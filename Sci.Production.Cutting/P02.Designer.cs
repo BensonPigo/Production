@@ -130,7 +130,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.rightpanel);
             this.masterpanel.Controls.Add(this.BalanceLayer);
             this.masterpanel.Controls.Add(this.TotalLayer);
             this.masterpanel.Controls.Add(this.label8);
@@ -147,8 +146,8 @@
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.masterpanel.Size = new System.Drawing.Size(1048, 672);
+            this.masterpanel.Dock = System.Windows.Forms.DockStyle.None;
+            this.masterpanel.Size = new System.Drawing.Size(635, 99);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
@@ -165,15 +164,19 @@
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
             this.masterpanel.Controls.SetChildIndex(this.TotalLayer, 0);
             this.masterpanel.Controls.SetChildIndex(this.BalanceLayer, 0);
-            this.masterpanel.Controls.SetChildIndex(this.rightpanel, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
             // 
+            this.detailpanel.Controls.Add(this.rightpanel);
             this.detailpanel.Controls.Add(this.detailbtm);
             this.detailpanel.Controls.Add(this.masterpanel);
             this.detailpanel.Location = new System.Drawing.Point(0, 0);
-            this.detailpanel.Size = new System.Drawing.Size(1048, 672);
+            this.detailpanel.Size = new System.Drawing.Size(1007, 672);
+            this.detailpanel.Controls.SetChildIndex(this.masterpanel, 0);
+            this.detailpanel.Controls.SetChildIndex(this.detailbtm, 0);
+            this.detailpanel.Controls.SetChildIndex(this.rightpanel, 0);
+            this.detailpanel.Controls.SetChildIndex(this.detailgridcont, 0);
             // 
             // gridicon
             // 
@@ -183,16 +186,12 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(3059, 561);
+            this.refresh.Location = new System.Drawing.Point(3584, 561);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(3, 101);
-            this.detailgridcont.Size = new System.Drawing.Size(684, 531);
+            this.detailgridcont.Size = new System.Drawing.Size(632, 538);
             // 
             // detail2
             // 
@@ -208,11 +207,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1048, 672);
+            this.detail.Size = new System.Drawing.Size(1007, 672);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1048, 672);
+            this.detailcont.Size = new System.Drawing.Size(1007, 672);
             // 
             // detailbtm
             // 
@@ -225,7 +224,7 @@
             this.detailbtm.Controls.Add(this.Qtybreak);
             this.detailbtm.Controls.Add(this.label2);
             this.detailbtm.Location = new System.Drawing.Point(0, 637);
-            this.detailbtm.Size = new System.Drawing.Size(1048, 35);
+            this.detailbtm.Size = new System.Drawing.Size(1007, 35);
             this.detailbtm.Controls.SetChildIndex(this.label2, 0);
             this.detailbtm.Controls.SetChildIndex(this.Qtybreak, 0);
             this.detailbtm.Controls.SetChildIndex(this.textbox_LastCutRef, 0);
@@ -246,7 +245,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1056, 701);
+            this.tabs.Size = new System.Drawing.Size(1015, 701);
             // 
             // createby
             // 
@@ -462,7 +461,7 @@
             // Qtybreak
             // 
             this.Qtybreak.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Qtybreak.Location = new System.Drawing.Point(897, 1);
+            this.Qtybreak.Location = new System.Drawing.Point(856, 1);
             this.Qtybreak.Name = "Qtybreak";
             this.Qtybreak.Size = new System.Drawing.Size(144, 30);
             this.Qtybreak.TabIndex = 23;
@@ -776,7 +775,7 @@
             // label20
             // 
             this.label20.Lines = 0;
-            this.label20.Location = new System.Drawing.Point(169, 281);
+            this.label20.Location = new System.Drawing.Point(172, 281);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(68, 23);
             this.label20.TabIndex = 45;
@@ -785,7 +784,7 @@
             // label21
             // 
             this.label21.Lines = 0;
-            this.label21.Location = new System.Drawing.Point(169, 308);
+            this.label21.Location = new System.Drawing.Point(172, 308);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(86, 23);
             this.label21.TabIndex = 46;
@@ -795,7 +794,7 @@
             // 
             this.displayBox_Cutplanid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox_Cutplanid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox_Cutplanid.Location = new System.Drawing.Point(240, 281);
+            this.displayBox_Cutplanid.Location = new System.Drawing.Point(243, 281);
             this.displayBox_Cutplanid.Name = "displayBox_Cutplanid";
             this.displayBox_Cutplanid.Size = new System.Drawing.Size(108, 23);
             this.displayBox_Cutplanid.TabIndex = 47;
@@ -889,7 +888,7 @@
             this.label22.Lines = 0;
             this.label22.Location = new System.Drawing.Point(2, 374);
             this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(112, 23);
+            this.label22.Size = new System.Drawing.Size(112, 15);
             this.label22.TabIndex = 50;
             this.label22.Text = "Distribute to SP#";
             this.label22.TextStyle.Color = System.Drawing.Color.Black;
@@ -897,7 +896,7 @@
             // label23
             // 
             this.label23.Lines = 0;
-            this.label23.Location = new System.Drawing.Point(169, 366);
+            this.label23.Location = new System.Drawing.Point(171, 366);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(133, 23);
             this.label23.TabIndex = 51;
@@ -928,9 +927,9 @@
             // 
             this.label24.BackColor = System.Drawing.Color.Transparent;
             this.label24.Lines = 0;
-            this.label24.Location = new System.Drawing.Point(2, 498);
+            this.label24.Location = new System.Drawing.Point(2, 503);
             this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(112, 23);
+            this.label24.Size = new System.Drawing.Size(112, 11);
             this.label24.TabIndex = 52;
             this.label24.Text = "Q\'ty Break down";
             this.label24.TextStyle.Color = System.Drawing.Color.Black;
@@ -1031,7 +1030,7 @@
             // 
             this.displayBox_TotalCutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox_TotalCutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox_TotalCutQty.Location = new System.Drawing.Point(169, 335);
+            this.displayBox_TotalCutQty.Location = new System.Drawing.Point(172, 335);
             this.displayBox_TotalCutQty.Name = "displayBox_TotalCutQty";
             this.displayBox_TotalCutQty.Size = new System.Drawing.Size(165, 23);
             this.displayBox_TotalCutQty.TabIndex = 57;
@@ -1107,14 +1106,14 @@
             this.rightpanel.Controls.Add(this.editBox_desc);
             this.rightpanel.Controls.Add(this.displayBox_FabricRefno);
             this.rightpanel.Controls.Add(this.displayBox_FabricType);
-            this.rightpanel.Location = new System.Drawing.Point(690, 3);
+            this.rightpanel.Location = new System.Drawing.Point(636, 0);
             this.rightpanel.Name = "rightpanel";
-            this.rightpanel.Size = new System.Drawing.Size(355, 1239);
+            this.rightpanel.Size = new System.Drawing.Size(371, 632);
             this.rightpanel.TabIndex = 60;
             // 
             // P02
             // 
-            this.ClientSize = new System.Drawing.Size(1056, 734);
+            this.ClientSize = new System.Drawing.Size(1015, 734);
             this.DefaultDetailOrder = "Markname";
             this.DefaultOrder = "ID";
             this.GridAlias = "WorkOrder";
