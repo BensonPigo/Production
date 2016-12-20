@@ -65,6 +65,22 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
+            Decimal sum = 0;
+            foreach (DataRow dr in dtIssueBreakDown.Rows)
+            {
+                foreach (DataColumn dc in dtIssueBreakDown.Columns)
+                {
+                    if (Object.ReferenceEquals(sum.GetType(), dr[dc].GetType()))
+                        sum += (Decimal)dr[dc];                 
+                }
+            }
+
+            if (sum == 0)
+            {
+                MyUtility.Msg.WarningBox("IssueBreakdown data no data!", "Warning");
+                this.Close();
+                return;
+            }
 
             //POPrg.BOAExpend(poid, "0", 1, out BOA, out BOA_Orderlist);
             SqlConnection sqlConnection = null;
