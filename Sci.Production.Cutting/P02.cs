@@ -1190,7 +1190,7 @@ namespace Sci.Production.Cutting
             #region 判斷download id
             string downloadid = MyUtility.GetValue.Lookup("MarkerDownLoadid",CurrentDetailData["Order_EachConsUkey"].ToString(),"Order_EachCons","Ukey");
             displayBox_Downloadid.Text = downloadid;
-            if (downloadid != CurrentDetailData["MarkerDownLoadid"].ToString()) downloadid_Text.Visible = true; 
+            if (downloadid.Trim() != CurrentDetailData["MarkerDownLoadid"].ToString().Trim()) downloadid_Text.Visible = true; 
             #endregion 
 
             #region 顯示Marker Length
