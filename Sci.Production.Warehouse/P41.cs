@@ -137,20 +137,21 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", S
                 sqlcmd += string.Format(@" and a.BuyerDelivery between '{0}' and '{1}'", buyerdlv_b, buyerdlv_e);
             }
             sqlcmd += "GROUP BY c.mdivisionid,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit,b.stockunit";
-            if (eachchk && mtletachk) sqlcmd += @" having EachConsApv is not null and (SELECT MAX(FinalETA) FROM 
-	(SELECT B1.FinalETA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
-		WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
-		AND a1.StockPOID = b1.ID and a1.StockSeq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
-	) tmp) is not null";
-            else
-            {
-                if (eachchk) sqlcmd += " having EachConsApv is not null";
-                if (mtletachk) sqlcmd += @" having (SELECT MAX(FinalETA) FROM 
-	(SELECT B1.FinalETA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
-		WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
-		AND a1.StockPOID = b1.ID and a1.StockSeq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
-	) tmp) is not null";
-            }
+            //20161220 CheckBox 選項用 checkBoxs_Status() 取代
+//            if (eachchk && mtletachk) sqlcmd += @" having EachConsApv is not null and (SELECT MAX(FinalETA) FROM 
+//	(SELECT B1.FinalETA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
+//		WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
+//		AND a1.StockPOID = b1.ID and a1.StockSeq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
+//	) tmp) is not null";
+//            else
+//            {
+//                if (eachchk) sqlcmd += " having EachConsApv is not null";
+//                if (mtletachk) sqlcmd += @" having (SELECT MAX(FinalETA) FROM 
+//	(SELECT B1.FinalETA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
+//		WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
+//		AND a1.StockPOID = b1.ID and a1.StockSeq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
+//	) tmp) is not null";
+//            }
             sqlcmd += @" ORDER BY c.mdivisionid,c.POID";
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
@@ -158,6 +159,7 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", S
                 if (dtData.Rows.Count == 0)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
                 listControlBindingSource1.DataSource = dtData;
+                checkBoxs_Status();
             }
             else
             {
@@ -212,6 +214,28 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", S
             //{
             //    return;
             //}
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBoxs_Status();
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBoxs_Status();
+        }
+
+        private void checkBoxs_Status()
+        {
+            if (listControlBindingSource1.DataSource == null)
+                return;
+            string formatStr = "";
+            if (checkBox1.Checked) formatStr += "EachConsApv is not null ";
+            if (checkBox2.Checked)
+                formatStr += (formatStr.EqualString("")) ? "ETA is not null" : "and ETA is not null";
+
+            listControlBindingSource1.Filter = string.Format(formatStr);
         }
     }
 }
