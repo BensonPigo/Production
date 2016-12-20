@@ -991,7 +991,7 @@ group by tmpData2.Style, tmpData2.CPU, tmpData2.SMV, {1}, tmpData2.FactoryCountr
                 ShowErr("Get StandardTms Fail!!");
                 return;
             }
-            StandardTms = decimal.Parse(dtData.Rows[0]["StandardTms"].ToString());
+            StandardTms = decimal.Parse(dtData.Rows[0]["StdTMS"].ToString());
         }
 
         private string GenEFFX(string ProdQty)
