@@ -83,7 +83,7 @@ s.EditDate
 t.Model= s.Model,
 t.MiscBrandID= s.MachineBrandID,
 t.Description= s.Description,
-t.UnitID= s.UnitID,
+t.UnitID= s.PoUnitID,
 t.CurrencyID= s.CurrencyID,
 t.Price= s.Price,
 --t.SuppID= s.SuppID, MMS可以編輯,所以不用update
@@ -413,6 +413,12 @@ update t
 		set t.TpePOID = s.id,
 		t.seq1=s.seq1
 		from  Machine.dbo.MiscPO_Detail as  t
+		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
+		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID
+		left join Production.dbo.scifty b on a.FactoryID=b.ID
+		where a.Type='O'
+
+		SELECT * from  Machine.dbo.MiscPO_Detail as  t
 		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
 		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID
 		left join Production.dbo.scifty b on a.FactoryID=b.ID
