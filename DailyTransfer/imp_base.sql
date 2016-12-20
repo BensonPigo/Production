@@ -390,7 +390,8 @@ SET
       ,a.AddName	      =b.AddName		
       ,a.AddDate	      =b.AddDate		
       ,a.EditName	      =b.EditName		
-      ,a.EditDate	      =b.EditDate		
+      ,a.EditDate	      =b.EditDate
+	  ,a.IsTrimCardOther = b.isTrimCardOther		
 
 from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
 where b.EditDate > a.EditDate
@@ -407,7 +408,8 @@ SET
       ,a.OutputUnit	      =b.OutputUnit		
       ,a.IsExtensionUnit	      =b.IsExtensionUnit		
       ,a.AddName	      =b.AddName		
-      ,a.AddDate	      =b.AddDate		
+      ,a.AddDate	      =b.AddDate
+	  ,a.IsTrimCardOther = b.isTrimCardOther
       --,a.EditName	      =b.EditName		
       --,a.EditDate	      =b.EditDate		
 
@@ -428,6 +430,7 @@ ID
       ,AddDate
       ,EditName
       ,EditDate
+	  ,isTrimCardOther
 
 )
 select 
@@ -444,6 +447,7 @@ ID
       ,AddDate
       ,EditName
       ,EditDate
+	  ,isTrimCardOther
 
 from Trade_To_Pms.dbo.MtlType as b
 where not exists(select id from Production.dbo.MtlType as a where a.id = b.id)
@@ -2458,6 +2462,54 @@ on t.type=s.type and t.id=s.id
 	when not matched by source then
 		delete;
 
+	---------KeyWord--------------
+	select * from Trade_To_Pms..KeyWord
+
+	Merge Production.dbo.KeyWord as t
+	Using Trade_To_Pms.dbo.KeyWord as s
+	on t.id=s.id
+		when matched then
+		update set 
+		t.Description= s.Description,
+		t.Junk= s.Junk,
+		t.Prefix= s.Prefix,
+		t.Fieldname= s.Fieldname,
+		t.Postfix= s.Postfix,
+		t.IsSize= s.IsSize,
+		t.IsPatternPanel= s.IsPatternPanel,
+		t.AddName= s.AddName,
+		t.AddDate= s.AddDate,
+		t.EditName= s.EditName,
+		t.EditDate= s.EditDate
+	when not matched by target then 
+		insert(ID
+		,Description
+		,Junk
+		,Prefix
+		,Fieldname
+		,Postfix
+		,IsSize
+		,IsPatternPanel
+		,AddName
+		,AddDate
+		,EditName
+		,EditDate
+		)
+			values(s.ID,
+		s.Description,
+		s.Junk,
+		s.Prefix,
+		s.Fieldname,
+		s.Postfix,
+		s.IsSize,
+		s.IsPatternPanel,
+		s.AddName,
+		s.AddDate,
+		s.EditName,
+		s.EditDate
+		)
+		when not matched by source then
+			delete;
   
 END
 
