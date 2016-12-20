@@ -101,7 +101,7 @@ namespace Sci.Production.Warehouse
                                     from Order_BOA_Expend A
                                     left join Fabric B on B.SCIRefno=A.SCIRefno
                                     where Id='{0}' and Article<>'' and ColorId<>''
-                                    and b.MtlTypeID = (select id from MtlType where IsTrimcardOther=0)
+                                    and b.MtlTypeID in (select id from MtlType where IsTrimcardOther=0)
                                     group by A.Refno, B.Description ", orderID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint);
                 if (!result) return result;
