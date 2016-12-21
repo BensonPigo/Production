@@ -81,7 +81,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 349);
-            this.detailpanel.Size = new System.Drawing.Size(892, 0);
+            this.detailpanel.Size = new System.Drawing.Size(892, 145);
             // 
             // gridicon
             // 
@@ -89,7 +89,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 0);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 145);
             // 
             // detail2
             // 
@@ -105,15 +105,15 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(892, 532);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(892, 494);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Location = new System.Drawing.Point(0, 494);
             this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
@@ -141,7 +141,6 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(5, 72);
             this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;

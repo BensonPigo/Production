@@ -28,11 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.components = new System.ComponentModel.Container();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.label7 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.label5 = new Sci.Win.UI.Label();
             this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
             this.checkBox3 = new Sci.Win.UI.CheckBox();
@@ -55,7 +57,6 @@
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.btnUnApprove = new Sci.Win.UI.Button();
             this.checkBox2 = new Sci.Win.UI.CheckBox();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -79,15 +80,15 @@
             this.grid1.AllowUserToResizeRows = false;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -130,6 +131,15 @@
             this.groupBox1.Size = new System.Drawing.Size(1008, 147);
             this.groupBox1.TabIndex = 21;
             this.groupBox1.TabStop = false;
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(590, 82);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(107, 23);
+            this.txtfactory1.TabIndex = 23;
             // 
             // label5
             // 
@@ -356,15 +366,6 @@
             this.checkBox2.Size = new System.Drawing.Size(15, 14);
             this.checkBox2.TabIndex = 21;
             this.checkBox2.UseVisualStyleBackColor = true;
-            // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(590, 82);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(107, 23);
-            this.txtfactory1.TabIndex = 23;
             // 
             // P01_BatchApprove
             // 
