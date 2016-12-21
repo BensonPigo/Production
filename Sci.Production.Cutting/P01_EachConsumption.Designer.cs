@@ -339,7 +339,6 @@
             this.gridSizeQty.Location = new System.Drawing.Point(0, 0);
             this.gridSizeQty.Name = "gridSizeQty";
             this.gridSizeQty.ReadOnly = true;
-            this.gridSizeQty.RowHeadersVisible = false;
             this.gridSizeQty.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSizeQty.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSizeQty.RowTemplate.Height = 24;
