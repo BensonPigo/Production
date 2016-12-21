@@ -96,9 +96,10 @@ namespace Sci.Production.Subcon
                                                                     and b.RefNo = d.RefNo
                                                                     and a.ApvToPurchase = 1 
                                                                     and a.LocalPOID =''
-                                                                    and a.factoryid = '{0}'
-and a.mdivisionid='{1}'"
-                                                                , Env.User.Factory, Env.User.Keyword, dr_localPO["category"]);
+                                                                    and d.localsuppid= '{3}'
+                                                                    and a.factoryid = '{0}'    
+                                                                    and a.mdivisionid='{1}'"
+                                                                , Env.User.Factory, Env.User.Keyword, dr_localPO["category"],dr_localPO["localsuppid"]);
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
@@ -149,9 +150,10 @@ and a.mdivisionid='{1}'"
                                                                     and b.RefNo = d.RefNo
                                                                     and a.status = 'Approved' 
                                                                     and a.factoryid = '{0}'
-and a.Mdivisionid = '{1}'
+                                                                    and d.localsuppid= '{3}'
+                                                                    and a.Mdivisionid = '{1}'
                                                                 "
-                        , Env.User.Factory, Env.User.Keyword, dr_localPO["category"]);
+                        , Env.User.Factory, Env.User.Keyword, dr_localPO["category"], dr_localPO["localsuppid"]);
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }

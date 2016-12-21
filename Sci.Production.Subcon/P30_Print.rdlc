@@ -90,7 +90,7 @@
                                                                     </TextRun>
                                                                   </TextRuns>
                                                                   <Style>
-                                                                    <TextAlign>Right</TextAlign>
+                                                                    <TextAlign>Center</TextAlign>
                                                                   </Style>
                                                                 </Paragraph>
                                                               </Paragraphs>
@@ -98,7 +98,7 @@
                                                               <Top>0.10583cm</Top>
                                                               <Left>14.0494cm</Left>
                                                               <Height>0.74083cm</Height>
-                                                              <Width>2.06374cm</Width>
+                                                              <Width>2.20485cm</Width>
                                                               <ZIndex>1</ZIndex>
                                                               <Style>
                                                                 <Border>
@@ -403,7 +403,7 @@
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
-                                                  <TextAlign>Right</TextAlign>
+                                                  <TextAlign>Center</TextAlign>
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
@@ -434,7 +434,9 @@
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
-                                                <Style />
+                                                <Style>
+                                                  <TextAlign>Left</TextAlign>
+                                                </Style>
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox33</rd:DefaultName>
@@ -476,7 +478,9 @@
                                                     <Style />
                                                   </TextRun>
                                                 </TextRuns>
-                                                <Style />
+                                                <Style>
+                                                  <TextAlign>Left</TextAlign>
+                                                </Style>
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox33</rd:DefaultName>
@@ -586,7 +590,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Right</TextAlign>
+                                <TextAlign>Center</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -694,7 +698,7 @@
   <Width>8.2in</Width>
   <Page>
     <PageHeader>
-      <Height>6.39568cm</Height>
+      <Height>7.29526cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
@@ -1145,7 +1149,7 @@
           <Top>5.452cm</Top>
           <Left>14.46214cm</Left>
           <Height>0.61171cm</Height>
-          <Width>2.06374cm</Width>
+          <Width>2.20485cm</Width>
           <ZIndex>14</ZIndex>
           <Style>
             <Border>
@@ -1463,7 +1467,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=Now</Value>
+                  <Value>=now.ToShortDateString()</Value>
                   <Style />
                 </TextRun>
               </TextRuns>

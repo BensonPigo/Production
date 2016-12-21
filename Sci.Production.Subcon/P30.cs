@@ -115,7 +115,9 @@ namespace Sci.Production.Subcon
             {
                 var frm = new Sci.Production.PublicForm.EditRemark("Localpo", "remark", dr);
                 frm.ShowDialog(this);
+                
                 this.RenewData();
+                displayBox7.Text = Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToShortDateString();
                 return false;
             }
 
@@ -171,11 +173,10 @@ namespace Sci.Production.Subcon
 
             #endregion
 
-            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0 or qty = null"))
+            foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty =0 or refno =' '"))
             {
                 row.Delete();
             }
-            
 
             if (DetailDatas.Count == 0)
             {
@@ -441,7 +442,7 @@ namespace Sci.Production.Subcon
             }
             if (MyUtility.Check.Empty(dr["category"]))
             {
-                MyUtility.Msg.WarningBox("Please fill Localtype first!");
+                MyUtility.Msg.WarningBox("Please fill category first!");
                 txtartworktype_fty1.Focus();
                 return;
             }
@@ -704,16 +705,17 @@ namespace Sci.Production.Subcon
                     ,a.Price [UPrice]
                     ,a.Qty [Order_Qty]
                     ,a.UnitId [Unit]
-                    ,a.Price*a.Qty [Amount]
+                    ,Cast(a.Price*a.Qty as decimal(20,4)) [Amount]
                     ,[Total1]=sum(a.Qty) OVER (PARTITION BY a.Delivery )
 			        ,[Total2]=sum(a.Qty) OVER (PARTITION BY a.Refno)
-                    ,[Total3]=sum(a.Price*a.Qty) OVER (PARTITION BY a.Delivery )
-			        ,[Total4]=sum(a.Price*a.Qty) OVER (PARTITION BY a.Refno )
+                    ,[Total3]=Cast(sum(a.Price*a.Qty) OVER (PARTITION BY a.Delivery )as decimal(30,4))
+			        ,[Total4]=Cast(sum(a.Price*a.Qty) OVER (PARTITION BY a.Refno )as decimal(30,4))
             from dbo.LocalPO_Detail a
             left join dbo.LocalPO b on  a.id=b.id
             where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
+          
             // 傳 list 資料            
             List<P30_PrintData> data = dd.AsEnumerable()
                 .Select(row1 => new P30_PrintData()
