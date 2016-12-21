@@ -73,10 +73,10 @@ where c.VNContractID = '{0}'
 and c.StyleID = '{1}'
 and c.Category = '{2}'
 and c.BrandID = '{3}'
-and c.ID = '{6}'
+and c.CustomSP = '{6}'
 and exists (select 1 from VNConsumption_Article ca where ca.ID = c.ID and ca.Article = '{4}')
 and exists (select 1 from VNConsumption_SizeCode cs where cs.ID = c.ID and cs.SizeCode = '{5}')
-order by c.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Convert.GetString(dr["Category"]), MyUtility.Convert.GetString(dr["BrandID"]), MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["CustomSP"]));
+order by c.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Convert.GetString(dr["Category"]), MyUtility.Convert.GetString(dr["BrandID"]), MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(e.FormattedValue));
                             if (!MyUtility.Check.Seek(sqlCmd))
                             {
                                 MyUtility.Msg.WarningBox("Custom SP# not found!!");
