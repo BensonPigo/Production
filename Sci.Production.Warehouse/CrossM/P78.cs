@@ -538,7 +538,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             #region 更新表頭狀態資料
 
-            sqlupd3 = string.Format(@"update RequestCrossM set status='Sent', editname = '{0}' , editdate = GETDATE()
+            sqlupd3 = string.Format(@"update RequestCrossM set status='New', editname = '{0}' , editdate = GETDATE()
                                 where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             #endregion 更新表頭狀態資料
