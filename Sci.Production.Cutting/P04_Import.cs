@@ -161,7 +161,7 @@ namespace Sci.Production.Cutting
 
                                     //265: CUTTING_P04_Import_Import From Work Order，將id回寫至Workorder.CutplanID
                                     string UpdateWorkorder = string.Format(@"update Workorder set CutplanID = '{0}' 
-                                                                            where cutplanid='' and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}'" 
+                                                                            where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}'"
                                                                             , id , dr["CuttingID"] , dr["cutcellid"],  keyWord, dateBox1.Text);
 
                                     if (!(upResult = DBProxy.Current.Execute(null, insertheader)))
