@@ -61,6 +61,7 @@ namespace Sci.Production.Cutting
             .Text("Seasonid", header: "Season", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("SizeRatio", header: "Size Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Markerno", header: "Flow No", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("MarkerName", header: "MarkerName", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Text("PatternPanel", header: "PatternPanel", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("fabriccombo", header: "FabricCombo", width: Widths.AnsiChars(2), iseditingreadonly: true)
