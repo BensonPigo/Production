@@ -172,7 +172,6 @@ namespace Sci.Production.Warehouse
             ns.IsSupportNegative = true;
             Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
             Ict.Win.UI.DataGridViewTextBoxColumn col_Location;
-            Ict.Win.UI.DataGridViewTextBoxColumn col_StockType;
 
             #region Location 右鍵開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
@@ -225,70 +224,44 @@ namespace Sci.Production.Warehouse
             #endregion
 
             #region StockType設定
-            Ict.Win.DataGridViewGeneratorTextColumnSettings sk = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorComboBoxColumnSettings sk = new DataGridViewGeneratorComboBoxColumnSettings();
             sk.CellValidating += (s, e) =>
             {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                switch (e.FormattedValue.ToString().ToUpper())
+                if (this.EditMode && e.FormattedValue != null)
                 {
-                    case "INVENTORY":
-                        dr["StockType"] = "I";
-                        break;
-                    case "I":
-                        dr["StockType"] = "I";
-                        break;
-                    case "BULK":
-                        dr["StockType"] = "B";
-                        break;
-                    case "B" :
-                        dr["StockType"] = "B";
-                        break;
-                    default :
-                        MyUtility.Msg.WarningBox("Data not found : " + e.FormattedValue.ToString());
-                        dr["StockType"] = "";
-                        e.Cancel = true;
-                        break;
-                };
-
-                detailgrid.GetDataRow(e.RowIndex).Set(dr);
-            };
-            sk.EditingMouseDown += (s, e) =>
-            {
-                if (this.EditMode && e.Button == MouseButtons.Right)
-                {
-                    DataTable dt = new DataTable();
-                    dt.Columns.Add("Stock Type");
-                    foreach(string st in new string[]{"Inventory","Bulk"}){
-                        DataRow dr = dt.NewRow();
-                        dr["Stock Type"] = st;
-                        dt.Rows.Add(dr);
+                    CurrentDetailData["stocktype"] = e.FormattedValue;
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errLocation = new List<string>();
+                    List<string> trueLocation = new List<string>();
+                    foreach (string location in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        {
+                            selectId &= false;
+                            errLocation.Add(location);
+                        }
+                        else if (!(location.EqualString("")))
+                        {
+                            trueLocation.Add(location);
+                        }
                     }
-                    
-                    Sci.Win.Tools.SelectItem selectlocation = new Win.Tools.SelectItem(dt, "Stock Type", "10", CurrentDetailData["stocktype"].ToString());
 
-                    DialogResult result = selectlocation.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-                    CurrentDetailData["stocktype"] = selectlocation.GetSelectedString();
-                }
-            };
-            sk.CellFormatting += (s, e) =>
-            {
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                switch (dr["StockType"].ToString())
-                {
-                    case "B":
-                        e.Value = "Bulk";
-                        break;
-                    case "I":
-                        e.Value = "Inventory";
-                        break;
-                    case "O":
-                        e.Value = "Other";
-                        break;
+                    if (!selectId)
+                    {
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+                        e.Cancel = true;
+                    }
+                    trueLocation.Sort();
+                    CurrentDetailData["location"] = string.Join(",", (trueLocation).ToArray());
+                    //去除錯誤的Location將正確的Location填回
                 }
             };
             #endregion
-
+            Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("poid", header: "Bulk" + Environment.NewLine + "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -298,14 +271,15 @@ namespace Sci.Production.Warehouse
             .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(8))
             .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(4))
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true, settings: ns).Get(out col_Qty)
-            .Text("stocktype", header: "Stock" + Environment.NewLine + "Type", iseditingreadonly: false, width: Widths.AnsiChars(10), settings : sk).Get(out col_StockType)
+            .ComboBox("stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(10), settings: sk).Get(out cbb_stocktype)
             .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(30)).Get(out col_Location)
             ;     //
             #endregion 欄位設定
             
             col_Location.DefaultCellStyle.BackColor = Color.Pink;
-            col_StockType.DefaultCellStyle.BackColor = Color.Pink;
-
+            cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
+            cbb_stocktype.ValueMember = "Key";
+            cbb_stocktype.DisplayMember = "Value";
         }
 
         protected override void ClickConfirm()
