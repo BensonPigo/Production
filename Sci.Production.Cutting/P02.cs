@@ -2010,6 +2010,7 @@ namespace Sci.Production.Cutting
         {
             base.ClickSaveAfter();
             foreach (DataRow dr in DetailDatas) dr["SORT_NUM"] = 0;  //編輯後存檔，將[SORT_NUM]歸零
+            sorting(comboBox1.Text);
         }
 
         private void Qtybreak_Click(object sender, EventArgs e)
