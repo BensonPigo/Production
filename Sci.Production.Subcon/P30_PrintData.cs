@@ -21,6 +21,7 @@ namespace Sci.Production.Subcon
         public string Total2 { get; set; }
         public string Total3 { get; set; }
         public string Total4 { get; set; }
+        public string groupby { get { return this.Order_Qty; } }
 
     }
 }
