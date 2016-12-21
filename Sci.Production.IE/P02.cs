@@ -38,20 +38,30 @@ namespace Sci.Production.IE
             }
             textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Inline", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
             textBox4.Mask = dateTimeMask;
-            string brand = @"SELECT BrandID FROM Orders
-                             left join ChgOver on  Orders.id= ChgOver.OrderID";
-            DataTable brandOutput;
-            DualResult result = DBProxy.Current.Select(null, brand, out brandOutput);
-            textBox_brand.Text = brandOutput.Rows[0]["BrandID"].ToString();
-          //  textBox_brand.Visible = false;
-           
-            textBox_brand.ReadOnly = true;
         }
 
 
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+           
+            string brand  = string.Format( @"SELECT BrandID FROM Orders
+                             left join ChgOver on  Orders.id= ChgOver.OrderID
+                             where ChgOver.OrderID ='{0}'", CurrentMaintain["OrderID"].ToString());
+            DataTable brandOutput;
+            DualResult res = DBProxy.Current.Select(null, brand, out brandOutput);
+            if (!res) { this.ShowErr(res); }
+            if (brandOutput.Rows.Count < 1)
+            {
+                textBox_brand.Text = "";
+            }
+            else
+            {
+                textBox_brand.Text = brandOutput.Rows[0]["BrandID"].ToString();
+            }
+            //  textBox_brand.Visible = false;
+
+            textBox_brand.ReadOnly = true;
             label18.Text = CurrentMaintain["Type"].ToString() == "N" ? "New" : "Repeat";
             string sqlCmd = string.Format(@"with tmpSO
 as

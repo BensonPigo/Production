@@ -1003,8 +1003,8 @@
             // 
             // textBox_brand
             // 
-            this.textBox_brand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox_brand.ForeColor = System.Drawing.Color.Blue;
+            this.textBox_brand.BackColor = System.Drawing.Color.White;
+            this.textBox_brand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox_brand.IsSupportEditMode = false;
             this.textBox_brand.Location = new System.Drawing.Point(575, 31);
             this.textBox_brand.Name = "textBox_brand";
