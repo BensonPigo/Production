@@ -230,11 +230,12 @@ where d.id=i.CutplanID and i.id = '{0}' and i.Status = 'Confirmed' and d.FromMDi
             foreach (DataRow tmp in dr2)
             {
                 DataRow[] findrow = dt_detail.Select(string.Format(@"mdivisionid = '{0}' and poid = '{1}' and seq1 = '{2}' and seq2 = '{3}' 
-                        and roll = '{4}' and dyelot = '{5}' and stocktype = '{6}'"
-                    , tmp["Mdivisionid"], tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["dyelot"], tmp["stocktype"]));
+                        and roll = '{4}' and dyelot = '{5}'"
+                    , tmp["Mdivisionid"], tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["dyelot"]));
 
                 if (findrow.Length > 0)
                 {
+                    findrow[0]["stocktype"] = tmp["stocktype"];
                     findrow[0]["qty"] = tmp["qty"];
                     findrow[0]["Location"] = tmp["Location"];
                 }
