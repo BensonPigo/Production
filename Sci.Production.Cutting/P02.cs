@@ -1317,22 +1317,22 @@ namespace Sci.Production.Cutting
             switch (sort)
             {
                 case "FabricCombo":
-                    dv.Sort = "SORT_NUM,FabricCombo,multisize,Article,SizeCode";
+                    dv.Sort = "SORT_NUM,FabricCombo,multisize,Article,SizeCode,Colorid ASC,Order_SizeCode_Seq DESC,MarkerName ASC";
                     break;
                 case "SP":
-                    dv.Sort = "SORT_NUM,Orderid,FabricCombo";
+                    dv.Sort = "SORT_NUM,Orderid,FabricCombo,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC,MarkerName ASC";
                     break;
                 case "Cut#":
-                    dv.Sort = "SORT_NUM,cutno,FabricCombo";
+                    dv.Sort = "SORT_NUM,cutno,FabricCombo,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC,MarkerName ASC";
                     break;
                 case "Ref#":
-                    dv.Sort = "SORT_NUM,cutref";
+                    dv.Sort = "SORT_NUM,cutref,FabricCombo ASC,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC,MarkerName ASC";
                     break;
                 case "Cutplan#":
-                    dv.Sort = "SORT_NUM,Cutplanid";
+                    dv.Sort = "SORT_NUM,Cutplanid,FabricCombo ASC,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC,MarkerName ASC";
                     break;
                 case "MarkerName":
-                    dv.Sort = "SORT_NUM,FabricCombo,Cutno,Markername,estcutdate";
+                    dv.Sort = "SORT_NUM,FabricCombo,Cutno,Markername,estcutdate,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC";
                     break;
                 default:
                     dv.Sort = "SORT_NUM ASC,FabricCombo ASC,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC,MarkerName ASC";
