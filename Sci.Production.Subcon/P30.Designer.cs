@@ -158,15 +158,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1058, 515);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(1052, 469);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(1052, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -230,7 +230,7 @@
             this.label7.Lines = 0;
             this.label7.Location = new System.Drawing.Point(16, 80);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(92, 23);
+            this.label7.Size = new System.Drawing.Size(75, 23);
             this.label7.TabIndex = 7;
             this.label7.Text = "Category";
             // 
@@ -515,9 +515,9 @@
             this.txtartworktype_fty1.cSubprocess = "";
             this.txtartworktype_fty1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "category", true));
             this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_fty1.Location = new System.Drawing.Point(111, 80);
+            this.txtartworktype_fty1.Location = new System.Drawing.Point(94, 80);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
-            this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
+            this.txtartworktype_fty1.Size = new System.Drawing.Size(167, 23);
             this.txtartworktype_fty1.TabIndex = 3;
             this.txtartworktype_fty1.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
             // 
@@ -528,7 +528,7 @@
             this.txtsubcon1.IsIncludeJunk = false;
             this.txtsubcon1.Location = new System.Drawing.Point(94, 47);
             this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
+            this.txtsubcon1.Size = new System.Drawing.Size(167, 23);
             this.txtsubcon1.TabIndex = 2;
             this.txtsubcon1.TextBox1Binding = "";
             // 
