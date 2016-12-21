@@ -197,33 +197,6 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                ;
             col_Qty.DefaultCellStyle.BackColor = Color.Pink;
             col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
-
-
-            // 全選
-            checkBox1.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid_ftyDetail.SetCheckeds(col_chk);
-                    if (col_chk.Index == this.grid_ftyDetail.CurrentCellAddress.X)
-                    {
-                        if (this.grid_ftyDetail.IsCurrentCellInEditMode) this.grid_ftyDetail.RefreshEdit();
-                    }
-                }
-            };
-
-            // 全不選
-            checkBox2.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid_ftyDetail.SetUncheckeds(col_chk);
-                    if (col_chk.Index == this.grid_ftyDetail.CurrentCellAddress.X)
-                    {
-                        if (this.grid_ftyDetail.IsCurrentCellInEditMode) this.grid_ftyDetail.RefreshEdit();
-                    }
-                }
-            };
         }
 
         // Cancel

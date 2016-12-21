@@ -28,9 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btn_Cancel = new Sci.Win.UI.Button();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.btn_Import = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
             this.textBox1 = new Sci.Win.UI.TextBox();
@@ -44,8 +43,8 @@
             this.grid_TaipeiInput = new Sci.Win.UI.Grid();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid_ftyDetail = new Sci.Win.UI.Grid();
-            this.TaipeiInputBS = new Sci.Win.UI.ListControlBindingSource();
-            this.FtyDetailBS = new Sci.Win.UI.ListControlBindingSource();
+            this.TaipeiInputBS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.FtyDetailBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid_TaipeiInput)).BeginInit();
@@ -66,34 +65,6 @@
             this.btn_Cancel.Text = "Cancel";
             this.btn_Cancel.UseVisualStyleBackColor = true;
             this.btn_Cancel.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBox2.IsSupportEditMode = false;
-            this.checkBox2.Location = new System.Drawing.Point(25, 23);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.ReadOnly = true;
-            this.checkBox2.Size = new System.Drawing.Size(15, 14);
-            this.checkBox2.TabIndex = 1;
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBox1.IsSupportEditMode = false;
-            this.checkBox1.Location = new System.Drawing.Point(6, 23);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.ReadOnly = true;
-            this.checkBox1.Size = new System.Drawing.Size(15, 14);
-            this.checkBox1.TabIndex = 0;
-            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // btn_Import
             // 
@@ -146,8 +117,6 @@
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.cb_return);
             this.groupBox2.Controls.Add(this.btn_Cancel);
-            this.groupBox2.Controls.Add(this.checkBox2);
-            this.groupBox2.Controls.Add(this.checkBox1);
             this.groupBox2.Controls.Add(this.btn_Import);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 548);
@@ -195,7 +164,7 @@
             this.cb_return.AutoSize = true;
             this.cb_return.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cb_return.IsSupportEditMode = false;
-            this.cb_return.Location = new System.Drawing.Point(70, 20);
+            this.cb_return.Location = new System.Drawing.Point(9, 19);
             this.cb_return.Name = "cb_return";
             this.cb_return.Size = new System.Drawing.Size(189, 21);
             this.cb_return.TabIndex = 5;
@@ -298,8 +267,6 @@
         #endregion
 
         private Win.UI.Button btn_Cancel;
-        private Win.UI.CheckBox checkBox2;
-        private Win.UI.CheckBox checkBox1;
         private Win.UI.Button btn_Import;
         private Win.UI.Button button1;
         private Win.UI.TextBox textBox1;
