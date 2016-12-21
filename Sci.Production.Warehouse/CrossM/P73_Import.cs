@@ -10,6 +10,7 @@ using Ict.Win;
 using Sci;
 using Sci.Data;
 using Sci.Production.PublicPrg;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -47,6 +48,42 @@ namespace Sci.Production.Warehouse
                     currentRow["location"] = item.GetSelectedString();
                 }
             };
+            ts2.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    dr["location"] = e.FormattedValue;
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", dr["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = dr["location"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errLocation = new List<string>();
+                    List<string> trueLocation = new List<string>();
+                    foreach (string location in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        {
+                            selectId &= false;
+                            errLocation.Add(location);
+                        }
+                        else if (!(location.EqualString("")))
+                        {
+                            trueLocation.Add(location);
+                        }
+                    }
+
+                    if (!selectId)
+                    {
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+                        e.Cancel = true;
+                    }
+                    trueLocation.Sort();
+                    dr["location"] = string.Join(",", (trueLocation).ToArray());
+                    //去除錯誤的Location將正確的Location填回
+                }
+            };
             #endregion
 
             this.grid1.IsEditingReadOnly = false;
@@ -61,7 +98,7 @@ namespace Sci.Production.Warehouse
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(4))
                 .Numeric("qty", header: "Received" + Environment.NewLine + "Qty", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)).Get(out col_Qty)
                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6))
-                .Text("Location", header: "Location", settings: ts2, iseditingreadonly: true, width: Widths.AnsiChars(30)).Get(out col_Location)
+                .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(30)).Get(out col_Location)
                ;
 
             col_Location.DefaultCellStyle.BackColor = Color.Pink;
@@ -128,6 +165,7 @@ where d.id='{0}' and i.CutplanID = '{0}' and i.Status = 'Confirmed'
                 if (findrow.Length > 0)
                 {
                     findrow[0]["qty"] = tmp["qty"];
+                    findrow[0]["Location"] = tmp["Location"];
                 }
                 else
                 {
