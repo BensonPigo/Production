@@ -104,7 +104,7 @@
             this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.textBox1);
             this.masterpanel.Controls.Add(this.label12);
-            this.masterpanel.Size = new System.Drawing.Size(806, 212);
+            this.masterpanel.Size = new System.Drawing.Size(892, 212);
             this.masterpanel.Controls.SetChildIndex(this.label12, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
@@ -140,7 +140,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 212);
-            this.detailpanel.Size = new System.Drawing.Size(806, 218);
+            this.detailpanel.Size = new System.Drawing.Size(892, 137);
             // 
             // gridicon
             // 
@@ -152,7 +152,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(806, 218);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 137);
             // 
             // detail2
             // 
@@ -168,16 +168,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(806, 468);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(806, 430);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 430);
-            this.detailbtm.Size = new System.Drawing.Size(806, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -556,6 +556,7 @@
             this.KeyField1 = "ID";
             this.Name = "B42";
             this.Text = "B42. Custom SP# and Consumption";
+            this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
             this.WorkAlias = "VNConsumption";
             this.Controls.SetChildIndex(this.tabs, 0);
