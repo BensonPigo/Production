@@ -96,6 +96,7 @@
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.textBox7 = new Sci.Win.UI.TextBox();
             this.textBox6 = new Sci.Win.UI.TextBox();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -112,6 +113,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.dateTimePicker1);
             this.masterpanel.Controls.Add(this.button6);
             this.masterpanel.Controls.Add(this.textBox6);
             this.masterpanel.Controls.Add(this.textBox7);
@@ -250,6 +252,7 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox6, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.button6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateTimePicker1, 0);
             // 
             // detailpanel
             // 
@@ -1054,26 +1057,41 @@
             // 
             // textBox7
             // 
-            this.textBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox7.IsSupportEditMode = false;
+            this.textBox7.BackColor = System.Drawing.Color.White;
+            this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox7.Location = new System.Drawing.Point(658, 112);
             this.textBox7.Name = "textBox7";
-            this.textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
-            this.textBox7.ReadOnly = true;
-            this.textBox7.Size = new System.Drawing.Size(153, 23);
+            this.textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
+            this.textBox7.Size = new System.Drawing.Size(164, 23);
             this.textBox7.TabIndex = 71;
             this.textBox7.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox7_PopUp);
+            this.textBox7.Validating += new System.ComponentModel.CancelEventHandler(this.textBox7_Validating);
             // 
             // textBox6
             // 
             this.textBox6.BackColor = System.Drawing.Color.White;
             this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox6.Location = new System.Drawing.Point(658, 139);
+            this.textBox6.Location = new System.Drawing.Point(828, 139);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(153, 23);
             this.textBox6.TabIndex = 73;
+            this.textBox6.Visible = false;
             this.textBox6.Validating += new System.ComponentModel.CancelEventHandler(this.textBox6_Validating);
+            // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.CalendarMonthBackground = System.Drawing.SystemColors.MenuHighlight;
+            this.dateTimePicker1.CalendarTitleBackColor = System.Drawing.SystemColors.Highlight;
+            this.dateTimePicker1.CustomFormat = "yyyy/MM/dd hh:mm:ss";
+            this.dateTimePicker1.Enabled = false;
+            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker1.Location = new System.Drawing.Point(659, 139);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(163, 23);
+            this.dateTimePicker1.TabIndex = 74;
+            this.dateTimePicker1.CloseUp += new System.EventHandler(this.dateTimePicker1_CloseUp);
+            this.dateTimePicker1.MouseLeave += new System.EventHandler(this.dateTimePicker1_MouseLeave);
+            this.dateTimePicker1.Validating += new System.ComponentModel.CancelEventHandler(this.dateTimePicker1_Validating);
             // 
             // P05
             // 
@@ -1182,5 +1200,6 @@
         private Win.UI.ComboBox comboBox1;
         private Win.UI.TextBox textBox7;
         private Win.UI.TextBox textBox6;
+        private System.Windows.Forms.DateTimePicker dateTimePicker1;
     }
 }

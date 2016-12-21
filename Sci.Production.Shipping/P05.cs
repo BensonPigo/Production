@@ -41,6 +41,7 @@ namespace Sci.Production.Shipping
 
             this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutOffDate", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
             this.textBox6.Mask = dateTimeMask;
+            this.dateTimePicker1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutOffDate", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -71,6 +72,11 @@ where {0}", masterID);
 
             textBox7.Text = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
 
+            if (EditMode) this.dateTimePicker1.Enabled = true;
+            else this.dateTimePicker1.Enabled = false;
+            
+                
+            
             #region AirPP List按鈕變色
             if (!this.EditMode)
             {
@@ -254,7 +260,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                 txtsubcon1.TextBox1.ReadOnly = true;
                 comboBox1.ReadOnly = true;
                 textBox3.ReadOnly = true;
-                textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndNonReadOnly;
+                //textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndNonReadOnly;
                // textBox6.ReadOnly = true;
                 col_lock.IsEditingReadOnly = true;
                 col_crd.IsEditingReadOnly = true;
@@ -270,7 +276,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                 col_crd.IsEditingReadOnly = false;
                 detailgrid.Columns[0].DefaultCellStyle.ForeColor = Color.Red;
                 detailgrid.Columns[4].DefaultCellStyle.ForeColor = Color.Red;
-                textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+                //textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             }
         }
 
@@ -507,8 +513,11 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 }
                 if (selectData.Rows.Count > 0)
                 {
-                    season = MyUtility.Convert.GetString(selectData.Rows[0]["Season"]).Substring(0, MyUtility.Convert.GetString(selectData.Rows[0]["Season"]).Length-1);
-                    category = MyUtility.Convert.GetString(selectData.Rows[0]["Category"]).Substring(0, MyUtility.Convert.GetString(selectData.Rows[0]["Category"]).Length - 1);
+                    if (!MyUtility.Check.Empty(selectData.Rows[0]["Season"]))
+                    {
+                        season = MyUtility.Convert.GetString(selectData.Rows[0]["Season"]).Substring(0, MyUtility.Convert.GetString(selectData.Rows[0]["Season"]).Length - 1);
+                        category = MyUtility.Convert.GetString(selectData.Rows[0]["Category"]).Substring(0, MyUtility.Convert.GetString(selectData.Rows[0]["Category"]).Length - 1);
+                    }                   
                 }
             }
             CurrentMaintain["Description"] = MyUtility.Convert.GetString(CurrentMaintain["BrandID"]) + ',' + season + ',' + MyUtility.Convert.GetString(CurrentMaintain["CustCDID"]) + "," + MyUtility.Convert.GetString(CurrentMaintain["Dest"]) + "," + category;
@@ -769,6 +778,11 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         //檢查輸入的Cut-off Date是否正確
         private void textBox6_Validating(object sender, CancelEventArgs e)
         {
+            if ((textBox6.Text == "/  /     :  :"))
+            {
+                //e.Cancel=true;
+                return;
+            }
             if (this.EditMode && textBox6.Text != emptyDTMask)
             {
                 string cutOffDate = textBox6.Text.Substring(0, 10).Replace(" ","1");
@@ -1081,7 +1095,7 @@ left join AirPP a on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipm
                     StringBuilder MSG = new StringBuilder();
                     if (row.Length > 0)
                     {
-                        foreach (DataRow dr in selectData.Rows)
+                        foreach (DataRow dr in row)
                         {
                             MSG.Append(string.Format("Packing NO : {0}\n\r",dr["ID"]));
                         }
@@ -1167,6 +1181,113 @@ order by fwd.WhseNo", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), M
             IList<DataRow> dr =  item.GetSelecteds();
             textBox7.Text = item.GetSelectedString();
             CurrentMaintain["ForwarderWhse_DetailUKey"] = dr[0]["Ukey"];
-        }        
+        }
+
+        private void textBox7_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(textBox7.Text))
+            {
+                this.textBox7.Text = "";
+                CurrentMaintain["ForwarderWhse_DetailUKey"] = 0;
+                return;
+            }
+            DataTable dt;
+            string sqlCmd = string.Format(@"select fwd.WhseNo,fwd.UKey from ForwarderWhse fw, ForwarderWhse_Detail fwd
+where fw.ID = fwd.ID
+and fwd.whseno = '{0}'
+order by fwd.WhseNo", this.textBox7.Text.ToString().Trim());
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
+            if (result)
+            {
+                if (dt.Rows.Count>=1)
+                {
+                    this.textBox7.Text = dt.Rows[0]["WhseNo"].ToString();
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("Whse# is not found!!");
+                    CurrentMaintain["ForwarderWhse_DetailUKey"] = 0;
+                    this.textBox7.Text = "";
+                    e.Cancel = true;
+                    
+                }
+            }           
+        }
+
+        private void dateTimePicker1_Validating(object sender, CancelEventArgs e)
+        {
+            DateTime today = DateTime.Now;
+            TimeSpan ts = today - dateTimePicker1.Value;
+            int diffDays = ts.Days;
+            if (MyUtility.Check.Empty(dateTimePicker1.Value))
+            {
+                return;
+            }
+            else
+            {
+                if (diffDays>365)
+                {
+                    MyUtility.Msg.WarningBox("<Cut off Date > cannot more or less than today over 365 Days"); 
+                    e.Cancel = true;
+                    return;
+                }
+                else
+                {
+                    CurrentMaintain["CutOffDate"] = dateTimePicker1.Value;
+                }
+               
+            }
+        }
+
+        private void dateTimePicker1_CloseUp(object sender, EventArgs e)
+        {
+            DateTime today = DateTime.Now;
+            TimeSpan ts = today - dateTimePicker1.Value;
+            int diffDays = ts.Days;
+            if (MyUtility.Check.Empty(dateTimePicker1.Value))
+            {
+                return;
+            }
+            else
+            {
+                if (diffDays > 365)
+                {
+                    MyUtility.Msg.WarningBox("<Cut off Date > cannot more or less than today over 365 Days"); 
+                    dateTimePicker1.Focus();
+                    return;
+                }
+                else
+                {
+                    CurrentMaintain["CutOffDate"] = dateTimePicker1.Value;
+                }
+
+            }
+        }
+
+        private void dateTimePicker1_MouseLeave(object sender, EventArgs e)
+        {
+            DateTime today = DateTime.Now;
+            TimeSpan ts = today - dateTimePicker1.Value;
+            int diffDays = ts.Days;
+            if (MyUtility.Check.Empty(dateTimePicker1.Value))
+            {
+                return;
+            }
+            else
+            {
+                if (diffDays > 365 || diffDays <-365)
+                {
+                    MyUtility.Msg.WarningBox("<Cut off Date > cannot more or less than today over 365 Days");
+                    dateTimePicker1.Focus();
+                    return;
+                }
+                else
+                {
+                    CurrentMaintain["CutOffDate"] = dateTimePicker1.Value;
+                }
+            }
+
+        }
+
     }
 }

@@ -262,6 +262,12 @@ values('{0}','{1}','{2}','New','{3}',GETDATE());", newID, Convert.ToDateTime(cal
                         else if (dr.RowState == DataRowState.Modified)
                         {
                             result = WriteRevise("Revise", dr);
+
+                            #region update PulloutID 到PackingList
+                            string updatePklst = string.Format(@"Update PackingList set pulloutID = '{0}' where id='{1}'", CurrentMaintain["ID"], dr["PackingListID"]);
+                            DBProxy.Current.Execute(null, updatePklst);
+                            #endregion
+
                             if (!result)
                             {
                                 return result;
@@ -270,6 +276,12 @@ values('{0}','{1}','{2}','New','{3}',GETDATE());", newID, Convert.ToDateTime(cal
                         else if (dr.RowState == DataRowState.Deleted)
                         {
                             result = WriteRevise("Delete", dr);
+
+                            #region update PulloutID 到PackingList
+                            string updatePklst = string.Format(@"Update PackingList set pulloutID = '' where id='{1}'", CurrentMaintain["ID"], dr["PackingListID"]);
+                            DBProxy.Current.Execute(null, updatePklst);
+                            #endregion
+
                             if (!result)
                             {
                                 return result;
@@ -292,6 +304,10 @@ where ID in (select distinct OrderID from Pullout_Detail where ID = '{0}');", My
                 DualResult failResult = new DualResult(false, "Update orders fail!!\r\n"+result.ToString());
                 return failResult;
             }
+
+
+          
+
             return base.ClickSavePost();
         }
 
@@ -648,7 +664,8 @@ where (p.Type = 'B' or p.Type = 'S')
 and s.Status = 'Confirmed'
 and p.MDivisionID = '{0}'
 and p.PulloutDate = '{1}'
-and (p.PulloutID != '{2}' or p.PulloutID = '')
+and ( (p.PulloutID != '{2}' or p.PulloutID = '') 
+or p.PulloutID='{2}') -- 20161220 willy 避免如果原本有資料,之後修改資料會清空shipQty問題
 group by pd.ID,p.Type,p.ShipModeID,pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode,o.Qty,oq.Qty,oqd.Qty,p.INVNo,o.StyleID,o.BrandID,o.Dest
 ),
 FLPacking
@@ -683,7 +700,13 @@ group by PackingListID,Type,ShipModeID,OrderID,OrderShipmodeSeq,OrderQty,OrderSh
 )
 select 'D' as DataType,*, 0 as AllShipQty from ShipPlanData
 union all
-select 'S' as DataType,*,(isnull((select sum(ShipQty) from Pullout_Detail where ID <> '{2}'  and OrderID = SummaryData.OrderID),0) + isnull((select sum(DiffQty) from InvAdjust_Qty),0))as AllShipQty from SummaryData
+select 'S' as DataType,*,(isnull((select sum(ShipQty) from Pullout_Detail where ID <> '{2}'  and OrderID = SummaryData.OrderID),0) + 
+isnull((select sum(DiffQty) from InvAdjust_Qty iq
+--20161208.willy修改
+inner join InvAdjust i on iq.ID=i.id 
+inner join SummaryData b on i.OrderID=b.OrderID  
+),0))as AllShipQty 
+from SummaryData
 ", Sci.Env.User.Keyword, Convert.ToDateTime(CurrentMaintain["PulloutDate"]).ToString("d"), MyUtility.Check.Empty(CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             #endregion
             DataTable AllPackData;
@@ -878,7 +901,6 @@ select 'S' as DataType,*,(isnull((select sum(ShipQty) from Pullout_Detail where 
 
             return true;
         }
-
         //Revise from ship plan and FOC/LO packing list
         private void button1_Click(object sender, EventArgs e)
         {
