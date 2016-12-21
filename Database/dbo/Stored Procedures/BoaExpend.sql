@@ -1,10 +1,10 @@
 ﻿	              
 
-CREATE Procedure [dbo].[BoaExpend]
+Create Procedure [dbo].[BoaExpend]
 (
 	  @ID				VarChar(13)				--採購母單
 	 ,@Order_BOAUkey	BigInt		= 0			--BOA Ukey
-	 ,@TestType			Bit			= 0			--是否為虛擬庫存計算
+	 ,@TestType			Int			= 0			--是否為虛擬庫存計算(0: 實際寫入Table; 1: 僅傳出Temp Table; 2: 不回傳Temp Table; 3: 實際寫入Table，但不回傳Temp Table)
 	 ,@UserID			VarChar(10) = ''
 	 ,@IsGetFabQuot		Bit			= 1
 	 ,@IsExpendDetail	Bit			= 0			--是否一律展開至最詳細
@@ -20,7 +20,7 @@ Begin
 			 , RefNo VarChar(20), SCIRefNo VarChar(26), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
 			 , SizeCode VarChar(8), SizeSpec VarChar(15), SizeUnit VarChar(8), Remark NVarChar(Max)
 			 , OrderQty Numeric(6,0), Price Numeric(8,4), UsageQty Numeric(9,2), UsageUnit VarChar(8), SysUsageQty  Numeric(9,2)
-			 , BomZipperInsert VarChar(5), BomCustPONo VarChar(30)
+			 , BomZipperInsert VarChar(5), BomCustPONo VarChar(30), Keyword VarChar(Max)
 			 , Primary Key (ExpendUkey)
 			 , Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
 			);
@@ -77,13 +77,15 @@ Begin
 	Declare @SysUsageQty Numeric(9,2)
 	Declare @Remark NVarchar(Max);
 	--Declare @BomFactory VarChar(8);
-	Declare @BomCustCD VarChar(16);
+	--Declare @BomCustCD VarChar(16);
 	Declare @BomZipperInsert VarChar(5);
 	Declare @BomCustPONo VarChar(30);
-	Declare @BomBuymonth VarChar(16);
-	Declare @BomCountry VarChar(2);
-	Declare @BomStyle VarChar(15);
-	Declare @BomArticle VarChar(8);
+	--Declare @BomBuymonth VarChar(16);
+	--Declare @BomCountry VarChar(2);
+	--Declare @BomStyle VarChar(15);
+	--Declare @BomArticle VarChar(8);
+	Declare @Keyword VarChar(Max);
+	Declare @Keyword_Trans VarChar(Max);
 
 	Declare @OrderID Varchar(13);
 
@@ -125,7 +127,8 @@ Begin
 	Declare @Sum_Qty Table
 		(  RowID BigInt Identity(1,1) Not Null, OrderID VarChar(13), ColorID VarChar(6), Article VarChar(8)
 		 , BomZipperInsert Varchar(5), BomCustPONo VarChar(30)
-		 , SizeSeq VarChar(2), SizeCode VarChar(8), SizeSpec VarChar(8), SizeUnit VarChar(8), OrderQty Numeric(6,0), UsageQty Numeric(9,2)
+		 , SizeSeq VarChar(2), SizeCode VarChar(8), SizeSpec VarChar(8), SizeUnit VarChar(8)
+		 , OrderQty Numeric(6,0), UsageQty Numeric(9,2)
 		);
 	Declare @Sum_QtyRowID Int;		--Sum_Qty ID
 	Declare @Sum_QtyRowCount Int;	--Sum_Qty總資料筆數
@@ -145,23 +148,26 @@ Begin
 		(  RowID BigInt Identity(1,1) Not Null, Ukey BigInt, SCIRefNo VarChar(26), SuppID VarChar(6)
 		 , PatternPanel VarChar(2), SizeItem VarChar(3), SizeItem_Elastic VarChar(3), ConsPC Numeric(8,4), Remark NVarChar(Max)
 		 , BomTypeZipper Bit, BomTypePo Bit
-		 , BomTypeSize Bit
-		 , BomTypeArticle Bit, BomTypeColor Bit
+		 , BomTypeSize Bit, BomTypeColor Bit
+		 --, BomTypeArticle Bit
+		 , Keyword VarChar(Max)
 		);
 	Declare @BoaRowID Int;
 	Declare @BoaRowCount Int;	--總資料筆數
 	
 	Insert Into @BoaCursor
 		(  Ukey, SCIRefNo, SuppID, PatternPanel, SizeItem, SizeItem_Elastic, ConsPC, Remark
-		 , BomTypeZipper, BomTypePo, BomTypeSize, BomTypeColor
+		 , BomTypeZipper, BomTypePo, BomTypeSize, BomTypeColor, Keyword
 		)
 		Select Ukey, SCIRefNo, SuppID, PatternPanel, SizeItem, SizeItem_Elastic, ConsPC, Remark
-			 , BomTypeZipper, BomTypePo, BomTypeSize, BomTypeColor
+			 , BomTypeZipper, BomTypePo, BomTypeSize, BomTypeColor, Keyword
 		  From dbo.Order_BOA
 		 Where ID = @ID
 		   And (   IsNull(@Order_BOAUkey, 0) = 0
 				Or Ukey = @Order_BOAUkey
 			   )
+		   And SubString(Seq, 1, 1) != '7'
+		   And RefNo != 'LABEL'
 		 Order by Ukey;
 
 	Set @BoaRowID = 1;
@@ -180,6 +186,7 @@ Begin
 			 , @BoaBomTypePo = BomTypePo
 			 , @BoaBomTypeSize = BomTypeSize
 			 , @BoaBomTypeColor = BomTypeColor
+			 , @Keyword = IsNull(Keyword, '')
 		  From @BoaCursor
 		 Where RowID = @BoaRowID;
 		
@@ -229,12 +236,13 @@ Begin
 						 , IIF(@BoaBomTypeSize = 1 Or @IsExpendDetail = 1, @SizeUnit, '') as SizeUnit
 						 --, IIF(@BoaBomTypeSize = 1 And IsNull(tmpOrder_SizeSpec.SizeSpec, '') = '', 0, Qty) as OrderQty
 						 , Qty as OrderQty
-						 , (Qty * IsNull(tmpOrder_SizeSpec.SizeSpec_Cal, 1) * @BoaConsPC) as UsageQty
+						 , (Qty * IIF(IsNull(@SizeItem, '') = '', 1, IsNull(tmpOrder_SizeSpec.SizeSpec_Cal, IIF(@BomTypeCalculate = 1, 0, 1))) * @BoaConsPC) as UsageQty
 					  From @tmpOrder_Qty as tmpQtyBreakDown
 					  Left Join dbo.Order_ColorCombo
 						On	   Order_ColorCombo.ID = @ID
 						   And Order_ColorCombo.Article = tmpQtyBreakDown.Article
-						   And Order_ColorCombo.LectraCode = @BoaPatternPanel
+						   --And Order_ColorCombo.LectraCode = @BoaPatternPanel
+						   And Order_ColorCombo.PatternPanel = @BoaPatternPanel
 					  Left Join (Select ID, SizeItem, SizeCode, SizeSpec
 									  , IIF(@BomTypeCalculate = 1, IIF(@UsageUnit = 'CM' Or @UsageUnit = 'INCH', Trade.dbo.GetDigitalValue(SizeSpec), 0), 1) as SizeSpec_Cal
 								   From dbo.Order_SizeSpec
@@ -282,9 +290,16 @@ Begin
 			  From @Sum_Qty
 			 Where RowID = @Sum_QtyRowID;
 			
+			--取得Keyword
+			Set @Keyword_Trans = ''
+			If @Keyword != ''
+			Begin
+				Exec dbo.GetKeyword @ID, @BoaUkey, @Keyword, @Keyword_Trans Output, @Article, @SizeCode;
+			End;
+			
 			Set @SysUsageQty = @UsageQty;
 			--取得 Supplier Color
-			Set @SuppColor = Trade.dbo.GetSuppColorList(@SciRefNo, @BoaSuppID, @ColorID, @BrandID, @SeasonID, @ProgramID, @StyleID);
+			Set @SuppColor = IsNull(Trade.dbo.GetSuppColorList(@SciRefNo, @BoaSuppID, @ColorID, @BrandID, @SeasonID, @ProgramID, @StyleID), '');
 			
 			--取得 Fabric Price
 			If @IsGetFabQuot = 1
@@ -299,12 +314,12 @@ Begin
 			Insert Into #Tmp_BoaExpend
 				(  ID, Order_BOAUkey, RefNo, SCIRefNo, Article, ColorID, SuppColor
 				 , SizeCode, SizeSpec, SizeUnit, Remark, OrderQty, Price, UsageQty
-				 , UsageUnit, SysUsageQty, BomZipperInsert, BomCustPONo
+				 , UsageUnit, SysUsageQty, BomZipperInsert, BomCustPONo, Keyword
 				)
 			Values
 				(  @ID, @BoaUkey, @RefNo, @SCIRefNo, @Article, @ColorID, @SuppColor
 				 , @SizeCode, @SizeSpec, @SizeUnit, @Remark, @OrderQty, @Price, @UsageQty
-				 , @UsageUnit, @SysUsageQty, @BomZipperInsert, @BomCustPONo
+				 , @UsageUnit, @SysUsageQty, @BomZipperInsert, @BomCustPONo, @Keyword_Trans
 				);
 			
 			Set @ExpendUkey = Scope_Identity();
@@ -353,11 +368,14 @@ Begin
 		Set @BoaRowID += 1
 	End;
 
-	Select * From #Tmp_BoaExpend;
-	Select * From #Tmp_BoaExpend_OrderList;
+	If (@TestType <> 2) And (@TestType <> 3)
+	Begin
+		Select * From #Tmp_BoaExpend;
+		Select * From #Tmp_BoaExpend_OrderList;
+	End;
 	
 	--若@TestType = 0，表示需實際寫入Table
-	If @TestType = 0
+	If @TestType = 0 Or @TestType = 3
 	Begin
 		Exec BoaExpend_Insert @ID, @Order_BOAUkey, @UserID;
 	End;

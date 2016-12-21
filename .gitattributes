@@ -45,6 +45,7 @@ Database/ProductionDB.sqlproj -text
 Database/ProductionDB.sqlproj.user -text
 Database/Storage/SLAVE.sql -text
 Database/dbo/Functions/GetCPURate.sql -text
+Database/dbo/Functions/GetColorName.sql -text
 Database/dbo/Functions/GetCurrencyRate.sql -text
 Database/dbo/Functions/GetDigitalValue.sql -text
 Database/dbo/Functions/GetFirResult.sql -text
@@ -92,6 +93,8 @@ Database/dbo/Stored[!!-~]Procedures/BoaExpend_Insert.sql -text
 Database/dbo/Stored[!!-~]Procedures/Create_CDC.sql -text
 Database/dbo/Stored[!!-~]Procedures/DailyImport.sql -text
 Database/dbo/Stored[!!-~]Procedures/GenGarmentTest.sql -text
+Database/dbo/Stored[!!-~]Procedures/GetKeyWordValue.sql -text
+Database/dbo/Stored[!!-~]Procedures/GetKeyword.sql -text
 Database/dbo/Stored[!!-~]Procedures/PoApproveLock.sql -text
 Database/dbo/Stored[!!-~]Procedures/dbo.insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/insertMygridstd2.sql -text

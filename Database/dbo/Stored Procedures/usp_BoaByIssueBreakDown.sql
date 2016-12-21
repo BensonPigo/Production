@@ -3,7 +3,7 @@
 -- Create date: 2015/12/31
 -- Description:	BOA AutoPick Prepare
 -- =============================================
-CREATE PROCEDURE [dbo].[usp_BoaByIssueBreakDown]
+Create PROCEDURE [dbo].[usp_BoaByIssueBreakDown]
 	@IssueID varchar(13)	--	Issue ID
 	,@POID				VarChar(13)				--採購母單
 	,@OrderID			VarChar(13)				--訂單子單
@@ -111,7 +111,7 @@ BEGIN
 		 , SizeCode VarChar(8), SizeSpec VarChar(15), SizeUnit VarChar(8), Remark NVarChar(Max)
 		 , OrderQty Numeric(6,0), Price Numeric(8,4), UsageQty Numeric(9,2), UsageUnit VarChar(8), SysUsageQty  Numeric(9,2)
 		 , BomFactory VarChar(8), BomCountry VarChar(2), BomStyle VarChar(15), BomCustCD VarChar(20)
-		 , BomArticle VarChar(8), BomZipperInsert VarChar(5), BomBuymonth VarChar(10), BomCustPONo VarChar(30)
+		 , BomArticle VarChar(8), BomZipperInsert VarChar(5), BomBuymonth VarChar(10), BomCustPONo VarChar(30), Keyword VarChar(Max)
 		 , Primary Key (ExpendUkey)
 		);
 	Create NonClustered Index Idx_ID on #Tmp_BoaExpend (ID, Order_BOAUkey, ColorID) -- table index
