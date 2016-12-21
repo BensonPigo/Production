@@ -309,8 +309,10 @@ namespace Sci.Production.Cutting
             detailgrid.ValidateControl();
             var frm = new Sci.Production.Cutting.P04_Import();
             frm.ShowDialog(this);
+            this.ReloadDatas();
             return true;
         }
+        
         protected override bool ClickEditBefore()
         {
             #region 判斷Encode 不可,MarkerReqid 存在
@@ -322,7 +324,7 @@ namespace Sci.Production.Cutting
             #endregion
             return base.ClickEditBefore();
         }
-
+        
         private void button1_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
@@ -428,21 +430,37 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
 
         private void button2_Click(object sender, EventArgs e)
         {
+            createfolder();
             if (!ToExcel(true))
             {
                 return;
             }
             DataRow seekdr;
-            if (MyUtility.Check.Seek("select * from mailto where Id='002'", out seekdr))
+            if (MyUtility.Check.Seek("select * from mailto where Id='004'", out seekdr))
             {
+                string mailFrom = Sci.Env.User.MailAddress;
                 string mailto = seekdr["ToAddress"].ToString();
                 string cc = seekdr["ccAddress"].ToString();
                 string content = seekdr["content"].ToString();
-                string subject = "<" + CurrentMaintain["mDivisionid"].ToString() + ">Cutplan#:" + CurrentMaintain["ID"].ToString();
+                string subject = "<" + CurrentMaintain["mDivisionid"].ToString() + ">BulkMarkerRequest#:" + CurrentMaintain["ID"].ToString();
 
-                var email = new MailTo(Env.Cfg.MailFrom, mailto, cc, subject + "-" + fileNameExt, pathName,
-content, false, false);
-                email.ShowDialog(this);
+                var email = new MailTo(mailFrom, mailto, cc, subject + "-" + fileNameExt, pathName, content, false, false);
+                DialogResult DR = email.ShowDialog(this);
+                if (DR == DialogResult.OK)
+                {
+                    DateTime NOW = DateTime.Now;
+                    string sql = string.Format("Update MarkerReq set sendDate = '{0}'  where id ='{1}'", NOW.ToString("yyyy/MM/dd HH:mm:ss"), CurrentMaintain["ID"]);
+                    DualResult Result;
+                    if (!(Result = DBProxy.Current.Execute(null, sql)))
+                    {
+                        ShowErr(sql, Result);
+                    }
+                    else
+                    {
+                        CurrentMaintain["sendDate"] = NOW;
+                        this.OnDetailEntered();
+                    }
+                }
 
             }
             //刪除Excel File
