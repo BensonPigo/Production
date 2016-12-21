@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -89,6 +90,42 @@ where a.status='Confirmed' and a.id='{0}'", transid, Sci.Env.User.Keyword)); //
                     currentrow["Location"] = item.GetSelectedString();
                 }
             };
+            ts2.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    dr["location"] = e.FormattedValue;
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", dr["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = dr["location"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errLocation = new List<string>();
+                    List<string> trueLocation = new List<string>();
+                    foreach (string location in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        {
+                            selectId &= false;
+                            errLocation.Add(location);
+                        }
+                        else if (!(location.EqualString("")))
+                        {
+                            trueLocation.Add(location);
+                        }
+                    }
+
+                    if (!selectId)
+                    {
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+                        e.Cancel = true;
+                    }
+                    trueLocation.Sort();
+                    dr["location"] = string.Join(",", (trueLocation).ToArray());
+                    //去除錯誤的Location將正確的Location填回
+                }
+            };
             #endregion Location 右鍵開窗
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
             Ict.Win.UI.DataGridViewTextBoxColumn txt_roll;
@@ -105,7 +142,7 @@ where a.status='Confirmed' and a.id='{0}'", transid, Sci.Env.User.Keyword)); //
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)    //5
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
             .ComboBox("stocktype", header: "Stock Type", iseditable: true).Get(out cbb_stocktype)//7
-            .Text("Location", header: "Location", settings: ts2, iseditingreadonly: true).Get(out txt_location)    //8
+            .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false).Get(out txt_location)    //8
             ;
 
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
