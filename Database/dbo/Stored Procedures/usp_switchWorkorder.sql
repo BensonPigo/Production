@@ -74,16 +74,17 @@ BEGIN
 	Select distinct e.id,a.article,a.colorid,e.sizecode,a.PatternPanel,e.qty as orderqty, 0 as disqty,f.Inline
 	Into #_tmpdisQty
 	from Order_ColorCombo a ,Order_EachCons b ,
-	(Select d.*,cuttingsp from Order_Qty d,(Select id,cuttingsp from Orders where cuttingsp = @Cuttingid) c 
-		Where c.id = d.id) e
+	(Select d.*,cuttingsp from Order_Qty d,(Select id,cuttingsp from Orders where cuttingsp = @Cuttingid) c Where c.id = d.id) e
 	left join 
 	(Select a.inline,b.Article,b.SizeCode,a.OrderID 
 	from SewingSchedule a ,SewingSchedule_Detail b ,
 		(Select id from Orders where cuttingsp = @Cuttingid) c 
-		where c.id = a.orderid and a.id = b.id and mDivisionid = @mDivisionid) f on f.OrderID = e.id and f.Article = e.Article and f.SizeCode = e.SizeCode 
+		where c.id = a.orderid and a.id = b.id and mDivisionid = @mDivisionid) f 
+	on f.OrderID = e.id and f.Article = e.Article and f.SizeCode = e.SizeCode 
 	where a.id = @POID and a.FabricCode is not null and a.FabricCode !='' 
 	and b.id = @POID and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel and e.cuttingsp = a.id and e.Article = a.Article
 	Order by inline,e.ID
+
 	Select id,article,sizecode,colorid,PatternPanel,orderqty, disqty,Min(INLINE) as inline,IDENTITY(int,1,1) as identRowid
 	into #disQty
 	From #_tmpdisQty group by id,article,sizecode,PatternPanel,orderqty, disqty,colorid order by inline
@@ -123,6 +124,7 @@ BEGIN
 	Declare @ukey bigint
 	Declare @Rowno int
 	Declare @Article varchar(8)
+	Declare @LongArticle varchar(max)
 	Declare @SizeCode varchar(8)
 	Declare @distriqtyRowID int
 	Declare @distriqtyRowCount int
@@ -165,6 +167,7 @@ BEGIN
 	Declare @linsert bit
 	Declare @sizeQtyRowid_again int
 	Declare @sizeQtyRowCount_again int 
+	Declare @LongArticleCount int
 	---
 
 	/*
@@ -180,6 +183,7 @@ BEGIN
 		Set @WorkOrderMixRowID = 1
 		SET @NewKey = 1
 		Select @WorkOrderMixRowID = Min(RowID), @WorkOrderMixRowCount = Max(RowID) From #WorkOrderMix
+
 		While @WorkOrderMixRowID <= @WorkOrderMixRowCount
 		Begin
 			Select @maxLayer = MaxLayer,
@@ -197,10 +201,15 @@ BEGIN
 				   @ukey = ukey,
 				   @Type = '1',
 				   @MarkerDownLoadId = MarkerDownloadID,
-				   @Order_EachConsUkey = Order_EachConsUkey
+				   @Order_EachConsUkey = Order_EachConsUkey,
+				   @LongArticle = Article
 
 			From #WorkOrderMix
 			Where RowID = @WorkOrderMixRowID;
+
+			--將@LongArticle(例:AI3342  ,AJ4925  ,AY3686  ,AY3687  ,AY3688  ,)依逗號切，放至TEMP TABLE。
+			select * into #LongArticle from dbo.SplitString(@LongArticle , ',');
+			select @LongArticleCount = count(*) from #LongArticle;
 
 			SET @SCIRefno = ''
 
@@ -262,7 +271,9 @@ BEGIN
 							select id,Article,disqty,orderqty,IDENTITY(int,1,1) as Rowid,Convert(Bigint,identRowid) as identRowid
 							into #disorder_cutlayer
 							from #disQty 
-							Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo
+							--Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo
+							Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo and (Article in (select Data from #LongArticle) or @LongArticleCount=0)
+
 							set @disQtyRowID = 1
 							Select @disQtyRowID = Min(RowID), @disQtyRowCount = Max(RowID) from #disorder_cutlayer
 							While @disQtyRowID<=@disQtyRowCount 
@@ -407,7 +418,9 @@ BEGIN
 						select id,disqty,Article,orderqty,IDENTITY(int,1,1) as Rowid,Convert(Bigint,identRowid) as identRowid
 						into #disorder_modlayer 
 						from #disQty 
-						Where SizeCode = @sizeCode and Colorid = @Colorid and PatternPanel = @FabricCombo
+						--Where SizeCode = @sizeCode and Colorid = @Colorid and PatternPanel = @FabricCombo
+						Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo and (Article in (select Data from #LongArticle) or @LongArticleCount=0)
+
 						set @disQtyRowID = 1
 						Select @disQtyRowID = Min(RowID), @disQtyRowCount = Max(RowID) from #disorder_modlayer 
 						While @disQtyRowID<=@disQtyRowCount
@@ -521,7 +534,6 @@ BEGIN
 					----------End 餘數層數也要做一筆-----------------------------			
 				End		
 			
-			
 			Else --WorkType by SP#
 			Begin
 				---------排序混碼Size Ratio Qty由大到小，才可以由大的數量先排-------
@@ -540,12 +552,15 @@ BEGIN
 						   @SizeQty = Qty
 					From #SizeQty
 					where rowid = @sizeQtyRowid
+
 					-------取得此部位同Size同顏色inline 較早的Orderid與Qty
 					Select id,sizecode,article,colorid,orderqty,disQty,PatternPanel,convert(bigint,identRowid) as identRowid,IDENTITY(int,1,1) as Rowid
 					into #distOrder 
 					From #disQty
-					Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and orderQty - disQty >0
+					--Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and orderQty - disQty >0
+					Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and (Article in (select Data from #LongArticle) or @LongArticleCount=0) and orderQty - disQty >0
 					order by inline
+
 					Set @distOrderRowid = 1
 					Select @distOrderRowid = Min(Rowid),@distOrderRowCount = Max(Rowid)
 					From #distOrder
@@ -581,6 +596,7 @@ BEGIN
 						------------------------------------------------
 						Set @Layernum = 1
 						Set @linsert = 0 --表示尚未新增Distribute
+
 						While @Layernum<=@LayerCount
 						Begin
 							Set @linsert = 0 --表示尚未新增Distribute
@@ -598,8 +614,10 @@ BEGIN
 								Select id,sizecode,article,colorid,orderqty,disQty,PatternPanel,convert(bigint,identRowid) as identRowid,IDENTITY(int,1,1) as Rowid
 								into #distOrder_again 
 								From #disQty
-								Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid
+								--Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid
+								Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and (Article in (select Data from #LongArticle) or @LongArticleCount=0) and orderQty - disQty >0
 								Order by inline
+
 								Set @distOrderRowid_again = 1
 								Select @distOrderRowid_again = Min(Rowid),@distOrderRowCount_again = Max(Rowid)
 								From #distOrder_again
@@ -639,8 +657,14 @@ BEGIN
 										
 										insert into #NewWorkOrder_Distribute(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
 										Values(@Cuttingid, @WorkOrder_DisOrderID,@Article,@SizeCode,@WorkOrder_DisQty,@NewKey,0)
+										--更新DisQty暫存table中的Disqty (已分配數量)欄位
 										update #disQty set disqty = disqty + IsNull(@WorkOrder_DisQty,0) 
 										where identRowid = @WorkOrder_DisidenRow
+
+										--更新DistOrder暫存table中的Disqty (已分配數量)欄位，否則會有重覆問題
+										update #distOrder set disqty = disqty + IsNull(@WorkOrder_DisQty,0) 
+										where identRowid = @WorkOrder_DisidenRow
+
 										Set @linsert = 1 ---有新增要改變
 									end
 									Set @distOrderRowid_again += 1
@@ -732,10 +756,13 @@ BEGIN
 
 								Set @linsert = 0 --表示尚未新增Distribute
 								set @CutQty = @modLayer * @SizeQty
+
 								Select id,sizecode,article,colorid,orderqty,disQty,PatternPanel,convert(bigint,identRowid) as identRowid,IDENTITY(int,1,1) as Rowid
 								into #distOrder_againmod 
 								From #disQty
-								Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid
+								--Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid
+								Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and (Article in (select Data from #LongArticle) or @LongArticleCount=0) and orderQty - disQty >0
+
 								Set @distOrderRowid_again = 1
 								Select @distOrderRowid_again = Min(Rowid),@distOrderRowCount_again = Max(Rowid)
 								From #distOrder_againmod
@@ -777,8 +804,15 @@ BEGIN
 										Set @CutQty = @CutQty - @WorkOrder_DisQty
 										insert into #NewWorkOrder_Distribute(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
 										Values(@Cuttingid, @WorkOrder_DisOrderID,@Article,@SizeCode,@WorkOrder_DisQty,@NewKey,0)
+
+										--更新DisQty暫存table中的Disqty (已分配數量)欄位
 										update #disQty set disqty = disqty + IsNull(@WorkOrder_DisQty,0) 
 										where identRowid = @WorkOrder_DisidenRow
+
+										--更新DistOrder暫存table中的Disqty (已分配數量)欄位，否則會有
+										update #distOrder set disqty = disqty + IsNull(@WorkOrder_DisQty,0) 
+										where identRowid = @WorkOrder_DisidenRow
+
 										Set @linsert = 1 ---有新增要改變
 									End
 									Set @distOrderRowid_again += 1
@@ -859,8 +893,10 @@ BEGIN
 					Set @sizeQtyRowid += 1
 				EnD
 				Drop table #SizeQty
+				--Drop table #LongArticle
 			End --End WorkType by SP#
 		Set @WorkOrderMixRowID += 1
+		Drop table #LongArticle
 		ENd --End WorkOrder Loop
 		drop table #WorkOrderMix
 	End;
