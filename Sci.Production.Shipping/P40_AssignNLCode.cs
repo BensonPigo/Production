@@ -140,6 +140,9 @@ namespace Sci.Production.Shipping
         //Save NL Code & Re-Calculate
         private void button1_Click(object sender, EventArgs e)
         {
+            this.grid1.ValidateControl();
+            listControlBindingSource1.EndEdit();
+
             DataRow[] dataCheck = noNLCode.Select("NLCode = ''");
             if (dataCheck.Length < 0)
             {
