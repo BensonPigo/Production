@@ -43,6 +43,12 @@ namespace Sci.Production.Warehouse
         //存檔前檢查
         protected override bool ClickSaveBefore()
         {
+            if (CurrentMaintain["ID"].ToString().IndexOfAny(new char[] {','}, 0) > -1)
+            {
+                MyUtility.Msg.WarningBox("< Code > can not have ',' !");
+                this.textBox1.Focus();
+                return false;
+            }
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
@@ -65,7 +71,7 @@ namespace Sci.Production.Warehouse
             }
 
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;//MDivisionID為登入的ID
-
+            CurrentMaintain["ID"] = CurrentMaintain["ID"].ToString().Trim();
             return base.ClickSaveBefore();
         }
     }
