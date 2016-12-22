@@ -68,7 +68,25 @@ namespace Sci.Production.Class
            string str = this.Text;
            if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
            {
-               if (MyUtility.Check.Seek(str, "artworktype", "id") == false)
+
+               string sqlWhere = string.Format("Where 1=1 and id='{0}'", str);
+               string sqlCmd = string.Empty;
+
+               if (!string.IsNullOrWhiteSpace(cClassify))
+               {
+                   sqlWhere = sqlWhere + " And Classify in (" + this.cClassify + ")";
+               };
+
+               if (!string.IsNullOrWhiteSpace(cSubprocess))
+               {
+                   if (this.cSubprocess == "Y")
+                   { sqlWhere = sqlWhere + " And IsSubprocess =1 "; }
+                   else
+                   { sqlWhere = sqlWhere + " And IsSubprocess =0 "; };
+               };
+               sqlCmd = "select ID, Abbreviation from ArtworkType " + sqlWhere;
+
+               if (MyUtility.Check.Seek(sqlCmd) == false)
                {
                    MyUtility.Msg.WarningBox(string.Format("< Artworktype : {0} > not found!!!", str));
                    this.Text = "";
