@@ -239,7 +239,7 @@ as
 (
 select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,o.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup
 ,rtrim(pd.seq1) seq1,pd.seq2,pd.id stockpoid,pd.seq1 stockseq1,pd.seq2 stockseq2
-,pd.inputqty*v.RateValue inputqty,pd.POUnit,pd.StockUnit
+,ROUND(pd.inputqty*v.RateValue,2,1) N'inputqty',pd.POUnit,pd.StockUnit
 ,mpd.InQty
 ,isnull(x.accu_qty,0.00) accu_qty
 from dbo.orders o 
@@ -339,6 +339,13 @@ drop table #tmp");
                 MyUtility.Msg.WarningBox(sqlcmd.ToString(), "DB error!!");
                 return;
             }
+
+            if (dataSet.Tables[0].Rows.Count== 0)
+            {
+                MyUtility.Msg.WarningBox("NO Data!");
+                return;
+            }
+
             master = dataSet.Tables[0];
             master.TableName = "Master";
             master.DefaultView.Sort = "poid,seq1,seq2";
