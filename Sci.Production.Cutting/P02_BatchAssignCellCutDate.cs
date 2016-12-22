@@ -127,7 +127,9 @@ namespace Sci.Production.Cutting
             if (!MyUtility.Check.Empty(cutno_numericbox.Value)) filter = filter + string.Format(" and cutno ={0}", cutno_numericbox.Value);
             if (!MyUtility.Check.Empty(estcutdate_textbox1.Value)) filter = filter + string.Format(" and estcutdate ='{0}'", estcutdate);
             if (only_checkBox.Value == "True") filter = filter + " and estcutdate is null ";
+            string orderby = "SORT_NUM ASC,FabricCombo ASC,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC,MarkerName ASC,Ukey";
             curTb.DefaultView.RowFilter=filter;
+            curTb.DefaultView.Sort = orderby;
             grid1.DataSource = curTb;
             
         }
