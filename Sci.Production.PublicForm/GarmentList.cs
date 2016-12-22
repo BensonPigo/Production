@@ -52,12 +52,12 @@ namespace Sci.Production.PublicForm
             }
             #endregion
             #region 建立Table
-            string tablecreatesql = "Select a.*,'' as F_CODE,b.PatternPanel";
+            string tablecreatesql = "Select a.*,'' as F_CODE";
             foreach (DataRow dr in headertb.Rows)
             {
                 tablecreatesql = tablecreatesql + string.Format(" ,'' as {0}", dr["ArticleGroup"]);
             }
-            tablecreatesql = tablecreatesql + string.Format(@" from Pattern_GL a inner join Pattern_GL_LectraCode b on a.PatternUKEY=b.PatternUKEY and a.SEQ = b.SEQ Where a.PatternUkey = '{0}'", patternukey);
+            tablecreatesql = tablecreatesql + string.Format(@" from Pattern_GL a Where a.PatternUkey = '{0}'", patternukey);
             DataTable gridtb;
             DualResult tablecreateResult= DBProxy.Current.Select(null, tablecreatesql, out gridtb);
             if (!tablecreateResult)
