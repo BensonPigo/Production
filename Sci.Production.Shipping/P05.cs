@@ -41,7 +41,7 @@ namespace Sci.Production.Shipping
 
             this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutOffDate", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
             this.textBox6.Mask = dateTimeMask;
-            this.dateTimePicker1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutOffDate", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
+
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -64,17 +64,78 @@ where {0}", masterID);
         {
             base.OnFormLoaded();
             MyUtility.Tool.SetupCombox(comboBox1, 1, 1, ",CY-CY,CFS-CY,CFS-CFS");
+
+            
+            this.maskedTextBox1.TypeValidationCompleted += new TypeValidationEventHandler(maskedTextBox1_TypeValidationCompleted);
+           
         }
+
+        void maskedTextBox1_TypeValidationCompleted(object sender, TypeValidationEventArgs e)
+        {
+            if (this.EditMode && maskedTextBox1.Text != emptyDTMask)
+            {
+
+                for (int i = 0; i <= 10; i++)
+                {
+                    if (maskedTextBox1.Text.Substring(i, 1) != " ")
+                    {
+                        string cutOffDate = maskedTextBox1.Text.Substring(0, 10).Replace(" ", "1");
+                        try
+                        {
+                            if (!CheckDate((DateTime)MyUtility.Convert.GetDate(cutOffDate), -12, 12))
+                            {
+                                MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
+                                maskedTextBox1.Text = null;
+                                e.Cancel = true;
+                                return;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
+                            e.Cancel = true;
+                            return;
+                        }
+                    }
+                }
+                
+                
+
+            }
+            
+            //DateTime today = DateTime.Now;
+            //TimeSpan ts1 = new TimeSpan(today.Ticks);
+            //TimeSpan ts2 = new TimeSpan(MyUtility.Convert.GetDate(maskedTextBox1.Text).Value.Ticks);
+            //TimeSpan ts = ts1.Subtract(ts2).Duration();
+
+            //int diffDays = ts.Days;
+            //if (MyUtility.Check.Empty(maskedTextBox1.Text))
+            //{
+            //    return;
+            //}
+            //else
+            //{
+            //    if (diffDays > 365 || diffDays < -365)
+            //    {
+            //        MyUtility.Msg.WarningBox("<Cut off Date > cannot more or less than today over 365 Days");
+            //        maskedTextBox1.Focus();
+            //        return;
+            //    }
+            //    else
+            //    {
+            //        CurrentMaintain["CutOffDate"] = maskedTextBox1.Text;
+            //    }
+            //}
+        }
+
+       
 
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
 
             textBox7.Text = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
-
-            if (EditMode) this.dateTimePicker1.Enabled = true;
-            else this.dateTimePicker1.Enabled = false;
-            
+           
                 
             
             #region AirPP List按鈕變色
@@ -412,6 +473,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))
                 return false;
             }
             #endregion
+
             
             //新增單狀態下，取ID且檢查此ID是否存在
             if (IsDetailInserting)
@@ -780,7 +842,9 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         {
             if ((textBox6.Text == "/  /     :  :"))
             {
-                //e.Cancel=true;
+                this.textBox5.Focus();
+                this.textBox6.Text = "";
+                CurrentMaintain["CutoffDate"] = DBNull.Value;
                 return;
             }
             if (this.EditMode && textBox6.Text != emptyDTMask)
@@ -1214,79 +1278,59 @@ order by fwd.WhseNo", this.textBox7.Text.ToString().Trim());
             }           
         }
 
-        private void dateTimePicker1_Validating(object sender, CancelEventArgs e)
+             
+
+        private void maskedTextBox1_TextChanged(object sender, EventArgs e)
         {
-            DateTime today = DateTime.Now;
-            TimeSpan ts = today - dateTimePicker1.Value;
-            int diffDays = ts.Days;
-            if (MyUtility.Check.Empty(dateTimePicker1.Value))
+            this.maskedTextBox1.ValidatingType = Type.GetType("System.DateTime");
+            string validatedText = Convert.ToString(maskedTextBox1.ValidateText());
+            if (!string.IsNullOrEmpty(validatedText))
             {
+                DateTime dt = Convert.ToDateTime(validatedText);
+
+            }
+            //maskedTextBox1.Text.incl
+        }
+
+        private void maskedTextBox1_Validating(object sender, CancelEventArgs e)
+        {
+         
+            if ((maskedTextBox1.Text == "/  /     :  :"))
+            {
+                //e.Cancel=true;
                 return;
             }
-            else
+            if (this.EditMode && maskedTextBox1.Text != emptyDTMask)
             {
-                if (diffDays>365)
+                string cutOffDate = maskedTextBox1.Text.Substring(0, 10).Replace(" ", "1");
+                try
                 {
-                    MyUtility.Msg.WarningBox("<Cut off Date > cannot more or less than today over 365 Days"); 
+                    if (!CheckDate((DateTime)MyUtility.Convert.GetDate(cutOffDate), -12, 12))
+                    {
+                        MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
+                        maskedTextBox1.Text = null;
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+                catch (Exception)
+                {
+                    MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
                     e.Cancel = true;
                     return;
                 }
-                else
-                {
-                    CurrentMaintain["CutOffDate"] = dateTimePicker1.Value;
-                }
-               
-            }
-        }
-
-        private void dateTimePicker1_CloseUp(object sender, EventArgs e)
-        {
-            DateTime today = DateTime.Now;
-            TimeSpan ts = today - dateTimePicker1.Value;
-            int diffDays = ts.Days;
-            if (MyUtility.Check.Empty(dateTimePicker1.Value))
-            {
-                return;
-            }
-            else
-            {
-                if (diffDays > 365)
-                {
-                    MyUtility.Msg.WarningBox("<Cut off Date > cannot more or less than today over 365 Days"); 
-                    dateTimePicker1.Focus();
-                    return;
-                }
-                else
-                {
-                    CurrentMaintain["CutOffDate"] = dateTimePicker1.Value;
-                }
 
             }
         }
 
-        private void dateTimePicker1_MouseLeave(object sender, EventArgs e)
+        private void toolTip1_Popup(object sender, PopupEventArgs e)
         {
-            DateTime today = DateTime.Now;
-            TimeSpan ts = today - dateTimePicker1.Value;
-            int diffDays = ts.Days;
-            if (MyUtility.Check.Empty(dateTimePicker1.Value))
-            {
-                return;
-            }
-            else
-            {
-                if (diffDays > 365 || diffDays <-365)
-                {
-                    MyUtility.Msg.WarningBox("<Cut off Date > cannot more or less than today over 365 Days");
-                    dateTimePicker1.Focus();
-                    return;
-                }
-                else
-                {
-                    CurrentMaintain["CutOffDate"] = dateTimePicker1.Value;
-                }
-            }
 
+        }
+
+        private void maskedTextBox1_Validated(object sender, EventArgs e)
+        {
+            MyUtility.Msg.InfoBox("validated");
         }
 
     }
