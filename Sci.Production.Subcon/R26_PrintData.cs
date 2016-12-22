@@ -23,6 +23,7 @@ namespace Sci.Production.Subcon
         public string To { get; set; }
         public string Group_FIDS { get { return this.Title1 + this.Issue_Date + this.To; } }
         public string Group_PO { get { return this.PO + this.Code + this.To; } }
+        public string Group_O { get { return this.PO + this.Code + this.To; } }
        
     }
 }
