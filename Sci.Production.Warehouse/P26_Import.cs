@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -191,6 +192,43 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString())); //
                     currentrow["ToLocation"] = item.GetSelectedString();
                 }
             };
+
+            ts2.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    dr["ToLocation"] = e.FormattedValue;
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", dr_master["Stocktype"].ToString(), Sci.Env.User.Keyword);
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = dr["ToLocation"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errLocation = new List<string>();
+                    List<string> trueLocation = new List<string>();
+                    foreach (string location in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        {
+                            selectId &= false;
+                            errLocation.Add(location);
+                        }
+                        else if (!(location.EqualString("")))
+                        {
+                            trueLocation.Add(location);
+                        }
+                    }
+
+                    if (!selectId)
+                    {
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+                        e.Cancel = true;
+                    }
+                    trueLocation.Sort();
+                    dr["ToLocation"] = string.Join(",", (trueLocation).ToArray());
+                    //去除錯誤的Location將正確的Location填回
+                }
+            };
             #endregion Location 右鍵開窗
 
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
@@ -204,7 +242,7 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString())); //
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)    //5
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
             .Text("FromLocation", header: "FromLocation", iseditingreadonly: true)    //7
-            .Text("ToLocation", header: "ToLocation", settings: ts2, iseditingreadonly: true)    //8
+            .Text("ToLocation", header: "ToLocation", settings: ts2, iseditingreadonly: false)    //8
             ;
             this.grid1.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
 
