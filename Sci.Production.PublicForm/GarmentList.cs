@@ -52,12 +52,12 @@ namespace Sci.Production.PublicForm
             }
             #endregion
             #region 建立Table
-            string tablecreatesql = "Select a.*,'' as F_CODE";
+            string tablecreatesql = "Select a.*,'' as F_CODE,b.PatternPanel";
             foreach (DataRow dr in headertb.Rows)
             {
                 tablecreatesql = tablecreatesql + string.Format(" ,'' as {0}", dr["ArticleGroup"]);
             }
-            tablecreatesql = tablecreatesql + string.Format(" from Pattern_GL a Where PatternUkey = '{0}'", patternukey);
+            tablecreatesql = tablecreatesql + string.Format(@" from Pattern_GL a inner join Pattern_GL_LectraCode b on a.PatternUKEY=b.PatternUKEY and a.SEQ = b.SEQ Where a.PatternUkey = '{0}'", patternukey);
             DataTable gridtb;
             DualResult tablecreateResult= DBProxy.Current.Select(null, tablecreatesql, out gridtb);
             if (!tablecreateResult)
@@ -101,6 +101,7 @@ namespace Sci.Production.PublicForm
                 .Text("Alone", header: "Alone", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("Pair", header: "Pair", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("DV", header: "DV", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("PatternPanel", header: "Pattern Panel", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("F_CODE", header: "F_Code", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Remarks", header: "Remarks", width: Widths.AnsiChars(15), iseditingreadonly: true);
             foreach (DataRow dr in headertb.Rows)
