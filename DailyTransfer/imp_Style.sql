@@ -724,6 +724,107 @@ select
 
 from Trade_To_Pms.dbo.Style_MarkerList as b
 where not exists(select 1 from Production.dbo.Style_MarkerList as a where a.Ukey = b.Ukey)
+
+-----------------Style_MarkerList_Article-------------------
+
+	Merge Production.dbo.Style_MarkerList_Article as t
+	Using Trade_To_Pms.dbo.Style_MarkerList_Article as s
+	on t.style_MarkerListUkey=s.style_MarkerListUkey and t.article=s.article
+	when matched then 
+		update set
+		t.StyleUkey= s.StyleUkey,
+		--t.Style_MarkerListUkey= s.Style_MarkerListUkey,
+		--t.Article= s.Article,
+		t.AddName= s.AddName,
+		t.AddDate= s.AddDate,
+		t.EditName= s.EditName,
+		t.EditDate= s.EditDate
+	when not matched by target then
+		insert(StyleUkey
+				,Style_MarkerListUkey
+				,Article
+				,AddName
+				,AddDate
+				,EditName
+				,EditDate)
+		values(s.StyleUkey,
+				s.Style_MarkerListUkey,
+				s.Article,
+				s.AddName,
+				s.AddDate,
+				s.EditName,
+				s.EditDate)
+	when not matched by source and t.styleUkey in (select distinct styleUkey from production.dbo.style_markerlist) then
+		delete;
+
+
+----------------Style_MarkerList_PatternPanel------------------
+	
+	Merge Production.dbo.Style_MarkerList_PatternPanel as t
+	Using trade_to_pms.dbo.Style_MarkerList_PatternPanel as s
+	On t.Style_MarkerListUkey=s.Style_MarkerListUkey and t.Lectracode=s.Lectracode
+	when matched then 
+		update set
+		t.StyleUkey= s.StyleUkey,
+		--t.Style_MarkerListUkey= s.Style_MarkerListUkey,
+		t.PatternPanel= s.PatternPanel,
+		--t.Lectracode= s.Lectracode,
+		t.AddName= s.AddName,
+		t.AddDate= s.AddDate,
+		t.EditName= s.EditName,
+		t.EditDate= s.EditDate
+	when not matched by target then 
+		insert(StyleUkey
+			,Style_MarkerListUkey
+			,PatternPanel
+			,Lectracode
+			,AddName
+			,AddDate
+			,EditName
+			,EditDate			)
+		values(s.StyleUkey,
+			s.Style_MarkerListUkey,
+			s.PatternPanel,
+			s.Lectracode,
+			s.AddName,
+			s.AddDate,
+			s.EditName,
+			s.EditDate			)
+	when not matched by source  and t.styleUkey in (select distinct styleUkey from production.dbo.style_markerlist) then
+		delete;
+
+--------Style_MarkerList_SizeQty---------------------
+	
+	Merge Production.dbo.Style_MarkerList_SizeQty as t
+	Using trade_to_pms.dbo.Style_MarkerList_SizeQty as s
+	on t.Style_MarkerListUkey=s.Style_MarkerListUkey and t.SizeCode=s.SizeCode
+	when matched then
+		update set
+		--t.Style_MarkerListUkey= s.Style_MarkerListUkey,
+		t.StyleUkey= s.StyleUkey,
+		--t.SizeCode= s.SizeCode,
+		t.Qty= s.Qty
+	when not matched by target then
+		insert(Style_MarkerListUkey
+				,StyleUkey
+				,SizeCode
+				,Qty				)
+		values(s.Style_MarkerListUkey,
+				s.StyleUkey,
+				s.SizeCode,
+				s.Qty				)
+	when not matched by source and t.styleUkey in (select distinct styleUkey from production.dbo.style_markerlist) then
+		delete;
+
+
+
+
+
+
+
+
+
+
 --STYLE61
 --Style_FabricCode
 ----------------------刪除主TABLE多的資料
@@ -915,6 +1016,72 @@ StyleUkey
 
 from Trade_To_Pms.dbo.Style_BOA as b
 where not exists(select 1 from Production.dbo.Style_BOA as a where a.Ukey = b.Ukey)
+
+-----------------------[Style_BOA_CustCD]-----------------------
+
+	Merge Production.dbo.Style_BOA_CustCD as t
+	Using Trade_To_Pms.dbo.Style_BOA_CustCD as s
+	on t.Style_BOAUkey=s.Style_BOAUkey and t.CustCDID=s.CustCDID
+	when matched then
+		update set
+		t.StyleUkey= s.StyleUkey,
+		--t.Style_BOAUkey= s.Style_BOAUkey,
+		--t.CustCDID= s.CustCDID,
+		t.Refno= s.Refno,
+		t.SCIRefno= s.SCIRefno,
+		t.AddName= s.AddName,
+		t.AddDate= s.AddDate,
+		t.EditName= s.EditName,
+		t.EditDate= s.EditDate
+	when not matched by target then 
+		insert(StyleUkey
+				,Style_BOAUkey
+				,CustCDID
+				,Refno
+				,SCIRefno
+				,AddName
+				,AddDate
+				,EditName
+				,EditDate				)
+		values(s.StyleUkey,
+				s.Style_BOAUkey,
+				s.CustCDID,
+				s.Refno,
+				s.SCIRefno,
+				s.AddName,
+				s.AddDate,
+				s.EditName,
+				s.EditDate				)
+	when not matched by source and t.styleUkey in (select distinct styleUkey from production.dbo.style_markerlist) then
+		delete; 
+
+
+------------------Style_BOA_KeyWord-------------------
+
+	Merge Production.dbo.Style_BOA_KeyWord as t
+	Using Trade_to_Pms.dbo.Style_BOA_KeyWord as s
+	on t.Style_BOAUkey=s.Style_BOAUkey 
+	when matched then
+		update set 
+		t.StyleUkey= s.StyleUkey,
+		--t.Style_BOAUkey= s.Style_BOAUkey,
+		t.SEQ= '',
+		--t.Prefix= s.Prefix,
+		t.KeyWordID= s.KeyWordID
+		--t.Postfix= s.Postfix,
+		--t.Code= s.Code,
+		--t.AddName= s.AddName,
+		--t.AddDate= s.AddDate,
+		--t.EditName= s.EditName,
+		--t.EditDate= s.EditDate,
+	when not matched by target then 
+		insert(StyleUkey,SEQ,Style_BOAUkey,KeyWordID)
+		values(s.StyleUkey,'',s.Style_BOAUkey,s.KeyWordID)
+	when not matched by source and t.styleUkey in (select distinct styleUkey from production.dbo.style_markerlist) then
+		delete;
+
+
+
 --STYLE6
 --Style_ColorCombo
 ----------------------刪除主TABLE多的資料
