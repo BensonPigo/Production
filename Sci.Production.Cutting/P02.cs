@@ -456,24 +456,50 @@ namespace Sci.Production.Cutting
                 dr["layer"] = newvalue;
                 dr.EndEdit();
                 int bal = Convert.ToInt16(newvalue) - Convert.ToInt16(oldvalue);
+
+
+                int sumlayer = 0;
+                if (MyUtility.Check.Empty(CurrentDetailData["Order_EachConsUkey"]))
+                {
+                    DataRow[] AA = ((DataTable)detailgridbs.DataSource).Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]));
+
+                    foreach (DataRow l in AA)
+                    {
+                        sumlayer += MyUtility.Convert.GetInt(l["layer"]);
+                    }
+                }
+                else
+                {
+                    DataRow[] AA = ((DataTable)detailgridbs.DataSource).Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", CurrentDetailData["Order_EachConsUkey"], CurrentDetailData["Colorid"]));
+
+                    
+                    foreach (DataRow l in AA)
+                    {
+                        sumlayer += MyUtility.Convert.GetInt(l["layer"]);
+                    }
+                }
+
                 if (MyUtility.Check.Empty(CurrentDetailData["Order_EachConsUkey"]))
                 {
                     DataRow[] drar = layersTb.Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]));
                     if (drar.Length != 0)
                     {
-                        drar[0]["layer"] = Convert.ToInt16(drar[0]["layer"]) + bal;
+                        //drar[0]["layer"] = Convert.ToInt16(drar[0]["layer"]) + bal;
+                        //BalanceLayer.Value = Convert.ToInt16(drar[0]["layer"]) - Convert.ToInt16(drar[0]["TotalLayerMarker"]);
 
-                        BalanceLayer.Value = Convert.ToInt16(drar[0]["layer"]) - Convert.ToInt16(drar[0]["TotalLayerMarker"]);
+                        BalanceLayer.Value = sumlayer - Convert.ToInt16(drar[0]["TotalLayerMarker"]);
                     }
 
                 }
                 else
                 {
-                    DataRow[] drar = layersTb.Select(string.Format("Order_EachconsUkey = '{0}' ", CurrentDetailData["Order_EachConsUkey"]));
+                    DataRow[] drar = layersTb.Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", CurrentDetailData["Order_EachConsUkey"], CurrentDetailData["Colorid"]));
                     if (drar.Length != 0)
                     {
-                        drar[0]["layer"] = Convert.ToInt16(drar[0]["layer"]) + bal;
-                        BalanceLayer.Value = Convert.ToInt16(drar[0]["layer"]) - Convert.ToInt16(drar[0]["TotalLayerUkey"]);
+                        //drar[0]["layer"] = Convert.ToInt16(drar[0]["layer"]) + bal;
+                        //BalanceLayer.Value = Convert.ToInt16(drar[0]["layer"]) - Convert.ToInt16(drar[0]["TotalLayerUkey"]);
+
+                        BalanceLayer.Value = sumlayer - Convert.ToInt16(drar[0]["TotalLayerUkey"]);
                     }
 
                 }
@@ -1150,6 +1176,27 @@ namespace Sci.Production.Cutting
             totalDisQty();
             #endregion
 
+            int sumlayer = 0;
+            if (MyUtility.Check.Empty(CurrentDetailData["Order_EachConsUkey"]))
+            {
+                DataRow[] AA = ((DataTable)detailgridbs.DataSource).Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]));
+
+                foreach (DataRow l in AA)
+                {
+                    sumlayer += MyUtility.Convert.GetInt(l["layer"]);
+                }
+            }
+            else
+            {
+                DataRow[] AA = ((DataTable)detailgridbs.DataSource).Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", CurrentDetailData["Order_EachConsUkey"], CurrentDetailData["Colorid"]));
+
+
+                foreach (DataRow l in AA)
+                {
+                    sumlayer += MyUtility.Convert.GetInt(l["layer"]);
+                }
+            }
+
             int order_EachConsTemp;
             if (CurrentDetailData["Order_EachConsUkey"] == DBNull.Value)
             {//old rule
@@ -1164,7 +1211,9 @@ namespace Sci.Production.Cutting
                 else
                 {
                     TotalLayer.Value = (decimal)laydr[0]["TotalLayerMarker"];
-                    BalanceLayer.Value = (decimal)laydr[0]["layer"] - (decimal)laydr[0]["TotalLayerMarker"];
+                    //BalanceLayer.Value = (decimal)laydr[0]["layer"] - (decimal)laydr[0]["TotalLayerMarker"];
+                    BalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerMarker"];
+
                 }
             }
             else
@@ -1181,7 +1230,9 @@ namespace Sci.Production.Cutting
                 else
                 {
                     TotalLayer.Value = (decimal)laydr[0]["TotalLayerUkey"];
-                    BalanceLayer.Value = (decimal)laydr[0]["layer"] - (decimal)laydr[0]["TotalLayerUkey"];
+                    //BalanceLayer.Value = (decimal)laydr[0]["layer"] - (decimal)laydr[0]["TotalLayerUkey"];
+
+                    BalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerUkey"];
                 }
             }
 
@@ -1559,7 +1610,6 @@ namespace Sci.Production.Cutting
             newRow["actcutdate"] = OldRow["actcutdate"];
             newRow["Adduser"] = loginID;
             newRow["edituser"] = OldRow["edituser"];
-            newRow["totallayer"] = OldRow["totallayer"];
             newRow["totallayer"] = OldRow["totallayer"];
             newRow["multisize"] = OldRow["multisize"];
             newRow["Order_SizeCode_Seq"] = OldRow["Order_SizeCode_Seq"];
