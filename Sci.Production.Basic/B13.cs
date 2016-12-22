@@ -35,6 +35,7 @@ namespace Sci.Production.Basic
                 this.checkBox2.ReadOnly = true;
                 this.checkBox3.ReadOnly = true;
                 this.checkBox4.ReadOnly = true;
+                this.checkBox5.ReadOnly = true;
             }
         }
     }

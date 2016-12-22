@@ -40,6 +40,7 @@
             this.checkBox4 = new Sci.Win.UI.CheckBox();
             this.label6 = new Sci.Win.UI.Label();
             this.txtdropdownlist2 = new Sci.Production.Class.txtdropdownlist();
+            this.checkBox5 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -54,6 +55,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkBox5);
             this.detailcont.Controls.Add(this.txtdropdownlist2);
             this.detailcont.Controls.Add(this.label6);
             this.detailcont.Controls.Add(this.checkBox4);
@@ -201,7 +203,6 @@
             // 
             this.txtdropdownlist2.BackColor = System.Drawing.Color.White;
             this.txtdropdownlist2.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "IssueType", true));
-            this.txtdropdownlist2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.txtdropdownlist2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtdropdownlist2.FormattingEnabled = true;
             this.txtdropdownlist2.IsSupportUnselect = true;
@@ -210,6 +211,19 @@
             this.txtdropdownlist2.Size = new System.Drawing.Size(121, 24);
             this.txtdropdownlist2.TabIndex = 13;
             this.txtdropdownlist2.Type = "IssueType";
+            // 
+            // checkBox5
+            // 
+            this.checkBox5.AutoSize = true;
+            this.checkBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsTrimCardOther", true));
+            this.checkBox5.ForeColor = System.Drawing.Color.Red;
+            this.checkBox5.Location = new System.Drawing.Point(400, 191);
+            this.checkBox5.Name = "checkBox5";
+            this.checkBox5.ReadOnly = true;
+            this.checkBox5.Size = new System.Drawing.Size(131, 21);
+            this.checkBox5.TabIndex = 14;
+            this.checkBox5.Text = "IsTrimCardOther";
+            this.checkBox5.UseVisualStyleBackColor = true;
             // 
             // B13
             // 
@@ -250,5 +264,6 @@
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Label label6;
         private Class.txtdropdownlist txtdropdownlist2;
+        private Win.UI.CheckBox checkBox5;
     }
 }
