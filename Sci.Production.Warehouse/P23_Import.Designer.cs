@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btn_Cancel = new Sci.Win.UI.Button();
             this.checkBox2 = new Sci.Win.UI.CheckBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
@@ -44,8 +45,8 @@
             this.grid_TaipeiInput = new Sci.Win.UI.Grid();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid_ftyDetail = new Sci.Win.UI.Grid();
-            this.TaipeiInputBS = new Sci.Win.UI.ListControlBindingSource();
-            this.FtyDetailBS = new Sci.Win.UI.ListControlBindingSource();
+            this.TaipeiInputBS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.FtyDetailBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid_TaipeiInput)).BeginInit();
@@ -231,7 +232,6 @@
             this.grid_TaipeiInput.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid_TaipeiInput.Location = new System.Drawing.Point(3, 55);
             this.grid_TaipeiInput.Name = "grid_TaipeiInput";
-            this.grid_TaipeiInput.RowHeadersVisible = false;
             this.grid_TaipeiInput.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid_TaipeiInput.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid_TaipeiInput.RowTemplate.Height = 24;
@@ -265,7 +265,6 @@
             this.grid_ftyDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid_ftyDetail.Location = new System.Drawing.Point(0, 0);
             this.grid_ftyDetail.Name = "grid_ftyDetail";
-            this.grid_ftyDetail.RowHeadersVisible = false;
             this.grid_ftyDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid_ftyDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid_ftyDetail.RowTemplate.Height = 24;
