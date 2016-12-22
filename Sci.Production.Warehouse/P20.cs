@@ -253,6 +253,12 @@ select i.poid,i.seq1,i.Seq2,t.id
                 return;
             }
 
+            if (dtTpeIventory.Select("qty > 0", "").Count() == 0 && checkBox1.Checked)
+            {
+                MyUtility.Msg.WarningBox("Data not found!!");
+                return;
+            }
+
             dtTpeIventory.Columns.Add("InputQty_unit", typeof(decimal), "InputQty * rate");
             dtTpeIventory.Columns.Add("OutputQty_unit", typeof(decimal), "OutputQty * rate");
             dtTpeIventory.Columns.Add("Qty_unit", typeof(decimal), "Qty * rate");
