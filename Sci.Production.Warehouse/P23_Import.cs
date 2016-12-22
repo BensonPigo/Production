@@ -80,6 +80,7 @@ select 0 AS selected,'' as id
 ,fi.POID FromPOID
 ,fi.seq1 Fromseq1
 ,fi.seq2 Fromseq2
+,dbo.getmtldesc(fi.POID,fi.seq1,fi.seq2,2,0) as [description]
 ,left(fi.seq1+'   ',3)+fi.seq2 as fromseq
 ,fi.roll FromRoll,fi.dyelot FromDyelot,fi.stocktype FromStockType
 ,fi.Ukey as fromftyinventoryukey 
@@ -91,7 +92,7 @@ select 0 AS selected,'' as id
 	where t.MDivisionID = #tmp.MDivisionID and t.POID = #tmp.POID and t.seq1 = #tmp.seq1 and t.seq2 = #tmp.seq2 and t.StockType = 'B' 
 	and t.Roll = fi.Roll and t.Dyelot = fi.Dyelot),0) as [accu_qty]
 ,(select t1.MtlLocationID+',' from (select MtlLocationid from dbo.FtyInventory_Detail where FtyInventory_Detail.Ukey = fi.Ukey)t1 
-	for xml path('')) as [FromLocation]
+	for xml path('')) as [Location]
 ,fi.MDivisionID ToMDivisionID
 ,rtrim(#tmp.poid) ToPOID
 ,rtrim(#tmp.seq1) ToSeq1
@@ -229,6 +230,23 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 }
             };
             #endregion Location 右鍵開窗
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ns2 = new DataGridViewGeneratorTextColumnSettings();
+            ns2.CellFormatting = (s, e) =>
+            {
+                DataRow dr = grid_ftyDetail.GetDataRow(e.RowIndex);
+                switch (dr["Fromstocktype"].ToString())
+                {
+                    case "B":
+                        e.Value = "Bulk";
+                        break;
+                    case "I":
+                        e.Value = "Inventory";
+                        break;
+                    case "O":
+                        e.Value = "Obsolete";
+                        break;
+                }
+            };
             Helper.Controls.Grid.Generator(this.grid_ftyDetail)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("Frompoid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //0
@@ -237,45 +255,19 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 .Text("Fromroll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
                 .Text("Fromdyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6)) //3
-                .Text("Fromstocktype", header: "Stock" + Environment.NewLine + "Type", iseditingreadonly: true, width: Widths.AnsiChars(6)) //4
+                .Text("Fromstocktype", header: "Stock" + Environment.NewLine + "Type", iseditingreadonly: true, width: Widths.AnsiChars(8), settings: ns2) //4
                 .Numeric("accu_qty", header: "Accu." + Environment.NewLine + "Transfered", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(10)) //5
                 //.Numeric("inqty", header: "Stock" + Environment.NewLine + "In", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))      //6
                 //.Numeric("outqty", header: "Stock" + Environment.NewLine + "Out", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))      //7
                 //.Numeric("adjustqty", header: "Stock" + Environment.NewLine + "Adjust", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))      //8
                 .Numeric("balanceqty", header: "Stock" + Environment.NewLine + "Balance", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))      //9
                 .Numeric("qty", header: "Transfer" + Environment.NewLine + "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2,settings :ns).Get(out col_Qty)      //10
-                .Text("fromlocation", header: "From Location", iseditingreadonly: true)      //11
+                .Text("location", header: "From Location", iseditingreadonly: true)      //11
                 .Text("tolocation", header: "To Location", iseditingreadonly: false, settings: ts2).Get(out col_tolocation)      //12
                ;
             col_Qty.DefaultCellStyle.BackColor = Color.Pink;
             col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
 
-
-            // 全選
-            checkBox1.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid_ftyDetail.SetCheckeds(col_chk);
-                    if (col_chk.Index == this.grid_ftyDetail.CurrentCellAddress.X)
-                    {
-                        if (this.grid_ftyDetail.IsCurrentCellInEditMode) this.grid_ftyDetail.RefreshEdit();
-                    }
-                }
-            };
-
-            // 全不選
-            checkBox2.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid_ftyDetail.SetUncheckeds(col_chk);
-                    if (col_chk.Index == this.grid_ftyDetail.CurrentCellAddress.X)
-                    {
-                        if (this.grid_ftyDetail.IsCurrentCellInEditMode) this.grid_ftyDetail.RefreshEdit();
-                    }
-                }
-            };
         }
 
         // Cancel
