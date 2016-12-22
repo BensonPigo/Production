@@ -106,6 +106,42 @@ iseditingreadonly: true)
                 }
             };
 
+            ts2.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    DataRow dr = grid2.GetDataRow(e.RowIndex);
+                    dr["tolocation"] = e.FormattedValue;
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", dr["tostocktype"].ToString(), Sci.Env.User.Keyword);
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = dr["tolocation"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errLocation = new List<string>();
+                    List<string> trueLocation = new List<string>();
+                    foreach (string location in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        {
+                            selectId &= false;
+                            errLocation.Add(location);
+                        }
+                        else if (!(location.EqualString("")))
+                        {
+                            trueLocation.Add(location);
+                        }
+                    }
+
+                    if (!selectId)
+                    {
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+                        e.Cancel = true;
+                    }
+                    trueLocation.Sort();
+                    dr["tolocation"] = string.Join(",", (trueLocation).ToArray());
+                    //去除錯誤的Location將正確的Location填回
+                }
+            };
             #endregion
             #region -- Grid2 設定 --
             this.grid2.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
@@ -118,7 +154,7 @@ iseditingreadonly: true)
                  .Numeric("balanceQty", header: "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("qty", header: "Trans. Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, settings: ns).Get(out col_Qty)
                   .Text("fromlocation", header: "From Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                  .Text("tolocation", header: "To Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: ts2).Get(out col_tolocation)
+                  .Text("tolocation", header: "To Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(20), iseditingreadonly: false, settings: ts2).Get(out col_tolocation)
                   ;
             col_Qty.DefaultCellStyle.BackColor = Color.Pink;
             col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
