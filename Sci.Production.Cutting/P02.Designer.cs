@@ -130,6 +130,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.rightpanel);
             this.masterpanel.Controls.Add(this.BalanceLayer);
             this.masterpanel.Controls.Add(this.TotalLayer);
             this.masterpanel.Controls.Add(this.label8);
@@ -147,7 +148,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.masterpanel.Size = new System.Drawing.Size(1007, 672);
+            this.masterpanel.Size = new System.Drawing.Size(635, 99);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
@@ -164,6 +165,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
             this.masterpanel.Controls.SetChildIndex(this.TotalLayer, 0);
             this.masterpanel.Controls.SetChildIndex(this.BalanceLayer, 0);
+            this.masterpanel.Controls.SetChildIndex(this.rightpanel, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
@@ -186,16 +188,16 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(3698, 561);
+            this.refresh.Location = new System.Drawing.Point(3641, 561);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.detailgridcont.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(3, 101);
-            this.detailgridcont.Size = new System.Drawing.Size(747, 816);
+            this.detailgridcont.Size = new System.Drawing.Size(632, 531);
             // 
             // detail2
             // 
@@ -1110,9 +1112,9 @@
             this.rightpanel.Controls.Add(this.editBox_desc);
             this.rightpanel.Controls.Add(this.displayBox_FabricRefno);
             this.rightpanel.Controls.Add(this.displayBox_FabricType);
-            this.rightpanel.Location = new System.Drawing.Point(893, 0);
+            this.rightpanel.Location = new System.Drawing.Point(636, 0);
             this.rightpanel.Name = "rightpanel";
-            this.rightpanel.Size = new System.Drawing.Size(371, 882);
+            this.rightpanel.Size = new System.Drawing.Size(371, 632);
             this.rightpanel.TabIndex = 60;
             // 
             // P02
