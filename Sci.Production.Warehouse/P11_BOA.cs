@@ -102,14 +102,14 @@ namespace Sci.Production.Warehouse
                  .Text("remark", header: "Remark", width: Widths.AnsiChars(10))
                   .Text("usageqty", header: "Usage Qty", width: Widths.AnsiChars(10))
                   .Text("usageunit", header: "Usage Unit", width: Widths.AnsiChars(10))
-                  .Text("bomfactory", header: "bom factory", width: Widths.AnsiChars(6))
-                 .Text("bomcountry", header: "bom country", width: Widths.AnsiChars(15))
-                 .Text("bomstyle", header: "bom style", width: Widths.AnsiChars(10))
-                  .Text("bomcustcd", header: "bom custcd", width: Widths.AnsiChars(10))
-                  .Text("bomarticle", header: "bom article", width: Widths.AnsiChars(10))
-                  .Text("bomzipperinsert", header: "bom zipperinsert", width: Widths.AnsiChars(10))
-                  .Text("bombuymonth", header: "bom buymonth", width: Widths.AnsiChars(10))
-                  .Text("bomcustpono", header: "bom custpono", width: Widths.AnsiChars(10))
+                  //.Text("bomfactory", header: "bom factory", width: Widths.AnsiChars(6))
+                 //.Text("bomcountry", header: "bom country", width: Widths.AnsiChars(15))
+                 //.Text("bomstyle", header: "bom style", width: Widths.AnsiChars(10))
+                  //.Text("bomcustcd", header: "bom custcd", width: Widths.AnsiChars(10))
+                  //.Text("bomarticle", header: "bom article", width: Widths.AnsiChars(10))
+                  //.Text("bomzipperinsert", header: "bom zipperinsert", width: Widths.AnsiChars(10))
+                  //.Text("bombuymonth", header: "bom buymonth", width: Widths.AnsiChars(10))
+                  //.Text("bomcustpono", header: "bom custpono", width: Widths.AnsiChars(10))
                  ;
             gridBOA.Columns[5].Frozen = true;  //Order Qty
 
