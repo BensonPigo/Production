@@ -219,8 +219,15 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 return;
             }
 
+            //刪除表身Grid資料
+            foreach (DataRow dr in DetailDatas)
+            {
+                dr.Delete();
+            }
+
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(excelFile);
             if (excel == null) return;
+
 
             DataRow seekData;
             StringBuilder errNLCode = new StringBuilder();
@@ -243,22 +250,21 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 range = worksheet.Range[String.Format("A{0}:D{0}", intRowsRead)];
                 objCellArray = range.Value;
 
-                DataRow newRow = ((DataTable)detailgridbs.DataSource).NewRow();
-                newRow["NLCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
-                newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "N");
-                
                 if (!MyUtility.Check.Seek(string.Format("select HSCode,UnitID from VNContract_Detail where ID = '{0}' and NLCode = '{1}'",
-                    MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"))), out seekData))
+                    MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"))), out seekData))
                 {
-                    errNLCode.Append(string.Format("NL Code: {0}\r\n",MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"))));
+                    errNLCode.Append(string.Format("NL Code: {0}\r\n",MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"))));
                     continue;
                 }
                 else
                 {
+                    DataRow newRow = ((DataTable)detailgridbs.DataSource).NewRow();
+                    newRow["NLCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
+                    newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "N");
                     newRow["HSCode"] = seekData["HSCode"];
                     newRow["UnitID"] = seekData["UnitID"];
+                    ((DataTable)detailgridbs.DataSource).Rows.Add(newRow);
                 }
-                ((DataTable)detailgridbs.DataSource).Rows.Add(newRow);
             }
 
             excel.Workbooks.Close();
