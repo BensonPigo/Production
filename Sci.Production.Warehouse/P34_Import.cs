@@ -225,32 +225,6 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
 
             this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
             this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
-
-            // 全選
-            checkBox1.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetCheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
-
-            // 全不選
-            checkBox2.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetUncheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
         }
         //Close
         private void button3_Click(object sender, EventArgs e)
@@ -395,6 +369,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
 
         private void textBox4_Validating(object sender, CancelEventArgs e)
         {
+            if (textBox4.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.MtlLocation where StockType='I' and id = '{0}' and mdivisionid='{1}')", textBox4.Text, Sci.Env.User.Keyword), null))
             {
                 MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
