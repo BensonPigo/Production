@@ -870,21 +870,22 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>○</Value>
+                                  <Value>O</Value>
                                   <Style>
-                                    <FontFamily>times New Roman</FontFamily>
-                                    <FontSize>26pt</FontSize>
+                                    <FontSize>17pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox39</rd:DefaultName>
-                          <Left>3.85363cm</Left>
-                          <Height>0.88758cm</Height>
-                          <Width>0.75847cm</Width>
+                          <Left>0.16301cm</Left>
+                          <Height>0.63cm</Height>
+                          <Width>6.34999cm</Width>
                           <ZIndex>28</ZIndex>
                           <Style>
                             <Border>
