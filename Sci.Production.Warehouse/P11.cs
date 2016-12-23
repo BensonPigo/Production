@@ -85,8 +85,7 @@ namespace Sci.Production.Warehouse
             //DoSubForm
             #region -- Seq 右鍵開窗 --
 
-            Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings ts2 = new DataGridViewGeneratorMaskedTextColumnSettings();
-            ts2.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
@@ -175,7 +174,7 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivision
             #region -- 欄位設定 --
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
-            .MaskedText("seq", "CCC-CC", "Seq#", width: Widths.AnsiChars(6), settings: ts2)  //1
+            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts2)  //1
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //2
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)  //3
             .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)  //4
