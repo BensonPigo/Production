@@ -93,7 +93,7 @@ namespace Sci.Production.Subcon
                 list.Add(new SqlParameter("@payment", Pay));
             } if (!this.SettDate.Value1.Empty() && !this.SettDate.Value2.Empty())
             {
-                sqlHaving = "finalVoucher.[Settled Date] between @SettledDate1 and @SettledDate2";
+                sqlHaving = "and finalVoucher.[Settled Date] between @SettledDate1 and @SettledDate2";
                 list.Add(new SqlParameter("@SettledDate1", SettDate1));
                 list.Add(new SqlParameter("@SettledDate2", SettDate2));
             }
