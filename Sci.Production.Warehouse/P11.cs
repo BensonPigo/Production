@@ -398,6 +398,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
 
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
+            //檢查是否有勾選Combo，處理傳入AutoPick資料篩選
             if (!checkBox1.Checked && dtIssueBreakDown!=null)
             {
                 foreach (DataRow tempRow in dtIssueBreakDown.Rows)
