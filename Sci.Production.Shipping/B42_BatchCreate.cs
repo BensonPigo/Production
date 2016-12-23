@@ -93,7 +93,7 @@ namespace Sci.Production.Shipping
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Production.Shipping.B42_BatchCreate_Consumption callNextForm = new Sci.Production.Shipping.B42_BatchCreate_Consumption(MidDetailData, AllDetailData, MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',') - 1), MyUtility.Convert.GetString(dr["VNContractID"]));
+                        Sci.Production.Shipping.B42_BatchCreate_Consumption callNextForm = new Sci.Production.Shipping.B42_BatchCreate_Consumption(MidDetailData, AllDetailData, MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')), MyUtility.Convert.GetString(dr["VNContractID"]));
                         DialogResult result = callNextForm.ShowDialog(this);
                         callNextForm.Dispose();
                     }
@@ -494,7 +494,7 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
             string colorway,lackNLCode;
             foreach (DataRow dr in GroupData.Rows)
             {
-                colorway = MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')-1);
+                colorway = MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','));
                 //找出是否有空白的NL Code
                 DataRow[] findData = AllDetailData.Select(string.Format("StyleUKey = '{0}' and Article = '{1}' and SizeCode = '{2}' and NLCode = ''",
                     MyUtility.Convert.GetString(dr["StyleUKey"]), colorway, MyUtility.Convert.GetString(dr["SizeCode"])));
@@ -541,7 +541,7 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
             }
             foreach (DataRow dr in gridData.Rows)
             {
-                string article = MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',') - 1);
+                string article = MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','));
                 DataRow[] selectedData = AllDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), article));
                 for (int i = 0; i < selectedData.Length; i++)
                 {
@@ -749,7 +749,7 @@ Values ('{0}','{1}');", newID, str.ToString()));
                         }
                     }
 
-                    DataRow[] selectedData = MidDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and Deleted = 0", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',') - 1)));
+                    DataRow[] selectedData = MidDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and Deleted = 0", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(','))));
                    
                     for (int i = 0; i < selectedData.Length; i++)
                     {
@@ -758,13 +758,15 @@ Values ('{0}','{1}','{2}','{3}',{4},{5});", newID, MyUtility.Convert.GetString(s
                           , MyUtility.Convert.GetString(selectedData[i]["UnitID"]), MyUtility.Convert.GetString(selectedData[i]["Qty"])
                           , MyUtility.Convert.GetString(selectedData[i]["UserCreate"]).ToUpper() == "TRUE" ? "1" : "0"));
 
-                        DataRow[] selectedDetailData = AllDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and NLCode = '{3}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',') - 1), MyUtility.Convert.GetString(selectedData[i]["NLCode"])));
+                        DataRow[] selectedDetailData = AllDetailData.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and NLCode = '{3}'", MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')), MyUtility.Convert.GetString(selectedData[i]["NLCode"])));
                         for (int j = 0; j < selectedDetailData.Length; j++)
                         {
-                            insertCmds.Add(string.Format(@"Insert into VNConsumption_Detail_Detail (ID, NLCode,SCIRefno,RefNo,Qty, LocalItem)
+                            if (!MyUtility.Check.Empty(selectedDetailData[j]["RefNo"]))
+                            {
+                                insertCmds.Add(string.Format(@"Insert into VNConsumption_Detail_Detail (ID, NLCode,SCIRefno,RefNo,Qty, LocalItem)
 Values ('{0}','{1}','{2}','{3}',{4},{5});", newID, MyUtility.Convert.GetString(selectedData[i]["NLCode"]), MyUtility.Convert.GetString(selectedDetailData[j]["SCIRefno"])
-                          , MyUtility.Convert.GetString(selectedDetailData[j]["RefNo"]), MyUtility.Convert.GetString(selectedDetailData[j]["Qty"]), MyUtility.Convert.GetString(selectedDetailData[j]["LocalItem"])));
-
+                              , MyUtility.Convert.GetString(selectedDetailData[j]["RefNo"]), MyUtility.Convert.GetString(selectedDetailData[j]["Qty"]), MyUtility.Convert.GetString(selectedDetailData[j]["LocalItem"])));
+                            }
                         }
                     }
 
