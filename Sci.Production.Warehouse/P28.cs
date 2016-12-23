@@ -340,12 +340,6 @@ drop table #tmp");
                 return;
             }
 
-            if (dataSet.Tables[0].Rows.Count== 0)
-            {
-                MyUtility.Msg.WarningBox("NO Data!");
-                return;
-            }
-
             master = dataSet.Tables[0];
             master.TableName = "Master";
             master.DefaultView.Sort = "poid,seq1,seq2";
@@ -369,6 +363,12 @@ drop table #tmp");
             listControlBindingSource1.DataMember = "Master";
             listControlBindingSource2.DataSource = listControlBindingSource1;
             listControlBindingSource2.DataMember = "rel1";
+
+            if (dataSet.Tables[0].Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("NO Data!");
+                return;
+            }
 
         }
 
