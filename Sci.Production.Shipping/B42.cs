@@ -537,7 +537,7 @@ as (
 select sb.StyleUkey,sb.Ukey,sb.Refno,sb.SCIRefno,sb.SuppIDBulk,sb.SizeItem,sb.PatternPanel,sb.BomTypeArticle,sb.BomTypeColor,sb.ConsPC,
 sc.ColorID,f.UsageUnit,f.HSCode,f.NLCode,f.CustomsUnit,f.PcsWidth,f.PcsLength,f.PcsKg,f.BomTypeCalculate,f.Type,f.BrandID
 from Style_BOA sb
-left join Style_ColorCombo sc on sc.StyleUkey = sb.StyleUkey and sc.LectraCode = sb.PatternPanel and sc.Article = @article
+left join Style_ColorCombo sc on sc.StyleUkey = sb.StyleUkey and sc.PatternPanel = sb.PatternPanel and sc.Article = @article
 left join Fabric f on sb.SCIRefno = f.SCIRefno
 where sb.StyleUkey = @styleukey
 and sb.IsCustCD <> 2
@@ -636,7 +636,7 @@ from VNFixedDeclareItem vfd
 left join Style_Article sa on sa.StyleUkey = {0} and sa.Article = '{1}'
 left join Style s on s.Ukey = {0}
 )
-select NLCode,HSCode,UnitID,IIF(Type = 1, Qty, IIF(CTNQty = 0,0,ROUND(Qty/CTNQty,3))) as Qty
+select NLCode,HSCode,UnitID as CustomsUnit,IIF(Type = 1, Qty, IIF(CTNQty = 0,0,ROUND(Qty/CTNQty,3))) as Qty
 from tmpFixDeclare
 where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"]), colorway[0]));
             #endregion
@@ -778,9 +778,12 @@ select '1' as DataType,* from tmpfinal where NLCode = ''
 ),
 tmpUnitNotFound
 as (
-select distinct '2' as DataType,UsageUnit,'' as SCIRefno,'' as RefNo,'' as BrandID, '' as NLCode,'' as CustomsUnit,IIF(Type = 'F',Type,'') as Type,
+select distinct '2' as DataType,UsageUnit,SCIRefno,RefNo,'' as BrandID, '' as NLCode,'' as CustomsUnit,IIF(Type = 'F',Type,'') as Type,
 UnitRate,M2UnitRate
-from tmpfinal where UsageUnit <> CustomsUnit
+from tmpfinal 
+where UsageUnit <> CustomsUnit 
+AND NOT (UsageUnit = 'PCS' and (CustomsUnit = 'KGS' OR CustomsUnit = 'M2' OR CustomsUnit = 'M'))
+AND (UnitRate = '' AND M2UnitRate = '')
 )
 select * from tmpEmptyNLCode
 union all

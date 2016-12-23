@@ -215,7 +215,7 @@ sc.ColorID,f.UsageUnit,f.HSCode,f.NLCode,f.CustomsUnit,f.PcsWidth,f.PcsLength,f.
 f.Description
 from tmpAllStyle t
 inner join Style_BOA sb on  t.StyleUkey = sb.StyleUkey
-left join Style_ColorCombo sc on sc.StyleUkey = sb.StyleUkey and sc.LectraCode = sb.PatternPanel and sc.Article = t.Article
+left join Style_ColorCombo sc on sc.StyleUkey = sb.StyleUkey and sc.PatternPanel = sb.PatternPanel and sc.Article = t.Article
 left join Fabric f on sb.SCIRefno = f.SCIRefno
 where sb.IsCustCD <> 2
 and (sb.SuppIDBulk <> 'FTY' and sb.SuppIDBulk <> 'FTY-C')
