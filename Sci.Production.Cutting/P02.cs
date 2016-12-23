@@ -114,7 +114,7 @@ namespace Sci.Production.Cutting
 
             textbox_Style.Text = orderdr == null ? "" : orderdr["Styleid"].ToString();
             textbox_Line.Text = orderdr == null ? "" : orderdr["SewLine"].ToString();
-            string maxcutrefCmd = string.Format("Select Max(Cutref) from workorder where mDivisionid = '{0}'", keyWord);
+            string maxcutrefCmd = string.Format("Select Max(Cutref) from workorder WITH (NOLOCK) where mDivisionid = '{0}'", keyWord);
             textbox_LastCutRef.Text = MyUtility.GetValue.Lookup(maxcutrefCmd);
             comboBox1.Enabled = !EditMode;  //Sorting於編輯模式時不可選取
 
