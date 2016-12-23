@@ -163,9 +163,9 @@ select MAX(StartDate) from VNContract where GETDATE() between StartDate and EndD
         protected override DualResult ClickDeletePost()
         {
             IList<string> deleteCmds = new List<string>();
-            deleteCmds.Add(string.Format("delete VNConsumption_Article where ID = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
-            deleteCmds.Add(string.Format("delete VNConsumption_SizeCode where ID = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
-            deleteCmds.Add(string.Format("delete VNConsumption_Detail_Detail where ID = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
+            deleteCmds.Add(string.Format("delete VNConsumption_Article where ID = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            deleteCmds.Add(string.Format("delete VNConsumption_SizeCode where ID = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            deleteCmds.Add(string.Format("delete VNConsumption_Detail_Detail where ID = '{0}';", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
 
             return DBProxy.Current.Executes(null, deleteCmds);
         }
