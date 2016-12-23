@@ -413,7 +413,7 @@ namespace Sci.Production.Subcon
              .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, settings: ns)    //6
             .Text("Unitid", header: "Unit", width: Widths.AnsiChars(5), iseditingreadonly: true)   //7
             .Numeric("price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 4, iseditingreadonly: true)     //8
-            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(9), iseditingreadonly: true, decimal_places: 4, integer_places: 14)   //9
+            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(9), iseditingreadonly: true, decimal_places: 2, integer_places: 14)   //9
             .Date("delivery", header: "Delivery", width: Widths.AnsiChars(10))   //10
             .Text("Requestid", header: "Request ID", width: Widths.AnsiChars(13), iseditingreadonly: true) //11
             .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true) //12
@@ -705,11 +705,11 @@ namespace Sci.Production.Subcon
                     ,a.Price [UPrice]
                     ,a.Qty [Order_Qty]
                     ,a.UnitId [Unit]
-                    ,Cast(a.Price*a.Qty as decimal(20,4)) [Amount]
+                     ,format(Cast(a.Price*a.Qty as decimal(20,2)),'#,###,###,##0.00') [Amount]
                     ,[Total1]=sum(a.Qty) OVER (PARTITION BY a.Delivery )
 			        ,[Total2]=sum(a.Qty) OVER (PARTITION BY a.Refno)
-                    ,[Total3]=Cast(sum(a.Price*a.Qty) OVER (PARTITION BY a.Delivery )as decimal(30,4))
-			        ,[Total4]=Cast(sum(a.Price*a.Qty) OVER (PARTITION BY a.Refno )as decimal(30,4))
+                    ,[Total3]=format(Cast(sum(a.Price*a.Qty) OVER (PARTITION BY a.Delivery )as decimal(30,2)),'#,###,###,##0.00')
+			        ,[Total4]=format(Cast(sum(a.Price*a.Qty) OVER (PARTITION BY a.Refno )as decimal(30,2)),'#,###,###,##0.00')
             from dbo.LocalPO_Detail a
             left join dbo.LocalPO b on  a.id=b.id
             where a.id= @ID", pars, out dd);

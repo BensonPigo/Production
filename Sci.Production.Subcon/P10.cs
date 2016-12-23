@@ -332,7 +332,7 @@ namespace Sci.Production.Subcon
             .Numeric("accumulatedqty", header: "Accu. Paid Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //9
             .Numeric("balance", header: "Balance", width: Widths.AnsiChars(6), iseditingreadonly: true)    //10
             .Numeric("apqty", header: "Qty", width: Widths.AnsiChars(6),settings:ns2)    //11
-            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 4, integer_places: 14);  //12
+            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 2, integer_places: 14);  //12
                    
             #endregion
             #region 可編輯欄位變色
@@ -610,9 +610,9 @@ namespace Sci.Production.Subcon
             DataTable dtDetail;
             string sqlcmd = @"select 
                    F.nameEn,F.AddressEN,F.Tel,ap.LocalSuppID+'-'+L.name AS Supplier,L.Address,L.tel,ap.ID,
-	               A.ArtworkPoID,A.OrderID,A.ArtworkId,A.PatternDesc,A.Price,A.ApQty,A.Amount,ap.PayTermID+'-'+P.name as Terms,
+	               A.ArtworkPoID,A.OrderID,A.ArtworkId,A.PatternDesc,A.Price,A.ApQty,format(A.Amount,'#,###,###,##0.00')Amount,ap.PayTermID+'-'+P.name as Terms,
 	               LOB.AccountNo,LOB.AccountName,LOB.BankName,LOB.CountryID+'/'+LOB.City as Country,LOB.SWIFTCode,
-	               ap.Handle+CHAR(13)+CHAR(10)+pas.name as PreparedBy,ap.Amount as Total,ap.Vat as Vat,ap.Amount+ap.Vat as GrandTotal,ap.currencyid as Currency
+	               ap.Handle+CHAR(13)+CHAR(10)+pas.name as PreparedBy,format(ap.Amount,'#,###,###,##0.00') as Total,format(ap.Vat,'#,###,###,##0.00') as Vat,format(ap.Amount+ap.Vat,'#,###,###,##0.00') as GrandTotal,ap.currencyid as Currency
                    from DBO.artworkap ap
 	               LEFT JOIN dbo.factory F
 	               ON  F.ID = ap.factoryid

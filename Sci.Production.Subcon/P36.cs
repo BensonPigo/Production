@@ -462,7 +462,7 @@ where id = '{4}'"
 					inner join dbo.localdebit_detail on dbo.localdebit_detail.reasonid = DBO.Reason.id
 					WHERE reason.ReasonTypeID = 'DebitNote_Factory' 
 					and localdebit_detail.id =Ldeb.id) t for xml path(''))[Subject],
-					Ldeb.Description,Ldeb.Currencyid,Ldeb.Amount ,
+					Ldeb.Description,Ldeb.Currencyid,format(Ldeb.Amount,'#,###,###,##0.00') Amount,
 					Iif(Ldeb.Exchange=0,'',FORMAT(Ldeb.Exchange,'###.00'))as ExchangeRate,
 					CONCAT( Ldeb.taxrate , ' %TAX')as titletaxrate,FORMAT(Ldeb.tax,'#,##0.00')as taxrate
 					,FORMAT(Ldeb.Tax,'#,##0.00')as total,dbo.getpass1(Ldeb.Handle)+ '/' +  dbo.getpass1 (Ldeb.SMR) as Purchaser

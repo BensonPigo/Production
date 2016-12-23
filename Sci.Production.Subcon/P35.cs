@@ -288,7 +288,7 @@ namespace Sci.Production.Subcon
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6),settings:ns2)    //5
             .Text("Unitid", header: "Unit", width: Widths.AnsiChars(10), iseditingreadonly: true) //6
             .Numeric("price", header: "Price", width: Widths.AnsiChars(5), decimal_places: 4, integer_places: 4, iseditingreadonly: true)     //7
-            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 4, integer_places: 14)  //8
+            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 2, integer_places: 14)  //8
             .Numeric("inqty", header: "Accumulated" + Environment.NewLine + "Received Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //9
             .Numeric("apqty", header: "Accumulated" + Environment.NewLine + "Paid Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //10
             .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(6), iseditingreadonly: true);    //11
@@ -672,7 +672,7 @@ where localap_detail.id = '{0}'", masterID);
                     ,a.price [Price]
                     ,a.qty [Qty]
                     ,a.unitid [Unit]
-                    ,CONVERT(decimal(10,4),a.price*a.Qty) [Amount]
+                    ,format(CONVERT(decimal(10,2),a.price*a.Qty),'#,###,###,##0.00') [Amount]
             from dbo.LocalAP_Detail a
             left join dbo.LocalAP b on a.id=b.Id
             where a.id= @ID", pars, out dd);
