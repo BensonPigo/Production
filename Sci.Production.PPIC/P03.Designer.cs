@@ -108,7 +108,7 @@
             // 
             this.button2.Location = new System.Drawing.Point(282, 51);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(104, 30);
+            this.button2.Size = new System.Drawing.Size(131, 30);
             this.button2.TabIndex = 9;
             this.button2.Text = "Batch update";
             this.button2.UseVisualStyleBackColor = true;
