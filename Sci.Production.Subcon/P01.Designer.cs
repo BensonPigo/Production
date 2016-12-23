@@ -472,7 +472,7 @@
             // 
             this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "vat", true));
-            this.numericBox2.DecimalPlaces = 4;
+            this.numericBox2.DecimalPlaces = 2;
             this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox2.IsSupportEditMode = false;
             this.numericBox2.Location = new System.Drawing.Point(342, 116);
@@ -495,7 +495,7 @@
             // 
             this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "amount", true));
-            this.numericBox3.DecimalPlaces = 4;
+            this.numericBox3.DecimalPlaces = 2;
             this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox3.IsSupportEditMode = false;
             this.numericBox3.Location = new System.Drawing.Point(342, 82);
@@ -517,7 +517,7 @@
             // numericBox4
             // 
             this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.DecimalPlaces = 4;
+            this.numericBox4.DecimalPlaces = 2;
             this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox4.IsSupportEditMode = false;
             this.numericBox4.Location = new System.Drawing.Point(342, 149);
