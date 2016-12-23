@@ -252,7 +252,7 @@ namespace Sci.Production.Subcon
                     x += (decimal)drr["amount"];
                 }
                 x1 += x + (decimal)CurrentMaintain["vat"];
-                Console.WriteLine("get {0}", x);
+               Console.WriteLine("get {0}", x);
                 Amount = x.ToString();
                 Grandtotal = x1.ToString();
             }
@@ -531,7 +531,7 @@ namespace Sci.Production.Subcon
             string Issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             string Delivery = ((DateTime)MyUtility.Convert.GetDate(row["Delivery"])).ToShortDateString();
             string Remark = row["Remark"].ToString();
-            string TOTAL = Amount;
+            string TOTAL =Amount;
             string VAT = row["Vat"].ToString();
             string GRATOTAL = Grandtotal;
           
@@ -556,7 +556,7 @@ namespace Sci.Production.Subcon
             DataTable dtDetail;
             string sqlcmd = @"select 
             F.nameEn,F.AddressEN,F.Tel,ART.LocalSuppID+'-'+L.name AS TITLETO,L.Tel,L.Address,L.fax,
-            A.Orderid,O.styleID,A.poQty,A.artworkid,A.Stitch,A.Unitprice,A.Qtygarment,A.Amount
+            A.Orderid,O.styleID,A.poQty,A.artworkid,A.Stitch,A.Unitprice,A.Qtygarment,format(A.Amount,'#,###,###,##0.00') Amount
             from DBO.artworkpo ART
 			LEFT JOIN dbo.factory F
 			ON  F.ID = ART.factoryid
