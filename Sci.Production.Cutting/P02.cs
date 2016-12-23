@@ -1539,6 +1539,7 @@ namespace Sci.Production.Cutting
             frm.ShowDialog(this);
         }
 
+        //grid新增一筆的btn
         bool flag = false;
         protected override void OnDetailGridAppendClick()
         {
@@ -1546,8 +1547,10 @@ namespace Sci.Production.Cutting
             base.OnDetailGridAppendClick();
         }
 
+        //grid插入的btn, override成複製功能
         protected override void OnDetailGridInsert(int index = -1)
         {
+            //因按下新增也會進來這,但新增的btn不要複製功能
             if (flag || ((DataTable)this.detailgridbs.DataSource).Rows.Count <= 0)
             {
                 base.OnDetailGridInsert(index);
@@ -1556,7 +1559,6 @@ namespace Sci.Production.Cutting
             }
 
             DataTable table = (DataTable)this.detailgridbs.DataSource;
-
             DataRow newRow = table.NewRow();
             DataRow OldRow = CurrentDetailData == null ? newRow : CurrentDetailData;  //將游標停駐處的該筆資料複製起來
             //base.OnDetailGridInsert(index); //先給一個NewKey
@@ -1637,6 +1639,20 @@ namespace Sci.Production.Cutting
                 drNEW["Qty"] = drTEMP["Qty"];
                 drNEW["newkey"] = maxkey;
                 sizeratioTb.Rows.Add(drNEW);
+            }
+
+            DataRow[] drTEMPdists = distqtyTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
+            foreach (DataRow drTEMP in drTEMPdists)
+            {
+                DataRow drNEW = distqtyTb.NewRow();
+                drNEW["WorkOrderUkey"] = 0;  //新增WorkOrderUkey塞0
+                drNEW["ID"] = drTEMP["ID"];
+                drNEW["OrderID"] = drTEMP["OrderID"];
+                drNEW["Article"] = drTEMP["Article"];
+                drNEW["SizeCode"] = drTEMP["SizeCode"];
+                drNEW["Qty"] = drTEMP["Qty"];
+                drNEW["newkey"] = maxkey;
+                distqtyTb.Rows.Add(drNEW);
             }
         }
 
