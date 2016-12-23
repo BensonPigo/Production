@@ -114,3 +114,7 @@ CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
     ON [dbo].[SubTransfer_Detail]([FromMDivisionID] ASC, [FromPOID] ASC, [FromSeq1] ASC, [FromSeq2] ASC)
     INCLUDE([ID], [Qty]);
 
+
+GO
+
+CREATE INDEX [ID_TOSEQ1_TOSEQ2] ON [dbo].[SubTransfer_Detail] ([ID],[ToSeq1],[ToSeq2])
