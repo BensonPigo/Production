@@ -398,7 +398,22 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
 
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P11_AutoPick(CurrentMaintain["id"].ToString(), this.poid, CurrentMaintain["cutplanid"].ToString(),textBox1.Text.ToString(),dtIssueBreakDown, sbSizecode);
+            if (!checkBox1.Checked && dtIssueBreakDown!=null)
+            {
+                foreach (DataRow tempRow in dtIssueBreakDown.Rows)
+                {
+                    if (tempRow["OrderID"].ToString() != textBox1.Text.ToString())
+                    {
+                        foreach (DataColumn tempColumn in dtIssueBreakDown.Columns)
+                        {
+                            if("Decimal"==tempRow[tempColumn].GetType().Name)                         
+                                tempRow[tempColumn] = 0;
+                        }
+                    }
+                }
+            }
+
+            var frm = new Sci.Production.Warehouse.P11_AutoPick(CurrentMaintain["id"].ToString(), this.poid, CurrentMaintain["cutplanid"].ToString(), textBox1.Text.ToString(), dtIssueBreakDown, sbSizecode);
             DialogResult result = frm.ShowDialog(this);
             if (result == DialogResult.OK)
             {
