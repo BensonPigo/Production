@@ -783,7 +783,6 @@ UnitRate,M2UnitRate
 from tmpfinal 
 where UsageUnit <> CustomsUnit 
 AND NOT (UsageUnit = 'PCS' and (CustomsUnit = 'KGS' OR CustomsUnit = 'M2' OR CustomsUnit = 'M'))
-AND (UnitRate = '' AND M2UnitRate = '')
 )
 select * from tmpEmptyNLCode
 union all
@@ -847,6 +846,7 @@ order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMainta
                     newRow["HSCode"] = dr["HSCode"];
                     newRow["UnitID"] = dr["CustomsUnit"];
                     newRow["Qty"] = dr["Qty"];
+                    newRow["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format("select isnull(Waste,0) from VNContract_Detail where ID = '{0}' and NLCode = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(dr["NLCode"]))));
                     newRow["UserCreate"] = 0;
                     ((DataTable)detailgridbs.DataSource).Rows.Add(newRow);
                 }
@@ -896,7 +896,7 @@ order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMainta
             }
             #endregion
 
-            if (MyUtility.Check.Empty(allMessage))
+            if (MyUtility.Check.Empty(allMessage.ToString()))
             {
                 MyUtility.Msg.InfoBox("Calculate complete!!");
             }
