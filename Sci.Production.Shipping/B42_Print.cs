@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.IO;
 
 namespace Sci.Production.Shipping
 {
@@ -196,7 +197,7 @@ and v.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), C
                         Microsoft.Office.Interop.Excel.Range rngToDelete = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(stt + 14)), Type.Missing).EntireRow;
                         rngToDelete.Delete(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                         //貼圖
-                        if (!MyUtility.Check.Empty(pic1))
+                        if (!MyUtility.Check.Empty(pic1) && File.Exists(picPath + pic1))
                         {
                             string excelRng1 = string.Format("B{0}",MyUtility.Convert.GetString(stt+20));
                             Microsoft.Office.Interop.Excel.Range rngToInsert1 = worksheet.get_Range(excelRng1, Type.Missing);
@@ -207,7 +208,7 @@ and v.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), C
                             string targetFile = picPath+pic1;
                             worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, PicLeft, PicTop, 450, 400);
                         }
-                        if (!MyUtility.Check.Empty(pic2))
+                        if (!MyUtility.Check.Empty(pic2) && File.Exists(picPath + pic2))
                         {
                             string excelRng2 = string.Format("F{0}", MyUtility.Convert.GetString(stt + 20));
                             Microsoft.Office.Interop.Excel.Range rngToInsert2 = worksheet.get_Range(excelRng2, Type.Missing);
@@ -263,7 +264,7 @@ and v.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), C
                 Microsoft.Office.Interop.Excel.Range rngToDelete1 = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(stt + 14)), Type.Missing).EntireRow;
                 rngToDelete1.Delete(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 //貼圖
-                if (!MyUtility.Check.Empty(pic1))
+                if (!MyUtility.Check.Empty(pic1) && File.Exists(picPath + pic1))
                 {
                     string excelRng1 = string.Format("B{0}", MyUtility.Convert.GetString(stt + 20));
                     Microsoft.Office.Interop.Excel.Range rngToInsert1 = worksheet.get_Range(excelRng1, Type.Missing);
@@ -274,7 +275,7 @@ and v.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), C
                     string targetFile = picPath + pic1;
                     worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, PicLeft, PicTop, 450, 400);
                 }
-                if (!MyUtility.Check.Empty(pic2))
+                if (!MyUtility.Check.Empty(pic2) && File.Exists(picPath + pic2))
                 {
                     string excelRng2 = string.Format("F{0}", MyUtility.Convert.GetString(stt + 20));
                     Microsoft.Office.Interop.Excel.Range rngToInsert2 = worksheet.get_Range(excelRng2, Type.Missing);
