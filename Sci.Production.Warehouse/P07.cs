@@ -529,7 +529,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                     {
                         CurrentDetailData["shipqty"] = e.FormattedValue;
                         CurrentDetailData["Actualqty"] = e.FormattedValue;
-                        string rate = MyUtility.GetValue.Lookup(string.Format(@"select Rate from dbo.View_Unitrate v
+                        string rate = MyUtility.GetValue.Lookup(string.Format(@"select RateValue from dbo.View_Unitrate v
                     where v.FROM_U ='{0}' and v.TO_U='{1}'", CurrentDetailData["pounit"], CurrentDetailData["stockunit"]));
                         //string aa = string.Format(@"select Rate from dbo.View_Unitrate v
                    // where v.FROM_U ='{0}' and v.TO_U='{1}'", CurrentDetailData["pounit"], CurrentDetailData["stockunit"]);
@@ -550,7 +550,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                     CurrentDetailData["Actualqty"] = e.FormattedValue;
                     if (!MyUtility.Check.Empty(CurrentDetailData["pounit"]) && !MyUtility.Check.Empty(CurrentDetailData["stockunit"]))
                     {
-                        string rate = MyUtility.GetValue.Lookup(string.Format(@"select Rate from dbo.View_Unitrate v
+                        string rate = MyUtility.GetValue.Lookup(string.Format(@"select RateValue from dbo.View_Unitrate v
                     where v.FROM_U ='{0}' and v.TO_U='{1}'", CurrentDetailData["pounit"], CurrentDetailData["stockunit"]));
                         CurrentDetailData["stockqty"] = MyUtility.Math.Round(decimal.Parse(e.FormattedValue.ToString()) * decimal.Parse(rate), 2);
                     }

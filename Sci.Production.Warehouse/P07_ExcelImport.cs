@@ -261,7 +261,7 @@ namespace Sci.Production.Warehouse
 
                                 DataRow dr2;
                                 string sql = string.Format(@"
-select fabrictype,POUnit,StockUnit,isnull(vu.Rate,0)*{3} as stockqty 
+select fabrictype,POUnit,StockUnit,isnull(vu.RateValue,0)*{3} as stockqty 
 ,(select o.Category from Orders o where o.id= pd.id) as category
 from dbo.PO_Supp_Detail pd 
 left join dbo.View_Unitrate vu on vu.FROM_U = pd.POUnit and vu.TO_U = pd.StockUnit
