@@ -35,10 +35,9 @@ namespace Sci.Production.Cutting
             {
                 sql = string.Format(@"with a as (
 	                    select a.CuttingSP,b.ID,b.Article,b.SizeCode
-                            ,( select sum(bb.qty)
-		                            from Orders aa
-		                            inner join order_Qty bb on aa.id = bb.id
-		                            where aa.cuttingsp=a.CuttingSP  and bb.Article=b.Article and bb.SizeCode=b.SizeCode ) Qty
+                           ,( select sum(OQ.qty)
+		                    from order_Qty OQ
+		                    where OQ.ID=b.ID and OQ.Article=b.Article and OQ.SizeCode=b.SizeCode ) Qty
                             ,c.ColorID,c.PatternPanel
 	                    from Orders a
 	                    inner join order_Qty b on a.id = b.id
@@ -47,10 +46,9 @@ namespace Sci.Production.Cutting
 	                    where a.cuttingsp = '{0}'
                     ) ", cutid);
                 sql2 = string.Format(@"Select x.poid,y.ID,y.Article,y.SizeCode
-                                            ,( select sum(bb.qty)
-		                                        from Orders aa
-		                                        inner join order_Qty bb on aa.id = bb.id
-		                                        where aa.cuttingsp='{0}'  and bb.Article=Y.Article and bb.SizeCode=y.SizeCode ) QTY
+                                           ,( select sum(OQ.qty)
+		                                    from order_Qty OQ
+		                                    where OQ.ID=y.ID and OQ.Article=y.Article and OQ.SizeCode=y.SizeCode ) QTY
                                             ,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
 	                                    from (Select id,POID from Orders z where z.cuttingsp = '{0}') as x,order_Qty y 
 	                                    where y.id = x.id", cutid);
@@ -59,10 +57,9 @@ namespace Sci.Production.Cutting
             {
                 sql = string.Format(@"with a as (
 	                    select a.CuttingSP,b.ID,b.Article,b.SizeCode
-                            ,( select sum(bb.qty)
-		                            from Orders aa
-		                            inner join order_Qty bb on aa.id = bb.id
-		                            where aa.ID=a.ID  and bb.Article=b.Article and bb.SizeCode=b.SizeCode ) Qty
+                            ,( select sum(OQ.qty)
+		                    from order_Qty OQ
+		                    where OQ.ID=b.ID and OQ.Article=b.Article and OQ.SizeCode=b.SizeCode ) Qty
                             ,c.ColorID,c.PatternPanel
 	                    from Orders a
 	                    inner join order_Qty b on a.id = b.id
@@ -71,10 +68,9 @@ namespace Sci.Production.Cutting
 	                    where a.cuttingsp = '{0}'
                     )  ", cutid);
                 sql2 = string.Format(@"Select x.poid,y.ID,y.Article,y.SizeCode
-                                            ,( select sum(bb.qty)
-		                                        from Orders aa
-		                                        inner join order_Qty bb on aa.id = bb.id
-		                                        where aa.ID='{0}'  and bb.Article=Y.Article and bb.SizeCode=y.SizeCode ) QTY
+                                            ,( select sum(OQ.qty)
+		                                    from order_Qty OQ
+		                                    where OQ.ID=y.ID and OQ.Article=y.Article and OQ.SizeCode=y.SizeCode ) QTY
                                             ,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
 	                                    from (Select id,POID from Orders z where z.cuttingsp = '{0}') as x,order_Qty y 
 	                                    where y.id = x.id", cutid);
