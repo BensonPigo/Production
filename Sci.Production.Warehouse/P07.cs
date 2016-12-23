@@ -450,11 +450,27 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                             }
                             else
                             {
+                                DataRow dr_StockUnit;
+                                MyUtility.Check.Seek(string.Format(@"select 
+iif(mm.IsExtensionUnit is null, 
+    ff.UsageUnit , 
+    iif(mm.IsExtensionUnit > 0 , 
+        iif(uu.ExtensionUnit is null, 
+            ff.UsageUnit , 
+            uu.ExtensionUnit), 
+        ff.UsageUnit)) as StockUnit
+from dbo.PO_Supp_Detail b   
+inner join [dbo].[Fabric] ff on b.SCIRefno= ff.SCIRefno
+inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
+inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
+inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = (IIF ( mm.IsExtensionUnit > 0, uu.ExtensionUnit, ff.UsageUnit ))--b.StockUnit
+where b.id = '{0}' and b.seq1 ='{1}'and b.seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3), e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr_StockUnit, null);
+
+                                CurrentDetailData["stockunit"] = dr_StockUnit["stockunit"];
                                 CurrentDetailData["seq"] = e.FormattedValue;
                                 CurrentDetailData["seq1"] = e.FormattedValue.ToString().Substring(0, 3);
                                 CurrentDetailData["seq2"] = e.FormattedValue.ToString().Substring(3, 2);
                                 CurrentDetailData["pounit"] = dr["pounit"];
-                                CurrentDetailData["stockunit"] = dr["stockunit"];
                                 CurrentDetailData["fabrictype"] = dr["fabrictype"];
                                 CurrentDetailData["shipqty"] = 0m;
                                 CurrentDetailData["Actualqty"] = 0m;
@@ -1290,7 +1306,8 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword);
                 {
                     case Keys.Tab:
                         var currentCell = this.detailgrid.CurrentCell;
-                        if(detailgrid.RowCount > 0){
+                        if (!currentCell.Empty())
+                        {
                             var columnIndex = currentCell.ColumnIndex;
                             if (columnIndex == 8)
                             {
