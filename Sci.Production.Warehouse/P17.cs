@@ -460,7 +460,8 @@ where poid = '{0}' and seq1 ='{1}' and seq2 = '{2}' and mdivisionid = '{3}' and 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.IssueReturn_Detail d inner join FtyInventory f
-on d.ftyinventoryukey = f.ukey
+--on d.ftyinventoryukey = f.ukey
+on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -487,7 +488,8 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.IssueReturn_Detail d left join FtyInventory f
-on d.ftyinventoryukey = f.ukey
+--on d.ftyinventoryukey = f.ukey
+on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -534,10 +536,23 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            stocktype = m.First().Field<string>("stocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty"))
+                           qty = - (m.Sum(w => w.Field<decimal>("qty")))
                        }).ToList();
             sqlupd2_B = Prgs.UpdateMPoDetail(4, null, true);
 
+            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = m.Field<string>("mdivisionid"),
+                             poid = m.Field<string>("poid"),
+                             seq1 = m.Field<string>("seq1"),
+                             seq2 = m.Field<string>("seq2"),
+                             stocktype = m.Field<string>("stocktype"),
+                             Location = m.Field<string>("location"),
+                             qty = - (m.Field<decimal>("qty")),
+                             roll = m.Field<string>("roll"),
+                             dyelot = m.Field<string>("dyelot"),
+                         }).ToList();
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion 更新庫存數量  ftyinventory
 
@@ -554,8 +569,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                         ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
@@ -604,7 +618,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.IssueReturn_Detail d inner join FtyInventory f
-on d.ftyinventoryukey = f.ukey
+--on d.ftyinventoryukey = f.ukey
+on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -631,7 +646,8 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.IssueReturn_Detail d left join FtyInventory f
-on d.ftyinventoryukey = f.ukey
+--on d.ftyinventoryukey = f.ukey
+on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -678,11 +694,22 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            stocktype = m.First().Field<string>("stocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty"))
+                           qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
             sqlupd2_B = Prgs.UpdateMPoDetail(4, null, false);
 
-
+            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = m.Field<string>("mdivisionid"),
+                             poid = m.Field<string>("poid"),
+                             seq1 = m.Field<string>("seq1"),
+                             seq2 = m.Field<string>("seq2"),
+                             stocktype = m.Field<string>("stocktype"),
+                             qty = m.Field<decimal>("qty"),
+                             roll = m.Field<string>("roll"),
+                             dyelot = m.Field<string>("dyelot"),
+                         }).ToList();
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, true);
             #endregion
 
@@ -699,8 +726,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);

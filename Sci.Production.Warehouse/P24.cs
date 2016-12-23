@@ -195,7 +195,8 @@ namespace Sci.Production.Warehouse
             if (null == dr) return;
 
             string sqlupd2_C = "";
-            StringBuilder sqlupd2_B = new StringBuilder();
+            string sqlupd2_B_Linv = "";
+            string sqlupd2_B_Out = "";
             String sqlupd2_FIO = "";
             String sqlupd2_FIO2 = "";
 
@@ -268,7 +269,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #endregion 更新表頭狀態資料
 
             #region -- 更新mdivisionpodetail Inventory 數 --
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            var bs1_Out = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                    group b by new
                    {
                        mdivisionid = b.Field<string>("frommdivisionid"),
@@ -277,17 +278,28 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        seq2 = b.Field<string>("fromseq2"),
                        stocktype = b.Field<string>("fromstocktype")
                    } into m
-                       select new Prgs_POSuppDetailData_B
+                       select new Prgs_POSuppDetailData
                    {
                        mdivisionid = m.First().Field<string>("frommdivisionid"),
                        poid = m.First().Field<string>("frompoid"),
                        seq1 = m.First().Field<string>("fromseq1"),
                        seq2 = m.First().Field<string>("fromseq2"),
                        stocktype = m.First().Field<string>("fromstocktype"),
-                       qty = -m.Sum(w => w.Field<decimal>("qty")),
+                       qty = m.Sum(w => w.Field<decimal>("qty"))
                    }).ToList();
-            sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
-            sqlupd2_B.Append(Prgs.UpdateMPoDetail(8, bs1, true));
+            sqlupd2_B_Out = (Prgs.UpdateMPoDetail(4, bs1_Out, true));
+
+            var bs1_Linv = bs1_Out.Select(data => new Prgs_POSuppDetailData
+            {
+                mdivisionid = data.mdivisionid,
+                poid = data.poid,
+                seq1 = data.seq1,
+                seq2 = data.seq2,
+                stocktype = data.stocktype,
+                qty = - (data.qty)
+            }).ToList();
+
+            sqlupd2_B_Linv = (Prgs.UpdateMPoDetail(8, null, true));
             #endregion 
             #region -- 更新mdivisionpodetail Scrap數 --
             var bs2 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
@@ -347,7 +359,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 try
                 {
                     DataTable resulttb;
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1_Linv, "", sqlupd2_B_Linv.ToString(), out resulttb
+                        , "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1_Out, "", sqlupd2_B_Out.ToString(), out resulttb
                         , "#TmpSource")))
                     {
                         _transactionscope.Dispose();
@@ -402,7 +421,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             DataTable datacheck;
             DataTable dt = (DataTable)detailgridbs.DataSource;
 
-            StringBuilder sqlupd2_B = new StringBuilder();
+            string sqlupd2_B_Out = "";
+            string sqlupd2_B_Linv = "";
             string sqlupd2_C = "";
             String sqlupd2_FIO = "";
             String sqlupd2_FIO2 = "";
@@ -485,7 +505,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             #endregion 更新表頭狀態資料
             #region -- 更新mdivisionpodetail Inventory數 --
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            var bs1_Out = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            mdivisionid = b.Field<string>("frommdivisionid"),
@@ -494,17 +514,27 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            seq2 = b.Field<string>("fromseq2"),
                            stocktype = b.Field<string>("fromstocktype")
                        } into m
-                       select new Prgs_POSuppDetailData_B
+                       select new Prgs_POSuppDetailData
                        {
                            mdivisionid = m.First().Field<string>("frommdivisionid"),
                            poid = m.First().Field<string>("frompoid"),
                            seq1 = m.First().Field<string>("fromseq1"),
                            seq2 = m.First().Field<string>("fromseq2"),
                            stocktype = m.First().Field<string>("fromstocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty"))
+                           qty = - (m.Sum(w => w.Field<decimal>("qty")))
                        }).ToList();
-            sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
-            sqlupd2_B.Append(Prgs.UpdateMPoDetail(8, bs1, false));
+            sqlupd2_B_Out = (Prgs.UpdateMPoDetail(4, null, false));
+
+            var bs1_Linv = bs1_Out.Select(data => new Prgs_POSuppDetailData
+            {
+                mdivisionid = data.mdivisionid,
+                poid = data.poid,
+                seq1 = data.seq1,
+                seq2 = data.seq2,
+                stocktype = data.stocktype,
+                qty = - (data.qty)
+            }).ToList();
+            sqlupd2_B_Linv = (Prgs.UpdateMPoDetail(8, bs1_Out, false));
             #endregion
             #region -- 更新mdivisionpodetail Scrap數 --
             var bs2 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
@@ -523,7 +553,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        seq1 = m.First().Field<string>("toseq1"),
                        seq2 = m.First().Field<string>("toseq2"),
                        stocktype = m.First().Field<string>("tostocktype"),
-                       qty = m.Sum(w => w.Field<decimal>("qty"))
+                       qty = - (m.Sum(w => w.Field<decimal>("qty")))
                    }).ToList();
 
             sqlupd2_C = Prgs.UpdateMPoDetail(16, null, false);
@@ -537,7 +567,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                              seq1 = m.Field<string>("fromseq1"),
                              seq2 = m.Field<string>("fromseq2"),
                              stocktype = m.Field<string>("fromstocktype"),
-                             qty = m.Field<decimal>("qty"),
+                             qty = - (m.Field<decimal>("qty")),
                              location = m.Field<string>("tolocation"),
                              roll = m.Field<string>("fromroll"),
                              dyelot = m.Field<string>("fromdyelot"),
@@ -550,7 +580,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                                seq1 = m.Field<string>("toseq1"),
                                seq2 = m.Field<string>("toseq2"),
                                stocktype = m.Field<string>("tostocktype"),
-                               qty = m.Field<decimal>("qty"),
+                               qty = - (m.Field<decimal>("qty")),
                                location = m.Field<string>("tolocation"),
                                roll = m.Field<string>("toroll"),
                                dyelot = m.Field<string>("todyelot"),
@@ -565,7 +595,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 try
                 {
                     DataTable resulttb;
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1_Out, "", sqlupd2_B_Out.ToString(), out resulttb, "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1_Linv, "", sqlupd2_B_Linv.ToString(), out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);

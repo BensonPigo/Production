@@ -307,14 +307,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
-                       select new Prgs_POSuppDetailData_B
+                       select new Prgs_POSuppDetailData
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            stocktype = m.First().Field<string>("stocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty"))
+                           qty = - (m.Sum(w => w.Field<decimal>("qty")))
                        }).ToList();
             
             sqlupd2_B_4.Append(Prgs.UpdateMPoDetail(4, null, true));
@@ -501,7 +501,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                              seq1 = m.First().Field<string>("seq1"),
                              seq2 = m.First().Field<string>("seq2"),
                              stocktype = m.First().Field<string>("stocktype"),
-                             qty = m.Sum(w => w.Field<decimal>("qty"))
+                             qty = - (m.Sum(w => w.Field<decimal>("qty")))
                          }).ToList();
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
@@ -512,14 +512,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
-                       select new Prgs_POSuppDetailData_B
+                       select new Prgs_POSuppDetailData
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            stocktype = m.First().Field<string>("stocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty"))
+                           qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
 
             sqlupd2_B_4.Append(Prgs.UpdateMPoDetail(4, null, false));
@@ -533,7 +533,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                              seq1 = b.Field<string>("seq1"),
                              seq2 = b.Field<string>("seq2"),
                              stocktype = b.Field<string>("stocktype"),
-                             qty = b.Field<decimal>("qty"),
+                             qty = - (b.Field<decimal>("qty")),
                              location = b.Field<string>("location"),
                              roll = b.Field<string>("roll"),
                              dyelot = b.Field<string>("dyelot"),

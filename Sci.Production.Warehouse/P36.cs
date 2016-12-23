@@ -259,7 +259,8 @@ namespace Sci.Production.Warehouse
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.SubTransfer_Detail d inner join FtyInventory f
-on d.fromftyinventoryukey = f.ukey
+--on d.fromftyinventoryukey = f.ukey
+on d.frompoid = f.POID and d.fromSeq1 = f.Seq1 and d.fromseq2 = f.seq2 and d.fromStockType = f.StockType and d.fromMDivisionID = f.MDivisionID and d.fromRoll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -286,7 +287,8 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.SubTransfer_Detail d left join FtyInventory f
-on d.fromftyinventoryukey = f.ukey
+--on d.fromftyinventoryukey = f.ukey
+on d.frompoid = f.POID and d.fromSeq1 = f.Seq1 and d.fromseq2 = f.seq2 and d.fromStockType = f.StockType and d.fromMDivisionID = f.MDivisionID and d.fromRoll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -333,7 +335,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            seq1 = m.First().Field<string>("fromseq1"),
                            seq2 = m.First().Field<string>("fromseq2"),
                            stocktype = m.First().Field<string>("fromstocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty"))
+                           qty = - (m.Sum(w => w.Field<decimal>("qty")))
                        }).ToList();
 
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, true));
@@ -349,7 +351,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        seq2 = b.Field<string>("toseq2"),
                        stocktype = b.Field<string>("tostocktype")
                    } into m
-                       select new Prgs_POSuppDetailData_A
+                       select new Prgs_POSuppDetailData
                    {
                        mdivisionid = m.First().Field<string>("tomdivisionid"),
                        poid = m.First().Field<string>("topoid"),
@@ -359,7 +361,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        qty = m.Sum(w => w.Field<decimal>("qty")),
                        location = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct())
                    }).ToList();
-            sqlupd2_A = Prgs.UpdateMPoDetail_A(2, bs2, true);            
+            sqlupd2_A = Prgs.UpdateMPoDetail(8, bs2, true);            
             #endregion 
 
             #region -- 更新庫存數量  ftyinventory --
@@ -552,7 +554,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            seq1 = m.First().Field<string>("fromseq1"),
                            seq2 = m.First().Field<string>("fromseq2"),
                            stocktype = m.First().Field<string>("fromstocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty"))
+                           qty = m.Sum(w => w.Field<decimal>("qty"))
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(16, null, false));
@@ -567,16 +569,16 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        seq2 = b.Field<string>("toseq2"),
                        stocktype = b.Field<string>("tostocktype")
                    } into m
-                   select new Prgs_POSuppDetailData_A
+                   select new Prgs_POSuppDetailData
                    {
                        mdivisionid = m.First().Field<string>("tomdivisionid"),
                        poid = m.First().Field<string>("topoid"),
                        seq1 = m.First().Field<string>("toseq1"),
                        seq2 = m.First().Field<string>("toseq2"),
                        stocktype = m.First().Field<string>("tostocktype"),
-                       qty = m.Sum(w => w.Field<decimal>("qty"))
+                       qty = - (m.Sum(w => w.Field<decimal>("qty")))
                    }).ToList();
-            sqlupd2_A = Prgs.UpdateMPoDetail_A(2, bs2, true);    
+            sqlupd2_A = Prgs.UpdateMPoDetail(8, bs2, true);    
             #endregion
             #region -- 更新庫存數量  ftyinventory --
             var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
@@ -587,7 +589,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                              seq1 = m.Field<string>("fromseq1"),
                              seq2 = m.Field<string>("fromseq2"),
                              stocktype = m.Field<string>("fromstocktype"),
-                             qty = m.Field<decimal>("qty"),
+                             qty = - (m.Field<decimal>("qty")),
                              location = m.Field<string>("tolocation"),
                              roll = m.Field<string>("fromroll"),
                              dyelot = m.Field<string>("fromdyelot"),
@@ -600,7 +602,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                                seq1 = m.Field<string>("toseq1"),
                                seq2 = m.Field<string>("toseq2"),
                                stocktype = m.Field<string>("tostocktype"),
-                               qty = m.Field<decimal>("qty"),
+                               qty = - (m.Field<decimal>("qty")),
                                location = m.Field<string>("tolocation"),
                                roll = m.Field<string>("toroll"),
                                dyelot = m.Field<string>("todyelot"),

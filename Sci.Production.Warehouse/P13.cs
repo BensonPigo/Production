@@ -398,7 +398,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
-                       select new Prgs_POSuppDetailData_B
+                       select new Prgs_POSuppDetailData
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
@@ -554,14 +554,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
-                       select new Prgs_POSuppDetailData_B
+                       select new Prgs_POSuppDetailData
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            stocktype = m.First().Field<string>("stocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty"))
+                           qty = - (m.Sum(w => w.Field<decimal>("qty")))
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
 
@@ -573,7 +573,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                              seq1 = m.Field<string>("seq1"),
                              seq2 = m.Field<string>("seq2"),
                              stocktype = m.Field<string>("stocktype"),
-                             qty = m.Field<decimal>("qty"),
+                             qty = - (m.Field<decimal>("qty")),
                              location = m.Field<string>("location"),
                              roll = m.Field<string>("roll"),
                              dyelot = m.Field<string>("dyelot"),

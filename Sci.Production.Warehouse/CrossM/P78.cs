@@ -352,7 +352,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
-                       select new Prgs_POSuppDetailData_A
+                       select new Prgs_POSuppDetailData
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
@@ -371,7 +371,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                             seq2 = b.Field<string>("seq2"),
                             stocktype = b.Field<string>("stocktype")
                         } into m
-                        select new Prgs_POSuppDetailData_B
+                        select new Prgs_POSuppDetailData
                         {
                             mdivisionid = m.First().Field<string>("mdivisionid"),
                             poid = m.First().Field<string>("poid"),
@@ -381,7 +381,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                             qty = m.Sum(w => w.Field<decimal>("qty")),
                             location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
                         }).ToList();
-            sqlupd2_A = Prgs.UpdateMPoDetail_A(2, bs1, true);
+            sqlupd2_A = Prgs.UpdateMPoDetail(2, bs1, true);
             if (bs1I.Count > 0)
                 sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, true);
 
@@ -527,14 +527,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
-                       select new Prgs_POSuppDetailData_A
+                       select new Prgs_POSuppDetailData
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            stocktype = m.First().Field<string>("stocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty")),
+                           qty = - (m.Sum(w => w.Field<decimal>("qty"))),
                            location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
                        }).ToList();
             var bs1I = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
@@ -546,17 +546,17 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
-                        select new Prgs_POSuppDetailData_B
+                        select new Prgs_POSuppDetailData
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            stocktype = m.First().Field<string>("stocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty")),
+                           qty = - (m.Sum(w => w.Field<decimal>("qty"))),
                            location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
                        }).ToList();
-            sqlupd2_A = Prgs.UpdateMPoDetail_A(2, bs1, false);
+            sqlupd2_A = Prgs.UpdateMPoDetail(2, bs1, false);
             if (bs1I.Count > 0)
                 sqlupd2_BI = Prgs.UpdateMPoDetail(8, bs1I, false);
 
@@ -568,7 +568,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                              seq1 = b.Field<string>("seq1"),
                              seq2 = b.Field<string>("seq2"),
                              stocktype = b.Field<string>("stocktype"),
-                             qty = b.Field<decimal>("qty"),
+                             qty = - (b.Field<decimal>("qty")),
                              location = b.Field<string>("location"),
                              roll = b.Field<string>("roll"),
                              dyelot = b.Field<string>("dyelot"),

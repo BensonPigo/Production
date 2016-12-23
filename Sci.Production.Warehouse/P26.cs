@@ -263,7 +263,7 @@ namespace Sci.Production.Warehouse
                            seq1 = b.Field<string>("seq1"),
                            seq2 = b.Field<string>("seq2")
                        } into m
-                       select new Prgs_POSuppDetailData_A
+                       select new Prgs_POSuppDetailData
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
@@ -274,7 +274,7 @@ namespace Sci.Production.Warehouse
                            stocktype = CurrentMaintain["stocktype"].ToString()
                        }).ToList();
 
-            sqlupd2_A = Prgs.UpdateMPoDetail_A(2, bs1, true);
+            sqlupd2_A = Prgs.UpdateMPoDetail(2, bs1, true);
 
             #endregion
             #region 更新庫存數量 po_supp_detail & ftyinventory

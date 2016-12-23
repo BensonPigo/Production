@@ -362,7 +362,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
                            seq2 = b.Field<string>("seq2").Trim(),
                            stocktype = b.Field<string>("stocktype").Trim()
                        } into m
-                       select new Prgs_POSuppDetailData_B
+                       select new Prgs_POSuppDetailData
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
@@ -521,14 +521,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
                            seq2 = b.Field<string>("seq2").Trim(),
                            stocktype = b.Field<string>("stocktype").Trim()
                        } into m
-                       select new Prgs_POSuppDetailData_B
+                       select new Prgs_POSuppDetailData
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            stocktype = m.First().Field<string>("stocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("QtyAfter") - w.Field<decimal>("QtyBefore"))
+                           qty = - (m.Sum(w => w.Field<decimal>("QtyAfter") - w.Field<decimal>("QtyBefore")))
                        }).ToList();
 
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(8, bs1, false));
@@ -537,7 +537,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
             #region -- 更新庫存數量  ftyinventory --
 
             DataTable dtio = (DataTable)detailgridbs.DataSource;
-            dtio.ColumnsDecimalAdd("qty", expression: "QtyAfter- QtyBefore");
+            //dtio.ColumnsDecimalAdd("qty", expression: "QtyAfter- QtyBefore");
+            dtio.Columns.Add("qty", typeof(decimal));
+            foreach (DataRow dx in dtio.Rows) { dx["qty"] = - ((decimal)dx["QtyAfter"] - (decimal)dx["QtyBefore"]); };
+
             sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(8, null, false));
             
             #endregion 更新庫存數量  ftyinventory

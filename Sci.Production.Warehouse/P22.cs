@@ -364,7 +364,7 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
                            seq2 = b.Field<string>("fromseq2"),
                            stocktype = b.Field<string>("fromstocktype")
                        } into m
-                       select new Prgs_POSuppDetailData_B
+                       select new Prgs_POSuppDetailData
                        {
                            mdivisionid = m.First().Field<string>("fromMdivisionid"),
                            poid = m.First().Field<string>("frompoid"),
@@ -554,14 +554,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            seq2 = b.Field<string>("fromseq2"),
                            stocktype = b.Field<string>("fromstocktype")
                        } into m
-                       select new Prgs_POSuppDetailData_B
+                       select new Prgs_POSuppDetailData
                        {
                            mdivisionid = m.First().Field<string>("frommdivisionid"),
                            poid = m.First().Field<string>("frompoid"),
                            seq1 = m.First().Field<string>("fromseq1"),
                            seq2 = m.First().Field<string>("fromseq2"),
                            stocktype = m.First().Field<string>("fromstocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty"))
+                           qty = - (m.Sum(w => w.Field<decimal>("qty")))
                        }).ToList();
 
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(8, bs1, false));
@@ -576,7 +576,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                              seq1 = m.Field<string>("fromseq1"),
                              seq2 = m.Field<string>("fromseq2"),
                              stocktype = m.Field<string>("fromstocktype"),
-                             qty = m.Field<decimal>("qty"),
+                             qty = - (m.Field<decimal>("qty")),
                              location = m.Field<string>("tolocation"),
                              roll = m.Field<string>("fromroll"),
                              dyelot = m.Field<string>("fromdyelot"),
@@ -589,12 +589,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                                seq1 = m.Field<string>("toseq1"),
                                seq2 = m.Field<string>("toseq2"),
                                stocktype = m.Field<string>("tostocktype"),
-                               qty = m.Field<decimal>("qty"),
+                               qty = - (m.Field<decimal>("qty")),
                                location = m.Field<string>("tolocation"),
                                roll = m.Field<string>("toroll"),
                                dyelot = m.Field<string>("todyelot"),
                            }).ToList();
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
+
+
             sqlupd2_FIO2 = Prgs.UpdateFtyInventory_IO(2, null, false);
             #endregion 更新庫存數量  ftyinventory
 

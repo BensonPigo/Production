@@ -331,14 +331,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            seq2 = b.Field<string>("seq2"),
                            stocktype = b.Field<string>("stocktype")
                        } into m
-                       select new Prgs_POSuppDetailData_B
+                       select new Prgs_POSuppDetailData
                        {
                            mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            stocktype = m.First().Field<string>("stocktype"),
-                           qty = -m.Sum(w => w.Field<decimal>("qty")),
+                           qty = - (m.Sum(w => w.Field<decimal>("qty"))),
                        }).ToList();
 
             if (bs1.Count > 0)
@@ -520,7 +520,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            stocktype = m.First().Field<string>("stocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty"))
+                           qty = - (m.Sum(w => w.Field<decimal>("qty")))
                        }).ToList();
             var bsfio = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
                         group b by new
@@ -531,20 +531,23 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                             seq2 = b.Field<string>("seq2"),
                             stocktype = b.Field<string>("stocktype")
                         } into m
-                        select new Prgs_POSuppDetailData_B
+                        select new Prgs_POSuppDetailData
                         {
                             mdivisionid = m.First().Field<string>("mdivisionid"),
                             poid = m.First().Field<string>("poid"),
                             seq1 = m.First().Field<string>("seq1"),
                             seq2 = m.First().Field<string>("seq2"),
                             stocktype = m.First().Field<string>("stocktype"),
-                            qty = -m.Sum(w => w.Field<decimal>("qty"))
+                            qty = m.Sum(w => w.Field<decimal>("qty"))
                         }).ToList();
 
             if (bs1.Count > 0)
                 sqlupd2_B = Prgs.UpdateMPoDetail(4, null, false);
             if (bsfio.Count > 0)
                 sqlupd2_BI = Prgs.UpdateMPoDetail(8, bsfio, false);
+
+            DataTable fiodt = (DataTable)detailgridbs.DataSource;
+            foreach (DataRow fiodr in fiodt.Rows) { fiodr["qty"] = -(decimal)fiodr["qty"]; };
 
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
 
@@ -575,7 +578,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                         }
                     }
                     if (!(result = MyUtility.Tool.ProcessWithDatatable
-                         ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                         (fiodt, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
