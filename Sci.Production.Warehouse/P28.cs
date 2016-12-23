@@ -376,7 +376,7 @@ drop table #tmp");
         {
             foreach (DataRow dr in master.Rows)
             {
-                if (dr["selected"].ToString() == "TRUE" && !MyUtility.Check.Empty(dr["requestqty"]))
+                if (dr["selected"].ToString().ToUpper() == "TRUE" && !MyUtility.Check.Empty(dr["requestqty"]))
                 {
                     var issued = PublicPrg.Prgs.autopick(dr, false,"B");
                     if (issued == null) return;
