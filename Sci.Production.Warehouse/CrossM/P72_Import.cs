@@ -89,6 +89,9 @@ select rtrim(FromPOID) frompoid,rtrim(FromSeq1) FromSeq1,rtrim(FromSeq2) FromSeq
 	where r.Status = 'Sent' and r.id='{0}' and r.MDivisionID = '{1}'
 )
 select 0 as selected,'' as id,fi.Ukey FtyInventoryUkey,0.00 as qty,fi.MDivisionID,fi.POID,rtrim(fi.seq1) seq1,fi.seq2
+    ,dbo.getmtldesc(fi.poid,fi.seq1,fi.seq2,2,0) as [description]
+    ,(select stockunit from Po_Supp_Detail p where p.id = fi.POID and p.seq1 = fi.seq1 and p.seq2 = fi.seq2) stockunit
+    ,concat(rtrim(fi.seq1), ' ', fi.seq2) seq
 	,fi.Roll,fi.Dyelot,fi.StockType,fi.InQty - fi.OutQty+fi.AdjustQty balanceqty 
     ,(select mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where ukey = fi.ukey) t for xml path('')) [location]
 from cte inner join FtyInventory fi on fi.MDivisionID  =  cte.FromMDivisionID 
