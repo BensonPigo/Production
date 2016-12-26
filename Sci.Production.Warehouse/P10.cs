@@ -135,7 +135,7 @@ namespace Sci.Production.Warehouse
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
-            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            //.Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(20), iseditingreadonly: true)  //1
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)  //2
            // .Text("SizeSpec", header: "SizeSpec", width: Widths.AnsiChars(10), iseditingreadonly: true)  //3
