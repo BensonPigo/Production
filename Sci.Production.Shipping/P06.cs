@@ -146,6 +146,7 @@ order by os.Seq", masterID);
                         }
                     }
                 };
+         
 
 
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -163,6 +164,57 @@ order by os.Seq", masterID);
                 .Text("PackingListID", header: "Packing#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("INVNo", header: "Invoice No.", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("Remark", header: "Remarks", width: Widths.AnsiChars(30));
+
+        }
+
+        private void status_Change()
+        {
+            DataTable dr = (DataTable)detailgridbs.DataSource;
+            int i = 0;
+            foreach (DataRow dr1 in dr.Rows)
+            {
+                //this.detailgrid.Rows[i].Cells[9].Value = dr1["Status"];
+
+                switch (dr1["Status"].ToString().ToUpper())
+                {
+                    case "C":
+                        detailgrid.Rows[i].Cells[9].Value = "Complete";
+                        break;
+                    case "P":
+                        detailgrid.Rows[i].Cells[9].Value = "Partial";
+                        break;
+                    case "S":
+                        detailgrid.Rows[i].Cells[9].Value = "Shortage";
+                        break;
+                    case "E":
+                        detailgrid.Rows[i].Cells[9].Value = "Exceed";
+                        break;
+                    default:
+                        detailgrid.Rows[i].Cells[9].Value = "";
+                        break;
+                }
+                i++;
+                //case "C":
+                //               dr["StatusExp"] = "Complete";
+                //               dr["Status"] = "C";
+                //               dr.EndEdit();
+                //               break;
+                //           case "P":
+                //               dr["StatusExp"] = "Partial";
+                //               dr["Status"] = "P";
+                //               dr.EndEdit();
+                //               break;
+                //           case "S":
+                //               dr["StatusExp"] = "Shortage";
+                //               dr["Status"] = "S";
+                //               dr.EndEdit();
+                //               break;
+                //           default:
+                //               dr["StatusExp"] = dr["StatusExp"];
+                //               break;
+
+
+            }
         }
 
         protected override bool ClickNewBefore()
@@ -750,6 +802,7 @@ from SummaryData
                 {
                     int totalShipQty = MyUtility.Convert.GetInt(packData[0]["ShipQty"]) + MyUtility.Convert.GetInt(packData[0]["AllShipQty"]);
                     string newStatus = totalShipQty == MyUtility.Convert.GetInt(packData[0]["OrderQty"]) ? "C" : totalShipQty > MyUtility.Convert.GetInt(packData[0]["OrderQty"]) ? "E" : "P";
+                    //shipQty,OrderQty,InvNo 修改過才會更換資料
                     if (MyUtility.Convert.GetInt(dr["ShipQty"]) != MyUtility.Convert.GetInt(packData[0]["ShipQty"]) || MyUtility.Convert.GetInt(dr["OrderQty"]) != MyUtility.Convert.GetInt(packData[0]["OrderQty"]) || MyUtility.Convert.GetString(dr["INVNo"]) != MyUtility.Convert.GetString(packData[0]["INVNo"]))
                     {
                         dr["ShipQty"] = packData[0]["ShipQty"];
@@ -762,6 +815,9 @@ from SummaryData
                         dr["StatusExp"] = GetStatusName(newStatus);
                         dr["Variance"] = MyUtility.Convert.GetInt(packData[0]["OrderQty"]) - totalShipQty;
                     }
+                    //不管資料有無修改,都會重新更新status資料
+                    dr["Status"] = newStatus;
+
 
                     //取出第3層資料，比對是否有異動
                     DataTable SubDetailData;
@@ -898,6 +954,9 @@ from SummaryData
             #endregion
 
             detailgridbs.ResumeBinding();
+            this.detailgrid.ValidateControl();
+            this.status_Change();
+            
 
             return true;
         }
@@ -914,6 +973,10 @@ from SummaryData
             if (ReviseData())
             {
                 MyUtility.Msg.InfoBox("Revise completed!");
+
+               // this.grid.ValidateControl();
+                this.detailgrid.ValidateControl();
+
             }
         }
 
