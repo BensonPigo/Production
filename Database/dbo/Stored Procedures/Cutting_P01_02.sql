@@ -1,5 +1,5 @@
 ﻿
-CREATE PROCEDURE [dbo].[Cutting_P01_02]
+Create PROCEDURE [dbo].[Cutting_P01_02]
 	@OrderID VARCHAR(13)
 AS
 BEGIN
@@ -35,7 +35,7 @@ BEGIN
 	inner join Order_BOF on Order_EachCons.Id = ORDER_BOF.Id and Order_EachCons.FabricCode = ORDER_BOF.FabricCode
 	inner join Fabric on ORDER_BOF.SCIRefno = Fabric.SCIRefno
 	inner join Fabric_Supp on ORDER_BOF.SCIRefno = Fabric_Supp.SCIRefno and ORDER_BOF.SuppID = Fabric_Supp.SuppID
-	inner join TradeSystem on 1 = 1
+	inner join Trade.dbo.TradeSystem on 1 = 1--from Trade
 	inner join Orders on Orders.ID = Order_EachCons.Id
 	inner join Program on Orders.BrandID = Program.BrandID and Orders.ProgramID = Program.ID
 	outer apply (select * from dbo.GetUnitRound(Orders.BrandID, Orders.ProgramID, Orders.Category, Fabric.UsageUnit)) Unit
