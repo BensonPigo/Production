@@ -429,18 +429,43 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #endregion 檢查負數庫存
 
             #region -- 更新庫存數量  ftyinventory --
-            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            DataTable newDt = ((DataTable)detailgridbs.DataSource).Clone();
+            foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+                string[] dtrLocation = dtr["location"].ToString().Split(',');
+                if (dtrLocation.Length == 0)
+                {
+                    DataRow newDr = newDt.NewRow();
+                    newDr.ItemArray = dtr.ItemArray;
+                    newDt.Rows.Add(newDr);
+                }
+                else
+                {
+                    foreach (string location in dtrLocation)
+                    {
+                        if (!location.EqualString(""))
+                        {
+                            DataRow newDr = newDt.NewRow();
+                            newDr.ItemArray = dtr.ItemArray;
+                            newDr["location"] = location;
+                            newDt.Rows.Add(newDr);
+                        }
+                    }
+                }
+            }
+
+            var bsfio = (from b in newDt.AsEnumerable()
                          select new
                          {
-                             mdivisionid = m.Field<string>("mdivisionid"),
-                             poid = m.Field<string>("poid"),
-                             seq1 = m.Field<string>("seq1"),
-                             seq2 = m.Field<string>("seq2"),
-                             stocktype = m.Field<string>("stocktype"),
-                             qty = - (m.Field<decimal>("qty")),
-                             location = m.Field<string>("location"),
-                             roll = m.Field<string>("roll"),
-                             dyelot = m.Field<string>("dyelot"),
+                             mdivisionid = b.Field<string>("mdivisionid"),
+                             poid = b.Field<string>("poid"),
+                             seq1 = b.Field<string>("seq1"),
+                             seq2 = b.Field<string>("seq2"),
+                             stocktype = b.Field<string>("stocktype"),
+                             qty = b.Field<decimal>("qty"),
+                             location = b.Field<string>("location"),
+                             roll = b.Field<string>("roll"),
+                             dyelot = b.Field<string>("dyelot"),
                          }).ToList();
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion
