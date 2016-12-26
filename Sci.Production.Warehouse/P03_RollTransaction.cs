@@ -263,7 +263,14 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             //    , new DataColumn[] { dtFtyinventory.Columns["Roll"], dtFtyinventory.Columns["Dyelot"], dtFtyinventory.Columns["StockType"] }
             //    , new DataColumn[] { dtTrans.Columns["roll"], dtTrans.Columns["dyelot"], dtTrans.Columns["stocktype"] }
             //    );
-            DataRelation relation = new DataRelation("rel1"
+            //105.12.23 Jimmy
+            if (dtFtyinventory.Rows.Count == 0 || dtTrans.Rows.Count == 0)
+            {
+                MyUtility.Msg.ErrorBox("Data not found!!");
+                return;
+            }
+
+            DataRelation relation = new DataRelation("Rol1"
                 , new DataColumn[] { dtFtyinventory.Columns["Roll"], dtFtyinventory.Columns["StockType"] }
                 , new DataColumn[] { dtTrans.Columns["roll"], dtTrans.Columns["stocktype"] }
                 );
@@ -272,7 +279,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             bindingSource1.DataSource = data;
             bindingSource1.DataMember = "dtFtyinventory";
             bindingSource2.DataSource = bindingSource1;
-            bindingSource2.DataMember = "rel1";
+            bindingSource2.DataMember = "Rol1";
 
             //設定Grid1的顯示欄位
             MyUtility.Tool.SetGridFrozen(grid1);
