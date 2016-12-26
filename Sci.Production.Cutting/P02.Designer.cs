@@ -148,7 +148,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.masterpanel.Size = new System.Drawing.Size(635, 99);
+            this.masterpanel.Size = new System.Drawing.Size(1007, 730);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
@@ -170,15 +170,10 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Controls.Add(this.rightpanel);
             this.detailpanel.Controls.Add(this.detailbtm);
             this.detailpanel.Controls.Add(this.masterpanel);
             this.detailpanel.Location = new System.Drawing.Point(0, 0);
-            this.detailpanel.Size = new System.Drawing.Size(1007, 672);
-            this.detailpanel.Controls.SetChildIndex(this.masterpanel, 0);
-            this.detailpanel.Controls.SetChildIndex(this.detailbtm, 0);
-            this.detailpanel.Controls.SetChildIndex(this.rightpanel, 0);
-            this.detailpanel.Controls.SetChildIndex(this.detailgridcont, 0);
+            this.detailpanel.Size = new System.Drawing.Size(1007, 730);
             // 
             // gridicon
             // 
@@ -188,16 +183,16 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(3641, 561);
+            this.refresh.Location = new System.Drawing.Point(3698, 561);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.detailgridcont.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(3, 101);
-            this.detailgridcont.Size = new System.Drawing.Size(632, 531);
+            this.detailgridcont.Size = new System.Drawing.Size(629, 596);
             // 
             // detail2
             // 
@@ -213,11 +208,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1007, 672);
+            this.detail.Size = new System.Drawing.Size(1007, 730);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1007, 672);
+            this.detailcont.Size = new System.Drawing.Size(1007, 730);
             // 
             // detailbtm
             // 
@@ -229,7 +224,7 @@
             this.detailbtm.Controls.Add(this.textbox_LastCutRef);
             this.detailbtm.Controls.Add(this.Qtybreak);
             this.detailbtm.Controls.Add(this.label2);
-            this.detailbtm.Location = new System.Drawing.Point(0, 637);
+            this.detailbtm.Location = new System.Drawing.Point(0, 695);
             this.detailbtm.Size = new System.Drawing.Size(1007, 35);
             this.detailbtm.Controls.SetChildIndex(this.label2, 0);
             this.detailbtm.Controls.SetChildIndex(this.Qtybreak, 0);
@@ -251,7 +246,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1015, 701);
+            this.tabs.Size = new System.Drawing.Size(1015, 759);
             // 
             // createby
             // 
@@ -738,7 +733,7 @@
             this.sizeratio_grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.sizeratio_grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.sizeratio_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.sizeratio_grid.Location = new System.Drawing.Point(5, 281);
+            this.sizeratio_grid.Location = new System.Drawing.Point(0, 281);
             this.sizeratio_grid.Name = "sizeratio_grid";
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
@@ -752,7 +747,7 @@
             this.sizeratio_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.sizeratio_grid.RowTemplate.Height = 24;
             this.sizeratio_grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.sizeratio_grid.Size = new System.Drawing.Size(166, 86);
+            this.sizeratio_grid.Size = new System.Drawing.Size(166, 120);
             this.sizeratio_grid.TabIndex = 44;
             this.sizeratio_grid.TabStop = false;
             // 
@@ -818,7 +813,7 @@
             this.distribute_grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.distribute_grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.distribute_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.distribute_grid.Location = new System.Drawing.Point(0, 392);
+            this.distribute_grid.Location = new System.Drawing.Point(0, 416);
             this.distribute_grid.Name = "distribute_grid";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
@@ -832,7 +827,7 @@
             this.distribute_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.distribute_grid.RowTemplate.Height = 24;
             this.distribute_grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.distribute_grid.Size = new System.Drawing.Size(367, 108);
+            this.distribute_grid.Size = new System.Drawing.Size(367, 120);
             this.distribute_grid.TabIndex = 48;
             this.distribute_grid.TabStop = false;
             // 
@@ -870,7 +865,7 @@
             this.qtybreak_grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.qtybreak_grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.qtybreak_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.qtybreak_grid.Location = new System.Drawing.Point(0, 517);
+            this.qtybreak_grid.Location = new System.Drawing.Point(1, 551);
             this.qtybreak_grid.Name = "qtybreak_grid";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -884,7 +879,7 @@
             this.qtybreak_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.qtybreak_grid.RowTemplate.Height = 24;
             this.qtybreak_grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.qtybreak_grid.Size = new System.Drawing.Size(367, 115);
+            this.qtybreak_grid.Size = new System.Drawing.Size(367, 143);
             this.qtybreak_grid.TabIndex = 49;
             this.qtybreak_grid.TabStop = false;
             // 
@@ -892,7 +887,7 @@
             // 
             this.label22.BackColor = System.Drawing.Color.Transparent;
             this.label22.Lines = 0;
-            this.label22.Location = new System.Drawing.Point(2, 374);
+            this.label22.Location = new System.Drawing.Point(2, 401);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(112, 15);
             this.label22.TabIndex = 50;
@@ -933,7 +928,7 @@
             // 
             this.label24.BackColor = System.Drawing.Color.Transparent;
             this.label24.Lines = 0;
-            this.label24.Location = new System.Drawing.Point(2, 503);
+            this.label24.Location = new System.Drawing.Point(2, 538);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(112, 11);
             this.label24.TabIndex = 52;
@@ -1112,14 +1107,14 @@
             this.rightpanel.Controls.Add(this.editBox_desc);
             this.rightpanel.Controls.Add(this.displayBox_FabricRefno);
             this.rightpanel.Controls.Add(this.displayBox_FabricType);
-            this.rightpanel.Location = new System.Drawing.Point(636, 0);
+            this.rightpanel.Location = new System.Drawing.Point(633, 3);
             this.rightpanel.Name = "rightpanel";
-            this.rightpanel.Size = new System.Drawing.Size(371, 632);
+            this.rightpanel.Size = new System.Drawing.Size(371, 694);
             this.rightpanel.TabIndex = 60;
             // 
             // P02
             // 
-            this.ClientSize = new System.Drawing.Size(1015, 734);
+            this.ClientSize = new System.Drawing.Size(1015, 792);
             this.DefaultDetailOrder = "Markname";
             this.DefaultOrder = "ID";
             this.GridAlias = "WorkOrder";
