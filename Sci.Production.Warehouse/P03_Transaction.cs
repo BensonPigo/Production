@@ -278,7 +278,7 @@ namespace Sci.Production.Warehouse
                                     for XML PATH('')) as ToLocation,AddDate
             from SubTransfer a, SubTransfer_Detail b 
             where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and type = 'B' 
-            and b.frommdivisionid='{3}'"
+            and b.tomdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()
