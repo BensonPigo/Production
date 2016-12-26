@@ -310,6 +310,25 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
             callNextForm.ShowDialog(this);
         }
 
+        protected override bool ClickPrint()
+        {
+            string ID = this.CurrentDataRow["ID"].ToString();
+            if (tabs.SelectedIndex == 1)
+            {
+                P01_Print_OrderList frm = new P01_Print_OrderList(ID);
+                frm.ShowDialog();
+            }
+            //else if (tabs.SelectedIndex == 2)
+            //{
+            //    if (gridPoSupp.Rows.Count > 0)
+            //    {
+            //        string seq1 = gridPoSupp.SelectedCells[0].Value.ToString();
+            //        P01_Print_PurchaseList frm = new P01_Print_PurchaseList(ID, seq1);
+            //        frm.ShowDialog();
+            //    }
+            //}
 
+            return base.ClickPrint();
+        }
     }
 }

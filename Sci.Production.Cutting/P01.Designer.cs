@@ -92,10 +92,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(896, 442);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.numericBox2);
@@ -154,12 +150,6 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(896, 404);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 404);
-            this.detailbtm.Size = new System.Drawing.Size(896, 38);
             // 
             // browse
             // 
@@ -741,7 +731,6 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
-            this.IsSupportPrint = false;
             this.Name = "P01";
             this.WorkAlias = "Cutting";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
