@@ -347,11 +347,7 @@ namespace Sci.Production.Warehouse
                 }
                 CurrentMaintain["id"] = tmpId;
             }
-
-            //save 前清空資料，避免資料重複儲存
-            string sqlst = string.Format(@"delete Issue_Detail where id = '{0}'", CurrentMaintain["id"]);
-            DBProxy.Current.Execute(null, sqlst);
-
+            
             return base.ClickSaveBefore();
         }
 
@@ -382,6 +378,10 @@ namespace Sci.Production.Warehouse
 
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
+            //AutoPick 前清空資料，避免資料重複儲存
+            string sqlst = string.Format(@"delete Issue_Detail where id = '{0}'", CurrentMaintain["id"]);
+            DBProxy.Current.Execute(null, sqlst);
+
             DataTable subDT;
             foreach (DataRow dr in DetailDatas)
             {
