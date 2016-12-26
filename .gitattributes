@@ -58,6 +58,7 @@ Database/dbo/Functions/GetSCI.sql -text
 Database/dbo/Functions/GetSCI_1.sql -text
 Database/dbo/Functions/GetSimilarStyleList.sql -text
 Database/dbo/Functions/GetSizeCodeColumnByID.sql -text
+Database/dbo/Functions/GetSizeCodeColumnByID_1.sql -text
 Database/dbo/Functions/GetStdQty.sql -text
 Database/dbo/Functions/GetStyleGMTLT.sql -text
 Database/dbo/Functions/GetSuppColor.sql -text
@@ -93,6 +94,7 @@ Database/dbo/Functions/getVNUnitTransfer.sql -text
 Database/dbo/Stored[!!-~]Procedures/BoaExpend.sql -text
 Database/dbo/Stored[!!-~]Procedures/BoaExpend_Insert.sql -text
 Database/dbo/Stored[!!-~]Procedures/Create_CDC.sql -text
+Database/dbo/Stored[!!-~]Procedures/Cutting_P01_01.sql -text
 Database/dbo/Stored[!!-~]Procedures/DailyImport.sql -text
 Database/dbo/Stored[!!-~]Procedures/GenGarmentTest.sql -text
 Database/dbo/Stored[!!-~]Procedures/GetKeyWordValue.sql -text
