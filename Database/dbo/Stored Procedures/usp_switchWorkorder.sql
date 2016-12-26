@@ -224,7 +224,7 @@ BEGIN
 			------------SEQ1,SEQ2----------------
 			Select @Seq2 = isnull(seq2,'') --先找相同SEQ1,SCIRefno
 			From PO_Supp_Detail b 
-			Where id = @POID AND SEQ1 = @SEQ1 AND Scirefno = @SCIRefno and OutputSeq1='' and OutputSeq2 = ''
+			Where id = @POID AND SEQ1 = @SEQ1 AND Scirefno = @SCIRefno and OutputSeq1='' and OutputSeq2 = '' AND Colorid = @colorid
 			if @Seq2 = ''
 			Begin
 				--若SEQ2 為空就找70大項
@@ -271,7 +271,6 @@ BEGIN
 							select id,Article,disqty,orderqty,IDENTITY(int,1,1) as Rowid,Convert(Bigint,identRowid) as identRowid
 							into #disorder_cutlayer
 							from #disQty 
-							--Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo
 							Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo and (Article in (select Data from #LongArticle) or @LongArticleCount=0)
 
 							set @disQtyRowID = 1
@@ -418,7 +417,6 @@ BEGIN
 						select id,disqty,Article,orderqty,IDENTITY(int,1,1) as Rowid,Convert(Bigint,identRowid) as identRowid
 						into #disorder_modlayer 
 						from #disQty 
-						--Where SizeCode = @sizeCode and Colorid = @Colorid and PatternPanel = @FabricCombo
 						Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo and (Article in (select Data from #LongArticle) or @LongArticleCount=0)
 
 						set @disQtyRowID = 1
@@ -557,7 +555,6 @@ BEGIN
 					Select id,sizecode,article,colorid,orderqty,disQty,PatternPanel,convert(bigint,identRowid) as identRowid,IDENTITY(int,1,1) as Rowid
 					into #distOrder 
 					From #disQty
-					--Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and orderQty - disQty >0
 					Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and (Article in (select Data from #LongArticle) or @LongArticleCount=0) and orderQty - disQty >0
 					order by inline
 
@@ -614,7 +611,6 @@ BEGIN
 								Select id,sizecode,article,colorid,orderqty,disQty,PatternPanel,convert(bigint,identRowid) as identRowid,IDENTITY(int,1,1) as Rowid
 								into #distOrder_again 
 								From #disQty
-								--Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid
 								Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and (Article in (select Data from #LongArticle) or @LongArticleCount=0) and orderQty - disQty >0
 								Order by inline
 
@@ -760,7 +756,6 @@ BEGIN
 								Select id,sizecode,article,colorid,orderqty,disQty,PatternPanel,convert(bigint,identRowid) as identRowid,IDENTITY(int,1,1) as Rowid
 								into #distOrder_againmod 
 								From #disQty
-								--Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid
 								Where SizeCode = @SizeCode and PatternPanel = @FabricCombo and Colorid = @Colorid and (Article in (select Data from #LongArticle) or @LongArticleCount=0) and orderQty - disQty >0
 
 								Set @distOrderRowid_again = 1
@@ -893,10 +888,11 @@ BEGIN
 					Set @sizeQtyRowid += 1
 				EnD
 				Drop table #SizeQty
-				--Drop table #LongArticle
 			End --End WorkType by SP#
 		Set @WorkOrderMixRowID += 1
+
 		Drop table #LongArticle
+
 		ENd --End WorkOrder Loop
 		drop table #WorkOrderMix
 	End;
