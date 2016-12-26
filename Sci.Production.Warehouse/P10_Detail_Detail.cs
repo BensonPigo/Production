@@ -176,8 +176,8 @@ and a.scirefno='{2}' and a.colorid='{3}' and a.sizespec = '{4}'"
             foreach (DataRow tmp in dr2)
             {
                 //DataRow[] findrow = dt_detail.Select(string.Format("ftyinventoryukey = {0}" , tmp["ftyinventoryukey"]));
-                DataRow[] findrow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll = '{3}' and dyelot = '{4}'",
-                    tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString()));
+                DataRow[] findrow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll = '{3}' and dyelot = '{4}' and mdivisionid = '{5}'",
+                    tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString(), tmp["mdivisionid"].ToString()));
 
                 if (findrow.Length > 0)
                 {
