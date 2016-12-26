@@ -6,8 +6,11 @@
     [AddDate]  DATETIME       NULL,
     [EditName] VARCHAR (10)   CONSTRAINT [DF_Program_EditName] DEFAULT ('') NULL,
     [EditDate] DATETIME       NULL,
+    [MiAdidas] BIT            NULL,
     CONSTRAINT [PK_Program] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC)
 );
+
+
 
 
 GO
