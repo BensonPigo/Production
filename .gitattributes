@@ -937,6 +937,9 @@ Sci.Production.Cutting/P01_EachConsumption_SwitchWorkOrder.resx -text
 Sci.Production.Cutting/P01_MarkerList.cs -text
 Sci.Production.Cutting/P01_MarkerList.designer.cs -text
 Sci.Production.Cutting/P01_MarkerList.resx -text
+Sci.Production.Cutting/P01_Print_OrderList.Designer.cs -text
+Sci.Production.Cutting/P01_Print_OrderList.cs -text
+Sci.Production.Cutting/P01_Print_OrderList.resx -text
 Sci.Production.Cutting/P02.Designer.cs -text
 Sci.Production.Cutting/P02.cs -text
 Sci.Production.Cutting/P02.resx -text
