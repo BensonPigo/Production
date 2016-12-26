@@ -9,8 +9,12 @@
     [AddDate]       DATETIME       NULL,
     [EditName]      VARCHAR (10)   CONSTRAINT [DF_Unit_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME       NULL,
+    [MiAdidasRound] NUMERIC (2)    NULL,
+    [RoundStep]     NUMERIC (4, 2) NULL,
     CONSTRAINT [PK_Unit] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

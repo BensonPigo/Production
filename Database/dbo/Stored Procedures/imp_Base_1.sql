@@ -1118,6 +1118,8 @@ SET
       ,a.AddDate	      =b.AddDate	
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
+	  ,a.MiAdidasRound    =b.MiAdidasRound
+	  ,a.RoundStep        =b.RoundStep
 
 from Production.dbo.Unit as a inner join Trade_To_Pms.dbo.Unit as b ON a.id=b.id
 -------------------------- INSERT INTO ��
@@ -1132,6 +1134,8 @@ INSERT INTO Production.dbo.Unit(
       ,AddDate
       ,EditName
       ,EditDate
+	  ,MiAdidasRound
+	  ,RoundStep
 
 )
 select 
@@ -1145,6 +1149,8 @@ select
       ,AddDate
       ,EditName
       ,EditDate
+	  ,MiAdidasRound
+	  ,RoundStep
 
 from Trade_To_Pms.dbo.Unit as b
 where not exists(select id from Production.dbo.Unit as a where a.id = b.id)

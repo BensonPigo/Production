@@ -45,12 +45,14 @@ Database/ProductionDB.sqlproj -text
 Database/ProductionDB.sqlproj.user -text
 Database/Storage/SLAVE.sql -text
 Database/dbo/Functions/GetCPURate.sql -text
+Database/dbo/Functions/GetCeiling.sql -text
 Database/dbo/Functions/GetColorName.sql -text
 Database/dbo/Functions/GetCurrencyRate.sql -text
 Database/dbo/Functions/GetDigitalValue.sql -text
 Database/dbo/Functions/GetFirResult.sql -text
 Database/dbo/Functions/GetHaveDelaySupp.sql -text
 Database/dbo/Functions/GetInspectionResult.sql -text
+Database/dbo/Functions/GetLossFabric.sql -text
 Database/dbo/Functions/GetPriceFromMtl.sql -text
 Database/dbo/Functions/GetRequestETA.sql -text
 Database/dbo/Functions/GetRequestETA_1.sql -text
@@ -64,6 +66,8 @@ Database/dbo/Functions/GetStyleGMTLT.sql -text
 Database/dbo/Functions/GetSuppColor.sql -text
 Database/dbo/Functions/GetSuppColorList.sql -text
 Database/dbo/Functions/GetSuppColor_Solution.sql -text
+Database/dbo/Functions/GetUnitQty.sql -text
+Database/dbo/Functions/GetUnitRound.sql -text
 Database/dbo/Functions/Getlocation.sql -text
 Database/dbo/Functions/MarkerLengthToYDS.sql -text
 Database/dbo/Functions/SplitString.sql -text
@@ -95,6 +99,7 @@ Database/dbo/Stored[!!-~]Procedures/BoaExpend.sql -text
 Database/dbo/Stored[!!-~]Procedures/BoaExpend_Insert.sql -text
 Database/dbo/Stored[!!-~]Procedures/Create_CDC.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01_01.sql -text
+Database/dbo/Stored[!!-~]Procedures/Cutting_P01_02.sql -text
 Database/dbo/Stored[!!-~]Procedures/DailyImport.sql -text
 Database/dbo/Stored[!!-~]Procedures/GenGarmentTest.sql -text
 Database/dbo/Stored[!!-~]Procedures/GetKeyWordValue.sql -text
