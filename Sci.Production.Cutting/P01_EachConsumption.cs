@@ -80,7 +80,9 @@ namespace Sci.Production.Cutting
             AS EachConsSource,
 
             d.PatternPanel, 
-            f.Article as ForArticle ,
+
+            a.Article as ForArticle,
+
             EC_Size.TotalQty , 
             concat(RTrim(Fabric.Refno),'-',Fabric.Description) as FabricDesc,
             Fabric.Width as FabricWidth 
@@ -98,17 +100,6 @@ namespace Sci.Production.Cutting
 	            as PatternPanel
             ) d
 
-            Left Join (
-			            Select e.Order_EachConsUkey, Article =
-				            (
-					            Select Article+',' 
-					            From dbo.Order_EachCons_Article as tmp 
-					            Where tmp.Order_EachConsUkey = e.Order_EachConsUkey for XML path('')
-				            ) 
-			            From dbo.Order_EachCons_Article e 
-			            Group by Order_EachConsUkey
-			            ) as f
-			            On a.Ukey = f.Order_EachConsUkey  
             outer apply(select sum(Qty) as TotalQty from  dbo.Order_EachCons_SizeQty  where  a.Ukey = Order_EachConsUkey  ) as EC_Size 
             left join dbo.Order_BOF bof on bof.Id = a.Id and bof.FabricCode = a.FabricCode
             left join dbo.Fabric on Fabric.SCIRefno = bof.SCIRefno
