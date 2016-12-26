@@ -150,6 +150,12 @@
     <Compile Include="P01_MarkerList.designer.cs">
       <DependentUpon>P01_MarkerList.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_Print_OrderList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_Print_OrderList.Designer.cs">
+      <DependentUpon>P01_Print_OrderList.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -367,6 +373,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_Cutpartchecksummary.resx">
       <DependentUpon>P01_Cutpartchecksummary.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_Print_OrderList.resx">
+      <DependentUpon>P01_Print_OrderList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
