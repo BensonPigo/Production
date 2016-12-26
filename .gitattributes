@@ -2765,6 +2765,7 @@ Sci.Production/Win/SUBBASE.Designer.cs -text
 Sci.Production/Win/SUBBASE.cs -text
 Sci.Production/Win/SUBBASE.resx -text
 Sci.Production/app.config -text
+XLT/Cutting_P01_EachConsumptionCuttingCombo.xlt -text
 XLT/Cutting_P02_SpreadingReportbyCutref.xltx -text
 XLT/Cutting_P02_SpreadingReportbyRequest.xltx -text
 XLT/Cutting_P04.xltx -text
