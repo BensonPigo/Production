@@ -348,6 +348,10 @@ namespace Sci.Production.Warehouse
                 CurrentMaintain["id"] = tmpId;
             }
 
+            //save 前清空資料，避免資料重複儲存
+            string sqlst = string.Format(@"delete Issue_Detail where id = '{0}'", CurrentMaintain["id"]);
+            DBProxy.Current.Execute(null, sqlst);
+
             return base.ClickSaveBefore();
         }
 
