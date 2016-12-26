@@ -235,7 +235,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             #region 更新表頭狀態資料
 
-            sqlupd3 = string.Format(@"update LocalReceiving set status='Approved', editname = '{0}' , editdate = GETDATE()
+            sqlupd3 = string.Format(@"update LocalReceiving set status='Confirmed', editname = '{0}' , editdate = GETDATE()
                                 where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             #endregion 更新表頭狀態資料
@@ -457,7 +457,7 @@ insert (mdivisionid,orderid,refno,threadcolorid,inqty,unitid) values (s.mdivisio
         {
             string sqlcmd = string.Format(@"update dbo.LocalPO_Detail 
 set InQty = isnull((select sum(d.Qty) ttl_receiving from dbo.LocalReceiving c inner join dbo.LocalReceiving_Detail d on c.id = d.id  
- where c.Status = 'Approved' and d.LocalPo_detailukey = LocalPO_Detail.Ukey and d.LocalPoId = LocalPO_Detail.Id),0)
+ where c.Status = 'Confirmed' and d.LocalPo_detailukey = LocalPO_Detail.Ukey and d.LocalPoId = LocalPO_Detail.Id),0)
 from LocalPO_Detail join (select LocalPoId,LocalPo_detailukey from dbo.LocalReceiving a inner join dbo.LocalReceiving_Detail b 
 on b.id = a.id where a.id='{0}'
  ) s
