@@ -13,11 +13,7 @@ insert @Sayfty select id from Production.dbo.Factory
 
 	declare @Tdebit table(id varchar(13),isinsert bit)
 
-	SELECT issuedate,AddDate,* FROM Debit
-	WHERE 1=1--ID='DB20151200174'
-	AND MDivisionID='MWI'
-
-	--Merge update Production.Debit
+-------------Merge update Production.Debit---------------------------
 	Merge Production.dbo.Debit as t
 	Using (select * from Trade_To_Pms.dbo.Debit where BrandID in (select id from @Sayfty ) )as s
 	on t.id = s.id
@@ -29,24 +25,24 @@ insert @Sayfty select id from Production.dbo.Factory
 		t.SysDate = s.SysDate
 	when not matched by target then 	
 		insert(	 ID,  CurrencyID,  Amount,  Received,  BuyerID,  BrandID,  BankID,  LCFNO,  LCFDate,  EstPayDate,  Title,  SendFrom,  Attn,  CC,  Subject,  Handle,  SMR,  VoucherID,  BadID,  Status,  StatusRevise,  StatusReviseNm, CustPayId,   Settled,  SettleDate,  Cfm,  CfmDate,  Lock,  Lockdate,  OldAmount,  Type,  ShareFob,  VoucherFactory,  VoucherSettle,  IsSubcon,  LCLName,  LCLCurrency,  LCLAmount,  LCLRate,  AddName,issuedate,  AddDate,  EditName,  EditDate,  SysDate,MDivisionID)
-		values(s.ID,s.CurrencyID,s.Amount,s.Received,s.BuyerID,s.BrandID,s.BankID,s.LCFNO,s.LCFDate,s.EstPayDate,s.Title,s.SendFrom,s.Attn,s.CC,s.Subject,s.Handle,s.SMR,s.VoucherID,s.BadID,s.Status,s.StatusRevise,s.StatusReviseNm,s.CustPayId,s.Settled,s.SettleDate,s.Cfm,s.CfmDate,s.Lock,s.Lockdate,s.OldAmount,s.Type,s.ShareFob,s.VoucherFactory,s.VoucherSettle,s.IsSubcon,s.LCLName,s.LCLCurrency,s.LCLAmount,s.LCLRate,s.AddName,s.AddDate,s.AddDate,s.EditName,s.EditDate,s.SysDate,(SELECT iif(MDivisionID is null,'',MDivisionID) FROM Production.dbo.scifty where id=s.BrandID))
+		values(s.ID,s.CurrencyID,s.Amount,s.Received,s.BuyerID,s.BrandID,s.BankID,s.LCFNO,s.LCFDate,s.EstPayDate,s.Title,s.SendFrom,s.Attn,s.CC,s.Subject,s.Handle,s.SMR,s.VoucherID,s.BadID,s.Status,s.StatusRevise,s.StatusReviseNm,s.CustPayId,s.Settled,s.SettleDate,s.Cfm,s.CfmDate,s.Lock,s.Lockdate,s.OldAmount,s.Type,s.ShareFob,s.VoucherFactory,s.VoucherSettle,s.IsSubcon,s.LCLName,s.LCLCurrency,s.LCLAmount,s.LCLRate,s.AddName,s.cdate,s.AddDate,s.EditName,s.EditDate,s.SysDate,(SELECT iif(MDivisionID is null,'',MDivisionID) FROM Production.dbo.scifty where id=s.BrandID))
 		output inserted.id,iif(deleted.id is null,1,0) into @Tdebit ;
 
-
-
+-----------------Production.Debit_detail
 	Merge Production.dbo.Debit_Detail as t
 	Using (select * from  Trade_To_Pms.dbo.debit_detail where id in (select id from @Tdebit where isinsert=1))as s
-	on t.ukey =s.ukey
+	on t.TaipeiUkey =s.ukey
 	when not matched by target then
-		insert(ID,ORDERID,REASONID,Description,PRICE,Amount,UnitID,SOURCEID,QTY)
-		values(s.ID,s.ORDERID,s.REASONID,s.Description,s.PRICE,s.Amount,s.UnitID,s.SOURCEID,s.QTY );
+		insert(ID,ORDERID,REASONID,Description,PRICE,Amount,UnitID,SOURCEID,QTY,ReasonNM,TaipeiUkey)
+		values(s.ID,s.ORDERID,s.REASONID,s.Description,s.PRICE,s.Amount,s.UnitID,s.SOURCEID,s.QTY,s.Reason,s.ukey );
+		
 
 declare @tLocalDebit table (id varchar(13),isinsert bit)
 
 	Merge Production.dbo.LocalDebit as t
-	using (Select * from Trade_To_Pms.dbo.debit where id in (select id from @Tdebit where isinsert=1)) as s
+	using (Select * from Trade_To_Pms.dbo.debit where IsSubcon = 1 ) as s
 	on t.id = s.id
-	when not matched by target and s.IsSubcon = 1 then
+	when not matched by target then
 		insert(TaipeiDBC,id, FactoryID, TaipeiAMT, TaipeiCurrencyID, AddDate, AddName,[status],MDivisionID,issuedate)
 		values( '1', Id, BrandID, Amount, CurrencyID, AddDate,'SCIMIS','New',
 		(SELECT  iif(MDivisionID is null,'',MDivisionID) FROM SCIFTY WHERE ID=S.BRANDID),s.adddate )
@@ -57,12 +53,10 @@ declare @tLocalDebit table (id varchar(13),isinsert bit)
 	using( select a.*,b.adddate as add1 from Trade_To_Pms.dbo.debit_detail a
 	inner join Trade_To_Pms.dbo.debit b on a.id=b.id
 	 where a.id in (select id from  Production.dbo.LocalDebit where TaipeiDBC=1)) as s
-	on t.ukey=s.ukey
+	on t.TaipeiUkey=s.ukey
 	when not matched by target then
-		insert(	 id,   Orderid,   UnitID,   qty,   amount,  AddDate, AddName,taipeireason,description)
-		values(s.Id, s.orderid, s.UnitID, s.qty, s.Amount,s.add1, 'SCIMIS',s.reason,s.description
-);
-
+		insert(	 id,   Orderid,   UnitID,   qty,   amount,  AddDate, AddName,taipeireason,description,TaipeiUkey)
+		values(s.Id, s.orderid, s.UnitID, s.qty, s.Amount,s.add1, 'SCIMIS',s.reason,s.description,ukey);
 
 END
 
