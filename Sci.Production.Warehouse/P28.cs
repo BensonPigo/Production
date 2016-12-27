@@ -82,15 +82,24 @@ iseditingreadonly: true)
             ns.IsSupportNegative = true;
             ns.CellValidating += (s, e) =>
             {
-                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))         
+                //if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                if (this.EditMode && e.FormattedValue!=null)
                 {
                     DataRow thisRow = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
                     DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
                     DataRow currentrow = grid2.GetDataRow(grid2.GetSelectedRowIndex());
                     currentrow["qty"] = e.FormattedValue;
-                    currentrow["selected"] = true;
-                    currentrow.GetParentRow("rel1")["selected"] = true;
                     currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
+                    if (Convert.ToDecimal(e.FormattedValue) > 0)
+                    {
+                        currentrow["selected"] = true;
+                        currentrow.GetParentRow("rel1")["selected"] = true;
+                    }
+                    else
+                    {
+                        currentrow["selected"] = false;
+                        currentrow.GetParentRow("rel1")["selected"] = false;
+                    }                  
                 }
             };
             #endregion

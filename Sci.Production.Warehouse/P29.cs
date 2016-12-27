@@ -65,9 +65,11 @@ namespace Sci.Production.Warehouse
                 {
                     if (((bool)this.grid1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))
                     {
+                        thisRow["total_qty"] = 0.00;
                         foreach (DataRow dr in thisRow.GetChildRows("rel1"))
                         {
                             dr["selected"] = false;
+                            dr["qty"] = 0.00;
                         }
                     }
                 }
@@ -82,9 +84,21 @@ namespace Sci.Production.Warehouse
             {
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    DataRow thisRow = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
+                    DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
                     DataRow currentrow = grid2.GetDataRow(grid2.GetSelectedRowIndex());
                     currentrow["qty"] = e.FormattedValue;
-                    currentrow["selected"] = true;
+                    currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
+                    if (Convert.ToDecimal(e.FormattedValue) > 0)
+                    {
+                        currentrow["selected"] = true;
+                        currentrow.GetParentRow("rel1")["selected"] = true;
+                    }
+                    else
+                    {
+                        currentrow["selected"] = false;
+                        currentrow.GetParentRow("rel1")["selected"] = false;
+                    }                   
                 }
             };
             #endregion
@@ -178,8 +192,26 @@ namespace Sci.Production.Warehouse
                     if (!((bool)this.grid2.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))
                     {
                         // 原本沒selected , 會變selected , 就直接勾選parentRow
-                        thisRow.GetParentRow("rel1")["selected"] = true;
-                        
+                        thisRow.GetParentRow("rel1")["selected"] = true;                        
+                    }
+                    else
+                    {
+                        thisRow["qty"] = 0.00;
+                        DataRow y = thisRow.GetParentRow("rel1");
+                        var temp = y.GetChildRows("rel1");
+                        if (temp != null)
+                        {
+                            var selected = temp.Where(row => (bool)row["selected"]).ToList();
+                            if (selected.Count <= 1)
+                            {
+                                thisRow.GetParentRow("rel1")["selected"] = false;
+                                //thisRow.GetParentRow("rel1")["total_qty"] = temp.Sum(row => (decimal)row["qty"]);
+                                thisRow.GetParentRow("rel1")["total_qty"] = 0.00;
+                            }
+                            else
+                                thisRow.GetParentRow("rel1")["total_qty"] = temp.Sum(row => (decimal)row["qty"]);
+                        }
+
                     }
                 }
                 this.grid1.ValidateControl();
@@ -332,8 +364,10 @@ drop table #tmp");
 
             dataSet.Relations.Add(relation);
 
-            master.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
+            //master.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
             master.Columns.Add("requestqty", typeof(decimal), "poqty - inqty - sum(child.qty)");
+            master.Columns.Add("total_qty", typeof(decimal));
+     
 
             listControlBindingSource1.DataSource = dataSet;
             listControlBindingSource1.DataMember = "Master";
@@ -350,12 +384,22 @@ drop table #tmp");
 
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
-            if (master.Rows.Count==0)
-            {
-                return;
-            }
+            if (master.Rows.Count == 0) return;
+
             foreach (DataRow dr in master.Rows)
             {
+                if (dr["selected"].ToString().ToUpper() == "TRUE")
+                {
+                    DataRow[] curentgridrowChild = dr.GetChildRows("rel1");
+                    foreach (DataRow temp in curentgridrowChild)
+                    {
+                        temp["qty"] = 0.00;
+                        temp["selected"] = false;
+                    }
+                    //dr["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
+                    dr["total_qty"] = 0.00;
+                }
+
                 if (dr["selected"].ToString() == "True" && !MyUtility.Check.Empty(dr["requestqty"]))
                 {
                     var issued = PublicPrg.Prgs.autopick(dr, false,"I");
