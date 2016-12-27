@@ -143,9 +143,6 @@ namespace Sci.Production.Class
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {            
-           //Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-           //if (myForm.EditMode == false)
-           //{
                if (this.textBox1.ReadOnly && this.DataBindings.Count == 0)
                {
                    string selectSql = string.Format("Select Name from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
@@ -165,8 +162,6 @@ namespace Sci.Production.Class
                        this.textBox1.Text = "";
                    }
                }
-              
-          // }
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
