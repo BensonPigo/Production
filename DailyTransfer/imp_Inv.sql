@@ -139,9 +139,17 @@ select
       ,EditDate
       ,ETA
 	  ,SCIRefno
+from (
+select [SameNo]= ROW_NUMBER() over (partition by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId order by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId)
+,b.* from Trade_To_Pms.dbo.Inventory as b
+where not exists(select distinct POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId from Production.dbo.Inventory as a where a.POID=b.POID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2 and a.FactoryID=iif(B.FactoryID is null,'',B.FactoryID)
+and a.UnitID=b.UnitID and a.ProjectID=b.ProjectID and a.InventoryRefnoId=b.InventoryRefnoId)) as a
+where sameno=1
+
+/* That code will insert error, because duplicate key will happen.  Edit by willy on 20161227
 from Trade_To_Pms.dbo.Inventory as b
 where not exists(select POID from Production.dbo.Inventory as a where a.POID=b.POID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2 and a.FactoryID=ISNULL(B.FactoryID,'') and a.UnitID=b.UnitID and a.ProjectID=b.ProjectID and a.InventoryRefnoId=b.InventoryRefnoId)
-
+*/
 
 
 --invref
