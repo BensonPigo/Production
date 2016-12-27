@@ -53,7 +53,7 @@ namespace Sci.Production.Class
                 ftyWhere = string.Format("Where FactoryId = '{0}'", fty);
             }
             string sql = string.Format("Select ID,FactoryID,Description From SewingLine {0} ", ftyWhere);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,8,16", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,6,16", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
