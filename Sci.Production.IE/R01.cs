@@ -38,7 +38,7 @@ namespace Sci.Production.IE
         {
             string sqlCmd = "select distinct ID,BrandID,Description from Style where Junk = 0 order by ID";
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,8,50", textBox2.Text, "Style#,Brand,Description");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,10,50", textBox2.Text, "Style#,Brand,Description");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             textBox2.Text = item.GetSelectedString();

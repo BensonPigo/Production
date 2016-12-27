@@ -33,7 +33,7 @@ namespace Sci.Production.IE
             string selectCommand;
             selectCommand = "select ID,SeasonID,Description,BrandID from Style where Junk = 0 order by ID";
             
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "16,10,50,8", this.Text);
+            item = new Sci.Win.Tools.SelectItem(selectCommand, "14,6,50,12", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             IList<DataRow> selectedData = item.GetSelecteds();
@@ -52,7 +52,7 @@ namespace Sci.Production.IE
         private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WHERE Junk=0  ORDER BY Id";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,50,50", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,40,40", this.Text, false, ",");
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
