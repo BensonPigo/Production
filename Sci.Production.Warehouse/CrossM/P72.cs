@@ -411,6 +411,15 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             StringBuilder sqlupd2_B = new StringBuilder();
             StringBuilder sqlupd2_FIO = new StringBuilder();
 
+            #region 603: WAREHOUSE_P72 。若P73已經收料了，則不能unconfirm。
+            string P73_status = MyUtility.GetValue.Lookup(string.Format(@"select Status from RequestCrossM where ID='{0}'", CurrentMaintain["CutplanID"]));
+            if (P73_status.ToUpper() == "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("This request id already confirmed in P73 , can't unconfirm.", "Warning");
+                return;
+            }
+            #endregion
+
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
