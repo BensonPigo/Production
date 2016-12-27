@@ -223,7 +223,9 @@ as
 (
 select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,o.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup,o.CFMDate,o.CutInLine,o.ProjectID
 ,rtrim(pd.seq1) seq1,pd.seq2,pd.StockPOID,pd.StockSeq1,pd.StockSeq2
-,pd.Qty*v.RateValue PoQty,pd.POUnit,pd.StockUnit
+--,pd.Qty*v.RateValue PoQty
+,ROUND(pd.Qty*v.RateValue,2,1) N'PoQty'
+,pd.POUnit,pd.StockUnit
 ,mpd.InQty
 from dbo.orders o 
 inner join dbo.PO_Supp_Detail pd on pd.id = o.ID
@@ -350,7 +352,7 @@ drop table #tmp");
             {
                 if (dr["selected"].ToString() == "True" && !MyUtility.Check.Empty(dr["requestqty"]))
                 {
-                    var issued = PublicPrg.Prgs.autopick(dr, false);
+                    var issued = PublicPrg.Prgs.autopick(dr, false,"I");
                     if (issued == null) return;
                     
                     foreach (DataRow dr2 in issued)
