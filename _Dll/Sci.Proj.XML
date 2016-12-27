@@ -502,6 +502,7 @@
             <returns>result of the method process.</returns>
         </member>
         <!-- 忽略成員 "M:Sci.MyUtility.File.UnRARFile(System.String,System.String,System.String)" 中格式錯誤的 XML 註解 -->
+        <!-- 忽略成員 "M:Sci.MyUtility.File.UnRARFile(System.String,System.Boolean,System.String,System.String,System.Boolean)" 中格式錯誤的 XML 註解 -->
         <member name="M:Sci.MyUtility.File.ReadPoperty(System.String,System.String)">
             <summary>
             讀取內容為 {key} = {value} 這種多行格式的文字檔
@@ -1411,6 +1412,16 @@
             </summary>
             <param name="sheet"></param>
         </member>
+        <member name="M:Sci.Utility.Excel.MyExcelPrg.splitDataTable(System.Data.DataTable,System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            Edward : 分割Datatable
+                 create : 2016-05-10 16:00:00
+            </summary>
+            <param name="dt"></param>
+            <param name="colIdx"></param>
+            <param name="LeftHeader"></param>
+            <returns></returns>
+        </member>
         <member name="T:Sci.Utility.Excel.SaveDataToExcel">
             <summary>
             Edward : Data轉存成Excel，可自設是否加Pivot Table及其他屬性
@@ -1462,16 +1473,6 @@
                  Step3.Save()
             </summary>
             <param name="Path"></param>
-        </member>
-        <member name="M:Sci.Utility.Excel.SaveXltReportCls.splitDataTable(System.Data.DataTable,System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Int32,System.Int32)">
-            <summary>
-            Edward : 分割Datatable
-                 create : 2016-05-10 16:00:00
-            </summary>
-            <param name="dt"></param>
-            <param name="colIdx"></param>
-            <param name="LeftHeader"></param>
-            <returns></returns>
         </member>
         <member name="M:Sci.Utility.Word.SaveDotReportCls.OpenFile(System.String)">
             <summary>
