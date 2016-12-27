@@ -53,7 +53,7 @@ namespace Sci.Production.Class
                { sqlWhere = sqlWhere + " And IsSubprocess =0 "; };
            };
            sqlCmd = "select ID, Abbreviation from ArtworkType " + sqlWhere + " order by Seq";
-           Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "22,4", this.Text, false, ",");
+           Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "14,4", this.Text, false, ",");
 
            DialogResult result = item.ShowDialog();
            if (result == DialogResult.Cancel) { return; }

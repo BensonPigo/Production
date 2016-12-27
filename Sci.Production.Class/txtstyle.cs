@@ -74,7 +74,7 @@ namespace Sci.Production.Class
             {
                 selectCommand = string.Format("select ID,SeasonID,Description,BrandID from Style where Junk = 0 and BrandID = '{0}' order by ID", this.brandObject.Text);
             }
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "16,10,50,8", this.Text);
+            item = new Sci.Win.Tools.SelectItem(selectCommand, "16,8,50,10", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
