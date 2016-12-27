@@ -82,12 +82,12 @@ namespace Sci.Production.Warehouse
             ns.IsSupportNegative = true;
             ns.CellValidating += (s, e) =>
             {
-                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                if (this.EditMode && e.FormattedValue != null)
                 {
                     DataRow thisRow = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
                     DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
                     DataRow currentrow = grid2.GetDataRow(grid2.GetSelectedRowIndex());
-                    currentrow["qty"] = e.FormattedValue;
+                    currentrow["qty"] = e.FormattedValue; 
                     currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
                     if (Convert.ToDecimal(e.FormattedValue) > 0)
                     {
@@ -98,7 +98,8 @@ namespace Sci.Production.Warehouse
                     {
                         currentrow["selected"] = false;
                         currentrow.GetParentRow("rel1")["selected"] = false;
-                    }                   
+                    }                 
+                    currentrow["qty"] = e.FormattedValue;  
                 }
             };
             #endregion
@@ -384,6 +385,7 @@ drop table #tmp");
 
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(master)) return;
             if (master.Rows.Count == 0) return;
 
             foreach (DataRow dr in master.Rows)

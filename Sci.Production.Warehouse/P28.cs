@@ -388,6 +388,9 @@ drop table #tmp");
 
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(master)) return;
+            if (master.Rows.Count == 0) return;
+
             foreach (DataRow dr in master.Rows)
             {
                 if (dr["selected"].ToString().ToUpper() == "TRUE")
