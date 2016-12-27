@@ -98,7 +98,7 @@ and CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Con
 isnull(v.SubConAddress,'') as SubConAddress,isnull(v.TotalQty,0) as TotalQty,
 vc.CustomSP,vc.Qty as GMTQty,isnull(vn.DescVI,'') as DescVI,isnull(vcd.NLCode,'') as NLCode,
 isnull(vn.UnitVI,'') as UnitVI,isnull(vcd.Qty,0) as Qty,isnull(vd.Waste,0)*100 as Waste,
-isnull(IIF(vd.LocalPurchase = 1,(select vn.DescVI from VNNLCodeDesc where NLCode = 'VNBUY'),(select vn.DescVI from VNNLCodeDesc where NLCode = 'NOVNBUY')),'') as Original,
+isnull(IIF(vd.LocalPurchase = 1,(select DescVI from VNNLCodeDesc where NLCode = 'VNBUY'),(select DescVI from VNNLCodeDesc where NLCode = 'NOVNBUY')),'') as Original,
 isnull(s.Picture1,'') as Picture1,isnull(s.Picture2,'') as Picture2,(select PicPath from System) as PicPath,vc.StyleID
 from VNConsumption vc
 left join VNConsumption_Detail vcd on vcd.ID = vc.ID
@@ -123,7 +123,7 @@ and vc.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), 
             else
             {
                 sqlCmd.Append(string.Format(@"Select ROW_NUMBER() OVER (ORDER BY v.CustomSP) as STT,v.StyleID, v.SeasonID, v.Version, 
-v.BrandID, v.Category,isnull(s.Type,'') as StyleType, isnull(r1.Name,'') as FabricType,
+v.BrandID, v.Category,isnull(s.Gender,'') as StyleType, isnull(r1.Name,'') as FabricType,
 isnull(r2.Name,'') as ApparelType, isnull(s.Lining,'') as Lining,v.SizeCode, v.CustomSP,
 v.Qty,isnull(s.StyleUnit,'') as StyleUnit, (v.CPU*v.VNMultiple) as CMP,(v.CPU*v.VNMultiple*v.Qty) as TtlCMP,
 [dbo].getOrderUnitPrice(1,v.StyleUKey,'','',v.SizeCode) as FOB,
@@ -251,7 +251,7 @@ and v.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), C
                     objArray[0, 4] = dr["Qty"];
                     objArray[0, 5] = "";
                     objArray[0, 6] = dr["Waste"];
-                    objArray[0, 7] = string.Format("=E{0}+G{0}",MyUtility.Convert.GetString(stt+13));
+                    objArray[0, 7] = string.Format("=E{0}+ROUND((E{0}*(G{0}/100)),3)",MyUtility.Convert.GetString(stt+13));
                     objArray[0, 8] = dr["Original"];
                     objArray[0, 9] = "";
                     worksheet.Range[String.Format("A{0}:J{0}", stt + 13)].Value2 = objArray;

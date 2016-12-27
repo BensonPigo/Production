@@ -36,9 +36,9 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
             this.radioButton3 = new Sci.Win.UI.RadioButton();
+            this.radioButton2 = new Sci.Win.UI.RadioButton();
+            this.radioButton1 = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -49,10 +49,12 @@
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(392, 48);
+            this.toexcel.TabIndex = 4;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(392, 84);
+            this.close.TabIndex = 5;
             // 
             // label1
             // 
@@ -77,7 +79,7 @@
             this.dateRange1.Location = new System.Drawing.Point(107, 12);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(251, 23);
-            this.dateRange1.TabIndex = 96;
+            this.dateRange1.TabIndex = 0;
             // 
             // textBox1
             // 
@@ -86,7 +88,7 @@
             this.textBox1.Location = new System.Drawing.Point(107, 48);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(80, 23);
-            this.textBox1.TabIndex = 97;
+            this.textBox1.TabIndex = 1;
             // 
             // textBox2
             // 
@@ -95,7 +97,7 @@
             this.textBox2.Location = new System.Drawing.Point(210, 48);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(80, 23);
-            this.textBox2.TabIndex = 98;
+            this.textBox2.TabIndex = 2;
             // 
             // label3
             // 
@@ -128,31 +130,7 @@
             this.radioPanel1.Location = new System.Drawing.Point(107, 80);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(193, 89);
-            this.radioPanel1.TabIndex = 101;
-            // 
-            // radioButton1
-            // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(4, 4);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(176, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Form for custom system";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(4, 32);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(142, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Each consumption";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioPanel1.TabIndex = 3;
             // 
             // radioButton3
             // 
@@ -166,6 +144,30 @@
             this.radioButton3.Text = "ANNEX";
             this.radioButton3.UseVisualStyleBackColor = true;
             // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioButton2.Location = new System.Drawing.Point(4, 32);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(142, 21);
+            this.radioButton2.TabIndex = 1;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Each consumption";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioButton1.Location = new System.Drawing.Point(4, 4);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(176, 21);
+            this.radioButton1.TabIndex = 0;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "Form for custom system";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
             // B42_Print
             // 
             this.ClientSize = new System.Drawing.Size(484, 205);
@@ -177,7 +179,6 @@
             this.Controls.Add(this.dateRange1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.EditMode = true;
             this.IsSupportToPrint = false;
             this.Name = "B42_Print";
             this.Text = "Print";
