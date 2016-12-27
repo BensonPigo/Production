@@ -6,7 +6,7 @@
     [Lines]            INT             CONSTRAINT [DF_Manpower_Lines] DEFAULT ((0)) NULL,
     [DirectManpower]   INT             CONSTRAINT [DF_Manpower_DirectManpower] DEFAULT ((0)) NULL,
     [ManpowerRatio]    NUMERIC (8, 2)  CONSTRAINT [DF_Manpower_ManpowerRatio] DEFAULT ((0)) NULL,
-    [TotalWorkhour]    NUMERIC (6, 2)  CONSTRAINT [DF_Manpower_TotalWorkhour] DEFAULT ((0)) NULL,
+    [TotalWorkhour]    NUMERIC (7, 2)  CONSTRAINT [DF_Manpower_TotalWorkhour] DEFAULT ((0)) NULL,
     [TotalCPU]         INT             CONSTRAINT [DF_Manpower_TotalCPU] DEFAULT ((0)) NULL,
     [InHouse]          INT             CONSTRAINT [DF_Manpower_InHouse] DEFAULT ((0)) NULL,
     [OperatingCost]    INT             CONSTRAINT [DF_Manpower_OperatingCost] DEFAULT ((0)) NULL,
