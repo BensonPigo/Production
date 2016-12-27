@@ -161,7 +161,7 @@
                                                               <Top>0.17721cm</Top>
                                                               <Left>3.01624cm</Left>
                                                               <Height>0.69249cm</Height>
-                                                              <Width>2.8575cm</Width>
+                                                              <Width>3.20146cm</Width>
                                                               <ZIndex>1</ZIndex>
                                                               <Style>
                                                                 <Border>
@@ -191,9 +191,9 @@
                                                               </Paragraphs>
                                                               <rd:DefaultName>Textbox33</rd:DefaultName>
                                                               <Top>0.17721cm</Top>
-                                                              <Left>5.87374cm</Left>
+                                                              <Left>6.2177cm</Left>
                                                               <Height>0.69249cm</Height>
-                                                              <Width>2.88396cm</Width>
+                                                              <Width>2.54cm</Width>
                                                               <ZIndex>2</ZIndex>
                                                               <Style>
                                                                 <Border>
@@ -469,7 +469,6 @@
                                           </Border>
                                         </Style>
                                       </Rectangle>
-                                      <rd:Selected>true</rd:Selected>
                                     </CellContents>
                                   </TablixCell>
                                 </TablixCells>
@@ -559,7 +558,7 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>1.35744in</Height>
+    <Height>1.34702in</Height>
     <Style />
   </Body>
   <Width>8.2in</Width>
@@ -1004,7 +1003,7 @@
           <Top>7.45807cm</Top>
           <Left>3.33375cm</Left>
           <Height>0.5602cm</Height>
-          <Width>2.8575cm</Width>
+          <Width>3.20146cm</Width>
           <ZIndex>13</ZIndex>
           <Style>
             <Border>
@@ -1268,9 +1267,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox33</rd:DefaultName>
           <Top>7.45807cm</Top>
-          <Left>6.19125cm</Left>
+          <Left>6.53521cm</Left>
           <Height>0.5602cm</Height>
-          <Width>2.88396cm</Width>
+          <Width>2.54cm</Width>
           <ZIndex>19</ZIndex>
           <Style>
             <Border>
@@ -1715,10 +1714,6 @@
           <DataField>Description</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Factory">
-          <DataField>Factory</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Group_FIDS">
           <DataField>Group_FIDS</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -1743,8 +1738,12 @@
           <DataField>Remark</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Supp">
-          <DataField>Supp</DataField>
+        <Field Name="Title1">
+          <DataField>Title1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="To">
+          <DataField>To</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Total_Quantity">

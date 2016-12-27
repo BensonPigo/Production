@@ -55,17 +55,17 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(503, 12);
+            this.print.Location = new System.Drawing.Point(439, 24);
             this.print.TabIndex = 1;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(503, 48);
+            this.toexcel.Location = new System.Drawing.Point(439, 60);
             this.toexcel.TabIndex = 2;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(503, 84);
+            this.close.Location = new System.Drawing.Point(439, 96);
             this.close.TabIndex = 3;
             // 
             // panel1
@@ -90,9 +90,9 @@
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(12, 12);
+            this.panel1.Location = new System.Drawing.Point(8, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(481, 277);
+            this.panel1.Size = new System.Drawing.Size(409, 277);
             this.panel1.TabIndex = 0;
             // 
             // comboBox2
@@ -101,7 +101,7 @@
             this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(127, 135);
+            this.comboBox2.Location = new System.Drawing.Point(114, 135);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(121, 24);
             this.comboBox2.TabIndex = 6;
@@ -110,7 +110,7 @@
             // 
             this.textBox4.BackColor = System.Drawing.Color.White;
             this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(285, 104);
+            this.textBox4.Location = new System.Drawing.Point(272, 106);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(122, 23);
             this.textBox4.TabIndex = 5;
@@ -119,7 +119,7 @@
             // 
             this.label10.BackColor = System.Drawing.SystemColors.Control;
             this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(258, 106);
+            this.label10.Location = new System.Drawing.Point(245, 106);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(20, 23);
             this.label10.TabIndex = 17;
@@ -130,7 +130,7 @@
             // 
             this.textBox3.BackColor = System.Drawing.Color.White;
             this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(127, 106);
+            this.textBox3.Location = new System.Drawing.Point(114, 106);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(121, 23);
             this.textBox3.TabIndex = 4;
@@ -139,7 +139,7 @@
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(285, 75);
+            this.textBox2.Location = new System.Drawing.Point(272, 75);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(122, 23);
             this.textBox2.TabIndex = 3;
@@ -148,7 +148,7 @@
             // 
             this.label9.BackColor = System.Drawing.SystemColors.Control;
             this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(258, 76);
+            this.label9.Location = new System.Drawing.Point(245, 76);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(22, 23);
             this.label9.TabIndex = 14;
@@ -159,7 +159,7 @@
             // 
             this.textBox1.BackColor = System.Drawing.Color.White;
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(127, 76);
+            this.textBox1.Location = new System.Drawing.Point(114, 76);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(121, 23);
             this.textBox1.TabIndex = 2;
@@ -174,7 +174,7 @@
             "PO List",
             "PO Form",
             "PO Order"});
-            this.comboBox1.Location = new System.Drawing.Point(127, 235);
+            this.comboBox1.Location = new System.Drawing.Point(114, 235);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
             this.comboBox1.TabIndex = 9;
@@ -184,7 +184,7 @@
             // 
             this.txtsubcon1.DisplayBox1Binding = "";
             this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(126, 205);
+            this.txtsubcon1.Location = new System.Drawing.Point(114, 205);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(214, 23);
             this.txtsubcon1.TabIndex = 8;
@@ -196,7 +196,7 @@
             this.txtartworktype_fty1.cClassify = "\'P\'";
             this.txtartworktype_fty1.cSubprocess = "";
             this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_fty1.Location = new System.Drawing.Point(127, 168);
+            this.txtartworktype_fty1.Location = new System.Drawing.Point(114, 168);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(153, 23);
             this.txtartworktype_fty1.TabIndex = 7;
@@ -204,16 +204,14 @@
             // 
             // dateRange2
             // 
-            this.dateRange2.Location = new System.Drawing.Point(127, 41);
+            this.dateRange2.Location = new System.Drawing.Point(114, 41);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(280, 23);
             this.dateRange2.TabIndex = 1;
-            this.dateRange2.Value1 = new System.DateTime(2015, 1, 31, 0, 0, 0, 0);
-            this.dateRange2.Value2 = new System.DateTime(2015, 2, 1, 0, 0, 0, 0);
             // 
             // dateRange1
             // 
-            this.dateRange1.Location = new System.Drawing.Point(127, 8);
+            this.dateRange1.Location = new System.Drawing.Point(114, 8);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
             this.dateRange1.TabIndex = 0;
@@ -225,7 +223,7 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(94, 23);
             this.label8.TabIndex = 7;
-            this.label8.Text = "Report Type..:";
+            this.label8.Text = "Report Type";
             // 
             // label7
             // 
@@ -234,7 +232,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(94, 23);
             this.label7.TabIndex = 6;
-            this.label7.Text = "Supplier.......:";
+            this.label7.Text = "Supplier";
             // 
             // label6
             // 
@@ -243,7 +241,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(94, 23);
             this.label6.TabIndex = 5;
-            this.label6.Text = "Category....:";
+            this.label6.Text = "Category";
             // 
             // label5
             // 
@@ -252,7 +250,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(94, 23);
             this.label5.TabIndex = 4;
-            this.label5.Text = "Factory.........:";
+            this.label5.Text = "Factory";
             // 
             // label4
             // 
@@ -261,7 +259,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(94, 23);
             this.label4.TabIndex = 3;
-            this.label4.Text = "Local Poid.....:";
+            this.label4.Text = "Local Poid";
             // 
             // label3
             // 
@@ -270,7 +268,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(94, 23);
             this.label3.TabIndex = 2;
-            this.label3.Text = "SP No..........:";
+            this.label3.Text = "SP No";
             // 
             // label2
             // 
@@ -279,7 +277,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(94, 23);
             this.label2.TabIndex = 1;
-            this.label2.Text = "Issue Date..:";
+            this.label2.Text = "Issue Date";
             // 
             // label1
             // 
@@ -288,13 +286,13 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(94, 23);
             this.label1.TabIndex = 0;
-            this.label1.Text = "SCI Delivery.:";
+            this.label1.Text = "SCI Delivery";
             // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(503, 151);
+            this.checkBox1.Location = new System.Drawing.Point(427, 151);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(117, 21);
             this.checkBox1.TabIndex = 0;
@@ -304,10 +302,11 @@
             // 
             // R26
             // 
-            this.ClientSize = new System.Drawing.Size(627, 314);
+            this.ClientSize = new System.Drawing.Size(547, 314);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.panel1);
             this.Name = "R26";
+            this.Text = "R26. Local PO Report";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);

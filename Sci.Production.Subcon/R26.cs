@@ -13,6 +13,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using Sci.Utility.Excel;
+//using Ict.Win.Tools;
 
 namespace Sci.Production.Subcon
 {
@@ -24,16 +25,15 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             DataTable factory;
-            string sqlcmd = (@"select DISTINCT ftygroup FROM DBO.Factory");
-            DBProxy.Current.Select("", sqlcmd, out factory);
-            this.comboBox2.DataSource = factory;
-            this.comboBox2.ValueMember = "ftygroup";
-            this.comboBox2.DisplayMember = "ftygroup";
-            this.comboBox2.SelectedIndex = 0;
+            DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory", out factory);
+            MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
+            comboBox2.Text = Sci.Env.User.Factory;
+            this.comboBox1.SelectedIndex = 0;
             this.checkBox1.Enabled = false;
         }
         List<SqlParameter> lis;
         string sqlWhere = "";
+        string all = "";
         List<string> sqlWheres = new List<string>();
         DataTable dtt;
         DualResult result;
@@ -71,6 +71,14 @@ namespace Sci.Production.Subcon
 
                 return false;
             }
+
+            if (this.comboBox1.SelectedItem.Empty())
+            {
+                MyUtility.Msg.ErrorBox("[Report_Type] can't empty!!");
+                textBox1.Focus();
+                return false;
+            }
+
             lis = new List<SqlParameter>();
             SCI_Delivery = dateRange1.Value1;
             SCI_Delivery2 = dateRange1.Value2;
@@ -92,41 +100,41 @@ namespace Sci.Production.Subcon
 
             if (!this.SP.Empty() && !this.SP2.Empty())
             {
-                sqlWheres.Add("c.orderid between @SP and @SP2");
+                sqlWheres.Add("b.orderid between @SP and @SP2");
                 lis.Add(new SqlParameter("@SP", SP));
                 lis.Add(new SqlParameter("@SP2", SP2));
             }
             if (!this.SCI_Delivery.Empty() && !this.SCI_Delivery2.Empty())
             {
-                sqlWheres.Add("a.scidelivery between @SCI_Delivery and @SCI_Delivery2");
+                sqlWheres.Add("c.scidelivery between @SCI_Delivery and @SCI_Delivery2");
                 lis.Add(new SqlParameter("@SCI_Delivery", SCI_Delivery));
                 lis.Add(new SqlParameter("@SCI_Delivery2", SCI_Delivery2));
             }
             if (!this.Issue_Date1.Empty() && !this.Issue_Date2.Empty())
             {
-                sqlWheres.Add("b.issuedate between @Issue_Date1 and @Issue_Date2");
+                sqlWheres.Add("a.issuedate between @Issue_Date1 and @Issue_Date2");
                 lis.Add(new SqlParameter("@Issue_Date1", Issue_Date1));
                 lis.Add(new SqlParameter("@Issue_Date2", Issue_Date2));
             }
             if (!this.Location_Poid.Empty() && !this.Location_Poid2.Empty())
             {
-                sqlWheres.Add("b.id between @Location_Poid and @Location_Poid2");
+                sqlWheres.Add("a.id between @Location_Poid and @Location_Poid2");
                 lis.Add(new SqlParameter("@Location_Poid", Location_Poid));
                 lis.Add(new SqlParameter("@Location_Poid2", Location_Poid2));
             }
             if (!this.Factory1.Empty())//(Factory != "")
             {
-                sqlWheres.Add("b.factoryid =@Factory");
+                sqlWheres.Add("a.factoryid =@Factory");
                 lis.Add(new SqlParameter("@Factory", Factory1));
             }
             if (!this.Supplier.Empty())
             {
-                sqlWheres.Add("b.localsuppid =@Supplier");
+                sqlWheres.Add("a.localsuppid =@Supplier");
                 lis.Add(new SqlParameter("@Supplier", Supplier));
             }
             if (!this.Category.Empty())
             {
-                sqlWheres.Add("b.category =@Category");
+                sqlWheres.Add("a.category =@Category");
                 lis.Add(new SqlParameter("@Category", Category));
             }
 
@@ -135,6 +143,7 @@ namespace Sci.Production.Subcon
             {
                 sqlWhere = " where " + sqlWhere;
             }
+            all = "select Title1,Title2,Title3,To#,Tel,Fax,Issue_Date,PO,Code,Color_Shade,Description,Quantity,Unit,Unit_Price,Amount,[Total_Quantity]=sum(Quantity) over (PARTITION BY po,code),Remark,Total1,Total2,currencyid,vat,Grand_Total  from #temp";
             #endregion
 
 
@@ -145,61 +154,60 @@ namespace Sci.Production.Subcon
         {
             if (this.Report_Type == "PO List")
             {
-             #region Po List
-                string sqlcd = string.Format(@"select  a.FactoryID [Factory]
-                                                    ,b.FactoryId [Original Factory]
-                                                    ,c.OrderId [SP]
-                                                    ,a.StyleID [Style]
-                                                    ,a.SeasonID [Season]
-                                                    ,b.LocalSuppID+'-'+d.Abb [Supp]
-                                                    ,c.Delivery [Delivery]
-                                                    ,c.Refno [Code]
-                                                    ,c.ThreadColorID [Color_Shade]
-                                                    ,b.IssueDate [Issue_Date]
-                                                    ,[Description]=dbo.getItemDesc(b.Category,c.Refno)
-                                                    ,c.Qty [PO_Qty]
-                                                    ,c.UnitId [Unit]
-                                                    ,c.Price [Price]
-                                                    ,c.Qty*c.Price [Amount]
-                                                    ,c.InQty [In-Coming]
-                                                    ,c.APQty [AP_Qty]
-                                                    ,c.Remark [Remark]
-                                           from dbo.Orders a
-                                           left join dbo.LocalPO b on a.factoryid=b.factoryid
-                                           left join dbo.LocalPO_Detail c on a.id=c.OrderId
-                                           left join dbo.LocalSupp d on b.LocalSuppID=d.ID  " + sqlWhere);
+                #region Po List
+                string sqlcd = string.Format(@"select DISTINCT c.FactoryID
+	                                                 ,a.FactoryId
+	                                                 ,b.OrderId
+	                                                 ,c.StyleID
+	                                                 ,c.SeasonID
+	                                                 ,a.LocalSuppID+'-'+d.Abb [Supp]
+	                                                 ,b.Delivery
+	                                                 ,b.Refno
+	                                                 ,b.ThreadColorID
+	                                                 ,a.IssueDate
+	                                                 ,dbo.getItemDesc(a.Category,b.Refno) [Description]
+	                                                 ,b.qty
+	                                                 ,b.UnitId
+	                                                 ,b.Price
+	                                                 ,b.Qty*b.Price[Amount]
+	                                                 ,b.InQty
+	                                                 ,b.APQty
+	                                                 ,b.Remark
+                                            from localpo a
+                                            inner join LocalPO_Detail b on a.id=b.id
+                                            inner join orders c on c.poid=b.OrderId
+                                            left join localsupp d  on  d.id =a.LocalSuppID " + sqlWhere);
                 result = DBProxy.Current.Select("", sqlcd, lis, out dtt);
                 if (!result)
-                {
-                    return result;
-                }
-            #endregion
+                { return result; }
+                #endregion
             }
             else if (this.Report_Type == "PO Order")
             {
-            #region Po Order
-                string cmd = string.Format(@"select  b.id [LocalPOID]
-                                                ,b.FactoryId [Factory]
-		                                        ,b.FactoryId+'-'+b.Id [TheOrderID]
-                                                ,c.OrderId [SP]
-                                                ,b.LocalSuppID [Supp]
-                                                ,c.Delivery [Delivery]
-                                                ,c.Refno [Code]
-                                                ,c.ThreadColorID [Color_Shade]
-                                                ,b.IssueDate [Issue_Date]
-                                                ,[Description]=dbo.getItemDesc(b.Category,c.Refno)
-                                                ,sum(c.Qty) [Order_Qty]
-                                                ,c.UnitId [Unit]
-                                                ,sum(c.price) [Price]
-                                                ,sum(c.qty * c.price) [Amount]
-                                                ,sum(c.InQty) [In-Coming]
-                                                ,sum(c.APQty) [AP_Qty]
-                                       from dbo. LocalPO b
-                                       inner join Orders a on b.FactoryId = a.FactoryID
-                                       left join dbo.LocalPO_Detail c on b.id=c.Id
+                #region Po Order
+                string cmd = string.Format(@"select  a.id [LocalPOID]
+                                                    ,a.FactoryId [Factory]
+		                                            ,a.FactoryId+'-'+a.Id [TheOrderID]
+                                                    ,b.OrderId [SP]
+                                                    ,a.LocalSuppID [Supp]
+                                                    ,b.Delivery [Delivery]
+                                                    ,b.Refno [Code]
+                                                    ,b.ThreadColorID [Color_Shade]
+                                                    ,a.IssueDate [Issue_Date]
+                                                    ,[Description]=dbo.getItemDesc(a.Category,b.Refno)
+                                                    ,sum(b.Qty) [Order_Qty]
+                                                    ,b.UnitId [Unit]
+                                                    ,sum(b.price) [Price]
+                                                    ,sum(b.qty * b.price) [Amount]
+                                                    ,sum(b.InQty) [In-Coming]
+                                                    ,sum(b.APQty) [AP_Qty]
+                                       from localpo a
+                                       inner join LocalPO_Detail b on a.id=b.id
+                                       inner join orders c on c.poid=b.OrderId
+                                       left join localsupp d  on  d.id =a.LocalSuppID
                                        " + sqlWhere + @"
-		                               group by b.id, b.FactoryId, c.OrderId, b.LocalSuppID, c.Delivery, c.Refno, c.ThreadColorID, b.IssueDate, b.Category, c.Refno, c.UnitId
-		                               order by b.id, b.FactoryId");
+		                               group by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID, a.IssueDate, a.Category, b.Refno, b.UnitId
+		                               order by a.id, a.FactoryId");
                 result = DBProxy.Current.Select("", cmd, lis, out da);
                 if (!result)
                 {
@@ -210,91 +218,99 @@ namespace Sci.Production.Subcon
             else //if (this.comboBox1.Text == "PO Form")
             {
                 #region PO Form
-                result = DBProxy.Current.Select("", @"select e.NameEN [Title1] 
+                result = DBProxy.Current.Select("", @"select distinct e.NameEN [Title1] 
                                                        ,e.AddressEN [Title2]
                                                        ,e.Tel [Title3]
-                                                       ,b.LocalSuppID [To]
+                                                       ,a.LocalSuppID [To#]
                                                        ,d.Tel [Tel]
                                                        ,d.Fax [Fax]
-                                                       ,format(b.IssueDate,'yyyy/MM/dd') [Issue_Date]
-                                                       ,c.Id [PO]
-                                                       ,c.Refno [Code]
-                                                       ,c.ThreadColorID [Color_Shade]
-                                                       ,[Description]=dbo.getItemDesc(b.Category,c.Refno)
-                                                       ,c.Qty [Quantity]
-                                                       ,c.UnitId [Unit]
-                                                       ,cast(cast(isnull(c.Price , 0 ) as float) as varchar)[Unit_Price]
-													   ,cast(cast(isnull(c.Qty*c.Price , 0 ) as float) as varchar)[Amount]
-                                                       ,[Total_Quantity]=sum(c.Qty) OVER (PARTITION BY c.Id,c.Refno) 
-                                                       ,c.Remark [Remark] 
-                                                       ,b.CurrencyId [Total1] 
-                                                       ,b.Amount [Total2]
-                                                       ,b.CurrencyId [currencyid]
-                                                       ,b.Vat [vat]
-                                                       ,b.Amount+b.Vat [Grand_Total]     
-	                                         from dbo.localpo b 
-                                             left join dbo.Factory  e on e.id = b.factoryid 
-	                                         left join dbo.LocalPO_Detail c on b.id=c.Id
-                                             left join orders a on c.orderid = a.id
-	                                         left join dbo.LocalSupp d on b.LocalSuppID=d.ID " + sqlWhere, lis, out dt);
-         
-                if (!result)
+                                                       ,format(a.IssueDate,'yyyy/MM/dd') [Issue_Date]
+                                                       ,b.OrderId [PO]
+                                                       ,b.Refno [Code]
+                                                       ,b.ThreadColorID [Color_Shade]
+                                                       ,[Description]=dbo.getItemDesc(a.Category,b.Refno)
+                                                       ,b.Qty [Quantity]
+                                                       ,b.UnitId [Unit]
+                                                       ,cast(cast(isnull(b.Price , 0 ) as float) as varchar)[Unit_Price]
+													   ,cast(cast(isnull(b.Qty*b.Price , 0 ) as float) as varchar)[Amount]
+                                                       ,[Total_Quantity]=sum(b.Qty) OVER (PARTITION BY b.orderid,b.Refno) 
+                                                       ,a.Remark [Remark] 
+                                                       ,a.CurrencyId [Total1] 
+                                                       ,a.Amount [Total2]
+                                                       ,a.CurrencyId [currencyid]
+                                                       ,a.Vat [vat]
+                                                       ,a.Amount+a.Vat [Grand_Total]
+                                                       ,c.SciDelivery [SciDelivery]
+													   ,a.IssueDate[issd] 
+													   ,a.id [id]
+													   ,a.FactoryId [ftyid] 
+													   ,a.LocalSuppID [lospid] 
+													   ,a.Category[Category]   
+                                                        into #temp  
+	                                         from dbo.localpo a 
+											 inner join LocalPO_Detail b on b.id=a.Id
+                                             inner join orders c on c.poid=b.OrderId
+											 left join LocalSupp d on a.LocalSuppID=d.ID
+                                             left join Factory  e on e.id = a.factoryid" + sqlWhere+" "+all, lis, out dt);
+
+
+                if (!result )
                 {
                     return result;
                 }
 
+                 
+                //{
+                //    if (dt.Rows.Count < 0) { return result; }
+                //}
 
-                string Title1 = dt.Rows[0]["Title1"].ToString();
-                string Title2 = dt.Rows[0]["Title2"].ToString();
-                string Title3 = dt.Rows[0]["Title3"].ToString();
-                string To = dt.Rows[0]["To"].ToString();
-                string Tel = dt.Rows[0]["Tel"].ToString();
-                string Fax = dt.Rows[0]["Fax"].ToString();
-                string Issue_Date = dt.Rows[0]["Issue_Date"].ToString();
-                string Total1 = dt.Rows[0]["Total1"].ToString();
-                string Total2 = dt.Rows[0]["Total2"].ToString();
-                string CurrencyId = dt.Rows[0]["currencyid"].ToString();
-                string vat = dt.Rows[0]["vat"].ToString();
-                string Grand_Total = dt.Rows[0]["Grand_Total"].ToString();
-                ReportDefinition report = e.Report;
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("To", To));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issue_Date", Issue_Date));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total1", Total1));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total2", Total2));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyId", CurrencyId));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Grand_Total", Grand_Total));
+                    string Title1 = dt.Rows[0]["Title1"].ToString();
+                    string Title2 = dt.Rows[0]["Title2"].ToString();
+                    string Title3 = dt.Rows[0]["Title3"].ToString();
+                    string To = dt.Rows[0]["To#"].ToString();
+                    string Tel = dt.Rows[0]["Tel"].ToString();
+                    string Fax = dt.Rows[0]["Fax"].ToString();
+                    string Issue_Date = dt.Rows[0]["Issue_Date"].ToString();
+                    string Total1 = dt.Rows[0]["Total1"].ToString();
+                    string Total2 = dt.Rows[0]["Total2"].ToString();
+                    string CurrencyId = dt.Rows[0]["currencyid"].ToString();
+                    string vat = dt.Rows[0]["vat"].ToString();
+                    string Grand_Total = dt.Rows[0]["Grand_Total"].ToString();
+                    ReportDefinition report = e.Report;
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("To", To));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issue_Date", Issue_Date));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total1", Total1));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total2", Total2));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyId", CurrencyId));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Grand_Total", Grand_Total));
 
-                // 傳 list 資料            
-                List<R26_PrintData> data = dt.AsEnumerable()
-                    .Select(row1 => new R26_PrintData()
-                    {
-                        PO = row1["PO"].ToString(),
-                        Code = row1["Code"].ToString(),
-                        Color_Shade = row1["Color_Shade"].ToString(),
-                        Description = row1["Description"].ToString(),
-                        Quantity = row1["Quantity"].ToString(),
-                        Unit = row1["Unit"].ToString(),
-                        Unit_Price = row1["Unit_Price"].ToString(),
-                        Amount = row1["Amount"].ToString(),
-                        Total_Quantity = row1["Total_Quantity"].ToString(),
-                        Remark = row1["Remark"].ToString(),
-                        Title1 = row1["Title1"].ToString(),
-                        Issue_Date = row1["Issue_Date"].ToString(),
-                        To = row1["To"].ToString()
+                    // 傳 list 資料            
+                    List<R26_PrintData> data = dt.AsEnumerable()
+                        .Select(row1 => new R26_PrintData()
+                        {
+                            PO = row1["PO"].ToString(),
+                            Code = row1["Code"].ToString(),
+                            Color_Shade = row1["Color_Shade"].ToString(),
+                            Description = row1["Description"].ToString(),
+                            Quantity = row1["Quantity"].ToString(),
+                            Unit = row1["Unit"].ToString(),
+                            Unit_Price = row1["Unit_Price"].ToString(),
+                            Amount = row1["Amount"].ToString(),
+                            Total_Quantity = row1["Total_Quantity"].ToString(),
+                            Remark = row1["Remark"].ToString(),
+                            Title1 = row1["Title1"].ToString(),
+                            Issue_Date = row1["Issue_Date"].ToString(),
+                            To = row1["To#"].ToString()
+                        }).ToList();
 
-
-
-                    }).ToList();
-
-                report.ReportDataSource = data;
-
-
+                    report.ReportDataSource = data;
+               
                 #endregion
             }
 
@@ -302,18 +318,19 @@ namespace Sci.Production.Subcon
             if (Category.TrimEnd().Equals("CARTON", StringComparison.OrdinalIgnoreCase) && checkBox1.Checked == true)
             {
             #region Shipping Mark
-                string scmd = string.Format(@"select a.id [id]
+                string scmd = string.Format(@"select distinct c.id [id]
                                                     ,co.alias [name]
-                                                    ,RTRIM(a.id)+' '+RTRIM(co.Alias) [theorderid]
-                                                    ,a.MarkFront [A]
-                                                    ,a.MarkBack [B]
-                                                    ,a.markleft [C]
-                                                    ,a.Markright [D]
-                                             from orders a
-                                             inner join ( select distinct OrderId from localpo b
-                                             inner join localpo_detail c on b.id = c.id
-                                             inner join Orders a on a.poid = c.orderid  " + sqlWhere + @") m  on m.OrderId = a.poid 
-                                             left join country co on co.id = a.dest");
+                                                    ,left(RTRIM(c.id)+' '+RTRIM(co.Alias),30) [theorderid]
+                                                    ,c.MarkFront [A]
+                                                    ,c.MarkBack [B]
+                                                    ,c.markleft [C]
+                                                    ,c.Markright [D]
+                                             from orders c
+                                             inner join (select distinct OrderId from localpo a
+                                             inner join localpo_detail b on a.id = b.id
+                                             inner join Orders c on c.poid = b.orderid  " + sqlWhere + @") m  on m.OrderId = c.poid 
+                                             inner join country co on co.id = c.dest"
+                                             );
                 result = DBProxy.Current.Select("", scmd, lis, out shm);
 
 
@@ -329,21 +346,19 @@ namespace Sci.Production.Subcon
         }
 
 
-        
-    
-
-
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.Report_Type == "PO List" && (dtt == null || dtt.Rows.Count == 0))
             {
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
-            } if (this.Report_Type == "PO Order" && (da == null || da.Rows.Count == 0))
+            } 
+            if (this.Report_Type == "PO Order" && (da == null || da.Rows.Count == 0))
             {
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
-            } if (this.Report_Type == "PO Form" && (shm == null || shm.Rows.Count == 0))
+            }
+            if (this.Report_Type == "PO Form" && (shm == null || shm.Rows.Count == 0))
             {
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
@@ -455,7 +470,7 @@ namespace Sci.Production.Subcon
                     x1.dicDatas.Add("##D" + idxstr, D);
                     idx += 1;
                 }
-                x1.Save(outpath1, false);
+                x1.Save(outpath1, true);
             }
             #endregion
            return true; //return base.OnToExcel(report);
@@ -483,6 +498,7 @@ namespace Sci.Production.Subcon
 
             }
         }
+
         private void txtartworktype_fty1_TextChanged(object sender, EventArgs e)
         {
             checkBox1.Checked = false;
@@ -499,7 +515,6 @@ namespace Sci.Production.Subcon
 
             }
         }
-
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
