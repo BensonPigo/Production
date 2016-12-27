@@ -3,7 +3,7 @@
     [Id]          VARCHAR (13)  CONSTRAINT [DF_Bundle_Detail_Id] DEFAULT ((0)) NOT NULL,
     [BundleGroup] NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_BundleGroup] DEFAULT ((0)) NULL,
     [Patterncode] VARCHAR (20)  CONSTRAINT [DF_Bundle_Detail_Patterncode] DEFAULT ('') NOT NULL,
-    [PatternDesc] NVARCHAR (40) CONSTRAINT [DF_Bundle_Detail_PatternDesc] DEFAULT ('') NOT NULL,
+    [PatternDesc] NVARCHAR (100) CONSTRAINT [DF_Bundle_Detail_PatternDesc] DEFAULT ('') NOT NULL,
     [SizeCode]    VARCHAR (8)   CONSTRAINT [DF_Bundle_Detail_SizeCode] DEFAULT ('') NULL,
     [Qty]         NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_Qty] DEFAULT ((0)) NULL,
     [Parts]       NUMERIC (5)   CONSTRAINT [DF_Bundle_Detail_Parts] DEFAULT ((0)) NULL,
