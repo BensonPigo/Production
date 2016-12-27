@@ -82,7 +82,7 @@ namespace Sci.Production.Class
                         {
                             selectCommand = string.Format("select ID, Name, ExtNo, Factory from Pass1 where Name = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable,"ID,Name,ExtNo,Factory", "15,30,10,150", this.textBox1.Text);
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable,"ID,Name,ExtNo,Factory", "14,24,10,150", this.textBox1.Text);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) 
                             {
@@ -96,7 +96,7 @@ namespace Sci.Production.Class
                         {
                             selectCommand = string.Format("select ID, Name, ExtNo, Factory from Pass1 where Ext_No = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "15,30,10,150", this.textBox1.Text);
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "14,24,10,150", this.textBox1.Text);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -173,7 +173,7 @@ namespace Sci.Production.Class
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo,Factory from Pass1 where Resign is null order by ID", "15,30,10,150", this.textBox1.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo,Factory from Pass1 where Resign is null order by ID", "14,24,10,150", this.textBox1.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
