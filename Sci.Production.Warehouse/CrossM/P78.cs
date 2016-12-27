@@ -302,6 +302,17 @@ namespace Sci.Production.Warehouse
             string sqlupd2_BI= "";
             string sqlupd2_FIO = "";
 
+            #region 603: WAREHOUSE_P78 。若P77還沒 confirm，則P78 不能confirm。
+            string P78_status = MyUtility.GetValue.Lookup(string.Format(@"
+select status from Issue 
+where ID='{0}'", CurrentMaintain["ReferenceID"]));
+            if (P78_status.ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("This request id not already confirmed in P77 , can't confirm.", "Warning");
+                return;
+            }
+            #endregion
+
             #region 檢查負數庫存
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
