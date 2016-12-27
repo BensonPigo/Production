@@ -34,7 +34,7 @@ namespace Sci.Production.Warehouse
             String fromSP = this.textBox3.Text.TrimEnd();
             if (seq.Length!=5)
             {
-                MyUtility.Msg.WarningBox("Seq need enter 00-00");
+                MyUtility.Msg.WarningBox("Seq need enter 00 00");
                 return;
             }
             string seq1 = seq.Substring(0, 2).Trim();
