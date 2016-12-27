@@ -2,9 +2,11 @@
     [ID]            VARCHAR (13) CONSTRAINT [DF_WorkOrder_PatternPanel_ID] DEFAULT ('') NULL,
     [WorkOrderUkey] BIGINT       CONSTRAINT [DF_WorkOrder_PatternPanel_WorkOrderUkey] DEFAULT ((0)) NOT NULL,
     [PatternPanel]  VARCHAR (2)  CONSTRAINT [DF_WorkOrder_PatternPanel_PatternPanel] DEFAULT ('') NOT NULL,
-    [LectraCode]    VARCHAR (2)  CONSTRAINT [DF_WorkOrder_PatternPanel_LectraCode] DEFAULT ('') NULL,
-    CONSTRAINT [PK_WorkOrder_PatternPanel] PRIMARY KEY CLUSTERED ([WorkOrderUkey] ASC, [PatternPanel] ASC)
+    [LectraCode]    VARCHAR (2)  CONSTRAINT [DF_WorkOrder_PatternPanel_LectraCode] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_WorkOrder_PatternPanel] PRIMARY KEY CLUSTERED ([WorkOrderUkey] ASC, [PatternPanel] ASC, [LectraCode] ASC)
 );
+
+
 
 
 GO
