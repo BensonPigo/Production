@@ -336,6 +336,32 @@ namespace Sci.Production.Warehouse
             }
 
 
+            DataTable subDT;            
+            foreach (DataRow dr in DetailDatas)
+            {
+                if (GetSubDetailDatas(dr, out subDT))
+                {
+                    DataTable tmp = subDT.Clone();
+                    foreach (DataRow dr2 in subDT.Rows)
+                    {
+                        dr2.AcceptChanges();
+                        dr2.SetAdded();
+                        tmp.ImportRow(dr2);
+                    }
+
+                    subDT.Clear();
+                    foreach (DataRow dr2 in tmp.Rows)
+                    {
+                        dr2.AcceptChanges();
+                        dr2.SetAdded();
+                        subDT.ImportRow(dr2);
+                    }
+                    sum_subDetail(dr, subDT);
+                }
+
+            }
+
+
             //取單號
             if (this.IsDetailInserting)
             {
@@ -347,7 +373,11 @@ namespace Sci.Production.Warehouse
                 }
                 CurrentMaintain["id"] = tmpId;
             }
-            
+
+            //AutoPick 前清空資料，避免資料重複儲存
+            string sqlst = string.Format(@"delete Issue_Detail where id = '{0}'", CurrentMaintain["id"]);
+            DBProxy.Current.Execute(null, sqlst);
+
             return base.ClickSaveBefore();
         }
 
@@ -378,10 +408,6 @@ namespace Sci.Production.Warehouse
 
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
-            //AutoPick 前清空資料，避免資料重複儲存
-            string sqlst = string.Format(@"delete Issue_Detail where id = '{0}'", CurrentMaintain["id"]);
-            DBProxy.Current.Execute(null, sqlst);
-
             DataTable subDT;
             foreach (DataRow dr in DetailDatas)
             {
