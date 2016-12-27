@@ -2520,6 +2520,118 @@ on t.type=s.type and t.id=s.id
 		when not matched by source then
 			delete;
   
+		--Fabric_Supp
+		--Fabric_Supp 無多欄位
+		----------------------刪除主TABLE多的資料
+		Delete Production.dbo.Fabric_Supp
+		from Production.dbo.Fabric_Supp as a left join Trade_To_Pms.dbo.Fabric_Supp as b
+		on a.SuppID = b.SuppID and a.SCIRefno = b.SCIRefno
+		where b.SuppID is null
+		---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+		UPDATE a
+		SET  
+			   a.AbbCH	       = b.AbbCH	      
+			  ,a.AbbEN	       = b.AbbEN	      
+			  ,a.AddDate	   = b.AddDate	  
+			  ,a.AddName	   = b.AddName	  
+			  ,a.AllowanceRate = b.AllowanceRate
+			  ,a.AllowanceType = b.AllowanceType
+			  ,a.BrandID	   = b.BrandID	  
+			  ,a.Delay		   = b.Delay		  
+			  ,a.DelayMemo	   = b.DelayMemo	  
+			  ,a.EditDate	   = b.EditDate	  
+			  ,a.EditName	   = b.EditName	  
+			  ,a.IsECFA		   = b.IsECFA		  
+			  ,a.ItemType	   = b.ItemType	  
+			  ,a.Junk		   = b.Junk		  
+			  ,a.Keyword	   = b.Keyword	  
+			  ,a.Lock		   = b.Lock		  
+			  ,a.LTDay		   = b.LTDay		  
+			  ,a.NOForecast	   = b.NOForecast	  
+			  ,a.OldSys_Ukey   = b.OldSys_Ukey  
+			  ,a.OldSys_Ver	   = b.OldSys_Ver	  
+			  ,a.OrganicCotton = b.OrganicCotton
+			  ,a.POUnit		   = b.POUnit		  
+			  ,a.PreShrink	   = b.PreShrink	  
+			  ,a.Refno		   = b.Refno		  
+			  ,a.Remark		   = b.Remark		  
+			  ,a.SeasonID	   = b.SeasonID	  
+			  ,a.ShowSuppColor = b.ShowSuppColor
+			  ,a.SuppRefno	   = b.SuppRefno
+
+		from Production.dbo.Fabric_Supp as a 
+		inner join Trade_To_Pms.dbo.Fabric_Supp as b ON a.SuppID=b.SuppID and a.SCIRefno = b.SCIRefno
+		-------------------------- INSERT INTO 抓
+		INSERT INTO Production.dbo.Fabric_Supp(
+				 AbbCH	      
+				,AbbEN	      
+				,AddDate	  
+				,AddName	  
+				,AllowanceRate
+				,AllowanceType
+				,BrandID	  
+				,Delay		  
+				,DelayMemo	  
+				,EditDate	  
+				,EditName	  
+				,IsECFA		  
+				,ItemType	  
+				,Junk		  
+				,Keyword	  
+				,Lock		  
+				,LTDay		  
+				,NOForecast	  
+				,OldSys_Ukey  
+				,OldSys_Ver	  
+				,OrganicCotton
+				,POUnit		  
+				,PreShrink	  
+				,Refno		  
+				,Remark		  
+				,SeasonID	  
+				,ShowSuppColor
+				,SuppRefno	  
+				,ukey
+				,SuppID
+				,SCIRefno
+		)
+		select 
+				 AbbCH	      
+				,AbbEN	      
+				,AddDate	  
+				,AddName	  
+				,AllowanceRate
+				,AllowanceType
+				,BrandID	  
+				,Delay		  
+				,DelayMemo	  
+				,EditDate	  
+				,EditName	  
+				,IsECFA		  
+				,ItemType	  
+				,Junk		  
+				,Keyword	  
+				,Lock		  
+				,LTDay		  
+				,NOForecast	  
+				,OldSys_Ukey  
+				,OldSys_Ver	  
+				,OrganicCotton
+				,POUnit		  
+				,PreShrink	  
+				,Refno		  
+				,Remark		  
+				,SeasonID	  
+				,ShowSuppColor
+				,SuppRefno	  
+				,ukey
+				,SuppID
+				,SCIRefno
+
+		from Trade_To_Pms.dbo.Fabric_Supp as b
+		where not exists(select SuppID from Production.dbo.Fabric_Supp as a where a.SuppID = b.SuppID)
+
+
 END
 
 
