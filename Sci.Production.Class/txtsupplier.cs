@@ -49,7 +49,7 @@ namespace Sci.Production.Class
             string textValue = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!MyUtility.Check.Seek(textValue, "Supp", "ID"))
+                if (!MyUtility.Check.Seek(textValue, "Production.dbo.Supp", "ID"))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Supplier Code: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
@@ -61,14 +61,14 @@ namespace Sci.Production.Class
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            this.displayBox1.Text = MyUtility.GetValue.Lookup("AbbEN", this.textBox1.Text.ToString(), "Supp", "ID");
+            this.displayBox1.Text = MyUtility.GetValue.Lookup("AbbEN", this.textBox1.Text.ToString(), "Production.dbo.Supp", "ID");
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,AbbCH,AbbEN from Supp order by ID", "8,30,30", this.textBox1.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,AbbCH,AbbEN from Production.dbo.Supp order by ID", "8,30,30", this.textBox1.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
