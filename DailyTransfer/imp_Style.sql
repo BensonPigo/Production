@@ -4,7 +4,7 @@
 -- Create date: 20160903
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE imp_Style 
+Create PROCEDURE imp_Style 
 	-- Add the parameters for the stored procedure here
 
 AS
@@ -895,6 +895,7 @@ a.StyleUkey	= b.StyleUkey
 --,a.Ukey	= b.Ukey
 ,a.SuppIDBulk	= b.SuppIDBulk
 ,a.SuppIDSample	= b.SuppIDSample
+,a.consPc = b.consPc
 
 from Production.dbo.Style_BOF as a 
 inner join Trade_To_Pms.dbo.Style_BOF as b ON a.Ukey=b.Ukey
@@ -908,6 +909,7 @@ StyleUkey
 ,Ukey
 ,SuppIDBulk
 ,SuppIDSample
+,consPc
 )
 select 
 StyleUkey
@@ -918,6 +920,7 @@ StyleUkey
 ,Ukey
 ,SuppIDBulk
 ,SuppIDSample
+,consPc
 from Trade_To_Pms.dbo.Style_BOF as b
 where not exists(select 1 from Production.dbo.Style_BOF as a where a.Ukey = b.Ukey)
 --STYLE9
@@ -1065,7 +1068,7 @@ where not exists(select 1 from Production.dbo.Style_BOA as a where a.Ukey = b.Uk
 		update set 
 		t.StyleUkey= s.StyleUkey,
 		--t.Style_BOAUkey= s.Style_BOAUkey,
-		t.SEQ= '',
+		--t.SEQ= '',
 		--t.Prefix= s.Prefix,
 		t.KeyWordID= s.KeyWordID
 		--t.Postfix= s.Postfix,
@@ -1075,8 +1078,8 @@ where not exists(select 1 from Production.dbo.Style_BOA as a where a.Ukey = b.Uk
 		--t.EditName= s.EditName,
 		--t.EditDate= s.EditDate,
 	when not matched by target then 
-		insert(StyleUkey,SEQ,Style_BOAUkey,KeyWordID)
-		values(s.StyleUkey,'',s.Style_BOAUkey,s.KeyWordID)
+		insert(StyleUkey,Style_BOAUkey,KeyWordID)
+		values(s.StyleUkey,s.Style_BOAUkey,s.KeyWordID)
 	when not matched by source and t.styleUkey in (select distinct styleUkey from production.dbo.style_markerlist) then
 		delete;
 
