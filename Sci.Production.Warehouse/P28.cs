@@ -64,9 +64,11 @@ iseditingreadonly: true)
                 {
                     if (((bool)this.grid1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))
                     {
+                        thisRow["total_qty"] = 0.00;
                         foreach (DataRow dr in thisRow.GetChildRows("rel1"))
                         {
                             dr["selected"] = false;
+                            dr["qty"] = 0.00;
                         }
                     }
                 }
@@ -80,7 +82,7 @@ iseditingreadonly: true)
             ns.IsSupportNegative = true;
             ns.CellValidating += (s, e) =>
             {
-                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))         
                 {
                     DataRow thisRow = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
                     DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
@@ -186,7 +188,7 @@ iseditingreadonly: true)
                     }
                     else
                     {
-                        //thisRow["selected"] = false;
+                        thisRow["qty"] = 0.00;
                         DataRow y = thisRow.GetParentRow("rel1");
                         var temp = y.GetChildRows("rel1");
                         if (temp != null) 
@@ -195,8 +197,11 @@ iseditingreadonly: true)
                             if (selected.Count <= 1)
                             {
                                 thisRow.GetParentRow("rel1")["selected"] = false;
-                                thisRow.GetParentRow("rel1")["total_qty"] = 0;
+                                //thisRow.GetParentRow("rel1")["total_qty"] = temp.Sum(row => (decimal)row["qty"]);
+                                thisRow.GetParentRow("rel1")["total_qty"] = 0.00;
                             }
+                            else
+                                thisRow.GetParentRow("rel1")["total_qty"] = temp.Sum(row => (decimal)row["qty"]);
                         }
 
                     }
@@ -376,6 +381,19 @@ drop table #tmp");
         {
             foreach (DataRow dr in master.Rows)
             {
+                if (dr["selected"].ToString().ToUpper() == "TRUE")
+                {
+                    DataRow[] curentgridrowChild = dr.GetChildRows("rel1");
+                    foreach (DataRow temp in curentgridrowChild)
+                    {
+                        temp["qty"] = 0.00;
+                        temp["selected"] = false;
+                    }
+                    //dr["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
+                    dr["total_qty"] = 0.00;
+                }
+
+
                 if (dr["selected"].ToString().ToUpper() == "TRUE" && !MyUtility.Check.Empty(dr["requestqty"]))
                 {
                     var issued = PublicPrg.Prgs.autopick(dr, false,"B");
