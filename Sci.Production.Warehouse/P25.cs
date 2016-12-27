@@ -198,6 +198,7 @@ namespace Sci.Production.Warehouse
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.SubTransfer_Detail d inner join FtyInventory f
+WITH(INDEX(MdID_POSeq))
 on d.FromMDivisionID = f.MDivisionID and d.FromPOID = f.POID 
 and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 AND D.FromStockType = F.StockType
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -226,6 +227,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.SubTransfer_Detail d left join FtyInventory f
+WITH(INDEX(MdID_POSeq))
 on d.FromMDivisionID = f.MDivisionID and d.FromPOID = f.POID 
 and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 AND D.FromStockType = F.StockType
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -408,6 +410,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.SubTransfer_Detail d inner join FtyInventory f
+WITH(INDEX(MdID_POSeq))
 on d.tomdivisionid = f.mdivisionid
 and d.toPoId = f.PoId
 and d.toSeq1 = f.Seq1
@@ -440,6 +443,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.SubTransfer_Detail d left join FtyInventory f
+WITH(INDEX(MdID_POSeq))
 on d.tomdivisionid = f.mdivisionid
 and d.toPoId = f.PoId
 and d.toSeq1 = f.Seq1
@@ -447,6 +451,7 @@ and d.toSeq2 = f.seq2
 and d.toStocktype = f.StockType
 and d.toRoll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
+            
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 ShowErr(sqlcmd, result2);
