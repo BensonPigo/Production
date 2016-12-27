@@ -153,11 +153,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(896, 442);
+            this.browse.Size = new System.Drawing.Size(961, 442);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(904, 471);
+            this.tabs.Size = new System.Drawing.Size(969, 471);
             // 
             // label1
             // 
@@ -725,7 +725,7 @@
             // 
             // P01
             // 
-            this.ClientSize = new System.Drawing.Size(904, 504);
+            this.ClientSize = new System.Drawing.Size(969, 504);
             this.DefaultOrder = "id";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
