@@ -38,6 +38,7 @@ namespace Sci.Production.Cutting
 
                 if (!res) return false;
                 if (dts.Length < 2) return false;
+                if (dts[0].Rows.Count == 0) return false;
 
                 DataRow dr = dts[0].Rows[0];
 
@@ -107,7 +108,7 @@ namespace Sci.Production.Cutting
 
                 if (!res) return false;
                 if (dts.Length < 2) return false;
-
+                if (dts[0].Rows.Count == 0) return false;
                 DataRow dr = dts[0].Rows[0];
                 extra_P01_Report_TTLconsumptionPOCombo(dts[1], Convert.ToInt32(dr["QTY"]));
 
@@ -255,6 +256,9 @@ namespace Sci.Production.Cutting
             ToExcel();
         }
 
-
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
     }
 }
