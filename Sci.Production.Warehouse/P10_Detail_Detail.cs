@@ -62,7 +62,9 @@ namespace Sci.Production.Warehouse
 from dbo.PO_Supp_Detail a 
 inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid='{1}'
-and a.scirefno='{2}' and a.colorid='{3}' and a.sizespec = '{4}'"
+and a.scirefno='{2}' and a.colorid='{3}' and a.sizespec = '{4}'
+and ltrim(a.seq1) between '01' and '99'
+"
                 , dr_master["poid"], Sci.Env.User.Keyword, dr_master["scirefno"], dr_master["colorid"], dr_master["sizespec"]));
             #endregion
 
