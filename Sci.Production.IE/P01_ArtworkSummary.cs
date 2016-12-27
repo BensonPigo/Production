@@ -40,7 +40,7 @@ namespace Sci.Production.IE
             string sqlCmd = string.Format(@"select isnull(mt.ArtworkTypeID,'') as ArtworkTypeID, sum(td.SMV) as TMS
 from {0} td
 left join MachineType mt on td.MachineTypeID = mt.ID
-where td.ID = {1}
+where td.ID = {1} and mt.ArtworkTypeID !=''
 group by mt.ArtworkTypeID", tableName, id.ToString());
             DataTable gridData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
