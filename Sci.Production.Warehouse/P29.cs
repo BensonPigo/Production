@@ -340,6 +340,12 @@ drop table #tmp");
             listControlBindingSource2.DataSource = listControlBindingSource1;
             listControlBindingSource2.DataMember = "rel1";
 
+            if (dataSet.Tables[0].Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("NO Data!");
+                return;
+            }
+
         }
 
         private void btnAutoPick_Click(object sender, EventArgs e)
