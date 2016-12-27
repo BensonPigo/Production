@@ -356,8 +356,18 @@
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox1.Location = new System.Drawing.Point(156, 317);
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(40, 23);
             this.numericBox1.TabIndex = 9;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // B04
             // 
