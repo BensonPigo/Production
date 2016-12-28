@@ -8,8 +8,8 @@
     [Roll]             VARCHAR (8)     CONSTRAINT [DF_Stocktaking_Detail_Roll] DEFAULT ('') NULL,
     [Dyelot]           VARCHAR (4)     CONSTRAINT [DF_Stocktaking_Detail_Dyelot] DEFAULT ('') NULL,
     [StockType]        CHAR (1)        CONSTRAINT [DF_Stocktaking_Detail_StockType] DEFAULT ('') NULL,
-    [QtyBefore]        NUMERIC (10, 2) CONSTRAINT [DF_Stocktaking_Detail_QtyBefore] DEFAULT ((0)) NULL,
-    [QtyAfter]         NUMERIC (10, 2) CONSTRAINT [DF_Stocktaking_Detail_QtyAfter] DEFAULT ((0)) NULL,
+    [QtyBefore]        NUMERIC (11, 2) CONSTRAINT [DF_Stocktaking_Detail_QtyBefore] DEFAULT ((0)) NULL,
+    [QtyAfter]         NUMERIC (11, 2) CONSTRAINT [DF_Stocktaking_Detail_QtyAfter] DEFAULT ((0)) NULL,
     [UKey]             BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_Stocktaking_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
