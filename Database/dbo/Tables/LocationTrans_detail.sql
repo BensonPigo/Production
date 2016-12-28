@@ -9,7 +9,7 @@
     [Dyelot]           VARCHAR (4)     CONSTRAINT [DF_LocationTrans_detail_Dyelot] DEFAULT ('') NOT NULL,
     [FromLocation]     VARCHAR (60)    CONSTRAINT [DF_LocationTrans_detail_FromLocation] DEFAULT ('') NULL,
     [ToLocation]       VARCHAR (60)    CONSTRAINT [DF_LocationTrans_detail_ToLocation] DEFAULT ('') NOT NULL,
-    [Qty]              NUMERIC (10, 2) CONSTRAINT [DF_LocationTrans_detail_Qty] DEFAULT ((0)) NOT NULL,
+    [Qty]              NUMERIC (11, 2) CONSTRAINT [DF_LocationTrans_detail_Qty] DEFAULT ((0)) NOT NULL,
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_LocationTrans_detail_1] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
