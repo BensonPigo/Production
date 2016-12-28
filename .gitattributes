@@ -107,7 +107,6 @@ Database/dbo/Stored[!!-~]Procedures/GetKeyword.sql -text
 Database/dbo/Stored[!!-~]Procedures/PoApproveLock.sql -text
 Database/dbo/Stored[!!-~]Procedures/Purchase_P01_01.sql -text
 Database/dbo/Stored[!!-~]Procedures/dbo.insertMygridstd2.sql -text
-Database/dbo/Stored[!!-~]Procedures/imp_Base_1.sql -text
 Database/dbo/Stored[!!-~]Procedures/insertMygridstd2.sql -text
 Database/dbo/Stored[!!-~]Procedures/insert_Air_Fir.sql -text
 Database/dbo/Stored[!!-~]Procedures/usp_APSDataDownLoad.sql -text
