@@ -30,8 +30,11 @@ namespace Sci.Production.Planning
         {
 
             base.OnFormLoaded();
-            grid2.AutoGenerateColumns = true;
-
+          //  grid2.AutoGenerateColumns = true;
+            Helper.Controls.Grid.Generator(this.grid2)
+               .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(10))
+               .Numeric("totalqty", header: "TotalQty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true);
+            
             this.checkBox1.Checked = true;
             dateRange2.Value1 = DateTime.Now.AddMonths(1);
             dateRange2.Value2 = DateTime.Now.AddMonths(2).AddDays(-1);
@@ -341,8 +344,8 @@ namespace Sci.Production.Planning
             { sqlcmd += string.Format(@" and not (a.SewInLine > '{1}' or a.SewOffLine < '{0}')", sewinline_b, sewinline_e); }
 
             MyUtility.Msg.WaitWindows("Querying....Please wait....");
-            
-            Ict.DualResult result;
+
+            Ict.DualResult result; 
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
             {
                 if (dtData.Rows.Count == 0)
@@ -350,6 +353,7 @@ namespace Sci.Production.Planning
                 listControlBindingSource1.DataSource = dtData;
                 dtData.Columns.Add("totalqty", typeof(decimal));
                 dtData.Columns["totalqty"].Expression = "(orderqty - qaqty) * qty";
+              
                 grid2_generate();
             }
             else
@@ -480,17 +484,18 @@ namespace Sci.Production.Planning
                            Supplier = grouprows.Key.localsuppid + "-" + grouprows.Key.suppnm,
                            TotalQty = grouprows.Sum(r => r.Field<int>("OrderQty") - r.Field<int>("qaqty") * r.Field<decimal>("qty"))
                        }).ToList();
-
+           
             var bs2 = (from rows in ((DataTable)listControlBindingSource1.DataSource).AsEnumerable()
                        group rows by new { localsuppid = "Total" } into grouprows
                        select new
                        {
                            Supplier = grouprows.Key.localsuppid,
-                           TotalQty = grouprows.Sum(r => r.Field<int>("OrderQty") - r.Field<int>("qaqty") * r.Field<decimal>("qty"))
+                           TotalQty =  grouprows.Sum(r => r.Field<int>("OrderQty") - r.Field<int>("qaqty") * r.Field<decimal>("qty"))
                        }).ToList();
             bs1.AddRange(bs2);
             grid2.DataSource = bs1;
-            grid2.AutoResizeColumns();
+           
+         //   grid2.AutoResizeColumns();
         }
 
         //set default supplier from style
@@ -626,6 +631,7 @@ namespace Sci.Production.Planning
                 int widthCol = grid2.Columns[column.Index].Width;
                 grid2.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
                 grid2.Columns[column.Index].Width = widthCol;
+                
             }
         }
 
