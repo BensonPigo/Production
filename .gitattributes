@@ -251,6 +251,7 @@ Database/dbo/Tables/GarmentTest_Detail.sql -text
 Database/dbo/Tables/HisType.sql -text
 Database/dbo/Tables/Holiday.sql -text
 Database/dbo/Tables/IEReason.sql -text
+Database/dbo/Tables/IESelectCode.sql -text
 Database/dbo/Tables/IETMS.sql -text
 Database/dbo/Tables/IETMS_Detail.sql -text
 Database/dbo/Tables/Inspweight.sql -text
