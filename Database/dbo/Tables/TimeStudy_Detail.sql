@@ -4,7 +4,7 @@
     [OperationID]   VARCHAR (20)   CONSTRAINT [DF_TimeStudy_Detail_OperationID] DEFAULT ('') NULL,
     [Annotation]    NVARCHAR (200) CONSTRAINT [DF_TimeStudy_Detail_Annotation] DEFAULT ('') NULL,
     [PcsPerHour]    NUMERIC (8, 1) CONSTRAINT [DF_TimeStudy_Detail_PcsPerHour] DEFAULT ((0)) NULL,
-    [Sewer]         NUMERIC (3, 1) CONSTRAINT [DF_TimeStudy_Detail_Sewer] DEFAULT ((0)) NULL,
+    [Sewer]         NUMERIC (4, 1) CONSTRAINT [DF_TimeStudy_Detail_Sewer] DEFAULT ((0)) NULL,
     [MachineTypeID] VARCHAR (20)   CONSTRAINT [DF_TimeStudy_Detail_MachineTypeID] DEFAULT ('') NULL,
     [Frequency]     NUMERIC (4, 2) CONSTRAINT [DF_TimeStudy_Detail_Frequency] DEFAULT ((0)) NULL,
     [IETMSSMV]      NUMERIC (9, 4) CONSTRAINT [DF_TimeStudy_Detail_IETMSSMV] DEFAULT ((0)) NULL,
