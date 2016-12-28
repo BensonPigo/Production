@@ -6,7 +6,7 @@
     [Seq2]         VARCHAR (2)     CONSTRAINT [DF_Receiving_Detail_Seq2] DEFAULT ('') NOT NULL,
     [Roll]         VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_Roll] DEFAULT ('') NOT NULL,
     [Dyelot]       VARCHAR (4)     CONSTRAINT [DF_Receiving_Detail_Dyelot] DEFAULT ('') NOT NULL,
-    [ShipQty]      NUMERIC (10, 2) CONSTRAINT [DF_Receiving_Detail_ShipQty] DEFAULT ((0)) NULL,
+    [ShipQty]      NUMERIC (11, 2) CONSTRAINT [DF_Receiving_Detail_ShipQty] DEFAULT ((0)) NULL,
     [ActualQty]    NUMERIC (10, 2) CONSTRAINT [DF_Receiving_Detail_ActualQty] DEFAULT ((0)) NULL,
     [PoUnit]       VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_PoUnit] DEFAULT ('') NULL,
     [Weight]       NUMERIC (7, 2)  CONSTRAINT [DF_Receiving_Detail_Weight] DEFAULT ((0)) NULL,
@@ -15,7 +15,7 @@
     [Price]        NUMERIC (11, 3) CONSTRAINT [DF_Receiving_Detail_Price] DEFAULT ((0)) NULL,
     [Location]     VARCHAR (60)    CONSTRAINT [DF_Receiving_Detail_Location] DEFAULT ('') NULL,
     [Remark]       NVARCHAR (100)  CONSTRAINT [DF_Receiving_Detail_Remark] DEFAULT ('') NULL,
-    [StockQty]     NUMERIC (10, 2) CONSTRAINT [DF_Receiving_Detail_StockQty] DEFAULT ((0)) NULL,
+    [StockQty]     NUMERIC (11, 2) CONSTRAINT [DF_Receiving_Detail_StockQty] DEFAULT ((0)) NULL,
     [StockType]    VARCHAR (1)     CONSTRAINT [DF_Receiving_Detail_StockType] DEFAULT ('') NULL,
     [Ukey]         BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
