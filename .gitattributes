@@ -17,7 +17,6 @@ DailyTransfer/exp_Style_ProductionKits.sql -text
 DailyTransfer/exp_WkHours.sql -text
 DailyTransfer/imp_Airboat.sql -text
 DailyTransfer/imp_Airpp.sql -text
-DailyTransfer/imp_Ietms.sql -text
 DailyTransfer/imp_Ietms1.sql -text
 DailyTransfer/imp_Ietms2.sql -text
 DailyTransfer/imp_Ietms3.sql -text
