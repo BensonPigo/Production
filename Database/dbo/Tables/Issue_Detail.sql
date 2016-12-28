@@ -2,7 +2,7 @@
     [Id]                VARCHAR (13)    CONSTRAINT [DF_Issue_Detail_Id] DEFAULT ('') NOT NULL,
     [Issue_SummaryUkey] BIGINT          CONSTRAINT [DF_Issue_Detail_Issue_SummaryUkey] DEFAULT ((0)) NOT NULL,
     [FtyInventoryUkey]  BIGINT          NULL,
-    [Qty]               NUMERIC (10, 2) CONSTRAINT [DF_Issue_Detail_Qty] DEFAULT ((0)) NULL,
+    [Qty]               NUMERIC (11, 2) CONSTRAINT [DF_Issue_Detail_Qty] DEFAULT ((0)) NULL,
     [MDivisionID]       VARCHAR (8)     CONSTRAINT [DF_Issue_Detail_MDivisionID] DEFAULT ('') NULL,
     [POID]              VARCHAR (13)    CONSTRAINT [DF_Issue_Detail_POID] DEFAULT ('') NULL,
     [Seq1]              VARCHAR (3)     CONSTRAINT [DF_Issue_Detail_Seq1] DEFAULT ('') NULL,
