@@ -206,7 +206,6 @@ iseditingreadonly: true)
                             if (selected.Count <= 1)
                             {
                                 thisRow.GetParentRow("rel1")["selected"] = false;
-                                //thisRow.GetParentRow("rel1")["total_qty"] = temp.Sum(row => (decimal)row["qty"]);
                                 thisRow.GetParentRow("rel1")["total_qty"] = 0.00;
                             }
                             else
@@ -215,6 +214,7 @@ iseditingreadonly: true)
 
                     }
                 }
+                this.grid2.ValidateControl();
                 this.grid1.ValidateControl();
             };
             #endregion

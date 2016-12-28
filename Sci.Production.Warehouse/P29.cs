@@ -215,6 +215,7 @@ namespace Sci.Production.Warehouse
 
                     }
                 }
+                this.grid2.ValidateControl();
                 this.grid1.ValidateControl();
             };
 
