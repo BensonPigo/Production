@@ -50,8 +50,10 @@ namespace Sci.Production.Warehouse
 ,b.Roll,b.Dyelot,b.StockType,b.Qty 
 ,dbo.getmtldesc(b.poid,b.seq1,b.seq2,2,0) [description]
 ,'' location
+,psd.StockUnit
 from TransferOut a
 inner join TransferOut_Detail b on b.id = a.id
+inner join PO_Supp_Detail psd on b.POID = psd.id and b.Seq1 = psd.Seq1 and b.Seq2 = psd.Seq2
 where a.status='Confirmed' and a.id='{0}'", transid, Sci.Env.User.Keyword)); // 
 
 
