@@ -172,8 +172,7 @@ order by os.Seq", masterID);
             DataTable dr = (DataTable)detailgridbs.DataSource;
             int i = 0;
             foreach (DataRow dr1 in dr.Rows)
-            {
-                //this.detailgrid.Rows[i].Cells[9].Value = dr1["Status"];
+            {             
 
                 switch (dr1["Status"].ToString().ToUpper())
                 {
@@ -194,26 +193,7 @@ order by os.Seq", masterID);
                         break;
                 }
                 i++;
-                //case "C":
-                //               dr["StatusExp"] = "Complete";
-                //               dr["Status"] = "C";
-                //               dr.EndEdit();
-                //               break;
-                //           case "P":
-                //               dr["StatusExp"] = "Partial";
-                //               dr["Status"] = "P";
-                //               dr.EndEdit();
-                //               break;
-                //           case "S":
-                //               dr["StatusExp"] = "Shortage";
-                //               dr["Status"] = "S";
-                //               dr.EndEdit();
-                //               break;
-                //           default:
-                //               dr["StatusExp"] = dr["StatusExp"];
-                //               break;
-
-
+                
             }
         }
 
