@@ -70,6 +70,7 @@
             // 
             // button1
             // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.Location = new System.Drawing.Point(1018, 477);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
@@ -80,9 +81,10 @@
             // 
             // button2
             // 
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button2.Location = new System.Drawing.Point(12, 477);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(135, 30);
+            this.button2.Size = new System.Drawing.Size(150, 30);
             this.button2.TabIndex = 2;
             this.button2.Text = "Article for F_Code";
             this.button2.UseVisualStyleBackColor = true;
