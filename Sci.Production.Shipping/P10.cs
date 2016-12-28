@@ -232,16 +232,14 @@ where {0} order by g.ID", masterID);
                     continue;
                 }
             }
-
             foreach (DataRow dr in details)
             {
                 if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
                 {
-                    updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
+                    updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));                 
 
-                    //updateCmds.Add(string.Format("update PackingList set ShipPlanID = '{0}', InspDate='{1}' , InspStatus='{2}',PulloutDate='{3}' where invno = '{4}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
                     continue;
-                }
+                } 
 
                 if (dr.RowState == DataRowState.Deleted)
                 {
@@ -250,6 +248,16 @@ where {0} order by g.ID", masterID);
                     continue;
                 }
             }
+//            DataTable dtPklst = plData;
+//            int count = plData.Rows.Count;
+
+//            foreach (DataRow dr in dtPklst.Rows)
+//            {
+//                // 20161206 確認正確的值都有insert
+//                updateCmds.Add(string.Format("update PackingList set ShipPlanID = '{0}', InspDate='{1}' , InspStatus='{2}',PulloutDate='{3}' where id = '{4}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]), dr["InspDate"], dr["InspStatus"],Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyy/MM/dd"),
+//MyUtility.Convert.GetString(dr["ID"])));
+//            }
+           
 
             //執行更新
             if (updateCmds.Count != 0)
@@ -480,7 +488,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                     {
                         msg.Append(string.Format("GB#: {0}, Packing No:{1}\n\r", MyUtility.Convert.GetString(dr["InvNo"]), MyUtility.Convert.GetString(dr["ID"])));
                     }
-                    MyUtility.Msg.WarningBox("Below data's pullout date is empty, can' confirm!!\r\n" + msg.ToString());
+                    MyUtility.Msg.WarningBox("Below data's pullout date is empty, can't confirm!!\r\n" + msg.ToString());
                     return;
                 }
             }
@@ -501,7 +509,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                     {
                         msg1.Append(string.Format("GB#: {0}, Packing No:{1}\n\r", MyUtility.Convert.GetString(dr["InvNo"]), MyUtility.Convert.GetString(dr["ID"])));
                     }
-                    MyUtility.Msg.WarningBox("Below data's est. inspection date not empty but inspection status is empty, can' confirm!!\r\n" + msg1.ToString());
+                    MyUtility.Msg.WarningBox("Below data's est. inspection date not empty but inspection status is empty, can't confirm!!\r\n" + msg1.ToString());
                     return;
                 }
             }
@@ -523,7 +531,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                     {
                         msg2.Append(string.Format("GB#:{0}", MyUtility.Convert.GetString(dr["ID"])));
                     }
-                    MyUtility.Msg.WarningBox("Garment Booking's status not yet confirm, can' confirm!!\r\n" + msg2.ToString());
+                    MyUtility.Msg.WarningBox("Garment Booking's status not yet confirm, can't confirm!!\r\n" + msg2.ToString());
                     return;
                 }
             }
