@@ -8,8 +8,8 @@
     [Roll]             VARCHAR (8)     CONSTRAINT [DF_Adjust_Detail_Roll] DEFAULT ('') NULL,
     [Dyelot]           VARCHAR (4)     CONSTRAINT [DF_Adjust_Detail_Dyelot] DEFAULT ('') NULL,
     [StockType]        CHAR (1)        CONSTRAINT [DF_Adjust_Detail_StockType] DEFAULT ('') NULL,
-    [QtyBefore]        NUMERIC (10, 2) CONSTRAINT [DF_Adjust_Detail_QtyBefore] DEFAULT ((0)) NULL,
-    [QtyAfter]         NUMERIC (10, 2) CONSTRAINT [DF_Adjust_Detail_QtyAfter] DEFAULT ((0)) NULL,
+    [QtyBefore]        NUMERIC (11, 2) CONSTRAINT [DF_Adjust_Detail_QtyBefore] DEFAULT ((0)) NULL,
+    [QtyAfter]         NUMERIC (11, 2) CONSTRAINT [DF_Adjust_Detail_QtyAfter] DEFAULT ((0)) NULL,
     [ReasonId]         VARCHAR (5)     CONSTRAINT [DF_Adjust_Detail_ReasonId] DEFAULT ('') NULL,
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_Adjust_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
