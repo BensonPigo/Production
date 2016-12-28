@@ -151,7 +151,7 @@ namespace Sci.Production.Cutting
         private void btnDetail_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentData; if (null == dr) return;
-            var frm = new Sci.Production.Cutting.P01_EachConsumption_Detail(false, dr["ID"].ToString(), null, null);
+            var frm = new Sci.Production.Cutting.P01_EachConsumption_Detail(false, dr["ID"].ToString(), dr["ukey"].ToString(), detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex())["colorid"].ToString());
             frm.ShowDialog(this);
         }
 

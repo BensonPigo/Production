@@ -18,6 +18,7 @@ namespace Sci.Production.Cutting
             InitializeComponent();
         }
 
+        //keyvalue1:ID, keyvalue2:Order_EachConsUkey, keyvalue3:ColorID
         public P01_EachConsumption_Detail(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
@@ -35,6 +36,7 @@ namespace Sci.Production.Cutting
                             "    On     Color.BrandId = Orders.BrandID" +
                             "       And Color.ID = Order_EachCons_Color.ColorID" +
                             " Where Order_EachCons_Color.ID = '" + this.KeyValue1 + "'" +
+                            " and Order_EachConsUkey=" + this.KeyValue2 + " and ColorID='" + this.KeyValue3 + "' " +
                             " Order by Order_EachCons_Color.ColorID";
             DualResult result;
             if (!(result = DBProxy.Current.Select(null, sqlCmd, out datas))) return result;

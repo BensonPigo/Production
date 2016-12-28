@@ -38,8 +38,8 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Location = new System.Drawing.Point(12, 230);
-            this.detailgridcont.Size = new System.Drawing.Size(807, 217);
+            this.detailgridcont.Location = new System.Drawing.Point(12, 108);
+            this.detailgridcont.Size = new System.Drawing.Size(760, 199);
             // 
             // detailgridicon
             // 
@@ -48,6 +48,8 @@
             // btmcont
             // 
             this.btmcont.Controls.Add(this.btnOrderBy);
+            this.btmcont.Location = new System.Drawing.Point(0, 313);
+            this.btmcont.Size = new System.Drawing.Size(784, 40);
             this.btmcont.TabIndex = 1;
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
@@ -58,7 +60,7 @@
             // 
             // gridcont
             // 
-            this.gridcont.Size = new System.Drawing.Size(807, 180);
+            this.gridcont.Size = new System.Drawing.Size(760, 68);
             // 
             // append
             // 
@@ -79,10 +81,12 @@
             // 
             // undo
             // 
+            this.undo.Location = new System.Drawing.Point(694, 5);
             this.undo.TabIndex = 5;
             // 
             // save
             // 
+            this.save.Location = new System.Drawing.Point(614, 5);
             this.save.TabIndex = 4;
             // 
             // label1
@@ -90,7 +94,7 @@
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(12, 200);
+            this.label1.Location = new System.Drawing.Point(12, 85);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(165, 22);
             this.label1.TabIndex = 0;
@@ -110,7 +114,7 @@
             // 
             // P01_EachConsumption_Detail
             // 
-            this.ClientSize = new System.Drawing.Size(831, 497);
+            this.ClientSize = new System.Drawing.Size(784, 353);
             this.Controls.Add(this.label1);
             this.DefaultDetailOrder = "Article, SizeCode";
             this.DefaultOrder = "ColorID";
