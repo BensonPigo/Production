@@ -1,76 +1,95 @@
 ﻿CREATE TABLE [dbo].[Fabric_Supp] (
-    [SCIRefno]      VARCHAR (26)   CONSTRAINT [DF_Fabric_Supp_SCIRefno] DEFAULT ('') NOT NULL,
-    [SuppID]        VARCHAR (8)    CONSTRAINT [DF_Fabric_Supp_SuppID] DEFAULT ('') NOT NULL,
-    [Remark]        NVARCHAR (MAX) CONSTRAINT [DF_Fabric_Supp_Remark] DEFAULT ('') NULL,
-    [POUnit]        VARCHAR (8)    CONSTRAINT [DF_Fabric_Supp_POUnit] DEFAULT ('') NOT NULL,
+    [SCIRefno]      VARCHAR (26)   NOT NULL,
+    [BrandID]       VARCHAR (8)    NULL,
+    [Refno]         VARCHAR (20)   NULL,
+    [SuppRefno]     VARCHAR (30)   NULL,
+    [NOForecast]    BIT            NULL,
+    [IsECFA]        BIT            NULL,
+    [SuppID]        VARCHAR (6)    NOT NULL,
+    [Lock]          BIT            NULL,
+    [SeasonID]      VARCHAR (10)   NULL,
+    [Remark]        NVARCHAR (MAX) NULL,
+    [POUnit]        VARCHAR (8)    NOT NULL,
     [Delay]         DATE           NULL,
-    [DelayMemo]     NVARCHAR (MAX) CONSTRAINT [DF_Fabric_Supp_DelayMemo] DEFAULT ('') NULL,
-    [ShowSuppColor] BIT            CONSTRAINT [DF_Fabric_Supp_ShowSuppColor] DEFAULT ((0)) NULL,
-    [AbbCH]         NVARCHAR (70)  CONSTRAINT [DF_Fabric_Supp_AbbCH] DEFAULT ('') NULL,
-    [AbbEN]         NVARCHAR (70)  CONSTRAINT [DF_Fabric_Supp_AbbEN] DEFAULT ('') NULL,
-    [AddName]       VARCHAR (10)   CONSTRAINT [DF_Fabric_Supp_AddName] DEFAULT ('') NULL,
+    [DelayMemo]     NVARCHAR (MAX) NULL,
+    [ShowSuppColor] BIT            NULL,
+    [ItemType]      VARCHAR (1)    NULL,
+    [OrganicCotton] BIT            NULL,
+    [LTDay]         NUMERIC (1)    NULL,
+    [AbbCH]         NVARCHAR (70)  NULL,
+    [AbbEN]         NVARCHAR (70)  NULL,
+    [AllowanceType] NUMERIC (1)    NULL,
+    [AllowanceRate] NUMERIC (2)    NULL,
+    [AddName]       VARCHAR (10)   NULL,
     [AddDate]       DATETIME       NULL,
-    [EditName]      VARCHAR (10)   CONSTRAINT [DF_Fabric_Supp_EditName] DEFAULT ('') NULL,
+    [EditName]      VARCHAR (10)   NULL,
     [EditDate]      DATETIME       NULL,
-    [SuppRefno]     VARCHAR (30)   CONSTRAINT [DF_Fabric_Supp_SuppRefno] DEFAULT ('') NULL,
+    [OldSys_Ukey]   VARCHAR (10)   NULL,
+    [OldSys_Ver]    VARCHAR (2)    NULL,
+    [ukey]          BIGINT         NOT NULL,
+    [Keyword]       VARCHAR (MAX)  NULL,
+    [PreShrink]     BIT            NULL,
+    [Junk]          BIT            NULL,
     CONSTRAINT [PK_Fabric_Supp] PRIMARY KEY CLUSTERED ([SCIRefno] ASC, [SuppID] ASC)
 );
 
 
 
 
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'主副料基本檔 - By Supplier', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Supp';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'飛雁料號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Supp', @level2type = N'COLUMN', @level2name = N'SCIRefno';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Supp', @level2type = N'COLUMN', @level2name = N'SuppID';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Supp', @level2type = N'COLUMN', @level2name = N'Remark';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購單位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Supp', @level2type = N'COLUMN', @level2name = N'POUnit';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'物料延誤', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Supp', @level2type = N'COLUMN', @level2name = N'Delay';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'物料延誤說明', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Supp', @level2type = N'COLUMN', @level2name = N'DelayMemo';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'中文名稱簡稱', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Supp', @level2type = N'COLUMN', @level2name = N'AbbCH';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'英文名稱簡稱', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Supp', @level2type = N'COLUMN', @level2name = N'AbbEN';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Supp', @level2type = N'COLUMN', @level2name = N'AddName';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Supp', @level2type = N'COLUMN', @level2name = N'AddDate';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Supp', @level2type = N'COLUMN', @level2name = N'EditName';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Supp', @level2type = N'COLUMN', @level2name = N'EditDate';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商料號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Fabric_Supp', @level2type = N'COLUMN', @level2name = N'SuppRefno';
+
+
+
+GO
+
+
+
+GO
+
+
+
+GO
+
+
+
+GO
+
+
+
+GO
+
+
+
+GO
+
+
+
+GO
+
 
