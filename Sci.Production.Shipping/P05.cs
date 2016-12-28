@@ -1266,6 +1266,7 @@ order by fwd.WhseNo", this.textBox7.Text.ToString().Trim());
                 if (dt.Rows.Count>=1)
                 {
                     this.textBox7.Text = dt.Rows[0]["WhseNo"].ToString();
+                    CurrentMaintain["ForwarderWhse_DetailUKey"] = dt.Rows[0]["Ukey"].ToString();
                 }
                 else
                 {
