@@ -48,10 +48,12 @@ namespace Sci.Production.Shipping
                 if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
                 {
                     button2.Enabled = true;
+                    this.lab_status.Text = "Confirmed";
                 }
                 else
                 {
                     button2.Enabled = false;
+                    this.lab_status.Text = "New";
                 }
             }
         }

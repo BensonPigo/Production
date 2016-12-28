@@ -42,6 +42,7 @@
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.button1 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
+            this.lab_status = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -58,6 +59,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.lab_status);
             this.masterpanel.Controls.Add(this.button2);
             this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.editBox1);
@@ -72,7 +74,7 @@
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 131);
+            this.masterpanel.Size = new System.Drawing.Size(757, 131);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
@@ -88,11 +90,12 @@
             this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
             this.masterpanel.Controls.SetChildIndex(this.button2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lab_status, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 131);
-            this.detailpanel.Size = new System.Drawing.Size(892, 218);
+            this.detailpanel.Size = new System.Drawing.Size(757, 248);
             // 
             // gridicon
             // 
@@ -104,7 +107,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 218);
+            this.detailgridcont.Size = new System.Drawing.Size(757, 248);
             // 
             // detail2
             // 
@@ -120,16 +123,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(757, 417);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(757, 379);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 379);
+            this.detailbtm.Size = new System.Drawing.Size(757, 38);
             // 
             // browse
             // 
@@ -298,12 +301,23 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // lab_status
+            // 
+            this.lab_status.AutoSize = true;
+            this.lab_status.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lab_status.ForeColor = System.Drawing.Color.Red;
+            this.lab_status.Location = new System.Drawing.Point(616, 9);
+            this.lab_status.Name = "lab_status";
+            this.lab_status.Size = new System.Drawing.Size(76, 25);
+            this.lab_status.TabIndex = 15;
+            this.lab_status.Text = "label7";
+            // 
             // B43
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(765, 479);
             this.DefaultDetailOrder = "NLCode";
-            this.DefaultOrder = "ID";
+            this.DefaultOrder = "startDate";
             this.GridAlias = "VNContract_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "ID,NLCode";
@@ -354,5 +368,6 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private System.Windows.Forms.Label lab_status;
     }
 }
