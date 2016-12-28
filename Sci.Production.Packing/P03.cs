@@ -494,6 +494,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             base.ClickNewAfter();
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["Type"] = "B";
+            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["Status"] = "New";
         }
 
@@ -588,6 +589,11 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             string OrderIDs = string.Empty;
             foreach (DataRow dr in DetailDatas) OrderIDs += "'" + dr["OrderID"].ToString().Trim() + "',";
             OrderIDs = OrderIDs.TrimEnd(',');
+            if (MyUtility.Check.Empty(OrderIDs))
+            {
+                MyUtility.Msg.WarningBox("OrderID is empty,can't save! ");
+                return false;
+            }
             sqlCmd = string.Format("select SUM(ShipQty) as Qty from PackingList_Detail where OrderID IN ({0})", OrderIDs);
             needPackQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd));
 
@@ -642,6 +648,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 {
                     cbm = MyUtility.Math.Round(cbm + (MyUtility.Math.Round(MyUtility.Convert.GetDouble(MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo")), 3) * MyUtility.Convert.GetInt(dr["CTNQty"])), 4);
                 }
+
                 #endregion
 
                 #region 重算表身Grid的Bal. Qty
