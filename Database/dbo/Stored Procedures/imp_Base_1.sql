@@ -1875,6 +1875,7 @@ SET
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
 	  ,a.MiAdidas         =b.MiAdidas
+
 from Production.dbo.Program as a inner join Trade_To_Pms.dbo.Program as b ON a.id=b.id and a.BrandID = b.BrandID
 -------------------------- INSERT INTO ��
 INSERT INTO Production.dbo.Program(
@@ -1886,6 +1887,7 @@ INSERT INTO Production.dbo.Program(
       ,EditName
       ,EditDate
 	  ,MiAdidas
+
 )
 select 
  ID
@@ -1896,6 +1898,7 @@ select
       ,EditName
       ,EditDate
 	  ,MiAdidas
+
 from Trade_To_Pms.dbo.Program as b
 where not exists(select id from Production.dbo.Program as a where a.id = b.id and a.BrandID = b.BrandID)
 
@@ -2517,4 +2520,116 @@ on t.type=s.type and t.id=s.id
 		when not matched by source then
 			delete;
   
+		--Fabric_Supp
+		--Fabric_Supp �L�h���
+		----------------------�R���DTABLE�h�����
+		Delete Production.dbo.Fabric_Supp
+		from Production.dbo.Fabric_Supp as a left join Trade_To_Pms.dbo.Fabric_Supp as b
+		on a.SuppID = b.SuppID and a.SCIRefno = b.SCIRefno
+		where b.SuppID is null
+		---------------------------UPDATE �DTABLE��ӷ�TABLE ���@��(�DTABLE�h���� �O�_�� ~�ӷ�TABLE�h���ܤ��z�|)
+		UPDATE a
+		SET  
+			   a.AbbCH	       = b.AbbCH	      
+			  ,a.AbbEN	       = b.AbbEN	      
+			  ,a.AddDate	   = b.AddDate	  
+			  ,a.AddName	   = b.AddName	  
+			  ,a.AllowanceRate = b.AllowanceRate
+			  ,a.AllowanceType = b.AllowanceType
+			  ,a.BrandID	   = b.BrandID	  
+			  ,a.Delay		   = b.Delay		  
+			  ,a.DelayMemo	   = b.DelayMemo	  
+			  ,a.EditDate	   = b.EditDate	  
+			  ,a.EditName	   = b.EditName	  
+			  ,a.IsECFA		   = b.IsECFA		  
+			  ,a.ItemType	   = b.ItemType	  
+			  ,a.Junk		   = b.Junk		  
+			  ,a.Keyword	   = b.Keyword	  
+			  ,a.Lock		   = b.Lock		  
+			  ,a.LTDay		   = b.LTDay		  
+			  ,a.NOForecast	   = b.NOForecast	  
+			  ,a.OldSys_Ukey   = b.OldSys_Ukey  
+			  ,a.OldSys_Ver	   = b.OldSys_Ver	  
+			  ,a.OrganicCotton = b.OrganicCotton
+			  ,a.POUnit		   = b.POUnit		  
+			  ,a.PreShrink	   = b.PreShrink	  
+			  ,a.Refno		   = b.Refno		  
+			  ,a.Remark		   = b.Remark		  
+			  ,a.SeasonID	   = b.SeasonID	  
+			  ,a.ShowSuppColor = b.ShowSuppColor
+			  ,a.SuppRefno	   = b.SuppRefno
+
+		from Production.dbo.Fabric_Supp as a 
+		inner join Trade_To_Pms.dbo.Fabric_Supp as b ON a.SuppID=b.SuppID and a.SCIRefno = b.SCIRefno
+		-------------------------- INSERT INTO ��
+		INSERT INTO Production.dbo.Fabric_Supp(
+				 AbbCH	      
+				,AbbEN	      
+				,AddDate	  
+				,AddName	  
+				,AllowanceRate
+				,AllowanceType
+				,BrandID	  
+				,Delay		  
+				,DelayMemo	  
+				,EditDate	  
+				,EditName	  
+				,IsECFA		  
+				,ItemType	  
+				,Junk		  
+				,Keyword	  
+				,Lock		  
+				,LTDay		  
+				,NOForecast	  
+				,OldSys_Ukey  
+				,OldSys_Ver	  
+				,OrganicCotton
+				,POUnit		  
+				,PreShrink	  
+				,Refno		  
+				,Remark		  
+				,SeasonID	  
+				,ShowSuppColor
+				,SuppRefno	  
+				,ukey
+				,SuppID
+				,SCIRefno
+		)
+		select 
+				 AbbCH	      
+				,AbbEN	      
+				,AddDate	  
+				,AddName	  
+				,AllowanceRate
+				,AllowanceType
+				,BrandID	  
+				,Delay		  
+				,DelayMemo	  
+				,EditDate	  
+				,EditName	  
+				,IsECFA		  
+				,ItemType	  
+				,Junk		  
+				,Keyword	  
+				,Lock		  
+				,LTDay		  
+				,NOForecast	  
+				,OldSys_Ukey  
+				,OldSys_Ver	  
+				,OrganicCotton
+				,POUnit		  
+				,PreShrink	  
+				,Refno		  
+				,Remark		  
+				,SeasonID	  
+				,ShowSuppColor
+				,SuppRefno	  
+				,ukey
+				,SuppID
+				,SCIRefno
+
+		from Trade_To_Pms.dbo.Fabric_Supp as b
+		where not exists(select SuppID from Production.dbo.Fabric_Supp as a where a.SuppID = b.SuppID)
+
+
 END
