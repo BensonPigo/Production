@@ -32,7 +32,7 @@ namespace Sci.Production.Planning
             base.OnFormLoaded();
           //  grid2.AutoGenerateColumns = true;
             Helper.Controls.Grid.Generator(this.grid2)
-               .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(10))
+               .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(20))
                .Numeric("totalqty", header: "TotalQty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true);
             
             this.checkBox1.Checked = true;
@@ -189,7 +189,13 @@ namespace Sci.Production.Planning
                            ddr["suppnm"] = dtabb; 
                            return;
                        }
-                   } 
+                   }
+                  if (Code == "")
+                  {
+                      ddr["localSuppid"] = "";
+                      ddr["suppnm"] = "";
+                      return;
+                  }
                    if (Code != dtid)
                        {
                            MyUtility.Msg.WarningBox("This supp id is wrong");

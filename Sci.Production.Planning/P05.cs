@@ -185,6 +185,12 @@ namespace Sci.Production.Planning
                         return;
                     }
                 }
+                if (Code == "")
+                { 
+                    ddr["localSuppid"] = ""; 
+                    ddr["suppnm"] = "";
+                    return; 
+                }
                 if (Code != dtid)
                 {
                     MyUtility.Msg.WarningBox("This supp id is wrong");
