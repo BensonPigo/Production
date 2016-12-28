@@ -422,6 +422,10 @@ drop table #tmp");
                             findrow[0]["selected"] = true;
                         }
                     }
+                    var tempchildrows = dr.GetChildRows("rel1");
+                    dr["total_qty"] = tempchildrows.Sum(row => (decimal)row["qty"]);
+                    this.grid2.ValidateControl();
+                    this.grid1.ValidateControl();
                 }
             }
         }
