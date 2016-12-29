@@ -270,7 +270,6 @@
             this.gridBreakDown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridBreakDown.Location = new System.Drawing.Point(10, 12);
             this.gridBreakDown.Name = "gridBreakDown";
-            this.gridBreakDown.RowHeadersVisible = false;
             this.gridBreakDown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridBreakDown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBreakDown.RowTemplate.Height = 24;
