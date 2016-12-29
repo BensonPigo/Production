@@ -320,6 +320,7 @@ where a.id = '{0}' and a.seq1 ='{1}'and a.seq2 = '{2}'", CurrentDetailData["poid
                                 CurrentDetailData["stockunit"] = dr["stockunit"];
                                 CurrentDetailData["Description"] = dr["description"];
                                 CurrentDetailData["useqty"] = dr["qty"];
+                                CurrentDetailData["fabrictype"] = dr["fabrictype"];
                             }
                         }
                     }
