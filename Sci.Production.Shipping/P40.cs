@@ -301,7 +301,7 @@ namespace Sci.Production.Shipping
 
         protected override bool ClickPrint()
         {
-            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "NEW")
             {
                 MyUtility.Msg.WarningBox("Can't Print it ,you should Confirmed first! ");
                 return false;
