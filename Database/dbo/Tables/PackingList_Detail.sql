@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[PackingList_Detail] (
     [Article]          VARCHAR (8)    CONSTRAINT [DF_PackingList_Detail_Article] DEFAULT ('') NOT NULL,
     [Color]            VARCHAR (6)    CONSTRAINT [DF_PackingList_Detail_Color] DEFAULT ('') NULL,
     [SizeCode]         VARCHAR (8)    CONSTRAINT [DF_PackingList_Detail_SizeCode] DEFAULT ('') NOT NULL,
-    [QtyPerCTN]        SMALLINT       CONSTRAINT [DF_PackingList_Detail_QtyPerCTN] DEFAULT ((0)) NULL,
+    [QtyPerCTN]        INT       CONSTRAINT [DF_PackingList_Detail_QtyPerCTN] DEFAULT ((0)) NULL,
     [ShipQty]          INT            CONSTRAINT [DF_PackingList_Detail_ShipQty] DEFAULT ((0)) NULL,
     [NW]               NUMERIC (6, 3) CONSTRAINT [DF_PackingList_Detail_NW] DEFAULT ((0)) NULL,
     [GW]               NUMERIC (6, 3) CONSTRAINT [DF_PackingList_Detail_GW] DEFAULT ((0)) NULL,
