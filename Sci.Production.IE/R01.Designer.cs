@@ -95,6 +95,7 @@
             this.textBox1.Size = new System.Drawing.Size(70, 23);
             this.textBox1.TabIndex = 99;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // textBox2
             // 
@@ -105,6 +106,7 @@
             this.textBox2.Size = new System.Drawing.Size(150, 23);
             this.textBox2.TabIndex = 100;
             this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
             // textBox3
             // 
@@ -115,6 +117,7 @@
             this.textBox3.Size = new System.Drawing.Size(80, 23);
             this.textBox3.TabIndex = 101;
             this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
+            this.textBox3.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
             // 
             // comboBox1
             // 
@@ -138,7 +141,6 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.EditMode = true;
             this.IsSupportToPrint = false;
             this.Name = "R01";
             this.Text = "R01. Line Mapping List";

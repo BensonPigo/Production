@@ -21,7 +21,7 @@ namespace Sci.Production.IE
             InitializeComponent();
             MyUtility.Tool.SetupCombox(comboBox1, 1, 1, ",A,B");
         }
-
+       
         //Factory
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
@@ -31,6 +31,7 @@ namespace Sci.Production.IE
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             textBox1.Text = item.GetSelectedString();
+           
         }
 
         //Style
@@ -54,10 +55,11 @@ namespace Sci.Production.IE
             if (returnResult == DialogResult.Cancel) { return; }
             textBox3.Text = item.GetSelectedString();
         }
-
+            
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
+         
             factory = textBox1.Text;
             style = textBox2.Text;
             season = textBox3.Text;
@@ -173,5 +175,75 @@ where 1 = 1
             excel.Visible = true;
             return true;
         }
+        private void textBox1_Validating(object sender, CancelEventArgs e)
+        {
+            DataTable FactoryData; string fac = "";
+            string sqlCmd = "select distinct FTYGroup from Factory where Junk = 0 AND FTYGroup!=''";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out FactoryData);
+            foreach (DataRow dr in FactoryData.Rows)
+            {
+                fac = dr["FTYGroup"].ToString();
+                if (textBox1.Text == fac) { return; }
+            }
+            if (textBox1.Text == "")
+            {
+                textBox1.Text = "";
+                return;
+            }
+            if (textBox1.Text != fac)
+            {
+                MyUtility.Msg.WarningBox("This Factory is wrong!");
+                textBox1.Text = "";
+                return;
+            }
+        }
+
+        private void textBox2_Validating(object sender, CancelEventArgs e)
+        {
+            DataTable StyleData; string sty = "";
+            string sqlCmd = "select distinct ID,BrandID,Description from Style where Junk = 0 order by ID";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out StyleData);
+            foreach (DataRow dr in StyleData.Rows)
+            {
+                sty = dr["ID"].ToString();
+                if (textBox2.Text == sty) { return; }
+            }
+            if (textBox2.Text == "")
+            {
+                textBox2.Text = "";
+                return;
+            }
+            if (textBox2.Text != sty)
+            {
+                MyUtility.Msg.WarningBox("This Style# is wrong!");
+                textBox2.Text = "";
+                return;
+            }
+        }
+
+        private void textBox3_Validating(object sender, CancelEventArgs e)
+        {
+            DataTable SeasonData; string season = "";
+            string sqlCmd = "select distinct ID from Season where Junk = 0";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out SeasonData);
+            foreach (DataRow dr in SeasonData.Rows)
+            {
+                season = dr["ID"].ToString();
+                if (textBox3.Text == season) { return; }
+            }
+            if (textBox3.Text == "")
+            {
+                textBox3.Text = "";
+                return;
+            }
+            if (textBox3.Text != season)
+            {
+                MyUtility.Msg.WarningBox("This Season is wrong!");
+                textBox3.Text = "";
+                return;
+            }
+        }
+
+        
     }
 }
