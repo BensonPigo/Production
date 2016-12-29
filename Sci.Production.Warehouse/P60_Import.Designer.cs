@@ -37,17 +37,17 @@
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.label4 = new Sci.Win.UI.Label();
+            this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
+            this.label1 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.dateRange1 = new Sci.Win.UI.DateRange();
             this.label2 = new Sci.Win.UI.Label();
             this.txtSpno2 = new Sci.Win.UI.TextBox();
             this.txtSpno1 = new Sci.Win.UI.TextBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.detailBS = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label3 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
-            this.label4 = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -161,6 +161,56 @@
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
+            // label4
+            // 
+            this.label4.Lines = 0;
+            this.label4.Location = new System.Drawing.Point(383, 54);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(104, 23);
+            this.label4.TabIndex = 105;
+            this.label4.Text = "Category";
+            // 
+            // txtartworktype_fty1
+            // 
+            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
+            this.txtartworktype_fty1.cClassify = "";
+            this.txtartworktype_fty1.cSubprocess = "Y";
+            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtartworktype_fty1.Location = new System.Drawing.Point(490, 54);
+            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
+            this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
+            this.txtartworktype_fty1.TabIndex = 104;
+            // 
+            // label1
+            // 
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(9, 19);
+            this.label1.Name = "label1";
+            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label1.Size = new System.Drawing.Size(95, 23);
+            this.label1.TabIndex = 103;
+            this.label1.Text = "Local PO#";
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.PaleGreen;
+            this.label3.Lines = 0;
+            this.label3.Location = new System.Drawing.Point(383, 19);
+            this.label3.Name = "label3";
+            this.label3.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label3.Size = new System.Drawing.Size(104, 23);
+            this.label3.TabIndex = 102;
+            this.label3.Text = "PO Issue Date";
+            this.label3.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // dateRange1
+            // 
+            this.dateRange1.Location = new System.Drawing.Point(490, 19);
+            this.dateRange1.Name = "dateRange1";
+            this.dateRange1.Size = new System.Drawing.Size(280, 23);
+            this.dateRange1.TabIndex = 101;
+            // 
             // label2
             // 
             this.label2.Lines = 0;
@@ -215,7 +265,6 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -223,56 +272,6 @@
             this.grid1.Size = new System.Drawing.Size(1008, 515);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            // 
-            // label3
-            // 
-            this.label3.BackColor = System.Drawing.Color.PaleGreen;
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(383, 19);
-            this.label3.Name = "label3";
-            this.label3.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label3.Size = new System.Drawing.Size(104, 23);
-            this.label3.TabIndex = 102;
-            this.label3.Text = "PO Issue Date";
-            this.label3.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // dateRange1
-            // 
-            this.dateRange1.Location = new System.Drawing.Point(490, 19);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 101;
-            // 
-            // label1
-            // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 19);
-            this.label1.Name = "label1";
-            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label1.Size = new System.Drawing.Size(95, 23);
-            this.label1.TabIndex = 103;
-            this.label1.Text = "Local PO#";
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // txtartworktype_fty1
-            // 
-            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_fty1.cClassify = "";
-            this.txtartworktype_fty1.cSubprocess = "Y";
-            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_fty1.Location = new System.Drawing.Point(490, 54);
-            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
-            this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 104;
-            // 
-            // label4
-            // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(383, 54);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(104, 23);
-            this.label4.TabIndex = 105;
-            this.label4.Text = "Category";
             // 
             // P60_Import
             // 
