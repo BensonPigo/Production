@@ -978,7 +978,7 @@ end", CurrentMaintain["id"].ToString(),CurrentMaintain["borrowid"],DateTime.Pars
 ,a.ToDyelot
 ,a.ToStocktype
 ,a.ukey
-,(select mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail fd where ukey= a.fromftyinventoryukey)t for xml path('')) location
+,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail fd where ukey= a.fromftyinventoryukey)t for xml path('')), 1, 1, '') location
 from dbo.BorrowBack_detail a left join PO_Supp_Detail p1 on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);

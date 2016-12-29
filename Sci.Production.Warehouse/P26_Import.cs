@@ -55,7 +55,7 @@ namespace Sci.Production.Warehouse
                         strSQLCmd.Append(string.Format(@"select distinct 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq
 ,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey ftyinventoryukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
-,(select t.mtllocationid +',' from (select mtllocationid from dbo.ftyinventory_detail where ukey = a.ukey) t for xml path('')) fromlocation
+,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where ukey = a.ukey) t for xml path('')), 1, 1, '') fromlocation
 ,'' tolocation, '' id
 ,p1.refno
 ,p1.colorid
@@ -93,7 +93,7 @@ and a.poid='{0}'", sp, dr_master["stocktype"].ToString())); //
                     }
                     strSQLCmd.Append(string.Format(@"select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
-,(select t.mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')) as fromlocation
+,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation
 , '' id
 ,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
@@ -106,7 +106,7 @@ and r1.id = '{0}'
 union all
 select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
-,(select t.mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')) as fromlocation
+,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation
 , '' id
 ,a.ukey ftyinventoryukey
@@ -119,7 +119,7 @@ and r1.id = '{0}'
 union all
 select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
-,(select t.mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')) as fromlocation
+,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation, '' id
 ,a.ukey ftyinventoryukey
 ,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
@@ -131,7 +131,7 @@ and r1.id = '{0}'
 union all
 select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
-,(select t.mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')) as fromlocation
+,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation, '' id
 ,a.ukey ftyinventoryukey
 ,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
@@ -143,7 +143,7 @@ and r1.id = '{0}'
 union
 select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
-,(select t.mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')) as fromlocation
+,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation, '' id
 ,a.ukey ftyinventoryukey 
 ,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno

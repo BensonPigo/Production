@@ -224,7 +224,7 @@ a.Id
 ,p.SizeSpec
 ,p.UsedQty
 ,p.SizeUnit
-,isnull((select t.MtlLocationID+',' from (select mtllocationid from dbo.FtyInventory_Detail where ukey=a.FtyInventoryUkey)t for xml path('')),'') [location]
+,isnull(stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.FtyInventory_Detail where ukey=a.FtyInventoryUkey)t for xml path('')), 1, 1, ''),'') [location]
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
 ,isnull((select sum(Issue_Detail.qty) from dbo.issue inner join dbo.Issue_Detail on Issue_Detail.id = Issue.Id where Issue.type = 'B' and Issue.Status='Confirmed' and issue.id!=a.Id and Issue_Detail.FtyInventoryUkey = a.FtyInventoryUkey),0.00) [accu_issue]
 ,isnull((select v.sizeqty+', ' from (select (rtrim(Issue_Size.SizeCode) +'*'+convert(varchar,Issue_Size.Qty)) as sizeqty from dbo.Issue_Size where Issue_Size.Issue_DetailUkey = a.ukey and Issue_Size.Qty != '0.00') v for xml path('')),'') [output]
@@ -1325,7 +1325,7 @@ a.POID
 ,b.SizeSpec
 ,b.UsedQty
 ,b.SizeUnit
-,isnull((select t.MtlLocationID+',' from (select mtllocationid from [Production].[dbo].FtyInventory_Detail where ukey=a.Ukey)t for xml path('')),'') [location]
+,isnull(stuff((select ',' + t.MtlLocationID from (select mtllocationid from [Production].[dbo].FtyInventory_Detail where ukey=a.Ukey)t for xml path('')), 1, 1, ''), '') [location]
 ,[Production].[dbo].getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
 ,isnull((select a.InQty-a.OutQty+a.AdjustQty ),0.00) as balanceqty
 from [Production].[dbo].ftyinventory a 

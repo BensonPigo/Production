@@ -633,8 +633,8 @@ a.id
 ,a.ToDyelot
 ,a.ToRoll
 ,a.ToStockType
-,(select t.MtlLocationID+',' from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FromFtyInventoryUkey) t 
-	for xml path('')) location
+,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FromFtyInventoryUkey) t 
+	for xml path('')), 1, 1, '') location
 ,a.ukey
 from dbo.SubTransfer_Detail a 
 left join PO_Supp_Detail p1 on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 

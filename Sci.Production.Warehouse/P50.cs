@@ -255,8 +255,8 @@ namespace Sci.Production.Warehouse
 ,left(a.seq1+' ',3)+a.Seq2 as seq
 ,a.Roll
 ,a.Dyelot
-,(select t.MtlLocationID+',' from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FtyInventoryUkey) t 
-	for xml path('')) location
+,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FtyInventoryUkey) t 
+	for xml path('')), 1, 1, '') location
 ,a.QtyBefore
 ,a.QtyAfter
 ,a.QtyAfter - a.QtyBefore as variance

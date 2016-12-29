@@ -56,12 +56,12 @@ namespace Sci.Production.Warehouse
 			                                        when stocktype = 'O' then 'Other' End
                                             ,a.InQty,a.OutQty,a.AdjustQty
                                             ,a.InQty - a.OutQty + a.AdjustQty as balance
-                                            , (Select cast(tmp.MtlLocationID as nvarchar)+',' 
+                                            ,stuff((Select ',' + cast(tmp.MtlLocationID as nvarchar) 
                                                                     from (select b.MtlLocationID 
                                                                                 from FtyInventory_Detail b
                                                                                 where a.Ukey = b.Ukey 
                                                                                     group by b.MtlLocationID) tmp 
-                                                                    for XML PATH('')) as  MtlLocationID 
+                                                                    for XML PATH('')), 1, 1, '') as  MtlLocationID 
                                             from FtyInventory a 
                                             where a.Poid = '{0}'
                                             and a.Seq1 = '{1}'

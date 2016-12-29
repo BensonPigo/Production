@@ -60,8 +60,8 @@ namespace Sci.Production.Warehouse
 ,c.StockType as fromStocktype
 ,c.inqty-c.outqty + c.adjustqty as balance
 ,0.00 as qty
-,isnull((select cast(mtllocationid as varchar)+',' 
-		from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')),'') as location
+,isnull(stuff((select ',' + cast(mtllocationid as varchar) 
+		from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, ''),'') as location
 ,a.FabricType
 ,a.stockunit
 ,a.InputQty

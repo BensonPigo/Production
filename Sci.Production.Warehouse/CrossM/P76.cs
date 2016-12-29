@@ -312,7 +312,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
             {
                 string[] dtrLocation = dtr["location"].ToString().Split(',');
-                if (dtrLocation.Length == 0) {
+                if (dtrLocation.Length == 1) {
                     DataRow newDr = newDt.NewRow();
                     newDr.ItemArray = dtr.ItemArray;
                     newDt.Rows.Add(newDr);
@@ -479,7 +479,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
             {
                 string[] dtrLocation = dtr["location"].ToString().Split(',');
-                if (dtrLocation.Length == 0)
+                if (dtrLocation.Length == 1)
                 {
                     DataRow newDr = newDt.NewRow();
                     newDr.ItemArray = dtr.ItemArray;

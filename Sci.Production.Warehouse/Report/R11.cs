@@ -113,7 +113,7 @@ p.Qty,
 p.NETQty,
 p.LossQty,
 sum(sd.Qty) * (select vu.RateValue from dbo.View_Unitrate vu where vu.FROM_U = p.StockUnit and vu.TO_U = p.POUnit) scrapqty,
-(select mtllocationid+',' from (select distinct mtllocationid from dbo.FtyInventory_Detail where ukey = sd.FromFtyInventoryUkey) mtl for xml path('')) location,
+stuff((select ',' + mtllocationid from (select distinct mtllocationid from dbo.FtyInventory_Detail where ukey = sd.FromFtyInventoryUkey) mtl for xml path('')), 1, 1, '') location,
 s.IssueDate
 from dbo.orders o 
 inner join dbo.SubTransfer_Detail sd on o.id = sd.FromPOID

@@ -113,7 +113,7 @@ select 0 as selected,'' as id,fi.Ukey FtyInventoryUkey,0.00 as qty,fi.MDivisionI
 	,fi.Roll,fi.Dyelot
 ,fi.StockType
 ,fi.InQty - fi.OutQty+fi.AdjustQty balanceqty 
-    ,(select mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where ukey = fi.ukey) t for xml path('')) [location]
+    ,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where ukey = fi.ukey) t for xml path('')), 1, 1, '') [location]
 from cte inner join FtyInventory fi on fi.MDivisionID  =  cte.FromMDivisionID 
 and fi.POID = cte.FromPOID and fi.Seq1 = cte.FromSeq1 and fi.Seq2 = cte.FromSeq2 
 where lock = 0 and fi.InQty - fi.OutQty+fi.AdjustQty > 0;", dr_master["cutplanid"], Sci.Env.User.Keyword);

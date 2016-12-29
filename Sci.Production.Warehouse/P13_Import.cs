@@ -55,7 +55,7 @@ namespace Sci.Production.Warehouse
 ,0.00 as Qty
 ,'B' StockType
 ,c.ukey as ftyinventoryukey
-,(select cast(mtllocationid as varchar)+',' from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')) as location
+,stuff((select ',' + cast(mtllocationid as varchar) from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, '') as location
 ,c.inqty-c.outqty + c.adjustqty as balance
 from dbo.PO_Supp_Detail a 
 inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'

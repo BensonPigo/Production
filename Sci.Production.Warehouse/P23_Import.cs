@@ -91,8 +91,8 @@ select 0 AS selected,'' as id
 ,isnull((select inqty from dbo.FtyInventory t 
 	where t.MDivisionID = #tmp.MDivisionID and t.POID = #tmp.POID and t.seq1 = #tmp.seq1 and t.seq2 = #tmp.seq2 and t.StockType = 'B' 
 	and t.Roll = fi.Roll and t.Dyelot = fi.Dyelot),0) as [accu_qty]
-,(select t1.MtlLocationID+',' from (select MtlLocationid from dbo.FtyInventory_Detail where FtyInventory_Detail.Ukey = fi.Ukey)t1 
-	for xml path('')) as [Location]
+,stuff((select ',' + t1.MtlLocationID from (select MtlLocationid from dbo.FtyInventory_Detail where FtyInventory_Detail.Ukey = fi.Ukey)t1 
+	for xml path('')), 1, 1, '') as [Location]
 ,fi.MDivisionID ToMDivisionID
 ,rtrim(#tmp.poid) ToPOID
 ,rtrim(#tmp.seq1) ToSeq1

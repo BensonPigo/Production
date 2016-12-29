@@ -69,7 +69,7 @@ namespace Sci.Production.Warehouse
                 {
                     sqlcmd.Append(@"select distinct (select orders.Factoryid from orders where orders.id = a.poid) Factory
 ,a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
-,(select cast(MtlLocationID as varchar)+',' from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')) as location
+,stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, '') as location
 ,p.Width,p.ColorID Color,p.SizeSpec Size
 ,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) AS description 
 ,a.StockType
@@ -100,7 +100,7 @@ where 1=1");
                 {
                     sqlcmd.Append(string.Format(@"select distinct (select orders.Factoryid from orders where orders.id = a.poid) as factory,
 a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
-,(select cast(MtlLocationID as varchar)+',' from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')) as location
+,stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, '') as location
 ,p.Width,p.ColorID,p.SizeSpec
 ,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) AS description 
 ,a.StockType
@@ -133,7 +133,7 @@ where 1=1 And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'", location1,
                 if (MyUtility.Check.Empty())
                 {
                     sqlcmd.Append(string.Format(@"select distinct orders.factoryid factory,a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
-,(select cast(MtlLocationID as varchar)+',' from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')) as location
+,stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, '') as location
 ,p.Width,p.ColorID,p.SizeSpec
 ,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) AS description 
 ,a.StockType
@@ -164,7 +164,7 @@ And orders.scidelivery between '{0}' and '{1}'", dateRange1.Text1, dateRange1.Te
                 else
                 {
                     sqlcmd.Append(string.Format(@"select distinct orders.factoryid as factory,a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
-,(select cast(MtlLocationID as varchar)+',' from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')) as location
+,stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, '') as location
 ,p.Width,p.ColorID,p.SizeSpec
 ,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) AS description 
 ,a.StockType

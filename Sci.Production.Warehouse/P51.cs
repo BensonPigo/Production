@@ -292,7 +292,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                     if (MyUtility.Check.Empty(CurrentDetailData["stocktype"])) CurrentDetailData["stocktype"] = CurrentMaintain["stocktype"].ToString();
 
                     string sqlcmd = string.Format(@"select a.ukey,a.roll,a.dyelot,inqty-a.outqty+a.adjustqty qty 
-                                 ,(select t.MtlLocationID+',' from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.Ukey) t for xml path('')) as location 
+                                 ,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.Ukey) t for xml path('')), 1, 1, '') as location 
                                  ,dbo.getmtldesc('{1}','{2}','{3}',2,0) as [description]
                                         from dbo.ftyinventory a
                                         where mdivisionid='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' 
@@ -345,7 +345,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                         if (MyUtility.Check.Empty(CurrentDetailData["stocktype"])) CurrentDetailData["stocktype"] = CurrentMaintain["stocktype"].ToString();
 
                         if (!MyUtility.Check.Seek(string.Format(@"select a.ukey,a.roll,a.dyelot,a.inqty-a.outqty+a.adjustqty qty
-                                 ,(select t.MtlLocationID+',' from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.Ukey) t for xml path('')) as location 
+                                 ,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.Ukey) t for xml path('')), 1, 1, '') as location 
                                  ,dbo.getmtldesc('{1}','{2}','{3}',2,0) as [description] 
                                         from dbo.ftyinventory a where mdivisionid='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' 
                                         and stocktype='{4}' and roll='{5}' and lock =0", CurrentDetailData["mdivisionid"]
@@ -446,8 +446,8 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
 ,left(a.seq1+' ',3)+a.Seq2 as seq
 ,a.Roll
 ,a.Dyelot
-,(select t.MtlLocationID+',' from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FtyInventoryUkey) t 
-	for xml path('')) location
+,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FtyInventoryUkey) t 
+	for xml path('')), 1, 1, '') location
 ,a.QtyBefore
 ,a.QtyAfter
 ,a.QtyAfter - a.QtyBefore as variance

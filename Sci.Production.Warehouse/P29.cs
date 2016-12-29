@@ -338,7 +338,7 @@ fi.StockType FromStockType,
 fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty,
 0.00 as Qty,
 fi.MDivisionID toMdivisionID,rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'B' tostocktype 
-,(select mtllocationid+',' from (select MtlLocationid from dbo.FtyInventory_Detail where ukey = fi.Ukey)t for xml path('')) fromlocation
+,stuff((select ',' + mtllocationid from (select MtlLocationid from dbo.FtyInventory_Detail where ukey = fi.Ukey)t for xml path('')), 1, 1, '') fromlocation
 ,'' tolocation
 from #tmp t inner join FtyInventory fi on fi.MDivisionID = t.MDivisionID and fi.POID = t.StockPOID 
 and fi.seq1 = t.StockSeq1 and fi.Seq2 = t.StockSeq2

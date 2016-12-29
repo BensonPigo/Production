@@ -61,7 +61,7 @@ namespace Sci.Production.Warehouse
 ,a.stockunit
 ,c.StockType as fromstocktype
 ,c.InQty - c.OutQty + c.AdjustQty balance
-,(select mtllocationid +',' from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')) as location
+,stuff((select ',' + mtllocationid from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, '') as location
 ,left(b.seq1+' ',3)+b.Seq2 as toseq
 ,c.Roll toroll
 ,c.Dyelot todyelot

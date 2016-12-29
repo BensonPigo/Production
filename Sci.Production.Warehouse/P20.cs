@@ -194,7 +194,7 @@ select i.poid,i.seq1,i.Seq2,t.id
  order by InventoryUkey,ConfirmDate,ID");
             sqlcmd.Append(Environment.NewLine);
             sqlcmd.Append(@";select f.poid as id,f.Poid,f.Seq1,f.seq2,f.Roll,f.Dyelot,f.InQty,f.OutQty,f.AdjustQty
- ,isnull((select t.MtlLocationID+',' as MtlLocationID from (select fd.MtlLocationID from FtyInventory_Detail fd where fd.Ukey = f.Ukey)t for xml path('')),'')  Location
+ ,isnull(stuff((select ',' + t.MtlLocationID as MtlLocationID from (select fd.MtlLocationID from FtyInventory_Detail fd where fd.Ukey = f.Ukey)t for xml path('')), 1, 1, ''),'')  Location
  from FtyInventory f
  where stocktype='I'");
             if (!MyUtility.Check.Empty(spno))

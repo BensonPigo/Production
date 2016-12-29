@@ -68,7 +68,7 @@ namespace Sci.Production.Warehouse
 ,c.roll as toRoll
 ,c.dyelot as toDyelot
 ,left(bd.FromSeq1+' ',3)+bd.FromSeq2 as toseq
-,(select mtllocationid +',' from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')) as location
+,stuff((select ',' + mtllocationid from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, '') as location
 ,dbo.getMtlDesc(bd.topoid,bd.toseq1,bd.toseq2,2,0) as [description]
 ,p.StockUnit
 ,p.FabricType

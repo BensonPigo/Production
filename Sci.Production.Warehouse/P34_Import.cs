@@ -56,7 +56,7 @@ namespace Sci.Production.Warehouse
 ,c.Dyelot
 ,c.inqty-c.outqty + c.adjustqty as QtyBefore
 ,0.00 as QtyAfter
-,isnull((select cast(mtllocationid as varchar)+',' from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')),'') as location
+,isnull(stuff((select ',' + cast(mtllocationid as varchar) from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, ''),'') as location
 ,'' reasonid
 ,'' reason_nm
 ,a.FabricType

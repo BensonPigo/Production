@@ -118,10 +118,10 @@ and b.Seq2 = '{2}'
 group by b.Roll,b.Dyelot)
 select tmp.Roll,tmp.Dyelot,sum(tmp.Receiving) Receiving,sum(tmp.A2B) A2B,sum(tmp.C2B) C2B,sum(tmp.TransIn) TransIn,sum(tmp.BackIn) BackIn
 ,sum(tmp.ReturnIn) ReturnIn,sum(tmp.B2A) B2A,sum(tmp.B2C) B2C,sum(tmp.TransOut) TransOut,sum(tmp.BorrowOut) BorrowOut,sum(tmp.Adjust) Adjust
-,(select cast(t.MtlLocationID as nvarchar)+',' 
+,stuff((select ',' + cast(t.MtlLocationID as nvarchar)
 	from (select b1.MtlLocationID from FtyInventory a1 inner join FtyInventory_Detail b1 on a1.Ukey = b1.Ukey 
 	where a1.Poid = '{0}' and a1.seq1 = '{1}' and a1.Seq2 = '{2}' and a1.StockType = 'I' and a1.Roll = tmp.Roll and a1.Dyelot =tmp.Dyelot 
-	group by b1.MtlLocationID) t for xml path('')) as location
+	group by b1.MtlLocationID) t for xml path('')), 1, 1, '') as location
 from  tmp 
 group by tmp.roll,tmp.Dyelot
 union all

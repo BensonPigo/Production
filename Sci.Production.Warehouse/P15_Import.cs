@@ -56,7 +56,7 @@ where a.id = '{0}';", dr_master["requestid"]));
 ,0.00 as Qty
 ,'B' StockType
 ,c.ukey as ftyinventoryukey
-,isnull((select cast(MtlLocationid as varchar)+',' from (select MtlLocationid from FtyInventory_Detail where ukey=c.Ukey) t for xml path('')),'') as location
+,isnull(stuff((select ',' + cast(MtlLocationid as varchar) from (select MtlLocationid from FtyInventory_Detail where ukey=c.Ukey) t for xml path('')), 1, 1, ''),'') as location
 ,c.inqty-c.outqty + c.adjustqty as balance
 ,(select stockunit from po_supp_detail where id = c.poid and seq1 =c.seq1 and seq2 = c.seq2 ) as stockunit
 ,dbo.getMtlDesc(c.poid,c.seq1,c.seq2,2,0) as [description]

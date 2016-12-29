@@ -69,8 +69,8 @@ namespace Sci.Production.Warehouse
 ,c.Roll as toroll
 ,c.Dyelot as todyelot
 ,'O' as toStocktype
-,(select t.MtlLocationID+',' from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = c.Ukey) t 
-	for xml path('')) Fromlocation
+,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = c.Ukey) t 
+	for xml path('')), 1, 1, '') Fromlocation
 ,'{0}' as toMdivisionid
 from dbo.PO_Supp_Detail a 
 inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 

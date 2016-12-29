@@ -606,7 +606,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
 ,a.ReasonId
 ,(select Name from Reason where ReasonTypeID='Stock_Adjust' AND ID= A.ReasonId) reason_nm
 ,a.StockType
-,(select mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail fd where ukey= a.ftyinventoryukey) t for xml path('')) location
+,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail fd where ukey= a.ftyinventoryukey) t for xml path('')), 1, 1, '') location
 ,a.ukey
 ,a.ftyinventoryukey
 from dbo.Adjust_Detail a 

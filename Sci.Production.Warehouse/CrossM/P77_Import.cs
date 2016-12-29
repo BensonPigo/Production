@@ -111,7 +111,7 @@ select distinct rtrim(toPOID) frompoid,rtrim(toSeq1) FromSeq1,rtrim(toSeq2) From
 )
 select distinct 0 as selected,'' as id,fi.Ukey FtyInventoryUkey,0.00 as qty,fi.MDivisionID,fi.POID,rtrim(fi.seq1) seq1,fi.seq2,left(fi.seq1+' ',3)+fi.Seq2 as seq,dbo.getmtldesc(fi.poid,fi.seq1,fi.seq2,2,0) as [description],p1.stockunit
 	,fi.Roll,fi.Dyelot,fi.StockType,fi.InQty - fi.OutQty+fi.AdjustQty balanceqty 
-    ,(select mtllocationid+',' from (select mtllocationid from dbo.ftyinventory_detail where ukey = fi.ukey) t for xml path('')) [location]
+    ,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where ukey = fi.ukey) t for xml path('')), 1, 1, '') [location]
 from cte inner join FtyInventory fi on fi.MDivisionID  =  cte.ToMDivisionID 
 and fi.POID = cte.toPOID and fi.Seq1 = cte.toSeq1 and fi.Seq2 = cte.toSeq2 
 left join PO_Supp_Detail p1 on p1.ID = cte.toPOID and p1.seq1 = cte.toSeq1 and p1.SEQ2 = cte.toSeq2
