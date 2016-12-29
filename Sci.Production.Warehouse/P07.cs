@@ -451,11 +451,12 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                             else
                             {
                                 DataRow dr_StockUnit;
-                                MyUtility.Check.Seek(string.Format(@"select 
-iif(mm.IsExtensionUnit is null, 
+                                bool unti_result= MyUtility.Check.Seek(string.Format(@"
+select 
+iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
     ff.UsageUnit , 
     iif(mm.IsExtensionUnit > 0 , 
-        iif(uu.ExtensionUnit is null, 
+        iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
             ff.UsageUnit , 
             uu.ExtensionUnit), 
         ff.UsageUnit)) as StockUnit
@@ -463,10 +464,18 @@ from dbo.PO_Supp_Detail b
 inner join [dbo].[Fabric] ff on b.SCIRefno= ff.SCIRefno
 inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
 inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
-inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = (IIF ( mm.IsExtensionUnit > 0, uu.ExtensionUnit, ff.UsageUnit ))--b.StockUnit
+inner join View_unitrate v on v.FROM_U = b.POUnit 
+	and v.TO_U = (
+	iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+		ff.UsageUnit , 
+		iif(mm.IsExtensionUnit > 0 , 
+			iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+				ff.UsageUnit , 
+				uu.ExtensionUnit), 
+			ff.UsageUnit)))--b.StockUnit
 where b.id = '{0}' and b.seq1 ='{1}'and b.seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3), e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr_StockUnit, null);
 
-                                CurrentDetailData["stockunit"] = dr_StockUnit["stockunit"];
+                                CurrentDetailData["stockunit"] = (unti_result) ? dr_StockUnit["stockunit"] : dr["stockunit"];
                                 CurrentDetailData["seq"] = e.FormattedValue;
                                 CurrentDetailData["seq1"] = e.FormattedValue.ToString().Substring(0, 3);
                                 CurrentDetailData["seq2"] = e.FormattedValue.ToString().Substring(3, 2);
@@ -1121,13 +1130,13 @@ Where a.id = '{0}' ", masterID);
 , a.NetKg as ActualWeight, iif(c.category='M','I','B') as stocktype
 , b.POUnit 
 --,b.StockUnit
-,iif(mm.IsExtensionUnit is null, 
-	ff.UsageUnit , 
-	iif(mm.IsExtensionUnit > 0 , 
-		iif(uu.ExtensionUnit is null, 
-			ff.UsageUnit , 
-			uu.ExtensionUnit), 
-		ff.UsageUnit)) as StockUnit
+,iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+    ff.UsageUnit , 
+    iif(mm.IsExtensionUnit > 0 , 
+        iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+            ff.UsageUnit , 
+            uu.ExtensionUnit), 
+        ff.UsageUnit)) as StockUnit
 --,IIF ( mm.IsExtensionUnit > 0, uu.ExtensionUnit, ff.UsageUnit ) AS StockUnit
 ,b.FabricType
 , left(a.seq1+' ',3)+a.Seq2 as seq
@@ -1143,7 +1152,15 @@ inner join orders c on c.id = a.poid
 inner join [dbo].[Fabric] ff on b.SCIRefno= ff.SCIRefno
 inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
 inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
-inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U = (IIF ( mm.IsExtensionUnit > 0, uu.ExtensionUnit, ff.UsageUnit ))--b.StockUnit
+inner join View_unitrate v on v.FROM_U = b.POUnit
+	and v.TO_U = (
+	iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+		ff.UsageUnit , 
+		iif(mm.IsExtensionUnit > 0 , 
+			iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+				ff.UsageUnit , 
+				uu.ExtensionUnit), 
+			ff.UsageUnit)))--b.StockUnit
 where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword);
                     DBProxy.Current.Select(null, selCom, out dt);
                     if (MyUtility.Check.Empty(dt) || MyUtility.Check.Empty(dt.Rows.Count))
