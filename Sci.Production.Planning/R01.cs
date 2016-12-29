@@ -335,7 +335,7 @@ from subtotal
             }
  
             objSheets.Cells[2, 1] = condition.ToString();   // 條件字串寫入excel
-            objSheets.Cells[3, 2] = DateTime.Now.ToString();  // 列印日期寫入excel
+            objSheets.Cells[3, 2] = DateTime.Now.ToShortDateString();  // 列印日期寫入excel
             objApp.Visible = true;
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
