@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button3 = new Sci.Win.UI.Button();
             this.checkBox2 = new Sci.Win.UI.CheckBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
@@ -35,11 +36,11 @@
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.label2 = new Sci.Win.UI.Label();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grid1 = new Sci.Win.UI.Grid();
             this.grid2 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -166,11 +167,10 @@
             this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -190,11 +190,10 @@
             this.grid2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid2.Location = new System.Drawing.Point(0, 0);
             this.grid2.Name = "grid2";
-            this.grid2.RowHeadersVisible = false;
             this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
@@ -203,13 +202,13 @@
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
             // 
-            // P16_Import
+            // P15_Import
             // 
             this.ClientSize = new System.Drawing.Size(1008, 530);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.groupBox2);
-            this.Name = "P16_Import";
-            this.Text = "P16. Import Detail";
+            this.Name = "P15_Import";
+            this.Text = "P15. Import Detail";
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
