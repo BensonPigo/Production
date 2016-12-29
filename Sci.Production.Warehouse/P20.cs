@@ -100,7 +100,8 @@ namespace Sci.Production.Warehouse
         //Close
         private void button1_Click(object sender, EventArgs e)
         {
-            this.Dispose();
+            //this.Dispose();
+            this.Close();
         }
 
         //Query
