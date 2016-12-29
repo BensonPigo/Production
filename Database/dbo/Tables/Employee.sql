@@ -4,7 +4,7 @@
     [ID]              VARCHAR (10)  CONSTRAINT [DF_Employee_ID] DEFAULT ('') NOT NULL,
     [Name]            NVARCHAR (30) CONSTRAINT [DF_Employee_Name] DEFAULT ('') NOT NULL,
     [Skill]           NVARCHAR (20) CONSTRAINT [DF_Employee_Skill] DEFAULT ('') NULL,
-    [OnBoardDate]     DATE          NOT NULL,
+    [OnBoardDate]     DATE          NULL,
     [ResignationDate] DATE          NULL,
     [SewingLineID]    VARCHAR (2)   CONSTRAINT [DF_Employee_SewingLineID] DEFAULT ('') NOT NULL,
     [AddName]         VARCHAR (10)  CONSTRAINT [DF_Employee_AddName] DEFAULT ('') NULL,
