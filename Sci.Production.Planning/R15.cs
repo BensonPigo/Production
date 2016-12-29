@@ -151,7 +151,7 @@ namespace Sci.Production.Planning
 
             if (!MyUtility.Check.Empty(spno1))
             {
-                sqlCmd.Append(" and o1.id >= @spno1 and o1.id <= @spno2");
+                sqlCmd.Append(" and o.id >= @spno1 and o.id <= @spno2");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@spno1", spno1));
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@spno2", spno2));
             }
