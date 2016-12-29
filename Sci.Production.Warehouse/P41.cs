@@ -60,8 +60,8 @@ namespace Sci.Production.Warehouse
                  .Text("SizeSpec", header: "SizeSpec", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                  .Date("fstSCIdlv", header: "SCI Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                  .Date("fstBuyerDlv", header: "Buyer Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                  .Date("SCIdlv", header: "SCI Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                  .Date("BuyerDlv", header: "Buyer Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20), iseditingreadonly: true)
                   .Text("color", header: "Color Desc", width: Widths.AnsiChars(13), iseditingreadonly: true)
                   ;
@@ -100,7 +100,7 @@ namespace Sci.Production.Warehouse
             }
 
             string sqlcmd
-                = string.Format(@"select c.mdivisionid,c.POID,a.EachConsApv
+                = string.Format(@"select c.mdivisionid,c.POID,left(b.seq1+' ',3)+b.Seq2 as seq,a.EachConsApv
 ,(SELECT MAX(FinalETA) FROM 
 	(SELECT PO_SUPP_DETAIL.FinalETA FROM PO_Supp_Detail 
 		WHERE PO_Supp_Detail.ID = B.ID 
@@ -112,18 +112,19 @@ namespace Sci.Production.Warehouse
 	) tmp) as ETA
 	,MIN(a.SewInLine) as FstSewinline
     ,b.Special
+    ,b.SizeSpec
 	,round(cast(b.Qty as float)
         * (iif(b.POUnit=b.StockUnit,1,(select unit_rate.rate from unit_rate where Unit_Rate.UnitFrom = b.POUnit and Unit_Rate.UnitTo = b.StockUnit)))
 		,(select unit.Round from unit where id = b.StockUnit)) as qty
-	,b.stockunit
-	,b.SizeSpec
+    ,min(a.SciDelivery) SCIdlv
+    ,min(a.BuyerDelivery) BuyerDlv
     ,B.Refno
+    ,a.BrandID
+    ,(select color.Name from color where color.id = b.ColorID and color.BrandId = a.brandid ) as color
+	,b.stockunit	
     ,B.SEQ1
     ,B.SEQ2
-    ,c.TapeInline,c.TapeOffline
-	,min(a.SciDelivery) FstSCIdlv
-	,min(a.BuyerDelivery) FstBuyerDlv
-	,(select color.Name from color where color.id = b.ColorID and color.BrandId = a.brandid ) as color
+    ,c.TapeInline,c.TapeOffline			
 from dbo.orders a inner join dbo.po_supp_detail b on a.poid = b.id
 inner join dbo.cuttingtape_detail c on c.mdivisionid = '{0}' and c.poid = b.id and c.seq1 = b.seq1 and c.seq2 = b.seq2
 WHERE A.IsForecast = 0 AND A.Junk = 0 AND A.LocalOrder = 0
@@ -187,6 +188,11 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", S
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             dt.DefaultView.RowFilter = listControlBindingSource1.Filter;
             dt = dt.DefaultView.ToTable();
+            dt.Columns.Remove("stockunit");
+            dt.Columns.Remove("SEQ1");
+            dt.Columns.Remove("SEQ2");
+            dt.Columns.Remove("TapeInline");
+            dt.Columns.Remove("TapeOffline");
             if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No Data!!");
