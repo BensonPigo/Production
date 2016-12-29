@@ -161,11 +161,13 @@ namespace Sci.Production.Shipping
             StringBuilder wrongUnit = new StringBuilder();
             foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
             {
-                insertCmds.Add(string.Format(@"insert into VNContract_Detail (ID,HSCode,NLCode,Qty,UnitID,Waste,Price,LocalPurchase,NecessaryItem,AddName,AddDate) 
-values('{0}','{1}','{2}',{3},'{4}',{5},{6},{7},{8},'{9}',GETDATE());", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dr["HSCode"]), MyUtility.Convert.GetString(dr["NLCode"]),
-                                                                     MyUtility.Convert.GetString(dr["Qty"]), MyUtility.Convert.GetString(dr["UnitID"]), MyUtility.Convert.GetString(dr["Waste"]),
-                                                                     MyUtility.Convert.GetString(dr["Price"]), MyUtility.Convert.GetString(dr["LocalPurchase"]).ToUpper() == "TRUE" ? "1" : "0",
-                                                                     MyUtility.Convert.GetString(dr["NecessaryItem"]).ToUpper() == "TRUE" ? "1" : "0", Sci.Env.User.UserID));
+                insertCmds.Add(string.Format(@"insert into VNContract_Detail (      ID,HSCode,NLCode,Qty,UnitID,Waste,Price,LocalPurchase,NecessaryItem,AddName,AddDate) 
+values('{0}','{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}',GETDATE());", 
+MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dr["HSCode"]),
+MyUtility.Convert.GetString(dr["NLCode"]),MyUtility.Convert.GetString(dr["Qty"]), 
+MyUtility.Convert.GetString(dr["UnitID"]), MyUtility.Convert.GetString(dr["Waste"]),
+MyUtility.Convert.GetString(dr["Price"]), MyUtility.Convert.GetString(dr["LocalPurchase"]).ToUpper() == "TRUE" ? "1" : "0",
+MyUtility.Convert.GetString(dr["NecessaryItem"]).ToUpper() == "TRUE" ? "1" : "0", Sci.Env.User.UserID));
                 if (MyUtility.Check.Seek(string.Format("select ID from VNContract_Detail where ID = '{0}' and NLCode = '{1}'", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dr["NLCode"]))))
                 {
                     dupNLCode.Append(string.Format("NL Code: {0}\r\n", MyUtility.Convert.GetString(dr["NLCode"])));
