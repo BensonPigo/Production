@@ -174,7 +174,7 @@ as
                 cmds.Add(sp_spno2);
             }
 
-            if (!MyUtility.Check.Empty(GLdate1))
+            if (!MyUtility.Check.Empty(GLdate1) && !MyUtility.Check.Empty(GLdate2))
             {
                 sqlCmd.Append(" and a.ApvDate between @GLdate1 and @GLdate2");
                 sp_GLdate1.Value = GLdate1;
