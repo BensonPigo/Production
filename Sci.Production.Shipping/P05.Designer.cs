@@ -96,7 +96,6 @@
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.textBox7 = new Sci.Win.UI.TextBox();
             this.textBox6 = new Sci.Win.UI.TextBox();
-            this.maskedTextBox1 = new System.Windows.Forms.MaskedTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -113,7 +112,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.maskedTextBox1);
             this.masterpanel.Controls.Add(this.button6);
             this.masterpanel.Controls.Add(this.textBox6);
             this.masterpanel.Controls.Add(this.textBox7);
@@ -252,7 +250,6 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox6, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.button6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.maskedTextBox1, 0);
             // 
             // detailpanel
             // 
@@ -805,7 +802,7 @@
             this.textBox3.BackColor = System.Drawing.Color.White;
             this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SONo", true));
             this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(657, 85);
+            this.textBox3.Location = new System.Drawing.Point(658, 85);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(140, 23);
             this.textBox3.TabIndex = 14;
@@ -814,7 +811,7 @@
             // 
             this.dateBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SOCFMDate", true));
             this.dateBox4.IsSupportEditMode = false;
-            this.dateBox4.Location = new System.Drawing.Point(657, 166);
+            this.dateBox4.Location = new System.Drawing.Point(658, 166);
             this.dateBox4.Name = "dateBox4";
             this.dateBox4.ReadOnly = true;
             this.dateBox4.Size = new System.Drawing.Size(130, 23);
@@ -825,7 +822,7 @@
             this.textBox5.BackColor = System.Drawing.Color.White;
             this.textBox5.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Vessel", true));
             this.textBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox5.Location = new System.Drawing.Point(657, 193);
+            this.textBox5.Location = new System.Drawing.Point(658, 193);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(188, 23);
             this.textBox5.TabIndex = 17;
@@ -941,7 +938,7 @@
             this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ShipPlanID", true));
             this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(657, 220);
+            this.displayBox3.Location = new System.Drawing.Point(658, 220);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(120, 23);
             this.displayBox3.TabIndex = 70;
@@ -975,7 +972,7 @@
             this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
             this.txtsubcon1.DisplayBox1Binding = "";
             this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(657, 31);
+            this.txtsubcon1.Location = new System.Drawing.Point(658, 31);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
             this.txtsubcon1.TabIndex = 12;
@@ -985,7 +982,7 @@
             // 
             this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
             this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(657, 4);
+            this.txtuser1.Location = new System.Drawing.Point(658, 4);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(302, 23);
             this.txtuser1.TabIndex = 11;
@@ -1071,25 +1068,11 @@
             // 
             this.textBox6.BackColor = System.Drawing.Color.White;
             this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox6.Location = new System.Drawing.Point(661, 139);
+            this.textBox6.Location = new System.Drawing.Point(658, 139);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(153, 23);
             this.textBox6.TabIndex = 73;
             this.textBox6.Validating += new System.ComponentModel.CancelEventHandler(this.textBox6_Validating);
-            // 
-            // maskedTextBox1
-            // 
-            this.maskedTextBox1.BackColor = System.Drawing.Color.White;
-            this.maskedTextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.maskedTextBox1.Location = new System.Drawing.Point(828, 139);
-            this.maskedTextBox1.Mask = "0000/00/00 00:00:00";
-            this.maskedTextBox1.Name = "maskedTextBox1";
-            this.maskedTextBox1.Size = new System.Drawing.Size(153, 23);
-            this.maskedTextBox1.TabIndex = 76;
-            this.maskedTextBox1.ValidatingType = typeof(System.DateTime);
-            this.maskedTextBox1.Visible = false;
-            this.maskedTextBox1.Validating += new System.ComponentModel.CancelEventHandler(this.maskedTextBox1_Validating);
-            this.maskedTextBox1.Validated += new System.EventHandler(this.maskedTextBox1_Validated);
             // 
             // P05
             // 
@@ -1198,6 +1181,5 @@
         private Win.UI.ComboBox comboBox1;
         private Win.UI.TextBox textBox7;
         private Win.UI.TextBox textBox6;
-        private System.Windows.Forms.MaskedTextBox maskedTextBox1;
     }
 }

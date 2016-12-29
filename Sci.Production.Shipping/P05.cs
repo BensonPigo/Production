@@ -63,71 +63,9 @@ where {0}", masterID);
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, ",CY-CY,CFS-CY,CFS-CFS");
-
-            
-            this.maskedTextBox1.TypeValidationCompleted += new TypeValidationEventHandler(maskedTextBox1_TypeValidationCompleted);
+            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, ",CY-CY,CFS-CY,CFS-CFS");         
            
-        }
-
-        void maskedTextBox1_TypeValidationCompleted(object sender, TypeValidationEventArgs e)
-        {
-            if (this.EditMode && maskedTextBox1.Text != emptyDTMask)
-            {
-
-                for (int i = 0; i <= 10; i++)
-                {
-                    if (maskedTextBox1.Text.Substring(i, 1) != " ")
-                    {
-                        string cutOffDate = maskedTextBox1.Text.Substring(0, 10).Replace(" ", "1");
-                        try
-                        {
-                            if (!CheckDate((DateTime)MyUtility.Convert.GetDate(cutOffDate), -12, 12))
-                            {
-                                MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
-                                maskedTextBox1.Text = null;
-                                e.Cancel = true;
-                                return;
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
-                            e.Cancel = true;
-                            return;
-                        }
-                    }
-                }
-                
-                
-
-            }
-            
-            //DateTime today = DateTime.Now;
-            //TimeSpan ts1 = new TimeSpan(today.Ticks);
-            //TimeSpan ts2 = new TimeSpan(MyUtility.Convert.GetDate(maskedTextBox1.Text).Value.Ticks);
-            //TimeSpan ts = ts1.Subtract(ts2).Duration();
-
-            //int diffDays = ts.Days;
-            //if (MyUtility.Check.Empty(maskedTextBox1.Text))
-            //{
-            //    return;
-            //}
-            //else
-            //{
-            //    if (diffDays > 365 || diffDays < -365)
-            //    {
-            //        MyUtility.Msg.WarningBox("<Cut off Date > cannot more or less than today over 365 Days");
-            //        maskedTextBox1.Focus();
-            //        return;
-            //    }
-            //    else
-            //    {
-            //        CurrentMaintain["CutOffDate"] = maskedTextBox1.Text;
-            //    }
-            //}
-        }
-
+        }      
        
 
         protected override void OnDetailEntered()
@@ -1278,57 +1216,7 @@ order by fwd.WhseNo", this.textBox7.Text.ToString().Trim());
                 }
             }           
         }
-
-             
-
-        private void maskedTextBox1_TextChanged(object sender, EventArgs e)
-        {
-            this.maskedTextBox1.ValidatingType = Type.GetType("System.DateTime");
-            string validatedText = Convert.ToString(maskedTextBox1.ValidateText());
-            if (!string.IsNullOrEmpty(validatedText))
-            {
-                DateTime dt = Convert.ToDateTime(validatedText);
-
-            }
-            //maskedTextBox1.Text.incl
-        }
-
-        private void maskedTextBox1_Validating(object sender, CancelEventArgs e)
-        {
-         
-            if ((maskedTextBox1.Text == "/  /     :  :"))
-            {
-                //e.Cancel=true;
-                return;
-            }
-            if (this.EditMode && maskedTextBox1.Text != emptyDTMask)
-            {
-                string cutOffDate = maskedTextBox1.Text.Substring(0, 10).Replace(" ", "1");
-                try
-                {
-                    if (!CheckDate((DateTime)MyUtility.Convert.GetDate(cutOffDate), -12, 12))
-                    {
-                        MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
-                        maskedTextBox1.Text = null;
-                        e.Cancel = true;
-                        return;
-                    }
-                }
-                catch (Exception)
-                {
-                    MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
-                    e.Cancel = true;
-                    return;
-                }
-
-            }
-        }
-
-        private void toolTip1_Popup(object sender, PopupEventArgs e)
-        {
-
-        }
-
+       
         private void maskedTextBox1_Validated(object sender, EventArgs e)
         {
             MyUtility.Msg.InfoBox("validated");
