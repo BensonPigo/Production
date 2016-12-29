@@ -279,7 +279,13 @@ namespace Sci.Production.Warehouse
                             //jimmy 105/11/14
                             //gird的StockUnit照新規則 抓取值
                             if (!MyUtility.Check.Seek(string.Format(@"select 
-top 1 IIF ( mm.IsExtensionUnit > 0, uu.ExtensionUnit, ff.UsageUnit ) as stockunit
+iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+    ff.UsageUnit , 
+    iif(mm.IsExtensionUnit > 0 , 
+        iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+            ff.UsageUnit , 
+            uu.ExtensionUnit), 
+        ff.UsageUnit)) as StockUnit
 --,stockunit
 ,a.fabrictype
 ,a.qty
@@ -290,6 +296,15 @@ inner join Receiving_detail b on b.PoID= a.id and b.Seq1 = a.SEQ1 and b.Seq2 = a
 inner join [dbo].[Fabric] ff on a.SCIRefno= ff.SCIRefno
 inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
 inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
+inner join View_unitrate v on v.FROM_U = ａ.POUnit 
+	and v.TO_U = (
+	iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+		ff.UsageUnit , 
+		iif(mm.IsExtensionUnit > 0 , 
+			iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+				ff.UsageUnit , 
+				uu.ExtensionUnit), 
+			ff.UsageUnit)))--ａ.StockUnit
 where a.id = '{0}' and a.seq1 ='{1}'and a.seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3), e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
