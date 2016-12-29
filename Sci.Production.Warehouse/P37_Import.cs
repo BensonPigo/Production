@@ -56,7 +56,7 @@ namespace Sci.Production.Warehouse
 ,f.StockType 
 ,f.InQty - f.OutQty + f.AdjustQty balance
 ,0.00 as qty
-,(select t.MtlLocationID+',' from (select MtlLocationID from FtyInventory_Detail where Ukey = f.Ukey) t for xml path('')) as location
+,stuff((select ',' + t.MtlLocationID from (select MtlLocationID from FtyInventory_Detail where Ukey = f.Ukey) t for xml path('')),1,1,'') as location
 ,dbo.getMtlDesc(f.PoId,f.seq1,f.seq2,2,0) [description]
 ,f.ukey ftyinventoryukey
 ,f.mdivisionid
@@ -72,7 +72,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and stocktype !='O' and 
 ,b.StockType 
 ,f.InQty - f.OutQty + f.AdjustQty balance
 ,0.00 as qty
-,(select t.MtlLocationID+',' from (select MtlLocationID from FtyInventory_Detail where Ukey = f.Ukey) t for xml path('')) as location
+,stuff((select ',' + t.MtlLocationID from (select MtlLocationID from FtyInventory_Detail where Ukey = f.Ukey) t for xml path('')),1,1,'') as location
 ,dbo.getMtlDesc(b.PoId,b.seq1,b.seq2,2,0) [description]
 ,f.ukey ftyinventoryukey
 ,f.mdivisionid
