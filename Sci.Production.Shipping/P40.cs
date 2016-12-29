@@ -31,11 +31,12 @@ namespace Sci.Production.Shipping
             DBProxy.Current.Select(null, sqlCmd, out NotInPO);
             sqlCmd = "select '' as OriUnit,'' as CustomsUnit,'' as RefNo from VNImportDeclaration where 1=0";
             DBProxy.Current.Select(null, sqlCmd, out UnitNotFound);
+           
         }
 
         protected override void OnDetailEntered()
         {
-            base.OnDetailEntered();
+            base.OnDetailEntered();              
             if (EditMode)
             {
                 if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
@@ -59,6 +60,7 @@ namespace Sci.Production.Shipping
                     textBox1.ReadOnly = false;
                     txtshipmode1.ReadOnly = false;
                     txtcountry1.TextBox1.ReadOnly = false;
+                    
                     if (MyUtility.Convert.GetString(CurrentMaintain["IsSystemCalculate"]).ToUpper() == "TRUE")
                     {
                         gridicon.Append.Enabled = false;
@@ -91,9 +93,15 @@ namespace Sci.Production.Shipping
                         textBox2.ReadOnly = false;
                         textBox4.ReadOnly = true;
                     }
+                    //if (this.checkBox1.Checked)
+                    //{
+                    //    this.gridicon.Enabled = false;                   
+                        
+                    //}
                 }
-                detailgrid.EnsureStyle();
+                detailgrid.EnsureStyle();                
             }
+            
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -159,13 +167,15 @@ namespace Sci.Production.Shipping
                         }
                     }
                 };
-            base.OnDetailGridSetup();
-            Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(7), settings: nlcode).Get(out col_nlcode)
-                .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15), settings: qty).Get(out col_qty)
-                .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
+                base.OnDetailGridSetup();
+                Helper.Controls.Grid.Generator(this.detailgrid)
+                    .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                    .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(7), settings: nlcode).Get(out col_nlcode)
+                    .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15), settings: qty).Get(out col_qty)
+                    .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                    .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
+
+
         }
 
         protected override void ClickNewAfter()
@@ -296,6 +306,11 @@ namespace Sci.Production.Shipping
 
         protected override bool ClickPrint()
         {
+            if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Can't Print it ,you should Confirmed first! ");
+                return false;
+            }
             Sci.Production.Shipping.P40_Print callPurchaseForm = new Sci.Production.Shipping.P40_Print(CurrentMaintain);
             callPurchaseForm.ShowDialog(this);
             return base.ClickPrint();
@@ -392,6 +407,7 @@ namespace Sci.Production.Shipping
                         textBox4.ReadOnly = true;
                     }
                 }
+                OnDetailEntered();
             }
         }
 
@@ -529,6 +545,7 @@ namespace Sci.Production.Shipping
                         }
                     }
                 }
+                OnDetailEntered();
             }
         }
 
