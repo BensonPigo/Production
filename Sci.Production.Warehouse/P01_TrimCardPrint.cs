@@ -144,7 +144,7 @@ namespace Sci.Production.Warehouse
                                     from Order_BOA_Expend A
                                     left join Fabric B on B.SCIRefno=A.SCIRefno
                                     where Id='{0}'
-                                    and b.MtlTypeID = (select id from MtlType where IsTrimcardOther=1)
+                                    and b.MtlTypeID in (select id from MtlType where IsTrimcardOther=1)
                                     ", orderID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint);
                 if (!result) return result;
