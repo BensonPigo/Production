@@ -112,34 +112,6 @@ Where c.OrderID = '{0}' and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid
                 .Numeric("balance", header: "Stock Qty", iseditable: true, decimal_places: 2, integer_places: 10) //6
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns)  //7
                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)); //8
-
-
-
-            // 全選
-            checkBox1.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetCheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
-
-            // 全不選
-            checkBox2.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetUncheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
         }
 
         private void button3_Click(object sender, EventArgs e)
