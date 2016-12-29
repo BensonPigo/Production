@@ -112,13 +112,29 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])), out detail2s);
             };
             #endregion
 
+            #region NLCode
+            DataGridViewGeneratorTextColumnSettings Nlcode = new DataGridViewGeneratorTextColumnSettings();
+            Nlcode.CellEditable += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Convert.GetBool(dr["UserCreate"])) e.IsEditable = false;
+            };
+
+            #endregion
+
             base.OnDetailGridSetup();
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(7))
+                .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(7), settings: Nlcode)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", decimal_places: 3, width: Widths.AnsiChars(15), settings: qty)
                 .Numeric("Waste", header: "Waste", decimal_places: 3, iseditingreadonly: true)
-                .CheckBox("UserCreate", header: "Create by user", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
+                .CheckBox("UserCreate", header: "Create by user", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0);
+        }
+
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+
         }
 
         protected override void ClickNewAfter()
