@@ -137,11 +137,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 515);
+            this.browse.Size = new System.Drawing.Size(1025, 515);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 544);
+            this.tabs.Size = new System.Drawing.Size(1033, 544);
             // 
             // label3
             // 
@@ -300,7 +300,7 @@
             // P24
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1008, 577);
+            this.ClientSize = new System.Drawing.Size(1033, 577);
             this.DefaultControl = "textBox3";
             this.DefaultControlForEdit = "textBox3";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
