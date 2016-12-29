@@ -93,11 +93,6 @@ namespace Sci.Production.Shipping
                         textBox2.ReadOnly = false;
                         textBox4.ReadOnly = true;
                     }
-                    //if (this.checkBox1.Checked)
-                    //{
-                    //    this.gridicon.Enabled = false;                   
-                        
-                    //}
                 }
                 detailgrid.EnsureStyle();                
             }
