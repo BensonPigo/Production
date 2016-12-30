@@ -14,12 +14,13 @@ namespace Sci.Production.Warehouse
 {
     public partial class P15_Unfinish : Sci.Win.Subs.Base
     {
-        protected DataRow dr;
-        public P15_Unfinish(DataRow data, string title)
+        public static string TypeFabric = "F", TypeAccessory = "A";
+        protected string FabricType;
+        public P15_Unfinish(string FabricType, string title)
         {
-            this.Text = title;
+            this.Text = title.ToString();
             InitializeComponent();
-            dr = data;
+            this.FabricType = FabricType;
             //請勿刪除 Hide & Timer ！！！
             //this.timer();
         }
@@ -34,20 +35,21 @@ namespace Sci.Production.Warehouse
             this.grid1.IsEditingReadOnly = true;
             this.grid1.DataSource = bindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                 .Text("ctype", header: "Type", width: Widths.AnsiChars(13))
+                 .Text("ctype", header: "Type", width: Widths.AnsiChars(25))
                  .Text("ID", header: "Request#", width: Widths.AnsiChars(13))
-                 .Text("issuedate", header: "Date", width: Widths.AnsiChars(13));
+                 .Date("issuedate", header: "Date", width: Widths.AnsiChars(13));
         }
 
         private void selectData()
         {
             string selectCmd = string.Format(@"
-SELECT TOP 30 (case when L.Type = 'L' then 'Accessory-Lacking' 
-					when L.Type = 'R' then 'Accessory-Replacement' end) as ctype
+declare @Fabric varchar(30) = case when '{1}' = 'A' then 'Accessory' when '{1}' = 'F' then 'Fabric' end
+SELECT TOP 30 (case when L.Type = 'L' then @Fabric + '-Lacking' 
+					when L.Type = 'R' then @Fabric + '-Replacement' end) as ctype
 , L.issuedate, L.ID 
 FROM LACK  L 
 WHERE (L.apvname = '' OR L.ApvName is not null) AND (L.IssueLackId = '' OR L.IssueLackId is not null) AND factoryid = '{0}' and L.FabricType = '{1}'
-ORDER BY issuedate desc,id asc;", dr["MDivisionID"], dr["FabricType"]);
+ORDER BY issuedate desc,id asc;", Sci.Env.User.Keyword, FabricType);
             DataTable selectDataTable1;
             MyUtility.Msg.WaitWindows("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCmd, out selectDataTable1);

@@ -106,7 +106,6 @@
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.panel2);
             this.Name = "P15_Unfinish";
-            this.Text = "P15_Unfinish";
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
