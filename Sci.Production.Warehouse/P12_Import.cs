@@ -90,32 +90,6 @@ and mdivisionid = '{1}' ", sp_b, Sci.Env.User.Keyword);
                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(40)); //6
 
             this.grid1.Columns[5].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
-
-            // 全選
-            checkBox1.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetCheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
-
-            // 全不選
-            checkBox2.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetUncheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -154,11 +128,12 @@ and mdivisionid = '{1}' ", sp_b, Sci.Env.User.Keyword);
 
                 if (findrow.Length > 0)
                 {
-                    findrow[0]["unitprice"] = tmp["unitprice"];
-                    findrow[0]["Price"] = tmp["Price"];
-                    findrow[0]["amount"] = tmp["amount"];
-                    findrow[0]["poqty"] = tmp["poqty"];
-                    findrow[0]["qtygarment"] = 1;
+                    //findrow[0]["unitprice"] = tmp["unitprice"];
+                    //findrow[0]["Price"] = tmp["Price"];
+                    //findrow[0]["amount"] = tmp["amount"];
+                    //findrow[0]["poqty"] = tmp["poqty"];
+                    //findrow[0]["qtygarment"] = 1;
+                    findrow[0]["Qty"] = tmp["Qty"];
                 }
                 else
                 {
