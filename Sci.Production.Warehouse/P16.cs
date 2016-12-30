@@ -615,7 +615,7 @@ Where a.id = '{0}'", masterID);
                 MyUtility.Msg.WarningBox("Request# can't be empty, Please fill it first!!");
                 return;
             }
-            var frm = new Sci.Production.Warehouse.P16_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource, comboBox1.Text);
+            var frm = new Sci.Production.Warehouse.P16_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource, comboBox1.Text, "P16_Import");
             frm.ShowDialog(this);
             this.RenewData();
         }
