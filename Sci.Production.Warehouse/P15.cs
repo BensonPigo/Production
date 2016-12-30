@@ -615,7 +615,7 @@ Where a.id = '{0}'", masterID);
                 return;
             }
             //string aa = comboBox1.Text;
-            var frm = new Sci.Production.Warehouse.P16_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource, comboBox1.Text);
+            var frm = new Sci.Production.Warehouse.P16_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource, comboBox1.Text, "P15_Import");
             frm.ShowDialog(this);
             this.RenewData();
         }
