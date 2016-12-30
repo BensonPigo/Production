@@ -635,8 +635,10 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         //Inv. Serial:移除空白值
         private void textBox1_Validated(object sender, EventArgs e)
         {
+            this.textBox1.Text = this.textBox1.Text.ToString().Replace(" ", "");            
             CurrentMaintain["InvSerial"] = MyUtility.Convert.GetString(CurrentMaintain["InvSerial"]).Replace(" ", "");
-        }
+            
+            }   
 
         //檢查輸入的Inv. Date是否正確
         private void dateBox1_Validating(object sender, CancelEventArgs e)
@@ -1211,8 +1213,7 @@ order by fwd.WhseNo", this.textBox7.Text.ToString().Trim());
                     MyUtility.Msg.WarningBox("Whse# is not found!!");
                     CurrentMaintain["ForwarderWhse_DetailUKey"] = 0;
                     this.textBox7.Text = "";
-                    e.Cancel = true;
-                    
+                    e.Cancel = true;                    
                 }
             }           
         }
@@ -1220,7 +1221,7 @@ order by fwd.WhseNo", this.textBox7.Text.ToString().Trim());
         private void maskedTextBox1_Validated(object sender, EventArgs e)
         {
             MyUtility.Msg.InfoBox("validated");
-        }
+        }       
 
     }
 }
