@@ -177,31 +177,6 @@ Where a.id = '{0}' and c.lock = 0  and c.mdivisionid='{1}' ", dr_master["request
             this.grid2.Columns[4].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
-            // 全選
-            checkBox1.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid2.SetCheckeds(col_chk);
-                    if (col_chk.Index == this.grid2.CurrentCellAddress.X)
-                    {
-                        if (this.grid2.IsCurrentCellInEditMode) this.grid2.RefreshEdit();
-                    }
-                }
-            };
-
-            // 全不選
-            checkBox2.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetUncheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
         }
 
         private void button3_Click(object sender, EventArgs e)
