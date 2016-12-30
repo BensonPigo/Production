@@ -94,10 +94,10 @@ namespace Sci.Production.Cutting
                     if (dt.Rows.Count==0)
                     {
                         MyUtility.Msg.WarningBox("<Cut Ref> data not found.");
-                        dr["cutref"] = "";
                         dr["Orderid"] = "";
                         dr["Cuttingid"] = "";
                         dr["Cutref"] = "";
+                        dr["FabricCombo"] = "";
                         dr["MarkerName"] = "";
                         dr["Layer"] =0;
                         dr["Cons"] = 0;
@@ -127,6 +127,7 @@ namespace Sci.Production.Cutting
                 dr["Orderid"] = "";
                 dr["Cuttingid"] = seldr["ID"];
                 dr["Cutref"] = seldr["cutref"];
+                dr["FabricCombo"] = seldr["FabricCombo"];
                 dr["MarkerName"] = seldr["MarkerName"];
                 dr["Layer"] = seldr["Layer"];
                 dr["Cons"] = seldr["Cons"];
