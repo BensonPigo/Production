@@ -118,7 +118,7 @@
             this.txtdropdownlist1.Name = "txtdropdownlist1";
             this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
             this.txtdropdownlist1.TabIndex = 4;
-            this.txtdropdownlist1.Type = "Shift";
+            this.txtdropdownlist1.Type = "ApplyType";
             // 
             // dateRange2
             // 
