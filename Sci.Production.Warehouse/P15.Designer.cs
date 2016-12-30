@@ -335,6 +335,7 @@
             this.button2.TabIndex = 4;
             this.button2.Text = "UnFinish";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Visible = false;
             // 
             // textBox2
             // 
