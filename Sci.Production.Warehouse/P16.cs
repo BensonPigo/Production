@@ -57,6 +57,19 @@ namespace Sci.Production.Warehouse
 
         }
 
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            #region 新增Batch Shipment Finished按鈕
+            Sci.Win.UI.Button btnUnFinish = new Sci.Win.UI.Button();
+            btnUnFinish.Text = "UnFinish";
+            btnUnFinish.Click += new EventHandler(unfinish);
+            browsetop.Controls.Add(btnUnFinish);
+            btnUnFinish.Size = new Size(180, 30);//預設是(80,30)
+            btnUnFinish.Visible = true;
+            #endregion
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -614,9 +627,11 @@ Where a.id = '{0}'", masterID);
             frm.ShowDialog(this);
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        // Unfinish
+        private void unfinish(object sender, EventArgs e)
         {
-
+            var frm = new Sci.Production.Warehouse.P15_Unfinish(P15_Unfinish.TypeFabric, "P16_Unfinish");
+            frm.ShowDialog(this);
         }
 
         //Locate for (find)
