@@ -56,6 +56,7 @@ namespace Sci.Production.Class
                     e.Cancel = true;
                     return;
                 }
+                this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
         }
 
