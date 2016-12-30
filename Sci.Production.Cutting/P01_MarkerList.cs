@@ -77,8 +77,8 @@ namespace Sci.Production.Cutting
 
             Helper.Controls.Grid.Generator(this.grid)
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Text("Markername", header: "Markername", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("FabricCombo", header: "FabricCombo", width: Widths.AnsiChars(2), iseditingreadonly: true);
+                .Text("Markername", header: "Marker" + Environment.NewLine + "name", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("FabricCombo", header: "Fabric"  + Environment.NewLine +  "Combo", width: Widths.AnsiChars(2), iseditingreadonly: true);
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8))
