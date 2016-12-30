@@ -61,6 +61,7 @@ namespace Sci.Production.Shipping
         {
             StringBuilder sqlCmd = new StringBuilder();
             DualResult result;
+            // 	Form for custom system
             if (reportType == "1")
             {
                 sqlCmd.Append(string.Format(@"select vcd.NLCode,vcd.Qty,isnull(vd.Waste,0)*100 as Waste,'' as Orignal,vc.CustomSP,vc.VNContractID
@@ -73,7 +74,7 @@ and vc.Status = 'Confirmed'", Convert.ToDateTime(date1).ToString("d"), Convert.T
                 {
                     sqlCmd.Append(string.Format(" and vc.CustomSP between '{0}' and '{1}'", customSP1, customSP2));
                 }
-                sqlCmd.Append(" order by CONVERT(int,SUBSTRING(vcd.NLCode,3,3))");
+                sqlCmd.Append(" order by CustomSP,CONVERT(int,SUBSTRING(vcd.NLCode,3,3))");
 
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
                 if (!result)
@@ -82,6 +83,7 @@ and vc.Status = 'Confirmed'", Convert.ToDateTime(date1).ToString("d"), Convert.T
                     return failResult;
                 }
             }
+            //	Each consumption
             else if (reportType == "2")
             {
                 sqlCmd.Append(string.Format(@"select count(CustomSP) as RecCount
@@ -107,7 +109,7 @@ left join VNContract_Detail vd on vd.ID = vc.VNContractID and vd.NLCode = vcd.NL
 left join VNNLCodeDesc vn on vn.NLCode = vcd.NLCode
 left join Style s on s.Ukey = vc.StyleUKey
 where vc.Status = 'Confirmed'
-and vc.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
+and vc.CDate between '{0}' and '{1}' order by CustomSP,NLCode", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
                 if (!MyUtility.Check.Empty(customSP1))
                 {
                     sqlCmd.Append(string.Format(" and vc.CustomSP between '{0}' and '{1}'", customSP1, customSP2));
