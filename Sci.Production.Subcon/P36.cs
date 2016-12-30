@@ -18,6 +18,7 @@ using System.Transactions;
 using System.Reflection;
 using System.Data.SqlClient;
 using Sci.Win;
+using System.Globalization;
 
 namespace Sci.Production.Subcon
 {
@@ -28,6 +29,8 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            
+
         }
 
         protected override void OnFormLoaded()
@@ -112,6 +115,8 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
             CurrentMaintain["Tax"] = 0;
             CurrentMaintain["TaxRate"] = 0;
             CurrentMaintain["Status"] = "New";
+            CurrentMaintain["SMR"] = MyUtility.GetValue.Lookup("Supervisor", Sci.Env.User.UserID, "Pass1", "ID");
+            
         }
 
         // save前檢查 & 取id
@@ -208,6 +213,8 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 MyUtility.Msg.WarningBox("This record is Junked, can't edit!!");
                 return false;
             }
+           
+
 
             if (dr["Status"].ToString().ToUpper() == "CONFIRMED")
             {
@@ -395,7 +402,7 @@ where id = '{4}'"
             base.ClickUnconfirm();
             updateStatus(CurrentMaintain["status"].ToString(), "Received", true);
         }
-
+        
         protected override void ClickJunk()
         {
             base.ClickJunk();
@@ -437,9 +444,39 @@ where id = '{4}'"
         //print
         protected override bool ClickPrint()
         {
+           
+            if (CurrentMaintain["status"].ToString() == "Junked"){return false;}
+            if (Sci.Env.User.UserID!=CurrentMaintain["handle"].ToString()){return false;}
+            
+            if (dateBox2.Text != "" && dateBox2.Text != "    /  /") //有值
+            {
+                string pt = Sci.MyUtility.GetValue.Lookup(string.Format("select printdate from localdebit where ID ='{0}'", CurrentMaintain["id"]));
+                DialogResult dResult = MyUtility.Msg.QuestionBox("In" + ' ' + pt + ' ' + " has been printed ,Do you want to print again?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+                if (dResult.ToString().ToUpper() == "NO") return false;
+                var result3 = DBProxy.Current.Execute(null, string.Format("update localdebit set printdate=getdate() where id = '{0}'", CurrentMaintain["id"]));
+                DataTable printdate1;
+                DBProxy.Current.Select(null, string.Format("select printdate from localdebit where ID ='{0}'", CurrentMaintain["id"]), out printdate1);
+                DateTime printDate1 = (DateTime)Sci.MyUtility.Convert.GetDate(printdate1.Rows[0]["printdate"]);
+
+                dateBox2.Value = printDate1;
+                dateBox2.DataBindings.Cast<Binding>().ToList().ForEach(b => b.WriteValue());
+            }
+            else if (dateBox2.Text == "    /  /")//沒值
+                
+                {
+                    var result2 = DBProxy.Current.Execute(null, string.Format("update localdebit set printdate=getdate() where id = '{0}'", CurrentMaintain["id"]));
+                DataTable printdate ;
+                DBProxy.Current.Select(null, string.Format("select printdate from localdebit where ID ='{0}'", CurrentMaintain["id"]), out printdate);
+                DateTime printDate = (DateTime)Sci.MyUtility.Convert.GetDate(printdate.Rows[0]["printdate"]);
+                   
+                    dateBox2.Value = printDate;
+                    dateBox2.DataBindings.Cast<Binding>().ToList().ForEach(b => b.WriteValue());
+                }
+        
+          
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
-          
+           
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
     
             #region -- 撈表頭資料 --
@@ -465,7 +502,7 @@ where id = '{4}'"
 					Ldeb.Description,Ldeb.Currencyid,format(Ldeb.Amount,'#,###,###,##0.00') Amount,
 					Iif(Ldeb.Exchange=0,'',FORMAT(Ldeb.Exchange,'###.00'))as ExchangeRate,
 					CONCAT( Ldeb.taxrate , ' %TAX')as titletaxrate,FORMAT(Ldeb.tax,'#,##0.00')as taxrate
-					,FORMAT(Ldeb.Tax,'#,##0.00')as total,dbo.getpass1(Ldeb.Handle)+ '/' +  dbo.getpass1 (Ldeb.SMR) as Purchaser
+					,FORMAT(Ldeb.Amount+Ldeb.Tax,'#,##0.00')as total,dbo.getpass1(Ldeb.Handle)+ '/' +  dbo.getpass1 (Ldeb.SMR) as Purchaser
 					
                    from DBO.LocalDebit Ldeb
 	               LEFT JOIN dbo.factory F
@@ -524,7 +561,7 @@ where id = '{4}'"
             var frm = new Sci.Win.Subs.ReportView(report);
             frm.MdiParent = MdiParent;
             frm.Show();
-
+           
             return true;
         }
     }
