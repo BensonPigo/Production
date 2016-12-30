@@ -158,32 +158,6 @@ and a.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
             cbb_fabrictype.DataSource = new BindingSource(di_fabrictype, null);
             cbb_fabrictype.ValueMember = "Key";
             cbb_fabrictype.DisplayMember = "Value";
-
-            // 全選
-            checkBox1.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetCheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
-
-            // 全不選
-            checkBox2.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetUncheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
         }
 
         private void button3_Click(object sender, EventArgs e)

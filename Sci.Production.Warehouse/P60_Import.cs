@@ -163,32 +163,6 @@ and mdivisionid = '{0}' and a.status = 'Approved' and a.LocalSuppID = '{1}'", Sc
 
             col_qty.DefaultCellStyle.BackColor = Color.Pink;
             col_remark.DefaultCellStyle.BackColor = Color.Pink;
-
-            // 全選
-            checkBox1.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetCheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
-
-            // 全不選
-            checkBox2.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetUncheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
         }
 
         private void button3_Click(object sender, EventArgs e)
