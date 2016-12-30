@@ -209,7 +209,6 @@
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.groupBox2);
             this.Name = "P16_Import";
-            this.Text = "P16. Import Detail";
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();

@@ -21,8 +21,9 @@ namespace Sci.Production.Warehouse
         string poType;
         protected DataTable dtlack, dtftyinventory;
         string Type;
-        public P16_Import(DataRow master, DataTable detail,string type)
+        public P16_Import(DataRow master, DataTable detail,string type, string title)
         {
+            this.Text = title.ToString();
             InitializeComponent();
             dr_master = master;
             dt_detail = detail;
