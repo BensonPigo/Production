@@ -120,6 +120,7 @@ namespace Sci.Production.Cutting
 
             #region Cutinline,Cutoffline 是減System.Cutday計算
             int cutday = Convert.ToInt16(MyUtility.GetValue.Lookup(String.Format("Select cutday from System")));
+            cutday = 0 - cutday;  //應該是要減cutday，所以轉成負數
             if (CurrentMaintain["sewinline"] == DBNull.Value) dateBox1.Value = null;
             else dateBox1.Value = Convert.ToDateTime(CurrentMaintain["sewinline"]).AddDays(cutday);
 
