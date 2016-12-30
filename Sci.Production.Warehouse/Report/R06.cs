@@ -119,7 +119,7 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
                 , Convert.ToDateTime(issuedate1).ToString("d")
                  , Convert.ToDateTime(issuedate2).ToString("d")));
             }
-
+            if (!MyUtility.Check.Empty(approveDate1))
             {
                 sqlCmd.Append(string.Format(@" and a.apvdate between '{0}' and '{1}'"
                 , Convert.ToDateTime(approveDate1).ToString("d")
