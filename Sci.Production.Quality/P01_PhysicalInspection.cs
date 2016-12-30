@@ -673,10 +673,10 @@ Where DetailUkey = {15};",
             }
 
             #endregion
-                       
 
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\P01_Physical_Inspection_Report.xltx";
+
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Quality_P01_Physical_Inspection_Report.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);                  
             excel.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

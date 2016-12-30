@@ -525,8 +525,8 @@ namespace Sci.Production.Quality
                 }
             }
             #endregion
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\P01_Weight_Report.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(dt, "", "P01_Weight_Report.xltx", 5, true, null, objApp);      // 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P01_Weight_Report.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(dt, "", "Quality_P01_Weight_Report.xltx", 5, true, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 2] = sp_box.Text.ToString();
             objSheets.Cells[2, 4] = seq_box.Text.ToString();

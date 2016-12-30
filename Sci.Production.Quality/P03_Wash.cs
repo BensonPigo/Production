@@ -879,7 +879,7 @@ namespace Sci.Production.Quality
                 }
             }
             Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
-            MyUtility.Excel.CopyToXls(ret, xltFileName: "P03_Wash_Test.xltx", headerline: 5, excelAppObj: excel);
+            MyUtility.Excel.CopyToXls(ret, xltFileName: "Quality_P03_Wash_Test.xltx", fileName: "Quality_P03_Wash_Test", headerline: 5, excelAppObj: excel);
             Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表            
             excelSheets.Cells[2, 2] = sptext.Text.ToString();
             excelSheets.Cells[2, 4] = SEQtext.Text.ToString();

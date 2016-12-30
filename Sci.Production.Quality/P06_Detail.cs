@@ -1037,7 +1037,7 @@ namespace Sci.Production.Quality
                 }
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\P06_Detail_Report.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Quality_P06_Detail_Report.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];

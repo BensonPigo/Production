@@ -995,7 +995,7 @@ group by a.Article";
                 }
             }
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\P05_Detail_Report.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Quality_P05_Detail_Report.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
