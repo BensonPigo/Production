@@ -210,6 +210,12 @@
     <Compile Include="P12_PrintData.cs" />
     <Compile Include="P13_PrintData.cs" />
     <Compile Include="P15_PrintData.cs" />
+    <Compile Include="P15_Unfinish.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P15_Unfinish.Designer.cs">
+      <DependentUpon>P15_Unfinish.cs</DependentUpon>
+    </Compile>
     <Compile Include="P16_PrintData.cs" />
     <Compile Include="P17_PrintData.cs" />
     <Compile Include="P18_PrintData.cs" />
@@ -1043,6 +1049,9 @@
     <EmbeddedResource Include="P12_Print.rdlc" />
     <EmbeddedResource Include="P13_Print.rdlc" />
     <EmbeddedResource Include="P15_Print.rdlc" />
+    <EmbeddedResource Include="P15_Unfinish.resx">
+      <DependentUpon>P15_Unfinish.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P16_Print.rdlc" />
     <EmbeddedResource Include="P17_Print.rdlc" />
     <EmbeddedResource Include="P18_Print.rdlc" />
