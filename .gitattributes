@@ -2506,6 +2506,9 @@ Sci.Production.Warehouse/P15_Import.cs -text
 Sci.Production.Warehouse/P15_Import.resx -text
 Sci.Production.Warehouse/P15_Print.rdlc -text
 Sci.Production.Warehouse/P15_PrintData.cs -text
+Sci.Production.Warehouse/P15_Unfinish.Designer.cs -text
+Sci.Production.Warehouse/P15_Unfinish.cs -text
+Sci.Production.Warehouse/P15_Unfinish.resx -text
 Sci.Production.Warehouse/P16.Designer.cs -text
 Sci.Production.Warehouse/P16.cs -text
 Sci.Production.Warehouse/P16.resx -text
