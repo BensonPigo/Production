@@ -45,6 +45,7 @@ namespace Sci.Production.Warehouse
                  .Numeric("InQty", header: "Accu Trans.", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("total_qty", header: "Trans. Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("requestqty", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                 .Text("TransID", header: "Trans. ID" , width: Widths.AnsiChars(13), iseditingreadonly: true)
                   ;
             #endregion
             col_chk.CellClick += (s, e) =>
@@ -505,6 +506,18 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
                 }
             }
             _transactionscope = null;
+
+            if (!master.Columns.Contains("TransID")) master.Columns.Add("TransID", typeof(string));
+            foreach (DataRow Alldetailrows in detail.Rows)
+            {
+                if (Alldetailrows["selected"].ToString().ToUpper() == "TRUE" && Convert.ToDecimal(Alldetailrows["qty"]) > 0)
+                {
+                    Alldetailrows.GetParentRow("rel1")["selected"] = true;
+                    Alldetailrows.GetParentRow("rel1")["TransID"] = tmpId;
+                }
+            }
+            this.grid2.ValidateControl();
+            this.grid1.ValidateControl();
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -522,7 +535,10 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
 
         private void btnExcel_Click(object sender, EventArgs e)
         {
-            Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(master);
+            master.DefaultView.RowFilter = "TransID<>''";
+            DataTable Exceldt = master.DefaultView.ToTable();
+
+            Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(Exceldt);
             sdExcel.Save();
         }
 
