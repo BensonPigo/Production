@@ -1674,7 +1674,7 @@ namespace Sci.Production.Cutting
         {
             string ukey = CurrentDetailData["Ukey"].ToString();
             int NewKey = Convert.ToInt16(CurrentDetailData["NewKey"]);
-            DataRow[] drar = sizeratioTb.Select(string.Format("WorkOrderUkey = {0} and NewKey = {1}", ukey, NewKey));
+            DataRow[] drar = sizeratioTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = {1}", ukey, NewKey));
             foreach (DataRow dr in drar)
             {
                 dr.Delete();

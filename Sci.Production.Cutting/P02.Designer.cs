@@ -183,7 +183,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(3698, 561);
+            this.refresh.Location = new System.Drawing.Point(3755, 561);
             // 
             // detailgridcont
             // 
@@ -242,7 +242,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1007, 672);
+            this.browse.Size = new System.Drawing.Size(1007, 730);
             // 
             // tabs
             // 
@@ -1118,7 +1118,6 @@
             this.DefaultDetailOrder = "Markname";
             this.DefaultOrder = "ID";
             this.GridAlias = "WorkOrder";
-            this.GridUniqueKey = "ukey";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
