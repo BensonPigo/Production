@@ -216,6 +216,7 @@ namespace Sci.Production.Cutting
 			from Workorder a
 			left join fabric c on c.SCIRefno = a.SCIRefno
             where a.id = '{0}'
+            --order by SORT_NUM,FabricCombo,multisize DESC,Colorid,Order_SizeCode_Seq DESC,MarkerName,Ukey
             ", masterID);
             this.DetailSelectCommand = cmdsql;
             #region SizeRatio
@@ -1386,7 +1387,7 @@ namespace Sci.Production.Cutting
                     dv.Sort = "SORT_NUM,FabricCombo,Cutno,Markername,estcutdate,Ukey";
                     break;
                 default:
-                    dv.Sort = "SORT_NUM ASC,FabricCombo ASC,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC,MarkerName ASC,Ukey";
+                    dv.Sort = "SORT_NUM,FabricCombo,multisize DESC,Colorid,Order_SizeCode_Seq DESC,MarkerName,Ukey";
                     break;
             }
 
@@ -1404,12 +1405,12 @@ namespace Sci.Production.Cutting
             gridValid();
             grid.ValidateControl();
             #region 變更先將同d,Cutref, LectraCode, CutNo, MarkerName, estcutdate 且有cutref,Cuno無cutplanid 的cutref值找出來Group by→cutref 會相同
-            string cmdsql = string.Format(@"            
-            SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, isnull(CutNo,0) as cutno, 
-            isnull(MarkerName,'') as MarkerName, estcutdate 
-            FROM Workorder 
-            WHERE (cutplanid is null or cutplanid ='') AND (CutNo is not null ) 
-                    AND (cutref is not null and cutref !='') and id = '{0}' and mDivisionid = '{1}'		
+            string cmdsql = string.Format(@"
+            SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, isnull(CutNo,0) as cutno,
+            isnull(MarkerName,'') as MarkerName, estcutdate
+            FROM Workorder
+            WHERE (cutplanid is null or cutplanid ='') AND (CutNo is not null )
+                    AND (cutref is not null and cutref !='') and id = '{0}' and mDivisionid = '{1}'
             GROUP BY Cutref, FabricCombo, CutNo, MarkerName, estcutdate", CurrentMaintain["ID"], keyWord);
             DataTable cutreftb;
             DualResult cutrefresult = DBProxy.Current.Select(null, cmdsql, out cutreftb);
@@ -1425,7 +1426,8 @@ namespace Sci.Production.Cutting
                   From workorder 
                   Where (CutNo is not null ) and (cutref is null or cutref ='') 
                     and (estcutdate is not null and estcutdate !='' )
-                    and id = '{0}' and mDivisionid = '{1}'", CurrentMaintain["ID"], keyWord);//找出空的cutref
+                    and id = '{0}' and mDivisionid = '{1}'
+                order by FabricCombo,cutno", CurrentMaintain["ID"], keyWord);//找出空的cutref
             cutrefresult = DBProxy.Current.Select(null, cmdsql, out workordertmp);
             if (!cutrefresult)
             {
