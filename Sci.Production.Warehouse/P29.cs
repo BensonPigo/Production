@@ -535,9 +535,23 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
 
         private void btnExcel_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(master))
+            {
+                MyUtility.Msg.WarningBox("All TransID NO data");
+                return;
+            }
+            if (!master.Columns.Contains("TransID"))
+            {
+                MyUtility.Msg.WarningBox("All TransID NO data");
+                return;
+            }
             master.DefaultView.RowFilter = "TransID<>''";
             DataTable Exceldt = master.DefaultView.ToTable();
-
+            if (Exceldt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("All TransID NO data");
+                return;
+            }
             Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(Exceldt);
             sdExcel.Save();
         }
