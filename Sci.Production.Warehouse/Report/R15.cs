@@ -121,10 +121,11 @@ where a.type = 'D' AND a.Status = 'Confirmed' and a.issuedate between '{0}' and 
             }
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R15.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R15.xltx", 2, true, null, objApp);
-            objApp.Columns.AutoFit();
-            objApp.Rows.AutoFit();
+            bool s = MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R15.xltx", 2, true, null, objApp);
 
+            //objApp.Columns.AutoFit();
+            objApp.Columns.ColumnWidth = 20;    
+            
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
         }
