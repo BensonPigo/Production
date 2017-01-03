@@ -45,10 +45,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(900, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.textBox4);
@@ -60,11 +56,6 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Size = new System.Drawing.Size(900, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(900, 38);
             // 
             // browse
             // 
@@ -156,7 +147,7 @@
             // 
             // textBox4
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
+            this.textBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "actioncode", true));
             this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.textBox4.Location = new System.Drawing.Point(102, 112);
@@ -171,7 +162,10 @@
             // 
             this.ClientSize = new System.Drawing.Size(908, 457);
             this.DefaultFilter = "TYPE=\'RR\'";
+            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B03";
             this.Text = "B03.Refund Reason";

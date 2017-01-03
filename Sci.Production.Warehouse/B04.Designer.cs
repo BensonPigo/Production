@@ -43,10 +43,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(726, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkBox1);
@@ -56,15 +52,10 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Size = new System.Drawing.Size(726, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(726, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(776, 395);
+            this.browse.Size = new System.Drawing.Size(726, 395);
             // 
             // tabs
             // 
@@ -145,7 +136,10 @@
             // 
             this.ClientSize = new System.Drawing.Size(734, 457);
             this.DefaultFilter = "type=\'RA\'";
+            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B04";
             this.Text = "B04.Refund Action Code";
