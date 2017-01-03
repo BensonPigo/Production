@@ -12,6 +12,7 @@ using Ict;
 using Ict.Win;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
@@ -46,7 +47,18 @@ namespace Sci.Production.Warehouse
 
             try
             {
-                return MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R02.xltx", 1,true);
+                //return MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R02.xltx", 1,true);
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R02.xltx"); //預先開啟excel app
+                MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R02.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
+
+                MyUtility.Msg.WaitWindows("Excel Processing...");
+                Excel.Worksheet worksheet = objApp.Sheets[1];
+                for (int i = 1; i <= dt.Rows.Count; i++) worksheet.Cells[i + 1, 7] = ((string)((Excel.Range)worksheet.Cells[i + 1, 7]).Value).Trim();
+                objApp.Visible = true;
+
+                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+                return true;
             }
             catch (Exception ex)
             {
