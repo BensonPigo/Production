@@ -216,13 +216,13 @@
             // 
             this.checkBox5.AutoSize = true;
             this.checkBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsTrimCardOther", true));
-            this.checkBox5.ForeColor = System.Drawing.Color.Red;
+            this.checkBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkBox5.Location = new System.Drawing.Point(400, 191);
             this.checkBox5.Name = "checkBox5";
             this.checkBox5.ReadOnly = true;
-            this.checkBox5.Size = new System.Drawing.Size(131, 21);
+            this.checkBox5.Size = new System.Drawing.Size(143, 21);
             this.checkBox5.TabIndex = 14;
-            this.checkBox5.Text = "IsTrimCardOther";
+            this.checkBox5.Text = "Is Trim Card Other";
             this.checkBox5.UseVisualStyleBackColor = true;
             // 
             // B13
