@@ -60,10 +60,9 @@ namespace Sci.Production.Warehouse
             {
                 if (!((string)((Excel.Range)objSheets.Cells[i + 1, 10]).Value).Empty())
                     objSheets.Cells[i + 1, 10] = ((string)((Excel.Range)objSheets.Cells[i + 1, 10]).Value).Trim();
-
-                if (!((string)((Excel.Range)objSheets.Cells[i + 1, 12]).Value).Empty())
-                    objSheets.Cells[i + 1, 12] = ((string)((Excel.Range)objSheets.Cells[i + 1, 12]).Value).Trim();
             }
+            objSheets.Columns[10].ColumnWidth = 50;
+            objSheets.Rows.AutoFit();
             objApp.Visible = true;
 
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
@@ -88,16 +87,26 @@ namespace Sci.Production.Warehouse
             {
                 if (MyUtility.Check.Empty(location1)) // Location empty
                 {
-                    sqlcmd.Append(@"select distinct (select orders.Factoryid from orders where orders.id = a.poid) Factory
-,a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
-,stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, '') as location
-,p.Width,p.ColorID Color,p.SizeSpec Size
-,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) AS description 
-,a.StockType
-,(select max(Deadline) from dbo.Inventory i 
-	where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select orders.Factoryid from orders where orders.id = a.poid)) deadline
-,a.InQty,a.OutQty,a.AdjustQty
-,a.inqty- a.outqty + a.adjustqty Balance
+                    sqlcmd.Append(@"select distinct 
+Factory		= (select orders.Factoryid from orders where orders.id = a.poid) ,
+sp			= a.Poid,
+seq1		= a.seq1,
+seq2		= a.seq2,
+Refno		= p.Refno,
+location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, ''),
+width		= p.Width,
+color		= p.ColorID,
+size		= p.SizeSpec,
+description	= dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) ,
+roll		= a.Roll,
+dyelot		= a.Dyelot,
+sotckType	= a.StockType,
+deadline	= (select max(Deadline) from dbo.Inventory i 
+				where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select orders.Factoryid from orders where orders.id = a.poid)),
+InQty		= a.InQty,
+OutQty		= a.OutQty,
+AdjustQty	= a.AdjustQty,
+Balance		= isnull(a.inqty, 0) - isnull(a.outqty, 0) + isnull(a.adjustqty, 0)
 from dbo.FtyInventory a left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 where 1=1");
@@ -119,16 +128,26 @@ where 1=1");
                 }
                 else
                 {
-                    sqlcmd.Append(string.Format(@"select distinct (select orders.Factoryid from orders where orders.id = a.poid) as factory,
-a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
-,stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, '') as location
-,p.Width,p.ColorID,p.SizeSpec
-,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) AS description 
-,a.StockType
-,(select max(Deadline) from dbo.Inventory i 
-					where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2
-						and i.FactoryID = (select FactoryID from orders where id = a.Poid)) deadline
-,a.InQty,a.OutQty,a.AdjustQty,a.inqty- a.outqty + a.adjustqty Balance
+                    sqlcmd.Append(string.Format(@"select distinct 
+Factory		= (select orders.Factoryid from orders where orders.id = a.poid) ,
+sp			= a.Poid,
+seq1		= a.seq1,
+seq2		= a.seq2,
+Refno		= p.Refno,
+location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, ''),
+width		= p.Width,
+color		= p.ColorID,
+size		= p.SizeSpec,
+description	= dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) ,
+roll		= a.Roll,
+dyelot		= a.Dyelot,
+sotckType	= a.StockType,
+deadline	= (select max(Deadline) from dbo.Inventory i 
+				where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select FactoryID from orders where id = a.Poid)),
+InQty		= a.InQty,
+OutQty		= a.OutQty,
+AdjustQty	= a.AdjustQty,
+Balance		= isnull(a.inqty, 0) - isnull(a.outqty, 0) + isnull(a.adjustqty, 0)
 from dbo.FtyInventory a left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 where 1=1 And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'", location1, location2));
@@ -151,16 +170,28 @@ where 1=1 And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'", location1,
             }
             else
             {// 有下sci delivery 條件
-                if (MyUtility.Check.Empty())
+                if (MyUtility.Check.Empty(location1))
                 {
-                    sqlcmd.Append(string.Format(@"select distinct orders.factoryid factory,a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
-,stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, '') as location
-,p.Width,p.ColorID,p.SizeSpec
-,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) AS description 
-,a.StockType
-,(select max(Deadline) from dbo.Inventory i 
-	where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.Factoryid) deadline
-,a.InQty,a.OutQty,a.AdjustQty,a.inqty- a.outqty + a.adjustqty Balance
+                    sqlcmd.Append(string.Format(@"select distinct 
+Factory		= orders.factoryid,
+sp			= a.Poid,
+seq1		= a.seq1,
+seq2		= a.seq2,
+Refno		= p.Refno,
+location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, ''),
+width		= p.Width,
+color		= p.ColorID,
+size		= p.SizeSpec,
+description	= dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0),
+roll		= a.Roll,
+dyelot		= a.Dyelot,
+sotckType	= a.StockType,
+deadline	= (select max(Deadline) from dbo.Inventory i 
+				where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.Factoryid),
+InQty		= a.InQty,
+OutQty		= a.OutQty,
+AdjustQty	= a.AdjustQty,
+Balance		= isnull(a.inqty, 0) - isnull(a.outqty, 0) + isnull(a.adjustqty, 0)
 from dbo.FtyInventory a left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 inner join dbo.orders on orders.id = p.id
@@ -184,14 +215,26 @@ And orders.scidelivery between '{0}' and '{1}'", dateRange1.Text1, dateRange1.Te
                 }
                 else
                 {
-                    sqlcmd.Append(string.Format(@"select distinct orders.factoryid as factory,a.Poid,a.seq1,a.seq2,a.Dyelot,a.Roll,p.Refno
-,stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, '') as location
-,p.Width,p.ColorID,p.SizeSpec
-,dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) AS description 
-,a.StockType
-,(select max(Deadline) from dbo.Inventory i 
-	where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.FactoryID) deadline
-,a.InQty,a.OutQty,a.AdjustQty,a.inqty- a.outqty + a.adjustqty Balance
+                    sqlcmd.Append(string.Format(@"select distinct
+Factory		= orders.factoryid,
+sp			= a.Poid,
+seq1		= a.seq1,
+seq2		= a.seq2,
+Refno		= p.Refno,
+location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, ''),
+width		= p.Width,
+color		= p.ColorID,
+size		= p.SizeSpec,
+description	= dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0),
+roll		= a.Roll,
+dyelot		= a.Dyelot,
+sotckType	= a.StockType,
+deadline	= (select max(Deadline) from dbo.Inventory i 
+				where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.Factoryid),
+InQty		= a.InQty,
+OutQty		= a.OutQty,
+AdjustQty	= a.AdjustQty,
+Balance		= isnull(a.inqty, 0) - isnull(a.outqty, 0) + isnull(a.adjustqty, 0)
 from dbo.FtyInventory a 
 left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
