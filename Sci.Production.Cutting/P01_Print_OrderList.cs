@@ -34,7 +34,7 @@ namespace Sci.Production.Cutting
             {
                 #region rdCheck1
                 System.Data.DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01_01", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01print_EachConsumption", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
 
                 if (!res) return false;
                 if (dts.Length < 2) return false;
@@ -104,7 +104,7 @@ namespace Sci.Production.Cutting
             {
                 #region rdCheck2
                 System.Data.DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01_02", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01print_TTLconsumption", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
 
                 if (!res) return false;
                 if (dts.Length < 2) return false;
