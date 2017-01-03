@@ -31,12 +31,10 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -51,7 +49,6 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.textBox4);
             this.detailcont.Controls.Add(this.textBox3);
             this.detailcont.Controls.Add(this.textBox2);
             this.detailcont.Controls.Add(this.textBox1);
@@ -59,7 +56,6 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label6);
             this.detailcont.Size = new System.Drawing.Size(900, 357);
             // 
             // detailbtm
@@ -100,15 +96,6 @@
             this.label5.Size = new System.Drawing.Size(75, 23);
             this.label5.TabIndex = 6;
             this.label5.Text = "Remark";
-            // 
-            // label6
-            // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(24, 117);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 7;
-            this.label6.Text = "No";
             // 
             // checkBox1
             // 
@@ -154,24 +141,17 @@
             this.textBox3.Size = new System.Drawing.Size(378, 23);
             this.textBox3.TabIndex = 11;
             // 
-            // textBox4
-            // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "no", true));
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(102, 117);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(36, 23);
-            this.textBox4.TabIndex = 12;
-            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(908, 457);
             this.DefaultFilter = "TYPE=\'IR\'";
+            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B01";
-            this.Text = "Issue R/Mtl Reason";
+            this.Text = "B01.Issue R/Mtl Reason";
             this.WorkAlias = "WhseReason";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -188,7 +168,6 @@
 
         #endregion
 
-        private Win.UI.TextBox textBox4;
         private Win.UI.TextBox textBox3;
         private Win.UI.TextBox textBox2;
         private Win.UI.TextBox textBox1;
@@ -196,6 +175,5 @@
         private Win.UI.Label label3;
         private Win.UI.Label label4;
         private Win.UI.Label label5;
-        private Win.UI.Label label6;
     }
 }

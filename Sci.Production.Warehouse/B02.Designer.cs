@@ -34,6 +34,7 @@
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -44,7 +45,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(900, 395);
+            this.detail.Size = new System.Drawing.Size(726, 395);
             // 
             // detailcont
             // 
@@ -54,11 +55,12 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Size = new System.Drawing.Size(900, 357);
+            this.detailcont.Controls.Add(this.checkBox1);
+            this.detailcont.Size = new System.Drawing.Size(726, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(900, 38);
+            this.detailbtm.Size = new System.Drawing.Size(726, 38);
             // 
             // browse
             // 
@@ -66,7 +68,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(908, 424);
+            this.tabs.Size = new System.Drawing.Size(734, 424);
             // 
             // label3
             // 
@@ -127,9 +129,22 @@
             this.textBox2.Size = new System.Drawing.Size(258, 23);
             this.textBox2.TabIndex = 9;
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "junk", true));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.Location = new System.Drawing.Point(299, 14);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(57, 21);
+            this.checkBox1.TabIndex = 8;
+            this.checkBox1.Text = "Junk";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(908, 457);
+            this.ClientSize = new System.Drawing.Size(734, 457);
+            this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B02";
             this.Text = "B02.Material Location Index";
@@ -155,5 +170,6 @@
         private Win.UI.Label label3;
         private Win.UI.Label label4;
         private Win.UI.Label label5;
+        private Win.UI.CheckBox checkBox1;
     }
 }

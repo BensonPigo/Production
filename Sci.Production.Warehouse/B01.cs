@@ -33,12 +33,12 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            if (String.IsNullOrWhiteSpace(CurrentMaintain["No"].ToString()))
-            {
-                MyUtility.Msg.WarningBox("< No > can not be empty!");
-                this.textBox4.Focus();
-                return false;
-            }
+            //if (String.IsNullOrWhiteSpace(CurrentMaintain["No"].ToString()))
+            //{
+            //    MyUtility.Msg.WarningBox("< No > can not be empty!");
+            //    this.textBox4.Focus();
+            //    return false;
+            //}
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["id"].ToString()))
             {
