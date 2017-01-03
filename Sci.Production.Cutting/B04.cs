@@ -10,7 +10,8 @@ namespace Sci.Production.Cutting
 {
     public partial class B04 : Sci.Win.Tems.Input1
     {
-        public B04()
+        public B04(ToolStripMenuItem menuitem)
+            : base(menuitem)
         {
             InitializeComponent();
         }
