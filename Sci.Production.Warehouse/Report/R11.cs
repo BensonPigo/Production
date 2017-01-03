@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
@@ -222,10 +224,35 @@ from cte t"));
                 return false;
             }
 
+            //if (checkBox1.Checked)
+            //    MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R11_Summary.xltx", 3);
+            //else
+            //    MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R11_List.xltx", 3);
+
+            string ExcelXltx = "";
+            int DescIndex = 0;
+
             if (checkBox1.Checked)
-                MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R11_Summary.xltx", 3);
+            {
+                ExcelXltx = "Warehouse_R11_Summary.xltx";
+                DescIndex = 5;
+            }
             else
-                MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R11_List.xltx", 3);
+            {
+                ExcelXltx = "Warehouse_R11_List.xltx";
+                DescIndex = 6;
+            }
+
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + ExcelXltx); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(printData, "", ExcelXltx, 3, showExcel: false, showSaveMsg: true, excelApp: objApp);      // 將datatable copy to excel
+            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
+            MyUtility.Msg.WaitWindows("Excel Processing...");
+            for (int i = 1; i <= printData.Rows.Count; i++) objSheets.Cells[i + 3, DescIndex] = ((string)((Excel.Range)objSheets.Cells[i + 3, DescIndex]).Value).Trim();
+            objApp.Visible = true;
+
+            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
         }
     }
