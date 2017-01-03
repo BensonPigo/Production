@@ -10,6 +10,9 @@ using Sci;
 using Sci.Data;
 using Ict;
 using Ict.Win;
+using System.Runtime.InteropServices;
+using System.Linq;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
@@ -48,7 +51,25 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.InfoBox("Data not found!!");
                 return result;
             }
-            MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R18_Material_Tracking.xltx");
+
+
+            
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R18_Material_Tracking.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R18_Material_Tracking.xltx", 1, true, null, objApp);
+
+            Excel.Worksheet worksheet= objApp.Sheets[1];
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                worksheet.Cells[i + 1, 18] = ((string)((Excel.Range)worksheet.Cells[i + 1, 18]).Value).Trim();
+            }
+
+            
+
+
+            objApp.Columns.AutoFit();
+            objApp.Rows.AutoFit();                     
+
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return false;
 
         }
@@ -90,7 +111,7 @@ pd.Refno,
 pd.Width,
 pd.ColorID,
 pd.SizeSpec,
-dbo.getMtlDesc(pd.id,pd.seq1,pd.seq2,2,0) [description],
+isnull(ltrim(rtrim(dbo.getMtlDesc(pd.id,pd.seq1,pd.seq2,2,0))), '') [description],
 y.Deadline,
 pd.Qty,
 pd.ShipQty,
