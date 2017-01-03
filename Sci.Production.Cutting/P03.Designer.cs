@@ -320,7 +320,7 @@
             this.Controls.Add(this.groupBox2);
             this.EditMode = true;
             this.Name = "P03";
-            this.Text = "Change Est. Cut Date after finished Cutting Daily Plan";
+            this.Text = "P03.Change Est. Cut Date after finished Cutting Daily Plan";
             this.Controls.SetChildIndex(this.groupBox2, 0);
             this.Controls.SetChildIndex(this.groupBox1, 0);
             this.Controls.SetChildIndex(this.detailgrid, 0);

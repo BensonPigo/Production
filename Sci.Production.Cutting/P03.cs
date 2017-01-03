@@ -142,6 +142,11 @@ namespace Sci.Production.Cutting
             if (!MyUtility.Check.Empty(dateBox_sewinginline.Value)) where = where + string.Format(" and Sewinline='{0}'", sewinginline);
             sql = sql + where;
             DualResult dResult = DBProxy.Current.Select(null, sql, out detailTb);
+            if (detailTb == null || detailTb.Rows.Count == 0)
+            {
+                MyUtility.Msg.ErrorBox("Data not found!!");
+                return ;
+            }
             detailgrid.DataSource = gridbs;
             gridbs.DataSource = detailTb;
         }
@@ -191,7 +196,7 @@ namespace Sci.Production.Cutting
                         return;
                     }
                     update = update + string.Format("Update Workorder Set estcutdate ='{0}' where Ukey = {1}; ", dr["newestcutdate"],dr["Ukey"]);
-                    update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate,NewEstCutDate,CutReasonid) Values({0},'{1}','{2}','{3}');",  dr["Ukey"],Convert.ToDateTime(dr["EstCutDate"]).ToShortDateString(),dr["NewEstCutDate"],dr["CutReasonid"]);
+                    update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate,NewEstCutDate,CutReasonid,ID) Values({0},'{1}','{2}','{3}','{4}');", dr["Ukey"], Convert.ToDateTime(dr["EstCutDate"]).ToShortDateString(), dr["NewEstCutDate"], dr["CutReasonid"], dr["ID"]);
                 }
             }
             DualResult upResult;
