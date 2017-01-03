@@ -417,12 +417,7 @@ update t
 		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID
 		left join Production.dbo.scifty b on a.FactoryID=b.ID
 		where a.Type='O'
-
-		SELECT * from  Machine.dbo.MiscPO_Detail as  t
-		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
-		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID
-		left join Production.dbo.scifty b on a.FactoryID=b.ID
-		where a.Type='O'
+		
 
 ------------------MachinePO_Detail Type='M'----------------------
 
