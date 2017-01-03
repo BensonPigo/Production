@@ -732,6 +732,7 @@
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
             this.Name = "P01";
+            this.Text = "P01.Cutting Master List      ";
             this.WorkAlias = "Cutting";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
