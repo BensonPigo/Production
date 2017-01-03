@@ -43,6 +43,7 @@ namespace Sci.Production.Cutting
 	                    inner join order_Qty b on a.id = b.id
 	                    inner join Order_ColorCombo c on c.id = a.POID and c.Article = b.Article 
                             and c.FabricCode is not null and c.FabricCode != ''
+                            and c.LectraCode in (select distinct LectraCode from Order_EachCons WHERE ID='{0}' and CuttingPiece = 0)  --排除外裁
 	                    where a.cuttingsp = '{0}'
                     ) ", cutid);
                 sql2 = string.Format(@"Select x.poid,y.ID,y.Article,y.SizeCode
@@ -65,6 +66,7 @@ namespace Sci.Production.Cutting
 	                    inner join order_Qty b on a.id = b.id
 	                    inner join Order_ColorCombo c on c.id = a.POID and c.Article = b.Article 
                             and c.FabricCode is not null and c.FabricCode != ''
+                            and c.LectraCode in (select distinct LectraCode from Order_EachCons WHERE ID='{0}' and CuttingPiece = 0)  --排除外裁
 	                    where a.cuttingsp = '{0}'
                     )  ", cutid);
                 sql2 = string.Format(@"Select x.poid,y.ID,y.Article,y.SizeCode
