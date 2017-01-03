@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
@@ -130,25 +132,26 @@ where 1=1"));
                     cmds.Add(sp_season);
                 }
                 sqlCmd.Append(")");
-                sqlCmd.Append(string.Format(@"select isnull(d.mdivisionid,cte.mdivisionid),a.id
-,b.SEQ1
-,b.SEQ2
-,a.suppid+'-'+c.AbbEN supp
-,dbo.getMtlDesc(b.id,b.seq1,b.seq2,2,0) [description]
-,iif(b.fabrictype = 'F','Fabric',iif(b.fabrictype='A','Accessory',b.fabrictype)) fabrictype
-,b.Qty
-,b.ShipQty
-,b.ShipFOC
-,b.POUnit
-,iif(b.Complete=1,'Y','N') [complete]
-,b.FinalETD
-,b.ETA
-,b.FinalETA
-,d.InQty
-,b.StockUnit
-,d.OutQty
-,d.AdjustQty
-,d.InQty - d.OutQty + d.AdjustQty balance
+                sqlCmd.Append(string.Format(@"select --isnull(d.mdivisionid,cte.mdivisionid)
+sp = a.id
+,seq = concat(b.SEQ1, b.Seq2)
+--,b.SEQ2
+,supp = a.suppid+'-'+c.AbbEN
+,description = dbo.getMtlDesc(b.id,b.seq1,b.seq2,2,0) 
+,MaterialType = iif(b.fabrictype = 'F','Fabric',iif(b.fabrictype='A','Accessory',b.fabrictype))
+,OrderQty = b.Qty
+,ShipQty = isnull(b.ShipQty, 0) + isnull(b.ShipFOC, 0)
+--,b.ShipFOC
+,PoUnit = b.POUnit
+,complete = iif(b.Complete=1,'Y','N') 
+--,b.Final ETD
+,EstETA = b.ETA
+--,b.FinalETA
+,ArrivedQty = d.InQty
+,ReleasedQty = d.OutQty
+,AdjustQty = d.AdjustQty
+,Balance = d.InQty - d.OutQty + d.AdjustQty
+,StockUnit = b.StockUnit
  from cte 
 inner join dbo.PO_Supp a on a.id = cte.poid
 inner join dbo.PO_Supp_Detail b on b.id = a.id and b.SEQ1 = a.SEQ1
@@ -158,26 +161,26 @@ where 1= 1 and c.ThirdCountry = 1"));
             }
             else
             {
-                sqlCmd.Append(string.Format(@"select isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders where id = a.id))
-,a.id
-,b.SEQ1
-,b.SEQ2
-,a.suppid+'-'+c.AbbEN supp
-,dbo.getMtlDesc(b.id,b.seq1,b.seq2,2,0) [description]
-,iif(b.fabrictype = 'F','Fabric',iif(b.fabrictype='A','Accessory',b.fabrictype)) fabrictype
-,b.Qty
-,b.ShipQty
-,b.ShipFOC
-,b.POUnit
-,iif(b.Complete=1,'Y','N') [complete]
-,b.FinalETD
-,b.ETA
-,b.FinalETA
-,d.InQty
-,b.StockUnit
-,d.OutQty
-,d.AdjustQty
-,d.InQty - d.OutQty + d.AdjustQty balance
+                sqlCmd.Append(string.Format(@"select --isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders where id = a.id))
+sp = a.id
+,seq = concat(b.SEQ1, b.Seq2)
+--,b.SEQ2
+,supp = a.suppid+'-'+c.AbbEN
+,description = dbo.getMtlDesc(b.id,b.seq1,b.seq2,2,0) 
+,MaterialType = iif(b.fabrictype = 'F','Fabric',iif(b.fabrictype='A','Accessory',b.fabrictype))
+,OrderQty = b.Qty
+,ShipQty = isnull(b.ShipQty, 0) + isnull(b.ShipFOC, 0)
+--,b.ShipFOC
+,PoUnit = b.POUnit
+,complete = iif(b.Complete=1,'Y','N') 
+--,b.Final ETD
+,EstETA = b.ETA
+--,b.FinalETA
+,ArrivedQty = d.InQty
+,ReleasedQty = d.OutQty
+,AdjustQty = d.AdjustQty
+,Balance = d.InQty - d.OutQty + d.AdjustQty
+,StockUnit = b.StockUnit
  from dbo.PO_Supp a
 inner join dbo.PO_Supp_Detail b on b.id = a.id and b.SEQ1 = a.SEQ1
 inner join dbo.Supp c on c.id = a.SuppID
@@ -280,10 +283,18 @@ where 1=1 and c.ThirdCountry = 1"));
                 return false;
             }
 
-            //MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R01.xltx", 1);
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R01.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R01.xltx", 1, showExcel: false, showSaveMsg: true, excelApp : objApp);
 
-            Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(printData);
-            sdExcel.Save();
+            MyUtility.Msg.WaitWindows("Excel Processing...");
+            Excel.Worksheet worksheet = objApp.Sheets[1];
+            for (int i = 1; i <= printData.Rows.Count; i++) worksheet.Cells[i + 1, 4] = ((string)((Excel.Range)worksheet.Cells[i + 1, 4]).Value).Trim();            
+            objApp.Visible = true;
+
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+            //Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(printData);
+            //sdExcel.Save();
             return true;
         }
     }
