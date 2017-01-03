@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
@@ -108,7 +110,17 @@ Where a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}' and a.type 
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R13.xltx", 1);
+            //MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R13.xltx", 1);
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R13.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R13.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);      // 將datatable copy to excel
+            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
+            MyUtility.Msg.WaitWindows("Excel Processing...");
+            for (int i = 1; i <= printData.Rows.Count; i++) objSheets.Cells[i + 1, 10] = ((string)((Excel.Range)objSheets.Cells[i + 1, 10]).Value).Trim();
+            objApp.Visible = true;
+
+            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
         }
     }
