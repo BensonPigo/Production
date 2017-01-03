@@ -295,6 +295,36 @@ where poid ='{0}' and seq1='{1}' and seq2='{2}' and roll='{3}' and dyelot='{4}' 
             }
             _transactionscope.Dispose();
             _transactionscope = null;
+
+            DataTable dt;
+            DualResult result;
+            string selectCommand1 = string.Format(@"select a.id,a.MDivisionID,a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+,(select p1.FabricType from PO_Supp_Detail p1 where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
+,a.shipqty
+,a.Weight
+,a.ActualWeight
+,a.Roll
+,a.Dyelot
+,a.ActualQty
+,a.PoUnit
+,a.StockQty
+,a.StockUnit
+,a.StockType
+,a.Location
+,a.remark
+,a.ukey
+from dbo.Receiving_Detail a
+Where a.id = '{0}' ", docno);
+
+            if (!(result = DBProxy.Current.Select(null, selectCommand1, out dt)))
+            {
+                ShowErr(selectCommand1, result);
+            }
+            else
+            {
+                grid1.DataSource = dt;
+                source = dt;
+            }
         }
     }
 }

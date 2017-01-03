@@ -386,9 +386,9 @@
             // 
             this.btModifyRollDyelot.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btModifyRollDyelot.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btModifyRollDyelot.Location = new System.Drawing.Point(755, 76);
+            this.btModifyRollDyelot.Location = new System.Drawing.Point(745, 76);
             this.btModifyRollDyelot.Name = "btModifyRollDyelot";
-            this.btModifyRollDyelot.Size = new System.Drawing.Size(121, 43);
+            this.btModifyRollDyelot.Size = new System.Drawing.Size(131, 43);
             this.btModifyRollDyelot.TabIndex = 10;
             this.btModifyRollDyelot.Text = "Modify Roll & Dyelot";
             this.btModifyRollDyelot.UseVisualStyleBackColor = true;
@@ -445,9 +445,9 @@
             // button7
             // 
             this.button7.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button7.Location = new System.Drawing.Point(755, 125);
+            this.button7.Location = new System.Drawing.Point(745, 125);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(121, 30);
+            this.button7.Size = new System.Drawing.Size(131, 30);
             this.button7.TabIndex = 12;
             this.button7.Text = "Update Act. (kg)";
             this.button7.UseVisualStyleBackColor = true;
