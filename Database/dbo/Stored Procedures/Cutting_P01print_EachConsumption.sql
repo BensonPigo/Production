@@ -1,5 +1,5 @@
 ﻿
-Create PROCEDURE [dbo].[Cutting_P01_01]
+Create PROCEDURE [dbo].[Cutting_P01print_EachConsumption]
 	@OrderID VARCHAR(13)
 AS
 BEGIN
