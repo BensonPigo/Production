@@ -41,7 +41,7 @@ namespace Sci.Production.Warehouse
             result = DBProxy.Current.Select("",
             @"select  r.POID,r.Seq1+'-'+r.seq2 as SEQ,r.Roll,r.Dyelot
 		,r.stockqty,r.StockUnit,s.refno 
-	    ,dbo.Getmtldesc(r.poid, r.seq1, r.seq2,2,0) [Description],s.colorId 
+	    ,RTRIM(dbo.Getmtldesc(r.poid, r.seq1, r.seq2,2,0)) [Description],s.colorId 
         ,dbo.getTPEPass1( p.posmr )[MRName] 
 		, p.posmr, o.Seasonid,o.BrandId,o.styleid ,rec.WhseArrival
          from dbo.Receiving_Detail r
