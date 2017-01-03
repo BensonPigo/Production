@@ -88,13 +88,34 @@ namespace Sci.Production.Warehouse
 	select poid from dbo.orders o 
 	where o.BuyerDelivery between '{0}' and '{1}' group by POID
 )
-select a.POID, a.seq1, a.seq2, a.eta, A.Refno
-, iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)) FabricType
-, B.StockUnit
-,B.ColorID, C.BLocation, (B.ShipQty+B.ShipFOC)*v.RateValue ShipQty
-,C.InQty, C.OutQty, C.AdjustQty ,B.InputQty*v.RateValue InputQty,B.OutputQty*v.RateValue OutputQty
-, (B.InputQty - B.OutputQty)*v.RateValue TaipeiBalance
-,x.InQty, x.OutQty, x.AdjustQty,x.InQty - x.OutQty + x.AdjustQty balance
+select 
+--a.POID, a.seq1, a.seq2, a.eta, A.Refno
+--, iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)) FabricType
+--, B.StockUnit
+--,B.ColorID, C.BLocation, (B.ShipQty+B.ShipFOC)*v.RateValue ShipQty
+--,C.InQty, C.OutQty, C.AdjustQty ,B.InputQty*v.RateValue InputQty,B.OutputQty*v.RateValue OutputQty
+--, (B.InputQty - B.OutputQty)*v.RateValue TaipeiBalance
+--,x.InQty, x.OutQty, x.AdjustQty,x.InQty - x.OutQty + x.AdjustQty balance
+---------------------------------------------------------------------------
+SP					= a.POID, 
+SEQ					= concat(a.seq1, ' ', a.seq2),  
+ETA					= b.ETA,
+REF					= A.Refno, 
+MtlType				= iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)), 
+PurchaseUnit		= B.StockUnit,
+Color				= B.ColorID, 
+StockLocation		= C.BLocation, 
+ShipQty				= (B.ShipQty+B.ShipFOC)*v.RateValue ,
+ArrivedQty			= C.InQty, 
+ReleasedQty			= C.OutQty, 
+AdjustQty			= C.AdjustQty ,
+StockInQty			= B.InputQty*v.RateValue,
+StockAllocatedQty	= B.OutputQty*v.RateValue , 
+StockBalanceQty		= (B.InputQty - B.OutputQty)*v.RateValue ,
+InQty				= x.InQty, 
+OutQty				= x.OutQty, 
+AdjustQty			= x.AdjustQty,
+BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)
 from cte
 inner join Inventory a on a.POID = cte.POID 
 inner join dbo.PO_Supp_Detail b on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
@@ -108,12 +129,33 @@ where b.InputQty > 0 ", Convert.ToDateTime(buyerDelivery1).ToString("d"), Conver
             }
             else
             {
-                sqlCmd.Append(string.Format(@"select a.POID, a.seq1, a.seq2, a.eta,A.Refno
-, iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)) FabricType, B.StockUnit
-,B.ColorID, C.BLocation, (B.ShipQty+B.ShipFOC)*v.RateValue ShipQty
-,C.InQty, C.OutQty, C.AdjustQty ,B.InputQty*v.RateValue InputQty,B.OutputQty*v.RateValue OutputQty
-, (B.InputQty - B.OutputQty)*v.RateValue TaipeiBalance
-,x.InQty, x.OutQty, x.AdjustQty,x.InQty - x.OutQty + x.AdjustQty balance
+                sqlCmd.Append(string.Format(@"select 
+--a.POID, a.seq1, a.seq2, a.eta,A.Refno
+--, iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)) FabricType, B.StockUnit
+--,B.ColorID, C.BLocation, (B.ShipQty+B.ShipFOC)*v.RateValue ShipQty
+--,C.InQty, C.OutQty, C.AdjustQty ,B.InputQty*v.RateValue InputQty,B.OutputQty*v.RateValue OutputQty
+--, (B.InputQty - B.OutputQty)*v.RateValue TaipeiBalance
+--,x.InQty, x.OutQty, x.AdjustQty,x.InQty - x.OutQty + x.AdjustQty balance
+---------------------------------------------------------------------------
+SP					= a.POID, 
+SEQ					= concat(a.seq1, ' ', a.seq2),  
+ETA					= b.ETA,
+REF					= A.Refno, 
+MtlType				= iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)), 
+PurchaseUnit		= B.StockUnit,
+Color				= B.ColorID, 
+StockLocation		= C.BLocation, 
+ShipQty				= (B.ShipQty+B.ShipFOC)*v.RateValue ,
+ArrivedQty			= C.InQty, 
+ReleasedQty			= C.OutQty, 
+AdjustQty			= C.AdjustQty ,
+StockInQty			= B.InputQty*v.RateValue,
+StockAllocatedQty	= B.OutputQty*v.RateValue , 
+StockBalanceQty		= (B.InputQty - B.OutputQty)*v.RateValue ,
+InQty				= x.InQty, 
+OutQty				= x.OutQty, 
+AdjustQty			= x.AdjustQty,
+BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)
 from Inventory a
 inner join dbo.PO_Supp_Detail b on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
 inner join MDivisionPoDetail c on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2 
