@@ -292,7 +292,7 @@ iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '',
 ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [description] 
 ,a.POUnit 
 from po_supp_detail a 
-inner join Receiving_detail b on b.PoID= a.id and b.Seq1 = a.SEQ1 and b.Seq2 = a.SEQ2
+left join Receiving_detail b on b.PoID= a.id and b.Seq1 = a.SEQ1 and b.Seq2 = a.SEQ2
 inner join [dbo].[Fabric] ff on a.SCIRefno= ff.SCIRefno
 inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
 inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
@@ -308,6 +308,7 @@ inner join View_unitrate v on v.FROM_U = ａ.POUnit
 where a.id = '{0}' and a.seq1 ='{1}'and a.seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3), e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                                CurrentDetailData["seq"] = "";
                                 e.Cancel = true;
                                 return;
                             }
