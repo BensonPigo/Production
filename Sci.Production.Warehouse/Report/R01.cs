@@ -288,7 +288,10 @@ where 1=1 and c.ThirdCountry = 1"));
 
             MyUtility.Msg.WaitWindows("Excel Processing...");
             Excel.Worksheet worksheet = objApp.Sheets[1];
-            for (int i = 1; i <= printData.Rows.Count; i++) worksheet.Cells[i + 1, 4] = ((string)((Excel.Range)worksheet.Cells[i + 1, 4]).Value).Trim();            
+            for (int i = 1; i <= printData.Rows.Count; i++) worksheet.Cells[i + 1, 4] = ((string)((Excel.Range)worksheet.Cells[i + 1, 4]).Value).Trim();
+
+            worksheet.Columns[4].ColumnWidth = 50;
+            worksheet.Rows.AutoFit();
             objApp.Visible = true;
 
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
