@@ -156,8 +156,7 @@ union all
     group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,b.roll,b.stocktype,b.dyelot,a.eta
 union all
 	select b.roll,b.stocktype,b.dyelot,issuedate
-    ,'P37. Return Receiving Material' name
-, a.id, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
+, a.id,'P37. Return Receiving Material' name, sum(-Qty) inqty,0 as released,0 as adjust, remark,'' location
 from ReturnReceipt a, ReturnReceipt_Detail b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id
     and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯 
@@ -243,7 +242,6 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                 , Sci.Env.User.Keyword);
 
             #endregion
-
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out dtFtyinventory);
             if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
             dtFtyinventory.TableName = "dtFtyinventory";
