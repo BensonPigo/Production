@@ -60,6 +60,8 @@ namespace Sci.Production.Warehouse
             MyUtility.Msg.WaitWindows("Excel Processing...");
             Excel.Worksheet worksheet= objApp.Sheets[1];
             for (int i = 1; i <= dt.Rows.Count; i++) worksheet.Cells[i + 1, 18] = ((string)((Excel.Range)worksheet.Cells[i + 1, 18]).Value).Trim();
+
+            worksheet.Columns[18].ColumnWidth = 88;
             objApp.Visible = true;
 
             objApp.Columns.AutoFit();
