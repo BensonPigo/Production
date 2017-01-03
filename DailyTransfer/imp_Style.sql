@@ -1353,7 +1353,7 @@ Delete Production.dbo.Style_ProductionKits
 from Production.dbo.Style_ProductionKits as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_ProductionKits as b
-on a.StyleUkey= b.StyleUkey AND a.FactoryID=B.FactoryID
+on a.ukey= b.ukey AND a.FactoryID=B.FactoryID
 where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
@@ -1391,7 +1391,7 @@ a.StyleUkey	= b.StyleUkey
 --,a.QAReceived = b.QAReceived
 ,a.StyleCUkey1_Old = b.StyleCUkey1_Old
 from Production.dbo.Style_ProductionKits as a 
-inner join Trade_To_Pms.dbo.Style_ProductionKits as b ON a.StyleUkey=b.StyleUkey AND a.FactoryID=b.FactoryID
+inner join Trade_To_Pms.dbo.Style_ProductionKits as b ON a.ukey=b.ukey AND a.FactoryID=b.FactoryID
 left join Trade_To_Pms.dbo.Factory as c ON c.ID=b.FactoryID
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.Style_ProductionKits(
@@ -1465,7 +1465,7 @@ b.Ukey
 ,b.StyleCUkey1_Old
 from Trade_To_Pms.dbo.Style_ProductionKits as b
 left join Trade_To_Pms.dbo.Factory as c ON c.ID=b.FactoryID
-where not exists(select 1 from Production.dbo.Style_ProductionKits as a where a.StyleUkey=b.StyleUkey AND a.FactoryID=b.FactoryID)
+where not exists(select 1 from Production.dbo.Style_ProductionKits as a where a.ukey=b.ukey AND a.FactoryID=b.FactoryID)
 	and b.FactoryID in (select id from Production.dbo.Factory)
 
 
