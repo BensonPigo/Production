@@ -61,13 +61,18 @@ namespace Sci.Production.Class
                 string sqlcmd = string.Format(@"select Id, Description from WhseReason where type ='RA'and id in ({0}) and id in ('{1}')", actionCode,str);
                 //if (!MyUtility.Check.Seek(str, "WhseReason", "ID"))
                 if (!MyUtility.Check.Seek(sqlcmd) )
-                {                   
+                {
+                    this.DisplayBox1.Text = "";
                     this.textBox1.Text = "";
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("< Refund Action: {0} > not found!!!", str));
                     this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                     return;
                 }
+                DataRow temp;
+                if (MyUtility.Check.Seek(string.Format("Select Description from WhseReason where ID='{0}' and Type='RA'", str), out temp))
+                    this.DisplayBox1.Text = temp[0].ToString();
+
                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
         }
@@ -91,10 +96,11 @@ namespace Sci.Production.Class
             }
             Sci.Win.Tools.SelectItem item = 
                 new Sci.Win.Tools.SelectItem("select Id, Description from WhseReason where type ='RA' "+
-                string.Format(" and id in ({0})", actionCode), "10,100", this.textBox1.Text);
+                string.Format(" and id in ({0})", actionCode), "10,30", this.textBox1.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
+            this.DisplayBox1.Text = item.GetSelecteds()[0][1].ToString();
             this.Validate();
             this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
         }
