@@ -462,7 +462,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                              seq1 = b.Field<string>("seq1"),
                              seq2 = b.Field<string>("seq2"),
                              stocktype = b.Field<string>("stocktype"),
-                             qty = b.Field<decimal>("qty"),
+                             qty = - b.Field<decimal>("qty"),
                              location = b.Field<string>("location"),
                              roll = b.Field<string>("roll"),
                              dyelot = b.Field<string>("dyelot"),
