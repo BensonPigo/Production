@@ -118,6 +118,7 @@ BEGIN
 
 		update  a
 		set a.OutQty = isnull(a.OutQty,0) + isnull(b.ScrapQty, 0)
+		   ,a.LObQty = isnull(a.LObQty,0) + isnull(b.ScrapQty, 0)
 		from dbo.MDivisionPoDetail a 
 		inner join #tmpScrap b on
 			a.MDivisionID = b.MDivisionID and 

@@ -170,7 +170,7 @@ namespace Sci.Production.Warehouse
             .Text("fabrictype", header: "Type", iseditingreadonly: true, width: Widths.AnsiChars(8))    //5
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //6
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //7
-            .Text("FromLocation", header: "From Location", iseditingreadonly: true, width: Widths.AnsiChars(30))    //8
+            .Text("location", header: "From Location", iseditingreadonly: true, width: Widths.AnsiChars(30))    //8
             ;     //
             #endregion 欄位設定
             this.detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
@@ -634,7 +634,7 @@ a.id
 ,a.ToRoll
 ,a.ToStockType
 ,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FromFtyInventoryUkey) t 
-	for xml path('')), 1, 1, '') location
+	for xml path('')), 1, 2, '') location
 ,a.ukey
 from dbo.SubTransfer_Detail a 
 left join PO_Supp_Detail p1 on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 
@@ -671,7 +671,7 @@ Where a.id = '{0}'", masterID);
         private void button8_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("frompoid", textBox1.Text.TrimEnd());
+            int index = detailgridbs.Find("fromseq", textBox1.Text.TrimEnd());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else

@@ -76,9 +76,9 @@
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(767, 17);
+            this.button2.Location = new System.Drawing.Point(746, 17);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(139, 30);
+            this.button2.Size = new System.Drawing.Size(160, 30);
             this.button2.TabIndex = 4;
             this.button2.Text = "Batch Close R/MTL";
             this.button2.UseVisualStyleBackColor = true;
@@ -119,7 +119,7 @@
             // 
             // btnToEexcel
             // 
-            this.btnToEexcel.Location = new System.Drawing.Point(671, 17);
+            this.btnToEexcel.Location = new System.Drawing.Point(650, 17);
             this.btnToEexcel.Name = "btnToEexcel";
             this.btnToEexcel.Size = new System.Drawing.Size(90, 30);
             this.btnToEexcel.TabIndex = 3;
@@ -328,7 +328,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Name = "P01_BatchCloseRowMaterial";
-            this.Text = "P01. BatchCloseRowMaterial";
+            this.Text = "P01. Batch Close Row Material";
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
