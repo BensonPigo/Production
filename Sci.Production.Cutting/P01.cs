@@ -298,7 +298,7 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
         private void button2_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain; if (null == dr) return;
-            var frm = new Sci.Production.Cutting.P01_EachConsumption(false, CurrentMaintain["id"].ToString(), null, null, false);
+            var frm = new Sci.Production.Cutting.P01_EachConsumption(true, CurrentMaintain["id"].ToString(), null, null, false);
             frm.ShowDialog(this);
             this.RenewData();
             this.OnDetailEntered();

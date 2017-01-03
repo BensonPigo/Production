@@ -61,7 +61,10 @@ namespace Sci.Production.Cutting
             }
 
             bool EditSwitch2Order = Prgs.GetAuthority(Sci.Env.User.UserID, "P01.Cutting Master List", "CanEdit");
-            button1.Enabled = EditSwitch2Order;
+            if (EditSwitch2Order && canedit)
+                button1.Enabled = true;
+            else
+                button1.Enabled = false;
 
         }
 
