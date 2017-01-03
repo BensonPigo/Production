@@ -384,7 +384,7 @@ drop table #tmp");
                 MyUtility.Msg.WarningBox("NO Data!");
                 return;
             }
-
+            btnCreate.Enabled = true;
         }
 
         private void btnAutoPick_Click(object sender, EventArgs e)
@@ -432,7 +432,12 @@ drop table #tmp");
         }
 
         private void btnCreate_Click(object sender, EventArgs e)
-        {            
+        {
+            if (MyUtility.Check.Empty(detail))
+            {
+                MyUtility.Msg.WarningBox("Please select data first!!");
+                return;
+            }
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to create data?");
             if (dResult == DialogResult.No) return;
 
@@ -519,6 +524,8 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
                     Alldetailrows.GetParentRow("rel1")["TransID"] = tmpId;
                 }
             }
+            //Create後Btn失效，需重新Qurey才能再使用。
+            btnCreate.Enabled = false;
             this.grid2.ValidateControl();
             this.grid1.ValidateControl();
         }
