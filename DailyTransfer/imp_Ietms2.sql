@@ -285,6 +285,21 @@ where not exists(select id from Production.dbo.Mold as a where a.id = b.id)
 --SMNotice
 --SMNotice
 
+--Table:IESelectCode--
+merge IESelectCode t
+using (select * from trade_to_pms.dbo.IESelectCode) s
+on t.id = s.id and t.type = s.type
+when matched then
+	update set 
+		 t.name		= s.name		
+		,t.AddName	= s.AddName	
+		,t.AddDate	= s.AddDate	
+		,t.EditName	= s.EditName
+		,t.EditDate = s.EditDate
+when not matched by target then
+insert (name,AddName,AddDate,EditName,EditDate)
+values (s.name,s.AddName,s.AddDate,s.EditName,s.EditDate);
+
 END
 
 
