@@ -77,14 +77,14 @@ namespace Sci.Production.Class
             }
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            if (myForm.EditMode == false)
-            {
-                this.displayBox1.Text = MyUtility.GetValue.Lookup("Description", "RA" + this.textBox1.Text.ToString(), "WhseReason", "Type+ID");
-            }
-        }
+        //private void textBox1_TextChanged(object sender, EventArgs e)
+        //{
+        //    Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+        //    if (myForm.EditMode == false)
+        //    {
+        //        this.displayBox1.Text = MyUtility.GetValue.Lookup("Description", "RA" + this.textBox1.Text.ToString(), "WhseReason", "Type+ID");
+        //    }
+        //}
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {

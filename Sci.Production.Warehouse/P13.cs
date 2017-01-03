@@ -284,6 +284,7 @@ namespace Sci.Production.Warehouse
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            this.txtwhseReason1.DisplayBox1.Text = MyUtility.GetValue.Lookup("Description", this.txtwhseReason1.Type.ToString() + this.txtwhseReason1.TextBox1.Text.ToString(), "WhseReason", "Type+ID");
             #region Status Label
 
             label25.Text = CurrentMaintain["status"].ToString();
