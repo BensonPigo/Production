@@ -10,6 +10,8 @@ using Sci;
 using Sci.Data;
 using Ict;
 using Ict.Win;
+using System.Runtime.InteropServices;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
@@ -47,7 +49,26 @@ namespace Sci.Production.Warehouse
                 return result;
             }
 
-            MyUtility.Excel.CopyToXls(dt,"","Warehouse_R17_Location_List.xltx");
+            //MyUtility.Excel.CopyToXls(dt,"","Warehouse_R17_Location_List.xltx");
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R17_Location_List.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R17_Location_List.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);      // 將datatable copy to excel
+            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
+            MyUtility.Msg.WaitWindows("Excel Processing...");
+            
+            for (int i = 1; i <= dt.Rows.Count; i++)
+            {
+                if (!((string)((Excel.Range)objSheets.Cells[i + 1, 10]).Value).Empty())
+                    objSheets.Cells[i + 1, 10] = ((string)((Excel.Range)objSheets.Cells[i + 1, 10]).Value).Trim();
+
+                if (!((string)((Excel.Range)objSheets.Cells[i + 1, 12]).Value).Empty())
+                    objSheets.Cells[i + 1, 12] = ((string)((Excel.Range)objSheets.Cells[i + 1, 12]).Value).Trim();
+            }
+            objApp.Visible = true;
+
+            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
             return false;
         }
 
