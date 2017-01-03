@@ -359,8 +359,9 @@ where ROW_NUMBER_D =1
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
             #endregion
+            this.ShowWaitMessage("Data Loading....");
 
-            MyUtility.Msg.WaitWindows("Data Loading....");
+            //MyUtility.Msg.WaitWindows("Data Loading....");
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtData))
             {
@@ -373,7 +374,7 @@ where ROW_NUMBER_D =1
             {
                 ShowErr(sqlcmd, result);
             }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
         }
 
         private void grid1_sorting()
