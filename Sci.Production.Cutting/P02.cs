@@ -1654,6 +1654,18 @@ namespace Sci.Production.Cutting
                 drNEW["newkey"] = maxkey;
                 distqtyTb.Rows.Add(drNEW);
             }
+
+            DataRow[] drTEMPPP = PatternPanelTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
+            foreach (DataRow drTEMP in drTEMPPP)
+            {
+                DataRow drNEW = PatternPanelTb.NewRow();
+                drNEW["WorkOrderUkey"] = 0;  //新增WorkOrderUkey塞0
+                drNEW["PatternPanel"] = drTEMP["PatternPanel"];
+                drNEW["LectraCode"] = drTEMP["LectraCode"];
+
+                drNEW["newkey"] = maxkey;
+                PatternPanelTb.Rows.Add(drNEW);
+            }
         }
 
         protected override void OnDetailGridDelete()
@@ -2025,23 +2037,11 @@ namespace Sci.Production.Cutting
             #endregion
             #region PatternPanel 修改
             foreach (DataRow dr in PatternPanelTb.Rows)
-            {
-                #region 刪除
-                if (dr.RowState == DataRowState.Deleted)
-                {
-                    delsql = delsql + string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and ID = '{4}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], dr["Article", DataRowVersion.Original], dr["Orderid", DataRowVersion.Original], cId);
-                }
-                #endregion
-                #region 修改
-                if (dr.RowState == DataRowState.Modified)
-                {
-                    updatesql = updatesql + string.Format("Update WorkOrder_distribute set Qty = {0} where WorkOrderUkey ={1} and SizeCode = '{2}' and Article = '{3}' and OrderID = '{4}' and ID='{5}'; ", dr["Qty"], dr["WorkOrderUkey"], dr["SizeCode"], dr["Article"], dr["OrderID"], cId);
-                }
-                #endregion
+            {               
                 #region 新增
                 if (dr.RowState == DataRowState.Added)
                 {
-                    insertsql = insertsql + string.Format("Insert into WorkOrder_distribute(WorkOrderUkey,SizeCode,Qty,Article,OrderID,ID) values({0},'{1}',{2},'{3}','{4}','{5}');", dr["WorkOrderUkey"], dr["SizeCode"], dr["Qty"], dr["Article"], dr["OrderID"], cId);
+                    insertsql = insertsql + string.Format("Insert into Workorder_PatternPanel(WorkOrderUkey,PatternPanel,LectraCode,ID) values({0},'{1}','{2}','{3}');", dr["WorkOrderUkey"], dr["PatternPanel"], dr["LectraCode"], cId);
                 }
                 #endregion
             }
