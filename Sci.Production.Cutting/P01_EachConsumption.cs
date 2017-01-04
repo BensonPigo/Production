@@ -89,6 +89,12 @@ namespace Sci.Production.Cutting
             EC_Size.TotalQty , 
             concat(RTrim(Fabric.Refno),'-',Fabric.Description) as FabricDesc,
             Fabric.Width as FabricWidth 
+            ,type2 = (case when  a.TYPE = 0 then ''
+	           when a.TYPE = 1 then 'Cutting Piece'
+	           when a.TYPE = 2 then 'TAPE'
+	           end) 
+            ,createby = concat(a.AddName ,a.AddDate)
+            ,editby = concat(a.EditName, a.EditDate)
 
             From dbo.Order_EachCons a 
             Left Join dbo.Orders b On a.ID = b.ID  
@@ -121,8 +127,8 @@ namespace Sci.Production.Cutting
         {
             Helper.Controls.Grid.Generator(this.grid)
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Text("Markername", header: "Markername", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("FabricCombo", header: "FabricCombo", width: Widths.AnsiChars(2), iseditingreadonly: true);
+                .Text("Markername", header: "Marker\r\n name", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("FabricCombo", header: "Fabric\r\n Combo", width: Widths.AnsiChars(2), iseditingreadonly: true);
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("ColorID", header: "Color ID", width: Widths.AnsiChars(8))

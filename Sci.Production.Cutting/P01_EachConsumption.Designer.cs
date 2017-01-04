@@ -42,7 +42,6 @@
             this.gridSizeQty = new Sci.Win.UI.Grid();
             this.sizeQtyGridDbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.numFabricWidth = new Sci.Win.UI.NumericBox();
-            this.numConsPC = new Sci.Win.UI.NumericBox();
             this.checkAllSize = new Sci.Win.UI.CheckBox();
             this.label25 = new Sci.Win.UI.Label();
             this.checkCuttingPiece = new Sci.Win.UI.CheckBox();
@@ -88,6 +87,8 @@
             this.label5 = new Sci.Win.UI.Label();
             this.displayCreateBy = new Sci.Win.UI.DisplayBox();
             this.button1 = new Sci.Win.UI.Button();
+            this.ConsPC = new Sci.Win.UI.DisplayBox();
+            this.displayBox2 = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -179,18 +180,18 @@
             // 
             this.displayEditBy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.displayEditBy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayEditBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EditDate", true));
+            this.displayEditBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "editby", true));
             this.displayEditBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayEditBy.Location = new System.Drawing.Point(431, 40);
+            this.displayEditBy.Location = new System.Drawing.Point(382, 40);
             this.displayEditBy.Name = "displayEditBy";
-            this.displayEditBy.Size = new System.Drawing.Size(188, 21);
+            this.displayEditBy.Size = new System.Drawing.Size(400, 21);
             this.displayEditBy.TabIndex = 9;
             // 
             // label2
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(353, 40);
+            this.label2.Location = new System.Drawing.Point(304, 40);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 21);
             this.label2.TabIndex = 8;
@@ -200,7 +201,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(353, 8);
+            this.label1.Location = new System.Drawing.Point(304, 8);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 21);
             this.label1.TabIndex = 6;
@@ -271,9 +272,10 @@
             this.panelBasic.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelBasic.Controls.Add(this.displayBox2);
+            this.panelBasic.Controls.Add(this.ConsPC);
             this.panelBasic.Controls.Add(this.panelSizeQty);
             this.panelBasic.Controls.Add(this.numFabricWidth);
-            this.panelBasic.Controls.Add(this.numConsPC);
             this.panelBasic.Controls.Add(this.checkAllSize);
             this.panelBasic.Controls.Add(this.label25);
             this.panelBasic.Controls.Add(this.checkCuttingPiece);
@@ -364,28 +366,6 @@
             this.numFabricWidth.Size = new System.Drawing.Size(80, 21);
             this.numFabricWidth.TabIndex = 22;
             this.numFabricWidth.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numConsPC
-            // 
-            this.numConsPC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numConsPC.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ConsPC", true));
-            this.numConsPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numConsPC.IsSupportEditMode = false;
-            this.numConsPC.Location = new System.Drawing.Point(92, 174);
-            this.numConsPC.Name = "numConsPC";
-            this.numConsPC.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numConsPC.ReadOnly = true;
-            this.numConsPC.Size = new System.Drawing.Size(92, 21);
-            this.numConsPC.TabIndex = 20;
-            this.numConsPC.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -768,7 +748,7 @@
             this.btnDownloadIdList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnDownloadIdList.Location = new System.Drawing.Point(322, 31);
             this.btnDownloadIdList.Name = "btnDownloadIdList";
-            this.btnDownloadIdList.Size = new System.Drawing.Size(116, 24);
+            this.btnDownloadIdList.Size = new System.Drawing.Size(160, 24);
             this.btnDownloadIdList.TabIndex = 8;
             this.btnDownloadIdList.Text = "Download ID List";
             this.btnDownloadIdList.UseVisualStyleBackColor = true;
@@ -858,11 +838,11 @@
             // 
             this.displayCreateBy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.displayCreateBy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayCreateBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AddDate", true));
+            this.displayCreateBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "createby", true));
             this.displayCreateBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCreateBy.Location = new System.Drawing.Point(432, 8);
+            this.displayCreateBy.Location = new System.Drawing.Point(383, 8);
             this.displayCreateBy.Name = "displayCreateBy";
-            this.displayCreateBy.Size = new System.Drawing.Size(187, 21);
+            this.displayCreateBy.Size = new System.Drawing.Size(399, 21);
             this.displayCreateBy.TabIndex = 7;
             // 
             // button1
@@ -874,6 +854,26 @@
             this.button1.Text = "Switch to WorkOrder";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // ConsPC
+            // 
+            this.ConsPC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.ConsPC.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ConsPC", true));
+            this.ConsPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.ConsPC.Location = new System.Drawing.Point(92, 174);
+            this.ConsPC.Name = "ConsPC";
+            this.ConsPC.Size = new System.Drawing.Size(93, 21);
+            this.ConsPC.TabIndex = 151;
+            // 
+            // displayBox2
+            // 
+            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "type2", true));
+            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox2.Location = new System.Drawing.Point(276, 304);
+            this.displayBox2.Name = "displayBox2";
+            this.displayBox2.Size = new System.Drawing.Size(122, 21);
+            this.displayBox2.TabIndex = 152;
             // 
             // P01_EachConsumption
             // 
@@ -973,7 +973,6 @@
         private Win.UI.CheckBox checkCuttingPiece;
         private Win.UI.EditBox editRemark;
         private Win.UI.Label label24;
-        private Win.UI.NumericBox numConsPC;
         private Win.UI.NumericBox numFabricWidth;
         private Win.UI.ListControlBindingSource sizeQtyGridDbs;
         private Win.UI.Panel panelSizeQty;
@@ -981,5 +980,7 @@
         private Win.UI.DisplayBox displayCreateBy;
         private Win.UI.DisplayBox displayBox1;
         private Win.UI.Button button1;
+        private Win.UI.DisplayBox ConsPC;
+        private Win.UI.DisplayBox displayBox2;
     }
 }
