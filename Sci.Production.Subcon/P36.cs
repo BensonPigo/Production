@@ -447,32 +447,14 @@ where id = '{4}'"
            
             if (CurrentMaintain["status"].ToString() == "Junked"){return false;}
             if (Sci.Env.User.UserID!=CurrentMaintain["handle"].ToString()){return false;}
-            
-            if (dateBox2.Text != "" && dateBox2.Text != "    /  /") //有值
-            {
-                string pt = Sci.MyUtility.GetValue.Lookup(string.Format("select printdate from localdebit where ID ='{0}'", CurrentMaintain["id"]));
-                DialogResult dResult = MyUtility.Msg.QuestionBox("In" + ' ' + pt + ' ' + " has been printed ,Do you want to print again?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
-                if (dResult.ToString().ToUpper() == "NO") return false;
-                var result3 = DBProxy.Current.Execute(null, string.Format("update localdebit set printdate=getdate() where id = '{0}'", CurrentMaintain["id"]));
-                DataTable printdate1;
-                DBProxy.Current.Select(null, string.Format("select printdate from localdebit where ID ='{0}'", CurrentMaintain["id"]), out printdate1);
-                DateTime printDate1 = (DateTime)Sci.MyUtility.Convert.GetDate(printdate1.Rows[0]["printdate"]);
 
-                dateBox2.Value = printDate1;
-                dateBox2.DataBindings.Cast<Binding>().ToList().ForEach(b => b.WriteValue());
+            //如果已經列印過的，則提醒是否再次列印。
+            string printdate = Sci.MyUtility.GetValue.Lookup(string.Format("select convert(varchar, printdate, 120) from localdebit where ID ='{0}'", CurrentMaintain["id"]));
+            if (!MyUtility.Check.Empty(printdate))
+            {
+                DialogResult dResult = MyUtility.Msg.QuestionBox("In" + ' ' + printdate + ' ' + " has been printed ,Do you want to print again?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+                if (dResult.ToString().ToUpper() == "NO") return false;
             }
-            else if (dateBox2.Text == "    /  /")//沒值
-                
-                {
-                    var result2 = DBProxy.Current.Execute(null, string.Format("update localdebit set printdate=getdate() where id = '{0}'", CurrentMaintain["id"]));
-                DataTable printdate ;
-                DBProxy.Current.Select(null, string.Format("select printdate from localdebit where ID ='{0}'", CurrentMaintain["id"]), out printdate);
-                DateTime printDate = (DateTime)Sci.MyUtility.Convert.GetDate(printdate.Rows[0]["printdate"]);
-                   
-                    dateBox2.Value = printDate;
-                    dateBox2.DataBindings.Cast<Binding>().ToList().ForEach(b => b.WriteValue());
-                }
-        
           
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
@@ -561,7 +543,10 @@ where id = '{4}'"
             var frm = new Sci.Win.Subs.ReportView(report);
             frm.MdiParent = MdiParent;
             frm.Show();
-           
+
+            //更新列印日期printdate。
+            var result3 = DBProxy.Current.Execute(null, string.Format("update localdebit set printdate=getdate() where id = '{0}'", CurrentMaintain["id"]));
+
             return true;
         }
     }
