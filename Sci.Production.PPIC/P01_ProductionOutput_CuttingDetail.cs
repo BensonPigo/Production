@@ -46,7 +46,7 @@ namespace Sci.Production.PPIC
                  .Text("LectraCode", header: "Lectra Code", width: Widths.AnsiChars(2))
                  .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3))
                  .Numeric("CutQty", header: "Q'ty", width: Widths.AnsiChars(6))
-                 .Text("Confirmed", header: "Status", width: Widths.AnsiChars(8));
+                 .Text("Status", header: "Status", width: Widths.AnsiChars(8));
             grid1.Columns[1].Visible = type != "A";
             grid1.Columns[2].Visible = type != "A";
             grid1.Columns[3].Visible = type != "A";
@@ -97,7 +97,7 @@ group by cDate", string.Format("o.ID = '{0}'", id));
             }
             else
             {
-                sqlCmd = string.Format(@"select c.cDate,cd.CutRef,wp.PatternPanel,w.LectraCode,CD.Cutno,sum(wd.Qty) as CutQty,IIF(c.Status = 'Confirmed','Y','') as Status
+                sqlCmd = string.Format(@"select c.cDate,cd.CutRef,wp.PatternPanel,w.LectraCode,CD.Cutno,sum(wd.Qty) as CutQty,Status
 from Orders o
 inner join WorkOrder_Distribute wd on wd.OrderID = o.ID and wd.Article = '{1}' and wd.SizeCode = '{2}'
 inner join WorkOrder_PatternPanel wp on wp.WorkOrderUkey = wd.WorkOrderUkey
@@ -105,7 +105,7 @@ inner join WorkOrder w on w.ID=wp.ID and w.Ukey=wp.WorkOrderUkey
 inner join CuttingOutput_Detail cd on cd.WorkOrderUkey = wd.WorkOrderUkey
 inner join CuttingOutput c on c.ID = cd.ID
 where {0}
-group by c.cDate,cd.CutRef,wp.PatternPanel,w.LectraCode,CD.Cutno,IIF(c.Status = 'Confirmed','Y','')"
+group by c.cDate,cd.CutRef,wp.PatternPanel,w.LectraCode,CD.Cutno,Status"
                     , string.Format("o.ID = '{0}'", id)
                     ,article,sizeCode);
             }
