@@ -60,7 +60,7 @@
             this.dateBox3 = new Sci.Win.UI.DateBox();
             this.dateBox4 = new Sci.Win.UI.DateBox();
             this.editBox2 = new Sci.Win.UI.EditBox();
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
+            this.display_MRLastUpdate = new Sci.Win.UI.DisplayBox();
             this.label18 = new Sci.Win.UI.Label();
             this.label19 = new Sci.Win.UI.Label();
             this.label20 = new Sci.Win.UI.Label();
@@ -70,7 +70,7 @@
             this.dateBox6 = new Sci.Win.UI.DateBox();
             this.editBox3 = new Sci.Win.UI.EditBox();
             this.txtuser2 = new Sci.Production.Class.txtuser();
-            this.displayBox7 = new Sci.Win.UI.DisplayBox();
+            this.display_FtyLastDate = new Sci.Win.UI.DisplayBox();
             this.label23 = new Sci.Win.UI.Label();
             this.dateBox7 = new Sci.Win.UI.DateBox();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
@@ -417,15 +417,14 @@
             this.editBox2.Size = new System.Drawing.Size(546, 50);
             this.editBox2.TabIndex = 126;
             // 
-            // displayBox6
+            // display_MRLastUpdate
             // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MRLastDate", true));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(126, 345);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(205, 23);
-            this.displayBox6.TabIndex = 128;
+            this.display_MRLastUpdate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.display_MRLastUpdate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.display_MRLastUpdate.Location = new System.Drawing.Point(126, 345);
+            this.display_MRLastUpdate.Name = "display_MRLastUpdate";
+            this.display_MRLastUpdate.Size = new System.Drawing.Size(205, 23);
+            this.display_MRLastUpdate.TabIndex = 128;
             // 
             // label18
             // 
@@ -512,15 +511,14 @@
             this.txtuser2.TabIndex = 137;
             this.txtuser2.TextBox1Binding = "";
             // 
-            // displayBox7
+            // display_FtyLastDate
             // 
-            this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FtyLastDate", true));
-            this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox7.Location = new System.Drawing.Point(126, 515);
-            this.displayBox7.Name = "displayBox7";
-            this.displayBox7.Size = new System.Drawing.Size(205, 23);
-            this.displayBox7.TabIndex = 138;
+            this.display_FtyLastDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.display_FtyLastDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.display_FtyLastDate.Location = new System.Drawing.Point(126, 515);
+            this.display_FtyLastDate.Name = "display_FtyLastDate";
+            this.display_FtyLastDate.Size = new System.Drawing.Size(205, 23);
+            this.display_FtyLastDate.TabIndex = 138;
             // 
             // label23
             // 
@@ -625,7 +623,7 @@
             this.Controls.Add(this.txttpeuser5);
             this.Controls.Add(this.dateBox7);
             this.Controls.Add(this.label23);
-            this.Controls.Add(this.displayBox7);
+            this.Controls.Add(this.display_FtyLastDate);
             this.Controls.Add(this.txtuser2);
             this.Controls.Add(this.editBox3);
             this.Controls.Add(this.dateBox6);
@@ -635,7 +633,7 @@
             this.Controls.Add(this.label20);
             this.Controls.Add(this.label19);
             this.Controls.Add(this.label18);
-            this.Controls.Add(this.displayBox6);
+            this.Controls.Add(this.display_MRLastUpdate);
             this.Controls.Add(this.editBox2);
             this.Controls.Add(this.dateBox4);
             this.Controls.Add(this.dateBox3);
@@ -706,7 +704,7 @@
             this.Controls.SetChildIndex(this.dateBox3, 0);
             this.Controls.SetChildIndex(this.dateBox4, 0);
             this.Controls.SetChildIndex(this.editBox2, 0);
-            this.Controls.SetChildIndex(this.displayBox6, 0);
+            this.Controls.SetChildIndex(this.display_MRLastUpdate, 0);
             this.Controls.SetChildIndex(this.label18, 0);
             this.Controls.SetChildIndex(this.label19, 0);
             this.Controls.SetChildIndex(this.label20, 0);
@@ -716,7 +714,7 @@
             this.Controls.SetChildIndex(this.dateBox6, 0);
             this.Controls.SetChildIndex(this.editBox3, 0);
             this.Controls.SetChildIndex(this.txtuser2, 0);
-            this.Controls.SetChildIndex(this.displayBox7, 0);
+            this.Controls.SetChildIndex(this.display_FtyLastDate, 0);
             this.Controls.SetChildIndex(this.label23, 0);
             this.Controls.SetChildIndex(this.dateBox7, 0);
             this.Controls.SetChildIndex(this.txttpeuser5, 0);
@@ -761,7 +759,7 @@
         private Win.UI.DateBox dateBox3;
         private Win.UI.DateBox dateBox4;
         private Win.UI.EditBox editBox2;
-        private Win.UI.DisplayBox displayBox6;
+        private Win.UI.DisplayBox display_MRLastUpdate;
         private Win.UI.Label label18;
         private Win.UI.Label label19;
         private Win.UI.Label label20;
@@ -771,7 +769,7 @@
         private Win.UI.DateBox dateBox6;
         private Win.UI.EditBox editBox3;
         private Class.txtuser txtuser2;
-        private Win.UI.DisplayBox displayBox7;
+        private Win.UI.DisplayBox display_FtyLastDate;
         private Win.UI.Label label23;
         private Win.UI.DateBox dateBox7;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
