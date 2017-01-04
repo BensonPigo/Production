@@ -624,18 +624,17 @@ namespace Sci.Production.Quality
                     ret[i,j] = row[columnNames[j]];
                 }
             }
-          
-            DataTable dtSeason;
-            DualResult sResult;         
-            if (sResult = DBProxy.Current.Select("Production", string.Format(
-            "select C.SeasonID from FIR_Shadebone a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", maindr["ID"]), out dtSeason))
+            if (dt.Rows.Count==0)
             {
-                if (dtSeason.Rows.Count <= 0)
-                {
-                    MyUtility.Msg.WarningBox("Data not found!");
-                    return;
-                }
+                MyUtility.Msg.WarningBox("Data not found!");
+                return;
             }
+            
+            //撈取seasonID
+            DataTable dtSeason;
+            DBProxy.Current.Select("Production", string.Format(
+            "select C.SeasonID from FIR_Shadebone a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", maindr["ID"]), out dtSeason);
+           
             
             Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
             MyUtility.Excel.CopyToXls(ret, xltFileName: "Quality_P03_Crocking_Test.xltx", fileName: "Quality_P03_Crocking_Test", headerline: 5, excelAppObj: excel);

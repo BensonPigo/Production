@@ -316,7 +316,7 @@
             // 
             // encode_button
             // 
-            this.encode_button.Location = new System.Drawing.Point(838, 107);
+            this.encode_button.Location = new System.Drawing.Point(929, 107);
             this.encode_button.Name = "encode_button";
             this.encode_button.Size = new System.Drawing.Size(80, 30);
             this.encode_button.TabIndex = 124;
@@ -409,7 +409,7 @@
             this.GridPopUp = false;
             this.KeyField1 = "id";
             this.Name = "P03_Crocking";
-            this.Text = "P03_Crocking";
+            this.Text = "P03_Crocking Test";
             this.WorkAlias = "FIR_Laboratory_Crocking";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
