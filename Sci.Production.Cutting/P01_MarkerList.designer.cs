@@ -297,8 +297,18 @@
             this.numericSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericSeq.Location = new System.Drawing.Point(339, 15);
             this.numericSeq.Name = "numericSeq";
+            this.numericSeq.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericSeq.Size = new System.Drawing.Size(48, 21);
             this.numericSeq.TabIndex = 119;
+            this.numericSeq.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label19
             // 
@@ -333,6 +343,7 @@
             // checkCuttingPiece
             // 
             this.checkCuttingPiece.AutoSize = true;
+            this.checkCuttingPiece.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CuttingPiece", true));
             this.checkCuttingPiece.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.checkCuttingPiece.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkCuttingPiece.Location = new System.Drawing.Point(339, 353);
@@ -486,6 +497,7 @@
             // displayMarkerUpdate
             // 
             this.displayMarkerUpdate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayMarkerUpdate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MarkerUpdate", true));
             this.displayMarkerUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.displayMarkerUpdate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayMarkerUpdate.Location = new System.Drawing.Point(339, 468);
@@ -510,7 +522,7 @@
             this.displayWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Width", true));
             this.displayWidth.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.displayWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayWidth.Location = new System.Drawing.Point(770, 230);
+            this.displayWidth.Location = new System.Drawing.Point(807, 227);
             this.displayWidth.Name = "displayWidth";
             this.displayWidth.Size = new System.Drawing.Size(70, 21);
             this.displayWidth.TabIndex = 149;
@@ -536,8 +548,18 @@
             this.numericConsPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericConsPC.Location = new System.Drawing.Point(339, 229);
             this.numericConsPC.Name = "numericConsPC";
+            this.numericConsPC.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericConsPC.Size = new System.Drawing.Size(51, 21);
             this.numericConsPC.TabIndex = 153;
+            this.numericConsPC.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // displayFabricCode
             // 
@@ -638,6 +660,7 @@
             // displayCreateBy
             // 
             this.displayCreateBy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCreateBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "createby", true));
             this.displayCreateBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.displayCreateBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayCreateBy.Location = new System.Drawing.Point(339, 492);
@@ -658,6 +681,7 @@
             // displayEditBy
             // 
             this.displayEditBy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayEditBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "editby", true));
             this.displayEditBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.displayEditBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayEditBy.Location = new System.Drawing.Point(339, 518);
@@ -668,6 +692,7 @@
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
+            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AllSize", true));
             this.checkBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox2.Location = new System.Drawing.Point(767, 353);
