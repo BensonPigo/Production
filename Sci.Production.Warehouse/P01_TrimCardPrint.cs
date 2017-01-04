@@ -140,11 +140,15 @@ namespace Sci.Production.Warehouse
             {
                 #region OTHER
                 //架構要調，先HOLD住
-                sql = string.Format(@"select distinct A.Refno,B.DescDetail
-                                    from Order_BOA_Expend A
-                                    left join Fabric B on B.SCIRefno=A.SCIRefno
-                                    where Id='{0}'
-                                    and b.MtlTypeID in (select id from MtlType where IsTrimcardOther=1)
+                sql = string.Format(@"
+select distinct A.Refno,B.DescDetail
+from Order_BOA_Expend A
+inner join Order_BOA ob on A.Order_BOAUkey = ob.Ukey
+left join Fabric B on B.SCIRefno=A.SCIRefno
+where a.Id='{0}'
+and b.MtlTypeID in (select id from MtlType where IsTrimcardOther=1)
+and not ob.SuppID = 'fty' 
+and not ob.SuppID = 'fty-c'
                                     ", orderID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint);
                 if (!result) return result;
@@ -232,29 +236,49 @@ namespace Sci.Production.Warehouse
                 tables = table[1];
 
                 #region ROW1
-                if (radioOther.Checked)
-                    tables.Cell(1, 1).Range.Text = string.Format("LABELLING & PACKAGING (SP# {0})", orderID);
+                 if (radioOther.Checked)
+                    if(dtPrint2.Rows.Count > 1)
+                        tables.Cell(1, 1).Range.Text = string.Format("LABELLING & PACKAGING (SP# {0} - {1})", orderID, dtPrint2.Rows[dtPrint2.Rows.Count - 1]["id"].ToString().Substring(8));
+                    else
+                        tables.Cell(1, 1).Range.Text = string.Format("LABELLING & PACKAGING (SP# {0})", orderID);
                 else
                     tables.Cell(1, 1).Range.Text = string.Format("SP#{0}     ST:{1}     SEASON:{2}     FTY:{3}", orderID, StyleID, SeasonID, FactoryID);
                 #endregion
 
                 #region ROW2
-                if (radioFabric.Checked)
-                {
-                    for (int i = 2; i <= tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "FABRIC";
-                }
-                else if (radioAccessory.Checked)
-                {
-                    for (int i = 2; i <= tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "ACCESSORY";
-                }
-                else if (radioOther.Checked)
-                {
-                    for (int i = 2; i <= tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "OTHER";
-                }
-                else if (radioThread.Checked)
-                {
-                    for (int i = 2; i <= tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "Thread";
-                }
+                 string Row2Type = "";
+                 //if (radioFabric.Checked)
+                 //{
+                 //    for (int i = 2; i <= tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "FABRIC";
+                 //}
+                 //else if (radioAccessory.Checked)
+                 //{
+                 //    for (int i = 2; i <= tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "ACCESSORY";
+                 //}
+                 //else if (radioOther.Checked)
+                 //{
+                 //    for (int i = 2; i <= tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "OTHER";
+                 //}
+                 //else if (radioThread.Checked)
+                 //{
+                 //    for (int i = 2; i <= tables.Columns.Count; i++) tables.Cell(2, i).Range.Text = "Thread";
+                 //}
+                 if (radioFabric.Checked)
+                 {
+                     Row2Type = "FABRIC";
+                 }
+                 else if (radioAccessory.Checked)
+                 {
+                     Row2Type = "ACCESSORY";
+                 }
+                 else if (radioOther.Checked)
+                 {
+                     Row2Type = "OTHER";
+                 }
+                 else if (radioThread.Checked)
+                 {
+                     Row2Type = "Thread";
+                 }
                 #endregion
 
                 #region 計算共要幾頁
@@ -279,7 +303,9 @@ namespace Sci.Production.Warehouse
                 winword.Selection.Copy();
                 for (int i = 1; i < pagecount; i++)
                 {
-                    winword.Selection.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine, 7);
+                    winword.Selection.MoveDown();
+                    if (pagecount > 1)
+                        winword.Selection.InsertBreak();
                     winword.Selection.Paste();
                 }
                 #endregion
@@ -297,8 +323,16 @@ namespace Sci.Production.Warehouse
                 {
                     for (int j = 0; j < CC; j++)
                     {
-                        for (int i = 0; i < dtPrint2.Rows.Count; i++)
-                            tables.Cell(i + 4 + (3 * (i / 7)) + rC * j * 10, 1).Range.Text = dtPrint2.Rows[i]["ID"].ToString().Trim();
+                        if (radioOther.Checked)
+                        {
+                            for (int i = 0; i < dtPrint2.Rows.Count; i++)
+                                tables.Cell(i + 4 + (3 * (i / 7)) + rC * j * 10, 1).Range.Text = dtPrint2.Rows[i]["ID"].ToString().Trim().Substring(8);
+                        }
+                        else
+                        {
+                            for (int i = 0; i < dtPrint2.Rows.Count; i++)
+                                tables.Cell(i + 4 + (3 * (i / 7)) + rC * j * 10, 1).Range.Text = dtPrint2.Rows[i]["ID"].ToString().Trim();
+                        }
                     }
                 }
                 #endregion
@@ -316,6 +350,8 @@ namespace Sci.Production.Warehouse
                         //填入欄位名稱,從第一欄開始填入需要的頁數
                         for (int j = 0; j < rC; j++)
                         {
+                            //有資料時才顯示Type
+                            tables.Cell((2 + 10 * j) + (i / 6) * rC * 10, (2 + (i % 6))).Range.Text = Row2Type;
                             tables.Cell((3 + 7 * j) + (i / 6) * rC * 7, (2 + (i % 6))).Range.Text = temp;
                         }
                         #endregion
@@ -351,6 +387,8 @@ namespace Sci.Production.Warehouse
                         //填入欄位名稱,從第一欄開始填入需要的頁數
                         for (int j = 0; j < rC; j++)
                         {
+                            //有資料時才顯示Type
+                            tables.Cell((2 + 10 * j) + (i / 6) * rC * 10, (2 + (i % 6))).Range.Text = Row2Type;
                             tables.Cell((3 + 7 * j) + (i / 6) * rC * 7, (2 + (i % 6))).Range.Text = temp;
                         }
                         #endregion
@@ -385,6 +423,8 @@ namespace Sci.Production.Warehouse
                         //填入欄位名稱,從第一欄開始填入需要的頁數
                         for (int j = 0; j < rC; j++)
                         {
+                            //有資料時才顯示Type
+                            tables.Cell((2 + 10 * j) + (i / 6) * rC * 10, (2 + (i % 6))).Range.Text = Row2Type;
                             tables.Cell((3 + 10 * j) + (i / 6) * rC * 10, (2 + (i % 6))).Range.Text = temp;
                         }
                         #endregion
@@ -392,6 +432,14 @@ namespace Sci.Production.Warehouse
                 }               
                 else if (radioThread.Checked)
                 {
+                    for (int i = 0; i < dtPrint.Rows.Count; i++)
+                    {
+                        for (int j = 0; j < rC; j++)
+                        {
+                            //有資料時才顯示Type
+                            tables.Cell((2 + 10 * j) + (i / 6) * rC * 10, (2 + (i % 6))).Range.Text = Row2Type;
+                        }
+                    }
                     #region 填入Datas
                     for (int k = 0; k < dtPrint2.Rows.Count; k++)
                     {
@@ -405,7 +453,7 @@ namespace Sci.Production.Warehouse
                             {
                                 temp = rowColorA[l]["ThreadColorID"].ToString().Trim();
                                 //填入字串
-                                tables.Cell((k + 4 + 3 * (k / 4)),2+l).Range.Text = temp;                                
+                                tables.Cell((k + 4 + 3 * (k / 4)),2+l).Range.Text = temp;
                             }
                         }
                     }
@@ -413,7 +461,7 @@ namespace Sci.Production.Warehouse
                 }
                 #endregion
                 winword.Visible = true;
-                winword.Quit(ref missing, ref missing, ref missing);     //close word application
+               // winword.Quit(ref missing, ref missing, ref missing);     //close word application
                 winword = null;
 
                 return Result.True;
