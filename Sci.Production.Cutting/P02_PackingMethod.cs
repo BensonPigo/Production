@@ -26,7 +26,7 @@ namespace Sci.Production.Cutting
         protected override bool OnGridSetup()
         {
             Helper.Controls.Grid.Generator(this.grid)
-                .Text("ID", header: "SP#", width: Widths.AnsiChars(13));
+                .Text("ID", header: "SP#", width: Widths.AnsiChars(16));
             return true;
         }
         protected override DualResult OnRequery(out DataTable datas)

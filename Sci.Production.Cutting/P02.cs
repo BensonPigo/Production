@@ -47,7 +47,7 @@ namespace Sci.Production.Cutting
 
 
             InitializeComponent();
-
+            this.detailgridcont.Size = new System.Drawing.Size(624, 589);
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("LectraCode", "Pattern Panel");
             comboBox1_RowSource.Add("SP", "SP");
@@ -2083,8 +2083,10 @@ namespace Sci.Production.Cutting
 
         private void Qtybreak_Click(object sender, EventArgs e)
         {
-            gridValid();
-            grid.ValidateControl();
+            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]),"");
+            callNextForm.ShowDialog(this);
+            //gridValid();
+            //grid.ValidateControl();
 
         }
 

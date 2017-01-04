@@ -183,7 +183,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(3755, 561);
+            this.refresh.Location = new System.Drawing.Point(3812, 561);
             // 
             // detailgridcont
             // 
@@ -192,7 +192,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(3, 101);
-            this.detailgridcont.Size = new System.Drawing.Size(629, 596);
+            this.detailgridcont.Size = new System.Drawing.Size(744, 939);
             // 
             // detail2
             // 
@@ -462,9 +462,9 @@
             // Qtybreak
             // 
             this.Qtybreak.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Qtybreak.Location = new System.Drawing.Point(856, 1);
+            this.Qtybreak.Location = new System.Drawing.Point(819, 1);
             this.Qtybreak.Name = "Qtybreak";
-            this.Qtybreak.Size = new System.Drawing.Size(144, 30);
+            this.Qtybreak.Size = new System.Drawing.Size(181, 30);
             this.Qtybreak.TabIndex = 23;
             this.Qtybreak.Text = "Quantity Breakdown";
             this.Qtybreak.UseVisualStyleBackColor = true;
@@ -472,9 +472,9 @@
             // 
             // Packing
             // 
-            this.Packing.Location = new System.Drawing.Point(723, 2);
+            this.Packing.Location = new System.Drawing.Point(663, 2);
             this.Packing.Name = "Packing";
-            this.Packing.Size = new System.Drawing.Size(120, 30);
+            this.Packing.Size = new System.Drawing.Size(145, 30);
             this.Packing.TabIndex = 24;
             this.Packing.Text = "Packing Method";
             this.Packing.UseVisualStyleBackColor = true;
