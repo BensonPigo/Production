@@ -46,8 +46,8 @@
             this.textBox1.Size = new System.Drawing.Size(70, 22);
             this.textBox1.TabIndex = 2;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            //this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
             // txtwhseReason
             // 

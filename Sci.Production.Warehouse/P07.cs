@@ -1267,13 +1267,14 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword);
             //呼叫執行檔絕對路徑
             DirectoryInfo dir = new DirectoryInfo(System.Windows.Forms.Application.StartupPath);
             //執行檔上一層絕對路徑
-            string xltpath = dir.Parent.FullName.ToString();
-            Microsoft.Office.Interop.Excel._Application ObjApp = MyUtility.Excel.ConnectExcel(xltpath + "\\xlt\\Warehouse_P07_ImportExcelFormat.xltx");
-            ObjApp.Visible = true;
-            //string strXltName = Sci.Env.Cfg.XltPathDir + "\\Warehouse_P07_ImportExcelFormat.xltx";
-           // Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            //if (excel == null) return;
-            //excel.Visible = true;
+            //string xltpath = dir.Parent.FullName.ToString();
+            //Microsoft.Office.Interop.Excel._Application ObjApp = MyUtility.Excel.ConnectExcel(xltpath + "\\xlt\\Warehouse_P07_ImportExcelFormat.xltx");
+            //ObjApp.Visible = true;
+
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Warehouse_P07_ImportExcelFormat.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return;
+            excel.Visible = true;
         }
         protected override bool ClickPrint()
         {

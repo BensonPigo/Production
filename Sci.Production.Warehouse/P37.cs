@@ -832,7 +832,7 @@ Where a.id = '{0}'", masterID);
         {
             this.txtwhseRefundAction1.TextBox1.Text = "";
             this.txtwhseRefundAction1.DisplayBox1.Text = "";
-            this.txtwhseRefundAction1.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+            this.txtwhseRefundAction1.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue()); 
         }
     
     }

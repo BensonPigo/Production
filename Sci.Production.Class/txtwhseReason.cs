@@ -68,6 +68,14 @@ namespace Sci.Production.Class
                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
 
+            if (e.Cancel)
+                return;
+            this.OnValidating(e);
+        }
+
+        private void textBox1_Validated(object sender, EventArgs e)
+        {
+            this.OnValidated(e);
         }
 
         //private void textBox1_TextChanged(object sender, EventArgs e)
