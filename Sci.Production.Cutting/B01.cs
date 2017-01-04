@@ -17,5 +17,40 @@ namespace Sci.Production.Cutting
             InitializeComponent();
         }
 
+        protected override void ClickNewAfter()
+        {
+            textBox1.ReadOnly = true;
+            base.ClickNewAfter();
+        }
+
+        protected override void ClickEditAfter()
+        {
+            textBox1.ReadOnly = false;
+            base.ClickEditAfter();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            textBox1.ReadOnly = true;
+            base.ClickSaveAfter();
+        }
+
+        protected override void ClickUndo()
+        {
+            textBox1.ReadOnly = true;
+            base.ClickUndo();
+        }
+
+        protected override bool ClickSaveBefore()
+        {
+            if (MyUtility.Check.Empty(textBox1.Text.Trim()) || MyUtility.Check.Empty(textBox3.Text.Trim()))
+            {
+                MyUtility.Msg.InfoBox("ID or Show SEQ can not empty");
+                return false;
+            }
+
+            return base.ClickSaveBefore();            
+        }
+
     }
 }

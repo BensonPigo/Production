@@ -36,10 +36,10 @@
             this.checkBox4 = new Sci.Win.UI.CheckBox();
             this.label3 = new Sci.Win.UI.Label();
             this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox3 = new Sci.Win.UI.TextBox();
             this.textBox5 = new Sci.Win.UI.TextBox();
             this.label5 = new Sci.Win.UI.Label();
+            this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -50,10 +50,10 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtartworktype_fty1);
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.textBox5);
             this.detailcont.Controls.Add(this.textBox3);
-            this.detailcont.Controls.Add(this.textBox2);
             this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.checkBox4);
@@ -140,23 +140,15 @@
             // 
             // textBox1
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.textBox1.IsSupportEditMode = false;
             this.textBox1.Location = new System.Drawing.Point(162, 55);
             this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(90, 23);
             this.textBox1.TabIndex = 10;
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(162, 112);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(138, 23);
-            this.textBox2.TabIndex = 11;
             // 
             // textBox3
             // 
@@ -187,6 +179,18 @@
             this.label5.Size = new System.Drawing.Size(89, 23);
             this.label5.TabIndex = 16;
             this.label5.Text = "BcsDate";
+            // 
+            // txtartworktype_fty1
+            // 
+            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
+            this.txtartworktype_fty1.cClassify = "";
+            this.txtartworktype_fty1.cSubprocess = "t";
+            this.txtartworktype_fty1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
+            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtartworktype_fty1.Location = new System.Drawing.Point(162, 112);
+            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
+            this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
+            this.txtartworktype_fty1.TabIndex = 17;
             // 
             // B01
             // 
@@ -222,9 +226,9 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox2;
         private Win.UI.TextBox textBox1;
         private Win.UI.Label label5;
         private Win.UI.TextBox textBox5;
+        private Class.txtartworktype_fty txtartworktype_fty1;
     }
 }
