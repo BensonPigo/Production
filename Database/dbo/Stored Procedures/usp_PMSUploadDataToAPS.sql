@@ -9,10 +9,7 @@ CREATE PROCEDURE [dbo].[usp_PMSUploadDataToAPS]
 AS
 BEGIN
 declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varchar(20)='', @LoginPwd varchar(20)=''
-	--若其中一欄位空白則不執行此程式
-
 	--select出目標table所在位置
-	IF @M != ''
 	BEGIN
 		select 
 			@ServerName = [SQLServerName],
@@ -22,9 +19,11 @@ declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varch
 		from [Production].[dbo].[MDivision]
 		where [ID] = @M
 	END
-	IF @ServerName ='' or @DatabaseName = '' or @loginId = '' or @LoginPwd = ''
+
+	--若其中一欄位空白則不執行此程式
+	IF @ServerName ='' or @DatabaseName = '' or @loginId = '' or @LoginPwd = '' or @M =''
 	BEGIN
-		PRINT concat(@M,',connection information has not set')
+		PRINT 'Connection information has not set' 
 		RETURN  
 	END
 
@@ -39,7 +38,7 @@ declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varch
 
 	BEGIN--4部分字串
 --cmd,cmd2連的Table
---...[dbo].[OPDWF510_TEST]
+--...[dbo].[OPDWF510]
 -------------------------------------------------第一部分-------------------------------------------------
 Declare @SerDbDboTb varchar(66)
 Set @SerDbDboTb = concat('[',@ServerName,'].[',@DatabaseName,N'].[dbo].[OPDWF510]')
@@ -281,7 +280,7 @@ From (
 	,[sSEASONCD] = SeasonID
 	,[sFULLPATH] = concat((select PicPath from System),Picture1)
 	from Style s
-	inner join [J1-7362].[SCIAPS].[dbo].[IMAGEMAPPING_TEST] t 
+	inner join [J1-7362].[SCIAPS].[dbo].[IMAGEMAPPING] t 
 	on t.STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.ID
 	and t.SEASONCD collate Chinese_Taiwan_Stroke_CI_AS = s.SeasonID
 )s
@@ -295,7 +294,7 @@ Select Distinct [STYLENO] = ID
 ,[SEASONCD] = SeasonID
 ,[FULLPATH] = concat((select PicPath from System),Picture1)
 from Style s
-left join [J1-7362].[SCIAPS].[dbo].[IMAGEMAPPING_TEST] t 
+left join [J1-7362].[SCIAPS].[dbo].[IMAGEMAPPING] t 
 on t.STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.ID
 and t.SEASONCD collate Chinese_Taiwan_Stroke_CI_AS = s.SeasonID
 where t.STYLENO is null

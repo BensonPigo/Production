@@ -98,7 +98,9 @@ Database/dbo/Stored[!!-~]Procedures/BoaExpend.sql -text
 Database/dbo/Stored[!!-~]Procedures/BoaExpend_Insert.sql -text
 Database/dbo/Stored[!!-~]Procedures/Create_CDC.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_EachConsumption.sql -text
+Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_EachConsumption_1.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_TTLconsumption.sql -text
+Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_TTLconsumption_1.sql -text
 Database/dbo/Stored[!!-~]Procedures/DailyImport.sql -text
 Database/dbo/Stored[!!-~]Procedures/GenGarmentTest.sql -text
 Database/dbo/Stored[!!-~]Procedures/GetKeyWordValue.sql -text
