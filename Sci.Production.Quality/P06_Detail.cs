@@ -69,7 +69,7 @@ namespace Sci.Production.Quality
             base.OnEditModeChanged();
             if (isSee)
             {
-                this.ToExcel.Enabled = canEdit && !this.EditMode;
+                this.ToExcel.Enabled =  !this.EditMode;
                 this.encode_btn.Enabled = canEdit && !this.EditMode;
             }
         }

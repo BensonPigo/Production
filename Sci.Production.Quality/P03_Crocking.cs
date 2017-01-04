@@ -596,8 +596,8 @@ namespace Sci.Production.Quality
         {
             //return;
             if (maindr == null) return;
-            encode_button.Enabled = this.CanEdit && !this.EditMode;
-            this.ToExcelBtn.Enabled = this.CanEdit && !this.EditMode;
+            encode_button.Enabled = this.CanEdit && !this.EditMode;            
+            this.ToExcelBtn.Enabled =  !this.EditMode;
             this.Supptext.TextBox1.ReadOnly = true;
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P03", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");

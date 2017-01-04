@@ -56,7 +56,7 @@ namespace Sci.Production.Quality
                 //this.EditMode = true;
                 this.OnUIConvertToMaintain();                
             }
-            this.ToExcel.Enabled = canEdit && !this.EditMode;
+            this.ToExcel.Enabled = !this.EditMode;
         }
 
         protected override void OnEditModeChanged()
@@ -71,7 +71,7 @@ namespace Sci.Production.Quality
             base.OnEditModeChanged();
             if (isSee)
             {
-                this.ToExcel.Enabled = canEdit && !this.EditMode;
+                this.ToExcel.Enabled =  !this.EditMode;
                 this.encode_btn.Enabled = canEdit && !this.EditMode;
             }
             
