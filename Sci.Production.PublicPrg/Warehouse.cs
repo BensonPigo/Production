@@ -1124,6 +1124,7 @@ drop table #tmpS1 ";
 ,m.seq1
 ,m.seq2
 ,p.scirefno
+,p.qty
 from dbo.mdivisionpodetail m 
 inner join dbo.PO_Supp_Detail p on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
 inner join [dbo].[Fabric] ff on p.SCIRefno= ff.SCIRefno
