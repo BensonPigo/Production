@@ -84,7 +84,7 @@
             this.masterpanel.Controls.Add(this.Target_text);
             this.masterpanel.Controls.Add(this.Earliest_text);
             this.masterpanel.Controls.Add(this.Cutting_text);
-            this.masterpanel.Size = new System.Drawing.Size(1143, 150);
+            this.masterpanel.Size = new System.Drawing.Size(892, 150);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.Cutting_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Earliest_text, 0);
@@ -110,7 +110,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 150);
-            this.detailpanel.Size = new System.Drawing.Size(1143, 331);
+            this.detailpanel.Size = new System.Drawing.Size(892, 199);
             // 
             // gridicon
             // 
@@ -118,7 +118,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1143, 331);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 199);
             // 
             // detail2
             // 
@@ -134,16 +134,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1143, 519);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1143, 481);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 481);
-            this.detailbtm.Size = new System.Drawing.Size(1143, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -353,7 +353,7 @@
             this.KeyField1 = "id";
             this.KeyField2 = "POID";
             this.Name = "P06";
-            this.Text = "P06.Laboratory-Fabric Color Fasteness";
+            this.Text = "P06.Laboratory-Fabric Color Fastness";
             this.UniqueExpress = "id";
             this.WorkAlias = "PO";
             this.Controls.SetChildIndex(this.tabs, 0);

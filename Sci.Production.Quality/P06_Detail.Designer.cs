@@ -126,7 +126,7 @@
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.comboBox1.Enabled = false;
+            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
@@ -151,8 +151,8 @@
             // testno
             // 
             this.testno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.testno.Enabled = false;
             this.testno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.testno.IsSupportEditMode = false;
             this.testno.Location = new System.Drawing.Point(117, 23);
             this.testno.Name = "testno";
             this.testno.ReadOnly = true;
@@ -225,8 +225,8 @@
             // poid
             // 
             this.poid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.poid.Enabled = false;
             this.poid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.poid.IsSupportEditMode = false;
             this.poid.Location = new System.Drawing.Point(326, 23);
             this.poid.Name = "poid";
             this.poid.ReadOnly = true;
@@ -256,7 +256,7 @@
             this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "P06_Detail";
-            this.Text = "P06_Detail";
+            this.Text = "Color Fastness";
             this.WorkAlias = "ColorFastness_Detail";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
