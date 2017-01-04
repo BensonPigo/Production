@@ -225,10 +225,42 @@ namespace Sci.Production.Warehouse
                     row["dyelot"] = "";
                 }
             }
+
             if (!MyUtility.Check.Empty(warningmsg.ToString()))
             {
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
                 return false;
+            }
+
+            //判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
+            foreach (DataRow row in DetailDatas)
+            {
+                DataRow dr;
+                if (row["fabrictype"].ToString().ToUpper() == "F")
+                {
+                    if (MyUtility.Check.Seek(string.Format(@"
+select 
+	RD.RD_Count+ST.ST_Count+BB.BB_Count as total
+from(
+select COUNT(*) RD_Count from dbo.Receiving_Detail RD inner join dbo.Receiving R on RD.Id=R.Id  where RD.PoId='{0}' and RD.Seq1='{1}' and RD.Seq2='{2}' and RD.Roll='{3}' and RD.MDivisionID='{4}' and RD.id!='{5}' and R.Status='Confirmed'
+) RD
+OUTER APPLY
+(
+select COUNT(*) ST_Count from dbo.SubTransfer_Detail SD inner join dbo.SubTransfer S on SD.ID=S.Id where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and ToMDivisionID='{4}' and S.Status='Confirmed'
+) ST
+OUTER APPLY
+(
+select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD inner join dbo.BorrowBack B on BD.ID=B.Id  where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and ToMDivisionID='{4}' and B.Status='Confirmed'
+) BB"
+                        , row["poid"], row["seq1"], row["seq2"], row["roll"], Sci.Env.User.Keyword, CurrentMaintain["id"]), out dr, null))
+                    {
+                        if (Convert.ToInt32(dr[0]) > 0)
+                        {
+                            MyUtility.Msg.WarningBox(string.Format(@"{0},{1},{2} already received, SP#,SEQ,Roll can't duplicate.", row["poid"], row["seq1"].ToString() + row["seq2"].ToString(), row["roll"]));
+                            return false;
+                        }
+                    }
+                }
             }
 
             if (!MyUtility.Check.Empty(DetailDatas) && DetailDatas.Count > 0)

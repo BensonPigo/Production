@@ -220,7 +220,8 @@ group by a.id, poid, Seq1,Seq2, remark,a.IssueDate) tmp
 
             DataTable dt;
             DualResult result;
-            MyUtility.Msg.WaitWindows("Data Loading...");
+            this.ShowWaitMessage("Data Loading....");
+            //MyUtility.Msg.WaitWindows("Data Loading...");
             if (!(result = DBProxy.Current.Select(null, selectCommand1,out dt)))
             {
                 ShowErr(selectCommand1, result);
@@ -232,7 +233,8 @@ group by a.id, poid, Seq1,Seq2, remark,a.IssueDate) tmp
                 grid2.AutoResizeColumns();
             }
             button3.Enabled = !MyUtility.Check.Empty(dt) && dt.Rows.Count == 0 && source.Rows[e.RowIndex]["fabrictype"].ToString()=="F";
-            MyUtility.Msg.WaitClear();
+            //MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -322,8 +324,8 @@ Where a.id = '{0}' ", docno);
             }
             else
             {
-                grid1.DataSource = dt;
                 source = dt;
+                grid1.DataSource = dt;              
             }
         }
     }

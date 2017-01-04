@@ -172,12 +172,12 @@ namespace Sci.Production.Warehouse
                         string seq2 = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C");
                         string ctnno = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C");
                         string lotno = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C");
-                        string unit = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C");
-                        string qty = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 8], "C");
-                        string foc = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 9], "C");
-                        string net = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 10], "C");
-                        string weight = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 11], "C");
-                        string location = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 12], "C");
+                        //string unit = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C");
+                        string qty = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C");
+                        string foc = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 8], "C");
+                        string net = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 9], "C");
+                        string weight = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 10], "C");
+                        string location = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 11], "C");
 
 
                         if (wkno.ToUpper() != "WK#" ||
@@ -232,13 +232,13 @@ namespace Sci.Production.Warehouse
                                 newRow["seq"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C").ToString().PadRight(3) + MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C").ToString();
                                 newRow["roll"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C");
                                 newRow["dyelot"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C");
-                                newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 8], "N");
-                                newRow["foc"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 9], "N");
+                                newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "N");
+                                newRow["foc"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 8], "N");
                                 newRow["shipqty"] = decimal.Parse(newRow["qty"].ToString()) + decimal.Parse(newRow["foc"].ToString());
                                 newRow["actualqty"] = decimal.Parse(newRow["qty"].ToString()) + decimal.Parse(newRow["foc"].ToString());
-                                newRow["actualWeight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 10], "N");
-                                newRow["Weight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 11], "N");
-                                newRow["location"] = (objCellArray[1, 12] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, 12], "C");
+                                newRow["actualWeight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 9], "N");
+                                newRow["Weight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 10], "N");
+                                newRow["location"] = (objCellArray[1, 11] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, 11], "C");
 
                                 if (!MyUtility.Check.Empty(newRow["wkno"]) && newRow["wkno"].ToString() != master["exportid"].ToString())
                                 {
@@ -261,11 +261,14 @@ namespace Sci.Production.Warehouse
 
                                 DataRow dr2;
                                 string sql = string.Format(@"
-select fabrictype,POUnit,StockUnit,isnull(vu.RateValue,0)*{3} as stockqty 
+select pd.fabrictype,pd.POUnit,pd.StockUnit,isnull(vu.RateValue,0)*{3} as stockqty 
 ,(select o.Category from Orders o where o.id= pd.id) as category
 from dbo.PO_Supp_Detail pd 
-left join dbo.View_Unitrate vu on vu.FROM_U = pd.POUnit and vu.TO_U = pd.StockUnit
-where id='{0}' and seq1 ='{1}' and seq2 = '{2}'", newRow["poid"], newRow["seq1"], newRow["seq2"], newRow["shipqty"]);
+inner join dbo.View_Unitrate vu on vu.FROM_U = pd.POUnit and vu.TO_U = pd.StockUnit
+inner join [dbo].[Fabric] ff on pd.SCIRefno= ff.SCIRefno
+inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
+inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
+where pd.id='{0}' and pd.seq1 ='{1}' and pd.seq2 = '{2}'", newRow["poid"], newRow["seq1"], newRow["seq2"], newRow["shipqty"]);
 
                                 if (MyUtility.Check.Seek(sql, out dr2))
                                 {
