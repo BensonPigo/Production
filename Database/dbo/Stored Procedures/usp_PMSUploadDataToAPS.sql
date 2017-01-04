@@ -268,6 +268,7 @@ IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp2
 
 -------------------------------------------------第三部分-------------------------------------------------
 --Style圖檔資料：APS的中間表Table Name為IMAGEMAPPING
+--key要注意production這有3個key,目標table 只有兩個key,多筆取top 1
 Declare @SerDbDboTb2 varchar(66)
 Set @SerDbDboTb2 = concat('[',@ServerName,'].[',@DatabaseName,N'].[dbo].[IMAGEMAPPING]')
 Declare @cmd3 varchar(max)
@@ -288,17 +289,27 @@ where STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.sSTYLENO
 and SEASONCD collate Chinese_Taiwan_Stroke_CI_AS = s.sSEASONCD
 and FULLPATH collate Chinese_Taiwan_Stroke_CI_AS != s.sFULLPATH
 
-insert into '+@SerDbDboTb2+N'
-([STYLENO],[SEASONCD],[FULLPATH])
-Select Distinct [STYLENO] = ID
-,[SEASONCD] = SeasonID
-,[FULLPATH] = concat((select PicPath from System),Picture1)
+IF OBJECT_ID(''tempdb.dbo.#tmps'', ''U'') IS NOT NULL DROP TABLE #tmps
+Select Distinct  ID
+,SeasonID
+,BrandID
+into #tmps
 from Style s
 left join [J1-7362].[SCIAPS].[dbo].[IMAGEMAPPING] t 
-on t.STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.ID
+on t.STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.ID 
 and t.SEASONCD collate Chinese_Taiwan_Stroke_CI_AS = s.SeasonID
 where t.STYLENO is null
-'
+insert into '+@SerDbDboTb2+N'
+([STYLENO],[SEASONCD],[FULLPATH])
+select distinct s.ID,s.SeasonID
+,[FULLPATH] = 
+(
+	select top 1 concat((select PicPath from System),s2.Picture1) 
+	from Style s2 where s2.id = s.id  and s2.SeasonID = s.SeasonID
+)
+from #tmps s
+IF OBJECT_ID(''tempdb.dbo.#tmps'', ''U'') IS NOT NULL DROP TABLE #tmps'
+
 
 -------------------------------------------------第四部分-------------------------------------------------
 --Sewing Daily Output：APS的中間表Table Name為OPDWF220
