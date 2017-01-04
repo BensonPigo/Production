@@ -92,6 +92,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(961, 442);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.numericBox2);
@@ -150,6 +154,12 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Size = new System.Drawing.Size(961, 404);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 404);
+            this.detailbtm.Size = new System.Drawing.Size(961, 38);
             // 
             // browse
             // 
