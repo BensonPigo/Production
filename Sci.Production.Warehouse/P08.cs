@@ -253,6 +253,7 @@ namespace Sci.Production.Warehouse
                     CurrentDetailData["pounit"] = x[0]["pounit"];
                     CurrentDetailData["stockunit"] = x[0]["stockunit"];
                     CurrentDetailData["Description"] = x[0]["Description"];
+                    CurrentDetailData["useqty"] = x[0]["qty"];
                     CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
 
                 }
