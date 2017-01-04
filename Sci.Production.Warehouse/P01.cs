@@ -78,6 +78,7 @@ namespace Sci.Production.Warehouse
         {
             var frm = new Sci.Production.Warehouse.P01_BatchCloseRowMaterial();
             frm.ShowDialog(this);
+            ReloadDatas();
             this.RenewData();
         }
 
