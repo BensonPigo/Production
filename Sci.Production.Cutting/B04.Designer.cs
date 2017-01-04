@@ -43,6 +43,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(676, 250);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkBox1);
@@ -52,13 +56,23 @@
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.txt_ID);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Size = new System.Drawing.Size(676, 212);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 212);
+            this.detailbtm.Size = new System.Drawing.Size(676, 38);
+            // 
+            // tabs
+            // 
+            this.tabs.Size = new System.Drawing.Size(684, 279);
             // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
             this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(376, 58);
+            this.checkBox1.Location = new System.Drawing.Point(233, 18);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
             this.checkBox1.TabIndex = 14;
@@ -70,7 +84,7 @@
             this.editBox1.BackColor = System.Drawing.Color.White;
             this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(259, 154);
+            this.editBox1.Location = new System.Drawing.Point(116, 114);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(473, 50);
@@ -79,7 +93,7 @@
             // label3
             // 
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(164, 154);
+            this.label3.Location = new System.Drawing.Point(21, 114);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(88, 23);
             this.label3.TabIndex = 12;
@@ -90,7 +104,7 @@
             this.txt_desc.BackColor = System.Drawing.Color.White;
             this.txt_desc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.txt_desc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txt_desc.Location = new System.Drawing.Point(259, 106);
+            this.txt_desc.Location = new System.Drawing.Point(116, 66);
             this.txt_desc.Name = "txt_desc";
             this.txt_desc.Size = new System.Drawing.Size(379, 23);
             this.txt_desc.TabIndex = 11;
@@ -98,7 +112,7 @@
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(164, 106);
+            this.label2.Location = new System.Drawing.Point(21, 66);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(89, 23);
             this.label2.TabIndex = 10;
@@ -109,7 +123,7 @@
             this.txt_ID.BackColor = System.Drawing.Color.White;
             this.txt_ID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
             this.txt_ID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txt_ID.Location = new System.Drawing.Point(259, 58);
+            this.txt_ID.Location = new System.Drawing.Point(116, 18);
             this.txt_ID.Name = "txt_ID";
             this.txt_ID.Size = new System.Drawing.Size(100, 23);
             this.txt_ID.TabIndex = 9;
@@ -117,7 +131,7 @@
             // label1
             // 
             this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(164, 58);
+            this.label1.Location = new System.Drawing.Point(21, 18);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(88, 23);
             this.label1.TabIndex = 8;
@@ -125,9 +139,14 @@
             // 
             // B04
             // 
-            this.ClientSize = new System.Drawing.Size(905, 457);
+            this.ClientSize = new System.Drawing.Size(684, 312);
             this.DefaultFilter = "Type=\'RC\'";
             this.DefaultOrder = "ID";
+            this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
+            this.IsSupportPrint = false;
             this.Name = "B04";
             this.Text = "B04.CutReason";
             this.WorkAlias = "CutReason";
