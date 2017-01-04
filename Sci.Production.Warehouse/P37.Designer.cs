@@ -335,6 +335,7 @@
             this.txtwhseReason1.TabIndex = 1;
             this.txtwhseReason1.TextBox1Binding = "";
             this.txtwhseReason1.Type = "RR";
+            this.txtwhseReason1.TextBox1.Validated += new System.EventHandler(this.txtwhseReason1_Validated);
             // 
             // txtwhseRefundAction1
             // 
