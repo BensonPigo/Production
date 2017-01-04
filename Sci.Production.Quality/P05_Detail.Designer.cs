@@ -65,27 +65,13 @@
             this.gridcont.Location = new System.Drawing.Point(12, 113);
             this.gridcont.Size = new System.Drawing.Size(1056, 334);
             // 
-            // append
-            // 
-            this.append.EditMode = Sci.Win.UI.AdvEditModes.None;
-            // 
-            // revise
-            // 
-            this.revise.EditMode = Sci.Win.UI.AdvEditModes.None;
-            // 
-            // delete
-            // 
-            this.delete.EditMode = Sci.Win.UI.AdvEditModes.None;
-            // 
             // undo
             // 
-            this.undo.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.undo.Location = new System.Drawing.Point(990, 5);
             this.undo.TabIndex = 2;
             // 
             // save
             // 
-            this.save.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.save.Location = new System.Drawing.Point(904, 5);
             this.save.Size = new System.Drawing.Size(86, 30);
             this.save.TabIndex = 1;
@@ -156,8 +142,8 @@
             // testno
             // 
             this.testno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.testno.Enabled = false;
             this.testno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.testno.IsSupportEditMode = false;
             this.testno.Location = new System.Drawing.Point(117, 23);
             this.testno.Name = "testno";
             this.testno.ReadOnly = true;
@@ -167,8 +153,8 @@
             // poid
             // 
             this.poid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.poid.Enabled = false;
             this.poid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.poid.IsSupportEditMode = false;
             this.poid.Location = new System.Drawing.Point(326, 23);
             this.poid.Name = "poid";
             this.poid.ReadOnly = true;
@@ -190,7 +176,7 @@
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.comboBox1.Enabled = false;
+            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
@@ -273,7 +259,7 @@
             this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "P05_Detail";
-            this.Text = "P05_Detail";
+            this.Text = "Oven Test";
             this.WorkAlias = "Oven_Detail";
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label4, 0);

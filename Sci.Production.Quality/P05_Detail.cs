@@ -984,16 +984,14 @@ group by a.Article";
                     ret[i, j] = row[columnNames[j]];
                 }
             }
-            DataTable dtPo;
-            DualResult sResult;
-            if (sResult = DBProxy.Current.Select(null, string.Format("select * from PO where id='{0}'", PoID), out dtPo))
+            if (dt.Rows.Count==0)
             {
-                if (dtPo.Rows.Count <= 0)
-                {
-                    MyUtility.Msg.WarningBox("Data not found!");
-                    return;
-                }
+                 MyUtility.Msg.WarningBox("Data not found!");
+                 return;
             }
+            DataTable dtPo;            
+            DBProxy.Current.Select(null, string.Format("select * from PO where id='{0}'", PoID), out dtPo);
+            
 
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Quality_P05_Detail_Report.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
