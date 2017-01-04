@@ -458,6 +458,8 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["CuttingSP"])))
                     return;
                 }
                 MyUtility.Msg.WarningBox("Finished!");
+                ReloadDatas();
+                RenewData();
             }
             else
             {
@@ -470,7 +472,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["CuttingSP"])))
         //Quantity breakdown
         private void button8_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ProductionOutput callNextForm = new Sci.Production.PPIC.P01_ProductionOutput(CurrentMaintain);
+            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(CurrentMaintain["id"].ToString(), CurrentMaintain["poid"].ToString(), editBox2.Text);
             callNextForm.ShowDialog(this);
         }
 
