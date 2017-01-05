@@ -93,8 +93,8 @@ namespace Sci.Production.Cutting
 	           when a.TYPE = 1 then 'Cutting Piece'
 	           when a.TYPE = 2 then 'TAPE'
 	           end) 
-            ,createby = concat(a.AddName ,a.AddDate)
-            ,editby = concat(a.EditName, a.EditDate)
+            ,createby2 = concat(a.AddName,' ' ,FORMAT(a.AddDate,'yyyy/MM/dd HH:mm:ss'))
+            ,editby2 = concat(a.EditName,' ' , FORMAT(a.EditDate,'yyyy/MM/dd HH:mm:ss'))
 
             From dbo.Order_EachCons a 
             Left Join dbo.Orders b On a.ID = b.ID  
