@@ -127,7 +127,7 @@ select
 	[Actual Total# of Backlog] = d4.ct,
 	[Actual Total# of Cutting early schedule] = d5.ct,
 	[Actual Total# of Cuttings (F+G+H)]= d3.ct+d4.ct+d5.ct,
-	[BCS Rating % (F+G) / E] = Round( CAST((d3.ct+d4.ct) as float) / CAST((d1.ct+d2.ct) as float),3)
+	[BCS Rating % (F+G) / E] = iif(d1.ct+d2.ct = 0, 0, (Round( CAST((d3.ct+d4.ct) as float) / CAST((d1.ct+d2.ct) as float),3)))
 from #DateRanges as dr 
 outer apply(select distinct wo.MDivisionId from #tmpWO as WO) as M
 outer apply(
@@ -346,7 +346,7 @@ where 1=1
                 }
                 if (!MyUtility.Check.Empty(Est_CutDate1))
                 {
-                    sqlCmd.Append(string.Format(" and wo.EstCutDate <= '{0}' and wo.EstCutDate != null ", Convert.ToDateTime(Est_CutDate1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and wo.EstCutDate <= '{0}' and wo.EstCutDate is not null   ", Convert.ToDateTime(Est_CutDate1).ToString("d")));
                 }
                 if (!MyUtility.Check.Empty(CutCell1))
                 {
@@ -389,7 +389,7 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-
+            #region radiobtn_ByM
             if (radiobtn_ByM.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCSReportByFactory.xltx"); //預先開啟excel app
@@ -399,6 +399,7 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
                 if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
+            #endregion
 
             if (radioBtn_ByCutCell.Checked)
             {

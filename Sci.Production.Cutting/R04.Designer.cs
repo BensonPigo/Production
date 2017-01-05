@@ -220,6 +220,7 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.panel1);
             this.Name = "R04";
+            this.Text = "Cutting_R04_CuttingBCSReportByCutCell";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
