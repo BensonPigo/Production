@@ -358,18 +358,18 @@ namespace Sci.Production.Warehouse
                     DataTable tmp = subDT.Clone();
                     foreach (DataRow dr2 in subDT.Rows)
                     {
-                        //if (dr2.RowState == DataRowState.Unchanged)
-                        //{
-                        //    dr2.AcceptChanges();
-                        //    dr2.SetAdded();
-                        //}
+                        if (dr2.RowState != DataRowState.Deleted)
+                        {
+                            dr2.AcceptChanges();
+                            dr2.SetAdded();
+                        }
                         tmp.ImportRow(dr2);
                     }
 
                     subDT.Clear();
                     foreach (DataRow dr2 in tmp.Rows)
                     {
-                        if (dr2.RowState == DataRowState.Unchanged)
+                        if (dr2.RowState != DataRowState.Deleted)
                         {
                             dr2.AcceptChanges();
                             dr2.SetAdded();
