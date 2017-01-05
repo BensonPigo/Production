@@ -22,6 +22,10 @@ namespace Sci.Production.Subcon
         public string Issue_Date { get; set; }
         public string To { get; set; }
         public string Delivery_Date { get; set; }
+        public string Title2{ get; set; }
+        public string Title3{ get; set; }
+        public string Tel { get; set; }
+        public string Fax { get; set; }
         public string Group1 { get { return this.To+this.Title1 +this.Issue_Date+this.Delivery_Date; } }
         public string Group2 { get { return this.PO + this.Code + this.To; } }
       
