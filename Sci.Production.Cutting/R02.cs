@@ -163,7 +163,7 @@ from Cutplan
 inner join Cutplan_Detail on Cutplan.ID = Cutplan_Detail.ID
 inner join WorkOrder on Cutplan_Detail.WorkOrderUkey = WorkOrder.Ukey and Cutplan_Detail.ID = WorkOrder.CutplanID
 inner join WorkOrder_SizeRatio on Cutplan_Detail.WorkOrderUkey = WorkOrder_SizeRatio.WorkOrderUkey
-left join Order_SizeCode on Order_SizeCode.ID = (select POID from Orders where Orders.CuttingSP = WorkOrder_SizeRatio.ID) 
+left join Order_SizeCode on Order_SizeCode.ID = (select DISTINCT POID from Orders where Orders.CuttingSP = WorkOrder_SizeRatio.ID) 
 					      and (Order_SizeCode.SizeCode = WorkOrder_SizeRatio.SizeCode)
 outer apply(
 	select Orders.StyleID 
@@ -327,7 +327,7 @@ from Cutplan
 inner join Cutplan_Detail on Cutplan.ID = Cutplan_Detail.ID
 inner join WorkOrder on Cutplan_Detail.WorkOrderUkey = WorkOrder.Ukey and Cutplan_Detail.ID = WorkOrder.CutplanID
 inner join WorkOrder_SizeRatio on Cutplan_Detail.WorkOrderUkey = WorkOrder_SizeRatio.WorkOrderUkey
-left join Order_SizeCode on Order_SizeCode.ID = (select POID from Orders where Orders.CuttingSP = WorkOrder_SizeRatio.ID) 
+left join Order_SizeCode on Order_SizeCode.ID = (select DISTINCT POID from Orders where Orders.CuttingSP = WorkOrder_SizeRatio.ID) 
 					      and (Order_SizeCode.SizeCode = WorkOrder_SizeRatio.SizeCode)
 outer apply(
 	select PO_Supp_Detail.ETA
@@ -701,14 +701,19 @@ drop table #tmpall");
             if (!boolsend)
             {
                 tmpFile = Path.Combine(Sci.Env.Cfg.ReportTempDir, Guid.NewGuid() + ".xlsx");//設定存檔路徑字串
-                boolshowexcel = true;
+                boolshowexcel = false;
             }
-            if (printData[0].Rows.Count <= 0)
+            int a1 = -1, a2 = -1;
+            int.TryParse(CutCell1, out  a1);
+            int.TryParse(CutCell2, out  a2);
+            for (int i = 0; i < a1 - a2 + 1; i++)
             {
-                MyUtility.Msg.WarningBox("Data not found!");
-                return false;
+                if (printData[i].Rows.Count <= 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    return false;
+                }
             }
-
             #region radiobtn_Bydetail
             if (radiobtn_Bydetail.Checked)
             {
@@ -720,6 +725,8 @@ drop table #tmpall");
                 objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
                 for (int i = 0; i < cutcellint2 - cutcellint1 + 1; i++)
                 {
+                    if (printData[i].Rows.Count == 0)
+                        continue;
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表
                     MyUtility.Excel.CopyToXls(printData[i], tmpFile, "Cutting_R02_CuttingDailyPlanSummaryReportBydetail.xltx", headerRow: 3, excelApp: objApp, wSheet: objSheets, showExcel: boolshowexcel, showSaveMsg: false);//將datatable copy to excel
 
@@ -745,14 +752,19 @@ drop table #tmpall");
                     objSheets.Cells[1, 9] = WorkOrder;
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet                    
                 }
-
+                if (!boolsend)
+                {
+                    objApp.Visible = true;
+                }
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
             }
             #endregion
 
             #region radioBtn_Byonedaydetial
             if (radioBtn_Byonedaydetial.Checked)
             {
+
                 int cutcellint1 = -1, cutcellint2 = -1;
                 int.TryParse(CutCell1, out  cutcellint1);
                 int.TryParse(CutCell2, out  cutcellint2);
@@ -761,6 +773,8 @@ drop table #tmpall");
                 objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
                 for (int i = 0; i < cutcellint2 - cutcellint1 + 1; i++)
                 {
+                    if (printData[i].Rows.Count == 0)
+                        continue;
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表
                     MyUtility.Excel.CopyToXls(printData[i], tmpFile, "Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail.xltx", headerRow: 3, excelApp: objApp, wSheet: objSheets, showExcel: boolshowexcel, showSaveMsg: false);//將datatable copy to excel 
 
@@ -786,7 +800,10 @@ drop table #tmpall");
                     objSheets.Cells[1, 9] = WorkOrder;
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet                    
                 }
-
+                if (!boolsend)
+                {
+                    objApp.Visible = true;
+                }
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
             #endregion
@@ -802,6 +819,8 @@ drop table #tmpall");
                 objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
                 for (int i = 0; i < cutcellint2 - cutcellint1 + 1; i++)
                 {
+                    if (printData[i].Rows.Count == 0)
+                        continue;
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表
                     MyUtility.Excel.CopyToXls(printData[i], tmpFile, "Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", headerRow: 3, excelApp: objApp, wSheet: objSheets, showExcel: boolshowexcel, showSaveMsg: false);//將datatable copy to excel 
 
@@ -811,9 +830,15 @@ drop table #tmpall");
                     objSheets.Cells[1, 9] = WorkOrder;
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet                    
                 }
+                if (!boolsend)
+                {
+                    objApp.Visible = true;
+                }
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
             #endregion
+
+            
 
             boolsend = false;
             return true;
@@ -838,6 +863,17 @@ drop table #tmpall");
 
         private void Send_Mail()
         {
+            int a1 = -1, a2 = -1;
+            int.TryParse(CutCell1, out  a1);
+            int.TryParse(CutCell2, out  a2);
+            for (int i = 0; i < a1 - a2 + 1; i++)
+            {
+                if (printData[i].Rows.Count <= 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    return;
+                }
+            }
             StringBuilder CuttingDate = new StringBuilder();
             StringBuilder cutcell = new StringBuilder();
             CuttingDate.Clear();
@@ -857,14 +893,17 @@ drop table #tmpall");
             {
                 cutcell.Append(string.Format(@"~{0}", CutCell2));
             }
-            string ToAddress = "";
-            string CcAddress = "";
-            string Subject = "";
-            string Content = "";
+            string mailcmd = "select * from mailto where id = '005'";
+            DataTable maildt;
+            DBProxy.Current.Select(null, mailcmd, out maildt);
+            string ToAddress = MyUtility.Convert.GetString(maildt.Rows[0]["ToAddress"]);
+            string CcAddress = MyUtility.Convert.GetString(maildt.Rows[0]["CcAddress"]);
+            string Subject = MyUtility.Convert.GetString(maildt.Rows[0]["Subject"]) + CuttingDate;
+
             var email = new MailTo(Sci.Env.User.MailAddress, ToAddress, CcAddress,
                 Subject + '-' + CuttingDate,
                 tmpFile,
-                Content + "\r\nFilter as below description:\r\nCutting Date: " + CuttingDate + "\r\nCut Cell: " + cutcell + "\r\nM: " + WorkOrder, false, true);
+                "\r\nFilter as below description:\r\nCutting Date: " + CuttingDate + "\r\nCut Cell: " + cutcell + "\r\nM: " + WorkOrder, false, true);
             //var email = new MailTo(Sci.Env.User.MailAddress, mailto, Sci.Env.User.MailAddress, subject, null, content.ToString(), true, true);
             //var email = new MailTo("willy.wei@sportscity.com", "willy.wei@sportscity.com", "willy.wei@sportscity.com", subject, null, content.ToString(), false, true);
             email.ShowDialog(this);
