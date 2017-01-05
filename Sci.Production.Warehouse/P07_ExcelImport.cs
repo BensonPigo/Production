@@ -64,6 +64,7 @@ namespace Sci.Production.Warehouse
             grid2Data.Columns.Add("id", typeof(String));
             grid2Data.Columns.Add("location", typeof(String));
             grid2Data.Columns.Add("ErrMsg", typeof(String));
+            grid2Data.Columns.Add("fabrictype", typeof(String));
 
             listControlBindingSource2.DataSource = grid2Data;
             grid2.DataSource = listControlBindingSource2;
@@ -294,6 +295,7 @@ where pd.id='{0}' and pd.seq1 ='{1}' and pd.seq2 = '{2}'", newRow["poid"], newRo
                                         excel.Quit();
                                         return;
                                     }
+                                    newRow["fabrictype"] = dr2["fabrictype"].ToString();
                                     newRow["Pounit"] = dr2["pounit"].ToString();
                                     newRow["StockUnit"] = dr2["StockUnit"].ToString();
                                     newRow["stockqty"] = decimal.Parse(dr2["stockqty"].ToString());
