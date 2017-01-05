@@ -38,14 +38,14 @@ namespace Sci.Production.Warehouse
 , md.inqty - md.outqty + md.adjustqty Balance
 , b.stockunit 
 from orders a
-, po_supp_detail b left join dbo.MDivisionPoDetail md on md.POID = b.id and md.seq1 = b.seq2 and md.seq2 = b.seq2
+, po_supp_detail b left join dbo.MDivisionPoDetail md on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
 , po_supp c
 where b.scirefno = '{0}'
 and a.id = b.id
 and a.id = c.id
 and b.seq1 = c.seq1
 and a.WhseClose is null
-and md.mdivisionid='{1}'
+--and md.mdivisionid='{1}'
 order by ColorID, SizeSpec ,SewinLine
 ", dr["scirefno"].ToString(), Sci.Env.User.Keyword);
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
