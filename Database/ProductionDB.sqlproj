@@ -2056,14 +2056,6 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Stored Procedures\usp_PMSUploadDataToAPS.sql" />
-    <Build Include="dbo\Stored Procedures\Cutting_P01print_TTLconsumption_1.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Stored Procedures\Cutting_P01print_EachConsumption_1.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Views\Order_POComboList.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -2080,10 +2072,14 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Stored Procedures\Cutting_Color_Qty_BDown_PO_Combo.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
+    <Build Include="dbo\Stored Procedures\Cutting_P01print_TTLconsumption.sql" />
+    <Build Include="dbo\Stored Procedures\Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.sql" />
+    <Build Include="dbo\Stored Procedures\cutting_P01_MarkerList.sql" />
+    <Build Include="dbo\Stored Procedures\Cutting_P01print_Eachcons_vs_OrderQtyDown_POCombo.sql" />
+    <Build Include="dbo\Stored Procedures\Cutting_P01print_EachConsumption.sql" />
+    <Build Include="dbo\Stored Procedures\Cutting_Color_P01_OrderQtyDown_POCombo.sql" />
+    <Build Include="dbo\Functions\GetLossAccessory.sql" />
+    <Build Include="dbo\Functions\GetColorSizeQty.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

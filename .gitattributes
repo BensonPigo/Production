@@ -105,11 +105,9 @@ Database/dbo/Stored[!!-~]Procedures/Cutting_Color_P01_OrderQtyDown_POCombo_1.sql
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc_1.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_EachConsumption.sql -text
-Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_EachConsumption_1.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_Eachcons_vs_OrderQtyDown_POCombo.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_Eachcons_vs_OrderQtyDown_POCombo_1.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_TTLconsumption.sql -text
-Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_TTLconsumption_1.sql -text
 Database/dbo/Stored[!!-~]Procedures/DailyImport.sql -text
 Database/dbo/Stored[!!-~]Procedures/GenGarmentTest.sql -text
 Database/dbo/Stored[!!-~]Procedures/GetKeyWordValue.sql -text
