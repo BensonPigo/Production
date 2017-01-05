@@ -47,9 +47,9 @@ namespace Sci.Production.Cutting
 ,b.Description,b.Width as FabricWidth
 ,OFC.PatternPanel PatternPanel
 --,substring(Pattern.PatternPanel,1,len(Pattern.PatternPanel)-1) PatternPanel
-,concat(mark.MarkerUpdateName, mark.MarkerUpdate) MarkerUpdate
-,concat(mark.AddName, mark.AddDate) createby
-,concat(mark.EditName, mark.EditDate) editby
+,concat(rtrim(mark.MarkerUpdateName),' ', format(mark.MarkerUpdate,'yyyy/MM/dd HH:mm:ss')) MarkerUpdate2
+,concat(mark.AddName,' ', format(mark.AddDate,'yyyy/MM/dd HH:mm:ss')) createby2
+,concat(mark.EditName,' ', format(mark.EditDate,'yyyy/MM/dd HH:mm:ss')) editby2
                                     from dbo.Order_MarkerList mark 
                                     left join dbo.Order_BOF a on mark.Id = a.Id and mark.FabricCode = a.FabricCode  
                                     left join dbo.Fabric b on b.SCIRefno = a.SCIRefno  

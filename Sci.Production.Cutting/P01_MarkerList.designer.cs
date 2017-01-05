@@ -497,7 +497,7 @@
             // displayMarkerUpdate
             // 
             this.displayMarkerUpdate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayMarkerUpdate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MarkerUpdate", true));
+            this.displayMarkerUpdate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MarkerUpdate2", true));
             this.displayMarkerUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.displayMarkerUpdate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayMarkerUpdate.Location = new System.Drawing.Point(339, 468);
@@ -660,7 +660,7 @@
             // displayCreateBy
             // 
             this.displayCreateBy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayCreateBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "createby", true));
+            this.displayCreateBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "createby2", true));
             this.displayCreateBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.displayCreateBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayCreateBy.Location = new System.Drawing.Point(339, 492);
@@ -681,7 +681,7 @@
             // displayEditBy
             // 
             this.displayEditBy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayEditBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "editby", true));
+            this.displayEditBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "editby2", true));
             this.displayEditBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.displayEditBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayEditBy.Location = new System.Drawing.Point(339, 518);
