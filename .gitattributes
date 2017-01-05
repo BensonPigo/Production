@@ -2788,6 +2788,7 @@ Sci.Production/app.config -text
 XLT/Cutting_P01_ColorCombo_SizeBreakdown.xlt -text
 XLT/Cutting_P01_ColorCombo_SizeBreakdown_Combo.xlt -text
 XLT/Cutting_P01_EachConsumptionCuttingCombo.xlt -text
+XLT/Cutting_P01_EachconsVSOrderQTYBDownPOCombo.xlt -text
 XLT/Cutting_P01_TTLconsumptionPOCombo.xlt -text
 XLT/Cutting_P02_SpreadingReportbyCutref.xltx -text
 XLT/Cutting_P02_SpreadingReportbyRequest.xltx -text
