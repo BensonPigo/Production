@@ -408,7 +408,7 @@
             this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "P03_Wash";
-            this.Text = "P03_Wash Test";
+            this.Text = "Wash Test";
             this.WorkAlias = "FIR_Laboratory_Wash";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);

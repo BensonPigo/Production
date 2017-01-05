@@ -869,8 +869,11 @@ namespace Sci.Production.Quality
             }
             // 撈seasonID 
             DataTable dtSeason;
+            string SeasonID;
             DBProxy.Current.Select("Production", string.Format(
-            "select C.SeasonID from FIR_Shadebone a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", maindr["ID"]), out dtSeason);
+            "select C.SeasonID from FIR_Laboratory_Heat a left join FIR_Laboratory b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", maindr["ID"]), out dtSeason);
+            if (dtSeason.Rows.Count == 0) { SeasonID = ""; }
+            else { SeasonID = dtSeason.Rows[0]["SeasonID"].ToString(); }
           
             Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
 
@@ -880,7 +883,7 @@ namespace Sci.Production.Quality
             excelSheets.Cells[2, 4] = SEQtext.Text.ToString();
             excelSheets.Cells[2, 6] = Colortext.Text.ToString();
             excelSheets.Cells[2, 8] = Styletext.Text.ToString();
-            excelSheets.Cells[2, 10] = dtSeason.Rows[0]["SeasonID"];
+            excelSheets.Cells[2, 10] = SeasonID;
             excelSheets.Cells[3, 2] = SRnotext.Text.ToString();
             excelSheets.Cells[3, 4] = Wknotext.Text.ToString();
             excelSheets.Cells[3, 6] = ResultText.Text.ToString();

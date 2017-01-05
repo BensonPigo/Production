@@ -474,7 +474,6 @@ namespace Sci.Production.Quality
             DataTable dt;
             DualResult xresult;
              if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Continuity where id='{0}'", textID.Text), out dt))
-            //if (xresult = DBProxy.Current.Select("Production", "select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Continuity  where id in ('489066')", out dt)) //測試用
             {
                 if (dt.Rows.Count <= 0)
                 {
@@ -486,15 +485,15 @@ namespace Sci.Production.Quality
             #region Excel 表頭值
             DataTable dt1;
             DualResult xresult1;
-            //if (xresult1 = DBProxy.Current.Select("Production",
-              //  "select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Continuity a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID in ('489066')", out dt1))//測試用
+            string ContinuityEncode = "";
+            string SeasonID = "";            
             if (xresult1 = DBProxy.Current.Select("Production", string.Format(
             "select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Continuity a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", textID.Text), out dt1))
             {
-                if (dt1.Rows.Count <= 0)
+                if (dt1.Rows.Count > 0)
                 {
-                    MyUtility.Msg.WarningBox("Data not found!");
-                    return;
+                    ContinuityEncode=dt1.Rows[0]["ContinuityEncode"].ToString();
+                    SeasonID = dt1.Rows[0]["SeasonID"].ToString();
                 }
             }
             #endregion
@@ -505,17 +504,15 @@ namespace Sci.Production.Quality
             objSheets.Cells[2, 4] = seq_box.Text.ToString();
             objSheets.Cells[2, 6] = color_box.Text.ToString();
             objSheets.Cells[2, 8] = style_box.Text.ToString();
-            objSheets.Cells[2, 10] = dt1.Rows[0]["SeasonID"];//Season can not find
+            objSheets.Cells[2, 10] = SeasonID;
             objSheets.Cells[3, 2] = scirefno_box.Text.ToString();
-            objSheets.Cells[3, 4] = dt1.Rows[0]["ContinuityEncode"]; //Encode can not find
+            objSheets.Cells[3, 4] = ContinuityEncode; 
             objSheets.Cells[3, 6] = result_box.Text.ToString();
             objSheets.Cells[3, 8] = lastinspdate_box.Value;
             objSheets.Cells[3, 10] = brand_box.Text.ToString();
             objSheets.Cells[4, 2] = brandrefno_box.Text.ToString();
-            objSheets.Cells[4, 4] = arriveqty_box.Text.ToString();
-            //objSheets.Cells[4, 6] = ((DateTime)arrwhdate_box.Text).ToShortDateString();
-            objSheets.Cells[4, 6] = arrwhdate_box.Value;
-            //objSheets.Cells[4, 8] = txtsupplier1.Text.ToString();
+            objSheets.Cells[4, 4] = arriveqty_box.Text.ToString();            
+            objSheets.Cells[4, 6] = arrwhdate_box.Value;            
             objSheets.Cells[4, 8] = txtsupplier1.DisplayBox1.Text.ToString();
             objSheets.Cells[4, 10] = wk_box.Text.ToString();
 

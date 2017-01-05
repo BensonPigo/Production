@@ -409,7 +409,7 @@
             this.GridPopUp = false;
             this.KeyField1 = "id";
             this.Name = "P03_Crocking";
-            this.Text = "P03_Crocking Test";
+            this.Text = "Crocking Test";
             this.WorkAlias = "FIR_Laboratory_Crocking";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);

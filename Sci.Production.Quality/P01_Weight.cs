@@ -512,16 +512,23 @@ namespace Sci.Production.Quality
             #endregion
             #region Excel 表頭值
             DataTable dt1;
+            string SeasonID = "";
+            string ContinuityEncode = "";
             DualResult xresult1;
             //if (xresult1 = DBProxy.Current.Select("Production",
             //    "select Roll,Dyelot,WeightM2,averageWeightM2,Difference,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID from FIR_Weight a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID in ('492803')",out dt1))
             if (xresult1 = DBProxy.Current.Select("Production",string.Format(
                "select Roll,Dyelot,WeightM2,averageWeightM2,Difference,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID from FIR_Weight a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'",textID.Text), out dt1))          
             {
-                if (dt1.Rows.Count<=0)
+                if (dt1.Rows.Count==0)
                 {
-                    MyUtility.Msg.WarningBox("Data not found!");
-                    return ;
+                     SeasonID = "";
+                     ContinuityEncode = "";
+                }
+                else
+                {
+                    SeasonID = dt1.Rows[0]["SeasonID"].ToString();
+                    ContinuityEncode = dt1.Rows[0]["ContinuityEncode"].ToString(); 
                 }
             }
             #endregion
@@ -532,9 +539,9 @@ namespace Sci.Production.Quality
             objSheets.Cells[2, 4] = seq_box.Text.ToString();
             objSheets.Cells[2, 6] = color_box.Text.ToString();
             objSheets.Cells[2, 8] = style_box.Text.ToString();
-            objSheets.Cells[2, 10] = dt1.Rows[0]["SeasonID"];
+            objSheets.Cells[2, 10] = SeasonID;
             objSheets.Cells[3, 2] = scirefno_box.Text.ToString();
-            objSheets.Cells[3, 4] = dt1.Rows[0]["ContinuityEncode"]; //Encode can not find
+            objSheets.Cells[3, 4] = ContinuityEncode; 
             objSheets.Cells[3, 6] = result_box.Text.ToString();
             objSheets.Cells[3, 8] = lastinspdate_box.Value;
             objSheets.Cells[3, 10] = brand_box.Text.ToString();

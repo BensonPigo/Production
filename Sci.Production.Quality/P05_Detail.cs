@@ -989,8 +989,26 @@ group by a.Article";
                  MyUtility.Msg.WarningBox("Data not found!");
                  return;
             }
-            DataTable dtPo;            
+            DataTable dtPo;
+            string StyleID;
+            string SeasonID;
+            string status;
+            string BrandID;
             DBProxy.Current.Select(null, string.Format("select * from PO where id='{0}'", PoID), out dtPo);
+            if (dtPo.Rows.Count==0)
+            {
+                 StyleID="";
+                 SeasonID="";
+                 status="";
+                 BrandID="";
+            }
+            else
+            {
+                StyleID = dtPo.Rows[0]["StyleID"].ToString();
+                SeasonID = dtPo.Rows[0]["SeasonID"].ToString();
+                status = dtOven.Rows[0]["status"].ToString();
+                BrandID = dtPo.Rows[0]["BrandID"].ToString();
+            }
             
 
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Quality_P05_Detail_Report.xltx";
@@ -999,15 +1017,15 @@ group by a.Article";
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[1, 2] = this.poid.Text.ToString();
-            worksheet.Cells[1, 4] = dtPo.Rows[0]["StyleID"].ToString();
+            worksheet.Cells[1, 4] = StyleID;
             worksheet.Cells[1, 6] = dtPo.Rows[0]["SeasonID"].ToString();
-            worksheet.Cells[1, 8] = this.article.Text.ToString();
+            worksheet.Cells[1, 8] = SeasonID;
             worksheet.Cells[1, 10] = this.testno.Text.ToString();
-            worksheet.Cells[2, 2] = dtOven.Rows[0]["status"].ToString();
+            worksheet.Cells[2, 2] = status;
             worksheet.Cells[2, 4] = this.comboBox1.Text;
             worksheet.Cells[2, 6] = this.inspdate.Text;
             worksheet.Cells[2, 8] = this.txtuser1.TextBox1.Text.ToString();
-            worksheet.Cells[2, 10] = dtPo.Rows[0]["BrandID"].ToString();
+            worksheet.Cells[2, 10] = BrandID;
 
             int StartRow = 4;
             for (int i = 0; i < dt.Rows.Count; i++)
