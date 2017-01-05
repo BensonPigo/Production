@@ -184,9 +184,9 @@ namespace Sci.Production.Cutting
             .Text("PatternDesc", header: "Cutpart name", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("subProcessid", header: "SubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
-            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
-            .Numeric("Farmout", header: "Farm Out", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
-            .Numeric("Farmin", header: "Farm In", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true);
+            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true);
+            //.Numeric("Farmout", header: "Farm Out", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
+            //.Numeric("Farmin", header: "Farm In", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
             return base.OnGridSetup();
         }
         protected override void ClickNewAfter()
