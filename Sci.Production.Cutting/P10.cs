@@ -518,7 +518,7 @@ namespace Sci.Production.Cutting
                 CurrentMaintain["LectraCode"] = cutdr["LectraCode"].ToString();
                 displayBox_Season.Text = cutdr["Seasonid"].ToString();
                 displayBox_Style.Text = cutdr["Styleid"].ToString();
-                displayBox_EstCutdate.Text = cutdr["Estcutdate"].ToString();
+                displayBox_EstCutdate.Text = ((DateTime)cutdr["Estcutdate"]).ToString("yyyy/MM/dd");
                 
                 string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString()+cutdr["factoryid"].ToString(), "SewingLine", "ID+factoryid");
                 CurrentMaintain["SewingCell"] = cellid;
