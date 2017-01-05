@@ -97,6 +97,7 @@ Database/dbo/Functions/getVNUnitTransfer.sql -text
 Database/dbo/Stored[!!-~]Procedures/BoaExpend.sql -text
 Database/dbo/Stored[!!-~]Procedures/BoaExpend_Insert.sql -text
 Database/dbo/Stored[!!-~]Procedures/Create_CDC.sql -text
+Database/dbo/Stored[!!-~]Procedures/Cutting_Color_Qty_BDown_PO_Combo.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_EachConsumption.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_EachConsumption_1.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_TTLconsumption.sql -text
@@ -105,6 +106,9 @@ Database/dbo/Stored[!!-~]Procedures/DailyImport.sql -text
 Database/dbo/Stored[!!-~]Procedures/GenGarmentTest.sql -text
 Database/dbo/Stored[!!-~]Procedures/GetKeyWordValue.sql -text
 Database/dbo/Stored[!!-~]Procedures/GetKeyword.sql -text
+Database/dbo/Stored[!!-~]Procedures/Order_Report_AccColorCombination.sql -text
+Database/dbo/Stored[!!-~]Procedures/Order_Report_FabColorCombination.sql -text
+Database/dbo/Stored[!!-~]Procedures/Order_Report_QtyBreakdown.sql -text
 Database/dbo/Stored[!!-~]Procedures/PoApproveLock.sql -text
 Database/dbo/Stored[!!-~]Procedures/Purchase_P01_01.sql -text
 Database/dbo/Stored[!!-~]Procedures/dbo.insertMygridstd2.sql -text
