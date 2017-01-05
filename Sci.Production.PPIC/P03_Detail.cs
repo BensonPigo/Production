@@ -21,13 +21,17 @@ namespace Sci.Production.PPIC
         protected override void OnAttached(DataRow data)
         {
             base.OnAttached(data);
-            DateTime? lastTime = (DateTime?)this.CurrentData["MRLastDate"];
-            string MRLastUpdate = lastTime == null ? "" : ((DateTime)lastTime).ToString("yyyy/MM/dd HH:mm:ss");
-            this.display_MRLastUpdate.Text = MRLastUpdate;
 
-            DateTime? lastTime2 = (DateTime?)this.CurrentData["FtyLastDate"];
-            string FtyLastupdate = lastTime2 == null ? "" : ((DateTime)lastTime2).ToString("yyyy/MM/dd HH:mm:ss");
-            this.display_FtyLastDate.Text = FtyLastupdate;
+            if (!MyUtility.Check.Empty(CurrentData["MRLastDate"]))
+                this.display_MRLastUpdate.Text = Convert.ToDateTime(CurrentData["MRLastDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+            else
+                this.display_MRLastUpdate.Text = "";
+
+            if (!MyUtility.Check.Empty(CurrentData["FtyLastDate"]))
+                this.display_FtyLastDate.Text = Convert.ToDateTime(CurrentData["FtyLastDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+            else
+                this.display_FtyLastDate.Text = "";
+
         } 
     }
 }
