@@ -38,7 +38,7 @@ namespace Sci.Production.Warehouse
 , md.inqty - md.outqty + md.adjustqty Balance
 , b.stockunit 
 from orders a
-, po_supp_detail b left join dbo.MDivisionPoDetail md on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
+, po_supp_detail b inner join dbo.MDivisionPoDetail md on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
 , po_supp c
 where b.scirefno = '{0}'
 and a.id = b.id
