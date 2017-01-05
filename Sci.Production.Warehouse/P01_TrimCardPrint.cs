@@ -161,19 +161,19 @@ and not ob.SuppID = 'fty-c'
                 #endregion
             }
             else if (radioThread.Checked)
-            {
+            {//jimmy 記得把 註解 & isnull 拿掉
                 #region Thread
-                sql = string.Format(@"select distinct B.Article 
+                sql = string.Format(@"select distinct isnull(B.Article,'a')  as Article
                                     from ThreadRequisition_Detail A
                                     left join ThreadRequisition_Detail_Cons B on B.Ukey=A.Ukey
-                                    where A.orderid= '{0}' and article<>''", POID);
+                                    where A.orderid= '{0}'-- and article<>''", POID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint2);
                 if (!result) return result;
 
-                sql = string.Format(@"select B.Article , A.ThreadColorID
+                sql = string.Format(@"select isnull(B.Article,'a') as Article , A.ThreadColorID
                                     from ThreadRequisition_Detail A
                                     left join ThreadRequisition_Detail_Cons B on B.Ukey=A.Ukey
-                                    where A.orderid= '{0}' and article<>''
+                                    where A.orderid= '{0}'-- and article<>''
                                     group by article, threadcolorid", POID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint);
                 if (!result) return result;
@@ -311,33 +311,46 @@ and not ob.SuppID = 'fty-c'
                 #endregion
 
                 #region ROW4開始 左側抬頭
+                int nextPage = 1;
+                tables = table[nextPage];
                 if (radioFabric.Checked || radioAccessory.Checked || radioThread.Checked)
                 {
                     for (int j = 0; j < CC; j++)
                     {
                         for (int i = 0; i < dtPrint2.Rows.Count; i++)
-                            tables.Cell((i + 4 + 3 * (i / 4)) + rC * j * 7, 1).Range.Text = dtPrint2.Rows[i]["Article"].ToString().Trim();
+                        {
+                            //根據 DataRow 數量選取 Table, Dot DataRow = 4
+                            tables = table[nextPage + (i / 4)];
+                            tables.Cell(4 + (i % 4), 1).Range.Text = dtPrint2.Rows[i]["Article"].ToString().Trim();
+                            //tables.Cell((i + 4 + 3 * (i / 4)) + rC * j * 7, 1).Range.Text = dtPrint2.Rows[i]["Article"].ToString().Trim();
+                        }
+                        nextPage += rC;
+                        if (!(nextPage > pagecount))
+                            tables = table[nextPage];
                     }
                 }
                 else if (radioOther.Checked)
                 {
                     for (int j = 0; j < CC; j++)
                     {
-                        if (radioOther.Checked)
+                        for (int i = 0; i < dtPrint2.Rows.Count; i++)
                         {
-                            for (int i = 0; i < dtPrint2.Rows.Count; i++)
-                                tables.Cell(i + 4 + (3 * (i / 7)) + rC * j * 10, 1).Range.Text = dtPrint2.Rows[i]["ID"].ToString().Trim().Substring(8);
+                            //根據 DataRow 數量選取 Table, Dot DataRow = 7
+                            tables = table[nextPage + (i / 7)];
+                            tables.Cell(4 + (i % 7), 1).Range.Text = dtPrint2.Rows[i]["ID"].ToString().Trim().Substring(8); ;
+                            //tables.Cell(i + 4 + (3 * (i / 7)) + rC * j * 10, 1).Range.Text = dtPrint2.Rows[i]["ID"].ToString().Trim().Substring(8);
                         }
-                        else
-                        {
-                            for (int i = 0; i < dtPrint2.Rows.Count; i++)
-                                tables.Cell(i + 4 + (3 * (i / 7)) + rC * j * 10, 1).Range.Text = dtPrint2.Rows[i]["ID"].ToString().Trim();
-                        }
+                        nextPage += rC;
+                        if (!(nextPage > pagecount))
+                            tables = table[nextPage];
                     }
                 }
                 #endregion
 
                 #region [ROW3]欄位名,[ROW4]~[ROW7]對應資料
+                nextPage = 1;
+                tables = table[nextPage];
+
                 if (radioFabric.Checked)
                 {
                     for (int i = 0; i < dtPrint.Rows.Count; i++)
@@ -350,9 +363,13 @@ and not ob.SuppID = 'fty-c'
                         //填入欄位名稱,從第一欄開始填入需要的頁數
                         for (int j = 0; j < rC; j++)
                         {
+                            //根據 DataColumn 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 LectraCode 會占用的 Table 數) + 目前是編輯第 j 個 Table
+                            //其中 6 代表, 每個 Table 可以存的 LectraCode 數量
+                            tables = table[nextPage + (i / 6 * rC) + j];
+
                             //有資料時才顯示Type
-                            tables.Cell((2 + 10 * j) + (i / 6) * rC * 10, (2 + (i % 6))).Range.Text = Row2Type;
-                            tables.Cell((3 + 7 * j) + (i / 6) * rC * 7, (2 + (i % 6))).Range.Text = temp;
+                            tables.Cell(2, (2 + (i % 6))).Range.Text = Row2Type;
+                            tables.Cell(3, (2 + (i % 6))).Range.Text = temp;
                         }
                         #endregion
 
@@ -371,10 +388,15 @@ and not ob.SuppID = 'fty-c'
                             {
                                 temp = "";
                             }
+                            //根據 DataColumn & DataRow 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 LectraCode 會占用的 Table 數) + k / Table 可存的 Article 數量
+                            //其中 K 代表, 目前編輯到 LectraCode 的第幾個 Article
+                            tables = table[nextPage + (i / 6 * rC) + (k / 4)];
+
                             //填入字串
-                            tables.Cell((k + 4 + 3 * (k / 4)) + (i / 6) * rC * 7, (2 + (i % 6))).Range.Text = temp;
+                            tables.Cell((4 + (k % 4)), (2 + (i % 6))).Range.Text = temp;
                         }
                         #endregion
+                        //調整頁數
                     }
                 }
                 else if (radioAccessory.Checked) 
@@ -387,9 +409,13 @@ and not ob.SuppID = 'fty-c'
                         //填入欄位名稱,從第一欄開始填入需要的頁數
                         for (int j = 0; j < rC; j++)
                         {
+                            //根據 DataColumn 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 LectraCode 會占用的 Table 數) + 目前是編輯第 j 個 Table
+                            //其中 6 代表, 每個 Table 可以存的 LectraCode 數量
+                            tables = table[nextPage + (i / 6 * rC) + j];
+
                             //有資料時才顯示Type
-                            tables.Cell((2 + 10 * j) + (i / 6) * rC * 10, (2 + (i % 6))).Range.Text = Row2Type;
-                            tables.Cell((3 + 7 * j) + (i / 6) * rC * 7, (2 + (i % 6))).Range.Text = temp;
+                            tables.Cell(2, (2 + (i % 6))).Range.Text = Row2Type;
+                            tables.Cell(3, (2 + (i % 6))).Range.Text = temp;
                         }
                         #endregion
                         #region 填入Datas
@@ -407,8 +433,13 @@ and not ob.SuppID = 'fty-c'
                             {
                                 temp = "";
                             }
+
+                            //根據 DataColumn & DataRow 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 LectraCode 會占用的 Table 數) + k / Table 可存的 Article 數量
+                            //其中 K 代表, 目前編輯到 LectraCode 的第幾個 Article
+                            tables = table[nextPage + (i / 6 * rC) + (k / 4)];
+
                             //填入字串
-                            tables.Cell((k + 4 + 3 * (k / 4)) + (i / 6) * rC * 7, (2 + (i % 6))).Range.Text = temp;
+                            tables.Cell((4 + (k % 4)), (2 + (i % 6))).Range.Text = temp;
                         }
                         #endregion
                     }
@@ -423,10 +454,14 @@ and not ob.SuppID = 'fty-c'
                         //填入欄位名稱,從第一欄開始填入需要的頁數
                         for (int j = 0; j < rC; j++)
                         {
+                            //根據 DataColumn 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 LectraCode 會占用的 Table 數) + 目前是編輯第 j 個 Table
+                            //其中 6 代表, 每個 Table 可以存的 LectraCode 數量
+                            tables = table[nextPage + (i / 6 * rC) + j];
+
                             //有資料時才顯示Type
-                            tables.Cell((2 + 10 * j) + (i / 6) * rC * 10, (2 + (i % 6))).Range.Text = Row2Type;
-                            tables.Cell((3 + 10 * j) + (i / 6) * rC * 10, (2 + (i % 6))).Range.Text = temp;
-                        }
+                            tables.Cell(2, (2 + (i % 6))).Range.Text = Row2Type;
+                            tables.Cell(3, (2 + (i % 6))).Range.Text = temp;
+                        }                       
                         #endregion
                     }
                 }               
@@ -436,8 +471,12 @@ and not ob.SuppID = 'fty-c'
                     {
                         for (int j = 0; j < rC; j++)
                         {
+                            //根據 DataColumn 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 LectraCode 會占用的 Table 數) + 目前是編輯第 j 個 Table
+                            //其中 6 代表, 每個 Table 可以存的 LectraCode 數量
+                            tables = table[nextPage + (i / 6 * rC) + j];
+
                             //有資料時才顯示Type
-                            tables.Cell((2 + 10 * j) + (i / 6) * rC * 10, (2 + (i % 6))).Range.Text = Row2Type;
+                            tables.Cell(2, (2 + (i % 6))).Range.Text = Row2Type;
                         }
                     }
                     #region 填入Datas
@@ -451,9 +490,15 @@ and not ob.SuppID = 'fty-c'
                             DataRow[] rowColorA = dtPrint.Select(sql);
                             for (int l = 0; l < rowColorA.Count(); l++)
                             {
-                                temp = rowColorA[l]["ThreadColorID"].ToString().Trim();
                                 //填入字串
-                                tables.Cell((k + 4 + 3 * (k / 4)),2+l).Range.Text = temp;
+                                temp = rowColorA[l]["ThreadColorID"].ToString().Trim();
+
+                                //根據 DataColumn & DataRow 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 LectraCode 會占用的 Table 數) + k / Table 可存的 Article 數量
+                                //其中 K 代表, 目前編輯到 LectraCode 的第幾個 Article
+                                tables = table[nextPage + (l / 6 * rC) + (k / 4)];
+
+
+                                tables.Cell((4 + (k % 4)), (2 + (l % 6))).Range.Text = temp;
                             }
                         }
                     }
