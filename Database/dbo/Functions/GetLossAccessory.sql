@@ -1,5 +1,5 @@
 ﻿
-create Function [dbo].[GetLossAccessory]
+CREATE Function [dbo].[GetLossAccessory]
 (
 	  @PoID			VarChar(13)		--採購母單
 	 ,@SCIRefNo		VarChar(26)		--SCI Ref No.(空值表示為全部計算)
@@ -9,7 +9,7 @@ Returns @AccessoryColorQty Table
 	 , SciRefNo			VarChar(26)
 	 , LossType			Numeric(1,0)
 	 , MtltypeID		VarChar(20)
-	 , ColorID			VarChar(6)
+	 , ColorID			VarChar(100)
 	 --, Article			VarChar(8)
 	 --, SizeCode			VarChar(8)
 	 , SizeSpec			VarChar(15)
@@ -76,7 +76,7 @@ Begin
 	Declare @tmpBOARowID Int;		--Row ID
 	Declare @tmpBOARowCount Int;	--總資料筆數
 	
-	Declare @ColorID VarChar(6);
+	Declare @ColorID VarChar(100);
 	--Declare @Article VarChar(8);
 	--Declare @SizeCode VarChar(8);
 	Declare @SizeSpec VarChar(15);
@@ -91,7 +91,7 @@ Begin
 	Declare @Keyword NVarChar(Max);
 	Declare @UsageQty Numeric(9,2);
 	Declare @tmpBOA_Expend Table
-		(  RowID BigInt Identity(1,1) Not Null, ColorID VarChar(6)--, Article VarChar(8)
+		(  RowID BigInt Identity(1,1) Not Null, ColorID VarChar(100)--, Article VarChar(8)
 		 --, SizeCode VarChar(8), BomFactory VarChar(8), BomZipperInsert VarChar(5)
 		 , SizeSpec  VarChar(15), BomFactory VarChar(8), BomZipperInsert VarChar(5)
 		 , BomCustPONo VarChar(30), Keyword NVarChar(Max), UsageQty Numeric(9,2)

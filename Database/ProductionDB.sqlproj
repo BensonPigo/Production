@@ -2080,6 +2080,7 @@
     <Build Include="dbo\Stored Procedures\Cutting_Color_P01_OrderQtyDown_POCombo.sql" />
     <Build Include="dbo\Functions\GetLossAccessory.sql" />
     <Build Include="dbo\Functions\GetColorSizeQty.sql" />
+    <Build Include="dbo\Functions\SplitString.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

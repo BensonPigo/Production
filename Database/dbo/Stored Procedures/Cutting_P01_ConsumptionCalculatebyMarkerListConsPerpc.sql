@@ -1,5 +1,5 @@
 ﻿
-create PROCEDURE [dbo].[Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc]
+CREATE PROCEDURE [dbo].[Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc]
 	@OrderID VARCHAR(13)
 AS
 BEGIN
@@ -34,7 +34,7 @@ BEGIN
 	,mLossQty
 	,mFocQty
 	,mPlusN
-	,Seq
+	,csq.Seq
 	into #main
 	from Orders
 	inner join Order_BOA on Order_BOA.Id = Orders.ID
@@ -61,7 +61,7 @@ BEGIN
 	where Orders.poid = @OrderID and SizeItem <> '' and BomTypeCalculate = 1
 	group by Fabric.Refno,csq.ColorID,SizeItem,SizeItem_Elastic,Fabric.Refno,Order_BOA.SizeItem,Fabric.Description
 	,csq.ColorDesc,csq.SizeCode,aa.mSizeSpec,Fabric.UsageUnit,Fabric_Supp.POUnit
-	,cc.mStep,cc.mUsageUnit,cc.nRound,csq.SizeCode,mLossQty,mFocQty,mPlusN,Seq
+	,cc.mStep,cc.mUsageUnit,cc.nRound,csq.SizeCode,mLossQty,mFocQty,mPlusN,csq.Seq
 
 	order by Seq
 
