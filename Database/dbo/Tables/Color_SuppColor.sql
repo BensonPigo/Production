@@ -17,3 +17,7 @@
     CONSTRAINT [PK_Color_SuppColor] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
+
+GO
+
+CREATE INDEX [Boa_Expand] ON [dbo].[Color_SuppColor] ([ColorUkey],[SeasonID],[SuppID],[ProgramID],[StyleID],[Refno])

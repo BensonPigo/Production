@@ -114,10 +114,10 @@ Begin
 			On	   Tmp_Order_Qty.ID = Orders.ID
 			   And Tmp_Order_Qty.SizeCode = Order_SizeCode.SizeCode
 			   And Tmp_Order_Qty.Article = Order_Article.Article
-		  Left Join Trade.dbo.CustCD
+		  Left Join dbo.CustCD
 			On	   CustCD.BrandID = Orders.BrandID
 			   And CustCD.ID = Orders.CustCDID
-		  Left Join Trade.dbo.Factory
+		  Left Join dbo.Factory
 			On Factory.ID = Orders.FactoryID
 		 Where Orders.POID = @ID
 		   And Orders.Junk = 0
@@ -196,7 +196,7 @@ Begin
 			 , @UsageUnit = UsageUnit
 			 , @BomTypeCalculate = BomTypeCalculate
 			 , @NoSizeUnit = NoSizeUnit
-		  From Trade.dbo.Fabric
+		  From dbo.Fabric
 		 Where SCIRefNo = @SciRefNo;
 		
 		--取得SizeItem,當為Elastic，且SizeItem為S開頭時，改取SizeItem_Elastic
@@ -244,7 +244,7 @@ Begin
 						   --And Order_ColorCombo.LectraCode = @BoaPatternPanel
 						   And Order_ColorCombo.PatternPanel = @BoaPatternPanel
 					  Left Join (Select ID, SizeItem, SizeCode, SizeSpec
-									  , IIF(@BomTypeCalculate = 1, IIF(@UsageUnit = 'CM' Or @UsageUnit = 'INCH', Trade.dbo.GetDigitalValue(SizeSpec), 0), 1) as SizeSpec_Cal
+									  , IIF(@BomTypeCalculate = 1, IIF(@UsageUnit = 'CM' Or @UsageUnit = 'INCH', dbo.GetDigitalValue(SizeSpec), 0), 1) as SizeSpec_Cal
 								   From dbo.Order_SizeSpec
 								) tmpOrder_SizeSpec
 					    On	   tmpOrder_SizeSpec.ID = @ID
@@ -299,12 +299,12 @@ Begin
 			
 			Set @SysUsageQty = @UsageQty;
 			--取得 Supplier Color
-			Set @SuppColor = IsNull(Trade.dbo.GetSuppColorList(@SciRefNo, @BoaSuppID, @ColorID, @BrandID, @SeasonID, @ProgramID, @StyleID), '');
+			Set @SuppColor = IsNull(dbo.GetSuppColorList(@SciRefNo, @BoaSuppID, @ColorID, @BrandID, @SeasonID, @ProgramID, @StyleID), '');
 			
 			--取得 Fabric Price
 			If @IsGetFabQuot = 1
 			Begin
-				Set @Price = IsNull(Trade.dbo.GetPriceFromMtl(@SciRefNo, @BoaSuppID, @SeasonID, @UsageQty, @Category, @CfmDate, '', @ColorID), 0);
+				Set @Price = IsNull(dbo.GetPriceFromMtl(@SciRefNo, @BoaSuppID, @SeasonID, @UsageQty, @Category, @CfmDate, '', @ColorID), 0);
 			End;
 			Else
 			Begin
