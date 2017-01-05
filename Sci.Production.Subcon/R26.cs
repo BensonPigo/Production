@@ -60,8 +60,7 @@ namespace Sci.Production.Subcon
         string B;
         string C;
         string D;
-    
-
+        
         protected override bool ValidateInput()
         {
             if (!this.dateRange1.HasValue && !this.dateRange2.HasValue)
@@ -143,7 +142,7 @@ namespace Sci.Production.Subcon
             {
                 sqlWhere = " where " + sqlWhere;
             }
-            all = "select Title1,Title2,Title3,To#,Tel,Fax,Issue_Date,PO,Code,Color_Shade,Description,Quantity,Unit,Unit_Price,Amount,[Total_Quantity]=sum(Quantity) over (PARTITION BY po,code),Remark,Total1,Total2,currencyid,vat,Grand_Total  from #temp";
+            all = "select Title1,Title2,Title3,To#,Tel,Fax,Issue_Date,Delivery,PO,Code,Color_Shade,Description,Quantity,Unit,Unit_Price,Amount,[Total_Quantity]=sum(Quantity) over (PARTITION BY TO#),Remark,[Total1]=SUM(Amount)OVER (PARTITION BY to#,po,Issue_Date,Delivery)*VatRate,[Total2]=SUM(amount)OVER (PARTITION BY to#,po,Issue_Date,Delivery) ,CurrencyId,VatRate,[Grand_Total]=sum(Amount) OVER (PARTITION BY to#,po,Issue_Date,Delivery)+SUM(Amount)OVER (PARTITION BY to#,po,Issue_Date,Delivery)*VatRate  from #temp";
             #endregion
 
 
@@ -173,6 +172,7 @@ namespace Sci.Production.Subcon
 	                                                 ,b.InQty
 	                                                 ,b.APQty
 	                                                 ,b.Remark
+                                                       ,c.Delivery
                                             from localpo a
                                             inner join LocalPO_Detail b on a.id=b.id
                                             inner join orders c on c.poid=b.OrderId
@@ -208,6 +208,8 @@ namespace Sci.Production.Subcon
                                        " + sqlWhere + @"
 		                               group by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID, a.IssueDate, a.Category, b.Refno, b.UnitId
 		                               order by a.id, a.FactoryId");
+                
+                
                 result = DBProxy.Current.Select("", cmd, lis, out da);
                 if (!result)
                 {
@@ -221,7 +223,7 @@ namespace Sci.Production.Subcon
                 result = DBProxy.Current.Select("", @"select distinct e.NameEN [Title1] 
                                                        ,e.AddressEN [Title2]
                                                        ,e.Tel [Title3]
-                                                       ,a.LocalSuppID [To#]
+                                                       ,a.LocalSuppID+'-'+d.Abb [To#]
                                                        ,d.Tel [Tel]
                                                        ,d.Fax [Fax]
                                                        ,format(a.IssueDate,'yyyy/MM/dd') [Issue_Date]
@@ -232,16 +234,15 @@ namespace Sci.Production.Subcon
                                                        ,b.Qty [Quantity]
                                                        ,b.UnitId [Unit]
                                                        ,cast(cast(isnull(b.Price , 0 ) as float) as varchar)[Unit_Price]
-													   ,cast(cast(isnull(b.Qty*b.Price , 0 ) as float) as varchar)[Amount]
+													   ,cast(isnull(b.Qty*b.Price , 0 ) as float)[Amount]
                                                        ,[Total_Quantity]=sum(b.Qty) OVER (PARTITION BY b.orderid,b.Refno) 
                                                        ,a.Remark [Remark] 
                                                        ,a.CurrencyId [Total1] 
                                                        ,a.Amount [Total2]
                                                        ,a.CurrencyId [currencyid]
-                                                       ,a.Vat [vat]
+                                                       ,a.VatRate [VatRate]
                                                        ,a.Amount+a.Vat [Grand_Total]
-                                                       ,c.SciDelivery [SciDelivery]
-													   ,a.IssueDate[issd] 
+                                                       ,format(b.Delivery,'yyyy/MM/dd')[Delivery] 
 													   ,a.id [id]
 													   ,a.FactoryId [ftyid] 
 													   ,a.LocalSuppID [lospid] 
@@ -264,31 +265,26 @@ namespace Sci.Production.Subcon
                 //    if (dt.Rows.Count < 0) { return result; }
                 //}
 
-                    string Title1 = dt.Rows[0]["Title1"].ToString();
-                    string Title2 = dt.Rows[0]["Title2"].ToString();
-                    string Title3 = dt.Rows[0]["Title3"].ToString();
-                    string To = dt.Rows[0]["To#"].ToString();
-                    string Tel = dt.Rows[0]["Tel"].ToString();
-                    string Fax = dt.Rows[0]["Fax"].ToString();
-                    string Issue_Date = dt.Rows[0]["Issue_Date"].ToString();
-                    string Total1 = dt.Rows[0]["Total1"].ToString();
-                    string Total2 = dt.Rows[0]["Total2"].ToString();
-                    string CurrencyId = dt.Rows[0]["currencyid"].ToString();
-                    string vat = dt.Rows[0]["vat"].ToString();
-                    string Grand_Total = dt.Rows[0]["Grand_Total"].ToString();
-                    ReportDefinition report = e.Report;
-                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
-                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
-                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
-                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("To", To));
-                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
-                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
-                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issue_Date", Issue_Date));
-                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total1", Total1));
-                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total2", Total2));
-                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyId", CurrencyId));
-                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat));
-                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Grand_Total", Grand_Total));
+               
+                    //string Total1 = dt.Rows[0]["Total1"].ToString();
+                    //string Total2 = dt.Rows[0]["Total2"].ToString();
+                    //string CurrencyId = dt.Rows[0]["currencyid"].ToString();
+                    //string vat = dt.Rows[0]["VatRate"].ToString();
+                    //string Grand_Total = dt.Rows[0]["Grand_Total"].ToString();
+                ReportDefinition report = e.Report;
+                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
+                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
+                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
+                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("To", To));
+                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
+                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
+                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issue_Date", Issue_Date));
+                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Delivery_Date", Delivery_Date));
+                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total1", Total1));
+                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total2", Total2));
+                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyId", CurrencyId));
+                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat));
+                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Grand_Total", Grand_Total));
 
                     // 傳 list 資料            
                     List<R26_PrintData> data = dt.AsEnumerable()
@@ -306,7 +302,17 @@ namespace Sci.Production.Subcon
                             Remark = row1["Remark"].ToString(),
                             Title1 = row1["Title1"].ToString(),
                             Issue_Date = row1["Issue_Date"].ToString(),
-                            To = row1["To#"].ToString()
+                            To = row1["To#"].ToString(),
+                            Delivery_Date = row1["Delivery"].ToString(),
+                            Title2 = row1["Title2"].ToString(),
+                            Title3 = row1["Title3"].ToString(),
+                            Tel = row1["Tel"].ToString(),
+                            Fax = row1["Fax"].ToString(),
+                            Total1 = row1["Total1"].ToString(),
+                            Total2 = row1["Total2"].ToString(),
+                            CurrencyId = row1["currencyid"].ToString(),
+                            vat = row1["VatRate"].ToString(),
+                            Grand_Total =row1["Grand_Total"].ToString()
                         }).ToList();
 
                     report.ReportDataSource = data;
@@ -346,6 +352,7 @@ namespace Sci.Production.Subcon
         }
 
 
+       
         protected override bool OnToExcel(ReportDefinition report)
         {
             if (this.Report_Type == "PO List" && (dtt == null || dtt.Rows.Count == 0))
@@ -381,7 +388,7 @@ namespace Sci.Production.Subcon
                 xl.Save(outpath, false);
             }
             #endregion
-
+                
             #region PO Order
             else if ("PO Order".EqualString(this.comboBox1.Text))
             {
@@ -396,6 +403,7 @@ namespace Sci.Production.Subcon
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Local_PO_Order.xltx");
 
                 List<string> lis = new List<string>();
+                List<string> listt = new List<string>();
                 foreach (DataRow row in da.Rows)
                 {
                     string TheOrderID = row["TheOrderID"].ToString();
@@ -406,27 +414,27 @@ namespace Sci.Production.Subcon
                 //copy sheet by TheOrderID count.
                 x1.CopySheet.Add(1, lis.Count - 1);
                 x1.VarToSheetName = "##theorderid";
+               
                 int idx = 0;
+
                 foreach (string TheOrderID in lis)
                 {
                     string idxstr = (idx == 0) ? "" : idx.ToString(); //為了讓第一筆idx是空值
 
                     DataTable finalda = da.Select(string.Format("TheOrderID = '{0}'", TheOrderID)).CopyToDataTable();
-
+                    
                     finalda.Columns.RemoveAt(2);
                     finalda.Columns.RemoveAt(1);
                     finalda.Columns.RemoveAt(0);
 
-                    x1.dicDatas.Add("##LocalPOID" + idxstr, Location_Poid);
+                    x1.dicDatas.Add("##LocalPOID" + idxstr, TheOrderID.Substring(4));
                     x1.dicDatas.Add("##Factory" + idxstr, Factory1);
                     x1.dicDatas.Add("##theorderid" + idxstr, TheOrderID);
                     x1.dicDatas.Add("##date" + idxstr, date);
                     x1.dicDatas.Add("##SP" + idxstr, finalda);
                     idx += 1;
                 }
-
                 x1.Save(outpath, false);
-
             }
             #endregion
 
