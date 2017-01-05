@@ -690,10 +690,11 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 			t.AddName= s.AddName,
 			t.AddDate= s.AddDate,
 			t.EditName= s.EditName,
-			t.EditDate= s.EditDate
+			t.EditDate= s.EditDate,
+			t.Keyword = s.Keyword
 		when not matched by target then
-			insert(Id,UKEY,Order_BOAUkey,OrderQty,Refno,SCIRefno,Price,UsageQty,UsageUnit,Article,ColorId,SuppColor,SizeCode,Sizespec,SizeUnit,OrderIdList,SysUsageQty,Remark,BomZipperInsert,BomCustPONo,AddName,AddDate,EditName,EditDate)			
-			values(s.Id,s.UKEY,s.Order_BOAUkey,s.OrderQty,s.Refno,s.SCIRefno,s.Price,s.UsageQty,s.UsageUnit,s.Article,s.ColorId,s.SuppColor,s.SizeCode,s.Sizespec,s.SizeUnit,s.OrderIdList,s.SysUsageQty,s.Remark,s.BomZipperInsert,s.BomCustPONo,s.AddName,s.AddDate,s.EditName,s.EditDate)
+			insert(Id,UKEY,Order_BOAUkey,OrderQty,Refno,SCIRefno,Price,UsageQty,UsageUnit,Article,ColorId,SuppColor,SizeCode,Sizespec,SizeUnit,OrderIdList,SysUsageQty,Remark,BomZipperInsert,BomCustPONo,AddName,AddDate,EditName,EditDate,Keyword)			
+			values(s.Id,s.UKEY,s.Order_BOAUkey,s.OrderQty,s.Refno,s.SCIRefno,s.Price,s.UsageQty,s.UsageUnit,s.Article,s.ColorId,s.SuppColor,s.SizeCode,s.Sizespec,s.SizeUnit,s.OrderIdList,s.SysUsageQty,s.Remark,s.BomZipperInsert,s.BomCustPONo,s.AddName,s.AddDate,s.EditName,s.EditDate,s.Keyword)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
