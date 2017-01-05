@@ -1,5 +1,5 @@
 ﻿
-create FUNCTION [dbo].[GetColorSizeQty]
+CREATE FUNCTION [dbo].[GetColorSizeQty]
 (
 	@OrderID VARCHAR(13)
 )
@@ -17,7 +17,7 @@ RETURNS @tbl table(
 	,Seq varchar(2)
 	,Qty decimal(8,0)
 	,SizeItem varchar(3)
-	,OrderList nvarchar(90)
+	,OrderList nvarchar(200)
 )
 AS
 BEGIN
