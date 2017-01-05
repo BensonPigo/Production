@@ -17,7 +17,7 @@
     [OrderIdList]     NVARCHAR (MAX) CONSTRAINT [DF_Order_BOA_Expend_OrderIdList] DEFAULT ('') NULL,
     [SysUsageQty]     NUMERIC (9, 2) CONSTRAINT [DF_Order_BOA_Expend_SysUsageQty] DEFAULT ((0)) NOT NULL,
     [Remark]          NVARCHAR (MAX) CONSTRAINT [DF_Order_BOA_Expend_Remark] DEFAULT ('') NULL,
-    [BomFactory]      VARCHAR (8)   CONSTRAINT [DF_Order_BOA_Expend_BomFactory] DEFAULT ('') NULL,
+    [BomFactory]      VARCHAR (8)    CONSTRAINT [DF_Order_BOA_Expend_BomFactory] DEFAULT ('') NULL,
     [BomCountry]      VARCHAR (2)    CONSTRAINT [DF_Order_BOA_Expend_BomCountry] DEFAULT ('') NULL,
     [BomStyle]        VARCHAR (15)   CONSTRAINT [DF_Order_BOA_Expend_BomStyle] DEFAULT ('') NULL,
     [BomCustCD]       VARCHAR (20)   CONSTRAINT [DF_Order_BOA_Expend_BomCustCD] DEFAULT ('') NULL,
@@ -29,8 +29,11 @@
     [AddDate]         DATETIME       NULL,
     [EditName]        VARCHAR (10)   CONSTRAINT [DF_Order_BOA_Expend_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME       NULL,
+    [Keyword]         VARCHAR (MAX)  NULL,
     CONSTRAINT [PK_Order_BOA_Expend] PRIMARY KEY CLUSTERED ([UKEY] ASC)
 );
+
+
 
 
 GO
