@@ -71,6 +71,16 @@ namespace Sci.Production.Cutting
 
             //txtsewingline1.factoryobjectName = (Control)factoryid;
 
+            if (!MyUtility.Check.Empty(this.CurrentDataRow["printdate"]))
+            {
+                DateTime? lastTime = (DateTime?)this.CurrentDataRow["printdate"];
+                string FtyLastupdate = lastTime == null ? "" : ((DateTime)lastTime).ToString("yyyy/MM/dd HH:mm:ss");
+                this.displayBox_PrintDate.Text = FtyLastupdate;
+            }
+            else
+            {
+                this.displayBox_PrintDate.Text = "";
+            }
         }
         public void queryTable()
         {
@@ -184,12 +194,14 @@ namespace Sci.Production.Cutting
             base.ClickNewAfter();
             CurrentMaintain["Cdate"] = DateTime.Today;
             CurrentMaintain["mDivisionid"] = keyword;
+            displayBox_EstCutdate.Text = "";
+            displayBox_PrintDate.Text = "";
             bundle_Detail_allpart_Tb.Clear();
             bundle_Detail_Art_Tb.Clear();
             bundle_Detail_Qty_Tb.Clear();
 
         }
-
+       
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
@@ -506,8 +518,8 @@ namespace Sci.Production.Cutting
                 CurrentMaintain["LectraCode"] = cutdr["LectraCode"].ToString();
                 displayBox_Season.Text = cutdr["Seasonid"].ToString();
                 displayBox_Style.Text = cutdr["Styleid"].ToString();
-                displayBox_PrintDate.Text = cutdr["Estcutdate"].ToString();
-
+                displayBox_EstCutdate.Text = cutdr["Estcutdate"].ToString();
+                
                 string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString()+cutdr["factoryid"].ToString(), "SewingLine", "ID+factoryid");
                 CurrentMaintain["SewingCell"] = cellid;
 
@@ -711,7 +723,10 @@ namespace Sci.Production.Cutting
         {
             P10_Print p = new P10_Print(this.CurrentDataRow);
             p.ShowDialog();
-
+            string dtn = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+            this.displayBox_PrintDate.Text = dtn;
+            string sqlcmd = string.Format(@"update Bundle set PrintDate = '{0}' where ID = '{1}'", dtn, CurrentMaintain["ID"]);
+            DBProxy.Current.Execute(null,sqlcmd);
             return true;
 
         }
