@@ -19,13 +19,13 @@ namespace Sci.Production.Cutting
 
         protected override void ClickNewAfter()
         {
-            textBox1.ReadOnly = true;
+            textBox1.ReadOnly = false;
             base.ClickNewAfter();
         }
 
         protected override void ClickEditAfter()
         {
-            textBox1.ReadOnly = false;
+            textBox1.ReadOnly = true;
             base.ClickEditAfter();
         }
 
@@ -45,7 +45,7 @@ namespace Sci.Production.Cutting
         {
             if (MyUtility.Check.Empty(textBox1.Text.Trim()) || MyUtility.Check.Empty(textBox3.Text.Trim()))
             {
-                MyUtility.Msg.InfoBox("ID or Show SEQ can not empty");
+                MyUtility.Msg.InfoBox("ID and Show SEQ can not empty");
                 return false;
             }
 
