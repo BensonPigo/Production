@@ -227,6 +227,7 @@
             this.Controls.Add(this.panel1);
             this.IsSupportToPrint = false;
             this.Name = "R03";
+            this.Text = "Cutting Schedule List    ";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
