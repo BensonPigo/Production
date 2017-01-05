@@ -20,7 +20,7 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
 
-            this.Text = string.Format("Cut Parts Check<SP:{0}>)", cID);
+            this.Text = string.Format("Cut Parts Check Summary<SP:{0}>)", cID);
             cutid = cID;
             requery();
             gridSetup();
@@ -89,7 +89,8 @@ namespace Sci.Production.Cutting
                 foreach (DataRow pdr in sel)
                 {
 
-                    if (MyUtility.Convert.GetDecimal(dr["Qty"]) <= MyUtility.Convert.GetDecimal(dr[pdr["Patternpanel"].ToString()])) complete = true;
+                    if (MyUtility.Convert.GetDecimal(dr["Qty"]) <= MyUtility.Convert.GetDecimal(dr[pdr["Patternpanel"].ToString()])) 
+                        complete = true;
 
                 }
                 if (complete) dr["Complete"] = "Y";
@@ -135,8 +136,10 @@ namespace Sci.Production.Cutting
                     DataRow dr = grid1.GetDataRow(e.RowIndex);
 
                     if (MyUtility.Convert.GetDecimal(dr[e.ColumnIndex]) < MyUtility.Convert.GetDecimal(dr["Qty"]))
-                    {
+                    {                        
                         e.CellStyle.ForeColor = Color.Red;
+                        if (MyUtility.Convert.GetDecimal(dr[e.ColumnIndex]) > 0)
+                            dr["Complete"] = "";
                     }
                 };
             }
