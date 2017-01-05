@@ -2791,6 +2791,7 @@ Sci.Production/Win/SUBBASE.resx -text
 Sci.Production/app.config -text
 XLT/Cutting_P01_ColorCombo_SizeBreakdown.xlt -text
 XLT/Cutting_P01_ColorCombo_SizeBreakdown_Combo.xlt -text
+XLT/Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.xlt -text
 XLT/Cutting_P01_EachConsumptionCuttingCombo.xlt -text
 XLT/Cutting_P01_EachconsVSOrderQTYBDownPOCombo.xlt -text
 XLT/Cutting_P01_MarkerList.xlt -text
