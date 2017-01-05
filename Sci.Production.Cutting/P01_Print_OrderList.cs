@@ -163,7 +163,196 @@ namespace Sci.Production.Cutting
                 //SaveExcel(sxr, xltPath);
                 #endregion
             }
+            if (rdCheck3.Checked)
+            {
+                #region rdCheck3
+                System.Data.DataTable rpt3;
+                DualResult res = DBProxy.Current.Select("", "select b.POComboList,Style=StyleID+'-'+SeasonID from dbo.Orders a inner join Order_POComboList b on a.id = b.ID where a.ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) }, out rpt3);
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ColorCombo_SizeBreakdown.xlt");
 
+                sxrc sxr = new sxrc(xltPath);
+                string POComboList = rpt3.Rows[0]["POComboList"].ToString();
+                string sty = rpt3.Rows[0]["Style"].ToString();
+
+                sxr.dicDatas.Add(sxr._v + "SP", POComboList);
+                sxr.dicDatas.Add(sxr._v + "Style", sty);
+                sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
+
+                System.Data.DataTable[] dts;
+                res = DBProxy.Current.SelectSP("", "Cutting_Color_P01_OrderQtyDown_POCombo", new List<SqlParameter> { new SqlParameter("@OrderID", _id), new SqlParameter("@ByType", "2") }, out dts);
+
+                if (!res) return false;
+
+                sxrc.xltRptTable tbl1 = new sxrc.xltRptTable(dts[0], 1, 2, true);
+                sxrc.xltRptTable tbl2 = new sxrc.xltRptTable(dts[1], 1, 3);
+                sxrc.xltRptTable tbl3 = new sxrc.xltRptTable(dts[2], 1, 0);
+                SetColumn(tbl1, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight);
+                SetColumn(tbl2, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft);
+                SetColumn(tbl3, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft);
+
+                sxr.dicDatas.Add(sxr._v + "tbl1", tbl1);
+                sxr.dicDatas.Add(sxr._v + "tbl2", tbl2);
+                sxr.dicDatas.Add(sxr._v + "tbl3", tbl3);
+
+                sxr.boOpenFile = true;
+                sxr.Save();
+                //SaveExcel(sxr, xltPath);
+                #endregion
+            }
+            if (rdCheck4.Checked)
+            {
+                #region rdCheck4
+                System.Data.DataTable[] dts;
+                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01print_Eachcons_vs_OrderQtyDown_POCombo", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
+
+                if (!res) return false;
+                if (dts.Length < 2) return false;
+
+                DataRow dr = dts[0].Rows[0];
+                extra_P01_EachconsVSOrderQTYBDownPOCombo(dts[1]);
+
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_EachconsVSOrderQTYBDownPOCombo.xlt");
+                sxrc sxr = new sxrc(xltPath);
+                sxr.dicDatas.Add(sxr._v + "SPNO", dr["ORDERNO"]);
+                sxr.dicDatas.Add(sxr._v + "Style", dr["StyleID"]);
+                sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
+
+                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[1]);
+
+                //欄位水平對齊
+                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(3, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(4, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
+                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(5, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
+                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(6, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
+
+                //第二欄(Color)改為文字
+                sxrc.xlsColumnInfo xlc1 = new sxrc.xlsColumnInfo(dt.Columns[1].ColumnName);
+                xlc1.NumberFormate = "@";
+                dt.lisColumnInfo.Add(xlc1);
+
+                dt.Borders.InsideVertical = false;
+                dt.Borders.OutsideVertical = false;
+                dt.Borders.DependOnColumn.Add(1, 4);
+                dt.TotalBorders.DependOnColumn.Add(3, "Sub.TTL:");
+
+                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
+
+                sxr.boOpenFile = true;
+                sxr.Save();
+                //SaveExcel(sxr, xltPath);
+                #endregion
+            }
+            if (rdCheck5.Checked)
+            {
+                #region rdCheck5
+                System.Data.DataTable[] dts;
+                DualResult res = DBProxy.Current.SelectSP("", "cutting_P01_MarkerList", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
+
+                if (!res) return false;
+                if (dts.Length < 2) return false;
+
+                DataRow dr = dts[0].Rows[0];
+
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "cutting_P01_MarkerList.xlt");
+                sxrc sxr = new sxrc(xltPath);
+                sxr.CopySheet.Add(1, dts.Length - 2);
+
+                for (int sgIdx = 1; sgIdx < dts.Length; sgIdx++)
+                {
+                    string idxStr = sgIdx == 1 ? "" : (sgIdx - 1).ToString();
+                    string SizeGroup = dts[sgIdx].Rows[0]["SizeGroup"].ToString();
+
+                    dts[sgIdx].Columns.RemoveAt(0);
+
+                    extra_P01_EachConsumptionCuttingCombo(dts[sgIdx]);
+
+                    sxr.dicDatas.Add(sxr._v + "REPORTNAME" + idxStr, dr["REPORTNAME"]);
+                    sxr.dicDatas.Add(sxr._v + "ORDERNO" + idxStr, dr["ORDERNO"]);
+                    sxr.dicDatas.Add(sxr._v + "STYLENO" + idxStr, dr["STYLENO"]);
+                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, dr["QTY"]);
+                    sxr.dicDatas.Add(sxr._v + "FACTORY" + idxStr, dr["FACTORY"]);
+                    sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[sgIdx]);
+
+                    //欄位水平對齊
+                    for (int i = 4; i <= dt.Columns.Count - 2; i++)
+                    {
+                        sxrc.xlsColumnInfo citbl = new sxrc.xlsColumnInfo(i, false, 6, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight);
+                        dt.lisColumnInfo.Add(citbl);
+                    }
+                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter));
+                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter));
+                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(3, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(dt.Columns.Count - 1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(dt.Columns.Count, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter));
+                    dt.Borders.AllCellsBorders = true;
+
+                    //合併儲存格
+                    dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 4, dt.Columns.Count - 2) } });
+                    sxr.dicDatas.Add(sxr._v + "tbl1" + idxStr, dt);
+                    //sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
+                    sxr.dicDatas.Add(sxr._v + "SizeGroup" + idxStr, SizeGroup);
+
+                }
+                sxr.VarToSheetName = sxr._v + "SizeGroup";
+
+                sxr.boOpenFile = true;
+                sxr.Save();
+                //SaveExcel(sxr, xltPath);
+                #endregion
+            }
+            if (rdCheck6.Checked)
+            {
+                System.Data.DataTable[] dts;
+                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
+
+                if (!res) return false;
+                if (dts.Length < 2) return false;
+
+                DataRow dr = dts[0].Rows[0];
+                extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(dts[1]);
+
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.xlt");
+                sxrc sxr = new sxrc(xltPath);
+                sxr.dicDatas.Add(sxr._v + "ORDERNO", dr["ORDERNO"]);
+                sxr.dicDatas.Add(sxr._v + "STYLENO", dr["STYLENO"]);
+                sxr.dicDatas.Add(sxr._v + "QTY", dr["QTY"]);
+                sxr.dicDatas.Add(sxr._v + "FTY", dr["FACTORY"]);
+                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[1]);
+                dt.ShowHeader = false;
+
+                //欄位水平對齊
+                for (int i = 1; i <= dt.Columns.Count; i++)
+                {
+                    Microsoft.Office.Interop.Excel.XlHAlign xha = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight;
+                    if (i <= 2)
+                        xha = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+
+
+                    sxrc.xlsColumnInfo citbl = new sxrc.xlsColumnInfo(i, true, 0, xha);
+                    if (i == 5 | i == 8 | i == 10 | i == 12)
+                    {
+                        citbl.PointCnt = 2; //小數點兩位
+                    }
+                    else if (i == 4)
+                    {
+                        citbl.PointCnt = 4;
+                    }
+                    dt.lisColumnInfo.Add(citbl);
+                }
+
+                dt.Borders.DependOnColumn.Add(1, 2);
+
+                //合併儲存格
+                dt.lisTitleMerge.Add(new Dictionary<string, string> { { "Usage", "7,8" }, { "Purchase", "9,10" } });
+                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
+                sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
+
+                sxr.boOpenFile = true;
+                sxr.Save();
+                //SaveExcel(sxr, xltPath);
+            }
             return true;
         }
 
@@ -250,6 +439,310 @@ namespace Sci.Production.Cutting
             dr["CONS/PC"] = Qty == 0 ? 0 : Math.Round(tot / Qty, 3);
             dt.Rows.InsertAt(dr, idx);
         }
+
+        void SetColumn(sxrc.xltRptTable tbl, Microsoft.Office.Interop.Excel.XlHAlign Alignment)
+        {
+            sxrc.xlsColumnInfo xlc1 = new sxrc.xlsColumnInfo(tbl.Columns[0].ColumnName);
+            xlc1.NumberFormate = "@";
+            tbl.lisColumnInfo.Add(xlc1);
+
+            for (int i = 1; i < tbl.Columns.Count; i++)
+            {
+                sxrc.xlsColumnInfo xlc = new sxrc.xlsColumnInfo(tbl.Columns[i].ColumnName);
+                xlc.Alignment = Alignment;
+                tbl.lisColumnInfo.Add(xlc);
+            }
+        }
+
+        void extra_P01_EachconsVSOrderQTYBDownPOCombo(DataTable dt)
+        {
+            addTotal(dt, 1, "Sub.TTL:", true);
+            addTotal(dt, 0, "Total:", false);
+            removeRepeat(dt, 0, true);
+            removeRepeat(dt, 1, false);
+        }
+
+        void addTotal(DataTable dt, int cidx, string txt, bool exRow)
+        {
+            string col2tmp = "";
+            decimal sCutQty = 0;
+            decimal sOrderQty = 0;
+            decimal sBalance = 0;
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+
+                string col2 = dt.Rows[i][cidx].ToString();
+                if (col2 == "") continue;
+                if (col2tmp != col2)
+                {
+                    if (col2tmp == "")
+                    {
+                        col2tmp = col2;
+                    }
+                    else
+                    {
+                        col2tmp = col2;
+                        addSubTotalRow(txt, dt, sCutQty, sOrderQty, sBalance, i);
+
+                        if (exRow)
+                            dt.Rows.InsertAt(dt.NewRow(), i + 1);
+                        else
+                            dt.Rows.RemoveAt(i - 1);
+
+                        sCutQty = 0;
+                        sOrderQty = 0;
+                        sBalance = 0;
+                        if (exRow) i += 2;
+                    }
+                }
+                else
+                {
+
+                }
+
+                sCutQty += decimal.Parse(dt.Rows[i]["CutQty"].ToString());
+                sOrderQty += decimal.Parse(dt.Rows[i]["OrderQty"].ToString());
+                sBalance += decimal.Parse(dt.Rows[i]["Balance"].ToString());
+            }
+
+            addSubTotalRow(txt, dt, sCutQty, sOrderQty, sBalance, dt.Rows.Count);
+        }
+
+        void addSubTotalRow(string txt, DataTable dt, decimal sCutQty, decimal sOrderQty, decimal sBalance, int idx)
+        {
+            DataRow dr = dt.NewRow();
+            dr["Size"] = txt;
+            dr["CutQty"] = sCutQty;
+            dr["OrderQty"] = sOrderQty;
+            dr["Balance"] = sBalance;
+            dt.Rows.InsertAt(dr, idx);
+        }
+
+        void removeRepeat(DataTable dt, int cidx, bool addNewRow)
+        {
+            string col2tmp = "";
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+
+                string col2 = dt.Rows[i][cidx].ToString();
+                if (col2 == "") continue;
+                if (col2tmp != col2)
+                {
+                    if (col2tmp == "")
+                    {
+                        col2tmp = col2;
+                        if (addNewRow)
+                        {
+                            DataRow dr = dt.NewRow();
+                            dr[cidx] = dt.Rows[i][cidx].ToString();
+                            dt.Rows.InsertAt(dr, i);
+                            i += 1;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        col2tmp = col2;
+                        if (addNewRow)
+                        {
+                            DataRow dr = dt.NewRow();
+                            dr[cidx] = dt.Rows[i][cidx].ToString();
+                            dt.Rows.InsertAt(dr, i);
+                            i += 1;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                }
+                else
+                {
+
+                }
+                dt.Rows[i][cidx] = "";
+            }
+        }
+
+        void extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(DataTable dt)
+        {
+            //removeRepeat(dt, new int[] {0,1} );
+            ChangeColumnDataType(dt, "Q'ty/PCS", typeof(string));
+            ChangeColumnDataType(dt, "CONSUMPTION.", typeof(string));
+            ChangeColumnDataType(dt, "CONSUMPTION", typeof(string));
+
+            addTotal(dt, new int[] { 0, 1 });
+            removeRepeat(dt, new int[] { 0, 1 });
+        }
+
+        private bool ChangeColumnDataType(System.Data.DataTable table, string columnname, Type newtype)
+        {
+            if (table.Columns.Contains(columnname) == false)
+                return false;
+
+            DataColumn column = table.Columns[columnname];
+            if (column.DataType == newtype)
+                return true;
+
+            try
+            {
+                DataColumn newcolumn = new DataColumn("temporary", newtype);
+                table.Columns.Add(newcolumn);
+
+                foreach (DataRow row in table.Rows)
+                {
+                    try
+                    {
+                        row["temporary"] = Convert.ChangeType(row[columnname], newtype);
+                    }
+                    catch { }
+                }
+                newcolumn.SetOrdinal(column.Ordinal);
+                table.Columns.Remove(columnname);
+                newcolumn.ColumnName = columnname;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        
+        void addTotal(DataTable dt, int[] cidx)
+        {
+            string col2tmp = "";
+
+            decimal sOrderQty = 0;
+            decimal sUsageCon = 0;
+            string Unit = "";
+
+            string PUnit = "";
+            decimal PCon = 0;
+            string PLUSName = "";
+            decimal Total = 0;
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+
+                string col2 = ""; //dt.Rows[i][cidx].ToString();
+                for (int k = 0; k < cidx.Length; k++)
+                {
+                    col2 += dt.Rows[i][cidx[k]].ToString();
+                }
+
+                if (col2 == "") continue;
+                if (col2tmp != col2)
+                {
+                    if (col2tmp == "")
+                    {
+                        col2tmp = col2;
+                    }
+                    else
+                    {
+                        col2tmp = col2;
+                        addSubTotalRow_06(Unit, dt, sOrderQty, sUsageCon, i);
+                        addSubTotalRow_06_2(PUnit, PLUSName, dt, PCon, Total, i + 1);
+                        //if (exRow)
+                        //    dt.Rows.InsertAt(dt.NewRow(), i + 1);
+                        //else
+                        //    dt.Rows.RemoveAt(i - 1);
+
+                        sOrderQty = 0;
+                        sUsageCon = 0;
+
+                        i += 3;
+                        //if (exRow) i += 2;
+                    }
+                }
+                else
+                {
+
+                }
+                Unit = dt.Rows[i]["Unit"].ToString();
+                dt.Rows[i]["Unit"] = DBNull.Value;
+                sOrderQty += decimal.Parse(dt.Rows[i]["Order Qty"].ToString());
+                sUsageCon += decimal.Parse(dt.Rows[i]["CONSUMPTION"].ToString());
+
+
+                PUnit = dt.Rows[i]["Unit."].ToString();
+                dt.Rows[i]["Unit."] = DBNull.Value;
+                PCon = decimal.Parse(dt.Rows[i]["CONSUMPTION."].ToString());
+                dt.Rows[i]["CONSUMPTION."] = DBNull.Value;
+                PLUSName = dt.Rows[i]["PLUS(YDS/%)"].ToString();
+                dt.Rows[i]["PLUS(YDS/%)"] = DBNull.Value;
+                Total = decimal.Parse(dt.Rows[i]["TOTAL"].ToString());
+                dt.Rows[i]["TOTAL"] = DBNull.Value;
+            }
+
+            addSubTotalRow_06(Unit, dt, sOrderQty, sUsageCon, dt.Rows.Count);
+            addSubTotalRow_06_2(PUnit, PLUSName, dt, PCon, Total, dt.Rows.Count);
+        }
+
+        void removeRepeat(DataTable dt, int[] cidx)
+        {
+            string col2tmp = "";
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+
+                string col2 = "";// dt.Rows[i][cidx].ToString();
+                for (int k = 0; k < cidx.Length; k++)
+                {
+                    col2 += dt.Rows[i][cidx[k]].ToString();
+                }
+                if (col2 == "") continue;
+                if (col2tmp != col2)
+                {
+                    if (col2tmp == "")
+                    {
+                        col2tmp = col2;
+                        continue;
+
+                    }
+                    else
+                    {
+                        col2tmp = col2;
+                        continue;
+                    }
+                }
+                else
+                {
+
+                }
+                for (int k = 0; k < cidx.Length; k++)
+                {
+                    dt.Rows[i][cidx[k]] = "";
+                }
+
+            }
+        }
+
+        void addSubTotalRow_06(string Unit, DataTable dt, decimal sOrderQty, decimal sUsageCon, int idx)
+        {
+            DataRow dr = dt.NewRow();
+            dr["Q'ty/PCS"] = "TTL";
+            dr["Unit"] = Unit;
+            dr["Order Qty"] = sOrderQty;
+            dr["CONSUMPTION"] = sUsageCon;
+            dt.Rows.InsertAt(dr, idx);
+        }
+
+        void addSubTotalRow_06_2(string PUnit, string PLUSName, DataTable dt, decimal PCon, decimal Total, int idx)
+        {
+            DataRow dr = dt.NewRow();
+            dr["CONSUMPTION"] = "SubTotal";
+            dr["Unit."] = PUnit;
+            dr["CONSUMPTION."] = PCon;
+            dr["PLUS(YDS/%)"] = PLUSName;
+            dr["TOTAL"] = Total;
+
+            dt.Rows.InsertAt(dr, idx);
+            dt.Rows.InsertAt(dt.NewRow(), idx + 1);
+        }
+
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
