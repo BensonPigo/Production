@@ -73,7 +73,8 @@ namespace Sci.Production.Subcon
 ,b.OrderID
 ,(select orders.StyleID from orders where id = b.OrderID) style
 ,dbo.getPass1(c.Handle) pohandle
-,CONVERT(VARCHAR(20),CAST(c.Amount+c.Vat AS Money),1) as poAmount
+--,CONVERT(VARCHAR(20),CAST(c.Amount+c.Vat AS Money),1) as poAmount
+,CONVERT(VARCHAR(20),CAST(b.Amount AS Money),1) as poAmount
 ,c.IssueDate poDate
 ,a.InvNo
 from artworkap a inner join artworkap_detail b on a.id = b.id 
