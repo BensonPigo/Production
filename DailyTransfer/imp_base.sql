@@ -2631,6 +2631,104 @@ on t.type=s.type and t.id=s.id
 		from Trade_To_Pms.dbo.Fabric_Supp as b
 		where not exists(select SuppID from Production.dbo.Fabric_Supp as a where a.SuppID = b.SuppID)
 
+--------Color_Multiple---------------
+
+Merge Production.dbo.Color_Multiple as t
+Using Trade_To_Pms.dbo.Color_Multiple as s
+on t.colorUkey=s.colorUkey and t.Seqno=s.Seqno
+	when matched then
+	update set
+	t.ID= s.ID,	
+	t.BrandID= s.BrandID,	
+	t.ColorID= s.ColorID,
+	t.AddName= s.AddName,
+	t.AddDate= s.AddDate,
+	t.EditName= s.EditName,
+	t.EditDate= s.EditDate
+when not matched by target then 
+	insert(ID
+	,ColorUkey
+	,BrandID
+	,Seqno
+	,ColorID
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	)
+	values(s.ID,
+	s.ColorUkey,
+	s.BrandID,
+	s.Seqno,
+	s.ColorID,
+	s.AddName,
+	s.AddDate,
+	s.EditName,
+	s.EditDate	)
+when not matched by source then
+	delete;
+
+
+--------Color_SuppColor---------------
+
+Merge Production.dbo.Color_SuppColor as t
+Using Trade_To_Pms.dbo.Color_SuppColor as s
+on t.ukey=s.ukey
+when matched then
+	update set
+	t.ID= s.ID,
+	t.Ukey= s.Ukey,
+	t.BrandId= s.BrandId,
+	t.ColorUkey= s.ColorUkey,
+	t.SeasonID= s.SeasonID,
+	t.SuppID= s.SuppID,
+	t.SuppColor= s.SuppColor,
+	t.ProgramID= s.ProgramID,
+	t.StyleID= s.StyleID,
+	t.Refno= s.Refno,
+	t.Remark= s.Remark,
+	t.AddName= s.AddName,
+	t.AddDate= s.AddDate,
+	t.EditName= s.EditName,
+	t.EditDate= s.EditDate
+when not matched by target then
+	insert(ID
+	,Ukey
+	,BrandId
+	,ColorUkey
+	,SeasonID
+	,SuppID
+	,SuppColor
+	,ProgramID
+	,StyleID
+	,Refno
+	,Remark
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	)
+	values(s.ID,
+	s.Ukey,
+	s.BrandId,
+	s.ColorUkey,
+	s.SeasonID,
+	s.SuppID,
+	s.SuppColor,
+	s.ProgramID,
+	s.StyleID,
+	s.Refno,
+	s.Remark,
+	s.AddName,
+	s.AddDate,
+	s.EditName,
+	s.EditDate)
+when not matched by source then 
+	delete;
+
+
+
+	
 
 END
 
