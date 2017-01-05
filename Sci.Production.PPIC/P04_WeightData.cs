@@ -152,8 +152,8 @@ namespace Sci.Production.PPIC
                 .Text("Article", header: "Article", width: Widths.AnsiChars(8), settings: article)
                 .Numeric("NW", header: "N.W.", width: Widths.AnsiChars(5), decimal_places: 3, integer_places: 2, maximum: 99.999m, minimum: 0m)
                 .Numeric("NNW", header: "N.N.W.", width: Widths.AnsiChars(5), decimal_places: 3, integer_places: 2, maximum: 99.999m, minimum: 0m)
-                .Text("CreateBy", header: "Create By", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                .Text("EditBy", header: "Edit By", width: Widths.AnsiChars(30), iseditingreadonly: true);
+                .Text("CreateBy", header: "Create By", width: Widths.AnsiChars(35), iseditingreadonly: true)
+                .Text("EditBy", header: "Edit By", width: Widths.AnsiChars(35), iseditingreadonly: true);
             
             return true;
         }

@@ -47,8 +47,8 @@ namespace Sci.Production.PPIC
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .EditText("Article", header: "Colorway", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("ReasonName", header: "Doc", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .EditText("Article", header: "Colorway", width: Widths.AnsiChars(22), iseditingreadonly: true)
+                .Text("ReasonName", header: "Doc", width: Widths.AnsiChars(22), iseditingreadonly: true)
                 .Date("SendDate", header: "TW Send date", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Date("ReceiveDate", header: "FTY MR Rcv date", width: Widths.AnsiChars(8), settings: rcvDate)
                 .Text("FtyRemark", header: "Remark for factory", width: Widths.AnsiChars(15), settings: ftyRemark)
@@ -56,10 +56,10 @@ namespace Sci.Production.PPIC
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Date("SCIDelivery", header: "SCI Delivery", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Text("MRName", header: "MR", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("SMRName", header: "SMR", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("POHandleName", header: "PO Handle", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("POSMRName", header: "PO SMR", width: Widths.AnsiChars(13), iseditingreadonly: true);
+                .Text("MRName", header: "MR", width: Widths.AnsiChars(38), iseditingreadonly: true)
+                .Text("SMRName", header: "SMR", width: Widths.AnsiChars(38), iseditingreadonly: true)
+                .Text("POHandleName", header: "PO Handle", width: Widths.AnsiChars(38), iseditingreadonly: true)
+                .Text("POSMRName", header: "PO SMR", width: Widths.AnsiChars(38), iseditingreadonly: true);
 
             this.grid1.Columns[6].DefaultCellStyle.BackColor = Color.LightYellow;
             this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.LightYellow;
