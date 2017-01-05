@@ -204,7 +204,12 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
                 button7.ForeColor = Color.Black;
                 button8.ForeColor = Color.Black;
             }
-            button11.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits where StyleUkey = {0}", StyleUkey)) ? Color.Blue : Color.Black;
+
+            if (MyUtility.Check.Empty(StyleUkey))
+                button11.ForeColor = Color.Black;
+            else
+                button11.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits where StyleUkey = {0}", StyleUkey)) ? Color.Blue : Color.Black;
+            
             #endregion
         }
 
