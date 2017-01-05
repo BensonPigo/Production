@@ -904,8 +904,6 @@ drop table #tmpall");
                 Subject + '-' + CuttingDate,
                 tmpFile,
                 "\r\nFilter as below description:\r\nCutting Date: " + CuttingDate + "\r\nCut Cell: " + cutcell + "\r\nM: " + WorkOrder, false, true);
-            //var email = new MailTo(Sci.Env.User.MailAddress, mailto, Sci.Env.User.MailAddress, subject, null, content.ToString(), true, true);
-            //var email = new MailTo("willy.wei@sportscity.com", "willy.wei@sportscity.com", "willy.wei@sportscity.com", subject, null, content.ToString(), false, true);
             email.ShowDialog(this);
         }
     }
