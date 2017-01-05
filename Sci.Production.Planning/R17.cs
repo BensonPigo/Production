@@ -34,6 +34,8 @@ namespace Sci.Production.Planning
             InitializeComponent();
             EditMode = true;
             print.Visible = false;
+            txtMdivision1.Text = Sci.Env.User.Keyword;
+            txtFactory1.Text = Sci.Env.User.Factory;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -216,11 +218,13 @@ namespace Sci.Production.Planning
                                                         , A1.QTY AS G
                                                         , A4.ShipQty AS H
                                                         , A4.PulloutDate  AS I   
-                                                        , (Select ShipmodeID  as strData from Order_QtyShip  where id = A1.ID  Group by ShipModeID) AS J                                                     
+                                                        ,J.strData AS J
+                                                      --  , (Select ShipmodeID  as strData from Order_QtyShip  where id = A1.ID  Group by ShipModeID) AS J                                                     
                                                 FROM ORDERS A1
                                                 LEFT JOIN FACTORY A2 ON A1.FACTORYID = A2.ID 
                                                 LEFT JOIN COUNTRY A3 ON A2.COUNTRYID = A3.ID 
                                                 LEFT JOIN PullOut_Detail A4 ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
+                                                OUTER APPLY(Select ShipmodeID  as strData from Order_QtyShip  where id = A1.ID  Group by ShipModeID)J
                                                 WHERE 1= 1 ";
                     if (dateRange1.Value1 != null)
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
@@ -280,11 +284,13 @@ namespace Sci.Production.Planning
                                                         , A1.QTY AS G
                                                         , A4.ShipQty AS H
                                                         , A4.PulloutDate  AS I   
-                                                        , (Select ShipmodeID  as strData from Order_QtyShip  where id = A1.ID  Group by ShipModeID) AS J                                                     
+                                                        ,J.strData AS J 
+                                                       -- , (Select ShipmodeID  as strData from Order_QtyShip  where id = A1.ID  Group by ShipModeID) AS J                                                     
                                                 FROM ORDERS A1
                                                 LEFT JOIN FACTORY A2 ON A1.FACTORYID = A2.ID 
                                                 LEFT JOIN COUNTRY A3 ON A2.COUNTRYID = A3.ID 
                                                 LEFT JOIN PullOut_Detail A4 ON A1.ID = A4.ORDERID AND A4.PullOutDate > A1.FtyKPI 
+                                                OUTER APPLY(Select ShipmodeID  as strData from Order_QtyShip  where id = A1.ID  Group by ShipModeID)J
                                                 WHERE 1= 1 ";
                     if (dateRange1.Value1 != null)
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
@@ -492,7 +498,7 @@ namespace Sci.Production.Planning
             {
                 //if (!(result = PrivUtils.Excels.CreateExcel(temfile, out excel))) return result;
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
+                
                 int intRowsCount = gdtDatas.Rows.Count;
                 int intRowsStart = 2;//匯入起始位置
                 int rownum = intRowsStart; //每筆資料匯入之位置 
@@ -541,6 +547,8 @@ namespace Sci.Production.Planning
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
                         for (int intIndex = 0; intIndex < gdtOrderDetail.Rows.Count; intIndex++)
                         {
                             for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
@@ -565,6 +573,8 @@ namespace Sci.Production.Planning
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
                         for (int intIndex = 0; intIndex < gdtPullOut.Rows.Count; intIndex++)
                         {
                             for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
@@ -589,6 +599,8 @@ namespace Sci.Production.Planning
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
                         for (int intIndex = 0; intIndex < gdtFailDetail.Rows.Count; intIndex++)
                         {
                             for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
@@ -613,6 +625,8 @@ namespace Sci.Production.Planning
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
                         for (int intIndex = 0; intIndex < gdtSP.Rows.Count; intIndex++)
                         {
                             for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
