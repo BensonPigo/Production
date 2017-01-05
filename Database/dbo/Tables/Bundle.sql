@@ -15,7 +15,7 @@
     [Ratio]        VARCHAR (100) CONSTRAINT [DF_Bundle_Ratio] DEFAULT ('') NULL,
     [Startno]      NUMERIC (5)   CONSTRAINT [DF_Bundle_Startno] DEFAULT ((0)) NULL,
     [Qty]          NUMERIC (2)   CONSTRAINT [DF_Bundle_Qty] DEFAULT ((0)) NULL,
-    [PrintDate]    DATE          NULL,
+    [PrintDate]    DATETIME      NULL,
     [AllPart]      NUMERIC (5)   CONSTRAINT [DF_Bundle_AllPart] DEFAULT ((0)) NULL,
     [CutRef]       VARCHAR (8)   CONSTRAINT [DF_Bundle_CutRef] DEFAULT ('') NULL,
     [AddName]      VARCHAR (10)  CONSTRAINT [DF_Bundle_AddName] DEFAULT ('') NULL,
@@ -26,6 +26,8 @@
     [LectraCode]   VARCHAR (2)   NULL,
     CONSTRAINT [PK_Bundle] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
