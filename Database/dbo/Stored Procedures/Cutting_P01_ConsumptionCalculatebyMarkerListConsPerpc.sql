@@ -63,7 +63,7 @@ BEGIN
 	,csq.ColorDesc,csq.SizeCode,aa.mSizeSpec,Fabric.UsageUnit,Fabric_Supp.POUnit
 	,cc.mStep,cc.mUsageUnit,cc.nRound,csq.SizeCode,mLossQty,mFocQty,mPlusN,csq.Seq
 
-	order by Seq
+	order by csq.Seq
 
 
 
