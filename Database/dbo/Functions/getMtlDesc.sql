@@ -18,12 +18,11 @@ BEGIN
 	SELECT @scirefno=p.SCIRefno
 		, @refno = p.Refno
 		, @suppcolor = ISNULL(p.SuppColor,'')
-		--, @StockSP = isnull(concat(p.StockPOID,' ',p.SEQ1,' ',p.SEQ2),'')
 		, @StockSP = isnull(concat(p.StockPOID,' ',p.StockSeq1,' ',p.StockSeq2),'')
-		, @po_desc=@po_desc + ISNULL(p.ColorDetail,'')+ CHAR(13)+CHAR(10)
-		, @po_desc=@po_desc + ISNULL(p.sizespec,'')+ CHAR(13)+CHAR(10)
-		, @po_desc=@po_desc + ISNULL(p.SizeUnit,'')+ CHAR(13)+CHAR(10)
-		, @po_desc=@po_desc + ISNULL(p.Special,'')+ CHAR(13)+CHAR(10)
+		, @po_desc=@po_desc + ISNULL(p.ColorDetail,'')+ CHAR(13)--+CHAR(10)
+		, @po_desc=@po_desc + ISNULL(p.sizespec,'')+ CHAR(13)--+CHAR(10)
+		, @po_desc=@po_desc + ISNULL(p.SizeUnit,'')+ CHAR(13)--+CHAR(10)
+		, @po_desc=@po_desc + ISNULL(p.Special,'')+ CHAR(13)--+CHAR(10)
 		, @po_desc=@po_desc + ISNULL(p.Remark,'')
 		from dbo.po_supp_detail p WHERE ID=@poid and seq1 = @seq1 and seq2=@seq2;
 
@@ -32,10 +31,10 @@ BEGIN
 		if @repeat = 0
 		BEGIN
 			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric where SCIRefno = @scirefno;
-			set @string = rtrim(ISNULL(@fabric_detaildesc,''))+CHAR(13)+CHAR(10);
+			set @string = rtrim(iif(@fabric_detaildesc='','',@fabric_detaildesc + CHAR(13)));
 		END
 		ELSE
-			set @string = rtrim(ISNULL(@suppcolor,''))+ CHAR(13)+CHAR(10)+rtrim(ISNULL(@po_desc,''));
+			set @string = rtrim(iif(@suppcolor = '','',@suppcolor + CHAR(13)))+rtrim(iif(@po_desc = '','',@po_desc+CHAR(13)));
 	END
 
 	IF @type =2
@@ -43,10 +42,10 @@ BEGIN
 		if @repeat = 0
 		BEGIN	
 			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric where SCIRefno = @scirefno;
-			set @string = rtrim(ISNULL(@fabric_detaildesc,''))+CHAR(13)+CHAR(10)+ rtrim(ISNULL(@suppcolor,''))+rtrim(ISNULL(@po_desc,''));
+			set @string = rtrim(iif(@fabric_detaildesc='','',@fabric_detaildesc + CHAR(13)))+ rtrim(iif(@suppcolor = '','',@suppcolor + CHAR(13)))+rtrim(iif(@po_desc = '','',@po_desc+CHAR(13)));
 		END
 		ELSE
-			set @string = rtrim(ISNULL(@suppcolor,''))+ CHAR(13)+CHAR(10)+rtrim(ISNULL(@po_desc,''));
+			set @string = rtrim(iif(@suppcolor = '','',@suppcolor + CHAR(13)))+rtrim(iif(@po_desc = '','',@po_desc+CHAR(13)));
 	END
 
 	IF @type =4
@@ -55,15 +54,15 @@ BEGIN
 		if @repeat = 0
 		BEGIN
 			select @fabric_detaildesc= ISNULL([Description],'') from fabric where SCIRefno = @scirefno;
-			set @string = 'Ref#'+ @refno + ', ' + rtrim(ISNULL(@fabric_detaildesc,''))+ CHAR(13)+CHAR(10) + rtrim(ISNULL(@suppcolor,''))+rtrim(ISNULL(@po_desc,''));
+			set @string = 'Ref#'+ @refno + ', ' + rtrim(iif(@fabric_detaildesc='','',@fabric_detaildesc + CHAR(13))) + rtrim(iif(@suppcolor = '','',@suppcolor + CHAR(13)))+rtrim(iif(@po_desc = '','',@po_desc+CHAR(13)));
 		End
 		ELSE
-			set @string = rtrim(ISNULL(@suppcolor,''))+ CHAR(13)+CHAR(10)+rtrim(ISNULL(@po_desc,''));
+			set @string = rtrim(iif(@suppcolor = '','',@suppcolor + CHAR(13)))+rtrim(iif(@po_desc = '','',@po_desc+CHAR(13)));
 	END
 
 	IF left(@SEQ1,1) = '7'
 	BEGIN
-		SET @string = '**PLS USE STOCK FROM SP#:' + ISNULL(@StockSP,'') + '**' + CHAR(13)+CHAR(10) + @string;
+		SET @string = '**PLS USE STOCK FROM SP#:' + iif(@StockSP='','',@StockSP) + '**' + CHAR(13) + @string;
 	END 
 
     RETURN rtrim(@string)
