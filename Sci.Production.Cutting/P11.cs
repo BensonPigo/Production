@@ -1056,6 +1056,11 @@ namespace Sci.Production.Cutting
         private void BatchCreate_Button_Click(object sender, EventArgs e)
         {
             DataRow[] CutrefAy = CutRefTb.Select("Sel=1");
+            if (CutrefAy.Length == 0)
+            {
+                MyUtility.Msg.InfoBox("Please select data first !!");
+                return;
+            }
             DataTable Insert_Bundle = new DataTable();
             //Insert_Bundle,Insert_Bundle_Detail,Insert_Bundle_Detail_Art,Insert_Bundle_Detail_AllPart,Insert_Bundle_Detail_Qty
             #region Insert Table 
