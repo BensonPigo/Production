@@ -1,5 +1,5 @@
 ﻿
-create PROCEDURE [dbo].[Cutting_Color_Qty_BDown_PO_Combo]
+create PROCEDURE [dbo].[Cutting_Color_P01_OrderQtyDown_POCombo]
 	@OrderID varchar(13)
 	,@ByType int = 0 --0單張 , 1 By CustCDID , 2 By PO
 AS
