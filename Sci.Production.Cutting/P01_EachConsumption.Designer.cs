@@ -38,6 +38,8 @@
             this.btnDetail = new Sci.Win.UI.Button();
             this.label3 = new Sci.Win.UI.Label();
             this.panelBasic = new Sci.Win.UI.Panel();
+            this.displayBox2 = new Sci.Win.UI.DisplayBox();
+            this.ConsPC = new Sci.Win.UI.DisplayBox();
             this.panelSizeQty = new Sci.Win.UI.Panel();
             this.gridSizeQty = new Sci.Win.UI.Grid();
             this.sizeQtyGridDbs = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -87,8 +89,6 @@
             this.label5 = new Sci.Win.UI.Label();
             this.displayCreateBy = new Sci.Win.UI.DisplayBox();
             this.button1 = new Sci.Win.UI.Button();
-            this.ConsPC = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -180,7 +180,7 @@
             // 
             this.displayEditBy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.displayEditBy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayEditBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "editby", true));
+            this.displayEditBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "editby2", true));
             this.displayEditBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayEditBy.Location = new System.Drawing.Point(382, 40);
             this.displayEditBy.Name = "displayEditBy";
@@ -314,6 +314,26 @@
             this.panelBasic.Name = "panelBasic";
             this.panelBasic.Size = new System.Drawing.Size(622, 333);
             this.panelBasic.TabIndex = 0;
+            // 
+            // displayBox2
+            // 
+            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "type2", true));
+            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox2.Location = new System.Drawing.Point(276, 304);
+            this.displayBox2.Name = "displayBox2";
+            this.displayBox2.Size = new System.Drawing.Size(122, 21);
+            this.displayBox2.TabIndex = 152;
+            // 
+            // ConsPC
+            // 
+            this.ConsPC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.ConsPC.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ConsPC", true));
+            this.ConsPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.ConsPC.Location = new System.Drawing.Point(92, 174);
+            this.ConsPC.Name = "ConsPC";
+            this.ConsPC.Size = new System.Drawing.Size(93, 21);
+            this.ConsPC.TabIndex = 151;
             // 
             // panelSizeQty
             // 
@@ -838,7 +858,7 @@
             // 
             this.displayCreateBy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.displayCreateBy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayCreateBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "createby", true));
+            this.displayCreateBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "createby2", true));
             this.displayCreateBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayCreateBy.Location = new System.Drawing.Point(383, 8);
             this.displayCreateBy.Name = "displayCreateBy";
@@ -854,26 +874,6 @@
             this.button1.Text = "Switch to WorkOrder";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // ConsPC
-            // 
-            this.ConsPC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.ConsPC.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ConsPC", true));
-            this.ConsPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.ConsPC.Location = new System.Drawing.Point(92, 174);
-            this.ConsPC.Name = "ConsPC";
-            this.ConsPC.Size = new System.Drawing.Size(93, 21);
-            this.ConsPC.TabIndex = 151;
-            // 
-            // displayBox2
-            // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "type2", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(276, 304);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(122, 21);
-            this.displayBox2.TabIndex = 152;
             // 
             // P01_EachConsumption
             // 
