@@ -163,17 +163,17 @@ and not ob.SuppID = 'fty-c'
             else if (radioThread.Checked)
             {//jimmy 記得把 註解 & isnull 拿掉
                 #region Thread
-                sql = string.Format(@"select distinct isnull(B.Article,'a')  as Article
+                sql = string.Format(@"select distinct B.Article
                                     from ThreadRequisition_Detail A
                                     left join ThreadRequisition_Detail_Cons B on B.Ukey=A.Ukey
-                                    where A.orderid= '{0}'-- and article<>''", POID);
+                                    where A.orderid= '{0}' and article<>''", POID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint2);
                 if (!result) return result;
 
-                sql = string.Format(@"select isnull(B.Article,'a') as Article , A.ThreadColorID
+                sql = string.Format(@"select B.Article, A.ThreadColorID
                                     from ThreadRequisition_Detail A
                                     left join ThreadRequisition_Detail_Cons B on B.Ukey=A.Ukey
-                                    where A.orderid= '{0}'-- and article<>''
+                                    where A.orderid= '{0}' and article<>''
                                     group by article, threadcolorid", POID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint);
                 if (!result) return result;
