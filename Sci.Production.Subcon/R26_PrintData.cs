@@ -26,6 +26,11 @@ namespace Sci.Production.Subcon
         public string Title3{ get; set; }
         public string Tel { get; set; }
         public string Fax { get; set; }
+        public string Total1 { get; set; }
+        public string Total2 { get; set; }
+        public string CurrencyId { get; set; }
+        public string vat { get; set; }
+        public string Grand_Total{ get; set; }
         public string Group1 { get { return this.To+this.Title1 +this.Issue_Date+this.Delivery_Date; } }
         public string Group2 { get { return this.PO + this.Code + this.To; } }
       
