@@ -350,7 +350,7 @@ namespace Sci.Production.Warehouse
             }
 
 
-            DataTable subDT;            
+            DataTable subDT;
             foreach (DataRow dr in DetailDatas)
             {
                 if (GetSubDetailDatas(dr, out subDT))
@@ -358,16 +358,22 @@ namespace Sci.Production.Warehouse
                     DataTable tmp = subDT.Clone();
                     foreach (DataRow dr2 in subDT.Rows)
                     {
-                        dr2.AcceptChanges();
-                        dr2.SetAdded();
+                        //if (dr2.RowState == DataRowState.Unchanged)
+                        //{
+                        //    dr2.AcceptChanges();
+                        //    dr2.SetAdded();
+                        //}
                         tmp.ImportRow(dr2);
                     }
 
                     subDT.Clear();
                     foreach (DataRow dr2 in tmp.Rows)
                     {
-                        dr2.AcceptChanges();
-                        dr2.SetAdded();
+                        if (dr2.RowState == DataRowState.Unchanged)
+                        {
+                            dr2.AcceptChanges();
+                            dr2.SetAdded();
+                        }
                         subDT.ImportRow(dr2);
                     }
                     sum_subDetail(dr, subDT);

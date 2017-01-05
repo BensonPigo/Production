@@ -108,8 +108,8 @@ and ltrim(a.seq1) between '01' and '99'
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //3
                 .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //4
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //5
-                .Numeric("balanceqty", header: "Balance Qty", iseditable: true, decimal_places: 2, integer_places: 10) //6
-                .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns)  //7
+                .Numeric("balanceqty", header: "Balance Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) //6
+                .Numeric("qty", header: "Issue Qty", iseditable: true, decimal_places: 2, integer_places: 10, settings: ns)  //7
                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)); //8
 
             this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;

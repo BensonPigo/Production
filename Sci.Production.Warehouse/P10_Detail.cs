@@ -33,6 +33,30 @@ namespace Sci.Production.Warehouse
         protected override void OnAttached()
         {
             base.OnAttached();
+            DataTable temp =(DataTable)gridbs.DataSource;
+            if (!temp.Columns.Contains("balanceqty"))
+            {
+                DataTable dtFtyinventory;
+                StringBuilder strSQLCmd = new StringBuilder();
+
+                #region -- sqlcmd query --
+                strSQLCmd.Append(string.Format(@"select ISD.* , FTY.InQty,FTY.OutQty,FTY.AdjustQty,FTY.InQty-FTY.OutQty+FTY.AdjustQty as balanceqty,FTYD.MtlLocationID as location
+	from [dbo].[Issue_Detail] ISD 
+	inner join [dbo].FtyInventory FTY on ISD.FtyInventoryUkey=FTY.Ukey
+	inner join [dbo].FtyInventory_Detail FTYD on FTY.MDivisionPoDetailUkey=FTYD.Ukey 
+	where ISD.Id='{0}' and ISD.Issue_SummaryUkey='{1}'"
+                    , CurrentDetailData["id"].ToString(), CurrentDetailData["Ukey"].ToString()));
+                #endregion
+
+                Ict.DualResult result;
+                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtFtyinventory))
+                {
+                    gridbs.DataSource = dtFtyinventory;
+                    dtFtyinventory.DefaultView.Sort = "seq1,seq2,location,dyelot,balanceqty desc";
+                }
+                else { ShowErr(strSQLCmd.ToString(), result); }
+            }
+
             this.dis_ID.Text = CurrentDetailData["id"].ToString();
             this.dis_scirefno.Text = CurrentDetailData["scirefno"].ToString();
             this.dis_poid.Text = CurrentDetailData["poid"].ToString();
@@ -78,17 +102,24 @@ namespace Sci.Production.Warehouse
             .Numeric("balanceqty", header: "Balance" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //6
             ;     //
 
-            this.grid.Columns[6].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns[5].DefaultCellStyle.BackColor = Color.Pink;
 
             return true;
         }
 
         protected override bool OnSaveBefore()
         {
+            grid.ValidateControl();
             var dr2 = ((DataTable)gridbs.DataSource).Select("qty = 0");
             if (dr2.Length > 0)
             {
                 MyUtility.Msg.WarningBox("Issue Qty of selected row can't be zero!", "Warning");
+                return false;
+            }
+            var dr2_ba = ((DataTable)gridbs.DataSource).Select("qty > balanceqty");
+            if (dr2_ba.Length > 0)
+            {
+                MyUtility.Msg.WarningBox("Issue Qty of selected row can't be more then balance qty!", "Warning");
                 return false;
             }
             return base.OnSaveBefore();

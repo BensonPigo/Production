@@ -113,7 +113,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 215);
+            this.masterpanel.Size = new System.Drawing.Size(1076, 215);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -153,7 +153,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 215);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 262);
+            this.detailpanel.Size = new System.Drawing.Size(1076, 262);
             // 
             // gridicon
             // 
@@ -163,12 +163,12 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(978, 0);
+            this.refresh.Location = new System.Drawing.Point(996, 0);
             this.refresh.TabIndex = 0;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 262);
+            this.detailgridcont.Size = new System.Drawing.Size(1076, 262);
             // 
             // detail2
             // 
@@ -184,16 +184,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1058, 515);
+            this.detail.Size = new System.Drawing.Size(1076, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 477);
+            this.detailcont.Size = new System.Drawing.Size(1076, 477);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1076, 38);
             // 
             // browse
             // 
@@ -201,7 +201,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1066, 544);
+            this.tabs.Size = new System.Drawing.Size(1084, 544);
             // 
             // label3
             // 
@@ -386,7 +386,7 @@
             // 
             this.btModifyRollDyelot.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btModifyRollDyelot.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btModifyRollDyelot.Location = new System.Drawing.Point(745, 76);
+            this.btModifyRollDyelot.Location = new System.Drawing.Point(743, 76);
             this.btModifyRollDyelot.Name = "btModifyRollDyelot";
             this.btModifyRollDyelot.Size = new System.Drawing.Size(131, 43);
             this.btModifyRollDyelot.TabIndex = 10;
@@ -398,9 +398,9 @@
             // 
             this.btDownloadSample.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btDownloadSample.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btDownloadSample.Location = new System.Drawing.Point(882, 125);
+            this.btDownloadSample.Location = new System.Drawing.Point(880, 125);
             this.btDownloadSample.Name = "btDownloadSample";
-            this.btDownloadSample.Size = new System.Drawing.Size(156, 30);
+            this.btDownloadSample.Size = new System.Drawing.Size(178, 30);
             this.btDownloadSample.TabIndex = 13;
             this.btDownloadSample.Text = "Download Sample File";
             this.btDownloadSample.UseVisualStyleBackColor = true;
@@ -410,9 +410,9 @@
             // 
             this.btPrintSticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btPrintSticker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btPrintSticker.Location = new System.Drawing.Point(882, 76);
+            this.btPrintSticker.Location = new System.Drawing.Point(880, 76);
             this.btPrintSticker.Name = "btPrintSticker";
-            this.btPrintSticker.Size = new System.Drawing.Size(156, 43);
+            this.btPrintSticker.Size = new System.Drawing.Size(178, 43);
             this.btPrintSticker.TabIndex = 11;
             this.btPrintSticker.Text = "Print Fabric Sticker for SMS";
             this.btPrintSticker.UseVisualStyleBackColor = true;
@@ -422,9 +422,9 @@
             // 
             this.button5.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button5.Location = new System.Drawing.Point(882, 39);
+            this.button5.Location = new System.Drawing.Point(880, 39);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(156, 31);
+            this.button5.Size = new System.Drawing.Size(178, 31);
             this.button5.TabIndex = 9;
             this.button5.Text = "Accumulated Qty";
             this.button5.UseVisualStyleBackColor = true;
@@ -434,9 +434,9 @@
             // 
             this.btImportFromExcel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btImportFromExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btImportFromExcel.Location = new System.Drawing.Point(755, 175);
+            this.btImportFromExcel.Location = new System.Drawing.Point(743, 175);
             this.btImportFromExcel.Name = "btImportFromExcel";
-            this.btImportFromExcel.Size = new System.Drawing.Size(139, 30);
+            this.btImportFromExcel.Size = new System.Drawing.Size(161, 30);
             this.btImportFromExcel.TabIndex = 14;
             this.btImportFromExcel.Text = "Import From Excel";
             this.btImportFromExcel.UseVisualStyleBackColor = true;
@@ -445,7 +445,7 @@
             // button7
             // 
             this.button7.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button7.Location = new System.Drawing.Point(745, 125);
+            this.button7.Location = new System.Drawing.Point(743, 125);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(131, 30);
             this.button7.TabIndex = 12;
@@ -460,7 +460,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1058, 215);
+            this.shapeContainer1.Size = new System.Drawing.Size(1076, 215);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -468,7 +468,7 @@
             // 
             this.lineShape1.Name = "lineShape1";
             this.lineShape1.X1 = 17;
-            this.lineShape1.X2 = 1039;
+            this.lineShape1.X2 = 1057;
             this.lineShape1.Y1 = 163;
             this.lineShape1.Y2 = 163;
             // 
@@ -568,7 +568,7 @@
             // P07
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1066, 577);
+            this.ClientSize = new System.Drawing.Size(1084, 577);
             this.DefaultControl = "textBox3";
             this.DefaultControlForEdit = "textBox3";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
