@@ -632,10 +632,10 @@ where b.id = '{0}' and b.seq1 ='{1}'and b.seq2 = '{2}'", CurrentDetailData["poid
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9)).Get(out cbb_Roll)    //6
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5)).Get(out cbb_Dyelot)    //7
             .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(13), decimal_places: 2, integer_places: 10, settings: ns2).Get(out Col_ActualQty)    //8
-            .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)    //9
+            .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", iseditingreadonly: true)    //9
             .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(13), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //10
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //11
-            .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)   //12
+            .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype)   //12
             .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false).Get(out Col_Location)    //13
             .Text("remark", header: "Remark")    //14
             ;     //

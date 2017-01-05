@@ -301,11 +301,11 @@ where pd.id='{0}' and pd.seq1 ='{1}' and pd.seq2 = '{2}'", newRow["poid"], newRo
                                     // 決定倉別
                                     if (dr2["category"].ToString() == "M")
                                     {
-                                        newRow["stocktype"] = "B";
+                                        newRow["stocktype"] = "I";
                                     }
                                     else
                                     {
-                                        newRow["stocktype"] = "I";
+                                        newRow["stocktype"] = "B";
                                     }
 
                                     //檢查location是否正確
