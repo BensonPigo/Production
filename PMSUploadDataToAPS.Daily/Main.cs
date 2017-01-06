@@ -188,13 +188,25 @@ namespace PMSUploadDataToAPS.Daily
             }
             else
             {
+                //確認輸入ID是否有在MDivision內
+                string cmdid = string.Format("select id from MDivision  where id='{0}'", MDivisionID.Text);
+                DataTable tbid;
+                DBProxy.Current.Select(null, cmdid, out tbid);
+                if (tbid.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("Please enter correct MDivision!");
+                }
                 try
                 {
                     SqlCommand cmd = new SqlCommand("usp_PMSUploadDataToAPS", conn);
-                    cmd.CommandType = CommandType.StoredProcedure;                                        
-                    cmd.Parameters.AddWithValue("@M", MDivisionID.Text);
-                    cmd.ExecuteNonQuery();
-                    cmd.Parameters.Clear();                    
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    foreach (DataRow drid in tbid.Rows)
+                    {
+                        cmd.Parameters.AddWithValue("@M", drid[0].ToString());
+                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.Clear();
+                    }
                 }
                 catch (SqlException se)
                 {
