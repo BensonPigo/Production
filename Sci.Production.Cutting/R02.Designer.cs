@@ -238,7 +238,7 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.panel1);
             this.Name = "R02";
-            this.Text = "Cutting_R02_CuttingDailyPlanSummaryReport";
+            this.Text = "R02.Cutting Daily Plan Summary Report";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.print, 0);
