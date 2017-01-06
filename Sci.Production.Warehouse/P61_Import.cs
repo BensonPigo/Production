@@ -141,6 +141,12 @@ Where c.OrderID = '{0}' and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid
                 MyUtility.Msg.WarningBox("Qty of selected row can't be zero!", "Warning");
                 return;
             }
+            dr2 = dtGridBS1.Select("qty > balance");
+            if (dr2.Length > 0)
+            {
+                MyUtility.Msg.WarningBox("Qty of selected row can't more than Stock Qty!", "Warning");
+                return;
+            }
 
             dr2 = dtGridBS1.Select("qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)

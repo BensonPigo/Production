@@ -40,10 +40,9 @@ namespace Sci.Production.Warehouse
                 StringBuilder strSQLCmd = new StringBuilder();
 
                 #region -- sqlcmd query --
-                strSQLCmd.Append(string.Format(@"select ISD.* , FTY.InQty,FTY.OutQty,FTY.AdjustQty,FTY.InQty-FTY.OutQty+FTY.AdjustQty as balanceqty,FTYD.MtlLocationID as location
+                strSQLCmd.Append(string.Format(@"select ISD.* , FTY.InQty,FTY.OutQty,FTY.AdjustQty,FTY.InQty-FTY.OutQty+FTY.AdjustQty as balanceqty,[location]=dbo.Getlocation(FTY.Ukey)   
 	from [dbo].[Issue_Detail] ISD 
 	left join [dbo].FtyInventory FTY on ISD.FtyInventoryUkey=FTY.Ukey
-	left join [dbo].FtyInventory_Detail FTYD on FTY.MDivisionPoDetailUkey=FTYD.Ukey 
 	where ISD.Id='{0}' and ISD.Issue_SummaryUkey='{1}'"
                     , CurrentDetailData["id"].ToString(), CurrentDetailData["Ukey"].ToString()));
                 #endregion
