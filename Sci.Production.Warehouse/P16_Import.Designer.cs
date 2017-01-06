@@ -146,6 +146,7 @@
             this.grid1.Size = new System.Drawing.Size(1008, 225);
             this.grid1.TabIndex = 1;
             this.grid1.TabStop = false;
+            this.grid1.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid1_RowEnter);
             // 
             // grid2
             // 

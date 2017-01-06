@@ -36,6 +36,10 @@ namespace Sci.Production.Warehouse
             Object localPrice = dtftyinventory.Compute("Sum(qty)", "selected = 1");
             this.displayBox1.Value = localPrice.ToString();
         }
+        private void grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            grid2.ValidateControl();
+        }
 
         protected override void OnFormLoaded()
         {
