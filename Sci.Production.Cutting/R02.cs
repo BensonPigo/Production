@@ -213,18 +213,19 @@ where 1 = 1
                     {
                         sqlCmd.Append(string.Format(" and Cutplan.MDivisionID ='{0}' ", WorkOrder));
                     }
-                    if (!MyUtility.Check.Empty(CutCell1))
-                    {
-                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = {0} ", i));//CutCellID1 ~ CutCellID2
-                    }
                     //if (!MyUtility.Check.Empty(CutCell1))
                     //{
-                    //    sqlCmd.Append(string.Format(" and Cutplan.CutCellID >= {0} ", CutCell1));
+                    //    sqlCmd.Append(string.Format(" and Cutplan.CutCellID = {0} ", i));
                     //}
-                    //if (!MyUtility.Check.Empty(CutCell2))
-                    //{
-                    //    sqlCmd.Append(string.Format(" and Cutplan.CutCellID <= {0} ", CutCell2));
-                    //}
+                    
+                    if (!MyUtility.Check.Empty(CutCell1))
+                    {
+                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID >= '{0}' ", CutCell1));
+                    }
+                    if (!MyUtility.Check.Empty(CutCell2))
+                    {
+                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID <= '{0}' ", CutCell2));
+                    }
 
                     sqlCmd.Append(@"
 order by [Request#],[Line#], [Cutting Date], [SP#], [Fab_Code], WS1, WS2
@@ -838,7 +839,10 @@ drop table #tmpall");
             }
             #endregion
 
-            
+            if (boolsend)
+            {
+                Send_Mail();
+            }
 
             boolsend = false;
             return true;
@@ -857,23 +861,11 @@ drop table #tmpall");
             tmpFile = Path.Combine(Sci.Env.Cfg.ReportTempDir, Guid.NewGuid() + ".xlsx");//設定存檔路徑字串
             boolshowexcel = false;
             boolsend = true;
-            this.toexcel.PerformClick();
-            Send_Mail();
+            this.toexcel.PerformClick();            
         }
 
         private void Send_Mail()
         {
-            int a1 = -1, a2 = -1;
-            int.TryParse(CutCell1, out  a1);
-            int.TryParse(CutCell2, out  a2);
-            for (int i = 0; i < a1 - a2 + 1; i++)
-            {
-                if (printData[i].Rows.Count <= 0)
-                {
-                    MyUtility.Msg.WarningBox("Data not found!");
-                    return;
-                }
-            }
             StringBuilder CuttingDate = new StringBuilder();
             StringBuilder cutcell = new StringBuilder();
             CuttingDate.Clear();
