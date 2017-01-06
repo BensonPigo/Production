@@ -249,6 +249,15 @@ namespace Sci.Production.Warehouse
             DataTable datacheck;
             DataTable dt = (DataTable)detailgridbs.DataSource;
 
+            #region 602: WAREHOUSE_P71，若P72已經Confirm了，還不能recall。
+            string P72_Status = MyUtility.GetValue.Lookup(string.Format(@"select Status from Issue where CutplanID='{0}'", CurrentMaintain["id"]));
+            if (P72_Status.ToUpper() == "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Data is confirmed in [P72. Transfer Inventory to Bulk cross M (Confirmed)], can't recall !!", "Warning");
+                return;
+            }
+            #endregion
+
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to recall it?");
             if (dResult.ToString().ToUpper() == "NO") return;
             var dr = this.CurrentMaintain; if (null == dr) return;
