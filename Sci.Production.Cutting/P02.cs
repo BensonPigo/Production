@@ -44,8 +44,6 @@ namespace Sci.Production.Cutting
         public P02(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
         {
-
-
             InitializeComponent();
             this.detailgridcont.Size = new System.Drawing.Size(624, 589);
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
@@ -1166,7 +1164,7 @@ namespace Sci.Production.Cutting
 
 
             #region 根據左邊Grid Filter 右邊資訊
-            if (!MyUtility.Check.Empty(CurrentDetailData["Ukey"]))
+            if (!MyUtility.Check.Empty(CurrentDetailData["Ukey"]) || MyUtility.Convert.GetString(CurrentDetailData["Ukey"]) == "0")
             {
                 sizeratioTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}'", CurrentDetailData["Ukey"]);
                 distqtyTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}'", CurrentDetailData["Ukey"]);
@@ -1547,6 +1545,7 @@ namespace Sci.Production.Cutting
         {
             flag = true;
             base.OnDetailGridAppendClick();
+            this.detailgrid.SelectRowTo(0);
         }
 
         //grid插入的btn, override成複製功能
@@ -1672,14 +1671,14 @@ namespace Sci.Production.Cutting
 
         protected override void OnDetailGridDelete()
         {
-            string ukey = CurrentDetailData["Ukey"].ToString();
+            string ukey = CurrentDetailData["Ukey"].ToString() == "" ? "0" : CurrentDetailData["Ukey"].ToString();
             int NewKey = Convert.ToInt16(CurrentDetailData["NewKey"]);
             DataRow[] drar = sizeratioTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = {1}", ukey, NewKey));
             foreach (DataRow dr in drar)
             {
                 dr.Delete();
             }
-            drar = distqtyTb.Select(string.Format("WorkOrderUkey = {0} and NewKey = {1}", ukey, NewKey));
+            drar = distqtyTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = {1}", ukey, NewKey));
             foreach (DataRow dr in drar)
             {
                 dr.Delete();
@@ -1751,8 +1750,6 @@ namespace Sci.Production.Cutting
                 CurrentDetailData["Cons"] = MarkerLengthNum * Convert.ToInt32(CurrentDetailData["Layer"]);
         }
 
-        //1172: CUTTING_P02_Cutting Work Order
-        //private void cal_TotalCutQty(int workorderukey,int newkey)
         private void cal_TotalCutQty(object workorderukey, object newkey)
         {
             gridValid();
@@ -1894,6 +1891,20 @@ namespace Sci.Production.Cutting
         protected override bool ClickSaveBefore()
         {
             gridValid();
+            DataTable Dg = ((DataTable)detailgridbs.DataSource);
+            for (int i = Dg.Rows.Count; i > 0; i--)
+            {
+                if (MyUtility.Check.Empty(Dg.Rows[i - 1]["MarkerName"]) || MyUtility.Check.Empty(Dg.Rows[i - 1]["Layer"]) ||
+                    MyUtility.Check.Empty(Dg.Rows[i - 1]["SEQ1"]) || MyUtility.Check.Empty(Dg.Rows[i - 1]["SEQ2"]) ||
+                    MyUtility.Convert.GetString(Dg.Rows[i - 1]["MarkerName"]) == "" ||
+                    MyUtility.Convert.GetString(Dg.Rows[i - 1]["Layer"]) == "0" ||
+                    MyUtility.Convert.GetString(Dg.Rows[i - 1]["SEQ1"]) == "" ||
+                    MyUtility.Convert.GetString(Dg.Rows[i - 1]["SEQ2"]) == "")
+                {
+                    Dg.Rows[i - 1].Delete();
+                }                
+            }
+
             #region 刪除Qty 為0
             DataTable copyTb = sizeratioTb.Copy();
             DataRow[] deledr;
@@ -1921,6 +1932,7 @@ namespace Sci.Production.Cutting
                 }
             }
             #endregion
+
             DataTable dt;
             string msg1 = "", msg2 = "";
             MyUtility.Tool.ProcessWithDatatable(sizeratioTb, "SizeCode,WorkOrderUkey,NewKey", "Select SizeCode,WorkOrderUkey,NewKey,Count() as countN from #tmp having countN >1 Group by SizeCode,WorkOrderUkey,NewKey", out dt);
