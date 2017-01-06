@@ -76,6 +76,7 @@ namespace PMSUploadDataToAPS.Daily
                 sqlmsg.Append(e.Message); });
         }
         #endregion
+
         private void btnUpdate_Click(object sender, EventArgs e)
         {
             ClickExport();
@@ -136,11 +137,10 @@ namespace PMSUploadDataToAPS.Daily
         {
             String subject = "";
             String desc = "";
-            //MyUtility.Msg.InfoBox(sqlmsg.ToString());
 
             #region 完成後發送Mail
             #region 組合 Desc
-            desc = "Sorry Test usp_PMSUploadDataToAPS";
+            desc = "UPDATE usp_PMSUploadDataToAPS";
             desc += "Dear All:" + Environment.NewLine + Environment.NewLine +
                    "             (**Please don't reply this mail. **)" + Environment.NewLine + Environment.NewLine +
                    "PMS system already uploaded data to APS." + Environment.NewLine +
@@ -148,7 +148,7 @@ namespace PMSUploadDataToAPS.Daily
                    "================================" +
                     Environment.NewLine + mailTo["Content"].ToString() + Environment.NewLine +
                     "Sql msg:" + Environment.NewLine +
-                    sqlmsg.ToString();
+                    sqlmsg.ToString() + Environment.NewLine;
             #endregion
 
             subject = mailTo["Subject"].ToString().TrimEnd() + this.CurrentData["RgCode"].ToString();
@@ -161,31 +161,48 @@ namespace PMSUploadDataToAPS.Daily
         #region Export/Update (非同步)
         private DualResult AsyncUpdateExport(SqlConnection conn)
         {
-
-            string cmdid = "select id from MDivision  where SQLServerName !='' or APSDatabaseName != '' or APSLoginId != '' or APSLoginPwd !=''";
-            DataTable tbid;
-
-            DBProxy.Current.Select(null, cmdid, out tbid);
-
-            try
+            if (MDivisionID.Text == "")
             {
-                SqlCommand cmd = new SqlCommand("usp_PMSUploadDataToAPS", conn);
-                //SqlCommand cmd = new SqlCommand("TESTTT", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
+                string cmdid = "select id from MDivision  where SQLServerName !='' or APSDatabaseName != '' or APSLoginId != '' or APSLoginPwd !=''";
+                DataTable tbid;
+                DBProxy.Current.Select(null, cmdid, out tbid);
 
-                foreach (DataRow drid in tbid.Rows)
+                try
                 {
-                    cmd.Parameters.AddWithValue("@M", drid[0].ToString());
-                    cmd.ExecuteNonQuery();
-                    cmd.Parameters.Clear();
+                    SqlCommand cmd = new SqlCommand("usp_PMSUploadDataToAPS", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    foreach (DataRow drid in tbid.Rows)
+                    {
+                        cmd.Parameters.AddWithValue("@M", drid[0].ToString());
+                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.Clear();
+                    }
                 }
+                catch (SqlException se)
+                {
+                    //return Result.F("執行資料庫預存程序時發生錯誤。", se);
+                    return Ict.Result.F(se);
+                }
+                return Ict.Result.True;
             }
-            catch (SqlException se)
+            else
             {
-                //return Result.F("執行資料庫預存程序時發生錯誤。", se);
-                return Ict.Result.F(se);
-            }                       
-            return Ict.Result.True;
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("usp_PMSUploadDataToAPS", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;                                        
+                    cmd.Parameters.AddWithValue("@M", MDivisionID.Text);
+                    cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();                    
+                }
+                catch (SqlException se)
+                {
+                    //return Result.F("執行資料庫預存程序時發生錯誤。", se);
+                    return Ict.Result.F(se);
+                }
+                return Ict.Result.True;
+            }
         }
         #endregion
     }
