@@ -261,30 +261,7 @@ namespace Sci.Production.Subcon
                 }
 
                  
-                //{
-                //    if (dt.Rows.Count < 0) { return result; }
-                //}
-
-               
-                    //string Total1 = dt.Rows[0]["Total1"].ToString();
-                    //string Total2 = dt.Rows[0]["Total2"].ToString();
-                    //string CurrencyId = dt.Rows[0]["currencyid"].ToString();
-                    //string vat = dt.Rows[0]["VatRate"].ToString();
-                    //string Grand_Total = dt.Rows[0]["Grand_Total"].ToString();
                 ReportDefinition report = e.Report;
-                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
-                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
-                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
-                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("To", To));
-                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
-                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
-                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issue_Date", Issue_Date));
-                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Delivery_Date", Delivery_Date));
-                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total1", Total1));
-                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Total2", Total2));
-                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyId", CurrencyId));
-                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat));
-                    //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Grand_Total", Grand_Total));
 
                     // 傳 list 資料            
                     List<R26_PrintData> data = dt.AsEnumerable()
