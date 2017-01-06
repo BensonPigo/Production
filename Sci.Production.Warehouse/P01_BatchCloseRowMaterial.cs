@@ -18,7 +18,7 @@ namespace Sci.Production.Warehouse
         DataTable dt_detail;
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        protected DataTable dtBatch;
+        protected DataTable [] dtBatch;
 
         public P01_BatchCloseRowMaterial()
         {
@@ -66,10 +66,10 @@ namespace Sci.Production.Warehouse
             }
 
             strSQLCmd.Append(string.Format(@"with cte_order as
-(
-	select distinct poid from dbo.orders 
-	where orders.Finished=1 and Orders.WhseClose is null and MDivisionID = '{0}'
-", Sci.Env.User.Keyword));
+                                                               (
+	                                                            select distinct poid from dbo.orders 
+	                                                            where orders.Finished=1 and Orders.WhseClose is null and MDivisionID = '{0}'
+                                                                ", Sci.Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(pulloutdate1))
             {
@@ -108,7 +108,18 @@ namespace Sci.Production.Warehouse
             }
 
             strSQLCmd.Append(string.Format(@"
-                )
+	                    EXCEPT
+	                    select temp.POID from ( 
+							                    select distinct poid from dbo.orders 
+							                    where orders.Finished=0 and Orders.WhseClose is null and MDivisionID = '{0}'
+						                      ) temp
+                )select * into #cte_temp from cte_order
+
+
+            select fty.POID,fty.Seq1,fty.Seq2 from #cte_temp cte 
+		                                      left join FtyInventory fty on cte.POID=fty.POID 
+		                                      where fty.Lock=1 and StockType='B'
+
                 select 0 Selected
                 , m.poid
                 ,x.FactoryID
@@ -123,25 +134,39 @@ namespace Sci.Production.Warehouse
                     select a.POID
                     ,max(a.ActPulloutDate) ActPulloutDate, max(a.gmtclose) ppicClose
                     from dbo.orders a 
-                    inner join cte_order b on b.POID = a.POID
+                    inner join (select poid from #cte_temp 
+								EXCEPT
+								select distinct fty.POID from #cte_temp cte 
+														 left join FtyInventory fty on cte.POID=fty.POID 
+														 where fty.Lock=1 and StockType='B'
+							   ) b on b.POID = a.POID
                     where  a.MDivisionID = '{0}' and a.Finished=1 and a.WhseClose is null 
                     group by a.poid
                 ) m
-                cross apply (select * from dbo.orders a1 where a1.id=m.POID and MDivisionID = '{0}' {1}) x
-                order by m.POID", Sci.Env.User.Keyword, categorySql
-            ));
+                cross apply (select * from dbo.orders a1 where a1.id=m.POID and MDivisionID = '{0}' {1} ) x
+                order by m.POID
+                Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
 
-            MyUtility.Msg.WaitWindows("Data Loading....");
+            this.ShowWaitMessage("Data Loading....");
 
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtBatch))
             {
-                if (dtBatch.Rows.Count == 0) { MyUtility.Msg.WarningBox("Data not found!!"); }
-                listControlBindingSource1.DataSource = dtBatch;
+                if (dtBatch[1].Rows.Count == 0) { MyUtility.Msg.WarningBox("Data not found!!"); }
+                listControlBindingSource1.DataSource = dtBatch[1];
+                if(dtBatch[0].Rows.Count > 0)
+                {
+                    StringBuilder warningmsg = new StringBuilder();
+                    foreach (DataRow row in dtBatch[0].Rows)
+                    {
+                        warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} is Lock" + Environment.NewLine, row["poid"].ToString().Trim(), row["seq1"].ToString().Trim(), row["seq2"].ToString().Trim()));
+                    }
+                    MyUtility.Msg.WarningBox(warningmsg.ToString());
+                }
                 //dtFtyinventory.DefaultView.Sort = "fabrictype,poid,seq1,seq2,location,dyelot,roll";
             }
             else { ShowErr(strSQLCmd.ToString(), result); }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
         }
 
         protected override void OnFormLoaded()
@@ -229,9 +254,9 @@ namespace Sci.Production.Warehouse
 from #tmp";
             DataTable printDatatable; 
 
-            if (dtBatch != null && dtBatch.Rows.Count > 0)
+            if (dtBatch != null && dtBatch[1].Rows.Count > 0)
             {
-                MyUtility.Tool.ProcessWithDatatable(dtBatch, "",cmd , out printDatatable, "#Tmp");
+                MyUtility.Tool.ProcessWithDatatable(dtBatch[1], "",cmd , out printDatatable, "#Tmp");
                 Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(printDatatable);
                 sdExcel.Save();
 
