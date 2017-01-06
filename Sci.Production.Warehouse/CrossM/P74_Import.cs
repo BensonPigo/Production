@@ -119,6 +119,17 @@ and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
 
             this.grid1.IsEditingReadOnly = false;
             this.grid1.DataSource = BorrowItemBS;
+
+            #region Qty Validating
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings qtyNS = new DataGridViewGeneratorNumericColumnSettings();
+            qtyNS.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                dr["qty"] = e.FormattedValue;
+                dr["Selected"] = ((decimal)e.FormattedValue == 0) ? 0 : 1;      
+            };
+            #endregion
+
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("topoid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
@@ -130,7 +141,7 @@ and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
                 .Text("frompoid", header: "From" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("fromseq1", header: "From" + Environment.NewLine + "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4))
                 .Text("fromseq2", header: "From" + Environment.NewLine + "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(3))
-                .Numeric("qty", header: "Borrow" + Environment.NewLine + "Qty", integer_places: 8, decimal_places: 2, width: Widths.AnsiChars(8)) 
+                .Numeric("qty", header: "Borrow" + Environment.NewLine + "Qty", integer_places: 8, decimal_places: 2, width: Widths.AnsiChars(8), settings: qtyNS) 
                ;            
         }
 
