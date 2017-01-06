@@ -303,7 +303,6 @@ order by k.FactoryID,k.ID");
                 objSheet.Cells[4, 16] = d1 + "~" + d2;   // 條件字串寫入excel
                 objSheet.Cells[3, 13] = totalpoqty;   // 條件字串寫入excel
                 objSheet.Cells[4, 13] = totalpartsqty;   // 條件字串寫入excel
-           
                 objApp.Visible = true;
                 if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);    //釋放sheet
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
