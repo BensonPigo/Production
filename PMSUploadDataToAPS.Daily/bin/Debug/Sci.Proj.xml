@@ -502,6 +502,7 @@
             <returns>result of the method process.</returns>
         </member>
         <!-- 忽略成員 "M:Sci.MyUtility.File.UnRARFile(System.String,System.String,System.String)" 中格式錯誤的 XML 註解 -->
+        <!-- 忽略成員 "M:Sci.MyUtility.File.UnRARFile(System.String,System.Boolean,System.String,System.String,System.Boolean)" 中格式錯誤的 XML 註解 -->
         <member name="M:Sci.MyUtility.File.ReadPoperty(System.String,System.String)">
             <summary>
             讀取內容為 {key} = {value} 這種多行格式的文字檔
@@ -969,6 +970,38 @@
             <param name="listObjs"></param>
             <returns></returns>
         </member>
+        <member name="M:Sci.ProjExts.IsOneOfThe``1(``0,``0[])">
+            <summary>
+            檢查當前物件，是否存在於檢查物件
+            </summary>
+            <param name="lookupValue"></param>
+            <param name="lookupTargets"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.ProjExts.IsOneOfThe(System.String,System.String[])">
+            <summary>
+            檢查當前文字，是否存在於檢查目標(區分大小寫比較)
+            </summary>
+            <param name="lookupValue"></param>
+            <param name="lookupTargets"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.ProjExts.IsOneOfThe(System.String,System.Boolean,System.String[])">
+            <summary>
+            檢查當前文字，是否存在於檢查目標(指定是否區分大小寫來比較)
+            </summary>
+            <param name="lookupValue"></param>
+            <param name="lookupTargets"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.ProjExts.JoinToString(System.Collections.Generic.IEnumerable{System.String},System.String)">
+            <summary>
+            用指定的分隔符號，透過string.Join方法將各項目串連起來做回傳
+            </summary>
+            <param name="items"></param>
+            <param name="delimiter"></param>
+            <returns></returns>
+        </member>
         <member name="M:Sci.ProjExts.AddCheckBoxOnHeader(System.Windows.Forms.DataGridView,System.Int32,System.EventHandler)">
             <summary>
             to add a checkBox on columnHeader
@@ -976,6 +1009,20 @@
             <param name="grid"></param>
             <param name="columnIndex">default 0 ; specify the column to create checkBox</param>
             <param name="onCheckedChanged">specify code in checkBox.CheckedChanged</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.ProjExts.GetTable(System.Windows.Forms.DataGridView)">
+            <summary>
+            由 Grid 取回 DataSource 的 Datatable，若Source不為DataTable不在此Method使用範圍內
+            </summary>
+            <param name="grid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.ProjExts.GetTableWithGridLayout(System.Windows.Forms.DataGridView)">
+            <summary>
+            由 Grid 取回 DataSource 的 Datatable，並依照Grid顯示之欄位數量、名稱設定，若Source不為DataTable不在此Method使用範圍內
+            </summary>
+            <param name="grid"></param>
             <returns></returns>
         </member>
         <member name="M:Sci.ProjExts.CopyTo(System.Data.DataRow,System.Data.DataRow,System.String)">
@@ -1094,6 +1141,13 @@
             <param name="defaultValue">default false if expression is null</param>
             <param name="expression"></param>
             <returns></returns>
+        </member>
+        <member name="M:Sci.ProjExts.SetReadOnly(System.Windows.Forms.Control,System.Boolean)">
+            <summary>
+            由Control層級設定ReadOnly屬性，若Control非指定之Type則不做其他動作
+            </summary>
+            <param name="c"></param>
+            <param name="boReadOnly"></param>
         </member>
         <member name="F:Sci.SQL.QueryConnectionName">
             
@@ -1241,7 +1295,58 @@
         <member name="F:Sci.SQL.MergeOption.InsertUpdate_SafeDelete">
             <summary> 先 Delete (not merge) , 再使用Merge 作Insert / update </summary>
         </member>
-        <member name="M:Sci.Utility.Drawing.DrawingPrg.DrawText(System.String,System.Drawing.Font,System.Drawing.Color,System.Drawing.Color,System.Int32,System.Int32)">
+        <member name="T:Sci.Utility.AutoUpdator">
+            <summary>
+            自帶Adapter和CommandBuilder的DataSet
+            </summary>
+        </member>
+        <member name="M:Sci.Utility.AutoUpdator.LoadTable(System.String,System.Object[])">
+            <summary>
+            將資料表讀取回來，包含資料與資料結構，會自動判斷Identity欄位
+            </summary>
+            <param name="sql"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Utility.AutoUpdator.LoadReferenceTable(System.String,System.String,System.Object[])">
+            <summary>
+            將資料表加入內容作為一般資料表，這種資料表不能夠成為AutoUpdate的目標
+            </summary>
+            <param name="sql"></param>
+            <param name="tableName"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Utility.AutoUpdator.UpdateAllTable">
+            <summary>
+            依照當時LoadTable的順序，循序進行Update
+            </summary>
+        </member>
+        <member name="M:Sci.Utility.AutoUpdator.Update(System.Data.DataTable[])">
+            <summary>
+            依照指定的順序更新目標Table
+            </summary>
+            <param name="tables"></param>
+        </member>
+        <member name="M:Sci.Utility.AutoUpdator.Update(System.Data.DataRow[])">
+            <summary>
+            把要更新的資料列，分所屬Table，逐一進行更新，但是順序就不太一定了
+            </summary>
+            <param name="rows"></param>
+        </member>
+        <member name="M:Sci.Utility.AutoUpdator.AppendUkeyRelation(System.Data.DataRow,System.String,System.Data.DataRow[])">
+            <summary>
+            當有使用到UKey的欄位時，會以此關聯來同步MasterRow新取回來的Ukey給他的ChildRows
+            </summary>
+            <param name="masterRow"></param>
+            <param name="detailRows"></param>
+        </member>
+        <member name="T:Sci.Utility.AutoUpdator.UkeyRelation">
+            <summary>
+            以Ukey當作PK的DetailTable，透過這個設定值來做Identity欄位同步
+            </summary>
+        </member>
+        <member name="M:Sci.Utility.Drawing.DrawingPrg.DrawText(System.String,System.Drawing.Font,System.Drawing.Color,System.Drawing.Color,System.Int32,System.Int32,System.Int32)">
             <summary>
             文字 To Image
             </summary>
@@ -1251,6 +1356,13 @@
             <param name="backColor">背景顏色</param>
             <param name="Width">寬度，預設0為自動寬度</param>
             <param name="Height">長度，預設0為自動長度</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Utility.Drawing.DrawingPrg.DwarGrayMask(System.Drawing.Image)">
+            <summary>
+            把目標圖片圖灰後回傳
+            </summary>
+            <param name="img">目標圖片</param>
             <returns></returns>
         </member>
         <member name="M:Sci.Utility.Excel.MyExcelPrg.SaveXlsAs(System.String)">
@@ -1299,6 +1411,16 @@
             設定Sheet的列印範圍，A1~最後一格
             </summary>
             <param name="sheet"></param>
+        </member>
+        <member name="M:Sci.Utility.Excel.MyExcelPrg.splitDataTable(System.Data.DataTable,System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            Edward : 分割Datatable
+                 create : 2016-05-10 16:00:00
+            </summary>
+            <param name="dt"></param>
+            <param name="colIdx"></param>
+            <param name="LeftHeader"></param>
+            <returns></returns>
         </member>
         <member name="T:Sci.Utility.Excel.SaveDataToExcel">
             <summary>
@@ -1351,16 +1473,6 @@
                  Step3.Save()
             </summary>
             <param name="Path"></param>
-        </member>
-        <member name="M:Sci.Utility.Excel.SaveXltReportCls.splitDataTable(System.Data.DataTable,System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Int32,System.Int32)">
-            <summary>
-            Edward : 分割Datatable
-                 create : 2016-05-10 16:00:00
-            </summary>
-            <param name="dt"></param>
-            <param name="colIdx"></param>
-            <param name="LeftHeader"></param>
-            <returns></returns>
         </member>
         <member name="M:Sci.Utility.Word.SaveDotReportCls.OpenFile(System.String)">
             <summary>
