@@ -217,6 +217,7 @@ namespace Sci.Production.Subcon
             {
                 foreach (DataRow tmp in dr2)
                 {
+                    
                     DataRow[] findrow = dt_localApDetail.Select(string.Format("localpo_detailukey = '{0}' ", tmp["localpo_detailukey"].ToString()));
 
                     if (findrow.Length > 0)
@@ -228,6 +229,7 @@ namespace Sci.Production.Subcon
                     }
                     else
                     {
+                        tmp["amount"] = Convert.ToDecimal(tmp["price"]) * Convert.ToDecimal(tmp["qty"]);
                         tmp["id"] = dr_localAp["id"];
                         tmp.AcceptChanges();
                         tmp.SetAdded();

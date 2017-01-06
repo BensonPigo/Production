@@ -228,7 +228,8 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            
+
+            #region -- 加總明細金額，顯示於表頭 --
             if (!(CurrentMaintain == null))
             {
                 if (!(CurrentMaintain["amount"] == DBNull.Value) && !(CurrentMaintain["vat"] == DBNull.Value))
@@ -236,7 +237,21 @@ namespace Sci.Production.Subcon
                     decimal amount = (decimal)CurrentMaintain["amount"] + (decimal)CurrentMaintain["vat"];
                     numericBox4.Text = amount.ToString();
                 }
+
+                decimal x = 0; decimal x1 = 0; decimal x2 = 0;
+                foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
+                {
+                    x += (decimal)drr["amount"];
+                }
+                x2 = x * (decimal)CurrentMaintain["VatRate"] / 100;
+                x1 += x + x2;
+                Console.WriteLine("get {0}", x);
+                numericBox3.Text = x.ToString();
+                numericBox4.Text = x1.ToString();
+                numericBox2.Text = x2.ToString();
             }
+            #endregion
+
             txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
             txtpayterm_fty1.Enabled = !this.EditMode || IsDetailInserting;
@@ -371,12 +386,12 @@ namespace Sci.Production.Subcon
 
                 if (datacheck.Rows.Count > 0)
                 {
-                    sqlupd2 += string.Format("update Localpo_detail set apqty = {0} where ukey = '{1}';"
-                        + Environment.NewLine, (decimal)datacheck.Rows[0]["qty"] + (decimal)drchk["qty"], drchk["Localpo_detailukey"]);
+                    sqlupd2 += string.Format("update Localpo_detail set qty = {0}  where ukey = '{1}';"
+                        + Environment.NewLine,(decimal)datacheck.Rows[0]["qty"] + (decimal)drchk["qty"], drchk["Localpo_detailukey"]);
                 }
                 else
                 {
-                    sqlupd2 += string.Format("update Localpo_detail set apqty = {0} where ukey = '{1}';"
+                    sqlupd2 += string.Format("update Localpo_detail set cast(qty as decimal) = {0} where ukey = '{1}';"
                         + Environment.NewLine, (decimal)drchk["qty"], drchk["Localpo_detailukey"]);
                 }
             }
@@ -445,11 +460,11 @@ namespace Sci.Production.Subcon
 
             #region 開始更新相關table資料
             sqlupd3 = string.Format(@"update Localap set status='New',apvname='', apvdate = null , editname = '{0}' 
-                                                , editdate = GETDATE() where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+                                                , editdate = GETDATE()"+ "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             foreach (DataRow drchk in DetailDatas)
             {
-                sqlcmd = string.Format(@"select b.Localpo_detailukey, sum(b.qty) qty
+                sqlcmd = string.Format(@"select b.Localpo_detailukey,sum(b.qty) qty
                                 from Localap a, Localap_detail b
                                 where a.id = b.id  and a.status ='Approved' and b.Localpo_detailukey ='{0}'
                                 group by b.Localpo_detailukey ", drchk["Localpo_detailukey"]);
@@ -461,16 +476,17 @@ namespace Sci.Production.Subcon
                 }
                 if (datacheck.Rows.Count > 0)
                 {
-                    sqlupd2 += string.Format("update Localpo_detail set apqty = {0} where ukey = '{1}';"
-                            + Environment.NewLine, (decimal)datacheck.Rows[0]["qty"] - (decimal)drchk["qty"], drchk["Localpo_detailukey"]);
+                    int x = (int)((decimal)datacheck.Rows[0]["qty"] - (decimal)drchk["qty"]);
+                    sqlupd2 += string.Format("update Localpo_detail set qty = {0} where ukey = '{1}';"
+                            + Environment.NewLine, x, drchk["Localpo_detailukey"]);
                 }
                 else
                 {
-                    sqlupd2 += string.Format("update Localpo_detail set apqty = {0} where ukey = '{1}';"
+                    sqlupd2 += string.Format("update Localpo_detail set qty = {0} where ukey = '{1}';"
                             + Environment.NewLine, 0m, drchk["Localpo_detailukey"]);
                 }
             }
-
+        
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
@@ -486,7 +502,7 @@ namespace Sci.Production.Subcon
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(sqlupd2, result);
+                        ShowErr(sqlupd2, result2);
                         return;
                     }
 
