@@ -119,6 +119,7 @@ namespace Sci.Production.Cutting
             //617: CUTTING_P02_Cutting Work Order，(5) Article值不正確 (最後多了一個/)
             foreach (DataRow dr in DetailDatas) dr["Article"] = dr["Article"].ToString().TrimEnd('/');
             sorting(comboBox1.Text);
+            this.detailgrid.SelectRowTo(0);
         }
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
@@ -2090,7 +2091,8 @@ namespace Sci.Production.Cutting
         {
             base.ClickSaveAfter();
             foreach (DataRow dr in DetailDatas) dr["SORT_NUM"] = 0;  //編輯後存檔，將[SORT_NUM]歸零
-            sorting(comboBox1.Text);
+            //sorting(comboBox1.Text);
+            OnDetailEntered();
         }
 
         private void Qtybreak_Click(object sender, EventArgs e)
