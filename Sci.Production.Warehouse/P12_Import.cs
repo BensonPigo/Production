@@ -76,7 +76,20 @@ and mdivisionid = '{1}' ", sp_b, Sci.Env.User.Keyword);
 
         protected override void OnFormLoaded()
         {
+
             base.OnFormLoaded();
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            ns.CellValidating = (s, e) =>
+            {
+                
+                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    DataRow temp = dtArtwork.Rows[e.RowIndex];
+                    temp["qty"] = e.FormattedValue;
+                    if (Convert.ToDecimal(e.FormattedValue) > 0)
+                        temp["selected"] = true;
+                }
+            };
 
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
@@ -86,7 +99,7 @@ and mdivisionid = '{1}' ", sp_b, Sci.Env.User.Keyword);
                 .Text("location", header: "Bulk Location", iseditingreadonly: true)      //2
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //3
                 .Numeric("balance", header: "Stock Qty", iseditable: true, decimal_places: 2, integer_places: 10) //4
-                .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10)  //5
+                .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10 ,settings: ns)  //5
                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(40)); //6
 
             this.grid1.Columns[5].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
@@ -117,6 +130,12 @@ and mdivisionid = '{1}' ", sp_b, Sci.Env.User.Keyword);
             if (dr2.Length > 0 )
             {
                 MyUtility.Msg.WarningBox("Qty of selected row can't be zero!", "Warning");
+                return;
+            }
+            dr2 = dtGridBS1.Select("qty > balance");
+            if (dr2.Length > 0)
+            {
+                MyUtility.Msg.WarningBox("Qty of selected row can't more than Stock Qty!", "Warning");
                 return;
             }
 
