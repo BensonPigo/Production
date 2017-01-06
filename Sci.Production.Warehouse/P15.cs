@@ -157,6 +157,15 @@ namespace Sci.Production.Warehouse
                     warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Issue Qty can't be empty"
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
                 }
+                DataTable dr = (DataTable)this.detailgridbs.DataSource;
+                DataRow[] temp = dr.Select(string.Format("poid='{0}' and seq1='{1}' and seq2='{2}'", row["poid"], row["seq1"], row["seq2"]));
+                if (temp.Count() > 1)
+                {
+                    warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} can't be duplicate"
+                        , row["poid"], row["seq1"], row["seq2"])
+                        + Environment.NewLine);
+                }
+
             }
             if (!MyUtility.Check.Empty(warningmsg.ToString()))
             {
@@ -173,7 +182,7 @@ namespace Sci.Production.Warehouse
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IP", "IssueLack", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IF", "IssueLack", (DateTime)CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");

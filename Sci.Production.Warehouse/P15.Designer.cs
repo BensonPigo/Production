@@ -44,7 +44,6 @@
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.label2 = new Sci.Win.UI.Label();
             this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
@@ -71,7 +70,6 @@
             this.masterpanel.Controls.Add(this.label7);
             this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.button2);
             this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.editBox1);
@@ -104,7 +102,6 @@
             this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
@@ -325,18 +322,6 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
-            // 
-            this.button2.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(919, 43);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(100, 31);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "UnFinish";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Visible = false;
-            // 
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
@@ -453,6 +438,5 @@
         private Win.UI.Label label7;
         private Win.UI.Label label6;
         private Win.UI.TextBox textBox2;
-        private Win.UI.Button button2;
     }
 }
