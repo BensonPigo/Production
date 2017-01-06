@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Planning
 {
@@ -18,6 +19,7 @@ namespace Sci.Production.Planning
         DateTime? sciDelivery1, sciDelivery2, buyerDelivery1, buyerDelivery2, sewinline1, sewinline2
             , cutinline1, cutinline2;
         DataTable printData;
+        decimal totalpoqty, totalpartsqty;
 
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -55,6 +57,7 @@ namespace Sci.Production.Planning
             #endregion
             subcons = txtMultiSubcon1.Subcons;
             mdivision = txtMdivision1.Text;
+            factory = txtfactory1.Text;
             selectindex = cbxCategory.SelectedIndex;
             artworktype = txtartworktype_fty1.Text;
             
@@ -75,7 +78,7 @@ namespace Sci.Production.Planning
             sp_style.ParameterName = "@style";
 
             System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
-            sp_factory.ParameterName = "@season";
+            sp_factory.ParameterName = "@factory";
 
             System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
             sp_mdivision.ParameterName = "@MDivision";
@@ -93,7 +96,7 @@ namespace Sci.Production.Planning
 	,o2.ArtworkTypeID,o2.Qty stitch,o2.Price,o2.Cost,o2.TMS
 	,(select Article +',' from (select rtrim(article) article from dbo.Order_Article where id = o1.ID) tmp for xml path('')) articles
 	,o2.ArtworkID,o2.PatternCode,o2.PatternDesc,sum(o2.PoQty) OrderQty 
-,DBO.GETSTDQTY('A',o1.id,null,null) as stdqty
+,DBO.GETSTDQTY(o1.id,'A',null,null) as stdqty
 ,DBO.getMinCompleteSewQty(o1.id,null,null) as garments
 	from dbo.orders o1 
 	inner join dbo.View_Order_Artworks o2 on o2.id = o1.ID
@@ -200,7 +203,8 @@ outer apply (select t3.Mockup,t3.Oven,t3.Wash from  dbo.style_artwork t2
 inner join dbo.Style_Artwork_Quot t3 on t3.Ukey = t2.Ukey
 inner join dbo.Order_Article t4 on t4.id = x.ID
 where t2.StyleUkey = x.StyleUkey and t2.Article = t4.Article and t2.ArtworkTypeID = x.ArtworkTypeID and
-t2.PatternCode = x.PatternCode and t3.PriceApv = 'Y') x2
+t2.PatternCode = x.PatternCode and t3.PriceApv = 'Y'
+) x2
 )
 , farm_in_out as(
 select * 
@@ -240,6 +244,13 @@ order by k.FactoryID,k.ID");
 
             DBProxy.Current.DefaultTimeout = 1800;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            foreach (DataRow dr in printData.Rows) 
+            {
+             string poqty = dr["poqty"].ToString();
+             string totalqty = dr["total_stitch"].ToString();
+             totalpoqty = totalpoqty +=  Convert.ToDecimal(poqty);
+             totalpartsqty = totalpartsqty += Convert.ToDecimal(totalqty);
+            }
             DBProxy.Current.DefaultTimeout = 0;
             if (!result)
             {
@@ -247,6 +258,7 @@ order by k.FactoryID,k.ID");
                 return failResult;
             }
             return Result.True;
+            
         }
 
         // 產生Excel
@@ -272,16 +284,49 @@ order by k.FactoryID,k.ID");
                 MyUtility.Msg.WarningBox("Lines of Data is over 1,048,576 in excel file, please narrow down range of condition.");
                 return false;
             }
-
+            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+            saveDialog.ShowDialog();
+            string outpath = saveDialog.FileName;
+            if (outpath.Empty())
+            {
+                return false;
+            }
             if (checkBox1.Checked)
             {
-
-                MyUtility.Excel.CopyToXls(printData, "", "Planning_R02_Detail.xltx", 6);
+                Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Planning_R02_Detail.xltx");
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R02_Detail.xltx"); //預先開啟excel app
+                MyUtility.Excel.CopyToXls(printData, "", "Planning_R02_Detail.xltx", 6, true, null, objApp);      // 將datatable copy to excel
+                objApp.Visible = false;
+                Microsoft.Office.Interop.Excel.Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                string d1 = (MyUtility.Check.Empty(sciDelivery1)) ? "" : Convert.ToDateTime(sciDelivery1).ToString("yyyy/MM/dd");
+                string d2 = (MyUtility.Check.Empty(sciDelivery2)) ? "" : Convert.ToDateTime(sciDelivery2).ToString("yyyy/MM/dd");
+                objSheet.Cells[4, 16] = d1 + "~" + d2;   // 條件字串寫入excel
+                objSheet.Cells[3, 13] = totalpoqty;   // 條件字串寫入excel
+                objSheet.Cells[4, 13] = totalpartsqty;   // 條件字串寫入excel
+           
+                objApp.Visible = true;
+                if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);    //釋放sheet
+                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                return true;
             }
             else
-                MyUtility.Excel.CopyToXls(printData, "", "Planning_R02.xltx", 6);
-
+            {
+                Microsoft.Office.Interop.Excel.Application objApp2 = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R02.xltx"); //預先開啟excel app
+                MyUtility.Excel.CopyToXls(printData, "", "Planning_R02.xltx", 6, true, null, objApp2);      // 將datatable copy to excel
+                objApp2.Visible = false;
+                Microsoft.Office.Interop.Excel.Worksheet objSheet2 = objApp2.ActiveWorkbook.Worksheets[1];   // 取得工作表
+               
+                string d3 = (MyUtility.Check.Empty(sciDelivery1)) ? "" : Convert.ToDateTime(sciDelivery1).ToString("yyyy/MM/dd");
+                string d4 = (MyUtility.Check.Empty(sciDelivery2)) ? "" : Convert.ToDateTime(sciDelivery2).ToString("yyyy/MM/dd");
+                objSheet2.Cells[4, 16] = d3 + "~" + d4;   // 條件字串寫入excel
+                objSheet2.Cells[3, 13] = totalpoqty;   // 條件字串寫入excel
+                objSheet2.Cells[4, 13] = totalpartsqty;   // 條件字串寫入excel
+                objApp2.Visible = true;
+            if (objSheet2 != null) Marshal.FinalReleaseComObject(objSheet2);    //釋放sheet
+            if (objApp2 != null) Marshal.FinalReleaseComObject(objApp2);          //釋放objApp
             return true;
+            }
+         
         }
     }
 }
