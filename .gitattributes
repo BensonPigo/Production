@@ -793,6 +793,8 @@ Sci.Production.Basic/Properties/Resources.Designer.cs -text
 Sci.Production.Basic/Properties/Resources.resx -text
 Sci.Production.Basic/Resources/Carton.bmp -text
 Sci.Production.Basic/Sci.Production.Basic.csproj -text
+Sci.Production.Class/Command/TradeSystem.cs -text
+Sci.Production.Class/Command/UserPrg.cs -text
 Sci.Production.Class/Holiday.Designer.cs -text
 Sci.Production.Class/Holiday.cs -text
 Sci.Production.Class/Holiday.resx -text
