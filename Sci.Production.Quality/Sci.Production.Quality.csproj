@@ -561,10 +561,6 @@
       <Project>{F1A7F278-EFA9-4DDA-B68A-202093B2444C}</Project>
       <Name>Sci.Production.Tools</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sci.Trade.Class\Sci.Trade.Class.csproj">
-      <Project>{23a1d79e-68ab-4d45-8c1d-11a34edd3369}</Project>
-      <Name>Sci.Trade.Class</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
