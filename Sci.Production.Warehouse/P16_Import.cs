@@ -213,8 +213,19 @@ Where a.id = '{0}' and c.lock = 0  and c.mdivisionid='{1}' ", dr_master["request
             dr2 = dtftyinventory.Select("qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll ='{3}'and dyelot='{4}'"
-                    , tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString()));
+                DataRow[] findrow;
+
+                //判斷為P15(副料)呼叫還是P16(主料)呼叫
+                if (this.Text.ToString().Contains("P15"))
+                {
+                    findrow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}'"
+                        , tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString()));
+                }
+                else
+                {
+                    findrow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll ='{3}'and dyelot='{4}'"
+                        , tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString()));
+                }
 
                 if (findrow.Length > 0)
                 {
