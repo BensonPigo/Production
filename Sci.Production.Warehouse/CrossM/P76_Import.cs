@@ -157,7 +157,31 @@ where d.id='{0}' and i.CutplanID = '{0}' and i.Status = 'Confirmed'
             }
 
             dr2 = dt.Select("qty <> 0 and Selected = 1");
+
+            //Sum P76_Import 
+            DataTable sumDetail = dt_detail.Clone();
             foreach (DataRow tmp in dr2)
+            {
+                DataRow[] findrow = sumDetail.Select(string.Format(@"mdivisionid = '{0}' and poid = '{1}' and seq1 = '{2}' and seq2 = '{3}' 
+                        and roll = '{4}' and dyelot = '{5}' and stocktype = '{6}'"
+                    , tmp["Mdivisionid"], tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["dyelot"], tmp["stocktype"]));
+
+                if (findrow.Length > 0)
+                {
+                    findrow[0]["qty"] = Convert.ToDecimal(findrow[0]["qty"]) + Convert.ToDecimal(tmp["qty"]);
+                    findrow[0]["Location"] += "," + tmp["Location"];
+                }
+                else
+                {
+                    tmp["id"] = dr_master["id"];
+                    tmp.AcceptChanges();
+                    tmp.SetAdded();
+                    sumDetail.ImportRow(tmp);
+                }
+            }
+
+            //update P76 Detail
+            foreach (DataRow tmp in sumDetail.Rows)
             {
                 DataRow[] findrow = dt_detail.Select(string.Format(@"mdivisionid = '{0}' and poid = '{1}' and seq1 = '{2}' and seq2 = '{3}' 
                         and roll = '{4}' and dyelot = '{5}' and stocktype = '{6}'"
@@ -165,7 +189,7 @@ where d.id='{0}' and i.CutplanID = '{0}' and i.Status = 'Confirmed'
 
                 if (findrow.Length > 0)
                 {
-                    findrow[0]["qty"] = tmp["qty"];
+                    findrow[0]["qty"] =  tmp["qty"];
                     findrow[0]["Location"] = tmp["Location"];
                 }
                 else
@@ -176,7 +200,6 @@ where d.id='{0}' and i.CutplanID = '{0}' and i.Status = 'Confirmed'
                     dt_detail.ImportRow(tmp);
                 }
             }
-
 
             this.Close();
         }
