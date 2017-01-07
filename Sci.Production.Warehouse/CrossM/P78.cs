@@ -271,7 +271,7 @@ namespace Sci.Production.Warehouse
             .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(8))
             .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(4))
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true, settings: ns).Get(out col_Qty)
-            .ComboBox("stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(10), settings: sk).Get(out cbb_stocktype)
+            .ComboBox("stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(10)).Get(out cbb_stocktype)
             .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(30)).Get(out col_Location)
             ;     //
             #endregion 欄位設定
