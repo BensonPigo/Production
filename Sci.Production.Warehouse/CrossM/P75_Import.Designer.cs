@@ -133,6 +133,7 @@
             this.gridMaster.Size = new System.Drawing.Size(1008, 205);
             this.gridMaster.TabIndex = 0;
             this.gridMaster.TabStop = false;
+            this.gridMaster.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridMaster_RowEnter);
             // 
             // gridDetail
             // 

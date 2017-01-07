@@ -212,6 +212,11 @@ where lock = 0 and fi.InQty - fi.OutQty+fi.AdjustQty > 0;", dr_master["cutplanid
             this.Close();
         }
 
+        private void gridMaster_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            gridDetail.ValidateControl();
+        }
+
         
     }
 }
