@@ -19,7 +19,12 @@ namespace Sci.Production.Warehouse
         DataRow dr_master;
         DataTable dt_detail;
         DataSet dsTmp;
+        DataSet dsTmp2;
         StringBuilder strSQLCmd = new StringBuilder();
+        StringBuilder strSQLCmd2 = new StringBuilder();
+
+        private int grid1SelectIndex = 0;
+
         protected DataTable dtBorrow;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         DataRelation relation;
@@ -130,54 +135,190 @@ namespace Sci.Production.Warehouse
                 }
             };
             #endregion
-            Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
+
+            #region ReciveQty
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings cs = new DataGridViewGeneratorNumericColumnSettings();
+
+            cs.CellValidating += (s, e) =>
+            {
+                //check 判斷總數在Borrowing or Return 超過
+                bool checkBorrowingQty = false, checkReturnQty = false;
+                //紀錄 Borrowing and Return 總數
+                decimal sumBorrowing = 0, sumReturn = 0;
+                //Get Grid2 目前選取的Data
+                DataRow grid2Dr = grid2.GetDataRow(e.RowIndex);               
+                grid2Dr["ReciveQty"] = 0;
+
+                #region Grid1.Qty <= BorrowingQty
+                DataRow grid1Dr = grid1.GetDataRow(grid1SelectIndex);
+
+                //Borrowing 加總條件 BorrowingSP, BorrowingSeq, StockType
+                DataRow[] findrow = grid2.GetTable().Select(string.Format("BorrowingSP = '{0}' and BorrowingSeq = '{1}' and StockType = '{2}'", grid1Dr["BorrowingSP"], grid1Dr["BorrowingSeq"], grid1Dr["StockType"]));
+                foreach (DataRow dr in findrow)
+                    sumBorrowing += Convert.ToDecimal(dr["ReciveQty"]);
+
+                if ((sumBorrowing + Convert.ToDecimal(e.FormattedValue)) <= Convert.ToDecimal(grid1Dr["BorrowingQty"]))
+                    checkBorrowingQty = true;
+
+                findrow = null;
+                #endregion
+
+                #region Grid2.Accu <= ReturnQty
+                //Return 加總條件 ReturnSp, ReturnSeq, Roll, Dyelot
+                findrow = grid2.GetTable().Select(string.Format("ReturnSP = '{0}' and ReturnSeq = '{1}' and Roll = '{2}' and Dyelot = '{3}'", grid1Dr["ReturnSP"], grid1Dr["ReturnSeq"], grid2Dr["Roll"], grid2Dr["Dyelot"]));
+                foreach (DataRow dr in findrow)
+                    sumReturn += Convert.ToDecimal(dr["ReciveQty"]);
+
+                if ((sumReturn + Convert.ToDecimal(e.FormattedValue)) <= Convert.ToDecimal(grid2Dr["ReturnQty"]))
+                    checkReturnQty = true;
+                #endregion
+
+                if (checkBorrowingQty & checkReturnQty)
+                {
+                    grid2Dr["ReciveQty"] = e.FormattedValue;
+
+                    //寫回 AccuReciveQty
+                    foreach (DataRow dr in findrow)
+                        dr["AccuReciveQty"] = sumReturn + Convert.ToDecimal(grid2Dr["ReciveQty"]);
+                    grid1Dr["Qty"] = (sumBorrowing + Convert.ToDecimal(grid2Dr["ReciveQty"]));
+                }
+                else
+                {
+                    //寫回 AccuReciveQty
+                    foreach (DataRow dr in findrow)
+                        dr["AccuReciveQty"] = sumReturn;
+                    grid1Dr["Qty"] = sumBorrowing;
+                    e.Cancel = true;
+                }
+
+            };
+            #endregion
+
+            Ict.Win.UI.DataGridViewNumericBoxColumn col_ReciveQty;
+
             this.grid1.IsEditingReadOnly = false;
             this.grid1.DataSource = TaipeiOutputBS;
             Helper.Controls.Grid.Generator(this.grid1)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
-                .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4)) 
-                .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(3))
-                .EditText("description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) 
-                .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(8))
-                .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(4))
-                .Numeric("qty", header: "Received" + Environment.NewLine + "Qty", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)).Get(out col_Qty)
-                .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6))
-                .ComboBox("stocktype", header: "Stock" + Environment.NewLine + "Typt", width: Widths.AnsiChars(10), settings: sk).Get(out cbb_stocktype)
-                .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(30)).Get(out col_Location)
-               ;
+                .Text("BorrowingSP", header: "Borrowing" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(20))
+                .Text("BorrowingSeq", header: "Borrowing" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
+                .Text("StockType", header: "StockType", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .Numeric("BorrowingQty", header: "BorrowingQty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .Text("ReturnSP", header: "Return" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(20))
+                .Text("ReturnSeq", header: "Return" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
+                .Numeric("Qty", header: "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8));
 
-            col_Location.DefaultCellStyle.BackColor = Color.Pink;
-            cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
-            cbb_stocktype.ValueMember = "Key";
-            cbb_stocktype.DisplayMember = "Value";
+
+            this.grid2.IsEditingReadOnly = false;
+            this.grid2.DataSource = TaipeiOutputBS_Detail;
+            Helper.Controls.Grid.Generator(this.grid2)
+                .Text("BorrowingSP", header: "Borrowing" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(20))
+                .Text("BorrowingSeq", header: "Borrowing" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
+                .Text("StockType", header: "StockType", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .Text("StockUnit", header: "StockUnit", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .Text("Roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .Text("Dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .Numeric("ReturnQty", header: "Return" + Environment.NewLine + "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .Numeric("AccuReciveQty", header: "AccuRecive" + Environment.NewLine + "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .Numeric("ReciveQty", header: "Recive" + Environment.NewLine + "Qty", iseditingreadonly: false, integer_places: 10, decimal_places: 2, width: Widths.AnsiChars(8), settings: cs).Get(out col_ReciveQty);
+
+            col_ReciveQty.DefaultCellStyle.BackColor = Color.Pink;
 
                 // 建立可以符合回傳的Cursor
                 #region -- Sql Command --
                 strSQLCmd.Append(string.Format(@"
-select 0 as selected,'' id,d.FromMDivisionID MDivisionID,d.FromPOID poid,d.FromSeq1 seq1,d.FromSeq2 seq2, left(d.FromSeq1+'   ',3)+d.FromSeq2 as seq
-    , d2.Roll roll,d2.Dyelot dyelot,d2.Qty,'I' stocktype 
-    , dbo.getMtlDesc(d.ToPOID,d.ToSeq1,d.ToSeq2,2,0) [description]
-    , (select stockunit from dbo.po_supp_detail where id = d.topoid and seq1 = d.toseq1 and seq2 = d.toseq2) stockunit
-    ,'' location
-from dbo.RequestCrossM_Detail d 
-inner join dbo.Issue_Detail d2 on d2.POID = d.ToPOID and d2.seq1 = d.ToSeq1 and d2.seq2 = d.ToSeq2
-inner join dbo.Issue i on i.Id = d2.Id 
-where d.id=i.CutplanID and i.id = '{0}' and i.Status = 'Confirmed' and d.FromMDivisionID = '{1}'
+select distinct
+BorrowingSP		= ID.POID,
+BorrowingSeq	= concat(ID.Seq1, ' ', ID.Seq2),
+StockType		= ID.StockType,
+BorrowingQty	= ID.Qty,
+ReturnSP		= RCM.POID,
+ReturnSeq		= concat(RCM.Seq1, ' ', RCM.Seq2),
+Qty				= 0.00
+--,
+--FromSeq1		= ID.Seq1,
+--FromSeq2		= ID.Seq2,
+--ToSeq1			= RCM.Seq1,
+--ToSeq2			= RCM.Seq2
+from Issue I
+inner join Issue_Detail ID on I.Id = ID.id
+inner join RequestCrossM_Receive RCM on I.CutplanID = RCM.id
+
+where I.CutplanID = (select CutplanID from Issue where ID = '{0}')
+and i.MDivisionID= '{1}'
+and I.Status = 'Confirmed';
 ", dr_master["referenceid"], Sci.Env.User.Keyword));
-                #endregion
 
+                strSQLCmd2.Append(string.Format(@"
+with grid1 as(
+	select distinct
+	BorrowingSP		= ID.POID,
+	BorrowingSeq	= concat(ID.Seq1, ' ', ID.Seq2),
+	BorrowingQty	= ID.Qty,
+	StockType		= ID.StockType,
+	ReturnSP		= RCM.POID,
+	ReturnSeq		= concat(RCM.Seq1, ' ', RCM.Seq2),
+	ReturnQty		= 0.00,
+	BorrowingSeq1	= ID.Seq1,
+	BorrowingSeq2	= ID.Seq2,
+	ReturnSeq1		= RCM.Seq1,
+	ReturnSeq2		= RCM.Seq2
+	from Issue I
+	inner join Issue_Detail ID on I.Id = ID.id
+	inner join RequestCrossM_Receive RCM on I.CutplanID = RCM.id
 
+	where I.CutplanID = (select CutplanID from Issue where ID = '{0}')
+	and i.MDivisionID= '{1}'
+	and I.Status = 'Confirmed'
+),
+grid2 as(
+	select 
+	ReturnSP		= ID.POID,
+	ReturnSeq		= concat(ID.Seq1, ' ', ID.Seq2),
+	Dyelot			= ID.Dyelot,
+	Roll			= ID.Roll,
+	ReturnQty		= ID.Qty,
+	ReciveQty		= 0.00,
+	AccuReciveQty	= 0.00,
+	ReturnSeq1		= ID.Seq1,
+	ReturnSeq2		= ID.Seq2
+	from Issue I 
+	inner join Issue_Detail ID on I.Id = ID.Id
+	where I.Id = '{0}' and I.Status = 'Confirmed'
+)
+select 
+    id = '',
+	g1.BorrowingSP,
+	g1.BorrowingSeq,	
+	g1.StockType,
+	stockunit       = (select stockunit from dbo.po_supp_detail where id = g2.ReturnSP and seq1 = g2.ReturnSeq1 and seq2 = g2.ReturnSeq2),
+	g2.ReturnSp,
+	g2.ReturnSeq,
+	g2.Roll,
+	g2.Dyelot,
+	g2.ReturnQty, 
+	g2.AccuReciveQty,
+	g2.ReciveQty,	
+    description     = dbo.getmtldesc(g1.BorrowingSP, g1.BorrowingSeq1, g1.BorrowingSeq2, 2, 0),
+	g1.BorrowingSeq1,
+	g1.BorrowingSeq2
+from grid1 g1 
+inner join grid2 g2 on g1.ReturnSP = g2.ReturnSP and g1.ReturnSeq = g2.ReturnSeq
+order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelot, StockType
+", dr_master["referenceid"], Sci.Env.User.Keyword));
+                #endregion             
+            
                 MyUtility.Msg.WaitWindows("Data Loading....");
 
                 if (!SQL.Selects("", strSQLCmd.ToString(), out dsTmp)) 
                 { return; }
 
-                DataTable dtReceive = dsTmp.Tables[0];
-                TaipeiOutputBS.DataSource = dtReceive;
+                if (!SQL.Selects("", strSQLCmd2.ToString(), out dsTmp2))
+                { return; }
+
+                TaipeiOutputBS.DataSource = dsTmp.Tables[0];
+                TaipeiOutputBS_Detail.DataSource = dsTmp2.Tables[0];
 
                 MyUtility.Msg.WaitClear();
-
         }
 
         // Cancel
@@ -189,33 +330,36 @@ where d.id=i.CutplanID and i.id = '{0}' and i.Status = 'Confirmed' and d.FromMDi
          private void btn_Import_Click(object sender, EventArgs e)
         {
             grid1.ValidateControl();
-            DataTable dt = (DataTable)TaipeiOutputBS.DataSource;
-            DataRow[] dr2 = dt.Select("Selected = 1");
-            if (dr2.Length == 0)
-            {
-                MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
-                return;
-            }
 
-            dr2 = dt.Select("qty = 0 and Selected = 1");
-            if (dr2.Length > 0)
+            #region check Qty 
+            foreach (DataRow dr in grid2.GetTable().Rows)
             {
-                MyUtility.Msg.WarningBox("Qty of selected row can't be zero!", "Warning");
-                return;
+                if (Convert.ToDecimal(dr["ReturnQty"]) - Convert.ToDecimal(dr["AccuReciveQty"]) != 0)
+                {
+                    MyUtility.Msg.WarningBox("ReturnQty Err");
+                    return;
+                }
             }
+            #endregion
 
-            dr2 = dt.Select("qty <> 0 and Selected = 1");
-            foreach (DataRow tmp in dr2)
+            grid2.GetTable().Columns["BorrowingSP"].ColumnName = "POID";
+            grid2.GetTable().Columns["BorrowingSeq"].ColumnName = "Seq";
+            grid2.GetTable().Columns["BorrowingSeq1"].ColumnName = "Seq1";
+            grid2.GetTable().Columns["BorrowingSeq2"].ColumnName = "Seq2";
+            grid2.GetTable().Columns["ReciveQty"].ColumnName = "qty";
+            DataRow[] findRow = grid2.GetTable().Select("qty > 0");
+
+            foreach (DataRow tmp in findRow)
             {
                 DataRow[] findrow = dt_detail.Select(string.Format(@"mdivisionid = '{0}' and poid = '{1}' and seq1 = '{2}' and seq2 = '{3}' 
                         and roll = '{4}' and dyelot = '{5}'"
-                    , tmp["Mdivisionid"], tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["dyelot"]));
+                    , Sci.Env.User.Keyword, tmp["POID"], tmp["Seq1"], tmp["Seq2"], tmp["Roll"], tmp["Dyelot"]));
 
                 if (findrow.Length > 0)
                 {
-                    findrow[0]["stocktype"] = tmp["stocktype"];
+                    findrow[0]["stocktype"] = tmp["StockType"];
                     findrow[0]["qty"] = tmp["qty"];
-                    findrow[0]["Location"] = tmp["Location"];
+                    //findrow[0]["Location"] = tmp["Location"];
                 }
                 else
                 {
@@ -229,6 +373,13 @@ where d.id=i.CutplanID and i.id = '{0}' and i.Status = 'Confirmed' and d.FromMDi
 
             this.Close();
         }
+
+         private void grid1_RowSelecting(object sender, Ict.Win.UI.DataGridViewRowSelectingEventArgs e)
+         {
+             grid1SelectIndex = e.RowIndex;
+             DataRow dr = grid1.GetDataRow(grid1SelectIndex);
+             TaipeiOutputBS_Detail.Filter = string.Format("BorrowingSP = '{0}' and BorrowingSeq = '{1}' and StockType = '{2}'", dr["BorrowingSP"], dr["BorrowingSeq"], dr["StockType"]);
+         }
 
     }
 }

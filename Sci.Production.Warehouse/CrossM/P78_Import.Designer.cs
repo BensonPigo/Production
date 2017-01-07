@@ -28,16 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btn_Cancel = new Sci.Win.UI.Button();
             this.btn_Import = new Sci.Win.UI.Button();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.TaipeiOutputBS = new Sci.Win.UI.ListControlBindingSource();
+            this.TaipeiOutputBS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.TaipeiOutputBS_Detail = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
+            this.grid2 = new Sci.Win.UI.Grid();
             this.grid1 = new Sci.Win.UI.Grid();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TaipeiOutputBS)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TaipeiOutputBS_Detail)).BeginInit();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -86,6 +91,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.grid2);
             this.panel2.Controls.Add(this.grid1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 48);
@@ -93,12 +99,33 @@
             this.panel2.Size = new System.Drawing.Size(1008, 500);
             this.panel2.TabIndex = 20;
             // 
+            // grid2
+            // 
+            this.grid2.AllowUserToAddRows = false;
+            this.grid2.AllowUserToDeleteRows = false;
+            this.grid2.AllowUserToResizeRows = false;
+            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid2.Location = new System.Drawing.Point(0, 247);
+            this.grid2.Name = "grid2";
+            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid2.RowTemplate.Height = 24;
+            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid2.Size = new System.Drawing.Size(1008, 253);
+            this.grid2.TabIndex = 1;
+            this.grid2.TabStop = false;
+            // 
             // grid1
             // 
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
             this.grid1.AllowUserToResizeRows = false;
-            this.grid1.AutoGenerateColumns = true;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -116,6 +143,7 @@
             this.grid1.Size = new System.Drawing.Size(1008, 500);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
+            this.grid1.RowSelecting += new System.EventHandler<Ict.Win.UI.DataGridViewRowSelectingEventArgs>(this.grid1_RowSelecting);
             // 
             // P78_Import
             // 
@@ -127,7 +155,9 @@
             this.Text = "P78. Import Detail";
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.TaipeiOutputBS)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TaipeiOutputBS_Detail)).EndInit();
             this.panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.ResumeLayout(false);
 
@@ -139,8 +169,10 @@
         private Win.UI.Button btn_Import;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.ListControlBindingSource TaipeiOutputBS;
+        private Win.UI.ListControlBindingSource TaipeiOutputBS_Detail;
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
         private Win.UI.Grid grid1;
+        private Win.UI.Grid grid2;
     }
 }
