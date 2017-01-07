@@ -15,9 +15,8 @@ namespace Sci.Production.Class
 {
     public partial class txtuser : Sci.Win.UI._UserControl
     {
-        
         public txtuser()
-        {
+        {            
             InitializeComponent();
             
         }
@@ -37,14 +36,18 @@ namespace Sci.Production.Class
         public string TextBox1Binding
         {
             set 
-            { 
+            {               
                 this.textBox1.Text = value;
                 if (!Env.DesignTime)
-                {                
-
+                {
+                    if (this.textBox1.Text == "" || MyUtility.Check.Empty(this.textBox1.Text))
+                    {
+                        return;
+                    }
+                    
                     Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
                     this.DisplayBox1.Text = myUsername;
-
+           
                 }
             }
             get { return textBox1.Text; }
@@ -179,7 +182,7 @@ namespace Sci.Production.Class
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
-            this.displayBox1.Text = item.GetSelecteds()[0]["EXTNO"].ToString().TrimEnd();
+            this.displayBox1.Text = item.GetSelecteds()[0]["Name"].ToString().TrimEnd()+" #"+ item.GetSelecteds()[0]["EXTNO"].ToString().TrimEnd();
         }
     }
 }
