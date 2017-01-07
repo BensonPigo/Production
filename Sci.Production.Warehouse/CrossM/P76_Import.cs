@@ -99,10 +99,10 @@ namespace Sci.Production.Warehouse
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(4))
                 .Numeric("qty", header: "Received" + Environment.NewLine + "Qty", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)).Get(out col_Qty)
                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6))
-                .Text("Location", header: "Location", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(30)).Get(out col_Location)
+                //.Text("Location", header: "Location", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(30)).Get(out col_Location)
                ;
 
-            col_Location.DefaultCellStyle.BackColor = Color.Pink;
+            //col_Location.DefaultCellStyle.BackColor = Color.Pink;
 
                 // 建立可以符合回傳的Cursor
                 #region -- Sql Command --
@@ -169,7 +169,7 @@ where d.id='{0}' and i.CutplanID = '{0}' and i.Status = 'Confirmed'
                 if (findrow.Length > 0)
                 {
                     findrow[0]["qty"] = Convert.ToDecimal(findrow[0]["qty"]) + Convert.ToDecimal(tmp["qty"]);
-                    findrow[0]["Location"] += "," + tmp["Location"];
+                    //findrow[0]["Location"] += "," + tmp["Location"];
                 }
                 else
                 {
@@ -190,7 +190,7 @@ where d.id='{0}' and i.CutplanID = '{0}' and i.Status = 'Confirmed'
                 if (findrow.Length > 0)
                 {
                     findrow[0]["qty"] =  tmp["qty"];
-                    findrow[0]["Location"] = tmp["Location"];
+                    //findrow[0]["Location"] = tmp["Location"];
                 }
                 else
                 {
