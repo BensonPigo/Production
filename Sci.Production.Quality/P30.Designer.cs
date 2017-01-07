@@ -60,7 +60,7 @@
             this.textBox11 = new Sci.Win.UI.DateBox();
             this.textBox15 = new Sci.Win.UI.DateBox();
             this.textBox9 = new Sci.Production.Class.txtuser();
-            this.dropDownListTableAdapter1 = new Sci.Trade.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter();
+            this.dropDownListTableAdapter1 = new Sci.Production.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter();
             this.textBox6 = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -618,7 +618,7 @@
         private Win.UI.CheckBox checkBox2;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.ComboBox comboBox1;
-        private Trade.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter dropDownListTableAdapter1;
+        private Production.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter dropDownListTableAdapter1;
         private Win.UI.DateBox textBox8;
         private Win.UI.DateBox textBox13;
         private Win.UI.DateBox textBox15;
