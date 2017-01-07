@@ -1278,7 +1278,7 @@ namespace Sci.Production.Cutting
 
 
         }
-
+        
         //程式產生的BindingSource 必須自行Dispose, 以節省資源
         protected override void OnFormDispose()
         {
@@ -1691,7 +1691,11 @@ namespace Sci.Production.Cutting
             }
             base.OnDetailGridDelete();
         }
-
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            OnDetailEntered();
+        }
         private void insertSizeRatioToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DataRow ndr = sizeratioTb.NewRow();
