@@ -52,6 +52,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Command\TradeSystem.cs" />
+    <Compile Include="Command\UserPrg.cs" />
     <Compile Include="Holiday.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -378,6 +380,10 @@
     <Reference Include="Sci, Version=1.0.1503.2400, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Sci.dll</HintPath>
+    </Reference>
+    <Reference Include="Sci.Production.Class, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Sci.Production.Class.dll</HintPath>
     </Reference>
     <Reference Include="Sci.Proj, Version=1.0.1503.1700, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
