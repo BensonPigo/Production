@@ -73,8 +73,8 @@ namespace Sci.Production.IE
         private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WHERE Junk=0  ORDER BY Id";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,50,50", textBox4.Text, false, ",");
-
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,30,30", textBox4.Text, false, ",");
+            item.Size = new System.Drawing.Size(750, 500);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             textBox4.Text = item.GetSelectedString();
