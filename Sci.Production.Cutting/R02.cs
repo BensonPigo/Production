@@ -890,10 +890,10 @@ drop table #tmpall");
             DBProxy.Current.Select(null, mailcmd, out maildt);
             string ToAddress = MyUtility.Convert.GetString(maildt.Rows[0]["ToAddress"]);
             string CcAddress = MyUtility.Convert.GetString(maildt.Rows[0]["CcAddress"]);
-            string Subject = MyUtility.Convert.GetString(maildt.Rows[0]["Subject"]) + CuttingDate;
+            string Subject = MyUtility.Convert.GetString(maildt.Rows[0]["Subject"]) +"-"+ CuttingDate;
 
             var email = new MailTo(Sci.Env.User.MailAddress, ToAddress, CcAddress,
-                Subject + '-' + CuttingDate,
+                Subject,
                 tmpFile,
                 "\r\nFilter as below description:\r\nCutting Date: " + CuttingDate + "\r\nCut Cell: " + cutcell + "\r\nM: " + WorkOrder, false, true);
             email.ShowDialog(this);
