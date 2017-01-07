@@ -13,8 +13,6 @@ using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
 using System.Data.SqlClient;
-using Sci.Trade.Class.Commons;
-
 
 namespace Sci.Production.Quality
 {
@@ -376,7 +374,7 @@ namespace Sci.Production.Quality
 
             foreach (DataRow dr in dt.Rows)
             {
-                dr["LastUpdate"] = UserPrg.GetName(dt.Rows[i]["EditName"].ToString(), UserPrg.NameType.nameOnly) + " - " + dt.Rows[i]["EditDate"].ToString();
+                dr["LastUpdate"] = Sci.Production.Class.Commons.UserPrg.GetName(dt.Rows[i]["EditName"].ToString(), Sci.Production.Class.Commons.UserPrg.NameType.nameOnly) + " - " + dt.Rows[i]["EditDate"].ToString();
                 i++;
             }
             return base.OnRenewDataDetailPost(e);
