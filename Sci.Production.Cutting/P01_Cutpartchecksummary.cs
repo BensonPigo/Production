@@ -96,6 +96,7 @@ namespace Sci.Production.Cutting
                 if (complete) dr["Complete"] = "Y";
 
             }
+
             #endregion
             grid1.DataSource = gridtb;
         }
@@ -138,8 +139,8 @@ namespace Sci.Production.Cutting
                     if (MyUtility.Convert.GetDecimal(dr[e.ColumnIndex]) < MyUtility.Convert.GetDecimal(dr["Qty"]))
                     {                        
                         e.CellStyle.ForeColor = Color.Red;
-                        if (MyUtility.Convert.GetDecimal(dr[e.ColumnIndex]) > 0)
-                            dr["Complete"] = "";
+                        if (MyUtility.Convert.GetDecimal(dr[e.ColumnIndex]) > 0 && dr["Complete"].ToString() !="")
+                        { dr["Complete"] = ""; }
                     }
                 };
             }
