@@ -9,17 +9,19 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Data;
 using Sci.Win.UI;
+using Sci.Production.Class;
 
 namespace Sci.Production.Class
 {
     public partial class txtuser : Sci.Win.UI._UserControl
     {
-
+        
         public txtuser()
         {
             InitializeComponent();
             
         }
+        private string myUsername = null;
 
         public Sci.Win.UI.TextBox TextBox1
         {
@@ -38,25 +40,11 @@ namespace Sci.Production.Class
             { 
                 this.textBox1.Text = value;
                 if (!Env.DesignTime)
-                {
-                     string selectSql = string.Format("Select Name,ExtNo from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
-                    DataTable data;
-                    var result = DBProxy.Current.Select(null, selectSql, out data);
-                    string name = "";
-                    string extNo = "";
-                    if (result && data.Rows.Count > 0)
-                    {
-                        name = data.Rows[0]["name"].ToString();
-                        extNo = data.Rows[0]["extNo"].ToString();
-                    }
-                    if (!string.IsNullOrWhiteSpace(extNo) || !string.IsNullOrWhiteSpace(name))
-                    {
-                        this.displayBox1.Text = name + " #" + extNo;
-                    }
-                    else
-                    {
-                        this.displayBox1.Text = "";
-                    }
+                {                
+
+                    Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
+                    this.DisplayBox1.Text = myUsername;
+
                 }
             }
             get { return textBox1.Text; }
@@ -67,18 +55,18 @@ namespace Sci.Production.Class
         {
             set { this.displayBox1.Text = value; }
             get { return this.displayBox1.Text; }
-        }   
+        }
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-           // base.OnValidating(e);
+            // base.OnValidating(e);
             string textValue = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
                 if (!MyUtility.Check.Seek(textValue, "Pass1", "ID"))
                 {
                     string alltrimData = textValue.Trim();
-                    bool isUserName =  MyUtility.Check.Seek(alltrimData, "Pass1", "Name");
+                    bool isUserName = MyUtility.Check.Seek(alltrimData, "Pass1", "Name");
                     bool isUserExtNo = MyUtility.Check.Seek(alltrimData, "Pass1", "ExtNo");
 
                     if (isUserName | isUserExtNo)
@@ -89,13 +77,13 @@ namespace Sci.Production.Class
                         {
                             selectCommand = string.Format("select ID, Name, ExtNo, Factory from Pass1 where Name = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable,"ID,Name,ExtNo,Factory", "14,24,10,150", this.textBox1.Text);
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "14,24,10,150", this.textBox1.Text);
                             DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel) 
+                            if (returnResult == DialogResult.Cancel)
                             {
                                 this.textBox1.Text = "";
                                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
-                                return; 
+                                return;
                             }
                             this.textBox1.Text = item.GetSelectedString();
                         }
@@ -124,7 +112,7 @@ namespace Sci.Production.Class
                     }
                 }
             }
-
+            
             // 強制把binding的Text寫到DataRow
             this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
 
@@ -151,12 +139,13 @@ namespace Sci.Production.Class
             {
                 this.textBox1.Text = "";
             }
-         
-            }
+
+        }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {            
-               if (this.textBox1.ReadOnly && this.DataBindings.Count == 0)
+            
+               if (this.textBox1.ReadOnly || this.DataBindings.Count == 0)
                {
                    string selectSql = string.Format("Select Name,ExtNo from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
                    DataTable data;
