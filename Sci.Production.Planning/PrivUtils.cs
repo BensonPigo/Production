@@ -11,7 +11,7 @@ using Microsoft.Office.Interop.Excel;
 using EXCEL = Microsoft.Office.Interop.Excel;
 using Sci;
 
-namespace Sci.Trade.Report
+namespace Sci.Production.Report
 {
     internal static class PrivUtils
     {
@@ -294,7 +294,7 @@ namespace Sci.Trade.Report
             string rtn = "";
             if (Sci.Env.Cfg.XltPathDir != "")
             {
-                rtn = Sci.Trade.Class.Commons.TradeSystem.Env.XltPathDir;
+                rtn = Sci.Production.Class.Commons.TradeSystem.Env.XltPathDir;
             }
             else
             {

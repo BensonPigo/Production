@@ -8,10 +8,10 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Win;
 using System.Data.SqlClient;
-using Sci.Trade.Report;
+using Sci.Production.Report;
 using Sci.Data;
 using Msg = Sci.MyUtility.Msg;
-using Sci.Trade.Report.GSchemas;
+using Sci.Production.Report.GSchemas;
 
 namespace Sci.Production.Planning
 {

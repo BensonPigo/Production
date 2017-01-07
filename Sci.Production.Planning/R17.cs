@@ -13,8 +13,7 @@ using Sci.Data;
 using Ict;
 using Ict.Win;
 using Sci.Win;
-using Sci.Trade.Class;
-using Sci.Trade.Report;
+using Sci.Production.Report;
 
 
 namespace Sci.Production.Planning

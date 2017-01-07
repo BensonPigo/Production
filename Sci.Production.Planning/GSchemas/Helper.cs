@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 
 using Ict;
 using Sci.Data;
-namespace Sci.Trade.Report.GSchemas
+namespace Sci.Production.Report.GSchemas
 {
     public class Helper
     {

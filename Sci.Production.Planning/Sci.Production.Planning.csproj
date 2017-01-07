@@ -245,10 +245,6 @@
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
       <Name>Sci.Production.PublicPrg</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sci.Trade.Class\Sci.Trade.Class.csproj">
-      <Project>{23a1d79e-68ab-4d45-8c1d-11a34edd3369}</Project>
-      <Name>Sci.Trade.Class</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">

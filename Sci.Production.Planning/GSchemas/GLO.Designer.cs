@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace Sci.Trade.Report.GSchemas {
+namespace Sci.Production.Report.GSchemas {
     
     
     /// <summary>
@@ -1091,7 +1091,7 @@ namespace Sci.Trade.Report.GSchemas {
         }
     }
 }
-namespace Sci.Trade.Report.GSchemas.GLOTableAdapters {
+namespace Sci.Production.Report.GSchemas.GLOTableAdapters {
     
     
     /// <summary>
