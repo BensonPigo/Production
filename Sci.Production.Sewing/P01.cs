@@ -811,7 +811,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             #region GetID
             if (IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", Sci.Env.User.Factory, "Factory", "ID") + "mM", "SewingOutput", DateTime.Today, 3, "Id", null);
+                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", Sci.Env.User.Factory, "Factory", "ID") + "SM", "SewingOutput", DateTime.Today, 3, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");

@@ -182,7 +182,7 @@ namespace Sci.Production.Warehouse
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IF", "IssueLack", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IL", "IssueLack", (DateTime)CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");

@@ -246,7 +246,7 @@ from GMTBooking where ID = '{2}'", MyUtility.Convert.GetString(CurrentMaintain["
             //Get ID
             if (IsDetailInserting)
             {
-                string newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "ID", "VNExportDeclaration", Convert.ToDateTime(CurrentMaintain["CDate"]), 2, "ID", null);
+                string newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "ED", "VNExportDeclaration", Convert.ToDateTime(CurrentMaintain["CDate"]), 2, "ID", null);
                 if (MyUtility.Check.Empty(newID))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
