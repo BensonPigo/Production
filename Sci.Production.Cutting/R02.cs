@@ -796,7 +796,7 @@ drop table #tmpall");
                     }
                     objSheets.Columns["R"].Clear();
                     objSheets.Name = "Cell" + (i + cutcellint1);//工作表名稱
-                    objSheets.Cells[1, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
+                    objSheets.Cells[1, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d"); //查詢日期
                     objSheets.Cells[1, 6] = (i + cutcellint1);//cutcellID
                     objSheets.Cells[1, 9] = WorkOrder;
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet                    
