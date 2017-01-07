@@ -16,7 +16,6 @@ using Microsoft.Reporting.WinForms;
 using System.Data.SqlClient;
 using Sci.Win;
 using Sci.Utility.Excel;
-using Sci.Trade.Class.Commons;
 
 namespace Sci.Production.Warehouse
 {

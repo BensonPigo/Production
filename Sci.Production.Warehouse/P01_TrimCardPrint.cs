@@ -11,8 +11,6 @@ using Sci.Data;
 using Ict;
 using Ict.Win;
 using Sci.Win;
-using Sci.Trade.Class;
-using Sci.Trade.Class.Commons;
 using System.IO;
 using Word = Microsoft.Office.Interop.Word;
 using System.Linq;

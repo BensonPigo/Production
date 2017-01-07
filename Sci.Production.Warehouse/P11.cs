@@ -12,7 +12,6 @@ using Sci.Data;
 using System.Linq;
 using System.Transactions;
 using Sci.Production.PublicPrg;
-using Sci.Trade.Class.Commons;
 using Sci.Win;
 using Sci.Utility.Excel;
 using System.Data.SqlClient;

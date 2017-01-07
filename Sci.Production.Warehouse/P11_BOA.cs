@@ -9,7 +9,6 @@ using Ict.Win;
 using Sci;
 using Sci.Data;
 using Ict;
-using Sci.Trade.Class.Commons;
 using System.Data.SqlClient;
 using System.Linq;
 
