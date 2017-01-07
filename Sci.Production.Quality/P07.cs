@@ -13,7 +13,7 @@ using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
 using System.Data.SqlClient;
-using Sci.Trade.Class.Commons;
+
 
 
 namespace Sci.Production.Quality
