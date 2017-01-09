@@ -294,7 +294,11 @@ select
 	g2.ReturnSp,
 	g2.ReturnSeq,
 	g2.Roll,
-	g2.Dyelot,
+	Dyelot          = isnull((SELECT iif(b.Dyelot = '', null, b.Dyelot)
+							FROM View_TransactionList b
+							where b.MDivisionid = 'MWI' and b.poid = g1.BorrowingSP and b.seq1 = g1.BorrowingSeq1 and b.seq2 = g1.BorrowingSeq2 and b.Roll = g2.Roll
+							group by b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,dyelot)
+					, g2.Dyelot),
 	g2.ReturnQty, 
 	g2.AccuReciveQty,
 	g2.ReciveQty,	
