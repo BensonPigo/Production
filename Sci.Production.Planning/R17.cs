@@ -83,8 +83,8 @@ namespace Sci.Production.Planning
                 {
                     #region Order Detail
                     strSQL = @" SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D, A1.BRANDID AS E
-                                                        , A1.BuyerDelivery  AS F
-                                                        , A1.FtyKPI  AS G 
+                                                        , Convert(varchar,A1.BuyerDelivery ) AS F
+                                                        , Convert(varchar,cast( A1.FtyKPI as date))  AS G 
                                                         ,(SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip where id = A1.ID) t for xml path('')) AS H 
                                                         , A1.QTY AS I 
                                                         , Sum(A4.ShipQty) AS J
@@ -212,11 +212,11 @@ namespace Sci.Production.Planning
                     #endregion Order Detail
                     #region On time Order List by PullOut
                     strSQL = @" SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D
-                                                        , A1.FtyKPI  AS E
+                                                        , Convert(varchar,cast(A1.FtyKPI as date)) AS E
                                                         , (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip where id = A1.ID) t for xml path('')) AS F
                                                         , A1.QTY AS G
                                                         , A4.ShipQty AS H
-                                                        , A4.PulloutDate  AS I   
+                                                        ,Convert(varchar,A4.PulloutDate) AS I   
                                                         ,J.strData AS J
                                                       --  , (Select ShipmodeID  as strData from Order_QtyShip  where id = A1.ID  Group by ShipModeID) AS J                                                     
                                                 FROM ORDERS A1
@@ -278,11 +278,11 @@ namespace Sci.Production.Planning
                     #endregion On time Order List by PullOut
                     #region Fail Detail
                     strSQL = @" SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D
-                                                        , A1.FtyKPI  AS E
+                                                        , Convert(varchar,cast(A1.FtyKPI as date))  AS E
                                                         , (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip where id = A1.ID) t for xml path('')) AS F
                                                         , A1.QTY AS G
                                                         , A4.ShipQty AS H
-                                                        , A4.PulloutDate  AS I   
+                                                        , Convert(varchar,A4.PulloutDate ) AS I   
                                                         ,J.strData AS J 
                                                        -- , (Select ShipmodeID  as strData from Order_QtyShip  where id = A1.ID  Group by ShipModeID) AS J                                                     
                                                 FROM ORDERS A1
@@ -343,8 +343,8 @@ namespace Sci.Production.Planning
                     #endregion Fail Detail
                     #region Fail Order List by SP
                     strSQL = @" SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D, A1.BRANDID AS E
-                                                        , A1.BuyerDelivery  AS F
-                                                        , A1.FtyKPI  AS G 
+                                                        , Convert(varchar,A1.BuyerDelivery)  AS F
+                                                        , Convert(varchar,cast(A1.FtyKPI as date)) AS G 
                                                         , (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip where id = A1.ID) t for xml path('')) AS H 
                                                         , A1.QTY AS I 
                                                         , Sum(A4.ShipQty) AS J
@@ -546,16 +546,23 @@ namespace Sci.Production.Planning
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1, true); //篩選
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
+                        excel.ActiveSheet.Columns(6).NumberFormatlocal = "yyyy/MM/dd";
+                        excel.ActiveSheet.Columns(7).NumberFormatlocal = "yyyy/MM/dd"; 
                         for (int intIndex = 0; intIndex < gdtOrderDetail.Rows.Count; intIndex++)
                         {
                             for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
-                            {
+                            {                 
                                 objArray_1[0, intIndex_0] = gdtOrderDetail.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
                             }
                             worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
                         }
+                         //設定分割列數
+                        excel.ActiveWindow.SplitRow = 1; 
+                        // 進行凍結視窗
+                        excel.ActiveWindow.FreezePanes = true;
                     }
                     if ((gdtPullOut != null) && (gdtPullOut.Rows.Count > 0))
                     {
@@ -572,16 +579,25 @@ namespace Sci.Production.Planning
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1, true); //篩選
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
+                        excel.ActiveSheet.Columns(5).NumberFormatlocal = "yyyy/MM/dd";
+                        excel.ActiveSheet.Columns(9).NumberFormatlocal = "yyyy/MM/dd"; 
+
+
                         for (int intIndex = 0; intIndex < gdtPullOut.Rows.Count; intIndex++)
-                        {
+                        {              
                             for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
                             {
                                 objArray_1[0, intIndex_0] = gdtPullOut.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
                             }
                             worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
                         }
+                        //設定分割列數
+                        excel.ActiveWindow.SplitRow = 1;
+                        // 進行凍結視窗
+                        excel.ActiveWindow.FreezePanes = true;
                     }
                     if ((gdtFailDetail != null) && (gdtFailDetail.Rows.Count > 0))
                     {
@@ -598,16 +614,24 @@ namespace Sci.Production.Planning
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1,true); //篩選
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
+                        excel.ActiveSheet.Columns(5).NumberFormatlocal = "yyyy/MM/dd"; 
+                        excel.ActiveSheet.Columns(9).NumberFormatlocal = "yyyy/MM/dd"; 
                         for (int intIndex = 0; intIndex < gdtFailDetail.Rows.Count; intIndex++)
                         {
+                            
                             for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
                             {
                                 objArray_1[0, intIndex_0] = gdtFailDetail.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
                             }
                             worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
                         }
+                        //設定分割列數
+                        excel.ActiveWindow.SplitRow = 1;
+                        // 進行凍結視窗
+                        excel.ActiveWindow.FreezePanes = true;
                     }
                     if ((gdtSP != null) && (gdtSP.Rows.Count > 0))
                     {
@@ -624,16 +648,24 @@ namespace Sci.Production.Planning
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1,true); //篩選
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
+                        excel.ActiveSheet.Columns(6).NumberFormatlocal = "yyyy/MM/dd";
+                        excel.ActiveSheet.Columns(7).NumberFormatlocal = "yyyy/MM/dd"; 
                         for (int intIndex = 0; intIndex < gdtSP.Rows.Count; intIndex++)
                         {
+                           
                             for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
                             {
                                 objArray_1[0, intIndex_0] = gdtSP.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
                             }
                             worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
                         }
+                        //設定分割列數
+                        excel.ActiveWindow.SplitRow = 1;
+                        // 進行凍結視窗
+                        excel.ActiveWindow.FreezePanes = true;
                     }
                 }
                 #endregion
