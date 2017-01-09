@@ -3,7 +3,7 @@
 -- Create date: <2016/08/25>
 -- Description:	<import order>
 -- =============================================
-CREATE PROCEDURE [dbo].[imp_Order]
+Create PROCEDURE [dbo].[imp_Order]
 AS
 BEGIN
 
@@ -142,6 +142,11 @@ BEGIN
 		values(s.id,@dToDay,s.FactoryID,s.qty,s.BuyerDelivery,s.SciDelivery,styleid,KPILETA,LETA,@OldDate,1,CMPQDate,EachConsApv,MnorderApv,SMnorderApv,MnorderApv2);
 
 	--需填入 Order.SDPDate = Buyer Delivery - 放假日(船期表)--
+		--如果買家到貨日不是工廠放假日,SDDate=BuyerDelivery
+		update #TOrder
+		set SDPDate = BuyerDelivery	
+
+		--如果買家到貨日剛好遇到假日,SDDate就提前一天
 		update a
 		set a.SDPDate = DATEADD(day,-1, a.BuyerDelivery) 
 		from #TOrder  a
