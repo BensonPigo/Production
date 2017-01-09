@@ -915,6 +915,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         private void btCutRef_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P10_CutRef(CurrentMaintain);
+            frm.P10 = this;
             frm.ShowDialog(this);
         }
 

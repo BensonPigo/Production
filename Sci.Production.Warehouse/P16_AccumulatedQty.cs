@@ -14,6 +14,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P16_AccumulatedQty : Sci.Win.Subs.Base
     {
+        public Sci.Win.Tems.Base P16;
         protected DataRow dr;
         public P16_AccumulatedQty(DataRow data)
         {
@@ -36,13 +37,13 @@ where a.Id = '{0}' and c.id = '{1}'
 GROUP BY A.PoId,b.Seq1,b.Seq2,b.RequestQty", dr["requestid"], dr["id"]));
 
             DataTable selectDataTable1;
-            MyUtility.Msg.WaitWindows("Data Loading...");
+            P16.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
             
             if (selectResult1 == false)
             { ShowErr(selectCommand1.ToString(), selectResult1); }
 
-            MyUtility.Msg.WaitClear();
+            P16.HideWaitMessage();
             bindingSource1.DataSource = selectDataTable1;
 
             //設定Grid1的顯示欄位

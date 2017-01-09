@@ -14,6 +14,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P24_AccumulatedQty : Sci.Win.Subs.Base
     {
+        public Sci.Win.Tems.Base P24;
         protected DataRow dr;
         public P24_AccumulatedQty(DataRow data)
         {
@@ -59,13 +60,13 @@ where factory.MDivisionID='{1}'
 group by d.FromPOID,d.fromseq1,d.fromseq2,v.rate,p.StockUnit,d.scrap_qty", dr["id"], Sci.Env.User.Keyword));
 
             DataTable selectDataTable1;
-            MyUtility.Msg.WaitWindows("Data Loading...");
+            P24.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
             
             if (selectResult1 == false)
             { ShowErr(selectCommand1.ToString(), selectResult1); }
 
-            MyUtility.Msg.WaitClear();
+            P24.HideWaitMessage();
 
             bindingSource1.DataSource = selectDataTable1;
 

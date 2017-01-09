@@ -14,6 +14,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P32_AccumulatedQty : Sci.Win.Subs.Base
     {
+        public Sci.Win.Tems.Base P32;
         protected DataRow dr;
         public P32_AccumulatedQty(DataRow data)
         {
@@ -63,12 +64,12 @@ left join Orders o  on  p.id = o.id
                 , dr["id"].ToString(), dr["borrowid"].ToString()));
 
             DataTable selectDataTable1;
-            MyUtility.Msg.WaitWindows("Data Loading...");
+            P32.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
             
             if (selectResult1 == false)
             { ShowErr(selectCommand1.ToString(), selectResult1); }
-            MyUtility.Msg.WaitClear();
+            P32.HideWaitMessage();
 
             bindingSource1.DataSource = selectDataTable1;
 

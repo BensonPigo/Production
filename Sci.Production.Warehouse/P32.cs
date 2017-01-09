@@ -1010,6 +1010,7 @@ Where a.id = '{0}'", masterID);
         private void button1_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P32_AccumulatedQty(CurrentMaintain);
+            frm.P32 = this;
             frm.ShowDialog(this);
         }
 

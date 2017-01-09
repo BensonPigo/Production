@@ -14,6 +14,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P10_CutRef : Sci.Win.Subs.Base
     {
+        public Sci.Win.Tems.Base P10;
         protected DataRow dr;
         public P10_CutRef(DataRow data)
         {
@@ -43,12 +44,12 @@ order by b.POID,c.seq1,c.seq2,c.Cutno
 ", dr["cutplanid"].ToString()));
 
             DataTable selectDataTable1;
-            MyUtility.Msg.WaitWindows("Data Loading...");
+            P10.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
             
             if (selectResult1 == false)
             { ShowErr(selectCommand1.ToString(), selectResult1); }
-            MyUtility.Msg.WaitClear();
+            P10.HideWaitMessage();
 
             bindingSource1.DataSource = selectDataTable1;
 

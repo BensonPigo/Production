@@ -213,7 +213,7 @@ namespace Sci.Production.Warehouse
 
             foreach (DataRow tmp in dr2)
             {
-                MyUtility.Msg.WaitWindows(string.Format("Closing R/Mtl of {0}.", tmp["poid"]));
+                this.ShowWaitMessage(string.Format("Closing R/Mtl of {0}.", tmp["poid"]));
                 DualResult result;
                 #region store procedure parameters
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -240,7 +240,7 @@ namespace Sci.Production.Warehouse
             }
             //this.QueryData();
             MyUtility.Msg.InfoBox("Finish closing R/Mtl!!");
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
 
             QueryData();
         }

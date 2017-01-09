@@ -721,6 +721,7 @@ Where a.id = '{0}'", masterID);
         private void button1_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P36_AccumulatedQty(CurrentMaintain);
+            frm.P36 = this;
             frm.ShowDialog(this);
         }
 

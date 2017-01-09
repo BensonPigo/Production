@@ -1225,6 +1225,7 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword);
         private void btAccumulated_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P07_AccumulatedQty(CurrentMaintain);
+            frm.P07 = this;
             frm.ShowDialog(this);
         }
 

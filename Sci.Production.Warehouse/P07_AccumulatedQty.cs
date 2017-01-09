@@ -14,6 +14,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P07_AccumulatedQty : Sci.Win.Subs.Base
     {
+        public Sci.Win.Tems.Base P07;
         protected DataRow dr;
         public P07_AccumulatedQty(DataRow data)
         {
@@ -58,12 +59,12 @@ group by poid,seq1,seq2,description"
                                 , dr["exportid"].ToString()));
             }
             DataTable selectDataTable1;
-            MyUtility.Msg.WaitWindows("Data loading...");
+            P07.ShowWaitMessage("Data loading...");
             DBProxy.Current.DefaultTimeout = 1200;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
             if (selectResult1 == false) { ShowErr(selectCommand1.ToString(), selectResult1); }
             DBProxy.Current.DefaultTimeout = 0;
-            MyUtility.Msg.WaitClear();
+            P07.HideWaitMessage();
             selectDataTable1.ColumnsDecimalAdd("variance", 0m, "received+receiving-shipqty");
             bindingSource1.DataSource = selectDataTable1;
 

@@ -14,6 +14,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P37_AccumulatedQty : Sci.Win.Subs.Base
     {
+        public Sci.Win.Tems.Base P37;
         protected DataRow dr;
         public P37_AccumulatedQty(DataRow data)
         {
@@ -50,13 +51,13 @@ select group_by.POID,group_by.seq1,group_by.seq2
 from group_by left join cte on cte.POID = group_by.POID and cte.Seq1= group_by.Seq1 and cte.seq2 = group_by.Seq2", dr["id"], Sci.Env.User.Keyword));
 
             DataTable selectDataTable1;
-            MyUtility.Msg.WaitWindows("Data Loading...");
+            P37.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
             
             if (selectResult1 == false)
             { ShowErr(selectCommand1.ToString(), selectResult1); }
 
-            MyUtility.Msg.WaitClear();
+            P37.HideWaitMessage();
             bindingSource1.DataSource = selectDataTable1;
 
             //設定Grid1的顯示欄位

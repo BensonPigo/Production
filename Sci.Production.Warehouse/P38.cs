@@ -139,7 +139,7 @@ where fi.MDivisionID = '{0}' and fi.POID like @poid1
 
             Ict.DualResult result;
             DataTable dtData;
-            MyUtility.Msg.WaitWindows("Data Loading...");
+            this.ShowWaitMessage("Data Loading...");
             if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out dtData))
             {
                 if (dtData.Rows.Count == 0)
@@ -151,7 +151,7 @@ where fi.MDivisionID = '{0}' and fi.POID like @poid1
             {
                 ShowErr(strSQLCmd.ToString(), result);
             }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
         }
 
         private void btnLock_Click(object sender, EventArgs e)

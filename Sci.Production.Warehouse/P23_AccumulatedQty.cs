@@ -14,6 +14,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P23_AccumulatedQty : Sci.Win.Subs.Base
     {
+        public Sci.Win.Tems.Base P23;
         protected DataRow dr;
         public P23_AccumulatedQty(DataRow data)
         {
@@ -63,12 +64,12 @@ select sum(qty) accu_qty from (
 ", dr["id"],dr["mdivisionid"]));
 
             DataTable selectDataTable1;
-            MyUtility.Msg.WaitWindows("Data Loading...");
+            P23.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
             
             if (selectResult1 == false)
             { ShowErr(selectCommand1.ToString(), selectResult1); }
-            MyUtility.Msg.WaitClear();
+            P23.HideWaitMessage();
             //selectDataTable1.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - trans_qty");
             bindingSource1.DataSource = selectDataTable1;
 
