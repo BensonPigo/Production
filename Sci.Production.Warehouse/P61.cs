@@ -271,8 +271,8 @@ namespace Sci.Production.Warehouse
             sqlcmd = string.Format(@"Select d.poid,d.scirefno,d.sizespec,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Summary d left join localinventory f
-on f.MDivisionID = '{1}' and f.OrderID = d.Poid and f.Refno = d.SCIRefno and f.ThreadColorID = d.SizeSpec
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'"
+on f.MDivisionID = '{1}' and f.OrderID = d.Poid and f.Refno = d.SCIRefno and f.ThreadColorID = d.sizespec
+where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'"
                 , CurrentMaintain["id"],CurrentMaintain["mdivisionid"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
