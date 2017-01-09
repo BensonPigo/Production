@@ -110,7 +110,7 @@ namespace Sci.Production.Warehouse
 select
 	0 as selected,'' id,d.ToMDivisionID MDivisionID,d.ToPOID poid,d.ToSeq1 seq1,d.ToSeq2 seq2, left(d.toseq1+'   ',3)+d.toseq2 as seq
     , d2.Roll roll
-    , (	SELECT b.Dyelot
+    , (	SELECT iif(isnull(b.Dyelot, '') = '', d2.Dyelot, b.Dyelot)
 		FROM View_TransactionList b
 		where b.MDivisionid = d.ToMDivisionID and b.poid = d.ToPOID and b.seq1 = d.ToSeq1 and b.seq2 = d.ToSeq2 and b.Roll = d2.Roll
 		group by b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,dyelot
