@@ -48,7 +48,7 @@ SELECT TOP 30 (case when L.Type = 'L' then @Fabric + '-Lacking'
 					when L.Type = 'R' then @Fabric + '-Replacement' end) as ctype
 , L.issuedate, L.ID 
 FROM LACK  L 
-WHERE (L.apvname = '' OR L.ApvName is null) AND (L.IssueLackId = '' OR L.IssueLackId is null) AND factoryid = '{0}' and L.FabricType = '{1}'
+WHERE (L.apvname != '' OR L.ApvName is NOT null) AND (L.IssueLackId = '' OR L.IssueLackId is null) AND factoryid = '{0}' and L.FabricType = '{1}'
 ORDER BY issuedate desc,id asc;", Sci.Env.User.Keyword, FabricType);
             DataTable selectDataTable1;
             MyUtility.Msg.WaitWindows("Data Loading...");
