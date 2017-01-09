@@ -206,7 +206,7 @@ BEGIN
 				t.SpecialCust = s.       SpecialCust ,
 				t.TissuePaper = s.       TissuePaper ,
 				t.Packing = s.       Packing ,
-				t.SDPDate = s.SDPDate,
+				--t.SDPDate = s.SDPDate, --工廠交期只需要INSERT填預設值,不須UPDATE
 				t.MarkFront = s.       MarkFront ,
 				t.MarkBack = s.       MarkBack ,
 				t.MarkLeft = s.       MarkLeft ,
