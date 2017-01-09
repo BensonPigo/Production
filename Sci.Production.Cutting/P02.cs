@@ -350,7 +350,6 @@ namespace Sci.Production.Cutting
                 .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(5), integer_places: 6, settings: breakqty);
 
             changeeditable();
-
         }
 
         #region Grid Cell 物件設定
@@ -458,7 +457,7 @@ namespace Sci.Production.Cutting
 
                 dr["layer"] = newvalue;
                 dr.EndEdit();
-                int bal = Convert.ToInt16(newvalue) - Convert.ToInt16(oldvalue);
+                int bal = Convert.ToInt16(newvalue) - Convert.ToInt16(oldvalue == "" ? "0" : oldvalue);
 
 
                 int sumlayer = 0;
@@ -512,7 +511,6 @@ namespace Sci.Production.Cutting
                 cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
 
                 totalDisQty();
-
 
             };
             #endregion
@@ -1247,9 +1245,7 @@ namespace Sci.Production.Cutting
                     BalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerUkey"];
                 }
             }
-
-
-
+            
             #region 判斷download id
             string downloadid = MyUtility.GetValue.Lookup("MarkerDownLoadid", CurrentDetailData["Order_EachConsUkey"].ToString(), "Order_EachCons", "Ukey");
             displayBox_Downloadid.Text = downloadid;
@@ -1286,9 +1282,6 @@ namespace Sci.Production.Cutting
                 distributeMenuStrip.Enabled = false;
             }
             #endregion
-
-
-
         }
         
         //程式產生的BindingSource 必須自行Dispose, 以節省資源
@@ -1300,7 +1293,6 @@ namespace Sci.Production.Cutting
 
         private void getqtybreakdown(string masterID)
         {
-
             DataTable fabcodetb;
 
             #region 找出有哪些部位
@@ -1766,8 +1758,8 @@ namespace Sci.Production.Cutting
 
         private void cal_Cons(bool updateConsPC, bool updateCons) //update Cons
         {
-                gridValid();
-            if (numericBox_MarkerLengthY.Text == ""||textBox_MarkerLengthE.Text == "- / + \"")
+            gridValid();
+            if (numericBox_MarkerLengthY.Text == ""||textBox_MarkerLengthE.Text.Trim() == "- / + \"")
             {
                 return;
             }
