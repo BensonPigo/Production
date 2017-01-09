@@ -379,7 +379,7 @@ namespace Sci.Production.Cutting
 
         private void Query_button_Click(object sender, EventArgs e)
         {
-            MyUtility.Msg.WaitWindows("Query");
+            this.ShowWaitMessage("Query");
             DBProxy.Current.DefaultTimeout = 300;
             //判斷必須有一條件存在
             string cutref = Cutref_textBox.Text;
@@ -528,7 +528,7 @@ namespace Sci.Production.Cutting
             Qty_grid.DataSource = qtyTb;
             AllPart_grid.DataSource = allpartTb;
             Cutpart_grid.DataSource = patternTb;
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             
         }
         public void createPattern(string poid,string article,string patternpanel,string cutref,int iden)

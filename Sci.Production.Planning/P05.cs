@@ -381,7 +381,7 @@ inner join dbo.Factory on factory.id = a.factoryid
             if (!(string.IsNullOrWhiteSpace(inline_b)))
             { sqlcmd += string.Format(@" and not (b.artworkInLine > '{1}' or b.artworkOffLine < '{0}')", inline_b, inline_e); }
 
-            MyUtility.Msg.WaitWindows("Querying....Please wait....");
+            this.ShowWaitMessage("Querying....Please wait....");
             int wkdays = 0;
             DateTime inline;
             Ict.DualResult result;
@@ -406,7 +406,7 @@ inner join dbo.Factory on factory.id = a.factoryid
                     item["stdq"] = stdq;
                     wkdays = (stdq != '0') ? ' ' : int.Parse(Math.Ceiling((decimal.Parse(item["OrderQty"].ToString()) - decimal.Parse(item["qaqty"].ToString())) / stdq).ToString());
                 }
-                MyUtility.Msg.WaitClear();
+                this.HideWaitMessage();
             }   
         }
     
@@ -597,7 +597,7 @@ inner join dbo.Factory on factory.id = a.factoryid
                 return;
             }
 
-            MyUtility.Msg.WaitWindows("Updating Inline Date.... Please wait....");
+            this.ShowWaitMessage("Updating Inline Date.... Please wait....");
             foreach (DataRow item in find)
             {
                 
@@ -614,7 +614,7 @@ inner join dbo.Factory on factory.id = a.factoryid
                     }
                 }
             }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
         }
 
         //Check data

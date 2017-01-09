@@ -403,7 +403,7 @@ and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numer
             { sqlcmd += string.Format(@" and not (c.InLine > '{1}' or c.OffLine < '{0}')", sewinline_b, sewinline_e); }
             if (!(string.IsNullOrWhiteSpace(inline_b)))
             { sqlcmd += string.Format(@" and not (b.artworkInLine > '{1}' or b.artworkOffLine < '{0}')", inline_b, inline_e); }
-            MyUtility.Msg.WaitWindows("Querying.... Please wait....");
+            this.ShowWaitMessage("Querying.... Please wait....");
             int wkdays = 0;
             DateTime inline;
             Ict.DualResult result;
@@ -424,7 +424,7 @@ and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numer
                     item["stdq"] = stdq;
                     wkdays = (stdq != '0') ? ' ' : int.Parse(Math.Ceiling((decimal.Parse(item["OrderQty"].ToString()) - decimal.Parse(item["qaqty"].ToString())) / stdq).ToString());
                 }
-                MyUtility.Msg.WaitClear();
+                this.HideWaitMessage();
             }     
         }
 
@@ -616,7 +616,7 @@ and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numer
                 MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
                 return;
             }
-            MyUtility.Msg.WaitWindows("Updating Inline Date.... Please wait....");
+            this.ShowWaitMessage("Updating Inline Date.... Please wait....");
             foreach (DataRow item in find)
             {
                 
@@ -633,7 +633,7 @@ and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numer
                     }
                 }
             }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
         }
 
         //Check data

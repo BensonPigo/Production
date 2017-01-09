@@ -349,7 +349,7 @@ namespace Sci.Production.Planning
             if (!(string.IsNullOrWhiteSpace(sewinline_b)))
             { sqlcmd += string.Format(@" and not (a.SewInLine > '{1}' or a.SewOffLine < '{0}')", sewinline_b, sewinline_e); }
 
-            MyUtility.Msg.WaitWindows("Querying....Please wait....");
+            this.ShowWaitMessage("Querying....Please wait....");
 
             Ict.DualResult result; 
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
@@ -367,8 +367,8 @@ namespace Sci.Production.Planning
                 ShowErr(sqlcmd, result);
             }
 
-          
-            MyUtility.Msg.WaitClear();
+
+            this.HideWaitMessage();
         }
         
 
@@ -554,7 +554,7 @@ namespace Sci.Production.Planning
                 return;
             }
 
-            MyUtility.Msg.WaitWindows("Updating Inline Date... Please wait....");
+            this.ShowWaitMessage("Updating Inline Date... Please wait....");
             foreach (DataRow item in find)
             {
                 
@@ -571,7 +571,7 @@ namespace Sci.Production.Planning
                     }
                 }
             }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
         }
 
         //Check data

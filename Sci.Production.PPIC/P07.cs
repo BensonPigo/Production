@@ -49,7 +49,7 @@ namespace Sci.Production.PPIC
                 return;
             }
 
-            MyUtility.Msg.WaitWindows("Data Downloading....");
+            this.ShowWaitMessage("Data Downloading....");
 
             string sqlCmd = string.Format("exec dbo.usp_APSDataDownLoad '{0}','{1}','{2}','{3}'", MyUtility.Convert.GetString(dr["SQLServerName"]), MyUtility.Convert.GetString(dr["APSDatabaseName"]), Sci.Env.User.Factory, Sci.Env.User.UserID);
             DBProxy.Current.DefaultTimeout = 600;
@@ -64,7 +64,7 @@ namespace Sci.Production.PPIC
 
             setcuttingdate();
 
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Download successful !!");
         }
 
