@@ -473,7 +473,8 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         {
             IList<DataRow> StyleData;
             string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style where Junk = 0 and LocalStyle = 1";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,8,10,28,6,6,8,6", "", "Style,Season,Brand,Description,CdCode,CPU,Unit,");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,8,10,28,5,7,7,6", "", "Style,Season,Brand,Description,CdCode,CPU,Unit,Ukey",columndecimals:"0,0,0,0,0,3,0,0");
+            item.Size = new System.Drawing.Size(950, 500);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
