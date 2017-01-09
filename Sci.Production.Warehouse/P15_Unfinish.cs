@@ -51,13 +51,13 @@ FROM LACK  L
 WHERE (L.apvname != '' OR L.ApvName is NOT null) AND (L.IssueLackId = '' OR L.IssueLackId is null) AND factoryid = '{0}' and L.FabricType = '{1}'
 ORDER BY issuedate desc,id asc;", Sci.Env.User.Keyword, FabricType);
             DataTable selectDataTable1;
-            MyUtility.Msg.WaitWindows("Data Loading...");
+            this.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCmd, out selectDataTable1);
 
             if (selectResult1 == false)
             { ShowErr(selectCmd, selectResult1); }
 
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             bindingSource1.DataSource = selectDataTable1;
         }
 
