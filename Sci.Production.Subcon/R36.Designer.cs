@@ -231,7 +231,7 @@
             this.label14.Lines = 0;
             this.label14.Location = new System.Drawing.Point(16, 331);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(75, 23);
+            this.label14.Size = new System.Drawing.Size(115, 23);
             this.label14.TabIndex = 17;
             this.label14.Text = "Order By";
             // 
@@ -240,7 +240,7 @@
             this.label13.Lines = 0;
             this.label13.Location = new System.Drawing.Point(16, 304);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(106, 23);
+            this.label13.Size = new System.Drawing.Size(115, 23);
             this.label13.TabIndex = 16;
             this.label13.Text = "Received date";
             // 
@@ -249,7 +249,7 @@
             this.label12.Lines = 0;
             this.label12.Location = new System.Drawing.Point(16, 277);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(89, 23);
+            this.label12.Size = new System.Drawing.Size(115, 23);
             this.label12.TabIndex = 15;
             this.label12.Text = "Amt Revised";
             // 
@@ -258,7 +258,7 @@
             this.label11.Lines = 0;
             this.label11.Location = new System.Drawing.Point(16, 250);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(114, 23);
+            this.label11.Size = new System.Drawing.Size(115, 23);
             this.label11.TabIndex = 14;
             this.label11.Text = "Payment Settled:";
             // 
@@ -267,7 +267,7 @@
             this.label10.Lines = 0;
             this.label10.Location = new System.Drawing.Point(16, 223);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(75, 23);
+            this.label10.Size = new System.Drawing.Size(115, 23);
             this.label10.TabIndex = 13;
             this.label10.Text = "Status:";
             // 
@@ -276,7 +276,7 @@
             this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(16, 196);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 23);
+            this.label9.Size = new System.Drawing.Size(115, 23);
             this.label9.TabIndex = 12;
             this.label9.Text = "Factory:";
             // 
@@ -285,7 +285,7 @@
             this.label8.Lines = 0;
             this.label8.Location = new System.Drawing.Point(16, 169);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(75, 23);
+            this.label8.Size = new System.Drawing.Size(115, 23);
             this.label8.TabIndex = 11;
             this.label8.Text = "SMR:";
             // 
@@ -294,7 +294,7 @@
             this.label7.Lines = 0;
             this.label7.Location = new System.Drawing.Point(16, 142);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 23);
+            this.label7.Size = new System.Drawing.Size(115, 23);
             this.label7.TabIndex = 10;
             this.label7.Text = "Handle:";
             // 
@@ -303,7 +303,7 @@
             this.label6.Lines = 0;
             this.label6.Location = new System.Drawing.Point(16, 115);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
+            this.label6.Size = new System.Drawing.Size(115, 23);
             this.label6.TabIndex = 9;
             this.label6.Text = "Supplier:";
             // 
@@ -312,7 +312,7 @@
             this.label5.Lines = 0;
             this.label5.Location = new System.Drawing.Point(16, 88);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
+            this.label5.Size = new System.Drawing.Size(115, 23);
             this.label5.TabIndex = 8;
             this.label5.Text = "SD No.:";
             // 
@@ -328,7 +328,7 @@
             this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(16, 61);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(89, 23);
+            this.label4.Size = new System.Drawing.Size(115, 23);
             this.label4.TabIndex = 6;
             this.label4.Text = "Settled Date:";
             // 
@@ -344,7 +344,7 @@
             this.label3.Lines = 0;
             this.label3.Location = new System.Drawing.Point(16, 34);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(106, 23);
+            this.label3.Size = new System.Drawing.Size(115, 23);
             this.label3.TabIndex = 4;
             this.label3.Text = "Approved Date:";
             // 
@@ -360,7 +360,7 @@
             this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(16, 7);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.Size = new System.Drawing.Size(115, 23);
             this.label2.TabIndex = 0;
             this.label2.Text = "Debit Date:";
             // 
