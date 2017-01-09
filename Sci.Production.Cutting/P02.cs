@@ -56,6 +56,7 @@ namespace Sci.Production.Cutting
             comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
+            txtCell1.FactoryId = Sci.Env.User.Factory;
 
             /*
              *設定Binding Source for Text
@@ -71,8 +72,9 @@ namespace Sci.Production.Cutting
             this.displayBox_WorkOrderDownloadid.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerDownLoadId", true));
             this.displayBox_Cutplanid.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "Cutplanid", true));
             this.displayBox_TotalCutQty.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "CutQty", true));
-            this.numericBox_MarkerLengthY.DataBindings.Add(new System.Windows.Forms.Binding("Value", bindingSource2, "MarkerLengthY", true));
+            this.numericBox_MarkerLengthY.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLengthY", true));
             this.textBox_MarkerLengthE.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLengthE", true));
+            this.textBox_MarkerLength.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLength", true));
             this.textBox_PatternPanel.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "PatternPanel", true));
 
             sizeratioMenuStrip.Enabled = this.EditMode;
@@ -210,8 +212,9 @@ namespace Sci.Production.Cutting
 
             0 As SORT_NUM,  --617: CUTTING_P02_Cutting Work Order
 
-			c.MtlTypeID,c.DescDetail,0 as newkey,substring(a.MarkerLength,1,2) as MarkerLengthY, 
-            substring(a.MarkerLength,4,13) as MarkerLengthE
+			c.MtlTypeID,c.DescDetail,0 as newkey
+            ,substring(a.MarkerLength,1,2) as MarkerLengthY
+            ,substring(a.MarkerLength,4,13) as MarkerLengthE
 			from Workorder a
 			left join fabric c on c.SCIRefno = a.SCIRefno
             where a.id = '{0}'
@@ -1165,11 +1168,20 @@ namespace Sci.Production.Cutting
 
 
             #region 根據左邊Grid Filter 右邊資訊
-            if (!MyUtility.Check.Empty(CurrentDetailData["Ukey"]) || MyUtility.Convert.GetString(CurrentDetailData["Ukey"]) == "0")
+            if (!MyUtility.Check.Empty(CurrentDetailData["Ukey"]))
             {
                 sizeratioTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}'", CurrentDetailData["Ukey"]);
                 distqtyTb.DefaultView.RowFilter = string.Format("Workorderukey = '{0}'", CurrentDetailData["Ukey"]);
             }
+            if (MyUtility.Convert.GetString(CurrentDetailData["Ukey"]) == "0")
+            {
+                string ukey = CurrentDetailData["Ukey"].ToString();
+                string newkey = CurrentDetailData["newkey"].ToString();
+                sizeratioTb.DefaultView.RowFilter = string.Format("Workorderukey = {0} and newkey = {1}", ukey, newkey);
+                distqtyTb.DefaultView.RowFilter = string.Format("Workorderukey = {0} and newkey = {1}", ukey, newkey);
+                
+            }
+
             #endregion
 
             #region Total Dist
@@ -1552,10 +1564,13 @@ namespace Sci.Production.Cutting
         //grid插入的btn, override成複製功能
         protected override void OnDetailGridInsert(int index = -1)
         {
-            //因按下新增也會進來這,但新增的btn不要複製功能
+            //因按下新增也會進來這,但新增的btn不要複製全部
             if (flag || ((DataTable)this.detailgridbs.DataSource).Rows.Count <= 0)
             {
                 base.OnDetailGridInsert(index);
+
+                //if (index == -1) index = TEMP;
+                //OldRow.Table.Rows.InsertAt(newRow, index);
                 flag = false;
                 return;
             }
@@ -1570,15 +1585,22 @@ namespace Sci.Production.Cutting
             if (comput == DBNull.Value) maxkey = 0;
             else maxkey = Convert.ToInt32(comput);
             maxkey = maxkey + 1;
+            
+            DataTable detailtmp = (DataTable)detailgridbs.DataSource;
+            int TEMP = ((DataTable)detailgridbs.DataSource).Rows.Count;
 
             // 除Cutref, Cutno, Addname, AddDate, EditName, EditDate以外的所有欄位
+            newRow["Newkey"] = maxkey;
             newRow["ID"] = OldRow["ID"];
+            newRow["OrderID"] = OldRow["OrderID"];
+
+            
+
             newRow["FactoryID"] = OldRow["FactoryID"];
             newRow["MDivisionId"] = OldRow["MDivisionId"];
             newRow["SEQ1"] = OldRow["SEQ1"];
             newRow["SEQ2"] = OldRow["SEQ2"];
             //CutRef
-            newRow["OrderID"] = OldRow["OrderID"];
             newRow["Cutplanid"] = OldRow["Cutplanid"];
             //Cutno
             newRow["Layer"] = OldRow["Layer"];
@@ -1620,12 +1642,11 @@ namespace Sci.Production.Cutting
             newRow["SORT_NUM"] = OldRow["SORT_NUM"];
             newRow["MtlTypeID"] = OldRow["MtlTypeID"];
             newRow["DescDetail"] = OldRow["DescDetail"];
-            newRow["Newkey"] = maxkey;
             newRow["MarkerLengthY"] = OldRow["MarkerLengthY"];
             newRow["MarkerLengthE"] = OldRow["MarkerLengthE"];
 
-            DataTable detailtmp = (DataTable)detailgridbs.DataSource;
-            int TEMP = ((DataTable)detailgridbs.DataSource).Rows.Count;
+            //DataTable detailtmp = (DataTable)detailgridbs.DataSource;
+            //int TEMP = ((DataTable)detailgridbs.DataSource).Rows.Count;
 
             if (index == -1) index = TEMP;
             OldRow.Table.Rows.InsertAt(newRow, index);
@@ -1668,6 +1689,7 @@ namespace Sci.Production.Cutting
                 drNEW["newkey"] = maxkey;
                 PatternPanelTb.Rows.Add(drNEW);
             }
+            flag = false;
         }
 
         protected override void OnDetailGridDelete()
@@ -1694,7 +1716,7 @@ namespace Sci.Production.Cutting
         protected override void ClickUndo()
         {
             base.ClickUndo();
-            OnDetailEntered();
+            RenewData();
         }
         private void insertSizeRatioToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1716,11 +1738,18 @@ namespace Sci.Production.Cutting
 
         private void numericBox_MarkerLengthY_Validated(object sender, EventArgs e)
         {
+            if (numericBox_MarkerLengthY.OldValue == numericBox_MarkerLengthY.Text) return;
+            int y;
+            y = int.Parse(numericBox_MarkerLengthY.Text);
+            CurrentDetailData["MarkerLengthY"] = y.ToString("D2");
             cal_Cons(true, true);
         }
 
         private void textBox_MarkerLengthE_Validating(object sender, CancelEventArgs e)
         {
+            if (textBox_MarkerLengthE.OldValue == textBox_MarkerLengthE.Text) return;
+
+            CurrentDetailData["MarkerLengthE"] = textBox_MarkerLengthE.Text;
             cal_Cons(true, true);
         }
 
@@ -1731,7 +1760,11 @@ namespace Sci.Production.Cutting
 
         private void cal_Cons(bool updateConsPC, bool updateCons) //update Cons
         {
-            gridValid();
+                gridValid();
+            if (numericBox_MarkerLengthY.Text == ""||textBox_MarkerLengthE.Text == "- / + \"")
+            {
+                return;
+            }
             int sizeRatioQty;
             object comput;
             comput = sizeratioTb.Compute("Sum(Qty)", string.Format("WorkOrderUkey = '{0}'", CurrentDetailData["Ukey"]));
@@ -1744,7 +1777,7 @@ namespace Sci.Production.Cutting
             else lenY = CurrentDetailData["MarkerLengthY"].ToString();
             if (MyUtility.Check.Empty(CurrentDetailData["MarkerLengthE"])) lenE = "0-0/0+0\"";
             else lenE = CurrentDetailData["MarkerLengthE"].ToString();
-            MarkerLengthstr = lenY + "Ｙ" + lenE;
+            MarkerLengthstr = lenY + "Y" + lenE;
             MarkerLengthNum = Convert.ToDecimal(MyUtility.GetValue.Lookup(string.Format("Select dbo.MarkerLengthToYDS('{0}')", MarkerLengthstr)));
             //Conspc = MarkerLength / SizeRatio Qty
             if (sizeRatioQty == 0) Conspc = 0;
@@ -1753,6 +1786,12 @@ namespace Sci.Production.Cutting
                 CurrentDetailData["Conspc"] = Conspc;
             if (updateCons == true)
                 CurrentDetailData["Cons"] = MarkerLengthNum * Convert.ToInt32(CurrentDetailData["Layer"]);
+
+            //int mllint = int.Parse(numericBox_MarkerLengthY.Text);
+            //string mll = mllint.ToString("D2");
+            //string mla = mll + "Y" + textBox_MarkerLengthE.Text;
+            this.textBox_MarkerLength.Text = MarkerLengthstr;
+            this.textBox_MarkerLength.ValidateControl();
         }
 
         private void cal_TotalCutQty(object workorderukey, object newkey)
@@ -1899,15 +1938,18 @@ namespace Sci.Production.Cutting
             DataTable Dg = ((DataTable)detailgridbs.DataSource);
             for (int i = Dg.Rows.Count; i > 0; i--)
             {
-                if (MyUtility.Check.Empty(Dg.Rows[i - 1]["MarkerName"]) || MyUtility.Check.Empty(Dg.Rows[i - 1]["Layer"]) ||
-                    MyUtility.Check.Empty(Dg.Rows[i - 1]["SEQ1"]) || MyUtility.Check.Empty(Dg.Rows[i - 1]["SEQ2"]) ||
-                    MyUtility.Convert.GetString(Dg.Rows[i - 1]["MarkerName"]) == "" ||
-                    MyUtility.Convert.GetString(Dg.Rows[i - 1]["Layer"]) == "0" ||
-                    MyUtility.Convert.GetString(Dg.Rows[i - 1]["SEQ1"]) == "" ||
-                    MyUtility.Convert.GetString(Dg.Rows[i - 1]["SEQ2"]) == "")
+                if (Dg.Rows[i - 1].RowState != DataRowState.Deleted)
                 {
-                    Dg.Rows[i - 1].Delete();
-                }                
+                    if (MyUtility.Check.Empty(Dg.Rows[i - 1]["MarkerName"]) || MyUtility.Check.Empty(Dg.Rows[i - 1]["Layer"]) ||
+                        MyUtility.Check.Empty(Dg.Rows[i - 1]["SEQ1"]) || MyUtility.Check.Empty(Dg.Rows[i - 1]["SEQ2"]) ||
+                        MyUtility.Convert.GetString(Dg.Rows[i - 1]["MarkerName"]) == "" ||
+                        MyUtility.Convert.GetString(Dg.Rows[i - 1]["Layer"]) == "0" ||
+                        MyUtility.Convert.GetString(Dg.Rows[i - 1]["SEQ1"]) == "" ||
+                        MyUtility.Convert.GetString(Dg.Rows[i - 1]["SEQ2"]) == "")
+                    {
+                        Dg.Rows[i - 1].Delete();
+                    }
+                }          
             }
 
             #region 刪除Qty 為0
@@ -2088,12 +2130,14 @@ namespace Sci.Production.Cutting
                     return upResult;
                 }
             }
+
             return base.ClickSavePost();
         }
 
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
+            
             foreach (DataRow dr in DetailDatas) dr["SORT_NUM"] = 0;  //編輯後存檔，將[SORT_NUM]歸零
             //sorting(comboBox1.Text);
             OnDetailEntered();
@@ -2148,6 +2192,7 @@ namespace Sci.Production.Cutting
                 serial++;
             }
             this.detailgridbs.ResumeBinding();
+            this.detailgrid.SelectRowTo(0);
         }
 
 
