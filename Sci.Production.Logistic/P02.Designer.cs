@@ -249,6 +249,7 @@
             this.txtcloglocation1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtcloglocation1.IsSupportSytsemContextMenu = false;
             this.txtcloglocation1.Location = new System.Drawing.Point(97, 92);
+            this.txtcloglocation1.MDivisionObjectName = null;
             this.txtcloglocation1.Name = "txtcloglocation1";
             this.txtcloglocation1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
             this.txtcloglocation1.Size = new System.Drawing.Size(80, 23);
