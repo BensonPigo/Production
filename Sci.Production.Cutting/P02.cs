@@ -1564,17 +1564,6 @@ namespace Sci.Production.Cutting
         //grid插入的btn, override成複製功能
         protected override void OnDetailGridInsert(int index = -1)
         {
-            //因按下新增也會進來這,但新增的btn不要複製全部
-            if (flag || ((DataTable)this.detailgridbs.DataSource).Rows.Count <= 0)
-            {
-                base.OnDetailGridInsert(index);
-
-                //if (index == -1) index = TEMP;
-                //OldRow.Table.Rows.InsertAt(newRow, index);
-                flag = false;
-                return;
-            }
-
             DataTable table = (DataTable)this.detailgridbs.DataSource;
             DataRow newRow = table.NewRow();
             DataRow OldRow = CurrentDetailData == null ? newRow : CurrentDetailData;  //將游標停駐處的該筆資料複製起來
@@ -1592,12 +1581,31 @@ namespace Sci.Production.Cutting
             // 除Cutref, Cutno, Addname, AddDate, EditName, EditDate以外的所有欄位
             newRow["Newkey"] = maxkey;
             newRow["ID"] = OldRow["ID"];
-            newRow["OrderID"] = OldRow["OrderID"];
-
             
-
-            newRow["FactoryID"] = OldRow["FactoryID"];
+            newRow["Type"] = OldRow["Type"];
             newRow["MDivisionId"] = OldRow["MDivisionId"];
+            newRow["FactoryID"] = OldRow["FactoryID"];
+            newRow["UKey"] = 0;
+
+            //因按下新增也會進來這,但新增的btn不要複製全部
+            if (flag || ((DataTable)this.detailgridbs.DataSource).Rows.Count <= 0)
+            {
+                //base.OnDetailGridInsert(index);
+                if (OldRow["Type"].ToString()=="1")
+                {
+                    newRow["OrderID"] = OldRow["OrderID"];
+                }
+                else
+                {
+                    newRow["OrderID"] = OldRow["ID"];
+                }
+                if (index == -1) index = TEMP;
+                OldRow.Table.Rows.InsertAt(newRow, index);
+                flag = false;
+                return;
+            }
+
+            newRow["OrderID"] = OldRow["OrderID"];
             newRow["SEQ1"] = OldRow["SEQ1"];
             newRow["SEQ2"] = OldRow["SEQ2"];
             //CutRef
@@ -1615,8 +1623,6 @@ namespace Sci.Production.Cutting
             newRow["SCIRefno"] = OldRow["SCIRefno"];
             newRow["MarkerNo"] = OldRow["MarkerNo"];
             newRow["MarkerVersion"] = OldRow["MarkerVersion"];
-            newRow["UKey"] = 0;
-            newRow["Type"] = OldRow["Type"];
             //newRow["Addname"] = Sci.Env.User.UserName;
             //newRow["AddDate"] = DateTime.Now;
             //EditName
