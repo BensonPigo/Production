@@ -79,7 +79,7 @@ where bd.id='{0}' and bd.FromPoId = '{1}' and bd.FromSeq1 = '{2}' and bd.FromSeq
 and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and c.stocktype !='O'"
                     , dr_master["BorrowID"], sp, seq.Substring(0, 3), seq.Substring(3, 2))); // 
 
-                MyUtility.Msg.WaitWindows("Data Loading....");
+                this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtBorrow))
                 {
@@ -89,7 +89,7 @@ and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and c.stocktype !='O'"
                     dtBorrow.DefaultView.Sort = "fromseq1,fromseq2,location,fromdyelot,balance desc";
                 }
                 else { ShowErr(strSQLCmd.ToString(), result); }
-                MyUtility.Msg.WaitClear();
+                this.HideWaitMessage();
             }
         }
 

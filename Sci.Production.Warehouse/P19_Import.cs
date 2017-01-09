@@ -105,7 +105,7 @@ and a.id = @sp and c.mdivisionid='{0}' and c.stocktype = '{1}'", Sci.Env.User.Ke
             }
 
             Ict.DualResult result;
-            MyUtility.Msg.WaitWindows("Data loading....");
+            this.ShowWaitMessage("Data Loading....");
             if (result = DBProxy.Current.Select(null, sbSQLCmd.ToString(),cmds, out dtImportData))
             {
                 if (dtImportData.Rows.Count == 0)
@@ -116,7 +116,7 @@ and a.id = @sp and c.mdivisionid='{0}' and c.stocktype = '{1}'", Sci.Env.User.Ke
                 dtImportData.Columns["Balance"].Expression = "stockqty - qty";
             }
             else { ShowErr(sbSQLCmd.ToString(), result); }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
 
         }
 

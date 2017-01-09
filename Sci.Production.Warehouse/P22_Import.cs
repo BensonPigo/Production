@@ -101,7 +101,7 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 sqlp1.Value = sp;
                 paras.Add(sqlp1);
 
-                MyUtility.Msg.WaitWindows("Data Loading....");
+                this.ShowWaitMessage("Data Loading....");
 
                 if (!SQL.Selects("", strSQLCmd.ToString(), out dsTmp, paras)) { return; }
                 DataTable TaipeiInput = dsTmp.Tables[0];
@@ -123,7 +123,7 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
 
                 myFilter();
 
-                MyUtility.Msg.WaitClear();
+                this.HideWaitMessage();
             }
         }
 

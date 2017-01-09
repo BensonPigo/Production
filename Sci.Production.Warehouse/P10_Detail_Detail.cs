@@ -14,6 +14,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P10_Detail_Detail : Sci.Win.Subs.Base
     {
+        public Sci.Win.Subs.Base P10_Detail;
         DataRow dr_master;
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -68,7 +69,7 @@ and ltrim(a.seq1) between '01' and '99'
                 , dr_master["poid"], Sci.Env.User.Keyword, dr_master["scirefno"], dr_master["colorid"], dr_master["sizespec"]));
             #endregion
 
-            MyUtility.Msg.WaitWindows("Data Loading....");
+            P10_Detail.ShowWaitMessage("Data Loading....");
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtFtyinventory))
             {
@@ -78,7 +79,7 @@ and ltrim(a.seq1) between '01' and '99'
                 dtFtyinventory.DefaultView.Sort = "seq1,seq2,location,dyelot,balanceqty desc";
             }
             else { ShowErr(strSQLCmd.ToString(), result); }
-            MyUtility.Msg.WaitClear();
+            P10_Detail.HideWaitMessage();
 
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>

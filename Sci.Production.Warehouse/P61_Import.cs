@@ -56,7 +56,7 @@ namespace Sci.Production.Warehouse
 from dbo.LocalInventory c 
 Where c.OrderID = '{0}' and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid='{1}'", sp, Sci.Env.User.Keyword)); // 
 
-                MyUtility.Msg.WaitWindows("Data Loading....");
+                this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtArtwork))
                 {
@@ -66,7 +66,7 @@ Where c.OrderID = '{0}' and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid
                     dtArtwork.DefaultView.Sort = "scirefno,sizespec,balance desc";
                 }
                 else { ShowErr(strSQLCmd.ToString(), result); }
-                MyUtility.Msg.WaitClear();
+                this.HideWaitMessage();
             }
         }
 

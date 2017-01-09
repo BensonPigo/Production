@@ -14,6 +14,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P16_Import : Sci.Win.Subs.Base
     {
+        public Sci.Win.Tems.Base P16;
         DataRow dr_master;
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
@@ -78,13 +79,12 @@ Where a.id = '{0}' and c.lock = 0  and c.mdivisionid='{1}' ", dr_master["request
            // string AA = strSQLCmd.ToString();
             #endregion
 
-            MyUtility.Msg.WaitWindows("Data Loading....");
+            P16.ShowWaitMessage("Data Loading....");
 
             DataSet data;
             DBProxy.Current.DefaultTimeout = 1200;
             try
             {
-                MyUtility.Msg.WaitWindows("Data Loading....");
                 if (!SQL.Selects("", strSQLCmd.ToString(), out data))
                 {
                     ShowErr(strSQLCmd.ToString());
@@ -97,10 +97,10 @@ Where a.id = '{0}' and c.lock = 0  and c.mdivisionid='{1}' ", dr_master["request
             }
             finally
             {
-                DBProxy.Current.DefaultTimeout = 0;
-                MyUtility.Msg.WaitClear();
+                DBProxy.Current.DefaultTimeout = 0;               
             }
 
+            P16.HideWaitMessage();
             dtlack = data.Tables[0];
             dtftyinventory = data.Tables[1];
 

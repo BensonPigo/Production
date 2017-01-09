@@ -100,7 +100,7 @@ Where c.lock = 0 and c.mdivisionid = '{0}'", Sci.Env.User.Keyword));
                 }
 
 
-                MyUtility.Msg.WaitWindows("Data Loading....");
+                this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtInventory))
                 {
@@ -115,7 +115,7 @@ Where c.lock = 0 and c.mdivisionid = '{0}'", Sci.Env.User.Keyword));
                     listControlBindingSource1.DataSource = dtInventory;
                 }
                 else { ShowErr(strSQLCmd.ToString(), result); }
-                MyUtility.Msg.WaitClear();
+                this.HideWaitMessage();
             }
         }
         //Form Load

@@ -616,6 +616,7 @@ Where a.id = '{0}'", masterID);
                 return;
             }
             var frm = new Sci.Production.Warehouse.P16_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource, comboBox1.Text, "P16_Import");
+            frm.P16 = this;
             frm.ShowDialog(this);
             this.RenewData();
         }

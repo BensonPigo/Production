@@ -57,7 +57,7 @@ inner join PO_Supp_Detail psd on b.POID = psd.id and b.Seq1 = psd.Seq1 and b.Seq
 where a.status='Confirmed' and a.id='{0}'", transid, Sci.Env.User.Keyword)); // 
 
 
-            MyUtility.Msg.WaitWindows("Data Loading....");
+            this.ShowWaitMessage("Data Loading....");
             Ict.DualResult result;
             if (!(result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtImportData)))
             {
@@ -71,7 +71,7 @@ where a.status='Confirmed' and a.id='{0}'", transid, Sci.Env.User.Keyword)); //
                 listControlBindingSource1.DataSource = dtImportData;
                 dtImportData.DefaultView.Sort = "poid,seq1,seq2,dyelot,roll";
             }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
 
         }
 

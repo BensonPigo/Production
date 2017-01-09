@@ -25,7 +25,8 @@ namespace Sci.Production.Warehouse
         protected override void OnSubDetailInsert(int index = -1)
         {
             var frm = new Sci.Production.Warehouse.P10_Detail_Detail(CurrentDetailData, (DataTable)gridbs.DataSource);
-            frm.ShowDialog(this);
+            frm.P10_Detail = this;
+            frm.ShowDialog(this);            
             //base.OnSubDetailInsert(index);
             //CurrentSubDetailData["Issue_SummaryUkey"] = 0;
         }

@@ -121,7 +121,7 @@ and a.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
                 strSQLCmd.Append(string.Format(@" order by newid()"));
             }
 
-            MyUtility.Msg.WaitWindows("Data Loading....");
+            this.ShowWaitMessage("Data Loading....");
 
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtFtyinventory))
@@ -131,7 +131,7 @@ and a.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
                 dtFtyinventory.DefaultView.Sort = "fabrictype,poid,seq1,seq2,location,dyelot,roll";
             }
             else { ShowErr(strSQLCmd.ToString(), result); }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
         }
 
         protected override void OnFormLoaded()

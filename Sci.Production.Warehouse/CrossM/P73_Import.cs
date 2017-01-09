@@ -16,6 +16,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P73_Import : Sci.Win.Subs.Base
     {
+        public Sci.Win.Tems.Base P73;
         DataRow dr_master;
         DataTable dt_detail;
         DataSet dsTmp;
@@ -119,7 +120,7 @@ where d.id='{0}' and i.CutplanID = '{0}' and i.Status = 'Confirmed'
                 #endregion
 
 
-                MyUtility.Msg.WaitWindows("Data Loading....");
+                P73.ShowWaitMessage("Data Loading....");
 
                 if (!SQL.Selects("", strSQLCmd.ToString(), out dsTmp)) 
                 { return; }
@@ -127,7 +128,7 @@ where d.id='{0}' and i.CutplanID = '{0}' and i.Status = 'Confirmed'
                 DataTable dtReceive = dsTmp.Tables[0];
                 TaipeiOutputBS.DataSource = dtReceive;
 
-                MyUtility.Msg.WaitClear();
+                P73.HideWaitMessage();
 
         }
 

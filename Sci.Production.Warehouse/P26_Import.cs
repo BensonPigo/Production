@@ -157,7 +157,7 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString())); //
             }
 
 
-            MyUtility.Msg.WaitWindows("Data Loading....");
+            this.ShowWaitMessage("Data Loading....");
             Ict.DualResult result;
             if (!(result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtArtwork)))
             {
@@ -171,7 +171,7 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString())); //
                 listControlBindingSource1.DataSource = dtArtwork;
                 //dtArtwork.DefaultView.Sort = "seq1,seq2,location,dyelot,balance desc";
             }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
 
         }
 

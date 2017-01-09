@@ -103,7 +103,7 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I' and 
                     cmds.Add(seq2);
                 }
 
-                MyUtility.Msg.WaitWindows("Data Loading....");
+                this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out dtScrap))
                 {
@@ -116,7 +116,7 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I' and 
                     listControlBindingSource1.DataSource = dtScrap;
                 }
                 else { ShowErr(strSQLCmd.ToString(), result); }
-                MyUtility.Msg.WaitClear();
+                this.HideWaitMessage();
             }
         }
         //Form Load

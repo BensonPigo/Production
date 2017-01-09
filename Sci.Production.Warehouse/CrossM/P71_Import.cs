@@ -65,7 +65,7 @@ select 0 as selected ,* from cte
                 sqlp1.Value = sp;
                 paras.Add(sqlp1);
 
-                MyUtility.Msg.WaitWindows("Data Loading....");
+                this.ShowWaitMessage("Data Loading....");
 
                 if (!SQL.Selects("", strSQLCmd.ToString(), out dsTmp, paras)) { return; }
                 DataTable TaipeiOutput = dsTmp.Tables[0];
@@ -75,7 +75,7 @@ select 0 as selected ,* from cte
 
                 //myFilter();
 
-                MyUtility.Msg.WaitClear();
+                this.HideWaitMessage();
             }
         }
 

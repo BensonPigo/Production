@@ -647,7 +647,8 @@ Where a.id = '{0}'", masterID);
                 return;
             }
             var frm = new Sci.Production.Warehouse.P75_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
-            frm.ShowDialog(this);
+            frm.P75 = this;
+            frm.ShowDialog(this);         
             this.RenewData();
         }
         protected override bool ClickPrint()

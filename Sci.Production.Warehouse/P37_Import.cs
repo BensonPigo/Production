@@ -132,7 +132,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                     cmds.Add(sp4);
                 }
 
-                MyUtility.Msg.WaitWindows("Data Loading....");
+                this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out dtScrap))
                 {
@@ -145,7 +145,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                     listControlBindingSource1.DataSource = dtScrap;
                 }
                 else { ShowErr(strSQLCmd.ToString(), result); }
-                MyUtility.Msg.WaitClear();
+                this.HideWaitMessage();
             }
         }
         //Form Load

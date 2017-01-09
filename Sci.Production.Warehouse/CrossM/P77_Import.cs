@@ -14,6 +14,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P77_Import : Sci.Win.Subs.Base
     {
+        public Sci.Win.Tems.Base P77;
         DataRow dr_master;
         DataTable dt_detail;
         DataSet dsTmp;
@@ -117,7 +118,7 @@ and fi.POID = cte.toPOID and fi.Seq1 = cte.toSeq1 and fi.Seq2 = cte.toSeq2
 left join PO_Supp_Detail p1 on p1.ID = cte.toPOID and p1.seq1 = cte.toSeq1 and p1.SEQ2 = cte.toSeq2
 where fi.stocktype = 'B' and lock = 0 and fi.InQty - fi.OutQty+fi.AdjustQty > 0;", dr_master["cutplanid"], Sci.Env.User.Keyword);
 
-            MyUtility.Msg.WaitWindows("Data Loading....");
+            P77.ShowWaitMessage("Data Loading....");
 
             DataSet data = new DataSet();
             DataTable dtReqest, dtFtyDetail;
@@ -145,7 +146,7 @@ where fi.stocktype = 'B' and lock = 0 and fi.InQty - fi.OutQty+fi.AdjustQty > 0;
             listControlBindingSource2.DataSource = listControlBindingSource1;
             listControlBindingSource2.DataMember = "rel1";
 
-            MyUtility.Msg.WaitClear();
+            P77.HideWaitMessage();
             #endregion
         }
 

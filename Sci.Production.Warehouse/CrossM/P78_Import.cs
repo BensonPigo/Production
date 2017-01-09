@@ -16,6 +16,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P78_Import : Sci.Win.Subs.Base
     {
+        public Sci.Win.Tems.Base P78;
         DataRow dr_master;
         DataTable dt_detail;
         DataSet dsTmp;
@@ -305,10 +306,9 @@ from grid1 g1
 inner join grid2 g2 on g1.ReturnSP = g2.ReturnSP and g1.ReturnSeq = g2.ReturnSeq
 order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelot, StockType
 ", dr_master["referenceid"], Sci.Env.User.Keyword));
-                #endregion             
-            
-                MyUtility.Msg.WaitWindows("Data Loading....");
-
+                #endregion                        
+                
+                P78.ShowWaitMessage("Data Loading");
                 if (!SQL.Selects("", strSQLCmd.ToString(), out dsTmp)) 
                 { return; }
 
@@ -317,8 +317,7 @@ order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelo
 
                 TaipeiOutputBS.DataSource = dsTmp.Tables[0];
                 TaipeiOutputBS_Detail.DataSource = dsTmp2.Tables[0];
-
-                MyUtility.Msg.WaitClear();
+                P78.HideWaitMessage();
         }
 
         // Cancel

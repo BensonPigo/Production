@@ -78,7 +78,7 @@ left join dbo.po_supp_detail b on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec 
 Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}' and c.mdivisionid='{4}'
 and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substring(0, 3), seq.Substring(3, 2), Sci.Env.User.Keyword)); // 
 
-                MyUtility.Msg.WaitWindows("Data Loading....");
+                this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtBorrow))
                 {
@@ -88,7 +88,7 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substri
                     dtBorrow.DefaultView.Sort = "fromseq1,fromseq2,location,fromdyelot,balance desc";
                 }
                 else { ShowErr(strSQLCmd.ToString(), result); }
-                MyUtility.Msg.WaitClear();
+                this.HideWaitMessage();
             }
         }
 

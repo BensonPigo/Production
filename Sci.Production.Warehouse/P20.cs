@@ -222,12 +222,11 @@ select i.poid,i.seq1,i.Seq2,t.id
             paras.Add(sp2);
             paras.Add(sp3);
             #endregion
-
+            this.ShowWaitMessage("Data Loading....");
             DataSet data;
             DBProxy.Current.DefaultTimeout = 1200;
             try
-            {
-                MyUtility.Msg.WaitWindows("Data Loading....");
+            {              
                 if (!SQL.Selects("", sqlcmd.ToString(), out data, paras))
                 {
                     ShowErr(sqlcmd.ToString());
@@ -240,10 +239,9 @@ select i.poid,i.seq1,i.Seq2,t.id
             }
             finally
             {
-                DBProxy.Current.DefaultTimeout = 0;
-                MyUtility.Msg.WaitClear();
+                DBProxy.Current.DefaultTimeout = 0;                
             }
-            
+            this.HideWaitMessage();
             dtTpeIventory = data.Tables[0];
             dtInvtrans = data.Tables[1];
             dtFtyInventory = data.Tables[2];

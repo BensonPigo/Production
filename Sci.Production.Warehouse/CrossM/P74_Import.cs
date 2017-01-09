@@ -83,7 +83,7 @@ and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
                     and MDivisionID='{4}') and b.seq1 = '{2}' and b.seq2='{3}'"
                 , fromSP, sp, seq1, seq2, Sci.Env.User.Keyword, dr_master["mdivisionid"])); // 
 
-                MyUtility.Msg.WaitWindows("Data Loading....");
+                this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtBorrow))
                 {
@@ -109,7 +109,7 @@ and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
                     }
                 }
                 else { ShowErr(strSQLCmd.ToString(), result); }
-                MyUtility.Msg.WaitClear();                
+                this.HideWaitMessage();               
             }
         }
 

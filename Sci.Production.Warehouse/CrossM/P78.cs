@@ -672,6 +672,7 @@ Where a.id = '{0}'", masterID);
         private void button5_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P78_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
+            frm.P78 = this;
             frm.ShowDialog(this);
             this.RenewData();
         }
