@@ -56,8 +56,18 @@ BEGIN
                );
 		END
 
+		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WHERE S.ID = @poid AND S.Status!='Confirmed')
+		BEGIN
+			Delete FROM dbo.SubTransfer WHERE ID = @poid  
+			Delete FROM dbo.SubTransfer_Detail WHERE ID = @poid  
+		END
+
 		-- 新增 報廢單主檔 & 明細檔
-		INSERT INTO [dbo].[SubTransfer]
+		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WHERE S.ID = @poid AND S.Status='Confirmed')
+			update [dbo].[SubTransfer] set [EditName]= @loginid , [EditDate] = GETDATE()		
+		ELSE 
+		BEGIN
+			INSERT INTO [dbo].[SubTransfer]
 				   ([Id]				   ,[MDivisionID]				   ,[Type]
 				   ,[IssueDate]				   ,[Status]				   ,[Remark]
 				   ,[AddName]				   ,[AddDate]				   ,[EditName]
@@ -74,6 +84,7 @@ BEGIN
 					,@loginid
 					,GETDATE()
 					);
+		END
 
 		INSERT INTO [dbo].[SubTransfer_Detail]
            ([ID]				,[FromFtyInventoryUkey]           ,[FromMDivisionID]           ,[FromPOID]
