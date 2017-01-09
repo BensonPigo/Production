@@ -1346,7 +1346,7 @@
             以Ukey當作PK的DetailTable，透過這個設定值來做Identity欄位同步
             </summary>
         </member>
-        <member name="M:Sci.Utility.Drawing.DrawingPrg.DrawText(System.String,System.Drawing.Font,System.Drawing.Color,System.Drawing.Color,System.Int32,System.Int32,System.Int32)">
+        <member name="M:Sci.Utility.Drawing.DrawingPrg.DrawText(System.String,System.Drawing.Font,System.Drawing.Color,System.Drawing.Color,System.Int32,System.Int32)">
             <summary>
             文字 To Image
             </summary>
@@ -1473,6 +1473,35 @@
                  Step3.Save()
             </summary>
             <param name="Path"></param>
+        </member>
+        <member name="T:Sci.WaitPanelExtension">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Sci.WaitPanelExtension.ShowWaitMessage(System.Windows.Forms.Form,System.String,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="frm"></param>
+            <param name="message"></param>
+            <param name="delaySaperateMs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.WaitPanelExtension.HideWaitMessage(System.Windows.Forms.Form)">
+            <summary>
+            
+            </summary>
+            <param name="frm"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.WaitPanelExtension.SetWaitMessageAlignment(System.Windows.Forms.Form,System.Nullable{System.Drawing.ContentAlignment})">
+            <summary>
+            
+            </summary>
+            <param name="frm"></param>
+            <param name="align"></param>
+            <returns></returns>
         </member>
         <member name="M:Sci.Utility.Word.SaveDotReportCls.OpenFile(System.String)">
             <summary>
