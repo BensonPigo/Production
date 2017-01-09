@@ -1553,6 +1553,8 @@ namespace Sci.Production.Cutting
             newRow["FactoryID"] = OldRow["FactoryID"];
             newRow["UKey"] = 0;
             newRow["SCIRefno"] = OldRow["SCIRefno"];
+            newRow["FabricCombo"] = OldRow["FabricCombo"];
+            newRow["LectraCode"] = OldRow["LectraCode"];
             //因按下新增也會進來這,但新增的btn不要複製全部
             if (flag || ((DataTable)this.detailgridbs.DataSource).Rows.Count <= 0)
             {
@@ -1591,10 +1593,8 @@ namespace Sci.Production.Cutting
             //newRow["AddDate"] = DateTime.Now;
             //EditName
             //EditDate
-            newRow["FabricCombo"] = OldRow["FabricCombo"];
             newRow["MarkerDownLoadID"] = OldRow["MarkerDownLoadID"];
             newRow["FabricCode"] = OldRow["FabricCode"];
-            newRow["LectraCode"] = OldRow["LectraCode"];
             newRow["Order_EachconsUKey"] = OldRow["Order_EachconsUKey"];
             newRow["Article"] = OldRow["Article"];
             newRow["SizeCode"] = OldRow["SizeCode"];
