@@ -115,7 +115,7 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Name = "R43";
-            this.Text = "Sub-process BCS report (RFID)";
+            this.Text = "R43.Sub-process BCS report (RFID)";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);

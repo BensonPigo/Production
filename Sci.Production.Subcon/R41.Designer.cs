@@ -181,7 +181,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "R41";
-            this.Text = "Bundle tracking list (RFID)";
+            this.Text = "R41.Bundle tracking list (RFID)";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
