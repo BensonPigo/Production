@@ -318,7 +318,14 @@ namespace Sci.Production.Warehouse
             this.DetailSelectCommand = string.Format(@"select a.id,a.frommdivisionid,a.FromPoId,a.FromSeq1,a.FromSeq2
 ,left(a.FromSeq1+' ',3)+a.FromSeq2 as Fromseq
 ,p1.FabricType
-,p1.stockunit
+,iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+    ff.UsageUnit , 
+    iif(mm.IsExtensionUnit > 0 , 
+        iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+            ff.UsageUnit , 
+            uu.ExtensionUnit), 
+        ff.UsageUnit)) as StockUnit
+--,p1.stockunit
 ,dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) as [description]
 ,a.Qty
 ,a.ToMDivisionID
@@ -326,6 +333,18 @@ namespace Sci.Production.Warehouse
 ,a.ukey
 from dbo.RequestCrossM_detail a 
 left join PO_Supp_Detail p1 on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+inner join [dbo].[Fabric] ff on p1.SCIRefno= ff.SCIRefno
+inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
+inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
+inner join View_unitrate v on v.FROM_U = p1.POUnit
+	and v.TO_U = (
+	iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+		ff.UsageUnit , 
+		iif(mm.IsExtensionUnit > 0 , 
+			iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+				ff.UsageUnit , 
+				uu.ExtensionUnit), 
+			ff.UsageUnit)))--StockUnit
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
