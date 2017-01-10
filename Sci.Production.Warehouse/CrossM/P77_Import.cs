@@ -53,10 +53,15 @@ namespace Sci.Production.Warehouse
             ns.CellValidating += (s, e) =>
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
-                    {                       
+                    {
                         gridDetail.GetDataRow(gridDetail.GetSelectedRowIndex())["qty"] = e.FormattedValue;
                         gridDetail.GetDataRow(gridDetail.GetSelectedRowIndex())["selected"] = true;
-                        this.gridDetail.CurrentCell = this.gridDetail.Rows[this.gridDetail.CurrentCell.RowIndex].Cells[8];                                      
+                        this.gridDetail.CurrentCell = this.gridDetail.Rows[this.gridDetail.CurrentCell.RowIndex].Cells[8];
+                    }
+                    else
+                    {
+                        gridDetail.GetDataRow(gridDetail.GetSelectedRowIndex())["qty"] = 0;
+                        gridDetail.GetDataRow(gridDetail.GetSelectedRowIndex())["selected"] = false;
                     }
                 };
             ns2.CellFormatting = (s, e) =>
