@@ -640,6 +640,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.m
         /// *	4.	更新OutQty
         /// *	6.	更新OutQty with Location
         /// *	8.	更新AdjustQty
+        /// *   26. 更新Location
         /// </summary>
         /// <param name="Int Type"></param>
         /// <param name="String Poid"></param>
@@ -778,7 +779,7 @@ when not matched then
 
 --delete t from FtyInventory_Detail t
 --where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
---drop table #tmp_L_K 
+drop table #tmp_L_K 
 ";//↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
                     }
                     sqlcmd += "drop table #tmpS1 ";
@@ -993,7 +994,7 @@ when not matched then
 
 --delete t from FtyInventory_Detail t
 --where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
---drop table #tmp_L_K
+drop table #tmp_L_K
 ";//↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
                     }
                     sqlcmd += "drop table #tmpS1";
@@ -1087,6 +1088,35 @@ when not matched then
              ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
 
 drop table #tmpS1 ";
+                    #endregion
+                    break;
+                case 26:
+                    #region 更新Location
+                    sqlcmd += @"
+alter table #TmpSource alter column mdivisionid varchar(10)
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column roll varchar(15)
+
+select tolocation,[ukey] = f.ukey
+into #tmp_L_K 
+from #TmpSource s
+left join ftyinventory f on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
+                                           and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype
+
+delete t from FtyInventory_Detail t
+where  t.ukey = (select distinct ukey from #tmp_L_K where t.Ukey = Ukey)                                          
+
+merge dbo.ftyinventory_detail as t
+using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.tolocation,'')
+when not matched then
+    insert ([ukey],[mtllocationid]) 
+       values (s.ukey,isnull(s.tolocation,''));
+
+drop table #tmp_L_K
+drop table #TmpSource
+";
                     #endregion
                     break;
             }
