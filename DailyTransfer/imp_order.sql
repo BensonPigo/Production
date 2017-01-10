@@ -467,23 +467,24 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 	
 
 		-----------------Order_SizeCode---------------------------尺寸表 Size Spec(存尺寸碼)
+		--20170110 willy 調整順序: 刪除>修改>新增
 		Merge Production.dbo.Order_SizeCode as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_SizeCode a inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.sizecode=s.sizecode and t.ukey=s.ukey
+		on t.ukey=s.ukey
+		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+			delete
 		when matched then
 			update set
 			t.Seq= s.Seq,
 			t.SizeGroup= s.SizeGroup
 		When not matched by target then 
 			insert(Id,Seq,SizeGroup,SizeCode,ukey)
-			values(s.Id,s.Seq,s.SizeGroup,s.SizeCode,s.ukey)
-		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
-			delete;	
+			values(s.Id,s.Seq,s.SizeGroup,s.SizeCode,s.ukey);
 
 		----------------Order_Sizeitem------------------------------尺寸表 Size Spec(存量法資料)
 		Merge Production.dbo.Order_Sizeitem as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_Sizeitem a inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.sizeitem=s.sizeitem and t.ukey=s.ukey
+		on t.ukey=s.ukey
 		when matched then 
 			update set 			
 			t.SizeUnit= s.SizeUnit,
@@ -497,7 +498,7 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		-------------Order_SizeSpec--------------------------------尺寸表 Size Spec(存尺寸碼)
 		Merge Production.dbo.Order_SizeSpec as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_SizeSpec a inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.sizeitem=s.sizeitem and t.sizecode=s.sizecode and t.ukey=s.ukey
+		on  t.ukey=s.ukey
 		when matched then 
 			update set
 			t.SizeSpec= s.SizeSpec
