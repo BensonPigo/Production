@@ -619,11 +619,12 @@ Where a.id = '{0}'", masterID);
                 return;
             }
 
-            string checkSql = string.Format("select * from RequestCrossM where id = '{0}' and Status != 'Confirmed'", CurrentMaintain["cutplanid"]);
+            //判斷P76是否有收到料
+            string checkSql = string.Format("select * from RequestCrossM where id = '{0}' and Status = 'Confirmed' and ToMDivisionID = '{1}'", CurrentMaintain["cutplanid"], Sci.Env.User.Keyword);
             DataTable checkTable;
 
             DBProxy.Current.Select(null, checkSql, out checkTable);
-            if (checkTable.Rows.Count > 0)
+            if (checkTable.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox(string.Format("< Request Id > : {0} not Confirmed", CurrentMaintain["cutplanid"]));
                 return;
