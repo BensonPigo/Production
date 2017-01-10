@@ -179,7 +179,7 @@ and o.PulloutComplete = 0
 and o.Finished = 0
 and o.Junk = 0
 IF OBJECT_ID(''tempdb.dbo.#tmp2'', ''U'') IS NOT NULL DROP TABLE #tmp2
-select s.*, t.RCID as C
+select DISTINCT s.*, t.RCID as C
 into #tmp2
 from #tmp s
 left join '+@SerDbDboTb+N' t on t.RCID collate Chinese_Taiwan_Stroke_CI_AS = s.sRCID
