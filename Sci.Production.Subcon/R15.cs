@@ -151,6 +151,7 @@ where a.issuedate between '{0}' and '{1}'
                 sp_style.Value = style;
                 cmds.Add(sp_style);
             }
+            sqlCmd.Append(" and a.Status!='Closed'");
 
             if (orderby.ToUpper() == "ISSUE DATE")
                 sqlCmd.Append(" order by a.issuedate ");
