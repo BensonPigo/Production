@@ -85,7 +85,7 @@ namespace Sci.Production.Warehouse
 			       when stocktype = 'O' then 'Other' End
 ,Dyelot,IssueDate,ID,name,inqty,outqty,adjust,Remark,location,
 sum(TMP.inqty - TMP.outqty+tmp.adjust) 
-over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.stocktype,tmp.IssueDate,tmp.inqty desc,tmp.iD ) as [balance] 
+over (partition by tmp.stocktype,tmp.roll order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD ) as [balance] 
 from (
 	select b.roll,b.stocktype,b.dyelot,a.IssueDate, a.id
 ,Case type when 'A' then 'P35. Adjust Bulk Qty' 
@@ -230,7 +230,7 @@ select b.roll,b.stocktype,b.dyelot,issuedate, a.id
     , sum(Qty) as inqty, 0 released,0 as adjust, remark,'' location
 from RequestCrossM a, RequestCrossM_Receive b 
 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-    and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+    and a.ToMDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type,b.roll,b.stocktype,b.dyelot,a.type 
 
 ) tmp
