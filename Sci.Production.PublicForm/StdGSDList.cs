@@ -39,7 +39,7 @@ inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
 left join Operation o on id.OperationID = o.ID
 left join MachineType m on o.MachineTypeID = m.ID
 left join MtlFactor mf on mf.Type = 'F' and o.MtlFactorID = mf.ID
-where s.Ukey = {0}", styleUkey);
+where s.Ukey = {0} order by id.SEQ", styleUkey);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData1);
             if (!result)
             {
