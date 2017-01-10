@@ -769,16 +769,16 @@ select location,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
 left join ftyinventory f on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
-						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll
+						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype
 merge dbo.ftyinventory_detail as t
 using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.location,'')
 when not matched then
     insert ([ukey],[mtllocationid]) 
 	values (s.ukey,isnull(s.location,''));
 
-delete t from FtyInventory_Detail t
-where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
-drop table #tmp_L_K 
+--delete t from FtyInventory_Detail t
+--where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
+--drop table #tmp_L_K 
 ";//↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
                     }
                     sqlcmd += "drop table #tmpS1 ";
@@ -984,17 +984,16 @@ select location,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
 left join ftyinventory f on mdivisionid = s.mdivisionid and poid = s.poid 
-                         and seq1 = s.seq1 and seq2 = s.seq2 and roll = s.roll
+                         and seq1 = s.seq1 and seq2 = s.seq2 and roll = s.roll and f.stocktype = s.stocktype
 merge dbo.ftyinventory_detail as t
 using #tmp_L_K as s on t.ukey = s.ukey and t.mtllocationid = s.location
 when not matched then
     insert ([ukey],[mtllocationid]) 
     values (s.ukey,isnull(s.location,''));
 
-delete t from FtyInventory_Detail t
-where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
-
-drop table #tmp_L_K
+--delete t from FtyInventory_Detail t
+--where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
+--drop table #tmp_L_K
 ";//↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
                     }
                     sqlcmd += "drop table #tmpS1";
