@@ -132,7 +132,7 @@ namespace Sci.Production.IE
 
             if (!MyUtility.Tool.CursorUpdateTable(UpdateData, "Employee", "Production"))
             {
-                MyUtility.Msg.WaitClear();
+                this.HideWaitMessage();
                 MyUtility.Msg.WarningBox("Import data fail. Pls try again!");
                 return;
             }

@@ -826,7 +826,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             string strXltName = Sci.Env.Cfg.XltPathDir + XltxName;
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return;
-            MyUtility.Msg.WaitWindows("Starting to excel...");
+            //MyUtility.Msg.WaitWindows("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[2, 3] = MyUtility.Convert.GetString(PLdr["ID"]);
@@ -941,7 +941,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             worksheet.Cells[excelRow + 13, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkLeft"]);
             worksheet.Cells[excelRow + 13, 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkRight"]);
 
-            MyUtility.Msg.WaitClear();
+            //MyUtility.Msg.WaitClear();
             excel.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
             excel.Visible = true;
         }
@@ -1066,7 +1066,7 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
             string strXltName = Sci.Env.Cfg.XltPathDir + XltxName;
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return;
-            MyUtility.Msg.WaitWindows("Starting to excel...");
+            //MyUtility.Msg.WaitWindows("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[3, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
@@ -1248,7 +1248,7 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                 worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, PicLeft, PicTop, 450, 400);
             }
 
-            MyUtility.Msg.WaitClear();
+            //MyUtility.Msg.WaitClear();
 
             excel.Visible = true;
         }

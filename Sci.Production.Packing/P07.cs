@@ -109,6 +109,7 @@ select 0 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
         //To Excel
         private void button2_Click(object sender, EventArgs e)
         {
+            this.ShowWaitMessage("Data Loading....");
             foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
             {
                 if (MyUtility.Convert.GetString(dr["selected"]) == "1")
@@ -117,11 +118,13 @@ select 0 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox("Query Data Fail --\r\n" + result.ToString());
+                        this.HideWaitMessage();
                         return;
                     }
                     PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dr, radioButton1.Checked ? "1" : "2", printData, ctnDim, qtyBDown);
                 }
             }
+            this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Complete.");
         }
     }

@@ -71,9 +71,9 @@ on FB.ID = O.FactoryID
                                     Left Join Factory F WITH (NOLOCK) on O.FactoryID = F.ID
                                     Where 1=1 {1}", StandardTms, where);
 
-            BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Style, Order 資料抓取中, 資料可能很多, 請等待 (Step 1/5)"); });
+            BeginInvoke(() => { this.ShowWaitMessage("Wait – Style, Order 資料抓取中, 資料可能很多, 請等待 (Step 1/5)"); });
             result = DBProxy.Current.Select("", SqlData1, spList, out tmpData1);
-            BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
+            BeginInvoke(() => { this.HideWaitMessage(); });
             if (!result) return result;
             if (tmpData1 == null || tmpData1.Rows.Count == 0) return new DualResult(false, "Data not found.");
             #endregion
@@ -95,9 +95,9 @@ WHEN SMV >= 90 and SMV < 100 THEN 'G'  ELSE 'H' END as SMVEFFX
                                         Left Join SewingOutput_Detail WITH (NOLOCK) on OrderID = tmpData1.ID
                                         Left Join SewingOutput WITH (NOLOCK) on SewingOutput.ID = SewingOutput_Detail.ID", SqlData1);
 
-            BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("需顯示Wait – By Order, Factory 整理明細 (Step 2/5)"); });
+            BeginInvoke(() => { this.ShowWaitMessage("需顯示Wait – By Order, Factory 整理明細 (Step 2/5)"); });
             result = DBProxy.Current.Select("", SqlData2, spList, out tmpData2);
-            BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
+            BeginInvoke(() => { this.HideWaitMessage(); });
             if (!result) return result;
             #endregion
 
@@ -130,12 +130,12 @@ WHEN SMV >= 90 and SMV < 100 THEN 'G'  ELSE 'H' END as SMVEFFX
             All_SqlData3_SUM = string.Format(@"select  count(*) as SMVEFFX_COUNT
                                     from ({0}) tmpData2", SqlData2);
 
-            BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Group By Style , Country 整理明細 (Step 3/5)"); });
+            BeginInvoke(() => { this.ShowWaitMessage("Wait – Group By Style , Country 整理明細 (Step 3/5)"); });
             result = DBProxy.Current.Select("", SqlData3, spList, out tmpData3);
             result = DBProxy.Current.Select("", SqlData3_SUM, spList, out tmpData3_SUM);
             result = DBProxy.Current.Select("", All_SqlData3, spList, out All_tmpData3);
             result = DBProxy.Current.Select("", All_SqlData3_SUM, spList, out All_tmpData3_SUM);
-            BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
+            BeginInvoke(() => { this.HideWaitMessage(); });
             if (!result) return result;
             #endregion
 
@@ -177,10 +177,10 @@ WHEN SUM(tmpData2.ProdQty) >= 10001 THEN 'FF'	 END as QtyEFFX
                                             group by   tmpData2.SMVEFFX
                                             order by   tmpData2.SMVEFFX", SqlData2);
 
-            BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – 產生tmpEFFIC明細 (Step 3/5)"); });
+            BeginInvoke(() => { this.ShowWaitMessage("Wait – 產生tmpEFFIC明細 (Step 3/5)"); });
             result = DBProxy.Current.Select("", SqlData4, spList, out tmpData4);
             result = DBProxy.Current.Select("", All_SqlData4, spList, out All_tmpData4);
-            BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
+            BeginInvoke(() => { this.HideWaitMessage(); });
             if (!result) return result;
             #endregion
 
@@ -199,9 +199,9 @@ from
 ({0}) tmpData2
 group by tmpData2.Style, tmpData2.CPU, tmpData2.SMV, {1}, tmpData2.FactoryCountry", SqlData2, GroupBy);
 
-            BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – 整理 Style Detail 資料 (Step 4/5)"); });
+            BeginInvoke(() => { this.ShowWaitMessage("Wait – 整理 Style Detail 資料 (Step 4/5)"); });
             result = DBProxy.Current.Select("", SqlStyleDetail, spList, out tmpStyleDetail);
-            BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
+            BeginInvoke(() => { this.HideWaitMessage(); });
             if (!result) return result;
             #endregion
 
@@ -213,9 +213,9 @@ group by tmpData2.Style, tmpData2.CPU, tmpData2.SMV, {1}, tmpData2.FactoryCountr
                                             from 
                                             ({0}) tmpData2", SqlData2);
 
-            BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – 整理 Order Detail 資料 (Step 5/5)"); });
+            BeginInvoke(() => { this.ShowWaitMessage("Wait – 整理 Order Detail 資料 (Step 5/5)"); });
             result = DBProxy.Current.Select("", SqlOrderDetail, spList, out tmpOrderDetail);
-            BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
+            BeginInvoke(() => { this.HideWaitMessage(); });
             if (!result) return result;
             #endregion
 
@@ -933,7 +933,7 @@ group by tmpData2.Style, tmpData2.CPU, tmpData2.SMV, {1}, tmpData2.FactoryCountr
                 #region [sheet2] Style Detail
                 Microsoft.Office.Interop.Excel.Worksheet worksheet2 = excel.ActiveWorkbook.Worksheets[2];
 
-                BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("產生EXCEL檔的Style Detail中，請稍後..."); });
+                BeginInvoke(() => { this.ShowWaitMessage("產生EXCEL檔的Style Detail中，請稍後..."); });
 
                 for (int i = 0; i < tmpStyleDetail.Rows.Count; i++)
                 {
@@ -947,13 +947,13 @@ group by tmpData2.Style, tmpData2.CPU, tmpData2.SMV, {1}, tmpData2.FactoryCountr
                     worksheet2.Cells[i + 2, 8] = tmpStyleDetail.Rows[i]["Country"].ToString();  //國別
                 }
 
-                BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
+                BeginInvoke(() => { this.HideWaitMessage(); });
                 #endregion
 
                 #region [sheet3] Order Detail
                 Microsoft.Office.Interop.Excel.Worksheet worksheet3 = excel.ActiveWorkbook.Worksheets[3];
 
-                BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("產生EXCEL檔的Order Detail中，請稍後..."); });
+                BeginInvoke(() => { this.ShowWaitMessage("產生EXCEL檔的Order Detail中，請稍後..."); });
 
                 for (int i = 0; i < tmpOrderDetail.Rows.Count; i++)
                 {
@@ -969,7 +969,7 @@ group by tmpData2.Style, tmpData2.CPU, tmpData2.SMV, {1}, tmpData2.FactoryCountr
                     worksheet3.Cells[i + 2, 10] = tmpOrderDetail.Rows[i]["標準產量"].ToString();
                 }
 
-                BeginInvoke(() => { MyUtility.Msg.WaitClear(); });
+                BeginInvoke(() => { this.HideWaitMessage(); });
                 #endregion
 
                 excel.Visible = true;

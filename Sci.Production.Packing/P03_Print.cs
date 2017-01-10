@@ -86,6 +86,7 @@ namespace Sci.Production.Packing
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            this.ShowWaitMessage("Data Loading....");
             if (reportType == "1" || reportType == "2")
             {
                 PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", masterData, reportType, printData, ctnDim, qtyBDown);
@@ -95,7 +96,7 @@ namespace Sci.Production.Packing
                 PublicPrg.Prgs.PackingListToExcel_PackingGuideReport("\\Packing_P03_PackingGuideReport.xltx", printData, ctnDim, qtyCtn, articleSizeTtlShipQty, printGroupData, clipData, masterData, orderQty, specialInstruction);
 
             }
-
+            this.HideWaitMessage();
             return true;
         }
     }

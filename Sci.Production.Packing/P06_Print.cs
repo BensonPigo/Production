@@ -82,10 +82,12 @@ namespace Sci.Production.Packing
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            this.ShowWaitMessage("Data Loading....");
             if (reportType == "1")
             {
                 PublicPrg.Prgs.PackingListToExcel_PackingGuideReport("\\Packing_P03_PackingGuideReport.xltx", printData, ctnDim, qtyCtn, articleSizeTtlShipQty, printGroupData, clipData, masterData, orderQty, specialInstruction);
             }
+            this.HideWaitMessage();
             return true;
         }
     }
