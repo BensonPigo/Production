@@ -67,7 +67,6 @@
             this.numericBox3 = new Sci.Win.UI.NumericBox();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
             this.label17 = new Sci.Win.UI.Label();
@@ -101,15 +100,16 @@
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.checkBox4 = new Sci.Win.UI.CheckBox();
             this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
-            this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
-            this.txtcdcode1 = new Sci.Production.Class.txtcdcode();
             this.button15 = new Sci.Win.UI.Button();
             this.label29 = new Sci.Win.UI.Label();
             this.displayBox8 = new Sci.Win.UI.DisplayBox();
             this.button16 = new Sci.Win.UI.Button();
+            this.displayBox9 = new Sci.Win.UI.DisplayBox();
             this.comboBox2 = new Sci.Production.Class.txtdropdownlist();
+            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
+            this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
+            this.txtcdcode1 = new Sci.Production.Class.txtcdcode();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -127,6 +127,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayBox9);
             this.detailcont.Controls.Add(this.comboBox2);
             this.detailcont.Controls.Add(this.button16);
             this.detailcont.Controls.Add(this.displayBox8);
@@ -165,7 +166,6 @@
             this.detailcont.Controls.Add(this.label17);
             this.detailcont.Controls.Add(this.displayBox3);
             this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.dateBox2);
             this.detailcont.Controls.Add(this.displayBox2);
             this.detailcont.Controls.Add(this.dateBox1);
             this.detailcont.Controls.Add(this.numericBox3);
@@ -628,18 +628,8 @@
             this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox2.Location = new System.Drawing.Point(108, 358);
             this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(204, 23);
+            this.displayBox2.Size = new System.Drawing.Size(242, 23);
             this.displayBox2.TabIndex = 29;
-            // 
-            // dateBox2
-            // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ApvDate", true));
-            this.dateBox2.IsSupportEditMode = false;
-            this.dateBox2.Location = new System.Drawing.Point(319, 358);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.ReadOnly = true;
-            this.dateBox2.Size = new System.Drawing.Size(110, 23);
-            this.dateBox2.TabIndex = 30;
             // 
             // editBox1
             // 
@@ -994,45 +984,6 @@
             this.displayBox5.Size = new System.Drawing.Size(92, 23);
             this.displayBox5.TabIndex = 67;
             // 
-            // txtuser1
-            // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalMR", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(390, 304);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(302, 23);
-            this.txtuser1.TabIndex = 51;
-            this.txtuser1.TextBox1Binding = "";
-            // 
-            // txttpeuser2
-            // 
-            this.txttpeuser2.DisplayBox1Binding = "";
-            this.txttpeuser2.DisplayBox2Binding = "";
-            this.txttpeuser2.Location = new System.Drawing.Point(390, 277);
-            this.txttpeuser2.Name = "txttpeuser2";
-            this.txttpeuser2.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser2.TabIndex = 50;
-            // 
-            // txttpeuser1
-            // 
-            this.txttpeuser1.DisplayBox1Binding = "";
-            this.txttpeuser1.DisplayBox2Binding = "";
-            this.txttpeuser1.Location = new System.Drawing.Point(390, 250);
-            this.txttpeuser1.Name = "txttpeuser1";
-            this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser1.TabIndex = 49;
-            // 
-            // txtcdcode1
-            // 
-            this.txtcdcode1.BackColor = System.Drawing.Color.White;
-            this.txtcdcode1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CdCodeID", true));
-            this.txtcdcode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcdcode1.Location = new System.Drawing.Point(108, 142);
-            this.txtcdcode1.Name = "txtcdcode1";
-            this.txtcdcode1.Size = new System.Drawing.Size(54, 23);
-            this.txtcdcode1.TabIndex = 21;
-            this.txtcdcode1.Validated += new System.EventHandler(this.txtcdcode1_Validated);
-            // 
             // button15
             // 
             this.button15.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
@@ -1074,6 +1025,16 @@
             this.button16.UseVisualStyleBackColor = true;
             this.button16.Click += new System.EventHandler(this.button16_Click);
             // 
+            // displayBox9
+            // 
+            this.displayBox9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox9.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ApvDate", true));
+            this.displayBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox9.Location = new System.Drawing.Point(353, 358);
+            this.displayBox9.Name = "displayBox9";
+            this.displayBox9.Size = new System.Drawing.Size(152, 23);
+            this.displayBox9.TabIndex = 75;
+            // 
             // comboBox2
             // 
             this.comboBox2.BackColor = System.Drawing.Color.White;
@@ -1086,6 +1047,45 @@
             this.comboBox2.Size = new System.Drawing.Size(121, 24);
             this.comboBox2.TabIndex = 74;
             this.comboBox2.Type = "Gender";
+            // 
+            // txtuser1
+            // 
+            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalMR", true));
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(390, 304);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(302, 23);
+            this.txtuser1.TabIndex = 51;
+            this.txtuser1.TextBox1Binding = "";
+            // 
+            // txttpeuser2
+            // 
+            this.txttpeuser2.DisplayBox1Binding = "";
+            this.txttpeuser2.DisplayBox2Binding = "";
+            this.txttpeuser2.Location = new System.Drawing.Point(390, 277);
+            this.txttpeuser2.Name = "txttpeuser2";
+            this.txttpeuser2.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser2.TabIndex = 50;
+            // 
+            // txttpeuser1
+            // 
+            this.txttpeuser1.DisplayBox1Binding = "";
+            this.txttpeuser1.DisplayBox2Binding = "";
+            this.txttpeuser1.Location = new System.Drawing.Point(390, 250);
+            this.txttpeuser1.Name = "txttpeuser1";
+            this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser1.TabIndex = 49;
+            // 
+            // txtcdcode1
+            // 
+            this.txtcdcode1.BackColor = System.Drawing.Color.White;
+            this.txtcdcode1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CdCodeID", true));
+            this.txtcdcode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcdcode1.Location = new System.Drawing.Point(108, 142);
+            this.txtcdcode1.Name = "txtcdcode1";
+            this.txtcdcode1.Size = new System.Drawing.Size(54, 23);
+            this.txtcdcode1.TabIndex = 21;
+            this.txtcdcode1.Validated += new System.EventHandler(this.txtcdcode1_Validated);
             // 
             // P04
             // 
@@ -1152,7 +1152,6 @@
         private Win.UI.Label label17;
         private Win.UI.DisplayBox displayBox3;
         private Win.UI.EditBox editBox1;
-        private Win.UI.DateBox dateBox2;
         private Win.UI.DisplayBox displayBox2;
         private Win.UI.DateBox dateBox1;
         private Win.UI.NumericBox numericBox3;
@@ -1198,5 +1197,6 @@
         private Win.UI.Label label29;
         private Win.UI.Button button16;
         private Class.txtdropdownlist comboBox2;
+        private Win.UI.DisplayBox displayBox9;
     }
 }
