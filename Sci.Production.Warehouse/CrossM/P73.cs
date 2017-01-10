@@ -158,6 +158,23 @@ namespace Sci.Production.Warehouse
             ns.IsSupportNegative = true;
             Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
             Ict.Win.UI.DataGridViewTextBoxColumn col_Location;
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ns2 = new DataGridViewGeneratorTextColumnSettings();
+            ns2.CellFormatting = (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                switch (dr["StockType"].ToString())
+                {
+                    case "B":
+                        e.Value = "Bulk";
+                        break;
+                    case "I":
+                        e.Value = "Inventory";
+                        break;
+                    case "O":
+                        e.Value = "Obsolete";
+                        break;
+                }
+            };
 
             #region Location 右鍵開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
@@ -215,7 +232,7 @@ namespace Sci.Production.Warehouse
             .Text("seq", header: "Bulk" + Environment.NewLine + " Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("stocktype", header: "Stock Type", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("stocktype", header: "Stock Type", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ns2)
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true, settings: ns).Get(out col_Qty)
