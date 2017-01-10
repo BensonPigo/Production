@@ -1,0 +1,39 @@
+﻿[2016/10/14 09:51:35.172] [9] ***** ***** ***** [2016/10/14 09:41:57.316] ***** ***** *****
+[2016/10/14 09:51:35.172] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/10/14 09:51:35.304] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/10/14 09:51:38.245] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/10/14 09:51:38.388] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/10/14 09:51:38.391] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/10/14 09:51:38.772] [3] DeleteDatabase
+ok
+[2016/10/14 09:55:20.978] [3] DeleteDatabase
+ok
+[2016/10/14 09:58:39.674] [10] ***** ***** ***** [2016/10/14 09:58:37.739] ***** ***** *****
+[2016/10/14 09:58:39.674] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/10/14 09:58:39.794] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/10/14 09:58:41.015] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/10/14 09:58:41.170] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/10/14 09:58:41.174] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/10/14 09:58:41.458] [12] DeleteDatabase
+ok
+[2016/10/14 10:01:10.401] [12] DeleteDatabase
+ok
+[2016/10/14 10:03:26.624] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'。
+[2016/10/14 10:03:26.625] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/14 10:03:26.626] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  資料處理[Simple01] - CloseReason:'UserClosing'、
+[2016/10/14 10:03:26.642] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+非同步處理視窗無預警關閉，無法確認非同步處理是否已完成。
+[2016/10/14 10:03:26.735] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 開始叫用 OnFormLoaded。
+[2016/10/14 10:03:26.738] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 叫用 OnFormLoaded 完成。
+[2016/10/14 10:03:27.117] [12] Attach_DataBase
+ok
+[2016/10/14 10:03:27.598] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [ok]確定
+[2016/10/14 10:03:27.640] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ok_Click  訊息 - ok[確定]。
+[2016/10/14 10:03:27.640] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'。
+[2016/10/14 10:03:27.640] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/14 10:03:27.641] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [ok]確定
+[2016/10/14 10:03:27.641] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  錯誤[Msg] - CloseReason:'UserClosing'、
+[2016/10/14 10:03:27.649] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [btnUpdate]Update/Export
+[2016/10/14 10:03:29.259] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'。
+[2016/10/14 10:03:29.259] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/14 10:03:29.261] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  Data Transfer[Main] - CloseReason:'UserClosing'、

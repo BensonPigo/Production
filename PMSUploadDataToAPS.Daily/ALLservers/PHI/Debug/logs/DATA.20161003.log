@@ -1,0 +1,76 @@
+﻿[2016/10/03 09:30:01.440][23] ***** ***** ***** [2016/10/03 09:13:49.207] ***** ***** *****
+[2016/10/03 09:30:01.445][23] Error: Sci.dll  Sci.Data.DBProxy.ExecuteSPByConn  執行資料庫預存程序時發生錯誤。
+exp_Part
+System.Data.SqlClient.SqlException (0x80131904): There is already an object named 'MiscPO' in the database.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteSPByConn(SqlConnection conn, String spname, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 847
+ClientConnectionId:62a78046-9367-4efc-b7fd-87fe0adf7a9c
+[2016/10/03 09:40:45.825][23] Error: Sci.dll  Sci.Data.DBProxy.ExecuteByConn  執行資料庫文字命令時發生錯誤。
+
+USE master
+if db_id('Trade_To_Pms') is not null
+BEGIN
+    ALTER DATABASE Trade_To_Pms SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    execute sp_detach_db 'Trade_To_Pms' ;  -- 卸載SQL實體檔案
+END
+
+exec sp_attach_db N'Trade_To_Pms', N'E:\SQL_DB\Trade_To_Pms\Trade_To_Pms.mdf'
+
+System.Data.SqlClient.SqlException (0x80131904): Unable to open the physical file "E:\SQL_DB\Trade_To_Pms_PH\Trade_To_Pms_PH_log.ldf". Operating system error 32: "32(The process cannot access the file because it is being used by another process.)".
+Changed database context to 'master'.
+File activation failure. The physical file name "E:\SQL_DB\Trade_To_Pms_PH\Trade_To_Pms_PH_log.ldf" may be incorrect.
+New log file 'E:\SQL_DB\Trade_To_Pms\Trade_To_Pms_log.ldf' was created.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteNonQueryTds(String methodName, Boolean async, Int32 timeout)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:134be21b-7ae2-416d-ac5c-97da8651d658
+[2016/10/03 17:00:31.868][17] Error: Sci.dll  Sci.Data.DBProxy.ExecuteByConn  執行資料庫文字命令時發生錯誤。
+BEGIN TRY
+	Begin tran
+
+    exec imp_Invadj
+
+	Commit tran
+END TRY
+BEGIN CATCH
+	RollBack Tran
+
+    declare @ErrMsg varchar(1000) = 'Err# : ' + ltrim(str(ERROR_NUMBER())) + 
+				CHAR(10)+'Error Severity:'+ltrim(str(ERROR_SEVERITY()  )) +
+				CHAR(10)+'Error State:' + ltrim(str(ERROR_STATE() ))  +
+				CHAR(10)+'Error Proc:' + isNull(ERROR_PROCEDURE(),'')  +
+				CHAR(10)+'Error Line:'+ltrim(str(ERROR_LINE()  )) +
+				CHAR(10)+'Error Msg:'+ ERROR_MESSAGE() ;
+    
+    RaisError( @ErrMsg ,16,-1)
+END CATCH
+System.Data.SqlClient.SqlException (0x80131904): Err# : 1205
+Error Severity:13
+Error State:52
+Error Proc:imp_Invadj
+Error Line:138
+Error Msg:Transaction (Process ID 183) was deadlocked on lock | communication buffer resources with another process and has been chosen as the deadlock victim. Rerun the transaction.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:7928619d-fc61-405f-913b-33a9145e5cc7

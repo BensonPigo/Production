@@ -1,0 +1,390 @@
+﻿[2016/10/01 12:03:16.507] [9] ***** ***** ***** [2016/09/29 16:45:42.935] ***** ***** *****
+[2016/10/01 12:03:16.507] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/10/01 12:03:17.029] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/10/01 12:03:25.528] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'。
+[2016/10/01 12:03:25.529] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/01 12:03:25.531] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  Data Transfer[Main] - CloseReason:'UserClosing'、
+[2016/10/01 12:15:38.127] [10] ***** ***** ***** [2016/10/01 12:03:26.155] ***** ***** *****
+[2016/10/01 12:15:38.127] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/10/01 12:15:38.234] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/10/01 12:15:39.634] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/10/01 12:15:39.736] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/10/01 12:15:39.740] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/10/01 12:15:45.582] [3] DeleteDatabase
+ok
+[2016/10/01 12:19:52.228] [3] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  [MailTo] - 開始叫用 OnFormLoaded。
+[2016/10/01 12:19:52.281] [3] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  [MailTo] - CloseReason:'UserClosing'。
+[2016/10/01 12:19:52.281] [3] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  [MailTo] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/01 12:19:52.282] [3] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  [MailTo] - 叫用 OnFormLoaded 完成。
+[2016/10/01 12:19:52.316] [3] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  [MailTo] - CloseReason:'UserClosing'、
+[2016/10/01 12:19:52.336] [3] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Worker  duration(ms):252596
+[2016/10/01 12:19:52.337] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'。
+[2016/10/01 12:19:52.337] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/01 12:19:52.337] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  資料處理[Simple01] - CloseReason:'UserClosing'、
+[2016/10/01 12:19:52.344] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+Wrong the downloaded file date!!,Pls contact with Taipei.
+[2016/10/01 12:19:52.385] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 開始叫用 OnFormLoaded。
+[2016/10/01 12:19:52.387] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 叫用 OnFormLoaded 完成。
+[2016/10/01 12:19:55.412] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [ok]確定
+[2016/10/01 12:19:55.460] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ok_Click  訊息 - ok[確定]。
+[2016/10/01 12:19:55.460] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'。
+[2016/10/01 12:19:55.460] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/01 12:19:55.460] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [ok]確定
+[2016/10/01 12:19:55.461] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  錯誤[Msg] - CloseReason:'UserClosing'、
+[2016/10/01 12:19:55.470] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [btnUpdate]Update/Export
+[2016/10/01 12:20:51.007] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/10/01 12:20:51.043] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/10/01 12:20:51.045] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/10/01 12:20:51.265] [17] DeleteDatabase
+ok
+[2016/10/01 12:21:36.745] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'。
+[2016/10/01 12:21:36.745] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/01 12:21:36.746] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  資料處理[Simple01] - CloseReason:'UserClosing'、
+[2016/10/01 12:21:36.748] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+非同步處理視窗無預警關閉，無法確認非同步處理是否已完成。
+[2016/10/01 12:21:36.773] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 開始叫用 OnFormLoaded。
+[2016/10/01 12:21:36.774] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 叫用 OnFormLoaded 完成。
+[2016/10/01 12:21:37.992] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [ok]確定
+[2016/10/01 12:21:38.004] [10] Ict.Win.App.dll  Ict.Win.Tools.Msg.ok_Click  訊息 - ok[確定]。
+[2016/10/01 12:21:38.004] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'。
+[2016/10/01 12:21:38.004] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/01 12:21:38.004] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [ok]確定
+[2016/10/01 12:21:38.004] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  錯誤[Msg] - CloseReason:'UserClosing'、
+[2016/10/01 12:21:38.010] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [btnUpdate]Update/Export
+[2016/10/01 12:24:19.807] [8] ***** ***** ***** [2016/10/01 12:21:41.768] ***** ***** *****
+[2016/10/01 12:24:19.808] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/10/01 12:24:19.926] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/10/01 12:24:21.242] [8] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/10/01 12:24:21.351] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/10/01 12:24:21.356] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/10/01 12:24:21.661] [10] DeleteDatabase
+ok
+[2016/10/01 12:26:49.528] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  [MailTo] - 開始叫用 OnFormLoaded。
+[2016/10/01 12:26:49.542] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  [MailTo] - CloseReason:'UserClosing'。
+[2016/10/01 12:26:49.542] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  [MailTo] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/01 12:26:49.542] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  [MailTo] - 叫用 OnFormLoaded 完成。
+[2016/10/01 12:26:49.566] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  [MailTo] - CloseReason:'UserClosing'、
+[2016/10/01 12:26:49.571] [10] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Worker  duration(ms):148214
+[2016/10/01 12:26:49.571] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'。
+[2016/10/01 12:26:49.571] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/01 12:26:49.571] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  資料處理[Simple01] - CloseReason:'UserClosing'、
+[2016/10/01 12:26:49.575] [8] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+Wrong the downloaded file date!!,Pls contact with Taipei.
+[2016/10/01 12:26:49.610] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 開始叫用 OnFormLoaded。
+[2016/10/01 12:26:49.611] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 叫用 OnFormLoaded 完成。
+[2016/10/01 12:26:52.986] [8] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [ok]確定
+[2016/10/01 12:26:53.030] [8] Ict.Win.App.dll  Ict.Win.Tools.Msg.ok_Click  訊息 - ok[確定]。
+[2016/10/01 12:26:53.031] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'。
+[2016/10/01 12:26:53.031] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/01 12:26:53.031] [8] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [ok]確定
+[2016/10/01 12:26:53.031] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  錯誤[Msg] - CloseReason:'UserClosing'、
+[2016/10/01 12:26:53.039] [8] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [btnUpdate]Update/Export
+[2016/10/01 12:27:08.026] [8] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/10/01 12:27:08.087] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/10/01 12:27:08.089] [8] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/10/01 12:27:08.317] [14] DeleteDatabase
+ok
+[2016/10/01 12:30:23.203] [10] ***** ***** ***** [2016/10/01 12:30:21.202] ***** ***** *****
+[2016/10/01 12:30:23.204] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/10/01 12:30:23.320] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/10/01 12:30:24.356] [10] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/10/01 12:30:24.464] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/10/01 12:30:24.468] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/10/01 12:30:24.755] [12] DeleteDatabase
+ok
+[2016/10/01 13:11:45.338] [10] ***** ***** ***** [2016/10/01 13:11:42.346] ***** ***** *****
+[2016/10/01 13:11:45.338] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/10/01 13:11:45.726] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/10/01 13:11:46.944] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'。
+[2016/10/01 13:11:46.944] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  Data Transfer[Main] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/01 13:11:46.947] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  Data Transfer[Main] - CloseReason:'UserClosing'、
+[2016/10/01 13:12:56.190] [9] ***** ***** ***** [2016/10/01 13:11:47.479] ***** ***** *****
+[2016/10/01 13:12:56.190] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/10/01 13:12:56.505] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/10/01 13:12:57.514] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/10/01 13:12:57.606] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/10/01 13:12:57.613] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/10/01 13:12:57.933] [11] DeleteDatabase
+ok
+[2016/10/01 13:15:17.687] [11] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  [MailTo] - 開始叫用 OnFormLoaded。
+[2016/10/01 13:15:17.701] [11] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  [MailTo] - CloseReason:'UserClosing'。
+[2016/10/01 13:15:17.701] [11] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  [MailTo] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/01 13:15:17.701] [11] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  [MailTo] - 叫用 OnFormLoaded 完成。
+[2016/10/01 13:15:17.712] [11] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  [MailTo] - CloseReason:'UserClosing'、
+[2016/10/01 13:15:17.718] [11] Ict.Win.App.dll  Ict.Win.Asyncs.Simple01.Worker  duration(ms):140105
+[2016/10/01 13:15:17.722] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'。
+[2016/10/01 13:15:17.722] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  資料處理[Simple01] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/01 13:15:17.722] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  資料處理[Simple01] - CloseReason:'UserClosing'、
+[2016/10/01 13:15:17.728] [9] Ict.Win.App.dll  Ict.Win.Tools.Msg.ShowErr  錯誤訊息 - [錯誤]
+Wrong the downloaded file date!!,Pls contact with Taipei.
+[2016/10/01 13:15:17.759] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 開始叫用 OnFormLoaded。
+[2016/10/01 13:15:17.761] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  錯誤[Msg] - 叫用 OnFormLoaded 完成。
+[2016/10/01 13:15:24.618] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [ok]確定
+[2016/10/01 13:15:24.669] [9] Ict.Win.App.dll  Ict.Win.Tools.Msg.ok_Click  訊息 - ok[確定]。
+[2016/10/01 13:15:24.669] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'。
+[2016/10/01 13:15:24.669] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  錯誤[Msg] - CloseReason:'UserClosing'、Cancel:'False'。
+[2016/10/01 13:15:24.670] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [ok]確定
+[2016/10/01 13:15:24.670] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  錯誤[Msg] - CloseReason:'UserClosing'、
+[2016/10/01 13:15:24.678] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicked  [btnUpdate]Update/Export
+[2016/10/01 13:18:14.649] [9] ***** ***** ***** [2016/10/01 13:15:30.647] ***** ***** *****
+[2016/10/01 13:18:14.649] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/10/01 13:18:14.760] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/10/01 13:18:16.539] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/10/01 13:18:16.653] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/10/01 13:18:16.658] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/10/01 13:18:16.939] [3] DeleteDatabase
+ok
+[2016/10/01 13:38:11.015] [9] ***** ***** ***** [2016/10/01 13:35:47.149] ***** ***** *****
+[2016/10/01 13:38:11.015] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 開始叫用 OnFormLoaded。
+[2016/10/01 13:38:11.129] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  Data Transfer[Main] - 叫用 OnFormLoaded 完成。
+[2016/10/01 13:38:12.369] [9] Ict.Win.UI.dll  Ict.Win.UI.Button.OnClicking  [btnUpdate]Update/Export
+[2016/10/01 13:38:12.473] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 開始叫用 OnFormLoaded。
+[2016/10/01 13:38:12.479] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  資料處理[Simple01] - 叫用 OnFormLoaded 完成。
+[2016/10/01 13:38:12.789] [3] DeleteDatabase
+ok
+[2016/10/01 13:40:54.620] [3] DeleteDatabase
+ok
+[2016/10/01 13:43:18.190] [3] Attach_DataBase
+ok
+[2016/10/01 19:21:00.905] [33] imp_order
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 696
+   於 Sci.DB.Transfer.<>c__DisplayClass2c.<Transfer_Task_BySeq>b__2a(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 661
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 659
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__24(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 638
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 635
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1c(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 619
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): Err# : 2812
+Error Severity:16
+Error State:62
+Error Proc:
+Error Line:4
+Error Msg:Could not find stored procedure 'imp_order'.
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:8c1f7da5-d370-4902-b747-3aae767bd621
+[2016/10/01 19:21:01.203] [41] imp_debit
+ok
+[2016/10/01 19:21:03.556] [38] imp_Airpp
+ok
+[2016/10/01 19:21:04.045] [6] imp_adicomp
+ok
+[2016/10/01 19:21:07.003] [37] imp_Airboat
+ok
+[2016/10/01 19:21:40.369] [38] imp_part
+ok
+[2016/10/01 19:22:45.070] [36] imp_base
+ok
+[2016/10/01 19:22:48.718] [36] imp_replacement
+ok
+[2016/10/01 19:25:37.728] [33] imp_Invadj
+ok
+[2016/10/01 20:20:47.176] [41] imp_Inv
+ok
+[2016/10/01 20:44:10.208] [38] imp_Prokit
+ok
+[2016/10/01 21:16:23.130] [6] imp_Pattern
+ok
+[2016/10/01 22:00:06.639] [39] imp_Ietms1
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 696
+   於 Sci.DB.Transfer.<>c__DisplayClass2c.<Transfer_Task_BySeq>b__2a(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 661
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 659
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__24(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 638
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 635
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1c(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 619
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): 在目前的命令上發生嚴重錯誤。如果有任何結果，都必須捨棄。
+在目前的命令上發生嚴重錯誤。如果有任何結果，都必須捨棄。
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:e5e0c706-295b-4a90-9ede-f766064857fa
+[2016/10/01 22:00:09.323] [40] imp_export
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 696
+   於 Sci.DB.Transfer.<>c__DisplayClass2c.<Transfer_Task_BySeq>b__2a(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 661
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 659
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__24(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 638
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 635
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1c(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 619
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): 在目前的命令上發生嚴重錯誤。如果有任何結果，都必須捨棄。
+在目前的命令上發生嚴重錯誤。如果有任何結果，都必須捨棄。
+Import Export - Starts
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:5baf1fae-d72a-4b7e-9cf2-48f7f00da4ac
+[2016/10/01 22:05:05.297] [36] imp_Style
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 696
+   於 Sci.DB.Transfer.<>c__DisplayClass2c.<Transfer_Task_BySeq>b__2a(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 661
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 659
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__24(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 638
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 635
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1c(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 619
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): 在目前的命令上發生嚴重錯誤。如果有任何結果，都必須捨棄。
+在目前的命令上發生嚴重錯誤。如果有任何結果，都必須捨棄。
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:f88bd075-1bf3-4c3e-9073-98fcacdc39b1
+[2016/10/01 22:12:50.275] [37] imp_Po
+執行資料庫文字命令時發生錯誤。
+   於 Sci.Data.DBProxy.Result.F(String description, Exception ex) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 748
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1157
+   於 Sci.DB.Transfer.Transfer_Task(TransTask task, SqlConnection conn, List`1 pars) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 696
+   於 Sci.DB.Transfer.<>c__DisplayClass2c.<Transfer_Task_BySeq>b__2a(TransTask t) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 661
+   於 System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   於 Sci.DB.Transfer.Transfer_Task_BySeq(List`1 tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 659
+   於 Sci.DB.Transfer.<Import_ByGroupID_InThread>b__24(IGrouping`2 regionTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 638
+   於 System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   於 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   於 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   於 Sci.DB.Transfer.Import_ByGroupID_InThread(List`1 region_Tasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 635
+   於 Sci.DB.Transfer.<Import_ByGroupID>b__1c(IGrouping`2 rTasks) 於 d:\System2014\PublicClass\Sci.Proj\DB\TransExport.cs: 行 619
+   於 System.Linq.Parallel.SelectQueryOperator`2.SelectQueryOperatorEnumerator`1.MoveNext(TOutput& currentElement, TKey& currentKey)
+   於 System.Linq.Parallel.PipelineSpoolingTask`2.SpoolingWork()
+   於 System.Linq.Parallel.SpoolingTaskBase.Work()
+   於 System.Linq.Parallel.QueryTask.BaseWork(Object unused)
+   於 System.Linq.Parallel.QueryTask.<.cctor>b__0(Object o)
+   於 System.Threading.Tasks.Task.InnerInvoke()
+   於 System.Threading.Tasks.Task.Execute()
+   於 System.Threading.Tasks.Task.ExecutionContextCallback(Object obj)
+   於 System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   於 System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   於 System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   於 System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem()
+   於 System.Threading.ThreadPoolWorkQueue.Dispatch()
+   於 System.Threading._ThreadPoolWaitCallback.PerformWaitCallback()
+
+System.Data.SqlClient.SqlException (0x80131904): 在目前的命令上發生嚴重錯誤。如果有任何結果，都必須捨棄。
+在目前的命令上發生嚴重錯誤。如果有任何結果，都必須捨棄。
+   於 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   於 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   於 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   於 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   於 System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   於 Sci.Data.DBProxy.ExecuteByConn(SqlConnection conn, String cmdtext, IList`1 parameters) 於 d:\System2014\PublicClass\Sci\Data\DBProxy.cs: 行 1148
+ClientConnectionId:ded2ac6b-b5a2-4151-a9ff-5b96e9bcb7ae
