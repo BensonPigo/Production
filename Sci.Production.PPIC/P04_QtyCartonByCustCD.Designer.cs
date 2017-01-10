@@ -139,7 +139,7 @@
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P04_QtyCartonByCustCD";
-            this.Text = "HS Code";
+            this.Text = "Qty/Carton by CustCD";
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
