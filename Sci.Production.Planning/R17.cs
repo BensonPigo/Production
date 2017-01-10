@@ -539,7 +539,7 @@ namespace Sci.Production.Planning
                             worksheet = excel.ActiveWorkbook.Worksheets.Add(Type.Missing, (worksheet == null ? Type.Missing : worksheet), Type.Missing, XlSheetType.xlWorksheet);
                         intWorkIndex++;
                         worksheet.Name = "Order Detail";
-                        string[] aryTitles = new string[] {"Country", "KPI Group", "Factory", "SP No", "Brand", "Buyer Delivery", "Factory KPI", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle", "SMR", "PO Handle", "PO SMR" };
+                        string[] aryTitles = new string[] {"Country", "KPI Group", "Factory", "SP No", "Brand", "Buyer Delivery", "Factory KPI", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -558,6 +558,8 @@ namespace Sci.Production.Planning
                                 objArray_1[0, intIndex_0] = gdtOrderDetail.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
                             }
                             worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                            worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit();//自動調整欄寬
+                  
                         }
                          //設定分割列數
                         excel.ActiveWindow.SplitRow = 1; 
@@ -593,6 +595,7 @@ namespace Sci.Production.Planning
                                 objArray_1[0, intIndex_0] = gdtPullOut.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
                             }
                             worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                            worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit(); //自動調整欄寬
                         }
                         //設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
@@ -627,6 +630,7 @@ namespace Sci.Production.Planning
                                 objArray_1[0, intIndex_0] = gdtFailDetail.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
                             }
                             worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                            worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit(); //自動調整欄寬
                         }
                         //設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
@@ -652,7 +656,10 @@ namespace Sci.Production.Planning
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
                         excel.ActiveSheet.Columns(6).NumberFormatlocal = "yyyy/MM/dd";
-                        excel.ActiveSheet.Columns(7).NumberFormatlocal = "yyyy/MM/dd"; 
+                        excel.ActiveSheet.Columns(7).NumberFormatlocal = "yyyy/MM/dd";
+                        
+                      //  excelRange.EntireColumn.AutoFit();
+                        
                         for (int intIndex = 0; intIndex < gdtSP.Rows.Count; intIndex++)
                         {
                            
@@ -661,6 +668,7 @@ namespace Sci.Production.Planning
                                 objArray_1[0, intIndex_0] = gdtSP.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
                             }
                             worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                            worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit(); //自動調整欄寬
                         }
                         //設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
