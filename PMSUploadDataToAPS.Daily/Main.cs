@@ -62,7 +62,7 @@ namespace PMSUploadDataToAPS.Daily
             String sqlCmd;
             sqlCmd = "Select * From dbo.MailTo Where ID = '012'";
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out _mailTo);
+            DualResult result = DBProxy.Current.Select("Production", sqlCmd, out _mailTo);
 
             if (!result) { ShowErr(result); return; }
 
@@ -171,6 +171,7 @@ namespace PMSUploadDataToAPS.Daily
                 {
                     SqlCommand cmd = new SqlCommand("usp_PMSUploadDataToAPS", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandTimeout = 1800;  //30分鐘
 
                     foreach (DataRow drid in tbid.Rows)
                     {
@@ -200,6 +201,7 @@ namespace PMSUploadDataToAPS.Daily
                 {
                     SqlCommand cmd = new SqlCommand("usp_PMSUploadDataToAPS", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandTimeout = 600;  //10分鐘
 
                     foreach (DataRow drid in tbid.Rows)
                     {
