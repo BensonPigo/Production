@@ -278,40 +278,44 @@ namespace Sci.Production.Warehouse
 
             #endregion
             #region 更新庫存數量 po_supp_detail & ftyinventory
-            sqlupd2_FIO = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
-alter table #TmpSource alter column poid varchar(20)
-alter table #TmpSource alter column seq1 varchar(3)
-alter table #TmpSource alter column seq2 varchar(3)
-alter table #TmpSource alter column roll varchar(15)
 
-merge dbo.FtyInventory as target
-using #TmpSource as s
-    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-	and target.seq2 = s.seq2 and target.roll = s.roll
-when matched then
-    update
-    set inqty = isnull(inqty,0.00) + 0
-when not matched then
-    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[InQty])
-    values ((select ukey from dbo.MDivisionPoDetail 
-			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,0);
+            DataTable newDt = ((DataTable)detailgridbs.DataSource).Clone();
+            foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+                string[] dtrLocation = dtr["ToLocation"].ToString().Split(',');
+                if (dtrLocation.Length == 1)
+                {
+                    DataRow newDr = newDt.NewRow();
+                    newDr.ItemArray = dtr.ItemArray;
+                    newDt.Rows.Add(newDr);
+                }
+                else
+                {
+                    foreach (string location in dtrLocation)
+                    {
+                        DataRow newDr = newDt.NewRow();
+                        newDr.ItemArray = dtr.ItemArray;
+                        newDr["ToLocation"] = location;
+                        newDt.Rows.Add(newDr);
+                    }
+                }
+            }
 
-select tolocation,[ukey] = f.ukey
-into #tmp_L_K 
-from #TmpSource s
-left join ftyinventory f on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
-						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll
-merge dbo.ftyinventory_detail as t
-using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.tolocation,'')
-when not matched then
-    insert ([ukey],[mtllocationid]) 
-	values (s.ukey,isnull(s.tolocation,''));
+            var bsfio = (from b in newDt.AsEnumerable()
+                         select new
+                         {
+                             mdivisionid = b.Field<string>("mdivisionid"),
+                             poid = b.Field<string>("poid"),
+                             seq1 = b.Field<string>("seq1"),
+                             seq2 = b.Field<string>("seq2"),
+                             stocktype = CurrentMaintain["stocktype"].ToString(),
+                             qty = b.Field<decimal>("qty"),
+                             toLocation = b.Field<string>("ToLocation"),
+                             roll = b.Field<string>("roll"),
+                             dyelot = b.Field<string>("dyelot"),
+                         }).ToList();
 
-delete t from FtyInventory_Detail t
-where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.tolocation != t.MtlLocationID)
-";
+            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(26, null, false);
             #endregion 更新庫存數量 po_supp_detail & ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -326,8 +330,7 @@ where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.tolocation != t
                         ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        ((DataTable)detailgridbs.DataSource, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
