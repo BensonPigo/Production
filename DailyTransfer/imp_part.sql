@@ -377,7 +377,7 @@ s.EditDate
 		t.FactoryID = s.FactoryID ,
 		t.MDivisionID = s.MDivisionID,
 		t.CurrencyID = s.CurrencyID ,
-		t.Status= IIF(s.Junk = 1,'Junked',IIF(s.ApvName != '',T.Approve,'New')),
+		t.Status= IIF(s.Junk = 1,'Junked',IIF(s.ApvName != '','Approved','New')),
 		t.Handle = s.Handle ,
 		t.Amount = s.Amount ,
 		t.Vatrate = s.Vatrate ,
