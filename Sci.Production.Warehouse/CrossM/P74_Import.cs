@@ -66,7 +66,14 @@ and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
                     ,left(a.seq1+' ',3)+a.Seq2 as fromseq
                     ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
                     ,a.usedqty as poqty
-                    ,a.stockunit
+                    ,iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+                        ff.UsageUnit , 
+                        iif(mm.IsExtensionUnit > 0 , 
+                            iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+                                ff.UsageUnit , 
+                                uu.ExtensionUnit), 
+                            ff.UsageUnit)) as StockUnit
+                    --,a.stockunit
                     ,left(b.seq1+' ',3)+b.Seq2 as toseq
                     ,0.00 as Qty
                     ,'B' ToStocktype
@@ -78,6 +85,18 @@ and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
                     from dbo.PO_Supp_Detail a 
                     left join dbo.po_supp_detail b on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec 
                         and b.ColorID = a.ColorID and b.BrandId = a.BrandId
+                    inner join [dbo].[Fabric] ff on a.SCIRefno= ff.SCIRefno
+                    inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
+                    inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
+                    inner join View_unitrate v on v.FROM_U = a.POUnit
+	                    and v.TO_U = (
+	                    iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+		                    ff.UsageUnit , 
+		                    iif(mm.IsExtensionUnit > 0 , 
+			                    iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+				                    ff.UsageUnit , 
+				                    uu.ExtensionUnit), 
+			                    ff.UsageUnit)))--b.StockUnit
                     Where a.id = (SELECT distinct poid FROM Orders where poid='{0}' and MDivisionID='{5}')
                     and b.id = (SELECT distinct poid FROM Orders where poid='{1}' 
                     and MDivisionID='{4}') and b.seq1 = '{2}' and b.seq2='{3}'"
