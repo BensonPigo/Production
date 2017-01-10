@@ -101,26 +101,26 @@ namespace Sci.Production.Warehouse
             #region -- 撈資料 --
             string selectCommand1 = string.Format(@";with cte as
 (
-	select SUM(rd.Qty) as QTY,rd.Id,rd.ToMDivisionID,rd.ToPOID,rd.ToSeq1,rd.toSeq2
-	from dbo.RequestCrossM r inner join dbo.RequestCrossM_Detail rd on rd.id = r.Id
-	where r.Status = 'Confirmed' and r.id='{0}' and r.toMDivisionID = '{1}'
-    Group BY rd.Id,rd.ToMDivisionID,rd.ToPOID,rd.ToSeq1,rd.toSeq2
+	select SUM(RCM.Qty) as QTY, RCM.Id, RCM.MDivisionID, RCM.POID, RCM.Seq1, RCM.Seq2
+	from dbo.RequestCrossM_receive RCM
+	where RCM.id='{0}' and RCM.MDivisionID = '{1}'
+    Group BY RCM.Id, RCM.MDivisionID, RCM.POID, RCM.Seq1, RCM.Seq2
 )
-select distinct rtrim(toPOID) frompoid,rtrim(toSeq1) FromSeq1,rtrim(toSeq2) FromSeq2,Qty from cte;", dr_master["cutplanid"], Sci.Env.User.Keyword);
+select distinct rtrim(POID) frompoid,rtrim(Seq1) FromSeq1,rtrim(Seq2) FromSeq2,Qty from cte;", dr_master["cutplanid"], Sci.Env.User.Keyword);
             
-            string selectCommand2 = string.Format(@";with cte as
+            string selectCommand2 = string.Format(@"
+;with cte as
 (
-	select distinct rd.Id,rd.ToMDivisionID,rd.ToPOID,rd.ToSeq1,rd.toSeq2
-	from dbo.RequestCrossM r inner join dbo.RequestCrossM_Detail rd on rd.id = r.Id
-	where r.Status = 'Confirmed' and r.id='{0}' and r.toMDivisionID = '{1}'
-    
+	select RCM.Qty as QTY, RCM.Id, RCM.MDivisionID, RCM.POID, RCM.Seq1, RCM.Seq2
+	from dbo.RequestCrossM_receive RCM
+	where RCM.id='{0}' and RCM.MDivisionID = '{1}'    
 )
 select distinct 0 as selected,'' as id,fi.Ukey FtyInventoryUkey,0.00 as qty,fi.MDivisionID,fi.POID,rtrim(fi.seq1) seq1,fi.seq2,left(fi.seq1+' ',3)+fi.Seq2 as seq,dbo.getmtldesc(fi.poid,fi.seq1,fi.seq2,2,0) as [description],p1.stockunit
 	,fi.Roll,fi.Dyelot,fi.StockType,fi.InQty - fi.OutQty+fi.AdjustQty balanceqty 
     ,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where ukey = fi.ukey) t for xml path('')), 1, 1, '') [location]
-from cte inner join FtyInventory fi on fi.MDivisionID  =  cte.ToMDivisionID 
-and fi.POID = cte.toPOID and fi.Seq1 = cte.toSeq1 and fi.Seq2 = cte.toSeq2 
-left join PO_Supp_Detail p1 on p1.ID = cte.toPOID and p1.seq1 = cte.toSeq1 and p1.SEQ2 = cte.toSeq2
+from cte inner join FtyInventory fi on fi.MDivisionID  =  cte.MDivisionID 
+and fi.POID = cte.POID and fi.Seq1 = cte.Seq1 and fi.Seq2 = cte.Seq2 
+left join PO_Supp_Detail p1 on p1.ID = cte.POID and p1.seq1 = cte.Seq1 and p1.SEQ2 = cte.Seq2
 where fi.stocktype = 'B' and lock = 0 and fi.InQty - fi.OutQty+fi.AdjustQty > 0;", dr_master["cutplanid"], Sci.Env.User.Keyword);
 
             P77.ShowWaitMessage("Data Loading....");
