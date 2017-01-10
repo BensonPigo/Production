@@ -57,6 +57,7 @@ BEGIN
 									SET @cumulate = @cumulate + 1
 									SET @recorddate = DATEADD(day,-@i,@recorddate)
 									SET @currentcountdate = @cursordate
+									SET @hour = 0
 								END
 							BREAK
 						END
