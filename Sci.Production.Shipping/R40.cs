@@ -312,9 +312,9 @@ select * from #tmpScrapQty where Qty > 0 {0} {1} order by POID,Seq", MyUtility.C
             // 顯示筆數於PrintForm上Count欄位
             SetCount(Summary.Rows.Count + (liguidationonly ? 0 : WHDetail.Rows.Count + WIPDetail.Rows.Count + ProdDetail.Rows.Count + ScrapDetail.Rows.Count));
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             bool result;
-            MyUtility.Msg.WaitWindows("Starting EXCEL...Summary");
+            this.ShowWaitMessage("Starting EXCEL...Summary");
 
             if (!liguidationonly)
             {
@@ -323,28 +323,28 @@ select * from #tmpScrapQty where Qty > 0 {0} {1} order by POID,Seq", MyUtility.C
 
                 if (WHDetail.Rows.Count > 0)
                 {
-                    MyUtility.Msg.WaitWindows("Starting EXCEL...WHouse Qty Detail");
+                    this.ShowWaitMessage("Starting EXCEL...WHouse Qty Detail");
                     result = MyUtility.Excel.CopyToXls(WHDetail, "", xltfile: "Shipping_R40_WHQtyDetail.xltx", headerRow: 1);
                     if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
                 }
 
                 if (WIPDetail.Rows.Count > 0)
                 {
-                    MyUtility.Msg.WaitWindows("Starting EXCEL...WIP Qty Detail");
+                    this.ShowWaitMessage("Starting EXCEL...WIP Qty Detail");
                     result = MyUtility.Excel.CopyToXls(WIPDetail, "", xltfile: "Shipping_R40_WIPQtyDetail.xltx", headerRow: 1);
                     if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
                 }
 
                 if (ProdDetail.Rows.Count > 0)
                 {
-                    MyUtility.Msg.WaitWindows("Starting EXCEL...Prod. Qty Detail");
+                    this.ShowWaitMessage("Starting EXCEL...Prod. Qty Detail");
                     result = MyUtility.Excel.CopyToXls(ProdDetail, "", xltfile: "Shipping_R40_ProdQtyDetail.xltx", headerRow: 1);
                     if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
                 }
 
                 if (ScrapDetail.Rows.Count > 0)
                 {
-                    MyUtility.Msg.WaitWindows("Starting EXCEL...Scrap Qty Detail");
+                    this.ShowWaitMessage("Starting EXCEL...Scrap Qty Detail");
                     result = MyUtility.Excel.CopyToXls(ScrapDetail, "", xltfile: "Shipping_R40_ScrapQtyDetail.xltx", headerRow: 1);
                     if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
                 }
@@ -355,7 +355,7 @@ select * from #tmpScrapQty where Qty > 0 {0} {1} order by POID,Seq", MyUtility.C
                 if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             }
 
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             return true;
         }
 

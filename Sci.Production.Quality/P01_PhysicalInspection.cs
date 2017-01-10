@@ -689,7 +689,7 @@ Where DetailUkey = {15};",
             int int_z = 0;//判斷是否為第一次
 
             string typeColumn = "typeColumn";
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
 
             for (int i=0 ; i < counts; i++)
             {
@@ -869,7 +869,7 @@ Where DetailUkey = {15};",
             excel.Visible = true;   //open
             if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放sheet
             if (excel != null) Marshal.FinalReleaseComObject(excel);          //釋放objApp
-
+            this.HideWaitMessage();
 
         }
     }

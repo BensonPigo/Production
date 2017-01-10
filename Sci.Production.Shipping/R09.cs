@@ -297,7 +297,7 @@ select * from FtyExportData");
                 return false;
             }
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + (reportType == 1?"\\Shipping_R09_ShareExpenseImportByWK.xltx":"\\Shipping_R09_ShareExpenseImportByWKByFee.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
@@ -385,7 +385,7 @@ select * from FtyExportData");
             }
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             excel.Visible = true;
             return true;
         }

@@ -95,7 +95,7 @@ where ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));
                 return false;
             }
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + (type == "1" ? "\\Shipping_P40_CommercialInvoice.xltx" : "\\Shipping_P40_FormForCustomSystem.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
@@ -212,7 +212,7 @@ where ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));
             }
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             excel.Visible = true;
             return true;
         }

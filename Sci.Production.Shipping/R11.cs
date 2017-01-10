@@ -306,11 +306,11 @@ from FtyExportData");
                 return false;
             }
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = reportType == 1 ? "Shipping_R11_NonSharedListGarment.xltx" : "Shipping_R11_NonSharedListMaterial.xltx";
             bool result = MyUtility.Excel.CopyToXls(printData, "", xltfile: excelFile, headerRow: 1);
             if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             return true;
         }
     }

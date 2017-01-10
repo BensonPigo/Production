@@ -286,7 +286,7 @@ where 1=1 and c.ThirdCountry = 1"));
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R01.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R01.xltx", 1, showExcel: false, showSaveMsg: true, excelApp : objApp);
 
-            MyUtility.Msg.WaitWindows("Excel Processing...");
+            this.ShowWaitMessage("Excel Processing...");
             Excel.Worksheet worksheet = objApp.Sheets[1];
             for (int i = 1; i <= printData.Rows.Count; i++) worksheet.Cells[i + 1, 4] = ((string)((Excel.Range)worksheet.Cells[i + 1, 4]).Value).Trim();
 
@@ -298,6 +298,7 @@ where 1=1 and c.ThirdCountry = 1"));
             if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
             //Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(printData);
             //sdExcel.Save();
+            this.HideWaitMessage();
             return true;
         }
     }

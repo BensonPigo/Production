@@ -173,7 +173,7 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
                 return false;
             }
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + (reportType == 0 ? "\\PPIC_R04_FabricBCS.xltx" : "\\PPIC_R04_AccessoryBCS.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
@@ -312,7 +312,7 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
                 worksheet = excel.ActiveWorkbook.Worksheets[xlsSheet + 1];
                 worksheet.Delete();
             }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             excel.Visible = true;
             return true;
         }

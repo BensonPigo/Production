@@ -119,7 +119,7 @@ from tmpSumDetail
                 return false;
             }
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
 
             //填內容值
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P41_Print.xltx";
@@ -199,7 +199,7 @@ from tmpSumDetail
             excel.Visible = true;
 
 
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             return true;
         }
     }

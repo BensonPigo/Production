@@ -177,11 +177,11 @@ order by MDivisionID,FactoryID,OutputDate,SewingLineID,LastShift,Team,OrderId");
                 return false;
             }
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             string excelFile = "Sewing_R04_SewingDailyOutputList.xltx";
             bool result = MyUtility.Excel.CopyToXls(printData, "", xltfile: excelFile, headerRow: 1);
             if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             return true;
         }
     }

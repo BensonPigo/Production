@@ -579,7 +579,7 @@ where s.Type = 'EXPORT'");
                 return false;
             }
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + (reportType == 1 ? "\\Shipping_R10_ShareExpenseExportFeeReport.xltx" : reportType == 2 ? "\\Shipping_R10_ShareExpenseExportBySP.xltx" : "\\Shipping_R10_ShareExpenseExportBySPByFee.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
@@ -712,7 +712,7 @@ where s.Type = 'EXPORT'");
 
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             excel.Visible = true;
             return true;
         }

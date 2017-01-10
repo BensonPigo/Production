@@ -164,7 +164,7 @@ and v.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), C
                 return false;
             }
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
 
             //填內容值
             if (reportType == "1")
@@ -300,7 +300,7 @@ and v.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), C
                 bool result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "Shipping_B42_ANNEX.xltx", headerRow: 1);
                 if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             return true;
         }
     }

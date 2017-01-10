@@ -114,11 +114,11 @@ order by a.ID,a.BuyerDelivery,a.ASeq,a.SSeq");
                 return false;
             }
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             bool result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "Shipping_R42_QtyBDownByColorwaySize.xltx", headerRow: 1);
             if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
-            
-            MyUtility.Msg.WaitClear();
+
+            this.HideWaitMessage();
             return true;
         }
     }

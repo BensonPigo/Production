@@ -112,7 +112,7 @@ and o.SeasonID = '{0}'", season));
                 return false;
             }
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Planning_R03_LocalQuotationList.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
@@ -150,7 +150,7 @@ and o.SeasonID = '{0}'", season));
 
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             excel.Visible = true;
             return true;
         }

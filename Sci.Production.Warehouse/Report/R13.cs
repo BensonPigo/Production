@@ -115,12 +115,13 @@ Where a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}' and a.type 
             MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R13.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
-            MyUtility.Msg.WaitWindows("Excel Processing...");
+            this.ShowWaitMessage("Excel Processing...");
             for (int i = 1; i <= printData.Rows.Count; i++) objSheets.Cells[i + 1, 10] = ((string)((Excel.Range)objSheets.Cells[i + 1, 10]).Value).Trim();
             objApp.Visible = true;
 
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            this.HideWaitMessage();
             return true;
         }
     }

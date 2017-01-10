@@ -340,7 +340,7 @@ Order by ProgramID,StyleID,BrandID,CdCodeID,SeasonID", sqlCmd.ToString());
                 return false;
             }
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Sewing_R03_ProdEfficiencyAnalysisReport.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
@@ -561,7 +561,7 @@ Order by ProgramID,StyleID,BrandID,CdCodeID,SeasonID", sqlCmd.ToString());
             worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Select();
 
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             excel.Visible = true;
             return true;
 

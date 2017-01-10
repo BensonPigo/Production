@@ -512,7 +512,7 @@ select * from tmpSubconOut",
                 return false;
             }
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + (reportType == 0 ? "\\Sewing_R02_MonthlyReportByDate.xltx" : "\\Sewing_R02_MonthlyReportBySewingLine.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
@@ -683,8 +683,8 @@ select * from tmpSubconOut",
             {
                 DeleteExcelRow(9, insertRow, excel);
             }
-            
-            MyUtility.Msg.WaitClear();
+
+            this.HideWaitMessage();
             excel.Visible = true;
             return true;
         }

@@ -178,12 +178,13 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[1, 1] = condition.ToString();   // 條件字串寫入excel
 
-            MyUtility.Msg.WaitWindows("Excel Processing...");
+            this.ShowWaitMessage("Excel Processing...");
             for (int i = 1; i <= printData.Rows.Count; i++) objSheets.Cells[i + 3, 12] = ((string)((Excel.Range)objSheets.Cells[i + 3, 12]).Value).Trim();
             objApp.Visible = true;
 
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            this.HideWaitMessage();
             return true;
         }
     }

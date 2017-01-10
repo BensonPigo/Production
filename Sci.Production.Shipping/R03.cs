@@ -119,7 +119,7 @@ and p.PulloutDate between '{0}' and '{1}'", Convert.ToDateTime(pulloutDate1).ToS
                 return false;
             }
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R03_ActualShipmentRecord.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
@@ -155,7 +155,7 @@ and p.PulloutDate between '{0}' and '{1}'", Convert.ToDateTime(pulloutDate1).ToS
 
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             excel.Visible = true;
             return true;
         }

@@ -217,9 +217,9 @@ where a.Status = 'Confirmed'");
         }
         // 產生Excel 必須要有
         protected override bool OnToExcel(Win.ReportDefinition report)
-        {           
-            
-            MyUtility.Msg.WaitWindows("Starting Excel");
+        {
+
+            this.ShowWaitMessage("Starting Excel");
             if (S_radioButton.Checked)
             {
                 if (SummaryData.Rows.Count <= 0)
@@ -248,7 +248,7 @@ where a.Status = 'Confirmed'");
                  if (excelSheets != null) Marshal.FinalReleaseComObject(excelSheets);//釋放sheet
                  if (excel != null) Marshal.FinalReleaseComObject(excel);
             }
-
+            this.HideWaitMessage();
             return true;
         }
     }

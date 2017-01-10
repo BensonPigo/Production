@@ -232,7 +232,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             DataRow seekData;
             StringBuilder errNLCode = new StringBuilder();
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             excel.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intRowsCount = worksheet.UsedRange.Rows.Count;
@@ -270,7 +270,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             excel.Workbooks.Close();
             excel.Quit();
             excel = null;
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             if (!MyUtility.Check.Empty(errNLCode.ToString()))
             {
                 MyUtility.Msg.WarningBox(string.Format("Below NL Code is not in B43. Customs Contract - Contract No.: {0}\r\n{1}", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), errNLCode.ToString()));

@@ -114,7 +114,7 @@ namespace Sci.Production.Shipping
                 MyUtility.Msg.WarningBox("Adjust data not found!");
             }
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             bool result;
             if ((type == "Import" || type == "") && printImport.Rows.Count > 0)
             {
@@ -131,7 +131,7 @@ namespace Sci.Production.Shipping
                 result = MyUtility.Excel.CopyToXls(printAdjust, "", xltfile: "Shipping_R41_Adjust.xltx", headerRow: 1);
                 if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
             }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             return true;
         }
 

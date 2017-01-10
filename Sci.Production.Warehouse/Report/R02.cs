@@ -51,13 +51,14 @@ namespace Sci.Production.Warehouse
                 Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R02.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R02.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
 
-                MyUtility.Msg.WaitWindows("Excel Processing...");
+                this.ShowWaitMessage("Excel Processing...");
                 Excel.Worksheet worksheet = objApp.Sheets[1];
                 for (int i = 1; i <= dt.Rows.Count; i++) worksheet.Cells[i + 1, 7] = ((string)((Excel.Range)worksheet.Cells[i + 1, 7]).Value).Trim();
                 objApp.Visible = true;
 
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
                 if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+                this.HideWaitMessage();
                 return true;
             }
             catch (Exception ex)

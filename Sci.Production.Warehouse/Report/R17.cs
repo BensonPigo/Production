@@ -54,7 +54,7 @@ namespace Sci.Production.Warehouse
             MyUtility.Excel.CopyToXls(dt, "", "Warehouse_R17_Location_List.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
-            MyUtility.Msg.WaitWindows("Excel Processing...");
+            this.ShowWaitMessage("Excel Processing...");
             
             for (int i = 1; i <= dt.Rows.Count; i++)
             {
@@ -67,7 +67,7 @@ namespace Sci.Production.Warehouse
 
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-
+            this.HideWaitMessage();
             return false;
         }
 

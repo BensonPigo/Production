@@ -54,7 +54,7 @@ namespace Sci.Production.IE
 
             UpdateData = ((DataTable)gridbs.DataSource).Clone();
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             excel.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intRowsCount = worksheet.UsedRange.Rows.Count;
@@ -143,7 +143,7 @@ namespace Sci.Production.IE
                     MyUtility.Msg.InfoBox("Excel data import completed.");
                 }
             }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
 
             if (hasError == 1)
             {

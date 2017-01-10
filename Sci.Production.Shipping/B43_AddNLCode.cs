@@ -97,7 +97,7 @@ namespace Sci.Production.Shipping
 
             UpdateData = ((DataTable)listControlBindingSource1.DataSource).Clone();
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             excel.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intRowsCount = worksheet.UsedRange.Rows.Count;
@@ -147,7 +147,7 @@ namespace Sci.Production.Shipping
             {
                 ((DataTable)listControlBindingSource1.DataSource).ImportRow(dr);
             }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Import Complete!!");
         }
 

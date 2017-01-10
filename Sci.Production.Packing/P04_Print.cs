@@ -169,7 +169,7 @@ order by RefNo", MyUtility.Convert.GetString(masterData["ID"]));
                 string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P04_PackingListReport.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
                 if (excel == null) return false;
-                MyUtility.Msg.WaitWindows("Starting to excel...");
+                this.ShowWaitMessage("Starting to excel...");
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
                 worksheet.Cells[3, 1] = MyUtility.Convert.GetString(masterData["ID"]);
@@ -246,7 +246,7 @@ order by RefNo", MyUtility.Convert.GetString(masterData["ID"]));
                 excelRow++;
                 worksheet.Cells[excelRow, 3] = MyUtility.Convert.GetString(masterData["Remark"]);
 
-                MyUtility.Msg.WaitClear();
+                this.HideWaitMessage();
                 excel.Visible = true;
             }
             return true;

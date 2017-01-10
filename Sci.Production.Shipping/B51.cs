@@ -189,7 +189,7 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
 
             UpdateData = ((DataTable)gridbs.DataSource).Clone();
 
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+            this.ShowWaitMessage("Starting EXCEL...");
             excel.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intRowsCount = worksheet.UsedRange.Rows.Count;
@@ -249,7 +249,7 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
             {
                 ((DataTable)detailgridbs.DataSource).ImportRow(dr);
             }
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             if (MyUtility.Check.Empty(emptyNLCode.ToString()))
             {
                 MyUtility.Msg.InfoBox("Import Complete!!");

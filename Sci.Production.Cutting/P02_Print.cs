@@ -100,11 +100,11 @@ namespace Sci.Production.Cutting
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-            
-            MyUtility.Msg.WaitWindows("Starting EXCEL...");
+
+            this.ShowWaitMessage("Starting EXCEL...");
             if (Cutref_ra.Checked) return ByCutrefExcel();
             else return ByRequestExcel();
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             //return true;
         }
         

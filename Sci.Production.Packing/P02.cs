@@ -440,7 +440,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P02.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
-            MyUtility.Msg.WaitWindows("Starting to excel...");
+            this.ShowWaitMessage("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             
             worksheet.Cells[2, 2] = MyUtility.Check.Empty(PrintData.Rows[0]["BuyerDelivery"]) ? "" : Convert.ToDateTime(PrintData.Rows[0]["BuyerDelivery"]).ToString("d");
@@ -598,7 +598,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             row = row + (dataRow > 2 ? dataRow - 1 : 2);
             worksheet.Cells[row, 2] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0,ctnDimension.ToString().Length-2) : "";
 
-            MyUtility.Msg.WaitClear();
+            this.HideWaitMessage();
             
             excel.Visible = true;
             return base.ClickPrint();
