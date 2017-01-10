@@ -233,13 +233,17 @@ namespace Sci.Production.Warehouse
                 // 建立可以符合回傳的Cursor
                 #region -- Sql Command --
                 strSQLCmd.Append(string.Format(@"
-select distinct
+with returnSP as(
+	select distinct ID, POID, Seq1, Seq2 from RequestCrossM_Receive RCM
+	where RCM.Id = (select CutplanID from Issue where ID = '{0}')
+)
+select 
 BorrowingSP		= ID.POID,
 BorrowingSeq	= concat(ID.Seq1, ' ', ID.Seq2),
 StockType		= ID.StockType,
-BorrowingQty	= ID.Qty,
-ReturnSP		= RCM.POID,
-ReturnSeq		= concat(RCM.Seq1, ' ', RCM.Seq2),
+BorrowingQty	= sum(ID.Qty),
+ReturnSP		= RSP.POID,
+ReturnSeq		= concat(RSP.Seq1, ' ', RSP.Seq2),
 Qty				= 0.00
 --,
 --FromSeq1		= ID.Seq1,
@@ -248,34 +252,44 @@ Qty				= 0.00
 --ToSeq2			= RCM.Seq2
 from Issue I
 inner join Issue_Detail ID on I.Id = ID.id
-inner join RequestCrossM_Receive RCM on I.CutplanID = RCM.id
+inner join returnSP RSP on I.CutplanID = RSP.id
 
 where I.CutplanID = (select CutplanID from Issue where ID = '{0}')
 and i.MDivisionID= '{1}'
-and I.Status = 'Confirmed';
+and I.Status = 'Confirmed'
+group by ID.POID, concat(ID.Seq1, ' ', ID.Seq2), ID.StockType, RSP.POID, concat(RSP.Seq1, ' ', RSP.Seq2)
 ", dr_master["referenceid"], Sci.Env.User.Keyword));
 
                 strSQLCmd2.Append(string.Format(@"
-with grid1 as(
-	select distinct
-	BorrowingSP		= ID.POID,
-	BorrowingSeq	= concat(ID.Seq1, ' ', ID.Seq2),
-	BorrowingQty	= ID.Qty,
-	StockType		= ID.StockType,
-	ReturnSP		= RCM.POID,
-	ReturnSeq		= concat(RCM.Seq1, ' ', RCM.Seq2),
-	ReturnQty		= 0.00,
+with returnSP as(
+	select distinct ID, POID, Seq1, Seq2 from RequestCrossM_Receive RCM
+	where RCM.Id = (select CutplanID from Issue where ID = '{0}')
+),grid1 as (
+    select 
+    BorrowingSP		= ID.POID,
+    BorrowingSeq	= concat(ID.Seq1, ' ', ID.Seq2),
+    StockType		= ID.StockType,
+    BorrowingQty	= sum(ID.Qty),
+    ReturnSP		= RSP.POID,
+    ReturnSeq		= concat(RSP.Seq1, ' ', RSP.Seq2),
+    Qty				= 0.00,
 	BorrowingSeq1	= ID.Seq1,
 	BorrowingSeq2	= ID.Seq2,
-	ReturnSeq1		= RCM.Seq1,
-	ReturnSeq2		= RCM.Seq2
-	from Issue I
-	inner join Issue_Detail ID on I.Id = ID.id
-	inner join RequestCrossM_Receive RCM on I.CutplanID = RCM.id
+	ReturnSeq1		= RSP.Seq1,
+	ReturnSeq2		= RSP.Seq2
+    --,
+    --FromSeq1		= ID.Seq1,
+    --FromSeq2		= ID.Seq2,
+    --ToSeq1			= RCM.Seq1,
+    --ToSeq2			= RCM.Seq2
+    from Issue I
+    inner join Issue_Detail ID on I.Id = ID.id
+    inner join returnSP RSP on I.CutplanID = RSP.id
 
-	where I.CutplanID = (select CutplanID from Issue where ID = '{0}')
-	and i.MDivisionID= '{1}'
-	and I.Status = 'Confirmed'
+    where I.CutplanID = (select CutplanID from Issue where ID = '{0}')
+    and i.MDivisionID= '{1}'
+    and I.Status = 'Confirmed'
+    group by ID.POID, concat(ID.Seq1, ' ', ID.Seq2), ID.StockType, RSP.POID, concat(RSP.Seq1, ' ', RSP.Seq2), ID.Seq1, ID.Seq2, RSP.Seq1, RSP.Seq2
 ),
 grid2 as(
 	select 
