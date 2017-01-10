@@ -178,20 +178,24 @@ namespace Sci.Production.Warehouse
                 {
                     grid2Dr["ReciveQty"] = e.FormattedValue;
 
-                    //寫回 AccuReciveQty
+                    //寫回 AccuDiff
                     foreach (DataRow dr in findrow)
-                        dr["AccuReciveQty"] = sumReturn + Convert.ToDecimal(grid2Dr["ReciveQty"]);
+                        dr["AccuDiffReciveQty"] = Convert.ToDecimal(grid2Dr["ReturnQty"]) - (sumReturn + Convert.ToDecimal(grid2Dr["ReciveQty"]));
+
+                    grid1Dr["AccuDiffQty"] = Convert.ToDecimal(grid1Dr["BorrowingQty"]) - (sumBorrowing + Convert.ToDecimal(grid2Dr["ReciveQty"]));
                     grid1Dr["Qty"] = (sumBorrowing + Convert.ToDecimal(grid2Dr["ReciveQty"]));
                 }
                 else
                 {
                     string errStr = "";
                     errStr += (checkBorrowingQty) ? "" : string.Format("<ReciveQty> : {0} can't more than <BorrowingQty> : {1}\n", sumBorrowing + Convert.ToDecimal(e.FormattedValue), grid1Dr["BorrowingQty"]);
-                    errStr += (checkReturnQty) ? "" : string.Format("<AccuReciveQty> : {0} can't more than <ReturnQty> : {1}", sumReturn + Convert.ToDecimal(e.FormattedValue), grid2Dr["ReturnQty"]);                    
-                    
-                    //寫回 AccuReciveQty
+                    errStr += (checkReturnQty) ? "" : string.Format("<AccuReciveQty> : {0} can't more than <ReturnQty> : {1}", sumReturn + Convert.ToDecimal(e.FormattedValue), grid2Dr["ReturnQty"]);
+
+                    //寫回 AccuDiff
                     foreach (DataRow dr in findrow)
-                        dr["AccuReciveQty"] = sumReturn;
+                        dr["AccuDiffReciveQty"] = Convert.ToDecimal(grid2Dr["ReturnQty"]) -  sumReturn;
+
+                    grid1Dr["AccuDiffQty"] = Convert.ToDecimal(grid1Dr["BorrowingQty"]) - sumBorrowing;
                     grid1Dr["Qty"] = sumBorrowing;
 
                     MyUtility.Msg.ErrorBox(errStr);
@@ -212,6 +216,7 @@ namespace Sci.Production.Warehouse
                 .Numeric("BorrowingQty", header: "BorrowingQty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Text("ReturnSP", header: "Return" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(20))
                 .Text("ReturnSeq", header: "Return" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
+                .Numeric("AccuDiffQty", header: "Accu. Diff." + Environment.NewLine + "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Numeric("Qty", header: "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8));
 
 
@@ -225,7 +230,7 @@ namespace Sci.Production.Warehouse
                 .Text("Roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("Dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Numeric("ReturnQty", header: "Return" + Environment.NewLine + "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
-                .Numeric("AccuReciveQty", header: "AccuRecive" + Environment.NewLine + "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .Numeric("AccuDiffReciveQty", header: "Accu. Diff." + Environment.NewLine + "Recive Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Numeric("ReciveQty", header: "Recive" + Environment.NewLine + "Qty", iseditingreadonly: false, integer_places: 10, decimal_places: 2, width: Widths.AnsiChars(8), settings: cs).Get(out col_ReciveQty);
 
             col_ReciveQty.DefaultCellStyle.BackColor = Color.Pink;
@@ -244,6 +249,7 @@ StockType		= ID.StockType,
 BorrowingQty	= sum(ID.Qty),
 ReturnSP		= RSP.POID,
 ReturnSeq		= concat(RSP.Seq1, ' ', RSP.Seq2),
+AccuDiffQty     = sum(ID.Qty),
 Qty				= 0.00
 --,
 --FromSeq1		= ID.Seq1,
@@ -293,15 +299,15 @@ with returnSP as(
 ),
 grid2 as(
 	select 
-	ReturnSP		= ID.POID,
-	ReturnSeq		= concat(ID.Seq1, ' ', ID.Seq2),
-	Dyelot			= ID.Dyelot,
-	Roll			= ID.Roll,
-	ReturnQty		= ID.Qty,
-	ReciveQty		= 0.00,
-	AccuReciveQty	= 0.00,
-	ReturnSeq1		= ID.Seq1,
-	ReturnSeq2		= ID.Seq2
+	ReturnSP		    = ID.POID,
+	ReturnSeq		    = concat(ID.Seq1, ' ', ID.Seq2),
+	Dyelot			    = ID.Dyelot,
+	Roll			    = ID.Roll,
+	ReturnQty		    = ID.Qty,
+	ReciveQty		    = 0.00,
+	AccuDiffReciveQty	= ID.Qty,
+	ReturnSeq1		    = ID.Seq1,
+	ReturnSeq2		    = ID.Seq2
 	from Issue I 
 	inner join Issue_Detail ID on I.Id = ID.Id
 	where I.Id = '{0}' and I.Status = 'Confirmed'
@@ -317,7 +323,7 @@ select
 	g2.Roll,
 	g2.Dyelot,
 	g2.ReturnQty, 
-	g2.AccuReciveQty,
+	g2.AccuDiffReciveQty,
 	g2.ReciveQty,	
     description     = dbo.getmtldesc(g1.BorrowingSP, g1.BorrowingSeq1, g1.BorrowingSeq2, 2, 0),
 	g1.BorrowingSeq1,
@@ -353,9 +359,9 @@ order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelo
             #region check Qty 
             foreach (DataRow dr in grid2.GetTable().Rows)
             {
-                if (Convert.ToDecimal(dr["ReturnQty"]) - Convert.ToDecimal(dr["AccuReciveQty"]) != 0)
+                if (Convert.ToDecimal(dr["AccuDiffReciveQty"]) > 0)
                 {
-                    MyUtility.Msg.WarningBox("ReturnQty Err");
+                    MyUtility.Msg.WarningBox(string.Format("<AccuDiffReciveQty> : {0} can't more than 0", dr["AccuDiffReciveQty"]));
                     return;
                 }
             }
