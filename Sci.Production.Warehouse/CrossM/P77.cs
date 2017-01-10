@@ -618,9 +618,20 @@ Where a.id = '{0}'", masterID);
                 txtRequestID.Focus();
                 return;
             }
+
+            string checkSql = string.Format("select * from RequestCrossM where id = '{0}' and Status != 'Confirmed'", CurrentMaintain["cutplanid"]);
+            DataTable checkTable;
+
+            DBProxy.Current.Select(null, checkSql, out checkTable);
+            if (checkTable.Rows.Count > 0)
+            {
+                MyUtility.Msg.WarningBox(string.Format("< Request Id > : {0} not Confirmed", CurrentMaintain["cutplanid"]));
+                return;
+            }
+            
             var frm = new Sci.Production.Warehouse.P77_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             frm.P77 = this;
-            frm.ShowDialog(this);          
+            frm.ShowDialog(this);
             this.RenewData();
         }
         protected override bool ClickPrint()
