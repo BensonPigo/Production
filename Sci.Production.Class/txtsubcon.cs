@@ -112,7 +112,8 @@ namespace Sci.Production.Class
             }
             DataTable tbSelect;
             DBProxy.Current.Select("Production", selectCommand, out tbSelect);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbSelect, "ID,Abb,Name", "9,13,60", this.Text, false, ",", "ID,Abb,Name");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbSelect, "ID,Abb,Name", "9,13,40", this.Text, false, ",", "ID,Abb,Name");
+            item.Size = new System.Drawing.Size(690, 555);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
