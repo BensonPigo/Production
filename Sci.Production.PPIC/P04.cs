@@ -69,7 +69,7 @@ namespace Sci.Production.PPIC
             base.ClickNewAfter();
             CurrentMaintain["LocalStyle"] = 1;
             CurrentMaintain["LocalMR"] = Sci.Env.User.UserID;
-
+            this.displayBox9.Text = "";
         }
 
         protected override void ClickEditAfter()
