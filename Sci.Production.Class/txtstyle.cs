@@ -32,7 +32,7 @@ namespace Sci.Production.Class
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
-
+ 
             string textValue = this.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.OldValue)
             {
@@ -66,7 +66,7 @@ namespace Sci.Production.Class
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
-
+            
             Sci.Win.Tools.SelectItem item;
             string selectCommand;
             selectCommand = "select ID,SeasonID,Description,BrandID from Style where Junk = 0 order by ID";
@@ -74,8 +74,10 @@ namespace Sci.Production.Class
             {
                 selectCommand = string.Format("select ID,SeasonID,Description,BrandID from Style where Junk = 0 and BrandID = '{0}' order by ID", this.brandObject.Text);
             }
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "16,8,50,10", this.Text);
+            item = new Sci.Win.Tools.SelectItem(selectCommand, "12,5,38,10", this.Text);
+           item.Size=new System.Drawing.Size(757, 530);
             DialogResult returnResult = item.ShowDialog();
+            
             if (returnResult == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
         }
