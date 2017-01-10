@@ -80,7 +80,8 @@ inner join Operation o on id.OperationID = o.ID
 left join MachineType m on o.MachineTypeID = m.ID
 left join MtlFactor mf on mf.Type = 'F' and o.MtlFactorID = mf.ID
 where s.Ukey = {0}
-group by id.Location,o.MachineTypeID,isnull(m.Description,''),isnull(m.DescCH,''),isnull(m.RPM,0),isnull(m.Stitches,0.0)", styleUkey);
+group by id.Location,o.MachineTypeID,isnull(m.Description,''),isnull(m.DescCH,''),isnull(m.RPM,0),isnull(m.Stitches,0.0)
+ORDER BY id.Location,o.MachineTypeID", styleUkey);
             result = DBProxy.Current.Select(null, sqlCmd, out gridData3);
             if (!result)
             {
