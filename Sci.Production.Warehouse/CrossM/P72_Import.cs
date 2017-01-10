@@ -181,6 +181,11 @@ where fi.StockType = 'I' and lock = 0 and fi.InQty - fi.OutQty+fi.AdjustQty > 0;
             this.Close();
         }
 
+        private void gridMaster_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            gridDetail.ValidateControl();
+        }
+
         
     }
 }
