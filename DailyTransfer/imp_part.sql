@@ -377,7 +377,7 @@ s.EditDate
 		t.FactoryID = s.FactoryID ,
 		t.MDivisionID = s.MDivisionID,
 		t.CurrencyID = s.CurrencyID ,
-		t.Status= IIF(s.Junk = 1,'Junked',IIF(s.ApvName != '',s.ApvName,'New')),
+		t.Status= IIF(s.Junk = 1,'Junked',IIF(s.ApvName != '',T.Approve,'New')),
 		t.Handle = s.Handle ,
 		t.Amount = s.Amount ,
 		t.Vatrate = s.Vatrate ,
@@ -395,7 +395,7 @@ s.EditDate
 		 ,MDivisionID,Status)
 		values
 		(s.ID ,	s.CDate , 'T' ,	s.FactoryID ,s.CurrencyID ,	s.Handle,s.SuppID ,		s.Amount ,		s.Vatrate ,	Vat ,		s.Remark ,		s.ApvName ,		s.ApvDate ,		s.AddName ,		s.AddDate ,		s.EditName ,		s.EditDate
-		,MDivisionID, IIF(s.Junk = 1,'Junked',IIF(s.ApvName != '',s.ApvName,'New')))
+		,MDivisionID, IIF(s.Junk = 1,'Junked',IIF(s.ApvName != '',ApvName,'New')))
 	output inserted.id into @T;
 
 -----------------MachinePO_Detail Type <>'M'---------------------
