@@ -1547,7 +1547,7 @@ namespace Sci.Production.Cutting
             int TEMP = ((DataTable)detailgridbs.DataSource).Rows.Count;
             // 除Cutref, Cutno, Addname, AddDate, EditName, EditDate以外的所有欄位
             newRow["Newkey"] = maxkey;
-            newRow["ID"] = OldRow["ID"];            
+            newRow["ID"] = OldRow["ID"];
             newRow["Type"] = OldRow["Type"];
             newRow["MDivisionId"] = OldRow["MDivisionId"];
             newRow["FactoryID"] = OldRow["FactoryID"];
@@ -1726,10 +1726,14 @@ namespace Sci.Production.Cutting
         private void cal_Cons(bool updateConsPC, bool updateCons) //update Cons
         {
             gridValid();
-            if (numericBox_MarkerLengthY.Text == ""||textBox_MarkerLengthE.Text.Trim() == "- / + \"")
-            {
-                return;
-            }
+
+            string me = textBox_MarkerLengthE.Text.Trim();            
+            string[] me1 = me.Split('-'); if (me1[0].Length == 0) return;
+            string[] me2 = me1[1].Split('/'); if (me2[0].Length == 0) return;
+            string[] me3 = me2[1].Split('+'); if (me3[0].Length == 0) return;
+            if (me3[1].Length == 0) return;
+            if (numericBox_MarkerLengthY.Text == "") return;
+            
             int sizeRatioQty;
             object comput;
             comput = sizeratioTb.Compute("Sum(Qty)", string.Format("WorkOrderUkey = '{0}'", CurrentDetailData["Ukey"]));
@@ -1757,7 +1761,7 @@ namespace Sci.Production.Cutting
             //string mla = mll + "Y" + textBox_MarkerLengthE.Text;
             this.textBox_MarkerLength.Text = MarkerLengthstr;
             this.textBox_MarkerLength.ValidateControl();
-        }
+            }
 
         private void cal_TotalCutQty(object workorderukey, object newkey)
         {

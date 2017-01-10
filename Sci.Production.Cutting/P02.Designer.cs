@@ -103,8 +103,8 @@
             this.label25 = new Sci.Win.UI.Label();
             this.textBox_PatternPanel = new Sci.Win.UI.DisplayBox();
             this.rightpanel = new Sci.Win.UI.Panel();
-            this.textBox_MarkerLength = new Sci.Win.UI.TextBox();
             this.numericBox_MarkerLengthY = new Sci.Win.UI.TextBox();
+            this.textBox_MarkerLength = new Sci.Win.UI.TextBox();
             this.txtCell1 = new Sci.Production.Class.txtCell();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -184,7 +184,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(3926, 561);
+            this.refresh.Location = new System.Drawing.Point(3983, 561);
             // 
             // detailgridcont
             // 
@@ -193,7 +193,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(3, 101);
-            this.detailgridcont.Size = new System.Drawing.Size(629, 596);
+            this.detailgridcont.Size = new System.Drawing.Size(631, 596);
             // 
             // detail2
             // 
@@ -1074,16 +1074,6 @@
             this.rightpanel.Size = new System.Drawing.Size(371, 694);
             this.rightpanel.TabIndex = 60;
             // 
-            // textBox_MarkerLength
-            // 
-            this.textBox_MarkerLength.BackColor = System.Drawing.Color.White;
-            this.textBox_MarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox_MarkerLength.Location = new System.Drawing.Point(290, 4);
-            this.textBox_MarkerLength.Name = "textBox_MarkerLength";
-            this.textBox_MarkerLength.Size = new System.Drawing.Size(74, 23);
-            this.textBox_MarkerLength.TabIndex = 59;
-            this.textBox_MarkerLength.Visible = false;
-            // 
             // numericBox_MarkerLengthY
             // 
             this.numericBox_MarkerLengthY.BackColor = System.Drawing.Color.White;
@@ -1095,6 +1085,16 @@
             this.numericBox_MarkerLengthY.TabIndex = 60;
             this.numericBox_MarkerLengthY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numericBox_MarkerLengthY.Validated += new System.EventHandler(this.numericBox_MarkerLengthY_Validated);
+            // 
+            // textBox_MarkerLength
+            // 
+            this.textBox_MarkerLength.BackColor = System.Drawing.Color.White;
+            this.textBox_MarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox_MarkerLength.Location = new System.Drawing.Point(290, 4);
+            this.textBox_MarkerLength.Name = "textBox_MarkerLength";
+            this.textBox_MarkerLength.Size = new System.Drawing.Size(74, 23);
+            this.textBox_MarkerLength.TabIndex = 59;
+            this.textBox_MarkerLength.Visible = false;
             // 
             // txtCell1
             // 
