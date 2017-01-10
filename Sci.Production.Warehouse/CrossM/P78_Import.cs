@@ -185,10 +185,16 @@ namespace Sci.Production.Warehouse
                 }
                 else
                 {
+                    string errStr = "";
+                    errStr += (checkBorrowingQty) ? "" : string.Format("<ReciveQty> : {0} can't more than <BorrowingQty> : {1}\n", sumBorrowing + Convert.ToDecimal(e.FormattedValue), grid1Dr["BorrowingQty"]);
+                    errStr += (checkReturnQty) ? "" : string.Format("<AccuReciveQty> : {0} can't more than <ReturnQty> : {1}", sumReturn + Convert.ToDecimal(e.FormattedValue), grid2Dr["ReturnQty"]);                    
+                    
                     //寫回 AccuReciveQty
                     foreach (DataRow dr in findrow)
                         dr["AccuReciveQty"] = sumReturn;
                     grid1Dr["Qty"] = sumBorrowing;
+
+                    MyUtility.Msg.ErrorBox(errStr);
                     e.Cancel = true;
                 }
 
@@ -378,6 +384,11 @@ order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelo
              grid1SelectIndex = e.RowIndex;
              DataRow dr = grid1.GetDataRow(grid1SelectIndex);
              TaipeiOutputBS_Detail.Filter = string.Format("BorrowingSP = '{0}' and BorrowingSeq = '{1}' and StockType = '{2}'", dr["BorrowingSP"], dr["BorrowingSeq"], dr["StockType"]);
+         }
+
+         private void grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
+         {
+             grid2.ValidateControl();
          }
 
     }

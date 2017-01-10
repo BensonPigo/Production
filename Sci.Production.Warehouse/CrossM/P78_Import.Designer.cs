@@ -144,6 +144,7 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             this.grid1.RowSelecting += new System.EventHandler<Ict.Win.UI.DataGridViewRowSelectingEventArgs>(this.grid1_RowSelecting);
+            this.grid1.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid1_RowEnter);
             // 
             // P78_Import
             // 
