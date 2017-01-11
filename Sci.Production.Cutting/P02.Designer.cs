@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -184,7 +184,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(3983, 561);
+            this.refresh.Location = new System.Drawing.Point(4040, 561);
             // 
             // detailgridcont
             // 
@@ -331,7 +331,7 @@
             this.textbox_Style.Location = new System.Drawing.Point(82, 33);
             this.textbox_Style.Name = "textbox_Style";
             this.textbox_Style.Size = new System.Drawing.Size(120, 23);
-            this.textbox_Style.TabIndex = 12;
+            this.textbox_Style.TabIndex = 11;
             // 
             // textbox_Line
             // 
@@ -340,7 +340,7 @@
             this.textbox_Line.Location = new System.Drawing.Point(248, 6);
             this.textbox_Line.Name = "textbox_Line";
             this.textbox_Line.Size = new System.Drawing.Size(55, 23);
-            this.textbox_Line.TabIndex = 13;
+            this.textbox_Line.TabIndex = 12;
             // 
             // AutoRef
             // 
@@ -396,7 +396,7 @@
             this.displayBox_MarkerName.Location = new System.Drawing.Point(396, 5);
             this.displayBox_MarkerName.Name = "displayBox_MarkerName";
             this.displayBox_MarkerName.Size = new System.Drawing.Size(60, 23);
-            this.displayBox_MarkerName.TabIndex = 18;
+            this.displayBox_MarkerName.TabIndex = 13;
             // 
             // displayBox_Color
             // 
@@ -405,7 +405,7 @@
             this.displayBox_Color.Location = new System.Drawing.Point(396, 32);
             this.displayBox_Color.Name = "displayBox_Color";
             this.displayBox_Color.Size = new System.Drawing.Size(66, 23);
-            this.displayBox_Color.TabIndex = 19;
+            this.displayBox_Color.TabIndex = 14;
             // 
             // TotalLayer
             // 
@@ -421,7 +421,7 @@
             0});
             this.TotalLayer.ReadOnly = true;
             this.TotalLayer.Size = new System.Drawing.Size(61, 23);
-            this.TotalLayer.TabIndex = 20;
+            this.TotalLayer.TabIndex = 15;
             this.TotalLayer.Value = new decimal(new int[] {
             0,
             0,
@@ -442,7 +442,7 @@
             0});
             this.BalanceLayer.ReadOnly = true;
             this.BalanceLayer.Size = new System.Drawing.Size(61, 23);
-            this.BalanceLayer.TabIndex = 21;
+            this.BalanceLayer.TabIndex = 16;
             this.BalanceLayer.Value = new decimal(new int[] {
             0,
             0,
@@ -455,7 +455,7 @@
             this.Batchassign.Location = new System.Drawing.Point(304, 65);
             this.Batchassign.Name = "Batchassign";
             this.Batchassign.Size = new System.Drawing.Size(215, 30);
-            this.Batchassign.TabIndex = 22;
+            this.Batchassign.TabIndex = 17;
             this.Batchassign.Text = "Batch assign Cell/Est. Cut Date";
             this.Batchassign.UseVisualStyleBackColor = true;
             this.Batchassign.Click += new System.EventHandler(this.Batchassign_Click);
@@ -572,7 +572,7 @@
             this.textBox_MarkerLengthE.Mask = "00-0/0+0\"";
             this.textBox_MarkerLengthE.Name = "textBox_MarkerLengthE";
             this.textBox_MarkerLengthE.Size = new System.Drawing.Size(116, 23);
-            this.textBox_MarkerLengthE.TabIndex = 35;
+            this.textBox_MarkerLengthE.TabIndex = 19;
             this.textBox_MarkerLengthE.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_MarkerLengthE_Validating);
             // 
             // numericBox_UnitCons
@@ -593,7 +593,7 @@
             0,
             0});
             this.numericBox_UnitCons.Size = new System.Drawing.Size(108, 23);
-            this.numericBox_UnitCons.TabIndex = 36;
+            this.numericBox_UnitCons.TabIndex = 20;
             this.numericBox_UnitCons.Value = new decimal(new int[] {
             0,
             0,
@@ -616,7 +616,7 @@
             0});
             this.numericBox_Cons.ReadOnly = true;
             this.numericBox_Cons.Size = new System.Drawing.Size(86, 23);
-            this.numericBox_Cons.TabIndex = 38;
+            this.numericBox_Cons.TabIndex = 22;
             this.numericBox_Cons.Value = new decimal(new int[] {
             0,
             0,
@@ -630,7 +630,7 @@
             this.textBox_LectraCode.Location = new System.Drawing.Point(104, 86);
             this.textBox_LectraCode.Name = "textBox_LectraCode";
             this.textBox_LectraCode.Size = new System.Drawing.Size(43, 23);
-            this.textBox_LectraCode.TabIndex = 40;
+            this.textBox_LectraCode.TabIndex = 24;
             // 
             // textBox_FabricCombo
             // 
@@ -639,7 +639,7 @@
             this.textBox_FabricCombo.Location = new System.Drawing.Point(303, 59);
             this.textBox_FabricCombo.Name = "textBox_FabricCombo";
             this.textBox_FabricCombo.Size = new System.Drawing.Size(62, 23);
-            this.textBox_FabricCombo.TabIndex = 39;
+            this.textBox_FabricCombo.TabIndex = 23;
             // 
             // label18
             // 
@@ -657,7 +657,7 @@
             this.displayBox_FabricRefno.Location = new System.Drawing.Point(104, 113);
             this.displayBox_FabricRefno.Name = "displayBox_FabricRefno";
             this.displayBox_FabricRefno.Size = new System.Drawing.Size(170, 23);
-            this.displayBox_FabricRefno.TabIndex = 42;
+            this.displayBox_FabricRefno.TabIndex = 26;
             // 
             // displayBox_FabricType
             // 
@@ -666,7 +666,7 @@
             this.displayBox_FabricType.Location = new System.Drawing.Point(104, 139);
             this.displayBox_FabricType.Name = "displayBox_FabricType";
             this.displayBox_FabricType.Size = new System.Drawing.Size(108, 23);
-            this.displayBox_FabricType.TabIndex = 43;
+            this.displayBox_FabricType.TabIndex = 27;
             // 
             // editBox_desc
             // 
@@ -678,7 +678,7 @@
             this.editBox_desc.Name = "editBox_desc";
             this.editBox_desc.ReadOnly = true;
             this.editBox_desc.Size = new System.Drawing.Size(235, 47);
-            this.editBox_desc.TabIndex = 45;
+            this.editBox_desc.TabIndex = 29;
             // 
             // label19
             // 
@@ -706,14 +706,14 @@
             this.sizeratio_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.sizeratio_grid.Location = new System.Drawing.Point(0, 281);
             this.sizeratio_grid.Name = "sizeratio_grid";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.sizeratio_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.sizeratio_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.sizeratio_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.sizeratio_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.sizeratio_grid.RowTemplate.Height = 24;
@@ -769,7 +769,7 @@
             this.displayBox_Cutplanid.Location = new System.Drawing.Point(243, 281);
             this.displayBox_Cutplanid.Name = "displayBox_Cutplanid";
             this.displayBox_Cutplanid.Size = new System.Drawing.Size(108, 23);
-            this.displayBox_Cutplanid.TabIndex = 48;
+            this.displayBox_Cutplanid.TabIndex = 32;
             // 
             // distribute_grid
             // 
@@ -786,14 +786,14 @@
             this.distribute_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.distribute_grid.Location = new System.Drawing.Point(0, 416);
             this.distribute_grid.Name = "distribute_grid";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.distribute_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.distribute_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.distribute_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.distribute_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.distribute_grid.RowTemplate.Height = 24;
@@ -838,14 +838,14 @@
             this.qtybreak_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.qtybreak_grid.Location = new System.Drawing.Point(1, 551);
             this.qtybreak_grid.Name = "qtybreak_grid";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.qtybreak_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.qtybreak_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.qtybreak_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.qtybreak_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.qtybreak_grid.RowTemplate.Height = 24;
@@ -888,7 +888,7 @@
             0});
             this.totaldisqtybox.ReadOnly = true;
             this.totaldisqtybox.Size = new System.Drawing.Size(62, 23);
-            this.totaldisqtybox.TabIndex = 50;
+            this.totaldisqtybox.TabIndex = 34;
             this.totaldisqtybox.Value = new decimal(new int[] {
             0,
             0,
@@ -966,7 +966,7 @@
             this.displayBox_WorkOrderDownloadid.Location = new System.Drawing.Point(173, 217);
             this.displayBox_WorkOrderDownloadid.Name = "displayBox_WorkOrderDownloadid";
             this.displayBox_WorkOrderDownloadid.Size = new System.Drawing.Size(165, 23);
-            this.displayBox_WorkOrderDownloadid.TabIndex = 46;
+            this.displayBox_WorkOrderDownloadid.TabIndex = 30;
             // 
             // displayBox_Downloadid
             // 
@@ -975,7 +975,7 @@
             this.displayBox_Downloadid.Location = new System.Drawing.Point(173, 244);
             this.displayBox_Downloadid.Name = "displayBox_Downloadid";
             this.displayBox_Downloadid.Size = new System.Drawing.Size(165, 23);
-            this.displayBox_Downloadid.TabIndex = 47;
+            this.displayBox_Downloadid.TabIndex = 31;
             // 
             // AutoCut
             // 
@@ -995,14 +995,14 @@
             this.displayBox_TotalCutQty.Location = new System.Drawing.Point(172, 335);
             this.displayBox_TotalCutQty.Name = "displayBox_TotalCutQty";
             this.displayBox_TotalCutQty.Size = new System.Drawing.Size(165, 23);
-            this.displayBox_TotalCutQty.TabIndex = 49;
+            this.displayBox_TotalCutQty.TabIndex = 33;
             // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(217, 136);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(110, 30);
-            this.button1.TabIndex = 44;
+            this.button1.TabIndex = 28;
             this.button1.Text = "PatternPanel";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -1023,7 +1023,7 @@
             this.textBox_PatternPanel.Location = new System.Drawing.Point(249, 86);
             this.textBox_PatternPanel.Name = "textBox_PatternPanel";
             this.textBox_PatternPanel.Size = new System.Drawing.Size(115, 23);
-            this.textBox_PatternPanel.TabIndex = 41;
+            this.textBox_PatternPanel.TabIndex = 25;
             // 
             // rightpanel
             // 
@@ -1082,7 +1082,7 @@
             this.numericBox_MarkerLengthY.Mask = "00";
             this.numericBox_MarkerLengthY.Name = "numericBox_MarkerLengthY";
             this.numericBox_MarkerLengthY.Size = new System.Drawing.Size(34, 23);
-            this.numericBox_MarkerLengthY.TabIndex = 60;
+            this.numericBox_MarkerLengthY.TabIndex = 18;
             this.numericBox_MarkerLengthY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numericBox_MarkerLengthY.Validated += new System.EventHandler(this.numericBox_MarkerLengthY_Validated);
             // 
@@ -1104,7 +1104,7 @@
             this.txtCell1.Location = new System.Drawing.Point(282, 31);
             this.txtCell1.Name = "txtCell1";
             this.txtCell1.Size = new System.Drawing.Size(30, 23);
-            this.txtCell1.TabIndex = 37;
+            this.txtCell1.TabIndex = 21;
             // 
             // P02
             // 

@@ -1704,7 +1704,9 @@ namespace Sci.Production.Cutting
 
         private void numericBox_MarkerLengthY_Validated(object sender, EventArgs e)
         {
+            if (numericBox_MarkerLengthY.Text.Trim() == "") return;
             if (numericBox_MarkerLengthY.OldValue == numericBox_MarkerLengthY.Text) return;
+
             int y;
             y = int.Parse(numericBox_MarkerLengthY.Text);
             CurrentDetailData["MarkerLengthY"] = y.ToString("D2");
@@ -1714,6 +1716,7 @@ namespace Sci.Production.Cutting
         private void textBox_MarkerLengthE_Validating(object sender, CancelEventArgs e)
         {
             if (textBox_MarkerLengthE.OldValue == textBox_MarkerLengthE.Text) return;
+           
             CurrentDetailData["MarkerLengthE"] = textBox_MarkerLengthE.Text;
             cal_Cons(true, true);
         }
@@ -1726,13 +1729,12 @@ namespace Sci.Production.Cutting
         private void cal_Cons(bool updateConsPC, bool updateCons) //update Cons
         {
             gridValid();
-
-            string me = textBox_MarkerLengthE.Text.Trim();            
-            string[] me1 = me.Split('-'); if (me1[0].Length == 0) return;
-            string[] me2 = me1[1].Split('/'); if (me2[0].Length == 0) return;
-            string[] me3 = me2[1].Split('+'); if (me3[0].Length == 0) return;
-            if (me3[1].Length == 0) return;
-            if (numericBox_MarkerLengthY.Text == "") return;
+            if (numericBox_MarkerLengthY.Text.Trim() == "") return;
+            string me = textBox_MarkerLengthE.Text.Trim();
+            string[] me1 = me.Split('-'); if (me1[0].ToString().Trim().Length == 0) return;
+            string[] me2 = me1[1].Split('/'); if (me2[0].ToString().Trim().Length == 0) return;
+            string[] me3 = me2[1].Split('+'); if (me3[0].ToString().Trim().Length == 0) return;
+            if (me3[1].ToString().Trim().Length == 0) return;
             
             int sizeRatioQty;
             object comput;
