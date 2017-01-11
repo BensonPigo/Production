@@ -179,10 +179,24 @@ namespace Sci.Production.Warehouse
                     grid2Dr["ReciveQty"] = e.FormattedValue;
 
                     //寫回 AccuDiff
-                    foreach (DataRow dr in findrow)
+                    foreach(DataRow dr in findrow)
                         dr["AccuDiffReciveQty"] = Convert.ToDecimal(grid2Dr["ReturnQty"]) - (sumReturn + Convert.ToDecimal(grid2Dr["ReciveQty"]));
 
+                    //Grid2 AccuDiffReciveQty == 0 then change Color
+                    grid2_changeColor();
+
                     grid1Dr["AccuDiffQty"] = Convert.ToDecimal(grid1Dr["BorrowingQty"]) - (sumBorrowing + Convert.ToDecimal(grid2Dr["ReciveQty"]));
+                    if (Convert.ToDecimal(grid1Dr["AccuDiffQty"]) == 0)
+                    {
+                        grid1Dr["ReciveCheck"] = 0;
+                        //grid1.Rows[grid1SelectIndex].Cells["AccuDiffQty"].Style.BackColor = Color.Gray;
+                    }
+                    else
+                    {
+                        grid1Dr["ReciveCheck"] = 1;
+                        //grid1.Rows[grid1SelectIndex].Cells["AccuDiffQty"].Style.BackColor = Color.White;
+                    }
+
                     grid1Dr["Qty"] = (sumBorrowing + Convert.ToDecimal(grid2Dr["ReciveQty"]));
                 }
                 else
@@ -217,7 +231,8 @@ namespace Sci.Production.Warehouse
                 .Text("ReturnSP", header: "Return" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(20))
                 .Text("ReturnSeq", header: "Return" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
                 .Numeric("AccuDiffQty", header: "Accu. Diff." + Environment.NewLine + "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
-                .Numeric("Qty", header: "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8));
+                .Numeric("Qty", header: "Accu. Recive" + Environment.NewLine + "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .CheckBox("ReciveCheck", header: "Complete", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0);
 
 
             this.grid2.IsEditingReadOnly = false;
@@ -230,7 +245,8 @@ namespace Sci.Production.Warehouse
                 .Text("Roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("Dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Numeric("ReturnQty", header: "Return" + Environment.NewLine + "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
-                .Numeric("AccuDiffReciveQty", header: "Accu. Diff." + Environment.NewLine + "Recive Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .Numeric("AccuDiffReciveQty", header: "Assign Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))               
+                .CheckBox("AssignCheck", header: "Assign", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0) 
                 .Numeric("ReciveQty", header: "Recive" + Environment.NewLine + "Qty", iseditingreadonly: false, integer_places: 10, decimal_places: 2, width: Widths.AnsiChars(8), settings: cs).Get(out col_ReciveQty);
 
             col_ReciveQty.DefaultCellStyle.BackColor = Color.Pink;
@@ -243,6 +259,7 @@ with returnSP as(
 	where RCM.Id = (select CutplanID from Issue where ID = '{0}')
 )
 select 
+ReciveCheck     = 1,
 BorrowingSP		= ID.POID,
 BorrowingSeq	= concat(ID.Seq1, ' ', ID.Seq2),
 StockType		= ID.StockType,
@@ -313,7 +330,8 @@ grid2 as(
 	where I.Id = '{0}' and I.Status = 'Confirmed'
 )
 select 
-    id = '',
+    AssignCheck     = 1,
+    id              = '',
 	g1.BorrowingSP,
 	g1.BorrowingSeq,	
 	g1.StockType,
@@ -355,6 +373,7 @@ order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelo
          private void btn_Import_Click(object sender, EventArgs e)
         {
             grid1.ValidateControl();
+            grid2.ValidateControl();
 
             #region check Qty 
             foreach (DataRow dr in grid2.GetTable().Rows)
@@ -409,7 +428,24 @@ order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelo
          private void grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
          {
              grid2.ValidateControl();
+             grid2_changeColor();
          }
 
+         private void grid2_changeColor()
+         {
+             for (int i = 0; i < grid2.Rows.Count; i++)
+             {
+                 if (Convert.ToDecimal(grid2.Rows[i].Cells["AccuDiffReciveQty"].Value) == 0)
+                 {
+                     grid2.Rows[i].Cells["AssignCheck"].Value = 0;
+                     grid2.Rows[i].Cells["AccuDiffReciveQty"].Style.BackColor = Color.Gray;
+                 }
+                 else
+                 {
+                     grid2.Rows[i].Cells["AssignCheck"].Value = 1;
+                     grid2.Rows[i].Cells["AccuDiffReciveQty"].Style.BackColor = Color.White;
+                 }
+             }
+         }
     }
 }
