@@ -436,8 +436,13 @@ namespace Sci.Production.Subcon
         //unApprove
         protected override void ClickUnconfirm()
         {
-            if (this.displayBox4.Text!="")
-            {return ;}
+            //若VoucherID有值，則不能UNCONFIRM
+            if (!MyUtility.Check.Empty(CurrentMaintain["VoucherID"]))
+            {
+                MyUtility.Msg.WarningBox("Voucher# already has value, can not unconfirm !!");
+                return;
+            }
+
             base.ClickUnconfirm();
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
