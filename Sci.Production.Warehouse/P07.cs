@@ -418,7 +418,7 @@ select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD inner join dbo.Borro
 //--from dbo.Export_Detail e left join dbo.PO_Supp_Detail p on e.PoID = p.ID and e.Seq1 = p.SEQ1 and e.Seq2 = p.seq2
                         sqlcmd = string.Format(@"
 
-select e.poid,left(e.seq1+' ',3)+e.Seq2 as seq, e.Refno, dbo.getmtldesc(e.poid,e.seq1,e.seq2,2,0) as [Description]
+select e.poid,concat(Ltrim(Rtrim(e.seq1)), ' ', e.Seq2) as seq, e.Refno, dbo.getmtldesc(e.poid,e.seq1,e.seq2,2,0) as [Description]
 ,p.ColorID
 ,(SELECT eta from dbo.export where id = e.id) as eta
 ,M.InQty
@@ -473,8 +473,10 @@ where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintai
                         }
                         else
                         {
+                            string seq1 = e.FormattedValue.ToString().Trim().Substring(0, e.FormattedValue.ToString().Trim().Length - 3);
+                            string seq2 = e.FormattedValue.ToString().Trim().Substring(e.FormattedValue.ToString().Trim().Length - 2);
                             if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype from po_supp_detail
-where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3), e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
+where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], seq1, seq2), out dr, null))
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 e.Cancel = true;
@@ -509,8 +511,8 @@ where b.id = '{0}' and b.seq1 ='{1}'and b.seq2 = '{2}'", CurrentDetailData["poid
 
                                 CurrentDetailData["stockunit"] = (unti_result) ? dr_StockUnit["stockunit"] : dr["stockunit"];
                                 CurrentDetailData["seq"] = e.FormattedValue;
-                                CurrentDetailData["seq1"] = e.FormattedValue.ToString().Substring(0, 3);
-                                CurrentDetailData["seq2"] = e.FormattedValue.ToString().Substring(3, 2);
+                                CurrentDetailData["seq1"] = seq1;
+                                CurrentDetailData["seq2"] = seq2;
                                 CurrentDetailData["pounit"] = dr["pounit"];
                                 CurrentDetailData["fabrictype"] = dr["fabrictype"];
                                 CurrentDetailData["shipqty"] = 0m;
@@ -1112,7 +1114,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
-            this.DetailSelectCommand = string.Format(@"select a.id,a.MDivisionID,a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+            this.DetailSelectCommand = string.Format(@"select a.id,a.MDivisionID,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,(select p1.FabricType from PO_Supp_Detail p1 where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
 ,a.shipqty
 ,a.Weight
@@ -1171,7 +1173,7 @@ Where a.id = '{0}' ", masterID);
         ff.UsageUnit)) as StockUnit
 --,IIF ( mm.IsExtensionUnit > 0, uu.ExtensionUnit, ff.UsageUnit ) AS StockUnit
 ,b.FabricType
-, left(a.seq1+' ',3)+a.Seq2 as seq
+, concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Qty+a.Foc as Actualqty
 , round((a.Qty+a.Foc)*v.rate,2) as stockqty
 , '' as dyelot
