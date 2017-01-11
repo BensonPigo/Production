@@ -411,7 +411,7 @@
             this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox4.Location = new System.Drawing.Point(504, 32);
             this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(111, 23);
+            this.displayBox4.Size = new System.Drawing.Size(165, 23);
             this.displayBox4.TabIndex = 24;
             // 
             // txttpeuser4
