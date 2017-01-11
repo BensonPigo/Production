@@ -23,12 +23,16 @@ namespace Sci.Production.PPIC
         protected override void OnFormLoaded()
         {
             //撈Grid資料
-            string sqlCmd = string.Format(@"select sq.* ,isnull(d.Name,'') as ContinentName, isnull(c.Alias,'') as Alias, '' as CreateBy,'' as EditBy 
-from Style_QtyCTN sq
-left join DropDownList d on d.Type = 'Continent' and sq.Continent = d.ID
-left join Country c on sq.CountryID = c.ID
-where sq.StyleUkey = {0}
-order by sq.Continent,sq.CountryID", styleUkey);
+            //   select sq.* ,isnull(d.Name,'') as ContinentName, isnull(c.Alias,'') as Alias, '' as CreateBy,'' as EditBy 
+            //from Style_QtyCTN sq
+            //left join DropDownList d on d.Type = 'Continent' and sq.Continent = d.ID
+            //left join Country c on sq.CountryID = c.ID order by s.Continent,s.CountryID
+           string sqlCmd = string.Format(@"
+SELECT DISTINCT isnull(d.Name,'') as ContinentName,S.CountryID,isnull(c.Alias,'') as Alias,S.CustCDID,S.Qty,S.AddName,S.AddDate,S.EditName,S.EditDate, '' as CreateBy,'' as EditBy 
+FROM Style_QtyCTN S
+LEFT JOIN Country C ON S.CountryID=C.ID
+left join DropDownList d on d.Type = 'Continent' and s.Continent = d.ID
+where s.StyleUkey = {0}", styleUkey);
 
             DataTable selectDataTable;
             DualResult selectResult1 = DBProxy.Current.Select(null, sqlCmd, out selectDataTable);
@@ -49,8 +53,8 @@ order by sq.Continent,sq.CountryID", styleUkey);
                  .Text("Alias", header: "Country", width: Widths.AnsiChars(10))
                  .Text("CustCDID", header: "CustCD", width: Widths.AnsiChars(10))
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5))
-                 .Text("CreateBy", header: "Create by", width: Widths.AnsiChars(30))
-                 .Text("EditBy", header: "Edit by", width: Widths.AnsiChars(30));
+                 .Text("CreateBy", header: "Create by", width: Widths.AnsiChars(28))
+                 .Text("EditBy", header: "Edit by", width: Widths.AnsiChars(28));
         }
     }
 }
