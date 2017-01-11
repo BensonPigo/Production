@@ -50,7 +50,7 @@ select FactoryID=iif(ed.potype='M', (case when ed.FabricType = 'M' then (select 
 o.ProjectID,ed.PoID,(select min(SciDelivery) from Orders where POID = ed.PoID and (Category = 'B' or Category = o.Category)) as SCIDlv,
 (case when o.Category = 'B' then 'Bulk' when o.Category = 'S' then 'Sample' when o.Category = 'M' then 'Material' else '' end) as Category,
 iif(o.PFOrder = 1,dateadd(day,-10,o.SciDelivery),iif((select CountryID from Factory where ID = o.factoryID)='PH',iif((select MrTeam from Brand where ID = o.BrandID) = '01',dateadd(day,-15,o.SciDelivery),dateadd(day,-24,o.SciDelivery)),dateadd(day,-34,o.SciDelivery))) as InspDate,
-(SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2) as Seq,(ed.SuppID+'-'+s.AbbEN) as Supp,
+(SUBSTRING(ed.Seq1,1,3)+' '+ed.Seq2) as Seq,(ed.SuppID+'-'+s.AbbEN) as Supp,
 iif(ed.Description = '',isnull(f.DescDetail,''),ed.Description) as Description,
 
 FabricType =iif(ed.potype='M',
@@ -58,7 +58,7 @@ FabricType =iif(ed.potype='M',
 			''),
 
 ed.UnitId,isnull(psd.ColorID,'') as ColorID,isnull(psd.SizeSpec,'') as SizeSpec,ed.Qty,ed.Foc,ed.BalanceQty,
-ed.NetKg,ed.WeightKg,iif(ed.IsFormA = 1,'Y','') as IsFormA,ed.FormXType,ed.FormXReceived,ed.FormXDraftCFM,ed.FormXINV,ed.ID,ed.Seq1,ed.Seq2,ed.Ukey,rtrim(ed.PoID)+(SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2) as FindColumn
+ed.NetKg,ed.WeightKg,iif(ed.IsFormA = 1,'Y','') as IsFormA,ed.FormXType,ed.FormXReceived,ed.FormXDraftCFM,ed.FormXINV,ed.ID,ed.Seq1,ed.Seq2,ed.Ukey,rtrim(ed.PoID)+(SUBSTRING(ed.Seq1,1,3)+' '+ed.Seq2) as FindColumn
 
 from Export_Detail ed
 left join Orders o on o.ID = ed.PoID
@@ -164,7 +164,8 @@ where ed.ID = '{0}'", masterID);
         //Find
         private void button3_Click(object sender, EventArgs e)
         {
-            string poID = textBox1.Text + textBox2.Text;
+            string seq = textBox2.Text.Substring(0, textBox2.Text.Length - 3).Trim() + ' ' + textBox2.Text.Substring(textBox2.Text.Length - 2);
+            string poID = textBox1.Text + seq;
 
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
             int index = detailgridbs.Find("FindColumn", poID);
