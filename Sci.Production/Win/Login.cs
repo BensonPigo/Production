@@ -162,6 +162,26 @@ namespace Sci.Production.Win
             if (!data.IsEMAILNull()) u.MailAddress = data.EMAIL;
             u.Factory = factoryID;
             u.Keyword = keyword;
+
+            #region 登入時將SYSTEM資料表相關設定載入Sci.Env.Cfg中
+            DataRow drSystem;
+            if (!MyUtility.Check.Seek("select * from system", out drSystem, null))
+            {
+                return new DualResult(false, "Get system data fail !!");
+            }
+            else
+            {
+                Sci.Env.Cfg.MailServerIP = drSystem["Mailserver"].ToString().Trim();
+                Sci.Env.Cfg.MailFrom = drSystem["Sendfrom"].ToString().Trim();
+                Sci.Env.Cfg.MailServerAccount = drSystem["EmailID"].ToString().Trim();
+                Sci.Env.Cfg.MailServerPassword = drSystem["EmailPwd"].ToString().Trim();
+                Sci.Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
+                Sci.Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
+                Sci.Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
+                Sci.Env.Cfg.ClipDir = drSystem["ClipPath"].ToString().Trim();
+            }
+            #endregion
+
             return result;
         }
 
