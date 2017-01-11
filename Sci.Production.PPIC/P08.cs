@@ -64,9 +64,9 @@ order by rd.Seq1,rd.Seq2", masterID);
             button1.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "Junked" && !MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? true : false;
             label15.Visible = MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Junked";
             displayBox4.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(CurrentMaintain["POID"]), "Orders", "ID");
-            displayBox5.Value = MyUtility.Check.Empty(CurrentMaintain["ApplyDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApplyDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
-            displayBox6.Value = MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
-            displayBox7.Value = MyUtility.Check.Empty(CurrentMaintain["TPECFMDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPECFMDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            displayBox5.Value = MyUtility.Check.Empty(CurrentMaintain["ApplyDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApplyDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
+            displayBox6.Value = MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
+            displayBox7.Value = MyUtility.Check.Empty(CurrentMaintain["TPECFMDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPECFMDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
             displayBox2.Value = MyUtility.Check.Empty(CurrentMaintain["TPEEditDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             DataRow POData;
             if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out POData))
@@ -265,12 +265,12 @@ order by rd.Seq1,rd.Seq2", masterID);
                 }
             }
 
-            string attention = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 where ID = '{0}'", MyUtility.Convert.GetString(txttpeuser5.DisplayBox1.Value)));
+            string attention = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 where ID = '{0}'", this.txttpeuser5.DisplayBox1Binding));
             string apply = MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ApplyName"])));
             string approve = MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ApvName"])));
             string style = MyUtility.GetValue.Lookup(string.Format("select top 1 StyleID from Orders where POID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])));
             string confirm = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["TPECFMName"])));
-            int j = 0;
+            int j = 0; int n = 0;
             foreach (DataRow dr in gridData.Rows)
             {
                 j++;
@@ -280,13 +280,14 @@ order by rd.Seq1,rd.Seq2", masterID);
                 //填表頭資料
                 if (j % 2 == 1)
                 {
-                    worksheet.Cells[row + 3, 2] = MyUtility.Convert.GetString(CurrentMaintain["ID"]) + " - " + MyUtility.Convert.GetString(row + 1) + "/" + MyUtility.Convert.GetString(totalPage);
+                    n++; 
+                    worksheet.Cells[row + 3, 2] = MyUtility.Convert.GetString(CurrentMaintain["ID"]) + " - " + n + "/" + MyUtility.Convert.GetString(totalPage);
                     worksheet.Cells[row + 4, 2] = MyUtility.Convert.GetString(CurrentMaintain["FactoryID"]);
-                    worksheet.Cells[row + 4, 6] = MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToString("yyyy/MM/dd HH:mm:ss");
-                    worksheet.Cells[row + 4, 8] = MyUtility.Check.Empty(CurrentMaintain["ApplyDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApplyDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+                    worksheet.Cells[row + 4, 6] = MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToString("yyyy/MM/dd");
+                    worksheet.Cells[row + 4, 8] = MyUtility.Check.Empty(CurrentMaintain["ApplyDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApplyDate"]).ToString("yyyy/MM/dd");
                     worksheet.Cells[row + 5, 2] = MyUtility.Convert.GetString(CurrentMaintain["POID"]);
-                    worksheet.Cells[row + 5, 6] = MyUtility.Check.Empty(CurrentMaintain["TPECFMDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPECFMDate"]).ToString("yyyy/MM/dd HH:mm:ss");
-                    worksheet.Cells[row + 5, 7] = attention;
+                    worksheet.Cells[row + 5, 6] = MyUtility.Check.Empty(CurrentMaintain["TPECFMDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPECFMDate"]).ToString("yyyy/MM/dd");
+                    worksheet.Cells[row + 5, 8] = attention;
                     worksheet.Cells[row + 6, 2] = apply + "/" + approve;
                     worksheet.Cells[row + 6, 8] = style;
                     column = 5;
@@ -586,12 +587,13 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain[
                 DataTable allMail;
                 string sqlCmd = string.Format(@"select isnull((select EMail from Pass1 where ID = r.ApplyName),'') as ApplyName,
 isnull((select Name from Pass1 where ID = r.ApvName),'') as ApvName,
+isnull((select Email from Pass1 where ID = r.ApvName),'') as CCMAIL,
 isnull((select EMail from TPEPass1 where ID = o.MRHandle),'') as MRHandle,
 isnull((select EMail from TPEPass1 where ID = o.SMR),'') as SMR,
 isnull((select EMail from TPEPass1 where ID = p.POHandle),'') as POHandle,
 isnull((select EMail from TPEPass1 where ID = p.POSMR),'') as POSMR,
 isnull((select EMail from TPEPass1 where ID = p.PCHandle),'') as PCHandle,
-isnull((select EMail from TPEPass1 where ID = p.PCSMR),'') as PCSMR
+isnull((select EMail from TPEPass1 where ID = p.PCSMR),'') as PCSMR 
 from ReplacementReport r
 left join Orders o on o.ID = r.POID
 left join PO p on p.ID = o.POID
@@ -604,7 +606,7 @@ where r.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 }
 
                 string mailto = MyUtility.Convert.GetString(allMail.Rows[0]["POSMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["POHandle"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["PCSMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["PCHandle"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["SMR"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["MRHandle"]) + ";";
-                string cc = MyUtility.Convert.GetString(allMail.Rows[0]["ApplyName"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["ApvName"]) + ";";
+                string cc = MyUtility.Convert.GetString(allMail.Rows[0]["ApplyName"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["CCMAIL"]) + ";";
                 string subject = string.Format("{0} - Fabric Replacement report",MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 StringBuilder content = new StringBuilder();
                 #region 組Content
