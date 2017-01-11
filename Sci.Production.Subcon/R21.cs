@@ -61,35 +61,38 @@ namespace Sci.Production.Subcon
         {
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"Select 
-(select FactoryId from orders where id = b.OrderId) order_factory
-,a.MDivisionID
-,a.FactoryID
-,a.LocalSuppID
-,(select abb from LocalSupp where id = a.LocalSuppID) supplier
-,a.Id
-,a.Status
-,a.IssueDate
-,dbo.getpass1(a.Handle) handle
-,a.CurrencyID
-,a.Amount+a.vat apAmount
-,a.Category
-,b.OrderID
-,b.Refno
-,b.ThreadColorID
-,b.UnitID
-,b.Price
-,b.Qty
-,b.Price*b.Qty ApAmount
-,b.LocalPoId
-,dbo.getpass1(c.AddName) pohandle
-,c.Amount+c.Vat poAmount
-,c.IssueDate poDate
-,a.InvNo
-from localap a inner join LocalAP_Detail b on a.id = b.id 
-left join LocalPO c on c.ID = b.LocalPoId
-where a.ApvDate is null and a.issuedate between '{0}' and '{1}'
-", Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
+            sqlCmd.Append(string.Format(@"Select (select FactoryId from orders where id = b.OrderId) order_factory
+                                                 ,a.MDivisionID
+                                                 ,a.FactoryID
+                                                 ,a.LocalSuppID
+                                                 ,(select abb from LocalSupp where id = a.LocalSuppID) supplier
+                                                 ,a.Id
+                                                 ,a.Status
+                                                 ,a.IssueDate
+                                                 ,vs1.Name_Extno Handle
+                                                 ,a.CurrencyID
+                                                 ,a.Amount+a.vat apAmount
+                                                 ,a.Category
+                                                 ,b.OrderID
+                                                 ,b.Refno
+                                                 ,b.ThreadColorID
+                                                 ,b.UnitID
+                                                 ,b.Price
+                                                 ,b.Qty
+                                                 ,b.Price*b.Qty ApAmount
+                                                 ,b.LocalPoId
+                                                 ,vs2.Name_Extno POHandle
+                                                 ,c.Amount+c.Vat poAmount
+                                                 ,c.IssueDate poDate
+                                                 ,a.InvNo
+                                       from localap a 
+                                       inner join LocalAP_Detail b on a.id = b.id 
+                                       left join LocalPO c on c.ID = b.LocalPoId
+                                       outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
+                                       outer apply (select * from dbo.View_ShowName vs where vs.id = c.AddName) vs2
+                                       where a.ApvDate is null and a.issuedate between '{0}' and '{1}'"
+                                     ,Convert.ToDateTime(APdate1).ToString("d")
+                                     ,Convert.ToDateTime(APdate2).ToString("d")));
             #endregion
 
             System.Data.SqlClient.SqlParameter sp_category = new System.Data.SqlClient.SqlParameter();
