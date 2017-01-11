@@ -470,7 +470,7 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		--20170110 willy 調整順序: 刪除>修改>新增
 		Merge Production.dbo.Order_SizeCode as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_SizeCode a inner join #TOrder b on a.id=b.id) as s
-		on t.ukey=s.ukey
+		on t.id=s.id and t.sizecode=s.sizecode and t.ukey=s.ukey
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete
 		when matched then
@@ -899,10 +899,10 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		----------Order_EachCons_PatternPanel---------------PatternPanel
 			Merge Production.dbo.Order_EachCons_PatternPanel as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_PatternPanel a inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.PatternPanel=s.PatternPanel and t.Order_EachConsUkey=s.Order_EachConsUkey and t.LectraCode=s.LectraCode
+		on t.PatternPanel=s.PatternPanel and t.Order_EachConsUkey=s.Order_EachConsUkey and t.LectraCode=s.LectraCode
 		When matched then 
 			update set 
-			--t.Id= s.Id,
+			t.Id= s.Id,
 			--t.PatternPanel= s.PatternPanel,
 			--t.Order_EachConsUkey= s.Order_EachConsUkey,
 			--t.LectraCode= s.LectraCode,
