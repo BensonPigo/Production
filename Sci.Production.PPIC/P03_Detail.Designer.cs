@@ -504,6 +504,7 @@
             // 
             // txtuser2
             // 
+            this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "FtyHandle", true));
             this.txtuser2.DisplayBox1Binding = "";
             this.txtuser2.Location = new System.Drawing.Point(126, 488);
             this.txtuser2.Name = "txtuser2";
