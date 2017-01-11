@@ -46,97 +46,113 @@ namespace Sci.Production.Warehouse
             Ict.Win.UI.DataGridViewTextBoxColumn col_Location;
 
             #region Location 右鍵開窗
-            Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
-            ts2.EditingMouseDown += (s, e) =>
-            {
-                if (this.EditMode && e.Button == MouseButtons.Right)
-                {
-                    DataRow currentRow = grid1.GetDataRow(grid1.GetSelectedRowIndex());
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(currentRow["stocktype"].ToString(), currentRow["location"].ToString());
-                    DialogResult result = item.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-                    currentRow["location"] = item.GetSelectedString();
-                }
-            };
+            //Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
+            //ts2.EditingMouseDown += (s, e) =>
+            //{
+            //    if (this.EditMode && e.Button == MouseButtons.Right)
+            //    {
+            //        DataRow currentRow = grid1.GetDataRow(grid1.GetSelectedRowIndex());
+            //        Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(currentRow["stocktype"].ToString(), currentRow["location"].ToString());
+            //        DialogResult result = item.ShowDialog();
+            //        if (result == DialogResult.Cancel) { return; }
+            //        currentRow["location"] = item.GetSelectedString();
+            //    }
+            //};
 
-            ts2.CellValidating += (s, e) =>
-            {
-                if (this.EditMode && e.FormattedValue != null)
-                {
-                    DataRow dr = grid1.GetDataRow(e.RowIndex);
-                    dr["location"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", dr["stocktype"].ToString(), Sci.Env.User.Keyword);
-                    DataTable dt;
-                    DBProxy.Current.Select(null, sqlcmd, out dt);
-                    string[] getLocation = dr["location"].ToString().Split(',').Distinct().ToArray();
-                    bool selectId = true;
-                    List<string> errLocation = new List<string>();
-                    List<string> trueLocation = new List<string>();
-                    foreach (string location in getLocation)
-                    {
-                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
-                        {
-                            selectId &= false;
-                            errLocation.Add(location);
-                        }
-                        else if (!(location.EqualString("")))
-                        {
-                            trueLocation.Add(location);
-                        }
-                    }
+            //ts2.CellValidating += (s, e) =>
+            //{
+            //    if (this.EditMode && e.FormattedValue != null)
+            //    {
+            //        DataRow dr = grid1.GetDataRow(e.RowIndex);
+            //        dr["location"] = e.FormattedValue;
+            //        string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", dr["stocktype"].ToString(), Sci.Env.User.Keyword);
+            //        DataTable dt;
+            //        DBProxy.Current.Select(null, sqlcmd, out dt);
+            //        string[] getLocation = dr["location"].ToString().Split(',').Distinct().ToArray();
+            //        bool selectId = true;
+            //        List<string> errLocation = new List<string>();
+            //        List<string> trueLocation = new List<string>();
+            //        foreach (string location in getLocation)
+            //        {
+            //            if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+            //            {
+            //                selectId &= false;
+            //                errLocation.Add(location);
+            //            }
+            //            else if (!(location.EqualString("")))
+            //            {
+            //                trueLocation.Add(location);
+            //            }
+            //        }
 
-                    if (!selectId)
-                    {
-                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
-                        e.Cancel = true;
-                    }
-                    trueLocation.Sort();
-                    dr["location"] = string.Join(",", (trueLocation).ToArray());
-                    //去除錯誤的Location將正確的Location填回
-                }
-            };
+            //        if (!selectId)
+            //        {
+            //            MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+            //            e.Cancel = true;
+            //        }
+            //        trueLocation.Sort();
+            //        dr["location"] = string.Join(",", (trueLocation).ToArray());
+            //        //去除錯誤的Location將正確的Location填回
+            //    }
+            //};
             #endregion
 
             #region StockType setting
-            Ict.Win.DataGridViewGeneratorComboBoxColumnSettings sk = new DataGridViewGeneratorComboBoxColumnSettings();
-            sk.CellValidating += (s, e) =>
-            {
-                if (this.EditMode && e.FormattedValue != null)
-                {
-                    DataRow CurrentDetailData = grid1.GetDataRow(e.RowIndex);
-                    CurrentDetailData["stocktype"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
-                    DataTable dt;
-                    DBProxy.Current.Select(null, sqlcmd, out dt);
-                    string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
-                    bool selectId = true;
-                    List<string> errLocation = new List<string>();
-                    List<string> trueLocation = new List<string>();
-                    foreach (string location in getLocation)
-                    {
-                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
-                        {
-                            selectId &= false;
-                            errLocation.Add(location);
-                        }
-                        else if (!(location.EqualString("")))
-                        {
-                            trueLocation.Add(location);
-                        }
-                    }
+            //Ict.Win.DataGridViewGeneratorComboBoxColumnSettings sk = new DataGridViewGeneratorComboBoxColumnSettings();
+            //sk.CellValidating += (s, e) =>
+            //{
+            //    if (this.EditMode && e.FormattedValue != null)
+            //    {
+            //        DataRow CurrentDetailData = grid1.GetDataRow(e.RowIndex);
+            //        CurrentDetailData["stocktype"] = e.FormattedValue;
+            //        string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
+            //        DataTable dt;
+            //        DBProxy.Current.Select(null, sqlcmd, out dt);
+            //        string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
+            //        bool selectId = true;
+            //        List<string> errLocation = new List<string>();
+            //        List<string> trueLocation = new List<string>();
+            //        foreach (string location in getLocation)
+            //        {
+            //            if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+            //            {
+            //                selectId &= false;
+            //                errLocation.Add(location);
+            //            }
+            //            else if (!(location.EqualString("")))
+            //            {
+            //                trueLocation.Add(location);
+            //            }
+            //        }
 
-                    if (!selectId)
-                    {
-                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
-                        e.Cancel = true;
-                    }
-                    trueLocation.Sort();
-                    CurrentDetailData["location"] = string.Join(",", (trueLocation).ToArray());
-                    //去除錯誤的Location將正確的Location填回
+            //        if (!selectId)
+            //        {
+            //            MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+            //            e.Cancel = true;
+            //        }
+            //        trueLocation.Sort();
+            //        CurrentDetailData["location"] = string.Join(",", (trueLocation).ToArray());
+            //        //去除錯誤的Location將正確的Location填回
+            //    }
+            //};
+            #endregion
+
+            #region StockType
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
+            ns.CellFormatting = (s, e) =>
+            {
+                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                switch (dr["StockType"].ToString())
+                {
+                    case "B":
+                        e.Value = "Bulk";
+                        break;
+                    case "I":
+                        e.Value = "Inventory";
+                        break;
                 }
             };
             #endregion
-
             #region ReciveQty
             Ict.Win.DataGridViewGeneratorNumericColumnSettings cs = new DataGridViewGeneratorNumericColumnSettings();
 
@@ -185,15 +201,16 @@ namespace Sci.Production.Warehouse
                     //Grid2 AccuDiffReciveQty == 0 then change Color
                     grid2_changeColor();
 
+                    //Grid1 AccuDiffQty == 0 then check = 1
                     grid1Dr["AccuDiffQty"] = Convert.ToDecimal(grid1Dr["BorrowingQty"]) - (sumBorrowing + Convert.ToDecimal(grid2Dr["ReciveQty"]));
                     if (Convert.ToDecimal(grid1Dr["AccuDiffQty"]) == 0)
                     {
-                        grid1Dr["ReciveCheck"] = 0;
+                        grid1Dr["ReciveCheck"] = 1;
                         //grid1.Rows[grid1SelectIndex].Cells["AccuDiffQty"].Style.BackColor = Color.Gray;
                     }
                     else
                     {
-                        grid1Dr["ReciveCheck"] = 1;
+                        grid1Dr["ReciveCheck"] = 0;
                         //grid1.Rows[grid1SelectIndex].Cells["AccuDiffQty"].Style.BackColor = Color.White;
                     }
 
@@ -226,7 +243,7 @@ namespace Sci.Production.Warehouse
             Helper.Controls.Grid.Generator(this.grid1)
                 .Text("BorrowingSP", header: "Borrowing" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(20))
                 .Text("BorrowingSeq", header: "Borrowing" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
-                .Text("StockType", header: "StockType", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .Text("StockType", header: "StockType", iseditingreadonly: true, width: Widths.AnsiChars(10), settings: ns)
                 .Numeric("BorrowingQty", header: "BorrowingQty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Text("ReturnSP", header: "Return" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(20))
                 .Text("ReturnSeq", header: "Return" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
@@ -259,7 +276,7 @@ with returnSP as(
 	where RCM.Id = (select CutplanID from Issue where ID = '{0}')
 )
 select 
-ReciveCheck     = 1,
+ReciveCheck     = 0,
 BorrowingSP		= ID.POID,
 BorrowingSeq	= concat(ID.Seq1, ' ', ID.Seq2),
 StockType		= ID.StockType,
@@ -438,12 +455,12 @@ order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelo
                  if (Convert.ToDecimal(grid2.Rows[i].Cells["AccuDiffReciveQty"].Value) == 0)
                  {
                      grid2.Rows[i].Cells["AssignCheck"].Value = 0;
-                     grid2.Rows[i].Cells["AccuDiffReciveQty"].Style.BackColor = Color.Gray;
+                     grid2.Rows[i].DefaultCellStyle.BackColor = Color.Gray;
                  }
                  else
                  {
                      grid2.Rows[i].Cells["AssignCheck"].Value = 1;
-                     grid2.Rows[i].Cells["AccuDiffReciveQty"].Style.BackColor = Color.White;
+                     grid2.Rows[i].DefaultCellStyle.BackColor = Color.White;
                  }
              }
          }
