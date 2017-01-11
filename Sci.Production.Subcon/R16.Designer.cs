@@ -261,7 +261,7 @@
             this.txtdropdownlist1.Name = "txtdropdownlist1";
             this.txtdropdownlist1.Size = new System.Drawing.Size(261, 24);
             this.txtdropdownlist1.TabIndex = 7;
-            this.txtdropdownlist1.Type = "Category";
+            this.txtdropdownlist1.Type = "OrderType";
             // 
             // R16
             // 
@@ -310,7 +310,7 @@
             this.Controls.SetChildIndex(this.txtSpno1, 0);
             this.Controls.SetChildIndex(this.txtSpno2, 0);
             this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.txtFinanceEnReason1, 0);
+            this.Controls.SetChildIndex(this.txtFinanceEnReason1,0);
             this.Controls.SetChildIndex(this.txtdropdownlist1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -33,6 +33,15 @@ namespace Sci.Production.Subcon
             txtFinanceEnReason1.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(cbbStatus, 1, 1, "Only Approved,Only Unapproved,All");
             cbbStatus.SelectedIndex = 0;
+
+            //DataTable ex;
+            //DBProxy.Current.Select(null, "select Exchangeid from System", out ex);
+            //string exchang = ex.Rows[0]["Exchangeid"].ToString();
+            //int exc = int.Parse(exchang);
+            //txtFinanceEnReason1.SelectedIndex = exc;
+             
+
+            
         }
 
         // 驗證輸入條件
@@ -55,6 +64,7 @@ namespace Sci.Production.Subcon
             ordertypeindex = txtdropdownlist1.SelectedIndex;
             ratetype = txtFinanceEnReason1.SelectedValue.ToString();
             statusindex = cbbStatus.SelectedIndex;
+
             switch (ordertypeindex)
             {
                 case 0:
@@ -203,7 +213,7 @@ select aa.FactoryID
 ,round(isnull(x.po_amt,0.0)+isnull(z.localpo_amt,0.0),2) amount
 ,round((isnull(x.po_amt,0.0)+isnull(z.localpo_amt,0.0)) / iif(y.order_qty=0,1,y.order_qty),3) ttl_price
 ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
-,round(isnull(x.po_amt,0.0)+isnull(z.localpo_amt,0.0) / iif(y.order_amt=0,1,y.order_amt),2) percentage
+,[percentage]=convert(varchar,round((round((isnull(x.po_amt,0.0)+isnull(z.localpo_amt,0.0)) / iif(y.order_qty=0,1,y.order_qty),3))/(round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3))*100,2))+'%'
 ,x.po_amt
 ,round(isnull(x.po_amt,0.0) / iif(x.po_qty=0,1,x.po_qty),3) po_price
 ,round(isnull(x.po_amt,0.0) / iif(y.order_amt=0,1,y.order_amt),2) po_percentage
