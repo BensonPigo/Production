@@ -263,7 +263,7 @@
             this.txtdropdownlist1.Name = "txtdropdownlist1";
             this.txtdropdownlist1.Size = new System.Drawing.Size(261, 24);
             this.txtdropdownlist1.TabIndex = 8;
-            this.txtdropdownlist1.Type = "Category";
+            this.txtdropdownlist1.Type = "orderType";
             // 
             // dateRangeGLDate
             // 
@@ -281,7 +281,7 @@
             this.label3.TabIndex = 122;
             this.label3.Text = "GL Date";
             // 
-            // R16
+            // R14
             // 
             this.ClientSize = new System.Drawing.Size(522, 388);
             this.Controls.Add(this.label3);
@@ -307,7 +307,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.IsSupportToPrint = false;
-            this.Name = "R16";
+            this.Name = "R14";
             this.Text = "R14. Sub-con Payment summary by SP#";
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);

@@ -27,10 +27,10 @@ namespace Sci.Production.Subcon
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
             txtMdivision1.Text = Sci.Env.User.Keyword;
-            
             txtdropdownlist1.SelectedIndex = 0;
-            
+            //MyUtility.Tool.SetupCombox(txtFinanceEnReason1, 2, 1, "FX,Fixed Exchange Rate,KP,KPI Exchange Rate,DL,Daily Exchange Rate,3S,Custom Exchange Rate,RV,Currency Revaluation Rate,OT,One-time Exchange Rate");
             txtFinanceEnReason1.SelectedIndex= 0;
+
             MyUtility.Tool.SetupCombox(cbbStatus, 1, 1, "Only Approved,Only Unapproved,All");
             cbbStatus.SelectedIndex = 0;
         }
@@ -219,7 +219,7 @@ select aa.FactoryID
 ,round(isnull(x.ap_amt,0.0)+isnull(z.localap_amt,0.0),2) amount
 ,round((isnull(x.ap_amt,0.0)+isnull(z.localap_amt,0.0)) / iif(y.order_qty=0,1,y.order_qty),3) ttl_price
 ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
-,round(isnull(x.ap_amt,0.0)+isnull(z.localap_amt,0.0) / iif(y.order_amt=0,1,y.order_amt),2) percentage
+,[percentage]=convert(varchar,round((round((isnull(x.ap_amt,0.0)+isnull(z.localap_amt,0.0)) / iif(y.order_qty=0,1,y.order_qty),3))/(round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3))*100,2))+'%'
 ,round(x.ap_amt,2)
 ,round(isnull(x.ap_amt,0.0) / iif(x.ap_qty=0,1,x.ap_qty),3) ap_price
 ,round(isnull(x.ap_amt,0.0) / iif(y.order_amt=0,1,y.order_amt),2) ap_percentage
@@ -362,7 +362,7 @@ where ap_qty > 0
             }
             else
             {
-                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R14.xltx", 3);
+                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R14.xltx", 4);
             }
             return true;
 
