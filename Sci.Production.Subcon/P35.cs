@@ -436,6 +436,8 @@ namespace Sci.Production.Subcon
         //unApprove
         protected override void ClickUnconfirm()
         {
+            if (this.displayBox4.Text!="")
+            {return ;}
             base.ClickUnconfirm();
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
@@ -457,6 +459,8 @@ namespace Sci.Production.Subcon
                 return;
             }
             #endregion
+
+         
 
             #region 開始更新相關table資料
             sqlupd3 = string.Format(@"update Localap set status='New',apvname='', apvdate = null , editname = '{0}' 
