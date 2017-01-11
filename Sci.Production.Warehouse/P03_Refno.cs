@@ -31,7 +31,8 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             string selectCommand1
-                = string.Format(@"Select md.mdivisionid ,  b.id,left(b.seq1+' ',3)+b.Seq2 as seq
+                = string.Format(@"Select md.mdivisionid ,  b.id
+, concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) as seq --left(b.seq1+' ',3)+b.Seq2 as seq
 , b.colorid,  b.sizespec
 , c.suppid, a.sewinline
 , a.sewline, b.FinalETA
