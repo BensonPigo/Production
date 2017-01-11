@@ -198,22 +198,6 @@ namespace Sci.Production.Warehouse
                     foreach(DataRow dr in findrow)
                         dr["AccuDiffReciveQty"] = Convert.ToDecimal(grid2Dr["ReturnQty"]) - (sumReturn + Convert.ToDecimal(grid2Dr["ReciveQty"]));
 
-                    //Grid2 AccuDiffReciveQty == 0 then change Color
-                    grid2_changeColor();
-
-                    //Grid1 AccuDiffQty == 0 then check = 1
-                    grid1Dr["AccuDiffQty"] = Convert.ToDecimal(grid1Dr["BorrowingQty"]) - (sumBorrowing + Convert.ToDecimal(grid2Dr["ReciveQty"]));
-                    if (Convert.ToDecimal(grid1Dr["AccuDiffQty"]) == 0)
-                    {
-                        grid1Dr["ReciveCheck"] = 1;
-                        //grid1.Rows[grid1SelectIndex].Cells["AccuDiffQty"].Style.BackColor = Color.Gray;
-                    }
-                    else
-                    {
-                        grid1Dr["ReciveCheck"] = 0;
-                        //grid1.Rows[grid1SelectIndex].Cells["AccuDiffQty"].Style.BackColor = Color.White;
-                    }
-
                     grid1Dr["Qty"] = (sumBorrowing + Convert.ToDecimal(grid2Dr["ReciveQty"]));
                 }
                 else
@@ -222,17 +206,39 @@ namespace Sci.Production.Warehouse
                     errStr += (checkBorrowingQty) ? "" : string.Format("<ReciveQty> : {0} can't more than <BorrowingQty> : {1}\n", sumBorrowing + Convert.ToDecimal(e.FormattedValue), grid1Dr["BorrowingQty"]);
                     errStr += (checkReturnQty) ? "" : string.Format("<AccuReciveQty> : {0} can't more than <ReturnQty> : {1}", sumReturn + Convert.ToDecimal(e.FormattedValue), grid2Dr["ReturnQty"]);
 
+                    decimal AccuDiffReciveQty = (Convert.ToDecimal(grid1Dr["BorrowingQty"]) - sumBorrowing);
+                    decimal AccuDiffQty = (Convert.ToDecimal(grid2Dr["ReturnQty"]) - sumReturn);
+                    grid2Dr["ReciveQty"] = (AccuDiffReciveQty <= AccuDiffQty) ? AccuDiffReciveQty : AccuDiffQty;
+
                     //寫回 AccuDiff
                     foreach (DataRow dr in findrow)
-                        dr["AccuDiffReciveQty"] = Convert.ToDecimal(grid2Dr["ReturnQty"]) -  sumReturn;
+                        dr["AccuDiffReciveQty"] = Convert.ToDecimal(grid2Dr["ReturnQty"]) - sumReturn - Convert.ToDecimal(grid2Dr["ReciveQty"]);
 
-                    grid1Dr["AccuDiffQty"] = Convert.ToDecimal(grid1Dr["BorrowingQty"]) - sumBorrowing;
-                    grid1Dr["Qty"] = sumBorrowing;
+                    grid1Dr["AccuDiffQty"] = Convert.ToDecimal(grid1Dr["BorrowingQty"]) - sumBorrowing - Convert.ToDecimal(grid2Dr["ReciveQty"]);
+                    grid1Dr["Qty"] = sumBorrowing + Convert.ToDecimal(grid2Dr["ReciveQty"]);
 
                     MyUtility.Msg.ErrorBox(errStr);
-                    e.Cancel = true;
+                    //
+                }
+                
+                //Grid2 AccuDiffReciveQty == 0 then change Color
+                grid2_changeColor();
+
+                //Grid1 AccuDiffQty == 0 then check = 1
+                grid1Dr["AccuDiffQty"] = Convert.ToDecimal(grid1Dr["BorrowingQty"]) - (sumBorrowing + Convert.ToDecimal(grid2Dr["ReciveQty"]));
+                if (Convert.ToDecimal(grid1Dr["AccuDiffQty"]) == 0)
+                {
+                    grid1Dr["ReciveCheck"] = 1;
+                    //grid1.Rows[grid1SelectIndex].Cells["AccuDiffQty"].Style.BackColor = Color.Gray;
+                }
+                else
+                {
+                    grid1Dr["ReciveCheck"] = 0;
+                    //grid1.Rows[grid1SelectIndex].Cells["AccuDiffQty"].Style.BackColor = Color.White;
                 }
 
+                grid1.RefreshEdit();
+                grid2.RefreshEdit();
             };
             #endregion
 
@@ -245,26 +251,28 @@ namespace Sci.Production.Warehouse
                 .Text("BorrowingSeq", header: "Borrowing" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
                 .Text("StockType", header: "StockType", iseditingreadonly: true, width: Widths.AnsiChars(10), settings: ns)
                 .Numeric("BorrowingQty", header: "BorrowingQty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
-                .Text("ReturnSP", header: "Return" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(20))
-                .Text("ReturnSeq", header: "Return" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
-                .Numeric("AccuDiffQty", header: "Accu. Diff." + Environment.NewLine + "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
-                .Numeric("Qty", header: "Accu. Recive" + Environment.NewLine + "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
+                //.Text("ReturnSP", header: "Return" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(20))
+                //.Text("ReturnSeq", header: "Return" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
+                //.Numeric("AccuDiffQty", header: "Accu. Diff." + Environment.NewLine + "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .Numeric("Qty", header: "Accu. Assign" + Environment.NewLine + "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .CheckBox("ReciveCheck", header: "Complete", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0);
 
 
             this.grid2.IsEditingReadOnly = false;
             this.grid2.DataSource = TaipeiOutputBS_Detail;
             Helper.Controls.Grid.Generator(this.grid2)
-                .Text("BorrowingSP", header: "Borrowing" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(20))
-                .Text("BorrowingSeq", header: "Borrowing" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
-                .Text("StockType", header: "StockType", iseditingreadonly: true, width: Widths.AnsiChars(10))
-                .Text("StockUnit", header: "StockUnit", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                //.Text("BorrowingSP", header: "Borrowing" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(20))
+                //.Text("BorrowingSeq", header: "Borrowing" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
+                //.Text("StockType", header: "StockType", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                //.Text("StockUnit", header: "StockUnit", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .Text("ReturnSP", header: "Return" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(20))
+                .Text("ReturnSeq", header: "Return" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
                 .Text("Roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("Dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Numeric("ReturnQty", header: "Return" + Environment.NewLine + "Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
-                .Numeric("AccuDiffReciveQty", header: "Assign Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))               
-                .CheckBox("AssignCheck", header: "Assign", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0) 
-                .Numeric("ReciveQty", header: "Recive" + Environment.NewLine + "Qty", iseditingreadonly: false, integer_places: 10, decimal_places: 2, width: Widths.AnsiChars(8), settings: cs).Get(out col_ReciveQty);
+                .Numeric("AccuDiffReciveQty", header: "Accu. Diff." + Environment.NewLine + "Assign Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))               
+                .CheckBox("AssignCheck", header: "Assign", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+                .Numeric("ReciveQty", header: "Assign" + Environment.NewLine + "Qty", iseditingreadonly: false, integer_places: 10, decimal_places: 2, width: Widths.AnsiChars(8), settings: cs).Get(out col_ReciveQty);
 
             col_ReciveQty.DefaultCellStyle.BackColor = Color.Pink;
 
