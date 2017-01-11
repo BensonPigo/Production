@@ -227,6 +227,10 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString())); //
                     trueLocation.Sort();
                     dr["ToLocation"] = string.Join(",", (trueLocation).ToArray());
                     //去除錯誤的Location將正確的Location填回
+
+                    dr["selected"] = (!String.IsNullOrEmpty(dr["ToLocation"].ToString())) ? 1 : 0; 
+
+                    grid1.RefreshEdit();
                 }
             };
             #endregion Location 右鍵開窗
