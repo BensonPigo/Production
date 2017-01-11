@@ -154,7 +154,7 @@ BEGIN
 		and t.stocktype = s.stocktype)
 		WHEN MATCHED THEN
 		UPDATE
-		SET outqty = isnull(outqty,0) + s.qty
+		SET inqty = isnull(inqty,0) + s.qty
 		WHEN NOT MATCHED THEN
 		INSERT
 		(mdivisionid, poid,seq1,seq2,roll,stocktype,dyelot,inqty,outqty,adjustqty,lock )
