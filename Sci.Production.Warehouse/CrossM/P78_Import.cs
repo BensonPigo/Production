@@ -418,25 +418,26 @@ order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelo
             grid2.GetTable().Columns["ReciveQty"].ColumnName = "qty";
             DataRow[] findRow = grid2.GetTable().Select("qty > 0");
 
+            dt_detail.Clear();
             foreach (DataRow tmp in findRow)
             {
-                DataRow[] findrow = dt_detail.Select(string.Format(@"mdivisionid = '{0}' and poid = '{1}' and seq1 = '{2}' and seq2 = '{3}' 
-                        and roll = '{4}' and dyelot = '{5}'"
-                    , Sci.Env.User.Keyword, tmp["POID"], tmp["Seq1"], tmp["Seq2"], tmp["Roll"], tmp["Dyelot"]));
+//                DataRow[] findrow = dt_detail.Select(string.Format(@"mdivisionid = '{0}' and poid = '{1}' and seq1 = '{2}' and seq2 = '{3}' 
+//                        and roll = '{4}' and dyelot = '{5}'"
+//                    , Sci.Env.User.Keyword, tmp["POID"], tmp["Seq1"], tmp["Seq2"], tmp["Roll"], tmp["Dyelot"]));
 
-                if (findrow.Length > 0)
-                {
-                    findrow[0]["stocktype"] = tmp["StockType"];
-                    findrow[0]["qty"] = tmp["qty"];
-                    //findrow[0]["Location"] = tmp["Location"];
-                }
-                else
-                {
+//                if (findrow.Length > 0)
+//                {
+//                    findrow[0]["stocktype"] = tmp["StockType"];
+//                    findrow[0]["qty"] = tmp["qty"];
+//                    //findrow[0]["Location"] = tmp["Location"];
+//                }
+//                else
+//                {
                     tmp["id"] = dr_master["id"];
                     tmp.AcceptChanges();
                     tmp.SetAdded();
                     dt_detail.ImportRow(tmp);
-                }
+                //}
             }
 
 
