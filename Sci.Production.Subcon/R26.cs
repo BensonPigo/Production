@@ -172,7 +172,6 @@ namespace Sci.Production.Subcon
 	                                                 ,b.InQty
 	                                                 ,b.APQty
 	                                                 ,b.Remark
-                                                       ,c.Delivery
                                             from localpo a
                                             inner join LocalPO_Detail b on a.id=b.id
                                             inner join orders c on c.poid=b.OrderId
