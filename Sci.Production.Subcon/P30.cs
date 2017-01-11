@@ -117,7 +117,10 @@ namespace Sci.Production.Subcon
                 frm.ShowDialog(this);
                 
                 this.RenewData();
-                displayBox7.Text = Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToShortDateString();
+
+                //[Apv. Date]格式調整，僅顯示YYYY/MM/DD
+                if (!(CurrentMaintain["ApvDate"] == DBNull.Value)) displayBox7.Text = Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToShortDateString();
+
                 return false;
             }
 
