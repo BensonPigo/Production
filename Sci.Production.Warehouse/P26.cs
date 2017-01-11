@@ -283,6 +283,8 @@ namespace Sci.Production.Warehouse
             foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
             {
                 string[] dtrLocation = dtr["ToLocation"].ToString().Split(',');
+                dtrLocation = dtrLocation.Distinct().ToArray();
+
                 if (dtrLocation.Length == 1)
                 {
                     DataRow newDr = newDt.NewRow();
