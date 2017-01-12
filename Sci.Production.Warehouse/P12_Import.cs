@@ -44,7 +44,7 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
 
-                string strSQLCmd = string.Format(@"select 0 as selected ,'' id, a.id as PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+                string strSQLCmd = string.Format(@"select 0 as selected ,'' id, a.id as PoId,a.Seq1,a.Seq2, concat(a.seq1, ' ', a.Seq2) as seq
 ,a.FabricType
 ,a.stockunit
 ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
