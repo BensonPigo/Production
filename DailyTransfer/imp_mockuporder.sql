@@ -63,8 +63,8 @@ BEGIN
 			t.MDivisionID = s.FactoryID ,
 			t.AddName = s.AddName ,
 			t.AddDate = s.AddDate ,
-			t.EditName = iif(s.EditDate<=t.EditDate,'',s.EditName) ,
-			t.EditDate = iif(s.EditDate<=t.EditDate,'',s.EditDate) 
+			t.EditName = iif(s.EditDate<=t.EditDate,t.EditName,s.EditName) ,
+			t.EditDate = iif(s.EditDate<=t.EditDate,t.EditDate,s.EditDate) 
 		when not matched by target then  -------go to Merge2
 			insert (ID ,MockupID ,Description ,Cpu ,BrandID ,StyleID ,SeasonID ,ProgramID ,FactoryID ,Qty ,CfmDate ,SCIDelivery ,MRHandle ,SMR ,Junk ,Remark ,CMPUnit ,CMPPrice ,FTYGroup ,CPUFactor ,MDivisionID ,AddName ,AddDate ,EditName ,EditDate )
 			values(s.ID ,s.MockupID ,s.Description ,s.Cpu ,s.BrandID ,s.StyleID ,s.SeasonID ,s.ProgramID ,s.FactoryID ,s.Qty ,s.CfmDate ,s.SCIDelivery ,s.MRHandle ,s.SMR ,s.Junk ,s.Remark ,s.CMPUnit ,s.CMPPrice ,s.FTy_Group ,3,'',s.AddName ,s.AddDate ,s.EditName ,s.EditDate )
