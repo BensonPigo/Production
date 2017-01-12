@@ -334,19 +334,27 @@ namespace Sci.Production.Warehouse
                     }
                     else
                     {
-                        if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,scirefno
-,dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail
-where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
-                                             , e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
+                        //check Seq Length
+                        string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (seq.Length < 2)
                         {
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
                             e.Cancel = true;
                             return;
                         }
 
-                        CurrentDetailData["seq"] = e.FormattedValue;
-                        CurrentDetailData["seq1"] = e.FormattedValue.ToString().Substring(0, 3);
-                        CurrentDetailData["seq2"] = e.FormattedValue.ToString().Substring(3, 2);
+                        if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,scirefno
+,dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail
+where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
+                        {
+                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                            e.Cancel = true;
+                            return;
+                        }
+
+                        CurrentDetailData["seq"] = seq[0] + " " + seq[1];
+                        CurrentDetailData["seq1"] = seq[0];
+                        CurrentDetailData["seq2"] = seq[1];
                         CurrentDetailData["Roll"] = "";
                         CurrentDetailData["Dyelot"] = "";
                         CurrentDetailData["stockunit"] = dr["stockunit"];
@@ -760,7 +768,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.mdivisionid,a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+            this.DetailSelectCommand = string.Format(@"select a.id,a.mdivisionid,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
@@ -848,7 +856,7 @@ Where a.id = '{0}'", masterID);
                 {
                     DBProxy.Current.Select(null, string.Format(@"select a.poid,a.seq1,a.seq2,a.Qty,a.StockType
 ,b.StockUnit
-, a.seq1+a.seq2 as seq
+, concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) as seq
 , a.Roll as roll
 , a.Dyelot as dyelot
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [description]
