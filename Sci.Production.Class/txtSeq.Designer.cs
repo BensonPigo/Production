@@ -35,6 +35,7 @@
             // 
             // textSeq2
             // 
+            this.textSeq2.IsSupportEditMode = false;
             this.textSeq2.Location = new System.Drawing.Point(38, 0);
             this.textSeq2.MaxLength = 2;
             this.textSeq2.Name = "textSeq2";
@@ -52,6 +53,7 @@
             // 
             // textSeq1
             // 
+            this.textSeq1.IsSupportEditMode = false;
             this.textSeq1.Location = new System.Drawing.Point(0, 0);
             this.textSeq1.MaxLength = 3;
             this.textSeq1.Name = "textSeq1";
