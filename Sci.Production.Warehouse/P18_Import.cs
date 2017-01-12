@@ -46,7 +46,7 @@ namespace Sci.Production.Warehouse
             }
             strSQLCmd.Append(string.Format(@"select 0 as selected,null as ukey,'' as id,'{1}' as MdivisionID
 ,b.POID,b.seq1,b.seq2
-,left(b.seq1+' ',3)+b.Seq2 as seq
+,concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) as seq
 ,b.Roll,b.Dyelot,b.StockType,b.Qty 
 ,dbo.getmtldesc(b.poid,b.seq1,b.seq2,2,0) [description]
 ,'' location
