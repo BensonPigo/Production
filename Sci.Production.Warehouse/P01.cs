@@ -198,7 +198,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             button23.ForeColor = MyUtility.Check.Seek(string.Format("select ID From dbo.Order_EachCons a  where a.id ='{0}'", CurrentMaintain["id"].ToString())) ? Color.Blue : Color.Black;
 
             button8.ForeColor = MyUtility.Check.Seek(string.Format(@"select oq.Article from Orders o inner join Order_Qty oq on oq.ID = o.ID
-where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["CuttingSP"]))) ? Color.Blue : Color.Black;
+where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
             button4.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
 
