@@ -81,7 +81,7 @@ select 0 AS selected,'' as id
 ,fi.seq1 Fromseq1
 ,fi.seq2 Fromseq2
 ,dbo.getmtldesc(fi.POID,fi.seq1,fi.seq2,2,0) as [description]
-,left(fi.seq1+'   ',3)+fi.seq2 as fromseq
+,concat(Ltrim(Rtrim(fi.seq1)), ' ', fi.seq2) as fromseq
 ,fi.roll FromRoll,fi.dyelot FromDyelot,fi.stocktype FromStockType
 ,fi.Ukey as fromftyinventoryukey 
 ,fi.InQty,fi.OutQty,fi.AdjustQty
@@ -97,7 +97,7 @@ select 0 AS selected,'' as id
 ,rtrim(#tmp.poid) ToPOID
 ,rtrim(#tmp.seq1) ToSeq1
 ,#tmp.seq2 ToSeq2
-,left(#tmp.seq1+'   ',3)+#tmp.seq2 as toseq
+,concat(Ltrim(Rtrim(#tmp.seq1)), ' ', #tmp.seq2) as toseq
 ,fi.roll ToRoll,fi.dyelot ToDyelot
 ,'B' as [ToStockType]
 ,'' as [ToLocation]
