@@ -30,6 +30,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Sewing Dailiy output(車縫日報主檔)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput';
 
@@ -129,4 +131,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturi
 GO
 CREATE NONCLUSTERED INDEX [FACTORY]
     ON [dbo].[SewingOutput]([FactoryID] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [OpD]
+    ON [dbo].[SewingOutput]([OutputDate] ASC);
 
