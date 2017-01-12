@@ -119,8 +119,7 @@ AND Order_TmsCost.TMS > 0
             condition.Clear();
             if (!MyUtility.Check.Empty(sewingDate1))
             {
-                sqlCmd.Append(string.Format(@" AND SewingSchedule.Inline BETWEEN '{0:d}' AND '{1}'
-                                                OR SewingSchedule.offline BETWEEN '{0:d}' AND '{1}'",
+                sqlCmd.Append(string.Format(@" AND ((SewingSchedule.Inline BETWEEN '{0:d}' AND '{1}') OR (SewingSchedule.Offline BETWEEN '{0:d}' AND '{1}'))",
                 sewingDate1, Convert.ToDateTime(sewingDate2).ToString("d")));
                 condition.Append(string.Format(@"SCI Delivery : {0} ~ {1}"
                 , Convert.ToDateTime(sewingDate1).ToString("d")
@@ -200,15 +199,21 @@ where Holiday = 0
  from grouping_data
  where running_total_workhours - WorkHour < avg_workhours -- 因為無法依上線時間計算出最真實的工作時數，所以累計工時可能不夠展算到下線日
  )
-select FactoryID,SewingLineID,StyleID,OrderID,AlloQty,Inline,Offline,avg_workhours,TMS,{0} from detail
+
+,theDetail as (
+select topdata.factoryid,topdata.sewinglineid,topdata.StyleID,id_list.OrderID,topdata.AlloQty,topdata.Inline,topdata.Offline,topdata.avg_workhours,topdata.TMS,id_list.TTL_HT_TMS,id_list.workdate
+from (select distinct orderid,FactoryID,SewingLineID,styleid,TTL_HT_TMS,workdate from detail) as id_list
+outer apply(select top 1* from detail dt where dt.FactoryID=id_list.FactoryID and dt.SewingLineID=id_list.SewingLineID and dt.StyleID=id_list.StyleID and dt.OrderID=id_list.OrderID  ) as topdata 
+)
+select FactoryID,SewingLineID,StyleID,OrderID,AlloQty,Inline,Offline,avg_workhours,TMS,{0}
+from theDetail
 pivot
     (
         sum(TTL_HT_TMS)
-        for workdate  in ( {0})
-    )as pvt
-	order by factoryid,inline,sewinglineid,orderid ", datelist.ToString().Substring(0, datelist.ToString().Length - 1)));
-
-            
+        for workdate  in ({0})
+    )as pvt  order by factoryid,sewinglineid,orderid,inline
+", datelist.ToString().Substring(0, datelist.ToString().Length - 1)));
+ 
             DBProxy.Current.DefaultTimeout = 1800;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
             DBProxy.Current.DefaultTimeout = 0;
