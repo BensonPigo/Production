@@ -76,7 +76,7 @@ cross apply
   ) xxx
 where m.taipei_qty > accu_qty;
 select * from #tmp;
-select 0 AS selected,'' as id,fi.MDivisionID FromMDivisionID,fi.POID FromPOID,fi.seq1 Fromseq1,fi.seq2 Fromseq2,left(fi.seq1+'   ',3)+fi.seq2 as fromseq
+select 0 AS selected,'' as id,fi.MDivisionID FromMDivisionID,fi.POID FromPOID,fi.seq1 Fromseq1,fi.seq2 Fromseq2,concat(Ltrim(Rtrim(fi.seq1)), ' ', fi.seq2) as fromseq
 ,fi.roll FromRoll,fi.dyelot FromDyelot,fi.stocktype FromStockType,fi.Ukey as fromftyinventoryukey 
 ,fi.InQty,fi.OutQty,fi.AdjustQty
 ,fi.InQty - fi.OutQty + fi.AdjustQty as balanceQty
