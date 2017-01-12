@@ -37,5 +37,13 @@ namespace Sci.Production.Class
         {
             return seq1 + " " + seq2;
         }
+
+        public bool checkEmpty()
+        {
+            if((MyUtility.Check.Empty(seq1) | MyUtility.Check.Empty(seq2)))
+                MyUtility.Msg.WarningBox("Seq' mask need enter 00-00");
+
+            return MyUtility.Check.Empty(seq1) | MyUtility.Check.Empty(seq2);
+        }
     }
 }
