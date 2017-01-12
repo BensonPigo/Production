@@ -73,7 +73,6 @@ where ed.ID = '{0}'", masterID);
         {
             base.OnDetailEntered();
             textBox1.ReadOnly = false;
-            textBox2.ReadOnly = false;
             label21.Visible = MyUtility.Convert.GetString(CurrentMaintain["Junk"]) == "True" ? true : false;
             switch (MyUtility.Convert.GetString(CurrentMaintain["Payer"]))
             {
@@ -164,8 +163,7 @@ where ed.ID = '{0}'", masterID);
         //Find
         private void button3_Click(object sender, EventArgs e)
         {
-            string seq = textBox2.Text.Substring(0, textBox2.Text.Length - 3).Trim() + ' ' + textBox2.Text.Substring(textBox2.Text.Length - 2);
-            string poID = textBox1.Text + seq;
+            string poID = textBox1.Text + txtSeq1.getSeq();
 
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
             int index = detailgridbs.Find("FindColumn", poID);

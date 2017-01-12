@@ -72,9 +72,9 @@
             this.label22 = new Sci.Win.UI.Label();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.label23 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
             this.button3 = new Sci.Win.UI.Button();
             this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -91,8 +91,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtSeq1);
             this.masterpanel.Controls.Add(this.button3);
-            this.masterpanel.Controls.Add(this.textBox2);
             this.masterpanel.Controls.Add(this.label23);
             this.masterpanel.Controls.Add(this.textBox1);
             this.masterpanel.Controls.Add(this.label22);
@@ -185,8 +185,8 @@
             this.masterpanel.Controls.SetChildIndex(this.label22, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label23, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.button3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSeq1, 0);
             // 
             // detailpanel
             // 
@@ -738,19 +738,9 @@
             this.label23.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label23.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(213, 252);
-            this.textBox2.Mask = "AAA-00";
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(50, 23);
-            this.textBox2.TabIndex = 47;
-            // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(272, 248);
+            this.button3.Location = new System.Drawing.Point(280, 248);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(58, 30);
             this.button3.TabIndex = 48;
@@ -767,6 +757,15 @@
             this.txttpeuser1.Name = "txttpeuser1";
             this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser1.TabIndex = 36;
+            // 
+            // txtSeq1
+            // 
+            this.txtSeq1.Location = new System.Drawing.Point(213, 252);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 49;
             // 
             // P02
             // 
@@ -808,7 +807,6 @@
         #endregion
 
         private Win.UI.Button button3;
-        private Win.UI.TextBox textBox2;
         private Win.UI.Label label23;
         private Win.UI.TextBox textBox1;
         private Win.UI.Label label22;
@@ -854,5 +852,6 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Class.txtSeq txtSeq1;
     }
 }
