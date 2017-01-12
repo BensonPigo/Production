@@ -92,7 +92,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Numeric("qty", header: "Affect Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 6, iseditingreadonly: true)
-                .Text("unitid", header: "Unit", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("unitid", header: "Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("amount", header: "Claim Amt", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                 .Numeric("addition", header: "Addition", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                 .Text("taipeireason", header: "Ori. Reason", iseditingreadonly: true, width: Widths.AnsiChars(20))
@@ -116,7 +116,8 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
             CurrentMaintain["TaxRate"] = 0;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["SMR"] = MyUtility.GetValue.Lookup("Supervisor", Sci.Env.User.UserID, "Pass1", "ID");
-            
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+           
         }
 
         // save前檢查 & 取id
@@ -251,7 +252,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
-            this.DetailSelectCommand = string.Format(@"select id,orderid,reasonid
+            this.DetailSelectCommand = string.Format(@"select ID,Ukey,TaipeiUkey,orderid,reasonid
 ,reasonid+isnull((select name from dbo.reason where ReasonTypeID='DebitNote_Factory' and id = reasonid),'') reason_desc
 ,0.00 as total 
 ,QTY,UNITID,AMOUNT,ADDITION,TAIPEIREASON,DESCRIPTION 
@@ -396,7 +397,10 @@ where id = '{4}'"
             base.ClickConfirm();
             updateStatus(CurrentMaintain["status"].ToString(), "Confirmed", false);
         }
-
+        protected override bool ClickNew()
+        {
+            return base.ClickNew();
+        }
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();

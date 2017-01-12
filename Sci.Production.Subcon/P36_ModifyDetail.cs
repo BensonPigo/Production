@@ -42,5 +42,7 @@ namespace Sci.Production.Subcon
         {
             CurrentData["total"] = decimal.Parse(CurrentData["amount"].ToString()) + decimal.Parse(CurrentData["addition"].ToString());
         }
+
+       
     }
 }
