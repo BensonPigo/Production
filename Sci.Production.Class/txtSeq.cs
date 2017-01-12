@@ -20,17 +20,22 @@ namespace Sci.Production.Class
         }
 
         [Bindable(true)]
-        public string TextBox1Binding
+        public string seq1
         {
             set { this.textSeq1.Text = value.Trim(); }
             get { return textSeq1.Text.ToString().Trim(); }
         }
 
         [Bindable(true)]
-        public string TextBox2Binding
+        public string seq2
         {
             set { this.textSeq2.Text = value.Trim(); }
             get { return textSeq2.Text.ToString().Trim(); }
+        }
+
+        public string getSeq()
+        {
+            return seq1 + " " + seq2;
         }
     }
 }
