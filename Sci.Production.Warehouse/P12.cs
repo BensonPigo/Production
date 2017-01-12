@@ -261,13 +261,14 @@ namespace Sci.Production.Warehouse
                         else
                         {
                             //check Seq Length
-                            if (e.FormattedValue.ToString().Trim().Length < 5)
+                            string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (seq.Length < 2)
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 e.Cancel = true;
                                 return;
                             }
-                            string[] seq = e.FormattedValue.ToString().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+                            
 
                             if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,scirefno
 ,dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail
