@@ -260,10 +260,12 @@ namespace Sci.Production.Warehouse
                         }
                         else
                         {
+                            string seq1 = e.FormattedValue.ToString().Substring(0, e.FormattedValue.ToString().Length - 3);
+                            string seq2 = e.FormattedValue.ToString().Substring(e.FormattedValue.ToString().Length - 2);
+
                             if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,scirefno
 ,dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail
-where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
-                                                 , e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
+where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], seq1, seq2), out dr, null))
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 e.Cancel = true;
@@ -281,8 +283,8 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                                 else
                                 {
                                     CurrentDetailData["seq"] = e.FormattedValue;
-                                    CurrentDetailData["seq1"] = e.FormattedValue.ToString().Substring(0, 3);
-                                    CurrentDetailData["seq2"] = e.FormattedValue.ToString().Substring(3, 2);
+                                    CurrentDetailData["seq1"] = seq1;
+                                    CurrentDetailData["seq2"] = seq2;
                                     CurrentDetailData["stockunit"] = dr["stockunit"];
                                     CurrentDetailData["Description"] = dr["description"];
                                 }
@@ -639,7 +641,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id, a.mdivisionid, a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+            this.DetailSelectCommand = string.Format(@"select a.id, a.mdivisionid, a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,p1.FabricType
 ,p1.stockunit
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
