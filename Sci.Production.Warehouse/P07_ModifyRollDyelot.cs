@@ -300,7 +300,7 @@ where poid ='{0}' and seq1='{1}' and seq2='{2}' and roll='{3}' and dyelot='{4}' 
 
             DataTable dt;
             DualResult result;
-            string selectCommand1 = string.Format(@"select a.id,a.MDivisionID,a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+            string selectCommand1 = string.Format(@"select a.id,a.MDivisionID,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,(select p1.FabricType from PO_Supp_Detail p1 where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
 ,a.shipqty
 ,a.Weight
