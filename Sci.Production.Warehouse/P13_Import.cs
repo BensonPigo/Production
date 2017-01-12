@@ -33,7 +33,9 @@ namespace Sci.Production.Warehouse
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.textBox1.Text.TrimEnd();
-            String seq = this.textBox2.Text.TrimEnd();
+            string seq1 = txtSeq1.seq1;
+            string seq2 = txtSeq1.seq2;
+            string seq = seq1 + " " + seq2;
 
             if (string.IsNullOrWhiteSpace(sp))
             {
@@ -46,7 +48,7 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
 
-                strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id, c.mdivisionid,a.id as PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+                strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id, c.mdivisionid,a.id as PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.FabricType
 ,a.stockunit
 ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
@@ -62,7 +64,7 @@ inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  =
 Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid='{1}'", sp, Sci.Env.User.Keyword)); // 
                 if (!MyUtility.Check.Empty(seq))
                 {
-                    strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'", seq.Substring(0, 3), seq.Substring(3, 2)));
+                    strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'", seq1, seq2));
                 }
 
                 this.ShowWaitMessage("Data Loading....");
@@ -180,11 +182,13 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and c.m
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
             string sp = textBox1.Text.TrimEnd();
-            string seq = textBox2.Text.PadRight(5, ' ');
+            string seq1 = txtSeq1.seq1;
+            string seq2 = txtSeq1.seq2;
+            string seq = seq1 + " " + seq2;
 
             if (MyUtility.Check.Empty(sp)) return;
 
-            if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
+            if (MyUtility.Check.Empty(seq))
             {
                 if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail where id ='{0}')"
                     , sp), null))
@@ -197,7 +201,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and c.m
             else
             {
                 if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail where id ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}')", sp, seq.Substring(0, 3), seq.Substring(3, 2)), null))
+                        and seq1 = '{1}' and seq2 = '{2}')", sp, seq1, seq2), null))
                 {
                     MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                     e.Cancel = true;
@@ -210,11 +214,13 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and c.m
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
             string sp = textBox1.Text.TrimEnd();
-            if (MyUtility.Check.Empty(sp) || MyUtility.Check.Empty(textBox2.Text.TrimEnd())) return;
-            string seq = textBox2.Text.PadRight(5, ' ');
+            if (MyUtility.Check.Empty(sp) || MyUtility.Check.Empty(txtSeq1.getSeq())) return;
+
+            string seq1 = txtSeq1.seq1;
+            string seq2 = txtSeq1.seq2;
 
             if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail where id ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}')", sp, seq.Substring(0, 3), seq.Substring(3, 2)), null))
+                        and seq1 = '{1}' and seq2 = '{2}')", sp, seq1, seq2), null))
             {
                 MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                 e.Cancel = true;
