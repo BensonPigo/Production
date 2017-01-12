@@ -474,6 +474,14 @@ where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintai
                         }
                         else
                         {
+                            //check Seq Length
+                            if (e.FormattedValue.ToString().Trim().Length < 5)
+                            {
+                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                                e.Cancel = true;
+                                return;
+                            }
+
                             string seq1 = e.FormattedValue.ToString().Trim().Substring(0, e.FormattedValue.ToString().Trim().Length - 3);
                             string seq2 = e.FormattedValue.ToString().Trim().Substring(e.FormattedValue.ToString().Trim().Length - 2);
                             if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype from po_supp_detail
