@@ -276,7 +276,8 @@ namespace Sci.Production.Warehouse
                         }
                         else
                         {
-
+                            string seq1 = e.FormattedValue.ToString().Substring(0, e.FormattedValue.ToString().Length - 3);
+                            string seq2 = e.FormattedValue.ToString().Substring(e.FormattedValue.ToString().Length - 2);
                             //jimmy 105/11/14
                             //gird的StockUnit照新規則 抓取值
                             if (!MyUtility.Check.Seek(string.Format(@"select 
@@ -306,7 +307,7 @@ inner join View_unitrate v on v.FROM_U = ａ.POUnit
 				ff.UsageUnit , 
 				uu.ExtensionUnit), 
 			ff.UsageUnit)))--ａ.StockUnit
-where a.id = '{0}' and a.seq1 ='{1}'and a.seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3), e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
+where a.id = '{0}' and a.seq1 ='{1}'and a.seq2 = '{2}'", CurrentDetailData["poid"], seq1, seq2), out dr, null))
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 CurrentDetailData["seq"] = "";
@@ -316,8 +317,8 @@ where a.id = '{0}' and a.seq1 ='{1}'and a.seq2 = '{2}'", CurrentDetailData["poid
                             else
                             {
                                 CurrentDetailData["seq"] = e.FormattedValue;
-                                CurrentDetailData["seq1"] = e.FormattedValue.ToString().Substring(0, 3);
-                                CurrentDetailData["seq2"] = e.FormattedValue.ToString().Substring(3, 2);
+                                CurrentDetailData["seq1"] = seq1;
+                                CurrentDetailData["seq2"] = seq2;
                                 CurrentDetailData["pounit"] = dr["pounit"];
                                 CurrentDetailData["stockunit"] = dr["stockunit"];
                                 CurrentDetailData["Description"] = dr["description"];
@@ -753,7 +754,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,(select p1.FabricType from PO_Supp_Detail p1 where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as Description
 ,a.Roll
