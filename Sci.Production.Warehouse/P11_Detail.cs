@@ -116,7 +116,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnAttached();
             DataRow dr;
-            if (MyUtility.Check.Seek(string.Format(@"select *,left(seq1+'   ',3)+seq2 as seq,dbo.getmtldesc(id,seq1,seq2,2,0) [description]
+            if (MyUtility.Check.Seek(string.Format(@"select *,concat(Ltrim(Rtrim(seq1)), ' ', seq2) as seq,dbo.getmtldesc(id,seq1,seq2,2,0) [description]
 ,(select orderid+',' from (select orderid from dbo.po_supp_detail_orderlist where id=po_supp_detail.id and seq1=po_supp_detail.seq1 and seq2=po_supp_detail.seq2)t for xml path('')) [orderlist] 
 from dbo.po_supp_detail where id='{0}' and seq1='{1}' and seq2='{2}'"
                 , CurrentDetailData["poid"], CurrentDetailData["seq1"], CurrentDetailData["seq2"]), out dr))
