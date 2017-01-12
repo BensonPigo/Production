@@ -29,12 +29,10 @@ namespace Sci.Production.PPIC
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select ld.*,(left(ld.Seq1+' ',3)+ld.Seq2) as Seq,isnull(psd.Refno,'') as Refno,dbo.getMtlDesc(l.POID,ld.Seq1,ld.Seq2,1,0) as Description,
-(select max(i.IssueDate) from Issue i, Issue_Detail id where i.Id = id.Id and id.PoId = l.POID and id.Seq1 = ld.Seq1 and id.Seq2 = ld.seq2) as IssueDate,
-isnull(mpd.InQty,0) as InQty,isnull(mpd.OutQty,0) as OutQty,isnull(p.Description,'') as PPICReasonDesc
+isnull(p.Description,'') as PPICReasonDesc
 from Lack l
 inner join Lack_Detail ld on l.ID = ld.ID
 left join PO_Supp_Detail psd on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
-left join MDivisionPoDetail mpd on mpd.POID = l.POID and mpd.SEQ1 = ld.Seq1 and mpd.SEQ2 = ld.Seq2 and mpd.MDivisionId = l.MDivisionId
 left join Fabric f on psd.SCIRefno = f.SCIRefno
 left join PPICReason p on p.Type = 'FL' and ld.PPICReasonID = p.ID
 where l.ID = '{0}'
@@ -85,16 +83,25 @@ order by ld.Seq1,ld.Seq2", masterID);
                             dr["Seq2"] = selectData[0]["Seq2"];
                             dr["RefNo"] = selectData[0]["RefNo"];
                             dr["Description"] = selectData[0]["Description"];
-                            dr["InQty"] = MyUtility.Convert.GetDecimal(selectData[0]["InQty"]);
-                            dr["OutQty"] = MyUtility.Convert.GetDecimal(selectData[0]["OutQty"]);
+
+                            DataTable WHdata;
+                            DualResult whdr = DBProxy.Current.Select(null, string.Format("SELECT InQty,OutQty FROM MDivisionPoDetail WHERE POID = '{0}' AND Seq1 = '{1}' AND Seq2 = '{2}' AND MDivisionID = '{3}'",MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq"]),Sci.Env.User.Keyword), out WHdata);
+                            if (whdr)
+                            {
+                                if (WHdata.Rows.Count > 0)
+                                {
+                                    dr["WhseInQty"] = MyUtility.Convert.GetDecimal(WHdata.Rows[0]["InQty"]);
+                                    dr["FTYInQty"] = MyUtility.Convert.GetDecimal(WHdata.Rows[0]["OutQty"]);
+                                }
+                            }
                             DateTime? maxIssueDate = MaxIssueDate(MyUtility.Convert.GetString(selectData[0]["Seq1"]), MyUtility.Convert.GetString(selectData[0]["Seq2"]));
                             if (MyUtility.Check.Empty(maxIssueDate))
                             {
-                                dr["IssueDate"] = DBNull.Value;
+                                dr["FTYLastRecvDate"] = DBNull.Value;
                             }
                             else
                             {
-                                dr["IssueDate"] = maxIssueDate;
+                                dr["FTYLastRecvDate"] = maxIssueDate;
                             }
                             dr.EndEdit();
                         }
@@ -132,9 +139,11 @@ order by ld.Seq1,ld.Seq2", masterID);
                         //string sqlCmd = string.Format(@"select left(seq1+' ',3)+seq2 as Seq, Refno,InQty,OutQty,seq1,seq2, dbo.getmtldesc(id,seq1,seq2,2,0) as Description 
                         //                                from dbo.PO_Supp_Detail
                         //                                where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 3), MyUtility.Convert.GetString(e.FormattedValue).Substring(2, 2));
-                        string sqlCmd = string.Format(@"select left(seq1+' ',3)+seq2 as Seq, Refno,InputQty,OutputQty,seq1,seq2, dbo.getmtldesc(id,seq1,seq2,2,0) as Description 
-                                                        from dbo.PO_Supp_Detail
-                                                        where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 2), MyUtility.Convert.GetString(e.FormattedValue).Substring(3, 2));
+                        string sqlCmd = string.Format(@"select left(psd.seq1+' ',3)+psd.seq2 as Seq, psd.Refno,isnull(m.InQty,0) as InQty,isnull(m.OutQty,0) as OutQty,psd.seq1,psd.seq2, dbo.getmtldesc(id,psd.seq1,psd.seq2,2,0) as Description 
+from dbo.PO_Supp_Detail psd
+left join MDivisionPoDetail m on m.POID = psd.ID and m.Seq1 = psd.SEQ1 and m.Seq2 = psd.SEQ2 and m.MDivisionID = '{3}'
+where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType = 'F'",
+                                                                                       MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 2), MyUtility.Convert.GetString(e.FormattedValue).Substring(3, 2),Sci.Env.User.Keyword);
 
                         if (!MyUtility.Check.Seek(sqlCmd, out poData))
                         {
@@ -151,16 +160,16 @@ order by ld.Seq1,ld.Seq2", masterID);
                             dr["Seq2"] = poData["Seq2"];
                             dr["RefNo"] = poData["RefNo"];
                             dr["Description"] = poData["Description"];
-                            dr["InQty"] = MyUtility.Convert.GetDecimal(poData["InputQty"]);
-                            dr["OutQty"] = MyUtility.Convert.GetDecimal(poData["OutputQty"]);
+                            dr["WhseInQty"] = MyUtility.Convert.GetDecimal(poData["InQty"]);
+                            dr["FTYInQty"] = MyUtility.Convert.GetDecimal(poData["OutQty"]);
                             DateTime? maxIssueDate = MaxIssueDate(MyUtility.Convert.GetString(poData["Seq1"]), MyUtility.Convert.GetString(poData["Seq2"]));
                             if (MyUtility.Check.Empty(maxIssueDate))
                             {
-                                dr["IssueDate"] = DBNull.Value;
+                                dr["FTYLastRecvDate"] = DBNull.Value;
                             }
                             else
                             {
-                                dr["IssueDate"] = maxIssueDate;
+                                dr["FTYLastRecvDate"] = maxIssueDate;
                             }
                             dr.EndEdit();
                         }
@@ -251,9 +260,9 @@ order by ld.Seq1,ld.Seq2", masterID);
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Seq", header: "Seq#", width: Widths.AnsiChars(5), settings: seq)
                 .Text("RefNo", header: "Refer#", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: refno)
-                .Date("IssueDate", header: "Prod. Last Rcvd Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("OutQty", header: "Prod. Accu. Rcvd Qty", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true, settings: outqty)
-                .Numeric("InQty", header: "WH Accu. Rcvd Qty", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true, settings: inqty)
+                .Date("FTYLastRecvDate", header: "Prod. Last Rcvd Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("FTYInQty", header: "Prod. Accu. Rcvd Qty", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true, settings: outqty)
+                .Numeric("WhseInQty", header: "WH Accu. Rcvd Qty", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true, settings: inqty)
                 .Numeric("RequestQty", header: "Request Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, maximum: 99999999.99M, minimum: 0, settings: requestqty)
                 .Numeric("RejectQty", header: "# of pcs rejected")
                 .Numeric("IssueQty", header: "Issue Qty upon request", decimal_places: 2, iseditingreadonly: true, settings: issueqty)
@@ -269,9 +278,9 @@ order by ld.Seq1,ld.Seq2", masterID);
             dr["Seq2"] = "";
             dr["RefNo"] = "";
             dr["Description"] = "";
-            dr["InQty"] = 0;
-            dr["OutQty"] = 0;
-            dr["IssueDate"] = DBNull.Value;
+            dr["WhseInQty"] = 0;
+            dr["FTYInQty"] = 0;
+            dr["FTYLastRecvDate"] = DBNull.Value;
             dr.EndEdit();
         }
 
@@ -432,11 +441,9 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                 return false;
             }
             string sqlCmd = string.Format(@"select (left(ld.Seq1+' ',3)+'-'+ld.Seq2) as Seq, dbo.getMtlDesc(l.POID,ld.Seq1,ld.Seq2,1,0) as Description,
-            (Select Max(IssueDate) from Issue i, Issue_Detail id where i.ID = id.ID and id.POID = l.POID and id.Seq1 = ld.Seq1 and id.Seq2 = ld.Seq2) as IssueDate,
-            isnull(mp.InQty,0) as InQty,isnull(mp.OutQty,0) as OutQty,ld.RequestQty,ld.IssueQty
+            ld.FTYLastRecvDate,ld.FTYInQty,ld.WhseInQty,ld.RequestQty,ld.IssueQty
             from Lack l
             left join Lack_Detail ld on l.ID = ld.ID
-            left join MDivisionPoDetail mp on mp.POID = l.POID and mp.Seq1 = ld.Seq1 and mp.Seq2 = ld.Seq2 and mp.MDivisionId = l.MDivisionID
             where l.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             DataTable ExcelData;
@@ -476,9 +483,9 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                 rownum = intRowsStart + i;
                 objArray[0, 0] = dr["Seq"];
                 objArray[0, 1] = dr["Description"];
-                objArray[0, 2] = dr["IssueDate"];
-                objArray[0, 3] = dr["InQty"];
-                objArray[0, 4] = dr["OutQty"];
+                objArray[0, 2] = dr["FTYLastRecvDate"];
+                objArray[0, 3] = dr["FTYInQty"];
+                objArray[0, 4] = dr["WhseInQty"];
                 objArray[0, 5] = dr["RequestQty"];
                 objArray[0, 6] = dr["IssueQty"];
 
