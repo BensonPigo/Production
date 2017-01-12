@@ -200,6 +200,7 @@
             // refresh
             // 
             this.refresh.Location = new System.Drawing.Point(910, 0);
+            this.refresh.TabIndex = 0;
             // 
             // detailgridcont
             // 
@@ -701,7 +702,7 @@
             this.button2.Location = new System.Drawing.Point(859, 97);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(123, 30);
-            this.button2.TabIndex = 43;
+            this.button2.TabIndex = 3;
             this.button2.Text = "Shipping Mark";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -722,7 +723,7 @@
             this.textBox1.Location = new System.Drawing.Point(98, 252);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 45;
+            this.textBox1.TabIndex = 0;
             // 
             // label23
             // 
@@ -743,7 +744,7 @@
             this.button3.Location = new System.Drawing.Point(280, 248);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(58, 30);
-            this.button3.TabIndex = 48;
+            this.button3.TabIndex = 2;
             this.button3.Text = "Find";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -765,7 +766,7 @@
             this.txtSeq1.seq1 = "";
             this.txtSeq1.seq2 = "";
             this.txtSeq1.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq1.TabIndex = 49;
+            this.txtSeq1.TabIndex = 1;
             // 
             // P02
             // 
