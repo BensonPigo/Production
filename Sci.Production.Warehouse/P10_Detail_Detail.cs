@@ -48,7 +48,7 @@ namespace Sci.Production.Warehouse
 
             StringBuilder strSQLCmd = new StringBuilder();
             #region -- sqlcmd query -- 
-            strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id, c.mdivisionid,a.id as PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+            strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id, c.mdivisionid,a.id as PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.FabricType
 ,a.stockunit
 ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
