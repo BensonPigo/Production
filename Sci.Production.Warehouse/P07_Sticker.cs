@@ -39,7 +39,7 @@ namespace Sci.Production.Warehouse
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
             result = DBProxy.Current.Select("",
-            @"select  r.POID,r.Seq1+'-'+r.seq2 as SEQ,r.Roll,r.Dyelot
+            @"select  r.POID,r.Seq1+' '+r.seq2 as SEQ,r.Roll,r.Dyelot
 		,r.stockqty,r.StockUnit,s.refno 
 	    ,RTRIM(dbo.Getmtldesc(r.poid, r.seq1, r.seq2,2,0)) [Description],s.colorId 
         ,dbo.getTPEPass1( p.posmr )[MRName] 
