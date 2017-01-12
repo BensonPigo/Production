@@ -386,12 +386,12 @@ namespace Sci.Production.Subcon
 
                 if (datacheck.Rows.Count > 0)
                 {
-                    sqlupd2 += string.Format("update Localpo_detail set qty = {0}  where ukey = '{1}';"
+                    sqlupd2 += string.Format("update Localpo_detail set apqty = {0}  where ukey = '{1}';"
                         + Environment.NewLine,(decimal)datacheck.Rows[0]["qty"] + (decimal)drchk["qty"], drchk["Localpo_detailukey"]);
                 }
                 else
                 {
-                    sqlupd2 += string.Format("update Localpo_detail set cast(qty as decimal) = {0} where ukey = '{1}';"
+                    sqlupd2 += string.Format("update Localpo_detail set aqty  = {0} where ukey = '{1}';"
                         + Environment.NewLine, (decimal)drchk["qty"], drchk["Localpo_detailukey"]);
                 }
             }
@@ -485,13 +485,13 @@ namespace Sci.Production.Subcon
                 }
                 if (datacheck.Rows.Count > 0)
                 {
-                    int x = (int)((decimal)datacheck.Rows[0]["qty"] - (decimal)drchk["qty"]);
-                    sqlupd2 += string.Format("update Localpo_detail set qty = {0} where ukey = '{1}';"
-                            + Environment.NewLine, x, drchk["Localpo_detailukey"]);
+                 
+                     sqlupd2 += string.Format("update Localpo_detail set apqty = {0} where ukey = '{1}';"
+                       + Environment.NewLine, (decimal)datacheck.Rows[0]["qty"] - (decimal)drchk["qty"], drchk["Localpo_detailukey"]);
                 }
                 else
                 {
-                    sqlupd2 += string.Format("update Localpo_detail set qty = {0} where ukey = '{1}';"
+                    sqlupd2 += string.Format("update Localpo_detail set apqty = {0} where ukey = '{1}';"
                             + Environment.NewLine, 0m, drchk["Localpo_detailukey"]);
                 }
             }
@@ -511,7 +511,7 @@ namespace Sci.Production.Subcon
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(sqlupd2, result2);
+                        ShowErr(sqlupd2, result);
                         return;
                     }
 
