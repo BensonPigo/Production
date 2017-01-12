@@ -470,6 +470,7 @@ order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelo
                  {
                      grid2.Rows[i].Cells["AssignCheck"].Value = 1;
                      grid2.Rows[i].DefaultCellStyle.BackColor = Color.White;
+                     grid2.Rows[i].Cells["ReciveQty"].Style.BackColor = Color.Pink;
                  }
              }
          }

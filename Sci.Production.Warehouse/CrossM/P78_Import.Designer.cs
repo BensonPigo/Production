@@ -104,6 +104,9 @@
             this.grid2.AllowUserToAddRows = false;
             this.grid2.AllowUserToDeleteRows = false;
             this.grid2.AllowUserToResizeRows = false;
+            this.grid2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
