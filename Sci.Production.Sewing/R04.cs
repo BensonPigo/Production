@@ -109,15 +109,15 @@ left join Factory f on t.FactoryID = f.ID
 where 1=1");
             if (!MyUtility.Check.Empty(category) && category != "Mockup")
             {
-                if (category != "Bulk")
+                if (category == "Bulk")
                 {
                     sqlCmd.Append(" and t.OrderCategory = 'B'");
                 }
-                else if (category != "Sample")
+                else if (category == "Sample")
                 {
                     sqlCmd.Append(" and t.OrderCategory = 'S'");
                 }
-                else if (category != "Bulk+Sample")
+                else if (category == "Bulk+Sample")
                 {
                     sqlCmd.Append(" and (t.OrderCategory = 'B' or t.OrderCategory = 'S')");
                 }
