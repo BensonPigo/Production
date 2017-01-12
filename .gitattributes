@@ -1441,6 +1441,9 @@ Sci.Production.Class/txtMultiSubcon.cs -text
 Sci.Production.Class/txtMultiSubcon.resx -text
 Sci.Production.Class/txtReason.Designer.cs -text
 Sci.Production.Class/txtReason.cs -text
+Sci.Production.Class/txtSeq.Designer.cs -text
+Sci.Production.Class/txtSeq.cs -text
+Sci.Production.Class/txtSeq.resx -text
 Sci.Production.Class/txtToMdivision.Designer.cs -text
 Sci.Production.Class/txtToMdivision.cs -text
 Sci.Production.Class/txtartworktype_fty.Designer.cs -text
