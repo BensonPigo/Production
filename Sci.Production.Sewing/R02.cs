@@ -516,14 +516,13 @@ select * from tmpSubconOut",
             string strXltName = Sci.Env.Cfg.XltPathDir + (reportType == 0 ? "\\Sewing_R02_MonthlyReportByDate.xltx" : "\\Sewing_R02_MonthlyReportBySewingLine.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
+            //excel.Visible = true;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[2, 1] = string.Format("Fm:{0}",factoryName);
             worksheet.Cells[3, 1] = string.Format("{0} Monthly CMP Report, MTH:{1} ({2}{3}) {4}",
-                MyUtility.Check.Empty(factory) ? "All Factory" : factory, Convert.ToDateTime(date1).ToString("yyyy/MM"), excludeHolday == 0 ? "Included Holiday" : "Excluded Holiday",
-                excludeSubconin == 0 ? ", Subcon-In" : "", reportType == 0 ? "" : "By Sewing Line");
+                MyUtility.Check.Empty(factory) ? "All Factory" : factory, Convert.ToDateTime(date1).ToString("yyyy/MM"), excludeHolday == 0 ? "Included Holiday" : "Excluded Holiday", excludeSubconin == 0 ? ", Subcon-In" : "", reportType == 0 ? "" : "By Sewing Line");
             worksheet.Cells[4, 3] = excludeSubconin == 0 ? "Total CPU Included Subcon-In" : "Total CPU";
-
 
             int insertRow = 5;
             object[,] objArray = new object[1, 11];
@@ -591,7 +590,19 @@ select * from tmpSubconOut",
                 
                 worksheet.Range[String.Format("A{0}:D{0}", insertRow)].Value2 = objArray;
                 insertRow++;
+                Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
+                rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
             }
+
+            DeleteExcelRow(2, insertRow, excel);
+            //insertRow
+
+            //Borders.LineStyle 儲存格邊框線
+            //Microsoft.Office.Interop.Excel.Range excelRange 
+            //    = worksheet.get_Range(string.Format("A{0}:K{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing);
+            //excelRange.Borders.LineStyle = 3;
+            //excelRange.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle 
+            //    = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
             //Subprocess
             insertRow = insertRow + 2;
@@ -693,9 +704,9 @@ select * from tmpSubconOut",
         {
             for (int i = 1; i <= rowCount; i++)
             {
-                Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[rowLocation, Type.Missing];
-                rng.Select();
-                rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[rowLocation];
+                //rng.Select();
+                rng.Delete();
             }
         }
     }
