@@ -391,7 +391,7 @@ namespace Sci.Production.Subcon
                 }
                 else
                 {
-                    sqlupd2 += string.Format("update Localpo_detail set aqty  = {0} where ukey = '{1}';"
+                    sqlupd2 += string.Format("update Localpo_detail set APQty  = {0} where ukey = '{1}';"
                         + Environment.NewLine, (decimal)drchk["qty"], drchk["Localpo_detailukey"]);
                 }
             }
@@ -511,7 +511,7 @@ namespace Sci.Production.Subcon
                     if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
                     {
                         _transactionscope.Dispose();
-                        ShowErr(sqlupd2, result);
+                        ShowErr(sqlupd2, result2);
                         return;
                     }
 
