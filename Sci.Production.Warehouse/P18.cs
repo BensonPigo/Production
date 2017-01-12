@@ -308,7 +308,7 @@ namespace Sci.Production.Warehouse
 
                     DataTable dt;
                     string sqlcmd = string.Format(@"select p.POID poid
-,left(p.seq1+' ',3)+p.seq2 as seq
+,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
 ,p.seq1
 ,p.seq2
 , p.Refno
@@ -356,9 +356,17 @@ where POID ='{0}'", CurrentDetailData["poid"].ToString());
                     }
                     else
                     {
+                        //check Seq Length
+                        string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (seq.Length < 2)
+                        {
+                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                            e.Cancel = true;
+                            return;
+                        }
+
                         if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,scirefno, dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail
-where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
-                                             , e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
+where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
                         {
                             if (!MyUtility.Check.Seek(string.Format(@"select p.POID poid
 ,left(p.seq1+' ',3)+p.seq2 as seq
@@ -379,9 +387,9 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
                             }
                             else
                             {
-                                CurrentDetailData["seq"] = e.FormattedValue;
-                                CurrentDetailData["seq1"] = e.FormattedValue.ToString().Substring(0, 3);
-                                CurrentDetailData["seq2"] = e.FormattedValue.ToString().Substring(3, 2);
+                                CurrentDetailData["seq"] = seq[0] + " " + seq[1];
+                                CurrentDetailData["seq1"] = seq[0];
+                                CurrentDetailData["seq2"] = seq[1];
                                 CurrentDetailData["Roll"] = "";
                                 CurrentDetailData["Dyelot"] = "";
                                 //CurrentDetailData["stockunit"] = dr["stockunit"];
@@ -390,9 +398,9 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
                         }
                         else
                         {
-                            CurrentDetailData["seq"] = e.FormattedValue;
-                            CurrentDetailData["seq1"] = e.FormattedValue.ToString().Substring(0, 3);
-                            CurrentDetailData["seq2"] = e.FormattedValue.ToString().Substring(3, 2);
+                            CurrentDetailData["seq"] = seq[0] + " " + seq[1];
+                            CurrentDetailData["seq1"] = seq[0];
+                            CurrentDetailData["seq2"] = seq[1];
                             CurrentDetailData["Roll"] = "";
                             CurrentDetailData["Dyelot"] = "";
                             CurrentDetailData["stockunit"] = dr["stockunit"];
@@ -1003,7 +1011,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.mdivisionid,a.PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+            this.DetailSelectCommand = string.Format(@"select a.id,a.mdivisionid,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
