@@ -277,15 +277,14 @@ namespace Sci.Production.Warehouse
                         else
                         {
                             //check Seq Length
-                            if (e.FormattedValue.ToString().Trim().Length < 5)
+                            string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (seq.Length < 2)
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 e.Cancel = true;
                                 return;
                             }
 
-                            string seq1 = e.FormattedValue.ToString().Substring(0, e.FormattedValue.ToString().Length - 3);
-                            string seq2 = e.FormattedValue.ToString().Substring(e.FormattedValue.ToString().Length - 2);
                             //jimmy 105/11/14
                             //gird的StockUnit照新規則 抓取值
                             if (!MyUtility.Check.Seek(string.Format(@"select 
@@ -315,7 +314,7 @@ inner join View_unitrate v on v.FROM_U = ａ.POUnit
 				ff.UsageUnit , 
 				uu.ExtensionUnit), 
 			ff.UsageUnit)))--ａ.StockUnit
-where a.id = '{0}' and a.seq1 ='{1}'and a.seq2 = '{2}'", CurrentDetailData["poid"], seq1, seq2), out dr, null))
+where a.id = '{0}' and a.seq1 ='{1}'and a.seq2 = '{2}'", CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 CurrentDetailData["seq"] = "";
@@ -324,9 +323,9 @@ where a.id = '{0}' and a.seq1 ='{1}'and a.seq2 = '{2}'", CurrentDetailData["poid
                             }
                             else
                             {
-                                CurrentDetailData["seq"] = e.FormattedValue;
-                                CurrentDetailData["seq1"] = seq1;
-                                CurrentDetailData["seq2"] = seq2;
+                                CurrentDetailData["seq"] = seq[0] + " " + seq[1];
+                                CurrentDetailData["seq1"] = seq[0];
+                                CurrentDetailData["seq2"] = seq[1];
                                 CurrentDetailData["pounit"] = dr["pounit"];
                                 CurrentDetailData["stockunit"] = dr["stockunit"];
                                 CurrentDetailData["Description"] = dr["description"];
