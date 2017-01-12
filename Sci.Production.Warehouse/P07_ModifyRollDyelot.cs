@@ -233,6 +233,8 @@ group by a.id, poid, Seq1,Seq2, remark,a.IssueDate) tmp
                 grid2.AutoResizeColumns();
             }
             button3.Enabled = !MyUtility.Check.Empty(dt) && dt.Rows.Count == 0 && source.Rows[e.RowIndex]["fabrictype"].ToString()=="F";
+            textBox1.Enabled = !MyUtility.Check.Empty(dt) && dt.Rows.Count == 0 && source.Rows[e.RowIndex]["fabrictype"].ToString() == "F";
+            textBox2.Enabled = !MyUtility.Check.Empty(dt) && dt.Rows.Count == 0 && source.Rows[e.RowIndex]["fabrictype"].ToString() == "F";
             //MyUtility.Msg.WaitClear();
             this.HideWaitMessage();
         }

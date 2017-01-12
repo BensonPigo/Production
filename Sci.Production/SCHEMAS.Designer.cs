@@ -708,7 +708,7 @@ namespace Sci.Production {
                 this.columnID.MaxLength = 10;
                 this.columnNAME.MaxLength = 30;
                 this.columnPASSWORD.MaxLength = 10;
-                this.columnPOSITION.MaxLength = 12;
+                this.columnPOSITION.MaxLength = 20;
                 this.columnORDERGROUP.MaxLength = 2;
                 this.columnEMAIL.MaxLength = 50;
                 this.columnSUPERVISOR.MaxLength = 10;
