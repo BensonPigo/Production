@@ -38,11 +38,11 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtSeq = new Sci.Win.UI.TextBox();
             this.cbbStockType = new Sci.Win.UI.ComboBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -109,10 +109,10 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtSeq1);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.txtSeq);
             this.groupBox1.Controls.Add(this.cbbStockType);
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.txtSP);
@@ -162,17 +162,6 @@
             this.label2.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label2.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // txtSeq
-            // 
-            this.txtSeq.BackColor = System.Drawing.Color.White;
-            this.txtSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeq.Location = new System.Drawing.Point(543, 19);
-            this.txtSeq.Mask = "00-00";
-            this.txtSeq.MaxLength = 5;
-            this.txtSeq.Name = "txtSeq";
-            this.txtSeq.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq.TabIndex = 2;
-            // 
             // cbbStockType
             // 
             this.cbbStockType.BackColor = System.Drawing.Color.White;
@@ -217,6 +206,15 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
+            // txtSeq1
+            // 
+            this.txtSeq1.Location = new System.Drawing.Point(543, 19);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 126;
+            // 
             // P19_Import
             // 
             this.ClientSize = new System.Drawing.Size(1008, 530);
@@ -247,9 +245,9 @@
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.ComboBox cbbStockType;
-        private Win.UI.TextBox txtSeq;
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Class.txtSeq txtSeq1;
     }
 }

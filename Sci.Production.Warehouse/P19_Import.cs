@@ -50,7 +50,6 @@ namespace Sci.Production.Warehouse
             StringBuilder sbSQLCmd = new StringBuilder();
             String stocktype = this.cbbStockType.SelectedValue.ToString();
             String sp = this.txtSP.Text;
-            String seq = this.txtSeq.Text;
 
             #region -- sql parameters declare --
 
@@ -71,7 +70,7 @@ namespace Sci.Production.Warehouse
 
             // 建立可以符合回傳的Cursor
 
-            sbSQLCmd.Append(string.Format(@"select 0 as selected ,'' id, c.mdivisionid,a.id as PoId,a.Seq1,a.Seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+            sbSQLCmd.Append(string.Format(@"select 0 as selected ,'' id, c.mdivisionid,a.id as PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.FabricType
 ,a.stockunit
 ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) Description
@@ -87,21 +86,17 @@ inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  =
 Where c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
 and a.id = @sp and c.mdivisionid='{0}' and c.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
 
-            if (!MyUtility.Check.Empty(seq))
+            if (txtSeq1.checkEmpty())
             {
-                if (seq.Length != 5 || seq=="-")
-                {
-                    MyUtility.Msg.WarningBox("Seq' mask need enter 00-00");
-                    return;
-                }
-                else
-                {
-                    sbSQLCmd.Append(string.Format(@" and a.seq1 = @seq1 and a.seq2=@seq2"));
-                    sp_seq1.Value = seq.Substring(0, 2).Trim();
-                    sp_seq2.Value = seq.Substring(3, 2).Trim();
-                    cmds.Add(sp_seq1);
-                    cmds.Add(sp_seq2);
-                }
+                return;
+            }
+            else
+            {
+                sbSQLCmd.Append(string.Format(@" and a.seq1 = @seq1 and a.seq2=@seq2"));
+                sp_seq1.Value = txtSeq1.seq1;
+                sp_seq2.Value = txtSeq1.seq2;
+                cmds.Add(sp_seq1);
+                cmds.Add(sp_seq2);
             }
 
             Ict.DualResult result;
