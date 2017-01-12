@@ -452,7 +452,8 @@ group by ot.ArtworkTypeID,a.OrderId,a.ComboType,ot.Price,sl.Rate
 )
 select ArtworkTypeID,sum(Price) as Price
 from tmpAllSubprocess
-group by ArtworkTypeID",
+group by ArtworkTypeID
+order by ArtworkTypeID",
                         out subprocessData);
                 }
                 catch (Exception ex)
