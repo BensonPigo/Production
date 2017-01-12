@@ -277,7 +277,7 @@ namespace Sci.Production.IE
             {
                 DataTable MachineGroup;
                 Ict.DualResult returnResule = DBProxy.Current.Select("Machine", "select ID,Description from MachineGroup where Junk = 0 order by ID", out MachineGroup);
-                Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(MachineGroup, "ID,Description", "Group ID,Description", "2,60", textBox3.Text);
+                Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(MachineGroup, "ID,Description", "Group ID,Description", "2,35", textBox3.Text);
 
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }

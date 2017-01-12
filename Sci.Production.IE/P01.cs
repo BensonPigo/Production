@@ -590,15 +590,16 @@ order by td.Seq", masterID);
                 MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
                 return;
             }
-
+            
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(styleData, "ID,SeasonID,Description,BrandID", "14,6,50,10", this.Text, headercaptions: "Style,Season,Description,Brand");
+            item.Width = 850;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             IList<DataRow> selectedData = item.GetSelecteds();
             CurrentMaintain["StyleID"] = item.GetSelectedString();
             CurrentMaintain["SeasonID"] = (selectedData[0])["SeasonID"].ToString();
             CurrentMaintain["BrandID"] = (selectedData[0])["BrandID"].ToString();
-
+           
             sqlCmd = string.Format("select Location from Style_Location where StyleUkey = {0}", MyUtility.Convert.GetInt((selectedData[0])["UKey"]).ToString());
             DataTable LocationData;
             result = DBProxy.Current.Select(null, sqlCmd, out LocationData);
