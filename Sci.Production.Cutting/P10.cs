@@ -739,7 +739,9 @@ namespace Sci.Production.Cutting
             if (!MyUtility.Check.Empty(CurrentMaintain["cutref"]))
             {
                 selectCommand = string.Format(@"select distinct Article from Workorder_Distribute 
-                                                where Article!='' and WorkorderUkey={0}", WorkOrder_Ukey);
+                                                where Article!='' 
+                                                    and WorkorderUkey=(select Ukey from workorder where cutref='{0}' and mDivisionid = '{1}')"
+                                , CurrentMaintain["cutref"].ToString(), keyword);
                 item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
