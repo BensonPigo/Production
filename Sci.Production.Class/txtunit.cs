@@ -69,7 +69,8 @@ namespace Sci.Production.Class
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from Unit where junk = 0 order by ID", "10,100", this.textBox1.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from Unit where junk = 0 order by ID", "10,38", this.textBox1.Text);
+            item.Size = new System.Drawing.Size(570, 530);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
