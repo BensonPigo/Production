@@ -114,8 +114,8 @@ namespace Sci.Production.Warehouse
 
             string spno, seq1, seq2;
             spno = textBox1.Text;
-            seq1 = textBox2.Text;
-            seq2 = textBox3.Text;
+            seq1 = txtSeq1.seq1;
+            seq2 = txtSeq1.seq2;
             if (MyUtility.Check.Empty(spno))
             {
                 DialogResult dResult = MyUtility.Msg.QuestionBox("It will take a lot of time for searching data if condition of SP# is empty, Do you continue?");

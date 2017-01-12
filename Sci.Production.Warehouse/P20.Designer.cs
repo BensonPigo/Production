@@ -35,12 +35,9 @@
             this.panel3 = new Sci.Win.UI.Panel();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.label3 = new Sci.Win.UI.Label();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.button2 = new Sci.Win.UI.Button();
-            this.label1 = new Sci.Win.UI.Label();
             this.bindingSource2 = new Sci.Win.UI.BindingSource(this.components);
             this.bindingSource3 = new Sci.Win.UI.BindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -48,6 +45,7 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.grid2 = new Sci.Win.UI.Grid();
             this.grid3 = new Sci.Win.UI.Grid();
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
@@ -93,14 +91,12 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.txtSeq1);
             this.panel3.Controls.Add(this.checkBox1);
             this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.textBox3);
-            this.panel3.Controls.Add(this.textBox2);
             this.panel3.Controls.Add(this.textBox1);
             this.panel3.Controls.Add(this.label2);
             this.panel3.Controls.Add(this.button2);
-            this.panel3.Controls.Add(this.label1);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
@@ -114,10 +110,10 @@
             this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox1.IsSupportEditMode = false;
-            this.checkBox1.Location = new System.Drawing.Point(560, 11);
+            this.checkBox1.Location = new System.Drawing.Point(436, 11);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(73, 21);
-            this.checkBox1.TabIndex = 4;
+            this.checkBox1.TabIndex = 3;
             this.checkBox1.Text = "Qty > 0";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
@@ -129,29 +125,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(45, 23);
             this.label3.TabIndex = 17;
-            this.label3.Text = "Seq1";
-            // 
-            // textBox3
-            // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.IsSupportEditMode = false;
-            this.textBox3.Location = new System.Drawing.Point(390, 9);
-            this.textBox3.MaxLength = 2;
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(64, 23);
-            this.textBox3.TabIndex = 2;
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.IsSupportEditMode = false;
-            this.textBox2.Location = new System.Drawing.Point(272, 9);
-            this.textBox2.MaxLength = 3;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(64, 23);
-            this.textBox2.TabIndex = 1;
+            this.label3.Text = "Seq";
             // 
             // textBox1
             // 
@@ -176,22 +150,13 @@
             // button2
             // 
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(460, 5);
+            this.button2.Location = new System.Drawing.Point(350, 5);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 3;
+            this.button2.TabIndex = 2;
             this.button2.Text = "Query";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // label1
-            // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(342, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(45, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Seq2";
             // 
             // splitContainer1
             // 
@@ -301,6 +266,15 @@
             this.grid3.TabIndex = 8;
             this.grid3.TabStop = false;
             // 
+            // txtSeq1
+            // 
+            this.txtSeq1.Location = new System.Drawing.Point(272, 9);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 1;
+            // 
             // P20
             // 
             this.ClientSize = new System.Drawing.Size(1008, 661);
@@ -339,14 +313,11 @@
         private Win.UI.Button button1;
         private Win.UI.BindingSource bindingSource1;
         private Win.UI.Panel panel3;
-        private Win.UI.Label label1;
         private Win.UI.BindingSource bindingSource2;
         private Win.UI.BindingSource bindingSource3;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private Win.UI.Grid grid1;
         private Win.UI.Label label3;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox2;
         private Win.UI.TextBox textBox1;
         private Win.UI.Label label2;
         private Win.UI.Button button2;
@@ -354,5 +325,6 @@
         private Win.UI.Grid grid2;
         private Win.UI.Grid grid3;
         private Win.UI.CheckBox checkBox1;
+        private Class.txtSeq txtSeq1;
     }
 }
