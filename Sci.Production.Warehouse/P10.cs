@@ -245,7 +245,7 @@ namespace Sci.Production.Warehouse
                         group by a.NETQty,a.ID,a.SEQ1,a.SEQ2,a.SCIRefno,a.ColorID,[dbo].[getStockUnit](a.SCIRefno,c.SuppID)
                     )
                     select a.*
-                    ,left(a.seq1+' ',3)+a.Seq2 as seq
+                    ,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
                     ,[NETQty] = isnull(b.NETQty,0)
                     ,tmpQty.arqty 
                     ,tmpQty.aiqqty
@@ -525,7 +525,7 @@ NetQty as(
         a.STOCKPOID =''
         and a.SEQ1 = (select min(seq1) from dbo.PO_Supp_Detail where id=a.id and seq1 = a.SEQ1 and seq2 = a.seq2)
 )
-select a.*,left(a.seq1+' ',3)+a.Seq2 as seq, isnull(b.NETQty,0) as NETQty 
+select a.*,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq, isnull(b.NETQty,0) as NETQty 
 ,tmpQty.arqty 
 ,tmpQty.aiqqty
 ,tmpQty.arqty -tmpQty.aiqqty as [avqty] 
