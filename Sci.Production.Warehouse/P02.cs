@@ -89,6 +89,7 @@ where ed.ID = '{0}'", masterID);
                     displayBox7.Value = "";
                     break;
             }
+            button2.Enabled = !MyUtility.Check.Empty(MyUtility.Convert.GetString(CurrentMaintain["ShipMarkDesc"])) ;
         }
 
         protected override void OnDetailGridSetup()
