@@ -143,6 +143,14 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, Current
                     }
                     else
                     {
+                        //check Seq Length
+                        if (e.FormattedValue.ToString().Trim().Length < 5)
+                        {
+                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                            e.Cancel = true;
+                            return;
+                        }
+
                         string seq1 = e.FormattedValue.ToString().Substring(0, e.FormattedValue.ToString().Length - 3);
                         string seq2 = e.FormattedValue.ToString().Substring(e.FormattedValue.ToString().Length - 2);
                         if (!MyUtility.Check.Seek(string.Format(@"select a.*,b.FabricType,b.SCIRefno,f.MtlTypeID,m.IssueType,left(a.seq1+'   ',3)+a.seq2 seq
