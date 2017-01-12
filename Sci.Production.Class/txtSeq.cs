@@ -22,15 +22,15 @@ namespace Sci.Production.Class
         [Bindable(true)]
         public string TextBox1Binding
         {
-            set { this.textSeq1.Text = value; }
-            get { return textSeq1.Text; }
+            set { this.textSeq1.Text = value.Trim(); }
+            get { return textSeq1.Text.ToString().Trim(); }
         }
 
         [Bindable(true)]
         public string TextBox2Binding
         {
-            set { this.textSeq2.Text = value; }
-            get { return textSeq2.Text; }
+            set { this.textSeq2.Text = value.Trim(); }
+            get { return textSeq2.Text.ToString().Trim(); }
         }
     }
 }
