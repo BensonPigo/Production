@@ -85,7 +85,7 @@ order by ld.Seq1,ld.Seq2", masterID);
                             dr["Description"] = selectData[0]["Description"];
 
                             DataTable WHdata;
-                            DualResult whdr = DBProxy.Current.Select(null, string.Format("SELECT InQty,OutQty FROM MDivisionPoDetail WHERE POID = '{0}' AND Seq1 = '{1}' AND Seq2 = '{2}' AND MDivisionID = '{3}'",MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq"]),Sci.Env.User.Keyword), out WHdata);
+                            DualResult whdr = DBProxy.Current.Select(null, string.Format("SELECT InQty,OutQty FROM MDivisionPoDetail WHERE POID = '{0}' AND Seq1 = '{1}' AND Seq2 = '{2}' AND MDivisionID = '{3}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq1"]),MyUtility.Convert.GetString(dr["Seq2"]), Sci.Env.User.Keyword), out WHdata);
                             if (whdr)
                             {
                                 if (WHdata.Rows.Count > 0)
