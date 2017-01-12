@@ -276,6 +276,14 @@ namespace Sci.Production.Warehouse
                         }
                         else
                         {
+                            //check Seq Length
+                            if (e.FormattedValue.ToString().Trim().Length < 5)
+                            {
+                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                                e.Cancel = true;
+                                return;
+                            }
+
                             string seq1 = e.FormattedValue.ToString().Substring(0, e.FormattedValue.ToString().Length - 3);
                             string seq2 = e.FormattedValue.ToString().Substring(e.FormattedValue.ToString().Length - 2);
                             //jimmy 105/11/14
