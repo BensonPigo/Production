@@ -216,28 +216,17 @@ namespace Sci.Production.PPIC
                     e.Cancel = true;
                     return;
                 }
-            }            
-        }
-
-        //MR
-        private void textBox4_Validating(object sender, CancelEventArgs e)
-        {
-            string textBox4Value = textBox4.Text;
-            if (TPEUserValidating(textBox4Value))
-            {
-                textBox4.Text = textBox4Value;
-                displayBox2.Value = GetUserName(textBox4.Text);
             }
-            else
+            if (textBox3Value == "")
             {
-                MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textBox4Value));
-                textBox4.Text = "";
-                displayBox2.Value = "";
-                e.Cancel = true;
-                return;
+                textBox3.Text = "";
+                displayBox1.Value = "";
+             
             }
         }
 
+        
+     
         private bool TPEUserValidating(string userID)
         {
             if (!MyUtility.Check.Seek(userID, "TPEPass1", "ID"))
@@ -639,6 +628,35 @@ where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.
             DBProxy.Current.DefaultTimeout = 0;
 
         }
+            //MR
+        private void textBox4_Validating(object sender, CancelEventArgs e)
+        {
+            string textBox4Value = textBox4.Text;
+            if (textBox4Value != "")
+            {
+                if (TPEUserValidating(textBox4Value))
+                {
+                    textBox4.Text = textBox4Value;
+                    displayBox2.Value = GetUserName(textBox4.Text);
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textBox4Value));
+                    textBox4.Text = "";
+                    displayBox2.Value = "";
+                    e.Cancel = true;
+                    return;
+                }
+            }
+            if (textBox4Value == "")
+            {
+                textBox4.Text = "";
+                displayBox2.Value = "";
+             
+            }
+        }
+       
+        
 
 
     }
