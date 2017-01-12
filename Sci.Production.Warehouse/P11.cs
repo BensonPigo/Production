@@ -144,21 +144,20 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, Current
                     else
                     {
                         //check Seq Length
-                        if (e.FormattedValue.ToString().Trim().Length < 5)
+                        string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (seq.Length < 2)
                         {
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
                             e.Cancel = true;
                             return;
                         }
 
-                        string seq1 = e.FormattedValue.ToString().Substring(0, e.FormattedValue.ToString().Length - 3);
-                        string seq2 = e.FormattedValue.ToString().Substring(e.FormattedValue.ToString().Length - 2);
                         if (!MyUtility.Check.Seek(string.Format(@"select a.*,b.FabricType,b.SCIRefno,f.MtlTypeID,m.IssueType,left(a.seq1+'   ',3)+a.seq2 seq
 from dbo.ftyinventory a inner join dbo.po_supp_detail b on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
 inner join Fabric f on f.SCIRefno = b.SCIRefno
 inner join MtlType m on m.ID = f.MtlTypeID
 where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivisionid='{3}'  and inqty-outqty+adjustqty > 0  --and stocktype='B' "
-                            , CurrentDetailData["poid"], seq1, seq2, Sci.Env.User.Keyword), out dr, null))
+                            , CurrentDetailData["poid"], seq[0], seq[1], Sci.Env.User.Keyword), out dr, null))
                         {
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
                             e.Cancel = true;
@@ -166,9 +165,9 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivision
                         }
                         else
                         {
-                            CurrentDetailData["seq"] = e.FormattedValue;
-                            CurrentDetailData["seq1"] = seq1;
-                            CurrentDetailData["seq2"] = seq2;
+                            CurrentDetailData["seq"] = seq[0] + " " + seq[1];
+                            CurrentDetailData["seq1"] = seq[0];
+                            CurrentDetailData["seq2"] = seq[1];
                             CurrentDetailData["mdivisionid"] = dr["mdivisionid"];
                             CurrentDetailData["stocktype"] = dr["stocktype"];
                             CurrentDetailData["ftyinventoryukey"] = dr["ukey"];
