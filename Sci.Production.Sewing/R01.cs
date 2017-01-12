@@ -139,7 +139,8 @@ where 1 =1");
                 try
                 {
                     MyUtility.Tool.ProcessWithDatatable(printData, "Shift,Team,SewingLineID,ActManPower,TMS,QAQty,RFT,LastShift",
-                        @";with SubMaxActManpower
+                        @"
+;with SubMaxActManpower
 as (
 select Shift,Team,SewingLineID,max(ActManPower) as ActManPower
 from #tmp
@@ -242,7 +243,8 @@ select 'Grand' as Type,'4' as Sort,'' as Shift,'' as Team,TMS,RFT,ActManPower fr
                 try
                 {
                     MyUtility.Tool.ProcessWithDatatable(printData, "OrderId,ComboType,QAQty,LastShift",
-                        @";with tmpArtwork
+                        @"
+;with tmpArtwork
 as (
 Select ID from ArtworkType where Classify in ('I','A','P') and IsTtlTMS = 0
 ),
