@@ -260,12 +260,18 @@ namespace Sci.Production.Warehouse
                         }
                         else
                         {
-                            string seq1 = e.FormattedValue.ToString().Substring(0, e.FormattedValue.ToString().Length - 3);
-                            string seq2 = e.FormattedValue.ToString().Substring(e.FormattedValue.ToString().Length - 2);
+                            //check Seq Length
+                            if (e.FormattedValue.ToString().Trim().Length < 5)
+                            {
+                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                                e.Cancel = true;
+                                return;
+                            }
+                            string[] seq = e.FormattedValue.ToString().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
                             if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,scirefno
 ,dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail
-where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], seq1, seq2), out dr, null))
+where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 e.Cancel = true;
@@ -282,9 +288,9 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], se
                                 }
                                 else
                                 {
-                                    CurrentDetailData["seq"] = e.FormattedValue;
-                                    CurrentDetailData["seq1"] = seq1;
-                                    CurrentDetailData["seq2"] = seq2;
+                                    CurrentDetailData["seq"] = seq[0] + " " + seq[1];
+                                    CurrentDetailData["seq1"] = seq[0];
+                                    CurrentDetailData["seq2"] = seq[1];
                                     CurrentDetailData["stockunit"] = dr["stockunit"];
                                     CurrentDetailData["Description"] = dr["description"];
                                 }
