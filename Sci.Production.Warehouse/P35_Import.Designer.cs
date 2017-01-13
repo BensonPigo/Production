@@ -45,10 +45,10 @@
             this.label6 = new Sci.Win.UI.Label();
             this.textBox3 = new Sci.Win.UI.TextBox();
             this.label3 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -163,13 +163,13 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtSeq1);
             this.groupBox1.Controls.Add(this.txtdropdownlist1);
             this.groupBox1.Controls.Add(this.textBox4);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.textBox3);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.textBox2);
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Controls.Add(this.label1);
@@ -239,16 +239,6 @@
             this.label3.TabIndex = 4;
             this.label3.Text = "Ref#";
             // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(209, 19);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(61, 23);
-            this.textBox2.TabIndex = 1;
-            this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
-            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.grid1);
@@ -274,7 +264,6 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = true;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -282,6 +271,17 @@
             this.grid1.Size = new System.Drawing.Size(1008, 419);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
+            // 
+            // txtSeq1
+            // 
+            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq1.Location = new System.Drawing.Point(210, 19);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 1;
+            this.txtSeq1.Leave += new System.EventHandler(this.txtSeq1_Leave);
             // 
             // P35_Import
             // 
@@ -313,7 +313,6 @@
         private Win.UI.Panel panel1;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.TextBox textBox2;
         private Win.UI.TextBox textBox3;
         private Win.UI.Label label3;
         private Win.UI.Label label4;
@@ -323,5 +322,6 @@
         private Win.UI.ComboBox comboBox2;
         private Win.UI.TextBox textBox4;
         private Class.txtdropdownlist txtdropdownlist1;
+        private Class.txtSeq txtSeq1;
     }
 }
