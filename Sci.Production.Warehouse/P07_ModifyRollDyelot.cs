@@ -251,6 +251,7 @@ group by a.id, poid, Seq1,Seq2, remark,a.IssueDate) tmp
                 MyUtility.Msg.WarningBox("Roll# & Dyelot# can't be empty!!");
                 return;
             }
+            int temprowindex = grid1.GetSelectedRowIndex();
             DataRow dr = grid1.GetDataRow(grid1.GetSelectedRowIndex());
             sqlcmd = string.Format(@"select 1 from dbo.Receiving_Detail 
                 where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and dyelot='{5}'"
@@ -329,6 +330,7 @@ Where a.id = '{0}' ", docno);
                 source = dt;
                 grid1.DataSource = dt;              
             }
+            grid1.SelectRowTo(temprowindex);
         }
     }
 }
