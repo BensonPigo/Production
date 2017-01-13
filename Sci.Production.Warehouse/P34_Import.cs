@@ -32,7 +32,6 @@ namespace Sci.Production.Warehouse
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.textBox1.Text.TrimEnd();
-            String seq = this.textBox2.Text.TrimEnd();
             String refno = this.textBox3.Text.TrimEnd();
             String location = this.textBox4.Text.TrimEnd();
             string fabrictype = txtdropdownlist1.SelectedValue.ToString();
@@ -50,7 +49,7 @@ namespace Sci.Production.Warehouse
 
                 strSQLCmd.Append(string.Format(@"select 0 as selected 
 ,'' id,c.mdivisionid, c.PoId,a.Seq1,a.Seq2
-,left(a.seq1+' ',3)+a.Seq2 as seq
+,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
 ,c.Roll
 ,c.Dyelot
@@ -82,9 +81,9 @@ Where c.lock = 0 and c.mdivisionid = '{0}'", Sci.Env.User.Keyword));
                     strSQLCmd.Append(string.Format(@" and c.ukey in (select ukey from dbo.ftyinventory_detail where mtllocationid = '{0}') ", location));
                 }
 
-                if (!MyUtility.Check.Empty(seq))
+                if (!txtSeq1.checkEmpty(showErrMsg: false))
                 {
-                    strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'", seq.Substring(0, 3), seq.Substring(3, 2)));
+                    strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'", txtSeq1.seq1, txtSeq1.seq2));
                 }
 
                 switch (fabrictype)
@@ -287,11 +286,10 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
             string sp = textBox1.Text.TrimEnd();
-            string seq = textBox2.Text.PadRight(5, ' ');
 
             if (MyUtility.Check.Empty(sp)) return;
 
-            if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
+            if (txtSeq1.checkEmpty(showErrMsg: false))
             {
                 if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from MdivisionPoDetail where poid ='{0}' and mdivisionid='{1}')"
                     , sp, Sci.Env.User.Keyword), null))
@@ -304,7 +302,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             else
             {
                 if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from MdivisionPoDetail where poid ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}', mdivisionid='{3}')", sp, seq.Substring(0, 3), seq.Substring(3, 2), Sci.Env.User.Keyword), null))
+                        and seq1 = '{1}' and seq2 = '{2}', mdivisionid='{3}')", sp, txtSeq1.seq1, txtSeq1.seq2, Sci.Env.User.Keyword), null))
                 {
                     MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                     e.Cancel = true;
@@ -318,11 +316,10 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
             string sp = textBox1.Text.TrimEnd();
-            if (MyUtility.Check.Empty(sp) || MyUtility.Check.Empty(textBox2.Text.TrimEnd())) return;
-            string seq = textBox2.Text.PadRight(5, ' ');
+            if (MyUtility.Check.Empty(sp) || txtSeq1.checkEmpty(showErrMsg: false)) return;
 
             if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from mdivisionpoDetail where poid ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}' and mdivisionid='{3}')", sp, seq.Substring(0, 3), seq.Substring(3, 2), Sci.Env.User.Keyword), null))
+                        and seq1 = '{1}' and seq2 = '{2}' and mdivisionid='{3}')", sp, txtSeq1.seq1, txtSeq1.seq2, Sci.Env.User.Keyword), null))
             {
                 MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                 e.Cancel = true;
