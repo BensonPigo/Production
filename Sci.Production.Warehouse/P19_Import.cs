@@ -86,11 +86,11 @@ inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  =
 Where c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
 and a.id = @sp and c.mdivisionid='{0}' and c.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
 
-            if (txtSeq1.checkEmpty())
-            {
-                return;
-            }
-            else
+            if (!txtSeq1.checkEmpty(showErrMsg: false))
+            //{
+            //    return;
+            //}
+            //else
             {
                 sbSQLCmd.Append(string.Format(@" and a.seq1 = @seq1 and a.seq2=@seq2"));
                 sp_seq1.Value = txtSeq1.seq1;
