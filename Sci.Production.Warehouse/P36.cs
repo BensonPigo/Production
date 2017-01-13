@@ -676,7 +676,7 @@ a.id
 ,a.FromPoId
 ,a.FromSeq1
 ,a.FromSeq2
-,left(a.FromSeq1+' ',3)+a.FromSeq2 as FromSeq
+,concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2) as FromSeq
 ,p1.FabricType
 ,p1.stockunit
 ,dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) as [description]
