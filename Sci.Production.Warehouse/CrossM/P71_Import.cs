@@ -46,9 +46,9 @@ namespace Sci.Production.Warehouse
                 #region -- Sql Command --
                 strSQLCmd.Append(string.Format(@"
 ;with cte as (
-select '' as id,o.MDivisionID ToMdivisionid,pd.ID topoid ,pd.seq1 toseq1,pd.seq2 toseq2,left(pd.seq1+'   ',3)+pd.seq2 toseq,pd.POUnit,pd.StockUnit,pd.Qty*u.RateValue poqty
+select '' as id,o.MDivisionID ToMdivisionid,pd.ID topoid ,pd.seq1 toseq1,pd.seq2 toseq2,concat(Ltrim(Rtrim(pd.seq1)), ' ', pd.seq2) toseq,pd.POUnit,pd.StockUnit,pd.Qty*u.RateValue poqty
 	,dbo.getMtlDesc(pd.ID,seq1,seq2,2,0) as [description]
-	,o1.MDivisionID fromMdivisionid,pd.StockPOID frompoid,pd.StockSeq1 fromseq1,pd.StockSeq2 fromseq2,left(pd.stockseq1+'   ',3)+pd.stockseq2 fromseq
+	,o1.MDivisionID fromMdivisionid,pd.StockPOID frompoid,pd.StockSeq1 fromseq1,pd.StockSeq2 fromseq2,concat(Ltrim(Rtrim(pd.stockseq1)), ' ', pd.stockseq2) fromseq
 	,pd.Qty*u.Rate as qty
 from dbo.PO_Supp_Detail pd 
 inner join dbo.orders o on o.id = pd.id and o.MDivisionID ='{0}'
