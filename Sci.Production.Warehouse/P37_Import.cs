@@ -32,7 +32,6 @@ namespace Sci.Production.Warehouse
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.textBox1.Text.TrimEnd();
-            String seq = this.textBox2.Text.TrimEnd();
             String transid = this.textBox3.Text.TrimEnd();
             String wkno = this.textBox4.Text.TrimEnd();
 
@@ -52,7 +51,7 @@ namespace Sci.Production.Warehouse
 ,'' id
 , '' ExportId
 ,null as ETA
-,f.PoId,f.seq1,f.seq2,left(f.seq1+' ',3)+f.Seq2 as seq,f.Roll,f.Dyelot,p1.stockunit
+,f.PoId,f.seq1,f.seq2,concat(Ltrim(Rtrim(f.seq1)), ' ', f.Seq2) as seq,f.Roll,f.Dyelot,p1.stockunit
 ,f.StockType 
 ,f.InQty - f.OutQty + f.AdjustQty balance
 ,0.00 as qty
@@ -68,7 +67,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and stocktype !='O' and 
                 {
                     strSQLCmd.Append(string.Format(@"select 0 as selected 
 ,'' id
-, a.ExportId,a.ETA,b.PoId,b.seq1,b.seq2,b.seq1+b.seq2 as seq,b.Roll,b.Dyelot,p1.stockunit
+, a.ExportId,a.ETA,b.PoId,b.seq1,b.seq2,concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) as seq,b.Roll,b.Dyelot,p1.stockunit
 ,b.StockType 
 ,f.InQty - f.OutQty + f.AdjustQty balance
 ,0.00 as qty
@@ -109,11 +108,11 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                     cmds.Add(sp1);
                 }
 
-                if (!MyUtility.Check.Empty(seq))
+                if (!txtSeq1.checkEmpty(showErrMsg: false))
                 {
                     strSQLCmd.Append(@" and f.seq1 = @seq1 and f.seq2 = @seq2");
-                    seq1.Value = seq.Substring(0, 3);
-                    seq2.Value = seq.Substring(3, 2);
+                    seq1.Value = txtSeq1.seq1;
+                    seq2.Value = txtSeq1.seq2;
                     cmds.Add(seq1);
                     cmds.Add(seq2);
                 }
@@ -286,11 +285,10 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
             string sp = textBox1.Text.TrimEnd();
-            string seq = textBox2.Text.PadRight(5, ' ');
 
             if (MyUtility.Check.Empty(sp)) return;
 
-            if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
+            if (txtSeq1.checkEmpty(showErrMsg: false))
             {
                 if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from ftyinventory where poid ='{0}' and mdivisionid='{1}')"
                     , sp, Sci.Env.User.Keyword), null))
@@ -303,7 +301,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
             else
             {
                 if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from mdivisionpodetail where poid ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}' and mdivisionid='{3}')", sp, seq.Substring(0, 3), seq.Substring(3, 2), Sci.Env.User.Keyword), null))
+                        and seq1 = '{1}' and seq2 = '{2}' and mdivisionid='{3}')", sp, txtSeq1.seq1, txtSeq1.seq2, Sci.Env.User.Keyword), null))
                 {
                     MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                     e.Cancel = true;
@@ -314,17 +312,15 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
         }
 
         //Seq Valid
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        private void txtSeq1_Leave(object sender, EventArgs e)
         {
             string sp = textBox1.Text.TrimEnd();
-            if (MyUtility.Check.Empty(sp) || MyUtility.Check.Empty(textBox2.Text.TrimEnd())) return;
-            string seq = textBox2.Text.PadRight(5, ' ');
+            if (MyUtility.Check.Empty(sp) || txtSeq1.checkEmpty(showErrMsg: false)) return;
 
             if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail where id ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}')", sp, seq.Substring(0, 3), seq.Substring(3, 2)), null))
+                        and seq1 = '{1}' and seq2 = '{2}')", sp, txtSeq1.seq1, txtSeq1.seq2), null))
             {
                 MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-                e.Cancel = true;
                 return;
             }
 
