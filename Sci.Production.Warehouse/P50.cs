@@ -252,7 +252,7 @@ namespace Sci.Production.Warehouse
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"select a.id,a.MDivisionID
 ,a.PoId,a.Seq1,a.Seq2
-,left(a.seq1+' ',3)+a.Seq2 as seq
+,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
 ,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FtyInventoryUkey) t 
