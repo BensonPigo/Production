@@ -192,6 +192,7 @@ namespace Sci.Production.PPIC
         private string PopUpTPEUser(string userID)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1", "15,30,10", userID);
+            item.Width = 510;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return ""; }
             return item.GetSelectedString();
