@@ -286,11 +286,11 @@ with returnSP as(
 select 
 ReciveCheck     = 0,
 BorrowingSP		= ID.POID,
-BorrowingSeq	= concat(ID.Seq1, ' ', ID.Seq2),
+BorrowingSeq	= concat(Ltrim(Rtrim(ID.Seq1)), ' ', ID.Seq2),
 StockType		= ID.StockType,
 BorrowingQty	= sum(ID.Qty),
 ReturnSP		= RSP.POID,
-ReturnSeq		= concat(RSP.Seq1, ' ', RSP.Seq2),
+ReturnSeq		= concat(Ltrim(Rtrim(RSP.Seq1)), ' ', RSP.Seq2),
 AccuDiffQty     = sum(ID.Qty),
 Qty				= 0.00
 --,
@@ -305,7 +305,7 @@ inner join returnSP RSP on I.CutplanID = RSP.id
 where I.CutplanID = (select CutplanID from Issue where ID = '{0}')
 and i.MDivisionID= '{1}'
 and I.Status = 'Confirmed'
-group by ID.POID, concat(ID.Seq1, ' ', ID.Seq2), ID.StockType, RSP.POID, concat(RSP.Seq1, ' ', RSP.Seq2)
+group by ID.POID, concat(Ltrim(Rtrim(ID.Seq1)), ' ', ID.Seq2), ID.StockType, RSP.POID, concat(Ltrim(Rtrim(RSP.Seq1)), ' ', RSP.Seq2)
 ", dr_master["referenceid"], Sci.Env.User.Keyword));
 
                 strSQLCmd2.Append(string.Format(@"
@@ -315,11 +315,11 @@ with returnSP as(
 ),grid1 as (
     select 
     BorrowingSP		= ID.POID,
-    BorrowingSeq	= concat(ID.Seq1, ' ', ID.Seq2),
+    BorrowingSeq	= concat(Ltrim(Rtrim(ID.Seq1)), ' ', ID.Seq2),
     StockType		= ID.StockType,
     BorrowingQty	= sum(ID.Qty),
     ReturnSP		= RSP.POID,
-    ReturnSeq		= concat(RSP.Seq1, ' ', RSP.Seq2),
+    ReturnSeq		= concat(Ltrim(Rtrim(RSP.Seq1)), ' ', RSP.Seq2),
     Qty				= 0.00,
 	BorrowingSeq1	= ID.Seq1,
 	BorrowingSeq2	= ID.Seq2,
@@ -337,12 +337,12 @@ with returnSP as(
     where I.CutplanID = (select CutplanID from Issue where ID = '{0}')
     and i.MDivisionID= '{1}'
     and I.Status = 'Confirmed'
-    group by ID.POID, concat(ID.Seq1, ' ', ID.Seq2), ID.StockType, RSP.POID, concat(RSP.Seq1, ' ', RSP.Seq2), ID.Seq1, ID.Seq2, RSP.Seq1, RSP.Seq2
+    group by ID.POID, concat(Ltrim(Rtrim(ID.Seq1)), ' ', ID.Seq2), ID.StockType, RSP.POID, concat(Ltrim(Rtrim(RSP.Seq1)), ' ', RSP.Seq2), ID.Seq1, ID.Seq2, RSP.Seq1, RSP.Seq2
 ),
 grid2 as(
 	select 
 	ReturnSP		    = ID.POID,
-	ReturnSeq		    = concat(ID.Seq1, ' ', ID.Seq2),
+	ReturnSeq		    = concat(Ltrim(Rtrim(ID.Seq1)), ' ', ID.Seq2),
 	Dyelot			    = ID.Dyelot,
 	Roll			    = ID.Roll,
 	ReturnQty		    = ID.Qty,
