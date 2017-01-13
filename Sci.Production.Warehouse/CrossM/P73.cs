@@ -545,7 +545,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"
 select a.*
-,left(a.Seq1+' ',3)+a.seq2 as seq
+,concat(Ltrim(Rtrim(a.Seq1)), ' ', a.seq2) as seq
 ,p1.FabricType
 ,p1.stockunit
 ,dbo.getmtldesc(a.PoId,a.Seq1,a.Seq2,2,0) as [description]
