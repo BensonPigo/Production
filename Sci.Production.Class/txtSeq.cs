@@ -46,6 +46,11 @@ namespace Sci.Production.Class
             return MyUtility.Check.Empty(seq1) | MyUtility.Check.Empty(seq2);
         }
 
+        public void txtSeq_ReadOnly(bool ReadOnly)
+        {
+            textSeq1.ReadOnly = ReadOnly;
+            textSeq2.ReadOnly = ReadOnly;
+        }
 
         private void txtSeq_Leave(object sender, EventArgs e)
         {
