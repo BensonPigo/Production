@@ -37,12 +37,12 @@
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.button8 = new Sci.Win.UI.Button();
-            this.textBox1 = new Sci.Win.UI.TextBox();
             this.label5 = new Sci.Win.UI.Label();
             this.button9 = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.button1 = new Sci.Win.UI.Button();
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -59,12 +59,12 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtSeq1);
             this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.editBox1);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.button9);
             this.masterpanel.Controls.Add(this.button8);
-            this.masterpanel.Controls.Add(this.textBox1);
             this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.button5);
             this.masterpanel.Controls.Add(this.dateBox3);
@@ -83,12 +83,12 @@
             this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.button5, 0);
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.button8, 0);
             this.masterpanel.Controls.SetChildIndex(this.button9, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSeq1, 0);
             // 
             // detailpanel
             // 
@@ -226,23 +226,13 @@
             // button8
             // 
             this.button8.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button8.Location = new System.Drawing.Point(279, 125);
+            this.button8.Location = new System.Drawing.Point(197, 125);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(70, 30);
             this.button8.TabIndex = 6;
             this.button8.Text = "Find";
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
-            // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.IsSupportEditMode = false;
-            this.textBox1.Location = new System.Drawing.Point(128, 129);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(145, 23);
-            this.textBox1.TabIndex = 5;
             // 
             // label5
             // 
@@ -256,7 +246,7 @@
             // button9
             // 
             this.button9.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button9.Location = new System.Drawing.Point(355, 125);
+            this.button9.Location = new System.Drawing.Point(273, 125);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(148, 30);
             this.button9.TabIndex = 7;
@@ -295,6 +285,15 @@
             this.button1.Text = "Accumulated Qty";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // txtSeq1
+            // 
+            this.txtSeq1.Location = new System.Drawing.Point(130, 129);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 64;
             // 
             // P25
             // 
@@ -350,11 +349,11 @@
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
         private Win.UI.Button button8;
-        private Win.UI.TextBox textBox1;
         private Win.UI.Label label5;
         private Win.UI.Button button9;
         private Win.UI.EditBox editBox1;
         private Win.UI.Label label1;
         private Win.UI.Button button1;
+        private Class.txtSeq txtSeq1;
     }
 }

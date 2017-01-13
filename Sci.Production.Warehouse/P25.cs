@@ -616,7 +616,7 @@ a.id
 ,a.FromPoId
 ,a.FromSeq1
 ,a.FromSeq2
-,left(a.FromSeq1+' ',3)+a.FromSeq2 as FromSeq
+,concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2) as FromSeq
 --,p1.FabricType
 ,case p1.FabricType when 'F' then 'Fabric' when 'A' then 'Accessory' when 'O' then 'Other' else p1.FabricType end as FabricType  
 ,p1.stockunit
@@ -671,7 +671,7 @@ Where a.id = '{0}'", masterID);
         private void button8_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("fromseq", textBox1.Text.TrimEnd());
+            int index = detailgridbs.Find("fromseq", txtSeq1.getSeq());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
