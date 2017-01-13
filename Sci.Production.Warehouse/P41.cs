@@ -100,7 +100,7 @@ namespace Sci.Production.Warehouse
             }
 
             string sqlcmd
-                = string.Format(@"select c.mdivisionid,c.POID,left(b.seq1+' ',3)+b.Seq2 as seq,a.EachConsApv
+                = string.Format(@"select c.mdivisionid,c.POID,concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) as seq,a.EachConsApv
 ,(SELECT MAX(FinalETA) FROM 
 	(SELECT PO_SUPP_DETAIL.FinalETA FROM PO_Supp_Detail 
 		WHERE PO_Supp_Detail.ID = B.ID 
