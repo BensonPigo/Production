@@ -248,9 +248,17 @@ namespace Sci.Production.Warehouse
                     }
                     else
                     {
+                        //check Seq Length
+                        string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' });
+                        if (seq.Length < 2)
+                        {
+                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                            e.Cancel = true;
+                            return;
+                        }
+
                         if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,colorid,refno from po_supp_detail
-where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
-                                                 , e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr, null))
+where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
                         {
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
                             e.Cancel = true;
@@ -258,9 +266,9 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
                         }
                         else
                         {
-                            CurrentDetailData["seq"] = e.FormattedValue;
-                            CurrentDetailData["seq1"] = e.FormattedValue.ToString().Substring(0, 3);
-                            CurrentDetailData["seq2"] = e.FormattedValue.ToString().Substring(3, 2);
+                            CurrentDetailData["seq"] = seq[0] + " " + seq[1];
+                            CurrentDetailData["seq1"] = seq[0];
+                            CurrentDetailData["seq2"] = seq[1];
                             CurrentDetailData["stockunit"] = dr["stockunit"];
                             CurrentDetailData["fabrictype"] = dr["fabrictype"];
                             CurrentDetailData["colorid"] = dr["colorid"];
@@ -443,7 +451,7 @@ where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], e.
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"select a.id,a.MDivisionID
 ,a.PoId,a.Seq1,a.Seq2
-,left(a.seq1+' ',3)+a.Seq2 as seq
+,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
 ,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FtyInventoryUkey) t 
