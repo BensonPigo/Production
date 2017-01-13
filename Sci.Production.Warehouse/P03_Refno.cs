@@ -15,6 +15,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_Refno : Sci.Win.Subs.Base
     {
+        string comboMvalue = "All", comboColorvalue = "All", comboSizevalue = "All";
         DataRow dr;
         DataTable selectDataTable1;
         protected Sci.Win.UI.ContextMenuStrip myCMS = new Win.UI.ContextMenuStrip();
@@ -53,7 +54,7 @@ order by ColorID, SizeSpec ,SewinLine
             if (selectResult1 == false) ShowErr(selectCommand1, selectResult1);
             else
             {
-                Filter();
+                listControlBindingSource1.DataSource = selectDataTable1;
             }
 
             //分別加入comboboxitem
@@ -181,32 +182,122 @@ order by ColorID, SizeSpec ,SewinLine
 
         private void comboM_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (comboM.SelectedValue == null) return;
+            if (comboM.SelectedValue.ToString() == comboMvalue) return;
+            comboMvalue = comboM.SelectedValue.ToString();
             Filter();
+            DataTable temp = (DataTable)listControlBindingSource1.DataSource;
+            comboColor.DataSource = null;
+            comboColor.Items.Clear();
+            comboSize.DataSource = null;
+            comboSize.Items.Clear();
+            List<string> dts2 = temp.AsEnumerable().Select(row => row["colorid"].ToString()).Distinct().ToList();
+            List<string> dts3 = temp.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
+            if (!dts2.Empty())
+            {
+                dts2.Insert(0, "All");
+                if (comboColorvalue != "All")
+                {
+                    dts2.Remove(comboColorvalue);
+                    dts2.Insert(0, comboColorvalue);
+                }
+                comboColor.DataSource = dts2;             
+            }
+            if (!dts3.Empty())
+            {
+                dts3.Insert(0, "All");
+                if (comboSizevalue != "All")
+                {
+                    dts3.Remove(comboSizevalue);
+                    dts3.Insert(0, comboSizevalue);
+                }
+                comboSize.DataSource = dts3;                
+            }          
         }
 
         private void comboColor_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (comboColor.SelectedValue == null) return;
+            if (comboColor.SelectedValue.ToString() == comboColorvalue || comboColor.SelectedValue.ToString() == null) return;
+            comboColorvalue = comboColor.SelectedValue.ToString();
             Filter();
+            DataTable temp = (DataTable)listControlBindingSource1.DataSource;
+            comboM.DataSource = null;
+            comboM.Items.Clear();
+            comboSize.DataSource = null;
+            comboSize.Items.Clear();
+            List<string> dts1 = temp.AsEnumerable().Select(row => row["mdivisionid"].ToString()).Distinct().ToList();
+            List<string> dts3 = temp.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
+            if (!dts1.Empty())
+            {
+                dts1.Insert(0, "All");
+                if (comboMvalue != "All")
+                {
+                    dts1.Remove(comboMvalue);
+                    dts1.Insert(0, comboMvalue);
+                }
+                comboM.DataSource = dts1;
+            }
+            if (!dts3.Empty())
+            {
+                dts3.Insert(0, "All");
+                if (comboSizevalue != "All")
+                {
+                    dts3.Remove(comboSizevalue);
+                    dts3.Insert(0, comboSizevalue);
+                }
+                comboSize.DataSource = dts3;
+            }
         }
 
         private void comboSize_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (comboSize.SelectedValue == null) return;
+            if (comboSize.SelectedValue.ToString() == comboSizevalue || comboSize.SelectedValue.ToString() == null) return;
+            comboSizevalue = comboSize.SelectedValue.ToString();
             Filter();
+            DataTable temp = (DataTable)listControlBindingSource1.DataSource;
+            comboM.DataSource = null;
+            comboM.Items.Clear();
+            comboColor.DataSource = null;
+            comboColor.Items.Clear();
+            List<string> dts1 = temp.AsEnumerable().Select(row => row["mdivisionid"].ToString()).Distinct().ToList();
+            List<string> dts2 = temp.AsEnumerable().Select(row => row["colorid"].ToString()).Distinct().ToList();
+            if (!dts1.Empty())
+            {
+                dts1.Insert(0, "All");
+                if (comboMvalue != "All")
+                {
+                    dts1.Remove(comboMvalue);
+                    dts1.Insert(0, comboMvalue);
+                }
+                comboM.DataSource = dts1;
+            }
+            if (!dts2.Empty())
+            {
+                dts2.Insert(0, "All");
+                if (comboColorvalue != "All")
+                {
+                    dts2.Remove(comboColorvalue);
+                    dts2.Insert(0, comboColorvalue);
+                }
+                comboColor.DataSource = dts2;
+            }
         }
 
         protected void Filter()
         {
             DataTable ntb=null;
-            string s1 = comboM.Text, s2 = comboColor.Text, s3 = comboSize.Text;
+            //string s1 = comboM.Text, s2 = comboColor.Text, s3 = comboSize.Text;
             //第一趟進來combobox都還未加入item都是""字串
-            if (comboM.Text != "" || comboColor.Text != "" || comboSize.Text != "")
+            if (comboMvalue != "" || comboColorvalue != "" || comboSizevalue != "")
             {
                 IEnumerable<DataRow> query =
                     from o in selectDataTable1.AsEnumerable()
                     where
-                    (comboM.Text != "All"? o.Field<String>("mdivisionid") ==s1:1==1) &&
-                    (comboColor.Text != "All" ? o.Field<String>("colorid") == s2 : 1 == 1) &&
-                    (comboSize.Text != "All" ? o.Field<String>("sizespec") == s3 : 1 == 1)
+                    (comboMvalue != "All" ? o.Field<String>("mdivisionid") == comboMvalue : 1 == 1) &&
+                    (comboColorvalue != "All" ? o.Field<String>("colorid") == comboColorvalue : 1 == 1) &&
+                    (comboSizevalue != "All" ? o.Field<String>("sizespec") == comboSizevalue : 1 == 1)
                     select o;
 
                 int FilterCount = query.ToList<DataRow>().Count;
