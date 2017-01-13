@@ -8,6 +8,11 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Data.SqlClient;
+using Sci.Production.Class.Commons;
+using sxrc = Sci.Utility.Excel.SaveXltReportCls;
+using Sci.Utility.Excel;
+using Sci.Utility.Drawing;
 
 
 namespace Sci.Production.PPIC
@@ -27,8 +32,9 @@ namespace Sci.Production.PPIC
             dataType = Type;
             button31.Visible = dataType == "1"; //Shipment Finished
             button33.Visible = dataType != "1"; //Back to P01. PPIC Master List
+         
         }
-
+     
         protected override void OnDetailDetached()
         {
             base.OnDetailDetached();
@@ -723,9 +729,112 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         //CMPQ Sheet
         private void button13_Click(object sender, EventArgs e)
         {
+            string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", CurrentMaintain["ID"]) });
 
+                System.Data.DataTable rpt3;
+                DualResult res = DBProxy.Current.Select("", @"
+declare @newLine varchar(10) = CHAR(13)+CHAR(10)
+Select IIF(fty.CountryID ='TW', 'STARPORT CORPORATION' , 'SPORTS CITY INTERNATIONAL') as Title
+,'11F, No.585, Ruiguang Rd. Neihu Dist,
+Taipei , Taiwan 11492 ( R.O.C.) 
+Tel: +886 2 8751-0228 Fax: +886 2 8752-4101' as AbbEN --依規格
+,o.ID
+,fty.NameEN as name
+,fty.AddressEN as AddressEN
+,fty.Tel
+,fty.Fax
+,o.CMPQRemark as remark
+,o.SeasonID
+,convert(varchar(10),o.BuyerDelivery,111) as delivery
+,cty.Alias as des
+,par.Description as terms
+,o.StyleID
+,format(o.Qty,'#,0.')+o.StyleUnit as QTY   --Format : 999,999
+,sty.Description as descripition
+,fty.CurrencyID+str( o.CMPPrice,5,2)  +'/'+o.CMPUnit as price
+,o.Qty * o.CPU * r.Rate as amount
+,o.packing ,o.label ,o.packing2
+,Mark=iif(MarkFront<>'','(A) '+@newLine+MarkFront,'')
++@newLine+iif(MarkBack<>'','(B) '+@newLine+MarkBack,'')
++@newLine+iif(MarkLeft<>'','(C) '+@newLine+MarkLeft,'')
++@newLine+iif(MarkRight<>'','(D) '+@newLine+MarkRight,'')
+from Orders o WITH (NOLOCK)  inner join Factory fty WITH (NOLOCK)  ON o.FactoryID = fty.ID
+LEFT join Country cty WITH (NOLOCK)  ON o.Dest = cty.ID
+LEFT JOIN PaytermAR par WITH (NOLOCK)  ON o.PayTermARID = par.ID
+LEFT JOIN Style sty WITH (NOLOCK)  ON o.StyleUkey = sty.Ukey
+OUTER APPLY (SELECT RateCost as pgRate FROM Program pg WHERE pg.BrandID = o.BrandID and pg.ID = o.ProgramID) pgr
+OUTER APPLY (SELECT CpuRate as otRate FROM OrderType ot WHERE ot.BrandID = o.BrandID and ot.ID = o.OrderTypeID) otr
+outer apply (select iif(isnull(pgRate,0) > isnull(otRate,0), pgRate, iif(otRate > 1, otRate, 1)) as Rate) r
+where o.Junk = 0 and o.POID= @POID order by o.ID
+", new List<SqlParameter> { new SqlParameter("@ID", CurrentMaintain["ID"]), new SqlParameter("@POID", poid) }, out rpt3);
+
+                if (!res) return;
+
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_CMPQ.xlt");
+
+                sxrc sxr = new sxrc(xltPath);
+                int idx = 0;
+                sxr.CopySheet.Add(1, rpt3.Rows.Count - 1);
+                sxr.VarToSheetName = sxr._v + "SP";
+
+                foreach (DataRow row in rpt3.Rows)
+                {
+                    string sIdx = (idx == 0) ? "" : idx.ToString();
+                    idx += 1;
+                    string oid = row["ID"].ToString();
+                    sxr.dicDatas.Add(sxr._v + "Title" + sIdx, row["Title"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "AbbEN" + sIdx, row["AbbEN"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "SP" + sIdx, oid);
+                    sxr.dicDatas.Add(sxr._v + "Style" + sIdx, row["StyleID"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "name" + sIdx, row["name"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "addressen" + sIdx, row["AddressEN"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "tel" + sIdx, row["Tel"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "fax" + sIdx, row["Fax"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "remark" + sIdx, row["remark"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "season" + sIdx, row["SeasonID"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "delivery" + sIdx, row["delivery"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "des" + sIdx, row["des"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "terms" + sIdx, row["terms"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "styleno" + sIdx, row["StyleID"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "qty" + sIdx, row["QTY"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "descripition" + sIdx, row["descripition"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "price" + sIdx, row["price"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "amount" + sIdx, row["amount"].ToString());
+
+                    System.Data.DataTable[] dts;
+                    res = DBProxy.Current.SelectSP("", "Order_Report03", new List<SqlParameter> { new SqlParameter("@OrderID", oid), new SqlParameter("@ByType", 0) }, out dts);
+
+                    if (!res) continue;
+                    if (dts.Length < 3) continue;
+
+                    sxrc.xltRptTable tbl1 = new sxrc.xltRptTable(dts[0], 1, 2, true);
+                    sxrc.xltRptTable tbl2 = new sxrc.xltRptTable(dts[1], 1, 3);
+                    sxrc.xltRptTable tbl3 = new sxrc.xltRptTable(dts[2], 1, 0);
+                    SetColumn1toText(tbl1);
+                    SetColumn1toText(tbl2);
+                    SetColumn1toText(tbl3);
+                    sxr.dicDatas.Add(sxr._v + "qtybreakdown" + sIdx, tbl1);
+                    sxr.dicDatas.Add(sxr._v + "fabcom" + sIdx, tbl2);
+                    sxr.dicDatas.Add(sxr._v + "acccom" + sIdx, tbl3);
+
+                    sxr.dicDatas.Add(sxr._v + "shipmark" + sIdx, new sxrc.xltImageString(row["mark"].ToString()));
+                    sxr.dicDatas.Add(sxr._v + "paching" + sIdx, new sxrc.xltImageString(row["packing"].ToString()));
+                    sxr.dicDatas.Add(sxr._v + "labelhantag" + sIdx, new sxrc.xltImageString(row["label"].ToString()));
+                    string UserName;
+                    UserPrg.GetName(Env.User.UserID, out UserName, UserPrg.NameType.idAndNameAndExt);
+                    sxr.dicDatas.Add(sxr._v + "userid" + sIdx, UserName);
+
+                }
+
+                sxr.Save();
+            }
+        void SetColumn1toText(sxrc.xltRptTable tbl)
+        {
+            sxrc.xlsColumnInfo c1 = new sxrc.xlsColumnInfo(1);
+            c1.NumberFormate = "@";
+            tbl.lisColumnInfo.Add(c1);
         }
-
+      
         //Artwork
         private void button14_Click(object sender, EventArgs e)
         {
