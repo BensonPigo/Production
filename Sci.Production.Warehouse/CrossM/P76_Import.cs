@@ -108,7 +108,7 @@ namespace Sci.Production.Warehouse
                 // 建立可以符合回傳的Cursor
                 #region -- Sql Command --
                 strSQLCmd.Append(string.Format(@"
-select 0 as selected,'' id,d.ToMDivisionID MDivisionID,d.ToPOID poid,d.ToSeq1 seq1,d.ToSeq2 seq2, left(d.toseq1+'   ',3)+d.toseq2 as seq
+select 0 as selected,'' id,d.ToMDivisionID MDivisionID,d.ToPOID poid,d.ToSeq1 seq1,d.ToSeq2 seq2, concat(Ltrim(Rtrim(d.toseq1)), ' ', d.toseq2) as seq
     , d2.Roll roll,d2.Dyelot dyelot,d2.Qty,'B' stocktype 
     , dbo.getMtlDesc(d.ToPOID,d.ToSeq1,d.ToSeq2,2,0) [description]
     , (select stockunit from dbo.po_supp_detail where id = d.topoid and seq1 = d.toseq1 and seq2 = d.toseq2) stockunit
