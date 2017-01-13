@@ -27,7 +27,7 @@ namespace Sci.Production.PPIC
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory", out factory);
             MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
             comboBox1.Text = Sci.Env.User.Keyword;
-            comboBox2.SelectedIndex = -1;
+            comboBox2.Text = Sci.Env.User.Factory;
             numericUpDown1.Value = MyUtility.Convert.GetInt(DateTime.Today.ToString("yyyy"));
             numericUpDown2.Value = MyUtility.Convert.GetInt(DateTime.Today.ToString("MM"));
 
