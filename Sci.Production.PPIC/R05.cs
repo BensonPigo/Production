@@ -28,7 +28,7 @@ namespace Sci.Production.PPIC
             comboBox2.Text = Sci.Env.User.Keyword;
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory", out factory);
             MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
-            comboBox3.SelectedIndex = -1;
+            comboBox3.Text = Sci.Env.User.Factory;
         }
 
         // 驗證輸入條件
