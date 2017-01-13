@@ -44,12 +44,12 @@
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.editBox1 = new Sci.Win.UI.EditBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.button1 = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BorrowItemBS)).BeginInit();
             this.panel1.SuspendLayout();
@@ -64,7 +64,7 @@
             this.btn_Cancel.Location = new System.Drawing.Point(912, 15);
             this.btn_Cancel.Name = "btn_Cancel";
             this.btn_Cancel.Size = new System.Drawing.Size(90, 30);
-            this.btn_Cancel.TabIndex = 3;
+            this.btn_Cancel.TabIndex = 1;
             this.btn_Cancel.Text = "Cancel";
             this.btn_Cancel.UseVisualStyleBackColor = true;
             this.btn_Cancel.Click += new System.EventHandler(this.button3_Click);
@@ -76,7 +76,7 @@
             this.btn_Import.Location = new System.Drawing.Point(816, 15);
             this.btn_Import.Name = "btn_Import";
             this.btn_Import.Size = new System.Drawing.Size(90, 30);
-            this.btn_Import.TabIndex = 2;
+            this.btn_Import.TabIndex = 0;
             this.btn_Import.Text = "Import";
             this.btn_Import.UseVisualStyleBackColor = true;
             this.btn_Import.Click += new System.EventHandler(this.btn_Import_Click);
@@ -94,6 +94,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtSeq1);
             this.panel1.Controls.Add(this.displayBoxColor);
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.displayBoxRefno);
@@ -104,7 +105,6 @@
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.editBox1);
-            this.panel1.Controls.Add(this.textBox2);
             this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.button1);
@@ -208,16 +208,6 @@
             this.editBox1.Size = new System.Drawing.Size(525, 56);
             this.editBox1.TabIndex = 17;
             // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(235, 11);
-            this.textBox2.MaxLength = 5;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(61, 23);
-            this.textBox2.TabIndex = 1;
-            // 
             // textBox1
             // 
             this.textBox1.BackColor = System.Drawing.Color.White;
@@ -281,6 +271,16 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
+            // txtSeq1
+            // 
+            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq1.Location = new System.Drawing.Point(236, 11);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 1;
+            // 
             // P74_Import
             // 
             this.ClientSize = new System.Drawing.Size(1008, 601);
@@ -319,8 +319,8 @@
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.EditBox editBox1;
-        private Win.UI.TextBox textBox2;
         private Win.UI.TextBox textBox1;
         private Win.UI.Label label1;
+        private Class.txtSeq txtSeq1;
     }
 }

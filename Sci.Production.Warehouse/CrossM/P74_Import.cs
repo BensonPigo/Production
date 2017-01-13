@@ -30,17 +30,15 @@ namespace Sci.Production.Warehouse
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.textBox1.Text.TrimEnd();
-            String seq = this.textBox2.Text.Trim();
             String fromSP = this.textBox3.Text.TrimEnd();
-            if (seq.Length!=5)
+            if (txtSeq1.checkEmpty())
             {
-                MyUtility.Msg.WarningBox("Seq need enter 00 00");
                 return;
             }
-            string seq1 = seq.Substring(0, 2).Trim();
-            string seq2 = seq.Substring(3, 2).Trim();
+            string seq1 = txtSeq1.seq1;
+            string seq2 = txtSeq1.seq2;
 
-            if (string.IsNullOrWhiteSpace(sp) || string.IsNullOrWhiteSpace(seq) || string.IsNullOrWhiteSpace(fromSP))
+            if (string.IsNullOrWhiteSpace(sp) || txtSeq1.checkEmpty(showErrMsg: false) || string.IsNullOrWhiteSpace(fromSP))
             {
                 MyUtility.Msg.WarningBox("< To SP# Seq> <From SP#> can't be empty!!");
                 textBox1.Focus();
@@ -63,7 +61,7 @@ and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
                     , a.id as FromPoId
                     ,a.Seq1 as FromSeq1
                     ,a.Seq2 as FromSeq2
-                    ,left(a.seq1+' ',3)+a.Seq2 as fromseq
+                    ,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as fromseq
                     ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
                     ,a.usedqty as poqty
                     ,iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
@@ -74,7 +72,7 @@ and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
                                 uu.ExtensionUnit), 
                             ff.UsageUnit)) as StockUnit
                     --,a.stockunit
-                    ,left(b.seq1+' ',3)+b.Seq2 as toseq
+                    ,concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) as toseq
                     ,0.00 as Qty
                     ,'B' ToStocktype
                     ,'{4}' as tomdivisionid
