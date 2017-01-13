@@ -81,6 +81,8 @@
             this.gridFir_Laboratory.AllowUserToAddRows = false;
             this.gridFir_Laboratory.AllowUserToDeleteRows = false;
             this.gridFir_Laboratory.AllowUserToResizeRows = false;
+            this.gridFir_Laboratory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridFir_Laboratory.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridFir_Laboratory.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridFir_Laboratory.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -103,6 +105,8 @@
             this.gridFirAir.AllowUserToAddRows = false;
             this.gridFirAir.AllowUserToDeleteRows = false;
             this.gridFirAir.AllowUserToResizeRows = false;
+            this.gridFirAir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridFirAir.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridFirAir.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridFirAir.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;

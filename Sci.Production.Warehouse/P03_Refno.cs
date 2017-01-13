@@ -185,34 +185,7 @@ order by ColorID, SizeSpec ,SewinLine
             if (comboM.SelectedValue == null) return;
             if (comboM.SelectedValue.ToString() == comboMvalue) return;
             comboMvalue = comboM.SelectedValue.ToString();
-            Filter();
-            DataTable temp = (DataTable)listControlBindingSource1.DataSource;
-            comboColor.DataSource = null;
-            comboColor.Items.Clear();
-            comboSize.DataSource = null;
-            comboSize.Items.Clear();
-            List<string> dts2 = temp.AsEnumerable().Select(row => row["colorid"].ToString()).Distinct().ToList();
-            List<string> dts3 = temp.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
-            if (!dts2.Empty())
-            {
-                dts2.Insert(0, "All");
-                if (comboColorvalue != "All")
-                {
-                    dts2.Remove(comboColorvalue);
-                    dts2.Insert(0, comboColorvalue);
-                }
-                comboColor.DataSource = dts2;             
-            }
-            if (!dts3.Empty())
-            {
-                dts3.Insert(0, "All");
-                if (comboSizevalue != "All")
-                {
-                    dts3.Remove(comboSizevalue);
-                    dts3.Insert(0, comboSizevalue);
-                }
-                comboSize.DataSource = dts3;                
-            }          
+            Filter();       
         }
 
         private void comboColor_SelectedIndexChanged(object sender, EventArgs e)
@@ -221,33 +194,6 @@ order by ColorID, SizeSpec ,SewinLine
             if (comboColor.SelectedValue.ToString() == comboColorvalue || comboColor.SelectedValue.ToString() == null) return;
             comboColorvalue = comboColor.SelectedValue.ToString();
             Filter();
-            DataTable temp = (DataTable)listControlBindingSource1.DataSource;
-            comboM.DataSource = null;
-            comboM.Items.Clear();
-            comboSize.DataSource = null;
-            comboSize.Items.Clear();
-            List<string> dts1 = temp.AsEnumerable().Select(row => row["mdivisionid"].ToString()).Distinct().ToList();
-            List<string> dts3 = temp.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
-            if (!dts1.Empty())
-            {
-                dts1.Insert(0, "All");
-                if (comboMvalue != "All")
-                {
-                    dts1.Remove(comboMvalue);
-                    dts1.Insert(0, comboMvalue);
-                }
-                comboM.DataSource = dts1;
-            }
-            if (!dts3.Empty())
-            {
-                dts3.Insert(0, "All");
-                if (comboSizevalue != "All")
-                {
-                    dts3.Remove(comboSizevalue);
-                    dts3.Insert(0, comboSizevalue);
-                }
-                comboSize.DataSource = dts3;
-            }
         }
 
         private void comboSize_SelectedIndexChanged(object sender, EventArgs e)
@@ -256,33 +202,6 @@ order by ColorID, SizeSpec ,SewinLine
             if (comboSize.SelectedValue.ToString() == comboSizevalue || comboSize.SelectedValue.ToString() == null) return;
             comboSizevalue = comboSize.SelectedValue.ToString();
             Filter();
-            DataTable temp = (DataTable)listControlBindingSource1.DataSource;
-            comboM.DataSource = null;
-            comboM.Items.Clear();
-            comboColor.DataSource = null;
-            comboColor.Items.Clear();
-            List<string> dts1 = temp.AsEnumerable().Select(row => row["mdivisionid"].ToString()).Distinct().ToList();
-            List<string> dts2 = temp.AsEnumerable().Select(row => row["colorid"].ToString()).Distinct().ToList();
-            if (!dts1.Empty())
-            {
-                dts1.Insert(0, "All");
-                if (comboMvalue != "All")
-                {
-                    dts1.Remove(comboMvalue);
-                    dts1.Insert(0, comboMvalue);
-                }
-                comboM.DataSource = dts1;
-            }
-            if (!dts2.Empty())
-            {
-                dts2.Insert(0, "All");
-                if (comboColorvalue != "All")
-                {
-                    dts2.Remove(comboColorvalue);
-                    dts2.Insert(0, comboColorvalue);
-                }
-                comboColor.DataSource = dts2;
-            }
         }
 
         protected void Filter()
@@ -310,6 +229,46 @@ order by ColorID, SizeSpec ,SewinLine
                 listControlBindingSource1.DataSource = selectDataTable1;
             }
 
+            DataTable temp = (DataTable)listControlBindingSource1.DataSource;
+            comboM.DataSource = null;
+            comboM.Items.Clear();
+            comboColor.DataSource = null;
+            comboColor.Items.Clear();
+            comboSize.DataSource = null;
+            comboSize.Items.Clear();
+            List<string> dts1 = temp.AsEnumerable().Select(row => row["mdivisionid"].ToString()).Distinct().ToList();
+            List<string> dts2 = temp.AsEnumerable().Select(row => row["colorid"].ToString()).Distinct().ToList();
+            List<string> dts3 = temp.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
+            if (!dts1.Empty())
+            {
+                dts1.Insert(0, "All");
+                if (comboMvalue != "All")
+                {
+                    dts1.Remove(comboMvalue);
+                    dts1.Insert(0, comboMvalue);
+                }
+                comboM.DataSource = dts1;
+            }
+            if (!dts2.Empty())
+            {
+                dts2.Insert(0, "All");
+                if (comboColorvalue != "All")
+                {
+                    dts2.Remove(comboColorvalue);
+                    dts2.Insert(0, comboColorvalue);
+                }
+                comboColor.DataSource = dts2;
+            }
+            if (!dts3.Empty())
+            {
+                dts3.Insert(0, "All");
+                if (comboSizevalue != "All")
+                {
+                    dts3.Remove(comboSizevalue);
+                    dts3.Insert(0, comboSizevalue);
+                }
+                comboSize.DataSource = dts3;
+            }
         }
     }
 }
