@@ -41,7 +41,6 @@
             this.textSeq2.Name = "textSeq2";
             this.textSeq2.Size = new System.Drawing.Size(24, 22);
             this.textSeq2.TabIndex = 3;
-            this.textSeq2.Validating += new System.ComponentModel.CancelEventHandler(this.textSeq2_Validating);
             // 
             // label1
             // 
@@ -60,7 +59,6 @@
             this.textSeq1.Name = "textSeq1";
             this.textSeq1.Size = new System.Drawing.Size(32, 22);
             this.textSeq1.TabIndex = 1;
-            this.textSeq1.Validating += new System.ComponentModel.CancelEventHandler(this.textSeq1_Validating);
             // 
             // txtSeq
             // 
@@ -71,6 +69,7 @@
             this.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.Name = "txtSeq";
             this.Size = new System.Drawing.Size(61, 23);
+            this.Leave += new System.EventHandler(this.txtSeq_Leave);
             this.ResumeLayout(false);
             this.PerformLayout();
 
