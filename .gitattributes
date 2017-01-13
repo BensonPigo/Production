@@ -3462,6 +3462,7 @@ XLT/Logistic_P06.xltx -text
 XLT/Logistic_R01_CartonStatusReport.xltx -text
 XLT/Logistic_R02_ClogAuditList.xltx -text
 XLT/PPIC_P01_BatchShipmentFinished.xltx -text
+XLT/PPIC_P01_CMPQ.xlt -text
 XLT/PPIC_P01_StdGSDList.xltx -text
 XLT/PPIC_P02.xltx -text
 XLT/PPIC_P04_Print.xltx -text
@@ -3495,6 +3496,8 @@ XLT/Planning_R01.xltx -text
 XLT/Planning_R02.xltx -text
 XLT/Planning_R02_Detail.xltx -text
 XLT/Planning_R03_LocalQuotationList.xltx -text
+XLT/Planning_R10_01.xlt -text
+XLT/Planning_R10_02.xlt -text
 XLT/Planning_R11.xltx -text
 XLT/Planning_R12.Matrix.xltx -text
 XLT/Planning_R15_WIP.xltx -text
