@@ -33,7 +33,6 @@ namespace Sci.Production.Warehouse
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.textBox1.Text.TrimEnd();
-            String seq = this.textBox2.Text.TrimEnd();
             String refno = this.textBox5.Text.TrimEnd();
             String locationid = this.textBox6.Text.TrimEnd();
             String dyelot = this.textBox7.Text.TrimEnd();
@@ -52,7 +51,7 @@ namespace Sci.Production.Warehouse
                     else
                     {
                         // 建立可以符合回傳的Cursor
-                        strSQLCmd.Append(string.Format(@"select distinct 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq
+                        strSQLCmd.Append(string.Format(@"select distinct 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey ftyinventoryukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
 ,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where ukey = a.ukey) t for xml path('')), 1, 1, '') fromlocation
@@ -65,9 +64,9 @@ from dbo.FtyInventory a
     left join dbo.PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0
 and a.poid='{0}'", sp, dr_master["stocktype"].ToString())); // 
-                        if (!MyUtility.Check.Empty(seq))
+                        if (!txtSeq1.checkEmpty(showErrMsg: false))
                         {
-                            strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'", seq.Substring(0, 3), seq.Substring(3, 2)));
+                            strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'", txtSeq1.seq1, txtSeq1.seq2));
                         }
                         if (!MyUtility.Check.Empty(refno))
                         {
@@ -91,7 +90,7 @@ and a.poid='{0}'", sp, dr_master["stocktype"].ToString())); //
                         textBox4.Focus();
                         return;
                     }
-                    strSQLCmd.Append(string.Format(@"select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+                    strSQLCmd.Append(string.Format(@"select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
 ,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation
@@ -104,7 +103,7 @@ from dbo.Receiving r1
 where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
 and r1.id = '{0}'
 union all
-select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
 ,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation
@@ -117,7 +116,7 @@ from dbo.SubTransfer r1
 where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
 and r1.id = '{0}'
 union all
-select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
 ,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation, '' id
@@ -129,7 +128,7 @@ from dbo.Issue r1
 where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
 and r1.id = '{0}'
 union all
-select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
 ,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation, '' id
@@ -141,7 +140,7 @@ from dbo.ReturnReceipt r1
 where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
 and r1.id = '{0}'
 union
-select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,left(a.seq1+' ',3)+a.Seq2 as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
 ,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation, '' id
@@ -300,11 +299,10 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString())); //
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
             string sp = textBox1.Text.TrimEnd();
-            string seq = textBox2.Text.PadRight(5, ' ');
 
             if (MyUtility.Check.Empty(sp)) return;
 
-            if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
+            if (txtSeq1.checkEmpty(showErrMsg: false))
             {
                 if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail where id ='{0}')"
                     , sp), null))
@@ -317,7 +315,7 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString())); //
             else
             {
                 if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail where id ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}')", sp, seq.Substring(0, 3), seq.Substring(3, 2)), null))
+                        and seq1 = '{1}' and seq2 = '{2}')", sp, txtSeq1.seq1, txtSeq1.seq2), null))
                 {
                     MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                     e.Cancel = true;
@@ -326,23 +324,7 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString())); //
             }
 
         }
-
-        private void textBox2_Validating(object sender, CancelEventArgs e)
-        {
-            string sp = textBox1.Text.TrimEnd();
-            if (MyUtility.Check.Empty(sp) || MyUtility.Check.Empty(textBox2.Text.TrimEnd())) return;
-            string seq = textBox2.Text.PadRight(5, ' ');
-
-            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail where id ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}')", sp, seq.Substring(0, 3), seq.Substring(3, 2)), null))
-            {
-                MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-                e.Cancel = true;
-                return;
-            }
-
-        }
-
+        
         private void textBox3_MouseDown(object sender, MouseEventArgs e)
         {
             Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("B", "");
@@ -358,7 +340,7 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString())); //
             {
                 case "1":
                     textBox1.ReadOnly = false;
-                    textBox2.ReadOnly = false;
+                    txtSeq1.txtSeq_ReadOnly(false);
                     textBox5.ReadOnly = false;
                     textBox6.ReadOnly = false;
                     textBox7.ReadOnly = false;
@@ -367,12 +349,13 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString())); //
                     break;
                 case "2":
                     textBox1.ReadOnly = true;
-                    textBox2.ReadOnly = true;
+                    txtSeq1.txtSeq_ReadOnly(true);
                     textBox5.ReadOnly = true;
                     textBox6.ReadOnly = true;
                     textBox7.ReadOnly = true;
                     textBox1.Text = "";
-                    textBox2.Text = "";
+                    txtSeq1.seq1 = "";
+                    txtSeq1.seq2 = "";
                     textBox5.Text = "";
                     textBox6.Text = "";
                     textBox7.Text = "";

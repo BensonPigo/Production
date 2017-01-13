@@ -46,12 +46,12 @@
             this.label1 = new Sci.Win.UI.Label();
             this.textBox6 = new Sci.Win.UI.TextBox();
             this.textBox4 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox5 = new Sci.Win.UI.TextBox();
             this.label3 = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.radioPanel1.SuspendLayout();
@@ -156,6 +156,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtSeq1);
             this.groupBox1.Controls.Add(this.textBox7);
             this.groupBox1.Controls.Add(this.radioPanel1);
             this.groupBox1.Controls.Add(this.button1);
@@ -164,7 +165,6 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.textBox6);
             this.groupBox1.Controls.Add(this.textBox4);
-            this.groupBox1.Controls.Add(this.textBox2);
             this.groupBox1.Controls.Add(this.textBox5);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -260,17 +260,6 @@
             this.textBox4.Size = new System.Drawing.Size(122, 23);
             this.textBox4.TabIndex = 5;
             // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.IsSupportEditMode = false;
-            this.textBox2.Location = new System.Drawing.Point(266, 29);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(61, 23);
-            this.textBox2.TabIndex = 1;
-            this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
-            // 
             // textBox5
             // 
             this.textBox5.BackColor = System.Drawing.Color.White;
@@ -323,6 +312,16 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
+            // txtSeq1
+            // 
+            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq1.Location = new System.Drawing.Point(267, 29);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 10;
+            // 
             // P26_Import
             // 
             this.ClientSize = new System.Drawing.Size(1008, 530);
@@ -356,7 +355,6 @@
         private Win.UI.Panel panel1;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.TextBox textBox2;
         private Win.UI.Label label2;
         private Win.UI.Button button4;
         private Win.UI.TextBox textBox3;
@@ -370,5 +368,6 @@
         private Win.UI.RadioButton radioButton2;
         private Win.UI.RadioButton radioButton1;
         private Win.UI.RadioPanel radioPanel1;
+        private Class.txtSeq txtSeq1;
     }
 }
