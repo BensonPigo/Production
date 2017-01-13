@@ -115,7 +115,7 @@ select distinct rtrim(POID) frompoid,rtrim(Seq1) FromSeq1,rtrim(Seq2) FromSeq2,Q
 	from dbo.RequestCrossM_receive RCM
 	where RCM.id='{0}' and RCM.MDivisionID = '{1}'    
 )
-select distinct 0 as selected,'' as id,fi.Ukey FtyInventoryUkey,0.00 as qty,fi.MDivisionID,fi.POID,rtrim(fi.seq1) seq1,fi.seq2,left(fi.seq1+' ',3)+fi.Seq2 as seq,dbo.getmtldesc(fi.poid,fi.seq1,fi.seq2,2,0) as [description],p1.stockunit
+select distinct 0 as selected,'' as id,fi.Ukey FtyInventoryUkey,0.00 as qty,fi.MDivisionID,fi.POID,rtrim(fi.seq1) seq1,fi.seq2,concat(Ltrim(Rtrim(fi.seq1)), ' ', fi.Seq2) as seq,dbo.getmtldesc(fi.poid,fi.seq1,fi.seq2,2,0) as [description],p1.stockunit
 	,fi.Roll,fi.Dyelot,fi.StockType,fi.InQty - fi.OutQty+fi.AdjustQty balanceqty 
     ,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where ukey = fi.ukey) t for xml path('')), 1, 1, '') [location]
 from cte inner join FtyInventory fi on fi.MDivisionID  =  cte.MDivisionID 
