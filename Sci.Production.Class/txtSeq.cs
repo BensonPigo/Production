@@ -45,5 +45,43 @@ namespace Sci.Production.Class
 
             return MyUtility.Check.Empty(seq1) | MyUtility.Check.Empty(seq2);
         }
+
+        protected override void OnValidating(CancelEventArgs e)
+        {
+            base.OnValidating(e);
+        }
+
+        private void textSeq1_Validating(object sender, CancelEventArgs e)
+        {
+            //Seq1 is Empty & Seq2 isn't Empty
+            if (MyUtility.Check.Empty(seq1) & !MyUtility.Check.Empty(seq2))
+            {
+                MyUtility.Msg.WarningBox("When Seq2 isn't Empty, Seq1 can't be Empty", "Seq");
+                e.Cancel = true;
+                textSeq1.Focus();
+                return;
+            }
+        }
+
+        private void textSeq2_Validating(object sender, CancelEventArgs e)
+        {
+            //Seq1 is Empty & Seq2 isn't Empty
+            if (MyUtility.Check.Empty(seq1) & !MyUtility.Check.Empty(seq2))
+            {
+                MyUtility.Msg.WarningBox("When Seq2 isn't Empty, Seq1 can't be Empty", "Seq");
+                e.Cancel = true;
+                textSeq1.Focus();
+                return;
+            }
+
+            //Seq1 isn't Empty & Seq2 is Empty
+            if (!MyUtility.Check.Empty(seq1) & MyUtility.Check.Empty(seq2))
+            {
+                MyUtility.Msg.WarningBox("When Seq1 isn't Empty, Seq2 can't be Empty", "Seq");
+                e.Cancel = true;
+                textSeq2.Focus();
+                return;
+            }
+        }
     }
 }
