@@ -72,7 +72,7 @@ namespace Sci.Production.Warehouse
             }
             strSQLCmd.Append(string.Format(@"  
 0 as selected ,'' id
-,a.POID,a.seq1,a.seq2,left(a.seq1+' ',3)+a.seq2 seq
+,a.POID,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) seq
 ,a.Roll
 ,a.Dyelot
 ,a.StockType
