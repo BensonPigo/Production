@@ -34,10 +34,9 @@ namespace Sci.Production.Warehouse
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.textBox1.Text.TrimEnd();
-            String seq = this.textBox2.Text.TrimEnd();
 
 
-            if (string.IsNullOrWhiteSpace(sp) || string.IsNullOrWhiteSpace(seq))
+            if (string.IsNullOrWhiteSpace(sp) || txtSeq1.checkEmpty(showErrMsg: false))
             {
                 MyUtility.Msg.WarningBox("< Return to SP# & Seq>  can't be empty!!");
                 textBox1.Focus();
@@ -54,7 +53,7 @@ namespace Sci.Production.Warehouse
 ,bd.ToPoid as FromPoId
 ,bd.ToSeq1 as FromSeq1
 ,bd.ToSeq2 as FromSeq2
-,left(bd.ToSeq1+' ',3)+bd.ToSeq2 as fromseq
+,concat(Ltrim(Rtrim(bd.ToSeq1)), ' ', bd.ToSeq2) as fromseq
 ,c.dyelot as FromDyelot
 ,c.roll as FromRoll
 ,c.StockType as FromStocktype
@@ -67,7 +66,7 @@ namespace Sci.Production.Warehouse
 ,bd.FromSeq2 as toseq2
 ,c.roll as toRoll
 ,c.dyelot as toDyelot
-,left(bd.FromSeq1+' ',3)+bd.FromSeq2 as toseq
+,concat(Ltrim(Rtrim(bd.FromSeq1)), ' ', bd.FromSeq2) as toseq
 ,stuff((select ',' + mtllocationid from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, '') as location
 ,dbo.getMtlDesc(bd.topoid,bd.toseq1,bd.toseq2,2,0) as [description]
 ,p.StockUnit
@@ -77,7 +76,7 @@ from dbo.BorrowBack_Detail as bd inner join ftyinventory c
 left join PO_Supp_Detail p on p.ID= bd.ToPoid and p.SEQ1 = bd.ToSeq1 and p.SEQ2 = bd.ToSeq2
 where bd.id='{0}' and bd.FromPoId = '{1}' and bd.FromSeq1 = '{2}' and bd.FromSeq2 = '{3}' 
 and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and c.stocktype !='O'"
-                    , dr_master["BorrowID"], sp, seq.Substring(0, 3), seq.Substring(3, 2))); // 
+                    , dr_master["BorrowID"], sp, txtSeq1.seq1, txtSeq1.seq2)); // 
 
                 this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
@@ -112,7 +111,16 @@ and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and c.stocktype !='O'"
             ts.CellMouseDoubleClick += (s, e) =>
             {
                 this.textBox1.Text = ((DataTable)listControlBindingSource2.DataSource).Rows[e.RowIndex]["FromPoId"].ToString();
-                this.textBox2.Text = ((DataTable)listControlBindingSource2.DataSource).Rows[e.RowIndex]["FromSeq"].ToString();
+                //check Seq Length
+                string[] seq = ((DataTable)listControlBindingSource2.DataSource).Rows[e.RowIndex]["FromSeq"].ToString().Split(new[] { ' ' });
+                if (seq.Length < 2)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!", "Seq");                  
+                    return;
+                }
+                txtSeq1.seq1 = seq[0];
+                txtSeq1.seq2 = seq[1];
+                
                 CheckAndShowInfo(((DataTable)listControlBindingSource2.DataSource).Rows[e.RowIndex]["FromPoId"].ToString()
                     , ((DataTable)listControlBindingSource2.DataSource).Rows[e.RowIndex]["FromSeq1"].ToString()
                     , ((DataTable)listControlBindingSource2.DataSource).Rows[e.RowIndex]["FromSeq2"].ToString());
@@ -147,7 +155,7 @@ as
 	where b.BorrowId='{0}' and b.Status = 'Confirmed'
 	group by bd.ToPoid,bd.ToSeq1,bd.ToSeq2,bd.ToStocktype
 )
-select cte1.FromPoId,cte1.FromSeq1,cte1.FromSeq2,left(cte1.FromSeq1+' ',3)+cte1.FromSeq2 as fromseq,cte1.FromStocktype,cte1.qty
+select cte1.FromPoId,cte1.FromSeq1,cte1.FromSeq2,concat(Ltrim(Rtrim(cte1.FromSeq1)), ' ', cte1.FromSeq2) as fromseq,cte1.FromStocktype,cte1.qty
 ,isnull(cte2.qty,0.00) as returnqty, cte1.qty - isnull(cte2.qty,0.00) as balance 
 from cte1 
 left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 and cte2.ToSeq2 =  cte1.FromSeq2 and cte2.ToStocktype = cte1.FromStocktype;
@@ -293,7 +301,6 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
             string sp = textBox1.Text.TrimEnd();
-            string seq = textBox2.Text.PadRight(5, ' ');
 
             if (MyUtility.Check.Empty(sp))
             {
@@ -305,7 +312,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             }
 
 
-            if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
+            if (txtSeq1.checkEmpty(showErrMsg: false))
             {
                 if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.mdivisionpodetail where poid ='{0}' and mdivisionid='{1}')"
                     , sp, Sci.Env.User.Keyword), null))
@@ -317,7 +324,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             }
             else
             {
-                e.Cancel = CheckAndShowInfo(sp, seq.Substring(0, 3), seq.Substring(3, 2));
+                e.Cancel = CheckAndShowInfo(sp, txtSeq1.seq1, txtSeq1.seq2);
             }
 
         }
@@ -346,10 +353,10 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             }
         }
         //Seq Vaild
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        private void txtSeq1_Leave(object sender, EventArgs e)
         {
             string sp = textBox1.Text.TrimEnd();
-            if (MyUtility.Check.Empty(sp) || MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
+            if (MyUtility.Check.Empty(sp) || txtSeq1.checkEmpty())
             {
                 this.displayBox2.Value = "";
                 this.displayBox3.Value = "";
@@ -357,9 +364,8 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
                 this.editBox1.Text = "";
                 return;
             }
-            string seq = textBox2.Text.PadRight(5, ' ');
 
-            e.Cancel = CheckAndShowInfo(sp, seq.Substring(0, 3), seq.Substring(3, 2));
+            CheckAndShowInfo(sp, txtSeq1.seq1, txtSeq1.seq2);
 
         }
 
@@ -371,7 +377,5 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             if (result == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
         }
-
-
     }
 }
