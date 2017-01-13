@@ -138,6 +138,8 @@ namespace Sci.Production.Class
                     // Parent form 若是非編輯狀態就 return 
                     if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow row1 = grid.GetDataRow(e.RowIndex);
+
                     DataTable subTb;
                     string sql = "select ID,Abb,Name from LocalSupp where  Junk =  0 order by ID";
                     DualResult duR =  DBProxy.Current.Select("Production", sql, out subTb);
@@ -146,7 +148,9 @@ namespace Sci.Production.Class
                         SelectItem sele = new SelectItem(subTb, "ID,Abb,Name", "10,20,30", row[suppid].ToString());
                         DialogResult result = sele.ShowDialog();
                         if (result == DialogResult.Cancel) { return; }
-                        e.EditingControl.Text = sele.GetSelectedString();
+                        //e.EditingControl.Text = sele.GetSelectedString();
+                        row1["Suppid"] = sele.GetSelectedString();
+                        row["abb"] = sele.GetSelecteds()[0]["abb"].ToString();
                     }
 
                 }
