@@ -208,6 +208,7 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivision
         {
             subform.master = CurrentMaintain;
             subform.parentData = this.CurrentDetailData;
+            subform.combo = checkBox1.Checked;
             base.OpenSubDetailPage();
 
         }

@@ -17,6 +17,7 @@ namespace Sci.Production.Warehouse
     {
         Sci.Win.MatrixHelper _matrix;
         String Orderid;
+        public bool combo;
 
         public DataRow master
         {
@@ -68,7 +69,7 @@ namespace Sci.Production.Warehouse
             _matrix.XMap.Name = "sizecode";  // 對應到第三表格的 X 欄位名稱
             _matrix.XOrder = "seq";
             //_matrix.XMap.MapName = "SIZECODE";//ignore
-            _matrix.YMap.Name = "article";  // 對應到第三表格的 Y 欄位名稱
+            _matrix.YMap.Name = "ID";  // 對應到第三表格的 Y 欄位名稱
             //_matrix.YMap.MapName = "SIZEITEM";//ignore
 
             //_matrix.XUniqueKey = "sizecode"; // X 軸不可重複的欄位名稱, 可多重欄位, 用","區隔.
@@ -77,7 +78,8 @@ namespace Sci.Production.Warehouse
             _matrix
                 .SetColDef("qty2", width: Widths.AnsiChars(4))  // 第三表格對應的欄位名稱
                 .AddXColDef("sizecode")                             // X 要顯示的欄位名稱, 可設定多個.
-                .AddYColDef("total", header: "Total", width: Widths.AnsiChars(13))
+                .AddYColDef("ID", header: "OrderID", width: Widths.AnsiChars(16))
+                .AddYColDef("total", header: "Total", width: Widths.AnsiChars(8))               
                 .AddYColDef("article", header: "Article", width: Widths.AnsiChars(8))  // Y 要顯示的欄位名稱, 可設定多個.
                 //.AddYColDef("DESCRIPTION", header: "Description", width: Widths.UnicodeChars(15))
                 ;
@@ -90,14 +92,28 @@ namespace Sci.Production.Warehouse
 
 
             #endregion
-            DBProxy.Current.Select(null, string.Format(@"select '' as Total, article,sizecode,convert(varchar,qty) as qty2 from dbo.Order_Qty where id = '{0}'
+            if (combo)
+            {
+                DBProxy.Current.Select(null, string.Format(@"select '' as Total,o.id, oq.article,oq.sizecode,convert(varchar,oq.qty) as qty2 from dbo.Orders o inner join dbo.Order_Qty oq on o.id=oq.ID where o.POID = '{0}'
                                                         union all 
-                                                        select '' as Total,'TTL' ,sizecode ,convert(varchar,sum(qty)) qty2 from dbo.Order_Qty where id='{0}' 
-                                                        group by sizecode", Orderid), out dtIssueBreakdown);
-            DBProxy.Current.Select(null, string.Format("select * from dbo.Order_SizeCode where id = (select poid from dbo.orders where id='{0}') order by seq", Orderid), out dtX);
-            DBProxy.Current.Select(null, string.Format(@"select sum(qty) Total,article from dbo.Order_Qty where id = '{0}' group by article
+                                                        select '' as Total,'','TTL' ,oq.sizecode ,convert(varchar,sum(oq.Qty)) qty2 from dbo.Orders o inner join dbo.Order_Qty oq on o.id=oq.ID where o.POID = '{0}'
+                                                        group by sizecode", CurrentDetailData["poid"]), out dtIssueBreakdown);
+                DBProxy.Current.Select(null, string.Format("select * from dbo.Order_SizeCode where id = (select poid from dbo.orders where id='{0}') order by seq", CurrentDetailData["poid"]), out dtX);
+                DBProxy.Current.Select(null, string.Format(@"select sum(oq.qty) Total,oq.article,o.ID from dbo.Orders o inner join dbo.Order_Qty oq on o.id=oq.ID where o.POID = '{0}' group by O.ID,Article 
                                                          union all
-                                                         select sum(qty) Total,'TTL' from dbo.Order_qty where id='{0}' ",Orderid), out dtY);
+                                                         select sum(oq.qty) Total,'TTL','' from dbo.Orders o inner join dbo.Order_Qty oq on o.id=oq.ID where o.POID = '{0}'", CurrentDetailData["poid"]), out dtY);
+            }
+            else
+            {
+                DBProxy.Current.Select(null, string.Format(@"select '' as Total,ID, article,sizecode,convert(varchar,qty) as qty2 from dbo.Order_Qty where id = '{0}'
+                                                        union all 
+                                                        select '' as Total,'','TTL' ,sizecode ,convert(varchar,sum(qty)) qty2 from dbo.Order_Qty where id='{0}' 
+                                                        group by sizecode", Orderid), out dtIssueBreakdown);
+                DBProxy.Current.Select(null, string.Format("select * from dbo.Order_SizeCode where id = (select poid from dbo.orders where id='{0}') order by seq", Orderid), out dtX);
+                DBProxy.Current.Select(null, string.Format(@"select sum(qty) Total,'{0}' as ID,article from dbo.Order_Qty where id = '{0}' group by article
+                                                         union all
+                                                         select sum(qty) Total,'','TTL' from dbo.Order_qty where id='{0}' ", Orderid), out dtY);
+            }
             _matrix.Clear();          
             if (!(result = _matrix.Sets(dtIssueBreakdown, dtX, dtY))) return result;  // 如果不是直接由資料庫載入, PR 自行處理資料來源, 再由 matrix.Set() 設定資料.
             ((DataTable)gridbsBreakdown.DataSource).Rows[0].Delete();  
