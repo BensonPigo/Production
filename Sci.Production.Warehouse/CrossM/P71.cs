@@ -309,13 +309,13 @@ namespace Sci.Production.Warehouse
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"select a.id,a.frommdivisionid,a.FromPoId,a.FromSeq1,a.FromSeq2
-,left(a.FromSeq1+' ',3)+a.FromSeq2 as Fromseq
+,concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2) as Fromseq
 ,p1.FabricType
 ,p1.stockunit
 ,dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) as [description]
 ,a.Qty
 ,a.ToMDivisionID
-,a.ToPoid,a.ToSeq1,a.ToSeq2,left(a.ToSeq1+' ',3)+a.ToSeq2 as toseq
+,a.ToPoid,a.ToSeq1,a.ToSeq2,concat(Ltrim(Rtrim(a.ToSeq1)), ' ', a.ToSeq2) as toseq
 ,a.ukey
 from dbo.RequestCrossM_detail a 
 left join PO_Supp_Detail p1 on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
