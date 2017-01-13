@@ -660,7 +660,7 @@ a.id
 ,a.FromPoId
 ,a.FromSeq1
 ,a.FromSeq2
-,left(a.FromSeq1+' ',3)+a.FromSeq2 as FromSeq
+,concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2) as FromSeq
 ,FabricType = Case p1.FabricType WHEN 'F' THEN 'Fabric' WHEN 'A' THEN 'Accessory' ELSE 'Other'  END 
 ,p1.stockunit
 ,dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) as [description]
