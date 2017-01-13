@@ -34,10 +34,9 @@ namespace Sci.Production.Warehouse
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.textBox1.Text.TrimEnd();
-            String seq = this.textBox2.Text.TrimEnd();
             String fromSP = this.textBox3.Text.TrimEnd();
 
-            if (string.IsNullOrWhiteSpace(sp) || string.IsNullOrWhiteSpace(seq) || string.IsNullOrWhiteSpace(fromSP))
+            if (string.IsNullOrWhiteSpace(sp) || txtSeq1.checkEmpty(showErrMsg: false) || string.IsNullOrWhiteSpace(fromSP))
             {
                 MyUtility.Msg.WarningBox("< To SP# Seq> <From SP#> can't be empty!!");
                 textBox1.Focus();
@@ -56,13 +55,13 @@ namespace Sci.Production.Warehouse
 , a.id as FromPoId
 ,a.Seq1 as FromSeq1
 ,a.Seq2 as FromSeq2
-,left(a.seq1+' ',3)+a.Seq2 as fromseq
+,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as fromseq
 ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
 ,a.stockunit
 ,c.StockType as fromstocktype
 ,c.InQty - c.OutQty + c.AdjustQty balance
 ,stuff((select ',' + mtllocationid from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, '') as location
-,left(b.seq1+' ',3)+b.Seq2 as toseq
+,concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) as toseq
 ,c.Roll toroll
 ,c.Dyelot todyelot
 ,0.00 as Qty
@@ -76,7 +75,7 @@ from dbo.PO_Supp_Detail a
 inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 left join dbo.po_supp_detail b on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec and b.ColorID = a.ColorID and b.BrandId = a.BrandId
 Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}' and c.mdivisionid='{4}'
-and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substring(0, 3), seq.Substring(3, 2), Sci.Env.User.Keyword)); // 
+and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, txtSeq1.seq1, txtSeq1.seq2, Sci.Env.User.Keyword)); // 
 
                 this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
@@ -229,13 +228,12 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substri
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
             string sp = textBox1.Text.TrimEnd();
-            string seq = textBox2.Text.PadRight(5, ' ');
 
             DataRow tmp;
 
             if (MyUtility.Check.Empty(sp)) return;
 
-            if (MyUtility.Check.Empty(textBox2.Text.TrimEnd()))
+            if (txtSeq1.checkEmpty(showErrMsg: false))
             {
                 if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail where id ='{0}')"
                     , sp), null))
@@ -248,7 +246,7 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substri
             else
             {
                 if (!MyUtility.Check.Seek(string.Format(@"select sizespec,refno,colorid,dbo.getmtldesc(id,seq1,seq2,2,0) as [description]
-                        from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq.Substring(0, 3), seq.Substring(3, 2)), out tmp, null))
+                        from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, txtSeq1.seq1, txtSeq1.seq2), out tmp, null))
                 {
                     MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                     e.Cancel = true;
@@ -261,30 +259,6 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, seq.Substri
                     this.displayBox4.Value = tmp["colorid"];
                     this.editBox1.Text = tmp["description"].ToString();
                 }
-            }
-
-        }
-        // To Seq# Valid
-        private void textBox2_Validating(object sender, CancelEventArgs e)
-        {
-            DataRow tmp;
-            string sp = textBox1.Text.TrimEnd();
-            if (MyUtility.Check.Empty(sp) || MyUtility.Check.Empty(textBox2.Text.TrimEnd())) return;
-            string seq = textBox2.Text.PadRight(5, ' ');
-
-            if (!MyUtility.Check.Seek(string.Format(@"select sizespec,refno,colorid,dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail where id ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}'", sp, seq.Substring(0, 3), seq.Substring(3, 2)), out tmp, null))
-            {
-                MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-                e.Cancel = true;
-                return;
-            }
-            else
-            {
-                this.displayBox2.Value = tmp["sizespec"];
-                this.displayBox3.Value = tmp["refno"];
-                this.displayBox4.Value = tmp["colorid"];
-                this.editBox1.Text = tmp["description"].ToString();
             }
 
         }

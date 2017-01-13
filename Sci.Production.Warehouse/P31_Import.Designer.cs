@@ -48,10 +48,10 @@
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.editBox1 = new Sci.Win.UI.EditBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -148,6 +148,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtSeq1);
             this.groupBox1.Controls.Add(this.displayBox4);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.displayBox3);
@@ -158,7 +159,6 @@
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.editBox1);
-            this.groupBox1.Controls.Add(this.textBox2);
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Controls.Add(this.label1);
@@ -263,17 +263,6 @@
             this.editBox1.Size = new System.Drawing.Size(525, 56);
             this.editBox1.TabIndex = 3;
             // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(235, 19);
-            this.textBox2.MaxLength = 5;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(61, 23);
-            this.textBox2.TabIndex = 1;
-            this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
-            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.grid1);
@@ -307,6 +296,16 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
+            // txtSeq1
+            // 
+            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq1.Location = new System.Drawing.Point(236, 19);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 13;
+            // 
             // P31_Import
             // 
             this.ClientSize = new System.Drawing.Size(1008, 530);
@@ -338,7 +337,6 @@
         private Win.UI.Panel panel1;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.TextBox textBox2;
         private Win.UI.DisplayBox displayBox1;
         private Win.UI.Label label2;
         private Win.UI.DisplayBox displayBox4;
@@ -351,5 +349,6 @@
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.EditBox editBox1;
+        private Class.txtSeq txtSeq1;
     }
 }
