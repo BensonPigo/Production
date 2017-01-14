@@ -1232,7 +1232,10 @@ namespace Sci.Production.Cutting
             #region 判斷download id
             string downloadid = MyUtility.GetValue.Lookup("MarkerDownLoadid", CurrentDetailData["Order_EachConsUkey"].ToString(), "Order_EachCons", "Ukey");
             displayBox_Downloadid.Text = downloadid;
-            if (downloadid.Trim() != CurrentDetailData["MarkerDownLoadid"].ToString().Trim()) downloadid_Text.Visible = true; 
+            if (downloadid.Trim() != CurrentDetailData["MarkerDownLoadid"].ToString().Trim()) 
+                downloadid_Text.Visible = true; 
+            else
+                downloadid_Text.Visible = false; 
             #endregion
             
             #region 判斷可否開放修改
