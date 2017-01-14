@@ -46,7 +46,7 @@ namespace Sci.Production.Cutting
         private bool isSizeQtyGridCurrentChanging { get { return 0 < _isSizeQtyGridCurrentChanging; } }
         private bool IsSizeQtyAttached { get { return null != _sizeQtyAttached; } }
 
-        public P01_EachConsumption(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, bool cuttingPiece)
+        public P01_EachConsumption(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, bool cuttingPiece, bool switchToWorkorder)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             InitializeComponent();
@@ -61,7 +61,7 @@ namespace Sci.Production.Cutting
             }
 
             bool EditSwitch2Order = Prgs.GetAuthority(Sci.Env.User.UserID, "P01.Cutting Master List", "CanEdit");
-            if (EditSwitch2Order && canedit)
+            if (EditSwitch2Order && switchToWorkorder)
                 button1.Enabled = true;
             else
                 button1.Enabled = false;
