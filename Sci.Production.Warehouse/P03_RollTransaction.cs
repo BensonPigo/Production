@@ -13,6 +13,7 @@ using System.Linq;
 using System.Data.SqlClient;
 using Sci.Win;
 using Sci.Utility.Excel;
+using System.Runtime.InteropServices;
 
 
 
@@ -390,13 +391,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
 
         private void button2_Click(object sender, EventArgs e)
         {
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return;
-            }
+
 
             DataRow row = this.dr;
             string id = row["ID"].ToString();
@@ -407,79 +402,140 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             pars.Add(new SqlParameter("@seq1", seq1));
             pars.Add(new SqlParameter("@seq2", seq2));
             DualResult result;
-            DataTable dt;
-            DBProxy.Current.Select("",
-             @" select a.id [SP]
+            DataTable dtt, dt;
+            string sqlcmd = string.Format(@"select a.id [SP]
                       ,a.SEQ1+'-'+a.SEQ2 [SEQ]
                       ,a.Refno [Ref]
                       ,a.ColorID [Color]
                       ,b.InQty [Arrived_Qty_by_Seq]
                       ,b.OutQty [Released_Qty_by_Seq]
                       ,b.InQty-b.OutQty+b.AdjustQty [Bal_Qty]
-                      ,[Description]=dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0)
-		    from dbo.PO_Supp_Detail a
-		    inner join dbo.MDivisionPoDetail b
-		        on a.id=b.POID and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
-            where a.id=@ID and a.seq1=@seq1 and a.seq2=@seq2", pars, out dt);
-       
-            string SP = dt.Rows[0]["SP"].ToString();
-            string SEQ = dt.Rows[0]["SEQ"].ToString();
-            string Ref = dt.Rows[0]["Ref"].ToString();
-            string Color = dt.Rows[0]["Color"].ToString();
-            string Arrived_Qty_by_Seq = dt.Rows[0]["Arrived_Qty_by_Seq"].ToString();
-            string Released_Qty_by_Seq = dt.Rows[0]["Released_Qty_by_Seq"].ToString();
-            string Bal_Qty = dt.Rows[0]["Bal_Qty"].ToString();
-            string Description = dt.Rows[0]["Description"].ToString();
-            ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SP", SP));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SEQ", SEQ));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Ref", Ref));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Color", Color));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Arrived_Qty_by_Seq", Arrived_Qty_by_Seq));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Released_Qty_by_Seq", Released_Qty_by_Seq));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Bal_Qty", Bal_Qty));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Description", Description));
-
-            
-            DataTable dtt;
-            string sqlcmd = string.Format(@"select c.Roll[Roll]
+                      ,[Description]=dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0) 
+                   from dbo.PO_Supp_Detail a
+		           inner join dbo.MDivisionPoDetail b on a.id=b.POID and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
+                   where a.id=@ID and a.seq1=@seq1 and a.seq2=@seq2");
+            result = DBProxy.Current.Select("", sqlcmd, pars, out dt);
+            if (!result)
+            {
+                ShowErr(result);
+                return;
+            }
+            DBProxy.Current.Select("",
+             @"                                   select c.Roll[Roll]
                                                   ,c.Dyelot [Dyelot]
-                                                  ,c.StockType [Stock_Type]
+                                                  ,Case c.StockType when 'B' THEN 'Bulk' WHEN 'I' THEN 'Inventory' ELSE 'Obsolete' END as [Stock_Type]
                                                   ,c.InQty [Arrived_Qty]
                                                   ,c.OutQty [Released_Qty]
                                                   ,c.AdjustQty [Adjust_Qty]
                                                   ,c.InQty-c.OutQty+c.AdjustQty [Balance]
                                                   ,[Location]=dbo.Getlocation(c.Ukey)
                                            from dbo.FtyInventory c 
-                                           where c.poid=@ID and c.seq1=@seq1 and c.seq2=@seq2");
-            result = DBProxy.Current.Select("", sqlcmd, pars, out dtt);
-            if (!result)
-            {
-                ShowErr(result);
-                return; 
-            }
-            string Roll = dtt.Rows[0]["Roll"].ToString();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Roll", Roll));
+                                           where c.poid=@ID and c.seq1=@seq1 and c.seq2=@seq2", pars, out dtt);
 
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_RollTransaction.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(dtt, "", "Warehouse_P03_RollTransaction.xltx", 6, true, null, objApp);      // 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            objSheets.Cells[3, 2] = MyUtility.Convert.GetString(dt.Rows[0]["SP"].ToString());
+            objSheets.Cells[3, 4] = MyUtility.Convert.GetString(dt.Rows[0]["SEQ"].ToString());
+            objSheets.Cells[3, 6] = MyUtility.Convert.GetString(dt.Rows[0]["REF"].ToString());
+            objSheets.Cells[3, 8] = MyUtility.Convert.GetString(dt.Rows[0]["Color"].ToString());
+            objSheets.Cells[4, 2] = MyUtility.Convert.GetString(dt.Rows[0]["Arrived_Qty_by_Seq"].ToString());
+            objSheets.Cells[4, 4] = MyUtility.Convert.GetString(dt.Rows[0]["Released_Qty_by_Seq"].ToString());
+            objSheets.Cells[4, 6] = MyUtility.Convert.GetString(dt.Rows[0]["Bal_Qty"].ToString());
+            objSheets.Cells[5, 2] = MyUtility.Convert.GetString(dt.Rows[0]["Description"].ToString());
+            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
 
-            string xlt = Sci.Env.Cfg.XltPathDir + @"\\Warehouse_P03_RollTransaction.xltx";
-            SaveXltReportCls xl = new SaveXltReportCls(xlt);
+//            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+//            saveDialog.ShowDialog();
+//            string outpath = saveDialog.FileName;
+//            if (outpath.Empty())
+//            {
+//                return;
+//            }
+
+//            DataRow row = this.dr;
+//            string id = row["ID"].ToString();
+//            string seq1 = row["seq1"].ToString();
+//            string seq2 = row["seq2"].ToString();
+//            List<SqlParameter> pars = new List<SqlParameter>();
+//            pars.Add(new SqlParameter("@ID", id));
+//            pars.Add(new SqlParameter("@seq1", seq1));
+//            pars.Add(new SqlParameter("@seq2", seq2));
+//            DualResult result;
+//            DataTable dt;
+//            DBProxy.Current.Select("",
+//             @" select a.id [SP]
+//                      ,a.SEQ1+'-'+a.SEQ2 [SEQ]
+//                      ,a.Refno [Ref]
+//                      ,a.ColorID [Color]
+//                      ,b.InQty [Arrived_Qty_by_Seq]
+//                      ,b.OutQty [Released_Qty_by_Seq]
+//                      ,b.InQty-b.OutQty+b.AdjustQty [Bal_Qty]
+//                      ,[Description]=dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0)
+//		    from dbo.PO_Supp_Detail a
+//		    inner join dbo.MDivisionPoDetail b
+//		        on a.id=b.POID and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
+//            where a.id=@ID and a.seq1=@seq1 and a.seq2=@seq2", pars, out dt);
+       
+//            string SP = dt.Rows[0]["SP"].ToString();
+//            string SEQ = dt.Rows[0]["SEQ"].ToString();
+//            string Ref = dt.Rows[0]["Ref"].ToString();
+//            string Color = dt.Rows[0]["Color"].ToString();
+//            string Arrived_Qty_by_Seq = dt.Rows[0]["Arrived_Qty_by_Seq"].ToString();
+//            string Released_Qty_by_Seq = dt.Rows[0]["Released_Qty_by_Seq"].ToString();
+//            string Bal_Qty = dt.Rows[0]["Bal_Qty"].ToString();
+//            string Description = dt.Rows[0]["Description"].ToString();
+//            ReportDefinition report = new ReportDefinition();
+//            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SP", SP));
+//            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SEQ", SEQ));
+//            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Ref", Ref));
+//            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Color", Color));
+//            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Arrived_Qty_by_Seq", Arrived_Qty_by_Seq));
+//            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Released_Qty_by_Seq", Released_Qty_by_Seq));
+//            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Bal_Qty", Bal_Qty));
+//            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Description", Description));
+
             
-            xl.dicDatas.Add("##SP",SP );
-            xl.dicDatas.Add("##SEQ",SEQ);
-            xl.dicDatas.Add("##Ref", Ref);
-            xl.dicDatas.Add("##Color", Color);
-            xl.dicDatas.Add("##Arrived_Qty_by_Seq", Arrived_Qty_by_Seq);
-            xl.dicDatas.Add("##Released_Qty_by_Seq", Released_Qty_by_Seq);
-            xl.dicDatas.Add("##Bal_Qty", Bal_Qty);
-            xl.dicDatas.Add("##Description", Description);
-            SaveXltReportCls.xltRptTable xlTable = new SaveXltReportCls.xltRptTable(dtt);
-            int allColumns = dtt.Columns.Count;
-            xlTable.Borders.OnlyHeaderBorders = true;
-            SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(xlTable);
-            xdt_All.ShowHeader = false;
-            xl.dicDatas.Add("##Roll", xdt_All);
-            xl.Save(outpath);
+//            DataTable dtt;
+//            string sqlcmd = string.Format(@"select c.Roll[Roll]
+//                                                  ,c.Dyelot [Dyelot]
+//                                                  ,c.StockType [Stock_Type]
+//                                                  ,c.InQty [Arrived_Qty]
+//                                                  ,c.OutQty [Released_Qty]
+//                                                  ,c.AdjustQty [Adjust_Qty]
+//                                                  ,c.InQty-c.OutQty+c.AdjustQty [Balance]
+//                                                  ,[Location]=dbo.Getlocation(c.Ukey)
+//                                           from dbo.FtyInventory c 
+//                                           where c.poid=@ID and c.seq1=@seq1 and c.seq2=@seq2");
+//            result = DBProxy.Current.Select("", sqlcmd, pars, out dtt);
+//            if (!result)
+//            {
+//                ShowErr(result);
+//                return; 
+//            }
+//            string Roll = dtt.Rows[0]["Roll"].ToString();
+//            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Roll", Roll));
+
+
+//            string xlt = Sci.Env.Cfg.XltPathDir + @"\\Warehouse_P03_RollTransaction.xltx";
+//            SaveXltReportCls xl = new SaveXltReportCls(xlt);
+            
+//            xl.dicDatas.Add("##SP",SP );
+//            xl.dicDatas.Add("##SEQ",SEQ);
+//            xl.dicDatas.Add("##Ref", Ref);
+//            xl.dicDatas.Add("##Color", Color);
+//            xl.dicDatas.Add("##Arrived_Qty_by_Seq", Arrived_Qty_by_Seq);
+//            xl.dicDatas.Add("##Released_Qty_by_Seq", Released_Qty_by_Seq);
+//            xl.dicDatas.Add("##Bal_Qty", Bal_Qty);
+//            xl.dicDatas.Add("##Description", Description);
+//            SaveXltReportCls.xltRptTable xlTable = new SaveXltReportCls.xltRptTable(dtt);
+//            int allColumns = dtt.Columns.Count;
+//            xlTable.Borders.OnlyHeaderBorders = true;
+//            SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(xlTable);
+//            xdt_All.ShowHeader = false;
+//            xl.dicDatas.Add("##Roll", xdt_All);
+//            xl.Save(outpath);
             
             return; 
         }

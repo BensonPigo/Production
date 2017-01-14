@@ -199,6 +199,7 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivision
             #region 可編輯欄位變色
 
             detailgrid.Columns[1].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
 
             #endregion 可編輯欄位變色
