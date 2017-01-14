@@ -28,7 +28,7 @@ namespace Sci.Production.Sewing
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory", out factory);
             MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
             comboBox1.Text = Sci.Env.User.Keyword;
-            comboBox2.SelectedIndex = 0;
+            comboBox2.Text = Sci.Env.User.Factory;
             txtdropdownlist1.SelectedIndex = 0;
         }
 
