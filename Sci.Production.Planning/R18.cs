@@ -40,7 +40,7 @@ namespace Sci.Production.Planning
         {
             if (MyUtility.Check.Empty(dateRange1.Value1))
             {
-                MyUtility.Msg.WarningBox(" < Sewing Date > can't be empty!!");
+                MyUtility.Msg.ErrorBox(" < Sewing Date > can't be empty!!");
                 return false;
             }
 
@@ -53,22 +53,22 @@ namespace Sci.Production.Planning
             selectindex = cbbArtworkType.SelectedIndex;
 
             DualResult result;
-            if (!(result = DBProxy.Current.Select("", string.Format(@"with expend_date as 
-(select cast('{0}' as date) workdate,cast('{1}' as date) endDate ,CONVERT(char(10), '{0}', 111) workdateStr
-union all
-select dateadd(day,1,workdate),endDate , CONVERT(CHAR(10),dateadd(day,1,workdate),111) from expend_date 
-where dateadd(day,1,workdate) <= endDate
-)
-select * from expend_date option (maxrecursion 365)",
-                Convert.ToDateTime(sewingDate1).ToString("d"), Convert.ToDateTime(sewingDate2).ToString("d")), out dtDateList)))
+            string sql = string.Format(@"with expend_date as 
+                (select cast('{0}' as date) workdate,cast('{1}' as date) endDate ,CONVERT(char(10), '{0}', 111) workdateStr
+                union all
+                select dateadd(day,1,workdate),endDate , CONVERT(CHAR(10),dateadd(day,1,workdate),111) from expend_date 
+                where dateadd(day,1,workdate) <= endDate)
+                select * from expend_date option (maxrecursion 365)",
+                Convert.ToDateTime(sewingDate1).ToString("d"), Convert.ToDateTime(sewingDate2).ToString("d"));
+            if (!(result = DBProxy.Current.Select("", sql , out dtDateList)))
             {
-                MyUtility.Msg.WarningBox(result.ToString());
+                MyUtility.Msg.ErrorBox("Sewing date can not more than 365 days !!");
                 return false;
             }
 
             if (dtDateList.Rows.Count == 0)
             {
-                MyUtility.Msg.WarningBox("Artwork Type data not found, Please inform MIS to check !");
+                MyUtility.Msg.ErrorBox("Artwork Type data not found, Please inform MIS to check !");
                 return false;
             }
 
@@ -233,19 +233,19 @@ pivot
 
             if (printData.Rows.Count <= 0)
             {
-                MyUtility.Msg.WarningBox("Data not found!");
+                MyUtility.Msg.InfoBox("Data not found!");
                 return false;
             }
 
             if (printData.Columns.Count > 16384)
             {
-                MyUtility.Msg.WarningBox("Columns of Data is over 16,384 in excel file, please narrow down range of condition.");
+                MyUtility.Msg.ErrorBox("Columns of Data is over 16,384 in excel file, please narrow down range of condition.");
                 return false;
             }
 
             if (printData.Rows.Count + 6 > 1048576)
             {
-                MyUtility.Msg.WarningBox("Lines of Data is over 1,048,576 in excel file, please narrow down range of condition.");
+                MyUtility.Msg.ErrorBox("Lines of Data is over 1,048,576 in excel file, please narrow down range of condition.");
                 return false;
             }
 
