@@ -47,6 +47,7 @@ namespace Sci.Production.Sewing
             //delete.Visible = false;
             prev.Visible = false;
             next.Visible = false;
+            this.grid.AutoResizeColumns();
         }
 
         protected override void OnAttached()
