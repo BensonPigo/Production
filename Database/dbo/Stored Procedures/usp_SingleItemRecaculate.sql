@@ -19,7 +19,7 @@ BEGIN
 				BEGIN TRANSACTION
 
 				-- 沒有MDivisionPoDetail資料，先新增一筆。 (才有ukey寫入至 FtyInventory) 
-				IF @Ukey is null
+				IF @Ukey is null or @Ukey = ''
 				BEGIN
 					DECLARE @NewUkey as Table(ukey bigint not null);
 					INSERT INTO MDivisionPoDetail (MDivisionID,POID,Seq1,Seq2)
