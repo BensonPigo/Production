@@ -884,9 +884,15 @@ BEGIN
 
 	if(@WorkType=1)
 	Begin
+		Insert into #NewWorkOrder_Distribute(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)							
+		select ID,OrderID,Article,SizeCode,sum(Qty),NewKey,WorkOrderUkey
+		from #NewWorkOrder_Distributetmp
+		group by ID,OrderID,Article,SizeCode,NewKey,WorkOrderUkey
+
 		Insert into #NewWorkOrder_SizeRatio(ID,SizeCode,Qty,newKey,WorkOrderUkey)
 		select ID,SizeCode,sum(Qty),newKey,WorkOrderUkey
 		from #NewWorkOrder_SizeRatiotmp
+
 		group by ID,SizeCode,newKey,WorkOrderUkey
 		Insert into #NewWorkOrder_PatternPanel(ID,PatternPanel,LectraCode,newKey,WorkOrderUkey)							
 		select distinct ID,PatternPanel,LectraCode,newKey,WorkOrderUkey
