@@ -136,7 +136,9 @@ where 1=1");
             }
 
             sqlCmd.Append(@")
-select MDivisionID,FactoryID,FtyType,FtyCountry,OutputDate,SewingLineID,
+select MDivisionID,FactoryID
+,iif(FtyType='B','Bulk',iif(FtyType='S','Sample',FtyType)) FtyType
+,FtyCountry,OutputDate,SewingLineID,
 IIF(LastShift='D','Day',IIF(LastShift='N','Night',IIF(LastShift='O','Subcon-Out','Subcon-In'))) as Shift,
 Team,OrderId,IIF(Category='M',MockupBrandID,OrderBrandID) as Brand,
 IIF(Category='M','Mockup',IIF(LocalOrder = 1,'Local Order',IIF(OrderCategory='B','Bulk',IIF(OrderCategory='S','Sample','')))) as Category,
