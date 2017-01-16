@@ -42,7 +42,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select ID, Cpu, Description from CDCode where Junk = 0 order by ID", "7,6,45", this.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select ID, convert(nvarchar(5),Cpu) Cpu, Description from CDCode where Junk = 0 order by ID", "7,6,45", this.Text);
 
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
