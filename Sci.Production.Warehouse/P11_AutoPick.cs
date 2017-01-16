@@ -412,6 +412,7 @@ delete from #tmp2 where qty = 0;
             {              
                 var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
+                if (Convert.ToDecimal(e.FormattedValue) == Convert.ToDecimal(dr["qty"])) return;
                 dr["qty"] = e.FormattedValue;
                 if (Convert.ToDecimal(dr["qty"]) > 0 && Convert.ToDecimal(dr["Balanceqty"]) >= Convert.ToDecimal(dr["qty"])) dr["Selected"] = 1;
                 else dr["Selected"] = 0;
