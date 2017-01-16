@@ -734,6 +734,7 @@
             // numericBox7
             // 
             this.numericBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox7.DecimalPlaces = 2;
             this.numericBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox7.IsSupportEditMode = false;
             this.numericBox7.Location = new System.Drawing.Point(172, 376);
@@ -777,6 +778,7 @@
             // numericBox9
             // 
             this.numericBox9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox9.DecimalPlaces = 2;
             this.numericBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox9.IsSupportEditMode = false;
             this.numericBox9.Location = new System.Drawing.Point(319, 376);
@@ -820,6 +822,7 @@
             // numericBox11
             // 
             this.numericBox11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox11.DecimalPlaces = 2;
             this.numericBox11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox11.IsSupportEditMode = false;
             this.numericBox11.Location = new System.Drawing.Point(467, 376);
