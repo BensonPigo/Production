@@ -31,7 +31,7 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
 
             this.CurrentDataRow = row;
-            print.Enabled = false;
+            print.Visible = false;
             
             // TODO: Complete member initialization
         }
