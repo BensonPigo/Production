@@ -96,12 +96,14 @@ select ID,Shipper, InvSerial ,InvDate,BrandID,CustCDID,Dest, ShipModeID, ShipTer
 , ShipPlanID, CYCFS, AddName, AddDate , EditName , EditDate, DataFrom,HCID
 from #tmpFtyBooking1
 union all
-select ID,Shupper as Shipper,'' as InvSerial ,InvDate,BrandID,'' as CustCDID,Dest,''as ShipModeID,''as ShipTermID,'' as PayTermARID,'' as Forwarder
-,FCRDate
-,'' as Vessel,'' as CutOffDate , ETD ,'' as ETA , '' as SONo , '' as SOCFMDate ,''as ForwarderWhse_DetailUKey , '' as Remark ,TotalShipQty,'' as TotalCTNQty
+select ID,Shupper as Shipper,
+'' as InvSerial ,InvDate,BrandID,
+null as CustCDID,Dest,''as ShipModeID,''as ShipTermID,'' as PayTermARID,'' as Forwarder
+,FCRDate,'' as Vessel,null as CutOffDate , ETD ,null as ETA ,
+ '' as SONo ,  null as SOCFMDate ,''as ForwarderWhse_DetailUKey , '' as Remark ,TotalShipQty,'' as TotalCTNQty
 ,0.00 as TotalNW , 0.00 as TotalGW , 0.00 as TotalNNW , 0.00 as TotalCBM
-, Status,'' as Handle,'' as Description , '' as SendToTPE
-,'' as ShipPlanID,'' as CYCFS,'' as AddName,'' as AddDate ,''as EditName ,''as EditDate, DataFrom,HCID
+, Status,'' as Handle,'' as Description , null as SendToTPE
+,'' as ShipPlanID,'' as CYCFS,'' as AddName,null as AddDate ,''as EditName ,null as EditDate, DataFrom,HCID
 from #tmpFtyBooking2
 ) a 
 
