@@ -18,8 +18,8 @@ namespace Sci.Production.Class
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WHERE Junk=0  ORDER BY Id";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,50,50", this.Text, false, ",");
-
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,29,35", this.Text, false, ",");
+            item.Size = new System.Drawing.Size(777, 666);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
