@@ -110,7 +110,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(94, 23);
             this.label4.TabIndex = 102;
-            this.label4.Text = "Pattern Panel";
+            this.label4.Text = "LectraCode";
             // 
             // label5
             // 

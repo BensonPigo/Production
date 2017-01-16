@@ -33,7 +33,7 @@ namespace Sci.Production.Cutting
             displayBox5.Text = CurrentDetailData["MarkerName"].ToString();
             displayBox6.Text = CurrentDetailData["MarkerLength"].ToString();
             displayBox7.Text = CurrentDetailData["FabricCombo"].ToString();
-            displayBox8.Text = CurrentDetailData["PatternPanel"].ToString();
+            displayBox8.Text = CurrentDetailData["LectraCode"].ToString();
         }
         protected override void ToNext()
         {
