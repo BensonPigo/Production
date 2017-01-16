@@ -613,7 +613,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         {
             string sqlCmd = "select ID,SeasonID,BrandID,Description,CPU,Ukey from Style where Junk = 0 order by ID,SeasonID";
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,8,10,40,5,6", textBox7.Text, "Style#,Season,Brand,Description,CPU,Key");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,8,10,40,5,6", textBox7.Text, "Style#,Season,Brand,Description,CPU,Key", columndecimals:"0,0,0,0,3,0");
             item.Width = 838;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
