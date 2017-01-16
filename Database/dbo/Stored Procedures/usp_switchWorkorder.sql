@@ -19,8 +19,7 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-
-
+	
 	--將Cutting 填入WorkType
 	update cutting set WorkType =@WorkType where id = @Cuttingid
     -- Insert statements for procedure here
@@ -99,6 +98,7 @@ BEGIN
 	Select a.*,0 as newKey InTo #NewWorkOrder_SizeRatio From WorkOrder_SizeRatio a Where 1 = 0
 	Select a.*,0 as newKey InTo #NewWorkOrder_PatternPanel From WorkOrder_PatternPanel a Where 1 = 0
 						
+	Select a.*,0 as newKey InTo #NewWorkOrder_Distributetmp From WorkOrder_Distribute a Where 1 = 0
 	Select a.*,0 as newKey InTo #NewWorkOrder_SizeRatiotmp From WorkOrder_SizeRatio a Where 1 = 0
 	Select a.*,0 as newKey InTo #NewWorkOrder_PatternPaneltmp From WorkOrder_PatternPanel a Where 1 = 0
 	--產生給WorkOrder的變數
@@ -437,7 +437,7 @@ BEGIN
 									-------------Insert into WorkOrder_Distribute------------------
 									if(@WorkOrder_DisQty>0)
 									Begin
-										insert into #NewWorkOrder_Distribute(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
+										insert into #NewWorkOrder_Distributetmp(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
 										Values(@Cuttingid, @WorkOrder_DisOrderID,@Article,@SizeCode,@WorkOrder_DisQty,@NewKey-1,0)
 									End
 								End;
@@ -449,7 +449,7 @@ BEGIN
 							SET @distriqtyRowID += 1
 							if(@CutQty>0) ---若全分配完還有剩就要給Excess
 							Begin
-								insert into #NewWorkOrder_Distribute(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
+								insert into #NewWorkOrder_Distributetmp(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
 								Values(@Cuttingid, 'Excess','',@SizeCode,@CutQty,@NewKey-1,0)		
 							End
 						END
@@ -890,10 +890,9 @@ BEGIN
 		group by ID,OrderID,Article,SizeCode,NewKey,WorkOrderUkey
 
 		Insert into #NewWorkOrder_SizeRatio(ID,SizeCode,Qty,newKey,WorkOrderUkey)
-		select ID,SizeCode,sum(Qty),newKey,WorkOrderUkey
+		select distinct ID,SizeCode,Qty,newKey,WorkOrderUkey
 		from #NewWorkOrder_SizeRatiotmp
 
-		group by ID,SizeCode,newKey,WorkOrderUkey
 		Insert into #NewWorkOrder_PatternPanel(ID,PatternPanel,LectraCode,newKey,WorkOrderUkey)							
 		select distinct ID,PatternPanel,LectraCode,newKey,WorkOrderUkey
 		from #NewWorkOrder_PatternPaneltmp
