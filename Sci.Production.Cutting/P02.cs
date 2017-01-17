@@ -894,8 +894,8 @@ namespace Sci.Production.Cutting
                 //cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
                 cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
 
-                updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), dr["SizeCode"].ToString());
                 totalDisQty();
+                updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), dr["SizeCode"].ToString());
             };
             #endregion
             #region Distribute
@@ -1123,7 +1123,7 @@ namespace Sci.Production.Cutting
         {
             sizeratio_grid.ValidateControl();
             distribute_grid.ValidateControl();
-            grid.ValidateControl();
+            //grid.ValidateControl();
         }
 
         //1394: CUTTING_P02_Cutting Work Order。KEEP當前的資料。
@@ -1824,6 +1824,7 @@ namespace Sci.Production.Cutting
             }
         }
 
+        //計算Excess
         private void updateExcess(int workorderukey, int newkey, string sizecode)
         {
             gridValid();
@@ -1852,18 +1853,18 @@ namespace Sci.Production.Cutting
                 {
                     foreach (DataRow dr2 in distdr)
                     {
-                        if (dr2["OrderID"].ToString() != "EXCESS")
+                        if (!(dr2["OrderID"].ToString().Trim() == "EXCESS" || dr2["OrderID"].ToString().Trim() == "Excess"))
                         {
                             if (now_distqty != 0)
                             {
-                                if (Convert.ToInt32(dr2["Qty"]) < now_distqty)
+                                if (Convert.ToInt32(dr2["Qty"]) <= now_distqty)
                                 {
                                     now_distqty = now_distqty - Convert.ToInt32(dr2["Qty"]);
                                 }
                                 else
                                 {
                                     dr2["Qty"] = now_distqty;
-                                    now_distqty = 0;
+                                    //now_distqty = 0;
                                 }
                             }
                             else
