@@ -403,7 +403,7 @@ order by td.Seq", masterID);
                 .Numeric("PcsPerHour", header: "Pcs/hr", integer_places: 5, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true)
-                .Numeric("SeamLength", header: "Sewing length", integer_places: 7, decimal_places: 2, iseditingreadonly: true);
+                .Numeric("SeamLength", header: "Seam length", integer_places: 7, decimal_places: 2, iseditingreadonly: true);
         }
 
         private void ChangeToEmptyData(DataRow dr)
