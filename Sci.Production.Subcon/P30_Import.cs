@@ -87,6 +87,7 @@ namespace Sci.Production.Subcon
                                                                 ,'' as threadcolorid
                                                                 ,sum(b.CTNQty) qty, d.UnitID,d.Price, sum(b.CTNQty) * d.Price as amount 
                                                                 ,'' as remark ,a.EstCTNArrive etd ,a.ID as requestid, '' as id
+                                                                ,c.FactoryID ,c.SewInLine
                                                                 from dbo.PackingList a 
                                                                         , dbo.PackingList_Detail b 
                                                                         , dbo.Orders c 
@@ -141,6 +142,7 @@ namespace Sci.Production.Subcon
                                                                 ,'' as remark ,a.EstArriveDate etd 
                                                                 ,a.OrderID as requestid
                                                                 , '' as id
+                                                                ,c.FactoryID ,c.SewInLine
                                                                 from dbo.ThreadRequisition a 
                                                                         , dbo.ThreadRequisition_Detail b 
                                                                         , dbo.Orders c 
