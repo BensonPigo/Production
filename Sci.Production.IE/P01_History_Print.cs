@@ -122,7 +122,8 @@ FOR XML PATH('')", id));
                 objArray[0, 5] = dr["SMV"];
                 objArray[0, 6] = dr["PcsPerHour"];
                 objArray[0, 7] = dr["Sewer"];
-                objArray[0, 8] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["PcsPerHour"]) * (efficiency / 100), 1);
+                decimal txt_efficiency = MyUtility.Convert.GetDecimal(efficiency) / 100;
+                objArray[0, 8] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["PcsPerHour"]) * txt_efficiency, 1);
 
                 worksheet.Range[String.Format("A{0}:I{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
