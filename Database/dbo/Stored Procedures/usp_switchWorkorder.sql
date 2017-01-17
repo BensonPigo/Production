@@ -447,10 +447,10 @@ BEGIN
 
 							drop table #disorder_modlayer
 							SET @distriqtyRowID += 1
-							if(@CutQty>0) ---若全分配完還有剩就要給Excess
+							if(@CutQty>0) ---若全分配完還有剩就要給EXCESS
 							Begin
 								insert into #NewWorkOrder_Distributetmp(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
-								Values(@Cuttingid, 'Excess','',@SizeCode,@CutQty,@NewKey-1,0)		
+								Values(@Cuttingid, 'EXCESS','',@SizeCode,@CutQty,@NewKey-1,0)		
 							End
 						END
 						
@@ -643,10 +643,10 @@ BEGIN
 									Set @distOrderRowid_again += 1
 								End
 								Drop table #distOrder_again
-								if(@CutQty>0) ---若全分配完還有剩就要給Excess
+								if(@CutQty>0) ---若全分配完還有剩就要給EXCESS
 								Begin
 									insert into #NewWorkOrder_Distribute(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
-									Values(@Cuttingid, 'Excess','',@SizeCode,@CutQty,@NewKey,0)		
+									Values(@Cuttingid, 'EXCESS','',@SizeCode,@CutQty,@NewKey,0)		
 									Set @linsert = 1 ---有新增要改變		
 								End
 								Set @sizeQtyRowid_again+=1
@@ -792,10 +792,10 @@ BEGIN
 								Drop table #distOrder_againmod
 								SET @sizeQtyRowid_again += 1
 							
-								if(@CutQty>0) ---若全分配完還有剩就要給Excess
+								if(@CutQty>0) ---若全分配完還有剩就要給EXCESS
 								Begin
 									insert into #NewWorkOrder_Distribute(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
-									Values(@Cuttingid, 'Excess','',@SizeCode,@CutQty,@NewKey,0)		
+									Values(@Cuttingid, 'EXCESS','',@SizeCode,@CutQty,@NewKey,0)		
 									Set @linsert = 1 ---有新增要改變		
 								End
 							End
