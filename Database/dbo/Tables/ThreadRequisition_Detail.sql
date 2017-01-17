@@ -2,7 +2,7 @@
     [OrderID]        VARCHAR (13)   CONSTRAINT [DF_ThreadRequisition_Detail_OrderID] DEFAULT ('') NOT NULL,
     [Refno]          VARCHAR (24)   CONSTRAINT [DF_ThreadRequisition_Detail_Refno] DEFAULT ('') NOT NULL,
     [ThreadColorID]  VARCHAR (15)   CONSTRAINT [DF_ThreadRequisition_Detail_ThreadColorID] DEFAULT ('') NOT NULL,
-    [ConsumptionQty] NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_ConsumptionQty] DEFAULT ((0)) NULL,
+    [ConsumptionQty] NUMERIC (8)    CONSTRAINT [DF_ThreadRequisition_Detail_ConsumptionQty] DEFAULT ((0)) NULL,
     [TotalQty]       NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_TotalQty] DEFAULT ((0)) NULL,
     [AllowanceQty]   NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_AllowanceQty] DEFAULT ((0)) NULL,
     [UseStockQty]    NUMERIC (6)    CONSTRAINT [DF_ThreadRequisition_Detail_UseStockQty] DEFAULT ((0)) NULL,
