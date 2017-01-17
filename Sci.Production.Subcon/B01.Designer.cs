@@ -251,7 +251,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(86, 23);
             this.label15.TabIndex = 13;
-            this.label15.Text = "Thread Item";
+            this.label15.Text = "Thread Type";
             // 
             // label16
             // 
@@ -411,6 +411,8 @@
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(100, 23);
             this.textBox8.TabIndex = 1;
+            this.textBox8.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox8_PopUp);
+            this.textBox8.Validating += new System.ComponentModel.CancelEventHandler(this.textBox8_Validating);
             // 
             // textBox12
             // 

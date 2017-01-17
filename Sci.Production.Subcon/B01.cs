@@ -138,7 +138,7 @@ namespace Sci.Production.Subcon
                 }
                 if (string.IsNullOrWhiteSpace(CurrentMaintain["ThreadTypeID"].ToString()))
                 {
-                    MyUtility.Msg.WarningBox("< Thread Item > can not be empty!");
+                    MyUtility.Msg.WarningBox("< Thread Type > can not be empty!");
                     this.textBox8.Focus();
                     return false;
                 }
@@ -301,5 +301,34 @@ namespace Sci.Production.Subcon
 
             }
         }
+
+        //[Thread Type]右鍵開窗
+        private void textBox8_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
+            if (myForm.EditMode == false || textBox8.ReadOnly == true) return;
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from ThreadType WHERE Junk=0", "20", this.textBox8.Text);
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel) { return; }
+            this.textBox8.Text = item.GetSelectedString();
+        }
+
+        //[Thread Type]檢核
+        private void textBox8_Validating(object sender, CancelEventArgs e)
+        {
+            string textValue = this.textBox8.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox8.OldValue)
+            {
+                if (!MyUtility.Check.Seek(string.Format(@"select ID from ThreadType WHERE Junk=0 and id = '{0}'", textValue)))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("< Thread Type: {0} > not found !!", textValue));
+                    this.textBox8.Text = "";
+                    e.Cancel = true;
+                    return;
+                }
+            }
+        }
+
+
     }
 }
