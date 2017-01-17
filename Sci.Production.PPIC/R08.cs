@@ -53,13 +53,16 @@ namespace Sci.Production.PPIC
 rd.Seq1+'-'+rd.Seq2 as Seq,IIF(r.Type='F','Fabric','Accessory') as Type,isnull(f.MtlTypeID,'') as MtlTypeID,
 rd.Refno,isnull(f.DescDetail,'') as DescDetail,rd.ColorID,rd.EstInQty,rd.ActInQty,rd.TotalRequest,
 rd.AfterCuttingRequest,IIF(rd.Responsibility='M','Mill',IIF(rd.Responsibility = 'S','Subcon in Local',IIF(rd.Responsibility = 'F','Factory',IIF(rd.Responsibility = 'T','SCI dep. (purchase / s. mrs / sample room)','')))) as Responsibility,
-rd.ResponsibilityReason,rd.Suggested,IIF(p.POSMR is null,'',dbo.getTPEPass1(p.POSMR)) as POSMR,
-dbo.getPass1(r.ApplyName) as Prepare
+rd.ResponsibilityReason,rd.Suggested,
+IIF(p.POSMR is null,'',iif(tpe.ExtNo='','',dbo.getTPEPass1(p.POSMR)+' #'+tpe.ExtNo)) as POSMR,
+iif(pas.ExtNo='',dbo.getPass1(r.ApplyName),dbo.getPass1(r.ApplyName)+' #'+pas.ExtNo) as Prepare
 from ReplacementReport r
 inner join ReplacementReport_Detail rd on rd.ID = r.ID
 left join Orders o on o.ID = r.POID
 left join Fabric f on f.SCIRefno = rd.SCIRefno
 left join PO p on p.ID = r.POID
+outer apply(select TPEPass1.ExtNo from TPEPass1 where TPEPass1.ID=p.POSMR )tpe
+outer apply(select ExtNo from Pass1 where Pass1.ID=r.ApplyName)pas
 where 1=1");
 
             if (!MyUtility.Check.Empty(cdate1))
@@ -154,9 +157,9 @@ where 1=1");
                 worksheet.Range[String.Format("A{0}:V{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
-
+            
             excel.Cells.EntireColumn.AutoFit();
-            excel.Cells.EntireRow.AutoFit();
+            //excel.Cells.EntireRow.AutoFit();
             this.HideWaitMessage();
             excel.Visible = true;
             return true;
