@@ -7,23 +7,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+//from here by andy
 using System.Data.SqlClient;
 using Sci;
 using Sci.Data;
 using Ict;
 using Ict.Win;
 using Sci.Win;
-using Sci.Production.Report;
-//using Sci.Production.Class.Commons;
+using Sci.Production.Class.Commons;
 using System.IO;
 using Sci.Utility.Excel;
-using Sci.Production.Report.GSchemas;
+
 
 namespace Sci.Production.Planning
 {
     public partial class R10 : Sci.Win.Tems.PrintForm
     {
-        string temfile;
+         string temfile;
 
         DateTime currentTime = System.DateTime.Now;
         DataTable dtPrint;
@@ -43,7 +43,6 @@ namespace Sci.Production.Planning
             EditMode = true;
             print.Visible = false;
         }
-
 
         protected override bool ValidateInput()  //欄位檢核
         {
@@ -122,7 +121,7 @@ namespace Sci.Production.Planning
             try
             {
                 DataTable[] datas;
-                DualResult res = DBProxy.Current.SelectSP("", "Planning_Report_R02"
+                DualResult res = DBProxy.Current.SelectSP("", "Planning_Report_R10"
                 , new List<SqlParameter> { new SqlParameter("@ReportType", ReportType)
                 , new SqlParameter("@BrandID", BrandID)
                 , new SqlParameter("@ArtWorkType", ArtWorkType)
@@ -450,7 +449,7 @@ namespace Sci.Production.Planning
             rg.Columns.AutoFit();
 
             sxrc.dicDatas.Add("##Year", intYear);
-            sxrc.dicDatas.Add("##Month", intMonth);
+            sxrc.dicDatas.Add("##Month", intMonth);            
             sxrc.dicDatas.Add("##ArtworkType", ArtWorkType == "CPU" ? ArtWorkType : ArtWorkType + " TMS/Min");
             sxrc.dicDatas.Add("##Source", SourceStr);
             sxrc.dicDatas.Add("##Brand", BrandID);
@@ -504,7 +503,7 @@ namespace Sci.Production.Planning
                 if (dtCountry.Rows.Count == 0) continue;
                 string CountryName = dtCountry.Rows[0]["CountryName"].ToString();
                 wks.Cells[sheetStart, 1].Value = CountryName;
-
+                                
                 DataTable dtMDVList = safeGetDt(dtList, string.Format("CountryID = '{0}'", CountryID)).DefaultView.ToTable(true, "MDivisionID");
 
                 List<string> lisCapaCty = new List<string>();
@@ -880,13 +879,7 @@ namespace Sci.Production.Planning
 
         private void rdMonth_CheckedChanged(object sender, EventArgs e)
         {
-            lbMonth.Visible = !rdMonth.Checked;
-            numMonth.Visible = !rdMonth.Checked;
 
-            if (rdMonth.Checked)
-            {
-                numMonth.Value = 0;
-            }
         }
 
         private void rdHalfMonth_CheckedChanged(object sender, EventArgs e)

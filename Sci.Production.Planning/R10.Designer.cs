@@ -34,6 +34,7 @@
             this.chkOrder = new Sci.Win.UI.CheckBox();
             this.cbReportType = new Sci.Win.UI.ComboBox();
             this.cbDateType = new Sci.Win.UI.ComboBox();
+            this.txtBrand1 = new Sci.Production.Class.txtbrand();
             this.numMonth = new System.Windows.Forms.NumericUpDown();
             this.numYear1 = new System.Windows.Forms.NumericUpDown();
             this.lbMonth = new Sci.Win.UI.Label();
@@ -45,7 +46,6 @@
             this.rdHalfMonth = new System.Windows.Forms.RadioButton();
             this.rdMonth = new System.Windows.Forms.RadioButton();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtBrand1 = new Sci.Production.Class.txtbrand();
             this.radioGroup2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMonth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numYear1)).BeginInit();
@@ -147,6 +147,15 @@
             this.cbDateType.Name = "cbDateType";
             this.cbDateType.Size = new System.Drawing.Size(190, 24);
             this.cbDateType.TabIndex = 11;
+            // 
+            // txtBrand1
+            // 
+            this.txtBrand1.BackColor = System.Drawing.Color.White;
+            this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand1.Location = new System.Drawing.Point(150, 118);
+            this.txtBrand1.Name = "txtBrand1";
+            this.txtBrand1.Size = new System.Drawing.Size(94, 23);
+            this.txtBrand1.TabIndex = 10;
             // 
             // numMonth
             // 
@@ -252,6 +261,7 @@
             this.rdHalfMonth.TabStop = true;
             this.rdHalfMonth.Text = "Semimonthly Report";
             this.rdHalfMonth.UseVisualStyleBackColor = true;
+            this.rdHalfMonth.CheckedChanged += new System.EventHandler(this.rdHalfMonth_CheckedChanged);
             // 
             // rdMonth
             // 
@@ -276,15 +286,6 @@
             this.label1.TabIndex = 95;
             this.label1.Text = "Paper Size A4";
             this.label1.TextStyle.Color = System.Drawing.Color.Blue;
-            // 
-            // txtBrand1
-            // 
-            this.txtBrand1.BackColor = System.Drawing.Color.White;
-            this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand1.Location = new System.Drawing.Point(150, 118);
-            this.txtBrand1.Name = "txtBrand1";
-            this.txtBrand1.Size = new System.Drawing.Size(94, 23);
-            this.txtBrand1.TabIndex = 10;
             // 
             // R10
             // 

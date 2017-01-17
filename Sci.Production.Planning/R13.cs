@@ -1,4 +1,25 @@
-﻿using System;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.ComponentModel;
+//using System.Data;
+//using System.Drawing;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
+//using System.Windows.Forms;
+//using System.Data.SqlClient;
+//using Sci;
+//using Sci.Data;
+//using Ict;
+//using Ict.Win;
+//using Sci.Win;
+//using Sci.Production.Class.Commons;
+//using System.IO;
+//using Sci.Utility.Excel;
+//using System.Globalization;
+//using Sci.Production.Report;
+//using Sci.Production.Class;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,19 +34,17 @@ using Sci.Data;
 using Ict;
 using Ict.Win;
 using Sci.Win;
-using Sci.Production.Class;
 using Sci.Production.Class.Commons;
 using System.IO;
 using Sci.Utility.Excel;
 using System.Globalization;
 using Sci.Production.Report;
-//using Sci.Production.Report;
+using Sci.Production.Class;
 
 namespace Sci.Production.Planning
 {
     public partial class R13 : Sci.Win.Tems.PrintForm
-    {
-         private DataTable dt_source; //For Grid用
+    { private DataTable dt_source; //For Grid用
         private DataTable[] dsData;
         private IDictionary<string, IList<DataRow>> id_to_AdidasKPITarget = new Dictionary<string, IList<DataRow>>();
 
@@ -57,7 +76,7 @@ namespace Sci.Production.Planning
         {
             base.OnFormLoaded();
 
-            this.Text =PrivUtils.getVersion(this.Text);
+            this.Text = PrivUtils.getVersion(this.Text);
 
             if (IsFormClosed) return;
 
@@ -173,7 +192,7 @@ namespace Sci.Production.Planning
             if (intReportType == 1 || intReportType == 2)
             {
 
-                SaveXltReportCls sxrc = new SaveXltReportCls("Planning_R13_01.xlt");
+                SaveXltReportCls sxrc = new SaveXltReportCls("Planning_R04_01.xlt");
                 sxrc.boOpenFile = true;
                 sxrc.dicDatas.Add("##Year", strYear);
                 sxrc.dicDatas.Add("##Month", strMonth);
@@ -228,7 +247,7 @@ namespace Sci.Production.Planning
             }
             else
             {
-                SaveXltReportCls sxrc = new SaveXltReportCls("Planning_R13_02.xlt");
+                SaveXltReportCls sxrc = new SaveXltReportCls("Planning_R04_02.xlt");
                 sxrc.boOpenFile = true;
                 sxrc.dicDatas.Add("##Year", strYear);
                 sxrc.dicDatas.Add("##Month", strMonth);
