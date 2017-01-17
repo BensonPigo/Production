@@ -1,21 +1,29 @@
-﻿using Ict;
-using Sci.Data;
-using Sci.Utility.Excel;
-using Sci.Win;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Data.SqlClient;
+using Sci;
+using Sci.Data;
+using Ict;
+using Ict.Win;
+using Sci.Win;
+using Sci.Production.Report;
+//using Sci.Production.Class.Commons;
+using System.IO;
+using Sci.Utility.Excel;
+using Sci.Production.Report.GSchemas;
 
 namespace Sci.Production.Planning
 {
     public partial class R10 : Sci.Win.Tems.PrintForm
     {
-           string temfile;
+        string temfile;
 
         DateTime currentTime = System.DateTime.Now;
         DataTable dtPrint;
@@ -36,10 +44,11 @@ namespace Sci.Production.Planning
             print.Visible = false;
         }
 
+
         protected override bool ValidateInput()  //欄位檢核
         {
 
-            if (numYear.Text == "")
+            if (numYear1.Text == "")
             {
                 ShowErr("Year can't be  blank");
                 return false;
@@ -64,7 +73,7 @@ namespace Sci.Production.Planning
             ArtWorkType = cbReportType.SelectedValue.ToString();
             isSCIDelivery = (cbDateType.SelectedItem.ToString() == "SCI Delivery") ? true : false;
 
-            intYear = Convert.ToInt32(numYear.Value);
+            intYear = Convert.ToInt32(numYear1.Value);
             intMonth = Convert.ToInt32(numMonth.Value);
             SourceStr = (chkOrder.Checked ? "Order," : "")
                 + (chkForecast.Checked ? "Forecast," : "")
@@ -85,7 +94,7 @@ namespace Sci.Production.Planning
             chkForecast.Checked = true;
             chkFty.Checked = true;
 
-            numYear.Value = currentTime.Year;
+            numYear1.Value = currentTime.Year;
             numMonth.Value = currentTime.Month;
             numMonth.Visible = false;
 
@@ -441,7 +450,7 @@ namespace Sci.Production.Planning
             rg.Columns.AutoFit();
 
             sxrc.dicDatas.Add("##Year", intYear);
-            sxrc.dicDatas.Add("##Month", intMonth);            
+            sxrc.dicDatas.Add("##Month", intMonth);
             sxrc.dicDatas.Add("##ArtworkType", ArtWorkType == "CPU" ? ArtWorkType : ArtWorkType + " TMS/Min");
             sxrc.dicDatas.Add("##Source", SourceStr);
             sxrc.dicDatas.Add("##Brand", BrandID);
@@ -495,7 +504,7 @@ namespace Sci.Production.Planning
                 if (dtCountry.Rows.Count == 0) continue;
                 string CountryName = dtCountry.Rows[0]["CountryName"].ToString();
                 wks.Cells[sheetStart, 1].Value = CountryName;
-                                
+
                 DataTable dtMDVList = safeGetDt(dtList, string.Format("CountryID = '{0}'", CountryID)).DefaultView.ToTable(true, "MDivisionID");
 
                 List<string> lisCapaCty = new List<string>();
