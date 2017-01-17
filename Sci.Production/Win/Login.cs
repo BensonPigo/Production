@@ -74,7 +74,7 @@ namespace Sci.Production.Win
                 ShowErr(result);
                 return;
             }
-            Sci.Env.App.Text = string.Format("Production Management System-{0}-({1})", Sci.Env.User.Factory, Sci.Env.User.UserID);
+            Sci.Env.App.Text = string.Format("Production Management System-({2})-{0}-({1})", Sci.Env.User.Factory, Sci.Env.User.UserID, Environment.MachineName);
 
             DialogResult = DialogResult.OK;
             Close();
