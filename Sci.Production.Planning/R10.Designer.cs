@@ -34,7 +34,6 @@
             this.chkOrder = new Sci.Win.UI.CheckBox();
             this.cbReportType = new Sci.Win.UI.ComboBox();
             this.cbDateType = new Sci.Win.UI.ComboBox();
-            this.txtBrand1 = new Sci.Production.Class.txtbrand();
             this.numMonth = new System.Windows.Forms.NumericUpDown();
             this.numYear1 = new System.Windows.Forms.NumericUpDown();
             this.lbMonth = new Sci.Win.UI.Label();
@@ -46,6 +45,7 @@
             this.rdHalfMonth = new System.Windows.Forms.RadioButton();
             this.rdMonth = new System.Windows.Forms.RadioButton();
             this.label1 = new Sci.Win.UI.Label();
+            this.txtBrand1 = new Sci.Production.Class.txtbrand();
             this.radioGroup2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMonth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numYear1)).BeginInit();
@@ -148,28 +148,44 @@
             this.cbDateType.Size = new System.Drawing.Size(190, 24);
             this.cbDateType.TabIndex = 11;
             // 
-            // txtBrand1
-            // 
-            this.txtBrand1.BackColor = System.Drawing.Color.White;
-            this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand1.Location = new System.Drawing.Point(150, 118);
-            this.txtBrand1.Name = "txtBrand1";
-            this.txtBrand1.Size = new System.Drawing.Size(94, 23);
-            this.txtBrand1.TabIndex = 10;
-            // 
             // numMonth
             // 
             this.numMonth.Location = new System.Drawing.Point(290, 85);
+            this.numMonth.Maximum = new decimal(new int[] {
+            12,
+            0,
+            0,
+            0});
             this.numMonth.Name = "numMonth";
             this.numMonth.Size = new System.Drawing.Size(50, 23);
             this.numMonth.TabIndex = 9;
+            this.numMonth.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // numYear1
             // 
             this.numYear1.Location = new System.Drawing.Point(150, 85);
+            this.numYear1.Maximum = new decimal(new int[] {
+            2100,
+            0,
+            0,
+            0});
+            this.numYear1.Minimum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
             this.numYear1.Name = "numYear1";
             this.numYear1.Size = new System.Drawing.Size(72, 23);
             this.numYear1.TabIndex = 8;
+            this.numYear1.Value = new decimal(new int[] {
+            2015,
+            0,
+            0,
+            0});
             // 
             // lbMonth
             // 
@@ -260,6 +276,15 @@
             this.label1.TabIndex = 95;
             this.label1.Text = "Paper Size A4";
             this.label1.TextStyle.Color = System.Drawing.Color.Blue;
+            // 
+            // txtBrand1
+            // 
+            this.txtBrand1.BackColor = System.Drawing.Color.White;
+            this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand1.Location = new System.Drawing.Point(150, 118);
+            this.txtBrand1.Name = "txtBrand1";
+            this.txtBrand1.Size = new System.Drawing.Size(94, 23);
+            this.txtBrand1.TabIndex = 10;
             // 
             // R10
             // 
