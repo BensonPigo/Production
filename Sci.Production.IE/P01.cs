@@ -542,7 +542,9 @@ order by td.Seq", masterID);
             #endregion
             //回寫表頭的Total Sewing Time與表身的Sewer
             decimal ttlSewingTime = MyUtility.Convert.GetDecimal(((DataTable)detailgridbs.DataSource).Compute("sum(SMV)", ""));
-            CurrentMaintain["TotalSewingTime"] = MyUtility.Convert.GetInt(ttlSewingTime);
+            CurrentMaintain["TotalSewingTime"] = Convert.ToInt32(ttlSewingTime); // MyUtility.Convert.GetInt(ttlSewingTime);
+            string TotalSewing = CurrentMaintain["TotalSewingTime"].ToString();
+            numericBox2.Text = TotalSewing; 
             decimal allSewer = MyUtility.Check.Empty(CurrentMaintain["NumberSewer"]) ? 0.0m : MyUtility.Convert.GetDecimal(CurrentMaintain["NumberSewer"]);
             foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
             {
