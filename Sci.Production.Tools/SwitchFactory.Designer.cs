@@ -56,7 +56,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(109, 23);
             this.label3.TabIndex = 100;
-            this.label3.Text = "Factory";
+            this.label3.Text = "Switch M";
             this.label3.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // exit
