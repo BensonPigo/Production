@@ -30,7 +30,7 @@ namespace Sci.Production.PPIC
             MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
             comboBox1.SelectedIndex = 0;
             comboBox2.Text = Sci.Env.User.Keyword;
-            comboBox3.SelectedIndex = -1;
+            comboBox3.Text = Sci.Env.User.Factory;
 
             dateRange1.Value1 = DateTime.Today.AddDays(-1);
             dateRange1.Value2 = DateTime.Today.AddDays(-1);
@@ -66,7 +66,7 @@ namespace Sci.Production.PPIC
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder sqlCondition = new StringBuilder();
             sqlCondition.Append(string.Format(@"where l.FabricType = '{0}'
-and l.ApvDate between '{1}' and '{2}'", (reportType ==0 ?"F":"A"), Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
+and l.ApvDate between '{1}' and '{2}' ", (reportType == 0 ? "F" : "A"), Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
             if (!MyUtility.Check.Empty(mDivision))
             {
                 sqlCondition.Append(string.Format(" and l.MDivisionID = '{0}'", mDivision));
@@ -76,7 +76,7 @@ and l.ApvDate between '{1}' and '{2}'", (reportType ==0 ?"F":"A"), Convert.ToDat
                 sqlCondition.Append(string.Format(" and l.FactoryID = '{0}'", factory));
             }
 
-            sqlCmd.Append(string.Format(@"select l.MDivisionID,l.FactoryID,l.ID,l.SewingLineID,isnull(s.SewingCell,'') as SewingCell,
+            sqlCmd.Append(string.Format(@"select distinct l.MDivisionID,l.FactoryID,l.ID,l.SewingLineID,isnull(s.SewingCell,'') as SewingCell,
 isnull(o.StyleID,'') as StyleID,l.OrderID,ld.Seq1+' '+ld.Seq2 as Seq,isnull(c.Name,'') as ColorName,
 isnull(psd.Refno,'') as Refno,l.ApvDate,ld.RejectQty,ld.RequestQty,ld.IssueQty,
 IIF(l.Status= 'Received',l.EditDate,null) as FinishedDate,IIF(l.Type='R','Replacement','Lacking') as Type,
@@ -84,13 +84,13 @@ isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),'') as Description
 IIF(l.Status = 'Received',IIF(DATEDIFF(ss,l.ApvDate,l.EditDate) <= 10800,'Y','N'),'N') as OnTime
 from Lack l
 inner join Lack_Detail ld on l.ID = ld.ID
-left join SewingLine s on s.ID = l.SewingLineID
+left join SewingLine s on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID
 left join Orders o on o.ID = l.OrderID
 left join PO_Supp_Detail psd on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
 left join Color c on c.BrandId = o.BrandID and c.ID = psd.ColorID
 left join PPICReason pr on pr.Type = 'FL' and ld.PPICReasonID = pr.ID
 left join PPICReason pr1 on pr1.Type = 'AL' and ld.PPICReasonID = pr1.ID
-{0}
+{0} 
 order by l.MDivisionID,l.FactoryID,l.ID", sqlCondition.ToString()));
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
