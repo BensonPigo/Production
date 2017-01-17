@@ -13,17 +13,19 @@ using Sci.Data;
 using Ict;
 using Ict.Win;
 using Sci.Win;
+using Sci.Production.Class;
 using Sci.Production.Class.Commons;
 using System.IO;
 using Sci.Utility.Excel;
 using System.Globalization;
 using Sci.Production.Report;
+//using Sci.Production.Report;
 
 namespace Sci.Production.Planning
 {
     public partial class R13 : Sci.Win.Tems.PrintForm
     {
-         private System.Data.DataTable dt_source; //For Grid用
+         private DataTable dt_source; //For Grid用
         private DataTable[] dsData;
         private IDictionary<string, IList<DataRow>> id_to_AdidasKPITarget = new Dictionary<string, IList<DataRow>>();
 
@@ -55,7 +57,7 @@ namespace Sci.Production.Planning
         {
             base.OnFormLoaded();
 
-            this.Text = PrivUtils.getVersion(this.Text);
+            this.Text =PrivUtils.getVersion(this.Text);
 
             if (IsFormClosed) return;
 

@@ -28,10 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
+            this.lbRemark = new Sci.Win.UI.Label();
+            this.panelSourceType = new Sci.Win.UI.Panel();
+            this.rdAll = new System.Windows.Forms.RadioButton();
+            this.rdReebok = new System.Windows.Forms.RadioButton();
+            this.rdAdidas = new System.Windows.Forms.RadioButton();
+            this.panelByType = new Sci.Win.UI.Panel();
+            this.rdByAll = new System.Windows.Forms.RadioButton();
+            this.rdByFactory = new System.Windows.Forms.RadioButton();
+            this.rdByAGC = new System.Windows.Forms.RadioButton();
+            this.chkDetail = new Sci.Win.UI.CheckBox();
             this.panelReportType = new Sci.Win.UI.Panel();
             this.rdMDP = new System.Windows.Forms.RadioButton();
             this.rdFactory = new System.Windows.Forms.RadioButton();
@@ -42,28 +51,20 @@
             this.lbReport = new Sci.Win.UI.Label();
             this.lbMonth = new Sci.Win.UI.Label();
             this.lbYear = new Sci.Win.UI.Label();
-            this.chkDetail = new Sci.Win.UI.CheckBox();
-            this.panelByType = new Sci.Win.UI.Panel();
-            this.rdByAGC = new System.Windows.Forms.RadioButton();
-            this.rdByFactory = new System.Windows.Forms.RadioButton();
-            this.rdByAll = new System.Windows.Forms.RadioButton();
-            this.panelSourceType = new Sci.Win.UI.Panel();
-            this.rdAdidas = new System.Windows.Forms.RadioButton();
-            this.rdReebok = new System.Windows.Forms.RadioButton();
-            this.rdAll = new System.Windows.Forms.RadioButton();
-            this.lbRemark = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnUndo = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
+            this.bindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.radioGroup1.SuspendLayout();
+            this.panelSourceType.SuspendLayout();
+            this.panelByType.SuspendLayout();
             this.panelReportType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMonth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
-            this.panelByType.SuspendLayout();
-            this.panelSourceType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // print
@@ -96,6 +97,120 @@
             this.radioGroup1.Size = new System.Drawing.Size(314, 282);
             this.radioGroup1.TabIndex = 94;
             this.radioGroup1.TabStop = false;
+            // 
+            // lbRemark
+            // 
+            this.lbRemark.BackColor = System.Drawing.SystemColors.Control;
+            this.lbRemark.Lines = 0;
+            this.lbRemark.Location = new System.Drawing.Point(3, 248);
+            this.lbRemark.Name = "lbRemark";
+            this.lbRemark.Size = new System.Drawing.Size(311, 23);
+            this.lbRemark.TabIndex = 10;
+            this.lbRemark.Text = "PS:Sample Order has been Excluded";
+            this.lbRemark.TextStyle.Color = System.Drawing.Color.Red;
+            // 
+            // panelSourceType
+            // 
+            this.panelSourceType.Controls.Add(this.rdAll);
+            this.panelSourceType.Controls.Add(this.rdReebok);
+            this.panelSourceType.Controls.Add(this.rdAdidas);
+            this.panelSourceType.Location = new System.Drawing.Point(58, 207);
+            this.panelSourceType.Name = "panelSourceType";
+            this.panelSourceType.Size = new System.Drawing.Size(209, 26);
+            this.panelSourceType.TabIndex = 9;
+            // 
+            // rdAll
+            // 
+            this.rdAll.AutoSize = true;
+            this.rdAll.ForeColor = System.Drawing.Color.Red;
+            this.rdAll.Location = new System.Drawing.Point(160, 2);
+            this.rdAll.Name = "rdAll";
+            this.rdAll.Size = new System.Drawing.Size(41, 21);
+            this.rdAll.TabIndex = 2;
+            this.rdAll.TabStop = true;
+            this.rdAll.Text = "All";
+            this.rdAll.UseVisualStyleBackColor = true;
+            // 
+            // rdReebok
+            // 
+            this.rdReebok.AutoSize = true;
+            this.rdReebok.ForeColor = System.Drawing.Color.Red;
+            this.rdReebok.Location = new System.Drawing.Point(78, 2);
+            this.rdReebok.Name = "rdReebok";
+            this.rdReebok.Size = new System.Drawing.Size(75, 21);
+            this.rdReebok.TabIndex = 1;
+            this.rdReebok.TabStop = true;
+            this.rdReebok.Text = "Reebok";
+            this.rdReebok.UseVisualStyleBackColor = true;
+            // 
+            // rdAdidas
+            // 
+            this.rdAdidas.AutoSize = true;
+            this.rdAdidas.Checked = true;
+            this.rdAdidas.ForeColor = System.Drawing.Color.Red;
+            this.rdAdidas.Location = new System.Drawing.Point(3, 2);
+            this.rdAdidas.Name = "rdAdidas";
+            this.rdAdidas.Size = new System.Drawing.Size(69, 21);
+            this.rdAdidas.TabIndex = 0;
+            this.rdAdidas.TabStop = true;
+            this.rdAdidas.Text = "Adidas";
+            this.rdAdidas.UseVisualStyleBackColor = true;
+            // 
+            // panelByType
+            // 
+            this.panelByType.Controls.Add(this.rdByAll);
+            this.panelByType.Controls.Add(this.rdByFactory);
+            this.panelByType.Controls.Add(this.rdByAGC);
+            this.panelByType.Location = new System.Drawing.Point(191, 123);
+            this.panelByType.Name = "panelByType";
+            this.panelByType.Size = new System.Drawing.Size(111, 76);
+            this.panelByType.TabIndex = 8;
+            // 
+            // rdByAll
+            // 
+            this.rdByAll.AutoSize = true;
+            this.rdByAll.ForeColor = System.Drawing.Color.Red;
+            this.rdByAll.Location = new System.Drawing.Point(2, 54);
+            this.rdByAll.Name = "rdByAll";
+            this.rdByAll.Size = new System.Drawing.Size(60, 21);
+            this.rdByAll.TabIndex = 2;
+            this.rdByAll.Text = "by All";
+            this.rdByAll.UseVisualStyleBackColor = true;
+            // 
+            // rdByFactory
+            // 
+            this.rdByFactory.AutoSize = true;
+            this.rdByFactory.ForeColor = System.Drawing.Color.Red;
+            this.rdByFactory.Location = new System.Drawing.Point(2, 31);
+            this.rdByFactory.Name = "rdByFactory";
+            this.rdByFactory.Size = new System.Drawing.Size(92, 21);
+            this.rdByFactory.TabIndex = 1;
+            this.rdByFactory.Text = "by Factory";
+            this.rdByFactory.UseVisualStyleBackColor = true;
+            // 
+            // rdByAGC
+            // 
+            this.rdByAGC.AutoSize = true;
+            this.rdByAGC.Checked = true;
+            this.rdByAGC.ForeColor = System.Drawing.Color.Red;
+            this.rdByAGC.Location = new System.Drawing.Point(2, 6);
+            this.rdByAGC.Name = "rdByAGC";
+            this.rdByAGC.Size = new System.Drawing.Size(74, 21);
+            this.rdByAGC.TabIndex = 0;
+            this.rdByAGC.TabStop = true;
+            this.rdByAGC.Text = "by AGC";
+            this.rdByAGC.UseVisualStyleBackColor = true;
+            // 
+            // chkDetail
+            // 
+            this.chkDetail.AutoSize = true;
+            this.chkDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkDetail.Location = new System.Drawing.Point(191, 72);
+            this.chkDetail.Name = "chkDetail";
+            this.chkDetail.Size = new System.Drawing.Size(123, 21);
+            this.chkDetail.TabIndex = 7;
+            this.chkDetail.Text = "List Detail Data";
+            this.chkDetail.UseVisualStyleBackColor = true;
             // 
             // panelReportType
             // 
@@ -137,7 +252,7 @@
             this.rdAGC.Location = new System.Drawing.Point(1, 5);
             this.rdAGC.Name = "rdAGC";
             this.rdAGC.Size = new System.Drawing.Size(102, 21);
-            this.rdAGC.TabIndex = 7;
+            this.rdAGC.TabIndex = 51;
             this.rdAGC.TabStop = true;
             this.rdAGC.Text = "AGC Report";
             this.rdAGC.UseVisualStyleBackColor = true;
@@ -145,16 +260,46 @@
             // numMonth
             // 
             this.numMonth.Location = new System.Drawing.Point(185, 19);
+            this.numMonth.Maximum = new decimal(new int[] {
+            12,
+            0,
+            0,
+            0});
+            this.numMonth.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numMonth.Name = "numMonth";
             this.numMonth.Size = new System.Drawing.Size(59, 23);
-            this.numMonth.TabIndex = 5;
+            this.numMonth.TabIndex = 195;
+            this.numMonth.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // numYear
             // 
             this.numYear.Location = new System.Drawing.Point(46, 19);
+            this.numYear.Maximum = new decimal(new int[] {
+            2100,
+            0,
+            0,
+            0});
+            this.numYear.Minimum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
             this.numYear.Name = "numYear";
             this.numYear.Size = new System.Drawing.Size(68, 23);
             this.numYear.TabIndex = 4;
+            this.numYear.Value = new decimal(new int[] {
+            2015,
+            0,
+            0,
+            0});
             // 
             // lbSource
             // 
@@ -192,120 +337,6 @@
             this.lbYear.TabIndex = 0;
             this.lbYear.Text = "Year";
             // 
-            // chkDetail
-            // 
-            this.chkDetail.AutoSize = true;
-            this.chkDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkDetail.Location = new System.Drawing.Point(191, 72);
-            this.chkDetail.Name = "chkDetail";
-            this.chkDetail.Size = new System.Drawing.Size(123, 21);
-            this.chkDetail.TabIndex = 7;
-            this.chkDetail.Text = "List Detail Data";
-            this.chkDetail.UseVisualStyleBackColor = true;
-            // 
-            // panelByType
-            // 
-            this.panelByType.Controls.Add(this.rdByAll);
-            this.panelByType.Controls.Add(this.rdByFactory);
-            this.panelByType.Controls.Add(this.rdByAGC);
-            this.panelByType.Location = new System.Drawing.Point(191, 123);
-            this.panelByType.Name = "panelByType";
-            this.panelByType.Size = new System.Drawing.Size(111, 76);
-            this.panelByType.TabIndex = 8;
-            // 
-            // rdByAGC
-            // 
-            this.rdByAGC.AutoSize = true;
-            this.rdByAGC.Checked = true;
-            this.rdByAGC.ForeColor = System.Drawing.Color.Red;
-            this.rdByAGC.Location = new System.Drawing.Point(2, 6);
-            this.rdByAGC.Name = "rdByAGC";
-            this.rdByAGC.Size = new System.Drawing.Size(74, 21);
-            this.rdByAGC.TabIndex = 0;
-            this.rdByAGC.TabStop = true;
-            this.rdByAGC.Text = "by AGC";
-            this.rdByAGC.UseVisualStyleBackColor = true;
-            // 
-            // rdByFactory
-            // 
-            this.rdByFactory.AutoSize = true;
-            this.rdByFactory.ForeColor = System.Drawing.Color.Red;
-            this.rdByFactory.Location = new System.Drawing.Point(2, 31);
-            this.rdByFactory.Name = "rdByFactory";
-            this.rdByFactory.Size = new System.Drawing.Size(92, 21);
-            this.rdByFactory.TabIndex = 1;
-            this.rdByFactory.Text = "by Factory";
-            this.rdByFactory.UseVisualStyleBackColor = true;
-            // 
-            // rdByAll
-            // 
-            this.rdByAll.AutoSize = true;
-            this.rdByAll.ForeColor = System.Drawing.Color.Red;
-            this.rdByAll.Location = new System.Drawing.Point(2, 54);
-            this.rdByAll.Name = "rdByAll";
-            this.rdByAll.Size = new System.Drawing.Size(60, 21);
-            this.rdByAll.TabIndex = 2;
-            this.rdByAll.Text = "by All";
-            this.rdByAll.UseVisualStyleBackColor = true;
-            // 
-            // panelSourceType
-            // 
-            this.panelSourceType.Controls.Add(this.rdAll);
-            this.panelSourceType.Controls.Add(this.rdReebok);
-            this.panelSourceType.Controls.Add(this.rdAdidas);
-            this.panelSourceType.Location = new System.Drawing.Point(58, 207);
-            this.panelSourceType.Name = "panelSourceType";
-            this.panelSourceType.Size = new System.Drawing.Size(209, 26);
-            this.panelSourceType.TabIndex = 9;
-            // 
-            // rdAdidas
-            // 
-            this.rdAdidas.AutoSize = true;
-            this.rdAdidas.Checked = true;
-            this.rdAdidas.ForeColor = System.Drawing.Color.Red;
-            this.rdAdidas.Location = new System.Drawing.Point(3, 2);
-            this.rdAdidas.Name = "rdAdidas";
-            this.rdAdidas.Size = new System.Drawing.Size(69, 21);
-            this.rdAdidas.TabIndex = 0;
-            this.rdAdidas.TabStop = true;
-            this.rdAdidas.Text = "Adidas";
-            this.rdAdidas.UseVisualStyleBackColor = true;
-            // 
-            // rdReebok
-            // 
-            this.rdReebok.AutoSize = true;
-            this.rdReebok.ForeColor = System.Drawing.Color.Red;
-            this.rdReebok.Location = new System.Drawing.Point(78, 2);
-            this.rdReebok.Name = "rdReebok";
-            this.rdReebok.Size = new System.Drawing.Size(75, 21);
-            this.rdReebok.TabIndex = 1;
-            this.rdReebok.TabStop = true;
-            this.rdReebok.Text = "Reebok";
-            this.rdReebok.UseVisualStyleBackColor = true;
-            // 
-            // rdAll
-            // 
-            this.rdAll.AutoSize = true;
-            this.rdAll.ForeColor = System.Drawing.Color.Red;
-            this.rdAll.Location = new System.Drawing.Point(160, 2);
-            this.rdAll.Name = "rdAll";
-            this.rdAll.Size = new System.Drawing.Size(41, 21);
-            this.rdAll.TabIndex = 2;
-            this.rdAll.TabStop = true;
-            this.rdAll.Text = "All";
-            this.rdAll.UseVisualStyleBackColor = true;
-            // 
-            // lbRemark
-            // 
-            this.lbRemark.BackColor = System.Drawing.SystemColors.Control;
-            this.lbRemark.Lines = 0;
-            this.lbRemark.Location = new System.Drawing.Point(3, 248);
-            this.lbRemark.Name = "lbRemark";
-            this.lbRemark.Size = new System.Drawing.Size(311, 23);
-            this.lbRemark.TabIndex = 10;
-            this.lbRemark.Text = "PS:Sample Order has been Excluded";
-            this.lbRemark.TextStyle.Color = System.Drawing.Color.Red;
-            // 
             // label1
             // 
             this.label1.BackColor = System.Drawing.SystemColors.Control;
@@ -324,37 +355,21 @@
             this.grid1.AllowUserToResizeRows = false;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.grid1.DefaultCellStyle = dataGridViewCellStyle11;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(431, 12);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -412,15 +427,16 @@
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.radioGroup1.ResumeLayout(false);
             this.radioGroup1.PerformLayout();
+            this.panelSourceType.ResumeLayout(false);
+            this.panelSourceType.PerformLayout();
+            this.panelByType.ResumeLayout(false);
+            this.panelByType.PerformLayout();
             this.panelReportType.ResumeLayout(false);
             this.panelReportType.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMonth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
-            this.panelByType.ResumeLayout(false);
-            this.panelByType.PerformLayout();
-            this.panelSourceType.ResumeLayout(false);
-            this.panelSourceType.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -454,5 +470,6 @@
         private Win.UI.Button btnEdit;
         private Win.UI.Button btnUndo;
         private Win.UI.Button btnSave;
+        private Win.UI.ListControlBindingSource bindingSource1;
     }
 }

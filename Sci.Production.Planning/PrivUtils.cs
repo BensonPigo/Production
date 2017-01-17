@@ -398,6 +398,12 @@ namespace Sci.Production.Report
         {
             rngCell.Borders[XlBordersIndex.xlEdgeRight].LineStyle = XlLineStyle.xlContinuous;
         }
+        public static string getVersion(string value)
+        {
+            var rtn = value; // String.Format("{0}          {1}", value, " version.2016111101 ");
+
+            return rtn;
+        }
 
     }
 }
