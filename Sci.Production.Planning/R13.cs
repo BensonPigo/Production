@@ -23,7 +23,7 @@ namespace Sci.Production.Planning
 {
     public partial class R13 : Sci.Win.Tems.PrintForm
     {
-         private DataTable dt_source; //For Grid用
+         private System.Data.DataTable dt_source; //For Grid用
         private DataTable[] dsData;
         private IDictionary<string, IList<DataRow>> id_to_AdidasKPITarget = new Dictionary<string, IList<DataRow>>();
 
