@@ -39,7 +39,7 @@ namespace Sci.Production.Thread
             Select seq,operationid,annotation,d.SeamLength,d.MachineTypeID,descEN,styleid,seasonid,brandid
             from timestudy c,timestudy_Detail d 
             join operation e on e.id = d.operationid
-            where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}')
+            where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and d.SeamLength>0)
             select 0 as sel,a.id,b.*,a.threadcombid from b left join a 
 			on a.operationid = b.operationid and b.styleid = a.styleid 
             and a.seasonid  = b.seasonid and a.brandid = b.brandid order by seq
