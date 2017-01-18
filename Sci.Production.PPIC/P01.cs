@@ -41,7 +41,7 @@ namespace Sci.Production.PPIC
             button33.Visible = dataType != "1"; //Back to P01. PPIC Master List
          
         }
-       private string _id ;
+     
             
         
         protected override void OnDetailDetached()
@@ -236,6 +236,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             button10.ForeColor = haveTmsCost ? Color.Blue : Color.Black;
             button11.ForeColor = MyUtility.Check.Seek(string.Format("select i.ID from Style s, IETMS i where s.Ukey = {0} and s.IETMSID = i.ID and s.IETMSVersion = i.Version", MyUtility.Convert.GetString(CurrentMaintain["StyleUkey"]))) && MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button12.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["CMPQRemark"]) ? Color.Blue : Color.Black;
+            button13.ForeColor = MyUtility.Check.Seek(string.Format("select ID from orders where Junk = 0 and POID='{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]))) ? Color.Blue : Color.Black;
             button14.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Artwork where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button15.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button17.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["CuttingSP"]) ? Color.Blue : Color.Black;
@@ -248,6 +249,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             button21.ForeColor = MyUtility.Check.Seek(string.Format("select ID from AIR where PoID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]))) ? Color.Blue : Color.Black;
             button24.ForeColor = MyUtility.Check.Seek(string.Format("select ID from ArtworkPO_Detail where OrderID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button25.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"]))) ? Color.Blue : Color.Black;
+            button26.ForeColor = MyUtility.Check.Seek(string.Format("select ID from orders where Junk = 0 and POID='{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]))) ? Color.Blue : Color.Black;
             button27.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["SewLine"]) ? Color.Blue : Color.Black;
             button28.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail where OrderID = '{0}' and ReceiveDate is not null", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button29.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
@@ -738,7 +740,7 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         //CMPQ Sheet
         private void button13_Click(object sender, EventArgs e)
         {
-            string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", CurrentMaintain["ID"]) });
+            string poid = CurrentMaintain["POID"].ToString(); //MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", CurrentMaintain["POID"]) });
 
                 System.Data.DataTable rpt3;
                 DualResult res = DBProxy.Current.Select("", @"
@@ -811,7 +813,7 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
                     sxr.dicDatas.Add(sxr._v + "amount" + sIdx, row["amount"].ToString());
 
                     System.Data.DataTable[] dts;
-                    res = DBProxy.Current.SelectSP("", "Order_Report03", new List<SqlParameter> { new SqlParameter("@OrderID", oid), new SqlParameter("@ByType", 0) }, out dts);
+                    res = DBProxy.Current.SelectSP("", "PPIC_Report03", new List<SqlParameter> { new SqlParameter("@OrderID", oid), new SqlParameter("@ByType", 0) }, out dts);
 
                     if (!res) continue;
                     if (dts.Length < 3) continue;
@@ -974,9 +976,9 @@ where POID = @poid group by POID,b.spno";
         //M/Notice Sheet
         private void button26_Click(object sender, EventArgs e)
         {
-              _id=(string)CurrentMaintain["id"];
+              string _id = CurrentMaintain["id"].ToString();
 
-                string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
+              string poid = CurrentMaintain["POID"].ToString(); //MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
 
                 DataRow drvar = GetTitleDataByCustCD(poid, _id);
 
