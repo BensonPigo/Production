@@ -203,7 +203,7 @@ namespace Sci.Production.Warehouse
                     string sqlcmd = "";
                     IList<DataRow> x;
                    
-                        Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(CurrentDetailData["poid"].ToString(), CurrentDetailData["seq"].ToString(), "left(m.seq1,1) !='7'");
+                        Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(CurrentDetailData["poid"].ToString(), CurrentDetailData["seq"].ToString());
                         DialogResult result = selepoitem.ShowDialog();
                         if (result == DialogResult.Cancel) { return; }
                         x = selepoitem.GetSelecteds();
@@ -257,8 +257,8 @@ namespace Sci.Production.Warehouse
                             return;
                         }
 
-                        if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,colorid,refno from po_supp_detail
-where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
+                        if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
+                                    @"and m.seq1 ='{2}' and m.seq2 = '{3}'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                         {
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
                             e.Cancel = true;
