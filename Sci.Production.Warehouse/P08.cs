@@ -287,34 +287,8 @@ namespace Sci.Production.Warehouse
 
                             //jimmy 105/11/14
                             //gird的StockUnit照新規則 抓取值
-                            if (!MyUtility.Check.Seek(string.Format(@"select 
-iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
-    ff.UsageUnit , 
-    iif(mm.IsExtensionUnit > 0 , 
-        iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
-            ff.UsageUnit , 
-            uu.ExtensionUnit), 
-        ff.UsageUnit)) as StockUnit
---,stockunit
-,a.fabrictype
-,a.qty
-,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [description] 
-,a.POUnit 
-from po_supp_detail a 
-left join Receiving_detail b on b.PoID= a.id and b.Seq1 = a.SEQ1 and b.Seq2 = a.SEQ2
-inner join [dbo].[Fabric] ff on a.SCIRefno= ff.SCIRefno
-inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
-inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
-inner join View_unitrate v on v.FROM_U = ａ.POUnit 
-	and v.TO_U = (
-	iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
-		ff.UsageUnit , 
-		iif(mm.IsExtensionUnit > 0 , 
-			iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
-				ff.UsageUnit , 
-				uu.ExtensionUnit), 
-			ff.UsageUnit)))--ａ.StockUnit
-where a.id = '{0}' and a.seq1 ='{1}'and a.seq2 = '{2}'", CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
+                            if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
+                                    @"and m.seq1 ='{2}'and m.seq2 = '{3}' and left(m.seq1,1) !='7'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 CurrentDetailData["seq"] = "";
