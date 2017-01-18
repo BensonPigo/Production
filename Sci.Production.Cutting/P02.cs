@@ -1783,6 +1783,7 @@ namespace Sci.Production.Cutting
         {
             base.ClickUndo();
             RenewData();
+            OnDetailEntered();
         }
         private void insertSizeRatioToolStripMenuItem_Click(object sender, EventArgs e)
         {
