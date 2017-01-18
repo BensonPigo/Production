@@ -142,6 +142,7 @@ namespace Sci.Production.Cutting
             Helper.Controls.Grid.Generator(this.gridSizeQty)
                 .Text("SizeCode", header: "Size Code", width: Widths.AnsiChars(8))
                 .Numeric("Qty", header: "Q'ty", width: Widths.Numeric(4), decimal_places: 0);
+            this.gridSizeQty.Font = new Font("Arial", 9);
             return true;
         }
 

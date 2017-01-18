@@ -338,9 +338,9 @@
             // panelSizeQty
             // 
             this.panelSizeQty.Controls.Add(this.gridSizeQty);
-            this.panelSizeQty.Location = new System.Drawing.Point(322, 6);
+            this.panelSizeQty.Location = new System.Drawing.Point(276, 6);
             this.panelSizeQty.Name = "panelSizeQty";
-            this.panelSizeQty.Size = new System.Drawing.Size(160, 114);
+            this.panelSizeQty.Size = new System.Drawing.Size(186, 114);
             this.panelSizeQty.TabIndex = 150;
             // 
             // gridSizeQty
@@ -365,7 +365,7 @@
             this.gridSizeQty.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSizeQty.RowTemplate.Height = 24;
             this.gridSizeQty.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridSizeQty.Size = new System.Drawing.Size(160, 114);
+            this.gridSizeQty.Size = new System.Drawing.Size(186, 114);
             this.gridSizeQty.TabIndex = 0;
             this.gridSizeQty.TabStop = false;
             // 
@@ -528,7 +528,7 @@
             this.label21.Lines = 0;
             this.label21.Location = new System.Drawing.Point(236, 6);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(83, 21);
+            this.label21.Size = new System.Drawing.Size(37, 21);
             this.label21.TabIndex = 33;
             this.label21.Text = "Ratio";
             this.label21.TextStyle.Color = System.Drawing.Color.White;
