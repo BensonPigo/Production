@@ -179,7 +179,7 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
             if (excel == null) return false;
             excel.DisplayAlerts = false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            excel.Visible = true;
+
             //Summary -- Header
             if (reasonData.Rows.Count > 8)
             {
