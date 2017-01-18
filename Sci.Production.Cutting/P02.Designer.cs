@@ -801,6 +801,7 @@
             this.distribute_grid.Size = new System.Drawing.Size(367, 120);
             this.distribute_grid.TabIndex = 48;
             this.distribute_grid.TabStop = false;
+            this.distribute_grid.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.distribute_grid_DataError);
             // 
             // distributeMenuStrip
             // 

@@ -2141,5 +2141,10 @@ namespace Sci.Production.Cutting
             this.detailgridbs.ResumeBinding();
             this.detailgrid.SelectRowTo(0);
         }
+
+        private void distribute_grid_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+
+        }
     }
 }
