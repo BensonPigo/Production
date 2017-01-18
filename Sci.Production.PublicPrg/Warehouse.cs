@@ -1125,6 +1125,40 @@ drop table #TmpSource
         #endregion
 
         #region -- SelePoItem --
+        public static string selePoItemSqlCmd = @"select  m.poid,concat(Ltrim(Rtrim(m.seq1)), ' ', m.seq2) as seq, p.Refno, dbo.getmtldesc(m.poid,m.seq1,m.seq2,2,0) as Description 
+                                                    ,p.ColorID,p.FinalETA,m.InQty,p.pounit
+                                                    --,p.StockUnit
+                                                    ,iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+                                                        ff.UsageUnit , 
+                                                        iif(mm.IsExtensionUnit > 0 , 
+                                                            iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+                                                                ff.UsageUnit , 
+                                                                uu.ExtensionUnit), 
+                                                            ff.UsageUnit)) as StockUnit
+                                                    ,isnull(m.OutQty, 0) as outQty
+                                                    ,isnull(m.AdjustQty, 0) as AdjustQty
+                                                    ,isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) as balance
+                                                    ,m.LInvQty
+                                                    ,p.fabrictype
+                                                    ,m.seq1
+                                                    ,m.seq2
+                                                    ,p.scirefno
+                                                    ,p.qty
+                                                    from dbo.mdivisionpodetail m 
+                                                    inner join dbo.PO_Supp_Detail p on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
+                                                    inner join [dbo].[Fabric] ff on p.SCIRefno= ff.SCIRefno
+                                                    inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
+                                                    inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
+                                                    inner join View_unitrate v on v.FROM_U = p.POUnit 
+	                                                    and v.TO_U = (
+	                                                    iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+		                                                    ff.UsageUnit , 
+		                                                    iif(mm.IsExtensionUnit > 0 , 
+			                                                    iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+				                                                    ff.UsageUnit , 
+				                                                    uu.ExtensionUnit), 
+			                                                    ff.UsageUnit)))--p.StockUnit
+                                                    where m.poid ='{0}' and m.mdivisionid = '{1}'";
         /// <summary>
         /// 右鍵開窗選取採購項
         /// </summary>
@@ -1135,40 +1169,7 @@ drop table #TmpSource
         public static Sci.Win.Tools.SelectItem SelePoItem(string poid, string defaultseq, string filters = null)
         {
             DataTable dt;
-            string sqlcmd = string.Format(@"select  m.poid,left(m.seq1+' ',3)+m.seq2 as seq, p.Refno, dbo.getmtldesc(m.poid,m.seq1,m.seq2,2,0) as Description 
-,p.ColorID,p.FinalETA,m.InQty,p.pounit
---,p.StockUnit
-,iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
-    ff.UsageUnit , 
-    iif(mm.IsExtensionUnit > 0 , 
-        iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
-            ff.UsageUnit , 
-            uu.ExtensionUnit), 
-        ff.UsageUnit)) as StockUnit
-,isnull(m.OutQty, 0) as outQty
-,isnull(m.AdjustQty, 0) as AdjustQty
-,isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) as balance
-,m.LInvQty
-,p.fabrictype
-,m.seq1
-,m.seq2
-,p.scirefno
-,p.qty
-from dbo.mdivisionpodetail m 
-inner join dbo.PO_Supp_Detail p on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
-inner join [dbo].[Fabric] ff on p.SCIRefno= ff.SCIRefno
-inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
-inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
-inner join View_unitrate v on v.FROM_U = p.POUnit 
-	and v.TO_U = (
-	iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
-		ff.UsageUnit , 
-		iif(mm.IsExtensionUnit > 0 , 
-			iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
-				ff.UsageUnit , 
-				uu.ExtensionUnit), 
-			ff.UsageUnit)))--p.StockUnit
-where m.mdivisionid = '{1}' and m.poid ='{0}'", poid, Sci.Env.User.Keyword);
+            string sqlcmd = string.Format(selePoItemSqlCmd, poid, Sci.Env.User.Keyword);
 
             if (!(MyUtility.Check.Empty(filters)))
             {
