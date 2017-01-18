@@ -17,6 +17,7 @@ namespace Sci.Production.Cutting
 {
     public partial class P02 : Sci.Win.Tems.Input6
     {
+        #region
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
 
@@ -40,7 +41,7 @@ namespace Sci.Production.Cutting
         Ict.Win.UI.DataGridViewTextBoxColumn col_dist_article;
         Ict.Win.UI.DataGridViewTextBoxColumn col_dist_sp;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_dist_qty;
-
+        #endregion
         public P02(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
         {
@@ -90,36 +91,6 @@ namespace Sci.Production.Cutting
                 this.IsSupportEdit = false;
                 this.DefaultFilter = string.Format("mDivisionid = '{0}' and WorkType is not null and WorkType != '' and Finished = 1", keyWord);
             }
-        }
-
-        protected override void OnDetailEntered()
-        {
-            base.OnDetailEntered();
-
-            sizeratio_grid.DataSource = sizeratiobs;
-            sizeratiobs.DataSource = sizeratioTb;
-            distributebs.DataSource = distqtyTb;
-            distribute_grid.DataSource = distributebs;
-            qtybreakds.DataSource = qtybreakTb;
-            qtybreak_grid.DataSource = qtybreakds;
-
-            sizeratioTb.DefaultView.RowFilter = "";
-            qtybreakTb.DefaultView.RowFilter = "";
-            OnDetailGridRowChanged();
-
-            DataRow orderdr;
-            MyUtility.Check.Seek(string.Format("Select * from Orders where id='{0}'", CurrentMaintain["ID"]), out orderdr);
-
-            textbox_Style.Text = orderdr == null ? "" : orderdr["Styleid"].ToString();
-            textbox_Line.Text = orderdr == null ? "" : orderdr["SewLine"].ToString();
-            string maxcutrefCmd = string.Format("Select Max(Cutref) from workorder WITH (NOLOCK) where mDivisionid = '{0}'", keyWord);
-            textbox_LastCutRef.Text = MyUtility.GetValue.Lookup(maxcutrefCmd);
-            comboBox1.Enabled = !EditMode;  //Sorting於編輯模式時不可選取
-
-            //617: CUTTING_P02_Cutting Work Order，(5) Article值不正確 (最後多了一個/)
-            foreach (DataRow dr in DetailDatas) dr["Article"] = dr["Article"].ToString().TrimEnd('/');
-            sorting(comboBox1.Text);
-            this.detailgrid.SelectRowTo(0);
         }
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
@@ -288,6 +259,35 @@ namespace Sci.Production.Cutting
             getqtybreakdown(masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+
+            sizeratio_grid.DataSource = sizeratiobs;
+            sizeratiobs.DataSource = sizeratioTb;
+            distributebs.DataSource = distqtyTb;
+            distribute_grid.DataSource = distributebs;
+            qtybreakds.DataSource = qtybreakTb;
+            qtybreak_grid.DataSource = qtybreakds;
+
+            sizeratioTb.DefaultView.RowFilter = "";
+            qtybreakTb.DefaultView.RowFilter = "";
+            OnDetailGridRowChanged();
+
+            DataRow orderdr;
+            MyUtility.Check.Seek(string.Format("Select * from Orders where id='{0}'", CurrentMaintain["ID"]), out orderdr);
+
+            textbox_Style.Text = orderdr == null ? "" : orderdr["Styleid"].ToString();
+            textbox_Line.Text = orderdr == null ? "" : orderdr["SewLine"].ToString();
+            string maxcutrefCmd = string.Format("Select Max(Cutref) from workorder WITH (NOLOCK) where mDivisionid = '{0}'", keyWord);
+            textbox_LastCutRef.Text = MyUtility.GetValue.Lookup(maxcutrefCmd);
+            comboBox1.Enabled = !EditMode;  //Sorting於編輯模式時不可選取
+
+            //617: CUTTING_P02_Cutting Work Order，(5) Article值不正確 (最後多了一個/)
+            foreach (DataRow dr in DetailDatas) dr["Article"] = dr["Article"].ToString().TrimEnd('/');
+            sorting(comboBox1.Text);
+            this.detailgrid.SelectRowTo(0);
+        }
 
         protected override void OnDetailGridSetup()
         {
@@ -349,7 +349,6 @@ namespace Sci.Production.Cutting
 
             changeeditable();
         }
-
         #region Grid Cell 物件設定
         private void changeeditable()
         {
@@ -1111,23 +1110,6 @@ namespace Sci.Production.Cutting
         }
         #endregion
         
-        private void totalDisQty()
-        {
-            //gridValid();
-            if (!MyUtility.Check.Empty(CurrentDetailData["Ukey"]))
-            {
-                object comput;
-                int disqty;
-                comput = distqtyTb.Compute("SUM(Qty)", string.Format("workorderUkey = '{0}'", CurrentDetailData["Ukey"]));
-                if (comput == DBNull.Value) disqty = 0;
-                else disqty = Convert.ToInt32(comput);
-                totaldisqtybox.Value = disqty;
-            }
-            else
-            {
-                totaldisqtybox.Value = 0;
-            }
-        }
         //計算Excess
         private void updateExcess(int workorderukey, int newkey, string sizecode)
         {
@@ -1191,20 +1173,35 @@ namespace Sci.Production.Cutting
                 }
             }
         }
-
-        protected override void OnEditModeChanged()
+        private void totalDisQty()
         {
-
-            base.OnEditModeChanged();
-            if (sizeratioMenuStrip != null) sizeratioMenuStrip.Enabled = this.EditMode;
-            if (distributeMenuStrip != null) distributeMenuStrip.Enabled = this.EditMode;
+            //gridValid();
+            if (!MyUtility.Check.Empty(CurrentDetailData["Ukey"]))
+            {
+                object comput;
+                int disqty;
+                comput = distqtyTb.Compute("SUM(Qty)", string.Format("workorderUkey = '{0}'", CurrentDetailData["Ukey"]));
+                if (comput == DBNull.Value) disqty = 0;
+                else disqty = Convert.ToInt32(comput);
+                totaldisqtybox.Value = disqty;
+            }
+            else
+            {
+                totaldisqtybox.Value = 0;
+            }
         }
 
         private void gridValid()
         {
             sizeratio_grid.ValidateControl();
             distribute_grid.ValidateControl();
-            //grid.ValidateControl();
+        }
+
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+            if (sizeratioMenuStrip != null) sizeratioMenuStrip.Enabled = this.EditMode;
+            if (distributeMenuStrip != null) distributeMenuStrip.Enabled = this.EditMode;
         }
 
         //1394: CUTTING_P02_Cutting Work Order。KEEP當前的資料。
@@ -1785,6 +1782,7 @@ namespace Sci.Production.Cutting
             cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
         }
 
+        #region MarkerLengt驗證/UnitCons/Cons計算
         private void numericBox_MarkerLengthY_Validated(object sender, EventArgs e)
         {
             if (numericBox_MarkerLengthY.Text.Trim() == "") return;
@@ -1795,7 +1793,6 @@ namespace Sci.Production.Cutting
             CurrentDetailData["MarkerLengthY"] = y.ToString("D2");
             cal_Cons(true, true);
         }
-
         private void textBox_MarkerLengthE_Validating(object sender, CancelEventArgs e)
         {
             if (textBox_MarkerLengthE.OldValue == textBox_MarkerLengthE.Text) return;
@@ -1803,12 +1800,10 @@ namespace Sci.Production.Cutting
             CurrentDetailData["MarkerLengthE"] = textBox_MarkerLengthE.Text;
             cal_Cons(true, true);
         }
-
         private void numericBox_UnitCons_Validated(object sender, EventArgs e)
         {
             cal_Cons(false, true);
         }
-
         private void cal_Cons(bool updateConsPC, bool updateCons) //update Cons
         {
             gridValid();
@@ -1847,6 +1842,7 @@ namespace Sci.Production.Cutting
             this.textBox_MarkerLength.Text = MarkerLengthstr;
             this.textBox_MarkerLength.ValidateControl();
             }
+        #endregion
 
         private void cal_TotalCutQty(object workorderukey, object newkey)
         {
@@ -1885,7 +1881,8 @@ namespace Sci.Production.Cutting
 
             totalDisQty();
         }
-        
+
+        #region Save Before Post After
         protected override bool ClickSaveBefore()
         {
             gridValid();
@@ -1965,7 +1962,6 @@ namespace Sci.Production.Cutting
             }
             return base.ClickSaveBefore();
         }
-
         protected override DualResult ClickSavePost()
         {
             int ukey, newkey;
@@ -2085,7 +2081,6 @@ namespace Sci.Production.Cutting
 
             return base.ClickSavePost();
         }
-
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -2095,6 +2090,7 @@ namespace Sci.Production.Cutting
             RenewData();
             OnDetailEntered();
         }
+        #endregion
 
         private void Qtybreak_Click(object sender, EventArgs e)
         {
