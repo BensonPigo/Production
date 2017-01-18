@@ -143,7 +143,7 @@ left join PPICReason pr on pr.Type = 'FL' and ld.PPICReasonID = pr.ID
 left join PPICReason pr1 on pr1.Type = 'AL' and ld.PPICReasonID = pr1.ID
 {0}
 group by l.MDivisionID,l.FactoryID,ld.PPICReasonID+isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),''),l.FabricType)
-select *
+select  distinct *
 from tmpData
 PIVOT (SUM(RequestQty)
 FOR Description IN ({1})
@@ -179,7 +179,7 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
             if (excel == null) return false;
             excel.DisplayAlerts = false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
+            excel.Visible = true;
             //Summary -- Header
             if (reasonData.Rows.Count > 8)
             {
@@ -208,7 +208,7 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
                 worksheet.Cells[11, count] = string.Format("=SUM({0}2:{0}10)",PublicPrg.Prgs.GetExcelEnglishColumnName(count));
             }
 
-            //Summary -- Content
+          //  Summary -- Content
             int row = 1;
             foreach (DataRow dr in pivotData.Rows)
             {
@@ -222,7 +222,7 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
             }
 
             //刪除Summary多出來的資料行
-            for (int i = pivotData.Rows.Count+2; i <= 10; i++)
+            for (int i = pivotData.Rows.Count + 2; i <= 10; i++)
             {
                 Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[pivotData.Rows.Count + 2, Type.Missing];
                 rng.Select();
