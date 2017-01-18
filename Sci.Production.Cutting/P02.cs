@@ -867,8 +867,8 @@ namespace Sci.Production.Cutting
 
                 //cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
                 cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
-                totalDisQty();
                 updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), newvalue);
+                totalDisQty();
             };
             col_sizeRatio_qty.EditingControlShowing += (s, e) =>
             {
@@ -894,8 +894,8 @@ namespace Sci.Production.Cutting
                 //cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
                 cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
 
-                totalDisQty();
                 updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), dr["SizeCode"].ToString());
+                totalDisQty();
             };
             #endregion
             #region Distribute
@@ -908,7 +908,7 @@ namespace Sci.Production.Cutting
                     if (CurrentDetailData == null) return;
                     DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
-                    if (dr["OrderID"].ToString() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
+                    if (dr["OrderID"].ToString().ToUpper() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
                     sele = new SelectItem(spTb, "ID", "23", dr["OrderID"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -920,7 +920,7 @@ namespace Sci.Production.Cutting
                 if (e.RowIndex == -1) return;
                 if (CurrentDetailData == null) return;
                 DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString() != "EXCESS") ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString().ToUpper() != "EXCESS") ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
 
             };
@@ -932,7 +932,7 @@ namespace Sci.Production.Cutting
                 DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["orderid"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (oldvalue == newvalue || newvalue == "EXCESS") return;
+                if (oldvalue == newvalue || newvalue.ToUpper() == "EXCESS") return;
 
                 DataRow[] seledr = spTb.Select(string.Format("ID='{0}'", newvalue));
                 if (seledr.Length == 0)
@@ -970,7 +970,7 @@ namespace Sci.Production.Cutting
                     if (CurrentDetailData == null) return;
                     DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
-                    if (dr["OrderID"].ToString() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
+                    if (dr["OrderID"].ToString().ToUpper() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
                     sele = new SelectItem(sizeGroup, "SizeCode", "23", dr["SizeCode"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -982,7 +982,7 @@ namespace Sci.Production.Cutting
                 if (e.RowIndex == -1) return;
                 if (CurrentDetailData == null) return;
                 DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString() != "EXCESS") ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString().ToUpper() != "EXCESS") ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
 
             };
@@ -1018,8 +1018,8 @@ namespace Sci.Production.Cutting
                 }
                 dr["SizeCode"] = newvalue;
                 dr.EndEdit();
-                totalDisQty();
                 updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), dr["SizeCode"].ToString());
+                totalDisQty();
 
             };
             col_dist_article.EditingMouseDown += (s, e) =>
@@ -1031,7 +1031,7 @@ namespace Sci.Production.Cutting
                     if (CurrentDetailData == null) return;
                     DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
-                    if (dr["OrderID"].ToString() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
+                    if (dr["OrderID"].ToString().ToUpper() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
                     sele = new SelectItem(artTb, "article", "23", dr["Article"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -1043,7 +1043,7 @@ namespace Sci.Production.Cutting
                 if (e.RowIndex == -1) return;
                 if (CurrentDetailData == null) return;
                 DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString() != "EXCESS") ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString().ToUpper() != "EXCESS") ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
 
             };
@@ -1081,15 +1081,16 @@ namespace Sci.Production.Cutting
                 dr["Article"] = newvalue;
                 dr.EndEdit();
             };
+            //依據Cutplanid&OrderID來設定是否能修改
             col_dist_qty.EditingControlShowing += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
                 if (CurrentDetailData == null) return;
                 DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString() != "EXCESS") ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = false;
+                if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString().ToUpper() != "EXCESS") ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = true;
-
             };
+            //重算qty
             col_dist_qty.CellValidating += (s, e) =>
             {
                 if (!this.EditMode) { return; }
@@ -1102,14 +1103,110 @@ namespace Sci.Production.Cutting
 
                 dr["Qty"] = newvalue;
                 dr.EndEdit();
-                totalDisQty();
-                updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), dr["SizeCode"].ToString());
 
+                updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), dr["SizeCode"].ToString());
+                //計算完EXCESS正確後再Total計算
+                totalDisQty();
             };
             #endregion
-
         }
         #endregion
+        
+        private void totalDisQty()
+        {
+            //gridValid();
+            if (!MyUtility.Check.Empty(CurrentDetailData["Ukey"]))
+            {
+                object comput;
+                int disqty;
+                comput = distqtyTb.Compute("SUM(Qty)", string.Format("workorderUkey = '{0}'", CurrentDetailData["Ukey"]));
+                if (comput == DBNull.Value) disqty = 0;
+                else disqty = Convert.ToInt32(comput);
+                totaldisqtybox.Value = disqty;
+            }
+            else
+            {
+                totaldisqtybox.Value = 0;
+            }
+        }
+        //計算Excess
+        private void updateExcess(int workorderukey, int newkey, string sizecode)
+        {
+            //gridValid();
+            DataRow[] sizeview = sizeratioTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode = '{2}'", workorderukey, newkey, sizecode));
+            foreach (DataRow dr in sizeview)
+            {
+                int now_distqty, org_distqty;
+                object comput = distqtyTb.Compute("Sum(Qty)", string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode = '{2}'", workorderukey, newkey, dr["SizeCode"]));
+                if (comput == DBNull.Value) now_distqty = 0;
+                else org_distqty = Convert.ToInt32(comput);
+
+                now_distqty = Convert.ToInt32(dr["Qty"]) * Convert.ToInt32(CurrentDetailData["Layer"]);
+
+                DataRow[] distdr = distqtyTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode ='{2}' ", workorderukey, newkey, dr["SizeCode"]));
+                if (distdr.Length == 0)
+                {
+                    DataRow ndr = distqtyTb.NewRow();
+                    ndr["WorkOrderUKey"] = workorderukey;
+                    ndr["NewKey"] = newkey;
+                    ndr["OrderID"] = "EXCESS";
+                    ndr["SizeCode"] = dr["SizeCode"];
+                    ndr["Qty"] = now_distqty;
+                    distqtyTb.Rows.Add(ndr);
+                }
+                else
+                {
+                    foreach (DataRow dr2 in distdr)
+                    {
+                        if (dr2["OrderID"].ToString().Trim().ToUpper() != "EXCESS" )
+                        {
+                            if (now_distqty != 0)
+                            {
+                                if (Convert.ToInt32(dr2["Qty"]) <= now_distqty)
+                                {
+                                    now_distqty = now_distqty - Convert.ToInt32(dr2["Qty"]);
+                                }
+                                else
+                                {
+                                    dr2["Qty"] = now_distqty;
+                                    //now_distqty = 0;
+                                }
+                            }
+                            else
+                            {
+                                dr2.Delete();
+                            }
+                        }
+                    }
+
+                    if (now_distqty > 0)
+                    {
+                        DataRow[] exdr = distqtyTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode ='{2}' and OrderID ='EXCESS' ", workorderukey, newkey, dr["SizeCode"]));
+                        if (exdr.Length == 0)
+                        {
+                            DataRow ndr = distqtyTb.NewRow();
+                            ndr["WorkOrderUKey"] = workorderukey;
+                            ndr["NewKey"] = newkey;
+                            ndr["OrderID"] = "EXCESS";
+                            ndr["SizeCode"] = dr["SizeCode"];
+                            ndr["Qty"] = now_distqty;
+                            distqtyTb.Rows.Add(ndr);
+                        }
+                        else
+                        {
+                            exdr[0]["Qty"] = now_distqty;
+                        }
+                    }
+                    else
+                    {
+                        if (!this.EditMode) { return; }
+                        DataRow[] exdr = distqtyTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode ='{2}' and OrderID ='EXCESS' ", workorderukey, newkey, dr["SizeCode"]));
+                        if (exdr.Length > 0)
+                            exdr[0].Delete();
+                    }
+                }
+            }
+        }
 
         protected override void OnEditModeChanged()
         {
@@ -1805,103 +1902,7 @@ namespace Sci.Production.Cutting
 
             totalDisQty();
         }
-
-        private void totalDisQty()
-        {
-            gridValid();
-            if (!MyUtility.Check.Empty(CurrentDetailData["Ukey"]))
-            {
-                object comput;
-                int disqty;
-                comput = distqtyTb.Compute("SUM(Qty)", string.Format("workorderUkey = '{0}'", CurrentDetailData["Ukey"]));
-                if (comput == DBNull.Value) disqty = 0;
-                else disqty = Convert.ToInt32(comput);
-                totaldisqtybox.Value = disqty;
-            }
-            else
-            {
-                totaldisqtybox.Value = 0;
-            }
-        }
-
-        //計算Excess
-        private void updateExcess(int workorderukey, int newkey, string sizecode)
-        {
-            gridValid();
-            DataRow[] sizeview = sizeratioTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode = '{2}'", workorderukey, newkey, sizecode));
-            foreach (DataRow dr in sizeview)
-            {
-                int now_distqty, org_distqty;
-                object comput = distqtyTb.Compute("Sum(Qty)", string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode = '{2}'", workorderukey, newkey, dr["SizeCode"]));
-                if (comput == DBNull.Value) now_distqty = 0;
-                else org_distqty = Convert.ToInt32(comput);
-
-                now_distqty = Convert.ToInt32(dr["Qty"]) * Convert.ToInt32(CurrentDetailData["Layer"]);
-
-                DataRow[] distdr = distqtyTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode ='{2}' ", workorderukey, newkey, dr["SizeCode"]));
-                if (distdr.Length == 0)
-                {
-                    DataRow ndr = distqtyTb.NewRow();
-                    ndr["WorkOrderUKey"] = workorderukey;
-                    ndr["NewKey"] = newkey;
-                    ndr["OrderID"] = "EXCESS";
-                    ndr["SizeCode"] = dr["SizeCode"];
-                    ndr["Qty"] = now_distqty;
-                    distqtyTb.Rows.Add(ndr);
-                }
-                else
-                {
-                    foreach (DataRow dr2 in distdr)
-                    {
-                        if (!(dr2["OrderID"].ToString().Trim() == "EXCESS" || dr2["OrderID"].ToString().Trim() == "Excess"))
-                        {
-                            if (now_distqty != 0)
-                            {
-                                if (Convert.ToInt32(dr2["Qty"]) <= now_distqty)
-                                {
-                                    now_distqty = now_distqty - Convert.ToInt32(dr2["Qty"]);
-                                }
-                                else
-                                {
-                                    dr2["Qty"] = now_distqty;
-                                    //now_distqty = 0;
-                                }
-                            }
-                            else
-                            {
-                                dr2.Delete();
-                            }
-                        }
-                    }
-
-                    if (now_distqty > 0)
-                    {
-                        DataRow[] exdr = distqtyTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode ='{2}' and OrderID ='EXCESS' ", workorderukey, newkey, dr["SizeCode"]));
-                        if (exdr.Length == 0)
-                        {
-                            DataRow ndr = distqtyTb.NewRow();
-                            ndr["WorkOrderUKey"] = workorderukey;
-                            ndr["NewKey"] = newkey;
-                            ndr["OrderID"] = "EXCESS";
-                            ndr["SizeCode"] = dr["SizeCode"];
-                            ndr["Qty"] = now_distqty;
-                            distqtyTb.Rows.Add(ndr);
-                        }
-                        else
-                        {
-                            exdr[0]["Qty"] = now_distqty;
-                        }
-                    }
-                    else
-                    {
-                        DataRow[] exdr = distqtyTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode ='{2}' and OrderID ='EXCESS' ", workorderukey, newkey, dr["SizeCode"]));
-                        if (exdr.Length > 0)
-                            exdr[0].Delete();
-                    }
-                }
-            }
-        }
-
+        
         protected override bool ClickSaveBefore()
         {
             gridValid();
@@ -1941,7 +1942,7 @@ namespace Sci.Production.Cutting
             {
                 if (dr2.RowState != DataRowState.Deleted)
                 {
-                    if ((Convert.ToInt16(dr2["Qty"]) == 0 || MyUtility.Check.Empty(dr2["SizeCode"]) || MyUtility.Check.Empty(dr2["Article"])) && dr2["OrderID"].ToString() != "EXCESS")
+                    if ((Convert.ToInt16(dr2["Qty"]) == 0 || MyUtility.Check.Empty(dr2["SizeCode"]) || MyUtility.Check.Empty(dr2["Article"])) && dr2["OrderID"].ToString().ToUpper() != "EXCESS" )
                     {
                         deledr = distqtyTb.Select(string.Format("WorkOrderUkey = {0} and newKey = {1} and sizeCode = '{2}' and Article = '{3}' and OrderID = '{4}'", dr2["WorkOrderUkey"], dr2["NewKey"], dr2["SizeCode"], dr2["Article"], dr2["OrderID"]));
                         if (deledr.Length > 0) deledr[0].Delete();
