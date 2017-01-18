@@ -2092,6 +2092,7 @@ namespace Sci.Production.Cutting
             
             foreach (DataRow dr in DetailDatas) dr["SORT_NUM"] = 0;  //編輯後存檔，將[SORT_NUM]歸零
             //sorting(comboBox1.Text);
+            RenewData();
             OnDetailEntered();
         }
 
