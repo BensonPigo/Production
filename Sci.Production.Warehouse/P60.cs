@@ -191,6 +191,9 @@ namespace Sci.Production.Warehouse
             .Text("Remark", header: "remark", width: Widths.AnsiChars(20))
             ;     //
             #endregion 欄位設定
+
+            detailgrid.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Confirm

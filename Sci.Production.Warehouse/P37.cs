@@ -358,6 +358,9 @@ namespace Sci.Production.Warehouse
             .Text("Location", header: "Location", iseditingreadonly: true)    //7
             ;     //
             #endregion 欄位設定
+
+            detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
+            
         }
 
         //Confirm
