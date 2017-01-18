@@ -475,17 +475,16 @@ where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintai
                         else
                         {
                             //check Seq Length
-                            if (e.FormattedValue.ToString().Trim().Length < 5)
+                            string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (seq.Length < 2)
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 e.Cancel = true;
                                 return;
                             }
 
-                            string seq1 = e.FormattedValue.ToString().Trim().Substring(0, e.FormattedValue.ToString().Trim().Length - 3);
-                            string seq2 = e.FormattedValue.ToString().Trim().Substring(e.FormattedValue.ToString().Trim().Length - 2);
-                            if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype from po_supp_detail
-where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], seq1, seq2), out dr, null))
+                            if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
+                                    @"and m.seq1 ='{2}' and m.seq2 = '{3}' and left(m.seq1, 1) !='7'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 e.Cancel = true;
@@ -516,12 +515,12 @@ inner join View_unitrate v on v.FROM_U = b.POUnit
 				ff.UsageUnit , 
 				uu.ExtensionUnit), 
 			ff.UsageUnit)))--b.StockUnit
-where b.id = '{0}' and b.seq1 ='{1}'and b.seq2 = '{2}'", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3), e.FormattedValue.ToString().PadRight(5).Substring(3, 2)), out dr_StockUnit, null);
+where b.id = '{0}' and b.seq1 ='{1}'and b.seq2 = '{2}'", CurrentDetailData["poid"], seq[0], seq[1]), out dr_StockUnit, null);
 
                                 CurrentDetailData["stockunit"] = (unti_result) ? dr_StockUnit["stockunit"] : dr["stockunit"];
                                 CurrentDetailData["seq"] = e.FormattedValue;
-                                CurrentDetailData["seq1"] = seq1;
-                                CurrentDetailData["seq2"] = seq2;
+                                CurrentDetailData["seq1"] = seq[0];
+                                CurrentDetailData["seq2"] = seq[1];
                                 CurrentDetailData["pounit"] = dr["pounit"];
                                 CurrentDetailData["fabrictype"] = dr["fabrictype"];
                                 CurrentDetailData["shipqty"] = 0m;
