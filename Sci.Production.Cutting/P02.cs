@@ -45,7 +45,6 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             InitializeComponent();
-            this.detailgridcont.Size = new System.Drawing.Size(624, 589);
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("LectraCode", "Pattern Panel");
             comboBox1_RowSource.Add("SP", "SP");
@@ -1160,22 +1159,7 @@ namespace Sci.Production.Cutting
                     {
                         if (dr2["OrderID"].ToString().Trim().ToUpper() != "EXCESS" )
                         {
-                            if (now_distqty != 0)
-                            {
-                                if (Convert.ToInt32(dr2["Qty"]) <= now_distqty)
-                                {
-                                    now_distqty = now_distqty - Convert.ToInt32(dr2["Qty"]);
-                                }
-                                else
-                                {
-                                    dr2["Qty"] = now_distqty;
-                                    //now_distqty = 0;
-                                }
-                            }
-                            else
-                            {
-                                dr2.Delete();
-                            }
+                            now_distqty = now_distqty - Convert.ToInt32(dr2["Qty"]);
                         }
                     }
 
@@ -1470,7 +1454,6 @@ namespace Sci.Production.Cutting
                     dv.Sort = "SORT_NUM,FabricCombo,multisize DESC,Colorid,Order_SizeCode_Seq DESC,MarkerName,Ukey";
                     break;
             }
-
         }
 
         private void comboBox1_Validated(object sender, EventArgs e)
@@ -1570,7 +1553,6 @@ namespace Sci.Production.Cutting
             this.RenewData();
             sorting(comboBox1.Text);  //避免順序亂掉
             this.OnDetailEntered();
-
         }
 
         private void AutoCut_Click(object sender, EventArgs e)
