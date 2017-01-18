@@ -115,6 +115,8 @@ Database/dbo/Stored[!!-~]Procedures/GetKeyword.sql -text
 Database/dbo/Stored[!!-~]Procedures/Order_Report_AccColorCombination.sql -text
 Database/dbo/Stored[!!-~]Procedures/Order_Report_FabColorCombination.sql -text
 Database/dbo/Stored[!!-~]Procedures/Order_Report_QtyBreakdown.sql -text
+Database/dbo/Stored[!!-~]Procedures/PPIC_Report_Color_MaterialCode.sql -text
+Database/dbo/Stored[!!-~]Procedures/PPIC_Report_SizeSpec.sql -text
 Database/dbo/Stored[!!-~]Procedures/Planning_Report_R10.sql -text
 Database/dbo/Stored[!!-~]Procedures/Planning_Report_R13.sql -text
 Database/dbo/Stored[!!-~]Procedures/PoApproveLock.sql -text
