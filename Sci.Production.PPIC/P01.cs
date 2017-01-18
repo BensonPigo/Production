@@ -5,14 +5,21 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
 using System.Data.SqlClient;
+using System.Reflection;
+using Sci;
+using Sci.Data;
+using Ict;
+using Ict.Win;
+using Sci.Win;
 using Sci.Production.Class.Commons;
+//using CSCHEMAS = Sci.Production.Report.Order.Schemas.P01;
+using Microsoft.Office.Interop.Excel;
+using Excel = Microsoft.Office.Interop.Excel;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using Sci.Utility.Excel;
 using Sci.Utility.Drawing;
+using Microsoft.Office.Interop.Excel;
 
 
 namespace Sci.Production.PPIC
@@ -34,13 +41,15 @@ namespace Sci.Production.PPIC
             button33.Visible = dataType != "1"; //Back to P01. PPIC Master List
          
         }
-     
+       private string _id ;
+            
+        
         protected override void OnDetailDetached()
         {
             base.OnDetailDetached();
             ControlButton();
         }
-
+     
         //按鈕控制
         private void ControlButton()
         {
@@ -174,7 +183,7 @@ namespace Sci.Production.PPIC
             }
             #endregion
             #region 填PO Combo, Cutting Combo, MTLExport, PulloutComplete, Garment L/T欄位值
-            DataTable OrdersData;
+            System.Data.DataTable OrdersData;
             sqlCmd = string.Format(@"select isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList,
 isnull([dbo].getCuttingComboList(o.ID,o.CuttingSP),'') as CuttingList,
 isnull([dbo].getMTLExport(o.POID,o.MTLExport),'') as MTLExport,
@@ -392,7 +401,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
 
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                     cmds.Add(sp1);
-                    DataTable SCIFtyData;
+                    System.Data.DataTable SCIFtyData;
                     string sqlCmd = "select ID from SCIFty where ID = @programid";
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out SCIFtyData);
                     if (result && SCIFtyData.Rows.Count > 0)
@@ -520,7 +529,7 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                     cmds.Add(sp1);
 
-                    DataTable StyleData;
+                    System.Data.DataTable StyleData;
                     string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style where Junk = 0 and LocalStyle = 1 and ID = @styleid";
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out StyleData);
                     if (!result || StyleData.Rows.Count <= 0)
@@ -918,12 +927,131 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
             callNextForm.ShowDialog(this);
         }
 
+        private int intSizeSpecRowCnt = 0;
+        private int intSizeSpecColumnCnt = 18;
+        void ForSizeSpec(Worksheet oSheet, int rowNo, int columnNo)
+        {
+            for (int colIdx = 3; colIdx <= intSizeSpecColumnCnt; colIdx++)
+            {
+                //oSheet.Cells[4, colIdx].Interior.Color = System.Drawing.ColorTranslator.ToOle(Color.Red);    
+                oSheet.Cells[4, colIdx].HorizontalAlignment = XlHAlign.xlHAlignLeft;
+            }
+            for (int colIdx = 3; colIdx <= intSizeSpecColumnCnt; colIdx++)
+            {
+                //oSheet.Cells[4 + intSizeSpecRowCnt, colIdx].Interior.Color = System.Drawing.ColorTranslator.ToOle(Color.Red);
+                oSheet.Cells[4, colIdx].HorizontalAlignment = XlHAlign.xlHAlignLeft;
+            }
+        }
+
+     private DataRow GetTitleDataByCustCD(string poid, string id, bool ByCustCD = true)
+        {
+            DataRow drvar;
+            string cmd = "";
+            if (ByCustCD)
+            {
+                cmd = @"
+SELECT MAKER=max(FactoryID),sty=max(StyleID)+'-'+max(SeasonID),QTY=sum(QTY),'SPNO'=RTRIM(POID)+b.spno FROM Trade.dbo.Orders a
+OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM Trade.dbo.Orders WHERE POID = @poid AND CustCDID = (select CustCDID from Orders where ID = @ID) 
+	order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) b
+where POID = @poid and CustCDID = (select CustCDID from Orders where ID = @ID) group by POID,b.spno";
+            }
+            else
+            {
+                cmd = @"
+SELECT MAKER=max(FactoryID),sty=max(StyleID)+'-'+max(SeasonID),QTY=sum(QTY),'SPNO'=RTRIM(POID)+b.spno FROM Trade.dbo.Orders a
+OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM Trade.dbo.Orders WHERE POID = @poid
+	order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) b
+where POID = @poid group by POID,b.spno";
+            }
+
+            bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@poid", poid), new SqlParameter("@ID", id) }, out drvar, null);
+            if (res)
+                return drvar;
+            else
+                return null;
+        }
+        
         //M/Notice Sheet
         private void button26_Click(object sender, EventArgs e)
         {
+              _id=(string)CurrentMaintain["id"];
 
-        }
-        
+                string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
+
+                DataRow drvar = GetTitleDataByCustCD(poid, _id);
+
+                if (drvar == null) return ;
+
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice.xlt");
+                sxrc sxr = new sxrc(xltPath);
+                sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
+                sxr.dicDatas.Add(sxr._v + "PO_MAKER", drvar["MAKER"].ToString());
+                sxr.dicDatas.Add(sxr._v + "PO_STYLENO", drvar["sty"].ToString());
+                sxr.dicDatas.Add(sxr._v + "PO_QTY", drvar["QTY"]);
+                sxr.dicDatas.Add(sxr._v + "POID", poid);
+
+                System.Data.DataTable[] dts;
+                DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@POID", poid), new SqlParameter("@WithZ", false), new SqlParameter("@fullsize", 1) }, out dts);
+                
+                sxrc.xltRptTable xltTbl = new sxrc.xltRptTable(dts[0], 1, 0, false, 18, 2);
+                for (int i = 3; i <= 18; i++)
+                {
+                    sxrc.xlsColumnInfo xcinfo = new sxrc.xlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
+                    xcinfo.NumberFormate = "@";
+                    xltTbl.lisColumnInfo.Add(xcinfo);
+                }
+
+                sxr.dicDatas.Add(sxr._v + "S1_Tbl1", xltTbl);
+                intSizeSpecRowCnt = dts[0].Rows.Count + 1 + 2; //起始位置加一、格線加二
+                sxrc.ReplaceAction ra = ForSizeSpec;
+                sxr.dicDatas.Add(sxr._v + "ExtraAction", ra);
+
+                System.Data.DataTable dt;
+                DualResult getIds = DBProxy.Current.Select("", "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY from Orders where poid = @poid", new List<SqlParameter> { new SqlParameter("poid", poid) }, out dt);
+                if (!getIds && dt.Rows.Count <= 0)
+                {
+                    MyUtility.Msg.ErrorBox(getIds.ToString(), "error");
+                    return ;
+                }
+
+                sxr.CopySheet.Add(2, dt.Rows.Count - 1);
+                sxr.VarToSheetName = sxr._v + "SP";
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    string ID = dt.Rows[i]["ID"].ToString();
+                    string idxStr = (i == 0) ? "" : i.ToString();
+
+                    res = DBProxy.Current.SelectSP("", "PPIC_Report02", new List<SqlParameter> { new SqlParameter("@ID", ID), new SqlParameter("@WithZ", false) }, out dts);
+
+                    sxr.dicDatas.Add(sxr._v + "SP" + idxStr, ID);
+                    sxr.dicDatas.Add(sxr._v + "MAKER" + idxStr, dt.Rows[i]["MAKER"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "STYLENO" + idxStr, dt.Rows[i]["sty"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, dt.Rows[i]["QTY"].ToString());
+
+                    sxrc.xltRptTable tbl1 = new sxrc.xltRptTable(dts[0], 1, 2, true);
+                    sxrc.xltRptTable tbl2 = new sxrc.xltRptTable(dts[1], 1, 3);
+                    sxrc.xltRptTable tbl3 = new sxrc.xltRptTable(dts[2], 1, 0);
+                    SetColumn1toText(tbl1);
+                    SetColumn1toText(tbl2);
+                    SetColumn1toText(tbl3);
+
+                    sxr.dicDatas.Add(sxr._v + "S2_Tbl1" + idxStr, tbl1);
+                    sxr.dicDatas.Add(sxr._v + "S2_Tbl2" + idxStr, tbl2);
+                    sxr.dicDatas.Add(sxr._v + "S2_Tbl3" + idxStr, tbl3);
+                    sxr.dicDatas.Add(sxr._v + "S2_Tbl4" + idxStr, dts[3]); //COLOR list
+                    sxr.dicDatas.Add(sxr._v + "S2_Tbl5" + idxStr, dts[4]); //Fabric list
+                    sxr.dicDatas.Add(sxr._v + "S2_Tbl6" + idxStr, dts[5]); //Accessories list
+                    sxr.dicDatas.Add(sxr._v + "S2SHIPINGMARK" + idxStr, new sxrc.xltImageString(dts[6].Rows[0]["shipingMark"].ToString()));
+                    sxr.dicDatas.Add(sxr._v + "S2PACKING" + idxStr, new sxrc.xltImageString(dts[7].Rows[0]["Packing"].ToString()));
+                    sxr.dicDatas.Add(sxr._v + "S2LH" + idxStr, new sxrc.xltImageString(dts[8].Rows[0]["Label"].ToString()));
+
+                }
+                                
+                sxr.boOpenFile = true;
+                sxr.Save();
+            }
+
+          
         //Q'ty b'down by schedule
         private void button27_Click(object sender, EventArgs e)
         {

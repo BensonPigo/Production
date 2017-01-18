@@ -506,6 +506,7 @@
     <Compile Include="R08.Designer.cs">
       <DependentUpon>R08.cs</DependentUpon>
     </Compile>
+    <Compile Include="sxr.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
