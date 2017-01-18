@@ -45,7 +45,7 @@ declare @tLocalDebit table (id varchar(13),isinsert bit)
 	when not matched by target then
 		insert(TaipeiDBC,id, FactoryID, TaipeiAMT, TaipeiCurrencyID, AddDate, AddName,[status],MDivisionID,issuedate)
 		values( '1', Id, BrandID, Amount, CurrencyID, AddDate,'SCIMIS','New',
-		(SELECT  iif(MDivisionID is null,'',MDivisionID) FROM SCIFTY WHERE ID=S.BRANDID),s.adddate )
+		isnull((SELECT  MDivisionID FROM SCIFTY WHERE ID=S.BRANDID),''),s.adddate )
 		output inserted.id,iif(deleted.id='',1,0) into @tLocalDebit;
 
 
