@@ -343,9 +343,8 @@ namespace Sci.Production.Warehouse
                             return;
                         }
 
-                        if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,scirefno
-,dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail
-where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
+                        if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
+                                    @"and m.seq1 ='{2}' and m.seq2 = '{3}'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                         {
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
                             e.Cancel = true;
