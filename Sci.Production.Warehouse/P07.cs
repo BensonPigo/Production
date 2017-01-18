@@ -338,7 +338,7 @@ select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD inner join dbo.Borro
         // detail 新增時設定預設值
         protected override void OnDetailGridInsert(int index = -1)
         {
-            textBox3_Validating(null, null);
+            //textBox3_Validating(null, null);
             base.OnDetailGridInsert(index);
             CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
         }
