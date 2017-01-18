@@ -174,6 +174,7 @@ union all
 from SubTransfer a, SubTransfer_Detail b 
 where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}' and FromSeq2 = '{2}'  and a.id = b.id
     and a.MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+    and a.type <> 'C'  --排除C to B 的轉出紀錄，因目前不需要C倉交易紀錄，避免下面DataRelation出錯
 group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,b.FromRoll,b.FromStockType,b.FromDyelot,a.Type,a.remark
                                                                              
 union all
