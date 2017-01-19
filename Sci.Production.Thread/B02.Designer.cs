@@ -55,7 +55,7 @@
             this.label3.Location = new System.Drawing.Point(50, 46);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(95, 23);
-            this.label3.TabIndex = 0;
+            this.label3.TabIndex = 3;
             this.label3.Text = "Thread Color";
             // 
             // label4
@@ -64,7 +64,7 @@
             this.label4.Location = new System.Drawing.Point(50, 103);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(95, 23);
-            this.label4.TabIndex = 1;
+            this.label4.TabIndex = 4;
             this.label4.Text = "Description";
             // 
             // checkBox1
@@ -75,7 +75,7 @@
             this.checkBox1.Location = new System.Drawing.Point(411, 46);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 4;
+            this.checkBox1.TabIndex = 2;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -87,7 +87,7 @@
             this.textBox1.Location = new System.Drawing.Point(148, 46);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 5;
+            this.textBox1.TabIndex = 0;
             // 
             // textBox2
             // 
@@ -97,11 +97,13 @@
             this.textBox2.Location = new System.Drawing.Point(148, 103);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(249, 23);
-            this.textBox2.TabIndex = 6;
+            this.textBox2.TabIndex = 1;
             // 
             // B02
             // 
             this.ClientSize = new System.Drawing.Size(905, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox2";
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B02";

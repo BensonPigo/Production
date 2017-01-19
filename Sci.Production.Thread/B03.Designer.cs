@@ -55,6 +55,10 @@
             this.detailbtm.Location = new System.Drawing.Point(0, 252);
             this.detailbtm.Size = new System.Drawing.Size(675, 38);
             // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(675, 290);
+            // 
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(683, 319);
@@ -65,7 +69,7 @@
             this.label3.Location = new System.Drawing.Point(50, 46);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(95, 23);
-            this.label3.TabIndex = 0;
+            this.label3.TabIndex = 2;
             this.label3.Text = "Thread Type";
             // 
             // checkBox1
@@ -76,7 +80,7 @@
             this.checkBox1.Location = new System.Drawing.Point(411, 46);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 4;
+            this.checkBox1.TabIndex = 1;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -88,11 +92,13 @@
             this.textBox1.Location = new System.Drawing.Point(148, 46);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 5;
+            this.textBox1.TabIndex = 0;
             // 
             // B03
             // 
             this.ClientSize = new System.Drawing.Size(683, 352);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "checkBox1";
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B03";
