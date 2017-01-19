@@ -892,6 +892,7 @@ namespace Sci.Production.Planning
                 numMonth.Value = System.DateTime.Today.Month;
             }
 
+
         }
 
     }
