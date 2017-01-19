@@ -312,6 +312,7 @@ namespace Sci.Production.Warehouse
                                                     where mdivisionid='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and stocktype='{4}' and roll='{5}' "
                             , Sci.Env.User.Keyword, CurrentDetailData["poid"], x[0]["seq1"], x[0]["seq2"], CurrentDetailData["stocktype"], ""));
                     if (!MyUtility.Check.Empty(tmp)) CurrentDetailData["ftyinventoryukey"] = tmp;
+                    CurrentDetailData.EndEdit();
                 }
             };
 #endregion
