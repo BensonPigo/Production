@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.radioGroup2 = new Sci.Win.UI.RadioGroup();
+            this.lbFactory = new Sci.Win.UI.Label();
+            this.lbM = new Sci.Win.UI.Label();
             this.chkFty = new Sci.Win.UI.CheckBox();
             this.chkForecast = new Sci.Win.UI.CheckBox();
             this.chkOrder = new Sci.Win.UI.CheckBox();
@@ -46,10 +48,8 @@
             this.rdHalfMonth = new System.Windows.Forms.RadioButton();
             this.rdMonth = new System.Windows.Forms.RadioButton();
             this.label1 = new Sci.Win.UI.Label();
-            this.lbM = new Sci.Win.UI.Label();
-            this.lbFactory = new Sci.Win.UI.Label();
-            this.txtM = new Sci.Win.UI.TextBox();
-            this.txtF = new Sci.Win.UI.TextBox();
+            this.txtM = new Sci.Production.Class.txtMdivision();
+            this.txtFactory = new Sci.Production.Class.txtfactory();
             this.radioGroup2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMonth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numYear1)).BeginInit();
@@ -69,7 +69,7 @@
             // 
             // radioGroup2
             // 
-            this.radioGroup2.Controls.Add(this.txtF);
+            this.radioGroup2.Controls.Add(this.txtFactory);
             this.radioGroup2.Controls.Add(this.txtM);
             this.radioGroup2.Controls.Add(this.lbFactory);
             this.radioGroup2.Controls.Add(this.lbM);
@@ -94,6 +94,24 @@
             this.radioGroup2.Size = new System.Drawing.Size(348, 360);
             this.radioGroup2.TabIndex = 94;
             this.radioGroup2.TabStop = false;
+            // 
+            // lbFactory
+            // 
+            this.lbFactory.Lines = 0;
+            this.lbFactory.Location = new System.Drawing.Point(64, 187);
+            this.lbFactory.Name = "lbFactory";
+            this.lbFactory.Size = new System.Drawing.Size(83, 23);
+            this.lbFactory.TabIndex = 17;
+            this.lbFactory.Text = "Factory";
+            // 
+            // lbM
+            // 
+            this.lbM.Lines = 0;
+            this.lbM.Location = new System.Drawing.Point(64, 152);
+            this.lbM.Name = "lbM";
+            this.lbM.Size = new System.Drawing.Size(83, 23);
+            this.lbM.TabIndex = 16;
+            this.lbM.Text = "M";
             // 
             // chkFty
             // 
@@ -295,24 +313,6 @@
             this.label1.Text = "Paper Size A4";
             this.label1.TextStyle.Color = System.Drawing.Color.Blue;
             // 
-            // lbM
-            // 
-            this.lbM.Lines = 0;
-            this.lbM.Location = new System.Drawing.Point(64, 152);
-            this.lbM.Name = "lbM";
-            this.lbM.Size = new System.Drawing.Size(83, 23);
-            this.lbM.TabIndex = 16;
-            this.lbM.Text = "M";
-            // 
-            // lbFactory
-            // 
-            this.lbFactory.Lines = 0;
-            this.lbFactory.Location = new System.Drawing.Point(64, 187);
-            this.lbFactory.Name = "lbFactory";
-            this.lbFactory.Size = new System.Drawing.Size(83, 23);
-            this.lbFactory.TabIndex = 17;
-            this.lbFactory.Text = "Factory";
-            // 
             // txtM
             // 
             this.txtM.BackColor = System.Drawing.Color.White;
@@ -322,14 +322,14 @@
             this.txtM.Size = new System.Drawing.Size(94, 23);
             this.txtM.TabIndex = 18;
             // 
-            // txtF
+            // txtFactory
             // 
-            this.txtF.BackColor = System.Drawing.Color.White;
-            this.txtF.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtF.Location = new System.Drawing.Point(150, 187);
-            this.txtF.Name = "txtF";
-            this.txtF.Size = new System.Drawing.Size(94, 23);
-            this.txtF.TabIndex = 19;
+            this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.Location = new System.Drawing.Point(150, 187);
+            this.txtFactory.Name = "txtFactory";
+            this.txtFactory.Size = new System.Drawing.Size(94, 23);
+            this.txtFactory.TabIndex = 19;
             // 
             // R10
             // 
@@ -376,9 +376,9 @@
         private Win.UI.ComboBox cbReportType;
         private Win.UI.ComboBox cbDateType;
         private Win.UI.Label label1;
-        private Win.UI.TextBox txtF;
-        private Win.UI.TextBox txtM;
         private Win.UI.Label lbFactory;
         private Win.UI.Label lbM;
+        private Class.txtfactory txtFactory;
+        private Class.txtMdivision txtM;
     }
 }

@@ -73,7 +73,7 @@ namespace Sci.Production.Planning
             ReportType = rdMonth.Checked ? 1 : 2;
             BrandID = txtBrand1.Text;
             M = txtM.Text;
-            Fty = txtF.Text;
+            Fty = txtFactory.Text;
             ArtWorkType = cbReportType.SelectedValue.ToString();
             isSCIDelivery = (cbDateType.SelectedItem.ToString() == "SCI Delivery") ? true : false;
 
