@@ -255,7 +255,7 @@ namespace Sci.Production.Warehouse
                     CurrentDetailData["Description"] = x[0]["Description"];
                     CurrentDetailData["useqty"] = x[0]["qty"];
                     CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
-
+                    CurrentDetailData.EndEdit();
                 }
             };
 
