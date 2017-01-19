@@ -878,7 +878,7 @@ namespace Sci.Production.Planning
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             DualResult result = Result.True;
-            ShowInfo("報表查詢完成"); //自動開啟Excel存檔畫面             
+            //ShowInfo("報表查詢完成"); //自動開啟Excel存檔畫面             
             return true;
         }
 
