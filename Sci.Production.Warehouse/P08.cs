@@ -242,7 +242,7 @@ namespace Sci.Production.Warehouse
                 {
                     IList<DataRow> x;
 
-                    Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(CurrentDetailData["poid"].ToString(), CurrentDetailData["seq"].ToString(), "left(m.seq1,1) !='7'");
+                    Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(CurrentDetailData["poid"].ToString(), CurrentDetailData["seq"].ToString(), "left(p.seq1,1) !='7'");
                     DialogResult result = selepoitem.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     x = selepoitem.GetSelecteds();
@@ -288,7 +288,7 @@ namespace Sci.Production.Warehouse
                             //jimmy 105/11/14
                             //gird的StockUnit照新規則 抓取值
                             if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
-                                    @"and m.seq1 ='{2}'and m.seq2 = '{3}' and left(m.seq1,1) !='7'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
+                                    @"and p.seq1 ='{2}'and p.seq2 = '{3}' and left(p.seq1,1) !='7'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 CurrentDetailData["seq"] = "";
@@ -740,7 +740,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as Description
 ,a.Roll
 ,a.Dyelot
-,(select sum(b.Qty * isnull(c.Rate,1)) as useqty from po_supp_detail b inner join View_Unitrate c on c.FROM_U = b.POUnit and c.TO_U = b.StockUnit
+,(select sum(b.Qty * isnull(c.RateValue,1)) as useqty from po_supp_detail b inner join View_Unitrate c on c.FROM_U = b.POUnit and c.TO_U = b.StockUnit
 where b.id= a.poid and b.seq1 = a.seq1 and b.seq2 = a.seq2) useqty
 ,a.StockQty
 ,a.StockUnit
