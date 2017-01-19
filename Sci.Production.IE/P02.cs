@@ -40,7 +40,7 @@ namespace Sci.Production.IE
             textBox4.Mask = dateTimeMask;
         }
 
-
+        string StdTMS = ""; DataTable dt1; DataTable dt2;
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -92,12 +92,14 @@ from tmpDetailData
 group by OutputDate,StdTMS
 )
 select top (3) OutputDate,iif(QAQty*WorkHour = 0,0,Round(ttlOutP/(round(ActManP/QAQty*WorkHour,2)*3600)*100,1)) as Eff,
-isnull((select top (1) iif(InspectQty = 0,0,Round((InspectQty-RejectQty)/InspectQty*100,2)) from RFT where OrderID = '{0}' and CDate = SummaryData.OutputDate and SewinglineID = '{2}'),0) as Rft
+isnull((select top (1) iif(InspectQty = 0,0,Round((InspectQty-RejectQty)/InspectQty*100,2)) from RFT where OrderID = '{0}' and CDate = SummaryData.OutputDate and SewinglineID = '{2}'),0) as Rft,StdTMS
 from SummaryData
 order by OutputDate
 ", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["ComboType"].ToString(), CurrentMaintain["SewingLineID"].ToString(), CurrentMaintain["FactoryID"].ToString());
             DataTable sewingOutput;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out sewingOutput);
+            if (sewingOutput.Rows.Count < 1) { StdTMS = "0"; }
+            else{StdTMS = sewingOutput.Rows[0]["StdTMS"].ToString();}
             if (result)
             {
                 int rec = 0;
@@ -158,6 +160,41 @@ order by OutputDate
                             break;
                     }
                 }
+string ExcelDt = string.Format(@"SELECT C.OrderID,
+                                        c.MDivisionID,
+	                                    c.FactoryID,
+                                        c.SewingLineID,
+	                                    CELL.SewingCell,
+	                                    c.StyleID,
+	                                    sty.CPU,
+	                                    c.CDCodeID,
+	                                    cd.TopProductionType,
+	                                    cd.TopFabricType,
+	                                    cd.BottomProductionType,
+	                                    cd.BottomFabricType,
+	                                    cd.InnerProductionType,
+	                                    cd.InnerFabricType,
+	                                    cd.OuterProductionType,
+	                                    cd.OuterFabricType,
+	                                    c.ComboType,
+                                        C.SeasonID,
+                                        C.COT,
+	                                    C.COPT,
+	                                    c.Type,
+	                                    c.Category,
+	                                    c.Inline,
+	                                    c.FirstOutputTime,
+                                        c.LastOutputTime
+                                 FROM ChgOver C
+                                 OUTER APPLY (SELECT TOP  1 O.SciDelivery  FROM Orders O WHERE O.POID=C.OrderID)SCI 
+                                 OUTER APPLY(SELECT S.SewingCell FROM SewingLine S WHERE S.ID=C.SewingLineID AND S.FactoryID=C.FactoryID)CELL
+                                 outer apply(select * from style t where t.id=c.StyleID and t.SeasonID=c.SeasonID)sty
+                                 outer apply(select  * from CDCode_Content cd where c.CDCodeID=cd.ID)cd
+                                 where c.orderid='{0}'
+                                 ORDER BY C.FactoryID,C.SewingLineID,C.Inline", CurrentMaintain["orderid"]);
+                DualResult result1 = DBProxy.Current.Select(null, ExcelDt, out dt1);
+                if (!result1) { this.ShowErr(result1); }
+
             }
         }
 
@@ -338,22 +375,23 @@ select {0},ID,'{1}',GETDATE() from IEReason where Type = 'CP' and Junk = 0", Cur
         private bool ToExcel(bool autoSave)
         {
             DataTable dtTitle;
-            string OrderID = CurrentMaintain["OrderID"].ToString().Trim();
+
+            string OrderID = dt1.Rows[0]["orderid"].ToString();
             string BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders where ID = '{0}'", OrderID));
-            string StyleID = CurrentMaintain["StyleID"].ToString().Trim();
-            string SeasonID = CurrentMaintain["SeasonID"].ToString().Trim();
+            string StyleID = dt1.Rows[0]["StyleID"].ToString().Trim();
+            string SeasonID = dt1.Rows[0]["SeasonID"].ToString().Trim();
             string CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", BrandID, StyleID, SeasonID));
-            string FirstOutputTime = CurrentMaintain["FirstOutputTime"].ToString().Trim();
+            string FirstOutputTime = dt1.Rows[0]["FirstOutputTime"].ToString().Trim();
             FirstOutputTime = MyUtility.Check.Empty(FirstOutputTime) ? "" : FirstOutputTime.Substring(0, 2) + ":" + FirstOutputTime.Substring(2, 2);
-            string LastOutputTime = CurrentMaintain["LastOutputTime"].ToString().Trim();
+            string LastOutputTime = dt1.Rows[0]["LastOutputTime"].ToString().Trim();
             LastOutputTime = MyUtility.Check.Empty(LastOutputTime) ? "" : LastOutputTime.Substring(0, 2) + ":" + LastOutputTime.Substring(2, 2);
-            string FactoryID = CurrentMaintain["FactoryID"].ToString().Trim();
-            string SewingLineID = CurrentMaintain["SewingLineID"].ToString().Trim();
-            string ComboType = CurrentMaintain["ComboType"].ToString().Trim();
+            string FactoryID = dt1.Rows[0]["FactoryID"].ToString().Trim();
+            string SewingLineID = dt1.Rows[0]["SewingLineID"].ToString().Trim();
+            string ComboType = dt1.Rows[0]["ComboType"].ToString().Trim();
 
             #region 取出ChgOverTarget.Target，然後再依ChgOver.Inline找出最接近但沒有超過這一天的Target
-            string MDivisionID = CurrentMaintain["MDivisionID"].ToString().Trim();
-            DateTime Inline = Convert.ToDateTime(CurrentMaintain["Inline"]);
+            string MDivisionID = dt1.Rows[0]["MDivisionID"].ToString().Trim();
+            DateTime Inline = Convert.ToDateTime(dt1.Rows[0]["Inline"]);
             string Target_COPT = MyUtility.GetValue.Lookup(string.Format(@"Select top 1 Target from ChgOverTarget 
                                                                         where Type = 'COPT' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
                                                                         Order by EffectiveDate desc", MDivisionID, Inline.ToShortDateString()));
@@ -362,24 +400,38 @@ select {0},ID,'{1}',GETDATE() from IEReason where Type = 'CP' and Junk = 0", Cur
                                                                         Order by EffectiveDate desc", MDivisionID, Inline.ToShortDateString()));
             #endregion
 
-            string CDCodeID = CurrentMaintain["CDCodeID"].ToString().Trim();
+            string CDCodeID = dt1.Rows[0]["CDCodeID"].ToString().Trim();
             DataRow TYPE = GetType(ComboType, CDCodeID);
-
             #region 找出上一筆
-            DataRow PreviousDR = null;
-            DataRow Previous_TYPE = null;
+            
             string Previous_CPU = string.Empty;
-            DataTable dt = (DataTable)gridbs.DataSource;
-            int index = dt.Rows.IndexOf(CurrentMaintain);
-            if (index > 0)
-            {
-                PreviousDR = dt.Rows[index - 1];
-                string Previous_BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders where ID = '{0}'", PreviousDR["OrderID"].ToString().Trim()));
-                string Previous_StyleID = PreviousDR["StyleID"].ToString().Trim();
-                string Previous_SeasonID = PreviousDR["SeasonID"].ToString().Trim();
+            string exceldt2 = string.Format(@"SELECT  * FROM (
+                SELECT Top 1 C.OrderID,
+                       c.MDivisionID,
+                       c.FactoryID,
+                       c.SewingLineID,
+                       CELL.SewingCell,
+                       c.SeasonID,
+                       c.StyleID,
+                       c.Inline,
+                       c.CDCodeID,
+                       cd.TopProductionType,
+                       cd.TopFabricType    
+                FROM ChgOver C
+                OUTER APPLY(SELECT S.SewingCell FROM SewingLine S WHERE S.ID=C.SewingLineID AND S.FactoryID=C.FactoryID)CELL
+                outer apply(select  * from CDCode_Content cd where c.CDCodeID=cd.ID)cd
+                WHERE Inline >= '{0}'
+		        AND OrderID !='{1}' and StyleID <='{2}' and FactoryID >= '{3}' and SewingLineID >='{4}' and CELL.SewingCell >='{5}'
+                ORDER BY C.FactoryID,C.SewingLineID,C.Inline asc
+                )[Found]", Inline.ToShortDateString(), dt1.Rows[0]["OrderID"], dt1.Rows[0]["StyleID"], dt1.Rows[0]["FactoryID"], dt1.Rows[0]["SewingLineID"], dt1.Rows[0]["SewingCell"]);
+                DualResult result2 = DBProxy.Current.Select(null, exceldt2, out dt2);
+                if (!result2) { this.ShowErr(result2); }
+                string Previous_BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders where ID = '{0}'", dt2.Rows[0]["OrderID"].ToString().Trim()));
+                string Previous_StyleID = dt2.Rows[0]["StyleID"].ToString().Trim();
+                string Previous_SeasonID = dt2.Rows[0]["SeasonID"].ToString().Trim();
                 Previous_CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", Previous_BrandID, Previous_StyleID, Previous_SeasonID));
-                Previous_TYPE = GetType(PreviousDR["ComboType"].ToString().Trim(), PreviousDR["CDCodeID"].ToString().Trim());
-            }
+                //Previous_TYPE = GetType(PreviousDR["ComboType"].ToString().Trim(), PreviousDR["CDCodeID"].ToString().Trim());
+            
             #endregion
 
             string cmdsql = string.Format("SELECT TOP 1 'CHANGEOVER REPORT'  FROM ChgOver where 1=1");
@@ -388,164 +440,172 @@ select {0},ID,'{1}',GETDATE() from IEReason where Type = 'CP' and Junk = 0", Cur
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\IE_P02_ChangeoverReport.xlt"); //預先開啟excel app
 
             if (MyUtility.Excel.CopyToXls(dtTitle, "", "IE_P02_ChangeoverReport.xlt", 2, !autoSave, null, objApp, false))
-            {// 將datatable copy to excel
+            {    // 將datatable copy to excel
                 objApp.Visible = false;  //隱藏，避免使用者誤按
                 Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
 
-                objSheet.Cells[9, 4] = FactoryID;  //Factory
-                objSheet.Cells[9, 7] = SewingLineID;  //Line No.
-                objSheet.Cells[9, 11] = CurrentMaintain["CellNo2"].ToString().Trim();  //Cell No.
-                objSheet.Cells[12, 4] = StyleID;  //Style No.
-                objSheet.Cells[13, 4] = CPU;  //CPU/pc
-                objSheet.Cells[14, 4] = CDCodeID;  //CD Code
-                objSheet.Cells[14, 5] = TYPE["ProdType"];  //Prod. Type
-                objSheet.Cells[14, 6] = TYPE["FabricType"];  //Fab. Type
+                    objSheet.Cells[9, 4] = FactoryID;  //Factory
+                    objSheet.Cells[9, 7] = SewingLineID;  //Line No.
+                    objSheet.Cells[9, 11] = dt2.Rows[0]["SewingCell"].ToString().Trim();  //Cell No.
+          
+                    objSheet.Cells[12, 4] = StyleID;  //Style No.
+                    objSheet.Cells[13, 4] = CPU;  //CPU/pc
+                    objSheet.Cells[14, 4] = CDCodeID;  //CD Code
+                    objSheet.Cells[14, 5] = dt1.Rows[0]["TopProductionType"];  //Prod. Type
+                    objSheet.Cells[14, 6] = dt1.Rows[0]["TopFabricType"];  //Fab. Type
+                   
+                    #region 抓上一筆資料
+                    if (dt1.Rows[0]["SewingLineID"].ToString() == dt2.Rows[0]["SewingLineID"].ToString())
+                    {
+                        objSheet.Cells[12, 9] = dt2.Rows[0]["StyleID"].ToString().Trim();  //Style No.
+                        objSheet.Cells[13, 9] = Previous_CPU;  //CPU/pc
+                        objSheet.Cells[14, 9] = dt2.Rows[0]["CDCodeID"].ToString().Trim();  //CD Code
+                        objSheet.Cells[14, 10] = dt2.Rows[0]["TopProductionType"];  //Prod. Type
+                        objSheet.Cells[14, 11] = dt2.Rows[0]["TopFabricType"];  //Fab. Type
 
-                #region 抓上一筆資料
-                if (PreviousDR != null)
-                {
-                    objSheet.Cells[12, 9] = PreviousDR["StyleID"].ToString().Trim();  //Style No.
-                    objSheet.Cells[13, 9] = Previous_CPU;  //CPU/pc
-                    objSheet.Cells[14, 9] = PreviousDR["CDCodeID"].ToString().Trim();  //CD Code
-                }
-                if (Previous_TYPE != null)
-                {
-                    objSheet.Cells[14, 10] = Previous_TYPE["ProdType"];  //Prod. Type
-                    objSheet.Cells[14, 11] = Previous_TYPE["FabricType"];  //Fab. Type
-                }
-                #endregion
+                    }
+                    else if (dt1.Rows[0]["SewingLineID"] != dt2.Rows[0]["SewingLineID"])
+                    { 
+                         objSheet.Cells[12, 9] ="";
+                         objSheet.Cells[13, 9] ="";
+                         objSheet.Cells[14, 9] = "";
+                         objSheet.Cells[14, 10] = "";
+                         objSheet.Cells[14, 11] =  "";
+                    }
+                   
+                    #endregion
 
-                objSheet.Cells[18, 5] = CurrentMaintain["Type"].ToString() == "N" ? "New" : "Repeat";  //Classification
-                objSheet.Cells[19, 4] = CurrentMaintain["Category"].ToString().Trim();  //Category
-                objSheet.Cells[20, 4] = Inline.ToShortDateString();  //Inline Date
-                objSheet.Cells[21, 5] = Inline.ToString("hh:mm");  //Inline Time(hh:mm)
-                objSheet.Cells[22, 6] = FirstOutputTime;  //Time of First Good Output (hh:mm):
-                objSheet.Cells[22, 11] = LastOutputTime;  //Time of Last Good Output (hh:mm):
+                    objSheet.Cells[18, 5] = dt1.Rows[0]["Type"].ToString() == "N" ? "New" : "Repeat";  //Classification
+                    objSheet.Cells[19, 4] = dt1.Rows[0]["Category"].ToString().Trim();  //Category
+                    objSheet.Cells[20, 4] = Inline.ToShortDateString();  //Inline Date
+                    objSheet.Cells[21, 5] = Inline.ToString("HH:mm");  //Inline Time(HH:mm)
+                    objSheet.Cells[22, 6] = FirstOutputTime;  //Time of First Good Output (hh:mm):
+                    objSheet.Cells[22, 11] = LastOutputTime;  //Time of Last Good Output (hh:mm):
 
-                objSheet.Cells[27, 3] = Target_COPT;  //Target
-                objSheet.Cells[27, 8] = Target_COT;  //Target
-                objSheet.Cells[27, 4] = CurrentMaintain["COPT"].ToString().Trim();  //Actual
-                objSheet.Cells[27, 9] = CurrentMaintain["COT"].ToString().Trim();  //Actual
+                    objSheet.Cells[27, 3] = Target_COPT;  //Target
+                    objSheet.Cells[27, 8] = Target_COT;  //Target
+                    objSheet.Cells[27, 4] = dt1.Rows[0]["COPT"].ToString().Trim();  //Actual
+                    objSheet.Cells[27, 9] = dt1.Rows[0]["COT"].ToString().Trim();  //Actual
 
-                #region 32列
-                string SewingDate = MyUtility.GetValue.Lookup(string.Format(@"select convert(varchar, min(a.OutputDate), 111) as SewingDate
+                    #region 32列
+                    string SewingDate = MyUtility.GetValue.Lookup(string.Format(@"select convert(varchar, min(a.OutputDate), 111) as SewingDate
                                                                         from SewingOutput a
                                                                         left join SewingOutput_Detail b on a.ID=b.ID
                                                                         where b.OrderId='{0}'", OrderID));
-                string Sewers_A = MyUtility.GetValue.Lookup(string.Format(@"Select Distinct a.Manpower 
+                    string Sewers_A = MyUtility.GetValue.Lookup(string.Format(@"Select Distinct a.Manpower 
                                                                         from SewingOutput a, SewingOutput_Detail b 
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' 
                                                                         and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
-                string Sewers_B = MyUtility.GetValue.Lookup(string.Format(@"Select Distinct a.Manpower 
+                    string Sewers_B = MyUtility.GetValue.Lookup(string.Format(@"Select Distinct a.Manpower 
                                                                         from SewingOutput a, SewingOutput_Detail b 
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' 
                                                                         and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
-                string WorkingHours_A = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.WorkHour)  
+                    string WorkingHours_A = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.WorkHour)  
                                                                         from SewingOutput a, SewingOutput_Detail b 
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' 
                                                                         and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
-                string WorkingHours_B = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.WorkHour)  
+                    string WorkingHours_B = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.WorkHour)  
                                                                         from SewingOutput a, SewingOutput_Detail b 
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' 
                                                                         and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
-                string Target = MyUtility.GetValue.Lookup(string.Format(@"Select top 1 Target from ChgOverTarget 
+                    string Target = MyUtility.GetValue.Lookup(string.Format(@"Select top 1 Target from ChgOverTarget 
                                                                         where Type = 'EFF.' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
                                                                         Order by EffectiveDate desc", MDivisionID, Inline.ToShortDateString()));
-                string OutputCMP_A = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.QAQty)  
+                    string OutputCMP_A = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.QAQty)  
                                                                         from SewingOutput a, SewingOutput_Detail b 
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' 
                                                                         and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
-                string OutputCMP_B = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.QAQty) 
+                    string OutputCMP_B = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.QAQty) 
                                                                         from SewingOutput a, SewingOutput_Detail b 
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' 
                                                                         and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
 
-                if (MyUtility.Check.Empty(CPU)) CPU = "1";
-                string Efficiency_A = MyUtility.GetValue.Lookup(string.Format(@"Select  sum(b.QAQty * {5} * AAA.CpuRate)  
+                    if (MyUtility.Check.Empty(CPU)) CPU = "1";
+                    string Efficiency_A = MyUtility.GetValue.Lookup(string.Format(@"Select IIF('{6}'=0,0,sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)
                                                                         from SewingOutput a, SewingOutput_Detail b 
                                                                         left join Orders c on c.ID=b.OrderId
                                                                         cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
-                                                                        and b.OrderID = '{3}' and b.ComboType = '{4}' ", SewingDate, FactoryID, SewingLineID, OrderID, ComboType, CPU));
-                string Efficiency_B = MyUtility.GetValue.Lookup(string.Format(@"Select  sum(b.QAQty * {5} * AAA.CpuRate)  
+                                                                        and b.OrderID = '{3}' and b.ComboType = '{4}' ", SewingDate, FactoryID, SewingLineID, OrderID, ComboType, CPU, StdTMS));
+                    string Efficiency_B = MyUtility.GetValue.Lookup(string.Format(@"Select  IIF('{6}'=0,0,sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)  
                                                                         from SewingOutput a, SewingOutput_Detail b 
                                                                         left join Orders c on c.ID=b.OrderId
                                                                         cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
-                                                                        and b.OrderID = '{3}' and b.ComboType = '{4}' ", SewingDate, FactoryID, SewingLineID, OrderID, ComboType, CPU));
-                string PPH_A = MyUtility.GetValue.Lookup(string.Format(@"Select  sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour) 
+                                                                        and b.OrderID = '{3}' and b.ComboType = '{4}' ", SewingDate, FactoryID, SewingLineID, OrderID, ComboType, CPU, StdTMS));
+                    string PPH_A = MyUtility.GetValue.Lookup(string.Format(@"Select  sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour) 
                                                                         from SewingOutput a, SewingOutput_Detail b 
                                                                         left join Orders c on c.ID=b.OrderId
                                                                         cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
                                                                         and b.OrderID = '{3}' and b.ComboType = '{4}' ", SewingDate, FactoryID, SewingLineID, OrderID, ComboType, CPU));
-                string PPH_B = MyUtility.GetValue.Lookup(string.Format(@"Select  sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour) 
+                    string PPH_B = MyUtility.GetValue.Lookup(string.Format(@"Select  sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour) 
                                                                         from SewingOutput a, SewingOutput_Detail b 
                                                                         left join Orders c on c.ID=b.OrderId
                                                                         cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
                                                                         and b.OrderID = '{3}' and b.ComboType = '{4}' ", SewingDate, FactoryID, SewingLineID, OrderID, ComboType, CPU));
 
-                objSheet.Cells[32, 1] = SewingDate;  //Date
-                objSheet.Cells[32, 2] = Sewers_A;  //No. of Sewers(Shift A)
-                objSheet.Cells[32, 3] = Sewers_B;  //No. of Sewers(Shift B)
-                objSheet.Cells[32, 4] = WorkingHours_A;  //Working Hours(Shift A)
-                objSheet.Cells[32, 5] = WorkingHours_B;  //Working Hours(Shift B)
-                objSheet.Cells[32, 6] = Target;  //Target(Eff)
-                objSheet.Cells[32, 8] = OutputCMP_A;  //Output (CMP) (Shift A)
-                objSheet.Cells[32, 9] = OutputCMP_B;  //Output (CMP) (Shift B)
-                objSheet.Cells[32, 10] = Efficiency_A;  //Efficiency (Shift A)
-                objSheet.Cells[32, 11] = Efficiency_B;  //Efficiency (Shift B)
-                objSheet.Cells[32, 12] = PPH_A;  //PPH (Shift A)
-                objSheet.Cells[32, 13] = PPH_B;  //PPH (Shift B)
-                #endregion
+                    objSheet.Cells[32, 1] = SewingDate;  //Date
+                    objSheet.Cells[32, 2] = Sewers_A;  //No. of Sewers(Shift A)
+                    objSheet.Cells[32, 3] = Sewers_B;  //No. of Sewers(Shift B)
+                    objSheet.Cells[32, 4] = WorkingHours_A;  //Working Hours(Shift A)
+                    objSheet.Cells[32, 5] = WorkingHours_B;  //Working Hours(Shift B)
+                    objSheet.Cells[32, 6] = Target;  //Target(Eff)
+                    objSheet.Cells[32, 8] = OutputCMP_A;  //Output (CMP) (Shift A)
+                    objSheet.Cells[32, 9] = OutputCMP_B;  //Output (CMP) (Shift B)
+                    objSheet.Cells[32, 10] = Efficiency_A;  //Efficiency (Shift A)
+                    objSheet.Cells[32, 11] = Efficiency_B;  //Efficiency (Shift B)
+                    objSheet.Cells[32, 12] = PPH_A;  //PPH (Shift A)
+                    objSheet.Cells[32, 13] = PPH_B;  //PPH (Shift B)
+                    #endregion
 
-                #region Problem Encountered
-                DataTable dtProblem;
-                string sql = string.Format(@"Select a.IEReasonID , b.Description, a.ShiftA, a.ShiftB 
+                    #region Problem Encountered
+                    DataTable dtProblem;
+                    string sql = string.Format(@"Select a.IEReasonID , b.Description, a.ShiftA, a.ShiftB 
                                             from ChgOver_Problem a, IEReason b 
                                             where a.IEReasonID = b.ID and a.ID = '{0}' and b.Type = 'CP' ", CurrentMaintain["ID"].ToString().Trim());
-                DualResult result = DBProxy.Current.Select(null, sql, out dtProblem);
+                    DualResult result = DBProxy.Current.Select(null, sql, out dtProblem);
 
-                //若超過4筆資料，Excel就要在新增列數
-                if (dtProblem.Rows.Count > 4)
-                {
-                    string RowNum, RowStr;
-                    int repeat = dtProblem.Rows.Count - 4;
-
-                    Microsoft.Office.Interop.Excel.Range RngToCopy = (Microsoft.Office.Interop.Excel.Range)objSheet.get_Range("A36:J36").EntireRow;
-                    Microsoft.Office.Interop.Excel.Range RngToInsert;
-
-                    for (int i = 0; i < repeat; i++)
+                    //若超過4筆資料，Excel就要在新增列數
+                    if (dtProblem.Rows.Count > 4)
                     {
-                        RowNum = Convert.ToString(40 + i);
-                        RowStr = string.Format("A{0}:M{0}", RowNum);
-                        RngToInsert = (Microsoft.Office.Interop.Excel.Range)objSheet.get_Range(RowStr).EntireRow;
-                        RngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, RngToCopy.Copy(Type.Missing));
+                        string RowNum, RowStr;
+                        int repeat = dtProblem.Rows.Count - 4;
+
+                        Microsoft.Office.Interop.Excel.Range RngToCopy = (Microsoft.Office.Interop.Excel.Range)objSheet.get_Range("A36:J36").EntireRow;
+                        Microsoft.Office.Interop.Excel.Range RngToInsert;
+
+                        for (int i = 0; i < repeat; i++)
+                        {
+                            RowNum = Convert.ToString(40 + i);
+                            RowStr = string.Format("A{0}:M{0}", RowNum);
+                            RngToInsert = (Microsoft.Office.Interop.Excel.Range)objSheet.get_Range(RowStr).EntireRow;
+                            RngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, RngToCopy.Copy(Type.Missing));
+                        }
                     }
+
+                    //Clipboard.Clear();  //清空剪貼簿
+
+                    int count = 0;
+                    foreach (DataRow dr in dtProblem.Rows)
+                    {
+                        objSheet.Cells[36 + count, 1] = dr["IEReasonID"].ToString().Trim() + ":" + dr["Description"].ToString().Trim();  //Problem Encountered
+                        objSheet.Cells[36 + count, 6] = dr["ShiftA"].ToString().Trim();  //Shift A
+                        objSheet.Cells[36 + count, 10] = dr["ShiftB"].ToString().Trim();  //Shift B
+                        count++;
+                    }
+                    #endregion
+
+                    objApp.Visible = true;
+
+                    if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);    //釋放sheet
+                    if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+
                 }
 
-                Clipboard.Clear();  //清空剪貼簿
-
-                int count = 0;
-                foreach (DataRow dr in dtProblem.Rows)
-                {
-                    objSheet.Cells[36 + count, 1] = dr["IEReasonID"].ToString().Trim() + ":" + dr["Description"].ToString().Trim();  //Problem Encountered
-                    objSheet.Cells[36 + count, 6] = dr["ShiftA"].ToString().Trim();  //Shift A
-                    objSheet.Cells[36 + count, 10] = dr["ShiftB"].ToString().Trim();  //Shift B
-                    count++;
-                }
-                #endregion
-                
-                objApp.Visible = true;
-
-                if (objSheet != null) Marshal.FinalReleaseComObject(objSheet);    //釋放sheet
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-
-            }
-
-            return true;
+                return true;
 
         }
 
