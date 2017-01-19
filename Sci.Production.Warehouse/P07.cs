@@ -454,6 +454,7 @@ where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintai
                     CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
                     CurrentDetailData["shipqty"] = 0m;
                     CurrentDetailData["Actualqty"] = 0m;
+                    CurrentDetailData.EndEdit();
                 }
             };
             ts.CellValidating += (s, e) =>
