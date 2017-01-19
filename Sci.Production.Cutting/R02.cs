@@ -15,14 +15,14 @@ namespace Sci.Production.Cutting
 {
     public partial class R02 : Sci.Win.Tems.PrintForm
     {
-        DataSet ds_printData = new DataSet();
         DataTable[] printData;
-        string WorkOrder, CutCell1, CutCell2;
+        string MD, CutCell1, CutCell2;
         DateTime? dateR_CuttingDate1, dateR_CuttingDate2;
         StringBuilder condition_CuttingDate = new StringBuilder();
         string tmpFile;
         bool boolshowexcel = false;
         bool boolsend = false;
+
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -32,9 +32,7 @@ namespace Sci.Production.Cutting
             MyUtility.Tool.SetupCombox(cmb_MDivisionID, 1, WorkOrder);
             cmb_MDivisionID.Text = Sci.Env.User.Keyword;
             createfolder();
-        }
-
-         
+        }         
 
         private void radiobtn_Bydetail_CheckedChanged(object sender, EventArgs e)
         {
@@ -81,7 +79,7 @@ namespace Sci.Production.Cutting
                 }
             }
         }
-
+        
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
@@ -90,18 +88,33 @@ namespace Sci.Production.Cutting
                 MyUtility.Msg.WarningBox("CuttingDate can't empty!!");
                 return false;
             }
-
-            if (MyUtility.Check.Empty(txt_CutCell1.Text) && MyUtility.Check.Empty(txt_CutCell2.Text))
+            if (MyUtility.Check.Empty(txt_CutCell1.Text.Trim()))
             {
                 MyUtility.Msg.WarningBox("CutCell can't empty!!");
                 return false;
             }
 
-            WorkOrder = cmb_MDivisionID.Text;
+            MD = cmb_MDivisionID.Text;
             dateR_CuttingDate1 = dateR_CuttingDate.Value1;
             dateR_CuttingDate2 = dateR_CuttingDate.Value2;
-            CutCell1 = txt_CutCell1.Text;
-            CutCell2 = txt_CutCell2.Text;
+
+            //select distinct cutcellid from cutplan order by cutcellid 不只數字,where條件要''單引號,且mask是00
+            int c1, c2;
+            bool bc1, bc2;
+            bc1 = int.TryParse(txt_CutCell1.Text.Trim(), out c1);
+            if (bc1) CutCell1 = c1.ToString("D2");
+            else CutCell1 = txt_CutCell1.Text.Trim();
+            //若CutCell2為空則=CutCell1
+            if (!MyUtility.Check.Empty(txt_CutCell2.Text.Trim()))
+            {
+                bc2 = int.TryParse(txt_CutCell2.Text.Trim(), out c2);
+                if (bc2) CutCell2 = c2.ToString("D2");
+                else CutCell2 = txt_CutCell2.Text.Trim();
+            }
+            else
+            {
+                CutCell2 = CutCell1;
+            }
 
             return base.ValidateInput();
         }
@@ -109,20 +122,26 @@ namespace Sci.Production.Cutting
         //非同步讀取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            //準備CutCell包含非數字
+            DataTable Cutcelltb;
+            DBProxy.Current.Select(null, string.Format("select distinct cutcellid from cutplan where cutcellid >= '{0}' and cutcellid <= '{1}' order by cutcellid", CutCell1, CutCell2), out Cutcelltb);
+
+            int CutCellcount = Cutcelltb.Rows.Count;//CutCel總數
+
             StringBuilder sqlCmd = new StringBuilder();
-            int cutcellint1 = -1, cutcellint2 = -1;
-            int.TryParse(CutCell1, out  cutcellint1);
-            int.TryParse(CutCell2, out  cutcellint2);
-            if (cutcellint2.Empty())
-            {
-                cutcellint2 = cutcellint1;
-            }
+            //int cutcellint1 = -1, cutcellint2 = -1;
+            //int.TryParse(CutCell1, out  cutcellint1);
+            //int.TryParse(CutCell2, out  cutcellint2);
+            //if (cutcellint2.Empty())
+            //{
+            //    cutcellint2 = cutcellint1;
+            //}
             //做cutcellID1~CutCell2
 
             #region radiobtnByM
             if (radiobtn_Bydetail.Checked)
             {
-                for (int i = cutcellint1; i < cutcellint2 + 1; i++)
+                for (int i = 0; i < CutCellcount; i++)
                 {
                     sqlCmd.Append(@"
 IF OBJECT_ID('tempdb.dbo.#tmpall");
@@ -132,7 +151,7 @@ IF OBJECT_ID('tempdb.dbo.#tmpall");
   DROP TABLE #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
-select	
+ select	
 	[Request#] = Cutplan.ID,
 	[Cutting Date] = Cutplan.EstCutdate,
 	[Line#] = Cutplan_Detail.SewingLineID,
@@ -155,7 +174,8 @@ select
 	[SCI Delivery] = SCI.SciDelivery,
 	[CutCellID] = Cutplan.CutCellID,
     [wosrQ]=WorkOrder_SizeRatio.Qty,
-	[woL]=WorkOrder.Layer
+	[woL]=WorkOrder.Layer,
+	[O_SEQ] = Order_SizeCode.Seq
 into #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
@@ -209,74 +229,52 @@ where 1 = 1
                     {
                         sqlCmd.Append(string.Format(" and Cutplan.EstCutdate <= '{0}' ", Convert.ToDateTime(dateR_CuttingDate2).ToString("d")));
                     }
-                    if (!MyUtility.Check.Empty(WorkOrder))
+                    if (!MyUtility.Check.Empty(MD))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.MDivisionID ='{0}' ", WorkOrder));
+                        sqlCmd.Append(string.Format(" and Cutplan.MDivisionID ='{0}' ", MD));
                     }
-                    //if (!MyUtility.Check.Empty(CutCell1))
-                    //{
-                    //    sqlCmd.Append(string.Format(" and Cutplan.CutCellID = {0} ", i));
-                    //}
-                    
                     if (!MyUtility.Check.Empty(CutCell1))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID >= '{0}' ", CutCell1));
+                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = '{0}' ", Cutcelltb.Rows[i][0].ToString()));
                     }
-                    if (!MyUtility.Check.Empty(CutCell2))
-                    {
-                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID <= '{0}' ", CutCell2));
-                    }
+
+                    sqlCmd.Append(@"order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#]");
 
                     sqlCmd.Append(@"
-order by [Request#],[Line#], [Cutting Date], [SP#], [Fab_Code], WS1, WS2
-
 select 
-	[Request#]= case when a.rnR >1 then '' else a.[Request#] end,
-	[Cutting Date] = case when a.rnCD >1  then '' else Convert(varchar,a.[Cutting Date]) end,
-	[Line#] = case when (a.rnL >1) then '' else a.[Line#] end,
-	[SP#] = case when a.rnSP >1 and a.rnSeq >1 then '' else a.[SP#] end ,
-	[Seq#] = case when a.rnSeq >1 then '' else a.[Seq#] end,
-	[Style#] = case when a.rnSt >1 then '' else a.[Style#] end,
-	[Ref#] = a.[Ref#],
-	[Cut#] = a.[Cut#],
-	[Comb.] = a.[Comb.],
-	[Fab_Code] = a.[Fab_Code],
-	[Size Ratio] = a.[Size Ratio],
-	[Colorway] = case when a.rnClrw >1   then '' else a.[Colorway] end,
-	[Color] = case when a.rnClr >1  then '' else a.[Colorway] end,
-	[Cut Qty] = a.[Cut Qty],
-	[Fab Cons.] = a.[Fab Cons.],
-	[Fab Desc] = case when a.rnFB >1and a.rnR >1  then '' else a.[Fab Desc] end,
-	[Remark] = a.[Remark],
-    [SCI Delivery]=a.[SCI Delivery],
-	[wosrQ]=a.wosrQ,
-	[woL]=a.woL
-
-from 
-	(select 	
-		rnR = Row_number() over (partition by [Request#] 
-				order by [CutCellID],[Request#],[Cutting Date],[Line#],[SP#],[Fab_Code],[Cut#],WS1,WS2),
-		rnCD = Row_number() over (partition by [Request#],[Cutting Date] 
-				order by [CutCellID],[Request#],[Cutting Date],[Line#],[SP#],[Fab_Code],[Cut#],WS1,WS2),
-		rnL = Row_number() over (partition by [Request#],[Cutting Date],[Line#] 
-				order by [CutCellID],[Request#],[Cutting Date],[Line#],[SP#],[Fab_Code],[Cut#],WS1,WS2),
-		rnSP = Row_number() over (partition by [Request#],[Cutting Date],[Line#],[SP#] 
-				order by [CutCellID],[Request#],[Cutting Date],[Line#],[SP#],[Fab_Code],[Cut#],WS1,WS2),
-		rnSeq = Row_number() over (partition by [Request#],[Cutting Date],[Line#],[SP#],[Seq#] 
-				order by [CutCellID],[Request#],[Cutting Date],[Line#],[SP#],[Fab_Code],[Cut#],WS1,WS2),		
-		rnSt = Row_number() over (partition by [Request#],[Cutting Date],[Line#],[Seq#],[SP#],[Style#] 
-				order by [CutCellID],[Request#],[Cutting Date],[Line#],[SP#],[Fab_Code],[Cut#],WS1,WS2),
-		rnFB = Row_number() over (partition by [Request#],[Cutting Date],[Line#],[Seq#],[SP#],[Style#] ,[Fab Desc] 
-				order by [CutCellID],[Request#],[Cutting Date],[Line#],[SP#],[Fab_Code],[Cut#],WS1,WS2),
-		rnClrw = Row_number() over (partition by [Request#],[Cutting Date],[Line#],[Seq#],[SP#],[Style#] ,[Fab Desc] ,[Colorway] 
-				order by [CutCellID],[Request#],[Cutting Date],[Line#],[SP#],[Fab_Code],[Cut#],WS1,WS2),
-		rnClr = Row_number() over (partition by [Request#],[Cutting Date],[Line#],[Seq#],[SP#],[Style#] ,[Fab Desc] ,[Colorway] ,[Color] 
-				order by [CutCellID],[Request#],[Cutting Date],[Line#],[SP#],[Fab_Code],[Cut#],WS1,WS2),
-		* 
-	 from #tmpall");
+[Request#1]= case when (Row_number() over (partition by [Line#],[Request#]
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1 then '' else [Request#] end,
+[Cutting Date1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date]
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1  then '' else Convert(varchar,[Cutting Date]) end,
+[Line#1] = case when ((Row_number() over (partition by [Line#]
+	order by [Line#] ,[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1) then '' else [Line#] end,
+[SP#1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#]
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1 then '' else [SP#] end ,
+[Seq#1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#] 
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1 then '' else [Seq#] end,
+[Style#1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#] 
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1 then '' else [Style#] end,
+[Ref#] = [Ref#],
+[Cut#] = [Cut#],
+[Comb.] = [Comb.],
+[Fab_Code] = [Fab_Code],
+[Size Ratio] = [Size Ratio],
+[Colorway1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#] ,[Seq#],[Style#],[Fab Desc],[Colorway] 
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1 then '' else [Colorway] end,
+[Color1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#],[Fab Desc],[Colorway],[Color]
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1 then '' else [Colorway] end,
+[Cut Qty] = [Cut Qty],
+[Fab Cons.] = [Fab Cons.],
+[Fab Desc1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#],[Fab Desc],[Colorway],[Color],[Fab Desc]
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1 then '' else [Fab Desc] end,
+[Remark] = [Remark],
+[SCI Delivery]=[SCI Delivery],
+[wosrQ]=wosrQ,
+[woL]=woL
+from #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
-	) as a
+order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#]
 
 drop table #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
@@ -287,7 +285,7 @@ drop table #tmpall");
             #region radioBtnByCutCell
             if (radioBtn_Byonedaydetial.Checked)
             {
-                for (int i = cutcellint1; i < cutcellint2 + 1; i++)
+                for (int i = 0; i < CutCellcount; i++)
                 {
                     sqlCmd.Append(@"
 IF OBJECT_ID('tempdb.dbo.#tmpall");
@@ -384,13 +382,13 @@ where 1 = 1
                     {
                         sqlCmd.Append(string.Format(" and Cutplan.EstCutdate = '{0}' ", Convert.ToDateTime(dateR_CuttingDate1).ToString("d")));
                     }
-                    if (!MyUtility.Check.Empty(WorkOrder))
+                    if (!MyUtility.Check.Empty(MD))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.MDivisionID ='{0}' ", WorkOrder));
+                        sqlCmd.Append(string.Format(" and Cutplan.MDivisionID ='{0}' ", MD));
                     }
                     if (!MyUtility.Check.Empty(CutCell1))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = {0} ", i));//CutCellID1 ~ CutCellID2
+                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = {0} ", Cutcelltb.Rows[i][0].ToString()));
                     }
 
                     sqlCmd.Append(@"
@@ -453,7 +451,7 @@ drop table #tmpall");
             #region radiobtn By Detail3
             if (radiobtn_BySummary.Checked)
             {
-                for (int i = cutcellint1; i < cutcellint2 + 1; i++)
+                for (int i = 0; i < CutCellcount; i++)
                 {
                     sqlCmd.Append(@"
 IF OBJECT_ID('tempdb.dbo.#tmpall");
@@ -497,13 +495,13 @@ where 1 = 1
                     {
                         sqlCmd.Append(string.Format(" and Cutplan.EstCutdate <= '{0}' ", Convert.ToDateTime(dateR_CuttingDate2).ToString("d")));
                     }
-                    if (!MyUtility.Check.Empty(WorkOrder))
+                    if (!MyUtility.Check.Empty(MD))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.MDivisionID ='{0}' ", WorkOrder));
+                        sqlCmd.Append(string.Format(" and Cutplan.MDivisionID ='{0}' ", MD));
                     }
                     if (!MyUtility.Check.Empty(CutCell1))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = {0} ", i));//CutCellID1 ~ CutCellID2
+                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = {0} ", Cutcelltb.Rows[i][0].ToString()));
                     }
 
                     sqlCmd.Append(@"
@@ -635,19 +633,17 @@ drop table #tmpall");
             if (radiobtn_Bydetail.Checked || radioBtn_Byonedaydetial.Checked)
             {
                 for (int i = 0; i < printData.Count(); i++)
-                {
+                {                    
                     int m = 0, n = 0, l = 0;
                     decimal dm = 0, dsum = 0;
                     DataTable tmps = new DataTable();
                     tmps = printData[i].Copy();
                     printData[i].Clear();
-
-
                     for (int j = 0; j < tmps.Rows.Count; j++)
                     {
                         int.TryParse(tmps.Rows[j]["wosrQ"].ToString(), out m);
                         int.TryParse(tmps.Rows[j]["woL"].ToString(), out n);
-                        decimal.TryParse(tmps.Rows[j][14].ToString(), out dm);
+                        decimal.TryParse(tmps.Rows[j]["Fab Cons."].ToString(), out dm);
                         l += (m * n);
                         dsum += dm;
                         DataRow drr = printData[i].NewRow();
@@ -658,13 +654,13 @@ drop table #tmpall");
                         if (j < tmps.Rows.Count - 1)
                         {
                             //若下個SP#有值則塞row
-                            if (!tmps.Rows[j + 1]["SP#"].Empty())
+                            if (!tmps.Rows[j + 1]["SP#1"].Empty())
                             {
-                                DataRow tabrow = printData[i].NewRow();//12
-                                tabrow[11] = "Total Cut Qty";
-                                tabrow[12] = l;
+                                DataRow tabrow = printData[i].NewRow();
+                                tabrow["Colorway1"] = "Total Cut Qty";
+                                tabrow["Color1"] = l;
                                 //tabrow[13] = "Total Cons.";//此欄在Datatable是Decimal無法放入string
-                                tabrow[14] = dsum;
+                                tabrow["Fab Cons."] = dsum;
                                 printData[i].Rows.Add(tabrow);
 
                                 l = 0;
@@ -678,10 +674,10 @@ drop table #tmpall");
                         if (j == tmps.Rows.Count - 1)
                         {
                             DataRow tabrow = printData[i].NewRow();
-                            tabrow[11] = "Total Cut Qty";
-                            tabrow[12] = l;
+                            tabrow["Colorway1"] = "Total Cut Qty";
+                            tabrow["Color1"] = l;
                             //tabrow[13] = "Total Cons.";
-                            tabrow[14] = dsum;
+                            tabrow["Fab Cons."] = dsum;
                             printData[i].Rows.Add(tabrow);
                         }
                     }
@@ -733,7 +729,7 @@ drop table #tmpall");
 
                     for (int j = 0; j < printData[i].Rows.Count; j++)
                     {
-                        if (!printData[i].Rows[j]["Request#"].Empty())
+                        if (!printData[i].Rows[j]["Request#1"].Empty())
                         {
                             objSheets.get_Range("A" + (5 + j), "B" + (5 + j)).Merge(false);//合併欄位
                             objSheets.get_Range("A" + (5 + j), "A" + (5 + j)).Font.Bold = true;//指定粗體
@@ -750,7 +746,7 @@ drop table #tmpall");
                     objSheets.Name = "Cell" + (i + cutcellint1);//工作表名稱
                     objSheets.Cells[1, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
                     objSheets.Cells[1, 6] = (i + cutcellint1);//cutcellID
-                    objSheets.Cells[1, 9] = WorkOrder;
+                    objSheets.Cells[1, 9] = MD;
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet                    
                 }
                 if (!boolsend)
@@ -798,7 +794,7 @@ drop table #tmpall");
                     objSheets.Name = "Cell" + (i + cutcellint1);//工作表名稱
                     objSheets.Cells[1, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d"); //查詢日期
                     objSheets.Cells[1, 6] = (i + cutcellint1);//cutcellID
-                    objSheets.Cells[1, 9] = WorkOrder;
+                    objSheets.Cells[1, 9] = MD;
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet                    
                 }
                 if (!boolsend)
@@ -828,7 +824,7 @@ drop table #tmpall");
                     objSheets.Name = "Cell" + (i + cutcellint1);//工作表名稱
                     objSheets.Cells[1, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
                     objSheets.Cells[1, 6] = (i + cutcellint1);//cutcellID
-                    objSheets.Cells[1, 9] = WorkOrder;
+                    objSheets.Cells[1, 9] = MD;
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet                    
                 }
                 if (!boolsend)
@@ -895,8 +891,10 @@ drop table #tmpall");
             var email = new MailTo(Sci.Env.User.MailAddress, ToAddress, CcAddress,
                 Subject,
                 tmpFile,
-                "\r\nFilter as below description:\r\nCutting Date: " + CuttingDate + "\r\nCut Cell: " + cutcell + "\r\nM: " + WorkOrder, false, true);
+                "\r\nFilter as below description:\r\nCutting Date: " + CuttingDate + "\r\nCut Cell: " + cutcell + "\r\nM: " + MD, false, true);
             email.ShowDialog(this);
         }
+
+        
     }
 }
