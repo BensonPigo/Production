@@ -21,6 +21,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Cutting Daily Plan', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutplan';
 
@@ -79,4 +81,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutplan', @level2type = N'COLUMN', @level2name = N'MDivisionid';
+
+
+GO
+CREATE NONCLUSTERED INDEX [EstCutDate]
+    ON [dbo].[Cutplan]([EstCutdate] ASC, [MDivisionid] ASC, [CutCellID] ASC);
 
