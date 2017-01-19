@@ -400,7 +400,7 @@ select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD inner join dbo.Borro
                     IList<DataRow> x;
                     if (MyUtility.Check.Empty(CurrentMaintain["exportid"]))
                     {
-                        Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(CurrentDetailData["poid"].ToString(), CurrentDetailData["seq"].ToString(), "left(m.seq1,1) !='7'");
+                        Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(CurrentDetailData["poid"].ToString(), CurrentDetailData["seq"].ToString(), "left(p.seq1,1) !='7'");
                         DialogResult result = selepoitem.ShowDialog();
                         if (result == DialogResult.Cancel) { return; }
                         x = selepoitem.GetSelecteds();
@@ -484,7 +484,7 @@ where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintai
                             }
 
                             if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
-                                    @"and m.seq1 ='{2}' and m.seq2 = '{3}' and left(m.seq1, 1) !='7'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
+                                    @"and p.seq1 ='{2}' and p.seq2 = '{3}' and left(p.seq1, 1) !='7'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                             {
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 e.Cancel = true;
