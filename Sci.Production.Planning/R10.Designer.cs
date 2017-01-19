@@ -46,6 +46,10 @@
             this.rdHalfMonth = new System.Windows.Forms.RadioButton();
             this.rdMonth = new System.Windows.Forms.RadioButton();
             this.label1 = new Sci.Win.UI.Label();
+            this.lbM = new Sci.Win.UI.Label();
+            this.lbFactory = new Sci.Win.UI.Label();
+            this.txtM = new Sci.Win.UI.TextBox();
+            this.txtF = new Sci.Win.UI.TextBox();
             this.radioGroup2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMonth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numYear1)).BeginInit();
@@ -53,18 +57,22 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(374, 24);
+            this.print.Location = new System.Drawing.Point(371, 24);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(374, 60);
+            this.toexcel.Location = new System.Drawing.Point(371, 60);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(374, 96);
+            this.close.Location = new System.Drawing.Point(371, 96);
             // 
             // radioGroup2
             // 
+            this.radioGroup2.Controls.Add(this.txtF);
+            this.radioGroup2.Controls.Add(this.txtM);
+            this.radioGroup2.Controls.Add(this.lbFactory);
+            this.radioGroup2.Controls.Add(this.lbM);
             this.radioGroup2.Controls.Add(this.chkFty);
             this.radioGroup2.Controls.Add(this.chkForecast);
             this.radioGroup2.Controls.Add(this.chkOrder);
@@ -83,7 +91,7 @@
             this.radioGroup2.Controls.Add(this.rdMonth);
             this.radioGroup2.Location = new System.Drawing.Point(12, 14);
             this.radioGroup2.Name = "radioGroup2";
-            this.radioGroup2.Size = new System.Drawing.Size(348, 319);
+            this.radioGroup2.Size = new System.Drawing.Size(348, 360);
             this.radioGroup2.TabIndex = 94;
             this.radioGroup2.TabStop = false;
             // 
@@ -93,7 +101,7 @@
             this.chkFty.Checked = true;
             this.chkFty.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkFty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkFty.Location = new System.Drawing.Point(150, 272);
+            this.chkFty.Location = new System.Drawing.Point(150, 335);
             this.chkFty.Name = "chkFty";
             this.chkFty.Size = new System.Drawing.Size(125, 21);
             this.chkFty.TabIndex = 15;
@@ -106,7 +114,7 @@
             this.chkForecast.Checked = true;
             this.chkForecast.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkForecast.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkForecast.Location = new System.Drawing.Point(150, 245);
+            this.chkForecast.Location = new System.Drawing.Point(150, 308);
             this.chkForecast.Name = "chkForecast";
             this.chkForecast.Size = new System.Drawing.Size(82, 21);
             this.chkForecast.TabIndex = 14;
@@ -119,7 +127,7 @@
             this.chkOrder.Checked = true;
             this.chkOrder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkOrder.Location = new System.Drawing.Point(150, 221);
+            this.chkOrder.Location = new System.Drawing.Point(150, 284);
             this.chkOrder.Name = "chkOrder";
             this.chkOrder.Size = new System.Drawing.Size(64, 21);
             this.chkOrder.TabIndex = 13;
@@ -132,7 +140,7 @@
             this.cbReportType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cbReportType.FormattingEnabled = true;
             this.cbReportType.IsSupportUnselect = true;
-            this.cbReportType.Location = new System.Drawing.Point(150, 187);
+            this.cbReportType.Location = new System.Drawing.Point(150, 250);
             this.cbReportType.Name = "cbReportType";
             this.cbReportType.Size = new System.Drawing.Size(190, 24);
             this.cbReportType.TabIndex = 12;
@@ -143,7 +151,7 @@
             this.cbDateType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cbDateType.FormattingEnabled = true;
             this.cbDateType.IsSupportUnselect = true;
-            this.cbDateType.Location = new System.Drawing.Point(150, 156);
+            this.cbDateType.Location = new System.Drawing.Point(150, 219);
             this.cbDateType.Name = "cbDateType";
             this.cbDateType.Size = new System.Drawing.Size(190, 24);
             this.cbDateType.TabIndex = 11;
@@ -208,7 +216,7 @@
             // lbSource
             // 
             this.lbSource.Lines = 0;
-            this.lbSource.Location = new System.Drawing.Point(64, 219);
+            this.lbSource.Location = new System.Drawing.Point(64, 282);
             this.lbSource.Name = "lbSource";
             this.lbSource.Size = new System.Drawing.Size(83, 23);
             this.lbSource.TabIndex = 6;
@@ -217,7 +225,7 @@
             // lbReportType
             // 
             this.lbReportType.Lines = 0;
-            this.lbReportType.Location = new System.Drawing.Point(64, 187);
+            this.lbReportType.Location = new System.Drawing.Point(64, 250);
             this.lbReportType.Name = "lbReportType";
             this.lbReportType.Size = new System.Drawing.Size(83, 23);
             this.lbReportType.TabIndex = 5;
@@ -226,7 +234,7 @@
             // lbDateType
             // 
             this.lbDateType.Lines = 0;
-            this.lbDateType.Location = new System.Drawing.Point(64, 156);
+            this.lbDateType.Location = new System.Drawing.Point(64, 219);
             this.lbDateType.Name = "lbDateType";
             this.lbDateType.Size = new System.Drawing.Size(83, 23);
             this.lbDateType.TabIndex = 4;
@@ -287,12 +295,48 @@
             this.label1.Text = "Paper Size A4";
             this.label1.TextStyle.Color = System.Drawing.Color.Blue;
             // 
+            // lbM
+            // 
+            this.lbM.Lines = 0;
+            this.lbM.Location = new System.Drawing.Point(64, 152);
+            this.lbM.Name = "lbM";
+            this.lbM.Size = new System.Drawing.Size(83, 23);
+            this.lbM.TabIndex = 16;
+            this.lbM.Text = "M";
+            // 
+            // lbFactory
+            // 
+            this.lbFactory.Lines = 0;
+            this.lbFactory.Location = new System.Drawing.Point(64, 187);
+            this.lbFactory.Name = "lbFactory";
+            this.lbFactory.Size = new System.Drawing.Size(83, 23);
+            this.lbFactory.TabIndex = 17;
+            this.lbFactory.Text = "Factory";
+            // 
+            // txtM
+            // 
+            this.txtM.BackColor = System.Drawing.Color.White;
+            this.txtM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtM.Location = new System.Drawing.Point(150, 152);
+            this.txtM.Name = "txtM";
+            this.txtM.Size = new System.Drawing.Size(94, 23);
+            this.txtM.TabIndex = 18;
+            // 
+            // txtF
+            // 
+            this.txtF.BackColor = System.Drawing.Color.White;
+            this.txtF.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtF.Location = new System.Drawing.Point(150, 187);
+            this.txtF.Name = "txtF";
+            this.txtF.Size = new System.Drawing.Size(94, 23);
+            this.txtF.TabIndex = 19;
+            // 
             // R10
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(470, 357);
+            this.ClientSize = new System.Drawing.Size(467, 404);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.radioGroup2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -332,5 +376,9 @@
         private Win.UI.ComboBox cbReportType;
         private Win.UI.ComboBox cbDateType;
         private Win.UI.Label label1;
+        private Win.UI.TextBox txtF;
+        private Win.UI.TextBox txtM;
+        private Win.UI.Label lbFactory;
+        private Win.UI.Label lbM;
     }
 }

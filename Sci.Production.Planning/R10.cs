@@ -35,6 +35,8 @@ namespace Sci.Production.Planning
         private int intYear;
         private int intMonth;
         private string SourceStr;
+        private string M;
+        private string Fty;
 
         public R10(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -42,6 +44,7 @@ namespace Sci.Production.Planning
             InitializeComponent();
             EditMode = true;
             print.Visible = false;
+            txtM.Text = Sci.Env.User.Keyword;
         }
 
         protected override bool ValidateInput()  //欄位檢核
@@ -69,6 +72,8 @@ namespace Sci.Production.Planning
 
             ReportType = rdMonth.Checked ? 1 : 2;
             BrandID = txtBrand1.Text;
+            M = txtM.Text;
+            Fty = txtF.Text;
             ArtWorkType = cbReportType.SelectedValue.ToString();
             isSCIDelivery = (cbDateType.SelectedItem.ToString() == "SCI Delivery") ? true : false;
 
@@ -891,8 +896,6 @@ namespace Sci.Production.Planning
             {
                 numMonth.Value = System.DateTime.Today.Month;
             }
-
-
         }
 
     }
