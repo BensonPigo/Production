@@ -27,7 +27,9 @@ namespace Sci.Production.PPIC
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory", out factory);
             MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
             comboBox1.Text = Sci.Env.User.Keyword;
-            comboBox2.SelectedIndex = 0;
+            
+         //   comboBox2.SelectedIndex = 0;
+            comboBox2.Text = Sci.Env.User.Factory;
         }
 
         //Sewing Line
@@ -111,7 +113,7 @@ isnull((select sum(Qty) from CuttingOutput_WIP c where c.OrderID = s.OrderID and
 isnull((select sum(sod.QAQty) from SewingOutput so, SewingOutput_Detail sod where so.ID = sod.ID and so.SewingLineID = s.SewingLineID and sod.OrderId = s.OrderID and sod.ComboType = s.ComboType),0) as SewingQty,
 isnull((select sum(pd.ShipQty) from PackingList_Detail pd where pd.OrderID = s.OrderID and pd.ReceiveDate is not null),'') as ClogQty,
 o.InspDate,s.StandardOutput,
-(select IIF(ctn = 0,0,Hours/ctn) from (Select isnull(sum(w.Hours),0) as Hours, Count(w.Date) as ctn from WorkHour w where FactoryID = s.FactoryID and w.SewingLineID = s.SewingLineID and w.Date between s.Inline and s.Offline and w.Hours > 0) a) as WorkHour,
+(select IIF(ctn = 0,0,Hours/ctn) from (Select isnull(sum(w.Hours),0) as Hours, Count(w.Date) as ctn from WorkHour w where FactoryID = s.FactoryID and w.SewingLineID = s.SewingLineID and w.Date between Convert(Date,s.Inline) and Convert(Date,s.Offline) and w.Hours > 0) a) as WorkHour,
 s.MaxEff,o.KPILETA,
 isnull((Select top 1 op.Remark from Order_PFHis op where op.ID = s.OrderID and op.AddDate = (Select Max(AddDate) from Order_PFHis where ID = s.OrderID)),'') as PFRemark,
 o.MTLETA,o.MTLExport,s.Inline,s.Offline,o.SciDelivery,o.BuyerDelivery,
