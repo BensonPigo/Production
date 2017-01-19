@@ -42,10 +42,10 @@ namespace Sci.Production.Thread
             left join threadcolor b on a.threadcolorid = b.id 
             where a.refno = '{0}' and mDivisionid = '{1}'", masterID, keyWord);
 
-            string sql = @"Select cdate, id, '' as name, 0.0 as Newin,0.0 as Newout,0.0 as Newbalance, 0.0 as Usedin,0.0 as Usedout ,
-                            0.0 as Usedbalance,'' as ThreadColorid,'' as ThreadLocationid, '' as editname 
-                            from ThreadIncoming a where 1=0";
-            DualResult sqlReault = DBProxy.Current.Select(null, sql, out gridTb);
+//            string sql = @"Select cdate, id, '' as name, 0.0 as Newin,0.0 as Newout,0.0 as Newbalance, 0.0 as Usedin,0.0 as Usedout ,
+//                            0.0 as Usedbalance,'' as ThreadColorid,'' as ThreadLocationid, '' as editname 
+//                            from ThreadIncoming a where 1=0";
+//            DualResult sqlReault = DBProxy.Current.Select(null, sql, out gridTb);
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -74,23 +74,29 @@ namespace Sci.Production.Thread
         protected override void OnRefreshClick()
         {
             int dgi = detailgrid.GetSelectedRowIndex();
-            base.OnRefreshClick();
-            detailgridbs.Filter = ""; //清空Filter
-            dateRange1.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
-            dateRange1.TextBox2.Text = DateTime.Now.ToShortDateString();
-            transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
-            grid1.DataSource = gridTb; //因重新Generator 所以要重給
+            //base.OnRefreshClick();
+            //RenewData();
+            OnDetailEntered();
+            //detailgridbs.Filter = ""; //清空Filter
+            //dateRange1.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
+            //dateRange1.TextBox2.Text = DateTime.Now.ToShortDateString();
+            //transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
+            //grid1.DataSource = gridTb; //因重新Generator 所以要重給
             detailgrid.SelectRowTo(dgi);
-            OnDetailGridRowChanged();
+            //OnDetailGridRowChanged();
         }
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            string sql = @"Select cdate, id, '' as name, 0.0 as Newin,0.0 as Newout,0.0 as Newbalance, 0.0 as Usedin,0.0 as Usedout ,
+                            0.0 as Usedbalance,'' as ThreadColorid,'' as ThreadLocationid, '' as editname 
+                            from ThreadIncoming a where 1=0";
+            DualResult sqlReault = DBProxy.Current.Select(null, sql, out gridTb);
+            grid1.DataSource = gridTb; //因重新Generator 所以要重給
             detailgridbs.Filter = ""; //清空Filter
             dateRange1.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
             dateRange1.TextBox2.Text = DateTime.Now.ToShortDateString();
             transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
-            grid1.DataSource = gridTb; //因重新Generator 所以要重給
             OnDetailGridRowChanged();
         }
         protected override void OnDetailGridRowChanged()
