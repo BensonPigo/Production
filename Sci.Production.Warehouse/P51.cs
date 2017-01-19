@@ -222,6 +222,7 @@ namespace Sci.Production.Warehouse
                     CurrentDetailData["dyelot"] = "";
                     CurrentDetailData["Location"] = "";
                     CurrentDetailData["description"] = "";
+                    CurrentDetailData.EndEdit();
                 }
             };
             ts.CellValidating += (s, e) =>
