@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
             this.lbRemark = new Sci.Win.UI.Label();
             this.panelSourceType = new Sci.Win.UI.Panel();
@@ -104,7 +104,7 @@
             this.lbRemark.Lines = 0;
             this.lbRemark.Location = new System.Drawing.Point(3, 248);
             this.lbRemark.Name = "lbRemark";
-            this.lbRemark.Size = new System.Drawing.Size(311, 23);
+            this.lbRemark.Size = new System.Drawing.Size(241, 23);
             this.lbRemark.TabIndex = 10;
             this.lbRemark.Text = "PS:Sample Order has been Excluded";
             this.lbRemark.TextStyle.Color = System.Drawing.Color.Red;
@@ -165,6 +165,7 @@
             this.panelByType.Name = "panelByType";
             this.panelByType.Size = new System.Drawing.Size(111, 76);
             this.panelByType.TabIndex = 8;
+            this.panelByType.Visible = false;
             // 
             // rdByAll
             // 
@@ -362,14 +363,15 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(431, 12);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.grid1.RowHeadersVisible = false;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -382,31 +384,36 @@
             // 
             this.btnEdit.Location = new System.Drawing.Point(431, 285);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(90, 36);
+            this.btnEdit.Size = new System.Drawing.Size(90, 41);
             this.btnEdit.TabIndex = 97;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // btnUndo
             // 
             this.btnUndo.Location = new System.Drawing.Point(619, 285);
             this.btnUndo.Name = "btnUndo";
-            this.btnUndo.Size = new System.Drawing.Size(79, 36);
+            this.btnUndo.Size = new System.Drawing.Size(79, 41);
             this.btnUndo.TabIndex = 98;
             this.btnUndo.Text = "Undo";
             this.btnUndo.UseVisualStyleBackColor = true;
+            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
             // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(704, 285);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(80, 36);
+            this.btnSave.Size = new System.Drawing.Size(80, 41);
             this.btnSave.TabIndex = 99;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // R13
             // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(789, 351);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnUndo);
@@ -414,6 +421,7 @@
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.radioGroup1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "R13";
             this.Text = "R13. Adidas KPI Report";
             this.Controls.SetChildIndex(this.print, 0);
