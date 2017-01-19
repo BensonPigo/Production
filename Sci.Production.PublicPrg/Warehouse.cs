@@ -1125,8 +1125,10 @@ drop table #TmpSource
         #endregion
 
         #region -- SelePoItem --
-        public static string selePoItemSqlCmd = @"select  m.poid,concat(Ltrim(Rtrim(m.seq1)), ' ', m.seq2) as seq, p.Refno, dbo.getmtldesc(m.poid,m.seq1,m.seq2,2,0) as Description 
-                                                    ,p.ColorID,p.FinalETA,m.InQty,p.pounit
+        public static string selePoItemSqlCmd = @"select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq, p.Refno, dbo.getmtldesc(p.id,p.seq1,p.seq2,2,0) as Description 
+                                                    ,p.ColorID,p.FinalETA
+                                                    ,isnull(m.InQty, 0) as InQty
+                                                    ,p.pounit
                                                     --,p.StockUnit
                                                     ,iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
                                                         ff.UsageUnit , 
@@ -1138,14 +1140,14 @@ drop table #TmpSource
                                                     ,isnull(m.OutQty, 0) as outQty
                                                     ,isnull(m.AdjustQty, 0) as AdjustQty
                                                     ,isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) as balance
-                                                    ,m.LInvQty
+                                                    ,isnull(m.LInvQty, 0) as LInvQty
                                                     ,p.fabrictype
-                                                    ,m.seq1
-                                                    ,m.seq2
+                                                    ,p.seq1
+                                                    ,p.seq2
                                                     ,p.scirefno
                                                     ,p.qty
-                                                    from dbo.mdivisionpodetail m 
-                                                    inner join dbo.PO_Supp_Detail p on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
+                                                    from dbo.PO_Supp_Detail p
+                                                    left join dbo.mdivisionpodetail m  on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2 and m.mdivisionid = '{1}'
                                                     inner join [dbo].[Fabric] ff on p.SCIRefno= ff.SCIRefno
                                                     inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
                                                     inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
@@ -1158,7 +1160,7 @@ drop table #TmpSource
 				                                                    ff.UsageUnit , 
 				                                                    uu.ExtensionUnit), 
 			                                                    ff.UsageUnit)))--p.StockUnit
-                                                    where m.poid ='{0}' and m.mdivisionid = '{1}'";
+                                                    where p.id ='{0}'";
         /// <summary>
         /// 右鍵開窗選取採購項
         /// </summary>
