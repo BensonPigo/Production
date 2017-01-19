@@ -207,7 +207,7 @@ namespace Sci.Production.Warehouse
                         DialogResult result = selepoitem.ShowDialog();
                         if (result == DialogResult.Cancel) { return; }
                         x = selepoitem.GetSelecteds();
-                    
+
                     CurrentDetailData["seq"] = x[0]["seq"];
                     CurrentDetailData["seq1"] = x[0]["seq1"];
                     CurrentDetailData["seq2"] = x[0]["seq2"];
@@ -258,7 +258,7 @@ namespace Sci.Production.Warehouse
                         }
 
                         if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
-                                    @"and m.seq1 ='{2}' and m.seq2 = '{3}'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
+                                    @"and p.seq1 ='{2}' and p.seq2 = '{3}'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                         {
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
                             e.Cancel = true;
