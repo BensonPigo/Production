@@ -242,7 +242,7 @@ namespace Sci.Production.Warehouse
                         CurrentDetailData["stockunit"] = x[0]["stockunit"];
                         CurrentDetailData["Description"] = x[0]["Description"];
                     }
-                    
+                    CurrentDetailData.EndEdit();
                 }
             };
             ts.CellValidating += (s, e) =>
