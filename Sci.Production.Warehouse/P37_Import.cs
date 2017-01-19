@@ -142,6 +142,9 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                         dtScrap.DefaultView.Sort = "poid,seq1,seq2,location,dyelot";
                     }
                     listControlBindingSource1.DataSource = dtScrap;
+
+                    grid1.Columns["exportid"].Visible = !(MyUtility.Check.Empty(transid) && MyUtility.Check.Empty(wkno));
+                    grid1.Columns["eta"].Visible = !(MyUtility.Check.Empty(transid) && MyUtility.Check.Empty(wkno));
                 }
                 else { ShowErr(strSQLCmd.ToString(), result); }
                 this.HideWaitMessage();
