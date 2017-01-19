@@ -110,7 +110,6 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 81);
             this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -276,15 +275,15 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "Refno";
             // 
-            // P06_Import
+            // P07_Import
             // 
             this.ClientSize = new System.Drawing.Size(840, 420);
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.label6);
-            this.Name = "P06_Import";
-            this.Text = "Import from Part";
+            this.Name = "P07_Import";
+            this.Text = "Import from Thread Stock";
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.panel1.ResumeLayout(false);
