@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.textBox1 = new Sci.Win.UI.TextBox();
             this.button3 = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
             this.button4 = new Sci.Win.UI.Button();
@@ -39,11 +40,21 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtmachinetype1 = new Sci.Production.Class.txtmachinetype();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(165, 17);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(150, 23);
+            this.textBox1.TabIndex = 18;
+            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // button3
             // 
@@ -148,9 +159,9 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.checkBox1);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.txtmachinetype1);
             this.panel1.Controls.Add(this.button3);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -177,16 +188,6 @@
             this.label1.Size = new System.Drawing.Size(95, 23);
             this.label1.TabIndex = 13;
             this.label1.Text = "Machine Type";
-            // 
-            // txtmachinetype1
-            // 
-            this.txtmachinetype1.BackColor = System.Drawing.Color.White;
-            this.txtmachinetype1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmachinetype1.IsSupportSytsemContextMenu = false;
-            this.txtmachinetype1.Location = new System.Drawing.Point(155, 17);
-            this.txtmachinetype1.Name = "txtmachinetype1";
-            this.txtmachinetype1.Size = new System.Drawing.Size(156, 23);
-            this.txtmachinetype1.TabIndex = 12;
             // 
             // P01_Generate
             // 
@@ -215,9 +216,9 @@
         private Win.UI.Panel panel1;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Label label1;
-        private Class.txtmachinetype txtmachinetype1;
         private Win.UI.Label label2;
         private Class.txtthreadcomb txtthreadcomb1;
         private Win.UI.Button button4;
+        private Win.UI.TextBox textBox1;
     }
 }

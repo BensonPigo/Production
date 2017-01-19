@@ -131,7 +131,6 @@ namespace Sci.Production.Thread
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
-
                     row[header] = sele.GetSelectedString();
                     row.EndEdit();
                 }

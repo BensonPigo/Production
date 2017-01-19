@@ -22,7 +22,7 @@ namespace Sci.Production.Thread
     public partial class P01_Generate : Sci.Win.Subs.Base
     {
         private DataTable gridTable;
-        private string styleUkey;
+        private string styleUkey, strstyleid, strseason, strbrandid;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public P01_Generate(string str_styleukey, string str_styleid, string str_season, string str_brandid)
         {
@@ -45,6 +45,9 @@ namespace Sci.Production.Thread
             and a.seasonid  = b.seasonid and a.brandid = b.brandid order by seq
             ", str_styleid, str_season, str_brandid);
             styleUkey = str_styleukey;
+            strstyleid = str_styleid;
+            strseason=str_season;
+            strbrandid = str_brandid;
             DualResult dResult = DBProxy.Current.Select(null, sql, out gridTable);
             if (dResult)
             {
@@ -55,24 +58,25 @@ namespace Sci.Production.Thread
                 ShowErr(sql);
                 return;
             }
-
+           
             DataGridViewGeneratorTextColumnSettings threadcombcell = cellthreadcomb.GetGridCell(true);
-            // DataGridViewGeneratorTextColumnSettings  combCell = new DataGridViewGeneratorTextColumnSettings();
-            threadcombcell.CellValidating += (s, e) =>
-            {
-                string newValue = e.FormattedValue.ToString();
-                string operationid = gridTable.DefaultView.ToTable().Rows[e.RowIndex]["operationid"].ToString();
-                string machinetypeid = gridTable.DefaultView.ToTable().Rows[e.RowIndex]["machinetypeid"].ToString();
-                foreach (DataRowView dr in gridTable.DefaultView)
-                {
-                    if (dr["operationid"].ToString() == operationid && dr["machinetypeid"].ToString() == machinetypeid)
-                    {
-                        dr["threadcombid"] = newValue;
-                        dr.EndEdit();
-                    }
-                }
+            //自動複製相同machinetypeid && operationid的Threadcombid到第二筆，JK：不需此功能，先註解掉
+            //// DataGridViewGeneratorTextColumnSettings  combCell = new DataGridViewGeneratorTextColumnSettings();
+            //threadcombcell.CellValidating += (s, e) =>
+            //{
+            //    string newValue = e.FormattedValue.ToString();
+            //    string operationid = gridTable.DefaultView.ToTable().Rows[e.RowIndex]["operationid"].ToString();
+            //    string machinetypeid = gridTable.DefaultView.ToTable().Rows[e.RowIndex]["machinetypeid"].ToString();
+            //    foreach (DataRowView dr in gridTable.DefaultView)
+            //    {
+            //        if (dr["operationid"].ToString() == operationid && dr["machinetypeid"].ToString() == machinetypeid)
+            //        {
+            //            dr["threadcombid"] = newValue;
+            //            dr.EndEdit();
+            //        }
+            //    }
 
-            };
+            //};
 
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             Helper.Controls.Grid.Generator(this.grid1)
@@ -90,13 +94,13 @@ namespace Sci.Production.Thread
         private void button3_Click(object sender, EventArgs e)
         {
             grid1.ValidateControl();
-            if (MyUtility.Check.Empty(txtmachinetype1.Text))
+            if (MyUtility.Check.Empty(textBox1.Text))
             {
                 gridTable.DefaultView.RowFilter = this.checkBox1.Value == "True" ? "Threadcombid is null" : "";
             }
             else
             {
-                gridTable.DefaultView.RowFilter = this.checkBox1.Value == "True" ? string.Format("MachineTypeid = '{0}' and Threadcombid is null", txtmachinetype1.Text) : string.Format("MachineTypeid = '{0}'", txtmachinetype1.Text);
+                gridTable.DefaultView.RowFilter = this.checkBox1.Value == "True" ? string.Format("MachineTypeid = '{0}' and Threadcombid is null", textBox1.Text) : string.Format("MachineTypeid = '{0}'", textBox1.Text);
             }
         }
 
@@ -123,24 +127,25 @@ namespace Sci.Production.Thread
                 //Threadcombid欄位有資料複製到gridTable3
                 gridTable3 = gridTable.Select("threadcombid is not null and Threadcombid <> ''").CopyToDataTable();
 
-                #region 判斷Threadcombid是否符合規則
-                //從gridTable3選threadcombid,Machinetypeid groupby後groupTable
-                MyUtility.Tool.ProcessWithDatatable(gridTable3, "threadcombid,Machinetypeid", @"Select threadcombid,Machinetypeid from #tmp where threadcombid is not null and rtrim(threadcombid) <>'' group by threadcombid,machinetypeid", out groupTable);
-                //從groupTable計數不同的Machinetypeid確有相同的Threadcombid
-                MyUtility.Tool.ProcessWithDatatable(groupTable, "threadcombid,Machinetypeid", @"Select count(Threadcombid) as tt , threadcombid from #tmp  group by threadcombid having count(Threadcombid) > 1", out countTable);
-                //countTable不為空則表示Threadcombid不符規則
-                StringBuilder overmsg = new StringBuilder();
-                if (countTable.Rows.Count != 0)
-                {
-                    overmsg.Append("There is <Thread Combination > over use two <Machine Type> \n");
-                    foreach (DataRow dr in countTable.Rows)
-                    {
-                        overmsg.Append(dr["ThreadCombid"] + "\n");
-                    }
-                    MyUtility.Msg.WarningBox(overmsg.ToString());
-                    return;
-                }
-                #endregion
+                //2017/1/19 Ricky修改 JK：目前允許一個Thread Comb用在兩個以上的Machine type，所以先註解掉
+                //#region 判斷Threadcombid是否符合規則
+                ////從gridTable3選threadcombid,Machinetypeid groupby後groupTable
+                //MyUtility.Tool.ProcessWithDatatable(gridTable3, "threadcombid,Machinetypeid", @"Select threadcombid,Machinetypeid from #tmp where threadcombid is not null and rtrim(threadcombid) <>'' group by threadcombid,machinetypeid", out groupTable);
+                ////從groupTable計數不同的Machinetypeid確有相同的Threadcombid
+                //MyUtility.Tool.ProcessWithDatatable(groupTable, "threadcombid,Machinetypeid", @"Select count(Threadcombid) as tt , threadcombid from #tmp  group by threadcombid having count(Threadcombid) > 1", out countTable);
+                ////countTable不為空則表示Threadcombid不符規則
+                //StringBuilder overmsg = new StringBuilder();
+                //if (countTable.Rows.Count != 0)
+                //{
+                //    overmsg.Append("There is <Thread Combination > over use two <Machine Type> \n");
+                //    foreach (DataRow dr in countTable.Rows)
+                //    {
+                //        overmsg.Append(dr["ThreadCombid"] + "\n");
+                //    }
+                //    MyUtility.Msg.WarningBox(overmsg.ToString());
+                //    return;
+                //}
+                //#endregion
             }
             #endregion
             
@@ -260,9 +265,51 @@ namespace Sci.Production.Thread
 
             foreach (DataRowView dr in gridTable.DefaultView)
             {
-                if (dr["Sel"].ToString() == "1") dr["ThreadCombid"] = txtthreadcomb1.Text;
+                if (dr["Sel"].ToString() == "1")
+                {
+                    dr["ThreadCombid"] = txtthreadcomb1.Text;
+                    dr["Sel"] = false;
+                }
+
             }
             grid1.ValidateControl();
         }
+
+        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"Select distinct d.MachineTypeID
+            from timestudy c,timestudy_Detail d 
+            join operation e on e.id = d.operationid
+            where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and d.SeamLength>0 ", strstyleid, strseason, strbrandid), "23", this.textBox1.Text, false, ",");
+            //
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            this.textBox1.Text = item.GetSelectedString();
+        }
+
+        private  void textBox1_Validating(object sender, CancelEventArgs e)
+        {
+            base.OnValidating(e);
+            string str = this.textBox1.Text;
+            if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
+            {
+                string tmp = MyUtility.GetValue.Lookup("id", str, "Machinetype", "id");
+                if (string.IsNullOrWhiteSpace(tmp))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("< Machine Type> : {0} not found!!!", str));
+                    this.textBox1.Text = "";
+                    e.Cancel = true;
+                    return;
+                }
+                //string cjunk = MyUtility.GetValue.Lookup("Junk", str, "Machinetype", "id");
+                //if (cjunk == "True")
+                //{
+                //    MyUtility.Msg.WarningBox(string.Format("Machine Type already junk, you can't choose!!"));
+                //    this.textBox1.Text = "";
+                //}
+            }
+        }
+
+
     }
 }
