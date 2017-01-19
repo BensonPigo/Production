@@ -149,7 +149,8 @@ targetData as (
 , orderData_basic as (
 	select o.FtyGroup
 	,o.StyleID
-	,count(1) order_count_style
+	--,count(1) order_count_style
+    ,count(distinct o.StyleID) order_count_style
 	,min(SewInLine) order_min_sewinline
 	,sum(o.qty) order_total_qty
 	,sum(o.qty * t.CpuRate) order_total_cpu
