@@ -5,23 +5,23 @@ Create PROCEDURE [dbo].[Order_Report_FabColorCombination]
 AS
 BEGIN
 
-declare @poid varchar(13) = (select POID from Orders where ID = @OrderID)
+declare @poid varchar(13) = (select POID from MNOrder where ID = @OrderID)
 declare @tbl table (id varchar(13), Article varchar(8))
 
 if(@ByType = 0)
 	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID = @OrderID
 else if(@ByType = 1)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Trade.dbo.Orders where POID = @poid AND CustCDID = (select CustCDID from Orders where ID = @OrderID))
+	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from MNOrder where POID = @poid AND CustCDID = (select CustCDID from MNOrder where ID = @OrderID))
 else if(@ByType = 2)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Trade.dbo.Orders where POID = @poid )
+	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from MNOrder where POID = @poid )
 	
 --FABRIC 主料，有FabricCode
 SELECT Article,c.BrandID,d.ColorID,a.LectraCode,QTLectraCode=isnull(b.QTLectraCode,''),FabricCode 
-into #tmp FROM dbo.Order_ColorCombo a
+into #tmp FROM dbo.MNOrder_ColorCombo a
 left join (
 	SELECT Id,LectraCode,QTLectraCode FROM DBO.Order_FabricCode_QT where LectraCode <> QTLectraCode
 ) b on a.Id = b.Id and a.LectraCode = b.LectraCode
-left join dbo.Orders c on a.Id = c.ID
+left join dbo.MNOrder c on a.Id = c.ID
 outer apply (	
 	select ColorID=STUFF((SELECT CHAR(10)+ColorID FROM dbo.Color_multiple d where BrandID = c.BrandID and d.ID = a.ColorID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
 ) d

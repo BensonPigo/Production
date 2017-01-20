@@ -5,19 +5,19 @@ Create PROCEDURE [dbo].[Order_Report_QtyBreakdown]
 AS
 BEGIN
 
-declare @poid varchar(13) = (select POID from Orders where ID = @OrderID)
+declare @poid varchar(13) = (select POID from MNOrder where ID = @OrderID)
 declare @tbl table (id varchar(13), Article varchar(8))
 
 if(@ByType = 0)
 	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID = @OrderID
 else if(@ByType = 1)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Trade.dbo.Orders where POID = @poid AND CustCDID = (select CustCDID from Orders where ID = @OrderID) )
+	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from MNOrder where POID = @poid AND CustCDID = (select CustCDID from MNOrder where ID = @OrderID) )
 else if(@ByType = 2)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Trade.dbo.Orders where POID = @poid )
+	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from MNOrder where POID = @poid )
 
 
 --主要資料
-SELECT b.id,b.Article,SizeCode,Qty into #tmp FROM @tbl a left join DBO.Order_Qty b on a.Article = b.Article and a.id = b.ID 
+SELECT b.id,b.Article,SizeCode,Qty into #tmp FROM @tbl a left join DBO.MNOrder_Qty b on a.Article = b.Article and a.id = b.ID 
 where b.ID is not null
 
 

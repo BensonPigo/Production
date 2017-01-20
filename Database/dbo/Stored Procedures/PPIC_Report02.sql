@@ -6,7 +6,7 @@ CREATE PROCEDURE [dbo].[PPIC_Report02]
 AS
 BEGIN
 
-declare @POID varchar(13) = (select POID from Orders where ID = @ID)
+declare @POID varchar(13) = (select POID from MNOrder where ID = @ID)
 
 --Page1 第一張只會呈現一次，另外抓就好-------------------------------------------------------------------------------
 --##MAKER ##STYLENO ##QTY ##SP
@@ -31,7 +31,7 @@ SELECT shipingMark=iif(MarkFront<>'','(A) '+@newLine+MarkFront,'')
 +@newLine+iif(MarkBack<>'','(B) '+@newLine+MarkBack,'')
 +@newLine+iif(MarkLeft<>'','(C) '+@newLine+MarkLeft,'')
 +@newLine+iif(MarkRight<>'','(D) '+@newLine+MarkRight,'')
-FROM Trade.dbo.Orders a where ID = @ID
+FROM MNOrder a where ID = @ID
 
 
 --##S2PACKING
