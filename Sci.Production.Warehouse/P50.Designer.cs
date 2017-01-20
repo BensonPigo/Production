@@ -92,7 +92,7 @@
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(928, 97);
-            this.gridicon.TabIndex = 15;
+            this.gridicon.TabIndex = 4;
             // 
             // refresh
             // 
@@ -181,7 +181,7 @@
             this.dateBox3.Location = new System.Drawing.Point(352, 13);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 1;
+            this.dateBox3.TabIndex = 0;
             // 
             // button5
             // 
@@ -190,7 +190,7 @@
             this.button5.Location = new System.Drawing.Point(939, 43);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(89, 31);
-            this.button5.TabIndex = 4;
+            this.button5.TabIndex = 2;
             this.button5.Text = "generate";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -253,15 +253,15 @@
             this.cbbStockType.Location = new System.Drawing.Point(597, 46);
             this.cbbStockType.Name = "cbbStockType";
             this.cbbStockType.Size = new System.Drawing.Size(121, 24);
-            this.cbbStockType.TabIndex = 66;
+            this.cbbStockType.TabIndex = 1;
             this.cbbStockType.Validating += new System.ComponentModel.CancelEventHandler(this.cbbStockType_Validating);
             // 
             // P50
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "textBox3";
-            this.DefaultControlForEdit = "textBox3";
+            this.DefaultControl = "dateBox3";
+            this.DefaultControlForEdit = "dateBox3";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;
             this.GridAlias = "StockTaking_detail";
