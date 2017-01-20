@@ -154,7 +154,7 @@ IF OBJECT_ID('tempdb.dbo.#tmpall");
   DROP TABLE #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
- select	
+ select distinct
 	[Request#] = Cutplan.ID,
 	[Cutting Date] = Cutplan.EstCutdate,
 	[Line#] = Cutplan_Detail.SewingLineID,
@@ -176,9 +176,7 @@ IF OBJECT_ID('tempdb.dbo.#tmpall");
 	WS2 = WorkOrder.Seq2,
 	[SCI Delivery] = SCI.SciDelivery,
 	[CutCellID] = Cutplan.CutCellID,
-    [wosrQ]=WorkOrder_SizeRatio.Qty,
-	[woL]=WorkOrder.Layer,
-	[O_SEQ] = Order_SizeCode.Seq
+	[total_qty] = WorkOrder_SizeRatio.Qty * WorkOrder.Layer
 into #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
@@ -241,43 +239,43 @@ where 1 = 1
                         sqlCmd.Append(string.Format(" and Cutplan.CutCellID = '{0}' ", Cutcelltb.Rows[i][0].ToString()));
                     }
 
-                    sqlCmd.Append(@"order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#]");
+                    sqlCmd.Append(@"order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#]");
 
                     sqlCmd.Append(@"
 select 
 [Request#1]= case when (Row_number() over (partition by [Line#],[Request#]
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1 then '' else [Request#] end,
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Request#] end,
 [Cutting Date1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date]
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1  then '' else Convert(varchar,[Cutting Date]) end,
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1  then '' else Convert(varchar,[Cutting Date]) end,
 [Line#1] = case when ((Row_number() over (partition by [Line#]
-	order by [Line#] ,[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1) then '' else [Line#] end,
-[SP#1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#]
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1 then '' else [SP#] end ,
+	order by [Line#] ,[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1) then '' else [Line#] end,
+[SP#1] = case when  (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#] 
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [SP#] end ,
 [Seq#1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#] 
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1 then '' else [Seq#] end,
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Seq#] end,
 [Style#1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#] 
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1 then '' else [Style#] end,
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Style#] end,
 [Ref#] = [Ref#],
 [Cut#] = [Cut#],
 [Comb.] = [Comb.],
 [Fab_Code] = [Fab_Code],
 [Size Ratio] = [Size Ratio],
 [Colorway1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#] ,[Seq#],[Style#],[Fab Desc],[Colorway] 
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1 then '' else [Colorway] end,
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Colorway] end,
 [Color1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#],[Fab Desc],[Colorway],[Color]
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1 then '' else [Colorway] end,
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Color] end,
 [Cut Qty] = [Cut Qty],
 [Fab Cons.] = [Fab Cons.],
 [Fab Desc1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#],[Fab Desc],[Colorway],[Color],[Fab Desc]
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#])) >1 then '' else [Fab Desc] end,
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Fab Desc] end,
 [Remark] = [Remark],
 [SCI Delivery]=[SCI Delivery],
-[wosrQ]=wosrQ,
-[woL]=woL
+[total_qty1] = sum([total_qty])
 from #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
-order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[O_SEQ] desc,[Seq#]
+group by [Request#],[Cutting Date],[Line#],[SP#],[Seq#],[Style#],[Ref#],[Cut#],[Comb.],[Fab_Code],[Size Ratio],[Colorway],[Color],[Cut Qty],[Fab Cons.],[Fab Desc],[Remark],WS1,WS2,[SCI Delivery],[CutCellID]
+order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#]
 
 drop table #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
@@ -631,9 +629,60 @@ drop table #tmpall");
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
-
             #region Bydetail OR Byonedaydetial 依狀況插入列
-            if (radiobtn_Bydetail.Checked || radioBtn_Byonedaydetial.Checked)
+            if (radiobtn_Bydetail.Checked)
+            {
+                for (int i = 0; i < printData.Count(); i++)
+                {
+                    int l = 0;
+                    decimal dm = 0, dsum = 0;
+                    DataTable tmps = new DataTable();
+                    tmps = printData[i].Copy();
+                    printData[i].Clear();
+                    for (int j = 0; j < tmps.Rows.Count; j++)
+                    {
+                        int.TryParse(tmps.Rows[j]["total_qty1"].ToString(), out l);
+                        decimal.TryParse(tmps.Rows[j]["Fab Cons."].ToString(), out dm);
+                        dsum += dm;
+                        DataRow drr = printData[i].NewRow();
+                        drr = tmps.Rows[j];
+                        printData[i].ImportRow(drr);
+
+                        //做到倒數第二row
+                        if (j < tmps.Rows.Count - 1)
+                        {
+                            //若下個SP#有值則塞row
+                            if (!tmps.Rows[j + 1]["SP#1"].Empty())
+                            {
+                                DataRow tabrow = printData[i].NewRow();
+                                tabrow["Colorway1"] = "Total Cut Qty";
+                                tabrow["Color1"] = l;
+                                //tabrow[13] = "Total Cons.";//此欄在Datatable是Decimal無法放入string
+                                tabrow["Fab Cons."] = dsum;
+                                printData[i].Rows.Add(tabrow);
+
+                                l = 0;
+                                dm = 0;
+                                dsum = 0;
+                            }
+                        }
+                        //若到最後一row塞row
+                        if (j == tmps.Rows.Count - 1)
+                        {
+                            DataRow tabrow = printData[i].NewRow();
+                            tabrow["Colorway1"] = "Total Cut Qty";
+                            tabrow["Color1"] = l;
+                            //tabrow[13] = "Total Cons.";
+                            tabrow["Fab Cons."] = dsum;
+                            printData[i].Rows.Add(tabrow);
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region Byonedaydetial 依狀況插入列
+            if (radioBtn_Byonedaydetial.Checked)
             {
                 for (int i = 0; i < printData.Count(); i++)
                 {                    
