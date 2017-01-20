@@ -352,8 +352,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "textBox2";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "txtwhseReason1";
+            this.DefaultControlForEdit = "txtwhseReason1";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;
             this.GridAlias = "returnreceipt_detail";
