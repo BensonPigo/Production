@@ -24,8 +24,11 @@
     [SizeRange]     NVARCHAR (MAX) CONSTRAINT [DF_MNOrder_SizeRange] DEFAULT ('') NULL,
     [AddName]       VARCHAR (10)   CONSTRAINT [DF_MNOrder_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME       NULL,
+    [POID]          VARCHAR (13)   NULL,
     CONSTRAINT [PK_MNOrder] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
