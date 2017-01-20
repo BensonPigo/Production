@@ -68,7 +68,7 @@ BEGIN
 	outer apply (select CpuRate from GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.CustCDID, @mSampleCPURate) ) gcRate
 	outer apply (select iif(@isSCIDelivery = 0, Orders.BuyerDelivery, Orders.SCIDelivery) as OrderDate) odd
 	outer apply (select substring(CONVERT(char(10), OrderDate, 111),6,2)  as Date1) odd1
-	outer apply (select dbo.GetHalfMonWithYear(OrderDate) as Date2) odd2
+	outer apply (select substring(CONVERT(char(10), OrderDate),1,7) as Date2) odd2
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s and @date_e)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
@@ -86,7 +86,7 @@ BEGIN
 	left join Sewingoutput_Detail on #tmpOrder1.ID = Sewingoutput_Detail.OrderID
 	left join Sewingoutput on Sewingoutput.ID = Sewingoutput_Detail.ID
 	outer apply (select substring(CONVERT(char(10), Sewingoutput.OutputDate, 111),6,2)  as Date1) odd1
-	outer apply (select dbo.GetHalfMonWithYear(Sewingoutput.OutputDate) as Date2) odd2
+	outer apply (select substring(CONVERT(char(10), Sewingoutput.OutputDate),1,7) as Date2) odd2
 
 
 	--Fty Local Order
@@ -109,7 +109,7 @@ BEGIN
 	outer apply (select iif(@ArtWorkType = 'CPU', Orders.CPU, FactoryOrderTMSCPU) as cCPU) ccpu
 	outer apply (select * from GetCPURate('', '', '', '', 0) ) gcRate
 	outer apply (select substring(CONVERT(char(10), Orders.BuyerDelivery, 111),6,2)  as Date1) odd1
-	outer apply (select dbo.GetHalfMonWithYear(Orders.BuyerDelivery) as Date2) odd2
+	outer apply (select substring(CONVERT(char(10), Orders.BuyerDelivery),1,7) as Date2) odd2
 	Where Orders.BuyerDelivery Between @date_s and @date_e
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
 	And (@M = '' or Orders.MDivisionID = @M)
@@ -127,7 +127,7 @@ BEGIN
 	left join Sewingoutput_Detail on #tmpFactoryOrder1.ID = Sewingoutput_Detail.OrderID
 	left join Sewingoutput on Sewingoutput.ID = Sewingoutput_Detail.ID
 	outer apply (select substring(CONVERT(char(10), Sewingoutput.OutputDate, 111),6,2)  as Date1) odd1
-	outer apply (select dbo.GetHalfMonWithYear(Sewingoutput.OutputDate) as Date2) odd2
+	outer apply (select substring(CONVERT(char(10), Sewingoutput.OutputDate),1,7) as Date2) odd2
 
 
 	--Forecast
@@ -150,7 +150,7 @@ BEGIN
 	outer apply (select iif(@ArtWorkType = 'CPU', Orders.CPU, ForecastTMSCPU) as cCPU) ccpu
 	outer apply (select CpuRate from GetCPURate('', '', '', '', 0) ) gcRate
 	outer apply (select substring(CONVERT(char(10), Orders.BuyerDelivery, 111),6,2)  as Date1) odd1
-	outer apply (select dbo.GetHalfMonWithYear(Orders.BuyerDelivery) as Date2) odd2
+	outer apply (select substring(CONVERT(char(10), Orders.BuyerDelivery),1,7) as Date2) odd2
 	Where Orders.BuyerDelivery Between @date_s and @date_e
 	And Orders.Qty > 0  
 	AND @HasForecast = 1
@@ -285,3 +285,4 @@ drop table #tmpFinal
 		
 
 END
+
