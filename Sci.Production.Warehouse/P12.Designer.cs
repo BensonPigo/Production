@@ -71,7 +71,7 @@
             this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 155);
+            this.masterpanel.Size = new System.Drawing.Size(1058, 155);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
@@ -90,13 +90,13 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 155);
-            this.detailpanel.Size = new System.Drawing.Size(892, 194);
+            this.detailpanel.Size = new System.Drawing.Size(1058, 322);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(928, 115);
-            this.gridicon.TabIndex = 15;
+            this.gridicon.TabIndex = 6;
             // 
             // refresh
             // 
@@ -104,7 +104,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 194);
+            this.detailgridcont.Size = new System.Drawing.Size(1058, 322);
             // 
             // detail2
             // 
@@ -120,16 +120,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1058, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1058, 477);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
             // 
             // browse
             // 
@@ -185,7 +185,7 @@
             this.dateBox3.Location = new System.Drawing.Point(352, 13);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 3;
+            this.dateBox3.TabIndex = 0;
             // 
             // button5
             // 
@@ -194,7 +194,7 @@
             this.button5.Location = new System.Drawing.Point(939, 43);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(89, 31);
-            this.button5.TabIndex = 9;
+            this.button5.TabIndex = 2;
             this.button5.Text = "Import";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -206,7 +206,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(892, 155);
+            this.shapeContainer1.Size = new System.Drawing.Size(1058, 155);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -224,7 +224,7 @@
             this.button8.Location = new System.Drawing.Point(279, 115);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(70, 30);
-            this.button8.TabIndex = 5;
+            this.button8.TabIndex = 4;
             this.button8.Text = "Find";
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
@@ -237,7 +237,7 @@
             this.textBox1.Location = new System.Drawing.Point(128, 119);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(145, 23);
-            this.textBox1.TabIndex = 4;
+            this.textBox1.TabIndex = 3;
             // 
             // label5
             // 
@@ -254,7 +254,7 @@
             this.button9.Location = new System.Drawing.Point(355, 115);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(148, 30);
-            this.button9.TabIndex = 7;
+            this.button9.TabIndex = 5;
             this.button9.Text = "Clear Qty is empty";
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
@@ -276,7 +276,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(658, 51);
-            this.editBox1.TabIndex = 60;
+            this.editBox1.TabIndex = 1;
             // 
             // P12
             // 
