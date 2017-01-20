@@ -59,7 +59,17 @@ namespace Production.Daily
         {
             DataTable _mailTo;
             String sqlCmd;
-            sqlCmd = "Select * From dbo.MailTo Where ID = '001'";
+            //需要改2個地方, 1是撈取 2是save          
+            
+            if (MyUtility.Check.Seek("select * from Production.dbo.MailTo where id='099'"))
+            {
+                sqlCmd = "Select * From dbo.MailTo Where ID = '099'";    
+            }
+            else
+            {
+                sqlCmd = "Select * From dbo.MailTo Where ID = '001'";
+            }
+
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out _mailTo);
 
@@ -77,8 +87,16 @@ namespace Production.Daily
             DualResult result;
             String sqlCmd;
             List<SqlParameter> paras = new List<SqlParameter>();
+            if (MyUtility.Check.Seek("select * from Production.dbo.MailTo where id='099'"))
+            {
+                sqlCmd = "Update dbo.MailTo Set ToAddress = @ToAddress, CcAddress = @CcAddress, Content = @Content Where ID = '099'";
+            }
+            else
+            {
+                sqlCmd = "Update dbo.MailTo Set ToAddress = @ToAddress, CcAddress = @CcAddress, Content = @Content Where ID = '001'";
+            }
 
-            sqlCmd = "Update dbo.MailTo Set ToAddress = @ToAddress, CcAddress = @CcAddress, Content = @Content Where ID = '001'";
+            
             paras.Add(new SqlParameter("@ToAddress", editToAddress.Text));
             paras.Add(new SqlParameter("@CcAddress", editCcAddress.Text));
             paras.Add(new SqlParameter("@Content", editContent.Text));
@@ -172,7 +190,7 @@ namespace Production.Daily
             String sendFrom = this.CurrentData["SendFrom"].ToString();
             String toAddress = mailTo["ToAddress"].ToString();
             String ccAddress = mailTo["CcAddress"].ToString();
-            //String toAddress = "ben.chen@sportscity.com.tw";
+            //String toAddress = "willy.wei@sportscity.com.tw";
             //String ccAddress = "";
             if (String.IsNullOrEmpty(subject))
             {
@@ -339,10 +357,10 @@ namespace Production.Daily
             #region 開始執行轉出
             result = DailyExport(exportRegion, importRegion);
 
-            if (!result) 
+            if (!result)
             {
                 ErrMail("Export", exportRegion);
-                return result; 
+                return result;
             }
             #endregion
 
@@ -585,13 +603,13 @@ Region      Succeeded       Message
             region.Is_Export = true;
             */
             #region 檢查FTP檔案的日期是否正確
-            if (!transferPMS.CheckRar_CreateDate(region, region.RarName, false))
-            {
-                String subject = "PMS transfer data (New) ERROR";
-                String desc = "Wrong the downloaded file date!!,Pls contact with Taipei.";
-                SendMail(subject, desc);
-                return Ict.Result.F("Wrong the downloaded file date!!,Pls contact with Taipei.");
-            }
+            //if (!transferPMS.CheckRar_CreateDate(region, region.RarName, false))
+            //{
+            //    String subject = "PMS transfer data (New) ERROR";
+            //    String desc = "Wrong the downloaded file date!!,Pls contact with Taipei.";
+            //    SendMail(subject, desc);
+            //    return Ict.Result.F("Wrong the downloaded file date!!,Pls contact with Taipei.");
+            //}
             #endregion
             #region 刪除DataBase
             result = transferPMS.DeleteDatabase(region);
@@ -626,6 +644,16 @@ Region      Succeeded       Message
             #region 掛載資料庫
             transferPMS.Attach_DataBase(region, 1);
             #endregion
+
+            #region 掛載LockDate 
+            Dictionary<string, KeyValuePair<DateTime?, DualResult>> resDic1 = Deploy_LockDate(region.DirName, prefix: "update_", connectionName: transferPMS.fromSystem);
+            foreach (var item in resDic1)
+            {
+                region.Logs.Add(item.Value);
+            }
+            
+            #endregion
+
             #region Deploy procedure 到Production
             Dictionary<string, KeyValuePair<DateTime?, DualResult>> resDic = transferPMS.Deploy_Procedure(region.DirName, prefix: "imp_", connectionName: transferPMS.fromSystem);
             foreach (var item in resDic)
@@ -759,5 +787,40 @@ Region      Succeeded       Message
             return result;
         }
         #endregion
+        public virtual Dictionary<string, KeyValuePair<DateTime?, DualResult>> Deploy_LockDate(string procedureDir, string prefix, string connectionName = null)
+        {
+            var sqlFiles = Directory.GetFiles(procedureDir, prefix + "*.sql");
+            Dictionary<string, KeyValuePair<DateTime?, DualResult>> errors = new Dictionary<string, KeyValuePair<DateTime?, DualResult>>();
+            SqlConnection conn;
+            DualResult result = DBProxy.Current.OpenConnection(connectionName, out conn);
+            if (!result)
+            {
+                errors.Add("Open Connection Fail : " + connectionName,
+                   new KeyValuePair<DateTime?, DualResult>(DateTime.Now, result)
+                   );
+            }
+            foreach (string sqlFile in sqlFiles)
+            {
+                string spname = Path.GetFileNameWithoutExtension(sqlFile);
+                result = Deploy_LockDate(sqlFile, conn);
+                if (!result)
+                {
+                    errors.Add(spname,new KeyValuePair<DateTime?, DualResult>(DateTime.Now, result)); 
+                }
+            }
+            return errors;
+        }
+        public virtual DualResult Deploy_LockDate(string sqlFile, SqlConnection conn)
+        {
+            string spname = Path.GetFileNameWithoutExtension(sqlFile);
+            string dropSP = @"
+                    If Object_Id ( 'dbo.@spname@') Is Not Null
+                        Drop Procedure dbo.@spname@;
+                    ".Replace("@spname@", spname);
+            DualResult rr = DBProxy.Current.ExecuteByConn(conn, dropSP);
+            string script = File.ReadAllText(sqlFile);
+            DualResult result = DBProxy.Current.ExecuteByConn(conn, script);
+            return result;
+        }
     }
 }
