@@ -159,7 +159,7 @@
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(928, 174);
-            this.gridicon.TabIndex = 15;
+            this.gridicon.TabIndex = 20;
             // 
             // refresh
             // 
@@ -303,7 +303,7 @@
             this.dateBox1.Location = new System.Drawing.Point(342, 47);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 1;
+            this.dateBox1.TabIndex = 4;
             // 
             // textBox3
             // 
@@ -313,7 +313,7 @@
             this.textBox3.Location = new System.Drawing.Point(94, 47);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(120, 23);
-            this.textBox3.TabIndex = 0;
+            this.textBox3.TabIndex = 1;
             this.textBox3.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
             // 
             // displayBox2
@@ -324,7 +324,7 @@
             this.displayBox2.Location = new System.Drawing.Point(94, 80);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(120, 23);
-            this.displayBox2.TabIndex = 45;
+            this.displayBox2.TabIndex = 2;
             // 
             // label1
             // 
@@ -343,7 +343,7 @@
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.ReadOnly = true;
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 6;
+            this.dateBox2.TabIndex = 3;
             // 
             // dateBox3
             // 
@@ -351,7 +351,7 @@
             this.dateBox3.Location = new System.Drawing.Point(375, 80);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 3;
+            this.dateBox3.TabIndex = 5;
             // 
             // dateBox4
             // 
@@ -359,7 +359,7 @@
             this.dateBox4.Location = new System.Drawing.Point(613, 47);
             this.dateBox4.Name = "dateBox4";
             this.dateBox4.Size = new System.Drawing.Size(130, 23);
-            this.dateBox4.TabIndex = 2;
+            this.dateBox4.TabIndex = 7;
             // 
             // dateBox5
             // 
@@ -369,7 +369,7 @@
             this.dateBox5.Name = "dateBox5";
             this.dateBox5.ReadOnly = true;
             this.dateBox5.Size = new System.Drawing.Size(130, 23);
-            this.dateBox5.TabIndex = 7;
+            this.dateBox5.TabIndex = 6;
             // 
             // dateBox6
             // 
@@ -437,7 +437,7 @@
             this.btImportFromExcel.Location = new System.Drawing.Point(743, 175);
             this.btImportFromExcel.Name = "btImportFromExcel";
             this.btImportFromExcel.Size = new System.Drawing.Size(161, 30);
-            this.btImportFromExcel.TabIndex = 14;
+            this.btImportFromExcel.TabIndex = 19;
             this.btImportFromExcel.Text = "Import From Excel";
             this.btImportFromExcel.UseVisualStyleBackColor = true;
             this.btImportFromExcel.Click += new System.EventHandler(this.btImportFromExcel_Click);
@@ -490,7 +490,7 @@
             this.button8.Location = new System.Drawing.Point(279, 175);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(98, 30);
-            this.button8.TabIndex = 5;
+            this.button8.TabIndex = 15;
             this.button8.Text = "Find";
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.btFind_Click);
@@ -503,7 +503,7 @@
             this.textBox1.Location = new System.Drawing.Point(128, 179);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(145, 23);
-            this.textBox1.TabIndex = 4;
+            this.textBox1.TabIndex = 14;
             // 
             // label5
             // 
@@ -520,7 +520,7 @@
             this.label8.Location = new System.Drawing.Point(390, 179);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(75, 23);
-            this.label8.TabIndex = 60;
+            this.label8.TabIndex = 16;
             this.label8.Text = "Type Filter";
             // 
             // comboBox1
@@ -537,7 +537,7 @@
             this.comboBox1.Location = new System.Drawing.Point(468, 178);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(100, 24);
-            this.comboBox1.TabIndex = 6;
+            this.comboBox1.TabIndex = 17;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // button9
@@ -546,7 +546,7 @@
             this.button9.Location = new System.Drawing.Point(574, 175);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(80, 30);
-            this.button9.TabIndex = 7;
+            this.button9.TabIndex = 18;
             this.button9.Text = "Delete all";
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.btDeleteAllDetail_Click);
