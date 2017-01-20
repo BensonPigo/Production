@@ -124,7 +124,12 @@ namespace Sci.Production.Cutting
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             //準備CutCell包含非數字
-            DBProxy.Current.Select(null, string.Format("select distinct cutcellid from cutplan where cutcellid >= '{0}' and cutcellid <= '{1}' order by cutcellid", CutCell1, CutCell2), out Cutcelltb);
+            DBProxy.Current.Select(null, string.Format(@"select distinct CutCellID from Cutplan 
+where Cutplan.EstCutdate >= '{0}' and Cutplan.EstCutdate <= '{1}' 
+and Cutplan.MDivisionID ='{2}' and Cutplan.CutCellID >= '{3}' and Cutplan.CutCellID <='{4}' order by CutCellID"
+                ,Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
+                ,Convert.ToDateTime(dateR_CuttingDate2).ToString("d")
+                ,MD, CutCell1, CutCell2), out Cutcelltb);
             
             int CutCellcount = Cutcelltb.Rows.Count;//CutCel總數
 
@@ -765,14 +770,19 @@ drop table #tmpall");
             }
 
             int CutCellcount = Cutcelltb.Rows.Count;//CutCel總數
-
+            bool countrow = false;
             for (int i = 0; i < CutCellcount; i++)
             {
-                if (printData[i].Rows.Count <= 0)
+                if (printData[i].Rows.Count > 0)
                 {
-                    MyUtility.Msg.WarningBox("Data not found!");
-                    return false;
+                    countrow = true;
                 }
+            }
+
+            if (!countrow)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                    return false;
             }
 
             #region radiobtn_Bydetail
