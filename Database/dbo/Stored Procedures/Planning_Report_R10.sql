@@ -3,6 +3,8 @@
 CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	@ReportType int = 1 --1:整個月 2:半個月 --3:Production status 2017.01.04 Serena電話確認後，表示不用做了
 	,@BrandID varchar(20)
+	,@M varchar(20)
+	,@Fty varchar(20)
 	,@ArtWorkType varchar(20) --= 'CPU'
 	,@isSCIDelivery bit = 1
 	,@Year int = 2017
@@ -70,6 +72,8 @@ BEGIN
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s and @date_e)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
+	And (@M = '' or Orders.MDivisionID = @M)
+	And (@Fty = '' or Orders.FactoryID = @Fty)
 	And Orders.Junk = 0 and Orders.Qty > 0  And Orders.Category in ('B','S') 
 	AND @HasOrders = 1
 
@@ -108,6 +112,8 @@ BEGIN
 	outer apply (select dbo.GetHalfMonWithYear(Orders.BuyerDelivery) as Date2) odd2
 	Where Orders.BuyerDelivery Between @date_s and @date_e
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
+	And (@M = '' or Orders.MDivisionID = @M)
+	And (@Fty = '' or Orders.FactoryID = @Fty)
 	And Orders.Junk = 0 and Orders.Qty > 0  
 	AND @HasFtyLocalOrder = 1
 	AND LocalOrder=1
