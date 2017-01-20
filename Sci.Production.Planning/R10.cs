@@ -129,6 +129,8 @@ namespace Sci.Production.Planning
                 DualResult res = DBProxy.Current.SelectSP("", "Planning_Report_R10"
                 , new List<SqlParameter> { new SqlParameter("@ReportType", ReportType)
                 , new SqlParameter("@BrandID", BrandID)
+                , new SqlParameter("@M", M)
+                , new SqlParameter("@Fty", Fty)
                 , new SqlParameter("@ArtWorkType", ArtWorkType)
                 , new SqlParameter("@isSCIDelivery", isSCIDelivery)
                 , new SqlParameter("@Year", intYear)
