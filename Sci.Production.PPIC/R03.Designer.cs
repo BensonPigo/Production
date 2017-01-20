@@ -49,10 +49,6 @@
             this.dateRange4 = new Sci.Win.UI.DateRange();
             this.dateRange5 = new Sci.Win.UI.DateRange();
             this.dateRange6 = new Sci.Win.UI.DateRange();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.comboBox2 = new Sci.Win.UI.ComboBox();
             this.comboBox3 = new Sci.Win.UI.ComboBox();
@@ -66,6 +62,10 @@
             this.checkBox7 = new Sci.Win.UI.CheckBox();
             this.checkBox8 = new Sci.Win.UI.CheckBox();
             this.checkBox9 = new Sci.Win.UI.CheckBox();
+            this.txtstyle1 = new Sci.Production.Class.txtstyle();
+            this.txtseason1 = new Sci.Production.Class.txtseason();
+            this.txtcustcd1 = new Sci.Production.Class.txtcustcd();
+            this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -265,46 +265,6 @@
             this.dateRange6.Size = new System.Drawing.Size(227, 23);
             this.dateRange6.TabIndex = 5;
             // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(119, 179);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(150, 23);
-            this.textBox1.TabIndex = 6;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(119, 207);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(80, 23);
-            this.textBox2.TabIndex = 7;
-            this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
-            // 
-            // textBox3
-            // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(119, 235);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(80, 23);
-            this.textBox3.TabIndex = 8;
-            this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
-            // 
-            // textBox4
-            // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(119, 263);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(150, 23);
-            this.textBox4.TabIndex = 9;
-            this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
-            // 
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
@@ -448,9 +408,52 @@
             this.checkBox9.Text = "Forecast";
             this.checkBox9.UseVisualStyleBackColor = true;
             // 
+            // txtstyle1
+            // 
+            this.txtstyle1.BackColor = System.Drawing.Color.White;
+            this.txtstyle1.BrandObjectName = null;
+            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle1.Location = new System.Drawing.Point(119, 178);
+            this.txtstyle1.Name = "txtstyle1";
+            this.txtstyle1.Size = new System.Drawing.Size(186, 23);
+            this.txtstyle1.TabIndex = 109;
+            // 
+            // txtseason1
+            // 
+            this.txtseason1.BackColor = System.Drawing.Color.White;
+            this.txtseason1.BrandObjectName = null;
+            this.txtseason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtseason1.Location = new System.Drawing.Point(119, 207);
+            this.txtseason1.Name = "txtseason1";
+            this.txtseason1.Size = new System.Drawing.Size(98, 23);
+            this.txtseason1.TabIndex = 110;
+            // 
+            // txtcustcd1
+            // 
+            this.txtcustcd1.BackColor = System.Drawing.Color.White;
+            this.txtcustcd1.BrandObjectName = null;
+            this.txtcustcd1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcustcd1.Location = new System.Drawing.Point(119, 261);
+            this.txtcustcd1.Name = "txtcustcd1";
+            this.txtcustcd1.Size = new System.Drawing.Size(186, 23);
+            this.txtcustcd1.TabIndex = 111;
+            // 
+            // txtbrand1
+            // 
+            this.txtbrand1.BackColor = System.Drawing.Color.White;
+            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand1.Location = new System.Drawing.Point(119, 235);
+            this.txtbrand1.Name = "txtbrand1";
+            this.txtbrand1.Size = new System.Drawing.Size(98, 23);
+            this.txtbrand1.TabIndex = 112;
+            // 
             // R03
             // 
             this.ClientSize = new System.Drawing.Size(478, 590);
+            this.Controls.Add(this.txtbrand1);
+            this.Controls.Add(this.txtcustcd1);
+            this.Controls.Add(this.txtseason1);
+            this.Controls.Add(this.txtstyle1);
             this.Controls.Add(this.checkBox9);
             this.Controls.Add(this.checkBox8);
             this.Controls.Add(this.checkBox7);
@@ -464,10 +467,6 @@
             this.Controls.Add(this.comboBox3);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.dateRange6);
             this.Controls.Add(this.dateRange5);
             this.Controls.Add(this.dateRange4);
@@ -516,10 +515,6 @@
             this.Controls.SetChildIndex(this.dateRange4, 0);
             this.Controls.SetChildIndex(this.dateRange5, 0);
             this.Controls.SetChildIndex(this.dateRange6, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
-            this.Controls.SetChildIndex(this.textBox2, 0);
-            this.Controls.SetChildIndex(this.textBox3, 0);
-            this.Controls.SetChildIndex(this.textBox4, 0);
             this.Controls.SetChildIndex(this.comboBox1, 0);
             this.Controls.SetChildIndex(this.comboBox2, 0);
             this.Controls.SetChildIndex(this.comboBox3, 0);
@@ -533,6 +528,10 @@
             this.Controls.SetChildIndex(this.checkBox7, 0);
             this.Controls.SetChildIndex(this.checkBox8, 0);
             this.Controls.SetChildIndex(this.checkBox9, 0);
+            this.Controls.SetChildIndex(this.txtstyle1, 0);
+            this.Controls.SetChildIndex(this.txtseason1, 0);
+            this.Controls.SetChildIndex(this.txtcustcd1, 0);
+            this.Controls.SetChildIndex(this.txtbrand1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -561,10 +560,6 @@
         private Win.UI.DateRange dateRange4;
         private Win.UI.DateRange dateRange5;
         private Win.UI.DateRange dateRange6;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox4;
         private Win.UI.ComboBox comboBox1;
         private Win.UI.ComboBox comboBox2;
         private Win.UI.ComboBox comboBox3;
@@ -578,5 +573,9 @@
         private Win.UI.CheckBox checkBox7;
         private Win.UI.CheckBox checkBox8;
         private Win.UI.CheckBox checkBox9;
+        private Class.txtstyle txtstyle1;
+        private Class.txtseason txtseason1;
+        private Class.txtcustcd txtcustcd1;
+        private Class.txtbrand txtbrand1;
     }
 }

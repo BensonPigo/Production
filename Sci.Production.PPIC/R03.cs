@@ -37,7 +37,7 @@ from Factory f where Zone <> ''", out zone);
 
             comboBox1.SelectedIndex = 0;
             comboBox2.Text = Sci.Env.User.Keyword;
-            comboBox3.SelectedIndex = 0;
+            comboBox3.Text = Sci.Env.User.Factory;
             comboBox4.SelectedIndex = 0;
             checkBox6.Checked = true;
         }
@@ -69,10 +69,7 @@ from Factory f where Zone <> ''", out zone);
             planDate2 = dateRange5.Value2;
             orderCfm1 = dateRange6.Value1;
             orderCfm2 = dateRange6.Value2;
-            style = textBox1.Text;
-            season = textBox2.Text;
-            brand = textBox3.Text;
-            custcd = textBox4.Text;
+           
             zone = MyUtility.Convert.GetString(comboBox1.SelectedValue);
             mDivision = comboBox2.Text;
             factory = comboBox3.Text;
@@ -103,11 +100,13 @@ o.CdCodeID,o.CPU,o.Qty,o.FOCQty,o.LocalOrder,o.PoPrice,o.CMPPrice,o.KPILETA,o.LE
 o.PackETA,o.MTLComplete,o.SewInLine,o.SewOffLine,o.CutInLine,o.CutOffLine,o.Category,o.PulloutDate,
 o.ActPulloutDate,o.SMR,o.MRHandle,o.MCHandle,o.OrigBuyerDelivery,o.DoxType,o.TotalCTN,o.FtyCTN,o.ClogCTN,
 o.VasShas,o.TissuePaper,o.MTLExport,o.SewLine,o.ShipModeList,o.PlanDate,o.FirstProduction,o.OrderTypeID,
-o.SpecialMark,o.SampleReason,o.InspDate,o.InspResult,o.InspHandle,o.MnorderApv,o.PulloutComplete,
+o.SpecialMark,o.SampleReason,o.InspDate,IIF(o.InspResult='P','Pass',IIF(o.InspResult='F','Fail',''))InspResult
+,(o.InspHandle +'-'+ I.Name)InspHandle,o.MnorderApv,o.PulloutComplete,
 o.FtyKPI,o.KPIChangeReason,o.EachConsApv,o.Junk,o.StyleUkey,o.CuttingSP,o.RainwearTestPassed,o.BrandFTYCode,
 o.CPUFactor,o.ClogLastReceiveDate,o.IsMixMarker,o.GFR
 from Orders o
 inner join Order_QtyShip oq on o.ID = oq.Id
+OUTER APPLY(SELECT Name FROM Pass1 WHERE Pass1.ID=O.InspHandle)I
 where 1=1");
             if (!MyUtility.Check.Empty(buyerDlv1))
             {
@@ -246,7 +245,8 @@ o.CdCodeID,o.CPU,o.Qty,o.FOCQty,o.LocalOrder,o.PoPrice,o.CMPPrice,o.KPILETA,o.LE
 o.PackETA,o.MTLComplete,o.SewInLine,o.SewOffLine,o.CutInLine,o.CutOffLine,o.Category,o.PulloutDate,
 o.ActPulloutDate,o.SMR,o.MRHandle,o.MCHandle,o.OrigBuyerDelivery,o.DoxType,o.TotalCTN,o.FtyCTN,o.ClogCTN,
 o.VasShas,o.TissuePaper,o.MTLExport,o.SewLine,o.ShipModeList,o.PlanDate,o.FirstProduction,o.OrderTypeID,
-o.SpecialMark,o.SampleReason,o.InspDate,o.InspResult,o.InspHandle,o.MnorderApv,o.PulloutComplete,o.FtyKPI,
+o.SpecialMark,o.SampleReason,o.InspDate,IIF(o.InspResult='P','Pass',IIF(o.InspResult='F','Fail',''))InspResult,
+o.InspHandle,o.MnorderApv,o.PulloutComplete,o.FtyKPI,
 o.KPIChangeReason,o.EachConsApv,o.Junk,o.StyleUkey,o.CuttingSP,o.RainwearTestPassed,o.BrandFTYCode,o.CPUFactor,
 o.ClogLastReceiveDate,o.IsMixMarker,o.GFR
 from Orders o 
@@ -294,7 +294,7 @@ isnull(dbo.getMinCompleteSewQty(t.ID,null,null),0) as TtlSewQty,
 isnull((select SUM(Qty) from CuttingOutput_WIP where OrderID = t.ID),0) as CutQty,
 isnull((select top 1 Remark from Order_PFHis where ID = t.ID and AddDate = (select Max(AddDate) from Order_PFHis where ID = t.ID)),'') as PFRemark,
 dbo.getMinSCIDelivery(t.POID,'') as EarliestSCIDlv,
-isnull((select Name from Reason where ReasonTypeID = 'Order_BuyerDelivery' and ID = t.KPIChangeReason),'') as KPIChangeReasonName,
+isnull((select Name from Reason where ReasonTypeID = 'Style_SpecialMark' and ID = t.KPIChangeReason),'') as KPIChangeReasonName,
 isnull((select Name from TPEPass1 where Id = t.SMR),'') as SMRName,
 isnull((select Name from TPEPass1 where Id = t.MRHandle),'') as MRHandleName,
 isnull((select Name from TPEPass1 where Id = p.POSMR),'') as POSMRName,
@@ -348,6 +348,7 @@ isnull((select Name from TPEPass1 where Id = p.POSMR),'') as POSMRName,
 isnull((select Name from TPEPass1 where Id = p.POHandle),'') as POHandleName,
 isnull((select Name from Pass1 where Id = t.MCHandle),'') as MCHandleName,
 isnull((select Name from Reason where ReasonTypeID = 'Order_reMakeSample' and ID = t.SampleReason),'') as SampleReasonName,
+isnull((select Name from Reason where ReasonTypeID = 'Style_SpecialMark' and ID = t.SpecialMark),'') as SpecialMarkName,
 isnull([dbo].getMTLExport(t.POID,t.MTLExport),'') as MTLExportTimes,
 dbo.GetStyleGMTLT(t.BrandID,t.StyleID,t.SeasonID,t.FactoryID) as GMTLT,
 dbo.GetSimilarStyleList(t.StyleUkey) as SimilarStyle,
@@ -600,8 +601,8 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 objArray[0, 76] = dr["PulloutQty"];
                 objArray[0, 77] = dr["ActPulloutTime"];
                 objArray[0, 78] = MyUtility.Convert.GetString(dr["PulloutComplete"]).ToUpper() == "TRUE" ? "OK" : "";
-                objArray[0, 79] = dr["FtyKPI"];
-                objArray[0, 80] = dr["KPIChangeReasonName"];
+                objArray[0, 79] = dr["FtyKPI"]; //cb
+                objArray[0, 80] = dr["KPIChangeReasonName"]; //cc
                 objArray[0, 81] = dr["PlanDate"];
                 objArray[0, 82] = dr["OrigBuyerDelivery"];
                 objArray[0, 83] = dr["SMR"];
@@ -621,14 +622,14 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 objArray[0, 97] = dr["ClogCTN"];
                 objArray[0, 98] = dr["ClogRcvDate"];
                 objArray[0, 99] = dr["InspDate"];
-                objArray[0, 100] = dr["InspResult"];
-                objArray[0, 101] = dr["InspHandle"];
-                objArray[0, 102] = dr["SewLine"];
-                objArray[0, 103] = dr["ShipModeList"];
-                objArray[0, 104] = dr["Article"];
-                objArray[0, 105] = dr["SpecialMark"];
-                objArray[0, 106] = dr["FTYRemark"];
-                objArray[0, 107] = dr["SampleReasonName"];
+                objArray[0, 100] = dr["InspResult"];//CW
+                objArray[0, 101] = dr["InspHandle"];//CX
+                objArray[0, 102] = dr["SewLine"];//CY
+                objArray[0, 103] = dr["ShipModeList"];//CZ
+                objArray[0, 104] = dr["Article"];//DA
+                objArray[0, 105] = dr["SpecialMarkName"];//DB
+                objArray[0, 106] = dr["FTYRemark"];//DC
+                objArray[0, 107] = dr["SampleReasonName"];//DD
                 objArray[0, 108] = MyUtility.Convert.GetString(dr["IsMixMarker"]).ToUpper() == "TRUE" ? "Y" : "";
                 objArray[0, 109] = dr["CuttingSP"];
                 objArray[0, 110] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : "";
@@ -721,50 +722,5 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
             return true;
         }
 
-        //Style
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            Sci.Win.Tools.SelectItem item;
-            string selectCommand = "select ID,SeasonID,BrandID,Description from Style where Junk = 0 order by ID";
-
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "16,10,8,50", textBox1.Text);
-            DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
-            textBox1.Text = item.GetSelectedString();
-        }
-
-        //Season
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            Sci.Win.Tools.SelectItem item;
-            string selectCommand = "select distinct ID from Season";
-
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "11", textBox2.Text);
-            DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
-            textBox2.Text = item.GetSelectedString();
-        }
-
-        //Brand
-        private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            string sqlWhere = "SELECT Id,NameEN FROM Brand WHERE Junk=0  ORDER BY Id";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,50", textBox3.Text, false, ",");
-
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            textBox3.Text = item.GetSelectedString();
-        }
-
-        //Cust CD
-        private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            Sci.Win.Tools.SelectItem item;
-            string selectCommand = "select ID from CustCD order by ID";
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "17", textBox4.Text);
-            DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
-            textBox4.Text = item.GetSelectedString();
-        }
     }
 }
