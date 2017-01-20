@@ -41,7 +41,7 @@ namespace Sci.Production.Thread
         protected override bool OnGridSetup()
         {
 
-            DataGridViewGeneratorTextColumnSettings refno = celllocalitem.GetGridCell("Thread");
+            DataGridViewGeneratorTextColumnSettings refno = celllocalitem.GetGridCell("Thread", null, ",,,Description");
             DataGridViewGeneratorTextColumnSettings thcolor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings threadlocaion = new DataGridViewGeneratorTextColumnSettings();
 

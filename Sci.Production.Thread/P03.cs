@@ -38,7 +38,7 @@ namespace Sci.Production.Thread
         protected override bool OnGridSetup()
         {
 
-            DataGridViewGeneratorTextColumnSettings refno = celllocalitem.GetGridCell("Thread");
+            DataGridViewGeneratorTextColumnSettings refno = celllocalitem.GetGridCell("Thread", null, "LocalSuppid,supp,category,description,ThreadTex,,MeterToCone,Weight,AxleWeight");
             DataGridViewGeneratorTextColumnSettings thcolor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings pcsused = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings totalweight = new DataGridViewGeneratorNumericColumnSettings();

@@ -37,7 +37,7 @@ namespace Sci.Production.Thread
         protected override bool OnGridSetup()
         {
 
-            DataGridViewGeneratorTextColumnSettings refno = celllocalitem.GetGridCell("Thread");
+            DataGridViewGeneratorTextColumnSettings refno = celllocalitem.GetGridCell("Thread", null, "LocalSuppid,Supp,category,Description,ThreadTex,ThreadTypeid");
             DataGridViewGeneratorTextColumnSettings thcolor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings thlocation = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
@@ -59,6 +59,7 @@ namespace Sci.Production.Thread
                     CurrentDetailData["ThreadTex"] = refdr["ThreadTex"];
                     CurrentDetailData["LocalSuppid"] = refdr["LocalSuppid"];
                     CurrentDetailData["Supp"] = refdr["LocalSuppid"].ToString() + "-" + MyUtility.GetValue.Lookup("Name", refdr["LocalSuppid"].ToString(), "LocalSupp", "ID");
+                    CurrentDetailData["ThreadTypeid"] = refdr["ThreadTypeid"];
                     CurrentDetailData["NewCone"] = 0;
                     CurrentDetailData["UsedCone"] = 0;
 
@@ -71,6 +72,7 @@ namespace Sci.Production.Thread
                     CurrentDetailData["ThreadTex"] = 0;
                     CurrentDetailData["LocalSuppid"] = "";
                     CurrentDetailData["Supp"] = "";
+                    CurrentDetailData["ThreadTypeid"] = "";
                     CurrentDetailData["NewCone"] = 0;
                     CurrentDetailData["UsedCone"] = 0;
                 }

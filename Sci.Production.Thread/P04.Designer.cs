@@ -82,6 +82,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(642, 66);
+            this.gridicon.TabIndex = 2;
             // 
             // detailgridcont
             // 
@@ -172,7 +173,7 @@
             this.dateBox1.Location = new System.Drawing.Point(115, 71);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 34;
+            this.dateBox1.TabIndex = 0;
             // 
             // displayBox3
             // 
@@ -192,7 +193,7 @@
             this.textBox2.Location = new System.Drawing.Point(352, 71);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(256, 23);
-            this.textBox2.TabIndex = 37;
+            this.textBox2.TabIndex = 1;
             // 
             // label7
             // 
@@ -210,6 +211,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(772, 414);
+            this.DefaultControl = "dateBox1";
+            this.DefaultControlForEdit = "textBox2";
             this.DefaultOrder = "ID";
             this.GridAlias = "ThreadIssue_Detail";
             this.GridNew = 0;

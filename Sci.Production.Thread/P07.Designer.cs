@@ -84,6 +84,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(852, 55);
+            this.gridicon.TabIndex = 2;
             // 
             // detailgridcont
             // 
@@ -214,7 +215,7 @@
             this.button3.Location = new System.Drawing.Point(707, 54);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(137, 32);
-            this.button3.TabIndex = 46;
+            this.button3.TabIndex = 3;
             this.button3.Text = "Import from stock";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -223,6 +224,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(968, 507);
+            this.DefaultControl = "dateBox1";
+            this.DefaultControlForEdit = "textBox2";
             this.DefaultOrder = "ID";
             this.GridAlias = "ThreadTransfer_Detail";
             this.GridNew = 0;

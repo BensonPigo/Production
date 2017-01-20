@@ -189,9 +189,11 @@ namespace Sci
                         {
                             DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ThreadColor where junk = 0 order by ID", "10,40", dr["ThreadColorid"].ToString().Trim());
-                            DialogResult returnResult = item.ShowDialog();
+                            DialogResult returnResult = item.ShowDialog();                           
                             if (returnResult == DialogResult.Cancel) { return; }
-                            e.EditingControl.Text = item.GetSelectedString();
+                            var sellist = item.GetSelecteds();
+                            if (dr.Table.Columns.Contains("Colordesc")) dr["Colordesc"] = sellist[0][1];
+                            e.EditingControl.Text = item.GetSelectedString();               
                         }
                     }
                 }

@@ -74,7 +74,7 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 146);
+            this.masterpanel.Size = new System.Drawing.Size(960, 146);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -95,15 +95,16 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 146);
-            this.detailpanel.Size = new System.Drawing.Size(892, 203);
+            this.detailpanel.Size = new System.Drawing.Size(960, 261);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(852, 108);
+            this.gridicon.TabIndex = 2;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 203);
+            this.detailgridcont.Size = new System.Drawing.Size(960, 261);
             // 
             // detail2
             // 
@@ -119,16 +120,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(960, 445);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(960, 407);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 407);
+            this.detailbtm.Size = new System.Drawing.Size(960, 38);
             // 
             // browse
             // 
@@ -287,6 +288,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(968, 507);
+            this.DefaultControl = "dateBox1";
+            this.DefaultControlForEdit = "textBox2";
             this.DefaultOrder = "ID";
             this.GridAlias = "ThreadAdjust_Detail";
             this.GridNew = 0;

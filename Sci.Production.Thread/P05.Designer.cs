@@ -109,6 +109,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(852, 108);
+            this.gridicon.TabIndex = 3;
             // 
             // detailgridcont
             // 
@@ -219,7 +220,7 @@
             this.textBox2.Location = new System.Drawing.Point(674, 62);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(226, 23);
-            this.textBox2.TabIndex = 1;
+            this.textBox2.TabIndex = 2;
             // 
             // label7
             // 
@@ -243,7 +244,7 @@
             this.comboBox1.Location = new System.Drawing.Point(473, 62);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(86, 24);
-            this.comboBox1.TabIndex = 2;
+            this.comboBox1.TabIndex = 1;
             this.comboBox1.SelectionChangeCommitted += new System.EventHandler(this.comboBox1_SelectionChangeCommitted);
             // 
             // label5
@@ -260,7 +261,7 @@
             this.button2.Location = new System.Drawing.Point(264, 106);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 42;
+            this.button2.TabIndex = 5;
             this.button2.Text = "Find";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -282,7 +283,7 @@
             this.textBox1.Location = new System.Drawing.Point(151, 106);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(107, 23);
-            this.textBox1.TabIndex = 3;
+            this.textBox1.TabIndex = 4;
             // 
             // button3
             // 
@@ -329,6 +330,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(968, 507);
+            this.DefaultControl = "dateBox1";
+            this.DefaultControlForEdit = "textBox2";
             this.DefaultOrder = "ID";
             this.GridAlias = "ThreadInventory_Detail";
             this.GridNew = 0;
