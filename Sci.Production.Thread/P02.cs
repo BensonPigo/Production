@@ -241,22 +241,22 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             
             #region set grid
             Helper.Controls.Grid.Generator(this.detailgrid)
-           .Text("Refno", header: "Thread Refno", width: Widths.Auto(true),settings:refno).Get(out col_refno)
-           .Text("description", header: "Thread Desc", width: Widths.Auto(true), iseditingreadonly: true)
-           .CellThreadColor("ThreadColorid", header: "Thread Color", width: Widths.Auto(true), settings: thcolor).Get(out col_color)
-           .Text("Colordesc", header: "Thread Color Desc", width: Widths.Auto(true), iseditingreadonly: true)
-           .Numeric("ConsumptionQty", header: "Total Consumptions", width: Widths.Auto(true), integer_places: 6, settings: cons).Get(out col_cons)
-           .Numeric("MeterToCone", header: "No. of Meters Per Cons", width: Widths.Auto(true), integer_places: 7, decimal_places: 1, iseditingreadonly: true)
-           .Numeric("TotalQty", header: "No. of Cones", width: Widths.Auto(true), integer_places: 6, iseditingreadonly: true, settings: poqty1)
+           .Text("Refno", header: "Thread Refno", width: Widths.Auto(false),settings:refno).Get(out col_refno)
+           .Text("description", header: "Thread Desc", width: Widths.Auto(false), iseditingreadonly: true)
+           .CellThreadColor("ThreadColorid", header: "Thread Color", width: Widths.Auto(false), settings: thcolor).Get(out col_color)
+           .Text("Colordesc", header: "Thread Color Desc", width: Widths.Auto(false), iseditingreadonly: true)
+           .Numeric("ConsumptionQty", header: "Total Cons.(M)", width: Widths.Auto(false), integer_places: 6, settings: cons).Get(out col_cons)
+           .Numeric("MeterToCone", header: "No. of Meters Per Cons", width: Widths.Auto(false), integer_places: 7, decimal_places: 1, iseditingreadonly: true)
+           .Numeric("TotalQty", header: "No. of Cones", width: Widths.Auto(false), integer_places: 6, iseditingreadonly: true, settings: poqty1)
 
-           .Numeric("AllowanceQty", header: "20% allowance", width: Widths.Auto(true), integer_places: 6, settings: poqty2).Get(out this.col_Allowance)
-           .Numeric("NewCone", header: "New Cone", width: Widths.Auto(true), integer_places: 6, settings: NewCone).Get(out this.col_NewCone)
-           .Numeric("UsedCone", header: "Use Cone", width: Widths.Auto(true), integer_places: 6, settings: UsedCone).Get(out this.col_UsedCone)
+           .Numeric("AllowanceQty", header: "20% allowance", width: Widths.Auto(false), integer_places: 6, settings: poqty2).Get(out this.col_Allowance)
+           .Numeric("NewCone", header: "New Cone", width: Widths.Auto(false), integer_places: 6, settings: NewCone).Get(out this.col_NewCone)
+           .Numeric("UsedCone", header: "Use Cone", width: Widths.Auto(false), integer_places: 6, settings: UsedCone).Get(out this.col_UsedCone)
 
-           .Numeric("UseStockQty", header: "Use Stock", width: Widths.Auto(true), integer_places: 6, iseditingreadonly: true, settings: poqty3)
-           .Numeric("PurchaseQty", header: "PO Qty", width: Widths.Auto(true), integer_places: 6, iseditingreadonly: true)
-           .Text("Remark", header: "Remark", width: Widths.Auto(true))
-           .Text("POID", header: "PO ID", width: Widths.Auto(true), iseditingreadonly: true);
+           .Numeric("UseStockQty", header: "Use Stock", width: Widths.Auto(false), integer_places: 6, iseditingreadonly: true, settings: poqty3)
+           .Numeric("PurchaseQty", header: "PO Qty", width: Widths.Auto(false), integer_places: 6, iseditingreadonly: true)
+           .Text("Remark", header: "Remark", width: Widths.Auto(false))
+           .Text("POID", header: "PO ID", width: Widths.Auto(false), iseditingreadonly: true);
             this.detailgrid.Columns["AllowanceQty"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["NewCone"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["UsedCone"].DefaultCellStyle.BackColor = Color.Pink;
@@ -417,7 +417,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             sqltr_duk = string.Format(@"select '{0}' as Orderid, #tmp.Refno,  ThreadColorId, 
                         Threadcombdesc,colordesc,
                         #tmp.MeterToCone,
-                        Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) as ConsumptionQty,
+                        CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100) as ConsumptionQty,
                         CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone) as TotalQty,
                         CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone) * 0.2) as AllowanceQty,
                         CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone)+
@@ -463,7 +463,8 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 string sqlsub = string.Format(@"select * from #tmp a where a.refno = '{0}' and a.threadColorid='{1}'",
                                                 dr["Refno"].ToString(), dr["threadColorid"].ToString());
                 GetSubDetailDatas(dr, out subtb);
-                subtb.Columns.Add("Allowance");
+                if(subtb.Columns.Contains("Allowance")==false) 
+                    subtb.Columns.Add("Allowance");
                 MyUtility.Tool.ProcessWithDatatable(pretb_cons, "", sqlsub, out sqlsubtb);
 
                 #region 新增第三層

@@ -109,35 +109,11 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(789, 119);
+            this.gridicon.TabIndex = 3;
             // 
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(892, 192);
-            // 
-            // detail2
-            // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
-            // 
-            // detailgridcont2
-            // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
-            // 
-            // detailpanel2
-            // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // displayBox4
             // 
@@ -193,7 +169,7 @@
             this.dateBox2.Location = new System.Drawing.Point(616, 101);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 29;
+            this.dateBox2.TabIndex = 2;
             // 
             // dateBox1
             // 
@@ -201,7 +177,7 @@
             this.dateBox1.Location = new System.Drawing.Point(616, 59);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 28;
+            this.dateBox1.TabIndex = 1;
             // 
             // label7
             // 
@@ -293,7 +269,7 @@
             this.textBox1.Location = new System.Drawing.Point(118, 17);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(108, 23);
-            this.textBox1.TabIndex = 18;
+            this.textBox1.TabIndex = 0;
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // label1
@@ -303,12 +279,14 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 17;
-            this.label1.Text = "PO No";
+            this.label1.Text = "SP#";
             // 
             // P02
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(900, 449);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.DefaultDetailOrder = "Refno,ThreadColorid";
             this.DefaultOrder = "OrderID";
             this.GridAlias = "ThreadRequisition_Detail";
