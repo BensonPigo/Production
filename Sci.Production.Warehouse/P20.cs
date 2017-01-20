@@ -21,6 +21,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
+            this.ActiveControl = textBox1;
         }
 
         protected override void OnFormLoaded()
