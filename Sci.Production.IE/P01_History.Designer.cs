@@ -105,7 +105,7 @@
             this.button3.Location = new System.Drawing.Point(604, 49);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(94, 30);
-            this.button3.TabIndex = 16;
+            this.button3.TabIndex = 8;
             this.button3.Text = "Summary";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -116,7 +116,7 @@
             this.button2.Location = new System.Drawing.Point(714, 49);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 15;
+            this.button2.TabIndex = 10;
             this.button2.Text = "Close";
             this.button2.UseVisualStyleBackColor = true;
             // 
@@ -125,7 +125,7 @@
             this.button1.Location = new System.Drawing.Point(714, 12);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 14;
+            this.button1.TabIndex = 9;
             this.button1.Text = "To Excel";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -137,7 +137,7 @@
             this.label7.Location = new System.Drawing.Point(470, 34);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(26, 23);
-            this.label7.TabIndex = 13;
+            this.label7.TabIndex = 6;
             this.label7.Text = "sec";
             this.label7.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label7.TextStyle.Color = System.Drawing.Color.Black;
@@ -158,7 +158,7 @@
             0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(45, 23);
-            this.numericBox2.TabIndex = 12;
+            this.numericBox2.TabIndex = 7;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -179,7 +179,7 @@
             0});
             this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(66, 23);
-            this.numericBox1.TabIndex = 11;
+            this.numericBox1.TabIndex = 5;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -195,7 +195,7 @@
             this.comboBox1.Location = new System.Drawing.Point(400, 5);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(149, 24);
-            this.comboBox1.TabIndex = 10;
+            this.comboBox1.TabIndex = 4;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // label6
@@ -232,7 +232,7 @@
             this.displayBox4.Location = new System.Drawing.Point(200, 7);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(25, 23);
-            this.displayBox4.TabIndex = 6;
+            this.displayBox4.TabIndex = 1;
             // 
             // displayBox3
             // 
@@ -241,7 +241,7 @@
             this.displayBox3.Location = new System.Drawing.Point(60, 61);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(55, 23);
-            this.displayBox3.TabIndex = 5;
+            this.displayBox3.TabIndex = 3;
             // 
             // displayBox2
             // 
@@ -250,7 +250,7 @@
             this.displayBox2.Location = new System.Drawing.Point(60, 34);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(92, 23);
-            this.displayBox2.TabIndex = 4;
+            this.displayBox2.TabIndex = 2;
             // 
             // displayBox1
             // 
@@ -259,7 +259,7 @@
             this.displayBox1.Location = new System.Drawing.Point(60, 7);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(138, 23);
-            this.displayBox1.TabIndex = 3;
+            this.displayBox1.TabIndex = 0;
             // 
             // label3
             // 

@@ -86,6 +86,10 @@
             // 
             this.tabs.Size = new System.Drawing.Size(694, 424);
             // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
+            // 
             // label3
             // 
             this.label3.Lines = 0;
@@ -148,7 +152,7 @@
             this.displayBox1.Location = new System.Drawing.Point(159, 30);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(80, 23);
-            this.displayBox1.TabIndex = 6;
+            this.displayBox1.TabIndex = 0;
             // 
             // displayBox2
             // 
@@ -158,7 +162,7 @@
             this.displayBox2.Location = new System.Drawing.Point(159, 65);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(380, 23);
-            this.displayBox2.TabIndex = 7;
+            this.displayBox2.TabIndex = 1;
             // 
             // displayBox3
             // 
@@ -168,7 +172,7 @@
             this.displayBox3.Location = new System.Drawing.Point(159, 100);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(35, 23);
-            this.displayBox3.TabIndex = 8;
+            this.displayBox3.TabIndex = 2;
             // 
             // displayBox4
             // 
@@ -178,7 +182,7 @@
             this.displayBox4.Location = new System.Drawing.Point(159, 135);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(140, 23);
-            this.displayBox4.TabIndex = 9;
+            this.displayBox4.TabIndex = 3;
             // 
             // numericBox1
             // 
@@ -188,8 +192,18 @@
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox1.Location = new System.Drawing.Point(159, 170);
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(50, 23);
-            this.numericBox1.TabIndex = 10;
+            this.numericBox1.TabIndex = 4;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox2
             // 
@@ -199,8 +213,18 @@
             this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox2.Location = new System.Drawing.Point(159, 205);
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.Size = new System.Drawing.Size(50, 23);
-            this.numericBox2.TabIndex = 11;
+            this.numericBox2.TabIndex = 5;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label9
             // 
@@ -228,13 +252,15 @@
             this.checkBox1.Location = new System.Drawing.Point(432, 30);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 14;
+            this.checkBox1.TabIndex = 6;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // B05
             // 
             this.ClientSize = new System.Drawing.Size(694, 457);
+            this.DefaultControl = "displayBox1";
+            this.DefaultControlForEdit = "displayBox1";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

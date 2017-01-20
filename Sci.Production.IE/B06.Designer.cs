@@ -66,6 +66,10 @@
             // 
             this.tabs.Size = new System.Drawing.Size(686, 424);
             // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
+            // 
             // label3
             // 
             this.label3.Lines = 0;
@@ -92,7 +96,7 @@
             this.displayBox1.Location = new System.Drawing.Point(115, 42);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(30, 23);
-            this.displayBox1.TabIndex = 2;
+            this.displayBox1.TabIndex = 0;
             // 
             // displayBox2
             // 
@@ -102,7 +106,7 @@
             this.displayBox2.Location = new System.Drawing.Point(115, 90);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(414, 23);
-            this.displayBox2.TabIndex = 3;
+            this.displayBox2.TabIndex = 1;
             // 
             // checkBox1
             // 
@@ -112,7 +116,7 @@
             this.checkBox1.Location = new System.Drawing.Point(400, 42);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 4;
+            this.checkBox1.TabIndex = 2;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -120,6 +124,8 @@
             // 
             this.ClientSize = new System.Drawing.Size(686, 457);
             this.ConnectionName = "Machine";
+            this.DefaultControl = "displayBox1";
+            this.DefaultControlForEdit = "displayBox2";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

@@ -72,6 +72,10 @@
             // 
             this.tabs.Size = new System.Drawing.Size(689, 424);
             // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
+            // 
             // label3
             // 
             this.label3.Lines = 0;
@@ -143,8 +147,18 @@
             131072});
             this.numericBox1.MaxLength = 7;
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(66, 23);
             this.numericBox1.TabIndex = 2;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // displayBox1
             // 
@@ -154,11 +168,13 @@
             this.displayBox1.Location = new System.Drawing.Point(374, 37);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(40, 23);
-            this.displayBox1.TabIndex = 8;
+            this.displayBox1.TabIndex = 3;
             // 
             // B02
             // 
             this.ClientSize = new System.Drawing.Size(689, 457);
+            this.DefaultControl = "dateBox1";
+            this.DefaultControlForEdit = "numericBox1";
             this.DefaultOrder = "EffectiveDate";
             this.IsSupportPrint = false;
             this.Name = "B02";

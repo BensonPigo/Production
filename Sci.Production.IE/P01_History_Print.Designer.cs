@@ -35,14 +35,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(253, 12);
+            this.print.TabIndex = 1;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(253, 48);
+            this.toexcel.TabIndex = 2;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(253, 84);
+            this.close.TabIndex = 3;
             // 
             // numericBox1
             // 
@@ -61,8 +64,18 @@
             0,
             0});
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(50, 23);
-            this.numericBox1.TabIndex = 100;
+            this.numericBox1.TabIndex = 0;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label1
             // 
@@ -78,7 +91,8 @@
             this.ClientSize = new System.Drawing.Size(345, 156);
             this.Controls.Add(this.numericBox1);
             this.Controls.Add(this.label1);
-            this.EditMode = true;
+            this.DefaultControl = "numericBox1";
+            this.DefaultControlForEdit = "numericBox1";
             this.IsSupportPrint = false;
             this.IsSupportToPrint = false;
             this.Name = "P01_History_Print";

@@ -88,6 +88,10 @@
             // 
             this.tabs.Size = new System.Drawing.Size(811, 424);
             // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
+            // 
             // label3
             // 
             this.label3.Lines = 0;
@@ -159,7 +163,7 @@
             this.textBox1.Location = new System.Drawing.Point(132, 80);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(80, 23);
-            this.textBox1.TabIndex = 8;
+            this.textBox1.TabIndex = 0;
             // 
             // textBox2
             // 
@@ -170,7 +174,7 @@
             this.textBox2.Location = new System.Drawing.Point(132, 131);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(200, 23);
-            this.textBox2.TabIndex = 9;
+            this.textBox2.TabIndex = 1;
             // 
             // textBox3
             // 
@@ -183,7 +187,7 @@
             this.textBox3.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(140, 23);
-            this.textBox3.TabIndex = 10;
+            this.textBox3.TabIndex = 2;
             this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
             // 
             // dateBox1
@@ -192,7 +196,7 @@
             this.dateBox1.Location = new System.Drawing.Point(479, 32);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 11;
+            this.dateBox1.TabIndex = 3;
             // 
             // dateBox2
             // 
@@ -200,7 +204,7 @@
             this.dateBox2.Location = new System.Drawing.Point(479, 81);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 12;
+            this.dateBox2.TabIndex = 4;
             // 
             // label1
             // 
@@ -240,11 +244,13 @@
             this.txtsewingline1.Location = new System.Drawing.Point(479, 132);
             this.txtsewingline1.Name = "txtsewingline1";
             this.txtsewingline1.Size = new System.Drawing.Size(60, 23);
-            this.txtsewingline1.TabIndex = 13;
+            this.txtsewingline1.TabIndex = 5;
             // 
             // B08
             // 
             this.ClientSize = new System.Drawing.Size(811, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox2";
             this.DefaultOrder = "FactoryID,ID";
             this.IsSupportCopy = false;
             this.Name = "B08";

@@ -88,7 +88,7 @@
             this.textBox2.Location = new System.Drawing.Point(79, 111);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(80, 23);
-            this.textBox2.TabIndex = 7;
+            this.textBox2.TabIndex = 3;
             this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
             // 
             // textBox1
@@ -98,7 +98,7 @@
             this.textBox1.Location = new System.Drawing.Point(79, 36);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(130, 23);
-            this.textBox1.TabIndex = 4;
+            this.textBox1.TabIndex = 0;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
@@ -110,7 +110,7 @@
             this.txtseason1.Location = new System.Drawing.Point(79, 73);
             this.txtseason1.Name = "txtseason1";
             this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 6;
+            this.txtseason1.TabIndex = 2;
             this.txtseason1.Validated += new System.EventHandler(this.txtseason1_Validated);
             // 
             // comboBox1
@@ -122,14 +122,14 @@
             this.comboBox1.Location = new System.Drawing.Point(213, 35);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(40, 24);
-            this.comboBox1.TabIndex = 5;
+            this.comboBox1.TabIndex = 1;
             // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(288, 36);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 8;
+            this.button1.TabIndex = 4;
             this.button1.Text = "OK";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -140,7 +140,7 @@
             this.button2.Location = new System.Drawing.Point(288, 72);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 9;
+            this.button2.TabIndex = 5;
             this.button2.Text = "Cancel";
             this.button2.UseVisualStyleBackColor = true;
             // 
@@ -159,6 +159,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "textBox1";
             this.Name = "P01_Copy";
             this.Text = "Copy to";
             this.ResumeLayout(false);

@@ -64,7 +64,6 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.txtsewingline1 = new Sci.Production.Class.txtsewingline();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.label14 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
@@ -102,6 +101,7 @@
             this.numericBox15 = new Sci.Win.UI.NumericBox();
             this.numericBox18 = new Sci.Win.UI.NumericBox();
             this.label31 = new Sci.Win.UI.Label();
+            this.txtsewingline1 = new Sci.Production.Class.txtsewingline();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -268,15 +268,16 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Location = new System.Drawing.Point(4, 24);
+            this.detail2.Size = new System.Drawing.Size(996, 661);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(990, 615);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(990, 40);
             // 
             // detail
             // 
@@ -378,7 +379,7 @@
             0});
             this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(43, 21);
-            this.numericBox1.TabIndex = 7;
+            this.numericBox1.TabIndex = 0;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -393,7 +394,7 @@
             this.textBox1.Location = new System.Drawing.Point(57, 35);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(70, 21);
-            this.textBox1.TabIndex = 0;
+            this.textBox1.TabIndex = 1;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             // 
             // textBox2
@@ -407,7 +408,7 @@
             this.textBox2.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(26, 21);
-            this.textBox2.TabIndex = 2;
+            this.textBox2.TabIndex = 3;
             this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
             // 
             // displayBox1
@@ -418,7 +419,7 @@
             this.displayBox1.Location = new System.Drawing.Point(57, 91);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(80, 21);
-            this.displayBox1.TabIndex = 11;
+            this.displayBox1.TabIndex = 4;
             // 
             // displayBox2
             // 
@@ -428,7 +429,7 @@
             this.displayBox2.Location = new System.Drawing.Point(57, 119);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(70, 21);
-            this.displayBox2.TabIndex = 12;
+            this.displayBox2.TabIndex = 5;
             // 
             // displayBox3
             // 
@@ -437,7 +438,7 @@
             this.displayBox3.Location = new System.Drawing.Point(57, 175);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(279, 21);
-            this.displayBox3.TabIndex = 13;
+            this.displayBox3.TabIndex = 7;
             // 
             // label7
             // 
@@ -474,7 +475,7 @@
             this.label9.Location = new System.Drawing.Point(214, 63);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(106, 21);
-            this.label9.TabIndex = 16;
+            this.label9.TabIndex = 3;
             this.label9.Text = "Daily demand/shift";
             this.label9.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label9.TextStyle.Color = System.Drawing.Color.Black;
@@ -547,7 +548,7 @@
             0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(55, 21);
-            this.numericBox2.TabIndex = 21;
+            this.numericBox2.TabIndex = 8;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -569,7 +570,7 @@
             0});
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(55, 21);
-            this.numericBox3.TabIndex = 22;
+            this.numericBox3.TabIndex = 10;
             this.numericBox3.Value = new decimal(new int[] {
             0,
             0,
@@ -591,7 +592,7 @@
             0});
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(55, 21);
-            this.numericBox4.TabIndex = 23;
+            this.numericBox4.TabIndex = 12;
             this.numericBox4.Value = new decimal(new int[] {
             0,
             0,
@@ -612,7 +613,7 @@
             0});
             this.numericBox5.ReadOnly = true;
             this.numericBox5.Size = new System.Drawing.Size(55, 21);
-            this.numericBox5.TabIndex = 26;
+            this.numericBox5.TabIndex = 13;
             this.numericBox5.Value = new decimal(new int[] {
             0,
             0,
@@ -633,7 +634,7 @@
             0});
             this.numericBox6.ReadOnly = true;
             this.numericBox6.Size = new System.Drawing.Size(55, 21);
-            this.numericBox6.TabIndex = 25;
+            this.numericBox6.TabIndex = 11;
             this.numericBox6.Value = new decimal(new int[] {
             0,
             0,
@@ -654,7 +655,7 @@
             0});
             this.numericBox7.ReadOnly = true;
             this.numericBox7.Size = new System.Drawing.Size(55, 21);
-            this.numericBox7.TabIndex = 24;
+            this.numericBox7.TabIndex = 9;
             this.numericBox7.Value = new decimal(new int[] {
             0,
             0,
@@ -771,17 +772,6 @@
             this.lineShape1.Y1 = 6;
             this.lineShape1.Y2 = 6;
             // 
-            // txtsewingline1
-            // 
-            this.txtsewingline1.BackColor = System.Drawing.Color.White;
-            this.txtsewingline1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewingline1.factoryobjectName = this.textBox1;
-            this.txtsewingline1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtsewingline1.Location = new System.Drawing.Point(322, 147);
-            this.txtsewingline1.Name = "txtsewingline1";
-            this.txtsewingline1.Size = new System.Drawing.Size(60, 21);
-            this.txtsewingline1.TabIndex = 4;
-            // 
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
@@ -801,7 +791,7 @@
             this.label14.Location = new System.Drawing.Point(385, 147);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(10, 23);
-            this.label14.TabIndex = 30;
+            this.label14.TabIndex = 17;
             this.label14.Text = "/";
             this.label14.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label14.TextStyle.Color = System.Drawing.Color.Black;
@@ -832,7 +822,7 @@
             0});
             this.numericBox8.ReadOnly = true;
             this.numericBox8.Size = new System.Drawing.Size(65, 21);
-            this.numericBox8.TabIndex = 32;
+            this.numericBox8.TabIndex = 6;
             this.numericBox8.Value = new decimal(new int[] {
             0,
             0,
@@ -890,7 +880,7 @@
             0});
             this.numericBox9.ReadOnly = true;
             this.numericBox9.Size = new System.Drawing.Size(50, 21);
-            this.numericBox9.TabIndex = 39;
+            this.numericBox9.TabIndex = 18;
             this.numericBox9.Value = new decimal(new int[] {
             0,
             0,
@@ -912,7 +902,7 @@
             0});
             this.numericBox10.ReadOnly = true;
             this.numericBox10.Size = new System.Drawing.Size(50, 21);
-            this.numericBox10.TabIndex = 40;
+            this.numericBox10.TabIndex = 19;
             this.numericBox10.Value = new decimal(new int[] {
             0,
             0,
@@ -934,7 +924,7 @@
             0});
             this.numericBox12.ReadOnly = true;
             this.numericBox12.Size = new System.Drawing.Size(55, 21);
-            this.numericBox12.TabIndex = 42;
+            this.numericBox12.TabIndex = 14;
             this.numericBox12.Value = new decimal(new int[] {
             0,
             0,
@@ -954,7 +944,7 @@
             0,
             0});
             this.numericBox13.Size = new System.Drawing.Size(55, 21);
-            this.numericBox13.TabIndex = 3;
+            this.numericBox13.TabIndex = 15;
             this.numericBox13.Value = new decimal(new int[] {
             0,
             0,
@@ -975,7 +965,7 @@
             0,
             0});
             this.numericBox14.Size = new System.Drawing.Size(50, 21);
-            this.numericBox14.TabIndex = 6;
+            this.numericBox14.TabIndex = 23;
             this.numericBox14.Value = new decimal(new int[] {
             0,
             0,
@@ -998,7 +988,7 @@
             0});
             this.numericBox16.ReadOnly = true;
             this.numericBox16.Size = new System.Drawing.Size(50, 21);
-            this.numericBox16.TabIndex = 55;
+            this.numericBox16.TabIndex = 22;
             this.numericBox16.Value = new decimal(new int[] {
             0,
             0,
@@ -1020,7 +1010,7 @@
             0});
             this.numericBox17.ReadOnly = true;
             this.numericBox17.Size = new System.Drawing.Size(50, 21);
-            this.numericBox17.TabIndex = 54;
+            this.numericBox17.TabIndex = 21;
             this.numericBox17.Value = new decimal(new int[] {
             0,
             0,
@@ -1043,7 +1033,7 @@
             0});
             this.numericBox19.ReadOnly = true;
             this.numericBox19.Size = new System.Drawing.Size(50, 21);
-            this.numericBox19.TabIndex = 52;
+            this.numericBox19.TabIndex = 25;
             this.numericBox19.Value = new decimal(new int[] {
             0,
             0,
@@ -1066,7 +1056,7 @@
             0});
             this.numericBox20.ReadOnly = true;
             this.numericBox20.Size = new System.Drawing.Size(50, 21);
-            this.numericBox20.TabIndex = 51;
+            this.numericBox20.TabIndex = 24;
             this.numericBox20.Value = new decimal(new int[] {
             0,
             0,
@@ -1169,7 +1159,7 @@
             0});
             this.numericBox21.ReadOnly = true;
             this.numericBox21.Size = new System.Drawing.Size(68, 21);
-            this.numericBox21.TabIndex = 61;
+            this.numericBox21.TabIndex = 28;
             this.numericBox21.Value = new decimal(new int[] {
             0,
             0,
@@ -1191,7 +1181,7 @@
             0});
             this.numericBox22.ReadOnly = true;
             this.numericBox22.Size = new System.Drawing.Size(68, 21);
-            this.numericBox22.TabIndex = 62;
+            this.numericBox22.TabIndex = 29;
             this.numericBox22.Value = new decimal(new int[] {
             0,
             0,
@@ -1213,7 +1203,7 @@
             0});
             this.numericBox23.ReadOnly = true;
             this.numericBox23.Size = new System.Drawing.Size(68, 21);
-            this.numericBox23.TabIndex = 63;
+            this.numericBox23.TabIndex = 30;
             this.numericBox23.Value = new decimal(new int[] {
             0,
             0,
@@ -1226,7 +1216,7 @@
             this.button1.Location = new System.Drawing.Point(852, 7);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(139, 43);
-            this.button1.TabIndex = 64;
+            this.button1.TabIndex = 31;
             this.button1.Text = "Not hit target reason";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -1237,7 +1227,7 @@
             this.button2.Location = new System.Drawing.Point(852, 54);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(139, 51);
-            this.button2.TabIndex = 65;
+            this.button2.TabIndex = 32;
             this.button2.Text = "Copy from other line mapping";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -1248,7 +1238,7 @@
             this.button3.Location = new System.Drawing.Point(852, 109);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(139, 30);
-            this.button3.TabIndex = 66;
+            this.button3.TabIndex = 33;
             this.button3.Text = "Copy from GSD";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -1264,7 +1254,7 @@
             this.textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox7.ReadOnly = true;
             this.textBox7.Size = new System.Drawing.Size(120, 21);
-            this.textBox7.TabIndex = 1;
+            this.textBox7.TabIndex = 2;
             this.textBox7.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox7_PopUp);
             // 
             // numericBox11
@@ -1282,7 +1272,7 @@
             0});
             this.numericBox11.ReadOnly = true;
             this.numericBox11.Size = new System.Drawing.Size(58, 21);
-            this.numericBox11.TabIndex = 71;
+            this.numericBox11.TabIndex = 20;
             this.numericBox11.Value = new decimal(new int[] {
             0,
             0,
@@ -1304,7 +1294,7 @@
             0});
             this.numericBox15.ReadOnly = true;
             this.numericBox15.Size = new System.Drawing.Size(58, 21);
-            this.numericBox15.TabIndex = 72;
+            this.numericBox15.TabIndex = 26;
             this.numericBox15.Value = new decimal(new int[] {
             0,
             0,
@@ -1326,7 +1316,7 @@
             0});
             this.numericBox18.ReadOnly = true;
             this.numericBox18.Size = new System.Drawing.Size(58, 21);
-            this.numericBox18.TabIndex = 73;
+            this.numericBox18.TabIndex = 27;
             this.numericBox18.Value = new decimal(new int[] {
             0,
             0,
@@ -1347,10 +1337,23 @@
             this.label31.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label31.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
+            // txtsewingline1
+            // 
+            this.txtsewingline1.BackColor = System.Drawing.Color.White;
+            this.txtsewingline1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
+            this.txtsewingline1.factoryobjectName = this.textBox1;
+            this.txtsewingline1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsewingline1.Location = new System.Drawing.Point(322, 147);
+            this.txtsewingline1.Name = "txtsewingline1";
+            this.txtsewingline1.Size = new System.Drawing.Size(60, 21);
+            this.txtsewingline1.TabIndex = 16;
+            // 
             // P03
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1004, 722);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.DefaultDetailOrder = "No";
             this.DefaultOrder = "BrandID,StyleID,SeasonID,Version";
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);

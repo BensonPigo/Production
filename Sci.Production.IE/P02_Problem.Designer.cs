@@ -42,13 +42,27 @@
             // 
             this.gridcont.Size = new System.Drawing.Size(686, 302);
             // 
+            // append
+            // 
+            this.append.Size = new System.Drawing.Size(80, 34);
+            // 
+            // revise
+            // 
+            this.revise.Size = new System.Drawing.Size(80, 34);
+            // 
+            // delete
+            // 
+            this.delete.Size = new System.Drawing.Size(80, 34);
+            // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(626, 8);
+            this.undo.Location = new System.Drawing.Point(620, 5);
+            this.undo.Size = new System.Drawing.Size(80, 34);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(540, 8);
+            this.save.Location = new System.Drawing.Point(540, 5);
+            this.save.Size = new System.Drawing.Size(80, 34);
             // 
             // P02_Problem
             // 

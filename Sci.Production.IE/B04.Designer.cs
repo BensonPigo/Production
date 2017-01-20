@@ -66,6 +66,10 @@
             // 
             this.tabs.Size = new System.Drawing.Size(689, 424);
             // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
+            // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
@@ -76,7 +80,7 @@
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.ReadOnly = true;
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 17;
+            this.checkBox1.TabIndex = 2;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -106,7 +110,7 @@
             this.displayBox1.Location = new System.Drawing.Point(137, 44);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(50, 23);
-            this.displayBox1.TabIndex = 18;
+            this.displayBox1.TabIndex = 0;
             // 
             // editBox1
             // 
@@ -119,11 +123,13 @@
             this.editBox1.Name = "editBox1";
             this.editBox1.ReadOnly = true;
             this.editBox1.Size = new System.Drawing.Size(348, 50);
-            this.editBox1.TabIndex = 19;
+            this.editBox1.TabIndex = 1;
             // 
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(689, 457);
+            this.DefaultControl = "displayBox1";
+            this.DefaultControlForEdit = "editBox1";
             this.DefaultFilter = "Type = \'CP\'";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;

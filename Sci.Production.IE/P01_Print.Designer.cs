@@ -39,14 +39,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(355, 12);
+            this.print.TabIndex = 3;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(355, 48);
+            this.toexcel.TabIndex = 4;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(355, 84);
+            this.close.TabIndex = 5;
             // 
             // label1
             // 
@@ -92,8 +95,18 @@
             0,
             0});
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(50, 23);
-            this.numericBox1.TabIndex = 98;
+            this.numericBox1.TabIndex = 0;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // comboBox1
             // 
@@ -104,7 +117,7 @@
             this.comboBox1.Location = new System.Drawing.Point(124, 48);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 99;
+            this.comboBox1.TabIndex = 1;
             // 
             // comboBox2
             // 
@@ -115,7 +128,7 @@
             this.comboBox2.Location = new System.Drawing.Point(124, 83);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(121, 24);
-            this.comboBox2.TabIndex = 101;
+            this.comboBox2.TabIndex = 2;
             // 
             // P01_Print
             // 
@@ -126,7 +139,8 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.EditMode = true;
+            this.DefaultControl = "numericBox1";
+            this.DefaultControlForEdit = "numericBox1";
             this.IsSupportToPrint = false;
             this.Name = "P01_Print";
             this.Text = "Print";

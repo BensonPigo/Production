@@ -148,6 +148,7 @@
             // refresh
             // 
             this.refresh.Location = new System.Drawing.Point(814, 0);
+            this.refresh.TabIndex = 3;
             // 
             // detailgridcont
             // 
@@ -155,15 +156,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(894, 481);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(888, 435);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(888, 40);
             // 
             // detail
             // 
@@ -192,6 +193,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(902, 510);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label1
             // 
@@ -291,7 +296,7 @@
             this.comboBox2.Location = new System.Drawing.Point(393, 3);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(118, 24);
-            this.comboBox2.TabIndex = 10;
+            this.comboBox2.TabIndex = 7;
             // 
             // label6
             // 
@@ -328,7 +333,7 @@
             this.displayBox1.Location = new System.Drawing.Point(393, 35);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(39, 23);
-            this.displayBox1.TabIndex = 11;
+            this.displayBox1.TabIndex = 8;
             // 
             // displayBox2
             // 
@@ -337,7 +342,7 @@
             this.displayBox2.Location = new System.Drawing.Point(393, 64);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(70, 23);
-            this.displayBox2.TabIndex = 12;
+            this.displayBox2.TabIndex = 9;
             // 
             // numericBox2
             // 
@@ -354,7 +359,7 @@
             0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(59, 23);
-            this.numericBox2.TabIndex = 17;
+            this.numericBox2.TabIndex = 5;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -368,7 +373,7 @@
             this.label9.Location = new System.Drawing.Point(203, 120);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(29, 23);
-            this.label9.TabIndex = 18;
+            this.label9.TabIndex = 6;
             this.label9.Text = "sec";
             this.label9.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label9.TextStyle.Color = System.Drawing.Color.Black;
@@ -381,7 +386,7 @@
             this.button1.Location = new System.Drawing.Point(782, 4);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(103, 30);
-            this.button1.TabIndex = 19;
+            this.button1.TabIndex = 16;
             this.button1.Text = "New Version";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -392,7 +397,7 @@
             this.button2.Location = new System.Drawing.Point(782, 38);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(103, 30);
-            this.button2.TabIndex = 20;
+            this.button2.TabIndex = 17;
             this.button2.Text = "New Status";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -403,7 +408,7 @@
             this.button3.Location = new System.Drawing.Point(782, 72);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(103, 30);
-            this.button3.TabIndex = 21;
+            this.button3.TabIndex = 18;
             this.button3.Text = "History";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -414,7 +419,7 @@
             this.button4.Location = new System.Drawing.Point(708, 114);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(58, 30);
-            this.button4.TabIndex = 8;
+            this.button4.TabIndex = 15;
             this.button4.Text = "Copy";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
@@ -424,7 +429,7 @@
             this.button5.Location = new System.Drawing.Point(624, 114);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(80, 30);
-            this.button5.TabIndex = 7;
+            this.button5.TabIndex = 14;
             this.button5.Text = "Art. Sum";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -434,7 +439,7 @@
             this.button6.Location = new System.Drawing.Point(539, 114);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(80, 30);
-            this.button6.TabIndex = 6;
+            this.button6.TabIndex = 13;
             this.button6.Text = "Sketch";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
@@ -445,7 +450,7 @@
             this.button7.Location = new System.Drawing.Point(337, 114);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(197, 30);
-            this.button7.TabIndex = 5;
+            this.button7.TabIndex = 12;
             this.button7.Text = "Copy from style std. GSD";
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
@@ -477,7 +482,7 @@
             this.button8.Location = new System.Drawing.Point(687, 4);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(119, 30);
-            this.button8.TabIndex = 0;
+            this.button8.TabIndex = 2;
             this.button8.Text = "Std. GSD List";
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
@@ -508,7 +513,7 @@
             this.displayBox3.Location = new System.Drawing.Point(651, 4);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(100, 23);
-            this.displayBox3.TabIndex = 13;
+            this.displayBox3.TabIndex = 10;
             // 
             // displayBox4
             // 
@@ -518,11 +523,13 @@
             this.displayBox4.Location = new System.Drawing.Point(673, 35);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(27, 23);
-            this.displayBox4.TabIndex = 14;
+            this.displayBox4.TabIndex = 11;
             // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(902, 543);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.DefaultOrder = "StyleID";
             this.GridAlias = "TimeStudy_Detail";
             this.GridNew = 0;

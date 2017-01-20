@@ -52,6 +52,10 @@
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(696, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.textBox4);
@@ -67,6 +71,12 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Size = new System.Drawing.Size(696, 357);
+            this.detailcont.TabIndex = 0;
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(696, 38);
             // 
             // browse
             // 
@@ -75,6 +85,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(704, 424);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label3
             // 
@@ -129,7 +143,7 @@
             this.textBox1.Location = new System.Drawing.Point(149, 28);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(50, 23);
-            this.textBox1.TabIndex = 5;
+            this.textBox1.TabIndex = 0;
             // 
             // textBox2
             // 
@@ -140,7 +154,7 @@
             this.textBox2.Location = new System.Drawing.Point(149, 68);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(404, 23);
-            this.textBox2.TabIndex = 6;
+            this.textBox2.TabIndex = 1;
             // 
             // textBox3
             // 
@@ -150,7 +164,7 @@
             this.textBox3.Location = new System.Drawing.Point(149, 108);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(38, 23);
-            this.textBox3.TabIndex = 7;
+            this.textBox3.TabIndex = 2;
             // 
             // radioPanel1
             // 
@@ -198,7 +212,7 @@
             this.comboBox1.Location = new System.Drawing.Point(149, 148);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(92, 24);
-            this.comboBox1.TabIndex = 9;
+            this.comboBox1.TabIndex = 3;
             // 
             // checkBox1
             // 
@@ -208,7 +222,7 @@
             this.checkBox1.Location = new System.Drawing.Point(449, 30);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 10;
+            this.checkBox1.TabIndex = 5;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -229,13 +243,15 @@
             this.textBox4.Location = new System.Drawing.Point(283, 28);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(66, 23);
-            this.textBox4.TabIndex = 13;
+            this.textBox4.TabIndex = 4;
             this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
             this.textBox4.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
             // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(704, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox2";
             this.DefaultOrder = "BrandID,Code";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

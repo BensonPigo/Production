@@ -55,7 +55,7 @@
             this.displayBox1.Location = new System.Drawing.Point(69, 9);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(273, 23);
-            this.displayBox1.TabIndex = 1;
+            this.displayBox1.TabIndex = 0;
             // 
             // pictureBox1
             // 
@@ -80,7 +80,7 @@
             this.displayBox2.Location = new System.Drawing.Point(462, 9);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(273, 23);
-            this.displayBox2.TabIndex = 4;
+            this.displayBox2.TabIndex = 1;
             // 
             // label2
             // 
@@ -97,7 +97,7 @@
             this.button1.Location = new System.Drawing.Point(671, 392);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 6;
+            this.button1.TabIndex = 2;
             this.button1.Text = "Close";
             this.button1.UseVisualStyleBackColor = true;
             // 

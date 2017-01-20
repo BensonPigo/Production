@@ -98,7 +98,7 @@
             this.button1.Location = new System.Drawing.Point(695, 37);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 10;
+            this.button1.TabIndex = 5;
             this.button1.Text = "Find";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -110,7 +110,7 @@
             this.textBox3.Location = new System.Drawing.Point(81, 41);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(533, 23);
-            this.textBox3.TabIndex = 9;
+            this.textBox3.TabIndex = 1;
             // 
             // numericBox2
             // 
@@ -125,7 +125,7 @@
             0,
             0});
             this.numericBox2.Size = new System.Drawing.Size(88, 23);
-            this.numericBox2.TabIndex = 8;
+            this.numericBox2.TabIndex = 4;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -148,7 +148,7 @@
             this.textBox2.Location = new System.Drawing.Point(472, 9);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(92, 23);
-            this.textBox2.TabIndex = 6;
+            this.textBox2.TabIndex = 3;
             // 
             // label4
             // 
@@ -172,7 +172,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(68, 23);
-            this.numericBox1.TabIndex = 4;
+            this.numericBox1.TabIndex = 2;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -195,7 +195,7 @@
             this.textBox1.Location = new System.Drawing.Point(34, 9);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(180, 23);
-            this.textBox1.TabIndex = 2;
+            this.textBox1.TabIndex = 0;
             // 
             // label2
             // 
@@ -241,7 +241,7 @@
             0});
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(81, 23);
-            this.numericBox3.TabIndex = 3;
+            this.numericBox3.TabIndex = 0;
             this.numericBox3.Value = new decimal(new int[] {
             0,
             0,
@@ -263,7 +263,7 @@
             this.button3.Location = new System.Drawing.Point(687, 8);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 1;
+            this.button3.TabIndex = 2;
             this.button3.Text = "Cancel";
             this.button3.UseVisualStyleBackColor = true;
             // 
@@ -272,7 +272,7 @@
             this.button2.Location = new System.Drawing.Point(585, 8);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 0;
+            this.button2.TabIndex = 1;
             this.button2.Text = "Select";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -321,6 +321,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "textBox1";
             this.Name = "P01_SelectOperationCode";
             this.Text = "Select Operation Code";
             this.panel3.ResumeLayout(false);
