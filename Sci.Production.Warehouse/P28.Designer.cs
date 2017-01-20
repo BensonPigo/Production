@@ -97,7 +97,7 @@
             this.cbxCategory.Location = new System.Drawing.Point(729, 42);
             this.cbxCategory.Name = "cbxCategory";
             this.cbxCategory.Size = new System.Drawing.Size(121, 24);
-            this.cbxCategory.TabIndex = 114;
+            this.cbxCategory.TabIndex = 4;
             // 
             // label8
             // 
@@ -121,7 +121,7 @@
             this.cbxFabricType.Location = new System.Drawing.Point(729, 9);
             this.cbxFabricType.Name = "cbxFabricType";
             this.cbxFabricType.Size = new System.Drawing.Size(121, 24);
-            this.cbxFabricType.TabIndex = 112;
+            this.cbxFabricType.TabIndex = 3;
             // 
             // label9
             // 
@@ -137,14 +137,14 @@
             this.dateRangeInputDate.Location = new System.Drawing.Point(334, 42);
             this.dateRangeInputDate.Name = "dateRangeInputDate";
             this.dateRangeInputDate.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeInputDate.TabIndex = 11;
+            this.dateRangeInputDate.TabIndex = 2;
             // 
             // dateRangeATA
             // 
             this.dateRangeATA.Location = new System.Drawing.Point(334, 9);
             this.dateRangeATA.Name = "dateRangeATA";
             this.dateRangeATA.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeATA.TabIndex = 10;
+            this.dateRangeATA.TabIndex = 1;
             // 
             // txtSP
             // 
@@ -153,7 +153,7 @@
             this.txtSP.Location = new System.Drawing.Point(87, 9);
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(117, 23);
-            this.txtSP.TabIndex = 8;
+            this.txtSP.TabIndex = 0;
             // 
             // btnAutoPick
             // 
@@ -161,7 +161,7 @@
             this.btnAutoPick.Location = new System.Drawing.Point(916, 45);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
-            this.btnAutoPick.TabIndex = 7;
+            this.btnAutoPick.TabIndex = 6;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
@@ -172,7 +172,7 @@
             this.btnQuery.Location = new System.Drawing.Point(916, 9);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 3;
+            this.btnQuery.TabIndex = 5;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);

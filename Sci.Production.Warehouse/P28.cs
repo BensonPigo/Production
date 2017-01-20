@@ -24,6 +24,8 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
+            this.ActiveControl = txtSP;
+
             cbxCategory.SelectedIndex = 0;
             cbxFabricType.SelectedIndex = 0;
             MyUtility.Tool.SetGridFrozen(this.grid1);
