@@ -310,8 +310,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "textBox3";
-            this.DefaultControlForEdit = "textBox3";
+            this.DefaultControl = "txtsubcon1";
+            this.DefaultControlForEdit = "txtsubcon1";
             this.DefaultDetailOrder = "localpoid,localpo_detailUkey";
             this.DefaultOrder = "IssueDate,ID";
             this.Grid2New = 0;
