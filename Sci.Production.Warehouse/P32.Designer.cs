@@ -161,7 +161,7 @@
             this.label3.Location = new System.Drawing.Point(16, 13);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(108, 23);
-            this.label3.TabIndex = 1;
+            this.label3.TabIndex = 5;
             this.label3.Text = "ID";
             // 
             // label11
@@ -201,7 +201,7 @@
             this.dateBox3.Location = new System.Drawing.Point(402, 13);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 1;
+            this.dateBox3.TabIndex = 2;
             // 
             // button5
             // 
@@ -210,7 +210,7 @@
             this.button5.Location = new System.Drawing.Point(939, 43);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(89, 31);
-            this.button5.TabIndex = 4;
+            this.button5.TabIndex = 3;
             this.button5.Text = "Import";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -293,7 +293,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(658, 51);
-            this.editBox1.TabIndex = 3;
+            this.editBox1.TabIndex = 1;
             // 
             // button1
             // 
@@ -302,7 +302,7 @@
             this.button1.Location = new System.Drawing.Point(883, 80);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(145, 31);
-            this.button1.TabIndex = 63;
+            this.button1.TabIndex = 4;
             this.button1.Text = "Accumulated Qty";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -342,15 +342,15 @@
             this.textBox2.Location = new System.Drawing.Point(129, 43);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(120, 23);
-            this.textBox2.TabIndex = 71;
+            this.textBox2.TabIndex = 0;
             this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
             // P32
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "textBox3";
-            this.DefaultControlForEdit = "textBox3";
+            this.DefaultControl = "textBox2";
+            this.DefaultControlForEdit = "textBox2";
             this.DefaultDetailOrder = "FromMdivisionid,Frompoid,Fromseq1,Fromseq2,Fromroll,FromDyelot";
             this.DefaultOrder = "Issuedate,ID";
             this.Grid2New = 0;

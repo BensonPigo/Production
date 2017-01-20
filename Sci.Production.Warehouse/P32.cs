@@ -1032,6 +1032,11 @@ Where a.id = '{0}'", masterID);
         //borrow id
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
+            if (MyUtility.Check.Empty(textBox2.Text))
+            {
+                CurrentMaintain["BorrowId"] = "";
+                return;
+            }
             DataRow dr;
             if (!MyUtility.Check.Seek(string.Format(@"select [status],[backdate] from dbo.borrowback where id='{0}' and type='A' and mdivisionid='{1}'"
                 , textBox2.Text, Sci.Env.User.Keyword), out dr, null))

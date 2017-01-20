@@ -201,7 +201,7 @@
             this.label1.Location = new System.Drawing.Point(9, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 0;
+            this.label1.TabIndex = 7;
             this.label1.Text = "Issue SP#";
             // 
             // panel2
@@ -330,6 +330,8 @@
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "txtSP";
+            this.DefaultControlForEdit = "txtSP";
             this.EditMode = true;
             this.Name = "P28";
             this.Text = "P28. Batch Create Bulk to Inventory";

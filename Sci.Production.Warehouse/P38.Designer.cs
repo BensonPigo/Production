@@ -65,7 +65,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 45);
-            this.panel1.TabIndex = 1;
+            this.panel1.TabIndex = 0;
             // 
             // cbxStockType
             // 
@@ -80,7 +80,7 @@
             this.cbxStockType.Location = new System.Drawing.Point(636, 9);
             this.cbxStockType.Name = "cbxStockType";
             this.cbxStockType.Size = new System.Drawing.Size(100, 24);
-            this.cbxStockType.TabIndex = 3;
+            this.cbxStockType.TabIndex = 2;
             // 
             // label3
             // 
@@ -132,14 +132,14 @@
             this.cbxStatus.Location = new System.Drawing.Point(362, 9);
             this.cbxStatus.Name = "cbxStatus";
             this.cbxStatus.Size = new System.Drawing.Size(121, 24);
-            this.cbxStatus.TabIndex = 2;
+            this.cbxStatus.TabIndex = 1;
             // 
             // btnQuery
             // 
             this.btnQuery.Location = new System.Drawing.Point(916, 6);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 4;
+            this.btnQuery.TabIndex = 3;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
@@ -188,7 +188,7 @@
             this.panel3.Location = new System.Drawing.Point(0, 601);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1008, 60);
-            this.panel3.TabIndex = 0;
+            this.panel3.TabIndex = 1;
             // 
             // btnExcel
             // 
@@ -240,6 +240,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.Name = "P38";
             this.Text = "P38. Material Lock/Unlock for All Transaction";
             this.Controls.SetChildIndex(this.panel1, 0);
