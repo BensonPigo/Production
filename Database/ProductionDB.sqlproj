@@ -2081,6 +2081,10 @@
     <Build Include="dbo\Functions\GetLossAccessory.sql" />
     <Build Include="dbo\Functions\GetColorSizeQty.sql" />
     <Build Include="dbo\Functions\SplitString.sql" />
+    <Build Include="dbo\Tables\ADIDASKPITARGET.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
