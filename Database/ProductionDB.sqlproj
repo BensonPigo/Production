@@ -2085,6 +2085,12 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="dbo\Stored Procedures\Planning_Report_R10.sql" />
+    <Build Include="dbo\Stored Procedures\Planning_Report_R13.sql" />
+    <Build Include="dbo\Stored Procedures\PPIC_Report_Color_MaterialCode.sql" />
+    <Build Include="dbo\Stored Procedures\PPIC_Report_SizeSpec.sql" />
+    <Build Include="dbo\Stored Procedures\PPIC_Report02.sql" />
+    <Build Include="dbo\Stored Procedures\PPIC_Report03.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
