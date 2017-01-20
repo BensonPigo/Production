@@ -89,7 +89,7 @@
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(928, 97);
-            this.gridicon.TabIndex = 4;
+            this.gridicon.TabIndex = 3;
             // 
             // refresh
             // 
@@ -178,7 +178,7 @@
             this.dateBox3.Location = new System.Drawing.Point(352, 13);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 1;
+            this.dateBox3.TabIndex = 0;
             // 
             // label1
             // 
@@ -198,7 +198,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(658, 51);
-            this.editBox1.TabIndex = 3;
+            this.editBox1.TabIndex = 2;
             // 
             // displayBox2
             // 
@@ -238,7 +238,7 @@
             this.cbbStockType.Location = new System.Drawing.Point(597, 46);
             this.cbbStockType.Name = "cbbStockType";
             this.cbbStockType.Size = new System.Drawing.Size(121, 24);
-            this.cbbStockType.TabIndex = 2;
+            this.cbbStockType.TabIndex = 1;
             this.cbbStockType.Validating += new System.ComponentModel.CancelEventHandler(this.cbbStockType_Validating);
             // 
             // P51
