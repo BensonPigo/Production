@@ -105,7 +105,7 @@
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(928, 144);
-            this.gridicon.TabIndex = 15;
+            this.gridicon.TabIndex = 8;
             // 
             // refresh
             // 
@@ -194,7 +194,7 @@
             this.dateBox3.Location = new System.Drawing.Point(352, 13);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 1;
+            this.dateBox3.TabIndex = 0;
             // 
             // button5
             // 
@@ -203,7 +203,7 @@
             this.button5.Location = new System.Drawing.Point(939, 43);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(89, 31);
-            this.button5.TabIndex = 4;
+            this.button5.TabIndex = 3;
             this.button5.Text = "Import";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -286,7 +286,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(658, 51);
-            this.editBox1.TabIndex = 3;
+            this.editBox1.TabIndex = 2;
             // 
             // label2
             // 
@@ -304,7 +304,7 @@
             this.button1.Location = new System.Drawing.Point(883, 80);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(145, 31);
-            this.button1.TabIndex = 63;
+            this.button1.TabIndex = 4;
             this.button1.Text = "Accumulated Qty";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -316,7 +316,7 @@
             this.txtwhseReason1.Location = new System.Drawing.Point(96, 43);
             this.txtwhseReason1.Name = "txtwhseReason1";
             this.txtwhseReason1.Size = new System.Drawing.Size(386, 27);
-            this.txtwhseReason1.TabIndex = 2;
+            this.txtwhseReason1.TabIndex = 1;
             this.txtwhseReason1.TextBox1Binding = "";
             this.txtwhseReason1.Type = "IR";
             // 
