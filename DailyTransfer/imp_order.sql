@@ -1035,7 +1035,8 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 			t.Label= s.Label,
 			t.SizeRange= s.SizeRange,
 			t.AddName= s.AddName,
-			t.AddDate= s.AddDate
+			t.AddDate= s.AddDate,
+			t.POID =s.POID
 		when not matched by target then
 			insert(ID
 ,BrandID
@@ -1062,6 +1063,7 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 ,SizeRange
 ,AddName
 ,AddDate
+,POID
 )
 			values(s.ID,
 s.BrandID,
@@ -1087,7 +1089,8 @@ s.MarkRight,
 s.Label,
 s.SizeRange,
 s.AddName,
-s.AddDate
+s.AddDate,
+s.POID
 );
 		
 		----------------MNOrder_Qty---------------------------M/NOtice Qty breakdown
