@@ -249,7 +249,11 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             button21.ForeColor = MyUtility.Check.Seek(string.Format("select ID from AIR where PoID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]))) ? Color.Blue : Color.Black;
             button24.ForeColor = MyUtility.Check.Seek(string.Format("select ID from ArtworkPO_Detail where OrderID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button25.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"]))) ? Color.Blue : Color.Black;
+<<<<<<< .mine
+            button26.ForeColor = MyUtility.Check.Seek(string.Format("select ID FROM MNOrder where POID = '{0}' and CustCDID = (select CustCDID from Orders where ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+=======
             button26.ForeColor = MyUtility.Check.Seek(string.Format("select ID FROM MNOrder where POID = '{0}' and CustCDID = (select CustCDID from Orders where ID = '{1}')", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+>>>>>>> .r4298
             button27.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["SewLine"]) ? Color.Blue : Color.Black;
             button28.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail where OrderID = '{0}' and ReceiveDate is not null", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button29.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
@@ -952,16 +956,26 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
             if (ByCustCD)
             {
                 cmd = @"
+<<<<<<< .mine
+SELECT MAKER=max(FactoryID),sty=max(StyleID)+'-'+max(SeasonID),QTY=sum(QTY),'SPNO'=RTRIM(POID)+b.spno FROM MNOrder a
+OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WHERE POID = @poid AND CustCDID = (select CustCDID from MNOrder where ID = @ID) 
+=======
 SELECT MAKER=max(FactoryID),sty=max(StyleID)+'-'+max(SeasonID),QTY=sum(QTY),'SPNO'=RTRIM(POID)+b.spno FROM dbo.Orders a
 OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM dbo.Orders WHERE POID = @poid AND CustCDID = (select CustCDID from Orders where ID = @ID) 
+>>>>>>> .r4298
 	order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) b
-where POID = @poid and CustCDID = (select CustCDID from Orders where ID = @ID) group by POID,b.spno";
+where POID = @poid and CustCDID = (select CustCDID from MNOrder where ID = @ID) group by POID,b.spno";
             }
             else
             {
                 cmd = @"
+<<<<<<< .mine
+SELECT MAKER=max(FactoryID),sty=max(StyleID)+'-'+max(SeasonID),QTY=sum(QTY),'SPNO'=RTRIM(POID)+b.spno FROM MNOrder a
+OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WHERE POID = @poid
+=======
 SELECT MAKER=max(FactoryID),sty=max(StyleID)+'-'+max(SeasonID),QTY=sum(QTY),'SPNO'=RTRIM(POID)+b.spno FROM dbo.Orders a
 OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM dbo.Orders WHERE POID = @poid
+>>>>>>> .r4298
 	order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) b
 where POID = @poid group by POID,b.spno";
             }
@@ -1009,7 +1023,7 @@ where POID = @poid group by POID,b.spno";
                 sxr.dicDatas.Add(sxr._v + "ExtraAction", ra);
 
                 System.Data.DataTable dt;
-                DualResult getIds = DBProxy.Current.Select("", "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY from Orders where poid = @poid", new List<SqlParameter> { new SqlParameter("poid", poid) }, out dt);
+                DualResult getIds = DBProxy.Current.Select("", "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY from MNorder where poid = @poid", new List<SqlParameter> { new SqlParameter("poid", poid) }, out dt);
                 if (!getIds && dt.Rows.Count <= 0)
                 {
                     MyUtility.Msg.ErrorBox(getIds.ToString(), "error");
@@ -1047,8 +1061,7 @@ where POID = @poid group by POID,b.spno";
                     sxr.dicDatas.Add(sxr._v + "S2PACKING" + idxStr, new sxrc.xltImageString(dts[7].Rows[0]["Packing"].ToString()));
                     sxr.dicDatas.Add(sxr._v + "S2LH" + idxStr, new sxrc.xltImageString(dts[8].Rows[0]["Label"].ToString()));
 
-                }
-                                
+                }           
                 sxr.boOpenFile = true;
                 sxr.Save();
             }
