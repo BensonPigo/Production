@@ -105,7 +105,7 @@
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(928, 144);
-            this.gridicon.TabIndex = 9;
+            this.gridicon.TabIndex = 8;
             // 
             // refresh
             // 
@@ -195,7 +195,7 @@
             this.dateBox3.Location = new System.Drawing.Point(383, 13);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 1;
+            this.dateBox3.TabIndex = 2;
             // 
             // shapeContainer1
             // 
@@ -222,7 +222,7 @@
             this.button8.Location = new System.Drawing.Point(279, 144);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(70, 30);
-            this.button8.TabIndex = 7;
+            this.button8.TabIndex = 6;
             this.button8.Text = "Find";
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
@@ -235,7 +235,7 @@
             this.textBox1.Location = new System.Drawing.Point(128, 148);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(145, 23);
-            this.textBox1.TabIndex = 6;
+            this.textBox1.TabIndex = 5;
             // 
             // label5
             // 
@@ -252,7 +252,7 @@
             this.button9.Location = new System.Drawing.Point(355, 144);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(148, 30);
-            this.button9.TabIndex = 8;
+            this.button9.TabIndex = 7;
             this.button9.Text = "Clear Qty is empty";
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
@@ -276,7 +276,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(658, 51);
-            this.editBox1.TabIndex = 4;
+            this.editBox1.TabIndex = 1;
             // 
             // button1
             // 
@@ -285,7 +285,7 @@
             this.button1.Location = new System.Drawing.Point(883, 80);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(145, 31);
-            this.button1.TabIndex = 5;
+            this.button1.TabIndex = 4;
             this.button1.Text = "Accumulated Qty";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -308,7 +308,7 @@
             this.textBox2.MaxLength = 8;
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(67, 23);
-            this.textBox2.TabIndex = 3;
+            this.textBox2.TabIndex = 0;
             this.textBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox2_MouseDown);
             this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
@@ -319,7 +319,7 @@
             this.btnImport.Location = new System.Drawing.Point(939, 41);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
-            this.btnImport.TabIndex = 70;
+            this.btnImport.TabIndex = 3;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
