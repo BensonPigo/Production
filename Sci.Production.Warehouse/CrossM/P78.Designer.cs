@@ -92,7 +92,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(998, 144);
+            this.gridicon.Location = new System.Drawing.Point(1106, 144);
             this.gridicon.TabIndex = 6;
             // 
             // refresh
@@ -143,7 +143,7 @@
             this.label3.Location = new System.Drawing.Point(16, 13);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(108, 23);
-            this.label3.TabIndex = 1;
+            this.label3.TabIndex = 5;
             this.label3.Text = "ID";
             // 
             // label11
@@ -176,7 +176,7 @@
             this.displayBox1.Location = new System.Drawing.Point(129, 13);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayBox1.TabIndex = 3;
             // 
             // dateBox3
             // 
@@ -186,7 +186,7 @@
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.ReadOnly = true;
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 1;
+            this.dateBox3.TabIndex = 4;
             // 
             // button5
             // 
@@ -196,7 +196,7 @@
             this.button5.Location = new System.Drawing.Point(890, 43);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(89, 31);
-            this.button5.TabIndex = 4;
+            this.button5.TabIndex = 2;
             this.button5.Text = "Import";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -250,7 +250,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(658, 86);
-            this.editBox1.TabIndex = 3;
+            this.editBox1.TabIndex = 1;
             // 
             // label2
             // 
@@ -270,14 +270,14 @@
             this.textBox1.MaxLength = 13;
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(125, 23);
-            this.textBox1.TabIndex = 2;
+            this.textBox1.TabIndex = 0;
             // 
             // P78
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1008, 601);
-            this.DefaultControl = "textBox3";
-            this.DefaultControlForEdit = "textBox3";
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;

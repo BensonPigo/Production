@@ -106,15 +106,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1058, 539);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(1052, 493);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(1052, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -143,7 +143,7 @@
             this.label3.Location = new System.Drawing.Point(16, 13);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(108, 23);
-            this.label3.TabIndex = 1;
+            this.label3.TabIndex = 5;
             this.label3.Text = "ID";
             // 
             // label11
@@ -175,7 +175,7 @@
             this.displayBox1.Location = new System.Drawing.Point(129, 13);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayBox1.TabIndex = 4;
             // 
             // dateBox3
             // 
@@ -192,7 +192,7 @@
             this.button5.Location = new System.Drawing.Point(939, 43);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(89, 31);
-            this.button5.TabIndex = 4;
+            this.button5.TabIndex = 3;
             this.button5.Text = "Import";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -245,7 +245,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(658, 86);
-            this.editBox1.TabIndex = 3;
+            this.editBox1.TabIndex = 2;
             // 
             // label2
             // 
@@ -264,13 +264,13 @@
             this.txtMdivision1.Location = new System.Drawing.Point(663, 13);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 66;
+            this.txtMdivision1.TabIndex = 0;
             // 
             // P71
             // 
             this.ClientSize = new System.Drawing.Size(1066, 601);
-            this.DefaultControl = "textBox3";
-            this.DefaultControlForEdit = "textBox3";
+            this.DefaultControl = "txtMdivision1";
+            this.DefaultControlForEdit = "txtMdivision1";
             this.DefaultDetailOrder = "FromMdivisionid,Frompoid,Fromseq1,Fromseq2,Fromroll,FromDyelot";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;
