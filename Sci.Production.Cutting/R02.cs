@@ -125,8 +125,11 @@ namespace Sci.Production.Cutting
             //準備CutCell包含非數字
             DataTable Cutcelltb;
             DBProxy.Current.Select(null, string.Format("select distinct cutcellid from cutplan where cutcellid >= '{0}' and cutcellid <= '{1}' order by cutcellid", CutCell1, CutCell2), out Cutcelltb);
-
+            
             int CutCellcount = Cutcelltb.Rows.Count;//CutCel總數
+
+            if (CutCellcount == 0)
+                return Result.F("Please re-enter CutCell range");
 
             StringBuilder sqlCmd = new StringBuilder();
             //int cutcellint1 = -1, cutcellint2 = -1;
