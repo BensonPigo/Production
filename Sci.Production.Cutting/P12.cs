@@ -407,10 +407,12 @@ namespace Sci.Production.Cutting
             ReportDefinition report = new ReportDefinition();
             report.ReportDataSource = res;
             report.ReportResource = reportresource;
+
             //開啟 report view
             var frm = new Sci.Win.Subs.ReportView(report);
-            frm.MdiParent = MdiParent;
+            if(MdiParent!=null)  frm.MdiParent = MdiParent;
             frm.Show();
+
             return;
 
             #endregion

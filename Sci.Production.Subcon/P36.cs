@@ -545,11 +545,10 @@ where id = '{4}'"
 
             // 開啟 report view
             var frm = new Sci.Win.Subs.ReportView(report);
-            frm.MdiParent = MdiParent;
+            //有按才更新列印日期printdate。
+            frm.viewer.Print += (s, eArgs) => { var result3 = DBProxy.Current.Execute(null, string.Format("update localdebit set printdate=getdate() where id = '{0}'", CurrentMaintain["id"])); }; 
+            if (MdiParent != null) frm.MdiParent = MdiParent;
             frm.Show();
-
-            //更新列印日期printdate。
-            var result3 = DBProxy.Current.Execute(null, string.Format("update localdebit set printdate=getdate() where id = '{0}'", CurrentMaintain["id"]));
 
             return true;
         }
