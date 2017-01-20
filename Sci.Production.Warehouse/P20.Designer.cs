@@ -33,6 +33,7 @@
             this.button1 = new Sci.Win.UI.Button();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
             this.panel3 = new Sci.Win.UI.Panel();
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.label3 = new Sci.Win.UI.Label();
             this.textBox1 = new Sci.Win.UI.TextBox();
@@ -45,7 +46,6 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.grid2 = new Sci.Win.UI.Grid();
             this.grid3 = new Sci.Win.UI.Grid();
-            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
@@ -102,6 +102,16 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1008, 43);
             this.panel3.TabIndex = 1;
+            // 
+            // txtSeq1
+            // 
+            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq1.Location = new System.Drawing.Point(272, 9);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 1;
             // 
             // checkBox1
             // 
@@ -266,16 +276,6 @@
             this.grid3.Size = new System.Drawing.Size(1008, 143);
             this.grid3.TabIndex = 8;
             this.grid3.TabStop = false;
-            // 
-            // txtSeq1
-            // 
-            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq1.Location = new System.Drawing.Point(272, 9);
-            this.txtSeq1.Name = "txtSeq1";
-            this.txtSeq1.seq1 = "";
-            this.txtSeq1.seq2 = "";
-            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq1.TabIndex = 1;
             // 
             // P20
             // 
