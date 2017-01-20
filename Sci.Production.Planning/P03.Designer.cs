@@ -110,7 +110,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(847, 105);
+            this.button1.Location = new System.Drawing.Point(762, 105);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
             this.button1.TabIndex = 10;
@@ -138,9 +138,9 @@
             // 
             // dateRange1
             // 
-            this.dateRange1.Location = new System.Drawing.Point(648, 44);
+            this.dateRange1.Location = new System.Drawing.Point(624, 44);
             this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
+            this.dateRange1.Size = new System.Drawing.Size(218, 23);
             this.dateRange1.TabIndex = 8;
             // 
             // label1
@@ -148,15 +148,15 @@
             this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(535, 44);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(109, 23);
+            this.label1.Size = new System.Drawing.Size(87, 23);
             this.label1.TabIndex = 11;
             this.label1.Text = "Sewing Inline";
             // 
             // dateRange2
             // 
-            this.dateRange2.Location = new System.Drawing.Point(648, 15);
+            this.dateRange2.Location = new System.Drawing.Point(624, 15);
             this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
+            this.dateRange2.Size = new System.Drawing.Size(218, 23);
             this.dateRange2.TabIndex = 7;
             // 
             // label3
@@ -164,7 +164,7 @@
             this.label3.Lines = 0;
             this.label3.Location = new System.Drawing.Point(535, 15);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(109, 23);
+            this.label3.Size = new System.Drawing.Size(87, 23);
             this.label3.TabIndex = 9;
             this.label3.Text = "SCI  Delivery";
             // 
@@ -383,7 +383,7 @@
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Location = new System.Drawing.Point(9, 10);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(941, 159);
+            this.groupBox2.Size = new System.Drawing.Size(855, 159);
             this.groupBox2.TabIndex = 33;
             this.groupBox2.TabStop = false;
             // 
@@ -486,9 +486,9 @@
             // 
             // dateRange3
             // 
-            this.dateRange3.Location = new System.Drawing.Point(648, 73);
+            this.dateRange3.Location = new System.Drawing.Point(624, 73);
             this.dateRange3.Name = "dateRange3";
-            this.dateRange3.Size = new System.Drawing.Size(280, 23);
+            this.dateRange3.Size = new System.Drawing.Size(218, 23);
             this.dateRange3.TabIndex = 9;
             // 
             // label6
@@ -496,7 +496,7 @@
             this.label6.Lines = 0;
             this.label6.Location = new System.Drawing.Point(535, 73);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(109, 23);
+            this.label6.Size = new System.Drawing.Size(87, 23);
             this.label6.TabIndex = 34;
             this.label6.Text = "Inline Date";
             // 
@@ -601,13 +601,13 @@
             this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(956, 12);
+            this.grid2.Location = new System.Drawing.Point(870, 12);
             this.grid2.Name = "grid2";
             this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(267, 159);
+            this.grid2.Size = new System.Drawing.Size(353, 159);
             this.grid2.TabIndex = 17;
             this.grid2.TabStop = false;
             // 
