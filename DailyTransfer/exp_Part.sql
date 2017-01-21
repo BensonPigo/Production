@@ -41,6 +41,53 @@ BEGIN
   DROP TABLE MiscPO_Detail
 END
 
+IF OBJECT_ID(N'dbo.PartReturnReceive') IS NOT NULL
+BEGIN
+  DROP TABLE PartReturnReceive
+END
+IF OBJECT_ID(N'dbo.PartReturnReceive_Detail') IS NOT NULL
+BEGIN
+  DROP TABLE PartReturnReceive_Detail
+END
+IF OBJECT_ID(N'dbo.NewPart') IS NOT NULL
+BEGIN
+  DROP TABLE NewPart
+END
+IF OBJECT_ID(N'dbo.NewPart_Detail') IS NOT NULL
+BEGIN
+  DROP TABLE NewPart_Detail
+END
+IF OBJECT_ID(N'dbo.PartStock') IS NOT NULL
+BEGIN
+  DROP TABLE PartStock
+END
+IF OBJECT_ID(N'dbo.MachineReturn') IS NOT NULL
+BEGIN
+  DROP TABLE MachineReturn
+END
+IF OBJECT_ID(N'dbo.MachineReturn_Detail') IS NOT NULL
+BEGIN
+  DROP TABLE MachineReturn_Detail
+END
+IF OBJECT_ID(N'dbo.#TPI_PartPO1') IS NOT NULL
+BEGIN
+  DROP TABLE #TPI_PartPO1
+END
+
+IF OBJECT_ID(N'dbo.#TPI_MachIn1') IS NOT NULL
+BEGIN
+  DROP TABLE #TPI_MachIn1
+END
+
+IF OBJECT_ID(N'dbo.MachineIn') IS NOT NULL
+BEGIN
+  DROP TABLE MachineIn
+END
+
+IF OBJECT_ID(N'dbo.MachineIn_Detail') IS NOT NULL
+BEGIN
+  DROP TABLE MachineIn_Detail
+END
 SELECT * 
 INTO  PartPO
 FROM Machine.dbo.PartPO 
@@ -48,7 +95,6 @@ WHERE Approve IS NOT NULL
 AND (cdate>=DATEADD(DAY,-7,GETDATE()) OR TranstoTPE IS NULL OR EditDate >= DATEADD(DAY,-7,GETDATE()))
 And Status <> 'Junked'
 AND PurchaseFrom = 'T'
-
 
 SELECT * 
 INTO  MiscPO
@@ -67,39 +113,33 @@ AND (cdate>=DATEADD(DAY,-7,GETDATE())  OR EditDate >= DATEADD(DAY,-7,GETDATE()))
 And Status <> 'Junked'
 AND PurchaseFrom = 'T'
 ------------------------------------------------
-
 SELECT pod.ID,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.PartBrandID, pod.suppid, pod.SEQ2 
 INTO  PartPO_Detail
 FROM Machine.dbo.PartPO, Machine.dbo.PartPO_Detail  pod
 WHERE PartPO.id= pod.id  
 ORDER BY PartPO.id 
-
 --SELECT pod.ID,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid, pod.SEQ2 
 SELECT pod.ID, pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid, pod.SEQ2 
 INTO  MachinePO_Detail
 FROM Machine.dbo.MachinePO, Machine.dbo.MachinePO_Detail  pod
 WHERE MachinePO.id= pod.id  
 ORDER BY MachinePO.id 
-
 SELECT pod.ID,pod.MiscID, pod.UnitID, pod.PRICE, pod.QTY, pod.MiscBrandID, pod.suppid, pod.SEQ2 
 INTO  MiscPO_Detail
 FROM Machine.dbo.MiscPO, Machine.dbo.MiscPO_Detail  pod
 WHERE MiscPO.id= pod.id  
 ORDER BY MiscPO.id 
----------------------------------------------------------------
-
+--------------------------------------------------------------
 UPDATE Machine.dbo.PartPO
 SET TranstoTPE = CONVERT(date, GETDATE())
 FROM Machine.dbo.PartPO AS Partpo1
 LEFT JOIN PartPO ON Partpo1.ID = PartPO.ID
 WHERE Partpo1.TranstoTPE  IS NULL
-
 UPDATE Machine.dbo.MiscPO
 SET TranstoTPE = CONVERT(date, GETDATE())
 FROM Machine.dbo.MiscPO AS MiscPO1
 LEFT JOIN MiscPO ON MiscPO1.ID = MiscPO.ID
 WHERE MiscPO1.TranstoTPE  IS NULL
-
 --UPDATE Machine.dbo.MachinePO
 --SET TranstoTPE = CONVERT(date, GETDATE())
 --FROM Machine.dbo.PartPO AS Partpo1
