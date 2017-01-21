@@ -89,7 +89,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList where MDivisio
                 DataTable dtData = (DataTable)listControlBindingSource1.DataSource;
                 for (int i = 0; i < e.RowCount; i++)
                 {
-                    if ((dtData.Rows[i]["OriginalQty"].ToString() != dtData.Rows[i]["NewQty"].ToString() && dtData.Rows[i]["NewQty"].ToString() == "0") || dtData.Rows[i]["JunkOrder"].ToString() == "V")
+                    if ((dtData.Rows[i]["OriginalQty"].ToString() != dtData.Rows[i]["NewQty"].ToString() && dtData.Rows[i]["NewQty"].ToString() == "0") || dtData.Rows[i]["JunkOrder"].ToString() == "V" || dtData.Rows[i]["DeleteOrder"].ToString() == "V")
                     {
                         grid1.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
                         grid1.Rows[i].DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
@@ -185,28 +185,9 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
                 return;
             }
 
-            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
-            dlg.Title = "Save as Excel File";
-            //dlg.FileName = "ComparisonList_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P02.xltx");
+            MyUtility.Excel.CopyToXls(ExcelTable, "", "PPIC_P02.xltx", 3, true, "", objApp);
 
-            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
-
-            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
-            // Get the selected file name and CopyToXls
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            {
-                // Open document
-                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "PPIC_P02.xltx", headerRow: 3);
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
-            }
-            else
-            {
-                return;
-            }
         }
     }
 }
