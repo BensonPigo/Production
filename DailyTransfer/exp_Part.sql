@@ -16,47 +16,30 @@ IF OBJECT_ID(N'dbo.PartPO') IS NOT NULL
 BEGIN
   DROP TABLE PartPO
 END
+IF OBJECT_ID(N'dbo.MiscPO') IS NOT NULL
+BEGIN
+  DROP TABLE MiscPO
+END
+
+IF OBJECT_ID(N'dbo.MachinePO') IS NOT NULL
+BEGIN
+  DROP TABLE MachinePO
+END
+
 IF OBJECT_ID(N'dbo.PartPO_Detail') IS NOT NULL
 BEGIN
   DROP TABLE PartPO_Detail
 END
-IF OBJECT_ID(N'dbo.PartReturnReceive') IS NOT NULL
+
+IF OBJECT_ID(N'dbo.MachinePO_Detail') IS NOT NULL
 BEGIN
-  DROP TABLE PartReturnReceive
-END
-IF OBJECT_ID(N'dbo.PartReturnReceive_Detail') IS NOT NULL
-BEGIN
-  DROP TABLE PartReturnReceive_Detail
-END
-IF OBJECT_ID(N'dbo.NewPart') IS NOT NULL
-BEGIN
-  DROP TABLE NewPart
-END
-IF OBJECT_ID(N'dbo.NewPart_Detail') IS NOT NULL
-BEGIN
-  DROP TABLE NewPart_Detail
-END
-IF OBJECT_ID(N'dbo.PartStock') IS NOT NULL
-BEGIN
-  DROP TABLE PartStock
-END
-IF OBJECT_ID(N'dbo.MachineReturn') IS NOT NULL
-BEGIN
-  DROP TABLE MachineReturn
-END
-IF OBJECT_ID(N'dbo.MachineReturn_Detail') IS NOT NULL
-BEGIN
-  DROP TABLE MachineReturn_Detail
-END
-IF OBJECT_ID(N'dbo.MachineIn') IS NOT NULL
-BEGIN
-  DROP TABLE MachineIn
-END
-IF OBJECT_ID(N'dbo.MachineIn_Detail') IS NOT NULL
-BEGIN
-  DROP TABLE MachineIn_Detail
+  DROP TABLE MachinePO_Detail
 END
 
+IF OBJECT_ID(N'dbo.MiscPO_Detail') IS NOT NULL
+BEGIN
+  DROP TABLE MiscPO_Detail
+END
 
 SELECT * 
 INTO  PartPO
