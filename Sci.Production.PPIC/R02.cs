@@ -159,68 +159,10 @@ where sp.SCIDelivery between '{0}' and '{1}'", Convert.ToDateTime(sciDate1).ToSt
                 return false;
             }
 
-            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
-            dlg.Title = "Save as Excel File";
-            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R02_ProductionKits.xltx");
+            MyUtility.Excel.CopyToXls(printData, "", "PPIC_R02_ProductionKits.xltx", 1, true, "", objApp);
 
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            {
-                // Open document
-                bool result = MyUtility.Excel.CopyToXls(printData, dlg.FileName, xltfile: "PPIC_R02_ProductionKits.xltx", headerRow: 1);
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); return false; }
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
-            //因為速度較慢，故不使用
-            //MyUtility.Msg.WaitWindows("Starting EXCEL...");
-            //string strXltName = Sci.Env.Cfg.XltPathDir + "PPIC_R02_ProductionKits.xltx";
-            //Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            //if (excel == null) return false;
-            //Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
-            ////填內容值
-            //int intRowsStart = 2;
-            //object[,] objArray = new object[1, 21];
-            //foreach (DataRow dr in printData.Rows)
-            //{
-            //    objArray[0, 0] = dr["BrandID"];
-            //    objArray[0, 1] = dr["ID"];
-            //    objArray[0, 2] = dr["SeasonID"];
-            //    objArray[0, 3] = dr["MDivisionID"];
-            //    objArray[0, 4] = dr["FactoryID"];
-            //    objArray[0, 5] = dr["Doc"];
-            //    objArray[0, 6] = dr["SendDate"];
-            //    objArray[0, 7] = dr["ReceiveDate"];
-            //    objArray[0, 8] = dr["SendToQA"];
-            //    objArray[0, 9] = dr["QAReceived"];
-            //    objArray[0, 10] = dr["ProvideDate"];
-            //    objArray[0, 11] = dr["OrderId"];
-            //    objArray[0, 12] = dr["SCIDelivery"];
-            //    objArray[0, 13] = dr["BuyerDelivery"];
-            //    objArray[0, 14] = dr["PullForward"];
-            //    objArray[0, 15] = dr["Handle"];
-            //    objArray[0, 16] = dr["MRHandle"];
-            //    objArray[0, 17] = dr["SMR"];
-            //    objArray[0, 18] = dr["POHandle"];
-            //    objArray[0, 19] = dr["POSMR"];
-            //    objArray[0, 20] = dr["FtyHandle"];
-            //    worksheet.Range[String.Format("A{0}:U{0}", intRowsStart)].Value2 = objArray;
-            //    intRowsStart++;
-            //}
-
-            //excel.Cells.EntireColumn.AutoFit();
-            //excel.Cells.EntireRow.AutoFit();
-            //MyUtility.Msg.WaitClear();
-            //excel.Visible = true;
-            //return true;
+            return true;
         }
     }
 }

@@ -493,28 +493,8 @@ where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.
                 return;
             }
 
-            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
-            dlg.Title = "Save as Excel File";
-            //dlg.FileName = "SampleSewingSchedule_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
-
-            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
-
-            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
-            // Get the selected file name and CopyToXls
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            {
-                // Open document
-                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "PPIC_P13.xltx");
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
-            }
-            else
-            {
-                return;
-            }
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P13.xltx");
+            MyUtility.Excel.CopyToXls(ExcelTable, "", "PPIC_P13.xltx", 1, true, "", objApp);
 
         }
 

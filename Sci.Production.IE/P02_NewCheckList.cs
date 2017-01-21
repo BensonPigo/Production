@@ -76,28 +76,9 @@ where cc.ID = {0} order by cc.ChgOverCheckListID", this.KeyValue1);
                 return;
             }
 
-            string MyDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = MyDocumentsPath;     //指定"我的文件"路徑
-            dlg.Title = "Save as Excel File";
-            dlg.FileName = "ChgOver_ChkListNew_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\IE_P02_ChkListNew.xltx");
+            MyUtility.Excel.CopyToXls(ExcelTable, "", "IE_P02_ChkListNew.xltx", 2, true, "", objApp);
 
-            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
-
-            // Display OpenFileDialog by calling ShowDialog method ->ShowDialog()
-            // Get the selected file name and CopyToXls
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            {
-                // Open document
-                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "IE_P02_ChkListNew.xltx", headerRow: 2);
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
-            }
-            else
-            {
-                return;
-            }
         }
     }
 }
