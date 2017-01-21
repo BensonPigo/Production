@@ -1782,7 +1782,7 @@
             <param name="ftp">SimpleFtpClient object.</param>
             <returns>Result of process.</returns>
         </member>
-        <member name="M:Sci.Utils.FTP_GetDirectoryList(System.String,System.Collections.Generic.IList{System.String}@)">
+        <member name="M:Sci.Utils.FTP_GetList(System.String,System.Collections.Generic.IList{System.String}@,System.Collections.Generic.IList{System.String}@)">
             <summary>
             Get Directory list from FTp server.
             </summary>
@@ -8286,15 +8286,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Sci.Win.Tems.Input1.RenewDataForMaintain(System.Data.DataRow@,System.Boolean@)">
-            <summary>
-            Template Used.
-            </summary>
-            <param name="data">DataRow of current.</param>
-            <param name="isdeleted">flag of the record is deleted.</param>
-            <returns>Result of process.</returns>
-        </member>
-        <member name="M:Sci.Win.Tems.Input1.RenewData(System.Data.DataRow,System.Boolean,System.Boolean@)">
+        <member name="M:Sci.Win.Tems.Input1.RenewData(System.Data.DataRow,System.Boolean,System.Boolean@,System.Data.DataRow@)">
             <summary>
             Reload current record from database.
             VFP : oReNewCursor()
@@ -11154,6 +11146,11 @@
             </summary>
             <param name="e">Report Event argument.</param>
             <returns>result of process.</returns>
+        </member>
+        <member name="F:Sci.Win.Tems.PrintForm.SetReportViewer">
+            <summary>
+            在ReportView顯示之前, 可客製修改 Subs.ReportView.viewer ( WinForm.ReportView )
+            </summary>
         </member>
         <member name="F:Sci.Win.Tems.PrintForm.components">
             <summary>
