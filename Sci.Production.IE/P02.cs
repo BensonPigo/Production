@@ -437,9 +437,9 @@ select {0},ID,'{1}',GETDATE() from IEReason where Type = 'CP' and Junk = 0", Cur
             string cmdsql = string.Format("SELECT TOP 1 'CHANGEOVER REPORT'  FROM ChgOver where 1=1");
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out dtTitle);
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\IE_P02_ChangeoverReport.xlt"); //預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\IE_P02_ChangeoverReport.xltx"); //預先開啟excel app
 
-            if (MyUtility.Excel.CopyToXls(dtTitle, "", "IE_P02_ChangeoverReport.xlt", 2, !autoSave, null, objApp, false))
+            if (MyUtility.Excel.CopyToXls(dtTitle, "", "IE_P02_ChangeoverReport.xltx", 2, !autoSave, null, objApp, false))
             {    // 將datatable copy to excel
                 objApp.Visible = false;  //隱藏，避免使用者誤按
                 Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
