@@ -42,7 +42,7 @@ namespace Sci.Production.Cutting
 
                 DataRow dr = dts[0].Rows[0];
 
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_EachConsumptionCuttingCombo.xlt");
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_EachConsumptionCuttingCombo.xltx");
                 sxrc sxr = new sxrc(xltPath);
                 sxr.CopySheet.Add(1, dts.Length - 2);
 
@@ -112,7 +112,7 @@ namespace Sci.Production.Cutting
                 DataRow dr = dts[0].Rows[0];
                 extra_P01_Report_TTLconsumptionPOCombo(dts[1], Convert.ToInt32(dr["QTY"]));
 
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_TTLconsumptionPOCombo.xlt");
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_TTLconsumptionPOCombo.xltx");
                 sxrc sxr = new sxrc(xltPath);
                 sxr.dicDatas.Add(sxr._v + "ORDERNO", dr["ORDERNO"]);
                 sxr.dicDatas.Add(sxr._v + "STYLENO", dr["STYLENO"]);
@@ -168,7 +168,7 @@ namespace Sci.Production.Cutting
                 #region rdCheck3
                 System.Data.DataTable rpt3;
                 DualResult res = DBProxy.Current.Select("", "select b.POComboList,Style=StyleID+'-'+SeasonID from dbo.Orders a inner join Order_POComboList b on a.id = b.ID where a.ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) }, out rpt3);
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ColorCombo_SizeBreakdown.xlt");
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ColorCombo_SizeBreakdown.xltx");
 
                 sxrc sxr = new sxrc(xltPath);
                 string POComboList = rpt3.Rows[0]["POComboList"].ToString();
@@ -211,7 +211,7 @@ namespace Sci.Production.Cutting
                 DataRow dr = dts[0].Rows[0];
                 extra_P01_EachconsVSOrderQTYBDownPOCombo(dts[1]);
 
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_EachconsVSOrderQTYBDownPOCombo.xlt");
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_EachconsVSOrderQTYBDownPOCombo.xltx");
                 sxrc sxr = new sxrc(xltPath);
                 sxr.dicDatas.Add(sxr._v + "SPNO", dr["ORDERNO"]);
                 sxr.dicDatas.Add(sxr._v + "Style", dr["StyleID"]);
@@ -255,7 +255,7 @@ namespace Sci.Production.Cutting
 
                 DataRow dr = dts[0].Rows[0];
 
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "cutting_P01_MarkerList.xlt");
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "cutting_P01_MarkerList.xltx");
                 sxrc sxr = new sxrc(xltPath);
                 sxr.CopySheet.Add(1, dts.Length - 2);
 
@@ -313,7 +313,7 @@ namespace Sci.Production.Cutting
                 DataRow dr = dts[0].Rows[0];
                 extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(dts[1]);
 
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.xlt");
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.xltx");
                 sxrc sxr = new sxrc(xltPath);
                 sxr.dicDatas.Add(sxr._v + "ORDERNO", dr["ORDERNO"]);
                 sxr.dicDatas.Add(sxr._v + "STYLENO", dr["STYLENO"]);
