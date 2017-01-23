@@ -1,5 +1,5 @@
 ﻿
-create PROCEDURE [dbo].[Cutting_P01print_Eachcons_vs_OrderQtyDown_POCombo]
+CREATE PROCEDURE [dbo].[Cutting_P01print_Eachcons_vs_OrderQtyDown_POCombo]
 	@OrderID VARCHAR(13)
 AS
 BEGIN
@@ -8,7 +8,7 @@ BEGIN
 	select @OrderID=POID FROM dbo.Orders where ID = @OrderID
 
 	SELECT ORDERNO=RTRIM(POID) + d.spno, StyleID FROM dbo.Orders
-	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Trade.dbo.Orders WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno
+	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Production.dbo.Orders WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno
 	) d WHERE POID = @OrderID GROUP BY POID,d.spno,StyleID
 
 	select '#'=a.LectraCode,'COLOR'=c.Article,'Size'=c.SizeCode,CutQty=max(c.CutQty),OrderQty=max(c.Orderqty),Balance=max(c.Variance)

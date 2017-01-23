@@ -1,5 +1,5 @@
 ﻿
-create PROCEDURE [dbo].[cutting_P01_MarkerList]
+CREATE PROCEDURE [dbo].[cutting_P01_MarkerList]
 	@OrderID VARCHAR(13)
 AS
 BEGIN
@@ -11,7 +11,7 @@ BEGIN
 	ORDERNO=RTRIM(POID) + d.spno ,STYLENO=StyleID+'-'+SeasonID ,QTY=SUM(Qty) ,FACTORY=FactoryID
 	,REPORTNAME = (SELECT top 1 Title FROM dbo.Company where Junk = 0 and IsDefault = 1 order by ID desc)
 	FROM dbo.Orders
-	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Trade.dbo.Orders WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) d
+	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Production.dbo.Orders WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) d
 	WHERE POID = @OrderID
 	GROUP BY POID,d.spno,StyleID,SeasonID,FactoryID
 	
