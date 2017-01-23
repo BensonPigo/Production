@@ -108,7 +108,8 @@
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(110, 23);
             this.dateBox2.TabIndex = 0;
-            this.dateBox2.Validated += new System.EventHandler(this.dateBox2_Validated);
+            this.dateBox2.TextChanged += new System.EventHandler(this.dateBox2_TextChanged);
+          //  this.dateBox2.Validated += new System.EventHandler(this.dateBox2_Validated);
             // 
             // label2
             // 
