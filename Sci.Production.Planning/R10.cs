@@ -163,7 +163,7 @@ namespace Sci.Production.Planning
         /// </summary>
         private DualResult transferReport1(DataTable[] datas)
         {
-            string xltPath = @"Planning_R10_01.xlt";
+            string xltPath = @"Planning_R10_01.xltx";
             SaveXltReportCls sxrc = new SaveXltReportCls(xltPath);
             Microsoft.Office.Interop.Excel.Worksheet wks = sxrc.ExcelApp.ActiveSheet;
             //sxrc.ExcelApp.Visible = true;
@@ -478,7 +478,7 @@ namespace Sci.Production.Planning
         /// </summary>
         private DualResult transferReport2(DataTable[] datas)
         {
-            string xltPath = @"Planning_R10_02.xlt";
+            string xltPath = @"Planning_R10_02.xltx";
             SaveXltReportCls sxrc = new SaveXltReportCls(xltPath);
             Microsoft.Office.Interop.Excel.Worksheet wks = sxrc.ExcelApp.ActiveSheet;
             //sxrc.ExcelApp.Visible = true;

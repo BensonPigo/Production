@@ -171,7 +171,7 @@ namespace Sci.Production.Planning
             if (intReportType == 1 || intReportType == 2)
             {
 
-                SaveXltReportCls sxrc = new SaveXltReportCls("Planning_R13_01.xlt");
+                SaveXltReportCls sxrc = new SaveXltReportCls("Planning_R13_01.xltx");
                 sxrc.boOpenFile = true;
                 sxrc.dicDatas.Add("##Year", strYear);
                 sxrc.dicDatas.Add("##Month", strMonth);
@@ -226,7 +226,7 @@ namespace Sci.Production.Planning
             }
             else
             {
-                SaveXltReportCls sxrc = new SaveXltReportCls("Planning_R13_02.xlt");
+                SaveXltReportCls sxrc = new SaveXltReportCls("Planning_R13_02.xltx");
                 sxrc.boOpenFile = true;
                 sxrc.dicDatas.Add("##Year", strYear);
                 sxrc.dicDatas.Add("##Month", strMonth);

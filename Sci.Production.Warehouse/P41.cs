@@ -215,7 +215,7 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", S
             //if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
             //{
             //    //DualResult result = MyUtility.Excel.CopyToXls(dt, dlg.FileName);
-            //    //if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName); }   //XlsAutoFit(dlg.FileName, "MMDR030.xlt", 12);
+            //    //if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName); }   //XlsAutoFit(dlg.FileName, "MMDR030.xltx", 12);
             //    //else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
             //}
             //else

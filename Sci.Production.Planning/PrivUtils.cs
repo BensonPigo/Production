@@ -290,7 +290,7 @@ namespace Sci.Production.Report
         public static string getPath_XLT(string sPath)
         {
             //string strPath = Application.StartupPath.Substring(0, Application.StartupPath.LastIndexOf("Sci.Trade")) + "Sci.Trade.Report\\XLT"; //Excel範例檔路徑
-            //string temfile = Sci.Env.Cfg.XltPathDir + @"\Style-R13.SimilarStyleCalucateOrderqtyAndForecastqty.xlt";
+            //string temfile = Sci.Env.Cfg.XltPathDir + @"\Style-R13.SimilarStyleCalucateOrderqtyAndForecastqty.xltx";
             string rtn = "";
             if (Sci.Env.Cfg.XltPathDir != "")
             {

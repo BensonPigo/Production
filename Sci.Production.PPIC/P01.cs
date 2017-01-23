@@ -781,7 +781,7 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
 
                 if (!res) return;
 
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_CMPQ.xlt");
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_CMPQ.xltx");
 
                 sxrc sxr = new sxrc(xltPath);
                 int idx = 0;
@@ -984,7 +984,7 @@ where POID = @poid group by POID,b.spno";
 
                 if (drvar == null) return ;
 
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice.xlt");
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice.xltx");
                 sxrc sxr = new sxrc(xltPath);
                 sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
                 sxr.dicDatas.Add(sxr._v + "PO_MAKER", drvar["MAKER"].ToString());
