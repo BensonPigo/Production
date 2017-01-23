@@ -2726,7 +2726,10 @@ when not matched by target then
 when not matched by source then 
 	delete;
 
-
+----update system.ProphetSingleSizeDeductÄæ¦ì
+update Production.dbo.System
+set ProphetSingleSizeDeduct =
+(select ProphetSingleSizeDeduct from Trade_To_Pms.dbo.Tradesystem s)
 
 	
 
