@@ -9,7 +9,7 @@ BEGIN
 		
 	--select SizeCode,Seq into #tmp_Col from dbo.GetSizeCodeColumnByID(@poid,1)
 	
-	SELECT distinct a.SizeCode,Seq into #tmp_Col FROM MNOrder_SizeCode a inner join Order_Qty b on a.Id = b.ID and (@fullsize = 1 or a.SizeCode = b.SizeCode)
+	SELECT distinct a.SizeCode,Seq into #tmp_Col FROM MNOrder_SizeCode a inner join MNOrder_Qty b on a.Id = b.ID and (@fullsize = 1 or a.SizeCode = b.SizeCode)
 	where a.Id = @POID
 
 	if exists(select 1 from #tmp_Col)

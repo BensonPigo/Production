@@ -35,9 +35,9 @@ FROM MNOrder a where ID = @ID
 
 
 --##S2PACKING
-SELECT Orders.Packing FROM DBO.Orders WHERE ID = @ID
+SELECT Packing FROM MNOrder WHERE ID = @ID
 --##S2LH
-SELECT Orders.Label FROM DBO.Orders WHERE ID = @ID
+SELECT Label FROM MNOrder WHERE ID = @ID
 
 
 
