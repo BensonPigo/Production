@@ -52,7 +52,21 @@ namespace Sci.Production.Basic
             bool hasEditauthority = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "B08. CD Code", "CanEdit");
             Sci.Production.Basic.B08_ProductionFabricType rm = new Sci.Production.Basic.B08_ProductionFabricType(hasEditauthority, selectDataTable.Rows[0]);
             rm.ShowDialog(this);
+            OnDetailEntered();
+        }
+
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+
+            //按鈕變色
+            string sql = string.Format(@"select ID from CDCode_Content where ID = '{0}' and 
+                        (TopProductionType<>'' or TopFabricType<>'' or BottomProductionType<>'' or BottomFabricType<>'' or
+                        InnerProductionType<>'' or InnerFabricType<>'' or OuterProductionType<>'' or OuterFabricType<>'')", CurrentMaintain["ID"].ToString());
+            button1.ForeColor = MyUtility.Check.Seek(sql) ? Color.Blue : Color.Black;
 
         }
+
+
     }
 }

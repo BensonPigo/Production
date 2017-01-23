@@ -178,6 +178,7 @@
             // B08
             // 
             this.ClientSize = new System.Drawing.Size(695, 457);
+            this.EnableGridJunkColor = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
