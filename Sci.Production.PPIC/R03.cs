@@ -294,13 +294,14 @@ isnull(dbo.getMinCompleteSewQty(t.ID,null,null),0) as TtlSewQty,
 isnull((select SUM(Qty) from CuttingOutput_WIP where OrderID = t.ID),0) as CutQty,
 isnull((select top 1 Remark from Order_PFHis where ID = t.ID and AddDate = (select Max(AddDate) from Order_PFHis where ID = t.ID)),'') as PFRemark,
 dbo.getMinSCIDelivery(t.POID,'') as EarliestSCIDlv,
-isnull((select Name from Reason where ReasonTypeID = 'Style_SpecialMark' and ID = t.KPIChangeReason),'') as KPIChangeReasonName,
+isnull((select Name from Reason where ReasonTypeID = 'Order_BuyerDelivery' and ID = t.KPIChangeReason),'') as KPIChangeReasonName,
 isnull((select Name from TPEPass1 where Id = t.SMR),'') as SMRName,
 isnull((select Name from TPEPass1 where Id = t.MRHandle),'') as MRHandleName,
 isnull((select Name from TPEPass1 where Id = p.POSMR),'') as POSMRName,
 isnull((select Name from TPEPass1 where Id = p.POHandle),'') as POHandleName,
 isnull((select Name from Pass1 where Id = t.MCHandle),'') as MCHandleName,
 isnull((select Name from Reason where ReasonTypeID = 'Order_reMakeSample' and ID = t.SampleReason),'') as SampleReasonName,
+isnull((select Name from Reason where ReasonTypeID = 'Style_SpecialMark' and ID = t.SpecialMark),'') as SpecialMarkName,
 isnull([dbo].getMTLExport(t.POID,t.MTLExport),'') as MTLExportTimes,
 dbo.GetStyleGMTLT(t.BrandID,t.StyleID,t.SeasonID,t.FactoryID) as GMTLT,
 dbo.GetSimilarStyleList(t.StyleUkey) as SimilarStyle,
@@ -716,7 +717,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
             }
 
             excel.Cells.EntireColumn.AutoFit();
-            excel.Cells.EntireRow.AutoFit();
+           // excel.Cells.EntireRow.AutoFit();
 
             excel.Visible = true;
             return true;
