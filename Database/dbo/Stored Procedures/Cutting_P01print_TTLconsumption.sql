@@ -1,5 +1,5 @@
 ﻿
-Create PROCEDURE [dbo].[Cutting_P01print_TTLconsumption]
+CREATE PROCEDURE [dbo].[Cutting_P01print_TTLconsumption]
 	@OrderID VARCHAR(13)
 AS
 BEGIN
@@ -11,8 +11,8 @@ BEGIN
 	FROM dbo.Orders a
 	inner join dbo.Style b on a.StyleID = b.Id and a.BrandID = b.BrandID and a.SeasonID = b.SeasonID
 	inner join dbo.LossRateFabric c on b.FabricType = c.WeaveTypeID
-	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Trade.dbo.Orders WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno ) d
-	OUTER APPLY(SELECT STUFF((SELECT '/'+rtrim(MarkerDownloadID) FROM Trade.dbo.Order_EachCons WHERE Id = @OrderID and MarkerDownloadID <> '' group by MarkerDownloadID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as MarkerDownloadID ) e
+	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Production.dbo.Orders WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno ) d
+	OUTER APPLY(SELECT STUFF((SELECT '/'+rtrim(MarkerDownloadID) FROM Production.dbo.Order_EachCons WHERE Id = @OrderID and MarkerDownloadID <> '' group by MarkerDownloadID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as MarkerDownloadID ) e
 	WHERE POID = @OrderID
 	GROUP BY CuttingSP,POID,d.spno,StyleID,a.SeasonID,FactoryID,b.FabricType,c.TWLimitUp,e.MarkerDownloadID
 
@@ -24,7 +24,7 @@ BEGIN
 	,Weight=cast(cast(Round(Fabric.[Weight],1,1) as decimal(10,1)) as nvarchar) + 'g'
 	,Fabric.UsageUnit
 	,Fabric_Supp.POUnit
-	,TradeSystem.ProphetSingleSizeDeduct
+	,System.ProphetSingleSizeDeduct
 	,Program.MiAdidas
 	,Unit.UnitRound ,Unit.RoundStep ,Unit.UsageRound	
 	,lf.RealLoss,lf.PlusName
@@ -35,7 +35,7 @@ BEGIN
 	inner join Order_BOF on Order_EachCons.Id = ORDER_BOF.Id and Order_EachCons.FabricCode = ORDER_BOF.FabricCode
 	inner join Fabric on ORDER_BOF.SCIRefno = Fabric.SCIRefno
 	inner join Fabric_Supp on ORDER_BOF.SCIRefno = Fabric_Supp.SCIRefno and ORDER_BOF.SuppID = Fabric_Supp.SuppID
-	inner join Trade.dbo.TradeSystem on 1 = 1--from Trade
+	inner join Production.dbo.System on 1 = 1--from Trade
 	inner join Orders on Orders.ID = Order_EachCons.Id
 	inner join Program on Orders.BrandID = Program.BrandID and Orders.ProgramID = Program.ID
 	outer apply (select * from dbo.GetUnitRound(Orders.BrandID, Orders.ProgramID, Orders.Category, Fabric.UsageUnit)) Unit
