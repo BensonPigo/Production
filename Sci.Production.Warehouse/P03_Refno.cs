@@ -180,7 +180,7 @@ order by ColorID, SizeSpec ,SewinLine
             //    // Open document
             //    DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             //    //DualResult result = MyUtility.Excel.CopyToXls(dt, dlg.FileName);
-            //    //if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName,"P03_Refno.xltx",4); }   //XlsAutoFit(dlg.FileName, "MMDR030.xlt", 12);
+            //    //if (result) { MyUtility.Excel.XlsAutoFit(dlg.FileName,"P03_Refno.xltx",4); }   //XlsAutoFit(dlg.FileName, "MMDR030.xltx", 12);
             //    //else { MyUtility.Msg.WarningBox(result.ToMessages().ToString(), "Warning"); }
             //}
             //else
