@@ -77,12 +77,13 @@ Left join ThreadComb b on b.id = a.threadcombid
 Left join Reason c on c.reasontypeid = 'ThreadLocation' and c.id = a.threadlocationid
 where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
-        } 
+        }
 
+        celllocalitem refno = (celllocalitem)celllocalitem.GetGridCell("Thread", null, ",,,description");
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            DataGridViewGeneratorTextColumnSettings refno = celllocalitem.GetGridCell("Thread");
+            
             DataGridViewGeneratorTextColumnSettings thcolor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings cons = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings NewCone = new DataGridViewGeneratorNumericColumnSettings();
@@ -145,7 +146,8 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 {
                     CurrentDetailData["ThreadColorid"] = "";
                     CurrentDetailData["Colordesc"] = "";
-                    
+                    MyUtility.Msg.WarningBox(string.Format("< Thread Color : {0} > not found!!!", e.FormattedValue.ToString()));
+                    return;                   
                 }
                 string sql = string.Format("Select newCone,usedCone from ThreadStock where refno ='{0}' and threadcolorid = '{1}' and mDivisionid ='{2}' ", CurrentDetailData["Refno"].ToString(), newvalue,keyWord);
                 if (MyUtility.Check.Seek(sql, out refdr))
@@ -161,6 +163,25 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                // ReQty(CurrentDetailData);
                 CurrentDetailData.EndEdit();
                 this.update_detailgrid_CellValidated(e.RowIndex);
+            };
+            thcolor.EditingMouseDown = (s, e) =>
+            {
+                if (EditMode)
+                {
+                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    {
+                        if (e.RowIndex != -1)
+                        {
+                            if (CurrentDetailData["autoCreate"].ToString() == "True") return;
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ThreadColor where junk = 0 order by ID", "10,40", CurrentDetailData["ThreadColorid"].ToString().Trim());
+                            DialogResult returnResult = item.ShowDialog();
+                            if (returnResult == DialogResult.Cancel) { return; }                           
+                            var sellist = item.GetSelecteds();
+                            CurrentDetailData["Colordesc"] = sellist[0][1];
+                            e.EditingControl.Text = item.GetSelectedString();
+                        }
+                    }
+                }
             };
             #endregion
             #region cons Cell
@@ -243,7 +264,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             Helper.Controls.Grid.Generator(this.detailgrid)
            .Text("Refno", header: "Thread Refno", width: Widths.Auto(false),settings:refno).Get(out col_refno)
            .Text("description", header: "Thread Desc", width: Widths.Auto(false), iseditingreadonly: true)
-           .CellThreadColor("ThreadColorid", header: "Thread Color", width: Widths.Auto(false), settings: thcolor).Get(out col_color)
+           .Text("ThreadColorid", header: "Thread Color", width: Widths.Auto(false), settings: thcolor).Get(out col_color)
            .Text("Colordesc", header: "Thread Color Desc", width: Widths.Auto(false), iseditingreadonly: true)
            .Numeric("ConsumptionQty", header: "Total Cons.(M)", width: Widths.Auto(false), integer_places: 6, settings: cons).Get(out col_cons)
            .Numeric("MeterToCone", header: "No. of Meters Per Cons", width: Widths.Auto(false), integer_places: 7, decimal_places: 1, iseditingreadonly: true)
@@ -260,14 +281,38 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             this.detailgrid.Columns["AllowanceQty"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["NewCone"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["UsedCone"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
             change_record();
 
             this.detailgrid.CellValidated += detailgrid_CellValidated;
+            this.detailgrid.RowEnter+=detailgrid_RowEnter;
+
         }
         DataGridViewColumn col_Allowance;
         DataGridViewColumn col_NewCone;
         DataGridViewColumn col_UsedCone;
+        private void detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || EditMode == false) { return; }
+            var data = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
+            if (data == null) { return; }
+
+            if (data["autoCreate"].ToString() == "True")
+            {
+                this.col_refno.IsEditingReadOnly = true;
+                this.col_color.IsEditingReadOnly = true;
+                this.col_cons.IsEditingReadOnly = true;
+                this.refno.SupportPopup = false;
+            }
+            else
+            {
+                this.col_refno.IsEditingReadOnly = false;
+                this.col_color.IsEditingReadOnly = false;
+                this.col_cons.IsEditingReadOnly = false;
+                this.refno.SupportPopup = true;
+            }
+        }
         void detailgrid_CellValidated(object sender, DataGridViewCellEventArgs e)
         {
             if (!this.EditMode 
@@ -344,6 +389,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
+            if (textBox1.OldValue == textBox1.Text) return;
             string id = textBox1.Text;
             DataRow drOrder;
             DataTable pretb_cons, TR_DUK;
@@ -619,7 +665,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             CurrentDetailData["AutoCreate"] = 0;
         }
         protected override void OnDetailGridRowChanged()
-        {
+        {         
             base.OnDetailGridRowChanged();
         }
         protected override void ClickConfirm()
@@ -694,14 +740,14 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
         #region 是否可編輯與變色
         private void change_record()
         {
-                col_color.EditingControlShowing += (s, e) =>
-                {
-                    if (e.RowIndex == -1) return;
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    if (dr["autoCreate"].ToString() == "True") e.Control.Enabled = false;
-                    else e.Control.Enabled = true;
+            //col_color.EditingControlShowing += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1) return;
+            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+            //    if (dr["autoCreate"].ToString() == "True") e.Control.Enabled = false;
+            //    else e.Control.Enabled = true;
 
-                };
+            //};
                 col_color.CellFormatting += (s, e) =>
                 {
                     if (e.RowIndex == -1) return;
@@ -717,14 +763,14 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                         e.CellStyle.ForeColor = Color.Red;
                     }
                 };
-                col_cons.EditingControlShowing += (s, e) =>
-                {
-                    if (CurrentDetailData == null) return;
-                    if (e.RowIndex == -1) return;
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    if (dr["autoCreate"].ToString() == "True") e.Control.Enabled = false;
-                    else e.Control.Enabled = true;
-                };
+                //col_cons.EditingControlShowing += (s, e) =>
+                //{
+                //    if (CurrentDetailData == null) return;
+                //    if (e.RowIndex == -1) return;
+                //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                //    if (dr["autoCreate"].ToString() == "True") e.Control.Enabled = false;
+                //    else e.Control.Enabled = true;
+                //};
                 col_cons.CellFormatting += (s, e) =>
                 {
                     if (e.RowIndex == -1) return;
@@ -741,13 +787,13 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                         e.CellStyle.ForeColor = Color.Red;
                     }
                 };                
-                col_refno.EditingControlShowing += (s, e) =>
-                {
-                    if (e.RowIndex == -1) return;
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    if (dr["autoCreate"].ToString() == "True") e.Control.Enabled = false;
-                    else e.Control.Enabled = true;
-                };
+                //col_refno.EditingControlShowing += (s, e) =>
+                //{
+                //    if (e.RowIndex == -1) return;
+                //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                //    if (dr["autoCreate"].ToString() == "True") e.Control.Enabled = false;
+                //    else e.Control.Enabled = true;
+                //};
                 col_refno.CellFormatting += (s, e) =>
                 {
                     if (e.RowIndex == -1) return;

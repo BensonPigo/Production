@@ -168,6 +168,8 @@ namespace Sci.Production.Class
     }
     public class celllocalitem : DataGridViewGeneratorTextColumnSettings
     {
+        public bool SupportPopup = true;
+
         public static DataGridViewGeneratorTextColumnSettings GetGridCell(string category, string localSupp = null, string setColumnname = null)
         {
             //pur 為ture 表示需判斷PurchaseFrom
@@ -200,6 +202,7 @@ namespace Sci.Production.Class
                 // 右鍵彈出功能
                 if (e.Button == MouseButtons.Right)
                 {
+                    if (!ts.SupportPopup) { return; }
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
                     // Parent form 若是非編輯狀態就 return 
                     if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
