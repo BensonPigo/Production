@@ -249,7 +249,7 @@ namespace Sci.Production.Planning
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(6))
                 .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
                 .Numeric("balance", header: "Balance M", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
-                .Numeric("Totaltms", header: "Total Tms", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true); ;
+                .Numeric("Totaltms", header: "Total Tms", width: Widths.AnsiChars(9), integer_places: 8, iseditingreadonly: true); ;
             
         }
         void grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)

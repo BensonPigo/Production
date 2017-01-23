@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P04));
             this.button2 = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
@@ -52,7 +51,7 @@
             this.pictureBox2 = new Sci.Win.UI.PictureBox();
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
             this.label5 = new Sci.Win.UI.Label();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
@@ -112,7 +111,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(847, 105);
+            this.button1.Location = new System.Drawing.Point(799, 105);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
             this.button1.TabIndex = 11;
@@ -142,7 +141,7 @@
             // 
             this.dateRange1.Location = new System.Drawing.Point(648, 44);
             this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
+            this.dateRange1.Size = new System.Drawing.Size(234, 23);
             this.dateRange1.TabIndex = 9;
             // 
             // label1
@@ -158,7 +157,7 @@
             // 
             this.dateRange2.Location = new System.Drawing.Point(648, 15);
             this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
+            this.dateRange2.Size = new System.Drawing.Size(234, 23);
             this.dateRange2.TabIndex = 8;
             // 
             // label3
@@ -188,7 +187,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(0, 616);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1232, 45);
+            this.panel3.Size = new System.Drawing.Size(1244, 45);
             this.panel3.TabIndex = 0;
             // 
             // numericBox4
@@ -252,7 +251,7 @@
             // button7
             // 
             this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button7.Location = new System.Drawing.Point(957, 8);
+            this.button7.Location = new System.Drawing.Point(969, 8);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(96, 30);
             this.button7.TabIndex = 4;
@@ -284,7 +283,7 @@
             // button4
             // 
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(1141, 8);
+            this.button4.Location = new System.Drawing.Point(1153, 8);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(80, 30);
             this.button4.TabIndex = 6;
@@ -295,7 +294,7 @@
             // button3
             // 
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(1057, 8);
+            this.button3.Location = new System.Drawing.Point(1069, 8);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(80, 30);
             this.button3.TabIndex = 5;
@@ -355,7 +354,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.grid1);
             this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainer1.Size = new System.Drawing.Size(1232, 616);
+            this.splitContainer1.Size = new System.Drawing.Size(1244, 616);
             this.splitContainer1.SplitterDistance = 235;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -387,7 +386,7 @@
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Location = new System.Drawing.Point(9, 10);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(941, 159);
+            this.groupBox2.Size = new System.Drawing.Size(896, 159);
             this.groupBox2.TabIndex = 33;
             this.groupBox2.TabStop = false;
             // 
@@ -512,7 +511,7 @@
             // 
             this.dateRange3.Location = new System.Drawing.Point(648, 73);
             this.dateRange3.Name = "dateRange3";
-            this.dateRange3.Size = new System.Drawing.Size(280, 23);
+            this.dateRange3.Size = new System.Drawing.Size(234, 23);
             this.dateRange3.TabIndex = 10;
             // 
             // label6
@@ -625,13 +624,13 @@
             this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(956, 12);
+            this.grid2.Location = new System.Drawing.Point(911, 12);
             this.grid2.Name = "grid2";
             this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(267, 159);
+            this.grid2.Size = new System.Drawing.Size(324, 159);
             this.grid2.TabIndex = 17;
             this.grid2.TabStop = false;
             // 
@@ -746,13 +745,13 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1226, 368);
+            this.grid1.Size = new System.Drawing.Size(1238, 368);
             this.grid1.TabIndex = 34;
             this.grid1.TabStop = false;
             // 
             // P04
             // 
-            this.ClientSize = new System.Drawing.Size(1232, 661);
+            this.ClientSize = new System.Drawing.Size(1244, 661);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel3);
             this.Name = "P04";
