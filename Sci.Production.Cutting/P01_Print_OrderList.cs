@@ -107,9 +107,9 @@ namespace Sci.Production.Cutting
                 System.Data.DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01print_TTLconsumption", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
 
-                if (!res) return false;
-                if (dts.Length < 2) return false;
-                if (dts[0].Rows.Count == 0) return false;
+                if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
+                if (dts.Length < 2 || dts[1].Rows.Count <= 0) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
+
                 DataRow dr = dts[0].Rows[0];
                 extra_P01_Report_TTLconsumptionPOCombo(dts[1], Convert.ToInt32(dr["QTY"]));
 
@@ -118,7 +118,7 @@ namespace Sci.Production.Cutting
                 sxr.dicDatas.Add(sxr._v + "ORDERNO", dr["ORDERNO"]);
                 sxr.dicDatas.Add(sxr._v + "STYLENO", dr["STYLENO"]);
 
-                sxr.dicDatas.Add(sxr._v + "QTY", dr["QTY"]);
+                sxr.dicDatas.Add(sxr._v + "QTY", MyUtility.Convert.GetString(dr["QTY"]));
                 sxr.dicDatas.Add(sxr._v + "FTY", dr["FACTORY"]);
 
                 sxr.dicDatas.Add(sxr._v + "FABTYPE", dr["FABTYPE"]);
