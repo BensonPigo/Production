@@ -13,10 +13,16 @@ BEGIN
 	SET NOCOUNT ON;
 
    --刪除不存在Sewing Schedule的資料
+	select distinct s.APSNo,s.FactoryID
+	into #checker
+	from SewingSchedule s
+
+	create index chkExists on #checker(APSNo,FactoryID)
+
 	delete from ChgOver 
 	where not exists (select 1 
-					  from SewingSchedule s, Factory f 
-					  where s.APSNo = ChgOver.APSNo and s.FactoryID = f.ID and f.IsSampleRoom = 0);
+						from #checker s, Factory f 
+						where s.APSNo = ChgOver.APSNo and s.FactoryID = f.ID and f.IsSampleRoom = 0);
 
 	--更新現有資料
 	update ChgOver set Inline = s.Inline,AlloQty = s.AlloQty,StandardOutput = s.StandardOutput,TotalSewingTime = s.TotalSewingTime
