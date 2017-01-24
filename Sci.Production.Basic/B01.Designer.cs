@@ -54,9 +54,9 @@
             this.textBox10 = new Sci.Win.UI.TextBox();
             this.button1 = new Sci.Win.UI.Button();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
             this.label1 = new Sci.Win.UI.Label();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.txtuser1 = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -73,7 +73,6 @@
             // 
             this.detailcont.Controls.Add(this.displayBox1);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.button1);
             this.detailcont.Controls.Add(this.textBox10);
@@ -100,6 +99,7 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Size = new System.Drawing.Size(680, 357);
             // 
             // detailbtm
@@ -373,16 +373,6 @@
             this.checkBox1.Text = "Use SBTS";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
-            // txtuser1
-            // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Manager", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(124, 196);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 7;
-            this.txtuser1.TextBox1Binding = "";
-            // 
             // label1
             // 
             this.label1.Lines = 0;
@@ -402,9 +392,21 @@
             this.displayBox1.Size = new System.Drawing.Size(41, 23);
             this.displayBox1.TabIndex = 28;
             // 
+            // txtuser1
+            // 
+            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Manager", true));
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(124, 196);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(300, 23);
+            this.txtuser1.TabIndex = 7;
+            this.txtuser1.TextBox1Binding = "";
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(688, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox10";
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B01";
