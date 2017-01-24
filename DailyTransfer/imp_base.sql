@@ -54,6 +54,7 @@ SET
       ,a. AddDate	      = b. AddDate
       ,a. EditName	      = b. EditName
       ,a. EditDate	      = b. EditDate
+	  ,a. LossSampleAccessory = b.LossSampleAccessory
 from Production.dbo.Brand as a inner join Trade_To_Pms.dbo.Brand as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.Brand
@@ -92,6 +93,7 @@ INSERT INTO Production.dbo.Brand
       ,AddDate
       ,EditName
       ,EditDate
+	  ,LossSampleAccessory
 )
 SELECT ID
       ,NameCH
@@ -127,6 +129,7 @@ SELECT ID
       ,AddDate
       ,EditName
       ,EditDate
+	  ,LossSampleAccessory
 from Trade_To_Pms.dbo.Brand as b
 where not exists(select id from Production.dbo.Brand as a where a.id = b.id)
 
