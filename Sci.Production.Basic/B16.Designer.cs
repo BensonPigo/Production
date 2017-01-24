@@ -116,6 +116,7 @@
             this.IsSupportEdit = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
+            this.EnableGridJunkColor = true;
             this.Name = "B16";
             this.Text = "B16. Shipping Mode";
             this.UniqueExpress = "Id";
