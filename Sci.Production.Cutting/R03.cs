@@ -61,7 +61,7 @@ namespace Sci.Production.Cutting
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
-select
+select DISTINCT
 	[M] = wo.MDivisionID,
 	[Factory] = o.FtyGroup,
 	[Est.Cutting Date]= wo.EstCutDate,
