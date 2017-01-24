@@ -184,7 +184,7 @@ namespace Sci.Production.Thread
             {
                 op.Append(string.Format(@"
                         outer apply (
-	                        select t.ThreadColorid as {0}
+	                        select t.ThreadColorid as '{0}'
 	                        from ThreadColorComb_Detail t
 	                        where Machinetypeid=MT.ID
                             and SEQ = MT.SEQ
