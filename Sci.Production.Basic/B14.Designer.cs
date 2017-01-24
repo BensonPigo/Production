@@ -462,6 +462,7 @@
             this.ClientSize = new System.Drawing.Size(702, 517);
             this.DefaultControlForEdit = "comboBox1";
             this.DefaultOrder = "Seq";
+            this.EnableGridJunkColor = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
