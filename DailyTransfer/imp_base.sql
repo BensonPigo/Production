@@ -1451,6 +1451,35 @@ MtltypeId
 from Trade_To_Pms.dbo.LossRateAccessory as b
 where not exists(select MtltypeId from Production.dbo.LossRateAccessory as a where a.MtltypeId = b.MtltypeId)
 
+----------------------刪除主TABLE多的資料
+Delete Production.dbo.LossRateAccessory_Limit
+from Production.dbo.LossRateAccessory_Limit as a left join Trade_To_Pms.dbo.LossRateAccessory_Limit as b
+on a.MtltypeId = b.MtltypeId and a.UsageUnit = b.UsageUnit
+where b.MtltypeId is null
+
+-------------------------- INSERT INTO 不INSERT waste的欄位
+INSERT INTO Production.dbo.LossRateAccessory_Limit(
+	MtltypeId
+      ,UsageUnit
+	  ,LimitUp
+	  ,AddName
+	  ,AddDate
+	  ,EditName
+	  ,EditDate
+)
+select 
+	MtltypeId
+      ,UsageUnit
+	  ,LimitUp
+	  ,AddName
+	  ,AddDate
+	  ,EditName
+	  ,EditDate
+
+from Trade_To_Pms.dbo.LossRateAccessory_Limit as b
+where not exists(select MtltypeId from Production.dbo.LossRateAccessory_Limit as a
+				 where a.MtltypeId = b.MtltypeId and a.UsageUnit = b.UsageUnit)
+
 
 -------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a--特別處理waste的欄位
