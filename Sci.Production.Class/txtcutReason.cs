@@ -78,7 +78,7 @@ namespace Sci.Production.Class
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                (string.Format("Select Id, Description from CutReason where type='{0}' order by id", Type), "10,100", this.textBox1.Text);
+                (string.Format("Select Id, Description from CutReason where type='{0}' order by id", Type), "10,40", this.textBox1.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
@@ -99,7 +99,7 @@ namespace Sci.Production.Class
                     // Parent form 若是非編輯狀態就 return 
                     if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                    SelectItem sele = new SelectItem(string.Format("Select ID,description From CutReason Where Junk=0 and type = '{0}'", ctype), "10,50", row["cutreasonid"].ToString(), false, ",");
+                    SelectItem sele = new SelectItem(string.Format("Select ID,description From CutReason Where Junk=0 and type = '{0}'", ctype), "10,40", row["cutreasonid"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();

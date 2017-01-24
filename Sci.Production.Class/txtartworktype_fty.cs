@@ -54,7 +54,7 @@ namespace Sci.Production.Class
            };
            sqlCmd = "select ID, Abbreviation from ArtworkType " + sqlWhere + " order by Seq";
            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,4", this.Text, false, ",");
-           item.Size = new System.Drawing.Size(415, 510);
+           item.Size = new System.Drawing.Size(435, 510);
            DialogResult result = item.ShowDialog();
            if (result == DialogResult.Cancel) { return; }
            this.Text = item.GetSelectedString();
