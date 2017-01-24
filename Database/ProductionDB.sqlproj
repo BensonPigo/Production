@@ -2093,6 +2093,10 @@
     <Build Include="dbo\Stored Procedures\PPIC_Report03.sql" />
     <Build Include="dbo\Tables\LossRateAccessory_Limit.sql" />
     <Build Include="dbo\Stored Procedures\PoApproveLock.sql" />
+    <Build Include="dbo\Stored Procedures\ChangeOver.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

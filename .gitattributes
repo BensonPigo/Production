@@ -99,6 +99,7 @@ Database/dbo/Functions/getUsdPrice.sql -text
 Database/dbo/Functions/getVNUnitTransfer.sql -text
 Database/dbo/Stored[!!-~]Procedures/BoaExpend.sql -text
 Database/dbo/Stored[!!-~]Procedures/BoaExpend_Insert.sql -text
+Database/dbo/Stored[!!-~]Procedures/ChangeOver.sql -text
 Database/dbo/Stored[!!-~]Procedures/Create_CDC.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_Color_P01_OrderQtyDown_POCombo.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_Color_P01_OrderQtyDown_POCombo_1.sql -text
