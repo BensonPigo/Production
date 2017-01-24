@@ -182,7 +182,8 @@ namespace Sci.Production.Cutting
                 System.Data.DataTable[] dts;
                 res = DBProxy.Current.SelectSP("", "Cutting_Color_P01_OrderQtyDown_POCombo", new List<SqlParameter> { new SqlParameter("@OrderID", _id), new SqlParameter("@ByType", "2") }, out dts);
 
-                if (!res) return false;
+                if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
+                if (dts.Length < 3 || (dts[0].Rows.Count <= 0 && dts[1].Rows.Count <= 0 && dts[2].Rows.Count <= 0)) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
 
                 sxrc.xltRptTable tbl1 = new sxrc.xltRptTable(dts[0], 1, 2, true);
                 sxrc.xltRptTable tbl2 = new sxrc.xltRptTable(dts[1], 1, 3);
@@ -206,8 +207,8 @@ namespace Sci.Production.Cutting
                 System.Data.DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01print_Eachcons_vs_OrderQtyDown_POCombo", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
 
-                if (!res) return false;
-                if (dts.Length < 2) return false;
+                if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
+                if (dts.Length < 2 || dts[1].Rows.Count <= 0) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
 
                 DataRow dr = dts[0].Rows[0];
                 extra_P01_EachconsVSOrderQTYBDownPOCombo(dts[1]);
@@ -251,8 +252,8 @@ namespace Sci.Production.Cutting
                 System.Data.DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP("", "cutting_P01_MarkerList", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
 
-                if (!res) return false;
-                if (dts.Length < 2) return false;
+                if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
+                if (dts.Length < 2) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
 
                 DataRow dr = dts[0].Rows[0];
 
@@ -272,7 +273,7 @@ namespace Sci.Production.Cutting
                     sxr.dicDatas.Add(sxr._v + "REPORTNAME" + idxStr, dr["REPORTNAME"]);
                     sxr.dicDatas.Add(sxr._v + "ORDERNO" + idxStr, dr["ORDERNO"]);
                     sxr.dicDatas.Add(sxr._v + "STYLENO" + idxStr, dr["STYLENO"]);
-                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, dr["QTY"]);
+                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, MyUtility.Convert.GetString(dr["QTY"]));
                     sxr.dicDatas.Add(sxr._v + "FACTORY" + idxStr, dr["FACTORY"]);
                     sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[sgIdx]);
 
@@ -295,6 +296,9 @@ namespace Sci.Production.Cutting
                     //sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
                     sxr.dicDatas.Add(sxr._v + "SizeGroup" + idxStr, SizeGroup);
 
+                    sxrc.ReplaceAction a = exMethod;
+                    sxr.dicDatas.Add(sxr._v + "exAction" + idxStr, a);
+
                 }
                 sxr.VarToSheetName = sxr._v + "SizeGroup";
 
@@ -305,11 +309,12 @@ namespace Sci.Production.Cutting
             }
             if (rdCheck6.Checked)
             {
+                #region rdCheck6
                 System.Data.DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
 
-                if (!res) return false;
-                if (dts.Length < 2) return false;
+                if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
+                if (dts.Length < 2 || dts[1].Rows.Count <= 0) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
 
                 DataRow dr = dts[0].Rows[0];
                 extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(dts[1]);
@@ -318,7 +323,7 @@ namespace Sci.Production.Cutting
                 sxrc sxr = new sxrc(xltPath);
                 sxr.dicDatas.Add(sxr._v + "ORDERNO", dr["ORDERNO"]);
                 sxr.dicDatas.Add(sxr._v + "STYLENO", dr["STYLENO"]);
-                sxr.dicDatas.Add(sxr._v + "QTY", dr["QTY"]);
+                sxr.dicDatas.Add(sxr._v + "QTY", MyUtility.Convert.GetString(dr["QTY"]));
                 sxr.dicDatas.Add(sxr._v + "FTY", dr["FACTORY"]);
                 sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[1]);
                 dt.ShowHeader = false;
@@ -353,6 +358,7 @@ namespace Sci.Production.Cutting
                 sxr.boOpenFile = true;
                 sxr.Save();
                 //SaveExcel(sxr, xltPath);
+                #endregion
             }
             return true;
         }
