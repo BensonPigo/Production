@@ -33,8 +33,11 @@
     [AddDate]                   DATETIME       NULL,
     [EditName]                  VARCHAR (10)   CONSTRAINT [DF_Brand_EditName] DEFAULT ('') NULL,
     [EditDate]                  DATETIME       NULL,
+    [LossSampleAccessory]       NUMERIC (3, 1) NULL,
     CONSTRAINT [PK_Brand] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

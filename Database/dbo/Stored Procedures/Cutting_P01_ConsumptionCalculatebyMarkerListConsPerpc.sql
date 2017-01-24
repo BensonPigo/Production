@@ -5,12 +5,10 @@ AS
 BEGIN
 
 	--抓取ID為POID
-	select @OrderID=POID FROM dbo.Orders where ID = @OrderID
-	
 	SELECT
 	ORDERNO=RTRIM(POID) + d.spno ,STYLENO=StyleID+'-'+SeasonID ,QTY=SUM(Qty) ,FACTORY=FactoryID	
 	FROM dbo.Orders
-	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM production.dbo.Orders WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) d
+	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Trade.dbo.Orders WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) d
 	WHERE POID = @OrderID
 	GROUP BY POID,d.spno,StyleID,SeasonID,FactoryID
 	
