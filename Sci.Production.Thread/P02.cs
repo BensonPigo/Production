@@ -370,7 +370,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             {
                 if (MyUtility.Check.Empty(dr["PurchaseQty"]))
                 {
-                    MyUtility.Msg.WarningBox("<PurchaseQty> can not be 0");
+                    MyUtility.Msg.WarningBox("<PO Qty> can not be 0");
                     return false;
                 }
             }
