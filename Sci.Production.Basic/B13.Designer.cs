@@ -235,6 +235,7 @@
             this.ClientSize = new System.Drawing.Size(696, 457);
             this.DefaultControlForEdit = "txtdropdownlist2";
             this.DefaultOrder = "ID";
+            this.EnableGridJunkColor = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
