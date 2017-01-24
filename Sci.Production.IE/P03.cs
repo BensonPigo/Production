@@ -133,7 +133,8 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = "select ID,Description from MachineType where Junk = 0";
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,40", dr["MachineTypeID"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,43", dr["MachineTypeID"].ToString());
+                            item.Width = 600;
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             e.EditingControl.Text = item.GetSelectedString();
@@ -194,6 +195,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                             GetEmployee(null);
 
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(EmployeeData, "ID,Name,Skill,SewingLineID,FactoryID", "10,30,20,2,8", dr["EmployeeID"].ToString());
+                            item.Width = 490;
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             IList<DataRow> selectedData = item.GetSelecteds();
