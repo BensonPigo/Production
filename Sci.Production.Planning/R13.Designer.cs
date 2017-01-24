@@ -70,14 +70,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(340, 17);
+            this.print.TabIndex = 5;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(340, 53);
+            this.toexcel.TabIndex = 6;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(340, 89);
+            this.close.TabIndex = 7;
             // 
             // radioGroup1
             // 
@@ -95,7 +98,7 @@
             this.radioGroup1.Location = new System.Drawing.Point(12, 3);
             this.radioGroup1.Name = "radioGroup1";
             this.radioGroup1.Size = new System.Drawing.Size(314, 282);
-            this.radioGroup1.TabIndex = 94;
+            this.radioGroup1.TabIndex = 1;
             this.radioGroup1.TabStop = false;
             // 
             // lbRemark
@@ -209,7 +212,7 @@
             this.chkDetail.Location = new System.Drawing.Point(191, 72);
             this.chkDetail.Name = "chkDetail";
             this.chkDetail.Size = new System.Drawing.Size(123, 21);
-            this.chkDetail.TabIndex = 7;
+            this.chkDetail.TabIndex = 2;
             this.chkDetail.Text = "List Detail Data";
             this.chkDetail.UseVisualStyleBackColor = true;
             // 
@@ -221,7 +224,7 @@
             this.panelReportType.Location = new System.Drawing.Point(58, 70);
             this.panelReportType.Name = "panelReportType";
             this.panelReportType.Size = new System.Drawing.Size(124, 80);
-            this.panelReportType.TabIndex = 6;
+            this.panelReportType.TabIndex = 2;
             // 
             // rdMDP
             // 
@@ -230,7 +233,7 @@
             this.rdMDP.Location = new System.Drawing.Point(2, 53);
             this.rdMDP.Name = "rdMDP";
             this.rdMDP.Size = new System.Drawing.Size(103, 21);
-            this.rdMDP.TabIndex = 9;
+            this.rdMDP.TabIndex = 2;
             this.rdMDP.Text = "MDP Report";
             this.rdMDP.UseVisualStyleBackColor = true;
             // 
@@ -241,7 +244,7 @@
             this.rdFactory.Location = new System.Drawing.Point(1, 29);
             this.rdFactory.Name = "rdFactory";
             this.rdFactory.Size = new System.Drawing.Size(120, 21);
-            this.rdFactory.TabIndex = 8;
+            this.rdFactory.TabIndex = 1;
             this.rdFactory.Text = "Factory Report";
             this.rdFactory.UseVisualStyleBackColor = true;
             // 
@@ -253,7 +256,7 @@
             this.rdAGC.Location = new System.Drawing.Point(1, 5);
             this.rdAGC.Name = "rdAGC";
             this.rdAGC.Size = new System.Drawing.Size(102, 21);
-            this.rdAGC.TabIndex = 51;
+            this.rdAGC.TabIndex = 0;
             this.rdAGC.TabStop = true;
             this.rdAGC.Text = "AGC Report";
             this.rdAGC.UseVisualStyleBackColor = true;
@@ -273,7 +276,7 @@
             0});
             this.numMonth.Name = "numMonth";
             this.numMonth.Size = new System.Drawing.Size(59, 23);
-            this.numMonth.TabIndex = 195;
+            this.numMonth.TabIndex = 1;
             this.numMonth.Value = new decimal(new int[] {
             1,
             0,
@@ -295,7 +298,7 @@
             0});
             this.numYear.Name = "numYear";
             this.numYear.Size = new System.Drawing.Size(68, 23);
-            this.numYear.TabIndex = 4;
+            this.numYear.TabIndex = 0;
             this.numYear.Value = new decimal(new int[] {
             2015,
             0,
@@ -385,7 +388,7 @@
             this.btnEdit.Location = new System.Drawing.Point(431, 285);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(90, 41);
-            this.btnEdit.TabIndex = 97;
+            this.btnEdit.TabIndex = 2;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
             this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
@@ -395,7 +398,7 @@
             this.btnUndo.Location = new System.Drawing.Point(619, 285);
             this.btnUndo.Name = "btnUndo";
             this.btnUndo.Size = new System.Drawing.Size(79, 41);
-            this.btnUndo.TabIndex = 98;
+            this.btnUndo.TabIndex = 3;
             this.btnUndo.Text = "Undo";
             this.btnUndo.UseVisualStyleBackColor = true;
             this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
@@ -405,7 +408,7 @@
             this.btnSave.Location = new System.Drawing.Point(704, 285);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 41);
-            this.btnSave.TabIndex = 99;
+            this.btnSave.TabIndex = 4;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -421,6 +424,8 @@
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.radioGroup1);
+            this.DefaultControl = "numYear";
+            this.DefaultControlForEdit = "numYear";
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "R13";
             this.Text = "R13. Adidas KPI Report";

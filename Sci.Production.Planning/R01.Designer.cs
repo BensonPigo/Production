@@ -41,17 +41,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(430, 12);
-            this.print.TabIndex = 11;
+            this.print.TabIndex = 4;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(430, 48);
-            this.toexcel.TabIndex = 12;
+            this.toexcel.TabIndex = 5;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(430, 84);
-            this.close.TabIndex = 13;
+            this.close.TabIndex = 6;
             // 
             // label3
             // 
@@ -91,7 +91,7 @@
             this.txtfactory1.Location = new System.Drawing.Point(115, 83);
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 7;
+            this.txtfactory1.TabIndex = 2;
             // 
             // label4
             // 
@@ -109,7 +109,7 @@
             this.txtMdivision1.Location = new System.Drawing.Point(115, 49);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 133;
+            this.txtMdivision1.TabIndex = 1;
             // 
             // cbxCategory
             // 
@@ -125,7 +125,7 @@
             this.cbxCategory.Location = new System.Drawing.Point(115, 121);
             this.cbxCategory.Name = "cbxCategory";
             this.cbxCategory.Size = new System.Drawing.Size(121, 24);
-            this.cbxCategory.TabIndex = 135;
+            this.cbxCategory.TabIndex = 3;
             // 
             // label7
             // 
@@ -147,6 +147,8 @@
             this.Controls.Add(this.label14);
             this.Controls.Add(this.dateRange1);
             this.Controls.Add(this.label3);
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R01";
             this.Text = "R01. Sub-process Monthly Report";

@@ -41,17 +41,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(430, 12);
-            this.print.TabIndex = 5;
+            this.print.TabIndex = 4;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(430, 48);
-            this.toexcel.TabIndex = 6;
+            this.toexcel.TabIndex = 5;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(430, 84);
-            this.close.TabIndex = 7;
+            this.close.TabIndex = 6;
             // 
             // label3
             // 
@@ -120,7 +120,7 @@
             this.cbbArtworkType.Location = new System.Drawing.Point(115, 111);
             this.cbbArtworkType.Name = "cbbArtworkType";
             this.cbbArtworkType.Size = new System.Drawing.Size(121, 24);
-            this.cbbArtworkType.TabIndex = 135;
+            this.cbbArtworkType.TabIndex = 3;
             // 
             // label1
             // 
@@ -142,6 +142,8 @@
             this.Controls.Add(this.label14);
             this.Controls.Add(this.dateRange1);
             this.Controls.Add(this.label3);
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R18";
             this.Text = "R18. Heat Transfer Machine Forecast";

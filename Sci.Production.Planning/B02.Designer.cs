@@ -62,11 +62,15 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(900, 395);
+            this.browse.Size = new System.Drawing.Size(676, 395);
             // 
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(684, 424);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label3
             // 
@@ -119,7 +123,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 5;
+            this.numericBox1.TabIndex = 0;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -151,7 +155,7 @@
             0,
             0});
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 6;
+            this.numericBox2.TabIndex = 1;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -184,7 +188,7 @@
             0,
             0});
             this.numericBox3.Size = new System.Drawing.Size(100, 23);
-            this.numericBox3.TabIndex = 7;
+            this.numericBox3.TabIndex = 2;
             this.numericBox3.Value = new decimal(new int[] {
             0,
             0,
@@ -194,6 +198,8 @@
             // B02
             // 
             this.ClientSize = new System.Drawing.Size(684, 457);
+            this.DefaultControl = "numericBox1";
+            this.DefaultControlForEdit = "numericBox1";
             this.IsSupportClip = false;
             this.IsSupportLocate = false;
             this.IsSupportPrint = false;

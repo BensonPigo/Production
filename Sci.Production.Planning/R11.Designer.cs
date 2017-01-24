@@ -160,6 +160,8 @@
             // 
             // numericUpDown1
             // 
+            this.numericUpDown1.BackColor = System.Drawing.Color.White;
+            this.numericUpDown1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericUpDown1.Location = new System.Drawing.Point(142, 161);
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(53, 23);
@@ -184,6 +186,8 @@
             this.Controls.Add(this.label14);
             this.Controls.Add(this.dateRange1);
             this.Controls.Add(this.label3);
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R11";
             this.Text = "R11. Prod. Efficiency record by  Style";

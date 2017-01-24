@@ -35,13 +35,13 @@
             this.label7 = new Sci.Win.UI.Label();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
             this.numericBox2 = new Sci.Win.UI.NumericBox();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.radioButton2 = new Sci.Win.UI.RadioButton();
             this.radioButton1 = new Sci.Win.UI.RadioButton();
             this.label25 = new Sci.Win.UI.Label();
+            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -70,6 +70,7 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label6);
             this.detailcont.Size = new System.Drawing.Size(900, 357);
+            this.detailcont.TabIndex = 1;
             // 
             // detailbtm
             // 
@@ -82,6 +83,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(908, 424);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label3
             // 
@@ -134,7 +139,7 @@
             this.dateBox1.Location = new System.Drawing.Point(126, 16);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 1;
+            this.dateBox1.TabIndex = 0;
             this.dateBox1.Validated += new System.EventHandler(this.dateBox1_Validated);
             // 
             // comboBox1
@@ -147,19 +152,8 @@
             this.comboBox1.Location = new System.Drawing.Point(126, 48);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(159, 24);
-            this.comboBox1.TabIndex = 2;
+            this.comboBox1.TabIndex = 1;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
-            // 
-            // txtsubcon1
-            // 
-            this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ftysupp", true));
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(126, 80);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
-            this.txtsubcon1.TabIndex = 3;
-            this.txtsubcon1.TextBox1Binding = "";
             // 
             // numericBox1
             // 
@@ -185,7 +179,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 4;
+            this.numericBox1.TabIndex = 3;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -216,7 +210,7 @@
             0,
             0});
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 8;
+            this.numericBox2.TabIndex = 4;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -241,7 +235,7 @@
             this.radioButton2.Location = new System.Drawing.Point(77, 3);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(84, 21);
-            this.radioButton2.TabIndex = 7;
+            this.radioButton2.TabIndex = 1;
             this.radioButton2.TabStop = true;
             this.radioButton2.Text = "by month";
             this.radioButton2.UseVisualStyleBackColor = true;
@@ -255,7 +249,7 @@
             this.radioButton1.Location = new System.Drawing.Point(3, 2);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(68, 21);
-            this.radioButton1.TabIndex = 6;
+            this.radioButton1.TabIndex = 0;
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "by day";
             this.radioButton1.UseVisualStyleBackColor = true;
@@ -268,13 +262,24 @@
             this.label25.Location = new System.Drawing.Point(313, 49);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(326, 23);
-            this.label25.TabIndex = 43;
+            this.label25.TabIndex = 5;
             this.label25.TextStyle.Color = System.Drawing.Color.Blue;
+            // 
+            // txtsubcon1
+            // 
+            this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ftysupp", true));
+            this.txtsubcon1.DisplayBox1Binding = "";
+            this.txtsubcon1.IsIncludeJunk = false;
+            this.txtsubcon1.Location = new System.Drawing.Point(126, 80);
+            this.txtsubcon1.Name = "txtsubcon1";
+            this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
+            this.txtsubcon1.TabIndex = 2;
+            this.txtsubcon1.TextBox1Binding = "";
             // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(908, 457);
-            this.DefaultControl = "datebox1";
+            this.DefaultControl = "dateBox1";
             this.DefaultControlForEdit = "datebox1";
             this.DefaultOrder = "ISSUEDATE,ARTWORKTYPEID,FTYSUPP";
             this.IsSupportPrint = false;

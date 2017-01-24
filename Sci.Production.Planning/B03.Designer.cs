@@ -93,11 +93,11 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(892, 532);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 486);
             // 
             // detailpanel2
             // 
@@ -123,6 +123,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(900, 561);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // grid1
             // 
@@ -158,7 +162,7 @@
             this.displayBox1.Location = new System.Drawing.Point(94, 10);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(100, 23);
-            this.displayBox1.TabIndex = 2;
+            this.displayBox1.TabIndex = 0;
             // 
             // label1
             // 
@@ -186,7 +190,7 @@
             this.displayBox2.Location = new System.Drawing.Point(312, 10);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(135, 23);
-            this.displayBox2.TabIndex = 4;
+            this.displayBox2.TabIndex = 2;
             // 
             // label3
             // 
@@ -205,7 +209,7 @@
             this.displayBox3.Location = new System.Drawing.Point(567, 10);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(100, 23);
-            this.displayBox3.TabIndex = 6;
+            this.displayBox3.TabIndex = 3;
             // 
             // label4
             // 
@@ -224,7 +228,7 @@
             this.displayBox4.Location = new System.Drawing.Point(94, 39);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(353, 23);
-            this.displayBox4.TabIndex = 8;
+            this.displayBox4.TabIndex = 1;
             // 
             // B03
             // 

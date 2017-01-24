@@ -144,6 +144,8 @@
             this.Controls.Add(this.txtfactory1);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.sewingDateRange);
+            this.DefaultControl = "sciDeliveryRange";
+            this.DefaultControlForEdit = "sciDeliveryRange";
             this.IsSupportToPrint = false;
             this.Name = "R16";
             this.Text = "R16. Critical Activity Report";

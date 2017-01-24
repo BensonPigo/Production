@@ -45,14 +45,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(422, 12);
+            this.print.TabIndex = 6;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(422, 48);
+            this.toexcel.TabIndex = 7;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(422, 84);
+            this.close.TabIndex = 8;
             // 
             // label1
             // 
@@ -116,7 +119,7 @@
             this.txtstyle1.Location = new System.Drawing.Point(100, 12);
             this.txtstyle1.Name = "txtstyle1";
             this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 100;
+            this.txtstyle1.TabIndex = 0;
             // 
             // txtbrand1
             // 
@@ -125,7 +128,7 @@
             this.txtbrand1.Location = new System.Drawing.Point(100, 48);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(80, 23);
-            this.txtbrand1.TabIndex = 101;
+            this.txtbrand1.TabIndex = 1;
             // 
             // txtseason1
             // 
@@ -135,7 +138,7 @@
             this.txtseason1.Location = new System.Drawing.Point(100, 84);
             this.txtseason1.Name = "txtseason1";
             this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 102;
+            this.txtseason1.TabIndex = 2;
             // 
             // txttpeuser_canedit1
             // 
@@ -143,7 +146,7 @@
             this.txttpeuser_canedit1.Location = new System.Drawing.Point(100, 121);
             this.txttpeuser_canedit1.Name = "txttpeuser_canedit1";
             this.txttpeuser_canedit1.Size = new System.Drawing.Size(300, 23);
-            this.txttpeuser_canedit1.TabIndex = 103;
+            this.txttpeuser_canedit1.TabIndex = 3;
             this.txttpeuser_canedit1.TextBox1Binding = "";
             // 
             // txtsubcon1
@@ -153,7 +156,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(100, 157);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 104;
+            this.txtsubcon1.TabIndex = 4;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // dateRange1
@@ -162,7 +165,7 @@
             this.dateRange1.Location = new System.Drawing.Point(100, 193);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 105;
+            this.dateRange1.TabIndex = 5;
             // 
             // R03
             // 
@@ -179,7 +182,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.EditMode = true;
+            this.DefaultControl = "txtstyle1";
             this.IsSupportToPrint = false;
             this.Name = "R03";
             this.Text = "R03. Local Quotation List";

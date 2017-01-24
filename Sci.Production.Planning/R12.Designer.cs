@@ -42,14 +42,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(397, 12);
+            this.print.TabIndex = 5;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(397, 48);
+            this.toexcel.TabIndex = 6;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(397, 84);
+            this.close.TabIndex = 7;
             // 
             // rbFactoryCode
             // 
@@ -58,7 +61,7 @@
             this.rbFactoryCode.Location = new System.Drawing.Point(225, 119);
             this.rbFactoryCode.Name = "rbFactoryCode";
             this.rbFactoryCode.Size = new System.Drawing.Size(110, 21);
-            this.rbFactoryCode.TabIndex = 133;
+            this.rbFactoryCode.TabIndex = 4;
             this.rbFactoryCode.Text = "Factory Code";
             this.rbFactoryCode.UseVisualStyleBackColor = true;
             // 
@@ -70,7 +73,7 @@
             this.rbRegionNo.Location = new System.Drawing.Point(123, 119);
             this.rbRegionNo.Name = "rbRegionNo";
             this.rbRegionNo.Size = new System.Drawing.Size(91, 21);
-            this.rbRegionNo.TabIndex = 132;
+            this.rbRegionNo.TabIndex = 3;
             this.rbRegionNo.TabStop = true;
             this.rbRegionNo.Text = "Region no";
             this.rbRegionNo.UseVisualStyleBackColor = true;
@@ -129,7 +132,7 @@
             this.txtcountry1.Location = new System.Drawing.Point(123, 47);
             this.txtcountry1.Name = "txtcountry1";
             this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 134;
+            this.txtcountry1.TabIndex = 1;
             this.txtcountry1.TextBox1Binding = "";
             // 
             // txtbrand1
@@ -139,7 +142,7 @@
             this.txtbrand1.Location = new System.Drawing.Point(123, 12);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(153, 23);
-            this.txtbrand1.TabIndex = 135;
+            this.txtbrand1.TabIndex = 0;
             // 
             // txtseason1
             // 
@@ -149,7 +152,7 @@
             this.txtseason1.Location = new System.Drawing.Point(123, 84);
             this.txtseason1.Name = "txtseason1";
             this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 136;
+            this.txtseason1.TabIndex = 2;
             // 
             // R12
             // 
@@ -163,6 +166,8 @@
             this.Controls.Add(this.lbSeason);
             this.Controls.Add(this.lbCountry);
             this.Controls.Add(this.lbBrand);
+            this.DefaultControl = "txtbrand1";
+            this.DefaultControlForEdit = "txtbrand1";
             this.Name = "R12";
             this.Text = "R12. Style  Efficiency Matrix and SMV evaluation report";
             this.Controls.SetChildIndex(this.print, 0);

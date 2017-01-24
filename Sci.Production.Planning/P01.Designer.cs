@@ -158,15 +158,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1000, 667);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(994, 621);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(994, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -188,6 +188,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(1008, 696);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label1
             // 
@@ -332,7 +336,7 @@
             this.displayBox1.Location = new System.Drawing.Point(127, 12);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(137, 23);
-            this.displayBox1.TabIndex = 16;
+            this.displayBox1.TabIndex = 0;
             // 
             // displayBox2
             // 
@@ -342,7 +346,7 @@
             this.displayBox2.Location = new System.Drawing.Point(127, 44);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(137, 23);
-            this.displayBox2.TabIndex = 17;
+            this.displayBox2.TabIndex = 1;
             // 
             // displayBox3
             // 
@@ -352,7 +356,7 @@
             this.displayBox3.Location = new System.Drawing.Point(127, 76);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(137, 23);
-            this.displayBox3.TabIndex = 18;
+            this.displayBox3.TabIndex = 2;
             // 
             // displayBox4
             // 
@@ -362,7 +366,7 @@
             this.displayBox4.Location = new System.Drawing.Point(127, 110);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(137, 23);
-            this.displayBox4.TabIndex = 19;
+            this.displayBox4.TabIndex = 3;
             // 
             // txtcountry1
             // 
@@ -372,7 +376,7 @@
             this.txtcountry1.Location = new System.Drawing.Point(127, 144);
             this.txtcountry1.Name = "txtcountry1";
             this.txtcountry1.Size = new System.Drawing.Size(178, 22);
-            this.txtcountry1.TabIndex = 21;
+            this.txtcountry1.TabIndex = 4;
             this.txtcountry1.TextBox1Binding = "";
             // 
             // dateBox1
@@ -383,7 +387,7 @@
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 22;
+            this.dateBox1.TabIndex = 5;
             // 
             // dateBox2
             // 
@@ -393,7 +397,7 @@
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.ReadOnly = true;
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 23;
+            this.dateBox2.TabIndex = 6;
             // 
             // dateBox3
             // 
@@ -403,7 +407,7 @@
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.ReadOnly = true;
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 24;
+            this.dateBox3.TabIndex = 7;
             // 
             // dateBox4
             // 
@@ -413,7 +417,7 @@
             this.dateBox4.Name = "dateBox4";
             this.dateBox4.ReadOnly = true;
             this.dateBox4.Size = new System.Drawing.Size(130, 23);
-            this.dateBox4.TabIndex = 25;
+            this.dateBox4.TabIndex = 8;
             // 
             // txtuser1
             // 
@@ -423,7 +427,7 @@
             this.txtuser1.Location = new System.Drawing.Point(389, 143);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(248, 23);
-            this.txtuser1.TabIndex = 26;
+            this.txtuser1.TabIndex = 9;
             this.txtuser1.TextBox1Binding = "";
             // 
             // dateBox7
@@ -434,7 +438,7 @@
             this.dateBox7.Name = "dateBox7";
             this.dateBox7.ReadOnly = true;
             this.dateBox7.Size = new System.Drawing.Size(130, 23);
-            this.dateBox7.TabIndex = 25;
+            this.dateBox7.TabIndex = 12;
             // 
             // numericBox_cutqty
             // 
@@ -450,7 +454,7 @@
             0});
             this.numericBox_cutqty.ReadOnly = true;
             this.numericBox_cutqty.Size = new System.Drawing.Size(100, 23);
-            this.numericBox_cutqty.TabIndex = 27;
+            this.numericBox_cutqty.TabIndex = 13;
             this.numericBox_cutqty.Value = new decimal(new int[] {
             0,
             0,
@@ -472,7 +476,7 @@
             0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 28;
+            this.numericBox2.TabIndex = 14;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -493,7 +497,7 @@
             0});
             this.numericBox_NeedPerDay.ReadOnly = true;
             this.numericBox_NeedPerDay.Size = new System.Drawing.Size(100, 23);
-            this.numericBox_NeedPerDay.TabIndex = 29;
+            this.numericBox_NeedPerDay.TabIndex = 11;
             this.numericBox_NeedPerDay.Value = new decimal(new int[] {
             0,
             0,
@@ -508,7 +512,7 @@
             this.displayBox5.Location = new System.Drawing.Point(773, 12);
             this.displayBox5.Name = "displayBox5";
             this.displayBox5.Size = new System.Drawing.Size(137, 23);
-            this.displayBox5.TabIndex = 30;
+            this.displayBox5.TabIndex = 10;
             // 
             // button_batchApprove
             // 

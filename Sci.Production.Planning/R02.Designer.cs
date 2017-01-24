@@ -334,6 +334,7 @@
             this.Controls.Add(this.dateRange1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
+            this.DefaultControl = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R02";
             this.Text = "R02. Subprocess Schedule Report";

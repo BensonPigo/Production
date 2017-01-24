@@ -139,7 +139,7 @@
             this.txtfactory1.Location = new System.Drawing.Point(590, 82);
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(107, 23);
-            this.txtfactory1.TabIndex = 23;
+            this.txtfactory1.TabIndex = 6;
             // 
             // label5
             // 
@@ -159,7 +159,7 @@
             this.txtartworktype_fty1.Location = new System.Drawing.Point(140, 115);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 21;
+            this.txtartworktype_fty1.TabIndex = 7;
             // 
             // checkBox3
             // 
@@ -168,7 +168,7 @@
             this.checkBox3.Location = new System.Drawing.Point(462, 115);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(156, 21);
-            this.checkBox3.TabIndex = 20;
+            this.checkBox3.TabIndex = 8;
             this.checkBox3.Text = "Only Aprroved  Data";
             this.checkBox3.UseVisualStyleBackColor = true;
             this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
@@ -187,7 +187,7 @@
             this.dateRangeApvDate.Location = new System.Drawing.Point(590, 48);
             this.dateRangeApvDate.Name = "dateRangeApvDate";
             this.dateRangeApvDate.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeApvDate.TabIndex = 6;
+            this.dateRangeApvDate.TabIndex = 4;
             // 
             // label4
             // 
@@ -203,7 +203,7 @@
             this.dateRangeSciDelivery.Location = new System.Drawing.Point(590, 15);
             this.dateRangeSciDelivery.Name = "dateRangeSciDelivery";
             this.dateRangeSciDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeSciDelivery.TabIndex = 1;
+            this.dateRangeSciDelivery.TabIndex = 3;
             // 
             // label3
             // 
@@ -228,7 +228,7 @@
             this.dateRangeSewInLine.Location = new System.Drawing.Point(140, 82);
             this.dateRangeSewInLine.Name = "dateRangeSewInLine";
             this.dateRangeSewInLine.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeSewInLine.TabIndex = 3;
+            this.dateRangeSewInLine.TabIndex = 5;
             // 
             // dateRangeInline
             // 
@@ -244,7 +244,7 @@
             this.textBoxSp2.Location = new System.Drawing.Point(268, 15);
             this.textBoxSp2.Name = "textBoxSp2";
             this.textBoxSp2.Size = new System.Drawing.Size(122, 23);
-            this.textBoxSp2.TabIndex = 5;
+            this.textBoxSp2.TabIndex = 2;
             // 
             // btnQuery
             // 
@@ -253,7 +253,7 @@
             this.btnQuery.Location = new System.Drawing.Point(901, 15);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(101, 30);
-            this.btnQuery.TabIndex = 8;
+            this.btnQuery.TabIndex = 9;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
@@ -265,7 +265,7 @@
             this.textBoxSp1.Location = new System.Drawing.Point(140, 15);
             this.textBoxSp1.Name = "textBoxSp1";
             this.textBoxSp1.Size = new System.Drawing.Size(122, 23);
-            this.textBoxSp1.TabIndex = 4;
+            this.textBoxSp1.TabIndex = 1;
             // 
             // label1
             // 
@@ -310,7 +310,7 @@
             this.btnClose.Location = new System.Drawing.Point(912, 15);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(90, 30);
-            this.btnClose.TabIndex = 1;
+            this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
@@ -349,7 +349,7 @@
             this.btnUnApprove.Location = new System.Drawing.Point(720, 17);
             this.btnUnApprove.Name = "btnUnApprove";
             this.btnUnApprove.Size = new System.Drawing.Size(90, 30);
-            this.btnUnApprove.TabIndex = 22;
+            this.btnUnApprove.TabIndex = 1;
             this.btnUnApprove.Text = "UnApprove";
             this.btnUnApprove.UseVisualStyleBackColor = true;
             this.btnUnApprove.Click += new System.EventHandler(this.btnUnApprove_Click);

@@ -187,7 +187,7 @@
             this.panel3.Location = new System.Drawing.Point(0, 616);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1232, 45);
-            this.panel3.TabIndex = 0;
+            this.panel3.TabIndex = 1;
             // 
             // numericBox4
             // 
@@ -204,7 +204,7 @@
             0});
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(100, 23);
-            this.numericBox4.TabIndex = 36;
+            this.numericBox4.TabIndex = 0;
             this.numericBox4.Value = new decimal(new int[] {
             0,
             0,
@@ -384,7 +384,7 @@
             this.groupBox2.Location = new System.Drawing.Point(9, 10);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(855, 159);
-            this.groupBox2.TabIndex = 33;
+            this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             // 
             // txtmfactory1
@@ -394,7 +394,7 @@
             this.txtmfactory1.Location = new System.Drawing.Point(359, 15);
             this.txtmfactory1.Name = "txtmfactory1";
             this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtmfactory1.TabIndex = 4;
+            this.txtmfactory1.TabIndex = 1;
             // 
             // label16
             // 
@@ -459,7 +459,7 @@
             0,
             0});
             this.numericBox2.Size = new System.Drawing.Size(39, 23);
-            this.numericBox2.TabIndex = 3;
+            this.numericBox2.TabIndex = 5;
             this.numericBox2.Value = new decimal(new int[] {
             90,
             0,
@@ -537,7 +537,7 @@
             this.comboBox1.Location = new System.Drawing.Point(119, 72);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 2;
+            this.comboBox1.TabIndex = 4;
             // 
             // label10
             // 
@@ -555,7 +555,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(359, 44);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 5;
+            this.txtsubcon1.TabIndex = 3;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // label9
@@ -575,7 +575,7 @@
             this.txtseason1.Location = new System.Drawing.Point(87, 44);
             this.txtseason1.Name = "txtseason1";
             this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 1;
+            this.txtseason1.TabIndex = 2;
             // 
             // label8
             // 
@@ -722,7 +722,7 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1226, 368);
+            this.grid1.Size = new System.Drawing.Size(1226, 360);
             this.grid1.TabIndex = 34;
             this.grid1.TabStop = false;
             // 
@@ -731,6 +731,8 @@
             this.ClientSize = new System.Drawing.Size(1232, 661);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel3);
+            this.DefaultControl = "txtstyle1";
+            this.DefaultControlForEdit = "txtstyle1";
             this.Name = "P03";
             this.Text = "P03. Laser Quick Adjust";
             this.Controls.SetChildIndex(this.panel3, 0);
