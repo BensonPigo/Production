@@ -2091,6 +2091,7 @@
     <Build Include="dbo\Stored Procedures\PPIC_Report_SizeSpec.sql" />
     <Build Include="dbo\Stored Procedures\PPIC_Report02.sql" />
     <Build Include="dbo\Stored Procedures\PPIC_Report03.sql" />
+    <Build Include="dbo\Tables\LossRateAccessory_Limit.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

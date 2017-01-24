@@ -58,7 +58,7 @@ Begin
 	 Where ID = @PoID;
 	
 	Select @LossSampleAccessory = LossSampleAccessory
-	  From Trade.dbo.Brand
+	  From Production.dbo.Brand
 	 Where ID = @BrandID;
 	---------------------------------------------------------------------------
 	Declare @BoaUkey BigInt;
@@ -127,14 +127,14 @@ Begin
 		
 		Set @Supp_Country = '';
 		Select @Supp_Country = CountryID
-		  From Trade.dbo.Supp
+		  From Production.dbo.Supp
 		 Where ID = @SuppID;
 		
 		Set @MtltypeID = '';
 		Set @UsageUnit = '';
 		Select @MtltypeID = MtltypeID
 			 , @UsageUnit = UsageUnit
-		  From Trade.dbo.Fabric
+		  From Production.dbo.Fabric
 		 Where SciRefNo = @SciRefNo;
 		
 		Delete @tmpBOA_Expend;
@@ -210,7 +210,7 @@ Begin
 							 , @PerQty = IIF(@Supp_Country = 'TW', PerQtyTW, PerQtyNonTW)
 							 , @PlusQty = IIF(@Supp_Country = 'TW', PlsQtyTW, PlsQtyNonTW)
 							 , @FOC = IIF(@Supp_Country = 'TW', FOCTW, FOCNonTW)
-						  From Trade.dbo.LossRateAccessory
+						  From Production.dbo.LossRateAccessory
 						 Where MtlTypeID = @MtltypeID
 						
 						If @@RowCount > 0
@@ -218,7 +218,7 @@ Begin
 							--損耗的上限依照TYPE ID和使用單位check是否有做設定
 							Set @LimitUp = 0;
 							Select @LimitUp = LimitUp
-							  From Trade.dbo.LossRateAccessory_Limit
+							  From Production.dbo.LossRateAccessory_Limit
 							 Where MtltypeID = @MtltypeID
 							   And UsageUnit = @UsageUnit;
 
