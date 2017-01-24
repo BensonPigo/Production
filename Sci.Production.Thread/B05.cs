@@ -105,7 +105,7 @@ namespace Sci.Production.Thread
 
             int index = this.gridbs.Position;
             if (index == -1) index = 0;
-            if (CurrentDetailData == null) return;
+            if (CurrentDetailData == null || MyUtility.Check.Empty(gridTb)) return;
             gridTb.DefaultView.RowFilter = string.Format("ThreadColorid = '{0}' and ThreadLocationid = '{1}'", CurrentDetailData["ThreadColorid"], CurrentDetailData["ThreadLocationid"]);
         }
 
