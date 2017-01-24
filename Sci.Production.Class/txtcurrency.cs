@@ -20,7 +20,7 @@ namespace Sci.Production.Class
             string sql = "select ID,NameCH,NameEN from Currency where Junk = 0 order by ID";
             DataTable tbCurrency;
             DBProxy.Current.Select("Production", sql, out tbCurrency);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbCurrency, "ID,NameCH,NameEn", "5,14,50", this.Text, "ID,NameCH,NameEn");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbCurrency, "ID,NameCH,NameEn", "5,14,30", this.Text, "ID,NameCH,NameEn");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
