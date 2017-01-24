@@ -70,7 +70,7 @@ namespace Sci.Production.Class
             string selItem = "select ID,Name from PayTerm where Junk = 0 order by ID";
             DataTable itemDt;
             DBProxy.Current.Select("Production", selItem, out itemDt);
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(itemDt, "ID,Name", "6,60", this.textBox1.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(itemDt, "ID,Name", "6,40", this.textBox1.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
