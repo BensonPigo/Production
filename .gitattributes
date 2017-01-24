@@ -320,6 +320,7 @@ Database/dbo/Tables/LocalSupp_Bank.sql -text
 Database/dbo/Tables/LocationTrans.sql -text
 Database/dbo/Tables/LocationTrans_detail.sql -text
 Database/dbo/Tables/LossRateAccessory.sql -text
+Database/dbo/Tables/LossRateAccessory_Limit.sql -text
 Database/dbo/Tables/LossRateFabric.sql -text
 Database/dbo/Tables/MD.sql -text
 Database/dbo/Tables/MDevisionPoDetail.sql -text
