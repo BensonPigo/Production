@@ -14,6 +14,7 @@ using Sci.Win;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using System.Data.SqlClient;
 using System.Linq;
+using Sci.Utility.Excel;
 
 namespace Sci.Production.Cutting
 {
@@ -36,9 +37,8 @@ namespace Sci.Production.Cutting
                 System.Data.DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01print_EachConsumption", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
 
-                if (!res) return false;
-                if (dts.Length < 2) return false;
-                if (dts[0].Rows.Count == 0) return false;
+                if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
+                if (dts.Length < 2) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
 
                 DataRow dr = dts[0].Rows[0];
 
@@ -48,7 +48,6 @@ namespace Sci.Production.Cutting
 
                 for (int sgIdx = 1; sgIdx < dts.Length; sgIdx++)
                 {
-
                     string idxStr = (sgIdx == 1) ? "" : (sgIdx - 1).ToString();
                     string SizeGroup = dts[sgIdx].Rows[0]["SizeGroup"].ToString();
                     string MarkerDownloadID = dts[sgIdx].Compute("MAX(MarkerDownloadID)", "").ToString();
@@ -63,7 +62,7 @@ namespace Sci.Production.Cutting
                     sxr.dicDatas.Add(sxr._v + "CUTTINGSP" + idxStr, dr["CUTTINGSP"]);
                     sxr.dicDatas.Add(sxr._v + "ORDERNO" + idxStr, dr["ORDERNO"]);
                     sxr.dicDatas.Add(sxr._v + "STYLENO" + idxStr, dr["STYLENO"]);
-                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, dr["QTY"]);
+                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, MyUtility.Convert.GetString(dr["QTY"]));
                     sxr.dicDatas.Add(sxr._v + "FACTORY" + idxStr, dr["FACTORY"]);
                     sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[sgIdx]);
 
@@ -91,6 +90,8 @@ namespace Sci.Production.Cutting
                     //sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
                     sxr.dicDatas.Add(sxr._v + "MarkerDownloadID" + idxStr, MarkerDownloadID);
 
+                    sxrc.ReplaceAction a = exMethod;
+                    sxr.dicDatas.Add(sxr._v + "exAction" + idxStr, a);
                 }
 
                 sxr.VarToSheetName = sxr._v + "SizeGroup";
@@ -356,6 +357,21 @@ namespace Sci.Production.Cutting
             return true;
         }
 
+        void SetColumn(sxrc.xltRptTable tbl, Microsoft.Office.Interop.Excel.XlHAlign Alignment)
+        {
+            sxrc.xlsColumnInfo xlc1 = new sxrc.xlsColumnInfo(tbl.Columns[0].ColumnName);
+            xlc1.NumberFormate = "@";
+            tbl.lisColumnInfo.Add(xlc1);
+
+            for (int i = 1; i < tbl.Columns.Count; i++)
+            {
+                sxrc.xlsColumnInfo xlc = new sxrc.xlsColumnInfo(tbl.Columns[i].ColumnName);
+                xlc.Alignment = Alignment;
+                tbl.lisColumnInfo.Add(xlc);
+            }
+        }
+
+
         void extra_P01_EachConsumptionCuttingCombo(DataTable dt)
         {
             string COMB = "";
@@ -393,6 +409,32 @@ namespace Sci.Production.Cutting
             }
         }
 
+        void exMethod(Microsoft.Office.Interop.Excel.Worksheet oSheet, int rowNo, int columnNo)
+        {
+            Microsoft.Office.Interop.Excel.Range rg = oSheet.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell, Type.Missing);
+            int rows = rg.Row;
+            bool title = false;
+            for (int i = 1; i < rows; i++)
+            {
+                if (title == false && oSheet.Cells[i, 1].Value == "COMB")
+                    title = true;
+
+                if (title && oSheet.Cells[i, 2].Value != null && oSheet.Cells[i, 2].Value == "")
+                {
+                    string rgStr = string.Format("C{0}:{1}{0}", i, MyExcelPrg.GetExcelColumnName(rg.Column));
+                    Microsoft.Office.Interop.Excel.Range rgMerge = oSheet.get_Range(rgStr);
+                    rgMerge.Merge();
+                    rgMerge.VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter; ;
+                }
+
+                if (oSheet.Cells[i, 5].Value != null && oSheet.Cells[i, 5].Value.ToString() == "SIZE RATIO OF MARKER")
+                {
+                    Microsoft.Office.Interop.Excel.Range r = oSheet.Cells[7, 5];
+                    r.Columns.AutoFit();
+                }
+            }
+        }
+        
         void extra_P01_Report_TTLconsumptionPOCombo(DataTable dt, int Qty)
         {
             string coltmp = "";
@@ -439,21 +481,7 @@ namespace Sci.Production.Cutting
             dr["CONS/PC"] = Qty == 0 ? 0 : Math.Round(tot / Qty, 3);
             dt.Rows.InsertAt(dr, idx);
         }
-
-        void SetColumn(sxrc.xltRptTable tbl, Microsoft.Office.Interop.Excel.XlHAlign Alignment)
-        {
-            sxrc.xlsColumnInfo xlc1 = new sxrc.xlsColumnInfo(tbl.Columns[0].ColumnName);
-            xlc1.NumberFormate = "@";
-            tbl.lisColumnInfo.Add(xlc1);
-
-            for (int i = 1; i < tbl.Columns.Count; i++)
-            {
-                sxrc.xlsColumnInfo xlc = new sxrc.xlsColumnInfo(tbl.Columns[i].ColumnName);
-                xlc.Alignment = Alignment;
-                tbl.lisColumnInfo.Add(xlc);
-            }
-        }
-
+        
         void extra_P01_EachconsVSOrderQTYBDownPOCombo(DataTable dt)
         {
             addTotal(dt, 1, "Sub.TTL:", true);
@@ -742,7 +770,6 @@ namespace Sci.Production.Cutting
             dt.Rows.InsertAt(dr, idx);
             dt.Rows.InsertAt(dt.NewRow(), idx + 1);
         }
-
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
