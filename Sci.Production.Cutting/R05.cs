@@ -52,7 +52,7 @@ namespace Sci.Production.Cutting
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
-select
+select DISTINCT
 	[Est. Inline]=c.CutInLine,
 	[Est. Offline]=c.CutOffline,
 	[Request#]=wo.CutplanID,
