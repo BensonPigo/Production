@@ -33,6 +33,26 @@
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
             // 
+            // append
+            // 
+            this.append.TabIndex = 0;
+            // 
+            // revise
+            // 
+            this.revise.TabIndex = 1;
+            // 
+            // delete
+            // 
+            this.delete.TabIndex = 2;
+            // 
+            // undo
+            // 
+            this.undo.TabIndex = 4;
+            // 
+            // save
+            // 
+            this.save.TabIndex = 3;
+            // 
             // B04_BankData
             // 
             this.ClientSize = new System.Drawing.Size(831, 497);

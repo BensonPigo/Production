@@ -58,7 +58,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(668, 395);
+            this.browse.Size = new System.Drawing.Size(676, 395);
             // 
             // tabs
             // 
@@ -105,6 +105,8 @@
             // B03
             // 
             this.ClientSize = new System.Drawing.Size(684, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "txtuser1";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;

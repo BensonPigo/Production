@@ -59,6 +59,22 @@
             // 
             this.btmcont.Location = new System.Drawing.Point(0, 354);
             // 
+            // undo
+            // 
+            this.undo.TabIndex = 3;
+            // 
+            // save
+            // 
+            this.save.TabIndex = 2;
+            // 
+            // left
+            // 
+            this.left.TabIndex = 0;
+            // 
+            // right
+            // 
+            this.right.TabIndex = 1;
+            // 
             // label1
             // 
             this.label1.Lines = 0;
@@ -251,7 +267,7 @@
             this.displayBox1.Location = new System.Drawing.Point(136, 293);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(232, 23);
-            this.displayBox1.TabIndex = 114;
+            this.displayBox1.TabIndex = 10;
             // 
             // displayBox2
             // 
@@ -261,7 +277,7 @@
             this.displayBox2.Location = new System.Drawing.Point(136, 320);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(232, 23);
-            this.displayBox2.TabIndex = 115;
+            this.displayBox2.TabIndex = 11;
             // 
             // txtcountry1
             // 

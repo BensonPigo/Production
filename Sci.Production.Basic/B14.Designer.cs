@@ -101,6 +101,7 @@
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Size = new System.Drawing.Size(694, 403);
+            this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
@@ -122,6 +123,7 @@
             // editby
             // 
             this.editby.Location = new System.Drawing.Point(400, 21);
+            this.editby.TabIndex = 1;
             // 
             // lblcreateby
             // 
@@ -236,7 +238,7 @@
             this.displayBox1.Location = new System.Drawing.Point(144, 10);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(42, 23);
-            this.displayBox1.TabIndex = 11;
+            this.displayBox1.TabIndex = 0;
             // 
             // displayBox2
             // 
@@ -246,7 +248,7 @@
             this.displayBox2.Location = new System.Drawing.Point(282, 10);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(30, 23);
-            this.displayBox2.TabIndex = 12;
+            this.displayBox2.TabIndex = 1;
             // 
             // displayBox3
             // 
@@ -256,7 +258,7 @@
             this.displayBox3.Location = new System.Drawing.Point(144, 40);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(170, 23);
-            this.displayBox3.TabIndex = 13;
+            this.displayBox3.TabIndex = 2;
             // 
             // displayBox4
             // 
@@ -266,7 +268,7 @@
             this.displayBox4.Location = new System.Drawing.Point(144, 100);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(78, 23);
-            this.displayBox4.TabIndex = 14;
+            this.displayBox4.TabIndex = 4;
             // 
             // displayBox6
             // 
@@ -276,7 +278,7 @@
             this.displayBox6.Location = new System.Drawing.Point(144, 373);
             this.displayBox6.Name = "displayBox6";
             this.displayBox6.Size = new System.Drawing.Size(380, 23);
-            this.displayBox6.TabIndex = 16;
+            this.displayBox6.TabIndex = 10;
             // 
             // displayBox7
             // 
@@ -286,7 +288,7 @@
             this.displayBox7.Location = new System.Drawing.Point(144, 130);
             this.displayBox7.Name = "displayBox7";
             this.displayBox7.Size = new System.Drawing.Size(78, 23);
-            this.displayBox7.TabIndex = 18;
+            this.displayBox7.TabIndex = 5;
             // 
             // txtdropdownlist1
             // 
@@ -299,21 +301,20 @@
             this.txtdropdownlist1.Name = "txtdropdownlist1";
             this.txtdropdownlist1.ReadOnly = true;
             this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist1.TabIndex = 17;
+            this.txtdropdownlist1.TabIndex = 3;
             this.txtdropdownlist1.Type = "Classify";
             // 
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
             this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "InhouseOSP", true));
-            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
             this.comboBox1.Location = new System.Drawing.Point(144, 160);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(100, 24);
-            this.comboBox1.TabIndex = 21;
+            this.comboBox1.TabIndex = 6;
             // 
             // checkBox1
             // 
@@ -323,7 +324,7 @@
             this.checkBox1.Location = new System.Drawing.Point(364, 10);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 22;
+            this.checkBox1.TabIndex = 11;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -335,7 +336,7 @@
             this.checkBox2.Location = new System.Drawing.Point(364, 38);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(168, 21);
-            this.checkBox2.TabIndex = 23;
+            this.checkBox2.TabIndex = 12;
             this.checkBox2.Text = "秒數換算成本 (Is TMS)";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
@@ -347,7 +348,7 @@
             this.checkBox3.Location = new System.Drawing.Point(364, 70);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(171, 21);
-            this.checkBox3.TabIndex = 24;
+            this.checkBox3.TabIndex = 13;
             this.checkBox3.Text = "直接輸入成本 (Is Price)";
             this.checkBox3.UseVisualStyleBackColor = true;
             // 
@@ -359,7 +360,7 @@
             this.checkBox4.Location = new System.Drawing.Point(364, 100);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(213, 21);
-            this.checkBox4.TabIndex = 25;
+            this.checkBox4.TabIndex = 14;
             this.checkBox4.Text = "是否加入ArtWork (Is ArtWork)";
             this.checkBox4.UseVisualStyleBackColor = true;
             // 
@@ -371,7 +372,7 @@
             this.checkBox5.Location = new System.Drawing.Point(364, 130);
             this.checkBox5.Name = "checkBox5";
             this.checkBox5.Size = new System.Drawing.Size(199, 21);
-            this.checkBox5.TabIndex = 26;
+            this.checkBox5.TabIndex = 15;
             this.checkBox5.Text = "是否加入ttl TMS (Is ttl TMS)";
             this.checkBox5.UseVisualStyleBackColor = true;
             // 
@@ -383,7 +384,7 @@
             this.checkBox6.Location = new System.Drawing.Point(364, 160);
             this.checkBox6.Name = "checkBox6";
             this.checkBox6.Size = new System.Drawing.Size(247, 21);
-            this.checkBox6.TabIndex = 27;
+            this.checkBox6.TabIndex = 16;
             this.checkBox6.Text = "是否為Subprocess (Is Subprocess)";
             this.checkBox6.UseVisualStyleBackColor = true;
             // 
@@ -394,7 +395,7 @@
             this.button1.Location = new System.Drawing.Point(573, 20);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 28;
+            this.button1.TabIndex = 17;
             this.button1.Text = "Machine";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -407,7 +408,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(380, 46);
-            this.editBox1.TabIndex = 29;
+            this.editBox1.TabIndex = 9;
             // 
             // numericBox1
             // 
@@ -423,8 +424,18 @@
             65536});
             this.numericBox1.MaxLength = 3;
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(42, 23);
-            this.numericBox1.TabIndex = 30;
+            this.numericBox1.TabIndex = 7;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox2
             // 
@@ -433,12 +444,23 @@
             this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox2.Location = new System.Drawing.Point(144, 265);
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.Size = new System.Drawing.Size(36, 23);
-            this.numericBox2.TabIndex = 31;
+            this.numericBox2.TabIndex = 8;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // B14
             // 
             this.ClientSize = new System.Drawing.Size(702, 517);
+            this.DefaultControlForEdit = "comboBox1";
             this.DefaultOrder = "Seq";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

@@ -69,6 +69,7 @@
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Size = new System.Drawing.Size(688, 357);
+            this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
@@ -81,6 +82,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(696, 424);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label3
             // 
@@ -117,7 +122,7 @@
             this.displayBox2.Location = new System.Drawing.Point(169, 70);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(170, 23);
-            this.displayBox2.TabIndex = 4;
+            this.displayBox2.TabIndex = 1;
             // 
             // displayBox3
             // 
@@ -127,7 +132,7 @@
             this.displayBox3.Location = new System.Drawing.Point(169, 110);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(100, 23);
-            this.displayBox3.TabIndex = 5;
+            this.displayBox3.TabIndex = 2;
             // 
             // comboBox1
             // 
@@ -140,7 +145,7 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.ReadOnly = true;
             this.comboBox1.Size = new System.Drawing.Size(100, 24);
-            this.comboBox1.TabIndex = 6;
+            this.comboBox1.TabIndex = 0;
             // 
             // checkBox1
             // 
@@ -150,7 +155,7 @@
             this.checkBox1.Location = new System.Drawing.Point(400, 30);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 7;
+            this.checkBox1.TabIndex = 4;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -162,7 +167,7 @@
             this.checkBox2.Location = new System.Drawing.Point(400, 70);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(70, 21);
-            this.checkBox2.TabIndex = 8;
+            this.checkBox2.TabIndex = 5;
             this.checkBox2.Text = "Extend";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
@@ -174,7 +179,7 @@
             this.checkBox3.Location = new System.Drawing.Point(400, 110);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(111, 21);
-            this.checkBox3.TabIndex = 9;
+            this.checkBox3.TabIndex = 6;
             this.checkBox3.Text = "Check Zipper";
             this.checkBox3.UseVisualStyleBackColor = true;
             // 
@@ -186,7 +191,7 @@
             this.checkBox4.Location = new System.Drawing.Point(400, 150);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(93, 21);
-            this.checkBox4.TabIndex = 10;
+            this.checkBox4.TabIndex = 7;
             this.checkBox4.Text = "is ICR Item";
             this.checkBox4.UseVisualStyleBackColor = true;
             // 
@@ -209,7 +214,7 @@
             this.txtdropdownlist2.Location = new System.Drawing.Point(169, 150);
             this.txtdropdownlist2.Name = "txtdropdownlist2";
             this.txtdropdownlist2.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist2.TabIndex = 13;
+            this.txtdropdownlist2.TabIndex = 3;
             this.txtdropdownlist2.Type = "IssueType";
             // 
             // checkBox5
@@ -221,13 +226,14 @@
             this.checkBox5.Name = "checkBox5";
             this.checkBox5.ReadOnly = true;
             this.checkBox5.Size = new System.Drawing.Size(143, 21);
-            this.checkBox5.TabIndex = 14;
+            this.checkBox5.TabIndex = 8;
             this.checkBox5.Text = "Is Trim Card Other";
             this.checkBox5.UseVisualStyleBackColor = true;
             // 
             // B13
             // 
             this.ClientSize = new System.Drawing.Size(696, 457);
+            this.DefaultControlForEdit = "txtdropdownlist2";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

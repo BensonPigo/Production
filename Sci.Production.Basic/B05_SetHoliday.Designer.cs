@@ -54,7 +54,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 9;
+            this.textBox1.TabIndex = 0;
             // 
             // label1
             // 
@@ -73,7 +73,7 @@
             this.textBox2.Location = new System.Drawing.Point(110, 72);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(360, 23);
-            this.textBox2.TabIndex = 13;
+            this.textBox2.TabIndex = 1;
             // 
             // button1
             // 
@@ -82,7 +82,7 @@
             this.button1.Location = new System.Drawing.Point(354, 131);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 14;
+            this.button1.TabIndex = 2;
             this.button1.Text = "Accept";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -94,7 +94,7 @@
             this.button2.Location = new System.Drawing.Point(443, 131);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 15;
+            this.button2.TabIndex = 3;
             this.button2.Text = "Cancel";
             this.button2.UseVisualStyleBackColor = true;
             // 
@@ -109,6 +109,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "textBox2";
             this.Name = "B05_SetHoliday";
             this.Text = "Holiday Setup";
             this.ResumeLayout(false);

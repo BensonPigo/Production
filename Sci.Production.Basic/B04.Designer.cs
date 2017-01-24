@@ -93,6 +93,7 @@
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Size = new System.Drawing.Size(767, 357);
+            this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
@@ -105,6 +106,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(775, 424);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label3
             // 
@@ -214,7 +219,7 @@
             this.textBox2.Location = new System.Drawing.Point(156, 42);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(120, 23);
-            this.textBox2.TabIndex = 1;
+            this.textBox2.TabIndex = 2;
             // 
             // textBox3
             // 
@@ -225,7 +230,7 @@
             this.textBox3.Location = new System.Drawing.Point(156, 96);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(317, 23);
-            this.textBox3.TabIndex = 3;
+            this.textBox3.TabIndex = 6;
             // 
             // textBox4
             // 
@@ -235,7 +240,7 @@
             this.textBox4.Location = new System.Drawing.Point(156, 123);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(220, 23);
-            this.textBox4.TabIndex = 4;
+            this.textBox4.TabIndex = 7;
             // 
             // textBox5
             // 
@@ -245,7 +250,7 @@
             this.textBox5.Location = new System.Drawing.Point(156, 150);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(220, 23);
-            this.textBox5.TabIndex = 5;
+            this.textBox5.TabIndex = 8;
             // 
             // editBox1
             // 
@@ -256,7 +261,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(400, 82);
-            this.editBox1.TabIndex = 6;
+            this.editBox1.TabIndex = 9;
             // 
             // checkBox1
             // 
@@ -266,7 +271,7 @@
             this.checkBox1.Location = new System.Drawing.Point(478, 15);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 10;
+            this.checkBox1.TabIndex = 1;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -278,7 +283,7 @@
             this.checkBox2.Location = new System.Drawing.Point(478, 42);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(92, 21);
-            this.checkBox2.TabIndex = 11;
+            this.checkBox2.TabIndex = 3;
             this.checkBox2.Text = "Use SBTS";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
@@ -290,7 +295,7 @@
             this.checkBox3.Location = new System.Drawing.Point(478, 69);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(88, 21);
-            this.checkBox3.TabIndex = 12;
+            this.checkBox3.TabIndex = 5;
             this.checkBox3.Text = "Is Factory";
             this.checkBox3.UseVisualStyleBackColor = true;
             // 
@@ -325,7 +330,7 @@
             this.txtpayterm_fty1.Location = new System.Drawing.Point(156, 290);
             this.txtpayterm_fty1.Name = "txtpayterm_fty1";
             this.txtpayterm_fty1.Size = new System.Drawing.Size(384, 23);
-            this.txtpayterm_fty1.TabIndex = 8;
+            this.txtpayterm_fty1.TabIndex = 11;
             this.txtpayterm_fty1.TextBox1Binding = "";
             // 
             // txtcurrency1
@@ -337,7 +342,7 @@
             this.txtcurrency1.Location = new System.Drawing.Point(156, 263);
             this.txtcurrency1.Name = "txtcurrency1";
             this.txtcurrency1.Size = new System.Drawing.Size(40, 23);
-            this.txtcurrency1.TabIndex = 7;
+            this.txtcurrency1.TabIndex = 10;
             // 
             // txtcountry1
             // 
@@ -346,7 +351,7 @@
             this.txtcountry1.Location = new System.Drawing.Point(156, 69);
             this.txtcountry1.Name = "txtcountry1";
             this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 2;
+            this.txtcountry1.TabIndex = 4;
             this.txtcountry1.TextBox1Binding = "";
             // 
             // numericBox1
@@ -362,7 +367,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(40, 23);
-            this.numericBox1.TabIndex = 9;
+            this.numericBox1.TabIndex = 12;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -372,6 +377,8 @@
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(775, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox4";
             this.DefaultOrder = "ID";
             this.EnableGridJunkColor = true;
             this.IsSupportCopy = false;

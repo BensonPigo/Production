@@ -52,10 +52,20 @@
             // undo
             // 
             this.undo.Location = new System.Drawing.Point(623, 5);
+            this.undo.TabIndex = 3;
             // 
             // save
             // 
             this.save.Location = new System.Drawing.Point(543, 5);
+            this.save.TabIndex = 2;
+            // 
+            // left
+            // 
+            this.left.TabIndex = 0;
+            // 
+            // right
+            // 
+            this.right.TabIndex = 1;
             // 
             // label1
             // 
@@ -119,7 +129,7 @@
             this.textBox1.Location = new System.Drawing.Point(92, 13);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(40, 23);
-            this.textBox1.TabIndex = 101;
+            this.textBox1.TabIndex = 0;
             // 
             // textBox2
             // 
@@ -130,7 +140,7 @@
             this.textBox2.Location = new System.Drawing.Point(92, 41);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(600, 23);
-            this.textBox2.TabIndex = 102;
+            this.textBox2.TabIndex = 1;
             // 
             // editBox1
             // 
@@ -141,7 +151,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(600, 50);
-            this.editBox1.TabIndex = 103;
+            this.editBox1.TabIndex = 2;
             // 
             // editBox2
             // 
@@ -152,7 +162,7 @@
             this.editBox2.Multiline = true;
             this.editBox2.Name = "editBox2";
             this.editBox2.Size = new System.Drawing.Size(600, 50);
-            this.editBox2.TabIndex = 104;
+            this.editBox2.TabIndex = 3;
             // 
             // textBox3
             // 
@@ -162,7 +172,7 @@
             this.textBox3.Location = new System.Drawing.Point(92, 179);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(600, 23);
-            this.textBox3.TabIndex = 105;
+            this.textBox3.TabIndex = 4;
             // 
             // editBox3
             // 
@@ -173,7 +183,7 @@
             this.editBox3.Multiline = true;
             this.editBox3.Name = "editBox3";
             this.editBox3.Size = new System.Drawing.Size(600, 218);
-            this.editBox3.TabIndex = 106;
+            this.editBox3.TabIndex = 5;
             // 
             // B02_MailTo_Detail
             // 

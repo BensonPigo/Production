@@ -175,7 +175,7 @@
             this.comboBox1.MaxDropDownItems = 15;
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(90, 24);
-            this.comboBox1.TabIndex = 8;
+            this.comboBox1.TabIndex = 0;
             this.comboBox1.Validated += new System.EventHandler(this.comboBox1_Validated);
             // 
             // button1
@@ -184,7 +184,7 @@
             this.button1.Location = new System.Drawing.Point(209, 5);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(83, 27);
-            this.button1.TabIndex = 9;
+            this.button1.TabIndex = 1;
             this.button1.Text = "Refresh";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -511,6 +511,7 @@
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.DefaultControl = "comboBox1";
             this.EditMode = true;
             this.Name = "B05";
             this.Text = "B05. Holiday setup";

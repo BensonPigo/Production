@@ -43,6 +43,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -96,13 +97,17 @@
             // 
             this.detailgridcont.Size = new System.Drawing.Size(754, 215);
             // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(754, 387);
+            // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(748, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(748, 40);
             // 
             // detail
             // 
@@ -114,6 +119,7 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
             this.detailbtm.Size = new System.Drawing.Size(754, 38);
             // 
             // browse
@@ -219,9 +225,19 @@
             this.numericBox1.IsSupportEditMode = false;
             this.numericBox1.Location = new System.Drawing.Point(103, 44);
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(50, 23);
             this.numericBox1.TabIndex = 12;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox2
             // 
@@ -231,9 +247,19 @@
             this.numericBox2.IsSupportEditMode = false;
             this.numericBox2.Location = new System.Drawing.Point(103, 74);
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(30, 23);
             this.numericBox2.TabIndex = 13;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // B12
             // 
@@ -259,6 +285,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

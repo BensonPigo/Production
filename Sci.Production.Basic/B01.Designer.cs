@@ -105,6 +105,7 @@
             // detailbtm
             // 
             this.detailbtm.Size = new System.Drawing.Size(680, 38);
+            this.detailbtm.TabIndex = 0;
             // 
             // browse
             // 
@@ -113,6 +114,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(688, 424);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label3
             // 
@@ -241,7 +246,7 @@
             this.textBox2.Location = new System.Drawing.Point(124, 41);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(317, 23);
-            this.textBox2.TabIndex = 2;
+            this.textBox2.TabIndex = 3;
             // 
             // textBox3
             // 
@@ -262,7 +267,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(317, 69);
-            this.editBox1.TabIndex = 3;
+            this.editBox1.TabIndex = 4;
             // 
             // textBox4
             // 
@@ -356,7 +361,7 @@
             this.button1.Location = new System.Drawing.Point(500, 14);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(162, 30);
-            this.button1.TabIndex = 24;
+            this.button1.TabIndex = 14;
             this.button1.Text = "Capacity / Work day";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -390,7 +395,7 @@
             this.displayBox1.Location = new System.Drawing.Point(398, 14);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(41, 23);
-            this.displayBox1.TabIndex = 28;
+            this.displayBox1.TabIndex = 2;
             // 
             // txtuser1
             // 

@@ -39,6 +39,7 @@
             // 
             // btmcont
             // 
+            this.btmcont.Location = new System.Drawing.Point(0, 453);
             this.btmcont.Size = new System.Drawing.Size(433, 44);
             // 
             // gridcont
@@ -48,23 +49,33 @@
             // 
             // append
             // 
+            this.append.Size = new System.Drawing.Size(80, 34);
+            this.append.TabIndex = 0;
             this.append.Visible = false;
             // 
             // revise
             // 
+            this.revise.Size = new System.Drawing.Size(80, 34);
+            this.revise.TabIndex = 1;
             this.revise.Visible = false;
             // 
             // delete
             // 
+            this.delete.Size = new System.Drawing.Size(80, 34);
+            this.delete.TabIndex = 2;
             this.delete.Visible = false;
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(341, 8);
+            this.undo.Location = new System.Drawing.Point(343, 5);
+            this.undo.Size = new System.Drawing.Size(80, 34);
+            this.undo.TabIndex = 4;
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(255, 8);
+            this.save.Location = new System.Drawing.Point(263, 5);
+            this.save.Size = new System.Drawing.Size(80, 34);
+            this.save.TabIndex = 3;
             // 
             // label1
             // 
@@ -91,7 +102,7 @@
             this.displayBox1.Location = new System.Drawing.Point(64, 13);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(66, 23);
-            this.displayBox1.TabIndex = 100;
+            this.displayBox1.TabIndex = 0;
             // 
             // displayBox2
             // 
@@ -100,7 +111,7 @@
             this.displayBox2.Location = new System.Drawing.Point(291, 13);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(120, 23);
-            this.displayBox2.TabIndex = 101;
+            this.displayBox2.TabIndex = 1;
             // 
             // B04_AccountNo
             // 

@@ -66,6 +66,10 @@
             // 
             this.tabs.Size = new System.Drawing.Size(686, 424);
             // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
+            // 
             // label3
             // 
             this.label3.Lines = 0;
@@ -92,7 +96,7 @@
             this.textBox1.Location = new System.Drawing.Point(121, 27);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(50, 23);
-            this.textBox1.TabIndex = 2;
+            this.textBox1.TabIndex = 0;
             // 
             // textBox2
             // 
@@ -103,7 +107,7 @@
             this.textBox2.Location = new System.Drawing.Point(122, 75);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(400, 23);
-            this.textBox2.TabIndex = 3;
+            this.textBox2.TabIndex = 1;
             // 
             // checkBox1
             // 
@@ -113,13 +117,15 @@
             this.checkBox1.Location = new System.Drawing.Point(400, 27);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 4;
+            this.checkBox1.TabIndex = 2;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // B07
             // 
             this.ClientSize = new System.Drawing.Size(686, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox2";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
