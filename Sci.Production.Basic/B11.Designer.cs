@@ -437,6 +437,7 @@
             // 
             this.ClientSize = new System.Drawing.Size(784, 638);
             this.DefaultControlForEdit = "textBox1";
+            this.EnableGridJunkColor = true;
             this.DefaultOrder = "BrandID,ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
