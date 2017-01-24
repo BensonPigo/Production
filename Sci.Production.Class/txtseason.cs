@@ -69,12 +69,13 @@ namespace Sci.Production.Class
             base.OnPopUp(e);
 
             Sci.Win.Tools.SelectItem item;
-            string selectCommand = "select distinct ID from Season";
+            string selectCommand = "select distinct ID from Season order by id desc";
             if (this.brandObject != null && !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
             {
-                selectCommand = string.Format("select distinct ID from Season where BrandID = '{0}' ", this.brandObject.Text);
+                selectCommand = string.Format("select distinct ID from Season where BrandID = '{0}' order by id desc", this.brandObject.Text);
             }
             item = new Sci.Win.Tools.SelectItem(selectCommand, "11", this.Text);
+            item.Width = 300;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();

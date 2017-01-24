@@ -593,8 +593,8 @@ order by td.Seq", masterID);
                 return;
             }
             
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(styleData, "ID,SeasonID,Description,BrandID", "14,6,50,10", this.Text, headercaptions: "Style,Season,Description,Brand");
-            item.Width = 850;
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(styleData, "ID,SeasonID,Description,BrandID", "14,6,40,10", this.Text, headercaptions: "Style,Season,Description,Brand");
+            item.Width = 780;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             IList<DataRow> selectedData = item.GetSelecteds();
@@ -618,8 +618,8 @@ order by td.Seq", masterID);
         private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WHERE Junk=0  ORDER BY Id";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,40,40", this.Text, false, ",");
-
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,30,30", this.Text, false, ",");
+            item.Width = 750;
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             CurrentMaintain["BrandID"] = item.GetSelectedString();
