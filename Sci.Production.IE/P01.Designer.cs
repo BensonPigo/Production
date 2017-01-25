@@ -454,6 +454,7 @@
             this.textBox1.Size = new System.Drawing.Size(130, 23);
             this.textBox1.TabIndex = 0;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.textBox1.Validated += new System.EventHandler(this.GenCD);
             // 
             // textBox2
             // 
@@ -465,6 +466,7 @@
             this.textBox2.Size = new System.Drawing.Size(80, 23);
             this.textBox2.TabIndex = 3;
             this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.textBox2.Validated += new System.EventHandler(this.GenCD);
             // 
             // button8
             // 
@@ -524,6 +526,7 @@
             this.txtseason1.Name = "txtseason1";
             this.txtseason1.Size = new System.Drawing.Size(80, 23);
             this.txtseason1.TabIndex = 2;
+            this.txtseason1.Validated += new System.EventHandler(this.GenCD);
             // 
             // P01
             // 

@@ -76,36 +76,7 @@ order by td.Seq", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            //sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-            sp1.ParameterName = "@styleid";
-            sp1.Value = CurrentMaintain["StyleID"].ToString();
-            sp2.ParameterName = "@seasonid";
-            sp2.Value = CurrentMaintain["SeasonID"].ToString();
-            sp3.ParameterName = "@brandid";
-            sp3.Value = CurrentMaintain["BrandID"].ToString();
-
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-            cmds.Add(sp1);
-            cmds.Add(sp2);
-            cmds.Add(sp3);
-            //撈CD Code
-            DataTable cdCode;
-            string sqlCmd = "select CdCodeID from Style where ID = @styleid and SeasonID = @seasonid and BrandID = @brandid";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out cdCode);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox("Query CdCode data fail!\r\n" + result.ToString());
-                displayBox2.Value = "";
-            }
-            else
-            {
-                displayBox2.Value = cdCode.Rows.Count > 0 ? cdCode.Rows[0]["CdCodeID"].ToString() : "";
-            }
-
+            GenCD(null, null);  //撈CD Code
             bool canEdit = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P01. Factory GSD", "CanEdit");
             button1.Enabled = !this.EditMode && CurrentMaintain != null && canEdit;
             button2.Enabled = !this.EditMode && CurrentMaintain != null && canEdit;
@@ -622,15 +593,9 @@ order by td.Seq", masterID);
                     CurrentMaintain["ComboType"] = LocationData.Rows[0]["Location"].ToString();
                 }
             }
-            //撈CD Code
-            DataTable cdCode;
-            string sqlCmd2 = string.Format("select CdCodeID from Style where ID = '{0}' and SeasonID = '{1}' and BrandID = '{2}'", CurrentMaintain["StyleID"], CurrentMaintain["SeasonID"], CurrentMaintain["BrandID"]);
-            DualResult result2 = DBProxy.Current.Select(null, sqlCmd2, out cdCode);
-            displayBox2.Value = cdCode.Rows[0]["CdCodeID"].ToString();
-            if (!result)
-            {
-                displayBox2.Value = "";
-            }
+
+            GenCD(null, null);  //撈CD Code
+
         }
 
         //Brand
@@ -959,6 +924,41 @@ order by id.SEQ";
                 DetailDatas[i]["Seq"] = MyUtility.Convert.GetString(seq).PadLeft(4, '0');
             }
         }
+
+        //撈CD Code
+        private void GenCD(object sender, EventArgs e)
+        {
+            //sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@styleid";
+            sp1.Value = CurrentMaintain["StyleID"].ToString();
+            sp2.ParameterName = "@seasonid";
+            sp2.Value = CurrentMaintain["SeasonID"].ToString();
+            sp3.ParameterName = "@brandid";
+            sp3.Value = CurrentMaintain["BrandID"].ToString();
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+            cmds.Add(sp2);
+            cmds.Add(sp3);
+
+            DataTable cdCode;
+            string sqlCmd = "select CdCodeID from Style where ID = @styleid and SeasonID = @seasonid and BrandID = @brandid";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out cdCode);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Query CdCode data fail!\r\n" + result.ToString());
+                displayBox2.Value = "";
+            }
+            else
+            {
+                displayBox2.Value = cdCode.Rows.Count > 0 ? cdCode.Rows[0]["CdCodeID"].ToString() : "";
+            }
+        }
+
 
     }
 }
