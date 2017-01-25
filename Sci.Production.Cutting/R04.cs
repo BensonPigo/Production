@@ -23,7 +23,7 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
             DataTable WorkOrder;
-            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder", out WorkOrder);
+            DBProxy.Current.Select(null, "select distinct ID from MDivision", out WorkOrder);
             MyUtility.Tool.SetupCombox(cmb_M, 1, WorkOrder);
             cmb_M.Text = Sci.Env.User.Keyword;
         }
@@ -163,7 +163,7 @@ outer apply(
 outer apply(	
 		select count(*) as ct 
 		from #tmpWO 
-		where Status = 'Confrimed'
+		where Status != 'New'
 			and CDate = dr.EstCutDate
 			and CDate < EstCutDate
 			and EstCutDate > dr.EstCutDate
