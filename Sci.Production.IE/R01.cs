@@ -49,9 +49,9 @@ namespace Sci.Production.IE
         //Season
         private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = "select distinct ID from Season where Junk = 0";
-
+            string sqlCmd = "select distinct ID from Season where Junk = 0 ORDER BY ID DESC";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", textBox3.Text, "Season");
+            item.Width = 300;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             textBox3.Text = item.GetSelectedString();
