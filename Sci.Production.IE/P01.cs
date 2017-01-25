@@ -314,6 +314,8 @@ order by td.Seq", masterID);
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["MachineTypeID"].ToString())
                     {
+                        dr["Mold"] = "";
+                        dr["DescEN"] = "";
                         if (!MyUtility.Check.Seek(string.Format("select ID,Description from MachineType where Junk = 0 and ID = '{0}'", e.FormattedValue.ToString())))
                         {
                             MyUtility.Msg.WarningBox(string.Format("< M/C: {0} > not found!!!", e.FormattedValue.ToString()));
@@ -322,8 +324,10 @@ order by td.Seq", masterID);
                             return;
                         }
                     }
+                    
                 }
             };
+            
             #endregion
             #region Attachment
             mold.EditingMouseDown += (s, e) =>
@@ -336,11 +340,12 @@ order by td.Seq", masterID);
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = "select ID,DescEN from Mold where Junk = 0";
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,15", dr["Mold"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,15", dr["Mold"].ToString(), dr["DescEN"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             IList<DataRow> selectData = item.GetSelecteds();
                             dr["Mold"] = item.GetSelectedString();
+                            dr["DescEN"] = item.GetSelectedString();
                         }
                     }
                 }
@@ -370,18 +375,21 @@ order by td.Seq", masterID);
                             {
                                 MyUtility.Msg.WarningBox(string.Format("< Attachment: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
                                 dr["Mold"] = "";
+                                dr["DescEN"] = "";
                                 e.Cancel = true;
                                 return;
                             }
                             else
                             {
                                 dr["Mold"] = MyUtility.Convert.GetString(e.FormattedValue);
+                              //  dr["DescEN"] = MyUtility.Convert.GetString(e.FormattedValue);
                             }
                         }
                         else
                         {
                             MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
                             dr["Mold"] = "";
+                            dr["DescEN"] = "";
                         }
                     }
                 }
@@ -400,6 +408,7 @@ order by td.Seq", masterID);
                 .Numeric("SMV", header: "SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: smvsec)
                 .Text("MachineTypeID", header: "M/C", width: Widths.AnsiChars(8), settings: machine)
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), settings: mold)
+                .Text("DescEN", header: "Attachment Description", width: Widths.AnsiChars(8))
                 .Numeric("PcsPerHour", header: "Pcs/hr", integer_places: 5, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true)
@@ -463,7 +472,7 @@ order by td.Seq", masterID);
             }
             return true;
         }
-
+      
         protected override bool ClickSaveBefore()
         {
             #region 檢查必輸欄位
@@ -531,6 +540,7 @@ order by td.Seq", masterID);
                     return false;
                 }
             }
+           
 
             #endregion
             #region 檢查表身不可為空
@@ -611,6 +621,15 @@ order by td.Seq", masterID);
                 {
                     CurrentMaintain["ComboType"] = LocationData.Rows[0]["Location"].ToString();
                 }
+            }
+            //撈CD Code
+            DataTable cdCode;
+            string sqlCmd2 = string.Format("select CdCodeID from Style where ID = '{0}' and SeasonID = '{1}' and BrandID = '{2}'", CurrentMaintain["StyleID"], CurrentMaintain["SeasonID"], CurrentMaintain["BrandID"]);
+            DualResult result2 = DBProxy.Current.Select(null, sqlCmd2, out cdCode);
+            displayBox2.Value = cdCode.Rows[0]["CdCodeID"].ToString();
+            if (!result)
+            {
+                displayBox2.Value = "";
             }
         }
 

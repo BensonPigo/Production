@@ -33,7 +33,6 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.txtseason1 = new Sci.Production.Class.txtseason();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
             this.label5 = new Sci.Win.UI.Label();
             this.comboBox2 = new Sci.Win.UI.ComboBox();
@@ -58,6 +57,7 @@
             this.label11 = new Sci.Win.UI.Label();
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
+            this.txtseason1 = new Sci.Production.Class.txtseason();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -156,15 +156,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(894, 481);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(888, 435);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(888, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -245,17 +245,6 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(40, 24);
             this.comboBox1.TabIndex = 1;
-            // 
-            // txtseason1
-            // 
-            this.txtseason1.BackColor = System.Drawing.Color.White;
-            this.txtseason1.BrandObjectName = null;
-            this.txtseason1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SeasonID", true));
-            this.txtseason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtseason1.Location = new System.Drawing.Point(100, 33);
-            this.txtseason1.Name = "txtseason1";
-            this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 2;
             // 
             // numericBox1
             // 
@@ -524,6 +513,17 @@
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(27, 23);
             this.displayBox4.TabIndex = 11;
+            // 
+            // txtseason1
+            // 
+            this.txtseason1.BackColor = System.Drawing.Color.White;
+            this.txtseason1.BrandObjectName = null;
+            this.txtseason1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SeasonID", true));
+            this.txtseason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtseason1.Location = new System.Drawing.Point(100, 33);
+            this.txtseason1.Name = "txtseason1";
+            this.txtseason1.Size = new System.Drawing.Size(80, 23);
+            this.txtseason1.TabIndex = 2;
             // 
             // P01
             // 
