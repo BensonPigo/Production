@@ -81,10 +81,6 @@ namespace Sci.Production.Planning
             string FirstColumn = string.Empty, Country = string.Empty;
             int startRow = 5;
             int count = 1;
-            //if (tmpData3 == null)
-            //{ }
-            //else
-            //{
                 for (int i = 0; i < tmpData3.Rows.Count; i++)
                 {
                     if (FirstColumn == tmpData3.Rows[i][0].ToString() && Country == tmpData3.Rows[i]["Country"].ToString()) continue;
@@ -102,14 +98,11 @@ namespace Sci.Production.Planning
                     }
                     count++;
                 }
-           // }
+ 
             #region ALL
             decimal fractions, numerator;
             int AllEnd = startRow + 8;
             count = 1;
-            //if (All_tmpData3_SUM == null) { }
-            //else
-            //{
                 numerator = Convert.ToDecimal(All_tmpData3_SUM.Rows[0][0].ToString());  //分母
                 for (int x = startRow; x < AllEnd; x++)
                 {
@@ -634,7 +627,6 @@ namespace Sci.Production.Planning
                     }
                     count++;
                 }
-         //   }
             #endregion
 
             #region SMV_RATIO塞值
@@ -642,9 +634,6 @@ namespace Sci.Production.Planning
             count = 1;
             int row;
             string filter, QtyEFFX, EFFIC;
-            //if (tmpData3 == null) { }
-            //else
-            //{
                 for (int i = 0; i < tmpData3.Rows.Count; i++)
                 {
                     if ((FirstColumn != tmpData3.Rows[i][0].ToString() || Country != tmpData3.Rows[i]["Country"].ToString()) && i != 0)
@@ -735,22 +724,21 @@ namespace Sci.Production.Planning
                     }
 
                 }
-            //}
             #endregion
 
             #endregion
             #region [sheet2] Style Detail
            
             Microsoft.Office.Interop.Excel.Worksheet worksheet2 = objApp.ActiveWorkbook.Worksheets[2];            // 取得工作表
-            
-            BeginInvoke(() => { this.ShowWaitMessage("產生EXCEL檔的Style Detail中，請稍後..."); });
+
+            BeginInvoke(() => { this.ShowWaitMessage("Create EXCEL Style Detail, please wait..."); });
             MyUtility.Excel.CopyToXls(tmpStyleDetail, "", "Planning_R12.Matrix.xltx", 1, true, null, null, true, worksheet2, false);// 將datatable copy to excel
             BeginInvoke(() => { this.HideWaitMessage(); });
             #endregion
 
             #region [sheet3] Order Detail
             Microsoft.Office.Interop.Excel.Worksheet worksheet3 = objApp.ActiveWorkbook.Worksheets[3];
-            BeginInvoke(() => { this.ShowWaitMessage("產生EXCEL檔的Order Detail中，請稍後..."); });
+            BeginInvoke(() => { this.ShowWaitMessage("Create EXCEL Order Detail, please wait..."); });
             MyUtility.Excel.CopyToXls(tmpOrderDetail, "", "Planning_R12.Matrix.xltx", 1, true, null, null, true, worksheet3, false); // 將datatable copy to excel
                  BeginInvoke(() => { this.HideWaitMessage(); });
             #endregion
@@ -791,7 +779,7 @@ on FB.ID = O.FactoryID
 , tmpData1.SMV as SMV, tmpData1.TMS as TMS, tmpData1.FactoryID as Factory, 
 	                                        tmpData1.BrandAreaCode as AGCCode, tmpData1.Qty as [Order Qty]
 , tmpData1.StyleID as Style, tmpData1.CountryID as FactoryCountry, 
-	                                        SewingOutput_Detail.QAQty as ProdQty
+SewingOutput_Detail.QAQty as ProdQty
 , Round(3600 / iif(tmpData1.TMS * Round(SewingOutput.ManPower * SewingOutput_Detail.WorkHour ,1) = 0,null
 ,tmpData1.TMS * Round(SewingOutput.ManPower * SewingOutput_Detail.WorkHour ,1)), 0)  as StardQty 
 ,CASE WHEN SMV < 40 THEN 'A' WHEN SMV >= 40 and SMV < 50  THEN 'B' 
@@ -903,29 +891,30 @@ WHEN SUM(tmpData2.ProdQty) >= 10001 THEN 'FF'	 END as QtyEFFX
                            tmpData2.CPU as CPU,
                            tmpData2.SMV as SMV, 
                            tmpData2.AGCCode  as AGC,
-                           SUM(tmpData2.ProdQty) as 實際產量, 
-                           SUM(tmpData2.StardQty) as 標準產量,
-                           ''AS 橫向區間, 
+                           SUM(tmpData2.ProdQty) as SewingOutput, 
+                           SUM(tmpData2.StardQty) as StdOutput,
+                           ''AS EfficiencyRange, 
                            tmpData2.FactoryCountry as Country
                          from 
                          ({0}) tmpData2
-                         group by tmpData2.Style, tmpData2.CPU, tmpData2.SMV, {1}, tmpData2.FactoryCountry", SqlData2, GroupBy);
+                         group by tmpData2.Style, tmpData2.CPU, tmpData2.AGCCode, tmpData2.SMV, {1} ,tmpData2.FactoryCountry", SqlData2, GroupBy);
 
             BeginInvoke(() => { this.ShowWaitMessage("Wait – Finishing Style Detail Data (Step 4/5)"); });
             result = DBProxy.Current.Select("", SqlStyleDetail, spList, out tmpStyleDetail);
+             if (!result) return result;
             for (int i = 0; i < tmpStyleDetail.Rows.Count; i++)
             {
-                tmpStyleDetail.Rows[i]["橫向區間"] = GenEFFX(tmpStyleDetail.Rows[i]["實際產量"].ToString());  //橫向區間#
+                tmpStyleDetail.Rows[i]["EfficiencyRange"] = GenEFFX(tmpStyleDetail.Rows[i]["SewingOutput"].ToString());  //橫向區間#
             }
             BeginInvoke(() => { this.HideWaitMessage(); });
-            if (!result) return result;
+        
             #endregion
 
             #region tmpOrderDetail
             SqlOrderDetail = string.Format(@"select DISTINCT tmpData2.OrderID as SP#, tmpData2.CPU as CPU
 , tmpData2.SMV as SMV, tmpData2.TMS as TMS, tmpData2.Factory as Factory
 , tmpData2.AGCCode  as AreaCode, tmpData2.[Order Qty] as [SP# Q'ty]
-, tmpData2.Style as Style, tmpData2.ProdQty as 實際產量, tmpData2.StardQty as 標準產量 
+, tmpData2.Style as Style, tmpData2.ProdQty as SewingOutput, tmpData2.StardQty as StdOutput 
                                             from 
                                             ({0}) tmpData2", SqlData2);
 
