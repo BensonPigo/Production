@@ -326,6 +326,8 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "dateRangeAPDate";
+            this.DefaultControlForEdit = "dateRangeAPDate";
             this.IsSupportToPrint = false;
             this.Name = "R24";
             this.Text = "R24. Local Payment summary by SP#";

@@ -98,12 +98,11 @@
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(892, 104);
-            this.gridicon.TabIndex = 6;
+            this.gridicon.TabIndex = 7;
             // 
             // refresh
             // 
             this.refresh.Location = new System.Drawing.Point(920, 0);
-            this.refresh.TabIndex = 0;
             // 
             // detailgridcont
             // 
@@ -133,6 +132,7 @@
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 629);
             this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            this.detailbtm.TabIndex = 0;
             // 
             // browse
             // 
@@ -142,6 +142,10 @@
             // 
             this.tabs.Size = new System.Drawing.Size(1008, 696);
             // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
+            // 
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -149,7 +153,7 @@
             this.button2.Location = new System.Drawing.Point(892, 48);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(100, 50);
-            this.button2.TabIndex = 5;
+            this.button2.TabIndex = 6;
             this.button2.Text = "Import From Real Time";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -218,7 +222,7 @@
             this.txtartworktype_fty1.Location = new System.Drawing.Point(354, 46);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 0;
+            this.txtartworktype_fty1.TabIndex = 4;
             this.txtartworktype_fty1.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
             // 
             // displayBox1
@@ -229,7 +233,7 @@
             this.displayBox1.Location = new System.Drawing.Point(94, 12);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(135, 23);
-            this.displayBox1.TabIndex = 12;
+            this.displayBox1.TabIndex = 0;
             // 
             // txtuser1
             // 
@@ -249,7 +253,7 @@
             this.textBox2.Location = new System.Drawing.Point(94, 81);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(753, 23);
-            this.textBox2.TabIndex = 3;
+            this.textBox2.TabIndex = 5;
             // 
             // dateBox1
             // 
@@ -257,7 +261,7 @@
             this.dateBox1.Location = new System.Drawing.Point(94, 46);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 1;
+            this.dateBox1.TabIndex = 3;
             // 
             // label25
             // 
@@ -279,13 +283,14 @@
             this.txtmfactory1.Location = new System.Drawing.Point(354, 14);
             this.txtmfactory1.Name = "txtmfactory1";
             this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtmfactory1.TabIndex = 46;
+            this.txtmfactory1.TabIndex = 1;
             // 
             // P04
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1008, 729);
             this.DefaultControl = "datebox1";
+            this.DefaultControlForEdit = "dateBox1";
             this.DefaultOrder = "IssueDate,ID";
             this.GridAlias = "FarmIn_detail";
             this.IsSupportConfirm = true;

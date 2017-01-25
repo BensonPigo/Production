@@ -92,21 +92,21 @@
             this.dateRange3.Location = new System.Drawing.Point(509, 15);
             this.dateRange3.Name = "dateRange3";
             this.dateRange3.Size = new System.Drawing.Size(280, 23);
-            this.dateRange3.TabIndex = 2;
+            this.dateRange3.TabIndex = 3;
             // 
             // dateRange2
             // 
             this.dateRange2.Location = new System.Drawing.Point(107, 45);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 1;
+            this.dateRange2.TabIndex = 6;
             // 
             // dateRange1
             // 
             this.dateRange1.Location = new System.Drawing.Point(107, 15);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 0;
+            this.dateRange1.TabIndex = 1;
             // 
             // label4
             // 
@@ -133,7 +133,7 @@
             this.textBox2.Location = new System.Drawing.Point(655, 45);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(122, 23);
-            this.textBox2.TabIndex = 4;
+            this.textBox2.TabIndex = 8;
             // 
             // label2
             // 
@@ -172,7 +172,7 @@
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(1181, 109);
-            this.groupBox1.TabIndex = 21;
+            this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
             // label8
@@ -202,7 +202,7 @@
             this.txtartworktype_fty1.Location = new System.Drawing.Point(910, 15);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 5;
+            this.txtartworktype_fty1.TabIndex = 4;
             this.txtartworktype_fty1.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
             this.txtartworktype_fty1.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
             // 
@@ -213,7 +213,7 @@
             this.button1.Location = new System.Drawing.Point(1068, 15);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 6;
+            this.button1.TabIndex = 9;
             this.button1.Text = "Find Now";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -225,7 +225,7 @@
             this.textBox1.Location = new System.Drawing.Point(509, 45);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(122, 23);
-            this.textBox1.TabIndex = 3;
+            this.textBox1.TabIndex = 7;
             // 
             // label1
             // 
@@ -356,6 +356,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
+            this.DefaultControl = "dateRange1";
             this.Name = "P01_BatchCreate";
             this.Text = "Batch Create From Sub Process Data";
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();

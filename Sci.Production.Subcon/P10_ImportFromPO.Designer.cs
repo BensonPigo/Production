@@ -59,7 +59,7 @@
             this.button3.Location = new System.Drawing.Point(1216, 15);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(90, 30);
-            this.button3.TabIndex = 1;
+            this.button3.TabIndex = 2;
             this.button3.Text = "Cancel";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -74,7 +74,7 @@
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.ReadOnly = true;
             this.checkBox2.Size = new System.Drawing.Size(15, 14);
-            this.checkBox2.TabIndex = 15;
+            this.checkBox2.TabIndex = 0;
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // checkBox1
@@ -99,7 +99,7 @@
             this.button2.Location = new System.Drawing.Point(1120, 16);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(90, 30);
-            this.button2.TabIndex = 0;
+            this.button2.TabIndex = 1;
             this.button2.Text = "Import";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -144,7 +144,7 @@
             this.groupBox2.Location = new System.Drawing.Point(0, 477);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(1312, 53);
-            this.groupBox2.TabIndex = 18;
+            this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             // 
             // groupBox1
@@ -238,6 +238,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
+            this.DefaultControl = "textBox1";
             this.Name = "P10_ImportFromPO";
             this.Text = "Import From P/O#";
             this.groupBox2.ResumeLayout(false);

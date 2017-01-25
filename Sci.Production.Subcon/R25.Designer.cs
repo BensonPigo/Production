@@ -47,14 +47,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(429, 27);
+            this.print.TabIndex = 1;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(429, 63);
+            this.toexcel.TabIndex = 2;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(429, 99);
+            this.close.TabIndex = 3;
             // 
             // panel1
             // 
@@ -73,7 +76,7 @@
             this.panel1.Location = new System.Drawing.Point(9, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(414, 244);
-            this.panel1.TabIndex = 94;
+            this.panel1.TabIndex = 0;
             // 
             // txtartworktype_fty1
             // 
@@ -84,7 +87,7 @@
             this.txtartworktype_fty1.Location = new System.Drawing.Point(118, 131);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(100, 23);
-            this.txtartworktype_fty1.TabIndex = 12;
+            this.txtartworktype_fty1.TabIndex = 3;
             // 
             // textBox2
             // 
@@ -93,7 +96,7 @@
             this.textBox2.Location = new System.Drawing.Point(118, 92);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(100, 23);
-            this.textBox2.TabIndex = 10;
+            this.textBox2.TabIndex = 2;
             // 
             // textBox1
             // 
@@ -102,7 +105,7 @@
             this.textBox1.Location = new System.Drawing.Point(118, 51);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 9;
+            this.textBox1.TabIndex = 1;
             // 
             // comboBox1
             // 
@@ -113,14 +116,14 @@
             this.comboBox1.Location = new System.Drawing.Point(118, 208);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 8;
+            this.comboBox1.TabIndex = 5;
             // 
             // dateRange1
             // 
             this.dateRange1.Location = new System.Drawing.Point(118, 14);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 7;
+            this.dateRange1.TabIndex = 0;
             // 
             // txtsubcon1
             // 
@@ -129,7 +132,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(118, 169);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 6;
+            this.txtsubcon1.TabIndex = 4;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // label6
@@ -190,6 +193,8 @@
             // 
             this.ClientSize = new System.Drawing.Size(517, 294);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.Name = "R25";
             this.Text = "R25. Local Purchase Receiving List";
             this.Controls.SetChildIndex(this.print, 0);

@@ -46,16 +46,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(430, 12);
+            this.print.TabIndex = 7;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(430, 48);
-            this.toexcel.TabIndex = 9;
+            this.toexcel.TabIndex = 8;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(430, 84);
-            this.close.TabIndex = 10;
+            this.close.TabIndex = 9;
             // 
             // label1
             // 
@@ -108,7 +109,7 @@
             this.cbbFactory.Location = new System.Drawing.Point(114, 154);
             this.cbbFactory.Name = "cbbFactory";
             this.cbbFactory.Size = new System.Drawing.Size(121, 24);
-            this.cbbFactory.TabIndex = 5;
+            this.cbbFactory.TabIndex = 4;
             // 
             // dateRange1
             // 
@@ -133,7 +134,7 @@
             this.txtMdivision1.Location = new System.Drawing.Point(114, 120);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 4;
+            this.txtMdivision1.TabIndex = 3;
             // 
             // txtsubcon1
             // 
@@ -142,7 +143,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(115, 192);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 6;
+            this.txtsubcon1.TabIndex = 5;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // txtartworktype_fty1
@@ -154,14 +155,14 @@
             this.txtartworktype_fty1.Location = new System.Drawing.Point(114, 84);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 3;
+            this.txtartworktype_fty1.TabIndex = 2;
             // 
             // dateRange2
             // 
             this.dateRange2.Location = new System.Drawing.Point(115, 48);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 104;
+            this.dateRange2.TabIndex = 1;
             // 
             // label6
             // 
@@ -185,7 +186,7 @@
             this.checkBox1.Location = new System.Drawing.Point(300, 194);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(86, 21);
-            this.checkBox1.TabIndex = 106;
+            this.checkBox1.TabIndex = 6;
             this.checkBox1.Text = "Summary";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -205,6 +206,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R22";
             this.Text = "R22. Local Payment List or Summary";

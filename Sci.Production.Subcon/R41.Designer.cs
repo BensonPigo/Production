@@ -46,14 +46,17 @@
             // 
             this.print.Enabled = false;
             this.print.Location = new System.Drawing.Point(425, 12);
+            this.print.TabIndex = 6;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(425, 48);
+            this.toexcel.TabIndex = 7;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(425, 84);
+            this.close.TabIndex = 8;
             // 
             // label1
             // 
@@ -107,14 +110,14 @@
             this.textSP.Location = new System.Drawing.Point(125, 48);
             this.textSP.Name = "textSP";
             this.textSP.Size = new System.Drawing.Size(143, 23);
-            this.textSP.TabIndex = 100;
+            this.textSP.TabIndex = 2;
             // 
             // dateBundle
             // 
             this.dateBundle.Location = new System.Drawing.Point(125, 77);
             this.dateBundle.Name = "dateBundle";
             this.dateBundle.Size = new System.Drawing.Size(280, 23);
-            this.dateBundle.TabIndex = 101;
+            this.dateBundle.TabIndex = 3;
             // 
             // comboSubProcess
             // 
@@ -125,7 +128,7 @@
             this.comboSubProcess.Location = new System.Drawing.Point(125, 106);
             this.comboSubProcess.Name = "comboSubProcess";
             this.comboSubProcess.Size = new System.Drawing.Size(121, 24);
-            this.comboSubProcess.TabIndex = 102;
+            this.comboSubProcess.TabIndex = 4;
             // 
             // comboM
             // 
@@ -136,7 +139,7 @@
             this.comboM.Location = new System.Drawing.Point(125, 136);
             this.comboM.Name = "comboM";
             this.comboM.Size = new System.Drawing.Size(121, 24);
-            this.comboM.TabIndex = 103;
+            this.comboM.TabIndex = 5;
             // 
             // label6
             // 
@@ -154,7 +157,7 @@
             this.textCutRef_Start.Location = new System.Drawing.Point(125, 19);
             this.textCutRef_Start.Name = "textCutRef_Start";
             this.textCutRef_Start.Size = new System.Drawing.Size(121, 23);
-            this.textCutRef_Start.TabIndex = 107;
+            this.textCutRef_Start.TabIndex = 0;
             // 
             // textCutRef_End
             // 
@@ -163,7 +166,7 @@
             this.textCutRef_End.Location = new System.Drawing.Point(274, 19);
             this.textCutRef_End.Name = "textCutRef_End";
             this.textCutRef_End.Size = new System.Drawing.Size(131, 23);
-            this.textCutRef_End.TabIndex = 108;
+            this.textCutRef_End.TabIndex = 1;
             // 
             // R41
             // 
@@ -180,6 +183,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "textCutRef_Start";
+            this.DefaultControlForEdit = "textCutRef_Start";
             this.Name = "R41";
             this.Text = "R41.Bundle tracking list (RFID)";
             this.Controls.SetChildIndex(this.print, 0);

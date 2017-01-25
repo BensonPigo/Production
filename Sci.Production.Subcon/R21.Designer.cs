@@ -45,16 +45,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(430, 12);
+            this.print.TabIndex = 6;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(430, 48);
-            this.toexcel.TabIndex = 9;
+            this.toexcel.TabIndex = 7;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(430, 84);
-            this.close.TabIndex = 10;
+            this.close.TabIndex = 8;
             // 
             // label1
             // 
@@ -107,7 +108,7 @@
             this.cbbFactory.Location = new System.Drawing.Point(114, 118);
             this.cbbFactory.Name = "cbbFactory";
             this.cbbFactory.Size = new System.Drawing.Size(121, 24);
-            this.cbbFactory.TabIndex = 5;
+            this.cbbFactory.TabIndex = 3;
             // 
             // dateRange1
             // 
@@ -132,7 +133,7 @@
             this.txtMdivision1.Location = new System.Drawing.Point(114, 84);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 4;
+            this.txtMdivision1.TabIndex = 2;
             // 
             // txtsubcon1
             // 
@@ -141,7 +142,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(115, 156);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 6;
+            this.txtsubcon1.TabIndex = 4;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // txtartworktype_fty1
@@ -153,7 +154,7 @@
             this.txtartworktype_fty1.Location = new System.Drawing.Point(114, 48);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 3;
+            this.txtartworktype_fty1.TabIndex = 1;
             // 
             // cbbOrderBy
             // 
@@ -167,7 +168,7 @@
             this.cbbOrderBy.Location = new System.Drawing.Point(114, 190);
             this.cbbOrderBy.Name = "cbbOrderBy";
             this.cbbOrderBy.Size = new System.Drawing.Size(121, 24);
-            this.cbbOrderBy.TabIndex = 104;
+            this.cbbOrderBy.TabIndex = 5;
             // 
             // label8
             // 
@@ -193,6 +194,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R21";
             this.Text = "R21. Outstanding List of Local Payment";

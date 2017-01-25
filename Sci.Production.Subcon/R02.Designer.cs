@@ -49,16 +49,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(430, 12);
+            this.print.TabIndex = 9;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(430, 48);
-            this.toexcel.TabIndex = 9;
+            this.toexcel.TabIndex = 10;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(430, 84);
-            this.close.TabIndex = 10;
+            this.close.TabIndex = 11;
             // 
             // label1
             // 
@@ -123,14 +124,14 @@
             this.cbbFactory.Location = new System.Drawing.Point(114, 118);
             this.cbbFactory.Name = "cbbFactory";
             this.cbbFactory.Size = new System.Drawing.Size(121, 24);
-            this.cbbFactory.TabIndex = 3;
+            this.cbbFactory.TabIndex = 4;
             // 
             // dateRange1
             // 
             this.dateRange1.Location = new System.Drawing.Point(115, 12);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 0;
+            this.dateRange1.TabIndex = 1;
             // 
             // cbbOrderBy
             // 
@@ -144,7 +145,7 @@
             this.cbbOrderBy.Location = new System.Drawing.Point(114, 263);
             this.cbbOrderBy.Name = "cbbOrderBy";
             this.cbbOrderBy.Size = new System.Drawing.Size(121, 24);
-            this.cbbOrderBy.TabIndex = 7;
+            this.cbbOrderBy.TabIndex = 8;
             // 
             // txtSPNO
             // 
@@ -154,7 +155,7 @@
             this.txtSPNO.MaxLength = 13;
             this.txtSPNO.Name = "txtSPNO";
             this.txtSPNO.Size = new System.Drawing.Size(146, 23);
-            this.txtSPNO.TabIndex = 5;
+            this.txtSPNO.TabIndex = 6;
             // 
             // txtsubcon1
             // 
@@ -163,7 +164,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(115, 156);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 4;
+            this.txtsubcon1.TabIndex = 5;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // txtartworktype_fty1
@@ -175,7 +176,7 @@
             this.txtartworktype_fty1.Location = new System.Drawing.Point(114, 48);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 1;
+            this.txtartworktype_fty1.TabIndex = 2;
             // 
             // txtstyle1
             // 
@@ -185,7 +186,7 @@
             this.txtstyle1.Location = new System.Drawing.Point(115, 228);
             this.txtstyle1.Name = "txtstyle1";
             this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 6;
+            this.txtstyle1.TabIndex = 7;
             // 
             // label4
             // 
@@ -203,7 +204,7 @@
             this.txtMdivision1.Location = new System.Drawing.Point(114, 84);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 2;
+            this.txtMdivision1.TabIndex = 3;
             // 
             // label9
             // 
@@ -215,7 +216,7 @@
             this.label9.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.label9.RectStyle.ExtBorderWidth = 1F;
             this.label9.Size = new System.Drawing.Size(98, 23);
-            this.label9.TabIndex = 108;
+            this.label9.TabIndex = 12;
             this.label9.Text = "Issue Date";
             this.label9.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label9.TextStyle.Color = System.Drawing.Color.Black;
@@ -239,6 +240,8 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R02";
             this.Text = "R02. Cutparts Farm Out List";

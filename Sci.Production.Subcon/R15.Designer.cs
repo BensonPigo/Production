@@ -49,6 +49,7 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(430, 12);
+            this.print.TabIndex = 8;
             // 
             // toexcel
             // 
@@ -239,6 +240,8 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R15";
             this.Text = "R15. Sub-con Purchase List (Artwork cost)";

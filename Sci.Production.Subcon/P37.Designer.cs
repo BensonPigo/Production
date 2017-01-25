@@ -81,9 +81,9 @@
             this.label25 = new Sci.Win.UI.Label();
             this.displayBox20 = new Sci.Win.UI.DisplayBox();
             this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
-            this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser3 = new Sci.Production.Class.txttpeuser();
+            this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
+            this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -138,6 +138,7 @@
             this.masterpanel.Controls.Add(this.lblStatus);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Size = new System.Drawing.Size(1000, 438);
+            this.masterpanel.TabIndex = 1;
             this.masterpanel.Paint += new System.Windows.Forms.PaintEventHandler(this.masterpanel_Paint);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblStatus, 0);
@@ -183,7 +184,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(2142, 397);
+            this.gridicon.Location = new System.Drawing.Point(2267, 397);
             // 
             // refresh
             // 
@@ -219,6 +220,7 @@
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 600);
             this.detailbtm.Size = new System.Drawing.Size(1000, 49);
+            this.detailbtm.TabIndex = 0;
             // 
             // browse
             // 
@@ -235,6 +237,7 @@
             // editby
             // 
             this.editby.Location = new System.Drawing.Point(400, 18);
+            this.editby.TabIndex = 1;
             // 
             // lblcreateby
             // 
@@ -262,7 +265,7 @@
             this.lblSubconDebitNote.Location = new System.Drawing.Point(659, 9);
             this.lblSubconDebitNote.Name = "lblSubconDebitNote";
             this.lblSubconDebitNote.Size = new System.Drawing.Size(178, 23);
-            this.lblSubconDebitNote.TabIndex = 46;
+            this.lblSubconDebitNote.TabIndex = 18;
             this.lblSubconDebitNote.Text = "Subcon Debit Note";
             this.lblSubconDebitNote.TextStyle.Color = System.Drawing.Color.Red;
             // 
@@ -275,7 +278,7 @@
             this.lblStatus.Location = new System.Drawing.Point(836, 9);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(151, 23);
-            this.lblStatus.TabIndex = 45;
+            this.lblStatus.TabIndex = 17;
             this.lblStatus.Text = "Not Approve";
             this.lblStatus.TextStyle.Color = System.Drawing.Color.Red;
             // 
@@ -287,7 +290,7 @@
             this.displayBox1.Location = new System.Drawing.Point(95, 9);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(128, 23);
-            this.displayBox1.TabIndex = 47;
+            this.displayBox1.TabIndex = 0;
             // 
             // label2
             // 
@@ -306,7 +309,7 @@
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 49;
+            this.dateBox1.TabIndex = 2;
             // 
             // label3
             // 
@@ -334,7 +337,7 @@
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.ReadOnly = true;
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 55;
+            this.dateBox2.TabIndex = 1;
             // 
             // label5
             // 
@@ -353,7 +356,7 @@
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.ReadOnly = true;
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 57;
+            this.dateBox3.TabIndex = 10;
             // 
             // label6
             // 
@@ -381,7 +384,7 @@
             this.displayBox2.Location = new System.Drawing.Point(95, 73);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(100, 23);
-            this.displayBox2.TabIndex = 59;
+            this.displayBox2.TabIndex = 6;
             // 
             // btnDebitSchedule
             // 
@@ -389,7 +392,7 @@
             this.btnDebitSchedule.Location = new System.Drawing.Point(837, 25);
             this.btnDebitSchedule.Name = "btnDebitSchedule";
             this.btnDebitSchedule.Size = new System.Drawing.Size(127, 30);
-            this.btnDebitSchedule.TabIndex = 60;
+            this.btnDebitSchedule.TabIndex = 6;
             this.btnDebitSchedule.Text = "Debit Schedule";
             this.btnDebitSchedule.UseVisualStyleBackColor = true;
             this.btnDebitSchedule.Click += new System.EventHandler(this.btnDebitSchedule_Click);
@@ -427,7 +430,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 65;
+            this.numericBox1.TabIndex = 5;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -449,7 +452,7 @@
             0,
             0});
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 67;
+            this.numericBox2.TabIndex = 3;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -491,7 +494,7 @@
             0});
             this.numTotalAmt.ReadOnly = true;
             this.numTotalAmt.Size = new System.Drawing.Size(103, 23);
-            this.numTotalAmt.TabIndex = 70;
+            this.numTotalAmt.TabIndex = 2;
             this.numTotalAmt.Value = new decimal(new int[] {
             0,
             0,
@@ -515,7 +518,7 @@
             this.displayBox4.Location = new System.Drawing.Point(398, 29);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(43, 23);
-            this.displayBox4.TabIndex = 77;
+            this.displayBox4.TabIndex = 1;
             // 
             // displayBox6
             // 
@@ -525,7 +528,7 @@
             this.displayBox6.Location = new System.Drawing.Point(126, 28);
             this.displayBox6.Name = "displayBox6";
             this.displayBox6.Size = new System.Drawing.Size(169, 23);
-            this.displayBox6.TabIndex = 88;
+            this.displayBox6.TabIndex = 0;
             // 
             // displayBox7
             // 
@@ -535,7 +538,7 @@
             this.displayBox7.Location = new System.Drawing.Point(458, 57);
             this.displayBox7.Name = "displayBox7";
             this.displayBox7.Size = new System.Drawing.Size(169, 23);
-            this.displayBox7.TabIndex = 90;
+            this.displayBox7.TabIndex = 3;
             // 
             // label16
             // 
@@ -543,7 +546,7 @@
             this.label16.Location = new System.Drawing.Point(646, 28);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(157, 23);
-            this.label16.TabIndex = 92;
+            this.label16.TabIndex = 3;
             this.label16.Text = "TW. Settled Voucher No";
             // 
             // label15
@@ -581,7 +584,7 @@
             this.displayBox8.Location = new System.Drawing.Point(95, 105);
             this.displayBox8.Name = "displayBox8";
             this.displayBox8.Size = new System.Drawing.Size(181, 23);
-            this.displayBox8.TabIndex = 96;
+            this.displayBox8.TabIndex = 9;
             // 
             // displayBox9
             // 
@@ -591,7 +594,7 @@
             this.displayBox9.Location = new System.Drawing.Point(95, 137);
             this.displayBox9.Name = "displayBox9";
             this.displayBox9.Size = new System.Drawing.Size(293, 23);
-            this.displayBox9.TabIndex = 98;
+            this.displayBox9.TabIndex = 11;
             // 
             // label19
             // 
@@ -610,7 +613,7 @@
             this.displayBox10.Location = new System.Drawing.Point(95, 169);
             this.displayBox10.Name = "displayBox10";
             this.displayBox10.Size = new System.Drawing.Size(293, 23);
-            this.displayBox10.TabIndex = 100;
+            this.displayBox10.TabIndex = 13;
             // 
             // label20
             // 
@@ -629,7 +632,7 @@
             this.displayBox11.Location = new System.Drawing.Point(95, 201);
             this.displayBox11.Name = "displayBox11";
             this.displayBox11.Size = new System.Drawing.Size(293, 23);
-            this.displayBox11.TabIndex = 102;
+            this.displayBox11.TabIndex = 14;
             // 
             // label21
             // 
@@ -657,7 +660,7 @@
             this.displayBox12.Location = new System.Drawing.Point(722, 41);
             this.displayBox12.Name = "displayBox12";
             this.displayBox12.Size = new System.Drawing.Size(43, 23);
-            this.displayBox12.TabIndex = 104;
+            this.displayBox12.TabIndex = 4;
             // 
             // label23
             // 
@@ -677,7 +680,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(425, 93);
-            this.editBox1.TabIndex = 107;
+            this.editBox1.TabIndex = 12;
             // 
             // label24
             // 
@@ -705,7 +708,7 @@
             this.groupBox1.Location = new System.Drawing.Point(17, 236);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(975, 95);
-            this.groupBox1.TabIndex = 110;
+            this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Local Debit Memo Info";
             // 
@@ -723,7 +726,7 @@
             0,
             0});
             this.numBalance.Size = new System.Drawing.Size(100, 23);
-            this.numBalance.TabIndex = 121;
+            this.numBalance.TabIndex = 5;
             this.numBalance.Value = new decimal(new int[] {
             0,
             0,
@@ -754,7 +757,7 @@
             0,
             0});
             this.numericBox3.Size = new System.Drawing.Size(100, 23);
-            this.numericBox3.TabIndex = 119;
+            this.numericBox3.TabIndex = 4;
             this.numericBox3.Value = new decimal(new int[] {
             0,
             0,
@@ -769,7 +772,7 @@
             this.displayBox19.Location = new System.Drawing.Point(117, 29);
             this.displayBox19.Name = "displayBox19";
             this.displayBox19.Size = new System.Drawing.Size(128, 23);
-            this.displayBox19.TabIndex = 118;
+            this.displayBox19.TabIndex = 0;
             // 
             // groupBox2
             // 
@@ -784,7 +787,7 @@
             this.groupBox2.Location = new System.Drawing.Point(17, 337);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(975, 95);
-            this.groupBox2.TabIndex = 111;
+            this.groupBox2.TabIndex = 16;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Voucher Info.";
             // 
@@ -805,7 +808,7 @@
             this.displayBox20.Location = new System.Drawing.Point(806, 28);
             this.displayBox20.Name = "displayBox20";
             this.displayBox20.Size = new System.Drawing.Size(163, 23);
-            this.displayBox20.TabIndex = 96;
+            this.displayBox20.TabIndex = 2;
             // 
             // displayBox5
             // 
@@ -815,27 +818,7 @@
             this.displayBox5.Location = new System.Drawing.Point(458, 28);
             this.displayBox5.Name = "displayBox5";
             this.displayBox5.Size = new System.Drawing.Size(169, 23);
-            this.displayBox5.TabIndex = 95;
-            // 
-            // txttpeuser1
-            // 
-            this.txttpeuser1.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "handle", true));
-            this.txttpeuser1.DisplayBox1Binding = "";
-            this.txttpeuser1.DisplayBox2Binding = "";
-            this.txttpeuser1.Location = new System.Drawing.Point(326, 41);
-            this.txttpeuser1.Name = "txttpeuser1";
-            this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser1.TabIndex = 118;
-            // 
-            // txttpeuser2
-            // 
-            this.txttpeuser2.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "smr", true));
-            this.txttpeuser2.DisplayBox1Binding = "";
-            this.txttpeuser2.DisplayBox2Binding = "";
-            this.txttpeuser2.Location = new System.Drawing.Point(326, 73);
-            this.txttpeuser2.Name = "txttpeuser2";
-            this.txttpeuser2.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser2.TabIndex = 119;
+            this.displayBox5.TabIndex = 1;
             // 
             // txttpeuser3
             // 
@@ -845,7 +828,27 @@
             this.txttpeuser3.Location = new System.Drawing.Point(702, 73);
             this.txttpeuser3.Name = "txttpeuser3";
             this.txttpeuser3.Size = new System.Drawing.Size(290, 23);
-            this.txttpeuser3.TabIndex = 120;
+            this.txttpeuser3.TabIndex = 8;
+            // 
+            // txttpeuser2
+            // 
+            this.txttpeuser2.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "smr", true));
+            this.txttpeuser2.DisplayBox1Binding = "";
+            this.txttpeuser2.DisplayBox2Binding = "";
+            this.txttpeuser2.Location = new System.Drawing.Point(326, 73);
+            this.txttpeuser2.Name = "txttpeuser2";
+            this.txttpeuser2.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser2.TabIndex = 7;
+            // 
+            // txttpeuser1
+            // 
+            this.txttpeuser1.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "handle", true));
+            this.txttpeuser1.DisplayBox1Binding = "";
+            this.txttpeuser1.DisplayBox2Binding = "";
+            this.txttpeuser1.Location = new System.Drawing.Point(326, 41);
+            this.txttpeuser1.Name = "txttpeuser1";
+            this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser1.TabIndex = 3;
             // 
             // P37
             // 

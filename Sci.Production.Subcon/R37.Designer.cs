@@ -52,6 +52,18 @@
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // print
+            // 
+            this.print.TabIndex = 1;
+            // 
+            // toexcel
+            // 
+            this.toexcel.TabIndex = 2;
+            // 
+            // close
+            // 
+            this.close.TabIndex = 3;
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.comboReport);
@@ -77,7 +89,7 @@
             this.panel1.Location = new System.Drawing.Point(18, 10);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(511, 305);
-            this.panel1.TabIndex = 94;
+            this.panel1.TabIndex = 0;
             // 
             // comboReport
             // 
@@ -91,7 +103,7 @@
             this.comboReport.Location = new System.Drawing.Point(139, 270);
             this.comboReport.Name = "comboReport";
             this.comboReport.Size = new System.Drawing.Size(121, 24);
-            this.comboReport.TabIndex = 19;
+            this.comboReport.TabIndex = 9;
             // 
             // comboPay
             // 
@@ -106,7 +118,7 @@
             this.comboPay.Location = new System.Drawing.Point(139, 235);
             this.comboPay.Name = "comboPay";
             this.comboPay.Size = new System.Drawing.Size(121, 24);
-            this.comboPay.TabIndex = 18;
+            this.comboPay.TabIndex = 8;
             // 
             // combFac
             // 
@@ -117,7 +129,7 @@
             this.combFac.Location = new System.Drawing.Point(139, 199);
             this.combFac.Name = "combFac";
             this.combFac.Size = new System.Drawing.Size(121, 24);
-            this.combFac.TabIndex = 17;
+            this.combFac.TabIndex = 7;
             // 
             // txttSMR
             // 
@@ -125,7 +137,7 @@
             this.txttSMR.Location = new System.Drawing.Point(139, 167);
             this.txttSMR.Name = "txttSMR";
             this.txttSMR.Size = new System.Drawing.Size(300, 23);
-            this.txttSMR.TabIndex = 16;
+            this.txttSMR.TabIndex = 6;
             this.txttSMR.TextBox1Binding = "";
             // 
             // Han
@@ -134,7 +146,7 @@
             this.Han.Location = new System.Drawing.Point(139, 134);
             this.Han.Name = "Han";
             this.Han.Size = new System.Drawing.Size(300, 23);
-            this.Han.TabIndex = 15;
+            this.Han.TabIndex = 5;
             this.Han.TextBox1Binding = "";
             // 
             // SettDate
@@ -142,21 +154,21 @@
             this.SettDate.Location = new System.Drawing.Point(139, 74);
             this.SettDate.Name = "SettDate";
             this.SettDate.Size = new System.Drawing.Size(280, 23);
-            this.SettDate.TabIndex = 14;
+            this.SettDate.TabIndex = 2;
             // 
             // ConDate
             // 
             this.ConDate.Location = new System.Drawing.Point(139, 45);
             this.ConDate.Name = "ConDate";
             this.ConDate.Size = new System.Drawing.Size(280, 23);
-            this.ConDate.TabIndex = 13;
+            this.ConDate.TabIndex = 1;
             // 
             // DebDate
             // 
             this.DebDate.Location = new System.Drawing.Point(139, 16);
             this.DebDate.Name = "DebDate";
             this.DebDate.Size = new System.Drawing.Size(280, 23);
-            this.DebDate.TabIndex = 12;
+            this.DebDate.TabIndex = 0;
             // 
             // DebNo2
             // 
@@ -165,7 +177,7 @@
             this.DebNo2.Location = new System.Drawing.Point(322, 104);
             this.DebNo2.Name = "DebNo2";
             this.DebNo2.Size = new System.Drawing.Size(164, 23);
-            this.DebNo2.TabIndex = 11;
+            this.DebNo2.TabIndex = 4;
             // 
             // label10
             // 
@@ -186,7 +198,7 @@
             this.DebNo1.Location = new System.Drawing.Point(139, 104);
             this.DebNo1.Name = "DebNo1";
             this.DebNo1.Size = new System.Drawing.Size(159, 23);
-            this.DebNo1.TabIndex = 9;
+            this.DebNo1.TabIndex = 3;
             // 
             // label9
             // 
@@ -273,6 +285,8 @@
             // 
             this.ClientSize = new System.Drawing.Size(627, 348);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "DebDate";
+            this.DefaultControlForEdit = "DebDate";
             this.Name = "R37";
             this.Text = "R37. Debit Memo List(Taipei)";
             this.Controls.SetChildIndex(this.print, 0);

@@ -69,7 +69,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(149, 23);
-            this.numericBox1.TabIndex = 134;
+            this.numericBox1.TabIndex = 8;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -85,7 +85,7 @@
             this.displayBox9.Location = new System.Drawing.Point(377, 190);
             this.displayBox9.Name = "displayBox9";
             this.displayBox9.Size = new System.Drawing.Size(149, 23);
-            this.displayBox9.TabIndex = 133;
+            this.displayBox9.TabIndex = 9;
             // 
             // displayBox8
             // 
@@ -94,7 +94,7 @@
             this.displayBox8.Location = new System.Drawing.Point(377, 158);
             this.displayBox8.Name = "displayBox8";
             this.displayBox8.Size = new System.Drawing.Size(149, 23);
-            this.displayBox8.TabIndex = 132;
+            this.displayBox8.TabIndex = 7;
             // 
             // displayBox7
             // 
@@ -103,7 +103,7 @@
             this.displayBox7.Location = new System.Drawing.Point(87, 126);
             this.displayBox7.Name = "displayBox7";
             this.displayBox7.Size = new System.Drawing.Size(149, 23);
-            this.displayBox7.TabIndex = 131;
+            this.displayBox7.TabIndex = 5;
             // 
             // displayBox6
             // 
@@ -112,7 +112,7 @@
             this.displayBox6.Location = new System.Drawing.Point(87, 158);
             this.displayBox6.Name = "displayBox6";
             this.displayBox6.Size = new System.Drawing.Size(149, 23);
-            this.displayBox6.TabIndex = 130;
+            this.displayBox6.TabIndex = 6;
             // 
             // displayBox5
             // 
@@ -121,7 +121,7 @@
             this.displayBox5.Location = new System.Drawing.Point(87, 93);
             this.displayBox5.Name = "displayBox5";
             this.displayBox5.Size = new System.Drawing.Size(149, 23);
-            this.displayBox5.TabIndex = 129;
+            this.displayBox5.TabIndex = 4;
             // 
             // displayBox4
             // 
@@ -130,7 +130,7 @@
             this.displayBox4.Location = new System.Drawing.Point(377, 41);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(149, 23);
-            this.displayBox4.TabIndex = 128;
+            this.displayBox4.TabIndex = 3;
             // 
             // displayBox3
             // 
@@ -139,7 +139,7 @@
             this.displayBox3.Location = new System.Drawing.Point(377, 9);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(149, 23);
-            this.displayBox3.TabIndex = 127;
+            this.displayBox3.TabIndex = 1;
             // 
             // displayBox2
             // 
@@ -148,7 +148,7 @@
             this.displayBox2.Location = new System.Drawing.Point(87, 41);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(149, 23);
-            this.displayBox2.TabIndex = 126;
+            this.displayBox2.TabIndex = 2;
             // 
             // displayBox1
             // 
@@ -157,7 +157,7 @@
             this.displayBox1.Location = new System.Drawing.Point(87, 9);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(149, 23);
-            this.displayBox1.TabIndex = 125;
+            this.displayBox1.TabIndex = 0;
             // 
             // label10
             // 
@@ -257,7 +257,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 235);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(539, 44);
-            this.panel1.TabIndex = 135;
+            this.panel1.TabIndex = 11;
             // 
             // button2
             // 
@@ -266,7 +266,7 @@
             this.button2.Location = new System.Drawing.Point(447, 6);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 137;
+            this.button2.TabIndex = 1;
             this.button2.Text = "Cancel";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -278,7 +278,7 @@
             this.button1.Location = new System.Drawing.Point(360, 6);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 136;
+            this.button1.TabIndex = 0;
             this.button1.Text = "Save";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -307,6 +307,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "numericBox1";
             this.Name = "P01_ModifyPoQty";
             this.Text = "Modify PO Qty";
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();

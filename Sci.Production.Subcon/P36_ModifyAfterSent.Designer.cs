@@ -52,7 +52,7 @@
             this.button1.Location = new System.Drawing.Point(472, 302);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 0;
+            this.button1.TabIndex = 7;
             this.button1.Text = "Close";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -63,7 +63,7 @@
             this.button2.Location = new System.Drawing.Point(386, 302);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 1;
+            this.button2.TabIndex = 6;
             this.button2.Text = "Save";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -103,7 +103,7 @@
             0,
             0});
             this.numExchange.Size = new System.Drawing.Size(100, 23);
-            this.numExchange.TabIndex = 88;
+            this.numExchange.TabIndex = 3;
             this.numExchange.Value = new decimal(new int[] {
             0,
             0,
@@ -134,7 +134,7 @@
             0,
             0});
             this.numericBox4.Size = new System.Drawing.Size(60, 23);
-            this.numericBox4.TabIndex = 86;
+            this.numericBox4.TabIndex = 2;
             this.numericBox4.Value = new decimal(new int[] {
             0,
             0,
@@ -156,7 +156,7 @@
             0,
             0});
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 85;
+            this.numericBox2.TabIndex = 1;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -187,7 +187,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 83;
+            this.numericBox1.TabIndex = 0;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -219,7 +219,7 @@
             this.txtAccountNo1.Location = new System.Drawing.Point(94, 258);
             this.txtAccountNo1.Name = "txtAccountNo1";
             this.txtAccountNo1.Size = new System.Drawing.Size(300, 23);
-            this.txtAccountNo1.TabIndex = 89;
+            this.txtAccountNo1.TabIndex = 5;
             this.txtAccountNo1.TextBox1Binding = "";
             // 
             // P36_ModifyAfterSent
@@ -238,6 +238,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
+            this.DefaultControl = "numericBox1";
             this.Name = "P36_ModifyAfterSent";
             this.Text = "P36. Modify After Sent";
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

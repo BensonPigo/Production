@@ -117,6 +117,7 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.txtartworktype_fty1);
             this.detailcont.Size = new System.Drawing.Size(900, 427);
+            this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
@@ -131,6 +132,10 @@
             // 
             this.tabs.Size = new System.Drawing.Size(908, 494);
             // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
+            // 
             // txtartworktype_fty1
             // 
             this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
@@ -141,7 +146,7 @@
             this.txtartworktype_fty1.Location = new System.Drawing.Point(92, 41);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(209, 23);
-            this.txtartworktype_fty1.TabIndex = 1;
+            this.txtartworktype_fty1.TabIndex = 2;
             this.txtartworktype_fty1.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
             this.txtartworktype_fty1.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
             // 
@@ -352,7 +357,7 @@
             this.txtunit_fty1.Location = new System.Drawing.Point(93, 72);
             this.txtunit_fty1.Name = "txtunit_fty1";
             this.txtunit_fty1.Size = new System.Drawing.Size(88, 23);
-            this.txtunit_fty1.TabIndex = 2;
+            this.txtunit_fty1.TabIndex = 3;
             // 
             // textBox2
             // 
@@ -363,7 +368,7 @@
             this.textBox2.Location = new System.Drawing.Point(92, 101);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(687, 23);
-            this.textBox2.TabIndex = 3;
+            this.textBox2.TabIndex = 4;
             // 
             // txtcurrency1
             // 
@@ -399,7 +404,7 @@
             this.comboBox1.Location = new System.Drawing.Point(540, 22);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 13;
+            this.comboBox1.TabIndex = 3;
             this.comboBox1.Validated += new System.EventHandler(this.textBox3_Validated);
             // 
             // textBox8
@@ -422,7 +427,7 @@
             this.textBox12.Location = new System.Drawing.Point(104, 390);
             this.textBox12.Name = "textBox12";
             this.textBox12.Size = new System.Drawing.Size(100, 23);
-            this.textBox12.TabIndex = 6;
+            this.textBox12.TabIndex = 11;
             // 
             // label25
             // 
@@ -442,7 +447,7 @@
             this.label26.Location = new System.Drawing.Point(258, 55);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(302, 23);
-            this.label26.TabIndex = 43;
+            this.label26.TabIndex = 4;
             this.label26.Text = "( Include Weight of Axle )";
             this.label26.TextStyle.Color = System.Drawing.Color.Blue;
             // 
@@ -494,7 +499,7 @@
             0,
             0});
             this.numericBox9.Size = new System.Drawing.Size(100, 23);
-            this.numericBox9.TabIndex = 4;
+            this.numericBox9.TabIndex = 5;
             this.numericBox9.Value = new decimal(new int[] {
             0,
             0,
@@ -577,7 +582,7 @@
             0,
             0});
             this.numericBox3.Size = new System.Drawing.Size(135, 23);
-            this.numericBox3.TabIndex = 3;
+            this.numericBox3.TabIndex = 4;
             this.numericBox3.Value = new decimal(new int[] {
             0,
             0,
@@ -669,7 +674,7 @@
             this.groupBox2.Location = new System.Drawing.Point(15, 254);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(786, 124);
-            this.groupBox2.TabIndex = 5;
+            this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Thread Only";
             // 
@@ -730,7 +735,7 @@
             0,
             0});
             this.numericBox6.Size = new System.Drawing.Size(100, 23);
-            this.numericBox6.TabIndex = 20;
+            this.numericBox6.TabIndex = 4;
             this.numericBox6.Value = new decimal(new int[] {
             0,
             0,
@@ -808,7 +813,7 @@
             this.checkBox1.Location = new System.Drawing.Point(334, 14);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 22;
+            this.checkBox1.TabIndex = 1;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -819,7 +824,7 @@
             this.button1.Location = new System.Drawing.Point(716, 14);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(157, 30);
-            this.button1.TabIndex = 23;
+            this.button1.TabIndex = 12;
             this.button1.Text = "Quotation Record";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -831,7 +836,7 @@
             this.button2.Location = new System.Drawing.Point(716, 43);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(157, 30);
-            this.button2.TabIndex = 24;
+            this.button2.TabIndex = 13;
             this.button2.Text = "Payment History";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -844,7 +849,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(93, 130);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
-            this.txtsubcon1.TabIndex = 4;
+            this.txtsubcon1.TabIndex = 5;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // dateBox1
@@ -860,7 +865,7 @@
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(908, 527);
-            this.DefaultControl = "textbox1";
+            this.DefaultControl = "textBox1";
             this.DefaultControlForEdit = "txtartworktype_fty1";
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;

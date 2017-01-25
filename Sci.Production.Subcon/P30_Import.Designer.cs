@@ -69,7 +69,7 @@
             this.button3.Location = new System.Drawing.Point(912, 15);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(90, 30);
-            this.button3.TabIndex = 1;
+            this.button3.TabIndex = 3;
             this.button3.Text = "Cancel";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -81,7 +81,7 @@
             this.button2.Location = new System.Drawing.Point(816, 16);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(90, 30);
-            this.button2.TabIndex = 0;
+            this.button2.TabIndex = 2;
             this.button2.Text = "Import";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -93,7 +93,7 @@
             this.button1.Location = new System.Drawing.Point(901, 15);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 8;
+            this.button1.TabIndex = 9;
             this.button1.Text = "Find Now";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -105,7 +105,7 @@
             this.textBox1.Location = new System.Drawing.Point(140, 82);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(122, 23);
-            this.textBox1.TabIndex = 4;
+            this.textBox1.TabIndex = 5;
             // 
             // label1
             // 
@@ -127,7 +127,7 @@
             this.groupBox2.Location = new System.Drawing.Point(0, 500);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(1008, 53);
-            this.groupBox2.TabIndex = 18;
+            this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             // 
             // checkBox2
@@ -140,7 +140,7 @@
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.ReadOnly = true;
             this.checkBox2.Size = new System.Drawing.Size(15, 14);
-            this.checkBox2.TabIndex = 21;
+            this.checkBox2.TabIndex = 0;
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // button4
@@ -150,7 +150,7 @@
             this.button4.Location = new System.Drawing.Point(720, 16);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(90, 30);
-            this.button4.TabIndex = 2;
+            this.button4.TabIndex = 1;
             this.button4.Text = "To Excel";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
@@ -202,7 +202,7 @@
             this.txtbrand1.Location = new System.Drawing.Point(590, 117);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(107, 23);
-            this.txtbrand1.TabIndex = 7;
+            this.txtbrand1.TabIndex = 8;
             // 
             // label7
             // 
@@ -227,7 +227,7 @@
             this.dateRangeApvDate.Location = new System.Drawing.Point(590, 82);
             this.dateRangeApvDate.Name = "dateRangeApvDate";
             this.dateRangeApvDate.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeApvDate.TabIndex = 6;
+            this.dateRangeApvDate.TabIndex = 7;
             // 
             // label4
             // 
@@ -243,7 +243,7 @@
             this.dateRangeSciDelivery.Location = new System.Drawing.Point(590, 15);
             this.dateRangeSciDelivery.Name = "dateRangeSciDelivery";
             this.dateRangeSciDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeSciDelivery.TabIndex = 1;
+            this.dateRangeSciDelivery.TabIndex = 2;
             // 
             // label5
             // 
@@ -259,7 +259,7 @@
             this.dateRangeArrived.Location = new System.Drawing.Point(140, 48);
             this.dateRangeArrived.Name = "dateRangeArrived";
             this.dateRangeArrived.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeArrived.TabIndex = 2;
+            this.dateRangeArrived.TabIndex = 3;
             // 
             // label3
             // 
@@ -284,14 +284,14 @@
             this.dateRangeSewInLine.Location = new System.Drawing.Point(590, 48);
             this.dateRangeSewInLine.Name = "dateRangeSewInLine";
             this.dateRangeSewInLine.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeSewInLine.TabIndex = 3;
+            this.dateRangeSewInLine.TabIndex = 4;
             // 
             // dateRangeBooking
             // 
             this.dateRangeBooking.Location = new System.Drawing.Point(140, 15);
             this.dateRangeBooking.Name = "dateRangeBooking";
             this.dateRangeBooking.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeBooking.TabIndex = 0;
+            this.dateRangeBooking.TabIndex = 1;
             // 
             // textBox2
             // 
@@ -300,7 +300,7 @@
             this.textBox2.Location = new System.Drawing.Point(268, 82);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(122, 23);
-            this.textBox2.TabIndex = 5;
+            this.textBox2.TabIndex = 6;
             // 
             // panel1
             // 
@@ -341,6 +341,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
+            this.DefaultControl = "dateRangeBooking";
             this.Name = "P30_Import";
             this.Text = "Import From P/O#";
             this.groupBox2.ResumeLayout(false);

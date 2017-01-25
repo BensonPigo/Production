@@ -40,14 +40,17 @@
             // 
             this.print.Enabled = false;
             this.print.Location = new System.Drawing.Point(473, 12);
+            this.print.TabIndex = 3;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(473, 48);
+            this.toexcel.TabIndex = 4;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(473, 84);
+            this.close.TabIndex = 5;
             // 
             // comboM
             // 
@@ -58,7 +61,7 @@
             this.comboM.Location = new System.Drawing.Point(169, 78);
             this.comboM.Name = "comboM";
             this.comboM.Size = new System.Drawing.Size(121, 24);
-            this.comboM.TabIndex = 117;
+            this.comboM.TabIndex = 2;
             // 
             // comboSubProcess
             // 
@@ -69,7 +72,7 @@
             this.comboSubProcess.Location = new System.Drawing.Point(169, 48);
             this.comboSubProcess.Name = "comboSubProcess";
             this.comboSubProcess.Size = new System.Drawing.Size(121, 24);
-            this.comboSubProcess.TabIndex = 116;
+            this.comboSubProcess.TabIndex = 1;
             // 
             // label5
             // 
@@ -103,7 +106,7 @@
             this.dateBundleReceive.Location = new System.Drawing.Point(169, 19);
             this.dateBundleReceive.Name = "dateBundleReceive";
             this.dateBundleReceive.Size = new System.Drawing.Size(280, 23);
-            this.dateBundleReceive.TabIndex = 119;
+            this.dateBundleReceive.TabIndex = 0;
             // 
             // R43
             // 
@@ -114,6 +117,8 @@
             this.Controls.Add(this.comboSubProcess);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
+            this.DefaultControl = "dateBundleReceive";
+            this.DefaultControlForEdit = "dateBundleReceive";
             this.Name = "R43";
             this.Text = "R43.Sub-process BCS report (RFID)";
             this.Controls.SetChildIndex(this.print, 0);

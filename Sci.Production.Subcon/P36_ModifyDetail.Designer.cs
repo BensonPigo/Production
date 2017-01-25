@@ -46,6 +46,10 @@
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
             // 
+            // btmcont
+            // 
+            this.btmcont.TabIndex = 7;
+            // 
             // undo
             // 
             this.undo.TabIndex = 3;
@@ -256,6 +260,7 @@
             this.Controls.Add(this.txtunit1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "textBox1";
             this.Name = "P36_ModifyDetail";
             this.Text = "P36 Detail";
             this.WorkAlias = "Localdebit_detail";

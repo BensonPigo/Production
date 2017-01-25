@@ -284,6 +284,8 @@
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "dateRangePoDate";
+            this.DefaultControlForEdit = "dateRangePoDate";
             this.IsSupportToPrint = false;
             this.Name = "R23";
             this.Text = "R23. Local PO summary by SP#";

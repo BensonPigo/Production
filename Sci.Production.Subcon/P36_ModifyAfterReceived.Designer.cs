@@ -48,7 +48,7 @@
             this.button1.Location = new System.Drawing.Point(472, 302);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 0;
+            this.button1.TabIndex = 5;
             this.button1.Text = "Close";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -59,7 +59,7 @@
             this.button2.Location = new System.Drawing.Point(386, 302);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 1;
+            this.button2.TabIndex = 4;
             this.button2.Text = "Save";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -70,7 +70,7 @@
             this.label1.Location = new System.Drawing.Point(9, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 2;
+            this.label1.TabIndex = 6;
             this.label1.Text = "Description";
             // 
             // editBox1
@@ -82,7 +82,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(459, 155);
-            this.editBox1.TabIndex = 4;
+            this.editBox1.TabIndex = 0;
             // 
             // label16
             // 
@@ -100,7 +100,7 @@
             this.txtAccountNo1.Location = new System.Drawing.Point(87, 242);
             this.txtAccountNo1.Name = "txtAccountNo1";
             this.txtAccountNo1.Size = new System.Drawing.Size(300, 23);
-            this.txtAccountNo1.TabIndex = 89;
+            this.txtAccountNo1.TabIndex = 3;
             this.txtAccountNo1.TextBox1Binding = "";
             // 
             // txtuser4
@@ -110,7 +110,7 @@
             this.txtuser4.Location = new System.Drawing.Point(87, 178);
             this.txtuser4.Name = "txtuser4";
             this.txtuser4.Size = new System.Drawing.Size(300, 23);
-            this.txtuser4.TabIndex = 92;
+            this.txtuser4.TabIndex = 1;
             this.txtuser4.TextBox1Binding = "";
             // 
             // label14
@@ -128,7 +128,7 @@
             this.dateBox1.Location = new System.Drawing.Point(87, 207);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 93;
+            this.dateBox1.TabIndex = 2;
             // 
             // P36_ModifyAfterReceived
             // 
@@ -142,6 +142,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
+            this.DefaultControl = "editBox1";
             this.Name = "P36_ModifyAfterReceived";
             this.Text = "P36. Modify After Received";
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

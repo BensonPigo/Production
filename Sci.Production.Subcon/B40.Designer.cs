@@ -55,6 +55,7 @@
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Size = new System.Drawing.Size(676, 357);
+            this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
@@ -67,6 +68,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(684, 424);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label1
             // 
@@ -105,7 +110,7 @@
             this.textID.Name = "textID";
             this.textID.ReadOnly = true;
             this.textID.Size = new System.Drawing.Size(201, 23);
-            this.textID.TabIndex = 3;
+            this.textID.TabIndex = 0;
             // 
             // comboSubprocess
             // 
@@ -117,7 +122,7 @@
             this.comboSubprocess.Location = new System.Drawing.Point(124, 94);
             this.comboSubprocess.Name = "comboSubprocess";
             this.comboSubprocess.Size = new System.Drawing.Size(121, 24);
-            this.comboSubprocess.TabIndex = 4;
+            this.comboSubprocess.TabIndex = 1;
             // 
             // comboType
             // 
@@ -129,11 +134,13 @@
             this.comboType.Location = new System.Drawing.Point(124, 150);
             this.comboType.Name = "comboType";
             this.comboType.Size = new System.Drawing.Size(121, 24);
-            this.comboType.TabIndex = 5;
+            this.comboType.TabIndex = 2;
             // 
             // B40
             // 
             this.ClientSize = new System.Drawing.Size(684, 457);
+            this.DefaultControl = "textID";
+            this.DefaultControlForEdit = "comboSubprocess";
             this.IsSupportPrint = false;
             this.Name = "B40";
             this.Text = "B40.RFID Reader setting";

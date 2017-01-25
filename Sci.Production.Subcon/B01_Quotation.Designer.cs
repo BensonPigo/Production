@@ -92,6 +92,7 @@
             this.detailcont.Controls.Add(this.txtsubcon2);
             this.detailcont.Controls.Add(this.txtsubcon1);
             this.detailcont.Size = new System.Drawing.Size(900, 357);
+            this.detailcont.TabIndex = 1;
             // 
             // detailbtm
             // 
@@ -113,7 +114,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(141, 44);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
-            this.txtsubcon1.TabIndex = 1;
+            this.txtsubcon1.TabIndex = 3;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // txtsubcon2
@@ -124,7 +125,7 @@
             this.txtsubcon2.Location = new System.Drawing.Point(141, 73);
             this.txtsubcon2.Name = "txtsubcon2";
             this.txtsubcon2.Size = new System.Drawing.Size(159, 23);
-            this.txtsubcon2.TabIndex = 3;
+            this.txtsubcon2.TabIndex = 6;
             this.txtsubcon2.TextBox1Binding = "";
             // 
             // txtsubcon3
@@ -135,7 +136,7 @@
             this.txtsubcon3.Location = new System.Drawing.Point(141, 102);
             this.txtsubcon3.Name = "txtsubcon3";
             this.txtsubcon3.Size = new System.Drawing.Size(159, 23);
-            this.txtsubcon3.TabIndex = 5;
+            this.txtsubcon3.TabIndex = 9;
             this.txtsubcon3.TextBox1Binding = "";
             // 
             // txtsubcon4
@@ -146,7 +147,7 @@
             this.txtsubcon4.Location = new System.Drawing.Point(141, 131);
             this.txtsubcon4.Name = "txtsubcon4";
             this.txtsubcon4.Size = new System.Drawing.Size(159, 23);
-            this.txtsubcon4.TabIndex = 7;
+            this.txtsubcon4.TabIndex = 12;
             this.txtsubcon4.TextBox1Binding = "";
             // 
             // txtcurrency1
@@ -173,7 +174,7 @@
             this.txtcurrency2.Name = "txtcurrency2";
             this.txtcurrency2.ReadOnly = true;
             this.txtcurrency2.Size = new System.Drawing.Size(40, 23);
-            this.txtcurrency2.TabIndex = 5;
+            this.txtcurrency2.TabIndex = 7;
             // 
             // txtcurrency3
             // 
@@ -186,7 +187,7 @@
             this.txtcurrency3.Name = "txtcurrency3";
             this.txtcurrency3.ReadOnly = true;
             this.txtcurrency3.Size = new System.Drawing.Size(40, 23);
-            this.txtcurrency3.TabIndex = 6;
+            this.txtcurrency3.TabIndex = 10;
             // 
             // txtcurrency4
             // 
@@ -199,7 +200,7 @@
             this.txtcurrency4.Name = "txtcurrency4";
             this.txtcurrency4.ReadOnly = true;
             this.txtcurrency4.Size = new System.Drawing.Size(40, 23);
-            this.txtcurrency4.TabIndex = 7;
+            this.txtcurrency4.TabIndex = 13;
             // 
             // label3
             // 
@@ -218,7 +219,7 @@
             this.displayBox1.Location = new System.Drawing.Point(141, 15);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(198, 23);
-            this.displayBox1.TabIndex = 9;
+            this.displayBox1.TabIndex = 0;
             // 
             // radioPanel1
             // 
@@ -230,7 +231,7 @@
             this.radioPanel1.Location = new System.Drawing.Point(28, 41);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(103, 129);
-            this.radioPanel1.TabIndex = 10;
+            this.radioPanel1.TabIndex = 2;
             // 
             // radioButton4
             // 
@@ -339,8 +340,18 @@
             0,
             65536});
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 2;
+            this.numericBox1.TabIndex = 5;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox2
             // 
@@ -361,8 +372,18 @@
             0,
             65536});
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 4;
+            this.numericBox2.TabIndex = 8;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox3
             // 
@@ -383,8 +404,18 @@
             0,
             65536});
             this.numericBox3.Name = "numericBox3";
+            this.numericBox3.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox3.Size = new System.Drawing.Size(100, 23);
-            this.numericBox3.TabIndex = 6;
+            this.numericBox3.TabIndex = 11;
+            this.numericBox3.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox4
             // 
@@ -405,8 +436,18 @@
             0,
             65536});
             this.numericBox4.Name = "numericBox4";
+            this.numericBox4.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox4.Size = new System.Drawing.Size(100, 23);
-            this.numericBox4.TabIndex = 8;
+            this.numericBox4.TabIndex = 14;
+            this.numericBox4.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label8
             // 
@@ -423,7 +464,7 @@
             this.dateBox1.Location = new System.Drawing.Point(455, 15);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 0;
+            this.dateBox1.TabIndex = 1;
             // 
             // button1
             // 
@@ -431,7 +472,7 @@
             this.button1.Location = new System.Drawing.Point(642, 15);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 9;
+            this.button1.TabIndex = 15;
             this.button1.Text = "Approve";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -439,6 +480,8 @@
             // B01_Quotation
             // 
             this.ClientSize = new System.Drawing.Size(908, 457);
+            this.DefaultControl = "dateBox1";
+            this.DefaultControlForEdit = "dateBox1";
             this.IsSupportCopy = false;
             this.Name = "B01_Quotation";
             this.Text = "Quotation Record";

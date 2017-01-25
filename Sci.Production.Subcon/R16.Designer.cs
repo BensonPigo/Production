@@ -286,6 +286,8 @@
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "dateRangePoIssueDate";
+            this.DefaultControlForEdit = "dateRangePoIssueDate";
             this.IsSupportToPrint = false;
             this.Name = "R16";
             this.Text = "R16. Sub-con PO Summary by SP#";
@@ -310,7 +312,7 @@
             this.Controls.SetChildIndex(this.txtSpno1, 0);
             this.Controls.SetChildIndex(this.txtSpno2, 0);
             this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.txtFinanceEnReason1,0);
+            this.Controls.SetChildIndex(this.txtFinanceEnReason1, 0);
             this.Controls.SetChildIndex(this.txtdropdownlist1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
