@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.grid1 = new Sci.Win.UI.Grid();
             this.button1 = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
@@ -79,14 +79,14 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(6, 123);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -103,7 +103,7 @@
             this.button1.Location = new System.Drawing.Point(916, 467);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 1;
+            this.button1.TabIndex = 15;
             this.button1.Text = "Close";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -196,7 +196,7 @@
             this.article_textbox.Location = new System.Drawing.Point(80, 46);
             this.article_textbox.Name = "article_textbox";
             this.article_textbox.Size = new System.Drawing.Size(78, 23);
-            this.article_textbox.TabIndex = 1;
+            this.article_textbox.TabIndex = 4;
             // 
             // cutno_numericbox
             // 
@@ -210,7 +210,7 @@
             0,
             0});
             this.cutno_numericbox.Size = new System.Drawing.Size(45, 23);
-            this.cutno_numericbox.TabIndex = 2;
+            this.cutno_numericbox.TabIndex = 1;
             this.cutno_numericbox.Value = new decimal(new int[] {
             0,
             0,
@@ -224,14 +224,14 @@
             this.sizecode_textbox.Location = new System.Drawing.Point(273, 46);
             this.sizecode_textbox.Name = "sizecode_textbox";
             this.sizecode_textbox.Size = new System.Drawing.Size(78, 23);
-            this.sizecode_textbox.TabIndex = 3;
+            this.sizecode_textbox.TabIndex = 5;
             // 
             // estcutdate_textbox1
             // 
             this.estcutdate_textbox1.Location = new System.Drawing.Point(450, 46);
             this.estcutdate_textbox1.Name = "estcutdate_textbox1";
             this.estcutdate_textbox1.Size = new System.Drawing.Size(130, 23);
-            this.estcutdate_textbox1.TabIndex = 5;
+            this.estcutdate_textbox1.TabIndex = 6;
             // 
             // fabriccombo_textbox
             // 
@@ -240,7 +240,7 @@
             this.fabriccombo_textbox.Location = new System.Drawing.Point(450, 9);
             this.fabriccombo_textbox.Name = "fabriccombo_textbox";
             this.fabriccombo_textbox.Size = new System.Drawing.Size(44, 23);
-            this.fabriccombo_textbox.TabIndex = 4;
+            this.fabriccombo_textbox.TabIndex = 2;
             // 
             // markername_textbox
             // 
@@ -249,7 +249,7 @@
             this.markername_textbox.Location = new System.Drawing.Point(612, 9);
             this.markername_textbox.Name = "markername_textbox";
             this.markername_textbox.Size = new System.Drawing.Size(60, 23);
-            this.markername_textbox.TabIndex = 6;
+            this.markername_textbox.TabIndex = 3;
             // 
             // only_checkBox
             // 
@@ -370,7 +370,7 @@
             this.btn_Confirm.Location = new System.Drawing.Point(819, 467);
             this.btn_Confirm.Name = "btn_Confirm";
             this.btn_Confirm.Size = new System.Drawing.Size(80, 30);
-            this.btn_Confirm.TabIndex = 25;
+            this.btn_Confirm.TabIndex = 14;
             this.btn_Confirm.Text = "Confirm";
             this.btn_Confirm.UseVisualStyleBackColor = true;
             this.btn_Confirm.Click += new System.EventHandler(this.btn_Confirm_Click);
@@ -407,6 +407,7 @@
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.shapeContainer1);
+            this.DefaultControl = "SP_textbox";
             this.Name = "P02_BatchAssignCellCutDate";
             this.Text = "Batch Assign Cell/Est. Cut Date";
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();

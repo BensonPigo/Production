@@ -145,6 +145,10 @@
             // 
             this.tabs.Size = new System.Drawing.Size(882, 485);
             // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
+            // 
             // label1
             // 
             this.label1.Lines = 0;
@@ -207,7 +211,7 @@
             this.displayBox1.Location = new System.Drawing.Point(103, 15);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(108, 23);
-            this.displayBox1.TabIndex = 11;
+            this.displayBox1.TabIndex = 0;
             // 
             // displayBox_Requestby
             // 
@@ -216,7 +220,7 @@
             this.displayBox_Requestby.Location = new System.Drawing.Point(553, 15);
             this.displayBox_Requestby.Name = "displayBox_Requestby";
             this.displayBox_Requestby.Size = new System.Drawing.Size(193, 23);
-            this.displayBox_Requestby.TabIndex = 14;
+            this.displayBox_Requestby.TabIndex = 2;
             // 
             // dateBox1
             // 
@@ -226,7 +230,7 @@
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 15;
+            this.dateBox1.TabIndex = 5;
             // 
             // displayBox_Cell
             // 
@@ -236,7 +240,7 @@
             this.displayBox_Cell.Location = new System.Drawing.Point(342, 45);
             this.displayBox_Cell.Name = "displayBox_Cell";
             this.displayBox_Cell.Size = new System.Drawing.Size(48, 23);
-            this.displayBox_Cell.TabIndex = 18;
+            this.displayBox_Cell.TabIndex = 4;
             // 
             // displayBox6
             // 
@@ -246,7 +250,7 @@
             this.displayBox6.Location = new System.Drawing.Point(342, 15);
             this.displayBox6.Name = "displayBox6";
             this.displayBox6.Size = new System.Drawing.Size(67, 23);
-            this.displayBox6.TabIndex = 19;
+            this.displayBox6.TabIndex = 1;
             // 
             // displayBox2
             // 
@@ -256,7 +260,7 @@
             this.displayBox2.Location = new System.Drawing.Point(103, 45);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(108, 23);
-            this.displayBox2.TabIndex = 24;
+            this.displayBox2.TabIndex = 3;
             // 
             // label7
             // 
@@ -266,7 +270,7 @@
             this.label7.Location = new System.Drawing.Point(749, 15);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(106, 23);
-            this.label7.TabIndex = 40;
+            this.label7.TabIndex = 3;
             this.label7.Text = "label7";
             this.label7.TextStyle.Color = System.Drawing.Color.Red;
             // 
@@ -284,7 +288,7 @@
             this.dateBox2.Location = new System.Drawing.Point(352, 75);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 42;
+            this.dateBox2.TabIndex = 6;
             // 
             // button1
             // 
@@ -292,7 +296,7 @@
             this.button1.Location = new System.Drawing.Point(488, 72);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(116, 30);
-            this.button1.TabIndex = 43;
+            this.button1.TabIndex = 7;
             this.button1.Text = "Batch Update";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -301,6 +305,7 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(882, 518);
+            this.DefaultControlForEdit = "dateBox2";
             this.DefaultOrder = "id";
             this.GridAlias = "MarkerReq_Detail";
             this.GridNew = 0;

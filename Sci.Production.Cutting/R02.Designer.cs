@@ -51,16 +51,19 @@
             this.print.Enabled = false;
             this.print.Location = new System.Drawing.Point(528, 12);
             this.print.Size = new System.Drawing.Size(87, 30);
+            this.print.TabIndex = 1;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(528, 48);
             this.toexcel.Size = new System.Drawing.Size(87, 30);
+            this.toexcel.TabIndex = 2;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(528, 120);
             this.close.Size = new System.Drawing.Size(87, 30);
+            this.close.TabIndex = 4;
             // 
             // panel1
             // 
@@ -79,7 +82,7 @@
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(492, 239);
-            this.panel1.TabIndex = 94;
+            this.panel1.TabIndex = 0;
             // 
             // radiobtn_BySummary
             // 
@@ -88,7 +91,7 @@
             this.radiobtn_BySummary.Location = new System.Drawing.Point(123, 197);
             this.radiobtn_BySummary.Name = "radiobtn_BySummary";
             this.radiobtn_BySummary.Size = new System.Drawing.Size(105, 21);
-            this.radiobtn_BySummary.TabIndex = 114;
+            this.radiobtn_BySummary.TabIndex = 6;
             this.radiobtn_BySummary.TabStop = true;
             this.radiobtn_BySummary.Text = "By Summary";
             this.radiobtn_BySummary.UseVisualStyleBackColor = true;
@@ -101,7 +104,7 @@
             this.radioBtn_Byonedaydetial.Location = new System.Drawing.Point(123, 170);
             this.radioBtn_Byonedaydetial.Name = "radioBtn_Byonedaydetial";
             this.radioBtn_Byonedaydetial.Size = new System.Drawing.Size(135, 21);
-            this.radioBtn_Byonedaydetial.TabIndex = 113;
+            this.radioBtn_Byonedaydetial.TabIndex = 5;
             this.radioBtn_Byonedaydetial.TabStop = true;
             this.radioBtn_Byonedaydetial.Text = "By one day detial";
             this.radioBtn_Byonedaydetial.UseVisualStyleBackColor = true;
@@ -115,7 +118,7 @@
             this.radiobtn_Bydetail.Location = new System.Drawing.Point(123, 143);
             this.radiobtn_Bydetail.Name = "radiobtn_Bydetail";
             this.radiobtn_Bydetail.Size = new System.Drawing.Size(80, 21);
-            this.radiobtn_Bydetail.TabIndex = 112;
+            this.radiobtn_Bydetail.TabIndex = 4;
             this.radiobtn_Bydetail.TabStop = true;
             this.radiobtn_Bydetail.Text = "By detail";
             this.radiobtn_Bydetail.UseVisualStyleBackColor = true;
@@ -130,7 +133,7 @@
             this.cmb_MDivisionID.Location = new System.Drawing.Point(123, 100);
             this.cmb_MDivisionID.Name = "cmb_MDivisionID";
             this.cmb_MDivisionID.Size = new System.Drawing.Size(121, 24);
-            this.cmb_MDivisionID.TabIndex = 111;
+            this.cmb_MDivisionID.TabIndex = 3;
             // 
             // txt_CutCell2
             // 
@@ -140,7 +143,7 @@
             this.txt_CutCell2.MaxLength = 2;
             this.txt_CutCell2.Name = "txt_CutCell2";
             this.txt_CutCell2.Size = new System.Drawing.Size(65, 23);
-            this.txt_CutCell2.TabIndex = 110;
+            this.txt_CutCell2.TabIndex = 2;
             // 
             // label9
             // 
@@ -164,7 +167,7 @@
             this.txt_CutCell1.MaxLength = 2;
             this.txt_CutCell1.Name = "txt_CutCell1";
             this.txt_CutCell1.Size = new System.Drawing.Size(65, 23);
-            this.txt_CutCell1.TabIndex = 108;
+            this.txt_CutCell1.TabIndex = 1;
             // 
             // dateR_CuttingDate
             // 
@@ -172,7 +175,7 @@
             this.dateR_CuttingDate.Location = new System.Drawing.Point(123, 18);
             this.dateR_CuttingDate.Name = "dateR_CuttingDate";
             this.dateR_CuttingDate.Size = new System.Drawing.Size(280, 23);
-            this.dateR_CuttingDate.TabIndex = 100;
+            this.dateR_CuttingDate.TabIndex = 0;
             this.dateR_CuttingDate.Leave += new System.EventHandler(this.Leave_CuttingDate);
             // 
             // label5
@@ -226,7 +229,7 @@
             this.btn_sendmail.Location = new System.Drawing.Point(528, 84);
             this.btn_sendmail.Name = "btn_sendmail";
             this.btn_sendmail.Size = new System.Drawing.Size(87, 30);
-            this.btn_sendmail.TabIndex = 97;
+            this.btn_sendmail.TabIndex = 3;
             this.btn_sendmail.Text = "Send Mail";
             this.btn_sendmail.UseVisualStyleBackColor = true;
             this.btn_sendmail.Click += new System.EventHandler(this.btn_sendmail_Click);
@@ -237,6 +240,8 @@
             this.Controls.Add(this.btn_sendmail);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "dateR_CuttingDate";
+            this.DefaultControlForEdit = "dateR_CuttingDate";
             this.Name = "R02";
             this.Text = "R02.Cutting Daily Plan Summary Report";
             this.Controls.SetChildIndex(this.panel1, 0);

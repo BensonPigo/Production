@@ -86,7 +86,7 @@
             this.textBox_seq.Mask = "000-00";
             this.textBox_seq.Name = "textBox_seq";
             this.textBox_seq.Size = new System.Drawing.Size(67, 23);
-            this.textBox_seq.TabIndex = 3;
+            this.textBox_seq.TabIndex = 4;
             this.textBox_seq.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             // 
             // button_Query
@@ -121,14 +121,14 @@
             this.dateBox_sewinginline.Location = new System.Drawing.Point(511, 19);
             this.dateBox_sewinginline.Name = "dateBox_sewinginline";
             this.dateBox_sewinginline.Size = new System.Drawing.Size(130, 23);
-            this.dateBox_sewinginline.TabIndex = 4;
+            this.dateBox_sewinginline.TabIndex = 2;
             // 
             // dateBox_estcutdate
             // 
             this.dateBox_estcutdate.Location = new System.Drawing.Point(104, 51);
             this.dateBox_estcutdate.Name = "dateBox_estcutdate";
             this.dateBox_estcutdate.Size = new System.Drawing.Size(130, 23);
-            this.dateBox_estcutdate.TabIndex = 1;
+            this.dateBox_estcutdate.TabIndex = 3;
             // 
             // textBox_sp
             // 
@@ -137,7 +137,7 @@
             this.textBox_sp.Location = new System.Drawing.Point(302, 19);
             this.textBox_sp.Name = "textBox_sp";
             this.textBox_sp.Size = new System.Drawing.Size(108, 23);
-            this.textBox_sp.TabIndex = 2;
+            this.textBox_sp.TabIndex = 1;
             // 
             // textBox_Cutsp
             // 
@@ -258,7 +258,7 @@
             this.groupBox2.Location = new System.Drawing.Point(662, 6);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(337, 74);
-            this.groupBox2.TabIndex = 38;
+            this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
             // 
             // txtcutReason1
@@ -277,7 +277,7 @@
             this.button_save.Location = new System.Drawing.Point(810, 405);
             this.button_save.Name = "button_save";
             this.button_save.Size = new System.Drawing.Size(92, 30);
-            this.button_save.TabIndex = 39;
+            this.button_save.TabIndex = 9;
             this.button_save.Text = "Save";
             this.button_save.UseVisualStyleBackColor = true;
             this.button_save.Click += new System.EventHandler(this.button_save_Click);
@@ -288,7 +288,7 @@
             this.button_close.Location = new System.Drawing.Point(908, 405);
             this.button_close.Name = "button_close";
             this.button_close.Size = new System.Drawing.Size(92, 30);
-            this.button_close.TabIndex = 40;
+            this.button_close.TabIndex = 10;
             this.button_close.Text = "Close";
             this.button_close.UseVisualStyleBackColor = true;
             this.button_close.Click += new System.EventHandler(this.button_close_Click);
@@ -318,6 +318,8 @@
             this.Controls.Add(this.detailgrid);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
+            this.DefaultControl = "textBox_Cutsp";
+            this.DefaultControlForEdit = "textBox_Cutsp";
             this.EditMode = true;
             this.Name = "P03";
             this.Text = "P03.Change Est. Cut Date after finished Cutting Daily Plan";

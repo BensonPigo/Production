@@ -50,14 +50,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(519, 12);
+            this.print.TabIndex = 1;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(519, 48);
+            this.toexcel.TabIndex = 2;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(519, 84);
+            this.close.TabIndex = 3;
             // 
             // panel1
             // 
@@ -78,7 +81,7 @@
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(472, 231);
-            this.panel1.TabIndex = 94;
+            this.panel1.TabIndex = 0;
             // 
             // txt_CuttingSP2
             // 
@@ -88,7 +91,7 @@
             this.txt_CuttingSP2.MaxLength = 13;
             this.txt_CuttingSP2.Name = "txt_CuttingSP2";
             this.txt_CuttingSP2.Size = new System.Drawing.Size(126, 23);
-            this.txt_CuttingSP2.TabIndex = 107;
+            this.txt_CuttingSP2.TabIndex = 4;
             // 
             // label9
             // 
@@ -97,7 +100,7 @@
             this.label9.Location = new System.Drawing.Point(289, 128);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(20, 23);
-            this.label9.TabIndex = 106;
+            this.label9.TabIndex = 7;
             this.label9.Text = "～";
             this.label9.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label9.TextStyle.Color = System.Drawing.Color.Black;
@@ -130,7 +133,7 @@
             this.txt_CuttingSP1.MaxLength = 13;
             this.txt_CuttingSP1.Name = "txt_CuttingSP1";
             this.txt_CuttingSP1.Size = new System.Drawing.Size(126, 23);
-            this.txt_CuttingSP1.TabIndex = 11;
+            this.txt_CuttingSP1.TabIndex = 3;
             // 
             // cmd_Factory
             // 
@@ -141,7 +144,7 @@
             this.cmd_Factory.Location = new System.Drawing.Point(160, 54);
             this.cmd_Factory.Name = "cmd_Factory";
             this.cmd_Factory.Size = new System.Drawing.Size(121, 24);
-            this.cmd_Factory.TabIndex = 10;
+            this.cmd_Factory.TabIndex = 1;
             // 
             // cmb_M
             // 
@@ -152,28 +155,28 @@
             this.cmb_M.Location = new System.Drawing.Point(160, 16);
             this.cmb_M.Name = "cmb_M";
             this.cmb_M.Size = new System.Drawing.Size(121, 24);
-            this.cmb_M.TabIndex = 9;
+            this.cmb_M.TabIndex = 0;
             // 
             // dateR_EarliestSewingInline
             // 
             this.dateR_EarliestSewingInline.Location = new System.Drawing.Point(160, 195);
             this.dateR_EarliestSewingInline.Name = "dateR_EarliestSewingInline";
             this.dateR_EarliestSewingInline.Size = new System.Drawing.Size(280, 23);
-            this.dateR_EarliestSewingInline.TabIndex = 8;
+            this.dateR_EarliestSewingInline.TabIndex = 6;
             // 
             // dateR_EarliestSCIDelivery
             // 
             this.dateR_EarliestSCIDelivery.Location = new System.Drawing.Point(160, 161);
             this.dateR_EarliestSCIDelivery.Name = "dateR_EarliestSCIDelivery";
             this.dateR_EarliestSCIDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateR_EarliestSCIDelivery.TabIndex = 7;
+            this.dateR_EarliestSCIDelivery.TabIndex = 5;
             // 
             // dateR_EstCutDate
             // 
             this.dateR_EstCutDate.Location = new System.Drawing.Point(160, 90);
             this.dateR_EstCutDate.Name = "dateR_EstCutDate";
             this.dateR_EstCutDate.Size = new System.Drawing.Size(280, 23);
-            this.dateR_EstCutDate.TabIndex = 6;
+            this.dateR_EstCutDate.TabIndex = 2;
             // 
             // label6
             // 
@@ -225,6 +228,8 @@
             this.ClientSize = new System.Drawing.Size(611, 287);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "cmb_M";
+            this.DefaultControlForEdit = "cmb_M";
             this.IsSupportToPrint = false;
             this.Name = "R03";
             this.Text = "R03.Cutting Schedule List    ";

@@ -114,15 +114,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(874, 456);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(868, 410);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(868, 40);
             // 
             // detail
             // 
@@ -144,6 +144,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(882, 485);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label1
             // 
@@ -207,7 +211,7 @@
             this.displayBox1.Location = new System.Drawing.Point(103, 15);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(108, 23);
-            this.displayBox1.TabIndex = 11;
+            this.displayBox1.TabIndex = 0;
             // 
             // displayBox_Requestby
             // 
@@ -216,7 +220,7 @@
             this.displayBox_Requestby.Location = new System.Drawing.Point(553, 15);
             this.displayBox_Requestby.Name = "displayBox_Requestby";
             this.displayBox_Requestby.Size = new System.Drawing.Size(193, 23);
-            this.displayBox_Requestby.TabIndex = 14;
+            this.displayBox_Requestby.TabIndex = 2;
             // 
             // dateBox1
             // 
@@ -226,7 +230,7 @@
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 15;
+            this.dateBox1.TabIndex = 6;
             // 
             // displayBox_Cell
             // 
@@ -236,7 +240,7 @@
             this.displayBox_Cell.Location = new System.Drawing.Point(342, 45);
             this.displayBox_Cell.Name = "displayBox_Cell";
             this.displayBox_Cell.Size = new System.Drawing.Size(48, 23);
-            this.displayBox_Cell.TabIndex = 18;
+            this.displayBox_Cell.TabIndex = 4;
             // 
             // displayBox6
             // 
@@ -246,14 +250,14 @@
             this.displayBox6.Location = new System.Drawing.Point(342, 15);
             this.displayBox6.Name = "displayBox6";
             this.displayBox6.Size = new System.Drawing.Size(67, 23);
-            this.displayBox6.TabIndex = 19;
+            this.displayBox6.TabIndex = 1;
             // 
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(771, 68);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(95, 30);
-            this.button2.TabIndex = 20;
+            this.button2.TabIndex = 7;
             this.button2.Text = "Send Mail";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -266,7 +270,7 @@
             this.textBox1.Location = new System.Drawing.Point(103, 45);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(108, 23);
-            this.textBox1.TabIndex = 21;
+            this.textBox1.TabIndex = 3;
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
@@ -287,7 +291,7 @@
             this.displayBox_LastSendDate.Location = new System.Drawing.Point(553, 45);
             this.displayBox_LastSendDate.Name = "displayBox_LastSendDate";
             this.displayBox_LastSendDate.Size = new System.Drawing.Size(193, 23);
-            this.displayBox_LastSendDate.TabIndex = 23;
+            this.displayBox_LastSendDate.TabIndex = 5;
             // 
             // label7
             // 
@@ -305,6 +309,7 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(882, 518);
+            this.DefaultControl = "textBox1";
             this.DefaultOrder = "id";
             this.GridAlias = "MarkerReq_Detail";
             this.GridNew = 0;

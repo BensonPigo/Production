@@ -155,6 +155,7 @@
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Size = new System.Drawing.Size(961, 404);
+            this.detailcont.TabIndex = 1;
             // 
             // detailbtm
             // 
@@ -168,6 +169,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(969, 471);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label1
             // 
@@ -287,7 +292,7 @@
             this.displayBox1.Location = new System.Drawing.Point(106, 21);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(113, 23);
-            this.displayBox1.TabIndex = 20;
+            this.displayBox1.TabIndex = 1;
             // 
             // displayBox2
             // 
@@ -296,7 +301,7 @@
             this.displayBox2.Location = new System.Drawing.Point(106, 46);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(113, 23);
-            this.displayBox2.TabIndex = 21;
+            this.displayBox2.TabIndex = 2;
             // 
             // displayBox3
             // 
@@ -305,7 +310,7 @@
             this.displayBox3.Location = new System.Drawing.Point(106, 121);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(113, 23);
-            this.displayBox3.TabIndex = 21;
+            this.displayBox3.TabIndex = 5;
             // 
             // displayBox4
             // 
@@ -314,7 +319,7 @@
             this.displayBox4.Location = new System.Drawing.Point(106, 71);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(64, 23);
-            this.displayBox4.TabIndex = 22;
+            this.displayBox4.TabIndex = 3;
             // 
             // textBox1
             // 
@@ -324,7 +329,7 @@
             this.textBox1.Location = new System.Drawing.Point(106, 146);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(220, 23);
-            this.textBox1.TabIndex = 23;
+            this.textBox1.TabIndex = 0;
             // 
             // dateBox1
             // 
@@ -333,7 +338,7 @@
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 24;
+            this.dateBox1.TabIndex = 6;
             // 
             // dateBox2
             // 
@@ -342,7 +347,7 @@
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.ReadOnly = true;
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 25;
+            this.dateBox2.TabIndex = 7;
             // 
             // dateBox3
             // 
@@ -351,7 +356,7 @@
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.ReadOnly = true;
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 26;
+            this.dateBox3.TabIndex = 8;
             // 
             // dateBox4
             // 
@@ -360,7 +365,7 @@
             this.dateBox4.Name = "dateBox4";
             this.dateBox4.ReadOnly = true;
             this.dateBox4.Size = new System.Drawing.Size(130, 23);
-            this.dateBox4.TabIndex = 27;
+            this.dateBox4.TabIndex = 9;
             // 
             // label13
             // 
@@ -423,7 +428,7 @@
             this.displayBox7.Location = new System.Drawing.Point(106, 96);
             this.displayBox7.Name = "displayBox7";
             this.displayBox7.Size = new System.Drawing.Size(113, 23);
-            this.displayBox7.TabIndex = 36;
+            this.displayBox7.TabIndex = 4;
             // 
             // displayBox8
             // 
@@ -432,7 +437,7 @@
             this.displayBox8.Location = new System.Drawing.Point(499, 21);
             this.displayBox8.Name = "displayBox8";
             this.displayBox8.Size = new System.Drawing.Size(198, 23);
-            this.displayBox8.TabIndex = 37;
+            this.displayBox8.TabIndex = 12;
             // 
             // label19
             // 
@@ -462,7 +467,7 @@
             this.dateBox5.Name = "dateBox5";
             this.dateBox5.ReadOnly = true;
             this.dateBox5.Size = new System.Drawing.Size(130, 23);
-            this.dateBox5.TabIndex = 35;
+            this.dateBox5.TabIndex = 22;
             // 
             // dateBox6
             // 
@@ -472,7 +477,7 @@
             this.dateBox6.Name = "dateBox6";
             this.dateBox6.ReadOnly = true;
             this.dateBox6.Size = new System.Drawing.Size(130, 23);
-            this.dateBox6.TabIndex = 34;
+            this.dateBox6.TabIndex = 21;
             // 
             // dateBox7
             // 
@@ -482,7 +487,7 @@
             this.dateBox7.Name = "dateBox7";
             this.dateBox7.ReadOnly = true;
             this.dateBox7.Size = new System.Drawing.Size(130, 23);
-            this.dateBox7.TabIndex = 33;
+            this.dateBox7.TabIndex = 20;
             // 
             // dateBox8
             // 
@@ -492,7 +497,7 @@
             this.dateBox8.Name = "dateBox8";
             this.dateBox8.ReadOnly = true;
             this.dateBox8.Size = new System.Drawing.Size(130, 23);
-            this.dateBox8.TabIndex = 32;
+            this.dateBox8.TabIndex = 19;
             // 
             // label21
             // 
@@ -536,7 +541,7 @@
             this.button1.Location = new System.Drawing.Point(734, 14);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(151, 24);
-            this.button1.TabIndex = 40;
+            this.button1.TabIndex = 23;
             this.button1.Text = "Marker List";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -547,7 +552,7 @@
             this.button2.Location = new System.Drawing.Point(734, 44);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(151, 24);
-            this.button2.TabIndex = 41;
+            this.button2.TabIndex = 24;
             this.button2.Text = "Each Cons.";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -558,7 +563,7 @@
             this.button3.Location = new System.Drawing.Point(734, 74);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(151, 24);
-            this.button3.TabIndex = 43;
+            this.button3.TabIndex = 25;
             this.button3.Text = "Bundle Card";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -569,7 +574,7 @@
             this.button5.Location = new System.Drawing.Point(734, 180);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(151, 24);
-            this.button5.TabIndex = 47;
+            this.button5.TabIndex = 28;
             this.button5.Text = "Quantity breakdown";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -580,7 +585,7 @@
             this.button7.Location = new System.Drawing.Point(734, 134);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(151, 42);
-            this.button7.TabIndex = 45;
+            this.button7.TabIndex = 27;
             this.button7.Text = "Cut Parts Check Summary";
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
@@ -591,7 +596,7 @@
             this.button8.Location = new System.Drawing.Point(734, 104);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(151, 24);
-            this.button8.TabIndex = 44;
+            this.button8.TabIndex = 26;
             this.button8.Text = "Cut Parts Check";
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
@@ -602,7 +607,7 @@
             this.button9.Location = new System.Drawing.Point(734, 270);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(151, 24);
-            this.button9.TabIndex = 53;
+            this.button9.TabIndex = 31;
             this.button9.Text = "Garment List";
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
@@ -613,7 +618,7 @@
             this.button11.Location = new System.Drawing.Point(734, 240);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(151, 24);
-            this.button11.TabIndex = 51;
+            this.button11.TabIndex = 30;
             this.button11.Text = "Production kit";
             this.button11.UseVisualStyleBackColor = true;
             this.button11.Click += new System.EventHandler(this.button11_Click);
@@ -624,7 +629,7 @@
             this.button12.Location = new System.Drawing.Point(734, 210);
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(151, 24);
-            this.button12.TabIndex = 50;
+            this.button12.TabIndex = 29;
             this.button12.Text = "Color Combo";
             this.button12.UseVisualStyleBackColor = true;
             this.button12.Click += new System.EventHandler(this.button12_Click);
@@ -637,7 +642,7 @@
             this.dateBox9.Name = "dateBox9";
             this.dateBox9.ReadOnly = true;
             this.dateBox9.Size = new System.Drawing.Size(130, 23);
-            this.dateBox9.TabIndex = 35;
+            this.dateBox9.TabIndex = 18;
             // 
             // dateBox10
             // 
@@ -647,7 +652,7 @@
             this.dateBox10.Name = "dateBox10";
             this.dateBox10.ReadOnly = true;
             this.dateBox10.Size = new System.Drawing.Size(130, 23);
-            this.dateBox10.TabIndex = 34;
+            this.dateBox10.TabIndex = 17;
             // 
             // dateBox11
             // 
@@ -656,7 +661,7 @@
             this.dateBox11.Name = "dateBox11";
             this.dateBox11.ReadOnly = true;
             this.dateBox11.Size = new System.Drawing.Size(130, 23);
-            this.dateBox11.TabIndex = 35;
+            this.dateBox11.TabIndex = 13;
             // 
             // editBox1
             // 
@@ -668,7 +673,7 @@
             this.editBox1.Name = "editBox1";
             this.editBox1.ReadOnly = true;
             this.editBox1.Size = new System.Drawing.Size(557, 51);
-            this.editBox1.TabIndex = 56;
+            this.editBox1.TabIndex = 10;
             // 
             // editBox2
             // 
@@ -680,7 +685,7 @@
             this.editBox2.Name = "editBox2";
             this.editBox2.ReadOnly = true;
             this.editBox2.Size = new System.Drawing.Size(557, 51);
-            this.editBox2.TabIndex = 57;
+            this.editBox2.TabIndex = 11;
             // 
             // displayBox5
             // 
@@ -689,7 +694,7 @@
             this.displayBox5.Location = new System.Drawing.Point(531, 96);
             this.displayBox5.Name = "displayBox5";
             this.displayBox5.Size = new System.Drawing.Size(58, 23);
-            this.displayBox5.TabIndex = 58;
+            this.displayBox5.TabIndex = 16;
             // 
             // numericBox1
             // 
@@ -705,7 +710,7 @@
             0});
             this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 59;
+            this.numericBox1.TabIndex = 14;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -726,7 +731,7 @@
             0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 60;
+            this.numericBox2.TabIndex = 15;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -736,6 +741,8 @@
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(969, 504);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.DefaultOrder = "id";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;

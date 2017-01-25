@@ -114,18 +114,6 @@
             // 
             this.detailgridcont.Size = new System.Drawing.Size(820, 241);
             // 
-            // detail2
-            // 
-            this.detail2.Size = new System.Drawing.Size(820, 414);
-            // 
-            // detailgridcont2
-            // 
-            this.detailgridcont2.Size = new System.Drawing.Size(814, 368);
-            // 
-            // detailpanel2
-            // 
-            this.detailpanel2.Size = new System.Drawing.Size(814, 40);
-            // 
             // detail
             // 
             this.detail.Size = new System.Drawing.Size(820, 414);
@@ -147,13 +135,17 @@
             // 
             this.tabs.Size = new System.Drawing.Size(828, 443);
             // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
+            // 
             // dateBox1
             // 
             this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cdate", true));
             this.dateBox1.Location = new System.Drawing.Point(99, 49);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 0;
+            this.dateBox1.TabIndex = 3;
             // 
             // displayBox1
             // 
@@ -163,7 +155,7 @@
             this.displayBox1.Location = new System.Drawing.Point(99, 11);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(108, 23);
-            this.displayBox1.TabIndex = 18;
+            this.displayBox1.TabIndex = 0;
             // 
             // label3
             // 
@@ -251,7 +243,7 @@
             0,
             0});
             this.numericBox2.Size = new System.Drawing.Size(46, 23);
-            this.numericBox2.TabIndex = 2;
+            this.numericBox2.TabIndex = 6;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -296,7 +288,7 @@
             this.displayBox2.Location = new System.Drawing.Point(327, 49);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(70, 23);
-            this.displayBox2.TabIndex = 28;
+            this.displayBox2.TabIndex = 4;
             // 
             // displayBox3
             // 
@@ -306,7 +298,7 @@
             this.displayBox3.Location = new System.Drawing.Point(599, 11);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(70, 23);
-            this.displayBox3.TabIndex = 29;
+            this.displayBox3.TabIndex = 2;
             // 
             // displayBox4
             // 
@@ -316,7 +308,7 @@
             this.displayBox4.Location = new System.Drawing.Point(599, 49);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(70, 23);
-            this.displayBox4.TabIndex = 30;
+            this.displayBox4.TabIndex = 5;
             // 
             // label8
             // 
@@ -348,7 +340,7 @@
             this.button1.Location = new System.Drawing.Point(448, 102);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(200, 30);
-            this.button1.TabIndex = 3;
+            this.button1.TabIndex = 7;
             this.button1.Text = "Import from WorkOrder";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -359,7 +351,7 @@
             this.button2.Location = new System.Drawing.Point(657, 81);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(160, 50);
-            this.button2.TabIndex = 4;
+            this.button2.TabIndex = 8;
             this.button2.Text = "Import from Realtime Bundle Tracking";
             this.button2.UseVisualStyleBackColor = true;
             // 
@@ -367,6 +359,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(828, 476);
+            this.DefaultControl = "numericBox1";
+            this.DefaultControlForEdit = "numericBox1";
             this.DefaultDetailOrder = "Cutref,OrderID";
             this.DefaultOrder = "cDate";
             this.GridAlias = "CuttingOutput_Detail";
@@ -374,8 +368,8 @@
             this.GridUniqueKey = "cutref,workorderUkey";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportUnconfirm = true;
             this.IsSupportPrint = false;
+            this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P20";
             this.SubDetailKeyField1 = "Ukey";

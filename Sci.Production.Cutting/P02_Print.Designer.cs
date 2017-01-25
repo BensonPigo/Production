@@ -41,14 +41,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(439, 12);
+            this.print.TabIndex = 1;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(439, 48);
+            this.toexcel.TabIndex = 2;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(439, 84);
+            this.close.TabIndex = 3;
             // 
             // radioGroup1
             // 
@@ -61,7 +64,7 @@
             this.radioGroup1.Location = new System.Drawing.Point(12, 12);
             this.radioGroup1.Name = "radioGroup1";
             this.radioGroup1.Size = new System.Drawing.Size(412, 166);
-            this.radioGroup1.TabIndex = 94;
+            this.radioGroup1.TabIndex = 0;
             this.radioGroup1.TabStop = false;
             // 
             // label2
@@ -82,7 +85,7 @@
             this.textBox2.Location = new System.Drawing.Point(255, 93);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(108, 23);
-            this.textBox2.TabIndex = 4;
+            this.textBox2.TabIndex = 3;
             // 
             // textBox1
             // 
@@ -91,7 +94,7 @@
             this.textBox1.Location = new System.Drawing.Point(122, 93);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(108, 23);
-            this.textBox1.TabIndex = 3;
+            this.textBox1.TabIndex = 2;
             // 
             // label1
             // 
@@ -99,7 +102,7 @@
             this.label1.Location = new System.Drawing.Point(44, 93);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 2;
+            this.label1.TabIndex = 4;
             this.label1.Text = "Cut RefNo";
             // 
             // Requ_ra
@@ -131,6 +134,8 @@
             // 
             this.ClientSize = new System.Drawing.Size(531, 220);
             this.Controls.Add(this.radioGroup1);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.IsSupportToPrint = false;
             this.Name = "P02_Print";
             this.Text = "Spreading Report";

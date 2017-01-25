@@ -60,21 +60,33 @@
             // 
             this.btmcont.Size = new System.Drawing.Size(405, 40);
             // 
+            // append
+            // 
+            this.append.TabIndex = 0;
+            // 
             // save
             // 
             this.save.Location = new System.Drawing.Point(235, 5);
+            this.save.TabIndex = 4;
             // 
             // undo
             // 
             this.undo.Location = new System.Drawing.Point(315, 5);
+            this.undo.TabIndex = 5;
+            // 
+            // revise
+            // 
+            this.revise.TabIndex = 1;
             // 
             // next
             // 
             this.next.Location = new System.Drawing.Point(180, 5);
+            this.next.TabIndex = 3;
             // 
             // prev
             // 
             this.prev.Location = new System.Drawing.Point(125, 5);
+            this.prev.TabIndex = 2;
             // 
             // label1
             // 
@@ -128,7 +140,7 @@
             this.displayBox1.Location = new System.Drawing.Point(90, 47);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(69, 23);
-            this.displayBox1.TabIndex = 104;
+            this.displayBox1.TabIndex = 1;
             // 
             // label6
             // 
@@ -176,7 +188,7 @@
             this.editBox1.Name = "editBox1";
             this.editBox1.ReadOnly = true;
             this.editBox1.Size = new System.Drawing.Size(256, 36);
-            this.editBox1.TabIndex = 109;
+            this.editBox1.TabIndex = 0;
             // 
             // displayBox2
             // 
@@ -185,7 +197,7 @@
             this.displayBox2.Location = new System.Drawing.Point(90, 81);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(50, 23);
-            this.displayBox2.TabIndex = 110;
+            this.displayBox2.TabIndex = 3;
             // 
             // displayBox3
             // 
@@ -194,7 +206,7 @@
             this.displayBox3.Location = new System.Drawing.Point(90, 115);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(80, 23);
-            this.displayBox3.TabIndex = 111;
+            this.displayBox3.TabIndex = 5;
             // 
             // displayBox4
             // 
@@ -203,7 +215,7 @@
             this.displayBox4.Location = new System.Drawing.Point(90, 149);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(69, 23);
-            this.displayBox4.TabIndex = 112;
+            this.displayBox4.TabIndex = 7;
             // 
             // displayBox5
             // 
@@ -212,7 +224,7 @@
             this.displayBox5.Location = new System.Drawing.Point(277, 47);
             this.displayBox5.Name = "displayBox5";
             this.displayBox5.Size = new System.Drawing.Size(69, 23);
-            this.displayBox5.TabIndex = 113;
+            this.displayBox5.TabIndex = 2;
             // 
             // displayBox6
             // 
@@ -221,7 +233,7 @@
             this.displayBox6.Location = new System.Drawing.Point(277, 81);
             this.displayBox6.Name = "displayBox6";
             this.displayBox6.Size = new System.Drawing.Size(108, 23);
-            this.displayBox6.TabIndex = 114;
+            this.displayBox6.TabIndex = 4;
             // 
             // displayBox7
             // 
@@ -230,7 +242,7 @@
             this.displayBox7.Location = new System.Drawing.Point(277, 115);
             this.displayBox7.Name = "displayBox7";
             this.displayBox7.Size = new System.Drawing.Size(108, 23);
-            this.displayBox7.TabIndex = 115;
+            this.displayBox7.TabIndex = 6;
             // 
             // displayBox8
             // 
@@ -239,7 +251,7 @@
             this.displayBox8.Location = new System.Drawing.Point(277, 149);
             this.displayBox8.Name = "displayBox8";
             this.displayBox8.Size = new System.Drawing.Size(108, 23);
-            this.displayBox8.TabIndex = 116;
+            this.displayBox8.TabIndex = 8;
             // 
             // P20_Detail
             // 

@@ -201,6 +201,7 @@
             // refresh
             // 
             this.refresh.Location = new System.Drawing.Point(787, 1);
+            this.refresh.TabIndex = 3;
             // 
             // detailgridcont
             // 
@@ -245,6 +246,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(892, 531);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label1
             // 
@@ -452,7 +457,7 @@
             this.displayBox_ID.Location = new System.Drawing.Point(96, 13);
             this.displayBox_ID.Name = "displayBox_ID";
             this.displayBox_ID.Size = new System.Drawing.Size(120, 23);
-            this.displayBox_ID.TabIndex = 23;
+            this.displayBox_ID.TabIndex = 0;
             // 
             // displayBox_poid
             // 
@@ -462,7 +467,7 @@
             this.displayBox_poid.Location = new System.Drawing.Point(739, 13);
             this.displayBox_poid.Name = "displayBox_poid";
             this.displayBox_poid.Size = new System.Drawing.Size(108, 23);
-            this.displayBox_poid.TabIndex = 24;
+            this.displayBox_poid.TabIndex = 3;
             // 
             // displayBox_Style
             // 
@@ -471,7 +476,7 @@
             this.displayBox_Style.Location = new System.Drawing.Point(519, 47);
             this.displayBox_Style.Name = "displayBox_Style";
             this.displayBox_Style.Size = new System.Drawing.Size(133, 23);
-            this.displayBox_Style.TabIndex = 25;
+            this.displayBox_Style.TabIndex = 6;
             // 
             // displayBox_Season
             // 
@@ -480,7 +485,7 @@
             this.displayBox_Season.Location = new System.Drawing.Point(739, 47);
             this.displayBox_Season.Name = "displayBox_Season";
             this.displayBox_Season.Size = new System.Drawing.Size(53, 23);
-            this.displayBox_Season.TabIndex = 26;
+            this.displayBox_Season.TabIndex = 7;
             // 
             // displayBox_M
             // 
@@ -490,7 +495,7 @@
             this.displayBox_M.Location = new System.Drawing.Point(314, 47);
             this.displayBox_M.Name = "displayBox_M";
             this.displayBox_M.Size = new System.Drawing.Size(53, 23);
-            this.displayBox_M.TabIndex = 27;
+            this.displayBox_M.TabIndex = 5;
             // 
             // numericBox_noBundle
             // 
@@ -512,7 +517,7 @@
             0});
             this.numericBox_noBundle.ReadOnly = true;
             this.numericBox_noBundle.Size = new System.Drawing.Size(43, 23);
-            this.numericBox_noBundle.TabIndex = 3;
+            this.numericBox_noBundle.TabIndex = 21;
             this.numericBox_noBundle.Value = new decimal(new int[] {
             0,
             0,
@@ -537,7 +542,7 @@
             0,
             0});
             this.numericBox_Group.Size = new System.Drawing.Size(53, 23);
-            this.numericBox_Group.TabIndex = 3;
+            this.numericBox_Group.TabIndex = 20;
             this.numericBox_Group.Value = new decimal(new int[] {
             0,
             0,
@@ -553,7 +558,7 @@
             this.displayBox_PrintDate.Location = new System.Drawing.Point(739, 81);
             this.displayBox_PrintDate.Name = "displayBox_PrintDate";
             this.displayBox_PrintDate.Size = new System.Drawing.Size(133, 23);
-            this.displayBox_PrintDate.TabIndex = 30;
+            this.displayBox_PrintDate.TabIndex = 11;
             // 
             // displayBox_EstCutdate
             // 
@@ -562,7 +567,7 @@
             this.displayBox_EstCutdate.Location = new System.Drawing.Point(770, 115);
             this.displayBox_EstCutdate.Name = "displayBox_EstCutdate";
             this.displayBox_EstCutdate.Size = new System.Drawing.Size(84, 23);
-            this.displayBox_EstCutdate.TabIndex = 31;
+            this.displayBox_EstCutdate.TabIndex = 15;
             // 
             // numericBox_GroupQty
             // 
@@ -583,7 +588,7 @@
             0});
             this.numericBox_GroupQty.ReadOnly = true;
             this.numericBox_GroupQty.Size = new System.Drawing.Size(53, 23);
-            this.numericBox_GroupQty.TabIndex = 32;
+            this.numericBox_GroupQty.TabIndex = 19;
             this.numericBox_GroupQty.Value = new decimal(new int[] {
             0,
             0,
@@ -598,7 +603,7 @@
             this.textBox_Cutref.Location = new System.Drawing.Point(314, 13);
             this.textBox_Cutref.Name = "textBox_Cutref";
             this.textBox_Cutref.Size = new System.Drawing.Size(73, 23);
-            this.textBox_Cutref.TabIndex = 4;
+            this.textBox_Cutref.TabIndex = 1;
             this.textBox_Cutref.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Cutref_Validating);
             // 
             // textBox_orderid
@@ -609,7 +614,7 @@
             this.textBox_orderid.Location = new System.Drawing.Point(519, 13);
             this.textBox_orderid.Name = "textBox_orderid";
             this.textBox_orderid.Size = new System.Drawing.Size(108, 23);
-            this.textBox_orderid.TabIndex = 5;
+            this.textBox_orderid.TabIndex = 2;
             this.textBox_orderid.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox_orderid_PopUp);
             this.textBox_orderid.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_orderid_Validating);
             // 
@@ -621,7 +626,7 @@
             this.textBox_item.Location = new System.Drawing.Point(519, 115);
             this.textBox_item.Name = "textBox_item";
             this.textBox_item.Size = new System.Drawing.Size(108, 23);
-            this.textBox_item.TabIndex = 6;
+            this.textBox_item.TabIndex = 14;
             // 
             // textBox_cell
             // 
@@ -631,7 +636,7 @@
             this.textBox_cell.Location = new System.Drawing.Point(519, 183);
             this.textBox_cell.Name = "textBox_cell";
             this.textBox_cell.Size = new System.Drawing.Size(56, 23);
-            this.textBox_cell.TabIndex = 36;
+            this.textBox_cell.TabIndex = 22;
             // 
             // numericBox_Cutno
             // 
@@ -646,7 +651,7 @@
             0,
             0});
             this.numericBox_Cutno.Size = new System.Drawing.Size(53, 23);
-            this.numericBox_Cutno.TabIndex = 1;
+            this.numericBox_Cutno.TabIndex = 8;
             this.numericBox_Cutno.Value = new decimal(new int[] {
             0,
             0,
@@ -659,7 +664,7 @@
             this.dateBox_Date.Location = new System.Drawing.Point(97, 47);
             this.dateBox_Date.Name = "dateBox_Date";
             this.dateBox_Date.Size = new System.Drawing.Size(130, 23);
-            this.dateBox_Date.TabIndex = 0;
+            this.dateBox_Date.TabIndex = 4;
             // 
             // textBox_FabricCombo
             // 
@@ -669,7 +674,7 @@
             this.textBox_FabricCombo.Location = new System.Drawing.Point(334, 81);
             this.textBox_FabricCombo.Name = "textBox_FabricCombo";
             this.textBox_FabricCombo.Size = new System.Drawing.Size(53, 23);
-            this.textBox_FabricCombo.TabIndex = 40;
+            this.textBox_FabricCombo.TabIndex = 9;
             // 
             // textBox_Size
             // 
@@ -679,7 +684,7 @@
             this.textBox_Size.Location = new System.Drawing.Point(97, 149);
             this.textBox_Size.Name = "textBox_Size";
             this.textBox_Size.Size = new System.Drawing.Size(93, 23);
-            this.textBox_Size.TabIndex = 7;
+            this.textBox_Size.TabIndex = 16;
             // 
             // textBox_Ratio
             // 
@@ -689,7 +694,7 @@
             this.textBox_Ratio.Location = new System.Drawing.Point(314, 149);
             this.textBox_Ratio.Name = "textBox_Ratio";
             this.textBox_Ratio.Size = new System.Drawing.Size(93, 23);
-            this.textBox_Ratio.TabIndex = 8;
+            this.textBox_Ratio.TabIndex = 17;
             // 
             // textBox_Article
             // 
@@ -699,7 +704,7 @@
             this.textBox_Article.Location = new System.Drawing.Point(97, 115);
             this.textBox_Article.Name = "textBox_Article";
             this.textBox_Article.Size = new System.Drawing.Size(73, 23);
-            this.textBox_Article.TabIndex = 9;
+            this.textBox_Article.TabIndex = 12;
             this.textBox_Article.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox_Article_PopUp);
             this.textBox_Article.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Article_Validating);
             // 
@@ -711,7 +716,7 @@
             this.textBox_Colorid.Location = new System.Drawing.Point(314, 115);
             this.textBox_Colorid.Name = "textBox_Colorid";
             this.textBox_Colorid.Size = new System.Drawing.Size(73, 23);
-            this.textBox_Colorid.TabIndex = 10;
+            this.textBox_Colorid.TabIndex = 13;
             // 
             // Generate_Button
             // 
@@ -719,7 +724,7 @@
             this.Generate_Button.Location = new System.Drawing.Point(780, 191);
             this.Generate_Button.Name = "Generate_Button";
             this.Generate_Button.Size = new System.Drawing.Size(80, 30);
-            this.Generate_Button.TabIndex = 46;
+            this.Generate_Button.TabIndex = 23;
             this.Generate_Button.Text = "Generate";
             this.Generate_Button.UseVisualStyleBackColor = true;
             this.Generate_Button.Click += new System.EventHandler(this.Generate_Button_Click);
@@ -730,7 +735,7 @@
             this.button1.Location = new System.Drawing.Point(670, 5);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(111, 30);
-            this.button1.TabIndex = 47;
+            this.button1.TabIndex = 2;
             this.button1.Text = "Garment List";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -743,7 +748,7 @@
             this.txtLine.Location = new System.Drawing.Point(520, 149);
             this.txtLine.Name = "txtLine";
             this.txtLine.Size = new System.Drawing.Size(73, 23);
-            this.txtLine.TabIndex = 47;
+            this.txtLine.TabIndex = 18;
             this.txtLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLine_PopUp);
             this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtLine_Validating);
             // 
@@ -764,11 +769,13 @@
             this.textBox_LectraCode.Location = new System.Drawing.Point(532, 81);
             this.textBox_LectraCode.Name = "textBox_LectraCode";
             this.textBox_LectraCode.Size = new System.Drawing.Size(53, 23);
-            this.textBox_LectraCode.TabIndex = 49;
+            this.textBox_LectraCode.TabIndex = 10;
             // 
             // P10
             // 
             this.ClientSize = new System.Drawing.Size(892, 564);
+            this.DefaultControl = "textBox_Cutref";
+            this.DefaultControlForEdit = "textBox_Cutref";
             this.DefaultDetailOrder = "BundleGroup";
             this.DefaultOrder = "ID";
             this.GridAlias = "Bundle_Detail";

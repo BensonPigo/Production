@@ -50,14 +50,14 @@
             this.textBox1.Location = new System.Drawing.Point(114, 19);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 5;
+            this.textBox1.TabIndex = 0;
             // 
             // Copy
             // 
             this.Copy.Location = new System.Drawing.Point(35, 64);
             this.Copy.Name = "Copy";
             this.Copy.Size = new System.Drawing.Size(80, 30);
-            this.Copy.TabIndex = 4;
+            this.Copy.TabIndex = 1;
             this.Copy.Text = "Copy";
             this.Copy.UseVisualStyleBackColor = true;
             this.Copy.Click += new System.EventHandler(this.Copy_Click);
@@ -67,7 +67,7 @@
             this.button2.Location = new System.Drawing.Point(134, 64);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 7;
+            this.button2.TabIndex = 2;
             this.button2.Text = "Cancel";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -79,6 +79,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.Copy);
+            this.DefaultControl = "textBox1";
             this.Name = "P11_copytocutref";
             this.Text = "Copy Cutpart/Artwork to other CutRef#";
             this.ResumeLayout(false);

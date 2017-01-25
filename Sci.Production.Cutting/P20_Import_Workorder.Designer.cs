@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.grid1 = new Sci.Win.UI.Grid();
             this.Query = new Sci.Win.UI.Button();
             this.Import = new Sci.Win.UI.Button();
@@ -59,14 +59,14 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -80,7 +80,7 @@
             this.Query.Location = new System.Drawing.Point(852, 7);
             this.Query.Name = "Query";
             this.Query.Size = new System.Drawing.Size(80, 30);
-            this.Query.TabIndex = 2;
+            this.Query.TabIndex = 1;
             this.Query.Text = "Query";
             this.Query.UseVisualStyleBackColor = true;
             this.Query.Click += new System.EventHandler(this.Query_Click);
@@ -91,7 +91,7 @@
             this.Import.Location = new System.Drawing.Point(766, 5);
             this.Import.Name = "Import";
             this.Import.Size = new System.Drawing.Size(80, 30);
-            this.Import.TabIndex = 2;
+            this.Import.TabIndex = 0;
             this.Import.Text = "Import";
             this.Import.UseVisualStyleBackColor = true;
             this.Import.Click += new System.EventHandler(this.Import_Click);
@@ -102,7 +102,7 @@
             this.Close.Location = new System.Drawing.Point(852, 5);
             this.Close.Name = "Close";
             this.Close.Size = new System.Drawing.Size(80, 30);
-            this.Close.TabIndex = 3;
+            this.Close.TabIndex = 1;
             this.Close.Text = "Close";
             this.Close.UseVisualStyleBackColor = true;
             this.Close.Click += new System.EventHandler(this.Close_Click);
@@ -132,7 +132,7 @@
             this.panelTOP.Location = new System.Drawing.Point(0, 0);
             this.panelTOP.Name = "panelTOP";
             this.panelTOP.Size = new System.Drawing.Size(944, 44);
-            this.panelTOP.TabIndex = 6;
+            this.panelTOP.TabIndex = 0;
             // 
             // panelBOTTOM
             // 
@@ -159,6 +159,7 @@
             this.Controls.Add(this.panelMIDDLE);
             this.Controls.Add(this.panelBOTTOM);
             this.Controls.Add(this.panelTOP);
+            this.DefaultControl = "dateBox1";
             this.Name = "P20_Import_Workorder";
             this.Text = "P20_Import";
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();

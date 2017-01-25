@@ -43,14 +43,17 @@
             // 
             this.print.Enabled = false;
             this.print.Location = new System.Drawing.Point(461, 12);
+            this.print.TabIndex = 1;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(461, 48);
+            this.toexcel.TabIndex = 2;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(461, 84);
+            this.close.TabIndex = 3;
             // 
             // panel1
             // 
@@ -63,7 +66,7 @@
             this.panel1.Location = new System.Drawing.Point(13, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(429, 127);
-            this.panel1.TabIndex = 94;
+            this.panel1.TabIndex = 0;
             // 
             // cmb_Factory
             // 
@@ -74,7 +77,7 @@
             this.cmb_Factory.Location = new System.Drawing.Point(107, 78);
             this.cmb_Factory.Name = "cmb_Factory";
             this.cmb_Factory.Size = new System.Drawing.Size(121, 24);
-            this.cmb_Factory.TabIndex = 100;
+            this.cmb_Factory.TabIndex = 2;
             // 
             // cmb_M
             // 
@@ -85,7 +88,7 @@
             this.cmb_M.Location = new System.Drawing.Point(107, 42);
             this.cmb_M.Name = "cmb_M";
             this.cmb_M.Size = new System.Drawing.Size(121, 24);
-            this.cmb_M.TabIndex = 99;
+            this.cmb_M.TabIndex = 1;
             // 
             // label2
             // 
@@ -135,6 +138,8 @@
             this.ClientSize = new System.Drawing.Size(553, 183);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "dateR_EstCutDate";
+            this.DefaultControlForEdit = "dateR_EstCutDate";
             this.Name = "R05";
             this.Text = "R05.Cutting Monthly Forecast";
             this.Controls.SetChildIndex(this.print, 0);

@@ -48,6 +48,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(676, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtartworktype_fty1);
@@ -62,6 +66,12 @@
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Size = new System.Drawing.Size(676, 357);
+            this.detailcont.TabIndex = 0;
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(676, 38);
             // 
             // browse
             // 
@@ -70,6 +80,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(684, 424);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label1
             // 
@@ -109,7 +123,7 @@
             this.checkBox2.Location = new System.Drawing.Point(412, 112);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(135, 21);
-            this.checkBox2.TabIndex = 5;
+            this.checkBox2.TabIndex = 7;
             this.checkBox2.Text = "Display on report";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
@@ -133,7 +147,7 @@
             this.checkBox4.Location = new System.Drawing.Point(412, 57);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(78, 21);
-            this.checkBox4.TabIndex = 7;
+            this.checkBox4.TabIndex = 5;
             this.checkBox4.Text = "Process";
             this.checkBox4.UseVisualStyleBackColor = true;
             // 
@@ -156,7 +170,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(90, 23);
-            this.textBox1.TabIndex = 10;
+            this.textBox1.TabIndex = 0;
             // 
             // textBox3
             // 
@@ -166,7 +180,7 @@
             this.textBox3.Location = new System.Drawing.Point(162, 167);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(53, 23);
-            this.textBox3.TabIndex = 12;
+            this.textBox3.TabIndex = 2;
             // 
             // textBox5
             // 
@@ -177,7 +191,7 @@
             this.textBox5.MaxLength = 2;
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(66, 23);
-            this.textBox5.TabIndex = 15;
+            this.textBox5.TabIndex = 3;
             // 
             // label5
             // 
@@ -198,11 +212,13 @@
             this.txtartworktype_fty1.Location = new System.Drawing.Point(162, 112);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 17;
+            this.txtartworktype_fty1.TabIndex = 1;
             // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(684, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "txtartworktype_fty1";
             this.DefaultOrder = "id";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;

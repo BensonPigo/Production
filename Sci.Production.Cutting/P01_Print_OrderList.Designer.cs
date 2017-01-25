@@ -52,7 +52,7 @@
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(368, 221);
-            this.groupBox1.TabIndex = 180;
+            this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             // 
             // rdCheck1
@@ -64,7 +64,7 @@
             this.rdCheck1.Location = new System.Drawing.Point(6, 22);
             this.rdCheck1.Name = "rdCheck1";
             this.rdCheck1.Size = new System.Drawing.Size(282, 24);
-            this.rdCheck1.TabIndex = 173;
+            this.rdCheck1.TabIndex = 0;
             this.rdCheck1.TabStop = true;
             this.rdCheck1.Text = "Each Consumption (Cutting Combo)";
             this.rdCheck1.UseVisualStyleBackColor = true;
@@ -77,7 +77,7 @@
             this.rdCheck6.Location = new System.Drawing.Point(6, 157);
             this.rdCheck6.Name = "rdCheck6";
             this.rdCheck6.Size = new System.Drawing.Size(264, 44);
-            this.rdCheck6.TabIndex = 178;
+            this.rdCheck6.TabIndex = 5;
             this.rdCheck6.Text = "Consumption Calculate by Marker\r\nList Cons/Per pc";
             this.rdCheck6.UseVisualStyleBackColor = true;
             // 
@@ -89,7 +89,7 @@
             this.rdCheck2.Location = new System.Drawing.Point(6, 49);
             this.rdCheck2.Name = "rdCheck2";
             this.rdCheck2.Size = new System.Drawing.Size(240, 24);
-            this.rdCheck2.TabIndex = 174;
+            this.rdCheck2.TabIndex = 1;
             this.rdCheck2.Text = "TTL consumption (PO Combo)";
             this.rdCheck2.UseVisualStyleBackColor = true;
             // 
@@ -101,7 +101,7 @@
             this.rdCheck5.Location = new System.Drawing.Point(6, 130);
             this.rdCheck5.Name = "rdCheck5";
             this.rdCheck5.Size = new System.Drawing.Size(105, 24);
-            this.rdCheck5.TabIndex = 177;
+            this.rdCheck5.TabIndex = 4;
             this.rdCheck5.Text = "Marker List";
             this.rdCheck5.UseVisualStyleBackColor = true;
             // 
@@ -113,7 +113,7 @@
             this.rdCheck3.Location = new System.Drawing.Point(6, 76);
             this.rdCheck3.Name = "rdCheck3";
             this.rdCheck3.Size = new System.Drawing.Size(249, 24);
-            this.rdCheck3.TabIndex = 175;
+            this.rdCheck3.TabIndex = 2;
             this.rdCheck3.Text = "Color & Q\'ty B\'Down (PO Combo)";
             this.rdCheck3.UseVisualStyleBackColor = true;
             // 
@@ -125,7 +125,7 @@
             this.rdCheck4.Location = new System.Drawing.Point(6, 103);
             this.rdCheck4.Name = "rdCheck4";
             this.rdCheck4.Size = new System.Drawing.Size(350, 24);
-            this.rdCheck4.TabIndex = 176;
+            this.rdCheck4.TabIndex = 3;
             this.rdCheck4.Text = "Each cons. vs Order Q\'ty B\'Down (PO Combo)";
             this.rdCheck4.UseVisualStyleBackColor = true;
             // 
@@ -134,7 +134,7 @@
             this.btnCancel.Location = new System.Drawing.Point(394, 82);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 30);
-            this.btnCancel.TabIndex = 184;
+            this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -144,7 +144,7 @@
             this.btnToExcel.Location = new System.Drawing.Point(394, 32);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(80, 30);
-            this.btnToExcel.TabIndex = 183;
+            this.btnToExcel.TabIndex = 0;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);

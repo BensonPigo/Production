@@ -49,14 +49,17 @@
             // 
             this.print.Enabled = false;
             this.print.Location = new System.Drawing.Point(441, 12);
+            this.print.TabIndex = 1;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(441, 48);
+            this.toexcel.TabIndex = 2;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(441, 84);
+            this.close.TabIndex = 3;
             // 
             // panel1
             // 
@@ -75,7 +78,7 @@
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(412, 191);
-            this.panel1.TabIndex = 95;
+            this.panel1.TabIndex = 0;
             // 
             // label2
             // 
@@ -93,7 +96,7 @@
             this.radioBtn_ByDetail.Location = new System.Drawing.Point(109, 157);
             this.radioBtn_ByDetail.Name = "radioBtn_ByDetail";
             this.radioBtn_ByDetail.Size = new System.Drawing.Size(82, 21);
-            this.radioBtn_ByDetail.TabIndex = 114;
+            this.radioBtn_ByDetail.TabIndex = 6;
             this.radioBtn_ByDetail.Text = "By Detail";
             this.radioBtn_ByDetail.UseVisualStyleBackColor = true;
             this.radioBtn_ByDetail.CheckedChanged += new System.EventHandler(this.radioBtn3_ByDetail_CheckedChanged);
@@ -105,7 +108,7 @@
             this.radioBtn_ByCutCell.Location = new System.Drawing.Point(109, 130);
             this.radioBtn_ByCutCell.Name = "radioBtn_ByCutCell";
             this.radioBtn_ByCutCell.Size = new System.Drawing.Size(94, 21);
-            this.radioBtn_ByCutCell.TabIndex = 113;
+            this.radioBtn_ByCutCell.TabIndex = 5;
             this.radioBtn_ByCutCell.Text = "By Cut Cell";
             this.radioBtn_ByCutCell.UseVisualStyleBackColor = true;
             this.radioBtn_ByCutCell.CheckedChanged += new System.EventHandler(this.radioBtn2_ByCutCell_CheckedChanged);
@@ -118,7 +121,7 @@
             this.radiobtn_ByM.Location = new System.Drawing.Point(109, 103);
             this.radiobtn_ByM.Name = "radiobtn_ByM";
             this.radiobtn_ByM.Size = new System.Drawing.Size(57, 21);
-            this.radiobtn_ByM.TabIndex = 112;
+            this.radiobtn_ByM.TabIndex = 4;
             this.radiobtn_ByM.TabStop = true;
             this.radiobtn_ByM.Text = "By M";
             this.radiobtn_ByM.UseVisualStyleBackColor = true;
@@ -133,7 +136,7 @@
             this.cmb_M.Location = new System.Drawing.Point(109, 12);
             this.cmb_M.Name = "cmb_M";
             this.cmb_M.Size = new System.Drawing.Size(121, 24);
-            this.cmb_M.TabIndex = 111;
+            this.cmb_M.TabIndex = 0;
             // 
             // txt_CutCell2
             // 
@@ -144,7 +147,7 @@
             this.txt_CutCell2.MaxLength = 2;
             this.txt_CutCell2.Name = "txt_CutCell2";
             this.txt_CutCell2.Size = new System.Drawing.Size(65, 23);
-            this.txt_CutCell2.TabIndex = 110;
+            this.txt_CutCell2.TabIndex = 3;
             // 
             // label9
             // 
@@ -153,7 +156,7 @@
             this.label9.Location = new System.Drawing.Point(171, 73);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(20, 23);
-            this.label9.TabIndex = 109;
+            this.label9.TabIndex = 8;
             this.label9.Text = "～";
             this.label9.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label9.TextStyle.Color = System.Drawing.Color.Black;
@@ -169,14 +172,14 @@
             this.txt_CutCell1.MaxLength = 2;
             this.txt_CutCell1.Name = "txt_CutCell1";
             this.txt_CutCell1.Size = new System.Drawing.Size(65, 23);
-            this.txt_CutCell1.TabIndex = 108;
+            this.txt_CutCell1.TabIndex = 2;
             // 
             // dateR_EstCutDate
             // 
             this.dateR_EstCutDate.Location = new System.Drawing.Point(109, 43);
             this.dateR_EstCutDate.Name = "dateR_EstCutDate";
             this.dateR_EstCutDate.Size = new System.Drawing.Size(280, 23);
-            this.dateR_EstCutDate.TabIndex = 100;
+            this.dateR_EstCutDate.TabIndex = 1;
             // 
             // label5
             // 
@@ -219,6 +222,8 @@
             this.ClientSize = new System.Drawing.Size(533, 242);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "cmb_M";
+            this.DefaultControlForEdit = "cmb_M";
             this.Name = "R04";
             this.Text = "R04.Cutting BCS Report";
             this.Controls.SetChildIndex(this.print, 0);

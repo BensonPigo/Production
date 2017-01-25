@@ -52,6 +52,11 @@
             this.detailcont.Controls.Add(this.displayBox1);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.TabIndex = 0;
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label1
             // 
@@ -79,7 +84,7 @@
             this.checkBox1.Location = new System.Drawing.Point(315, 59);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 4;
+            this.checkBox1.TabIndex = 3;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -100,7 +105,7 @@
             this.displayBox1.Location = new System.Drawing.Point(151, 57);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(64, 23);
-            this.displayBox1.TabIndex = 2;
+            this.displayBox1.TabIndex = 0;
             // 
             // textBox1
             // 
@@ -110,7 +115,7 @@
             this.textBox1.Location = new System.Drawing.Point(151, 112);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(43, 23);
-            this.textBox1.TabIndex = 9;
+            this.textBox1.TabIndex = 1;
             // 
             // textBox2
             // 
@@ -120,11 +125,13 @@
             this.textBox2.Location = new System.Drawing.Point(151, 167);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(172, 23);
-            this.textBox2.TabIndex = 10;
+            this.textBox2.TabIndex = 2;
             // 
             // B02
             // 
             this.ClientSize = new System.Drawing.Size(905, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox2";
             this.DefaultOrder = "id";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;

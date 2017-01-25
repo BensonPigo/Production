@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.withcuto = new Sci.Win.UI.RadioButton();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
             this.begin1 = new Sci.Win.UI.RadioButton();
@@ -104,7 +104,7 @@
             this.radioGroup1.Location = new System.Drawing.Point(685, 582);
             this.radioGroup1.Name = "radioGroup1";
             this.radioGroup1.Size = new System.Drawing.Size(114, 43);
-            this.radioGroup1.TabIndex = 103;
+            this.radioGroup1.TabIndex = 14;
             this.radioGroup1.TabStop = false;
             // 
             // begin1
@@ -124,7 +124,7 @@
             this.Close_Button.Location = new System.Drawing.Point(917, 584);
             this.Close_Button.Name = "Close_Button";
             this.Close_Button.Size = new System.Drawing.Size(80, 30);
-            this.Close_Button.TabIndex = 102;
+            this.Close_Button.TabIndex = 16;
             this.Close_Button.Text = "Close";
             this.Close_Button.UseVisualStyleBackColor = true;
             this.Close_Button.Click += new System.EventHandler(this.Close_Button_Click);
@@ -135,7 +135,7 @@
             this.BatchCreate_Button.Location = new System.Drawing.Point(811, 584);
             this.BatchCreate_Button.Name = "BatchCreate_Button";
             this.BatchCreate_Button.Size = new System.Drawing.Size(100, 30);
-            this.BatchCreate_Button.TabIndex = 101;
+            this.BatchCreate_Button.TabIndex = 15;
             this.BatchCreate_Button.Text = "Batch Create";
             this.BatchCreate_Button.UseVisualStyleBackColor = true;
             this.BatchCreate_Button.Click += new System.EventHandler(this.BatchCreate_Button_Click);
@@ -148,7 +148,7 @@
             this.label_TotalQty.Location = new System.Drawing.Point(87, 585);
             this.label_TotalQty.Name = "label_TotalQty";
             this.label_TotalQty.Size = new System.Drawing.Size(54, 23);
-            this.label_TotalQty.TabIndex = 100;
+            this.label_TotalQty.TabIndex = 11;
             this.label_TotalQty.Text = "0";
             this.label_TotalQty.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label_TotalQty.TextStyle.Color = System.Drawing.Color.Black;
@@ -159,7 +159,7 @@
             this.copy_to_same_Cutref.Location = new System.Drawing.Point(158, 582);
             this.copy_to_same_Cutref.Name = "copy_to_same_Cutref";
             this.copy_to_same_Cutref.Size = new System.Drawing.Size(224, 30);
-            this.copy_to_same_Cutref.TabIndex = 99;
+            this.copy_to_same_Cutref.TabIndex = 12;
             this.copy_to_same_Cutref.Text = "Copy Cutpart/Artwork to same CutRef#";
             this.copy_to_same_Cutref.UseVisualStyleBackColor = true;
             this.copy_to_same_Cutref.Click += new System.EventHandler(this.copy_to_same_Cutref_Click);
@@ -170,7 +170,7 @@
             this.copy_to_other_Cutref.Location = new System.Drawing.Point(383, 582);
             this.copy_to_other_Cutref.Name = "copy_to_other_Cutref";
             this.copy_to_other_Cutref.Size = new System.Drawing.Size(219, 30);
-            this.copy_to_other_Cutref.TabIndex = 98;
+            this.copy_to_other_Cutref.TabIndex = 13;
             this.copy_to_other_Cutref.Text = "Copy Cutpart/Artwork to other CutRef#";
             this.copy_to_other_Cutref.UseVisualStyleBackColor = true;
             this.copy_to_other_Cutref.Click += new System.EventHandler(this.copy_to_other_Cutref_Click);
@@ -181,7 +181,7 @@
             this.button1.Location = new System.Drawing.Point(902, 310);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(97, 30);
-            this.button1.TabIndex = 97;
+            this.button1.TabIndex = 8;
             this.button1.Text = "Color Comb";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -205,7 +205,7 @@
             0,
             0});
             this.totalpart_numericBox.Size = new System.Drawing.Size(37, 21);
-            this.totalpart_numericBox.TabIndex = 96;
+            this.totalpart_numericBox.TabIndex = 6;
             this.totalpart_numericBox.Value = new decimal(new int[] {
             0,
             0,
@@ -228,7 +228,7 @@
             this.button3.Location = new System.Drawing.Point(488, 310);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(97, 30);
-            this.button3.TabIndex = 94;
+            this.button3.TabIndex = 7;
             this.button3.Text = "Garment List";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -251,7 +251,7 @@
             this.button_LefttoRight.Location = new System.Drawing.Point(605, 415);
             this.button_LefttoRight.Name = "button_LefttoRight";
             this.button_LefttoRight.Size = new System.Drawing.Size(38, 30);
-            this.button_LefttoRight.TabIndex = 92;
+            this.button_LefttoRight.TabIndex = 9;
             this.button_LefttoRight.Text = ">";
             this.button_LefttoRight.UseVisualStyleBackColor = true;
             this.button_LefttoRight.Click += new System.EventHandler(this.button_LefttoRight_Click);
@@ -262,7 +262,7 @@
             this.button_RighttoLeft.Location = new System.Drawing.Point(605, 484);
             this.button_RighttoLeft.Name = "button_RighttoLeft";
             this.button_RighttoLeft.Size = new System.Drawing.Size(38, 30);
-            this.button_RighttoLeft.TabIndex = 91;
+            this.button_RighttoLeft.TabIndex = 10;
             this.button_RighttoLeft.Text = "<";
             this.button_RighttoLeft.UseVisualStyleBackColor = true;
             this.button_RighttoLeft.Click += new System.EventHandler(this.button_RighttoLeft_Click);
@@ -280,7 +280,7 @@
             0,
             0});
             this.numericBox_noofbundle.Size = new System.Drawing.Size(35, 21);
-            this.numericBox_noofbundle.TabIndex = 90;
+            this.numericBox_noofbundle.TabIndex = 4;
             this.numericBox_noofbundle.Value = new decimal(new int[] {
             0,
             0,
@@ -296,7 +296,7 @@
             this.label_TotalCutOutput.Location = new System.Drawing.Point(250, 312);
             this.label_TotalCutOutput.Name = "label_TotalCutOutput";
             this.label_TotalCutOutput.Size = new System.Drawing.Size(54, 23);
-            this.label_TotalCutOutput.TabIndex = 89;
+            this.label_TotalCutOutput.TabIndex = 5;
             this.label_TotalCutOutput.Text = "0";
             this.label_TotalCutOutput.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label_TotalCutOutput.TextStyle.Color = System.Drawing.Color.Black;
@@ -407,14 +407,14 @@
             this.Cutpart_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.Cutpart_grid.Location = new System.Drawing.Point(160, 346);
             this.Cutpart_grid.Name = "Cutpart_grid";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.Cutpart_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.Cutpart_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.Cutpart_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.Cutpart_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.Cutpart_grid.RowTemplate.Height = 24;
@@ -459,20 +459,20 @@
             this.ArticleSize_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.ArticleSize_grid.Location = new System.Drawing.Point(417, 38);
             this.ArticleSize_grid.Name = "ArticleSize_grid";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ArticleSize_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ArticleSize_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.ArticleSize_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.ArticleSize_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.ArticleSize_grid.RowTemplate.Height = 24;
             this.ArticleSize_grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.ArticleSize_grid.Size = new System.Drawing.Size(580, 267);
-            this.ArticleSize_grid.TabIndex = 78;
+            this.ArticleSize_grid.TabIndex = 20;
             this.ArticleSize_grid.TabStop = false;
             this.ArticleSize_grid.SelectionChanged += new System.EventHandler(this.ArticleSize_grid_SelectionChanged);
             // 
@@ -491,14 +491,14 @@
             this.AllPart_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.AllPart_grid.Location = new System.Drawing.Point(646, 346);
             this.AllPart_grid.Name = "AllPart_grid";
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.AllPart_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.AllPart_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.AllPart_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.AllPart_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.AllPart_grid.RowTemplate.Height = 24;
@@ -543,14 +543,14 @@
             this.Qty_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.Qty_grid.Location = new System.Drawing.Point(8, 346);
             this.Qty_grid.Name = "Qty_grid";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.Qty_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.Qty_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.Qty_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.Qty_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.Qty_grid.RowTemplate.Height = 24;
@@ -573,20 +573,20 @@
             this.CutRef_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.CutRef_grid.Location = new System.Drawing.Point(8, 38);
             this.CutRef_grid.Name = "CutRef_grid";
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.CutRef_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.CutRef_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.CutRef_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.CutRef_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.CutRef_grid.RowTemplate.Height = 24;
             this.CutRef_grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.CutRef_grid.Size = new System.Drawing.Size(399, 267);
-            this.CutRef_grid.TabIndex = 75;
+            this.CutRef_grid.TabIndex = 22;
             this.CutRef_grid.TabStop = false;
             this.CutRef_grid.SelectionChanged += new System.EventHandler(this.CutRef_grid_SelectionChanged);
             // 
@@ -609,7 +609,7 @@
             this.label3.Location = new System.Drawing.Point(657, 591);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(35, 23);
-            this.label3.TabIndex = 104;
+            this.label3.TabIndex = 17;
             this.label3.Text = "Group";
             this.label3.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label3.TextStyle.Color = System.Drawing.Color.Red;
@@ -648,6 +648,8 @@
             this.Controls.Add(this.AllPart_grid);
             this.Controls.Add(this.Qty_grid);
             this.Controls.Add(this.CutRef_grid);
+            this.DefaultControl = "Cutref_textBox";
+            this.DefaultControlForEdit = "Cutref_textBox";
             this.EditMode = true;
             this.Name = "P11";
             this.Text = "P11.Batch Create Bundle Card";

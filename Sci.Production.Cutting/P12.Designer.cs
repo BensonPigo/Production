@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.textBox10 = new Sci.Win.UI.TextBox();
@@ -97,14 +97,14 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1187, 86);
-            this.panel1.TabIndex = 1;
+            this.panel1.TabIndex = 0;
             // 
             // dateBox1
             // 
             this.dateBox1.Location = new System.Drawing.Point(687, 16);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 19;
+            this.dateBox1.TabIndex = 3;
             // 
             // textBox10
             // 
@@ -131,7 +131,7 @@
             this.textBox7.Location = new System.Drawing.Point(389, 15);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(100, 23);
-            this.textBox7.TabIndex = 4;
+            this.textBox7.TabIndex = 2;
             // 
             // label10
             // 
@@ -149,7 +149,7 @@
             this.textBox5.Location = new System.Drawing.Point(534, 49);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(99, 23);
-            this.textBox5.TabIndex = 6;
+            this.textBox5.TabIndex = 7;
             // 
             // textBox6
             // 
@@ -158,7 +158,7 @@
             this.textBox6.Location = new System.Drawing.Point(408, 50);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(99, 23);
-            this.textBox6.TabIndex = 5;
+            this.textBox6.TabIndex = 6;
             // 
             // label8
             // 
@@ -176,7 +176,7 @@
             this.textBox3.Location = new System.Drawing.Point(214, 49);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(99, 23);
-            this.textBox3.TabIndex = 3;
+            this.textBox3.TabIndex = 5;
             // 
             // textBox4
             // 
@@ -185,7 +185,7 @@
             this.textBox4.Location = new System.Drawing.Point(88, 50);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(99, 23);
-            this.textBox4.TabIndex = 2;
+            this.textBox4.TabIndex = 4;
             // 
             // label9
             // 
@@ -304,7 +304,7 @@
             this.label11.Location = new System.Drawing.Point(10, 11);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(50, 22);
-            this.label11.TabIndex = 3;
+            this.label11.TabIndex = 0;
             this.label11.Text = "Sort by";
             // 
             // comboBox1
@@ -319,7 +319,7 @@
             this.comboBox1.Location = new System.Drawing.Point(63, 11);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(144, 24);
-            this.comboBox1.TabIndex = 4;
+            this.comboBox1.TabIndex = 0;
             // 
             // button2
             // 
@@ -327,7 +327,7 @@
             this.button2.Location = new System.Drawing.Point(742, 11);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(123, 33);
-            this.button2.TabIndex = 5;
+            this.button2.TabIndex = 1;
             this.button2.Text = "Bundle Card";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -338,7 +338,7 @@
             this.button3.Location = new System.Drawing.Point(881, 11);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(136, 33);
-            this.button3.TabIndex = 6;
+            this.button3.TabIndex = 2;
             this.button3.Text = "ToExcel";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -349,7 +349,7 @@
             this.button4.Location = new System.Drawing.Point(1034, 11);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(136, 33);
-            this.button4.TabIndex = 7;
+            this.button4.TabIndex = 3;
             this.button4.Text = "Close";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
@@ -365,7 +365,7 @@
             this.panel3.Location = new System.Drawing.Point(0, 368);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1187, 52);
-            this.panel3.TabIndex = 9;
+            this.panel3.TabIndex = 1;
             // 
             // panel5
             // 
@@ -392,14 +392,14 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -414,6 +414,7 @@
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "textBox1";
             this.Name = "P12";
             this.Text = "P12. Batch Print Bundle Card";
             this.Controls.SetChildIndex(this.panel1, 0);

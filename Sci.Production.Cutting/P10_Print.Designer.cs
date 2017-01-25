@@ -38,14 +38,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(392, 12);
+            this.print.TabIndex = 1;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(392, 48);
+            this.toexcel.TabIndex = 2;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(392, 84);
+            this.close.TabIndex = 3;
             // 
             // radioPanel1
             // 
@@ -55,7 +58,7 @@
             this.radioPanel1.Location = new System.Drawing.Point(12, 11);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(350, 100);
-            this.radioPanel1.TabIndex = 94;
+            this.radioPanel1.TabIndex = 0;
             this.radioPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.radioPanel1_Paint);
             // 
             // checkBox1
@@ -65,7 +68,7 @@
             this.checkBox1.Location = new System.Drawing.Point(210, 18);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(126, 21);
-            this.checkBox1.TabIndex = 2;
+            this.checkBox1.TabIndex = 1;
             this.checkBox1.Text = "Extend All Parts";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -75,7 +78,7 @@
             this.radioButton2.Location = new System.Drawing.Point(28, 57);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(134, 21);
-            this.radioButton2.TabIndex = 1;
+            this.radioButton2.TabIndex = 2;
             this.radioButton2.Text = "Bundle Check list";
             this.radioButton2.UseVisualStyleBackColor = true;
             // 
@@ -95,6 +98,7 @@
             // 
             this.ClientSize = new System.Drawing.Size(484, 162);
             this.Controls.Add(this.radioPanel1);
+            this.DefaultControl = "radioButton1";
             this.Name = "P10_Print";
             this.Text = "P10. Print";
             this.Controls.SetChildIndex(this.radioPanel1, 0);
