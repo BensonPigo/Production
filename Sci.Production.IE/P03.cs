@@ -112,7 +112,21 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                                 }
                                 else
                                 {
-                                    dr["Cycle"] = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                                   dr["Cycle"] = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                                   string c = dr["Cycle"].ToString();
+                                  DataTable EffData;
+                                  string Eff = string.Format(@"
+                                            select ld.*,o.DescEN as Description,e.Name as EmployeeName,
+                                                    e.Skill as EmployeeSkill,
+                                                    iif(ld.Cycle = 0,0,ROUND(ld.GSD/'{1}',2)*100) as Efficiency
+                                            from LineMapping_Detail ld
+                                            left join Employee e on ld.EmployeeID = e.ID
+                                            left join Operation o on ld.OperationID = o.ID
+                                            where ld.ID = '{0}' and ld.No='{2}' and ld.Annotation='{3}' 
+                                                  and ld.GroupKey='{4}' and ld.OperationID='{5}' 
+                                            order by ld.No,ld.GroupKey", dr["ID"], c, dr["No"], dr["Annotation"], dr["GroupKey"], dr["OperationID"]);
+                                  DualResult result = DBProxy.Current.Select(null, Eff, out EffData);
+                                  dr["Efficiency"] = EffData.Rows[0]["Efficiency"];    
                                 }
                             }
                         }
@@ -134,7 +148,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = "select ID,Description from MachineType where Junk = 0";
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,43", dr["MachineTypeID"].ToString());
-                            item.Width = 600;
+                            item.Width = 590;
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             e.EditingControl.Text = item.GetSelectedString();
@@ -195,7 +209,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                             GetEmployee(null);
 
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(EmployeeData, "ID,Name,Skill,SewingLineID,FactoryID", "10,30,20,2,8", dr["EmployeeID"].ToString());
-                            item.Width = 490;
+                            item.Width = 650;
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             IList<DataRow> selectedData = item.GetSelecteds();
