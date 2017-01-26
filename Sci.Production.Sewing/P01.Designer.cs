@@ -134,15 +134,29 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 115);
-            this.detailpanel.Size = new System.Drawing.Size(892, 234);
+            this.detailpanel.Size = new System.Drawing.Size(892, 310);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(784, 80);
+            this.gridicon.TabIndex = 15;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 234);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 310);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(892, 463);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(892, 425);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 425);
+            this.detailbtm.TabIndex = 0;
             // 
             // browse
             // 
@@ -151,6 +165,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(900, 492);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label1
             // 
@@ -205,7 +223,7 @@
             this.displayBox1.Location = new System.Drawing.Point(171, 31);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(41, 23);
-            this.displayBox1.TabIndex = 27;
+            this.displayBox1.TabIndex = 4;
             // 
             // comboBox1
             // 
@@ -217,7 +235,7 @@
             this.comboBox1.Location = new System.Drawing.Point(48, 85);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(57, 24);
-            this.comboBox1.TabIndex = 3;
+            this.comboBox1.TabIndex = 10;
             // 
             // label5
             // 
@@ -274,7 +292,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(54, 23);
-            this.numericBox1.TabIndex = 4;
+            this.numericBox1.TabIndex = 1;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -325,7 +343,7 @@
             0});
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(54, 23);
-            this.numericBox3.TabIndex = 15;
+            this.numericBox3.TabIndex = 8;
             this.numericBox3.Value = new decimal(new int[] {
             0,
             0,
@@ -347,7 +365,7 @@
             0});
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(68, 23);
-            this.numericBox4.TabIndex = 16;
+            this.numericBox4.TabIndex = 11;
             this.numericBox4.Value = new decimal(new int[] {
             0,
             0,
@@ -405,7 +423,7 @@
             0});
             this.numericBox5.ReadOnly = true;
             this.numericBox5.Size = new System.Drawing.Size(62, 23);
-            this.numericBox5.TabIndex = 21;
+            this.numericBox5.TabIndex = 2;
             this.numericBox5.Value = new decimal(new int[] {
             0,
             0,
@@ -427,7 +445,7 @@
             0});
             this.numericBox6.ReadOnly = true;
             this.numericBox6.Size = new System.Drawing.Size(62, 23);
-            this.numericBox6.TabIndex = 22;
+            this.numericBox6.TabIndex = 6;
             this.numericBox6.Value = new decimal(new int[] {
             0,
             0,
@@ -449,7 +467,7 @@
             0});
             this.numericBox7.ReadOnly = true;
             this.numericBox7.Size = new System.Drawing.Size(62, 23);
-            this.numericBox7.TabIndex = 23;
+            this.numericBox7.TabIndex = 9;
             this.numericBox7.Value = new decimal(new int[] {
             0,
             0,
@@ -472,7 +490,7 @@
             0});
             this.numericBox8.ReadOnly = true;
             this.numericBox8.Size = new System.Drawing.Size(62, 23);
-            this.numericBox8.TabIndex = 24;
+            this.numericBox8.TabIndex = 12;
             this.numericBox8.Value = new decimal(new int[] {
             0,
             0,
@@ -484,7 +502,7 @@
             this.button1.Location = new System.Drawing.Point(762, 5);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(122, 30);
-            this.button1.TabIndex = 25;
+            this.button1.TabIndex = 13;
             this.button1.Text = "Revised History";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -495,7 +513,7 @@
             this.button2.Location = new System.Drawing.Point(650, 41);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(237, 30);
-            this.button2.TabIndex = 26;
+            this.button2.TabIndex = 14;
             this.button2.Text = "Share <working hours> to SP#";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -519,7 +537,7 @@
             this.txtdropdownlist1.Location = new System.Drawing.Point(49, 58);
             this.txtdropdownlist1.Name = "txtdropdownlist1";
             this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist1.TabIndex = 2;
+            this.txtdropdownlist1.TabIndex = 7;
             this.txtdropdownlist1.Type = "SewingOutput_Shift";
             // 
             // txtsewingline1
@@ -531,11 +549,13 @@
             this.txtsewingline1.Location = new System.Drawing.Point(49, 31);
             this.txtsewingline1.Name = "txtsewingline1";
             this.txtsewingline1.Size = new System.Drawing.Size(60, 23);
-            this.txtsewingline1.TabIndex = 1;
+            this.txtsewingline1.TabIndex = 3;
             // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(900, 525);
+            this.DefaultControl = "dateBox1";
+            this.DefaultControlForEdit = "txtdropdownlist1";
             this.DefaultDetailOrder = "OrderID,ComboType,Article";
             this.DefaultOrder = "OutputDate,SewingLineID,Shift";
             this.GridAlias = "SewingOutput_Detail";

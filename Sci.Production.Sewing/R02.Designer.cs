@@ -52,16 +52,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(351, 12);
+            this.print.TabIndex = 10;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(351, 48);
-            this.toexcel.TabIndex = 8;
+            this.toexcel.TabIndex = 11;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(351, 84);
-            this.close.TabIndex = 9;
+            this.close.TabIndex = 12;
             // 
             // label1
             // 
@@ -141,7 +142,7 @@
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.ReadOnly = true;
             this.dateBox2.Size = new System.Drawing.Size(98, 23);
-            this.dateBox2.TabIndex = 102;
+            this.dateBox2.TabIndex = 1;
             // 
             // label8
             // 
@@ -164,7 +165,7 @@
             this.textBox1.Location = new System.Drawing.Point(97, 48);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(41, 23);
-            this.textBox1.TabIndex = 1;
+            this.textBox1.TabIndex = 2;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             // 
             // label9
@@ -188,7 +189,7 @@
             this.textBox2.Location = new System.Drawing.Point(165, 48);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(41, 23);
-            this.textBox2.TabIndex = 2;
+            this.textBox2.TabIndex = 3;
             this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
             // 
             // comboBox1
@@ -200,7 +201,7 @@
             this.comboBox1.Location = new System.Drawing.Point(97, 84);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(90, 24);
-            this.comboBox1.TabIndex = 3;
+            this.comboBox1.TabIndex = 4;
             // 
             // comboBox2
             // 
@@ -211,7 +212,7 @@
             this.comboBox2.Location = new System.Drawing.Point(97, 120);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(90, 24);
-            this.comboBox2.TabIndex = 4;
+            this.comboBox2.TabIndex = 5;
             // 
             // comboBox3
             // 
@@ -222,7 +223,7 @@
             this.comboBox3.Location = new System.Drawing.Point(97, 156);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(121, 24);
-            this.comboBox3.TabIndex = 5;
+            this.comboBox3.TabIndex = 6;
             this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
             // 
             // comboBox4
@@ -234,7 +235,7 @@
             this.comboBox4.Location = new System.Drawing.Point(97, 192);
             this.comboBox4.Name = "comboBox4";
             this.comboBox4.Size = new System.Drawing.Size(65, 24);
-            this.comboBox4.TabIndex = 6;
+            this.comboBox4.TabIndex = 7;
             // 
             // comboBox5
             // 
@@ -245,7 +246,7 @@
             this.comboBox5.Location = new System.Drawing.Point(97, 228);
             this.comboBox5.Name = "comboBox5";
             this.comboBox5.Size = new System.Drawing.Size(121, 24);
-            this.comboBox5.TabIndex = 7;
+            this.comboBox5.TabIndex = 8;
             // 
             // label10
             // 
@@ -254,7 +255,7 @@
             this.label10.Location = new System.Drawing.Point(13, 266);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(264, 52);
-            this.label10.TabIndex = 112;
+            this.label10.TabIndex = 9;
             this.label10.Text = "** The value in this report are all excluded subcon-out, unless the column with \"" +
     "included subcon-out\".";
             this.label10.TextStyle.BorderColor = System.Drawing.Color.Red;
@@ -284,6 +285,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "dateBox1";
+            this.DefaultControlForEdit = "dateBox1";
             this.IsSupportToPrint = false;
             this.Name = "R02";
             this.Text = "R02. Monthly Production output Report";

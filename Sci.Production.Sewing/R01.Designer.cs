@@ -42,14 +42,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(302, 12);
+            this.print.TabIndex = 5;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(302, 48);
+            this.toexcel.TabIndex = 6;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(302, 84);
+            this.close.TabIndex = 7;
             // 
             // label1
             // 
@@ -92,7 +95,7 @@
             this.dateBox1.Location = new System.Drawing.Point(88, 13);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(103, 23);
-            this.dateBox1.TabIndex = 98;
+            this.dateBox1.TabIndex = 0;
             // 
             // comboBox1
             // 
@@ -103,7 +106,7 @@
             this.comboBox1.Location = new System.Drawing.Point(88, 48);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(75, 24);
-            this.comboBox1.TabIndex = 99;
+            this.comboBox1.TabIndex = 1;
             // 
             // comboBox2
             // 
@@ -114,7 +117,7 @@
             this.comboBox2.Location = new System.Drawing.Point(88, 84);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(63, 24);
-            this.comboBox2.TabIndex = 100;
+            this.comboBox2.TabIndex = 2;
             // 
             // comboBox3
             // 
@@ -125,7 +128,7 @@
             this.comboBox3.Location = new System.Drawing.Point(88, 121);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(91, 24);
-            this.comboBox3.TabIndex = 101;
+            this.comboBox3.TabIndex = 3;
             // 
             // label5
             // 
@@ -134,7 +137,7 @@
             this.label5.Location = new System.Drawing.Point(13, 151);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(226, 23);
-            this.label5.TabIndex = 102;
+            this.label5.TabIndex = 4;
             this.label5.Text = "P.S. This report include subcon-out.";
             this.label5.TextStyle.BorderColor = System.Drawing.Color.Red;
             this.label5.TextStyle.Color = System.Drawing.Color.Red;
@@ -153,6 +156,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "dateBox1";
+            this.DefaultControlForEdit = "dateBox1";
             this.IsSupportToPrint = false;
             this.Name = "R01";
             this.Text = "R01. Daily CMP Report";

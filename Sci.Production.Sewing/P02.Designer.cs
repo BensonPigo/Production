@@ -127,6 +127,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(715, 80);
+            this.gridicon.TabIndex = 13;
             // 
             // refresh
             // 
@@ -160,6 +161,7 @@
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 413);
             this.detailbtm.Size = new System.Drawing.Size(821, 38);
+            this.detailbtm.TabIndex = 1;
             // 
             // browse
             // 
@@ -168,6 +170,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(829, 480);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label1
             // 
@@ -202,7 +208,7 @@
             this.dateBox1.Location = new System.Drawing.Point(61, 4);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 4;
+            this.dateBox1.TabIndex = 0;
             this.dateBox1.Validating += new System.ComponentModel.CancelEventHandler(this.dateBox1_Validating);
             // 
             // displayBox1
@@ -275,7 +281,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(64, 23);
-            this.numericBox1.TabIndex = 11;
+            this.numericBox1.TabIndex = 1;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -307,7 +313,7 @@
             0,
             0});
             this.numericBox2.Size = new System.Drawing.Size(64, 23);
-            this.numericBox2.TabIndex = 12;
+            this.numericBox2.TabIndex = 4;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -331,7 +337,7 @@
             0});
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(64, 23);
-            this.numericBox3.TabIndex = 13;
+            this.numericBox3.TabIndex = 7;
             this.numericBox3.Value = new decimal(new int[] {
             0,
             0,
@@ -353,7 +359,7 @@
             0});
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(64, 23);
-            this.numericBox4.TabIndex = 14;
+            this.numericBox4.TabIndex = 9;
             this.numericBox4.Value = new decimal(new int[] {
             0,
             0,
@@ -411,7 +417,7 @@
             0});
             this.numericBox5.ReadOnly = true;
             this.numericBox5.Size = new System.Drawing.Size(64, 23);
-            this.numericBox5.TabIndex = 19;
+            this.numericBox5.TabIndex = 2;
             this.numericBox5.Value = new decimal(new int[] {
             0,
             0,
@@ -433,7 +439,7 @@
             0});
             this.numericBox6.ReadOnly = true;
             this.numericBox6.Size = new System.Drawing.Size(64, 23);
-            this.numericBox6.TabIndex = 20;
+            this.numericBox6.TabIndex = 5;
             this.numericBox6.Value = new decimal(new int[] {
             0,
             0,
@@ -455,7 +461,7 @@
             0});
             this.numericBox7.ReadOnly = true;
             this.numericBox7.Size = new System.Drawing.Size(64, 23);
-            this.numericBox7.TabIndex = 21;
+            this.numericBox7.TabIndex = 8;
             this.numericBox7.Value = new decimal(new int[] {
             0,
             0,
@@ -478,7 +484,7 @@
             0});
             this.numericBox8.ReadOnly = true;
             this.numericBox8.Size = new System.Drawing.Size(64, 23);
-            this.numericBox8.TabIndex = 22;
+            this.numericBox8.TabIndex = 10;
             this.numericBox8.Value = new decimal(new int[] {
             0,
             0,
@@ -491,7 +497,7 @@
             this.button1.Location = new System.Drawing.Point(679, 4);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(132, 50);
-            this.button1.TabIndex = 23;
+            this.button1.TabIndex = 12;
             this.button1.Text = "Share < working hours > to SP#";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -503,7 +509,7 @@
             this.label12.Location = new System.Drawing.Point(622, 85);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(16, 23);
-            this.label12.TabIndex = 24;
+            this.label12.TabIndex = 11;
             this.label12.Text = "%";
             this.label12.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label12.TextStyle.Color = System.Drawing.Color.Black;
@@ -519,11 +525,12 @@
             this.txtsewingline1.Location = new System.Drawing.Point(61, 31);
             this.txtsewingline1.Name = "txtsewingline1";
             this.txtsewingline1.Size = new System.Drawing.Size(60, 23);
-            this.txtsewingline1.TabIndex = 5;
+            this.txtsewingline1.TabIndex = 3;
             // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(829, 513);
+            this.DefaultControl = "dateBox1";
             this.DefaultDetailOrder = "OrderID";
             this.DefaultOrder = "OutputDate";
             this.GridAlias = "SewingOutput_Detail";

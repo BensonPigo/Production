@@ -45,14 +45,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(433, 12);
+            this.print.TabIndex = 6;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(433, 48);
+            this.toexcel.TabIndex = 7;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(433, 84);
+            this.close.TabIndex = 8;
             // 
             // label1
             // 
@@ -113,7 +116,7 @@
             this.dateRange1.Location = new System.Drawing.Point(115, 12);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 100;
+            this.dateRange1.TabIndex = 0;
             // 
             // comboBox1
             // 
@@ -124,7 +127,7 @@
             this.comboBox1.Location = new System.Drawing.Point(115, 48);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 101;
+            this.comboBox1.TabIndex = 1;
             // 
             // comboBox2
             // 
@@ -135,7 +138,7 @@
             this.comboBox2.Location = new System.Drawing.Point(115, 84);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(73, 24);
-            this.comboBox2.TabIndex = 102;
+            this.comboBox2.TabIndex = 2;
             // 
             // comboBox3
             // 
@@ -146,7 +149,7 @@
             this.comboBox3.Location = new System.Drawing.Point(115, 120);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(73, 24);
-            this.comboBox3.TabIndex = 103;
+            this.comboBox3.TabIndex = 3;
             // 
             // txtbrand1
             // 
@@ -155,7 +158,7 @@
             this.txtbrand1.Location = new System.Drawing.Point(115, 158);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(90, 23);
-            this.txtbrand1.TabIndex = 104;
+            this.txtbrand1.TabIndex = 4;
             // 
             // txtcdcode1
             // 
@@ -164,7 +167,7 @@
             this.txtcdcode1.Location = new System.Drawing.Point(115, 194);
             this.txtcdcode1.Name = "txtcdcode1";
             this.txtcdcode1.Size = new System.Drawing.Size(54, 23);
-            this.txtcdcode1.TabIndex = 105;
+            this.txtcdcode1.TabIndex = 5;
             // 
             // R04
             // 
@@ -181,7 +184,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.EditMode = true;
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R04";
             this.Text = "R04. Sewing daily output list";

@@ -50,14 +50,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(425, 12);
+            this.print.TabIndex = 9;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(425, 48);
+            this.toexcel.TabIndex = 10;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(425, 84);
+            this.close.TabIndex = 11;
             // 
             // label1
             // 
@@ -139,7 +142,7 @@
             this.label9.Location = new System.Drawing.Point(13, 302);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(389, 23);
-            this.label9.TabIndex = 102;
+            this.label9.TabIndex = 8;
             this.label9.Text = "Hint: Local order and all subcon-out are excluded.";
             this.label9.TextStyle.BorderColor = System.Drawing.Color.Red;
             this.label9.TextStyle.Color = System.Drawing.Color.Red;
@@ -152,7 +155,7 @@
             this.dateRange1.Location = new System.Drawing.Point(145, 12);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(226, 23);
-            this.dateRange1.TabIndex = 103;
+            this.dateRange1.TabIndex = 0;
             // 
             // dateRange2
             // 
@@ -160,7 +163,7 @@
             this.dateRange2.Location = new System.Drawing.Point(145, 48);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(226, 23);
-            this.dateRange2.TabIndex = 104;
+            this.dateRange2.TabIndex = 1;
             // 
             // dateRange3
             // 
@@ -168,7 +171,7 @@
             this.dateRange3.Location = new System.Drawing.Point(145, 84);
             this.dateRange3.Name = "dateRange3";
             this.dateRange3.Size = new System.Drawing.Size(226, 23);
-            this.dateRange3.TabIndex = 105;
+            this.dateRange3.TabIndex = 2;
             // 
             // txtseason1
             // 
@@ -178,7 +181,7 @@
             this.txtseason1.Location = new System.Drawing.Point(145, 120);
             this.txtseason1.Name = "txtseason1";
             this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 106;
+            this.txtseason1.TabIndex = 3;
             // 
             // txtbrand1
             // 
@@ -187,7 +190,7 @@
             this.txtbrand1.Location = new System.Drawing.Point(145, 156);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(80, 23);
-            this.txtbrand1.TabIndex = 107;
+            this.txtbrand1.TabIndex = 4;
             // 
             // comboBox1
             // 
@@ -198,7 +201,7 @@
             this.comboBox1.Location = new System.Drawing.Point(145, 192);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(80, 24);
-            this.comboBox1.TabIndex = 108;
+            this.comboBox1.TabIndex = 5;
             // 
             // comboBox2
             // 
@@ -209,7 +212,7 @@
             this.comboBox2.Location = new System.Drawing.Point(145, 228);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(80, 24);
-            this.comboBox2.TabIndex = 109;
+            this.comboBox2.TabIndex = 6;
             // 
             // txtdropdownlist1
             // 
@@ -220,7 +223,7 @@
             this.txtdropdownlist1.Location = new System.Drawing.Point(145, 264);
             this.txtdropdownlist1.Name = "txtdropdownlist1";
             this.txtdropdownlist1.Size = new System.Drawing.Size(143, 24);
-            this.txtdropdownlist1.TabIndex = 110;
+            this.txtdropdownlist1.TabIndex = 7;
             this.txtdropdownlist1.Type = "Fty_GMT_Simple";
             // 
             // R03
@@ -243,6 +246,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R03";
             this.Text = "R03. Prod. Efficiency Analysis Report";
