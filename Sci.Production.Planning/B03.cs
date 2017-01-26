@@ -94,7 +94,7 @@ namespace Sci.Production.Planning
 
                     sqlcmd = "select id,abb,currencyid from localsupp where junk = 0 and IsFactory = 0 order by ID";
                     item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30,10", null);
-
+                    item.Width = 592;
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     var x = item.GetSelecteds();
@@ -115,14 +115,26 @@ namespace Sci.Production.Planning
                         CurrentDetailData["localsuppid"] = find["id"].ToString();
                         CurrentDetailData["suppname"] = find["abb"].ToString();
                         CurrentDetailData["currencyid"] = find["currencyid"].ToString();
-                    }
-                    else
-                    {
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Supplier is not found!", "Warning");
                         return;
                     }
+                    else 
+                    {
+                        MyUtility.Msg.WarningBox("Supplier is not found!", "Warning");
+                        CurrentDetailData["localsuppid"] = "";
+                        CurrentDetailData["suppname"] = "";
+                        CurrentDetailData["currencyid"] = "";
+                        e.Cancel = true;
+                        
+                       return;
+                    }
                 }
+                if (e.FormattedValue.ToString() == "") 
+                {
+                    CurrentDetailData["localsuppid"] = "";
+                    CurrentDetailData["suppname"] = "";
+                    CurrentDetailData["currencyid"] = "";
+                }
+              
             };
             #endregion
 
