@@ -133,19 +133,18 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                 //[InHouse OSP] = InHouse時，按下[Subcon]儲存格，自動帶出[Subcon]及[Subcon Name]該有的值
                 if (this.EditMode && e.Button == MouseButtons.Left)
                 {
-                    DataTable dt;
-                    CurrentDetailData["localsuppid"] = Env.User.Factory;
-                   
-
-                    string SubconName = string.Format(@"
+                    if (CurrentDetailData["InhouseOSP"].ToString() == "I")
+                    {
+                        DataTable dt;
+                        CurrentDetailData["localsuppid"] = Env.User.Factory;
+                        string SubconName = string.Format(@"
                             SELECT top 1 l.Abb
                             FROM Order_tmscost ot
                             left join LocalSupp l on l.ID=ot.LocalSuppID
                             where ot.LocalSuppID='{0}'", CurrentDetailData["localsuppid"]);
-                    DualResult result = DBProxy.Current.Select(null, SubconName, out dt);
-                    
-                    this.CurrentDetailData["localsuppname"] = dt.Rows[0]["Abb"].ToString();
-                    
+                        DualResult result = DBProxy.Current.Select(null, SubconName, out dt);
+                        this.CurrentDetailData["localsuppname"] = dt.Rows[0]["Abb"].ToString();
+                    }
                 }
             };
             ts4.EditingMouseDown += (s, e) =>
@@ -219,7 +218,7 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                 {
                     CurrentDetailData["localsuppname"] = "";
                     CurrentDetailData["localsuppid"] = "";
-                    if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"]=""; }
+                    if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"] = DBNull.Value; }
                 }
                 if (CurrentDetailData["InhouseOSP"].ToString() == "I" && e.FormattedValue.ToString() == "")
                 {
@@ -256,8 +255,8 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                     {
                         CurrentDetailData["localsuppname"] = "";
                         CurrentDetailData["localsuppid"]= "";
-                        
-                        if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"] = ""; }
+
+                        if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"] = DBNull.Value; }
                     }            
                 }
             };
