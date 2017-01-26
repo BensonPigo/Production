@@ -37,7 +37,7 @@
             this.label7 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.textSP = new Sci.Win.UI.TextBox();
             this.displayBox2 = new Sci.Win.UI.DisplayBox();
             this.label9 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
@@ -98,7 +98,7 @@
             this.masterpanel.Controls.Add(this.txtuser1);
             this.masterpanel.Controls.Add(this.txttpeuser2);
             this.masterpanel.Controls.Add(this.txttpeuser1);
-            this.masterpanel.Controls.Add(this.textBox1);
+            this.masterpanel.Controls.Add(this.textSP);
             this.masterpanel.Controls.Add(this.displayBox1);
             this.masterpanel.Controls.Add(this.label8);
             this.masterpanel.Controls.Add(this.label7);
@@ -119,7 +119,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.txttpeuser1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txttpeuser2, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtuser1, 0);
@@ -278,17 +278,17 @@
             this.displayBox1.Size = new System.Drawing.Size(120, 23);
             this.displayBox1.TabIndex = 0;
             // 
-            // textBox1
+            // textSP
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "POID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(124, 31);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(120, 23);
-            this.textBox1.TabIndex = 3;
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
-            this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.textSP.BackColor = System.Drawing.Color.White;
+            this.textSP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "POID", true));
+            this.textSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textSP.Location = new System.Drawing.Point(124, 31);
+            this.textSP.Name = "textSP";
+            this.textSP.Size = new System.Drawing.Size(120, 23);
+            this.textSP.TabIndex = 3;
+            this.textSP.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.textSP.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
             // displayBox2
             // 
@@ -510,8 +510,8 @@
             this.ApvChkValue = "Checked";
             this.CheckChkValue = "New";
             this.ClientSize = new System.Drawing.Size(826, 552);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControl = "textSP";
+            this.DefaultControlForEdit = "textSP";
             this.DefaultDetailOrder = "Seq1,Seq2";
             this.DefaultOrder = "CDate,ID";
             this.GridAlias = "ReplacementReport_Detail";
@@ -574,7 +574,7 @@
         private Class.txtuser txtuser1;
         private Class.txttpeuser txttpeuser2;
         private Class.txttpeuser txttpeuser1;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.TextBox textSP;
         private Win.UI.DisplayBox displayBox1;
         private Win.UI.Label label8;
         private Win.UI.Label label7;

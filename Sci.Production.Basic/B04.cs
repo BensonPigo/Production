@@ -44,7 +44,7 @@ namespace Sci.Production.Basic
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
+            this.textCode.ReadOnly = true;
             this.textBox2.ReadOnly = true;
         }
 
@@ -53,7 +53,7 @@ namespace Sci.Production.Basic
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
-                this.textBox1.Focus();
+                this.textCode.Focus();
                 return false;
             }
 

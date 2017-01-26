@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P02));
             this.button2 = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
@@ -48,7 +49,7 @@
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
             this.label5 = new Sci.Win.UI.Label();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grid1 = new Sci.Win.UI.Grid();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
@@ -88,7 +89,7 @@
             this.button2.Location = new System.Drawing.Point(277, 369);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 7;
+            this.button2.TabIndex = 3;
             this.button2.Text = "Find";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -110,7 +111,7 @@
             this.textBox1.Location = new System.Drawing.Point(126, 373);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(145, 23);
-            this.textBox1.TabIndex = 6;
+            this.textBox1.TabIndex = 2;
             // 
             // label4
             // 
@@ -118,7 +119,7 @@
             this.label4.Location = new System.Drawing.Point(14, 373);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(109, 23);
-            this.label4.TabIndex = 16;
+            this.label4.TabIndex = 4;
             this.label4.Text = "Locate for SP#";
             // 
             // checkBox1
@@ -145,7 +146,7 @@
             this.label1.Location = new System.Drawing.Point(7, 102);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(109, 23);
-            this.label1.TabIndex = 11;
+            this.label1.TabIndex = 14;
             this.label1.Text = "Sewing Inline";
             // 
             // dateRange2
@@ -161,7 +162,7 @@
             this.label3.Location = new System.Drawing.Point(7, 73);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(109, 23);
-            this.label3.TabIndex = 9;
+            this.label3.TabIndex = 13;
             this.label3.Text = "SCI  Delivery";
             // 
             // panel3
@@ -187,7 +188,7 @@
             this.button7.Location = new System.Drawing.Point(959, 8);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(96, 30);
-            this.button7.TabIndex = 30;
+            this.button7.TabIndex = 3;
             this.button7.Text = "Check Data";
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
@@ -201,7 +202,7 @@
             this.comboBox3.Location = new System.Drawing.Point(367, 15);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(121, 24);
-            this.comboBox3.TabIndex = 29;
+            this.comboBox3.TabIndex = 1;
             // 
             // txtsubcon2
             // 
@@ -210,7 +211,7 @@
             this.txtsubcon2.Location = new System.Drawing.Point(610, 15);
             this.txtsubcon2.Name = "txtsubcon2";
             this.txtsubcon2.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon2.TabIndex = 27;
+            this.txtsubcon2.TabIndex = 2;
             this.txtsubcon2.TextBox1Binding = "";
             // 
             // button4
@@ -219,7 +220,7 @@
             this.button4.Location = new System.Drawing.Point(1143, 8);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(80, 30);
-            this.button4.TabIndex = 3;
+            this.button4.TabIndex = 5;
             this.button4.Text = "Close";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
@@ -230,7 +231,7 @@
             this.button3.Location = new System.Drawing.Point(1059, 8);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 2;
+            this.button3.TabIndex = 4;
             this.button3.Text = "Save";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -297,7 +298,7 @@
             this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.splitContainer1.Size = new System.Drawing.Size(1234, 616);
             this.splitContainer1.SplitterDistance = 800;
-            this.splitContainer1.TabIndex = 1;
+            this.splitContainer1.TabIndex = 0;
             // 
             // grid1
             // 
@@ -334,7 +335,7 @@
             this.groupBox1.Location = new System.Drawing.Point(9, 304);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(410, 60);
-            this.groupBox1.TabIndex = 30;
+            this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
             // label12
@@ -343,7 +344,7 @@
             this.label12.Location = new System.Drawing.Point(7, 23);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(109, 23);
-            this.label12.TabIndex = 33;
+            this.label12.TabIndex = 2;
             this.label12.Text = "Filter empty";
             // 
             // checkBox4
@@ -353,7 +354,7 @@
             this.checkBox4.Location = new System.Drawing.Point(130, 25);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(101, 21);
-            this.checkBox4.TabIndex = 18;
+            this.checkBox4.TabIndex = 0;
             this.checkBox4.Text = "< Supp ID >";
             this.checkBox4.UseVisualStyleBackColor = true;
             this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
@@ -365,7 +366,7 @@
             this.checkBox3.Location = new System.Drawing.Point(244, 25);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(93, 21);
-            this.checkBox3.TabIndex = 19;
+            this.checkBox3.TabIndex = 1;
             this.checkBox3.Text = "< In Line >";
             this.checkBox3.UseVisualStyleBackColor = true;
             this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
@@ -420,7 +421,7 @@
             this.groupBox2.Location = new System.Drawing.Point(9, 8);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(410, 292);
-            this.groupBox2.TabIndex = 33;
+            this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             // 
             // txtmfactory1
@@ -438,7 +439,7 @@
             this.label11.Location = new System.Drawing.Point(7, 189);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(109, 23);
-            this.label11.TabIndex = 32;
+            this.label11.TabIndex = 17;
             this.label11.Text = "Factory";
             // 
             // txtstyle1
@@ -457,7 +458,7 @@
             this.label2.Location = new System.Drawing.Point(7, 159);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(109, 23);
-            this.label2.TabIndex = 31;
+            this.label2.TabIndex = 16;
             this.label2.Text = "OSP/InHouse";
             // 
             // comboBox1
@@ -477,7 +478,7 @@
             this.label10.Location = new System.Drawing.Point(7, 131);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(109, 23);
-            this.label10.TabIndex = 27;
+            this.label10.TabIndex = 15;
             this.label10.Text = "Supplier";
             // 
             // txtsubcon1
@@ -496,7 +497,7 @@
             this.label9.Location = new System.Drawing.Point(7, 44);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(75, 23);
-            this.label9.TabIndex = 25;
+            this.label9.TabIndex = 12;
             this.label9.Text = "Season";
             // 
             // button5
@@ -504,7 +505,7 @@
             this.button5.Location = new System.Drawing.Point(100, 237);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(106, 30);
-            this.button5.TabIndex = 9;
+            this.button5.TabIndex = 10;
             this.button5.Text = "Update Inline";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -524,7 +525,7 @@
             this.button6.Location = new System.Drawing.Point(222, 237);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(179, 43);
-            this.button6.TabIndex = 10;
+            this.button6.TabIndex = 9;
             this.button6.Text = "Set Default Supp from Style";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
@@ -535,7 +536,7 @@
             this.label8.Location = new System.Drawing.Point(7, 15);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(75, 23);
-            this.label8.TabIndex = 22;
+            this.label8.TabIndex = 11;
             this.label8.Text = "Style";
             // 
             // P02
@@ -543,6 +544,8 @@
             this.ClientSize = new System.Drawing.Size(1234, 661);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel3);
+            this.DefaultControl = "txtstyle1";
+            this.DefaultControlForEdit = "txtstyle1";
             this.Name = "P02";
             this.Text = "P02. Printing Quick Adjust";
             this.Controls.SetChildIndex(this.panel3, 0);

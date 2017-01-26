@@ -19,7 +19,7 @@ namespace Sci.Production.Basic
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            textBox1.ReadOnly = true;
+            textM.ReadOnly = true;
         }
     }
 }

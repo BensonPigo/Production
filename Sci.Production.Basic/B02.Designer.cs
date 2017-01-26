@@ -85,8 +85,8 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.txtuser1 = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.panel1.SuspendLayout();
@@ -761,16 +761,6 @@
             this.panel1.Size = new System.Drawing.Size(737, 427);
             this.panel1.TabIndex = 50;
             // 
-            // txtuser1
-            // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "POApproveName", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(375, 54);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 5;
-            this.txtuser1.TextBox1Binding = "";
-            // 
             // shapeContainer2
             // 
             this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
@@ -790,12 +780,22 @@
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
             // 
+            // txtuser1
+            // 
+            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "POApproveName", true));
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(375, 54);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(300, 23);
+            this.txtuser1.TabIndex = 5;
+            this.txtuser1.TextBox1Binding = "";
+            // 
             // B02
             // 
             this.ClientSize = new System.Drawing.Size(759, 474);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "txtuser1";
-            this.DefaultControlForEdit = "txtuser1";
+            this.DefaultControl = "numericBox2";
+            this.DefaultControlForEdit = "numericBox2";
             this.IsSupportPrint = false;
             this.Name = "B02";
             this.Text = "B02. System Parameter";

@@ -190,6 +190,8 @@
             this.Controls.Add(this.dateRange1);
             this.Controls.Add(this.radioButton2);
             this.Controls.Add(this.radioButton1);
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.Name = "R17";
             this.Text = "R17. SDP Report";
             this.Controls.SetChildIndex(this.print, 0);

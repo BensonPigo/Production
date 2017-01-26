@@ -35,6 +35,7 @@ namespace Sci.Production.Planning
             print.Visible = false;
             txtMdivision1.Text = Sci.Env.User.Keyword;
             txtFactory1.Text = Sci.Env.User.Factory;
+            dateRange1.Select();
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)

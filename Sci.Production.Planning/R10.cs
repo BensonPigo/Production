@@ -89,6 +89,7 @@ namespace Sci.Production.Planning
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            numYear1.Select();
             if (IsFormClosed) return;
 
             lbMonth.Visible = false;

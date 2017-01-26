@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+
 namespace Sci.Production.Basic
 {
     public partial class B02 : Sci.Win.Tems.Input7
@@ -54,6 +55,11 @@ namespace Sci.Production.Basic
         {
             Sci.Production.Basic.B02_MailTo callNextForm = new Sci.Production.Basic.B02_MailTo(this.IsSupportEdit, null, null, null);
             callNextForm.ShowDialog(this);
+        }
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            txtuser1.TextBox1.Select();
         }
     }
 }

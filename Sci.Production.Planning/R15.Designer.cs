@@ -45,32 +45,32 @@
             this.cbxCategory = new Sci.Win.UI.ComboBox();
             this.label7 = new Sci.Win.UI.Label();
             this.chkbArtowk = new Sci.Win.UI.CheckBox();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
             this.dateRangePlanDate = new Sci.Win.UI.DateRange();
             this.label8 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtcustcd1 = new Sci.Production.Class.txtcustcd();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.label5 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
             this.cbxOrderBy = new Sci.Win.UI.ComboBox();
+            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.txtcustcd1 = new Sci.Production.Class.txtcustcd();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(430, 12);
-            this.print.TabIndex = 11;
+            this.print.TabIndex = 14;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(430, 48);
-            this.toexcel.TabIndex = 12;
+            this.toexcel.TabIndex = 15;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(430, 84);
-            this.close.TabIndex = 13;
+            this.close.TabIndex = 16;
             // 
             // label3
             // 
@@ -99,7 +99,7 @@
             this.dateRangeCustRqsDate.Location = new System.Drawing.Point(115, 117);
             this.dateRangeCustRqsDate.Name = "dateRangeCustRqsDate";
             this.dateRangeCustRqsDate.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeCustRqsDate.TabIndex = 1;
+            this.dateRangeCustRqsDate.TabIndex = 3;
             // 
             // label6
             // 
@@ -124,7 +124,7 @@
             this.txtSpno2.Location = new System.Drawing.Point(267, 190);
             this.txtSpno2.Name = "txtSpno2";
             this.txtSpno2.Size = new System.Drawing.Size(128, 23);
-            this.txtSpno2.TabIndex = 5;
+            this.txtSpno2.TabIndex = 6;
             // 
             // txtSpno1
             // 
@@ -133,7 +133,7 @@
             this.txtSpno1.Location = new System.Drawing.Point(114, 190);
             this.txtSpno1.Name = "txtSpno1";
             this.txtSpno1.Size = new System.Drawing.Size(128, 23);
-            this.txtSpno1.TabIndex = 4;
+            this.txtSpno1.TabIndex = 5;
             // 
             // label10
             // 
@@ -162,7 +162,7 @@
             this.dateRangeCutOffDate.Location = new System.Drawing.Point(115, 84);
             this.dateRangeCutOffDate.Name = "dateRangeCutOffDate";
             this.dateRangeCutOffDate.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeCutOffDate.TabIndex = 3;
+            this.dateRangeCutOffDate.TabIndex = 2;
             // 
             // label1
             // 
@@ -185,7 +185,7 @@
             this.dateRangeBuyerDelivery.Location = new System.Drawing.Point(115, 48);
             this.dateRangeBuyerDelivery.Name = "dateRangeBuyerDelivery";
             this.dateRangeBuyerDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeBuyerDelivery.TabIndex = 2;
+            this.dateRangeBuyerDelivery.TabIndex = 1;
             // 
             // label13
             // 
@@ -233,7 +233,7 @@
             this.cbxCategory.Location = new System.Drawing.Point(115, 370);
             this.cbxCategory.Name = "cbxCategory";
             this.cbxCategory.Size = new System.Drawing.Size(121, 24);
-            this.cbxCategory.TabIndex = 9;
+            this.cbxCategory.TabIndex = 11;
             // 
             // label7
             // 
@@ -251,34 +251,16 @@
             this.chkbArtowk.Location = new System.Drawing.Point(13, 447);
             this.chkbArtowk.Name = "chkbArtowk";
             this.chkbArtowk.Size = new System.Drawing.Size(157, 21);
-            this.chkbArtowk.TabIndex = 10;
+            this.chkbArtowk.TabIndex = 13;
             this.chkbArtowk.Text = "Include Artwork Data";
             this.chkbArtowk.UseVisualStyleBackColor = true;
-            // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(115, 335);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 7;
-            // 
-            // txtMdivision1
-            // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(115, 298);
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 6;
             // 
             // dateRangePlanDate
             // 
             this.dateRangePlanDate.Location = new System.Drawing.Point(115, 154);
             this.dateRangePlanDate.Name = "dateRangePlanDate";
             this.dateRangePlanDate.Size = new System.Drawing.Size(280, 23);
-            this.dateRangePlanDate.TabIndex = 144;
+            this.dateRangePlanDate.TabIndex = 4;
             // 
             // label8
             // 
@@ -303,25 +285,6 @@
             this.label2.Size = new System.Drawing.Size(98, 23);
             this.label2.TabIndex = 147;
             this.label2.Text = "Order By";
-            // 
-            // txtcustcd1
-            // 
-            this.txtcustcd1.BackColor = System.Drawing.Color.White;
-            this.txtcustcd1.BrandObjectName = null;
-            this.txtcustcd1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcustcd1.Location = new System.Drawing.Point(114, 262);
-            this.txtcustcd1.Name = "txtcustcd1";
-            this.txtcustcd1.Size = new System.Drawing.Size(125, 23);
-            this.txtcustcd1.TabIndex = 148;
-            // 
-            // txtbrand1
-            // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(114, 224);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand1.TabIndex = 149;
             // 
             // label5
             // 
@@ -350,7 +313,44 @@
             this.cbxOrderBy.Location = new System.Drawing.Point(115, 408);
             this.cbxOrderBy.Name = "cbxOrderBy";
             this.cbxOrderBy.Size = new System.Drawing.Size(121, 24);
-            this.cbxOrderBy.TabIndex = 152;
+            this.cbxOrderBy.TabIndex = 12;
+            // 
+            // txtbrand1
+            // 
+            this.txtbrand1.BackColor = System.Drawing.Color.White;
+            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand1.Location = new System.Drawing.Point(114, 224);
+            this.txtbrand1.Name = "txtbrand1";
+            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand1.TabIndex = 7;
+            // 
+            // txtcustcd1
+            // 
+            this.txtcustcd1.BackColor = System.Drawing.Color.White;
+            this.txtcustcd1.BrandObjectName = null;
+            this.txtcustcd1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcustcd1.Location = new System.Drawing.Point(114, 262);
+            this.txtcustcd1.Name = "txtcustcd1";
+            this.txtcustcd1.Size = new System.Drawing.Size(125, 23);
+            this.txtcustcd1.TabIndex = 8;
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(115, 335);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 10;
+            // 
+            // txtMdivision1
+            // 
+            this.txtMdivision1.BackColor = System.Drawing.Color.White;
+            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision1.Location = new System.Drawing.Point(115, 298);
+            this.txtMdivision1.Name = "txtMdivision1";
+            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision1.TabIndex = 9;
             // 
             // R15
             // 
@@ -382,6 +382,8 @@
             this.Controls.Add(this.txtMdivision1);
             this.Controls.Add(this.dateRangeSciDelivery);
             this.Controls.Add(this.label3);
+            this.DefaultControl = "dateRangeBuyerDelivery";
+            this.DefaultControlForEdit = "dateRangeBuyerDelivery";
             this.IsSupportToPrint = false;
             this.Name = "R15";
             this.Text = "R15. WIP";

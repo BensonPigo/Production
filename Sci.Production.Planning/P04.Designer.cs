@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P04));
             this.button2 = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
@@ -51,7 +52,7 @@
             this.pictureBox2 = new Sci.Win.UI.PictureBox();
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
             this.label5 = new Sci.Win.UI.Label();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
@@ -205,7 +206,7 @@
             0});
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(100, 23);
-            this.numericBox4.TabIndex = 36;
+            this.numericBox4.TabIndex = 0;
             this.numericBox4.Value = new decimal(new int[] {
             0,
             0,
@@ -239,14 +240,14 @@
             this.dateBox2.Location = new System.Drawing.Point(775, 12);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 3;
+            this.dateBox2.TabIndex = 4;
             // 
             // dateBox1
             // 
             this.dateBox1.Location = new System.Drawing.Point(608, 12);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 2;
+            this.dateBox1.TabIndex = 3;
             // 
             // button7
             // 
@@ -254,7 +255,7 @@
             this.button7.Location = new System.Drawing.Point(969, 8);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(96, 30);
-            this.button7.TabIndex = 4;
+            this.button7.TabIndex = 5;
             this.button7.Text = "Check Data";
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
@@ -268,7 +269,7 @@
             this.comboBox3.Location = new System.Drawing.Point(243, 12);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(121, 24);
-            this.comboBox3.TabIndex = 0;
+            this.comboBox3.TabIndex = 1;
             // 
             // txtsubcon2
             // 
@@ -277,7 +278,7 @@
             this.txtsubcon2.Location = new System.Drawing.Point(401, 12);
             this.txtsubcon2.Name = "txtsubcon2";
             this.txtsubcon2.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon2.TabIndex = 1;
+            this.txtsubcon2.TabIndex = 2;
             this.txtsubcon2.TextBox1Binding = "";
             // 
             // button4
@@ -286,7 +287,7 @@
             this.button4.Location = new System.Drawing.Point(1153, 8);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(80, 30);
-            this.button4.TabIndex = 6;
+            this.button4.TabIndex = 7;
             this.button4.Text = "Close";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
@@ -297,7 +298,7 @@
             this.button3.Location = new System.Drawing.Point(1069, 8);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 5;
+            this.button3.TabIndex = 6;
             this.button3.Text = "Save";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -387,7 +388,7 @@
             this.groupBox2.Location = new System.Drawing.Point(9, 10);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(896, 159);
-            this.groupBox2.TabIndex = 33;
+            this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             // 
             // txtmfactory1
@@ -397,7 +398,7 @@
             this.txtmfactory1.Location = new System.Drawing.Point(358, 15);
             this.txtmfactory1.Name = "txtmfactory1";
             this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtmfactory1.TabIndex = 4;
+            this.txtmfactory1.TabIndex = 1;
             // 
             // label13
             // 
@@ -417,7 +418,7 @@
             this.comboBox4.Location = new System.Drawing.Point(358, 71);
             this.comboBox4.Name = "comboBox4";
             this.comboBox4.Size = new System.Drawing.Size(159, 24);
-            this.comboBox4.TabIndex = 6;
+            this.comboBox4.TabIndex = 5;
             // 
             // label16
             // 
@@ -425,7 +426,7 @@
             this.label16.Location = new System.Drawing.Point(159, 105);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(19, 23);
-            this.label16.TabIndex = 41;
+            this.label16.TabIndex = 6;
             this.label16.Text = "%";
             // 
             // numericBox3
@@ -482,7 +483,7 @@
             0,
             0});
             this.numericBox2.Size = new System.Drawing.Size(39, 23);
-            this.numericBox2.TabIndex = 3;
+            this.numericBox2.TabIndex = 6;
             this.numericBox2.Value = new decimal(new int[] {
             90,
             0,
@@ -495,7 +496,7 @@
             this.label14.Location = new System.Drawing.Point(246, 105);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(109, 23);
-            this.label14.TabIndex = 38;
+            this.label14.TabIndex = 7;
             this.label14.Text = "Work Hours";
             // 
             // label7
@@ -560,7 +561,7 @@
             this.comboBox1.Location = new System.Drawing.Point(119, 72);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 2;
+            this.comboBox1.TabIndex = 4;
             // 
             // label10
             // 
@@ -578,7 +579,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(359, 44);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 5;
+            this.txtsubcon1.TabIndex = 3;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // label9
@@ -598,7 +599,7 @@
             this.txtseason1.Location = new System.Drawing.Point(87, 44);
             this.txtseason1.Name = "txtseason1";
             this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 1;
+            this.txtseason1.TabIndex = 2;
             // 
             // label8
             // 
@@ -649,7 +650,7 @@
             this.groupBox1.Location = new System.Drawing.Point(9, 175);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(1214, 49);
-            this.groupBox1.TabIndex = 30;
+            this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             // 
             // button6
@@ -754,6 +755,8 @@
             this.ClientSize = new System.Drawing.Size(1244, 661);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel3);
+            this.DefaultControl = "txtstyle1";
+            this.DefaultControlForEdit = "txtstyle1";
             this.Name = "P04";
             this.Text = "P04. Bonding Quick Adjust";
             this.Controls.SetChildIndex(this.panel3, 0);

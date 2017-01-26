@@ -169,7 +169,7 @@ order by rd.Seq1,rd.Seq2", masterID);
             if (MyUtility.Check.Empty(CurrentMaintain["POID"]))
             {
                 MyUtility.Msg.WarningBox("SP No. can't empty");
-                textBox1.Focus();
+                textSP.Focus();
                 return false;
             }
 
@@ -356,10 +356,10 @@ order by rd.Seq1,rd.Seq2", masterID);
         {
             if (EditMode)
             {
-                if (!MyUtility.Check.Empty(textBox1.Text) && textBox1.OldValue != textBox1.Text)
+                if (!MyUtility.Check.Empty(textSP.Text) && textSP.OldValue != textSP.Text)
                 {
                     //sql參數
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", textBox1.Text);
+                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", textSP.Text);
                     System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
 
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -386,7 +386,7 @@ order by rd.Seq1,rd.Seq2", masterID);
                     }
                     else
                     {
-                        CurrentMaintain["POID"] = textBox1.Text;
+                        CurrentMaintain["POID"] = textSP.Text;
                         CurrentMaintain["FactoryID"] = OrdersData.Rows[0]["FtyGroup"];
                     }
                 }
@@ -396,7 +396,7 @@ order by rd.Seq1,rd.Seq2", masterID);
         //SP No.
         private void textBox1_Validated(object sender, EventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(textBox1.Text) && textBox1.OldValue != textBox1.Text)
+            if (EditMode && !MyUtility.Check.Empty(textSP.Text) && textSP.OldValue != textSP.Text)
             {
                 //清空表身Grid資料
                 foreach (DataRow dr in DetailDatas)
@@ -415,7 +415,7 @@ left join Receiving r on a.ReceivingID = r.Id
 left join Receiving_Detail rd on r.Id = rd.Id and a.Seq1 = rd.SEQ1 and a.Seq2 = rd.SEQ2
 left join Export e on r.ExportId = e.ID
 where a.POID = '{0}' and a.Result = 'F'
-group by a.Seq1,a.Seq2, left(a.Seq1+' ',3)+a.Seq2,a.Refno,[dbo].getMtlDesc(a.POID,a.Seq1,a.Seq2,2,0),psd.ColorID,r.InvNo,iif(e.Eta is null,r.ETA,e.ETA),isnull(r.ExportId,'')", textBox1.Text);
+group by a.Seq1,a.Seq2, left(a.Seq1+' ',3)+a.Seq2,a.Refno,[dbo].getMtlDesc(a.POID,a.Seq1,a.Seq2,2,0),psd.ColorID,r.InvNo,iif(e.Eta is null,r.ETA,e.ETA),isnull(r.ExportId,'')", textSP.Text);
                 DataTable AIRData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out AIRData);
                 if (!result)

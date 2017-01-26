@@ -30,6 +30,7 @@ namespace Sci.Production.Planning
         {
 
             base.OnFormLoaded();
+            txtstyle1.Select();
           //  grid2.AutoGenerateColumns = true;
             Helper.Controls.Grid.Generator(this.grid2)
                .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(20))

@@ -30,6 +30,7 @@ namespace Sci.Production.Planning
         {
 
             base.OnFormLoaded();
+            txtstyle1.Select();
             //grid2.AutoGenerateColumns = true;
 
             dateRange1.Value1 = DateTime.Now.AddMonths(1);

@@ -30,7 +30,7 @@
         {
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.textM = new Sci.Win.UI.TextBox();
             this.txtuser1 = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -47,7 +47,7 @@
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtuser1);
-            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.textM);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Size = new System.Drawing.Size(676, 357);
@@ -82,15 +82,15 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "Manager";
             // 
-            // textBox1
+            // textM
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(118, 31);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(80, 23);
-            this.textBox1.TabIndex = 2;
+            this.textM.BackColor = System.Drawing.Color.White;
+            this.textM.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.textM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textM.Location = new System.Drawing.Point(118, 31);
+            this.textM.Name = "textM";
+            this.textM.Size = new System.Drawing.Size(80, 23);
+            this.textM.TabIndex = 2;
             // 
             // txtuser1
             // 
@@ -105,7 +105,7 @@
             // B03
             // 
             this.ClientSize = new System.Drawing.Size(684, 457);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "textM";
             this.DefaultControlForEdit = "txtuser1";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
@@ -130,7 +130,7 @@
         #endregion
 
         private Class.txtuser txtuser1;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.TextBox textM;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
     }

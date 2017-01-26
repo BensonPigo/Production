@@ -30,7 +30,7 @@ namespace Sci.Production.Cutting
             Cutref_ra.Checked = true;
             textBox1.Text = detDr["CutRef"].ToString();
             textBox2.Text = detDr["CutRef"].ToString();
-
+            textBox1.Select();
         }
 
         protected override bool ValidateInput()

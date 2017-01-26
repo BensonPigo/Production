@@ -38,7 +38,7 @@
             this.label10 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
             this.label12 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.textCode = new Sci.Win.UI.TextBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox3 = new Sci.Win.UI.TextBox();
             this.textBox4 = new Sci.Win.UI.TextBox();
@@ -81,7 +81,7 @@
             this.detailcont.Controls.Add(this.textBox4);
             this.detailcont.Controls.Add(this.textBox3);
             this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.textCode);
             this.detailcont.Controls.Add(this.label12);
             this.detailcont.Controls.Add(this.label11);
             this.detailcont.Controls.Add(this.label10);
@@ -201,15 +201,15 @@
             this.label12.TabIndex = 9;
             this.label12.Text = "W/Holding Rate(%)";
             // 
-            // textBox1
+            // textCode
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(156, 15);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(66, 23);
-            this.textBox1.TabIndex = 0;
+            this.textCode.BackColor = System.Drawing.Color.White;
+            this.textCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.textCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textCode.Location = new System.Drawing.Point(156, 15);
+            this.textCode.Name = "textCode";
+            this.textCode.Size = new System.Drawing.Size(66, 23);
+            this.textCode.TabIndex = 0;
             // 
             // textBox2
             // 
@@ -377,7 +377,7 @@
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(775, 457);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "textCode";
             this.DefaultControlForEdit = "textBox4";
             this.DefaultOrder = "ID";
             this.EnableGridJunkColor = true;
@@ -412,7 +412,7 @@
         private Win.UI.TextBox textBox4;
         private Win.UI.TextBox textBox3;
         private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.TextBox textCode;
         private Win.UI.Label label12;
         private Win.UI.Label label11;
         private Win.UI.Label label10;

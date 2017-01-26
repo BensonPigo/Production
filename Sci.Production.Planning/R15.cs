@@ -30,6 +30,7 @@ namespace Sci.Production.Planning
             cbxCategory.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(cbxOrderBy, 2, 1, "orderid,SPNO,brandid,Brand");
             cbxOrderBy.SelectedIndex = 0;
+            dateRangeBuyerDelivery.Select();
         }
 
         // 驗證輸入條件

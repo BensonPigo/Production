@@ -36,7 +36,6 @@
             this.chkOrder = new Sci.Win.UI.CheckBox();
             this.cbReportType = new Sci.Win.UI.ComboBox();
             this.cbDateType = new Sci.Win.UI.ComboBox();
-            this.txtBrand1 = new Sci.Production.Class.txtbrand();
             this.numMonth = new System.Windows.Forms.NumericUpDown();
             this.numYear1 = new System.Windows.Forms.NumericUpDown();
             this.lbMonth = new Sci.Win.UI.Label();
@@ -48,8 +47,9 @@
             this.rdHalfMonth = new System.Windows.Forms.RadioButton();
             this.rdMonth = new System.Windows.Forms.RadioButton();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtM = new Sci.Production.Class.txtMdivision();
             this.txtFactory = new Sci.Production.Class.txtfactory();
+            this.txtM = new Sci.Production.Class.txtMdivision();
+            this.txtBrand1 = new Sci.Production.Class.txtbrand();
             this.radioGroup2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMonth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numYear1)).BeginInit();
@@ -58,14 +58,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(371, 24);
+            this.print.TabIndex = 0;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(371, 60);
+            this.toexcel.TabIndex = 1;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(371, 96);
+            this.close.TabIndex = 2;
             // 
             // radioGroup2
             // 
@@ -92,7 +95,7 @@
             this.radioGroup2.Location = new System.Drawing.Point(12, 14);
             this.radioGroup2.Name = "radioGroup2";
             this.radioGroup2.Size = new System.Drawing.Size(348, 360);
-            this.radioGroup2.TabIndex = 94;
+            this.radioGroup2.TabIndex = 0;
             this.radioGroup2.TabStop = false;
             // 
             // lbFactory
@@ -122,7 +125,7 @@
             this.chkFty.Location = new System.Drawing.Point(150, 335);
             this.chkFty.Name = "chkFty";
             this.chkFty.Size = new System.Drawing.Size(125, 21);
-            this.chkFty.TabIndex = 15;
+            this.chkFty.TabIndex = 11;
             this.chkFty.Text = "Fty Local Order";
             this.chkFty.UseVisualStyleBackColor = true;
             // 
@@ -135,7 +138,7 @@
             this.chkForecast.Location = new System.Drawing.Point(150, 308);
             this.chkForecast.Name = "chkForecast";
             this.chkForecast.Size = new System.Drawing.Size(82, 21);
-            this.chkForecast.TabIndex = 14;
+            this.chkForecast.TabIndex = 10;
             this.chkForecast.Text = "Forecast";
             this.chkForecast.UseVisualStyleBackColor = true;
             // 
@@ -148,7 +151,7 @@
             this.chkOrder.Location = new System.Drawing.Point(150, 284);
             this.chkOrder.Name = "chkOrder";
             this.chkOrder.Size = new System.Drawing.Size(64, 21);
-            this.chkOrder.TabIndex = 13;
+            this.chkOrder.TabIndex = 9;
             this.chkOrder.Text = "Order";
             this.chkOrder.UseVisualStyleBackColor = true;
             // 
@@ -161,7 +164,7 @@
             this.cbReportType.Location = new System.Drawing.Point(150, 250);
             this.cbReportType.Name = "cbReportType";
             this.cbReportType.Size = new System.Drawing.Size(190, 24);
-            this.cbReportType.TabIndex = 12;
+            this.cbReportType.TabIndex = 8;
             // 
             // cbDateType
             // 
@@ -172,16 +175,7 @@
             this.cbDateType.Location = new System.Drawing.Point(150, 219);
             this.cbDateType.Name = "cbDateType";
             this.cbDateType.Size = new System.Drawing.Size(190, 24);
-            this.cbDateType.TabIndex = 11;
-            // 
-            // txtBrand1
-            // 
-            this.txtBrand1.BackColor = System.Drawing.Color.White;
-            this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand1.Location = new System.Drawing.Point(150, 118);
-            this.txtBrand1.Name = "txtBrand1";
-            this.txtBrand1.Size = new System.Drawing.Size(94, 23);
-            this.txtBrand1.TabIndex = 10;
+            this.cbDateType.TabIndex = 7;
             // 
             // numMonth
             // 
@@ -193,7 +187,7 @@
             0});
             this.numMonth.Name = "numMonth";
             this.numMonth.Size = new System.Drawing.Size(50, 23);
-            this.numMonth.TabIndex = 9;
+            this.numMonth.TabIndex = 3;
             this.numMonth.Value = new decimal(new int[] {
             1,
             0,
@@ -215,7 +209,7 @@
             0});
             this.numYear1.Name = "numYear1";
             this.numYear1.Size = new System.Drawing.Size(72, 23);
-            this.numYear1.TabIndex = 8;
+            this.numYear1.TabIndex = 2;
             this.numYear1.Value = new decimal(new int[] {
             2015,
             0,
@@ -313,15 +307,6 @@
             this.label1.Text = "Paper Size A4";
             this.label1.TextStyle.Color = System.Drawing.Color.Blue;
             // 
-            // txtM
-            // 
-            this.txtM.BackColor = System.Drawing.Color.White;
-            this.txtM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtM.Location = new System.Drawing.Point(150, 152);
-            this.txtM.Name = "txtM";
-            this.txtM.Size = new System.Drawing.Size(94, 23);
-            this.txtM.TabIndex = 18;
-            // 
             // txtFactory
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
@@ -329,7 +314,25 @@
             this.txtFactory.Location = new System.Drawing.Point(150, 187);
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(94, 23);
-            this.txtFactory.TabIndex = 19;
+            this.txtFactory.TabIndex = 6;
+            // 
+            // txtM
+            // 
+            this.txtM.BackColor = System.Drawing.Color.White;
+            this.txtM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtM.Location = new System.Drawing.Point(150, 152);
+            this.txtM.Name = "txtM";
+            this.txtM.Size = new System.Drawing.Size(94, 23);
+            this.txtM.TabIndex = 5;
+            // 
+            // txtBrand1
+            // 
+            this.txtBrand1.BackColor = System.Drawing.Color.White;
+            this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand1.Location = new System.Drawing.Point(150, 118);
+            this.txtBrand1.Name = "txtBrand1";
+            this.txtBrand1.Size = new System.Drawing.Size(94, 23);
+            this.txtBrand1.TabIndex = 4;
             // 
             // R10
             // 
@@ -339,6 +342,8 @@
             this.ClientSize = new System.Drawing.Size(467, 404);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.radioGroup2);
+            this.DefaultControl = "numYear1";
+            this.DefaultControlForEdit = "numYear1";
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "R10";
             this.Text = "R10. Factory Capacity by Month Report";
