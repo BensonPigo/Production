@@ -3,7 +3,7 @@
     [Seq]           VARCHAR (4)    CONSTRAINT [DF_TimeStudyHistory_Detail_Seq] DEFAULT ('') NOT NULL,
     [OperationID]   VARCHAR (20)   CONSTRAINT [DF_TimeStudyHistory_Detail_OperationID] DEFAULT ('') NULL,
     [Annotation]    NVARCHAR (MAX) CONSTRAINT [DF_TimeStudyHistory_Detail_Annotation] DEFAULT ('') NULL,
-    [PcsPerHour]    NUMERIC (6, 1) CONSTRAINT [DF_TimeStudyHistory_Detail_PcsPerHour] DEFAULT ((0)) NULL,
+    [PcsPerHour]    NUMERIC (8, 1) CONSTRAINT [DF_TimeStudyHistory_Detail_PcsPerHour] DEFAULT ((0)) NULL,
     [Sewer]         NUMERIC (8, 1) CONSTRAINT [DF_TimeStudyHistory_Detail_Sewer] DEFAULT ((0)) NULL,
     [MachineTypeID] VARCHAR (20)   CONSTRAINT [DF_TimeStudyHistory_Detail_MachineTypeID] DEFAULT ('') NULL,
     [Frequency]     NUMERIC (4, 2) CONSTRAINT [DF_TimeStudyHistory_Detail_Frequency] DEFAULT ((0)) NULL,
