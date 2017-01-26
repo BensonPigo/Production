@@ -72,7 +72,7 @@ namespace Sci.Production.Thread
                 }
                 foreach (DataRow dr in tbArticle.Rows)
                 {
-                    art_col.Append(string.Format(@",{0}", dr["article"].ToString().Trim()));
+                    art_col.Append(string.Format(@",[{0}]", dr["article"].ToString().Trim()));
                 }
             }
            
