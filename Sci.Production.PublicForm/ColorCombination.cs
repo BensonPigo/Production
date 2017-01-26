@@ -41,8 +41,9 @@ namespace Sci.Production.PublicForm
             .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
             Helper.Controls.Grid.Generator(this.gridColorDesc)
-           .Text("ID", header: "Color ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
-             .Text("Name", header: "Color Decription", width: Widths.AnsiChars(20), iseditingreadonly: true);
+            .Text("ID", header: "Color ID", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("Name", header: "Color Decription", width: Widths.AnsiChars(18), iseditingreadonly: true);
+            this.gridColorDesc.Font = new Font("Arial", 9);
 
             #region Create header
             string createheader = "Select Article";
@@ -232,7 +233,6 @@ namespace Sci.Production.PublicForm
                 ShowErr(sqlresult);
                 return;
             }
-            //gridColorDesc.DataSource = colortb;
             this.listControlBindingSource2.DataSource = colortb;
         }
 
