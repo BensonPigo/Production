@@ -87,10 +87,6 @@ namespace Sci.Production.Cutting
             if (radiobtn_ByM.Checked)
             {
                 sqlCmd.Append(@"
-IF OBJECT_ID('tempdb.dbo.#DateRanges', 'U') IS NOT NULL
-  DROP TABLE #DateRanges
- IF OBJECT_ID('tempdb.dbo.#tmpWO', 'U') IS NOT NULL
-  DROP TABLE #tmpWO
 select distinct wo.EstCutDate 
 into #DateRanges 
 from workorder wo
@@ -102,13 +98,26 @@ where 1 = 1
                 }
 
                 sqlCmd.Append(@"
-select wo.id,co.Status,wo.EstCutDate, wo.mdivisionid,co.CDate,c.Finished
+select wo.id,co.Status,wo.EstCutDate, wo.mdivisionid,co.CDate,c.Finished,[ATofCES] = d5.ct
 into #tmpWO
 from MDivision
-inner join dbo.WorkOrder as wo on MDivision.ID = wo.MDivisionID
-inner join CuttingOutput_Detail cod on  cod.WorkOrderUKey = wo.UKey 
-inner join CuttingOutput as co on co.ID = cod.ID
+left join dbo.WorkOrder as wo on MDivision.ID = wo.MDivisionID 
+and wo.EstCutDate is not null
 inner join Cutting as c on c.ID = wo.ID
+left join CuttingOutput_Detail cod on  cod.WorkOrderUKey = wo.UKey 
+left join CuttingOutput as co on co.ID = cod.ID and Status != 'New'
+outer apply(	
+	select Count(co5.ID) as ct 
+	from CuttingOutput co5
+	inner join CuttingOutput_Detail cd5 on co5.ID = cd5.ID 
+	inner join WorkOrder w5 on cd5.WorkOrderUKey = w5.UKey 
+	where 1=1
+		and co5.Status != 'New'
+		and co5.CDate = wo.EstCutDate
+		and co5.CDate < w5.EstCutDate
+		and w5.EstCutDate > wo.EstCutDate
+		and co5.MDivisionId = MDivision.id		
+) as d5
 where 1 = 1
 ");
                 if (!MyUtility.Check.Empty(WorkOrder))
@@ -117,7 +126,7 @@ where 1 = 1
                 }
 
                 sqlCmd.Append(@"
-select 
+select distinct
 	[Date] = dr.EstCutDate,
 	[M] = m.MDivisionId,
 	[Estimate Total# of Cuttings on schedule] = d1.ct,
@@ -139,18 +148,18 @@ outer apply(
 outer apply(
 	select count(*) as ct
 	from #tmpWO 
-	where (EstCutDate < dr.EstCutDate  
+	where MDivisionId = M.MDivisionId	
+	and (EstCutDate < dr.EstCutDate  
 		 and ((EstCutDate < CDate and CDate >= dr.EstCutDate) 
 			   or (CDate is null and Finished = 0 )		  
 			 )
 		)
-		and MDivisionId = M.MDivisionId
 ) as d2
 outer apply(
 	select count(*) as ct 
 	from #tmpWO 
 	Where EstCutDate = dr.EstCutDate 
-		and CDate < dr.EstCutDate
+		and CDate <= dr.EstCutDate
 		and MDivisionId = M.MDivisionId
 ) as d3
 outer apply(
@@ -161,13 +170,9 @@ outer apply(
 		and MDivisionId = M.MDivisionId
 ) as d4
 outer apply(	
-		select count(*) as ct 
+		select [ATofCES] as ct 
 		from #tmpWO 
-		where Status != 'New'
-			and CDate = dr.EstCutDate
-			and CDate < EstCutDate
-			and EstCutDate > dr.EstCutDate
-			and MDivisionId = M.MDivisionId
+		where EstCutDate = dr.EstCutDate
 ) as d5
 order by dr.EstCutDate
 
