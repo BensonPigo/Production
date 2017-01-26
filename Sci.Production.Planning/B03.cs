@@ -93,8 +93,8 @@ namespace Sci.Production.Planning
                     string sqlcmd;
 
                     sqlcmd = "select id,abb,currencyid from localsupp where junk = 0 and IsFactory = 0 order by ID";
-                    item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30,10", null);
-                    item.Width = 592;
+                    item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,15,5", null);
+                    item.Size = new System.Drawing.Size(480, 500);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     var x = item.GetSelecteds();
