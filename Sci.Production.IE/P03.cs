@@ -208,8 +208,8 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                             
                             GetEmployee(null);
 
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(EmployeeData, "ID,Name,Skill,SewingLineID,FactoryID", "10,30,20,2,8", dr["EmployeeID"].ToString());
-                            item.Width = 650;
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(EmployeeData, "ID,Name,Skill,SewingLineID,FactoryID", "10,18,16,2,5", dr["EmployeeID"].ToString(), headercaptions: "ID,Name,Skill,SewingLine,Factory");
+                            item.Width = 700;
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             IList<DataRow> selectedData = item.GetSelecteds();
