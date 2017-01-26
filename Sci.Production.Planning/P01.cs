@@ -123,10 +123,34 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
         {
 
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts4 = new DataGridViewGeneratorTextColumnSettings();
-            #region Supplier 右鍵開窗
+            #region Supplier 右鍵開窗 & 按下subcon欄位自動帶值
+            ts4.CellMouseClick += (s, e) => {
+
+
+                if (!this.EditMode) { return; } //原本有值就不做任何事
+                if (this.EditMode && CurrentDetailData["localsuppid"].ToString() != "") { return; }//原本有值就不做任何事
+              
+                //[InHouse OSP] = InHouse時，按下[Subcon]儲存格，自動帶出[Subcon]及[Subcon Name]該有的值
+                if (this.EditMode && e.Button == MouseButtons.Left)
+                {
+                    DataTable dt;
+                    CurrentDetailData["localsuppid"] = Env.User.Factory;
+                   
+
+                    string SubconName = string.Format(@"
+                            SELECT top 1 l.Abb
+                            FROM Order_tmscost ot
+                            left join LocalSupp l on l.ID=ot.LocalSuppID
+                            where ot.LocalSuppID='{0}'", CurrentDetailData["localsuppid"]);
+                    DualResult result = DBProxy.Current.Select(null, SubconName, out dt);
+                    
+                    this.CurrentDetailData["localsuppname"] = dt.Rows[0]["Abb"].ToString();
+                    
+                }
+            };
             ts4.EditingMouseDown += (s, e) =>
             {
-
+                if (!this.EditMode) { return; } //原本有值就不做任何事
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     Sci.Win.Tools.SelectItem item;
@@ -162,10 +186,12 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                     }
                 }
             };
+           
             #endregion
 
             ts4.CellValidating += (s, e) =>
             {
+                if (!this.EditMode) { return; } //原本有值就不做任何事
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
                     if (CurrentDetailData["InhouseOSP"].ToString() == "O")
@@ -186,8 +212,19 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Supplier not in Style Quotation or not Mock approved or not Price approved!!", "Warning");
                             return;
-                        }
+                        }  
                     }
+                }
+                if (CurrentDetailData["InhouseOSP"].ToString() == "O" && e.FormattedValue.ToString() == "")
+                {
+                    CurrentDetailData["localsuppname"] = "";
+                    CurrentDetailData["localsuppid"] = "";
+                    if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"]=""; }
+                }
+                if (CurrentDetailData["InhouseOSP"].ToString() == "I" && e.FormattedValue.ToString() == "")
+                {
+                    CurrentDetailData["localsuppname"] = "";
+                    CurrentDetailData["localsuppid"] = "";
                 }
             };
 
@@ -215,15 +252,28 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                                                     , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]), null);
                         CurrentDetailData["inhouseOSP"] = e.FormattedValue;
                     }
-                    if (e.FormattedValue.ToString() == "I")
+                    if (e.FormattedValue.ToString() == "O" && CurrentDetailData["localsuppid"].ToString() == "") 
                     {
-                        CurrentDetailData["localsuppid"] = Env.User.Factory;
-                        CurrentDetailData["inhouseOSP"] = e.FormattedValue;
+                        CurrentDetailData["localsuppname"] = "";
+                        CurrentDetailData["localsuppid"]= "";
                         
-                    }
-                   
+                        if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"] = ""; }
+                    }            
                 }
             };
+            //下拉選項顯示
+            cs.EditingControlShowing += (sender, eventArgs) =>
+                {
+                    if (sender == null || eventArgs == null) { return; }
+                    var e = ((Ict.Win.UI.DataGridViewEditingControlShowingEventArgs)eventArgs);
+                    ComboBox cb = e.Control as ComboBox;
+                    if (cb != null)
+                    {
+                        cb.SelectionChangeCommitted -= Cb_SelectionChangeCommitted1; //清空
+                        cb.SelectionChangeCommitted += Cb_SelectionChangeCommitted1;
+                    }
+
+                };
 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -258,6 +308,29 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
             detailgrid.Columns[14].DefaultCellStyle.BackColor = Color.Pink; //Unit Price
             detailgrid.Columns[15].DefaultCellStyle.BackColor = Color.Pink; //Qty/GMT
             #endregion
+        }
+        private void Cb_SelectionChangeCommitted1(object sender, EventArgs e)
+        {
+            //下拉選項是InHouse時，subcon & subcon name自動帶出，若為OSP時 清空 subcon & subcon name
+            if (((Ict.Win.UI.DataGridViewComboBoxEditingControl)(sender)).EditingControlFormattedValue.ToString() == "I")
+            {
+                DataTable dt;
+
+                this.CurrentDetailData["localsuppid"] = Env.User.Factory;
+                string sub = this.CurrentDetailData["localsuppid"].ToString();
+                string SubconName = string.Format(@"
+                            SELECT distinct l.Abb
+                            FROM Order_tmscost ot
+                            left join LocalSupp l on l.ID=ot.LocalSuppID
+                            where ot.LocalSuppID='{0}'", sub);
+                DualResult result = DBProxy.Current.Select(null, SubconName, out dt);
+                this.CurrentDetailData["localsuppname"] = dt.Rows[0]["Abb"].ToString();
+            }
+            else 
+            {
+                this.CurrentDetailData["localsuppname"] = "";
+                this.CurrentDetailData["localsuppid"] = "";
+            }
         }
 
         private void button_batchApprove_Click(object sender, EventArgs e)
