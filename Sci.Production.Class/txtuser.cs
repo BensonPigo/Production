@@ -78,9 +78,10 @@ namespace Sci.Production.Class
                         DataTable selectTable;
                         if (isUserName)
                         {
-                            selectCommand = string.Format("select ID, Name, ExtNo, replace(Factory,' ','')factory from Pass1 where Resign is null order by ID", textValue.Trim());
+                            selectCommand = string.Format("select ID, Name, ExtNo, REPLACE(Factory,' ','') Factory from Pass1 where Name = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "14,24,10,150", this.textBox1.Text);
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "10,22,5,40", this.textBox1.Text);
+                            item.Size = new System.Drawing.Size(828, 509);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -92,9 +93,10 @@ namespace Sci.Production.Class
                         }
                         else
                         {
-                            selectCommand = string.Format("select ID, Name, ExtNo, replace(Factory,' ','')factory from Pass1 where Resign is null order by ID", textValue.Trim());
+                            selectCommand = string.Format("select ID, Name, ExtNo, REPLACE(Factory,' ','') Factory from Pass1 where ExtNo = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "14,24,10,150", this.textBox1.Text);
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "10,22,5,40", this.textBox1.Text);
+                            item.Size = new System.Drawing.Size(828, 509);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
