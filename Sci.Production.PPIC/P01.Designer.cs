@@ -45,12 +45,10 @@
             this.button18 = new Sci.Win.UI.Button();
             this.numericBox11 = new Sci.Win.UI.NumericBox();
             this.label94 = new Sci.Win.UI.Label();
-            this.txtdropdownlist4 = new Sci.Production.Class.txtdropdownlist();
             this.label93 = new Sci.Win.UI.Label();
             this.displayBox28 = new Sci.Win.UI.DisplayBox();
             this.displayBox27 = new Sci.Win.UI.DisplayBox();
             this.label92 = new Sci.Win.UI.Label();
-            this.txtdropdownlist2 = new Sci.Production.Class.txtdropdownlist();
             this.label91 = new Sci.Win.UI.Label();
             this.editBox6 = new Sci.Win.UI.EditBox();
             this.numericBox10 = new Sci.Win.UI.NumericBox();
@@ -140,9 +138,6 @@
             this.lineShape7 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape6 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.txttpeuser5 = new Sci.Production.Class.txttpeuser();
-            this.txttpeuser3 = new Sci.Production.Class.txttpeuser();
-            this.txttpeuser4 = new Sci.Production.Class.txttpeuser();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -267,6 +262,8 @@
             this.button17 = new Sci.Win.UI.Button();
             this.checkBox13 = new Sci.Win.UI.CheckBox();
             this.displayBox29 = new Sci.Win.UI.DisplayBox();
+            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
+            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
             this.txtpaytermar1 = new Sci.Production.Class.txtpaytermar();
             this.txtcurrency1 = new Sci.Production.Class.txtcurrency();
             this.txtcountry1 = new Sci.Production.Class.txtcountry();
@@ -274,8 +271,11 @@
             this.txtuser2 = new Sci.Production.Class.txtuser();
             this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
-            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
-            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
+            this.txtdropdownlist4 = new Sci.Production.Class.txtdropdownlist();
+            this.txtdropdownlist2 = new Sci.Production.Class.txtdropdownlist();
+            this.txttpeuser5 = new Sci.Production.Class.txttpeuser();
+            this.txttpeuser3 = new Sci.Production.Class.txttpeuser();
+            this.txttpeuser4 = new Sci.Production.Class.txttpeuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -302,7 +302,6 @@
             this.detailcont.Controls.Add(this.label49);
             this.detailcont.Controls.Add(this.editBox2);
             this.detailcont.Controls.Add(this.displayBox14);
-            this.detailcont.Controls.Add(this.txtpaytermar1);
             this.detailcont.Controls.Add(this.displayBox13);
             this.detailcont.Controls.Add(this.label48);
             this.detailcont.Controls.Add(this.label47);
@@ -345,7 +344,6 @@
             this.detailcont.Controls.Add(this.checkBox6);
             this.detailcont.Controls.Add(this.numericBox4);
             this.detailcont.Controls.Add(this.numericBox3);
-            this.detailcont.Controls.Add(this.txtcurrency1);
             this.detailcont.Controls.Add(this.label37);
             this.detailcont.Controls.Add(this.label36);
             this.detailcont.Controls.Add(this.label35);
@@ -356,7 +354,6 @@
             this.detailcont.Controls.Add(this.label33);
             this.detailcont.Controls.Add(this.label32);
             this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.txtcountry1);
             this.detailcont.Controls.Add(this.displayBox8);
             this.detailcont.Controls.Add(this.label31);
             this.detailcont.Controls.Add(this.label30);
@@ -379,10 +376,6 @@
             this.detailcont.Controls.Add(this.numericBox1);
             this.detailcont.Controls.Add(this.label19);
             this.detailcont.Controls.Add(this.label18);
-            this.detailcont.Controls.Add(this.txtuser1);
-            this.detailcont.Controls.Add(this.txtuser2);
-            this.detailcont.Controls.Add(this.txttpeuser1);
-            this.detailcont.Controls.Add(this.txttpeuser2);
             this.detailcont.Controls.Add(this.label17);
             this.detailcont.Controls.Add(this.label16);
             this.detailcont.Controls.Add(this.label15);
@@ -392,12 +385,12 @@
             this.detailcont.Controls.Add(this.displayBox5);
             this.detailcont.Controls.Add(this.displayBox4);
             this.detailcont.Controls.Add(this.displayBox3);
-            this.detailcont.Controls.Add(this.dateBox6);
-            this.detailcont.Controls.Add(this.dateBox5);
-            this.detailcont.Controls.Add(this.dateBox4);
-            this.detailcont.Controls.Add(this.dateBox3);
-            this.detailcont.Controls.Add(this.dateBox2);
             this.detailcont.Controls.Add(this.dateBox1);
+            this.detailcont.Controls.Add(this.dateBox2);
+            this.detailcont.Controls.Add(this.dateBox3);
+            this.detailcont.Controls.Add(this.dateBox4);
+            this.detailcont.Controls.Add(this.dateBox5);
+            this.detailcont.Controls.Add(this.dateBox6);
             this.detailcont.Controls.Add(this.txtdropdownlist1);
             this.detailcont.Controls.Add(this.label11);
             this.detailcont.Controls.Add(this.label10);
@@ -421,6 +414,13 @@
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.shapeContainer1);
+            this.detailcont.Controls.Add(this.txtpaytermar1);
+            this.detailcont.Controls.Add(this.txtcurrency1);
+            this.detailcont.Controls.Add(this.txtcountry1);
+            this.detailcont.Controls.Add(this.txtuser1);
+            this.detailcont.Controls.Add(this.txtuser2);
+            this.detailcont.Controls.Add(this.txttpeuser1);
+            this.detailcont.Controls.Add(this.txttpeuser2);
             this.detailcont.Size = new System.Drawing.Size(1000, 661);
             // 
             // detailbtm
@@ -756,21 +756,6 @@
             this.label94.TabIndex = 93;
             this.label94.Text = "Q\'ty/Carton";
             // 
-            // txtdropdownlist4
-            // 
-            this.txtdropdownlist4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtdropdownlist4.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "CtnType", true));
-            this.txtdropdownlist4.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.txtdropdownlist4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtdropdownlist4.FormattingEnabled = true;
-            this.txtdropdownlist4.IsSupportUnselect = true;
-            this.txtdropdownlist4.Location = new System.Drawing.Point(101, 479);
-            this.txtdropdownlist4.Name = "txtdropdownlist4";
-            this.txtdropdownlist4.ReadOnly = true;
-            this.txtdropdownlist4.Size = new System.Drawing.Size(277, 23);
-            this.txtdropdownlist4.TabIndex = 92;
-            this.txtdropdownlist4.Type = "PackingMethod";
-            // 
             // label93
             // 
             this.label93.Lines = 0;
@@ -807,21 +792,6 @@
             this.label92.Size = new System.Drawing.Size(92, 21);
             this.label92.TabIndex = 88;
             this.label92.Text = "Sample Reason";
-            // 
-            // txtdropdownlist2
-            // 
-            this.txtdropdownlist2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtdropdownlist2.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ArtWorkCost", true));
-            this.txtdropdownlist2.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.txtdropdownlist2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtdropdownlist2.FormattingEnabled = true;
-            this.txtdropdownlist2.IsSupportUnselect = true;
-            this.txtdropdownlist2.Location = new System.Drawing.Point(269, 401);
-            this.txtdropdownlist2.Name = "txtdropdownlist2";
-            this.txtdropdownlist2.ReadOnly = true;
-            this.txtdropdownlist2.Size = new System.Drawing.Size(121, 23);
-            this.txtdropdownlist2.TabIndex = 87;
-            this.txtdropdownlist2.Type = "ArtworkCost";
             // 
             // label91
             // 
@@ -1698,34 +1668,6 @@
             this.lineShape5.Y1 = 53;
             this.lineShape5.Y2 = 53;
             // 
-            // txttpeuser5
-            // 
-            this.txttpeuser5.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "OutstandingInCharge", true));
-            this.txttpeuser5.DisplayBox1Binding = "";
-            this.txttpeuser5.DisplayBox2Binding = "";
-            this.txttpeuser5.Location = new System.Drawing.Point(179, 313);
-            this.txttpeuser5.Name = "txttpeuser5";
-            this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser5.TabIndex = 70;
-            // 
-            // txttpeuser3
-            // 
-            this.txttpeuser3.DisplayBox1Binding = "";
-            this.txttpeuser3.DisplayBox2Binding = "";
-            this.txttpeuser3.Location = new System.Drawing.Point(468, 4);
-            this.txttpeuser3.Name = "txttpeuser3";
-            this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser3.TabIndex = 6;
-            // 
-            // txttpeuser4
-            // 
-            this.txttpeuser4.DisplayBox1Binding = "";
-            this.txttpeuser4.DisplayBox2Binding = "";
-            this.txttpeuser4.Location = new System.Drawing.Point(468, 31);
-            this.txttpeuser4.Name = "txttpeuser4";
-            this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser4.TabIndex = 7;
-            // 
             // label1
             // 
             this.label1.Lines = 0;
@@ -1797,7 +1739,7 @@
             this.displayBox1.Location = new System.Drawing.Point(59, 6);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(120, 21);
-            this.displayBox1.TabIndex = 7;
+            this.displayBox1.TabIndex = 0;
             // 
             // displayBox2
             // 
@@ -1806,7 +1748,7 @@
             this.displayBox2.Location = new System.Drawing.Point(60, 31);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(75, 21);
-            this.displayBox2.TabIndex = 8;
+            this.displayBox2.TabIndex = 4;
             // 
             // textBox2
             // 
@@ -1816,7 +1758,7 @@
             this.textBox2.Location = new System.Drawing.Point(59, 85);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(110, 21);
-            this.textBox2.TabIndex = 10;
+            this.textBox2.TabIndex = 12;
             // 
             // textBox3
             // 
@@ -1826,7 +1768,7 @@
             this.textBox3.Location = new System.Drawing.Point(59, 112);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(200, 21);
-            this.textBox3.TabIndex = 11;
+            this.textBox3.TabIndex = 15;
             // 
             // textBox4
             // 
@@ -1836,7 +1778,7 @@
             this.textBox4.Location = new System.Drawing.Point(60, 139);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(140, 21);
-            this.textBox4.TabIndex = 12;
+            this.textBox4.TabIndex = 19;
             this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
             this.textBox4.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
             // 
@@ -1850,7 +1792,7 @@
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.ReadOnly = true;
             this.checkBox1.Size = new System.Drawing.Size(88, 19);
-            this.checkBox1.TabIndex = 14;
+            this.checkBox1.TabIndex = 1;
             this.checkBox1.Text = "Local order";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -1862,7 +1804,7 @@
             this.checkBox2.Location = new System.Drawing.Point(275, 31);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(180, 19);
-            this.checkBox2.TabIndex = 15;
+            this.checkBox2.TabIndex = 5;
             this.checkBox2.Text = "Subcon-in from sister factory";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
@@ -1876,7 +1818,7 @@
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.ReadOnly = true;
             this.checkBox3.Size = new System.Drawing.Size(73, 19);
-            this.checkBox3.TabIndex = 16;
+            this.checkBox3.TabIndex = 8;
             this.checkBox3.Text = "Forecast";
             this.checkBox3.UseVisualStyleBackColor = true;
             // 
@@ -1888,7 +1830,7 @@
             this.checkBox4.Location = new System.Drawing.Point(394, 4);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(113, 19);
-            this.checkBox4.TabIndex = 17;
+            this.checkBox4.TabIndex = 2;
             this.checkBox4.Text = "Cancelled order";
             this.checkBox4.UseVisualStyleBackColor = true;
             this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
@@ -1903,7 +1845,7 @@
             this.checkBox5.Name = "checkBox5";
             this.checkBox5.ReadOnly = true;
             this.checkBox5.Size = new System.Drawing.Size(123, 19);
-            this.checkBox5.TabIndex = 18;
+            this.checkBox5.TabIndex = 9;
             this.checkBox5.Text = "Pull forward order";
             this.checkBox5.UseVisualStyleBackColor = true;
             // 
@@ -1951,7 +1893,7 @@
             this.displayBox3.Location = new System.Drawing.Point(346, 112);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(50, 21);
-            this.displayBox3.TabIndex = 24;
+            this.displayBox3.TabIndex = 16;
             // 
             // displayBox4
             // 
@@ -1961,7 +1903,7 @@
             this.displayBox4.Location = new System.Drawing.Point(346, 139);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(200, 21);
-            this.displayBox4.TabIndex = 25;
+            this.displayBox4.TabIndex = 20;
             // 
             // displayBox5
             // 
@@ -1970,7 +1912,7 @@
             this.displayBox5.Location = new System.Drawing.Point(346, 166);
             this.displayBox5.Name = "displayBox5";
             this.displayBox5.Size = new System.Drawing.Size(313, 21);
-            this.displayBox5.TabIndex = 26;
+            this.displayBox5.TabIndex = 24;
             // 
             // label12
             // 
@@ -2059,7 +2001,7 @@
             0});
             this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(60, 21);
-            this.numericBox1.TabIndex = 41;
+            this.numericBox1.TabIndex = 18;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -2081,7 +2023,7 @@
             0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(60, 21);
-            this.numericBox2.TabIndex = 42;
+            this.numericBox2.TabIndex = 22;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -2093,7 +2035,7 @@
             this.button1.Location = new System.Drawing.Point(944, 57);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(43, 22);
-            this.button1.TabIndex = 43;
+            this.button1.TabIndex = 11;
             this.button1.Text = "CFM";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -2103,7 +2045,7 @@
             this.button2.Location = new System.Drawing.Point(944, 83);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(43, 22);
-            this.button2.TabIndex = 44;
+            this.button2.TabIndex = 15;
             this.button2.Text = "CFM";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -2119,7 +2061,7 @@
             this.lineShape2,
             this.lineShape1});
             this.shapeContainer1.Size = new System.Drawing.Size(1000, 661);
-            this.shapeContainer1.TabIndex = 45;
+            this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
             // lineShape4
@@ -2209,7 +2151,7 @@
             this.dateBox1.Location = new System.Drawing.Point(100, 197);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(100, 21);
-            this.dateBox1.TabIndex = 51;
+            this.dateBox1.TabIndex = 25;
             // 
             // dateBox2
             // 
@@ -2217,7 +2159,7 @@
             this.dateBox2.Location = new System.Drawing.Point(100, 224);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(100, 21);
-            this.dateBox2.TabIndex = 52;
+            this.dateBox2.TabIndex = 29;
             // 
             // dateBox3
             // 
@@ -2225,7 +2167,7 @@
             this.dateBox3.Location = new System.Drawing.Point(100, 251);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(100, 21);
-            this.dateBox3.TabIndex = 53;
+            this.dateBox3.TabIndex = 33;
             // 
             // dateBox4
             // 
@@ -2233,7 +2175,7 @@
             this.dateBox4.Location = new System.Drawing.Point(100, 278);
             this.dateBox4.Name = "dateBox4";
             this.dateBox4.Size = new System.Drawing.Size(100, 21);
-            this.dateBox4.TabIndex = 54;
+            this.dateBox4.TabIndex = 37;
             // 
             // displayBox6
             // 
@@ -2242,7 +2184,7 @@
             this.displayBox6.Location = new System.Drawing.Point(147, 305);
             this.displayBox6.Name = "displayBox6";
             this.displayBox6.Size = new System.Drawing.Size(427, 21);
-            this.displayBox6.TabIndex = 55;
+            this.displayBox6.TabIndex = 39;
             // 
             // label25
             // 
@@ -2288,7 +2230,7 @@
             this.displayBox7.Location = new System.Drawing.Point(278, 224);
             this.displayBox7.Name = "displayBox7";
             this.displayBox7.Size = new System.Drawing.Size(67, 21);
-            this.displayBox7.TabIndex = 61;
+            this.displayBox7.TabIndex = 30;
             // 
             // textBox5
             // 
@@ -2298,7 +2240,7 @@
             this.textBox5.Location = new System.Drawing.Point(278, 251);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(51, 21);
-            this.textBox5.TabIndex = 62;
+            this.textBox5.TabIndex = 34;
             // 
             // dateBox5
             // 
@@ -2308,7 +2250,7 @@
             this.dateBox5.Name = "dateBox5";
             this.dateBox5.ReadOnly = true;
             this.dateBox5.Size = new System.Drawing.Size(100, 21);
-            this.dateBox5.TabIndex = 63;
+            this.dateBox5.TabIndex = 38;
             // 
             // label29
             // 
@@ -2345,7 +2287,7 @@
             this.displayBox8.Location = new System.Drawing.Point(462, 197);
             this.displayBox8.Name = "displayBox8";
             this.displayBox8.Size = new System.Drawing.Size(100, 21);
-            this.displayBox8.TabIndex = 67;
+            this.displayBox8.TabIndex = 27;
             // 
             // editBox1
             // 
@@ -2359,7 +2301,7 @@
             this.editBox1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.editBox1.ReadOnly = true;
             this.editBox1.Size = new System.Drawing.Size(232, 50);
-            this.editBox1.TabIndex = 69;
+            this.editBox1.TabIndex = 35;
             this.editBox1.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editBox1_PopUp);
             // 
             // label32
@@ -2397,7 +2339,7 @@
             this.textBox6.Location = new System.Drawing.Point(793, 197);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(195, 21);
-            this.textBox6.TabIndex = 73;
+            this.textBox6.TabIndex = 28;
             // 
             // textBox7
             // 
@@ -2407,7 +2349,7 @@
             this.textBox7.Location = new System.Drawing.Point(793, 224);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(195, 21);
-            this.textBox7.TabIndex = 74;
+            this.textBox7.TabIndex = 32;
             // 
             // textBox8
             // 
@@ -2417,7 +2359,7 @@
             this.textBox8.Location = new System.Drawing.Point(793, 251);
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(195, 21);
-            this.textBox8.TabIndex = 75;
+            this.textBox8.TabIndex = 36;
             // 
             // label35
             // 
@@ -2460,7 +2402,7 @@
             0,
             0});
             this.numericBox3.Size = new System.Drawing.Size(73, 21);
-            this.numericBox3.TabIndex = 80;
+            this.numericBox3.TabIndex = 46;
             this.numericBox3.Value = new decimal(new int[] {
             0,
             0,
@@ -2483,7 +2425,7 @@
             0});
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(73, 21);
-            this.numericBox4.TabIndex = 81;
+            this.numericBox4.TabIndex = 52;
             this.numericBox4.Value = new decimal(new int[] {
             0,
             0,
@@ -2498,7 +2440,7 @@
             this.checkBox6.Location = new System.Drawing.Point(163, 363);
             this.checkBox6.Name = "checkBox6";
             this.checkBox6.Size = new System.Drawing.Size(59, 19);
-            this.checkBox6.TabIndex = 82;
+            this.checkBox6.TabIndex = 47;
             this.checkBox6.Text = "F.O.C.";
             this.checkBox6.UseVisualStyleBackColor = true;
             this.checkBox6.CheckedChanged += new System.EventHandler(this.checkBox6_CheckedChanged);
@@ -2538,7 +2480,7 @@
             this.displayBox9.Location = new System.Drawing.Point(336, 336);
             this.displayBox9.Name = "displayBox9";
             this.displayBox9.Size = new System.Drawing.Size(55, 21);
-            this.displayBox9.TabIndex = 86;
+            this.displayBox9.TabIndex = 41;
             // 
             // numericBox5
             // 
@@ -2556,7 +2498,7 @@
             0});
             this.numericBox5.ReadOnly = true;
             this.numericBox5.Size = new System.Drawing.Size(60, 21);
-            this.numericBox5.TabIndex = 87;
+            this.numericBox5.TabIndex = 48;
             this.numericBox5.Value = new decimal(new int[] {
             0,
             0,
@@ -2578,7 +2520,7 @@
             0});
             this.numericBox6.ReadOnly = true;
             this.numericBox6.Size = new System.Drawing.Size(70, 21);
-            this.numericBox6.TabIndex = 88;
+            this.numericBox6.TabIndex = 53;
             this.numericBox6.Value = new decimal(new int[] {
             0,
             0,
@@ -2593,7 +2535,7 @@
             this.displayBox10.Location = new System.Drawing.Point(60, 58);
             this.displayBox10.Name = "displayBox10";
             this.displayBox10.Size = new System.Drawing.Size(73, 21);
-            this.displayBox10.TabIndex = 89;
+            this.displayBox10.TabIndex = 7;
             // 
             // displayBox11
             // 
@@ -2603,7 +2545,7 @@
             this.displayBox11.Location = new System.Drawing.Point(59, 166);
             this.displayBox11.Name = "displayBox11";
             this.displayBox11.Size = new System.Drawing.Size(92, 21);
-            this.displayBox11.TabIndex = 90;
+            this.displayBox11.TabIndex = 23;
             // 
             // displayBox12
             // 
@@ -2613,7 +2555,7 @@
             this.displayBox12.Location = new System.Drawing.Point(644, 112);
             this.displayBox12.Name = "displayBox12";
             this.displayBox12.Size = new System.Drawing.Size(50, 21);
-            this.displayBox12.TabIndex = 91;
+            this.displayBox12.TabIndex = 17;
             // 
             // label41
             // 
@@ -2657,7 +2599,7 @@
             0});
             this.numericBox7.ReadOnly = true;
             this.numericBox7.Size = new System.Drawing.Size(73, 21);
-            this.numericBox7.TabIndex = 95;
+            this.numericBox7.TabIndex = 42;
             this.numericBox7.Value = new decimal(new int[] {
             0,
             0,
@@ -2679,7 +2621,7 @@
             0});
             this.numericBox8.ReadOnly = true;
             this.numericBox8.Size = new System.Drawing.Size(80, 21);
-            this.numericBox8.TabIndex = 96;
+            this.numericBox8.TabIndex = 49;
             this.numericBox8.Value = new decimal(new int[] {
             0,
             0,
@@ -2694,7 +2636,7 @@
             this.dateBox6.Name = "dateBox6";
             this.dateBox6.ReadOnly = true;
             this.dateBox6.Size = new System.Drawing.Size(100, 21);
-            this.dateBox6.TabIndex = 97;
+            this.dateBox6.TabIndex = 54;
             // 
             // label44
             // 
@@ -2703,7 +2645,7 @@
             this.label44.Location = new System.Drawing.Point(616, 336);
             this.label44.Name = "label44";
             this.label44.Size = new System.Drawing.Size(61, 21);
-            this.label44.TabIndex = 98;
+            this.label44.TabIndex = 43;
             this.label44.Text = "/PCS";
             this.label44.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label44.TextStyle.Color = System.Drawing.Color.Black;
@@ -2718,7 +2660,7 @@
             this.checkBox7.Location = new System.Drawing.Point(707, 336);
             this.checkBox7.Name = "checkBox7";
             this.checkBox7.Size = new System.Drawing.Size(50, 19);
-            this.checkBox7.TabIndex = 99;
+            this.checkBox7.TabIndex = 44;
             this.checkBox7.Text = "S&&P";
             this.checkBox7.UseVisualStyleBackColor = true;
             // 
@@ -2732,7 +2674,7 @@
             this.checkBox8.Name = "checkBox8";
             this.checkBox8.ReadOnly = true;
             this.checkBox8.Size = new System.Drawing.Size(83, 19);
-            this.checkBox8.TabIndex = 100;
+            this.checkBox8.TabIndex = 50;
             this.checkBox8.Text = "VAS/SHAS";
             this.checkBox8.UseVisualStyleBackColor = true;
             // 
@@ -2744,7 +2686,7 @@
             this.checkBox9.Location = new System.Drawing.Point(707, 390);
             this.checkBox9.Name = "checkBox9";
             this.checkBox9.Size = new System.Drawing.Size(97, 19);
-            this.checkBox9.TabIndex = 101;
+            this.checkBox9.TabIndex = 55;
             this.checkBox9.Text = "Tissue paper";
             this.checkBox9.UseVisualStyleBackColor = true;
             // 
@@ -2758,7 +2700,7 @@
             this.checkBox10.Name = "checkBox10";
             this.checkBox10.ReadOnly = true;
             this.checkBox10.Size = new System.Drawing.Size(121, 19);
-            this.checkBox10.TabIndex = 102;
+            this.checkBox10.TabIndex = 45;
             this.checkBox10.Text = "Special customer";
             this.checkBox10.UseVisualStyleBackColor = true;
             // 
@@ -2771,7 +2713,7 @@
             this.checkBox11.Name = "checkBox11";
             this.checkBox11.ReadOnly = true;
             this.checkBox11.Size = new System.Drawing.Size(108, 19);
-            this.checkBox11.TabIndex = 103;
+            this.checkBox11.TabIndex = 51;
             this.checkBox11.Text = "Exception form";
             this.checkBox11.UseVisualStyleBackColor = true;
             // 
@@ -2783,7 +2725,7 @@
             this.checkBox12.Location = new System.Drawing.Point(825, 388);
             this.checkBox12.Name = "checkBox12";
             this.checkBox12.Size = new System.Drawing.Size(144, 19);
-            this.checkBox12.TabIndex = 104;
+            this.checkBox12.TabIndex = 56;
             this.checkBox12.Text = "Rainwear test passed";
             this.checkBox12.UseVisualStyleBackColor = true;
             // 
@@ -2793,7 +2735,7 @@
             this.button3.Location = new System.Drawing.Point(6, 568);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(194, 27);
-            this.button3.TabIndex = 105;
+            this.button3.TabIndex = 64;
             this.button3.Text = "Production output";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -2804,7 +2746,7 @@
             this.button4.Location = new System.Drawing.Point(6, 598);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(194, 27);
-            this.button4.TabIndex = 106;
+            this.button4.TabIndex = 69;
             this.button4.Text = "Order remark";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
@@ -2826,7 +2768,7 @@
             this.button6.Location = new System.Drawing.Point(204, 628);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(194, 27);
-            this.button6.TabIndex = 110;
+            this.button6.TabIndex = 74;
             this.button6.Text = "Label && Hangtag";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
@@ -2836,7 +2778,7 @@
             this.button7.Location = new System.Drawing.Point(204, 598);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(194, 27);
-            this.button7.TabIndex = 109;
+            this.button7.TabIndex = 70;
             this.button7.Text = "Q\'ty b\'down by shipmode";
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
@@ -2846,7 +2788,7 @@
             this.button8.Location = new System.Drawing.Point(204, 568);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(194, 27);
-            this.button8.TabIndex = 108;
+            this.button8.TabIndex = 65;
             this.button8.Text = "Quantity breakdown";
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
@@ -2857,7 +2799,7 @@
             this.button9.Location = new System.Drawing.Point(402, 628);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(194, 27);
-            this.button9.TabIndex = 113;
+            this.button9.TabIndex = 75;
             this.button9.Text = "Shipping mark";
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
@@ -2868,7 +2810,7 @@
             this.button10.Location = new System.Drawing.Point(402, 598);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(194, 27);
-            this.button10.TabIndex = 112;
+            this.button10.TabIndex = 71;
             this.button10.Text = "TMS && Cost";
             this.button10.UseVisualStyleBackColor = true;
             this.button10.Click += new System.EventHandler(this.button10_Click);
@@ -2879,7 +2821,7 @@
             this.button11.Location = new System.Drawing.Point(402, 568);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(194, 27);
-            this.button11.TabIndex = 111;
+            this.button11.TabIndex = 66;
             this.button11.Text = "Std.GSD List";
             this.button11.UseVisualStyleBackColor = true;
             this.button11.Click += new System.EventHandler(this.button11_Click);
@@ -2890,7 +2832,7 @@
             this.button12.Location = new System.Drawing.Point(600, 598);
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(194, 27);
-            this.button12.TabIndex = 115;
+            this.button12.TabIndex = 72;
             this.button12.Text = "CMPQ remark";
             this.button12.UseVisualStyleBackColor = true;
             this.button12.Click += new System.EventHandler(this.button12_Click);
@@ -2900,7 +2842,7 @@
             this.button13.Location = new System.Drawing.Point(600, 568);
             this.button13.Name = "button13";
             this.button13.Size = new System.Drawing.Size(194, 27);
-            this.button13.TabIndex = 114;
+            this.button13.TabIndex = 67;
             this.button13.Text = "CMPQ Sheet";
             this.button13.UseVisualStyleBackColor = true;
             this.button13.Click += new System.EventHandler(this.button13_Click);
@@ -2911,7 +2853,7 @@
             this.button14.Location = new System.Drawing.Point(798, 598);
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(194, 27);
-            this.button14.TabIndex = 117;
+            this.button14.TabIndex = 73;
             this.button14.Text = "Artwork";
             this.button14.UseVisualStyleBackColor = true;
             this.button14.Click += new System.EventHandler(this.button14_Click);
@@ -2922,7 +2864,7 @@
             this.button15.Location = new System.Drawing.Point(798, 568);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(194, 27);
-            this.button15.TabIndex = 116;
+            this.button15.TabIndex = 68;
             this.button15.Text = "Garment export";
             this.button15.UseVisualStyleBackColor = true;
             this.button15.Click += new System.EventHandler(this.button15_Click);
@@ -2971,7 +2913,7 @@
             this.displayBox13.Location = new System.Drawing.Point(98, 421);
             this.displayBox13.Name = "displayBox13";
             this.displayBox13.Size = new System.Drawing.Size(46, 21);
-            this.displayBox13.TabIndex = 122;
+            this.displayBox13.TabIndex = 57;
             // 
             // displayBox14
             // 
@@ -2980,7 +2922,7 @@
             this.displayBox14.Location = new System.Drawing.Point(83, 479);
             this.displayBox14.Name = "displayBox14";
             this.displayBox14.Size = new System.Drawing.Size(424, 21);
-            this.displayBox14.TabIndex = 124;
+            this.displayBox14.TabIndex = 60;
             // 
             // editBox2
             // 
@@ -2992,7 +2934,7 @@
             this.editBox2.Name = "editBox2";
             this.editBox2.ReadOnly = true;
             this.editBox2.Size = new System.Drawing.Size(424, 55);
-            this.editBox2.TabIndex = 125;
+            this.editBox2.TabIndex = 62;
             // 
             // label49
             // 
@@ -3013,7 +2955,7 @@
             this.editBox3.Name = "editBox3";
             this.editBox3.ReadOnly = true;
             this.editBox3.Size = new System.Drawing.Size(347, 38);
-            this.editBox3.TabIndex = 127;
+            this.editBox3.TabIndex = 61;
             // 
             // label79
             // 
@@ -3034,7 +2976,7 @@
             this.editBox4.Name = "editBox4";
             this.editBox4.ReadOnly = true;
             this.editBox4.Size = new System.Drawing.Size(347, 38);
-            this.editBox4.TabIndex = 129;
+            this.editBox4.TabIndex = 63;
             // 
             // button17
             // 
@@ -3042,7 +2984,7 @@
             this.button17.Location = new System.Drawing.Point(600, 628);
             this.button17.Name = "button17";
             this.button17.Size = new System.Drawing.Size(194, 27);
-            this.button17.TabIndex = 130;
+            this.button17.TabIndex = 76;
             this.button17.Text = "Cutting Combo";
             this.button17.UseVisualStyleBackColor = true;
             this.button17.Click += new System.EventHandler(this.button17_Click);
@@ -3057,7 +2999,7 @@
             this.checkBox13.Name = "checkBox13";
             this.checkBox13.ReadOnly = true;
             this.checkBox13.Size = new System.Drawing.Size(100, 19);
-            this.checkBox13.TabIndex = 131;
+            this.checkBox13.TabIndex = 58;
             this.checkBox13.Text = "Is Mix Marker";
             this.checkBox13.UseVisualStyleBackColor = true;
             // 
@@ -3069,77 +3011,18 @@
             this.displayBox29.Location = new System.Drawing.Point(644, 139);
             this.displayBox29.Name = "displayBox29";
             this.displayBox29.Size = new System.Drawing.Size(145, 21);
-            this.displayBox29.TabIndex = 132;
+            this.displayBox29.TabIndex = 21;
             // 
-            // txtpaytermar1
+            // txtmfactory1
             // 
-            this.txtpaytermar1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARID", true));
-            this.txtpaytermar1.DisplayBox1Binding = "";
-            this.txtpaytermar1.Location = new System.Drawing.Point(98, 446);
-            this.txtpaytermar1.Name = "txtpaytermar1";
-            this.txtpaytermar1.Size = new System.Drawing.Size(311, 23);
-            this.txtpaytermar1.TabIndex = 123;
-            this.txtpaytermar1.TextBox1Binding = "";
-            // 
-            // txtcurrency1
-            // 
-            this.txtcurrency1.BackColor = System.Drawing.Color.White;
-            this.txtcurrency1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CurrencyID", true));
-            this.txtcurrency1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcurrency1.Location = new System.Drawing.Point(67, 336);
-            this.txtcurrency1.Name = "txtcurrency1";
-            this.txtcurrency1.Size = new System.Drawing.Size(48, 21);
-            this.txtcurrency1.TabIndex = 79;
-            // 
-            // txtcountry1
-            // 
-            this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Dest", true));
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Location = new System.Drawing.Point(462, 224);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 68;
-            this.txtcountry1.TextBox1Binding = "";
-            // 
-            // txtuser1
-            // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "MCHandle", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(644, 58);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 35;
-            this.txtuser1.TextBox1Binding = "";
-            // 
-            // txtuser2
-            // 
-            this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalMR", true));
-            this.txtuser2.DisplayBox1Binding = "";
-            this.txtuser2.Location = new System.Drawing.Point(644, 85);
-            this.txtuser2.Name = "txtuser2";
-            this.txtuser2.Size = new System.Drawing.Size(300, 23);
-            this.txtuser2.TabIndex = 36;
-            this.txtuser2.TextBox1Binding = "";
-            // 
-            // txttpeuser1
-            // 
-            this.txttpeuser1.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "SMR", true));
-            this.txttpeuser1.DisplayBox1Binding = "";
-            this.txttpeuser1.DisplayBox2Binding = "";
-            this.txttpeuser1.Location = new System.Drawing.Point(644, 6);
-            this.txttpeuser1.Name = "txttpeuser1";
-            this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser1.TabIndex = 33;
-            // 
-            // txttpeuser2
-            // 
-            this.txttpeuser2.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "MRHandle", true));
-            this.txttpeuser2.DisplayBox1Binding = "";
-            this.txttpeuser2.DisplayBox2Binding = "";
-            this.txttpeuser2.Location = new System.Drawing.Point(644, 31);
-            this.txttpeuser2.Name = "txttpeuser2";
-            this.txttpeuser2.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser2.TabIndex = 34;
+            this.txtmfactory1.BackColor = System.Drawing.Color.White;
+            this.txtmfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory1.Location = new System.Drawing.Point(278, 197);
+            this.txtmfactory1.Name = "txtmfactory1";
+            this.txtmfactory1.Size = new System.Drawing.Size(66, 21);
+            this.txtmfactory1.TabIndex = 26;
+            this.txtmfactory1.Validated += new System.EventHandler(this.txtmfactory1_Validated);
             // 
             // txtdropdownlist1
             // 
@@ -3153,23 +3036,142 @@
             this.txtdropdownlist1.Name = "txtdropdownlist1";
             this.txtdropdownlist1.ReadOnly = true;
             this.txtdropdownlist1.Size = new System.Drawing.Size(100, 23);
-            this.txtdropdownlist1.TabIndex = 23;
+            this.txtdropdownlist1.TabIndex = 13;
             this.txtdropdownlist1.Type = "Category";
             // 
-            // txtmfactory1
+            // txtpaytermar1
             // 
-            this.txtmfactory1.BackColor = System.Drawing.Color.White;
-            this.txtmfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory1.Location = new System.Drawing.Point(278, 197);
-            this.txtmfactory1.Name = "txtmfactory1";
-            this.txtmfactory1.Size = new System.Drawing.Size(66, 21);
-            this.txtmfactory1.TabIndex = 133;
-            this.txtmfactory1.Validated += new System.EventHandler(this.txtmfactory1_Validated);
+            this.txtpaytermar1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARID", true));
+            this.txtpaytermar1.DisplayBox1Binding = "";
+            this.txtpaytermar1.Location = new System.Drawing.Point(98, 446);
+            this.txtpaytermar1.Name = "txtpaytermar1";
+            this.txtpaytermar1.Size = new System.Drawing.Size(311, 23);
+            this.txtpaytermar1.TabIndex = 59;
+            this.txtpaytermar1.TextBox1Binding = "";
+            // 
+            // txtcurrency1
+            // 
+            this.txtcurrency1.BackColor = System.Drawing.Color.White;
+            this.txtcurrency1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CurrencyID", true));
+            this.txtcurrency1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcurrency1.Location = new System.Drawing.Point(67, 336);
+            this.txtcurrency1.Name = "txtcurrency1";
+            this.txtcurrency1.Size = new System.Drawing.Size(48, 21);
+            this.txtcurrency1.TabIndex = 40;
+            // 
+            // txtcountry1
+            // 
+            this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Dest", true));
+            this.txtcountry1.DisplayBox1Binding = "";
+            this.txtcountry1.Location = new System.Drawing.Point(462, 224);
+            this.txtcountry1.Name = "txtcountry1";
+            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
+            this.txtcountry1.TabIndex = 31;
+            this.txtcountry1.TextBox1Binding = "";
+            // 
+            // txtuser1
+            // 
+            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "MCHandle", true));
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(644, 58);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(300, 23);
+            this.txtuser1.TabIndex = 10;
+            this.txtuser1.TextBox1Binding = "";
+            // 
+            // txtuser2
+            // 
+            this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalMR", true));
+            this.txtuser2.DisplayBox1Binding = "";
+            this.txtuser2.Location = new System.Drawing.Point(644, 85);
+            this.txtuser2.Name = "txtuser2";
+            this.txtuser2.Size = new System.Drawing.Size(300, 23);
+            this.txtuser2.TabIndex = 14;
+            this.txtuser2.TextBox1Binding = "";
+            // 
+            // txttpeuser1
+            // 
+            this.txttpeuser1.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "SMR", true));
+            this.txttpeuser1.DisplayBox1Binding = "";
+            this.txttpeuser1.DisplayBox2Binding = "";
+            this.txttpeuser1.Location = new System.Drawing.Point(644, 6);
+            this.txttpeuser1.Name = "txttpeuser1";
+            this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser1.TabIndex = 3;
+            // 
+            // txttpeuser2
+            // 
+            this.txttpeuser2.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "MRHandle", true));
+            this.txttpeuser2.DisplayBox1Binding = "";
+            this.txttpeuser2.DisplayBox2Binding = "";
+            this.txttpeuser2.Location = new System.Drawing.Point(644, 31);
+            this.txttpeuser2.Name = "txttpeuser2";
+            this.txttpeuser2.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser2.TabIndex = 6;
+            // 
+            // txtdropdownlist4
+            // 
+            this.txtdropdownlist4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtdropdownlist4.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "CtnType", true));
+            this.txtdropdownlist4.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.txtdropdownlist4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtdropdownlist4.FormattingEnabled = true;
+            this.txtdropdownlist4.IsSupportUnselect = true;
+            this.txtdropdownlist4.Location = new System.Drawing.Point(101, 479);
+            this.txtdropdownlist4.Name = "txtdropdownlist4";
+            this.txtdropdownlist4.ReadOnly = true;
+            this.txtdropdownlist4.Size = new System.Drawing.Size(277, 23);
+            this.txtdropdownlist4.TabIndex = 92;
+            this.txtdropdownlist4.Type = "PackingMethod";
+            // 
+            // txtdropdownlist2
+            // 
+            this.txtdropdownlist2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtdropdownlist2.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ArtWorkCost", true));
+            this.txtdropdownlist2.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.txtdropdownlist2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtdropdownlist2.FormattingEnabled = true;
+            this.txtdropdownlist2.IsSupportUnselect = true;
+            this.txtdropdownlist2.Location = new System.Drawing.Point(269, 401);
+            this.txtdropdownlist2.Name = "txtdropdownlist2";
+            this.txtdropdownlist2.ReadOnly = true;
+            this.txtdropdownlist2.Size = new System.Drawing.Size(121, 23);
+            this.txtdropdownlist2.TabIndex = 87;
+            this.txtdropdownlist2.Type = "ArtworkCost";
+            // 
+            // txttpeuser5
+            // 
+            this.txttpeuser5.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "OutstandingInCharge", true));
+            this.txttpeuser5.DisplayBox1Binding = "";
+            this.txttpeuser5.DisplayBox2Binding = "";
+            this.txttpeuser5.Location = new System.Drawing.Point(179, 313);
+            this.txttpeuser5.Name = "txttpeuser5";
+            this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser5.TabIndex = 70;
+            // 
+            // txttpeuser3
+            // 
+            this.txttpeuser3.DisplayBox1Binding = "";
+            this.txttpeuser3.DisplayBox2Binding = "";
+            this.txttpeuser3.Location = new System.Drawing.Point(468, 4);
+            this.txttpeuser3.Name = "txttpeuser3";
+            this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser3.TabIndex = 6;
+            // 
+            // txttpeuser4
+            // 
+            this.txttpeuser4.DisplayBox1Binding = "";
+            this.txttpeuser4.DisplayBox2Binding = "";
+            this.txttpeuser4.Location = new System.Drawing.Point(468, 31);
+            this.txttpeuser4.Name = "txttpeuser4";
+            this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser4.TabIndex = 7;
             // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
+            this.DefaultControl = "textBox2";
+            this.DefaultControlForEdit = "textBox2";
             this.DefaultOrder = "ID";
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.IsSupportCopy = false;

@@ -43,14 +43,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(418, 12);
+            this.print.TabIndex = 6;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(418, 48);
+            this.toexcel.TabIndex = 7;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(418, 84);
+            this.close.TabIndex = 8;
             // 
             // label1
             // 
@@ -89,7 +92,7 @@
             this.txtstyle1.Name = "txtstyle1";
             this.txtstyle1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
             this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 97;
+            this.txtstyle1.TabIndex = 1;
             // 
             // txtstyle2
             // 
@@ -101,7 +104,7 @@
             this.txtstyle2.Name = "txtstyle2";
             this.txtstyle2.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
             this.txtstyle2.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle2.TabIndex = 98;
+            this.txtstyle2.TabIndex = 2;
             // 
             // txtbrand1
             // 
@@ -112,7 +115,7 @@
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
             this.txtbrand1.Size = new System.Drawing.Size(91, 23);
-            this.txtbrand1.TabIndex = 99;
+            this.txtbrand1.TabIndex = 3;
             // 
             // label4
             // 
@@ -145,7 +148,7 @@
             this.txtseason1.Location = new System.Drawing.Point(81, 84);
             this.txtseason1.Name = "txtseason1";
             this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 104;
+            this.txtseason1.TabIndex = 4;
             // 
             // txtuser1
             // 
@@ -153,7 +156,7 @@
             this.txtuser1.Location = new System.Drawing.Point(81, 119);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 105;
+            this.txtuser1.TabIndex = 5;
             this.txtuser1.TextBox1Binding = "";
             // 
             // P04_Print
@@ -169,7 +172,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.EditMode = true;
+            this.DefaultControl = "txtstyle1";
+            this.DefaultControlForEdit = "txtstyle1";
             this.IsSupportToPrint = false;
             this.Name = "P04_Print";
             this.Text = "Print";

@@ -99,6 +99,7 @@
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Size = new System.Drawing.Size(868, 142);
+            this.masterpanel.TabIndex = 1;
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
@@ -136,6 +137,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(759, 107);
+            this.gridicon.TabIndex = 13;
             // 
             // refresh
             // 
@@ -169,6 +171,7 @@
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 449);
             this.detailbtm.Size = new System.Drawing.Size(868, 38);
+            this.detailbtm.TabIndex = 1;
             // 
             // browse
             // 
@@ -178,13 +181,17 @@
             // 
             this.tabs.Size = new System.Drawing.Size(876, 516);
             // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
+            // 
             // label1
             // 
             this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(5, 4);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(55, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 0;
             this.label1.Text = "No.";
             // 
             // label2
@@ -231,7 +238,7 @@
             this.displayBox1.Location = new System.Drawing.Point(64, 4);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 6;
+            this.displayBox1.TabIndex = 0;
             // 
             // dateBox1
             // 
@@ -241,7 +248,7 @@
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(110, 23);
-            this.dateBox1.TabIndex = 7;
+            this.dateBox1.TabIndex = 3;
             // 
             // comboBox1
             // 
@@ -253,7 +260,7 @@
             this.comboBox1.Location = new System.Drawing.Point(64, 57);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 8;
+            this.comboBox1.TabIndex = 6;
             this.comboBox1.Validated += new System.EventHandler(this.comboBox1_Validated);
             // 
             // comboBox2
@@ -276,7 +283,7 @@
             this.textBox1.Location = new System.Drawing.Point(64, 112);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(616, 23);
-            this.textBox1.TabIndex = 10;
+            this.textBox1.TabIndex = 12;
             // 
             // label6
             // 
@@ -322,7 +329,7 @@
             this.displayBox2.Location = new System.Drawing.Point(323, 4);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(60, 23);
-            this.displayBox2.TabIndex = 15;
+            this.displayBox2.TabIndex = 1;
             // 
             // textBox2
             // 
@@ -332,7 +339,7 @@
             this.textBox2.Location = new System.Drawing.Point(323, 31);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(120, 23);
-            this.textBox2.TabIndex = 16;
+            this.textBox2.TabIndex = 4;
             this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
             // displayBox3
@@ -343,7 +350,7 @@
             this.displayBox3.Location = new System.Drawing.Point(323, 57);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(120, 23);
-            this.displayBox3.TabIndex = 17;
+            this.displayBox3.TabIndex = 7;
             // 
             // txtsewingline1
             // 
@@ -354,7 +361,7 @@
             this.txtsewingline1.Location = new System.Drawing.Point(323, 84);
             this.txtsewingline1.Name = "txtsewingline1";
             this.txtsewingline1.Size = new System.Drawing.Size(60, 23);
-            this.txtsewingline1.TabIndex = 18;
+            this.txtsewingline1.TabIndex = 10;
             // 
             // label10
             // 
@@ -399,7 +406,7 @@
             this.txtuser1.Location = new System.Drawing.Point(560, 4);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(302, 23);
-            this.txtuser1.TabIndex = 23;
+            this.txtuser1.TabIndex = 2;
             this.txtuser1.TextBox1Binding = "";
             // 
             // txtuser2
@@ -409,7 +416,7 @@
             this.txtuser2.Location = new System.Drawing.Point(560, 31);
             this.txtuser2.Name = "txtuser2";
             this.txtuser2.Size = new System.Drawing.Size(302, 23);
-            this.txtuser2.TabIndex = 24;
+            this.txtuser2.TabIndex = 5;
             this.txtuser2.TextBox1Binding = "";
             // 
             // dateBox2
@@ -420,7 +427,7 @@
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.ReadOnly = true;
             this.dateBox2.Size = new System.Drawing.Size(110, 23);
-            this.dateBox2.TabIndex = 25;
+            this.dateBox2.TabIndex = 8;
             // 
             // displayBox4
             // 
@@ -430,7 +437,7 @@
             this.displayBox4.Location = new System.Drawing.Point(560, 84);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(120, 23);
-            this.displayBox4.TabIndex = 26;
+            this.displayBox4.TabIndex = 11;
             // 
             // lbStatus
             // 
@@ -451,6 +458,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(876, 549);
+            this.DefaultControl = "textBox2";
+            this.DefaultControlForEdit = "textBox2";
             this.DefaultDetailOrder = "Seq";
             this.DefaultOrder = "ID";
             this.GridAlias = "Lack_Detail";

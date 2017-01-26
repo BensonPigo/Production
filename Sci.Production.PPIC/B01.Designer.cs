@@ -43,6 +43,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(683, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkBox1);
@@ -52,6 +56,12 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Size = new System.Drawing.Size(683, 357);
+            this.detailcont.TabIndex = 0;
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(683, 38);
             // 
             // browse
             // 
@@ -60,6 +70,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(691, 424);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label3
             // 
@@ -96,7 +110,7 @@
             this.textBox1.Location = new System.Drawing.Point(119, 33);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(50, 23);
-            this.textBox1.TabIndex = 3;
+            this.textBox1.TabIndex = 0;
             // 
             // textBox2
             // 
@@ -107,7 +121,7 @@
             this.textBox2.Location = new System.Drawing.Point(119, 75);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(380, 23);
-            this.textBox2.TabIndex = 4;
+            this.textBox2.TabIndex = 1;
             // 
             // comboBox1
             // 
@@ -119,7 +133,7 @@
             this.comboBox1.Location = new System.Drawing.Point(119, 117);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 5;
+            this.comboBox1.TabIndex = 2;
             // 
             // checkBox1
             // 
@@ -129,20 +143,22 @@
             this.checkBox1.Location = new System.Drawing.Point(367, 33);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 6;
+            this.checkBox1.TabIndex = 3;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(691, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox2";
             this.DefaultFilter = "Type = \'FL\'";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
-            this.IsSupportPrint = false;
             this.IsSupportNew = false;
+            this.IsSupportPrint = false;
             this.Name = "B01";
             this.Text = "B01. Fabric Lacking & Replacement Reason";
             this.UniqueExpress = "Type,ID";

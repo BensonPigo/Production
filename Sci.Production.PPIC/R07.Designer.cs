@@ -43,16 +43,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(317, 12);
+            this.print.TabIndex = 4;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(317, 48);
-            this.toexcel.TabIndex = 4;
+            this.toexcel.TabIndex = 5;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(317, 84);
-            this.close.TabIndex = 5;
+            this.close.TabIndex = 6;
             // 
             // label1
             // 
@@ -83,7 +84,8 @@
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.ForeColor = System.Drawing.Color.Red;
+            this.numericUpDown1.BackColor = System.Drawing.Color.White;
+            this.numericUpDown1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericUpDown1.Location = new System.Drawing.Point(69, 12);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             2500,
@@ -115,7 +117,8 @@
             // 
             // numericUpDown2
             // 
-            this.numericUpDown2.ForeColor = System.Drawing.Color.Red;
+            this.numericUpDown2.BackColor = System.Drawing.Color.White;
+            this.numericUpDown2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericUpDown2.Location = new System.Drawing.Point(233, 12);
             this.numericUpDown2.Maximum = new decimal(new int[] {
             12,
@@ -169,6 +172,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "numericUpDown1";
+            this.DefaultControlForEdit = "numericUpDown1";
             this.IsSupportToPrint = false;
             this.Name = "R07";
             this.Text = "R07. Sewing Schedule Gantt Chart";

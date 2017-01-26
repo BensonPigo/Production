@@ -40,11 +40,9 @@
             this.textBox4 = new Sci.Win.UI.TextBox();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.textBox3 = new Sci.Win.UI.TextBox();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.label7 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
-            this.txtstyle1 = new Sci.Production.Class.txtstyle();
             this.label4 = new Sci.Win.UI.Label();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox1 = new Sci.Win.UI.TextBox();
@@ -58,6 +56,8 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.txtstyle1 = new Sci.Production.Class.txtstyle();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -107,7 +107,7 @@
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(837, 86);
-            this.panel3.TabIndex = 3;
+            this.panel3.TabIndex = 0;
             // 
             // displayBox3
             // 
@@ -116,7 +116,7 @@
             this.displayBox3.Location = new System.Drawing.Point(621, 4);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(86, 23);
-            this.displayBox3.TabIndex = 19;
+            this.displayBox3.TabIndex = 3;
             // 
             // label8
             // 
@@ -132,7 +132,7 @@
             this.button2.Location = new System.Drawing.Point(738, 46);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(92, 30);
-            this.button2.TabIndex = 17;
+            this.button2.TabIndex = 11;
             this.button2.Text = "To Excel";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -142,7 +142,7 @@
             this.button1.Location = new System.Drawing.Point(738, 10);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(92, 30);
-            this.button1.TabIndex = 16;
+            this.button1.TabIndex = 10;
             this.button1.Text = "Query";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -154,7 +154,7 @@
             this.displayBox2.Location = new System.Drawing.Point(539, 58);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(168, 23);
-            this.displayBox2.TabIndex = 15;
+            this.displayBox2.TabIndex = 9;
             // 
             // textBox4
             // 
@@ -163,7 +163,7 @@
             this.textBox4.Location = new System.Drawing.Point(447, 58);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(90, 23);
-            this.textBox4.TabIndex = 14;
+            this.textBox4.TabIndex = 8;
             this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
             this.textBox4.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
             // 
@@ -174,7 +174,7 @@
             this.displayBox1.Location = new System.Drawing.Point(539, 31);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(168, 23);
-            this.displayBox1.TabIndex = 13;
+            this.displayBox1.TabIndex = 6;
             // 
             // textBox3
             // 
@@ -183,18 +183,9 @@
             this.textBox3.Location = new System.Drawing.Point(447, 31);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(90, 23);
-            this.textBox3.TabIndex = 12;
+            this.textBox3.TabIndex = 5;
             this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
             this.textBox3.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
-            // 
-            // txtbrand1
-            // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(447, 4);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand1.TabIndex = 11;
             // 
             // label7
             // 
@@ -223,16 +214,6 @@
             this.label5.TabIndex = 8;
             this.label5.Text = "Brand";
             // 
-            // txtstyle1
-            // 
-            this.txtstyle1.BackColor = System.Drawing.Color.White;
-            this.txtstyle1.BrandObjectName = null;
-            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle1.Location = new System.Drawing.Point(91, 31);
-            this.txtstyle1.Name = "txtstyle1";
-            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 7;
-            // 
             // label4
             // 
             this.label4.BackColor = System.Drawing.Color.Transparent;
@@ -254,7 +235,7 @@
             this.textBox2.Location = new System.Drawing.Point(233, 4);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(120, 23);
-            this.textBox2.TabIndex = 5;
+            this.textBox2.TabIndex = 1;
             // 
             // textBox1
             // 
@@ -263,7 +244,7 @@
             this.textBox1.Location = new System.Drawing.Point(91, 4);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(120, 23);
-            this.textBox1.TabIndex = 4;
+            this.textBox1.TabIndex = 0;
             // 
             // dateRange1
             // 
@@ -271,7 +252,7 @@
             this.dateRange1.Location = new System.Drawing.Point(91, 58);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(276, 23);
-            this.dateRange1.TabIndex = 3;
+            this.dateRange1.TabIndex = 7;
             // 
             // label3
             // 
@@ -308,7 +289,7 @@
             this.panel4.Location = new System.Drawing.Point(5, 428);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(837, 44);
-            this.panel4.TabIndex = 4;
+            this.panel4.TabIndex = 1;
             // 
             // button4
             // 
@@ -365,6 +346,25 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
+            // txtbrand1
+            // 
+            this.txtbrand1.BackColor = System.Drawing.Color.White;
+            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand1.Location = new System.Drawing.Point(447, 4);
+            this.txtbrand1.Name = "txtbrand1";
+            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand1.TabIndex = 2;
+            // 
+            // txtstyle1
+            // 
+            this.txtstyle1.BackColor = System.Drawing.Color.White;
+            this.txtstyle1.BrandObjectName = null;
+            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle1.Location = new System.Drawing.Point(91, 31);
+            this.txtstyle1.Name = "txtstyle1";
+            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle1.TabIndex = 4;
+            // 
             // P13
             // 
             this.ClientSize = new System.Drawing.Size(847, 472);
@@ -373,6 +373,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.EditMode = true;
             this.Name = "P13";
             this.Text = "P13. Assign sample to sewing schedule";

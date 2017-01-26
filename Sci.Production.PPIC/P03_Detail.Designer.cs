@@ -45,10 +45,6 @@
             this.label8 = new Sci.Win.UI.Label();
             this.dateBox2 = new Sci.Win.UI.DateBox();
             this.label9 = new Sci.Win.UI.Label();
-            this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
-            this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
-            this.txttpeuser3 = new Sci.Production.Class.txttpeuser();
-            this.txttpeuser4 = new Sci.Production.Class.txttpeuser();
             this.label10 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
             this.label12 = new Sci.Win.UI.Label();
@@ -69,7 +65,6 @@
             this.dateBox5 = new Sci.Win.UI.DateBox();
             this.dateBox6 = new Sci.Win.UI.DateBox();
             this.editBox3 = new Sci.Win.UI.EditBox();
-            this.txtuser2 = new Sci.Production.Class.txtuser();
             this.display_FtyLastDate = new Sci.Win.UI.DisplayBox();
             this.label23 = new Sci.Win.UI.Label();
             this.dateBox7 = new Sci.Win.UI.DateBox();
@@ -81,6 +76,11 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.txttpeuser5 = new Sci.Production.Class.txttpeuser();
+            this.txtuser2 = new Sci.Production.Class.txtuser();
+            this.txttpeuser4 = new Sci.Production.Class.txttpeuser();
+            this.txttpeuser3 = new Sci.Production.Class.txttpeuser();
+            this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
+            this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
@@ -89,24 +89,29 @@
             // 
             this.btmcont.Location = new System.Drawing.Point(0, 552);
             this.btmcont.Size = new System.Drawing.Size(696, 42);
+            this.btmcont.TabIndex = 24;
             // 
             // undo
             // 
             this.undo.Location = new System.Drawing.Point(606, 5);
             this.undo.Size = new System.Drawing.Size(80, 32);
+            this.undo.TabIndex = 3;
             // 
             // save
             // 
             this.save.Location = new System.Drawing.Point(526, 5);
             this.save.Size = new System.Drawing.Size(80, 32);
+            this.save.TabIndex = 2;
             // 
             // left
             // 
             this.left.Size = new System.Drawing.Size(80, 32);
+            this.left.TabIndex = 0;
             // 
             // right
             // 
             this.right.Size = new System.Drawing.Size(80, 32);
+            this.right.TabIndex = 1;
             // 
             // label1
             // 
@@ -170,7 +175,7 @@
             this.displayBox1.Location = new System.Drawing.Point(126, 13);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(140, 23);
-            this.displayBox1.TabIndex = 101;
+            this.displayBox1.TabIndex = 1;
             // 
             // editBox1
             // 
@@ -183,7 +188,7 @@
             this.editBox1.Name = "editBox1";
             this.editBox1.ReadOnly = true;
             this.editBox1.Size = new System.Drawing.Size(546, 50);
-            this.editBox1.TabIndex = 102;
+            this.editBox1.TabIndex = 3;
             // 
             // displayBox2
             // 
@@ -193,7 +198,7 @@
             this.displayBox2.Location = new System.Drawing.Point(126, 95);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(546, 23);
-            this.displayBox2.TabIndex = 103;
+            this.displayBox2.TabIndex = 4;
             // 
             // displayBox3
             // 
@@ -203,7 +208,7 @@
             this.displayBox3.Location = new System.Drawing.Point(126, 122);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(120, 23);
-            this.displayBox3.TabIndex = 104;
+            this.displayBox3.TabIndex = 5;
             // 
             // displayBox4
             // 
@@ -213,7 +218,7 @@
             this.displayBox4.Location = new System.Drawing.Point(126, 149);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(60, 23);
-            this.displayBox4.TabIndex = 105;
+            this.displayBox4.TabIndex = 7;
             // 
             // dateBox1
             // 
@@ -223,7 +228,7 @@
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(110, 23);
-            this.dateBox1.TabIndex = 106;
+            this.dateBox1.TabIndex = 9;
             // 
             // label7
             // 
@@ -242,7 +247,7 @@
             this.displayBox5.Location = new System.Drawing.Point(409, 13);
             this.displayBox5.Name = "displayBox5";
             this.displayBox5.Size = new System.Drawing.Size(71, 23);
-            this.displayBox5.TabIndex = 108;
+            this.displayBox5.TabIndex = 2;
             // 
             // label8
             // 
@@ -261,7 +266,7 @@
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.ReadOnly = true;
             this.dateBox2.Size = new System.Drawing.Size(110, 23);
-            this.dateBox2.TabIndex = 110;
+            this.dateBox2.TabIndex = 11;
             // 
             // label9
             // 
@@ -271,46 +276,6 @@
             this.label9.Size = new System.Drawing.Size(82, 23);
             this.label9.TabIndex = 111;
             this.label9.Text = "SMR";
-            // 
-            // txttpeuser1
-            // 
-            this.txttpeuser1.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "SMR", true));
-            this.txttpeuser1.DisplayBox1Binding = "";
-            this.txttpeuser1.DisplayBox2Binding = "";
-            this.txttpeuser1.Location = new System.Drawing.Point(370, 122);
-            this.txttpeuser1.Name = "txttpeuser1";
-            this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser1.TabIndex = 112;
-            // 
-            // txttpeuser2
-            // 
-            this.txttpeuser2.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "MRHandle", true));
-            this.txttpeuser2.DisplayBox1Binding = "";
-            this.txttpeuser2.DisplayBox2Binding = "";
-            this.txttpeuser2.Location = new System.Drawing.Point(370, 149);
-            this.txttpeuser2.Name = "txttpeuser2";
-            this.txttpeuser2.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser2.TabIndex = 113;
-            // 
-            // txttpeuser3
-            // 
-            this.txttpeuser3.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "POSMR", true));
-            this.txttpeuser3.DisplayBox1Binding = "";
-            this.txttpeuser3.DisplayBox2Binding = "";
-            this.txttpeuser3.Location = new System.Drawing.Point(370, 176);
-            this.txttpeuser3.Name = "txttpeuser3";
-            this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser3.TabIndex = 114;
-            // 
-            // txttpeuser4
-            // 
-            this.txttpeuser4.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "PoHandle", true));
-            this.txttpeuser4.DisplayBox1Binding = "";
-            this.txttpeuser4.DisplayBox2Binding = "";
-            this.txttpeuser4.Location = new System.Drawing.Point(370, 203);
-            this.txttpeuser4.Name = "txttpeuser4";
-            this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser4.TabIndex = 115;
             // 
             // label10
             // 
@@ -392,7 +357,7 @@
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.ReadOnly = true;
             this.dateBox3.Size = new System.Drawing.Size(110, 23);
-            this.dateBox3.TabIndex = 124;
+            this.dateBox3.TabIndex = 14;
             // 
             // dateBox4
             // 
@@ -402,7 +367,7 @@
             this.dateBox4.Name = "dateBox4";
             this.dateBox4.ReadOnly = true;
             this.dateBox4.Size = new System.Drawing.Size(110, 23);
-            this.dateBox4.TabIndex = 125;
+            this.dateBox4.TabIndex = 13;
             // 
             // editBox2
             // 
@@ -415,7 +380,7 @@
             this.editBox2.Name = "editBox2";
             this.editBox2.ReadOnly = true;
             this.editBox2.Size = new System.Drawing.Size(546, 50);
-            this.editBox2.TabIndex = 126;
+            this.editBox2.TabIndex = 15;
             // 
             // display_MRLastUpdate
             // 
@@ -424,7 +389,7 @@
             this.display_MRLastUpdate.Location = new System.Drawing.Point(126, 345);
             this.display_MRLastUpdate.Name = "display_MRLastUpdate";
             this.display_MRLastUpdate.Size = new System.Drawing.Size(205, 23);
-            this.display_MRLastUpdate.TabIndex = 128;
+            this.display_MRLastUpdate.TabIndex = 17;
             // 
             // label18
             // 
@@ -479,7 +444,7 @@
             this.dateBox5.Name = "dateBox5";
             this.dateBox5.ReadOnly = true;
             this.dateBox5.Size = new System.Drawing.Size(110, 23);
-            this.dateBox5.TabIndex = 134;
+            this.dateBox5.TabIndex = 18;
             // 
             // dateBox6
             // 
@@ -487,7 +452,7 @@
             this.dateBox6.Location = new System.Drawing.Point(126, 404);
             this.dateBox6.Name = "dateBox6";
             this.dateBox6.Size = new System.Drawing.Size(110, 23);
-            this.dateBox6.TabIndex = 135;
+            this.dateBox6.TabIndex = 19;
             // 
             // editBox3
             // 
@@ -500,17 +465,7 @@
             this.editBox3.Name = "editBox3";
             this.editBox3.ReadOnly = true;
             this.editBox3.Size = new System.Drawing.Size(546, 50);
-            this.editBox3.TabIndex = 136;
-            // 
-            // txtuser2
-            // 
-            this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "FtyHandle", true));
-            this.txtuser2.DisplayBox1Binding = "";
-            this.txtuser2.Location = new System.Drawing.Point(126, 488);
-            this.txtuser2.Name = "txtuser2";
-            this.txtuser2.Size = new System.Drawing.Size(302, 23);
-            this.txtuser2.TabIndex = 137;
-            this.txtuser2.TextBox1Binding = "";
+            this.editBox3.TabIndex = 21;
             // 
             // display_FtyLastDate
             // 
@@ -519,7 +474,7 @@
             this.display_FtyLastDate.Location = new System.Drawing.Point(126, 515);
             this.display_FtyLastDate.Name = "display_FtyLastDate";
             this.display_FtyLastDate.Size = new System.Drawing.Size(205, 23);
-            this.display_FtyLastDate.TabIndex = 138;
+            this.display_FtyLastDate.TabIndex = 23;
             // 
             // label23
             // 
@@ -536,7 +491,7 @@
             this.dateBox7.Location = new System.Drawing.Point(409, 404);
             this.dateBox7.Name = "dateBox7";
             this.dateBox7.Size = new System.Drawing.Size(110, 23);
-            this.dateBox7.TabIndex = 140;
+            this.dateBox7.TabIndex = 20;
             // 
             // shapeContainer1
             // 
@@ -551,7 +506,7 @@
             this.lineShape2,
             this.lineShape1});
             this.shapeContainer1.Size = new System.Drawing.Size(696, 594);
-            this.shapeContainer1.TabIndex = 141;
+            this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
             // lineShape6
@@ -616,7 +571,57 @@
             this.txttpeuser5.Location = new System.Drawing.Point(126, 318);
             this.txttpeuser5.Name = "txttpeuser5";
             this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser5.TabIndex = 142;
+            this.txttpeuser5.TabIndex = 16;
+            // 
+            // txtuser2
+            // 
+            this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "FtyHandle", true));
+            this.txtuser2.DisplayBox1Binding = "";
+            this.txtuser2.Location = new System.Drawing.Point(126, 488);
+            this.txtuser2.Name = "txtuser2";
+            this.txtuser2.Size = new System.Drawing.Size(302, 23);
+            this.txtuser2.TabIndex = 22;
+            this.txtuser2.TextBox1Binding = "";
+            // 
+            // txttpeuser4
+            // 
+            this.txttpeuser4.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "PoHandle", true));
+            this.txttpeuser4.DisplayBox1Binding = "";
+            this.txttpeuser4.DisplayBox2Binding = "";
+            this.txttpeuser4.Location = new System.Drawing.Point(370, 203);
+            this.txttpeuser4.Name = "txttpeuser4";
+            this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser4.TabIndex = 12;
+            // 
+            // txttpeuser3
+            // 
+            this.txttpeuser3.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "POSMR", true));
+            this.txttpeuser3.DisplayBox1Binding = "";
+            this.txttpeuser3.DisplayBox2Binding = "";
+            this.txttpeuser3.Location = new System.Drawing.Point(370, 176);
+            this.txttpeuser3.Name = "txttpeuser3";
+            this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser3.TabIndex = 10;
+            // 
+            // txttpeuser2
+            // 
+            this.txttpeuser2.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "MRHandle", true));
+            this.txttpeuser2.DisplayBox1Binding = "";
+            this.txttpeuser2.DisplayBox2Binding = "";
+            this.txttpeuser2.Location = new System.Drawing.Point(370, 149);
+            this.txttpeuser2.Name = "txttpeuser2";
+            this.txttpeuser2.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser2.TabIndex = 8;
+            // 
+            // txttpeuser1
+            // 
+            this.txttpeuser1.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "SMR", true));
+            this.txttpeuser1.DisplayBox1Binding = "";
+            this.txttpeuser1.DisplayBox2Binding = "";
+            this.txttpeuser1.Location = new System.Drawing.Point(370, 122);
+            this.txttpeuser1.Name = "txttpeuser1";
+            this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser1.TabIndex = 6;
             // 
             // P03_Detail
             // 

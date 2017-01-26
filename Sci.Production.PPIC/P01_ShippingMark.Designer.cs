@@ -49,16 +49,19 @@
             // 
             // edit
             // 
+            this.edit.TabIndex = 0;
             this.edit.Visible = false;
             // 
             // save
             // 
             this.save.Location = new System.Drawing.Point(699, 5);
+            this.save.TabIndex = 1;
             this.save.Visible = false;
             // 
             // undo
             // 
             this.undo.Location = new System.Drawing.Point(779, 5);
+            this.undo.TabIndex = 2;
             // 
             // editBox1
             // 
@@ -69,7 +72,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(285, 172);
-            this.editBox1.TabIndex = 94;
+            this.editBox1.TabIndex = 0;
             // 
             // label1
             // 
@@ -98,7 +101,7 @@
             this.editBox2.Multiline = true;
             this.editBox2.Name = "editBox2";
             this.editBox2.Size = new System.Drawing.Size(285, 172);
-            this.editBox2.TabIndex = 96;
+            this.editBox2.TabIndex = 2;
             // 
             // pictureBox1
             // 
@@ -127,7 +130,7 @@
             this.editBox3.Multiline = true;
             this.editBox3.Name = "editBox3";
             this.editBox3.Size = new System.Drawing.Size(285, 172);
-            this.editBox3.TabIndex = 101;
+            this.editBox3.TabIndex = 3;
             // 
             // label4
             // 
@@ -147,7 +150,7 @@
             this.editBox4.Multiline = true;
             this.editBox4.Name = "editBox4";
             this.editBox4.Size = new System.Drawing.Size(285, 172);
-            this.editBox4.TabIndex = 99;
+            this.editBox4.TabIndex = 1;
             // 
             // P01_ShippingMark
             // 

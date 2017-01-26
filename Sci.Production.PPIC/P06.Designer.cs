@@ -96,7 +96,7 @@
             this.button5.Location = new System.Drawing.Point(243, 73);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(80, 30);
-            this.button5.TabIndex = 15;
+            this.button5.TabIndex = 9;
             this.button5.Text = "Find Now";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -110,7 +110,7 @@
             this.textBox1.MaxLength = 13;
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(120, 23);
-            this.textBox1.TabIndex = 14;
+            this.textBox1.TabIndex = 8;
             // 
             // label3
             // 
@@ -126,7 +126,7 @@
             this.button4.Location = new System.Drawing.Point(702, 34);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(139, 30);
-            this.button4.TabIndex = 11;
+            this.button4.TabIndex = 7;
             this.button4.Text = "Quit without Save";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
@@ -136,7 +136,7 @@
             this.button3.Location = new System.Drawing.Point(702, 3);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(139, 30);
-            this.button3.TabIndex = 10;
+            this.button3.TabIndex = 6;
             this.button3.Text = "Save and Quit";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -146,7 +146,7 @@
             this.button2.Location = new System.Drawing.Point(602, 20);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 9;
+            this.button2.TabIndex = 5;
             this.button2.Text = "To Excel";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -156,7 +156,7 @@
             this.button1.Location = new System.Drawing.Point(509, 20);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 8;
+            this.button1.TabIndex = 4;
             this.button1.Text = "Query";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -167,7 +167,7 @@
             this.label1.Location = new System.Drawing.Point(4, 24);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(99, 23);
-            this.label1.TabIndex = 4;
+            this.label1.TabIndex = 10;
             this.label1.Text = "Exp P/out Date";
             // 
             // dateBox1
@@ -176,7 +176,7 @@
             this.dateBox1.Location = new System.Drawing.Point(107, 24);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 5;
+            this.dateBox1.TabIndex = 2;
             // 
             // label2
             // 
@@ -197,7 +197,7 @@
             this.txtdropdownlist1.Location = new System.Drawing.Point(329, 24);
             this.txtdropdownlist1.Name = "txtdropdownlist1";
             this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist1.TabIndex = 7;
+            this.txtdropdownlist1.TabIndex = 3;
             this.txtdropdownlist1.Type = "Fty_GMT_Simple";
             // 
             // shapeContainer1
@@ -208,7 +208,7 @@
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
             this.shapeContainer1.Size = new System.Drawing.Size(846, 108);
-            this.shapeContainer1.TabIndex = 12;
+            this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
             // lineShape1
@@ -268,6 +268,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "dateBox1";
+            this.DefaultControlForEdit = "dateBox1";
             this.EditMode = true;
             this.Name = "P06";
             this.Text = "P06. Shipment Schedule";

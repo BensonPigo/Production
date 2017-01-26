@@ -84,7 +84,7 @@
             this.dateRange1.Location = new System.Drawing.Point(87, 45);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 6;
+            this.dateRange1.TabIndex = 2;
             // 
             // comboBox1
             // 
@@ -95,7 +95,7 @@
             this.comboBox1.Location = new System.Drawing.Point(87, 78);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(144, 24);
-            this.comboBox1.TabIndex = 7;
+            this.comboBox1.TabIndex = 3;
             // 
             // numericBox1
             // 
@@ -115,8 +115,18 @@
             0,
             0});
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(46, 23);
-            this.numericBox1.TabIndex = 8;
+            this.numericBox1.TabIndex = 4;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // checkBox1
             // 
@@ -126,7 +136,7 @@
             this.checkBox1.Location = new System.Drawing.Point(13, 147);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(105, 21);
-            this.checkBox1.TabIndex = 9;
+            this.checkBox1.TabIndex = 5;
             this.checkBox1.Text = "It\'s a holiday";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
@@ -137,7 +147,7 @@
             this.button1.Location = new System.Drawing.Point(196, 164);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 10;
+            this.button1.TabIndex = 6;
             this.button1.Text = "OK";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -149,7 +159,7 @@
             this.button2.Location = new System.Drawing.Point(283, 164);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 11;
+            this.button2.TabIndex = 7;
             this.button2.Text = "Cancel";
             this.button2.UseVisualStyleBackColor = true;
             // 
@@ -173,7 +183,7 @@
             this.textBox1.MaxLength = 2;
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(40, 23);
-            this.textBox1.TabIndex = 4;
+            this.textBox1.TabIndex = 0;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
@@ -185,7 +195,7 @@
             this.textBox2.MaxLength = 2;
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(40, 23);
-            this.textBox2.TabIndex = 5;
+            this.textBox2.TabIndex = 1;
             this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
@@ -207,6 +217,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "textBox1";
             this.Name = "B07_BatchAdd";
             this.Text = " Batch Edit/Add";
             this.ResumeLayout(false);

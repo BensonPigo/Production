@@ -74,15 +74,29 @@
             // 
             this.btmcont.Location = new System.Drawing.Point(0, 374);
             this.btmcont.Size = new System.Drawing.Size(874, 42);
+            this.btmcont.TabIndex = 19;
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(781, 6);
+            this.undo.Location = new System.Drawing.Point(784, 5);
+            this.undo.Size = new System.Drawing.Size(80, 32);
+            this.undo.TabIndex = 3;
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(695, 6);
-            this.save.TabIndex = 0;
+            this.save.Location = new System.Drawing.Point(704, 5);
+            this.save.Size = new System.Drawing.Size(80, 32);
+            this.save.TabIndex = 2;
+            // 
+            // left
+            // 
+            this.left.Size = new System.Drawing.Size(80, 32);
+            this.left.TabIndex = 0;
+            // 
+            // right
+            // 
+            this.right.Size = new System.Drawing.Size(80, 32);
+            this.right.TabIndex = 1;
             // 
             // label1
             // 
@@ -196,7 +210,7 @@
             this.editBox1.Name = "editBox1";
             this.editBox1.ReadOnly = true;
             this.editBox1.Size = new System.Drawing.Size(573, 74);
-            this.editBox1.TabIndex = 106;
+            this.editBox1.TabIndex = 4;
             // 
             // displayBox1
             // 
@@ -206,7 +220,7 @@
             this.displayBox1.Location = new System.Drawing.Point(124, 123);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(100, 23);
-            this.displayBox1.TabIndex = 107;
+            this.displayBox1.TabIndex = 5;
             // 
             // numericBox1
             // 
@@ -226,8 +240,18 @@
             0,
             0});
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 1;
+            this.numericBox1.TabIndex = 6;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox2
             // 
@@ -242,8 +266,18 @@
             0,
             131072});
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 3;
+            this.numericBox2.TabIndex = 8;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox3
             // 
@@ -258,8 +292,18 @@
             0,
             131072});
             this.numericBox3.Name = "numericBox3";
+            this.numericBox3.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox3.Size = new System.Drawing.Size(100, 23);
-            this.numericBox3.TabIndex = 5;
+            this.numericBox3.TabIndex = 10;
+            this.numericBox3.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // dateBox1
             // 
@@ -267,7 +311,7 @@
             this.dateBox1.Location = new System.Drawing.Point(188, 243);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(110, 23);
-            this.dateBox1.TabIndex = 7;
+            this.dateBox1.TabIndex = 12;
             // 
             // dateBox2
             // 
@@ -275,7 +319,7 @@
             this.dateBox2.Location = new System.Drawing.Point(188, 273);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(110, 23);
-            this.dateBox2.TabIndex = 9;
+            this.dateBox2.TabIndex = 14;
             // 
             // comboBox1
             // 
@@ -287,7 +331,7 @@
             this.comboBox1.Location = new System.Drawing.Point(238, 303);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(198, 24);
-            this.comboBox1.TabIndex = 11;
+            this.comboBox1.TabIndex = 16;
             // 
             // label11
             // 
@@ -306,7 +350,7 @@
             this.displayBox2.Location = new System.Drawing.Point(221, 13);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(180, 23);
-            this.displayBox2.TabIndex = 115;
+            this.displayBox2.TabIndex = 1;
             // 
             // label12
             // 
@@ -328,7 +372,7 @@
             this.textBox2.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(200, 23);
-            this.textBox2.TabIndex = 117;
+            this.textBox2.TabIndex = 2;
             this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
             // 
             // label13
@@ -348,7 +392,7 @@
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.ReadOnly = true;
             this.dateBox3.Size = new System.Drawing.Size(110, 23);
-            this.dateBox3.TabIndex = 119;
+            this.dateBox3.TabIndex = 3;
             // 
             // label14
             // 
@@ -390,8 +434,18 @@
             0,
             131072});
             this.numericBox4.Name = "numericBox4";
+            this.numericBox4.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox4.Size = new System.Drawing.Size(100, 23);
-            this.numericBox4.TabIndex = 2;
+            this.numericBox4.TabIndex = 7;
+            this.numericBox4.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox5
             // 
@@ -406,8 +460,18 @@
             0,
             131072});
             this.numericBox5.Name = "numericBox5";
+            this.numericBox5.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox5.Size = new System.Drawing.Size(100, 23);
-            this.numericBox5.TabIndex = 4;
+            this.numericBox5.TabIndex = 9;
+            this.numericBox5.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox6
             // 
@@ -422,8 +486,18 @@
             0,
             131072});
             this.numericBox6.Name = "numericBox6";
+            this.numericBox6.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox6.Size = new System.Drawing.Size(100, 23);
-            this.numericBox6.TabIndex = 6;
+            this.numericBox6.TabIndex = 11;
+            this.numericBox6.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label17
             // 
@@ -460,7 +534,7 @@
             this.textBox3.Location = new System.Drawing.Point(510, 243);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(280, 23);
-            this.textBox3.TabIndex = 8;
+            this.textBox3.TabIndex = 13;
             // 
             // textBox5
             // 
@@ -471,7 +545,7 @@
             this.textBox5.Location = new System.Drawing.Point(505, 303);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(356, 23);
-            this.textBox5.TabIndex = 12;
+            this.textBox5.TabIndex = 17;
             // 
             // textBox6
             // 
@@ -482,7 +556,7 @@
             this.textBox6.Location = new System.Drawing.Point(348, 333);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(513, 23);
-            this.textBox6.TabIndex = 13;
+            this.textBox6.TabIndex = 18;
             // 
             // numericBox7
             // 
@@ -491,8 +565,18 @@
             this.numericBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox7.Location = new System.Drawing.Point(510, 273);
             this.numericBox7.Name = "numericBox7";
+            this.numericBox7.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox7.Size = new System.Drawing.Size(100, 23);
-            this.numericBox7.TabIndex = 10;
+            this.numericBox7.TabIndex = 15;
+            this.numericBox7.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // P09_InputData
             // 
@@ -535,6 +619,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "textBox1";
             this.Name = "P09_InputData";
             this.Text = "Replacement Report - Accessory";
             this.Controls.SetChildIndex(this.label1, 0);

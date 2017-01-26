@@ -82,7 +82,7 @@
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(838, 49);
-            this.panel3.TabIndex = 2;
+            this.panel3.TabIndex = 0;
             // 
             // textBox2
             // 
@@ -160,7 +160,7 @@
             this.panel4.Location = new System.Drawing.Point(10, 382);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(838, 45);
-            this.panel4.TabIndex = 3;
+            this.panel4.TabIndex = 1;
             // 
             // button3
             // 
@@ -232,6 +232,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "textBox1";
             this.Name = "P01_BatchShipmentFinished";
             this.Text = "Batch Shipment Finished";
             this.panel3.ResumeLayout(false);

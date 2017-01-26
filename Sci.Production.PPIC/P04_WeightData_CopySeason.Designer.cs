@@ -83,6 +83,7 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "textBox1";
             this.Name = "P04_WeightData_CopySeason";
             this.Text = "Copy Season";
             this.ResumeLayout(false);

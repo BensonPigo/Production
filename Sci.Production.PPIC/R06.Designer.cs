@@ -43,14 +43,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(424, 12);
+            this.print.TabIndex = 6;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(424, 48);
+            this.toexcel.TabIndex = 7;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(424, 84);
+            this.close.TabIndex = 8;
             // 
             // label1
             // 
@@ -84,7 +87,7 @@
             this.dateRange1.Location = new System.Drawing.Point(102, 12);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 101;
+            this.dateRange1.TabIndex = 0;
             // 
             // comboBox1
             // 
@@ -95,7 +98,7 @@
             this.comboBox1.Location = new System.Drawing.Point(102, 47);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(80, 24);
-            this.comboBox1.TabIndex = 104;
+            this.comboBox1.TabIndex = 1;
             // 
             // comboBox2
             // 
@@ -106,7 +109,7 @@
             this.comboBox2.Location = new System.Drawing.Point(102, 119);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(110, 24);
-            this.comboBox2.TabIndex = 105;
+            this.comboBox2.TabIndex = 3;
             // 
             // checkBox1
             // 
@@ -115,7 +118,7 @@
             this.checkBox1.Location = new System.Drawing.Point(13, 158);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(201, 21);
-            this.checkBox1.TabIndex = 109;
+            this.checkBox1.TabIndex = 4;
             this.checkBox1.Text = "Excluded Replacement Item";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -126,7 +129,7 @@
             this.checkBox2.Location = new System.Drawing.Point(13, 186);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(183, 21);
-            this.checkBox2.TabIndex = 110;
+            this.checkBox2.TabIndex = 5;
             this.checkBox2.Text = "PO# Material Completion";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
@@ -148,7 +151,7 @@
             this.comboBox3.Location = new System.Drawing.Point(102, 84);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(80, 24);
-            this.comboBox3.TabIndex = 112;
+            this.comboBox3.TabIndex = 2;
             // 
             // R06
             // 
@@ -163,7 +166,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.EditMode = true;
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R06";
             this.Text = "R06. Monthly Material Completion";

@@ -151,6 +151,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(711, 187);
+            this.gridicon.TabIndex = 18;
             // 
             // detailgridcont
             // 
@@ -158,15 +159,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(818, 490);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(812, 444);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(812, 40);
             // 
             // detail
             // 
@@ -180,6 +181,7 @@
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 452);
             this.detailbtm.Size = new System.Drawing.Size(818, 38);
+            this.detailbtm.TabIndex = 0;
             // 
             // browse
             // 
@@ -188,6 +190,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(826, 519);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label1
             // 
@@ -269,7 +275,7 @@
             this.displayBox1.Location = new System.Drawing.Point(124, 4);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 9;
+            this.displayBox1.TabIndex = 0;
             // 
             // textBox1
             // 
@@ -279,7 +285,7 @@
             this.textBox1.Location = new System.Drawing.Point(124, 31);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(120, 23);
-            this.textBox1.TabIndex = 0;
+            this.textBox1.TabIndex = 2;
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
@@ -290,7 +296,7 @@
             this.txttpeuser1.Location = new System.Drawing.Point(124, 58);
             this.txttpeuser1.Name = "txttpeuser1";
             this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser1.TabIndex = 11;
+            this.txttpeuser1.TabIndex = 6;
             // 
             // txttpeuser2
             // 
@@ -299,7 +305,7 @@
             this.txttpeuser2.Location = new System.Drawing.Point(124, 85);
             this.txttpeuser2.Name = "txttpeuser2";
             this.txttpeuser2.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser2.TabIndex = 12;
+            this.txttpeuser2.TabIndex = 8;
             // 
             // txtuser1
             // 
@@ -308,7 +314,7 @@
             this.txtuser1.Location = new System.Drawing.Point(124, 112);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(302, 23);
-            this.txtuser1.TabIndex = 1;
+            this.txtuser1.TabIndex = 10;
             this.txtuser1.TextBox1Binding = "";
             // 
             // txtuser2
@@ -318,7 +324,7 @@
             this.txtuser2.Location = new System.Drawing.Point(124, 139);
             this.txtuser2.Name = "txtuser2";
             this.txtuser2.Size = new System.Drawing.Size(302, 23);
-            this.txtuser2.TabIndex = 2;
+            this.txtuser2.TabIndex = 13;
             this.txtuser2.TextBox1Binding = "";
             // 
             // txttpeuser3
@@ -338,7 +344,7 @@
             this.displayBox2.Location = new System.Drawing.Point(124, 193);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(140, 23);
-            this.displayBox2.TabIndex = 16;
+            this.displayBox2.TabIndex = 17;
             // 
             // label9
             // 
@@ -366,7 +372,7 @@
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(110, 23);
-            this.dateBox1.TabIndex = 19;
+            this.dateBox1.TabIndex = 1;
             // 
             // displayBox3
             // 
@@ -376,7 +382,7 @@
             this.displayBox3.Location = new System.Drawing.Point(315, 31);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(73, 23);
-            this.displayBox3.TabIndex = 20;
+            this.displayBox3.TabIndex = 3;
             // 
             // label11
             // 
@@ -412,7 +418,7 @@
             this.displayBox4.Location = new System.Drawing.Point(504, 32);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(165, 23);
-            this.displayBox4.TabIndex = 24;
+            this.displayBox4.TabIndex = 4;
             // 
             // txttpeuser4
             // 
@@ -421,7 +427,7 @@
             this.txttpeuser4.Location = new System.Drawing.Point(504, 59);
             this.txttpeuser4.Name = "txttpeuser4";
             this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser4.TabIndex = 25;
+            this.txttpeuser4.TabIndex = 7;
             // 
             // txttpeuser5
             // 
@@ -430,7 +436,7 @@
             this.txttpeuser5.Location = new System.Drawing.Point(504, 86);
             this.txttpeuser5.Name = "txttpeuser5";
             this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser5.TabIndex = 26;
+            this.txttpeuser5.TabIndex = 9;
             // 
             // displayBox5
             // 
@@ -439,7 +445,7 @@
             this.displayBox5.Location = new System.Drawing.Point(428, 112);
             this.displayBox5.Name = "displayBox5";
             this.displayBox5.Size = new System.Drawing.Size(140, 23);
-            this.displayBox5.TabIndex = 27;
+            this.displayBox5.TabIndex = 11;
             // 
             // displayBox6
             // 
@@ -448,7 +454,7 @@
             this.displayBox6.Location = new System.Drawing.Point(428, 139);
             this.displayBox6.Name = "displayBox6";
             this.displayBox6.Size = new System.Drawing.Size(140, 23);
-            this.displayBox6.TabIndex = 28;
+            this.displayBox6.TabIndex = 14;
             // 
             // displayBox7
             // 
@@ -457,7 +463,7 @@
             this.displayBox7.Location = new System.Drawing.Point(428, 166);
             this.displayBox7.Name = "displayBox7";
             this.displayBox7.Size = new System.Drawing.Size(140, 23);
-            this.displayBox7.TabIndex = 29;
+            this.displayBox7.TabIndex = 16;
             // 
             // label14
             // 
@@ -481,7 +487,7 @@
             this.label15.Location = new System.Drawing.Point(740, 27);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(66, 23);
-            this.label15.TabIndex = 31;
+            this.label15.TabIndex = 5;
             this.label15.Text = "Junk";
             this.label15.TextStyle.BorderColor = System.Drawing.Color.Red;
             this.label15.TextStyle.Color = System.Drawing.Color.Red;
@@ -493,7 +499,7 @@
             this.button1.Location = new System.Drawing.Point(726, 115);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 32;
+            this.button1.TabIndex = 12;
             this.button1.Text = "Mail to";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -503,6 +509,8 @@
             this.ApvChkValue = "Checked";
             this.CheckChkValue = "New";
             this.ClientSize = new System.Drawing.Size(826, 552);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.DefaultDetailOrder = "Seq1,Seq2";
             this.DefaultOrder = "CDate,ID";
             this.GridAlias = "ReplacementReport_Detail";

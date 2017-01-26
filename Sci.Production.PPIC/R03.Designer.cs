@@ -71,16 +71,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(386, 12);
+            this.print.TabIndex = 24;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(386, 48);
-            this.toexcel.TabIndex = 23;
+            this.toexcel.TabIndex = 25;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(386, 84);
-            this.close.TabIndex = 24;
+            this.close.TabIndex = 26;
             // 
             // label1
             // 
@@ -223,7 +224,7 @@
             this.dateRange1.Location = new System.Drawing.Point(119, 11);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(227, 23);
-            this.dateRange1.TabIndex = 0;
+            this.dateRange1.TabIndex = 1;
             // 
             // dateRange2
             // 
@@ -231,7 +232,7 @@
             this.dateRange2.Location = new System.Drawing.Point(119, 39);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(227, 23);
-            this.dateRange2.TabIndex = 1;
+            this.dateRange2.TabIndex = 2;
             // 
             // dateRange3
             // 
@@ -239,7 +240,7 @@
             this.dateRange3.Location = new System.Drawing.Point(119, 67);
             this.dateRange3.Name = "dateRange3";
             this.dateRange3.Size = new System.Drawing.Size(227, 23);
-            this.dateRange3.TabIndex = 2;
+            this.dateRange3.TabIndex = 3;
             // 
             // dateRange4
             // 
@@ -247,7 +248,7 @@
             this.dateRange4.Location = new System.Drawing.Point(119, 95);
             this.dateRange4.Name = "dateRange4";
             this.dateRange4.Size = new System.Drawing.Size(227, 23);
-            this.dateRange4.TabIndex = 3;
+            this.dateRange4.TabIndex = 4;
             // 
             // dateRange5
             // 
@@ -255,7 +256,7 @@
             this.dateRange5.Location = new System.Drawing.Point(119, 123);
             this.dateRange5.Name = "dateRange5";
             this.dateRange5.Size = new System.Drawing.Size(227, 23);
-            this.dateRange5.TabIndex = 4;
+            this.dateRange5.TabIndex = 5;
             // 
             // dateRange6
             // 
@@ -263,7 +264,7 @@
             this.dateRange6.Location = new System.Drawing.Point(119, 151);
             this.dateRange6.Name = "dateRange6";
             this.dateRange6.Size = new System.Drawing.Size(227, 23);
-            this.dateRange6.TabIndex = 5;
+            this.dateRange6.TabIndex = 6;
             // 
             // comboBox1
             // 
@@ -274,7 +275,7 @@
             this.comboBox1.Location = new System.Drawing.Point(119, 290);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(227, 24);
-            this.comboBox1.TabIndex = 10;
+            this.comboBox1.TabIndex = 11;
             // 
             // comboBox2
             // 
@@ -285,7 +286,7 @@
             this.comboBox2.Location = new System.Drawing.Point(119, 318);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(66, 24);
-            this.comboBox2.TabIndex = 11;
+            this.comboBox2.TabIndex = 12;
             // 
             // comboBox3
             // 
@@ -296,7 +297,7 @@
             this.comboBox3.Location = new System.Drawing.Point(119, 346);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(66, 24);
-            this.comboBox3.TabIndex = 12;
+            this.comboBox3.TabIndex = 13;
             // 
             // comboBox4
             // 
@@ -307,7 +308,7 @@
             this.comboBox4.Location = new System.Drawing.Point(119, 402);
             this.comboBox4.Name = "comboBox4";
             this.comboBox4.Size = new System.Drawing.Size(165, 24);
-            this.comboBox4.TabIndex = 17;
+            this.comboBox4.TabIndex = 18;
             // 
             // checkBox1
             // 
@@ -316,7 +317,7 @@
             this.checkBox1.Location = new System.Drawing.Point(13, 430);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(161, 21);
-            this.checkBox1.TabIndex = 18;
+            this.checkBox1.TabIndex = 19;
             this.checkBox1.Text = "Include History Order";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -327,7 +328,7 @@
             this.checkBox2.Location = new System.Drawing.Point(13, 458);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(155, 21);
-            this.checkBox2.TabIndex = 19;
+            this.checkBox2.TabIndex = 20;
             this.checkBox2.Text = "Include Artwork data";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
@@ -338,7 +339,7 @@
             this.checkBox3.Location = new System.Drawing.Point(13, 486);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(252, 21);
-            this.checkBox3.TabIndex = 20;
+            this.checkBox3.TabIndex = 21;
             this.checkBox3.Text = "Include Artwork data -- Kind is \'PAP\'";
             this.checkBox3.UseVisualStyleBackColor = true;
             // 
@@ -349,7 +350,7 @@
             this.checkBox4.Location = new System.Drawing.Point(13, 514);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(286, 21);
-            this.checkBox4.TabIndex = 21;
+            this.checkBox4.TabIndex = 22;
             this.checkBox4.Text = "Seperate by < Qty b\'down by shipmode >";
             this.checkBox4.UseVisualStyleBackColor = true;
             // 
@@ -360,7 +361,7 @@
             this.checkBox5.Location = new System.Drawing.Point(13, 542);
             this.checkBox5.Name = "checkBox5";
             this.checkBox5.Size = new System.Drawing.Size(121, 21);
-            this.checkBox5.TabIndex = 22;
+            this.checkBox5.TabIndex = 23;
             this.checkBox5.Text = "List PO Combo";
             this.checkBox5.UseVisualStyleBackColor = true;
             // 
@@ -371,7 +372,7 @@
             this.checkBox6.Location = new System.Drawing.Point(119, 375);
             this.checkBox6.Name = "checkBox6";
             this.checkBox6.Size = new System.Drawing.Size(54, 21);
-            this.checkBox6.TabIndex = 13;
+            this.checkBox6.TabIndex = 14;
             this.checkBox6.Text = "Bulk";
             this.checkBox6.UseVisualStyleBackColor = true;
             // 
@@ -382,7 +383,7 @@
             this.checkBox7.Location = new System.Drawing.Point(180, 375);
             this.checkBox7.Name = "checkBox7";
             this.checkBox7.Size = new System.Drawing.Size(74, 21);
-            this.checkBox7.TabIndex = 14;
+            this.checkBox7.TabIndex = 15;
             this.checkBox7.Text = "Sample";
             this.checkBox7.UseVisualStyleBackColor = true;
             // 
@@ -393,7 +394,7 @@
             this.checkBox8.Location = new System.Drawing.Point(260, 375);
             this.checkBox8.Name = "checkBox8";
             this.checkBox8.Size = new System.Drawing.Size(77, 21);
-            this.checkBox8.TabIndex = 15;
+            this.checkBox8.TabIndex = 16;
             this.checkBox8.Text = "Material";
             this.checkBox8.UseVisualStyleBackColor = true;
             // 
@@ -404,7 +405,7 @@
             this.checkBox9.Location = new System.Drawing.Point(344, 375);
             this.checkBox9.Name = "checkBox9";
             this.checkBox9.Size = new System.Drawing.Size(82, 21);
-            this.checkBox9.TabIndex = 16;
+            this.checkBox9.TabIndex = 17;
             this.checkBox9.Text = "Forecast";
             this.checkBox9.UseVisualStyleBackColor = true;
             // 
@@ -416,7 +417,7 @@
             this.txtstyle1.Location = new System.Drawing.Point(119, 178);
             this.txtstyle1.Name = "txtstyle1";
             this.txtstyle1.Size = new System.Drawing.Size(186, 23);
-            this.txtstyle1.TabIndex = 109;
+            this.txtstyle1.TabIndex = 7;
             // 
             // txtseason1
             // 
@@ -426,7 +427,7 @@
             this.txtseason1.Location = new System.Drawing.Point(119, 207);
             this.txtseason1.Name = "txtseason1";
             this.txtseason1.Size = new System.Drawing.Size(98, 23);
-            this.txtseason1.TabIndex = 110;
+            this.txtseason1.TabIndex = 8;
             // 
             // txtcustcd1
             // 
@@ -436,7 +437,7 @@
             this.txtcustcd1.Location = new System.Drawing.Point(119, 261);
             this.txtcustcd1.Name = "txtcustcd1";
             this.txtcustcd1.Size = new System.Drawing.Size(186, 23);
-            this.txtcustcd1.TabIndex = 111;
+            this.txtcustcd1.TabIndex = 10;
             // 
             // txtbrand1
             // 
@@ -445,7 +446,7 @@
             this.txtbrand1.Location = new System.Drawing.Point(119, 235);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(98, 23);
-            this.txtbrand1.TabIndex = 112;
+            this.txtbrand1.TabIndex = 9;
             // 
             // R03
             // 
@@ -488,6 +489,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R03";
             this.Text = "R03. PPIC master list report";

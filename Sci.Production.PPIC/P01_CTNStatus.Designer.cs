@@ -90,14 +90,14 @@
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(780, 54);
-            this.panel3.TabIndex = 2;
+            this.panel3.TabIndex = 0;
             // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(645, 10);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(133, 30);
-            this.button1.TabIndex = 6;
+            this.button1.TabIndex = 3;
             this.button1.Text = "Recompute";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -111,7 +111,7 @@
             this.comboBox3.Location = new System.Drawing.Point(495, 13);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(118, 24);
-            this.comboBox3.TabIndex = 5;
+            this.comboBox3.TabIndex = 2;
             this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
             // 
             // label3
@@ -132,7 +132,7 @@
             this.comboBox2.Location = new System.Drawing.Point(327, 13);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(69, 24);
-            this.comboBox2.TabIndex = 3;
+            this.comboBox2.TabIndex = 1;
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // label2
@@ -153,7 +153,7 @@
             this.comboBox1.Location = new System.Drawing.Point(108, 13);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(139, 24);
-            this.comboBox1.TabIndex = 1;
+            this.comboBox1.TabIndex = 0;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // label1
@@ -239,10 +239,10 @@
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.grid2);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(772, 372);
+            this.tabPage2.Size = new System.Drawing.Size(772, 375);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "CTN# Last Status";
             // 
@@ -274,7 +274,7 @@
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(766, 366);
+            this.grid2.Size = new System.Drawing.Size(766, 369);
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
             // 
@@ -286,6 +286,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "comboBox1";
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P01_CTNStatus";
             this.Text = "Carton Status";

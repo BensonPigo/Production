@@ -57,14 +57,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(470, 12);
+            this.print.TabIndex = 12;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(470, 48);
+            this.toexcel.TabIndex = 13;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(470, 84);
+            this.close.TabIndex = 14;
             // 
             // label1
             // 
@@ -179,21 +182,21 @@
             this.dateRange1.Location = new System.Drawing.Point(129, 12);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 106;
+            this.dateRange1.TabIndex = 0;
             // 
             // dateRange2
             // 
             this.dateRange2.Location = new System.Drawing.Point(129, 48);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 107;
+            this.dateRange2.TabIndex = 1;
             // 
             // dateRange3
             // 
             this.dateRange3.Location = new System.Drawing.Point(129, 84);
             this.dateRange3.Name = "dateRange3";
             this.dateRange3.Size = new System.Drawing.Size(280, 23);
-            this.dateRange3.TabIndex = 108;
+            this.dateRange3.TabIndex = 2;
             // 
             // comboBox1
             // 
@@ -204,7 +207,7 @@
             this.comboBox1.Location = new System.Drawing.Point(129, 228);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(80, 24);
-            this.comboBox1.TabIndex = 112;
+            this.comboBox1.TabIndex = 6;
             // 
             // comboBox2
             // 
@@ -215,7 +218,7 @@
             this.comboBox2.Location = new System.Drawing.Point(129, 408);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(194, 24);
-            this.comboBox2.TabIndex = 113;
+            this.comboBox2.TabIndex = 11;
             // 
             // txtseason1
             // 
@@ -225,7 +228,7 @@
             this.txtseason1.Location = new System.Drawing.Point(129, 192);
             this.txtseason1.Name = "txtseason1";
             this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 111;
+            this.txtseason1.TabIndex = 5;
             // 
             // txtstyle1
             // 
@@ -235,7 +238,7 @@
             this.txtstyle1.Location = new System.Drawing.Point(129, 156);
             this.txtstyle1.Name = "txtstyle1";
             this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 110;
+            this.txtstyle1.TabIndex = 4;
             // 
             // txtbrand1
             // 
@@ -244,7 +247,7 @@
             this.txtbrand1.Location = new System.Drawing.Point(129, 120);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand1.TabIndex = 109;
+            this.txtbrand1.TabIndex = 3;
             // 
             // txttpeuser_canedit1
             // 
@@ -252,7 +255,7 @@
             this.txttpeuser_canedit1.Location = new System.Drawing.Point(129, 264);
             this.txttpeuser_canedit1.Name = "txttpeuser_canedit1";
             this.txttpeuser_canedit1.Size = new System.Drawing.Size(300, 23);
-            this.txttpeuser_canedit1.TabIndex = 114;
+            this.txttpeuser_canedit1.TabIndex = 7;
             this.txttpeuser_canedit1.TextBox1Binding = "";
             // 
             // txttpeuser_canedit2
@@ -261,7 +264,7 @@
             this.txttpeuser_canedit2.Location = new System.Drawing.Point(129, 300);
             this.txttpeuser_canedit2.Name = "txttpeuser_canedit2";
             this.txttpeuser_canedit2.Size = new System.Drawing.Size(300, 23);
-            this.txttpeuser_canedit2.TabIndex = 115;
+            this.txttpeuser_canedit2.TabIndex = 8;
             this.txttpeuser_canedit2.TextBox1Binding = "";
             // 
             // txttpeuser_canedit3
@@ -270,7 +273,7 @@
             this.txttpeuser_canedit3.Location = new System.Drawing.Point(129, 336);
             this.txttpeuser_canedit3.Name = "txttpeuser_canedit3";
             this.txttpeuser_canedit3.Size = new System.Drawing.Size(300, 23);
-            this.txttpeuser_canedit3.TabIndex = 116;
+            this.txttpeuser_canedit3.TabIndex = 9;
             this.txttpeuser_canedit3.TextBox1Binding = "";
             // 
             // txttpeuser_canedit4
@@ -279,7 +282,7 @@
             this.txttpeuser_canedit4.Location = new System.Drawing.Point(129, 372);
             this.txttpeuser_canedit4.Name = "txttpeuser_canedit4";
             this.txttpeuser_canedit4.Size = new System.Drawing.Size(300, 23);
-            this.txttpeuser_canedit4.TabIndex = 117;
+            this.txttpeuser_canedit4.TabIndex = 10;
             this.txttpeuser_canedit4.TextBox1Binding = "";
             // 
             // R02
@@ -309,7 +312,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.EditMode = true;
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R02";
             this.Text = "R02. Production Kits Report";

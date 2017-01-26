@@ -43,6 +43,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(675, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkBox1);
@@ -52,7 +56,12 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            
+            this.detailcont.Size = new System.Drawing.Size(675, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(675, 38);
+            // 
             // browse
             // 
             this.browse.Size = new System.Drawing.Size(675, 395);
@@ -136,6 +145,8 @@
             // B02
             // 
             this.ClientSize = new System.Drawing.Size(683, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox2";
             this.DefaultFilter = "Type = \'AL\'";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;

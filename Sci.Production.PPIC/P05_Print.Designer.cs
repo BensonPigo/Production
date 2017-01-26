@@ -35,14 +35,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(401, 12);
+            this.print.TabIndex = 1;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(401, 48);
+            this.toexcel.TabIndex = 2;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(401, 84);
+            this.close.TabIndex = 3;
             // 
             // label1
             // 
@@ -60,13 +63,15 @@
             this.dateRange1.Location = new System.Drawing.Point(102, 48);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 95;
+            this.dateRange1.TabIndex = 0;
             // 
             // P05_Print
             // 
             this.ClientSize = new System.Drawing.Size(493, 149);
             this.Controls.Add(this.dateRange1);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "P05_Print";
             this.Text = "Print";

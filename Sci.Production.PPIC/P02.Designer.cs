@@ -79,7 +79,7 @@
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(906, 40);
-            this.panel3.TabIndex = 3;
+            this.panel3.TabIndex = 1;
             // 
             // comboBox1
             // 
@@ -90,7 +90,7 @@
             this.comboBox1.Location = new System.Drawing.Point(738, 9);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(87, 24);
-            this.comboBox1.TabIndex = 1;
+            this.comboBox1.TabIndex = 2;
             this.comboBox1.SelectedValueChanged += new System.EventHandler(this.comboBox1_SelectedValueChanged);
             // 
             // label3
@@ -107,9 +107,8 @@
             this.dateBox2.Location = new System.Drawing.Point(425, 10);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(110, 23);
-            this.dateBox2.TabIndex = 0;
+            this.dateBox2.TabIndex = 1;
             this.dateBox2.TextChanged += new System.EventHandler(this.dateBox2_TextChanged);
-          //  this.dateBox2.Validated += new System.EventHandler(this.dateBox2_Validated);
             // 
             // label2
             // 
@@ -146,7 +145,7 @@
             this.panel4.Location = new System.Drawing.Point(5, 444);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(906, 46);
-            this.panel4.TabIndex = 4;
+            this.panel4.TabIndex = 2;
             // 
             // button2
             // 
@@ -211,6 +210,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "dateBox2";
+            this.DefaultControlForEdit = "dateBox2";
             this.EditMode = true;
             this.Name = "P02";
             this.Text = "P02. Comparison List for updated order";

@@ -59,6 +59,7 @@
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Size = new System.Drawing.Size(682, 357);
+            this.detailcont.TabIndex = 1;
             // 
             // detailbtm
             // 
@@ -71,6 +72,11 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(690, 424);
+            this.tabs.TabIndex = 0;
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label3
             // 
@@ -78,7 +84,7 @@
             this.label3.Location = new System.Drawing.Point(31, 40);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 0;
+            this.label3.TabIndex = 4;
             this.label3.Text = "ID";
             // 
             // label4
@@ -87,7 +93,7 @@
             this.label4.Location = new System.Drawing.Point(31, 80);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 1;
+            this.label4.TabIndex = 5;
             this.label4.Text = "Description";
             // 
             // label5
@@ -96,7 +102,7 @@
             this.label5.Location = new System.Drawing.Point(31, 120);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 2;
+            this.label5.TabIndex = 6;
             this.label5.Text = "CPU";
             // 
             // label6
@@ -105,7 +111,7 @@
             this.label6.Location = new System.Drawing.Point(31, 160);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 3;
+            this.label6.TabIndex = 7;
             this.label6.Text = "SMV";
             // 
             // displayBox1
@@ -116,7 +122,7 @@
             this.displayBox1.Location = new System.Drawing.Point(110, 40);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(110, 23);
-            this.displayBox1.TabIndex = 4;
+            this.displayBox1.TabIndex = 0;
             // 
             // displayBox2
             // 
@@ -126,7 +132,7 @@
             this.displayBox2.Location = new System.Drawing.Point(110, 80);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(380, 23);
-            this.displayBox2.TabIndex = 5;
+            this.displayBox2.TabIndex = 1;
             // 
             // numericBox1
             // 
@@ -136,8 +142,18 @@
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox1.Location = new System.Drawing.Point(110, 120);
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(60, 23);
-            this.numericBox1.TabIndex = 6;
+            this.numericBox1.TabIndex = 2;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox2
             // 
@@ -147,8 +163,18 @@
             this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numericBox2.Location = new System.Drawing.Point(110, 160);
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.Size = new System.Drawing.Size(60, 23);
-            this.numericBox2.TabIndex = 7;
+            this.numericBox2.TabIndex = 3;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // B05
             // 

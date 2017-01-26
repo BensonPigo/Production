@@ -41,14 +41,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(395, 12);
+            this.print.TabIndex = 4;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(395, 48);
+            this.toexcel.TabIndex = 5;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(395, 84);
+            this.close.TabIndex = 6;
             // 
             // label1
             // 
@@ -95,14 +98,14 @@
             this.comboBox1.Location = new System.Drawing.Point(99, 12);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(114, 24);
-            this.comboBox1.TabIndex = 98;
+            this.comboBox1.TabIndex = 0;
             // 
             // dateRange1
             // 
             this.dateRange1.Location = new System.Drawing.Point(99, 48);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 99;
+            this.dateRange1.TabIndex = 1;
             // 
             // comboBox2
             // 
@@ -113,7 +116,7 @@
             this.comboBox2.Location = new System.Drawing.Point(99, 84);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(72, 24);
-            this.comboBox2.TabIndex = 100;
+            this.comboBox2.TabIndex = 2;
             // 
             // comboBox3
             // 
@@ -124,7 +127,7 @@
             this.comboBox3.Location = new System.Drawing.Point(99, 120);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(72, 24);
-            this.comboBox3.TabIndex = 101;
+            this.comboBox3.TabIndex = 3;
             // 
             // R05
             // 
@@ -137,7 +140,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.EditMode = true;
+            this.DefaultControl = "comboBox1";
+            this.DefaultControlForEdit = "comboBox1";
             this.IsSupportToPrint = false;
             this.Name = "R05";
             this.Text = "R05. Allowance Consumption Report";

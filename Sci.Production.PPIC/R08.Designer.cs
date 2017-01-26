@@ -43,14 +43,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(403, 12);
+            this.print.TabIndex = 5;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(403, 48);
+            this.toexcel.TabIndex = 6;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(403, 84);
+            this.close.TabIndex = 7;
             // 
             // label1
             // 
@@ -94,7 +97,7 @@
             this.dateRange1.Location = new System.Drawing.Point(97, 12);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 98;
+            this.dateRange1.TabIndex = 0;
             // 
             // dateRange2
             // 
@@ -102,7 +105,7 @@
             this.dateRange2.Location = new System.Drawing.Point(97, 48);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 99;
+            this.dateRange2.TabIndex = 1;
             // 
             // comboBox1
             // 
@@ -113,7 +116,7 @@
             this.comboBox1.Location = new System.Drawing.Point(97, 84);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(66, 24);
-            this.comboBox1.TabIndex = 100;
+            this.comboBox1.TabIndex = 2;
             // 
             // comboBox2
             // 
@@ -124,7 +127,7 @@
             this.comboBox2.Location = new System.Drawing.Point(97, 158);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(112, 24);
-            this.comboBox2.TabIndex = 101;
+            this.comboBox2.TabIndex = 4;
             // 
             // label5
             // 
@@ -144,7 +147,7 @@
             this.comboBox3.Location = new System.Drawing.Point(97, 120);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(66, 24);
-            this.comboBox3.TabIndex = 103;
+            this.comboBox3.TabIndex = 3;
             // 
             // R08
             // 
@@ -159,7 +162,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.EditMode = true;
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R08";
             this.Text = "R08. Replacement Report List";

@@ -57,6 +57,7 @@
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Size = new System.Drawing.Size(681, 357);
+            this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
@@ -69,6 +70,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(689, 424);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label3
             // 
@@ -105,7 +110,7 @@
             this.displayBox1.Location = new System.Drawing.Point(108, 31);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(50, 23);
-            this.displayBox1.TabIndex = 4;
+            this.displayBox1.TabIndex = 0;
             // 
             // editBox1
             // 
@@ -116,7 +121,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(394, 50);
-            this.editBox1.TabIndex = 5;
+            this.editBox1.TabIndex = 1;
             // 
             // editBox2
             // 
@@ -127,7 +132,7 @@
             this.editBox2.Multiline = true;
             this.editBox2.Name = "editBox2";
             this.editBox2.Size = new System.Drawing.Size(394, 50);
-            this.editBox2.TabIndex = 6;
+            this.editBox2.TabIndex = 2;
             // 
             // checkBox1
             // 
@@ -137,7 +142,7 @@
             this.checkBox1.Location = new System.Drawing.Point(352, 31);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 7;
+            this.checkBox1.TabIndex = 3;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -164,6 +169,7 @@
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion

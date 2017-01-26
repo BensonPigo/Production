@@ -36,6 +36,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
             this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
             this.detailpanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -74,6 +75,18 @@
             // 
             this.detailgridcont.Size = new System.Drawing.Size(757, 249);
             // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
             // detail
             // 
             this.detail.Size = new System.Drawing.Size(757, 387);
@@ -84,11 +97,21 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
             this.detailbtm.Size = new System.Drawing.Size(757, 38);
+            this.detailbtm.TabIndex = 0;
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(757, 387);
             // 
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(765, 416);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label3
             // 
@@ -116,7 +139,7 @@
             this.displayBox1.Location = new System.Drawing.Point(90, 13);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(320, 23);
-            this.displayBox1.TabIndex = 3;
+            this.displayBox1.TabIndex = 0;
             // 
             // editBox1
             // 
@@ -127,7 +150,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(320, 50);
-            this.editBox1.TabIndex = 4;
+            this.editBox1.TabIndex = 1;
             // 
             // B08
             // 
@@ -153,6 +176,7 @@
             this.masterpanel.ResumeLayout(false);
             this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

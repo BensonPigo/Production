@@ -65,10 +65,12 @@
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Size = new System.Drawing.Size(679, 357);
+            this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
             this.detailbtm.Size = new System.Drawing.Size(679, 38);
+            this.detailbtm.TabIndex = 1;
             // 
             // browse
             // 
@@ -77,6 +79,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(687, 424);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label3
             // 
@@ -131,7 +137,7 @@
             this.displayBox1.Location = new System.Drawing.Point(112, 23);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(69, 23);
-            this.displayBox1.TabIndex = 5;
+            this.displayBox1.TabIndex = 0;
             // 
             // textBox1
             // 
@@ -141,7 +147,7 @@
             this.textBox1.Location = new System.Drawing.Point(112, 61);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(40, 23);
-            this.textBox1.TabIndex = 6;
+            this.textBox1.TabIndex = 1;
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // textBox2
@@ -152,7 +158,7 @@
             this.textBox2.Location = new System.Drawing.Point(112, 99);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(474, 23);
-            this.textBox2.TabIndex = 7;
+            this.textBox2.TabIndex = 2;
             // 
             // numericBox1
             // 
@@ -167,7 +173,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(40, 23);
-            this.numericBox1.TabIndex = 9;
+            this.numericBox1.TabIndex = 4;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -182,7 +188,7 @@
             this.checkBox1.Location = new System.Drawing.Point(313, 23);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 10;
+            this.checkBox1.TabIndex = 5;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -195,11 +201,13 @@
             this.txtCell1.Location = new System.Drawing.Point(112, 137);
             this.txtCell1.Name = "txtCell1";
             this.txtCell1.Size = new System.Drawing.Size(30, 23);
-            this.txtCell1.TabIndex = 11;
+            this.txtCell1.TabIndex = 3;
             // 
             // B06
             // 
             this.ClientSize = new System.Drawing.Size(687, 457);
+            this.DefaultControl = "displayBox1";
+            this.DefaultControlForEdit = "displayBox1";
             this.DefaultOrder = "ID";
             this.IsSupportPrint = false;
             this.Name = "B06";

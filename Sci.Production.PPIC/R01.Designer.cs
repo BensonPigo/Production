@@ -51,14 +51,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(394, 12);
+            this.print.TabIndex = 9;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(394, 48);
+            this.toexcel.TabIndex = 10;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(394, 84);
+            this.close.TabIndex = 11;
             // 
             // label1
             // 
@@ -141,7 +144,7 @@
             this.comboBox1.Location = new System.Drawing.Point(114, 12);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(72, 24);
-            this.comboBox1.TabIndex = 102;
+            this.comboBox1.TabIndex = 0;
             // 
             // comboBox2
             // 
@@ -152,7 +155,7 @@
             this.comboBox2.Location = new System.Drawing.Point(114, 48);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(72, 24);
-            this.comboBox2.TabIndex = 103;
+            this.comboBox2.TabIndex = 1;
             // 
             // textBox1
             // 
@@ -161,7 +164,7 @@
             this.textBox1.Location = new System.Drawing.Point(114, 84);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(41, 23);
-            this.textBox1.TabIndex = 104;
+            this.textBox1.TabIndex = 2;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             // 
             // label9
@@ -185,7 +188,7 @@
             this.textBox2.Location = new System.Drawing.Point(177, 84);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(41, 23);
-            this.textBox2.TabIndex = 106;
+            this.textBox2.TabIndex = 3;
             this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
             // 
             // dateBox1
@@ -193,14 +196,14 @@
             this.dateBox1.Location = new System.Drawing.Point(114, 120);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(104, 23);
-            this.dateBox1.TabIndex = 107;
+            this.dateBox1.TabIndex = 4;
             // 
             // dateBox2
             // 
             this.dateBox2.Location = new System.Drawing.Point(114, 156);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(104, 23);
-            this.dateBox2.TabIndex = 108;
+            this.dateBox2.TabIndex = 5;
             // 
             // dateRange1
             // 
@@ -208,7 +211,7 @@
             this.dateRange1.Location = new System.Drawing.Point(114, 192);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(234, 23);
-            this.dateRange1.TabIndex = 109;
+            this.dateRange1.TabIndex = 6;
             // 
             // dateRange2
             // 
@@ -216,7 +219,7 @@
             this.dateRange2.Location = new System.Drawing.Point(114, 228);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(234, 23);
-            this.dateRange2.TabIndex = 110;
+            this.dateRange2.TabIndex = 7;
             // 
             // txtbrand1
             // 
@@ -225,7 +228,7 @@
             this.txtbrand1.Location = new System.Drawing.Point(114, 264);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(85, 23);
-            this.txtbrand1.TabIndex = 111;
+            this.txtbrand1.TabIndex = 8;
             // 
             // R01
             // 
@@ -248,6 +251,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "comboBox1";
+            this.DefaultControlForEdit = "comboBox1";
             this.IsSupportToPrint = false;
             this.Name = "R01";
             this.Text = "R01. Sewing Line Schedule Report";

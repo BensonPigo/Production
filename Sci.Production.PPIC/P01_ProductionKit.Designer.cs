@@ -45,7 +45,9 @@
             // btmcont
             // 
             this.btmcont.Controls.Add(this.button1);
+            this.btmcont.Location = new System.Drawing.Point(0, 453);
             this.btmcont.Size = new System.Drawing.Size(908, 44);
+            this.btmcont.TabIndex = 5;
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
@@ -58,13 +60,34 @@
             this.gridcont.Location = new System.Drawing.Point(12, 43);
             this.gridcont.Size = new System.Drawing.Size(884, 404);
             // 
+            // append
+            // 
+            this.append.Location = new System.Drawing.Point(170, 5);
+            this.append.Size = new System.Drawing.Size(80, 34);
+            this.append.TabIndex = 2;
+            // 
+            // revise
+            // 
+            this.revise.Size = new System.Drawing.Size(80, 34);
+            this.revise.TabIndex = 1;
+            // 
+            // delete
+            // 
+            this.delete.Location = new System.Drawing.Point(10, 5);
+            this.delete.Size = new System.Drawing.Size(80, 34);
+            this.delete.TabIndex = 0;
+            // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(819, 8);
+            this.undo.Location = new System.Drawing.Point(818, 5);
+            this.undo.Size = new System.Drawing.Size(80, 34);
+            this.undo.TabIndex = 5;
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(733, 8);
+            this.save.Location = new System.Drawing.Point(738, 5);
+            this.save.Size = new System.Drawing.Size(80, 34);
+            this.save.TabIndex = 4;
             // 
             // label1
             // 
@@ -85,7 +108,7 @@
             this.comboBox1.Location = new System.Drawing.Point(70, 11);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(57, 24);
-            this.comboBox1.TabIndex = 99;
+            this.comboBox1.TabIndex = 0;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // label2
@@ -107,7 +130,7 @@
             this.comboBox2.Location = new System.Drawing.Point(228, 11);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(80, 24);
-            this.comboBox2.TabIndex = 101;
+            this.comboBox2.TabIndex = 1;
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // label3
@@ -129,7 +152,7 @@
             this.comboBox3.Location = new System.Drawing.Point(421, 11);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(80, 24);
-            this.comboBox3.TabIndex = 103;
+            this.comboBox3.TabIndex = 2;
             this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
             // 
             // checkBox1
@@ -140,7 +163,7 @@
             this.checkBox1.Location = new System.Drawing.Point(550, 11);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(130, 21);
-            this.checkBox1.TabIndex = 104;
+            this.checkBox1.TabIndex = 3;
             this.checkBox1.Text = "MR not send yet";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
@@ -153,7 +176,7 @@
             this.checkBox2.Location = new System.Drawing.Point(702, 11);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(156, 21);
-            this.checkBox2.TabIndex = 105;
+            this.checkBox2.TabIndex = 4;
             this.checkBox2.Text = "Factory not received";
             this.checkBox2.UseVisualStyleBackColor = true;
             this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
@@ -164,7 +187,7 @@
             this.button1.Location = new System.Drawing.Point(276, 8);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(105, 30);
-            this.button1.TabIndex = 95;
+            this.button1.TabIndex = 3;
             this.button1.Text = "View Detail";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -180,6 +203,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "comboBox1";
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.KeyField1 = "StyleUkey";
             this.Name = "P01_ProductionKit";

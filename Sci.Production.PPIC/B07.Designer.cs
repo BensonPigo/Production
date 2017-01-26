@@ -71,10 +71,12 @@
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Size = new System.Drawing.Size(685, 357);
+            this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
             this.detailbtm.Size = new System.Drawing.Size(685, 38);
+            this.detailbtm.TabIndex = 1;
             // 
             // browse
             // 
@@ -83,6 +85,10 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(693, 424);
+            // 
+            // editby
+            // 
+            this.editby.TabIndex = 1;
             // 
             // label3
             // 
@@ -146,7 +152,7 @@
             this.displayBox1.Location = new System.Drawing.Point(130, 30);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(60, 23);
-            this.displayBox1.TabIndex = 6;
+            this.displayBox1.TabIndex = 0;
             // 
             // dateBox1
             // 
@@ -154,7 +160,7 @@
             this.dateBox1.Location = new System.Drawing.Point(130, 65);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 7;
+            this.dateBox1.TabIndex = 1;
             // 
             // displayBox2
             // 
@@ -163,7 +169,7 @@
             this.displayBox2.Location = new System.Drawing.Point(130, 100);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(94, 23);
-            this.displayBox2.TabIndex = 8;
+            this.displayBox2.TabIndex = 2;
             // 
             // numericBox1
             // 
@@ -179,8 +185,18 @@
             65536});
             this.numericBox1.MaxLength = 4;
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(45, 23);
-            this.numericBox1.TabIndex = 10;
+            this.numericBox1.TabIndex = 4;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // textBox1
             // 
@@ -190,7 +206,7 @@
             this.textBox1.Location = new System.Drawing.Point(130, 205);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(318, 23);
-            this.textBox1.TabIndex = 11;
+            this.textBox1.TabIndex = 5;
             // 
             // checkBox1
             // 
@@ -200,7 +216,7 @@
             this.checkBox1.Location = new System.Drawing.Point(302, 65);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(74, 21);
-            this.checkBox1.TabIndex = 12;
+            this.checkBox1.TabIndex = 6;
             this.checkBox1.Text = "Holiday";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -211,7 +227,7 @@
             this.button1.Location = new System.Drawing.Point(534, 26);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(96, 30);
-            this.button1.TabIndex = 13;
+            this.button1.TabIndex = 7;
             this.button1.Text = "Batch Edit";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -225,7 +241,7 @@
             this.txtsewingline1.Location = new System.Drawing.Point(130, 135);
             this.txtsewingline1.Name = "txtsewingline1";
             this.txtsewingline1.Size = new System.Drawing.Size(60, 23);
-            this.txtsewingline1.TabIndex = 9;
+            this.txtsewingline1.TabIndex = 3;
             // 
             // B07
             // 

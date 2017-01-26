@@ -39,14 +39,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(401, 12);
+            this.print.TabIndex = 3;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(401, 48);
+            this.toexcel.TabIndex = 4;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(401, 84);
+            this.close.TabIndex = 5;
             // 
             // label1
             // 
@@ -63,7 +66,7 @@
             this.dateRange1.Location = new System.Drawing.Point(106, 22);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 95;
+            this.dateRange1.TabIndex = 0;
             // 
             // dateRange2
             // 
@@ -71,7 +74,7 @@
             this.dateRange2.Location = new System.Drawing.Point(106, 58);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 97;
+            this.dateRange2.TabIndex = 1;
             // 
             // label2
             // 
@@ -100,7 +103,7 @@
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
             this.txtbrand1.Size = new System.Drawing.Size(85, 23);
-            this.txtbrand1.TabIndex = 99;
+            this.txtbrand1.TabIndex = 2;
             // 
             // P06_Print
             // 
@@ -111,6 +114,8 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.dateRange1);
             this.Controls.Add(this.label1);
+            this.DefaultControl = "dateRange1";
+            this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "P06_Print";
             this.Text = "Print";

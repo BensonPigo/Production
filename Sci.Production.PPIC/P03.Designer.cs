@@ -99,7 +99,7 @@
             this.button5.Location = new System.Drawing.Point(808, 51);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(95, 30);
-            this.button5.TabIndex = 11;
+            this.button5.TabIndex = 8;
             this.button5.Text = "View Detail";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -109,7 +109,7 @@
             this.button2.Location = new System.Drawing.Point(282, 51);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(131, 30);
-            this.button2.TabIndex = 9;
+            this.button2.TabIndex = 7;
             this.button2.Text = "Batch update";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -120,7 +120,7 @@
             this.dateBox2.Location = new System.Drawing.Point(141, 55);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(110, 23);
-            this.dateBox2.TabIndex = 8;
+            this.dateBox2.TabIndex = 6;
             // 
             // label4
             // 
@@ -136,7 +136,7 @@
             this.button1.Location = new System.Drawing.Point(823, 9);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 6;
+            this.button1.TabIndex = 5;
             this.button1.Text = "Query";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -147,7 +147,7 @@
             this.dateBox1.Location = new System.Drawing.Point(509, 13);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(110, 23);
-            this.dateBox1.TabIndex = 5;
+            this.dateBox1.TabIndex = 4;
             // 
             // label3
             // 
@@ -185,7 +185,7 @@
             this.textBox1.Location = new System.Drawing.Point(73, 13);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(140, 23);
-            this.textBox1.TabIndex = 1;
+            this.textBox1.TabIndex = 2;
             // 
             // label1
             // 
@@ -193,7 +193,7 @@
             this.label1.Location = new System.Drawing.Point(8, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(61, 23);
-            this.label1.TabIndex = 0;
+            this.label1.TabIndex = 8;
             this.label1.Text = "Style No.";
             // 
             // shapeContainer1
@@ -204,7 +204,7 @@
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
             this.shapeContainer1.Size = new System.Drawing.Size(924, 88);
-            this.shapeContainer1.TabIndex = 10;
+            this.shapeContainer1.TabIndex = 1;
             this.shapeContainer1.TabStop = false;
             // 
             // lineShape1
@@ -289,6 +289,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.Name = "P03";
             this.Text = "P03. Production Kits confirm";
             this.Controls.SetChildIndex(this.panel1, 0);
