@@ -19,6 +19,7 @@ namespace Sci.Production.Class
             base.OnPopUp(e);
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from dbo.MDivision", "8", this.Text, false, ",");
+            item.Size = new System.Drawing.Size(300, 250);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
