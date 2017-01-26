@@ -100,7 +100,7 @@
             this.panelFTP.DrawBorder = true;
             this.panelFTP.Location = new System.Drawing.Point(12, 36);
             this.panelFTP.Name = "panelFTP";
-            this.panelFTP.Size = new System.Drawing.Size(710, 68);
+            this.panelFTP.Size = new System.Drawing.Size(712, 68);
             this.panelFTP.TabIndex = 1;
             // 
             // textImportDataFileName
@@ -227,7 +227,7 @@
             this.panelMail.DrawBorder = true;
             this.panelMail.Location = new System.Drawing.Point(12, 206);
             this.panelMail.Name = "panelMail";
-            this.panelMail.Size = new System.Drawing.Size(823, 191);
+            this.panelMail.Size = new System.Drawing.Size(825, 191);
             this.panelMail.TabIndex = 3;
             // 
             // label4
@@ -428,7 +428,7 @@
             this.panelPath.DrawBorder = true;
             this.panelPath.Location = new System.Drawing.Point(12, 110);
             this.panelPath.Name = "panelPath";
-            this.panelPath.Size = new System.Drawing.Size(710, 90);
+            this.panelPath.Size = new System.Drawing.Size(712, 90);
             this.panelPath.TabIndex = 2;
             // 
             // btnGetExportDataPath
@@ -554,7 +554,7 @@
             this.labelProgress});
             this.statusStrip.Location = new System.Drawing.Point(0, 410);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(844, 22);
+            this.statusStrip.Size = new System.Drawing.Size(846, 22);
             this.statusStrip.TabIndex = 8;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -576,7 +576,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(844, 432);
+            this.ClientSize = new System.Drawing.Size(846, 432);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.BtnTestMail);

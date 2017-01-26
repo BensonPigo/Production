@@ -16,6 +16,7 @@ using System.Net;
 using System.IO;
 using Sci;
 using System.Diagnostics;
+using System.Configuration;
 
 namespace Production.Daily
 {
@@ -138,6 +139,7 @@ namespace Production.Daily
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
+            DateTime Now = DateTime.Today;
             ClickExport();
         }
 
@@ -146,9 +148,15 @@ namespace Production.Daily
             DualResult result;
             result = transferPMS.Ftp_Ping(this.CurrentData["FtpIP"].ToString(), this.CurrentData["FtpID"].ToString(), this.CurrentData["FtpPwd"].ToString());
 
+            string rarFile =ConfigurationSettings.AppSettings["rarexefile"].ToString();
+           
             if (!result)
             {
                 ShowErr(result);
+            }
+            else if (!File.Exists(rarFile))
+            {
+                MyUtility.Msg.WarningBox("Win_RAR File does not exist.");
             }
             else
             {
@@ -351,6 +359,11 @@ namespace Production.Daily
             {
                 return new DualResult(false, "FTP Download failed!");
             };
+            string rarFile = ConfigurationSettings.AppSettings["rarexefile"].ToString();
+            if (!File.Exists(rarFile))
+            {                
+                return new DualResult(false, "Win_RAR File does not exist !");
+            }
             #endregion
             startDate = DateTime.Now;
 
@@ -359,21 +372,21 @@ namespace Production.Daily
 
             if (!result)
             {
-                ErrMail("Export", exportRegion);
+                ErrMail("Export", transferPMS.Regions_All); //exportRegion);
                 return result;
             }
             #endregion
 
-            endDate = DateTime.Now;
+            
 
             #region 開始執行轉入
             result = DailyImport(importRegion);
 
-            
+            endDate = DateTime.Now;
 
             if (!result) 
             {
-                ErrMail("Import", importRegion);
+                ErrMail("Import", transferPMS.Regions_All); //importRegion);
                 return result;             
             }
             #endregion
@@ -398,7 +411,14 @@ namespace Production.Daily
             }
             else
             {
-                transferDate = ((DateTime)orderComparisonList.Rows[0]["TransferDate"]).ToShortDateString();
+                if (MyUtility.Check.Empty(((DateTime)orderComparisonList.Rows[0]["TransferDate"]).ToShortDateString()))
+                {
+                    transferDate = "";
+                }
+                else
+                {
+                    transferDate = ((DateTime)orderComparisonList.Rows[0]["TransferDate"]).ToShortDateString();
+                }               
                 updateDate = ((DateTime)orderComparisonList.Rows[0]["UpdateDate"]).ToShortDateString();
             }
             #endregion
@@ -442,7 +462,7 @@ namespace Production.Daily
             return Ict.Result.True;
         }
 
-        void ErrMail(string Type , TransRegion Region)
+        void ErrMail(string Type, BindingList<TransRegion> Regions_All)
         {
             #region --export mail--
             string formatStr = @"Dear  All
@@ -456,7 +476,8 @@ Region      Succeeded       Message
 ***--------------------------------------------------------***
 ";
             string totalMsg = "";
-            string RegionStr = Region.Region;
+            TransRegion Region = Regions_All[0];
+            string RegionStr = Region.Region;            
             string Msg = "";//tfTrade.Regions_All[i].Message;
             bool success = Region.Succeeded;
             for (int k = 0; k < Region.Logs.Count; k++)
