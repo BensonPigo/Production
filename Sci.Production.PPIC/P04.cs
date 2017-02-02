@@ -226,8 +226,9 @@ namespace Sci.Production.PPIC
         private void textBox6_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item;
-            string sqlCmd = "select distinct ID from Season where Junk = 0";
+            string sqlCmd = "select distinct ID from Season where Junk = 0 order by ID desc";
             item = new Sci.Win.Tools.SelectItem(sqlCmd, "11", this.Text);
+            item.Width = 300;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             textBox6.Text = item.GetSelectedString();
