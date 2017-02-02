@@ -66,7 +66,8 @@ where sd.ID = '{0}'", masterID);
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             string sqlCmd = string.Format("select ID,MockupID,StyleID,SeasonID,BrandID from MockupOrder where Junk = 0 and FTYGroup = '{0}'", Sci.Env.User.Factory);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "13,15,15,10,8", dr["OrderID"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,13,15,5,10", dr["OrderID"].ToString(), "ID,MockupID,Style,Season,Brand");
+                            item.Size = new System.Drawing.Size(700, 600);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             e.EditingControl.Text = item.GetSelectedString();
