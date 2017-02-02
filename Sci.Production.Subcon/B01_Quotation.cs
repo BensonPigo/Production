@@ -88,8 +88,7 @@ namespace Sci.Production.Subcon
         //修改前檢查
         protected override bool ClickEditBefore()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["Status"].ToString() == "Approved")
+            if (CurrentMaintain["Status"].ToString() == "Approved")
             {
                 MyUtility.Msg.WarningBox("Record is Approved, can't modify!");
                 return false;
@@ -100,8 +99,7 @@ namespace Sci.Production.Subcon
         //刪除前檢查
         protected override bool ClickDeleteBefore()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["Status"].ToString() == "Approved")
+            if (CurrentMaintain["Status"].ToString() == "Approved")
             {
                 MyUtility.Msg.WarningBox("Record is Approved, can't delete!");
                 return false;

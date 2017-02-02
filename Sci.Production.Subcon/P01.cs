@@ -62,7 +62,6 @@ namespace Sci.Production.Subcon
         // delete前檢查 CurrentMaintain["id"]的FarmOut_Detail/FarmIn_Detail有data則不能刪除
         protected override bool ClickDeleteBefore()
         {
-            //DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());//此寫法的dr=CurrentMaintain
             if (CurrentMaintain["Status"].ToString() != "New")
             {
                 MyUtility.Msg.WarningBox("Data is approved or closed, can't delete.", "Warning");
@@ -95,10 +94,9 @@ namespace Sci.Production.Subcon
         protected override bool ClickEditBefore()
         {
             //!EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["Status"].ToString() != "New")
+            if (CurrentMaintain["Status"].ToString() != "New")
             {
-                var frm = new Sci.Production.PublicForm.EditRemark("artworkpo", "remark", dr);
+                var frm = new Sci.Production.PublicForm.EditRemark("artworkpo", "remark", CurrentMaintain);
                 frm.ShowDialog(this);
                 this.RenewData();
                 return false;

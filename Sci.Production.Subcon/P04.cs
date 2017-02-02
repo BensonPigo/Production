@@ -65,8 +65,7 @@ namespace Sci.Production.Subcon
         // delete前檢查
         protected override bool ClickDeleteBefore()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["Status"].ToString() == "Confirmed")
+            if (CurrentMaintain["Status"].ToString() == "Confirmed")
             {
                 MyUtility.Msg.WarningBox("Data is Confirmed, can't be deleted.", "Warning");
                 return false;
@@ -79,10 +78,9 @@ namespace Sci.Production.Subcon
         protected override bool ClickEditBefore()
         {
             //!EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString() == "Confirmed")
+            if (CurrentMaintain["status"].ToString() == "Confirmed")
             {
-                var frm = new Sci.Production.PublicForm.EditRemark("FarmIn", "remark", dr);
+                var frm = new Sci.Production.PublicForm.EditRemark("FarmIn", "remark", CurrentMaintain);
                 frm.ShowDialog(this);
          
                 this.RenewData();

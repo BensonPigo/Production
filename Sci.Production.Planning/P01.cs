@@ -334,8 +334,7 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
 
         private void button_batchApprove_Click(object sender, EventArgs e)
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            var frm = new Sci.Production.Planning.P01_BatchApprove(dr["ID"].ToString());
+            var frm = new Sci.Production.Planning.P01_BatchApprove(CurrentMaintain["ID"].ToString());
             frm.ShowDialog(this);
             this.RenewData();
         }

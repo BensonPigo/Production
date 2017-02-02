@@ -207,39 +207,35 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
         // edit前檢查
         protected override bool ClickEditBefore()
         {
-
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["Status"].ToString().ToUpper() == "JUNKED")
+            if (CurrentMaintain["Status"].ToString().ToUpper() == "JUNKED")
             {
                 MyUtility.Msg.WarningBox("This record is Junked, can't edit!!");
                 return false;
             }
-           
 
-
-            if (dr["Status"].ToString().ToUpper() == "CONFIRMED")
+            if (CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("This record is confirmed, can't edit!!");
                 return false;
             }
 
-            if (!PublicPrg.Prgs.GetAuthority(dr["HANDLE"].ToString()))
+            if (!PublicPrg.Prgs.GetAuthority(CurrentMaintain["HANDLE"].ToString()))
             {
                 MyUtility.Msg.WarningBox("You don't have permission to modify!!");
                 return false;
             }
 
-            if (dr["status"].ToString().ToUpper() == "SENT")
+            if (CurrentMaintain["status"].ToString().ToUpper() == "SENT")
             {
-                var frm = new P36_ModifyAfterSent(dr);
+                var frm = new P36_ModifyAfterSent(CurrentMaintain);
                 frm.ShowDialog(this);
                 this.RenewData();
                 return false;
             }
 
-            if (dr["status"].ToString().ToUpper() == "RECEIVED")
+            if (CurrentMaintain["status"].ToString().ToUpper() == "RECEIVED")
             {
-                var frm = new P36_ModifyAfterSent(dr);
+                var frm = new P36_ModifyAfterSent(CurrentMaintain);
                 frm.ShowDialog(this);
                 this.RenewData();
                 return false;

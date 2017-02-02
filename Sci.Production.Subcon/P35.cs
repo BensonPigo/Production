@@ -75,8 +75,7 @@ namespace Sci.Production.Subcon
         // delete前檢查
         protected override bool ClickDeleteBefore()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["Status"].ToString().ToUpper() == "APPROVED")
+            if (CurrentMaintain["Status"].ToString().ToUpper() == "APPROVED")
             {
                 MyUtility.Msg.WarningBox("Data is approved, can't delete.", "Warning");
                 return false;
@@ -87,10 +86,9 @@ namespace Sci.Production.Subcon
         // edit前檢查
         protected override bool ClickEditBefore()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString() == "Approved")
+            if (CurrentMaintain["status"].ToString() == "Approved")
             {
-                var frm = new Sci.Production.PublicForm.EditRemark("Localap", "remark", dr);
+                var frm = new Sci.Production.PublicForm.EditRemark("Localap", "remark", CurrentMaintain);
                 frm.ShowDialog(this);
                 this.RenewData();
                 return false;

@@ -74,8 +74,7 @@ namespace Sci.Production.Subcon
         // delete前檢查
         protected override bool ClickDeleteBefore()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() == "APPROVED")
+            if (CurrentMaintain["status"].ToString().ToUpper() == "APPROVED")
             {
                 MyUtility.Msg.WarningBox("Data is approved, can't delete.", "Warning");
                 return false;
@@ -83,7 +82,7 @@ namespace Sci.Production.Subcon
 
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
             sp1.ParameterName = "@id";
-            sp1.Value = dr["id"].ToString();
+            sp1.Value = CurrentMaintain["id"].ToString();
 
             IList<System.Data.SqlClient.SqlParameter> paras = new List<System.Data.SqlClient.SqlParameter>();
             paras.Add(sp1);
@@ -110,10 +109,9 @@ namespace Sci.Production.Subcon
         protected override bool ClickEditBefore()
         {
             //!EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() == "APPROVED")
+            if (CurrentMaintain["status"].ToString().ToUpper() == "APPROVED")
             {
-                var frm = new Sci.Production.PublicForm.EditRemark("Localpo", "remark", dr);
+                var frm = new Sci.Production.PublicForm.EditRemark("Localpo", "remark", CurrentMaintain);
                 frm.ShowDialog(this);
                 
                 this.RenewData();
