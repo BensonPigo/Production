@@ -297,8 +297,8 @@ when matched then
 		,t.EditName	= s.EditName
 		,t.EditDate = s.EditDate
 when not matched by target then
-insert (name,AddName,AddDate,EditName,EditDate)
-values (s.name,s.AddName,s.AddDate,s.EditName,s.EditDate);
+insert (type,id,name,AddName,AddDate,EditName,EditDate)
+values (s.type,s.id,s.name,s.AddName,s.AddDate,s.EditName,s.EditDate);
 
 END
 
