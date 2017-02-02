@@ -79,6 +79,7 @@ namespace Sci.Production.Class
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
+            this.displayBox1.Text = item.GetSelecteds()[0]["Name"].ToString().TrimEnd();
         }
     }
 }
