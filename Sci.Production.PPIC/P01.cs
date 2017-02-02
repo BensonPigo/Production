@@ -739,9 +739,10 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         
         //CMPQ Sheet
         private void button13_Click(object sender, EventArgs e)
-        {
+        { 
+            this.ShowWaitMessage("Data processing, please wait ...");
             string poid = CurrentMaintain["POID"].ToString(); //MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", CurrentMaintain["POID"]) });
-
+           
                 System.Data.DataTable rpt3;
                 DualResult res = DBProxy.Current.Select("", @"
 declare @newLine varchar(10) = CHAR(13)+CHAR(10)
@@ -778,9 +779,9 @@ OUTER APPLY (SELECT CpuRate as otRate FROM OrderType ot WHERE ot.BrandID = o.Bra
 outer apply (select iif(isnull(pgRate,0) > isnull(otRate,0), pgRate, iif(otRate > 1, otRate, 1)) as Rate) r
 where o.Junk = 0 and o.POID= @POID order by o.ID
 ", new List<SqlParameter> { new SqlParameter("@ID", CurrentMaintain["ID"]), new SqlParameter("@POID", poid) }, out rpt3);
-
+                
                 if (!res) return;
-
+                
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_CMPQ.xltx");
 
                 sxrc sxr = new sxrc(xltPath);
@@ -836,7 +837,7 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
                     sxr.dicDatas.Add(sxr._v + "userid" + sIdx, UserName);
 
                 }
-
+                this.HideWaitMessage();
                 sxr.Save();
             }
         void SetColumn1toText(sxrc.xltRptTable tbl)
