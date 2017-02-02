@@ -67,7 +67,7 @@ namespace Sci.Production.Warehouse
                                             where a.Poid = '{0}'
                                             and a.Seq1 = '{1}'
                                             and a.Seq2 = '{2}' 
-                                            and MDivisionPoDetailUkey is not null  --避免下面Relations發生問題
+                                            --and MDivisionPoDetailUkey is not null  --避免下面Relations發生問題
                                             and MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
                                             and StockType <> 'O'  --C倉不用算
                                             order by a.dyelot,a.roll,a.stocktype"
