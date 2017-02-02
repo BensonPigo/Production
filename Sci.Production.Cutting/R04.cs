@@ -340,7 +340,7 @@ select
 
 from WorkOrder wo
 	 left join CuttingOutput_Detail COD on wo.UKey = COD.WorkOrderUKey
-	 left Join CuttingOutput CO on CO.ID = COD.ID and CO.Status = 'Confirmed'
+	 left Join CuttingOutput CO on CO.ID = COD.ID and CO.Status != 'New'
 	 Inner Join Cutting C on C.ID = wo.ID
 outer apply(
 	select AC= (
