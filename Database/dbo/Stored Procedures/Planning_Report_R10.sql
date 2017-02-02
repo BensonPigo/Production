@@ -1,6 +1,6 @@
 ﻿
 
-CREATE PROCEDURE [dbo].[Planning_Report_R10]
+Alter PROCEDURE [dbo].[Planning_Report_R10]
 	@ReportType int = 1 --1:整個月 2:半個月 --3:Production status 2017.01.04 Serena電話確認後，表示不用做了
 	,@BrandID varchar(20)
 	,@M varchar(20)
@@ -35,7 +35,7 @@ BEGIN
 	,Capacity * fw.HalfMonth2 / (fw.HalfMonth1 + fw.HalfMonth2) as HalfCapacity2
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	into #tmpFactory From Factory
-	inner join Country on Factory.CountryID = Country.ID
+	inner join Country on Factory.CountryID = Country.ID 
 	left join Factory_TMS on Factory.ID = Factory_Tms.ID
 		And ((@ReportType = 1 and Factory_Tms.Year = @Year)
 		or (@ReportType = 2 and DATEFROMPARTS(Factory_Tms.Year,Factory_Tms.Month,8) between @date_s and @date_e))
@@ -59,7 +59,7 @@ BEGIN
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,OrderDate
 	into #tmpOrder1 from Orders
-	inner join Factory on Orders.FactoryID = Factory.ID
+	inner join Factory on Orders.FactoryID = Factory.ID and orders.MDivisionID=Factory.MDivisionID
 	left Join Order_TmsCost on @ArtWorkType != 'CPU' and Orders.ID = Order_TmsCost.ID And Order_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = Order_TmsCost.ArtworkTypeID
 	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Order_TmsCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Order_TmsCost.Qty, Order_TmsCost.Tms )) as cTms) amt
@@ -72,7 +72,7 @@ BEGIN
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s and @date_e)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
-	And (@M = '' or Orders.MDivisionID = @M)
+	And (@M = '' or Factory.MDivisionID = @M)
 	And (@Fty = '' or Orders.FactoryID = @Fty)
 	And Orders.Junk = 0 and Orders.Qty > 0  And Orders.Category in ('B','S') 
 	AND @HasOrders = 1
@@ -100,7 +100,7 @@ BEGIN
 	,Orders.BuyerDelivery
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	into #tmpFactoryOrder1 from Orders
-	inner join Factory on Orders.FactoryID = Factory.ID
+	inner join Factory on Orders.FactoryID = Factory.ID and orders.MDivisionID=factory.MDivisionID
 	left join Style on Style.Ukey = Orders.StyleUkey
 	left join Style_TmsCost on @ArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = Style_TmsCost.ArtworkTypeID
@@ -141,7 +141,7 @@ BEGIN
 	,Orders.BuyerDelivery
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	into #tmpForecast1 from Orders
-	left join Factory on Factory.ID = Orders.FactoryID
+	left join Factory on Factory.ID = Orders.FactoryID and orders.MDivisionID=factory.MDivisionID
 	left join Style on Style.Ukey = Orders.StyleUkey
 	left join Style_TmsCost on @ArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = Style_TmsCost.ArtworkTypeID
@@ -198,10 +198,13 @@ BEGIN
 	--Report1 : 每個月區間為某一整年----------------------------------------------------------------------------------------------------------------------------------
 
 		--By 所有 CountryID, MDisision, FactoryID
-		select CountryID,MDivisionID,FactoryID from #tmpFinal group by CountryID,MDivisionID,FactoryID
+		select CountryID,MDivisionID,FactoryID from #tmpFinal
+		where (@M = '' or MDivisionID = @M) and (@Fty ='' OR FactoryID=@Fty)
+		 group by CountryID,MDivisionID,FactoryID
 
 		--(A)+(B)By MDivisionID
 		select CountryID, CountryName, MDivisionID, #tmpFactory.Month, sum(Capacity) as Capacity from #tmpFactory 
+		where @M = '' or MDivisionID = @M
 		group by CountryID, CountryName, MDivisionID,#tmpFactory.Month
 	
 		--(C)By Factory
@@ -216,20 +219,24 @@ BEGIN
 			from Factory_Tms where YEAR = @Year and ArtworkTypeID = iif(@ArtWorkType = 'CPU', 'SEWING', @ArtWorkType)
 			GROUP BY ID,ArtworkTypeID
 		) c on a.FactoryID = c.ID
-				
+		where (@M = '' or MDivisionID = @M)and (@Fty ='' OR FactoryID=@Fty)
+
 		--(D)By non-sister
 		Select CountryID, MDivisionID, FactoryID, OrderYYMM as Month, SUM(FactoryOrderCapacity) as Capacity  from #tmpFactoryOrder1
+		where (@M = '' or MDivisionID = @M)and (@Fty ='' OR FactoryID=@Fty)
 		Group by CountryID,MDivisionID,FactoryID,OrderYYMM
 
 		--For Forecast shared
-		select CountryID, MDivisionID, FactoryID, OrderYYMM as Month, sum(ForecastCapacity) as Capacity from #tmpForecast1 group by CountryID,MDivisionID,FactoryID,OrderYYMM
+		select CountryID, MDivisionID, FactoryID, OrderYYMM as Month, sum(ForecastCapacity) as Capacity from #tmpForecast1
+		where (@M = '' or MDivisionID = @M)and (@Fty ='' OR FactoryID=@Fty)
+		group by CountryID,MDivisionID,FactoryID,OrderYYMM
 		
 		--For Output, 及Output後面的Max日期
 		select CountryID, MDivisionID, FactoryID, max(substring(CONVERT(char(10), SewingYYMM_Ori, 111),6,5)) as SewingYYMM, SewingYYMM as Month, sum(Capacity) as Capacity from (
 			Select CountryID, MDivisionID, FactoryID, SewingYYMM_Ori, SewingYYMM, SewCapacity as Capacity from #tmpOrder2
 			union Select CountryID, MDivisionID, FactoryID, SewingYYMM_Ori, SewingYYMM, SewCapacity as Capacity from #tmpFactoryOrder2
 		) c
-		where SewingYYMM_Ori is not null
+		where SewingYYMM_Ori is not null and (@M = '' or MDivisionID = @M)and (@Fty ='' OR FactoryID=@Fty)
 		group by CountryID,MDivisionID,FactoryID,SewingYYMM
 
 		--Select CountryID, MDivisionID, FactoryID, SewingYYMM_Ori, SewingYYMM as Month, sum(SewCapacity) as Capacity from #tmpOrder2 group by CountryID,MDivisionID,FactoryID,SewingYYMM_Ori,SewingYYMM
@@ -242,11 +249,14 @@ BEGIN
 	--Report2 : 每半個月，區間為設定的年月往後推半年----------------------------------------------------------------------------------------------------------------------------------
 		
 		--By 所有 CountryID, MDisision, FactoryID
-		select CountryID,MDivisionID,FactoryID from #tmpFinal group by CountryID,MDivisionID,FactoryID
+		select CountryID,MDivisionID,FactoryID from #tmpFinal
+		 where (@M = '' or MDivisionID = @M)and (@Fty ='' OR FactoryID=@Fty)
+		 group by CountryID,MDivisionID,FactoryID
 
 		--(K) By Factory 最細的上下半月Capacity
 		select CountryID, CountryName, MDivisionID, FactoryID, MONTH, sum(HalfCapacity1) as Capacity1, sum(HalfCapacity2) as Capacity2
 		from #tmpFactory 
+		where (@M = '' or MDivisionID = @M)and (@Fty ='' OR FactoryID=@Fty)
 		group by CountryID,CountryName,MDivisionID,FactoryID,MONTH
 
 		
@@ -259,6 +269,7 @@ BEGIN
 		left join (
 			select FactoryID,substring(OrderYYMM,1,6) as OrderYYMM, OrderLoadingCPU from #tmpFinal where RIGHT(OrderYYMM,1) = 2
 		) c on a.FactoryID = c.FactoryID and a.OrderYYMM = c.OrderYYMM
+		where (@M = '' or MDivisionID = @M)and (@Fty ='' OR a.FactoryID=@Fty)
 		group by a.CountryID,MDivisionID,a.OrderYYMM,a.FactoryID
 
 		--For Forecast shared
@@ -269,7 +280,8 @@ BEGIN
 		) b on a.FactoryID = b.FactoryID and a.OrderYYMM = b.OrderYYMM
 		left join (
 			select FactoryID,substring(OrderYYMM,1,6) as OrderYYMM, ForecastCapacity from #tmpForecast1 where RIGHT(OrderYYMM,1) = 2
-		) c on a.FactoryID = c.FactoryID and a.OrderYYMM = c.OrderYYMM		
+		) c on a.FactoryID = c.FactoryID and a.OrderYYMM = c.OrderYYMM	
+		where (@M = '' or MDivisionID = @M)and (@Fty ='' OR a.FactoryID=@Fty)	
 		group by a.CountryID,MDivisionID,a.OrderYYMM,a.FactoryID
 
 	End
