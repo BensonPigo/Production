@@ -91,6 +91,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(646, 79);
+            this.gridicon.TabIndex = 7;
             // 
             // refresh
             // 
@@ -139,7 +140,7 @@
             this.label1.Location = new System.Drawing.Point(6, 4);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(60, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 3;
             this.label1.Text = "SP#";
             // 
             // label2
@@ -148,7 +149,7 @@
             this.label2.Location = new System.Drawing.Point(6, 31);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(60, 23);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 4;
             this.label2.Text = "Style";
             // 
             // label3
@@ -157,7 +158,7 @@
             this.label3.Location = new System.Drawing.Point(6, 58);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(60, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 5;
             this.label3.Text = "Season";
             // 
             // label4
@@ -166,7 +167,7 @@
             this.label4.Location = new System.Drawing.Point(6, 85);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(60, 23);
-            this.label4.TabIndex = 4;
+            this.label4.TabIndex = 6;
             this.label4.Text = "Remark";
             // 
             // textBox1
@@ -177,7 +178,7 @@
             this.textBox1.Location = new System.Drawing.Point(69, 4);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(120, 23);
-            this.textBox1.TabIndex = 5;
+            this.textBox1.TabIndex = 0;
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // displayBox1
@@ -207,7 +208,7 @@
             this.textBox2.Location = new System.Drawing.Point(70, 85);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(384, 23);
-            this.textBox2.TabIndex = 8;
+            this.textBox2.TabIndex = 2;
             // 
             // label5
             // 
@@ -233,7 +234,7 @@
             this.dateBox1.Location = new System.Drawing.Point(413, 4);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 11;
+            this.dateBox1.TabIndex = 1;
             // 
             // displayBox3
             // 
@@ -249,6 +250,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(761, 449);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.DefaultDetailOrder = "Article";
             this.DefaultOrder = "ID";
             this.GridAlias = "OverrunGMT_Detail";

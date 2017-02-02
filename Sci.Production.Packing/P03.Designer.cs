@@ -181,6 +181,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(889, 185);
+            this.gridicon.TabIndex = 8;
             // 
             // refresh
             // 
@@ -229,7 +230,7 @@
             this.label1.Location = new System.Drawing.Point(4, 4);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 7;
             this.label1.Text = "No.";
             // 
             // label7
@@ -493,7 +494,7 @@
             this.dateBox3.Location = new System.Drawing.Point(651, 85);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 41;
+            this.dateBox3.TabIndex = 5;
             // 
             // dateBox4
             // 
@@ -501,7 +502,7 @@
             this.dateBox4.Location = new System.Drawing.Point(651, 112);
             this.dateBox4.Name = "dateBox4";
             this.dateBox4.Size = new System.Drawing.Size(130, 23);
-            this.dateBox4.TabIndex = 42;
+            this.dateBox4.TabIndex = 6;
             // 
             // editBox1
             // 
@@ -512,7 +513,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(415, 50);
-            this.editBox1.TabIndex = 46;
+            this.editBox1.TabIndex = 4;
             // 
             // label23
             // 
@@ -608,7 +609,7 @@
             this.txtshipmode1.Location = new System.Drawing.Point(83, 111);
             this.txtshipmode1.Name = "txtshipmode1";
             this.txtshipmode1.Size = new System.Drawing.Size(121, 24);
-            this.txtshipmode1.TabIndex = 25;
+            this.txtshipmode1.TabIndex = 3;
             this.txtshipmode1.UseFunction = "ORDER";
             this.txtshipmode1.Validated += new System.EventHandler(this.txtshipmode1_Validated);
             // 
@@ -647,7 +648,7 @@
             this.txtbrand1.Location = new System.Drawing.Point(83, 31);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(78, 23);
-            this.txtbrand1.TabIndex = 58;
+            this.txtbrand1.TabIndex = 0;
             this.txtbrand1.Validated += new System.EventHandler(this.txtbrand1_Validated);
             // 
             // txtcustcd1
@@ -659,7 +660,7 @@
             this.txtcustcd1.Location = new System.Drawing.Point(83, 58);
             this.txtcustcd1.Name = "txtcustcd1";
             this.txtcustcd1.Size = new System.Drawing.Size(125, 23);
-            this.txtcustcd1.TabIndex = 59;
+            this.txtcustcd1.TabIndex = 1;
             this.txtcustcd1.Validated += new System.EventHandler(this.txtcustcd1_Validated);
             // 
             // txtcountry1
@@ -669,7 +670,7 @@
             this.txtcountry1.Location = new System.Drawing.Point(83, 85);
             this.txtcountry1.Name = "txtcountry1";
             this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 60;
+            this.txtcountry1.TabIndex = 2;
             this.txtcountry1.TextBox1Binding = "";
             this.txtcountry1.Validated += new System.EventHandler(this.txtcountry1_Validated);
             // 
@@ -677,6 +678,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1000, 618);
+            this.DefaultControl = "txtbrand1";
+            this.DefaultControlForEdit = "txtbrand1";
             this.DefaultDetailOrder = "Seq";
             this.DefaultOrder = "FactoryID,ID";
             this.GridAlias = "PackingList_Detail";

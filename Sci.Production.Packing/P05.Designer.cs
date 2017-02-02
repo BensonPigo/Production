@@ -86,7 +86,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 142);
+            this.masterpanel.Size = new System.Drawing.Size(850, 142);
             this.masterpanel.Title = "3";
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
@@ -114,11 +114,12 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 142);
-            this.detailpanel.Size = new System.Drawing.Size(892, 207);
+            this.detailpanel.Size = new System.Drawing.Size(850, 303);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(745, 107);
+            this.gridicon.TabIndex = 10;
             // 
             // refresh
             // 
@@ -126,7 +127,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 207);
+            this.detailgridcont.Size = new System.Drawing.Size(850, 303);
             // 
             // detail2
             // 
@@ -142,16 +143,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(850, 483);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(850, 445);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 445);
+            this.detailbtm.Size = new System.Drawing.Size(850, 38);
             // 
             // browse
             // 
@@ -167,7 +168,7 @@
             this.label1.Location = new System.Drawing.Point(4, 5);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(60, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 6;
             this.label1.Text = "No.";
             // 
             // label3
@@ -176,7 +177,7 @@
             this.label3.Location = new System.Drawing.Point(4, 59);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(60, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 8;
             this.label3.Text = "Ship Qty";
             // 
             // label4
@@ -185,7 +186,7 @@
             this.label4.Location = new System.Drawing.Point(4, 86);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(60, 23);
-            this.label4.TabIndex = 4;
+            this.label4.TabIndex = 9;
             this.label4.Text = "Remark";
             // 
             // displayBox1
@@ -237,7 +238,7 @@
             this.label5.Location = new System.Drawing.Point(4, 32);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(60, 23);
-            this.label5.TabIndex = 9;
+            this.label5.TabIndex = 7;
             this.label5.Text = "Brand";
             // 
             // label6
@@ -424,6 +425,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(858, 545);
+            this.DefaultControl = "txtbrand1";
+            this.DefaultControlForEdit = "txtbrand1";
             this.DefaultDetailOrder = "OrderID";
             this.DefaultOrder = "ID";
             this.GridAlias = "PackingList_Detail";

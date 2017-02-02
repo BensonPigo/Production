@@ -217,7 +217,7 @@
             this.label1.Location = new System.Drawing.Point(3, 4);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 8;
             this.label1.Text = "No.";
             // 
             // label2
@@ -226,7 +226,7 @@
             this.label2.Location = new System.Drawing.Point(3, 31);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 9;
             this.label2.Text = "Brand";
             // 
             // label3
@@ -235,7 +235,7 @@
             this.label3.Location = new System.Drawing.Point(3, 58);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 10;
             this.label3.Text = "CustCD";
             // 
             // label4
@@ -244,7 +244,7 @@
             this.label4.Location = new System.Drawing.Point(3, 85);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 4;
+            this.label4.TabIndex = 11;
             this.label4.Text = "Destination";
             // 
             // label5
@@ -253,7 +253,7 @@
             this.label5.Location = new System.Drawing.Point(3, 112);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 5;
+            this.label5.TabIndex = 12;
             this.label5.Text = "Ttl Ctn";
             // 
             // label6
@@ -262,7 +262,7 @@
             this.label6.Location = new System.Drawing.Point(3, 139);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 6;
+            this.label6.TabIndex = 13;
             this.label6.Text = "Remark";
             // 
             // displayBox1
@@ -283,7 +283,7 @@
             this.txtbrand1.Location = new System.Drawing.Point(81, 31);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand1.TabIndex = 8;
+            this.txtbrand1.TabIndex = 1;
             // 
             // txtcustcd1
             // 
@@ -294,7 +294,7 @@
             this.txtcustcd1.Location = new System.Drawing.Point(81, 58);
             this.txtcustcd1.Name = "txtcustcd1";
             this.txtcustcd1.Size = new System.Drawing.Size(125, 23);
-            this.txtcustcd1.TabIndex = 9;
+            this.txtcustcd1.TabIndex = 3;
             // 
             // txtcountry1
             // 
@@ -303,7 +303,7 @@
             this.txtcountry1.Location = new System.Drawing.Point(81, 85);
             this.txtcountry1.Name = "txtcountry1";
             this.txtcountry1.Size = new System.Drawing.Size(209, 22);
-            this.txtcountry1.TabIndex = 10;
+            this.txtcountry1.TabIndex = 4;
             this.txtcountry1.TextBox1Binding = "";
             // 
             // editBox1
@@ -315,7 +315,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(434, 45);
-            this.editBox1.TabIndex = 12;
+            this.editBox1.TabIndex = 7;
             // 
             // label7
             // 
@@ -372,7 +372,7 @@
             this.txtshipmode1.Location = new System.Drawing.Point(403, 29);
             this.txtshipmode1.Name = "txtshipmode1";
             this.txtshipmode1.Size = new System.Drawing.Size(121, 24);
-            this.txtshipmode1.TabIndex = 19;
+            this.txtshipmode1.TabIndex = 2;
             this.txtshipmode1.UseFunction = null;
             // 
             // dateBox1
@@ -381,7 +381,7 @@
             this.dateBox1.Location = new System.Drawing.Point(666, 85);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 20;
+            this.dateBox1.TabIndex = 5;
             // 
             // dateBox2
             // 
@@ -389,7 +389,7 @@
             this.dateBox2.Location = new System.Drawing.Point(666, 112);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 21;
+            this.dateBox2.TabIndex = 6;
             // 
             // label12
             // 
@@ -618,12 +618,14 @@
             this.txtfactory1.Location = new System.Drawing.Point(403, 4);
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 55;
+            this.txtfactory1.TabIndex = 0;
             // 
             // P04
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1000, 618);
+            this.DefaultControl = "txtfactory1";
+            this.DefaultControlForEdit = "txtfactory1";
             this.DefaultDetailOrder = "Seq";
             this.DefaultOrder = "ID";
             this.GridAlias = "PackingList_Detail";

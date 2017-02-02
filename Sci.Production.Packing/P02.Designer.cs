@@ -544,6 +544,8 @@
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(900, 550);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.DefaultOrder = "OrderID";
             this.GridAlias = "PackingGuide_Detail";
             this.GridNew = 0;
