@@ -72,7 +72,7 @@
             this.label3.Location = new System.Drawing.Point(47, 41);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 0;
+            this.label3.TabIndex = 3;
             this.label3.Text = "Code";
             // 
             // label4
@@ -81,7 +81,7 @@
             this.label4.Location = new System.Drawing.Point(47, 89);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 1;
+            this.label4.TabIndex = 4;
             this.label4.Text = "Description";
             // 
             // textBox1
@@ -92,7 +92,7 @@
             this.textBox1.Location = new System.Drawing.Point(126, 41);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(80, 23);
-            this.textBox1.TabIndex = 2;
+            this.textBox1.TabIndex = 0;
             // 
             // textBox2
             // 
@@ -103,7 +103,7 @@
             this.textBox2.Location = new System.Drawing.Point(126, 89);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(260, 23);
-            this.textBox2.TabIndex = 3;
+            this.textBox2.TabIndex = 1;
             // 
             // checkBox1
             // 
@@ -113,13 +113,15 @@
             this.checkBox1.Location = new System.Drawing.Point(325, 41);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 4;
+            this.checkBox1.TabIndex = 2;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(696, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.DefaultOrder = "ID";
             this.Name = "B01";
             this.Text = "B01. Clog Location Index";
