@@ -75,8 +75,11 @@ namespace Sci.Production.Planning
         {
             detailgridbs.Filter = "";
             base.OnDetailGridInsert(index);
-            CurrentDetailData["ukey"] = grid1.GetDataRow(grid1.GetSelectedRowIndex())["ukey"].ToString();
-            detailgridbs.Filter = "ukey=" + grid1.GetDataRow(grid1.GetSelectedRowIndex())["ukey"].ToString();
+            if (grid1.GetSelectedRowIndex() >= 0)
+            {
+                CurrentDetailData["ukey"] = grid1.GetDataRow(grid1.GetSelectedRowIndex())["ukey"].ToString();
+                detailgridbs.Filter = "ukey=" + grid1.GetDataRow(grid1.GetSelectedRowIndex())["ukey"].ToString();
+            }
         }
 
         // Detail Grid 設定
