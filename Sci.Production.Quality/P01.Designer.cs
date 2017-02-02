@@ -39,9 +39,7 @@
             this.label9 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
             this.label13 = new Sci.Win.UI.Label();
-            this.wk_box = new Sci.Win.UI.TextBox();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.style_box = new Sci.Win.UI.DisplayBox();
             this.season_box = new Sci.Win.UI.DisplayBox();
@@ -76,6 +74,8 @@
             this.modifyWeightTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modifyShadeBondToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modifyContinuityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.wk_box = new Sci.Win.UI.TextBox();
+            this.label12 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -93,6 +93,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.wk_box);
+            this.masterpanel.Controls.Add(this.label12);
             this.masterpanel.Controls.Add(this.seq1_box);
             this.masterpanel.Controls.Add(this.label14);
             this.masterpanel.Controls.Add(this.button1);
@@ -108,9 +110,7 @@
             this.masterpanel.Controls.Add(this.season_box);
             this.masterpanel.Controls.Add(this.style_box);
             this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.wk_box);
             this.masterpanel.Controls.Add(this.label13);
-            this.masterpanel.Controls.Add(this.label12);
             this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.label10);
             this.masterpanel.Controls.Add(this.label9);
@@ -134,9 +134,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label9, 0);
             this.masterpanel.Controls.SetChildIndex(this.label10, 0);
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
             this.masterpanel.Controls.SetChildIndex(this.label13, 0);
-            this.masterpanel.Controls.SetChildIndex(this.wk_box, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.style_box, 0);
             this.masterpanel.Controls.SetChildIndex(this.season_box, 0);
@@ -153,6 +151,8 @@
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label14, 0);
             this.masterpanel.Controls.SetChildIndex(this.seq1_box, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
+            this.masterpanel.Controls.SetChildIndex(this.wk_box, 0);
             // 
             // detailpanel
             // 
@@ -343,7 +343,7 @@
             // 
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(509, 125);
+            this.label10.Location = new System.Drawing.Point(509, 87);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(105, 23);
             this.label10.TabIndex = 10;
@@ -359,36 +359,15 @@
             this.label11.TabIndex = 11;
             this.label11.Text = "MTL Cmlpt(SP)";
             // 
-            // label12
-            // 
-            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(509, 88);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(105, 23);
-            this.label12.TabIndex = 12;
-            this.label12.Text = "Locate for WK#";
-            // 
             // label13
             // 
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(151, 162);
+            this.label13.Location = new System.Drawing.Point(392, 161);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(75, 23);
             this.label13.TabIndex = 13;
             this.label13.Text = "SEQ2";
-            // 
-            // wk_box
-            // 
-            this.wk_box.BackColor = System.Drawing.Color.White;
-            this.wk_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.wk_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.wk_box.IsSupportEditMode = false;
-            this.wk_box.Location = new System.Drawing.Point(617, 86);
-            this.wk_box.Name = "wk_box";
-            this.wk_box.Size = new System.Drawing.Size(130, 21);
-            this.wk_box.TabIndex = 4;
             // 
             // displayBox1
             // 
@@ -477,7 +456,7 @@
             this.seq2_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.seq2_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.seq2_box.IsSupportEditMode = false;
-            this.seq2_box.Location = new System.Drawing.Point(229, 162);
+            this.seq2_box.Location = new System.Drawing.Point(470, 161);
             this.seq2_box.Name = "seq2_box";
             this.seq2_box.Size = new System.Drawing.Size(33, 21);
             this.seq2_box.TabIndex = 2;
@@ -487,7 +466,7 @@
             this.remark_box.BackColor = System.Drawing.Color.White;
             this.remark_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.remark_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.remark_box.Location = new System.Drawing.Point(617, 123);
+            this.remark_box.Location = new System.Drawing.Point(617, 85);
             this.remark_box.Multiline = true;
             this.remark_box.Name = "remark_box";
             this.remark_box.Size = new System.Drawing.Size(209, 51);
@@ -516,9 +495,9 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.button1.Location = new System.Drawing.Point(280, 158);
+            this.button1.Location = new System.Drawing.Point(511, 159);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(64, 27);
+            this.button1.Size = new System.Drawing.Size(76, 27);
             this.button1.TabIndex = 3;
             this.button1.Text = "Find";
             this.button1.UseVisualStyleBackColor = true;
@@ -640,7 +619,7 @@
             this.seq1_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.seq1_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.seq1_box.IsSupportEditMode = false;
-            this.seq1_box.Location = new System.Drawing.Point(93, 162);
+            this.seq1_box.Location = new System.Drawing.Point(334, 161);
             this.seq1_box.Name = "seq1_box";
             this.seq1_box.Size = new System.Drawing.Size(49, 21);
             this.seq1_box.TabIndex = 1;
@@ -649,7 +628,7 @@
             // 
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(15, 162);
+            this.label14.Location = new System.Drawing.Point(256, 161);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(75, 23);
             this.label14.TabIndex = 28;
@@ -717,6 +696,27 @@
             this.modifyContinuityToolStripMenuItem.Text = "Modify Continuity";
             this.modifyContinuityToolStripMenuItem.Click += new System.EventHandler(this.modifyContinuityToolStripMenuItem_Click);
             // 
+            // wk_box
+            // 
+            this.wk_box.BackColor = System.Drawing.Color.White;
+            this.wk_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.wk_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.wk_box.IsSupportEditMode = false;
+            this.wk_box.Location = new System.Drawing.Point(123, 164);
+            this.wk_box.Name = "wk_box";
+            this.wk_box.Size = new System.Drawing.Size(130, 21);
+            this.wk_box.TabIndex = 29;
+            // 
+            // label12
+            // 
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label12.Lines = 0;
+            this.label12.Location = new System.Drawing.Point(15, 161);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(105, 23);
+            this.label12.TabIndex = 30;
+            this.label12.Text = "Locate for WK#";
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(912, 730);
@@ -768,9 +768,7 @@
         private Win.UI.DisplayBox season_box;
         private Win.UI.DisplayBox style_box;
         private Win.UI.DisplayBox displayBox1;
-        private Win.UI.TextBox wk_box;
         private Win.UI.Label label13;
-        private Win.UI.Label label12;
         private Win.UI.Label label11;
         private Win.UI.Label label10;
         private Win.UI.Label label9;
@@ -807,5 +805,7 @@
         private System.Windows.Forms.ToolStripMenuItem modifyWeightTestToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem modifyShadeBondToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem modifyContinuityToolStripMenuItem;
+        private Win.UI.TextBox wk_box;
+        private Win.UI.Label label12;
     }
 }
