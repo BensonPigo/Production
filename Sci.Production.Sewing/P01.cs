@@ -74,7 +74,7 @@ namespace Sci.Production.Sewing
 	            select 
                     '' as ID ,--sd.ID, 
                     sd.UKey as SewingOutput_DetailUkey, sd.OrderId, sd.ComboType,oq.Article,oq.SizeCode,oq.Qty as OrderQty,
-	            isnull((select QAQty from SewingOutput_Detail_Detail where SewingOutput_DetailUkey = sd.UKey and SizeCode = oq.SizeCode),0) as QAQty ,
+	            isnull((select QAQty from SewingOutput_Detail_Detail where SewingOutput_DetailUkey = sd.UKey and SizeCode = oq.SizeCode and orderid = sd.OrderId),0) as QAQty ,
 	            isnull(
 			            (
 				            select sum(QAQty) 
