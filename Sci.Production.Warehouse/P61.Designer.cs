@@ -191,7 +191,7 @@
             this.dateBox3.Location = new System.Drawing.Point(352, 13);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 1;
+            this.dateBox3.TabIndex = 0;
             // 
             // button5
             // 
@@ -200,7 +200,7 @@
             this.button5.Location = new System.Drawing.Point(939, 43);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(89, 31);
-            this.button5.TabIndex = 4;
+            this.button5.TabIndex = 2;
             this.button5.Text = "Import";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -283,7 +283,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(658, 51);
-            this.editBox1.TabIndex = 3;
+            this.editBox1.TabIndex = 1;
             // 
             // label2
             // 
@@ -308,8 +308,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "textBox3";
-            this.DefaultControlForEdit = "textBox3";
+            this.DefaultControl = "editBox1";
+            this.DefaultControlForEdit = "editBox1";
             this.DefaultDetailOrder = "poid,scirefno,sizespec";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;
