@@ -288,6 +288,7 @@
             // 
             // txtSeq1
             // 
+            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq1.Location = new System.Drawing.Point(130, 129);
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.seq1 = "";
@@ -299,8 +300,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1033, 577);
-            this.DefaultControl = "textBox3";
-            this.DefaultControlForEdit = "textBox3";
+            this.DefaultControl = "editBox1";
+            this.DefaultControlForEdit = "editBox1";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "Issuedate,ID";
             this.Grid2New = 0;
