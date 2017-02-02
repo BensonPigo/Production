@@ -397,7 +397,7 @@
             this.txtLocalSupp1.DisplayBox1Binding = "";
             this.txtLocalSupp1.Location = new System.Drawing.Point(134, 115);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
-            this.txtLocalSupp1.Size = new System.Drawing.Size(232, 23);
+            this.txtLocalSupp1.Size = new System.Drawing.Size(300, 23);
             this.txtLocalSupp1.TabIndex = 5;
             this.txtLocalSupp1.TextBox1Binding = "";
             // 
