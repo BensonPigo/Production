@@ -13,21 +13,36 @@ namespace Sci.Production.IE
 {
     public partial class P01_SelectOperationCode : Sci.Win.Subs.Base
     {
+    
         private DataTable gridData;
         public DataRow p01SelectOperationCode;
         public P01_SelectOperationCode()
         {
             InitializeComponent();
         }
-
+        
         protected override void OnFormLoaded()
         {
+            Ict.Win.DataGridViewGeneratorTextColumnSettings s1 = new DataGridViewGeneratorTextColumnSettings();
             base.OnFormLoaded();
             this.grid1.IsEditingReadOnly = true;
             this.grid1.DataSource = listControlBindingSource1;
 
+            s1.CellMouseDoubleClick += (s, e) => 
+            {
+                if ( e.Button == MouseButtons.Left)
+                {
+                    DataGridViewSelectedRowCollection selectRows = grid1.SelectedRows;
+                    foreach (DataGridViewRow datarow in selectRows)
+                    {
+                        p01SelectOperationCode = ((DataRowView)datarow.DataBoundItem).Row;
+                        DialogResult = System.Windows.Forms.DialogResult.Cancel;
+                    }
+                }
+            };
+
             Helper.Controls.Grid.Generator(this.grid1)
-                 .Text("ID", header: "ID", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("ID", header: "ID", width: Widths.AnsiChars(20), iseditingreadonly: true,settings: s1)
                  .Text("DescEN", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
                  .Numeric("SMV", header: "S.M.V",decimal_places:4, iseditingreadonly: true)
                  .Text("MachineTypeID", header: "Machine Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -51,6 +66,10 @@ namespace Sci.Production.IE
             {
                 filterCondition.Append(string.Format(" ID like '%{0}%' and", textBox1.Text.Trim()));
             }
+            if (textBox1.Text == "")
+            {
+                filterCondition.Append(string.Format("   "));
+            }
             if (!MyUtility.Check.Empty(numericBox1.Value))
             {
                 filterCondition.Append(string.Format(" SMV >= {0} and", numericBox1.Value.ToString().Trim()));
@@ -67,7 +86,7 @@ namespace Sci.Production.IE
             {
                 filterCondition.Append(string.Format(" DescEN like'%{0}%' and", textBox3.Text.Trim()));
             }
-
+            
             if (filterCondition.Length > 0)
             {
                 string filter = filterCondition.ToString().Substring(0, filterCondition.Length - 3);

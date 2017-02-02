@@ -119,6 +119,22 @@ order by td.Seq", masterID);
 
                             Sci.Production.IE.P01_SelectOperationCode callNextForm = new Sci.Production.IE.P01_SelectOperationCode();
                             DialogResult result = callNextForm.ShowDialog(this);
+                            if (result  == System.Windows.Forms.DialogResult.Cancel)
+                            {
+                                if (callNextForm.p01SelectOperationCode != null)
+                                {
+                                    dr["OperationID"] = callNextForm.p01SelectOperationCode["ID"].ToString();
+                                    dr["OperationDescEN"] = callNextForm.p01SelectOperationCode["DescEN"].ToString();
+                                    dr["MachineTypeID"] = callNextForm.p01SelectOperationCode["MachineTypeID"].ToString();
+                                    dr["Mold"] = callNextForm.p01SelectOperationCode["MoldID"].ToString();
+                                    dr["OperationMtlFactorID"] = callNextForm.p01SelectOperationCode["MtlFactorID"].ToString();
+                                    dr["SeamLength"] = callNextForm.p01SelectOperationCode["SeamLength"].ToString();
+                                    dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.p01SelectOperationCode["SMV"]) * 60;
+                                    dr["IETMSSMV"] = MyUtility.Convert.GetDecimal(callNextForm.p01SelectOperationCode["SMV"]);
+                                    dr["Frequency"] = 1;
+                                    dr.EndEdit();
+                                }
+                            }
                             if (result == System.Windows.Forms.DialogResult.OK)
                             {
                                 dr["OperationID"] = callNextForm.p01SelectOperationCode["ID"].ToString();
@@ -283,16 +299,19 @@ order by td.Seq", masterID);
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (dr.Table.Columns.IndexOf("DescEN").ToString() != "16") { dr.Table.Columns.Add("DescEN"); }
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["MachineTypeID"].ToString())
                     {
-                        dr["Mold"] = "";
-                        dr["DescEN"] = "";
                         if (!MyUtility.Check.Seek(string.Format("select ID,Description from MachineType where Junk = 0 and ID = '{0}'", e.FormattedValue.ToString())))
                         {
                             MyUtility.Msg.WarningBox(string.Format("< M/C: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["MachineTypeID"] = "";
                             e.Cancel = true;
                             return;
+                        }
+                        else
+                        {
+                            dr["MachineTypeID"] = e.FormattedValue.ToString();
                         }
                     }
                     
@@ -306,17 +325,20 @@ order by td.Seq", masterID);
                 if (this.EditMode)
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                    {
-                        if (e.RowIndex != -1)
+                    { 
+                        if (e.RowIndex != -1 )
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                            if (dr.Table.Columns.IndexOf("DescEN").ToString() != "16") { dr.Table.Columns.Add("DescEN"); }
                             string sqlCmd = "select ID,DescEN from Mold where Junk = 0";
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,15", dr["Mold"].ToString(), dr["DescEN"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,15", dr["Mold"].ToString());
+                            
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             IList<DataRow> selectData = item.GetSelecteds();
                             dr["Mold"] = item.GetSelectedString();
                             dr["DescEN"] = item.GetSelectedString();
+
                         }
                     }
                 }
@@ -353,7 +375,7 @@ order by td.Seq", masterID);
                             else
                             {
                                 dr["Mold"] = MyUtility.Convert.GetString(e.FormattedValue);
-                              //  dr["DescEN"] = MyUtility.Convert.GetString(e.FormattedValue);
+                                dr["DescEN"] = MyUtility.Convert.GetString(e.FormattedValue);
                             }
                         }
                         else
