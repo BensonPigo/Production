@@ -19,7 +19,6 @@ using Excel = Microsoft.Office.Interop.Excel;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using Sci.Utility.Excel;
 using Sci.Utility.Drawing;
-using Microsoft.Office.Interop.Excel;
 
 
 namespace Sci.Production.PPIC
@@ -837,8 +836,8 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
                     sxr.dicDatas.Add(sxr._v + "userid" + sIdx, UserName);
 
                 }
-                this.HideWaitMessage();
                 sxr.Save();
+                this.HideWaitMessage();
             }
         void SetColumn1toText(sxrc.xltRptTable tbl)
         {
