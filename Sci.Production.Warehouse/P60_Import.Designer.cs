@@ -84,7 +84,7 @@
             this.button1.Location = new System.Drawing.Point(886, 50);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 6;
+            this.button1.TabIndex = 5;
             this.button1.Text = "Find Now";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -147,7 +147,7 @@
             this.txtartworktype_fty1.Location = new System.Drawing.Point(490, 54);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 5;
+            this.txtartworktype_fty1.TabIndex = 4;
             // 
             // label1
             // 
@@ -177,7 +177,7 @@
             this.dateRange1.Location = new System.Drawing.Point(490, 19);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 4;
+            this.dateRange1.TabIndex = 3;
             // 
             // label2
             // 
