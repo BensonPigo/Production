@@ -124,6 +124,7 @@
             // B05
             // 
             this.ClientSize = new System.Drawing.Size(787, 457);
+            this.DefaultControlForEdit = "numericBox1";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

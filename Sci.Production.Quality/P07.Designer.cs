@@ -462,6 +462,7 @@
             // P07
             // 
             this.ClientSize = new System.Drawing.Size(1151, 581);
+            this.DefaultControlForEdit = "remark_text";
             this.DefaultDetailOrder = "seq1,seq2";
             this.DefaultOrder = "id";
             this.GridAlias = "AIR_Laboratory";

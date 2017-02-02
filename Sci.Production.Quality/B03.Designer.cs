@@ -96,6 +96,8 @@
             // B03
             // 
             this.ClientSize = new System.Drawing.Size(865, 457);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

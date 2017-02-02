@@ -174,7 +174,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1044, 652);
+            this.browse.Size = new System.Drawing.Size(968, 652);
             // 
             // tabs
             // 
@@ -241,7 +241,7 @@
             this.remark_box.Multiline = true;
             this.remark_box.Name = "remark_box";
             this.remark_box.Size = new System.Drawing.Size(209, 76);
-            this.remark_box.TabIndex = 37;
+            this.remark_box.TabIndex = 1;
             // 
             // seq2_box
             // 
@@ -344,7 +344,7 @@
             this.wk_box.Location = new System.Drawing.Point(638, 85);
             this.wk_box.Name = "wk_box";
             this.wk_box.Size = new System.Drawing.Size(130, 21);
-            this.wk_box.TabIndex = 29;
+            this.wk_box.TabIndex = 0;
             // 
             // label13
             // 
@@ -479,6 +479,7 @@
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(976, 714);
+            this.DefaultControlForEdit = "wk_box";
             this.DefaultDetailOrder = "SEQ1,exportid";
             this.DefaultOrder = "id";
             this.GridAlias = "AIR";

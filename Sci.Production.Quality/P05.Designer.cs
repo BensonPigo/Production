@@ -374,6 +374,7 @@
             // P05
             // 
             this.ClientSize = new System.Drawing.Size(1151, 581);
+            this.DefaultControlForEdit = "remark_text";
             this.DefaultDetailOrder = "Testno,InspDate";
             this.DefaultOrder = "id";
             this.GridAlias = "oven";

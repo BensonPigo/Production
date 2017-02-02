@@ -223,7 +223,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(866, 668);
+            this.browse.Size = new System.Drawing.Size(904, 668);
             // 
             // tabs
             // 
@@ -256,7 +256,7 @@
             this.label1.Location = new System.Drawing.Point(15, 16);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 6;
             this.label1.Text = "SP#";
             // 
             // label2
@@ -266,7 +266,7 @@
             this.label2.Location = new System.Drawing.Point(15, 53);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 7;
             this.label2.Text = "Style";
             // 
             // label3
@@ -276,7 +276,7 @@
             this.label3.Location = new System.Drawing.Point(15, 88);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 8;
             this.label3.Text = "Season";
             // 
             // label4
@@ -286,7 +286,7 @@
             this.label4.Location = new System.Drawing.Point(15, 125);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 4;
+            this.label4.TabIndex = 9;
             this.label4.Text = "Brand";
             // 
             // label5
@@ -296,7 +296,7 @@
             this.label5.Location = new System.Drawing.Point(229, 16);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(137, 23);
-            this.label5.TabIndex = 5;
+            this.label5.TabIndex = 10;
             this.label5.Text = "Earliest Est. Cut Date";
             // 
             // label6
@@ -388,7 +388,7 @@
             this.wk_box.Location = new System.Drawing.Point(617, 86);
             this.wk_box.Name = "wk_box";
             this.wk_box.Size = new System.Drawing.Size(130, 21);
-            this.wk_box.TabIndex = 0;
+            this.wk_box.TabIndex = 4;
             // 
             // displayBox1
             // 
@@ -491,7 +491,7 @@
             this.remark_box.Multiline = true;
             this.remark_box.Name = "remark_box";
             this.remark_box.Size = new System.Drawing.Size(209, 51);
-            this.remark_box.TabIndex = 4;
+            this.remark_box.TabIndex = 5;
             // 
             // insp_box
             // 
@@ -501,7 +501,7 @@
             this.insp_box.Location = new System.Drawing.Point(617, 14);
             this.insp_box.Name = "insp_box";
             this.insp_box.Size = new System.Drawing.Size(126, 21);
-            this.insp_box.TabIndex = 25;
+            this.insp_box.TabIndex = 11;
             // 
             // mtl_box
             // 
@@ -511,7 +511,7 @@
             this.mtl_box.Location = new System.Drawing.Point(617, 53);
             this.mtl_box.Name = "mtl_box";
             this.mtl_box.Size = new System.Drawing.Size(126, 21);
-            this.mtl_box.TabIndex = 26;
+            this.mtl_box.TabIndex = 12;
             // 
             // button1
             // 
@@ -720,6 +720,7 @@
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(912, 730);
+            this.DefaultControlForEdit = "wk_box";
             this.DefaultDetailOrder = "seq1,seq2,Receivingid";
             this.DefaultOrder = "id";
             this.GridAlias = "FIR";

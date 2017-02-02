@@ -480,6 +480,7 @@
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(1070, 556);
+            this.DefaultControlForEdit = "SP_Text";
             this.DefaultOrder = "StyleID";
             this.GridAlias = "Garmenttest_Detail";
             this.GridNew = 0;

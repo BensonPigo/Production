@@ -105,6 +105,8 @@
             // B06
             // 
             this.ClientSize = new System.Drawing.Size(905, 457);
+            this.DefaultControl = "txtID";
+            this.DefaultControlForEdit = "txtID";
             this.IsDeleteOnBrowse = false;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;

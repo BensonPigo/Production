@@ -195,7 +195,7 @@
             this.seq1_box.Location = new System.Drawing.Point(99, 102);
             this.seq1_box.Name = "seq1_box";
             this.seq1_box.Size = new System.Drawing.Size(49, 21);
-            this.seq1_box.TabIndex = 59;
+            this.seq1_box.TabIndex = 1;
             // 
             // label14
             // 
@@ -248,7 +248,7 @@
             this.remark_box.Multiline = true;
             this.remark_box.Name = "remark_box";
             this.remark_box.Size = new System.Drawing.Size(297, 86);
-            this.remark_box.TabIndex = 66;
+            this.remark_box.TabIndex = 3;
             // 
             // seq2_box
             // 
@@ -259,7 +259,7 @@
             this.seq2_box.Location = new System.Drawing.Point(235, 102);
             this.seq2_box.Name = "seq2_box";
             this.seq2_box.Size = new System.Drawing.Size(45, 21);
-            this.seq2_box.TabIndex = 62;
+            this.seq2_box.TabIndex = 2;
             // 
             // brand_box
             // 
@@ -311,7 +311,7 @@
             this.wk_box.Location = new System.Drawing.Point(130, 72);
             this.wk_box.Name = "wk_box";
             this.wk_box.Size = new System.Drawing.Size(130, 21);
-            this.wk_box.TabIndex = 58;
+            this.wk_box.TabIndex = 0;
             // 
             // label13
             // 
@@ -512,6 +512,7 @@
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(1098, 573);
+            this.DefaultControlForEdit = "wk_box";
             this.DefaultDetailOrder = "Seq,Wkno";
             this.DefaultOrder = "ID";
             this.GridAlias = "FIR";
