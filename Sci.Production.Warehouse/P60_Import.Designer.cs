@@ -84,7 +84,7 @@
             this.button1.Location = new System.Drawing.Point(886, 50);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 5;
+            this.button1.TabIndex = 6;
             this.button1.Text = "Find Now";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -97,7 +97,7 @@
             this.textBox1.MaxLength = 13;
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(141, 23);
-            this.textBox1.TabIndex = 3;
+            this.textBox1.TabIndex = 0;
             // 
             // groupBox2
             // 
@@ -147,7 +147,7 @@
             this.txtartworktype_fty1.Location = new System.Drawing.Point(490, 54);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 104;
+            this.txtartworktype_fty1.TabIndex = 5;
             // 
             // label1
             // 
@@ -177,7 +177,7 @@
             this.dateRange1.Location = new System.Drawing.Point(490, 19);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 101;
+            this.dateRange1.TabIndex = 4;
             // 
             // label2
             // 
@@ -197,7 +197,7 @@
             this.txtSpno2.Location = new System.Drawing.Point(235, 54);
             this.txtSpno2.Name = "txtSpno2";
             this.txtSpno2.Size = new System.Drawing.Size(116, 23);
-            this.txtSpno2.TabIndex = 99;
+            this.txtSpno2.TabIndex = 2;
             // 
             // txtSpno1
             // 
@@ -206,7 +206,7 @@
             this.txtSpno1.Location = new System.Drawing.Point(107, 54);
             this.txtSpno1.Name = "txtSpno1";
             this.txtSpno1.Size = new System.Drawing.Size(122, 23);
-            this.txtSpno1.TabIndex = 98;
+            this.txtSpno1.TabIndex = 1;
             // 
             // panel1
             // 
