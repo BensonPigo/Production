@@ -134,6 +134,10 @@
             this.detailbtm.Location = new System.Drawing.Point(0, 391);
             this.detailbtm.Size = new System.Drawing.Size(751, 38);
             // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(751, 429);
+            // 
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(759, 458);
@@ -294,6 +298,8 @@
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(759, 491);
+            this.DefaultControl = "txtbrand1";
+            this.DefaultControlForEdit = "txtbrand1";
             this.DefaultDetailOrder = "WhseNo";
             this.DefaultOrder = "BrandID,ShipModeID,Forwarder";
             this.GridAlias = "ForwarderWhse_Detail";

@@ -164,7 +164,7 @@
             this.label1.Location = new System.Drawing.Point(9, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(105, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 6;
             this.label1.Text = "Start Date";
             // 
             // label2
@@ -173,7 +173,7 @@
             this.label2.Location = new System.Drawing.Point(9, 39);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(105, 23);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 7;
             this.label2.Text = "Contract No.";
             // 
             // label3
@@ -182,7 +182,7 @@
             this.label3.Location = new System.Drawing.Point(9, 69);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(105, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 8;
             this.label3.Text = "Grand Total Q\'ty";
             // 
             // label4
@@ -191,7 +191,7 @@
             this.label4.Location = new System.Drawing.Point(9, 99);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(105, 23);
-            this.label4.TabIndex = 4;
+            this.label4.TabIndex = 9;
             this.label4.Text = "Subcon Name";
             // 
             // dateBox1
@@ -200,7 +200,7 @@
             this.dateBox1.Location = new System.Drawing.Point(118, 9);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 5;
+            this.dateBox1.TabIndex = 0;
             // 
             // textBox1
             // 
@@ -210,7 +210,7 @@
             this.textBox1.Location = new System.Drawing.Point(118, 39);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(150, 23);
-            this.textBox1.TabIndex = 6;
+            this.textBox1.TabIndex = 2;
             // 
             // numericBox1
             // 
@@ -225,7 +225,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 7;
+            this.numericBox1.TabIndex = 4;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -240,7 +240,7 @@
             this.textBox2.Location = new System.Drawing.Point(118, 99);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(360, 23);
-            this.textBox2.TabIndex = 8;
+            this.textBox2.TabIndex = 5;
             // 
             // label5
             // 
@@ -266,7 +266,7 @@
             this.dateBox2.Location = new System.Drawing.Point(390, 9);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 11;
+            this.dateBox2.TabIndex = 1;
             // 
             // editBox1
             // 
@@ -277,7 +277,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(358, 50);
-            this.editBox1.TabIndex = 12;
+            this.editBox1.TabIndex = 3;
             // 
             // button1
             // 
@@ -316,6 +316,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(765, 479);
+            this.DefaultControl = "dateBox1";
+            this.DefaultControlForEdit = "dateBox1";
             this.DefaultDetailOrder = "NLCode";
             this.DefaultOrder = "startDate";
             this.GridAlias = "VNContract_Detail";

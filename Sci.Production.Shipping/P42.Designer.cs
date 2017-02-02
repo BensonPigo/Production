@@ -58,16 +58,16 @@
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.textBox2);
             this.masterpanel.Controls.Add(this.textBox1);
-            this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Size = new System.Drawing.Size(771, 103);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
@@ -82,6 +82,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(663, 68);
+            this.gridicon.TabIndex = 7;
             // 
             // refresh
             // 
@@ -118,7 +119,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(753, 387);
+            this.browse.Size = new System.Drawing.Size(771, 387);
             // 
             // tabs
             // 
@@ -146,7 +147,7 @@
             this.label1.Location = new System.Drawing.Point(9, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(81, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 4;
             this.label1.Text = "Date";
             // 
             // label2
@@ -155,7 +156,7 @@
             this.label2.Location = new System.Drawing.Point(9, 43);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(81, 23);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 5;
             this.label2.Text = "Contract no.";
             // 
             // label3
@@ -164,7 +165,7 @@
             this.label3.Location = new System.Drawing.Point(9, 73);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(81, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 6;
             this.label3.Text = "Remark";
             // 
             // dateBox1
@@ -173,7 +174,7 @@
             this.dateBox1.Location = new System.Drawing.Point(94, 13);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 4;
+            this.dateBox1.TabIndex = 0;
             // 
             // textBox1
             // 
@@ -183,7 +184,7 @@
             this.textBox1.Location = new System.Drawing.Point(94, 43);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(150, 23);
-            this.textBox1.TabIndex = 5;
+            this.textBox1.TabIndex = 2;
             // 
             // textBox2
             // 
@@ -193,7 +194,7 @@
             this.textBox2.Location = new System.Drawing.Point(94, 73);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(536, 23);
-            this.textBox2.TabIndex = 6;
+            this.textBox2.TabIndex = 3;
             // 
             // label4
             // 
@@ -201,7 +202,7 @@
             this.label4.Location = new System.Drawing.Point(313, 13);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(124, 23);
-            this.label4.TabIndex = 7;
+            this.label4.TabIndex = 9;
             this.label4.Text = "Custom declare no.";
             // 
             // textBox3
@@ -212,7 +213,7 @@
             this.textBox3.Location = new System.Drawing.Point(441, 13);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(168, 23);
-            this.textBox3.TabIndex = 8;
+            this.textBox3.TabIndex = 1;
             // 
             // button1
             // 
@@ -220,7 +221,7 @@
             this.button1.Location = new System.Drawing.Point(625, 13);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(142, 30);
-            this.button1.TabIndex = 9;
+            this.button1.TabIndex = 8;
             this.button1.Text = "Import from excel";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -229,6 +230,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(779, 449);
+            this.DefaultControl = "dateBox1";
+            this.DefaultControlForEdit = "dateBox1";
             this.DefaultOrder = "ID";
             this.GridAlias = "VNContractQtyAdjust_Detail";
             this.GridUniqueKey = "NLCode";

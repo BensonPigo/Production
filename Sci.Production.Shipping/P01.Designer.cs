@@ -34,7 +34,7 @@
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.txtSpNo = new Sci.Win.UI.TextBox();
             this.displayBox2 = new Sci.Win.UI.DisplayBox();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
             this.numericBox2 = new Sci.Win.UI.NumericBox();
@@ -305,7 +305,7 @@
             this.detailcont.Controls.Add(this.numericBox2);
             this.detailcont.Controls.Add(this.numericBox1);
             this.detailcont.Controls.Add(this.displayBox2);
-            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.txtSpNo);
             this.detailcont.Controls.Add(this.displayBox1);
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
@@ -372,7 +372,7 @@
             this.label1.Location = new System.Drawing.Point(5, 4);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(62, 18);
-            this.label1.TabIndex = 0;
+            this.label1.TabIndex = 19;
             this.label1.Text = "Air No.";
             // 
             // label2
@@ -381,7 +381,7 @@
             this.label2.Location = new System.Drawing.Point(5, 26);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(62, 18);
-            this.label2.TabIndex = 1;
+            this.label2.TabIndex = 20;
             this.label2.Text = "SP No.";
             // 
             // label3
@@ -390,7 +390,7 @@
             this.label3.Location = new System.Drawing.Point(5, 48);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(62, 18);
-            this.label3.TabIndex = 2;
+            this.label3.TabIndex = 21;
             this.label3.Text = "Style No.";
             // 
             // label4
@@ -399,7 +399,7 @@
             this.label4.Location = new System.Drawing.Point(5, 70);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(62, 18);
-            this.label4.TabIndex = 3;
+            this.label4.TabIndex = 22;
             this.label4.Text = "Order Q\'ty";
             // 
             // label5
@@ -408,7 +408,7 @@
             this.label5.Location = new System.Drawing.Point(5, 92);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(62, 18);
-            this.label5.TabIndex = 4;
+            this.label5.TabIndex = 23;
             this.label5.Text = "Air Q\'ty";
             // 
             // displayBox1
@@ -419,19 +419,19 @@
             this.displayBox1.Location = new System.Drawing.Point(69, 3);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(110, 21);
-            this.displayBox1.TabIndex = 5;
+            this.displayBox1.TabIndex = 24;
             // 
-            // textBox1
+            // txtSpNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(69, 25);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(110, 21);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
-            this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.txtSpNo.BackColor = System.Drawing.Color.White;
+            this.txtSpNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderID", true));
+            this.txtSpNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpNo.Location = new System.Drawing.Point(69, 25);
+            this.txtSpNo.Name = "txtSpNo";
+            this.txtSpNo.Size = new System.Drawing.Size(110, 21);
+            this.txtSpNo.TabIndex = 0;
+            this.txtSpNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSpNo.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
             // displayBox2
             // 
@@ -476,7 +476,7 @@
             0,
             0});
             this.numericBox2.Size = new System.Drawing.Size(51, 21);
-            this.numericBox2.TabIndex = 2;
+            this.numericBox2.TabIndex = 1;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -593,7 +593,7 @@
             this.dateBox3.Location = new System.Drawing.Point(340, 91);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(109, 21);
-            this.dateBox3.TabIndex = 3;
+            this.dateBox3.TabIndex = 2;
             // 
             // label12
             // 
@@ -710,7 +710,7 @@
             0,
             0});
             this.numericBox3.Size = new System.Drawing.Size(70, 21);
-            this.numericBox3.TabIndex = 4;
+            this.numericBox3.TabIndex = 3;
             this.numericBox3.Value = new decimal(new int[] {
             0,
             0,
@@ -743,7 +743,7 @@
             0,
             0});
             this.numericBox4.Size = new System.Drawing.Size(80, 20);
-            this.numericBox4.TabIndex = 5;
+            this.numericBox4.TabIndex = 4;
             this.numericBox4.Value = new decimal(new int[] {
             0,
             0,
@@ -775,7 +775,7 @@
             0,
             0});
             this.numericBox5.Size = new System.Drawing.Size(68, 21);
-            this.numericBox5.TabIndex = 6;
+            this.numericBox5.TabIndex = 5;
             this.numericBox5.Value = new decimal(new int[] {
             0,
             0,
@@ -860,7 +860,7 @@
             0,
             0});
             this.numericBox6.Size = new System.Drawing.Size(74, 21);
-            this.numericBox6.TabIndex = 8;
+            this.numericBox6.TabIndex = 7;
             this.numericBox6.Value = new decimal(new int[] {
             0,
             0,
@@ -923,7 +923,7 @@
             0,
             0});
             this.numericBox8.Size = new System.Drawing.Size(74, 21);
-            this.numericBox8.TabIndex = 12;
+            this.numericBox8.TabIndex = 13;
             this.numericBox8.Value = new decimal(new int[] {
             0,
             0,
@@ -972,7 +972,7 @@
             0,
             0});
             this.numericBox9.Size = new System.Drawing.Size(104, 21);
-            this.numericBox9.TabIndex = 50;
+            this.numericBox9.TabIndex = 8;
             this.numericBox9.Value = new decimal(new int[] {
             0,
             0,
@@ -1003,7 +1003,7 @@
             0,
             0});
             this.numericBox10.Size = new System.Drawing.Size(104, 21);
-            this.numericBox10.TabIndex = 51;
+            this.numericBox10.TabIndex = 11;
             this.numericBox10.Value = new decimal(new int[] {
             0,
             0,
@@ -1027,7 +1027,7 @@
             this.textBox3.Location = new System.Drawing.Point(52, 207);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(198, 21);
-            this.textBox3.TabIndex = 13;
+            this.textBox3.TabIndex = 14;
             // 
             // label28
             // 
@@ -1173,7 +1173,7 @@
             this.textBox4.Location = new System.Drawing.Point(77, 257);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(318, 21);
-            this.textBox4.TabIndex = 15;
+            this.textBox4.TabIndex = 16;
             // 
             // label33
             // 
@@ -1915,7 +1915,7 @@
             this.textBox8.Name = "textBox8";
             this.textBox8.ReadOnly = true;
             this.textBox8.Size = new System.Drawing.Size(32, 21);
-            this.textBox8.TabIndex = 14;
+            this.textBox8.TabIndex = 15;
             this.textBox8.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox8_PopUp);
             this.textBox8.Validating += new System.ComponentModel.CancelEventHandler(this.textBox8_Validating);
             // 
@@ -1927,7 +1927,7 @@
             this.txtsubcon3.Location = new System.Drawing.Point(87, 185);
             this.txtsubcon3.Name = "txtsubcon3";
             this.txtsubcon3.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon3.TabIndex = 11;
+            this.txtsubcon3.TabIndex = 12;
             this.txtsubcon3.TextBox1Binding = "";
             // 
             // txtsubcon2
@@ -1949,7 +1949,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(87, 141);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 7;
+            this.txtsubcon1.TabIndex = 6;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // txttpeuser2
@@ -2009,7 +2009,7 @@
             this.txtuser2.Location = new System.Drawing.Point(81, 520);
             this.txtuser2.Name = "txtuser2";
             this.txtuser2.Size = new System.Drawing.Size(302, 23);
-            this.txtuser2.TabIndex = 30;
+            this.txtuser2.TabIndex = 17;
             this.txtuser2.TextBox1Binding = "";
             // 
             // txtuser1
@@ -2029,7 +2029,7 @@
             this.txtuser3.Location = new System.Drawing.Point(81, 542);
             this.txtuser3.Name = "txtuser3";
             this.txtuser3.Size = new System.Drawing.Size(302, 23);
-            this.txtuser3.TabIndex = 31;
+            this.txtuser3.TabIndex = 18;
             this.txtuser3.TextBox1Binding = "";
             // 
             // txtfactory1
@@ -2056,6 +2056,8 @@
             this.ApvChkValue = "Checked";
             this.CheckChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1004, 690);
+            this.DefaultControl = "txtSpNo";
+            this.DefaultControlForEdit = "txtSpNo";
             this.DefaultOrder = "CDate";
             this.IsSupportCheck = true;
             this.IsSupportConfirm = true;
@@ -2145,7 +2147,7 @@
         private Win.UI.NumericBox numericBox2;
         private Win.UI.NumericBox numericBox1;
         private Win.UI.DisplayBox displayBox2;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.TextBox txtSpNo;
         private Win.UI.DisplayBox displayBox1;
         private Win.UI.Label label5;
         private Win.UI.Label label4;

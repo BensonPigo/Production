@@ -77,9 +77,9 @@ order by NLCode", "5,11,8", this.Text, false, ",", headercaptions: "NL Code, HSC
         //NL Code
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && textBox1.OldValue != textBox1.Text)
+            if (EditMode && txtNLCode.OldValue != txtNLCode.Text)
             {
-                if (MyUtility.Check.Empty(textBox1.Text))
+                if (MyUtility.Check.Empty(txtNLCode.Text))
                 {
                     CurrentMaintain["NLCode"] = "";
                     CurrentMaintain["HSCode"] = "";
@@ -91,9 +91,9 @@ order by NLCode", "5,11,8", this.Text, false, ",", headercaptions: "NL Code, HSC
                     if (MyUtility.Check.Seek(string.Format(@"select NLCode,HSCode,UnitID
 from VNContract_Detail
 where ID in (select ID from VNContract WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract where Status = 'Confirmed') )
-and NLCode = '{0}'", textBox1.Text), out NLCodeDate))
+and NLCode = '{0}'", txtNLCode.Text), out NLCodeDate))
                     {
-                        CurrentMaintain["NLCode"] = textBox1.Text;
+                        CurrentMaintain["NLCode"] = txtNLCode.Text;
                         CurrentMaintain["HSCode"] = NLCodeDate["HSCode"];
                         CurrentMaintain["CustomsUnit"] = NLCodeDate["UnitID"];
                     }

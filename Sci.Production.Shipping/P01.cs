@@ -176,7 +176,7 @@ where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), My
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
                 MyUtility.Msg.WarningBox("SP No. can't empty!!");
-                textBox1.Focus();
+                txtSpNo.Focus();
                 return false;
             }
 
@@ -542,13 +542,13 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         {
             if (EditMode)
             {
-                if (textBox1.Text != textBox1.OldValue)
+                if (txtSpNo.Text != txtSpNo.OldValue)
                 {
                     #region 檢查輸入的值是否符合條件
-                    if (!MyUtility.Check.Empty(textBox1.Text))
+                    if (!MyUtility.Check.Empty(txtSpNo.Text))
                     {
                         //sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", textBox1.Text);
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSpNo.Text);
                         System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -570,7 +570,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
                             }
                             //OrderID異動，其他相關欄位要跟著異動
                             ChangeOtherData("");
-                            textBox1.Text = "";
+                            txtSpNo.Text = "";
                             e.Cancel = true;
                             return;
                         }
@@ -685,13 +685,13 @@ where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(Cur
 
         private void textBox1_Validated(object sender, EventArgs e)
         {
-            if (textBox1.OldValue == textBox1.Text)
+            if (txtSpNo.OldValue == txtSpNo.Text)
             {
                 return;
             }
 
             //OrderID異動，其他相關欄位要跟著異動
-            ChangeOtherData(textBox1.Text);
+            ChangeOtherData(txtSpNo.Text);
         }
 
         //Seq按右鍵

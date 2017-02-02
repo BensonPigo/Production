@@ -248,7 +248,7 @@
             this.label1.Location = new System.Drawing.Point(5, 6);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 2;
             this.label1.Text = "WK No.";
             // 
             // label2
@@ -258,7 +258,7 @@
             this.label2.Location = new System.Drawing.Point(5, 33);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(89, 23);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 3;
             this.label2.Text = "ETA";
             // 
             // label3
@@ -268,7 +268,7 @@
             this.label3.Location = new System.Drawing.Point(4, 60);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(90, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 4;
             this.label3.Text = "Factory";
             // 
             // label4
@@ -278,7 +278,7 @@
             this.label4.Location = new System.Drawing.Point(4, 87);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(90, 23);
-            this.label4.TabIndex = 4;
+            this.label4.TabIndex = 5;
             this.label4.Text = "Consignee";
             // 
             // label5
@@ -288,7 +288,7 @@
             this.label5.Location = new System.Drawing.Point(4, 114);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(90, 23);
-            this.label5.TabIndex = 5;
+            this.label5.TabIndex = 6;
             this.label5.Text = "Packages";
             // 
             // label6
@@ -662,7 +662,7 @@
             this.dateBox3.Location = new System.Drawing.Point(673, 88);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 38;
+            this.dateBox3.TabIndex = 0;
             // 
             // dateBox4
             // 
@@ -680,7 +680,7 @@
             this.dateBox5.Location = new System.Drawing.Point(673, 142);
             this.dateBox5.Name = "dateBox5";
             this.dateBox5.Size = new System.Drawing.Size(130, 23);
-            this.dateBox5.TabIndex = 40;
+            this.dateBox5.TabIndex = 1;
             // 
             // label21
             // 
@@ -783,6 +783,8 @@
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(998, 662);
+            this.DefaultControl = "dateBox3";
+            this.DefaultControlForEdit = "dateBox3";
             this.DefaultDetailOrder = "PoID,Seq1,Seq2";
             this.DefaultOrder = "ID";
             this.GridAlias = "Export_Detail";

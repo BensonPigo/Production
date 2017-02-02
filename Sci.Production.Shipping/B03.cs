@@ -50,7 +50,7 @@ namespace Sci.Production.Shipping
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
+            this.txtCode.ReadOnly = true;
             this.txtsubcon1.TextBox1.ReadOnly = true;
         }
 
@@ -70,7 +70,7 @@ namespace Sci.Production.Shipping
             if (string.IsNullOrWhiteSpace(MyUtility.Convert.GetString(CurrentMaintain["ID"])))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
-                this.textBox1.Focus();
+                this.txtCode.Focus();
                 return false;
             }
 
@@ -101,21 +101,21 @@ namespace Sci.Production.Shipping
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (!MyUtility.Check.Empty(textBox1.Text) && textBox1.Text != textBox1.OldValue)
+            if (!MyUtility.Check.Empty(txtCode.Text) && txtCode.Text != txtCode.OldValue)
             {
-                if (textBox1.Text.IndexOf("'") != -1)
+                if (txtCode.Text.IndexOf("'") != -1)
                 {
                     MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
-                    textBox1.Text = "";
+                    txtCode.Text = "";
                     e.Cancel = true;
                     return;
                 }
 
-                string selectCommand = string.Format("select ID from ShipExpense where ID = '{0}'", textBox1.Text);
+                string selectCommand = string.Format("select ID from ShipExpense where ID = '{0}'", txtCode.Text);
                 if (MyUtility.Check.Seek(selectCommand, null))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("Code: '{0}' is duplicate!", textBox1.Text.Trim()));
-                    textBox1.Text = "";
+                    MyUtility.Msg.WarningBox(string.Format("Code: '{0}' is duplicate!", txtCode.Text.Trim()));
+                    txtCode.Text = "";
                     e.Cancel = true;
                     return;
                 }

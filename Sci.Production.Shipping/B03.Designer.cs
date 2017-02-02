@@ -35,7 +35,7 @@
             this.label7 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.txtCode = new Sci.Win.UI.TextBox();
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
@@ -70,7 +70,7 @@
             this.detailcont.Controls.Add(this.txtsubcon1);
             this.detailcont.Controls.Add(this.txtbrand1);
             this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.txtCode);
             this.detailcont.Controls.Add(this.label9);
             this.detailcont.Controls.Add(this.label8);
             this.detailcont.Controls.Add(this.label7);
@@ -98,7 +98,7 @@
             this.label3.Location = new System.Drawing.Point(27, 22);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(90, 23);
-            this.label3.TabIndex = 0;
+            this.label3.TabIndex = 4;
             this.label3.Text = "Code";
             // 
             // label4
@@ -107,7 +107,7 @@
             this.label4.Location = new System.Drawing.Point(27, 57);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(90, 23);
-            this.label4.TabIndex = 1;
+            this.label4.TabIndex = 5;
             this.label4.Text = "Description";
             // 
             // label5
@@ -116,7 +116,7 @@
             this.label5.Location = new System.Drawing.Point(27, 120);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(90, 23);
-            this.label5.TabIndex = 2;
+            this.label5.TabIndex = 6;
             this.label5.Text = "Brand";
             // 
             // label6
@@ -125,7 +125,7 @@
             this.label6.Location = new System.Drawing.Point(27, 155);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(90, 23);
-            this.label6.TabIndex = 3;
+            this.label6.TabIndex = 7;
             this.label6.Text = "Supplier";
             // 
             // label7
@@ -134,7 +134,7 @@
             this.label7.Location = new System.Drawing.Point(27, 190);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(90, 23);
-            this.label7.TabIndex = 4;
+            this.label7.TabIndex = 8;
             this.label7.Text = "Price";
             // 
             // label8
@@ -143,7 +143,7 @@
             this.label8.Location = new System.Drawing.Point(27, 225);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(90, 23);
-            this.label8.TabIndex = 5;
+            this.label8.TabIndex = 9;
             this.label8.Text = "Canvass Date";
             // 
             // label9
@@ -152,19 +152,19 @@
             this.label9.Location = new System.Drawing.Point(27, 260);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(90, 23);
-            this.label9.TabIndex = 6;
+            this.label9.TabIndex = 10;
             this.label9.Text = "Account No";
             // 
-            // textBox1
+            // txtCode
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(120, 22);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(140, 23);
-            this.textBox1.TabIndex = 7;
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtCode.BackColor = System.Drawing.Color.White;
+            this.txtCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCode.Location = new System.Drawing.Point(120, 22);
+            this.txtCode.Name = "txtCode";
+            this.txtCode.Size = new System.Drawing.Size(140, 23);
+            this.txtCode.TabIndex = 7;
+            this.txtCode.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // editBox1
             // 
@@ -175,7 +175,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(391, 50);
-            this.editBox1.TabIndex = 8;
+            this.editBox1.TabIndex = 0;
             // 
             // displayBox1
             // 
@@ -229,7 +229,7 @@
             this.textBox2.Mask = "9999-9999";
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(70, 23);
-            this.textBox2.TabIndex = 14;
+            this.textBox2.TabIndex = 2;
             this.textBox2.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             // 
             // checkBox1
@@ -240,7 +240,7 @@
             this.checkBox1.Location = new System.Drawing.Point(316, 22);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 15;
+            this.checkBox1.TabIndex = 3;
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -287,11 +287,13 @@
             this.txtbrand1.Location = new System.Drawing.Point(120, 118);
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand1.TabIndex = 9;
+            this.txtbrand1.TabIndex = 1;
             // 
             // B03
             // 
             this.ClientSize = new System.Drawing.Size(752, 457);
+            this.DefaultControl = "txtCode";
+            this.DefaultControlForEdit = "editBox1";
             this.DefaultOrder = "ID";
             this.IsSupportDelete = false;
             this.Name = "B03";
@@ -320,7 +322,7 @@
         private Class.txtsubcon txtsubcon1;
         private Class.txtbrand txtbrand1;
         private Win.UI.EditBox editBox1;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.TextBox txtCode;
         private Win.UI.Label label9;
         private Win.UI.Label label8;
         private Win.UI.Label label7;

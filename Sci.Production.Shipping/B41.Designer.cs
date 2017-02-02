@@ -39,7 +39,7 @@
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.txtNLCode = new Sci.Win.UI.TextBox();
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.displayBox5 = new Sci.Win.UI.DisplayBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
@@ -82,7 +82,7 @@
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.displayBox5);
             this.detailcont.Controls.Add(this.displayBox4);
-            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.txtNLCode);
             this.detailcont.Controls.Add(this.displayBox3);
             this.detailcont.Controls.Add(this.editBox1);
             this.detailcont.Controls.Add(this.displayBox1);
@@ -228,17 +228,17 @@
             this.displayBox3.Size = new System.Drawing.Size(190, 23);
             this.displayBox3.TabIndex = 14;
             // 
-            // textBox1
+            // txtNLCode
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(109, 186);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(60, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtNLCode.BackColor = System.Drawing.Color.White;
+            this.txtNLCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
+            this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNLCode.Location = new System.Drawing.Point(109, 186);
+            this.txtNLCode.Name = "txtNLCode";
+            this.txtNLCode.Size = new System.Drawing.Size(60, 23);
+            this.txtNLCode.TabIndex = 0;
+            this.txtNLCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtNLCode.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // displayBox4
             // 
@@ -426,6 +426,8 @@
             // B41
             // 
             this.ClientSize = new System.Drawing.Size(745, 372);
+            this.DefaultControl = "txtNLCode";
+            this.DefaultControlForEdit = "txtNLCode";
             this.DefaultOrder = "RefNo";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
@@ -462,7 +464,7 @@
         private Win.UI.CheckBox checkBox1;
         private Win.UI.DisplayBox displayBox5;
         private Win.UI.DisplayBox displayBox4;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.TextBox txtNLCode;
         private Win.UI.DisplayBox displayBox3;
         private Win.UI.EditBox editBox1;
         private Win.UI.DisplayBox displayBox1;

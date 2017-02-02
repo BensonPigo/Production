@@ -67,7 +67,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(627, 327);
+            this.browse.Size = new System.Drawing.Size(678, 327);
             // 
             // tabs
             // 
@@ -79,7 +79,7 @@
             this.label1.Location = new System.Drawing.Point(22, 14);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(91, 23);
-            this.label1.TabIndex = 0;
+            this.label1.TabIndex = 2;
             this.label1.Text = "NL Code";
             // 
             // label2
@@ -88,7 +88,7 @@
             this.label2.Location = new System.Drawing.Point(22, 50);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(91, 23);
-            this.label2.TabIndex = 1;
+            this.label2.TabIndex = 3;
             this.label2.Text = "English Desc";
             // 
             // label3
@@ -97,7 +97,7 @@
             this.label3.Location = new System.Drawing.Point(22, 87);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(91, 23);
-            this.label3.TabIndex = 2;
+            this.label3.TabIndex = 4;
             this.label3.Text = "Vietnam Desc";
             // 
             // label4
@@ -106,7 +106,7 @@
             this.label4.Location = new System.Drawing.Point(22, 125);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(91, 23);
-            this.label4.TabIndex = 3;
+            this.label4.TabIndex = 5;
             this.label4.Text = "Vietnam Unit";
             // 
             // textBox1
@@ -117,7 +117,7 @@
             this.textBox1.Location = new System.Drawing.Point(117, 14);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(68, 23);
-            this.textBox1.TabIndex = 4;
+            this.textBox1.TabIndex = 0;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
@@ -130,7 +130,7 @@
             this.textBox2.Location = new System.Drawing.Point(117, 50);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(479, 23);
-            this.textBox2.TabIndex = 5;
+            this.textBox2.TabIndex = 6;
             // 
             // textBox3
             // 
@@ -141,7 +141,7 @@
             this.textBox3.Location = new System.Drawing.Point(117, 87);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(479, 23);
-            this.textBox3.TabIndex = 6;
+            this.textBox3.TabIndex = 7;
             // 
             // textBox4
             // 
@@ -152,11 +152,13 @@
             this.textBox4.Location = new System.Drawing.Point(117, 125);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(68, 23);
-            this.textBox4.TabIndex = 7;
+            this.textBox4.TabIndex = 1;
             // 
             // B44
             // 
             this.ClientSize = new System.Drawing.Size(686, 389);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.DefaultOrder = "NLCode";
             this.Name = "B44";
             this.Text = "B44. NL Code Description";

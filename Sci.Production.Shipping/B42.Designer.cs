@@ -145,6 +145,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(700, 177);
+            this.gridicon.TabIndex = 6;
             // 
             // refresh
             // 
@@ -309,7 +310,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(80, 23);
-            this.numericBox1.TabIndex = 49;
+            this.numericBox1.TabIndex = 5;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -327,7 +328,7 @@
             this.textBox4.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox4.ReadOnly = true;
             this.textBox4.Size = new System.Drawing.Size(60, 23);
-            this.textBox4.TabIndex = 48;
+            this.textBox4.TabIndex = 4;
             this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
             // 
             // textBox3
@@ -338,7 +339,7 @@
             this.textBox3.Location = new System.Drawing.Point(482, 7);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(150, 23);
-            this.textBox3.TabIndex = 47;
+            this.textBox3.TabIndex = 1;
             this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
             this.textBox3.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
             // 
@@ -352,7 +353,7 @@
             this.comboBox1.Location = new System.Drawing.Point(92, 86);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(80, 24);
-            this.comboBox1.TabIndex = 45;
+            this.comboBox1.TabIndex = 3;
             // 
             // displayBox2
             // 
@@ -396,7 +397,7 @@
             this.textBox1.Location = new System.Drawing.Point(92, 7);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(80, 23);
-            this.textBox1.TabIndex = 41;
+            this.textBox1.TabIndex = 0;
             // 
             // label12
             // 
@@ -512,7 +513,7 @@
             this.dateBox1.Location = new System.Drawing.Point(482, 34);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 46;
+            this.dateBox1.TabIndex = 2;
             // 
             // label13
             // 
@@ -529,7 +530,7 @@
             this.label14.Location = new System.Drawing.Point(197, 7);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(30, 23);
-            this.label14.TabIndex = 57;
+            this.label14.TabIndex = 7;
             this.label14.Text = "Ver.";
             // 
             // displayBox3
@@ -546,6 +547,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(814, 530);
+            this.DefaultControl = "textBox1";
+            this.DefaultControlForEdit = "textBox1";
             this.DefaultOrder = "VNContractID,CustomSP";
             this.GridAlias = "VNConsumption_Detail";
             this.GridNew = 0;

@@ -236,7 +236,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.refresh.Location = new System.Drawing.Point(2605, 8);
+            this.refresh.Location = new System.Drawing.Point(2658, 8);
             // 
             // detailgridcont
             // 
@@ -1055,6 +1055,8 @@
             // 
             this.ApvChkValue = "Sent";
             this.ClientSize = new System.Drawing.Size(1006, 712);
+            this.DefaultControl = "comboBox1";
+            this.DefaultControlForEdit = "comboBox1";
             this.DefaultDetailOrder = "CTNNo,Seq1";
             this.DefaultOrder = "ShipDate,ID";
             this.GridAlias = "Express_Detail";

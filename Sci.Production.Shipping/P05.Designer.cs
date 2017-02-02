@@ -259,6 +259,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(882, 273);
+            this.gridicon.TabIndex = 20;
             // 
             // refresh
             // 
@@ -308,7 +309,7 @@
             this.label1.Location = new System.Drawing.Point(4, 4);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(66, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 21;
             this.label1.Text = "Invoice No.";
             // 
             // label2
@@ -318,7 +319,7 @@
             this.label2.Location = new System.Drawing.Point(4, 31);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 23);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 22;
             this.label2.Text = "Inv. Serial";
             // 
             // label3
@@ -328,7 +329,7 @@
             this.label3.Location = new System.Drawing.Point(4, 58);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(66, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 23;
             this.label3.Text = "Inv. Date";
             // 
             // label4
@@ -338,7 +339,7 @@
             this.label4.Location = new System.Drawing.Point(4, 85);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(66, 23);
-            this.label4.TabIndex = 4;
+            this.label4.TabIndex = 24;
             this.label4.Text = "Shipper";
             // 
             // label5
@@ -348,7 +349,7 @@
             this.label5.Location = new System.Drawing.Point(4, 112);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(66, 23);
-            this.label5.TabIndex = 5;
+            this.label5.TabIndex = 25;
             this.label5.Text = "Brand";
             // 
             // label6
@@ -358,7 +359,7 @@
             this.label6.Location = new System.Drawing.Point(4, 139);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(66, 23);
-            this.label6.TabIndex = 6;
+            this.label6.TabIndex = 26;
             this.label6.Text = "FCR Date";
             // 
             // label7
@@ -368,7 +369,7 @@
             this.label7.Location = new System.Drawing.Point(4, 166);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(66, 23);
-            this.label7.TabIndex = 7;
+            this.label7.TabIndex = 27;
             this.label7.Text = "CustCD";
             // 
             // label8
@@ -378,7 +379,7 @@
             this.label8.Location = new System.Drawing.Point(4, 193);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(66, 23);
-            this.label8.TabIndex = 8;
+            this.label8.TabIndex = 28;
             this.label8.Text = "Destination";
             // 
             // label9
@@ -388,7 +389,7 @@
             this.label9.Location = new System.Drawing.Point(4, 220);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(84, 23);
-            this.label9.TabIndex = 9;
+            this.label9.TabIndex = 29;
             this.label9.Text = "Payment Term";
             // 
             // label10
@@ -398,7 +399,7 @@
             this.label10.Location = new System.Drawing.Point(4, 247);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(66, 23);
-            this.label10.TabIndex = 10;
+            this.label10.TabIndex = 30;
             this.label10.Text = "Description";
             // 
             // label11
@@ -408,7 +409,7 @@
             this.label11.Location = new System.Drawing.Point(4, 274);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(66, 23);
-            this.label11.TabIndex = 11;
+            this.label11.TabIndex = 31;
             this.label11.Text = "Remark";
             // 
             // displayBox1
@@ -429,7 +430,7 @@
             this.textBox1.Location = new System.Drawing.Point(73, 31);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 0;
+            this.textBox1.TabIndex = 1;
             this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
             // dateBox1
@@ -438,7 +439,7 @@
             this.dateBox1.Location = new System.Drawing.Point(73, 58);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 1;
+            this.dateBox1.TabIndex = 2;
             this.dateBox1.Validating += new System.ComponentModel.CancelEventHandler(this.dateBox1_Validating);
             // 
             // dateBox2
@@ -478,7 +479,7 @@
             this.label12.Location = new System.Drawing.Point(327, 4);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(90, 23);
-            this.label12.TabIndex = 23;
+            this.label12.TabIndex = 32;
             this.label12.Text = "Shipping Mode";
             // 
             // label13
@@ -488,7 +489,7 @@
             this.label13.Location = new System.Drawing.Point(327, 31);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(90, 23);
-            this.label13.TabIndex = 24;
+            this.label13.TabIndex = 33;
             this.label13.Text = "Shipment Term";
             // 
             // label14
@@ -805,7 +806,7 @@
             this.textBox3.Location = new System.Drawing.Point(658, 85);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(140, 23);
-            this.textBox3.TabIndex = 14;
+            this.textBox3.TabIndex = 13;
             // 
             // dateBox4
             // 
@@ -825,7 +826,7 @@
             this.textBox5.Location = new System.Drawing.Point(658, 193);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(188, 23);
-            this.textBox5.TabIndex = 17;
+            this.textBox5.TabIndex = 16;
             // 
             // dateBox5
             // 
@@ -833,7 +834,7 @@
             this.dateBox5.Location = new System.Drawing.Point(636, 247);
             this.dateBox5.Name = "dateBox5";
             this.dateBox5.Size = new System.Drawing.Size(130, 23);
-            this.dateBox5.TabIndex = 18;
+            this.dateBox5.TabIndex = 17;
             this.dateBox5.Validating += new System.ComponentModel.CancelEventHandler(this.dateBox5_Validating);
             // 
             // dateBox6
@@ -842,7 +843,7 @@
             this.dateBox6.Location = new System.Drawing.Point(784, 247);
             this.dateBox6.Name = "dateBox6";
             this.dateBox6.Size = new System.Drawing.Size(130, 23);
-            this.dateBox6.TabIndex = 19;
+            this.dateBox6.TabIndex = 18;
             this.dateBox6.Validating += new System.ComponentModel.CancelEventHandler(this.dateBox6_Validating);
             // 
             // dateBox7
@@ -928,7 +929,7 @@
             this.button6.Location = new System.Drawing.Point(784, 274);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(165, 30);
-            this.button6.TabIndex = 20;
+            this.button6.TabIndex = 19;
             this.button6.Text = "Import from packing list";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
@@ -965,7 +966,7 @@
             this.comboBox1.Location = new System.Drawing.Point(658, 57);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 13;
+            this.comboBox1.TabIndex = 12;
             // 
             // txtsubcon1
             // 
@@ -975,7 +976,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(658, 31);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 12;
+            this.txtsubcon1.TabIndex = 11;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // txtuser1
@@ -985,7 +986,7 @@
             this.txtuser1.Location = new System.Drawing.Point(658, 4);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(302, 23);
-            this.txtuser1.TabIndex = 11;
+            this.txtuser1.TabIndex = 10;
             this.txtuser1.TextBox1Binding = "";
             // 
             // txtshipterm1
@@ -996,7 +997,7 @@
             this.txtshipterm1.Location = new System.Drawing.Point(420, 31);
             this.txtshipterm1.Name = "txtshipterm1";
             this.txtshipterm1.Size = new System.Drawing.Size(50, 23);
-            this.txtshipterm1.TabIndex = 10;
+            this.txtshipterm1.TabIndex = 9;
             // 
             // txtshipmode1
             // 
@@ -1008,7 +1009,7 @@
             this.txtshipmode1.Location = new System.Drawing.Point(420, 4);
             this.txtshipmode1.Name = "txtshipmode1";
             this.txtshipmode1.Size = new System.Drawing.Size(121, 24);
-            this.txtshipmode1.TabIndex = 9;
+            this.txtshipmode1.TabIndex = 8;
             this.txtshipmode1.UseFunction = "ORDER";
             // 
             // txtpaytermar1
@@ -1050,7 +1051,7 @@
             this.txtfactory1.Location = new System.Drawing.Point(73, 85);
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 2;
+            this.txtfactory1.TabIndex = 0;
             // 
             // textBox7
             // 
@@ -1060,7 +1061,7 @@
             this.textBox7.Name = "textBox7";
             this.textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
             this.textBox7.Size = new System.Drawing.Size(164, 23);
-            this.textBox7.TabIndex = 71;
+            this.textBox7.TabIndex = 14;
             this.textBox7.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox7_PopUp);
             this.textBox7.Validating += new System.ComponentModel.CancelEventHandler(this.textBox7_Validating);
             // 
@@ -1071,13 +1072,15 @@
             this.textBox6.Location = new System.Drawing.Point(658, 139);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(153, 23);
-            this.textBox6.TabIndex = 73;
+            this.textBox6.TabIndex = 15;
             this.textBox6.Validating += new System.ComponentModel.CancelEventHandler(this.textBox6_Validating);
             // 
             // P05
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(998, 662);
+            this.DefaultControl = "txtfactory1";
+            this.DefaultControlForEdit = "txtfactory1";
             this.DefaultOrder = "ID";
             this.GridAlias = "PackingList";
             this.GridNew = 0;

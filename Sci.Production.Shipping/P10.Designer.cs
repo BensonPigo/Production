@@ -91,6 +91,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(655, 52);
+            this.gridicon.TabIndex = 1;
             // 
             // refresh
             // 
@@ -170,7 +171,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(445, 50);
-            this.editBox1.TabIndex = 4;
+            this.editBox1.TabIndex = 2;
             // 
             // button1
             // 
@@ -178,7 +179,7 @@
             this.button1.Location = new System.Drawing.Point(593, 7);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(160, 30);
-            this.button1.TabIndex = 5;
+            this.button1.TabIndex = 3;
             this.button1.Text = "Update Pullout Date";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -189,7 +190,7 @@
             this.button2.Location = new System.Drawing.Point(593, 53);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(116, 30);
-            this.button2.TabIndex = 6;
+            this.button2.TabIndex = 0;
             this.button2.Text = "Import Data";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);

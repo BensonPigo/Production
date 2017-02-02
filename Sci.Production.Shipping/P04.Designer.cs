@@ -35,7 +35,6 @@
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox3 = new Sci.Win.UI.TextBox();
@@ -52,8 +51,6 @@
             this.label9 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
-            this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
-            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
             this.numericBox2 = new Sci.Win.UI.NumericBox();
             this.numericBox3 = new Sci.Win.UI.NumericBox();
@@ -65,7 +62,6 @@
             this.label16 = new Sci.Win.UI.Label();
             this.label17 = new Sci.Win.UI.Label();
             this.label18 = new Sci.Win.UI.Label();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
             this.textBox5 = new Sci.Win.UI.TextBox();
             this.textBox6 = new Sci.Win.UI.TextBox();
             this.dateBox1 = new Sci.Win.UI.DateBox();
@@ -73,6 +69,10 @@
             this.dateBox3 = new Sci.Win.UI.DateBox();
             this.button1 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
+            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
+            this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
+            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -183,6 +183,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(887, 140);
+            this.gridicon.TabIndex = 13;
             // 
             // refresh
             // 
@@ -232,7 +233,7 @@
             this.label1.Location = new System.Drawing.Point(5, 6);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(67, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 12;
             this.label1.Text = "Fty WK No.";
             // 
             // label2
@@ -242,7 +243,7 @@
             this.label2.Location = new System.Drawing.Point(5, 34);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(67, 23);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 13;
             this.label2.Text = "Forwarder";
             // 
             // label3
@@ -252,7 +253,7 @@
             this.label3.Location = new System.Drawing.Point(5, 62);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(67, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 14;
             this.label3.Text = "Invoice No.";
             // 
             // label4
@@ -262,7 +263,7 @@
             this.label4.Location = new System.Drawing.Point(5, 90);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(67, 23);
-            this.label4.TabIndex = 4;
+            this.label4.TabIndex = 15;
             this.label4.Text = "Consignee";
             // 
             // label5
@@ -272,7 +273,7 @@
             this.label5.Location = new System.Drawing.Point(5, 118);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(100, 23);
-            this.label5.TabIndex = 5;
+            this.label5.TabIndex = 16;
             this.label5.Text = "Port of Loading";
             // 
             // label6
@@ -282,7 +283,7 @@
             this.label6.Location = new System.Drawing.Point(5, 146);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(100, 23);
-            this.label6.TabIndex = 6;
+            this.label6.TabIndex = 17;
             this.label6.Text = "Port of Discharge";
             // 
             // displayBox1
@@ -293,18 +294,7 @@
             this.displayBox1.Location = new System.Drawing.Point(75, 6);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 7;
-            // 
-            // txtsubcon1
-            // 
-            this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(75, 34);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 2;
-            this.txtsubcon1.TextBox1Binding = "";
+            this.displayBox1.TabIndex = 18;
             // 
             // textBox1
             // 
@@ -314,7 +304,7 @@
             this.textBox1.Location = new System.Drawing.Point(75, 62);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(230, 23);
-            this.textBox1.TabIndex = 5;
+            this.textBox1.TabIndex = 1;
             // 
             // textBox2
             // 
@@ -324,7 +314,7 @@
             this.textBox2.Location = new System.Drawing.Point(75, 90);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(75, 23);
-            this.textBox2.TabIndex = 8;
+            this.textBox2.TabIndex = 2;
             // 
             // textBox3
             // 
@@ -337,7 +327,7 @@
             this.textBox3.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(185, 23);
-            this.textBox3.TabIndex = 11;
+            this.textBox3.TabIndex = 14;
             this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
             // 
             // textBox4
@@ -351,7 +341,7 @@
             this.textBox4.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.textBox4.ReadOnly = true;
             this.textBox4.Size = new System.Drawing.Size(185, 23);
-            this.textBox4.TabIndex = 13;
+            this.textBox4.TabIndex = 15;
             this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
             // 
             // displayBox2
@@ -362,7 +352,7 @@
             this.displayBox2.Location = new System.Drawing.Point(296, 118);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(32, 23);
-            this.displayBox2.TabIndex = 13;
+            this.displayBox2.TabIndex = 21;
             // 
             // displayBox3
             // 
@@ -372,7 +362,7 @@
             this.displayBox3.Location = new System.Drawing.Point(296, 146);
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(32, 23);
-            this.displayBox3.TabIndex = 14;
+            this.displayBox3.TabIndex = 22;
             // 
             // radioPanel1
             // 
@@ -493,32 +483,6 @@
             this.label11.TabIndex = 20;
             this.label11.Text = "N.W./G.W.";
             // 
-            // txtshipmode1
-            // 
-            this.txtshipmode1.BackColor = System.Drawing.Color.White;
-            this.txtshipmode1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
-            this.txtshipmode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshipmode1.FormattingEnabled = true;
-            this.txtshipmode1.IsSupportUnselect = true;
-            this.txtshipmode1.Location = new System.Drawing.Point(445, 31);
-            this.txtshipmode1.Name = "txtshipmode1";
-            this.txtshipmode1.Size = new System.Drawing.Size(80, 24);
-            this.txtshipmode1.TabIndex = 3;
-            this.txtshipmode1.UseFunction = "WK";
-            // 
-            // txtdropdownlist1
-            // 
-            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "CYCFS", true));
-            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist1.FormattingEnabled = true;
-            this.txtdropdownlist1.IsSupportUnselect = true;
-            this.txtdropdownlist1.Location = new System.Drawing.Point(445, 60);
-            this.txtdropdownlist1.Name = "txtdropdownlist1";
-            this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist1.TabIndex = 6;
-            this.txtdropdownlist1.Type = "ContainerCY";
-            // 
             // numericBox1
             // 
             this.numericBox1.BackColor = System.Drawing.Color.White;
@@ -532,7 +496,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(67, 23);
-            this.numericBox1.TabIndex = 9;
+            this.numericBox1.TabIndex = 5;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -553,7 +517,7 @@
             0,
             0});
             this.numericBox2.Size = new System.Drawing.Size(67, 23);
-            this.numericBox2.TabIndex = 12;
+            this.numericBox2.TabIndex = 6;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -678,16 +642,6 @@
             this.label18.TabIndex = 36;
             this.label18.Text = "Dox Rcv Date";
             // 
-            // txtuser1
-            // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(664, 6);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(302, 23);
-            this.txtuser1.TabIndex = 1;
-            this.txtuser1.TextBox1Binding = "";
-            // 
             // textBox5
             // 
             this.textBox5.BackColor = System.Drawing.Color.White;
@@ -696,7 +650,7 @@
             this.textBox5.Location = new System.Drawing.Point(712, 34);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(185, 23);
-            this.textBox5.TabIndex = 4;
+            this.textBox5.TabIndex = 8;
             // 
             // textBox6
             // 
@@ -706,7 +660,7 @@
             this.textBox6.Location = new System.Drawing.Point(712, 62);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(254, 23);
-            this.textBox6.TabIndex = 7;
+            this.textBox6.TabIndex = 9;
             // 
             // dateBox1
             // 
@@ -732,7 +686,7 @@
             this.dateBox3.Location = new System.Drawing.Point(712, 146);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 14;
+            this.dateBox3.TabIndex = 11;
             // 
             // button1
             // 
@@ -753,14 +707,63 @@
             this.button2.Location = new System.Drawing.Point(861, 141);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(93, 30);
-            this.button2.TabIndex = 44;
+            this.button2.TabIndex = 12;
             this.button2.Text = "Import Data";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // txtuser1
+            // 
+            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(664, 6);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(302, 23);
+            this.txtuser1.TabIndex = 7;
+            this.txtuser1.TextBox1Binding = "";
+            // 
+            // txtdropdownlist1
+            // 
+            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlist1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "CYCFS", true));
+            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlist1.FormattingEnabled = true;
+            this.txtdropdownlist1.IsSupportUnselect = true;
+            this.txtdropdownlist1.Location = new System.Drawing.Point(445, 60);
+            this.txtdropdownlist1.Name = "txtdropdownlist1";
+            this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
+            this.txtdropdownlist1.TabIndex = 4;
+            this.txtdropdownlist1.Type = "ContainerCY";
+            // 
+            // txtshipmode1
+            // 
+            this.txtshipmode1.BackColor = System.Drawing.Color.White;
+            this.txtshipmode1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
+            this.txtshipmode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtshipmode1.FormattingEnabled = true;
+            this.txtshipmode1.IsSupportUnselect = true;
+            this.txtshipmode1.Location = new System.Drawing.Point(445, 31);
+            this.txtshipmode1.Name = "txtshipmode1";
+            this.txtshipmode1.Size = new System.Drawing.Size(80, 24);
+            this.txtshipmode1.TabIndex = 3;
+            this.txtshipmode1.UseFunction = "WK";
+            // 
+            // txtsubcon1
+            // 
+            this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
+            this.txtsubcon1.DisplayBox1Binding = "";
+            this.txtsubcon1.IsIncludeJunk = false;
+            this.txtsubcon1.Location = new System.Drawing.Point(75, 34);
+            this.txtsubcon1.Name = "txtsubcon1";
+            this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
+            this.txtsubcon1.TabIndex = 0;
+            this.txtsubcon1.TextBox1Binding = "";
+            // 
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(998, 556);
+            this.DefaultControl = "txtsubcon1";
+            this.DefaultControlForEdit = "txtsubcon1";
             this.DefaultDetailOrder = "POID,Seq1,Seq2";
             this.DefaultOrder = "ID";
             this.GridAlias = "FtyExport_Detail";

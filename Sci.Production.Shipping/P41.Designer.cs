@@ -190,7 +190,7 @@
             this.label1.Location = new System.Drawing.Point(8, 7);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(50, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 4;
             this.label1.Text = "ID";
             // 
             // label2
@@ -199,7 +199,7 @@
             this.label2.Location = new System.Drawing.Point(8, 37);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(50, 23);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 5;
             this.label2.Text = "Date";
             // 
             // label3
@@ -208,7 +208,7 @@
             this.label3.Location = new System.Drawing.Point(8, 67);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(50, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 6;
             this.label3.Text = "Inv No.";
             // 
             // displayBox1
@@ -219,7 +219,7 @@
             this.displayBox1.Location = new System.Drawing.Point(62, 7);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(130, 23);
-            this.displayBox1.TabIndex = 4;
+            this.displayBox1.TabIndex = 7;
             // 
             // dateBox1
             // 
@@ -237,7 +237,7 @@
             this.textBox1.Location = new System.Drawing.Point(62, 67);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(200, 23);
-            this.textBox1.TabIndex = 3;
+            this.textBox1.TabIndex = 1;
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // label4
@@ -246,7 +246,7 @@
             this.label4.Location = new System.Drawing.Point(308, 7);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(125, 23);
-            this.label4.TabIndex = 7;
+            this.label4.TabIndex = 9;
             this.label4.Text = "Contract No.";
             // 
             // label5
@@ -255,7 +255,7 @@
             this.label5.Location = new System.Drawing.Point(308, 37);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(125, 23);
-            this.label5.TabIndex = 8;
+            this.label5.TabIndex = 10;
             this.label5.Text = "Port of Export";
             // 
             // label6
@@ -264,7 +264,7 @@
             this.label6.Location = new System.Drawing.Point(308, 67);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(125, 23);
-            this.label6.TabIndex = 9;
+            this.label6.TabIndex = 11;
             this.label6.Text = "Custom declare no.";
             // 
             // textBox2
@@ -275,7 +275,7 @@
             this.textBox2.Location = new System.Drawing.Point(437, 7);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(150, 23);
-            this.textBox2.TabIndex = 1;
+            this.textBox2.TabIndex = 2;
             this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
             this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
@@ -287,7 +287,7 @@
             this.textBox3.Location = new System.Drawing.Point(437, 37);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(100, 23);
-            this.textBox3.TabIndex = 2;
+            this.textBox3.TabIndex = 3;
             this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
             this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
             this.textBox3.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
@@ -317,7 +317,7 @@
             this.button1.Location = new System.Drawing.Point(687, 64);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(109, 30);
-            this.button1.TabIndex = 5;
+            this.button1.TabIndex = 8;
             this.button1.Text = "Re-Calculate";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -449,6 +449,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(810, 492);
+            this.DefaultControl = "dateBox1";
+            this.DefaultControlForEdit = "dateBox1";
             this.GridAlias = "VNExportDeclaration_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "OrderID,Article,SizeCode";

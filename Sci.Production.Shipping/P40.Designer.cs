@@ -109,6 +109,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(660, 113);
+            this.gridicon.TabIndex = 10;
             // 
             // refresh
             // 
@@ -157,7 +158,7 @@
             this.label1.Location = new System.Drawing.Point(9, 7);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(88, 23);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 6;
             this.label1.Text = "ID";
             // 
             // label2
@@ -166,7 +167,7 @@
             this.label2.Location = new System.Drawing.Point(9, 37);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(88, 23);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 7;
             this.label2.Text = "Date";
             // 
             // label3
@@ -175,7 +176,7 @@
             this.label3.Location = new System.Drawing.Point(9, 67);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(88, 23);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 8;
             this.label3.Text = "Contract No.";
             // 
             // label4
@@ -184,7 +185,7 @@
             this.label4.Location = new System.Drawing.Point(9, 97);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(88, 23);
-            this.label4.TabIndex = 4;
+            this.label4.TabIndex = 9;
             this.label4.Text = "B/L No.";
             // 
             // displayBox1
@@ -195,7 +196,7 @@
             this.displayBox1.Location = new System.Drawing.Point(101, 7);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(130, 23);
-            this.displayBox1.TabIndex = 5;
+            this.displayBox1.TabIndex = 11;
             // 
             // dateBox1
             // 
@@ -203,7 +204,7 @@
             this.dateBox1.Location = new System.Drawing.Point(101, 37);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 6;
+            this.dateBox1.TabIndex = 0;
             // 
             // textBox1
             // 
@@ -213,7 +214,7 @@
             this.textBox1.Location = new System.Drawing.Point(101, 67);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(150, 23);
-            this.textBox1.TabIndex = 7;
+            this.textBox1.TabIndex = 1;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
@@ -225,7 +226,7 @@
             this.textBox2.Location = new System.Drawing.Point(101, 97);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(200, 23);
-            this.textBox2.TabIndex = 8;
+            this.textBox2.TabIndex = 5;
             this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             this.textBox2.Validated += new System.EventHandler(this.textBox2_Validated);
             // 
@@ -235,7 +236,7 @@
             this.label5.Location = new System.Drawing.Point(356, 7);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(124, 23);
-            this.label5.TabIndex = 9;
+            this.label5.TabIndex = 12;
             this.label5.Text = "Ship by";
             // 
             // label6
@@ -266,7 +267,7 @@
             this.txtshipmode1.Location = new System.Drawing.Point(484, 6);
             this.txtshipmode1.Name = "txtshipmode1";
             this.txtshipmode1.Size = new System.Drawing.Size(80, 24);
-            this.txtshipmode1.TabIndex = 12;
+            this.txtshipmode1.TabIndex = 2;
             this.txtshipmode1.UseFunction = null;
             // 
             // txtcountry1
@@ -287,7 +288,7 @@
             this.textBox3.Location = new System.Drawing.Point(484, 67);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(168, 23);
-            this.textBox3.TabIndex = 14;
+            this.textBox3.TabIndex = 3;
             // 
             // checkBox1
             // 
@@ -338,7 +339,7 @@
             this.textBox4.Location = new System.Drawing.Point(484, 94);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(130, 23);
-            this.textBox4.TabIndex = 18;
+            this.textBox4.TabIndex = 4;
             this.textBox4.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
             this.textBox4.Validated += new System.EventHandler(this.textBox4_Validated);
             // 
@@ -346,6 +347,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(773, 513);
+            this.DefaultControl = "dateBox1";
+            this.DefaultControlForEdit = "dateBox1";
             this.DefaultOrder = "ID";
             this.GridAlias = "VNImportDeclaration_Detail";
             this.GridUniqueKey = "NLCode";
