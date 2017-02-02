@@ -70,7 +70,64 @@ where sd.ID = '{0}'", masterID);
                             item.Size = new System.Drawing.Size(700, 600);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
-                            e.EditingControl.Text = item.GetSelectedString();
+                            else
+                            {
+                                if (e.EditingControl.Text.Trim() != item.GetSelectedString().Trim())
+                                {
+                                    e.EditingControl.Text = item.GetSelectedString();
+                                    //sql參數
+                                    System.Data.SqlClient.SqlParameter sp1e = new System.Data.SqlClient.SqlParameter("@factoryid", Sci.Env.User.Factory);
+                                    System.Data.SqlClient.SqlParameter sp2e = new System.Data.SqlClient.SqlParameter("@id", e.EditingControl.Text);
+
+                                    IList<System.Data.SqlClient.SqlParameter> cmdse = new List<System.Data.SqlClient.SqlParameter>();
+                                    cmdse.Add(sp1e);
+                                    cmdse.Add(sp2e);
+                                    DataTable moDatae;
+                                    string sqlCmde = "select * from MockupOrder where Junk = 0 and FTYGroup = @factoryid and ID = @id";
+                                    DualResult result = DBProxy.Current.Select(null, sqlCmde, cmdse, out moDatae);
+                                    if (!result || moDatae.Rows.Count <= 0)
+                                    {
+                                        if (!result)
+                                        {
+                                            MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
+                                        }
+                                        else
+                                        {
+                                            MyUtility.Msg.WarningBox(string.Format("Data not found!!!"));
+                                        }
+
+                                        dr["OrderID"] = "";
+                                        dr["TMS"] = 0;
+                                        dr["MockupID"] = "";
+                                        dr["Qty"] = 0;
+                                        dr["AccuQty"] = 0;
+                                        dr["VarQty"] = 0;
+                                        dr["QAQty"] = 0;
+                                        dr["BalQty"] = 0;
+                                        dr["InlineQty"] = 0;
+                                        dr["DefectQty"] = 0;
+                                        dr["WorkHour"] = 0;
+                                        dr["RFT"] = 0;
+                                        e.EditingControl.ValidateControl();
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        dr["OrderID"] = e.EditingControl.Text;
+                                        dr["TMS"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(moDatae.Rows[0]["CPU"]) * MyUtility.Convert.GetDecimal(moDatae.Rows[0]["CPUFactor"]) * systemTMS);
+                                        dr["MockupID"] = MyUtility.Convert.GetString(moDatae.Rows[0]["MockupID"]);
+                                        dr["Qty"] = MyUtility.Convert.GetInt(moDatae.Rows[0]["Qty"]);
+                                        dr["AccuQty"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("select isnull(sum(QAQty),0) from SewingOutput_Detail where OrderId = '{0}'", MyUtility.Convert.GetString(dr["OrderID"]))));
+                                        dr["VarQty"] = MyUtility.Convert.GetInt(dr["Qty"]) - MyUtility.Convert.GetInt(dr["AccuQty"]);
+                                        dr["QAQty"] = 0;
+                                        dr["BalQty"] = MyUtility.Convert.GetInt(dr["Qty"]) - MyUtility.Convert.GetInt(dr["AccuQty"]) - MyUtility.Convert.GetInt(dr["QAQty"]);
+                                        dr["InlineQty"] = 0;
+                                        dr["DefectQty"] = 0;
+                                        dr["WorkHour"] = 0;
+                                        dr["RFT"] = 0;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -84,7 +141,7 @@ where sd.ID = '{0}'", masterID);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["OrderID"]))
                     {
                         //sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid",Sci.Env.User.Factory);
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", Sci.Env.User.Factory);
                         System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@id", MyUtility.Convert.GetString(e.FormattedValue));
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -98,13 +155,13 @@ where sd.ID = '{0}'", masterID);
                         {
                             if (!result)
                             {
-                                MyUtility.Msg.WarningBox("Sql connection fail!\r\n"+result.ToString());
+                                MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
                             }
                             else
                             {
                                 MyUtility.Msg.WarningBox(string.Format("Data not found!!!"));
                             }
-                            
+
                             dr["OrderID"] = "";
                             dr["TMS"] = 0;
                             dr["MockupID"] = "";
@@ -135,6 +192,21 @@ where sd.ID = '{0}'", masterID);
                             dr["WorkHour"] = 0;
                             dr["RFT"] = 0;
                         }
+                    }
+                    else if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["OrderID"] = "";
+                        dr["TMS"] = 0;
+                        dr["MockupID"] = "";
+                        dr["Qty"] = 0;
+                        dr["AccuQty"] = 0;
+                        dr["VarQty"] = 0;
+                        dr["QAQty"] = 0;
+                        dr["BalQty"] = 0;
+                        dr["InlineQty"] = 0;
+                        dr["DefectQty"] = 0;
+                        dr["WorkHour"] = 0;
+                        dr["RFT"] = 0;
                     }
                 }
             };
@@ -190,6 +262,10 @@ where sd.ID = '{0}'", masterID);
                 .Numeric("DefectQty", header: "Defect Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("WorkHour", header: "W'Hours", decimal_places: 3, width: Widths.AnsiChars(5))
                 .Numeric("RFT", header: "RFT(%)", width: Widths.AnsiChars(5), iseditingreadonly: true);
+        }
+        private void ovad()
+        {
+            
         }
 
         protected override void ClickNewAfter()
