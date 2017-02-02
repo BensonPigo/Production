@@ -48,6 +48,7 @@ namespace Sci.Production.PPIC
         {
             string sql = string.Format("Select Distinct ID From SewingLine{0}", MyUtility.Check.Empty(comboBox2.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboBox2.Text));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "3", line, false, ",");
+            item.Width = 300;
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
