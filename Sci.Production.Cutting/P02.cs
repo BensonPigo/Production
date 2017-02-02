@@ -2117,13 +2117,19 @@ namespace Sci.Production.Cutting
             if (drTEMP != null)
             {
                 callNextForm = new P02_Print(drTEMP, CurrentMaintain["ID"].ToString());
+                callNextForm.ShowDialog(this);
+            }
+            else if (drTEMP == null && CurrentDetailData != null)
+            {
+                callNextForm = new P02_Print(CurrentDetailData, CurrentMaintain["ID"].ToString());
+                callNextForm.ShowDialog(this);
             }
             else
             {
-                callNextForm = new P02_Print(CurrentDetailData, CurrentMaintain["ID"].ToString());
+                MyUtility.Msg.InfoBox("No datas");
+                return false;
             }
 
-            callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
 
