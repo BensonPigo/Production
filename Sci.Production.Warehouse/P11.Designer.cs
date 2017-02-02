@@ -140,7 +140,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(890, 127);
+            this.gridicon.Location = new System.Drawing.Point(997, 127);
             // 
             // refresh
             // 
@@ -232,7 +232,7 @@
             this.txtRequest.Location = new System.Drawing.Point(87, 40);
             this.txtRequest.Name = "txtRequest";
             this.txtRequest.Size = new System.Drawing.Size(107, 23);
-            this.txtRequest.TabIndex = 4;
+            this.txtRequest.TabIndex = 1;
             this.txtRequest.Validating += new System.ComponentModel.CancelEventHandler(this.txtRequest_Validating);
             // 
             // label3
@@ -250,7 +250,7 @@
             this.dateBox1.Location = new System.Drawing.Point(302, 9);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 6;
+            this.dateBox1.TabIndex = 0;
             // 
             // disLine
             // 
@@ -296,7 +296,7 @@
             this.textBox2.Location = new System.Drawing.Point(87, 133);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(340, 23);
-            this.textBox2.TabIndex = 12;
+            this.textBox2.TabIndex = 4;
             // 
             // label6
             // 
@@ -337,7 +337,7 @@
             this.btnAutoPick.Location = new System.Drawing.Point(911, 31);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
-            this.btnAutoPick.TabIndex = 15;
+            this.btnAutoPick.TabIndex = 5;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
@@ -363,7 +363,7 @@
             this.btnBreakDown.Location = new System.Drawing.Point(876, 63);
             this.btnBreakDown.Name = "btnBreakDown";
             this.btnBreakDown.Size = new System.Drawing.Size(120, 30);
-            this.btnBreakDown.TabIndex = 45;
+            this.btnBreakDown.TabIndex = 6;
             this.btnBreakDown.Text = "Issue B\'down";
             this.btnBreakDown.UseVisualStyleBackColor = true;
             this.btnBreakDown.Click += new System.EventHandler(this.btnBreakDown_Click);
@@ -416,7 +416,7 @@
             this.btnBOA.Location = new System.Drawing.Point(911, 95);
             this.btnBOA.Name = "btnBOA";
             this.btnBOA.Size = new System.Drawing.Size(80, 30);
-            this.btnBOA.TabIndex = 50;
+            this.btnBOA.TabIndex = 7;
             this.btnBOA.Text = "BOA";
             this.btnBOA.UseVisualStyleBackColor = true;
             this.btnBOA.Click += new System.EventHandler(this.btnBOA_Click);
@@ -428,7 +428,7 @@
             this.btnClear.Location = new System.Drawing.Point(805, 128);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(80, 30);
-            this.btnClear.TabIndex = 51;
+            this.btnClear.TabIndex = 8;
             this.btnClear.Text = "Clear All";
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.button9_Click);
@@ -441,7 +441,7 @@
             this.textBox1.Location = new System.Drawing.Point(87, 71);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(107, 23);
-            this.textBox1.TabIndex = 53;
+            this.textBox1.TabIndex = 3;
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
@@ -487,7 +487,7 @@
             this.checkBox1.Location = new System.Drawing.Point(224, 40);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(91, 21);
-            this.checkBox1.TabIndex = 54;
+            this.checkBox1.TabIndex = 2;
             this.checkBox1.Text = "By Combo";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
@@ -497,7 +497,7 @@
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1007, 592);
             this.DefaultControl = "txtRequest";
-            this.DefaultControlForEdit = "txtRequest";
+            this.DefaultControlForEdit = "checkBox1";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "Issue_Detail";
