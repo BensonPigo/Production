@@ -66,8 +66,24 @@ namespace Sci.Production.Cutting
             WorkOrder = cmb_M.Text;
             Est_CutDate1 = dateR_EstCutDate.Value1;
             Est_CutDate2 = dateR_EstCutDate.Value2;
-            CutCell1 = txt_CutCell1.Text;
-            CutCell2 = txt_CutCell2.Text;
+            //CutCell1 = txt_CutCell1.Text;
+            //CutCell2 = txt_CutCell2.Text;
+            int c1, c2;
+            bool bc1, bc2;
+            bc1 = int.TryParse(txt_CutCell1.Text.Trim(), out c1);
+            if (bc1) CutCell1 = c1.ToString("D2");
+            else CutCell1 = txt_CutCell1.Text.Trim();
+            //若CutCell2為空則=CutCell1
+            if (!MyUtility.Check.Empty(txt_CutCell2.Text.Trim()))
+            {
+                bc2 = int.TryParse(txt_CutCell2.Text.Trim(), out c2);
+                if (bc2) CutCell2 = c2.ToString("D2");
+                else CutCell2 = txt_CutCell2.Text.Trim();
+            }
+            else
+            {
+                CutCell2 = CutCell1;
+            }
 
             if (MyUtility.Check.Empty(Est_CutDate1))
             {
@@ -186,10 +202,6 @@ drop table #tmpWO
             if (radioBtn_ByCutCell.Checked)
             {
                 sqlCmd.Append(@"
-IF OBJECT_ID('tempdb.dbo.#DateRanges', 'U') IS NOT NULL
-  DROP TABLE #DateRanges
- IF OBJECT_ID('tempdb.dbo.#tmpWO', 'U') IS NOT NULL
-  DROP TABLE #tmpWO
 select distinct wo.EstCutDate 
 into #DateRanges 
 from workorder wo
@@ -201,14 +213,30 @@ where 1 = 1
                 }
 
                 sqlCmd.Append(@"
-select wo.id,co.Status,wo.EstCutDate, wo.mdivisionid,co.CDate,cc.id as ccid,wo.cutcellid,c.Finished
+select wo.id,co.Status
+,wo.EstCutDate, wo.mdivisionid,co.CDate
+,cc.id as ccid,wo.cutcellid,c.Finished
+,[ATofCES] = d5.ct
 into #tmpWO
 from MDivision
-inner join WorkOrder as wo on MDivision.ID = wo.MDivisionID and wo.EstCutDate is not null
-inner join CutCell as cc on cc.ID = wo.CutCellID and MDivision.ID = cc.MDivisionID
-inner join CuttingOutput_Detail cod on  cod.WorkOrderUKey = wo.UKey 
-inner join CuttingOutput as co on co.ID = cod.ID
+left join WorkOrder as wo on MDivision.ID = wo.MDivisionID and wo.EstCutDate is not null
 inner join Cutting as c on c.ID = wo.ID 
+inner join CutCell as cc on cc.ID = wo.CutCellID and MDivision.ID = cc.MDivisionID
+left join CuttingOutput_Detail cod on  cod.WorkOrderUKey = wo.UKey 
+left join CuttingOutput as co on co.ID = cod.ID and Status != 'New'
+outer apply(	
+	select Count(co5.ID) as ct 
+	from CuttingOutput co5
+	inner join CuttingOutput_Detail cd5 on co5.ID = cd5.ID 
+	inner join WorkOrder w5 on cd5.WorkOrderUKey = w5.UKey 
+	where 1=1
+		and co5.Status != 'New'
+		and co5.CDate = wo.EstCutDate
+		and co5.CDate < w5.EstCutDate
+		and w5.EstCutDate > wo.EstCutDate
+		and co5.MDivisionId = MDivision.id	
+		AND W5.CutCellid = CC.ID	
+) as d5
 where 1 = 1
 ");
                 if (!MyUtility.Check.Empty(WorkOrder))
@@ -218,16 +246,16 @@ where 1 = 1
 
                 if (!MyUtility.Check.Empty(CutCell1))
                 {
-                    sqlCmd.Append(string.Format(" and cc.ID >= {0} ", CutCell1));
+                    sqlCmd.Append(string.Format(" and cc.ID >= '{0}' ", CutCell1));
                 }
 
                 if (!MyUtility.Check.Empty(CutCell2))
                 {
-                    sqlCmd.Append(string.Format(" and cc.ID <= {0} ", CutCell2));
+                    sqlCmd.Append(string.Format(" and cc.ID <= '{0}' ", CutCell2));
                 }
 
                 sqlCmd.Append(@"
-select 
+select DISTINCT
 	[Date] = dr.EstCutDate,
 	[M] = M.MDivisionId,
 	[Cut Cell] = m2.ccid,
@@ -277,14 +305,9 @@ outer apply(
 		and CutCellID = m2.ccid
 ) as d4
 outer apply(	
-		select count(*) as ct 
-		from #tmpWO
-		where Status = 'Confrimed'
-			and CDate = dr.EstCutDate
-			and CDate < EstCutDate
-			and EstCutDate > dr.EstCutDate
-			and MDivisionId = M.MDivisionId	
-			and CutCellID = m2.ccid
+		select [ATofCES] as ct 
+		from #tmpWO 
+		where EstCutDate = dr.EstCutDate
 ) as d5
 order by dr.EstCutDate,m2.ccid
 drop table #DateRanges
