@@ -429,11 +429,14 @@ namespace Sci.Production.Sewing
                 int QAQty = 0;
                 foreach (DataRow dr in e.SubDetails.Rows)
                 {
-                    if (MyUtility.Convert.GetString(dr["SewingOutput_DetailUKey"]) == MyUtility.Convert.GetString(CurrentDetailData["UKey"]) && !MyUtility.Check.Empty(dr["QAQty"]))
+                    if (dr.RowState != DataRowState.Deleted)
                     {
-                        QAOutput.Append(string.Format("{0}*{1},", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["QAQty"])));
-                        QAQty = QAQty + MyUtility.Convert.GetInt(dr["QAQty"]);
-                    }
+                        if (MyUtility.Convert.GetString(dr["SewingOutput_DetailUKey"]) == MyUtility.Convert.GetString(CurrentDetailData["UKey"]) && !MyUtility.Check.Empty(dr["QAQty"]))
+                        {
+                            QAOutput.Append(string.Format("{0}*{1},", MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["QAQty"])));
+                            QAQty = QAQty + MyUtility.Convert.GetInt(dr["QAQty"]);
+                        }
+                    }                    
                 }
                 CurrentDetailData["QAOutput"] = QAOutput.Length > 0 ? QAOutput.ToString() : "";
                 CurrentDetailData["QAQty"] = QAQty;

@@ -25,12 +25,15 @@ namespace Sci.Production.Sewing
         }
         protected override bool OnSaveBefore()
         {
-            foreach (DataRow row in this.CurrentSubDetailDatas.Rows) {
-                if (row["ID"].ToString().Empty())
+            foreach (DataRow row in this.CurrentSubDetailDatas.Rows)
+            {
+                if (row.RowState != DataRowState.Deleted)
                 {
-                    row["ID"] = this.CurrentDetailData["ID"];
-                    
-                }
+                    if (row["ID"].ToString().Empty())
+                    {
+                        row["ID"] = this.CurrentDetailData["ID"];
+                    }
+                }                
             }
             return base.OnSaveBefore();
         }
