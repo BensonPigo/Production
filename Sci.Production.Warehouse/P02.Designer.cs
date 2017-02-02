@@ -761,6 +761,7 @@
             // 
             // txtSeq1
             // 
+            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtSeq1.Location = new System.Drawing.Point(213, 252);
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.seq1 = "";
