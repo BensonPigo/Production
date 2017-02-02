@@ -6,9 +6,9 @@
     [SizeCode]  VARCHAR (8)    CONSTRAINT [DF_PackingGuide_Detail_SizeCode] DEFAULT ('') NOT NULL,
     [QtyPerCTN] SMALLINT       CONSTRAINT [DF_PackingGuide_Detail_QtyPerCTN] DEFAULT ((0)) NOT NULL,
     [ShipQty]   INT            CONSTRAINT [DF_PackingGuide_Detail_ShipQty] DEFAULT ((0)) NOT NULL,
-    [NW]        NUMERIC (6, 3) CONSTRAINT [DF_PackingGuide_Detail_NW] DEFAULT ((0)) NULL,
-    [NNW]       NUMERIC (6, 3) CONSTRAINT [DF_PackingGuide_Detail_NNW] DEFAULT ((0)) NULL,
-    [GW]        NUMERIC (6, 3) CONSTRAINT [DF_PackingGuide_Detail_GW] DEFAULT ((0)) NULL,
+    [NW]        NUMERIC (7, 3) CONSTRAINT [DF_PackingGuide_Detail_NW] DEFAULT ((0)) NULL,
+    [NNW]       NUMERIC (7, 3) CONSTRAINT [DF_PackingGuide_Detail_NNW] DEFAULT ((0)) NULL,
+    [GW]        NUMERIC (7, 3) CONSTRAINT [DF_PackingGuide_Detail_GW] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_PackingGuide_Detail] PRIMARY KEY CLUSTERED ([Id] ASC, [Article] ASC, [SizeCode] ASC)
 );
 
