@@ -35,7 +35,7 @@ namespace Sci.Production.Cutting
         {
             base.OnFormLoaded();
             Helper.Controls.Grid.Generator(this.grid1)
-            .Text("id", header: "Issue ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("id", header: "Issue ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("IssueDate", header: "Issue Date", width: Widths.AnsiChars(10), iseditingreadonly: true);
         }
 
