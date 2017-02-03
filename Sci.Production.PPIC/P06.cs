@@ -165,8 +165,8 @@ namespace Sci.Production.PPIC
             outer apply(
 	            select CBM=(
 		            Select isnull(sum(p.CBM),0)
-		            from PackingList p
-		            where p.OrderID = oq.ID and p.OrderShipmodeSeq = oq.Seq
+		              from PackingList p 
+		            where p.ID=pd.ID and pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
 	            )
             )CBM
             outer apply(
