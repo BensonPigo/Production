@@ -146,12 +146,12 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
         //Updated Date
         //private void dateBox2_Validated(object sender, EventArgs e)
         //{
-            //if (dateBox2.OldValue != dateBox2.Value)
-            //{
-            //    QueryDate((string)comboBox1.SelectedValue, (DateTime?)dateBox2.Value);
-            //}
+        //    if (dateBox2.OldValue != dateBox2.Value)
+        //    {
+        //        QueryDate((string)comboBox1.SelectedValue, (DateTime?)dateBox2.Value);
+        //    }
 
-      //  }
+        //}
 
         //Factory
         private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
@@ -190,8 +190,8 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
             MyUtility.Excel.CopyToXls(ExcelTable, "", "PPIC_P02.xltx", 3, true, "", objApp);
 
         }
-
-        private void dateBox2_TextChanged(object sender, EventArgs e)
+              
+        private void dateBox2_ValueChanged(object sender, EventArgs e)
         {
             QueryDate((string)comboBox1.SelectedValue, (DateTime?)dateBox2.Value);
         }
