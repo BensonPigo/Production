@@ -138,6 +138,7 @@ namespace Sci.Production.Quality
             
             base.OnRequeryPost(datas);
             DataTable dtpo,dtsupp;
+            DataRow dr1;
             // Gridview新增欄位
             datas.Columns.Add("SCIRefno", typeof(string));
             datas.Columns.Add("Refno", typeof(string));
@@ -183,7 +184,11 @@ and a.seq1=@seq1";
                     dr["refno"] = dtpo.Rows[0]["refno"].ToString();
                     dr["Colorid"] = dtpo.Rows[0]["Colorid"].ToString();
                     dr["Supplier"] = dtsupp.Rows[0]["supplier"].ToString();
-                    dr["LastUpdate"] = datas.Rows[i]["EditName"].ToString() + " - " + datas.Rows[i]["EditDate"].ToString();   
+                    if (MyUtility.Check.Seek(string.Format(@"select * from DBO.View_ShowName where id='{0}'",datas.Rows[0]["EditNAme"].ToString()),out dr1 ))
+                    {
+                        dr["LastUpdate"] = dr1["ID"].ToString() + " - " + dr1["Name_Extno"].ToString();
+                    }
+                    //dr["LastUpdate"] = datas.Rows[i]["EditName"].ToString() + " - " + datas.Rows[i]["EditDate"].ToString();   
                 }
                              
                 i++;
