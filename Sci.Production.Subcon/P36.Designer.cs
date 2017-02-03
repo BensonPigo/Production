@@ -169,14 +169,14 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(3767, 184);
+            this.gridicon.Location = new System.Drawing.Point(3892, 184);
             // 
             // refresh
             // 
             this.refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.refresh.Location = new System.Drawing.Point(900, 167);
             this.refresh.Size = new System.Drawing.Size(92, 35);
-            this.refresh.TabIndex = 10;
+            this.refresh.TabIndex = 4;
             // 
             // detailgridcont
             // 
@@ -184,15 +184,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1000, 599);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(994, 553);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(994, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -218,7 +218,7 @@
             this.detailbtm.Controls.Add(this.editBox1);
             this.detailbtm.Location = new System.Drawing.Point(0, 389);
             this.detailbtm.Size = new System.Drawing.Size(1000, 210);
-            this.detailbtm.TabIndex = 1;
+            this.detailbtm.TabIndex = 0;
             this.detailbtm.Controls.SetChildIndex(this.editBox1, 0);
             this.detailbtm.Controls.SetChildIndex(this.label14, 0);
             this.detailbtm.Controls.SetChildIndex(this.txtuser4, 0);
@@ -244,16 +244,16 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(1008, 628);
+            this.tabs.TabIndex = 0;
             // 
             // createby
             // 
             this.createby.Location = new System.Drawing.Point(70, 179);
-            this.createby.TabIndex = 8;
             // 
             // editby
             // 
             this.editby.Location = new System.Drawing.Point(400, 179);
-            this.editby.TabIndex = 9;
+            this.editby.TabIndex = 1;
             // 
             // lblcreateby
             // 
@@ -326,6 +326,7 @@
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
             this.dateBox1.TabIndex = 2;
+            this.dateBox1.TabStop = false;
             // 
             // label3
             // 
@@ -354,6 +355,7 @@
             this.dateBox2.ReadOnly = true;
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
             this.dateBox2.TabIndex = 5;
+            this.dateBox2.TabStop = false;
             // 
             // label5
             // 
@@ -373,6 +375,7 @@
             this.dateBox3.ReadOnly = true;
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
             this.dateBox3.TabIndex = 6;
+            this.dateBox3.TabStop = false;
             // 
             // label6
             // 
@@ -408,7 +411,7 @@
             this.btnDebitSchedule.Location = new System.Drawing.Point(865, 76);
             this.btnDebitSchedule.Name = "btnDebitSchedule";
             this.btnDebitSchedule.Size = new System.Drawing.Size(127, 30);
-            this.btnDebitSchedule.TabIndex = 17;
+            this.btnDebitSchedule.TabIndex = 8;
             this.btnDebitSchedule.Text = "Debit Schedule";
             this.btnDebitSchedule.UseVisualStyleBackColor = true;
             this.btnDebitSchedule.Click += new System.EventHandler(this.btnDebitSchedule_Click);
@@ -459,7 +462,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 9;
+            this.numericBox1.TabIndex = 3;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -481,7 +484,7 @@
             0,
             0});
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 10;
+            this.numericBox2.TabIndex = 5;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -523,6 +526,7 @@
             this.numTotalAmt.ReadOnly = true;
             this.numTotalAmt.Size = new System.Drawing.Size(103, 23);
             this.numTotalAmt.TabIndex = 12;
+            this.numTotalAmt.TabStop = false;
             this.numTotalAmt.Value = new decimal(new int[] {
             0,
             0,
@@ -544,7 +548,7 @@
             0,
             0});
             this.numericBox4.Size = new System.Drawing.Size(60, 23);
-            this.numericBox4.TabIndex = 11;
+            this.numericBox4.TabIndex = 6;
             this.numericBox4.Value = new decimal(new int[] {
             0,
             0,
@@ -566,7 +570,7 @@
             0,
             0});
             this.numExchange.Size = new System.Drawing.Size(100, 23);
-            this.numExchange.TabIndex = 14;
+            this.numExchange.TabIndex = 4;
             this.numExchange.Value = new decimal(new int[] {
             0,
             0,
@@ -642,6 +646,7 @@
             this.btnStatusHistory.Name = "btnStatusHistory";
             this.btnStatusHistory.Size = new System.Drawing.Size(22, 30);
             this.btnStatusHistory.TabIndex = 7;
+            this.btnStatusHistory.TabStop = false;
             this.btnStatusHistory.Text = "H";
             this.btnStatusHistory.UseVisualStyleBackColor = true;
             this.btnStatusHistory.Click += new System.EventHandler(this.btnStatusHistory_Click);
@@ -702,7 +707,7 @@
             this.txtuser3.Location = new System.Drawing.Point(384, 180);
             this.txtuser3.Name = "txtuser3";
             this.txtuser3.Size = new System.Drawing.Size(300, 23);
-            this.txtuser3.TabIndex = 15;
+            this.txtuser3.TabIndex = 7;
             this.txtuser3.TextBox1Binding = "";
             // 
             // txtsubcon1
@@ -713,7 +718,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(95, 110);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 8;
+            this.txtsubcon1.TabIndex = 2;
             this.txtsubcon1.TextBox1Binding = "";
             this.txtsubcon1.Validated += new System.EventHandler(this.txtsubcon1_Validated);
             // 
@@ -724,7 +729,7 @@
             this.txtuser_SMR.Location = new System.Drawing.Point(357, 41);
             this.txtuser_SMR.Name = "txtuser_SMR";
             this.txtuser_SMR.Size = new System.Drawing.Size(300, 23);
-            this.txtuser_SMR.TabIndex = 3;
+            this.txtuser_SMR.TabIndex = 1;
             this.txtuser_SMR.TextBox1Binding = "";
             // 
             // txtuser_Handle
@@ -734,7 +739,7 @@
             this.txtuser_Handle.Location = new System.Drawing.Point(359, 9);
             this.txtuser_Handle.Name = "txtuser_Handle";
             this.txtuser_Handle.Size = new System.Drawing.Size(300, 23);
-            this.txtuser_Handle.TabIndex = 1;
+            this.txtuser_Handle.TabIndex = 0;
             this.txtuser_Handle.TextBox1Binding = "";
             // 
             // txtAccountNo1
@@ -744,7 +749,7 @@
             this.txtAccountNo1.Location = new System.Drawing.Point(494, 74);
             this.txtAccountNo1.Name = "txtAccountNo1";
             this.txtAccountNo1.Size = new System.Drawing.Size(300, 23);
-            this.txtAccountNo1.TabIndex = 5;
+            this.txtAccountNo1.TabIndex = 3;
             this.txtAccountNo1.TextBox1Binding = "";
             // 
             // txtuser5
@@ -754,7 +759,7 @@
             this.txtuser5.Location = new System.Drawing.Point(494, 45);
             this.txtuser5.Name = "txtuser5";
             this.txtuser5.Size = new System.Drawing.Size(300, 23);
-            this.txtuser5.TabIndex = 3;
+            this.txtuser5.TabIndex = 2;
             this.txtuser5.TextBox1Binding = "";
             // 
             // txtuser4

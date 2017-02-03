@@ -56,15 +56,15 @@
             this.numericBox2 = new Sci.Win.UI.NumericBox();
             this.numericBox3 = new Sci.Win.UI.NumericBox();
             this.numericBox4 = new Sci.Win.UI.NumericBox();
+            this.label12 = new Sci.Win.UI.Label();
+            this.dateBox2 = new Sci.Win.UI.DateBox();
+            this.button3 = new Sci.Win.UI.Button();
+            this.dateBox3 = new Sci.Win.UI.DateBox();
+            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             this.txtuser2 = new Sci.Production.Class.txtuser();
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
-            this.label12 = new Sci.Win.UI.Label();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.button3 = new Sci.Win.UI.Button();
-            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
-            this.dateBox3 = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -165,7 +165,7 @@
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(928, 210);
-            this.gridicon.TabIndex = 21;
+            this.gridicon.TabIndex = 11;
             // 
             // refresh
             // 
@@ -199,6 +199,7 @@
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 477);
             this.detailbtm.Size = new System.Drawing.Size(1079, 38);
+            this.detailbtm.TabIndex = 1;
             // 
             // browse
             // 
@@ -377,7 +378,7 @@
             this.button4.Location = new System.Drawing.Point(928, 44);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(136, 30);
-            this.button4.TabIndex = 16;
+            this.button4.TabIndex = 9;
             this.button4.Text = "Batch Import";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
@@ -388,7 +389,7 @@
             this.button5.Location = new System.Drawing.Point(928, 79);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(136, 30);
-            this.button5.TabIndex = 17;
+            this.button5.TabIndex = 10;
             this.button5.Text = "Special Record";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -401,7 +402,7 @@
             this.displayBox1.Location = new System.Drawing.Point(94, 14);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayBox1.TabIndex = 13;
             // 
             // dateBox1
             // 
@@ -409,7 +410,7 @@
             this.dateBox1.Location = new System.Drawing.Point(94, 81);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 6;
+            this.dateBox1.TabIndex = 1;
             // 
             // displayBox2
             // 
@@ -419,7 +420,7 @@
             this.displayBox2.Location = new System.Drawing.Point(94, 149);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(100, 23);
-            this.displayBox2.TabIndex = 12;
+            this.displayBox2.TabIndex = 15;
             // 
             // textBox2
             // 
@@ -429,7 +430,7 @@
             this.textBox2.Location = new System.Drawing.Point(580, 14);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(345, 23);
-            this.textBox2.TabIndex = 2;
+            this.textBox2.TabIndex = 7;
             // 
             // numericBox1
             // 
@@ -455,7 +456,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 14;
+            this.numericBox1.TabIndex = 3;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -470,7 +471,7 @@
             this.textBox1.Location = new System.Drawing.Point(614, 48);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(308, 23);
-            this.textBox1.TabIndex = 5;
+            this.textBox1.TabIndex = 8;
             // 
             // numericBox2
             // 
@@ -488,7 +489,8 @@
             0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 10;
+            this.numericBox2.TabIndex = 20;
+            this.numericBox2.TabStop = false;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -511,7 +513,8 @@
             0});
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(100, 23);
-            this.numericBox3.TabIndex = 7;
+            this.numericBox3.TabIndex = 17;
+            this.numericBox3.TabStop = false;
             this.numericBox3.Value = new decimal(new int[] {
             0,
             0,
@@ -533,58 +536,13 @@
             0});
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(100, 23);
-            this.numericBox4.TabIndex = 13;
+            this.numericBox4.TabIndex = 22;
+            this.numericBox4.TabStop = false;
             this.numericBox4.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            // 
-            // txtuser2
-            // 
-            this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
-            this.txtuser2.DisplayBox1Binding = "";
-            this.txtuser2.Enabled = false;
-            this.txtuser2.Location = new System.Drawing.Point(580, 82);
-            this.txtuser2.Name = "txtuser2";
-            this.txtuser2.Size = new System.Drawing.Size(300, 23);
-            this.txtuser2.TabIndex = 8;
-            this.txtuser2.TextBox1Binding = "";
-            // 
-            // txtuser1
-            // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "handle", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(342, 184);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 15;
-            this.txtuser1.TextBox1Binding = "";
-            // 
-            // txtartworktype_fty1
-            // 
-            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_fty1.cClassify = "";
-            this.txtartworktype_fty1.cSubprocess = "Y";
-            this.txtartworktype_fty1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
-            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_fty1.Location = new System.Drawing.Point(359, 47);
-            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
-            this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 4;
-            this.txtartworktype_fty1.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
-            this.txtartworktype_fty1.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
-            // 
-            // txtsubcon1
-            // 
-            this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(94, 48);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
-            this.txtsubcon1.TabIndex = 3;
-            this.txtsubcon1.TextBox1Binding = "";
             // 
             // label12
             // 
@@ -601,7 +559,7 @@
             this.dateBox2.Location = new System.Drawing.Point(94, 115);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 9;
+            this.dateBox2.TabIndex = 2;
             // 
             // button3
             // 
@@ -610,10 +568,20 @@
             this.button3.Location = new System.Drawing.Point(953, 12);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(115, 30);
-            this.button3.TabIndex = 4;
+            this.button3.TabIndex = 0;
             this.button3.Text = "Batch Create";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // dateBox3
+            // 
+            this.dateBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "apvdate", true));
+            this.dateBox3.IsSupportEditMode = false;
+            this.dateBox3.Location = new System.Drawing.Point(580, 116);
+            this.dateBox3.Name = "dateBox3";
+            this.dateBox3.Size = new System.Drawing.Size(130, 23);
+            this.dateBox3.TabIndex = 26;
+            this.dateBox3.TabStop = false;
             // 
             // txtmfactory1
             // 
@@ -623,16 +591,54 @@
             this.txtmfactory1.Location = new System.Drawing.Point(342, 14);
             this.txtmfactory1.Name = "txtmfactory1";
             this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtmfactory1.TabIndex = 1;
+            this.txtmfactory1.TabIndex = 4;
             // 
-            // dateBox3
+            // txtuser2
             // 
-            this.dateBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "apvdate", true));
-            this.dateBox3.IsSupportEditMode = false;
-            this.dateBox3.Location = new System.Drawing.Point(580, 116);
-            this.dateBox3.Name = "dateBox3";
-            this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 11;
+            this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
+            this.txtuser2.DisplayBox1Binding = "";
+            this.txtuser2.Enabled = false;
+            this.txtuser2.Location = new System.Drawing.Point(580, 82);
+            this.txtuser2.Name = "txtuser2";
+            this.txtuser2.Size = new System.Drawing.Size(300, 23);
+            this.txtuser2.TabIndex = 24;
+            this.txtuser2.TabStop = false;
+            this.txtuser2.TextBox1Binding = "";
+            // 
+            // txtuser1
+            // 
+            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "handle", true));
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(342, 184);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(300, 23);
+            this.txtuser1.TabIndex = 6;
+            this.txtuser1.TextBox1Binding = "";
+            // 
+            // txtartworktype_fty1
+            // 
+            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
+            this.txtartworktype_fty1.cClassify = "";
+            this.txtartworktype_fty1.cSubprocess = "Y";
+            this.txtartworktype_fty1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
+            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtartworktype_fty1.Location = new System.Drawing.Point(359, 47);
+            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
+            this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
+            this.txtartworktype_fty1.TabIndex = 5;
+            this.txtartworktype_fty1.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
+            this.txtartworktype_fty1.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
+            // 
+            // txtsubcon1
+            // 
+            this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
+            this.txtsubcon1.DisplayBox1Binding = "";
+            this.txtsubcon1.IsIncludeJunk = false;
+            this.txtsubcon1.Location = new System.Drawing.Point(94, 48);
+            this.txtsubcon1.Name = "txtsubcon1";
+            this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
+            this.txtsubcon1.TabIndex = 0;
+            this.txtsubcon1.TextBox1Binding = "";
             // 
             // P01
             // 

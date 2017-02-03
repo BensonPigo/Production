@@ -36,14 +36,14 @@
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
-            this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.numericBox3 = new Sci.Win.UI.NumericBox();
             this.label25 = new Sci.Win.UI.Label();
             this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
+            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -104,7 +104,7 @@
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(892, 100);
-            this.gridicon.TabIndex = 8;
+            this.gridicon.TabIndex = 6;
             // 
             // refresh
             // 
@@ -159,7 +159,7 @@
             this.button2.Location = new System.Drawing.Point(892, 46);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(100, 50);
-            this.button2.TabIndex = 7;
+            this.button2.TabIndex = 5;
             this.button2.Text = "Import From Real Time";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -227,19 +227,6 @@
             this.label7.TabIndex = 9;
             this.label7.Text = "Remark";
             // 
-            // txtartworktype_fty1
-            // 
-            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_fty1.cClassify = "";
-            this.txtartworktype_fty1.cSubprocess = "Y";
-            this.txtartworktype_fty1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
-            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_fty1.Location = new System.Drawing.Point(747, 14);
-            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
-            this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 2;
-            this.txtartworktype_fty1.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
-            // 
             // displayBox1
             // 
             this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -250,16 +237,6 @@
             this.displayBox1.Size = new System.Drawing.Size(135, 23);
             this.displayBox1.TabIndex = 0;
             // 
-            // txtuser1
-            // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "handle", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(331, 48);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 4;
-            this.txtuser1.TextBox1Binding = "";
-            // 
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
@@ -268,7 +245,7 @@
             this.textBox2.Location = new System.Drawing.Point(94, 81);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(753, 23);
-            this.textBox2.TabIndex = 6;
+            this.textBox2.TabIndex = 1;
             // 
             // dateBox1
             // 
@@ -276,7 +253,7 @@
             this.dateBox1.Location = new System.Drawing.Point(94, 46);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 3;
+            this.dateBox1.TabIndex = 0;
             // 
             // numericBox3
             // 
@@ -294,6 +271,7 @@
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(100, 23);
             this.numericBox3.TabIndex = 5;
+            this.numericBox3.TabStop = false;
             this.numericBox3.Value = new decimal(new int[] {
             0,
             0,
@@ -321,7 +299,31 @@
             this.txtmfactory1.Location = new System.Drawing.Point(330, 14);
             this.txtmfactory1.Name = "txtmfactory1";
             this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtmfactory1.TabIndex = 1;
+            this.txtmfactory1.TabIndex = 2;
+            this.txtmfactory1.TabStop = false;
+            // 
+            // txtuser1
+            // 
+            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "handle", true));
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(331, 48);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(300, 23);
+            this.txtuser1.TabIndex = 3;
+            this.txtuser1.TextBox1Binding = "";
+            // 
+            // txtartworktype_fty1
+            // 
+            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
+            this.txtartworktype_fty1.cClassify = "";
+            this.txtartworktype_fty1.cSubprocess = "Y";
+            this.txtartworktype_fty1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
+            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtartworktype_fty1.Location = new System.Drawing.Point(747, 14);
+            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
+            this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
+            this.txtartworktype_fty1.TabIndex = 4;
+            this.txtartworktype_fty1.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
             // 
             // P03
             // 

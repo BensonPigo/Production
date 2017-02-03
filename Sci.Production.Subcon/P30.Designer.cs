@@ -146,7 +146,7 @@
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(928, 170);
-            this.gridicon.TabIndex = 15;
+            this.gridicon.TabIndex = 9;
             // 
             // refresh
             // 
@@ -158,15 +158,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1058, 515);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(1052, 469);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(1052, 40);
             // 
             // detail
             // 
@@ -338,7 +338,7 @@
             this.button4.Location = new System.Drawing.Point(928, 47);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(115, 43);
-            this.button4.TabIndex = 14;
+            this.button4.TabIndex = 8;
             this.button4.Text = "Import Thread, Carton request";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
@@ -390,7 +390,7 @@
             this.textBox2.Location = new System.Drawing.Point(94, 145);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(818, 23);
-            this.textBox2.TabIndex = 12;
+            this.textBox2.TabIndex = 2;
             // 
             // numericBox1
             // 
@@ -416,7 +416,7 @@
             0,
             0});
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 6;
+            this.numericBox1.TabIndex = 7;
             this.numericBox1.Value = new decimal(new int[] {
             0,
             0,
@@ -432,7 +432,7 @@
             this.textBox1.Location = new System.Drawing.Point(128, 179);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(784, 23);
-            this.textBox1.TabIndex = 13;
+            this.textBox1.TabIndex = 3;
             // 
             // numericBox2
             // 
@@ -451,6 +451,7 @@
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
             this.numericBox2.TabIndex = 7;
+            this.numericBox2.TabStop = false;
             this.numericBox2.Value = new decimal(new int[] {
             0,
             0,
@@ -474,6 +475,7 @@
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(100, 23);
             this.numericBox3.TabIndex = 3;
+            this.numericBox3.TabStop = false;
             this.numericBox3.Value = new decimal(new int[] {
             0,
             0,
@@ -496,6 +498,7 @@
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(100, 23);
             this.numericBox4.TabIndex = 10;
+            this.numericBox4.TabStop = false;
             this.numericBox4.Value = new decimal(new int[] {
             0,
             0,
@@ -510,7 +513,8 @@
             this.txtmfactory1.Location = new System.Drawing.Point(342, 13);
             this.txtmfactory1.Name = "txtmfactory1";
             this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtmfactory1.TabIndex = 1;
+            this.txtmfactory1.TabIndex = 4;
+            this.txtmfactory1.TabStop = false;
             // 
             // txtuser2
             // 
@@ -520,7 +524,7 @@
             this.txtuser2.Location = new System.Drawing.Point(342, 80);
             this.txtuser2.Name = "txtuser2";
             this.txtuser2.Size = new System.Drawing.Size(300, 23);
-            this.txtuser2.TabIndex = 9;
+            this.txtuser2.TabIndex = 6;
             this.txtuser2.TextBox1Binding = "";
             // 
             // txtartworktype_fty1
@@ -533,7 +537,7 @@
             this.txtartworktype_fty1.Location = new System.Drawing.Point(94, 80);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(167, 23);
-            this.txtartworktype_fty1.TabIndex = 8;
+            this.txtartworktype_fty1.TabIndex = 1;
             this.txtartworktype_fty1.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
             // 
             // txtsubcon1
@@ -544,7 +548,7 @@
             this.txtsubcon1.Location = new System.Drawing.Point(94, 47);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(167, 23);
-            this.txtsubcon1.TabIndex = 4;
+            this.txtsubcon1.TabIndex = 0;
             this.txtsubcon1.TextBox1Binding = "";
             // 
             // P30
