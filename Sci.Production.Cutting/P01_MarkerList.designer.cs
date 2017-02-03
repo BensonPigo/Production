@@ -522,7 +522,7 @@
             this.displayWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Width", true));
             this.displayWidth.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.displayWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayWidth.Location = new System.Drawing.Point(807, 227);
+            this.displayWidth.Location = new System.Drawing.Point(767, 227);
             this.displayWidth.Name = "displayWidth";
             this.displayWidth.Size = new System.Drawing.Size(70, 21);
             this.displayWidth.TabIndex = 149;
