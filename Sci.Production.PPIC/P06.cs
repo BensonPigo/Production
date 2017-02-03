@@ -164,9 +164,10 @@ namespace Sci.Production.PPIC
             )Dimension
             outer apply(
 	            select CBM=(
-		            Select isnull(sum(p.CBM),0)
-		              from PackingList p 
-		            where p.ID=pd.ID and pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
+		               Select top 1 isnull(p.CBM,0)
+		            from PackingList p
+					inner join PackingList_Detail pd on p.id=pd.id
+		            where p.OrderID = oq.ID and pd.OrderShipmodeSeq = oq.Seq
 	            )
             )CBM
             outer apply(
