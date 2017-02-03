@@ -82,7 +82,7 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Seek(sql, out dr))
             {
                 this.DisplayStyle.Text = dr["StyleID"].ToString().Trim();
-                //this.DisplayCell.Text = dr["SewingCell"].ToString().Trim();
+                this.DisplayCell.Text = dr["SewingCell"].ToString().Trim();
                 this.DisplayDest.Text = dr["Dest"].ToString().Trim();
                 this.NumCPU.Text = MyUtility.Convert.GetDecimal(dr["CPU"]).ToString().Trim();
                 this.NumRFT.Text = dr["RFT_percentage"].ToString().Trim();
