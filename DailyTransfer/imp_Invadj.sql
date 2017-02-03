@@ -17,7 +17,6 @@ BEGIN
 --PMS¦h,[OrderShipmodeSeq]
 --      ,[MDivisionID]
 
-select * from Production.dbo.InvAdjust
 
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.InvAdjust(
