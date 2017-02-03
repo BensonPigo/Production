@@ -120,8 +120,21 @@ namespace Sci.Production.Quality
              DateTime completedate;
              if (inspnum == "100")
              {
-                 completedate = ((DateTime)detailTb.Compute("Max(InspDeadline)", ""));
-                 Complete_box.Text = completedate.ToShortDateString();
+                 DataTable dtMaxDate;
+                 string sqlDate = string.Format(@"select max(date) as MaxDate from (
+select  MAX(CrockingDate) AS date  from FIR_Laboratory
+where POID='{0}'
+union all
+select  MAX(HeatDate) as date from FIR_Laboratory
+where POID='{0}'
+union all
+select  MAX(WashDate) AS date from FIR_Laboratory
+where POID='{0}'
+) a", CurrentMaintain["ID"]);
+                 DBProxy.Current.Select(null, sqlDate, out dtMaxDate);
+
+                 completedate = ((DateTime)dtMaxDate.Rows[0]["MaxDate"]);
+                 Complete_box.Text = completedate.ToString("yyyy/MM/dd");
              }
              else this.Complete_box.Text = "";
              
