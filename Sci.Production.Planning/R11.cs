@@ -195,7 +195,7 @@ group by aa.StyleUkey,bb.ArtworkTypeID
 
             sqlCmd.Append(string.Format(@"
 select a.FtyGroup,a.StyleID,a.SeasonID,a.CdCodeID,a.CPU,a.ttl_qty,a.ttl_cpu
-,round(B.ttl_output/ttl_target,4) [Avg. Eff.]
+,round(B.ttl_output/ NULLIF(ttl_target,0),4) [Avg. Eff.]
 ,iif(xxx.outputdate is null,'Only Sample',xxx.sewinglineid+' ('+convert(varchar,xxx.outputdate)+')')remark
 ,(select 'Y' from dbo.Style_TmsCost where StyleUkey = a.StyleUkey and ArtworkTypeID = 'GMT WASH' and price > 0) wash
 ,pvt.*
@@ -203,10 +203,11 @@ from
 (select FtyGroup,styleukey,Styleid,seasonid,cdcodeid,cpu,sum(qty) ttl_qty,sum(qty*cpu) ttl_cpu from rawdata_order group by FtyGroup,styleukey,Styleid,seasonid,cdcodeid,cpu) a
 inner join tmscost_pvt pvt on pvt.StyleUkey = a.StyleUkey
 left join 
-(select StyleUkey,sum(set_tms*qaqty) ttl_tms 
-    ,sum(WorkHour*Manpower) ttl_manhours
+(select StyleUkey
+    , nullif(sum(set_tms*qaqty),0) ttl_tms 
+    , nullif(sum(WorkHour*Manpower),0) ttl_manhours
     , sum(qaqty) ttl_output
-    , sum(round(3600*WorkHour/set_tms*Manpower,0)) ttl_target
+    , sum(round(3600*WorkHour/ NULLIF(set_tms*Manpower,0),0)) ttl_target
 from rawdata_output group by StyleUkey) b on b.StyleUkey = a.StyleUkey
 outer apply (select outputdate,SewingLineID from max_output M 
 				where m.StyleUkey = a.StyleUkey) xxx
