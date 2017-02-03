@@ -73,7 +73,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 106);
-            this.panel1.TabIndex = 2;
+            this.panel1.TabIndex = 0;
             // 
             // button2
             // 
@@ -142,7 +142,7 @@
             this.dateRange3.Location = new System.Drawing.Point(122, 40);
             this.dateRange3.Name = "dateRange3";
             this.dateRange3.Size = new System.Drawing.Size(280, 23);
-            this.dateRange3.TabIndex = 2;
+            this.dateRange3.TabIndex = 1;
             // 
             // label2
             // 
@@ -158,7 +158,7 @@
             this.dateRange1.Location = new System.Drawing.Point(540, 9);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 1;
+            this.dateRange1.TabIndex = 2;
             // 
             // label1
             // 
