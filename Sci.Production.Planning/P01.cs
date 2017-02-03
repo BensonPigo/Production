@@ -214,17 +214,8 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                         }  
                     }
                 }
-                if (CurrentDetailData["InhouseOSP"].ToString() == "O" && e.FormattedValue.ToString() == "")
-                {
-                    CurrentDetailData["localsuppname"] = "";
-                    CurrentDetailData["localsuppid"] = "";
-                    if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"] = DBNull.Value; }
-                }
-                if (CurrentDetailData["InhouseOSP"].ToString() == "I" && e.FormattedValue.ToString() == "")
-                {
-                    CurrentDetailData["localsuppname"] = "";
-                    CurrentDetailData["localsuppid"] = "";
-                }
+                  if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"] = DBNull.Value; }
+              
             };
 
             Ict.Win.UI.DataGridViewComboBoxColumn col_inhouse_osp;
@@ -251,13 +242,9 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                                                     , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]), null);
                         CurrentDetailData["inhouseOSP"] = e.FormattedValue;
                     }
-                    if (e.FormattedValue.ToString() == "O" && CurrentDetailData["localsuppid"].ToString() == "") 
-                    {
-                        CurrentDetailData["localsuppname"] = "";
-                        CurrentDetailData["localsuppid"]= "";
-
+                    
                         if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"] = DBNull.Value; }
-                    }            
+                            
                 }
             };
             //下拉選項顯示
@@ -310,8 +297,9 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
         }
         private void Cb_SelectionChangeCommitted1(object sender, EventArgs e)
         {
-            //下拉選項是InHouse時，subcon & subcon name自動帶出，若為OSP時 清空 subcon & subcon name
-            if (((Ict.Win.UI.DataGridViewComboBoxEditingControl)(sender)).EditingControlFormattedValue.ToString() == "I")
+            //下拉選項是InHouse時，subcon & subcon name自動帶出，若為OSP時 帶出 subcon & subcon name
+            string newValue = ((Ict.Win.UI.DataGridViewComboBoxEditingControl)(sender)).EditingControlFormattedValue.ToString();
+            if ( newValue== "I")
             {
                 DataTable dt;
 
@@ -324,12 +312,27 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                             where ot.LocalSuppID='{0}'", sub);
                 DualResult result = DBProxy.Current.Select(null, SubconName, out dt);
                 this.CurrentDetailData["localsuppname"] = dt.Rows[0]["Abb"].ToString();
+
             }
-            else 
+            else if (newValue == "O")
             {
-                this.CurrentDetailData["localsuppname"] = "";
-                this.CurrentDetailData["localsuppid"] = "";
+                DataTable dt;
+                string suppidAndName = string.Format(@"SELECT top 1 QU.LocalSuppId,LocalSupp.Abb
+                                                    FROM Order_TmsCost OT
+                                                    INNER JOIN ORDERS ON OT.ID = ORDERS.ID
+                                                    INNER JOIN Style_Artwork SA ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
+                                                    LEFT JOIN Style_Artwork_Quot QU ON QU.Ukey = SA.Ukey
+                                                    INNER JOIN LocalSupp ON LocalSupp.ID = QU.LocalSuppId
+                                                    WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' 
+                                                        AND OT.ARTWORKTYPEID = '{1}' 
+                                                    GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup"
+                                                    , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]);
+                DualResult result = DBProxy.Current.Select(null, suppidAndName, out dt);
+                this.CurrentDetailData["localsuppname"] = dt.Rows[0]["Abb"].ToString();
+                this.CurrentDetailData["localsuppid"] = dt.Rows[0]["LocalSuppId"].ToString();
+
             }
+            CurrentDetailData["inhouseOSP"] = newValue;
         }
 
         private void button_batchApprove_Click(object sender, EventArgs e)
