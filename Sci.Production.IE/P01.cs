@@ -46,11 +46,12 @@ namespace Sci.Production.IE
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select 0 as Selected, td.*,o.DescEN as OperationDescEN,o.MtlFactorID as OperationMtlFactorID
-from TimeStudy_Detail td
-left join Operation o on td.OperationID = o.ID
-where td.ID = '{0}'
-order by td.Seq", masterID);
+            this.DetailSelectCommand = string.Format(@"select 0 as Selected, td.*,o.DescEN as OperationDescEN,o.MtlFactorID as OperationMtlFactorID, m.DescEN
+                                                        from TimeStudy_Detail td
+                                                        left join Operation o on td.OperationID = o.ID
+                                                        left join Mold m on m.ID=td.Mold
+                                                        where td.ID = '{0}'
+                                                        order by td.Seq", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -127,6 +128,7 @@ order by td.Seq", masterID);
                                     dr["OperationDescEN"] = callNextForm.p01SelectOperationCode["DescEN"].ToString();
                                     dr["MachineTypeID"] = callNextForm.p01SelectOperationCode["MachineTypeID"].ToString();
                                     dr["Mold"] = callNextForm.p01SelectOperationCode["MoldID"].ToString();
+                                    dr["DescEN"] = "";  //將[Attachment Description]清空
                                     dr["OperationMtlFactorID"] = callNextForm.p01SelectOperationCode["MtlFactorID"].ToString();
                                     dr["SeamLength"] = callNextForm.p01SelectOperationCode["SeamLength"].ToString();
                                     dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.p01SelectOperationCode["SMV"]) * 60;
@@ -141,6 +143,7 @@ order by td.Seq", masterID);
                                 dr["OperationDescEN"] = callNextForm.p01SelectOperationCode["DescEN"].ToString();
                                 dr["MachineTypeID"] = callNextForm.p01SelectOperationCode["MachineTypeID"].ToString();
                                 dr["Mold"] = callNextForm.p01SelectOperationCode["MoldID"].ToString();
+                                dr["DescEN"] = "";  //將[Attachment Description]清空
                                 dr["OperationMtlFactorID"] = callNextForm.p01SelectOperationCode["MtlFactorID"].ToString();
                                 dr["SeamLength"] = callNextForm.p01SelectOperationCode["SeamLength"].ToString();
                                 dr["SMV"] = MyUtility.Convert.GetDecimal(callNextForm.p01SelectOperationCode["SMV"]) * 60;
@@ -171,6 +174,7 @@ order by td.Seq", masterID);
                             dr["OperationDescEN"] = "";
                             dr["MachineTypeID"] = "";
                             dr["Mold"] = "";
+                            dr["DescEN"] = "";  //將[Attachment Description]清空
                             dr["OperationMtlFactorID"] = "";
                             dr["Frequency"] = 0;
                             dr["SeamLength"] = 0;
@@ -202,7 +206,8 @@ order by td.Seq", masterID);
                                     dr["OperationID"] = e.FormattedValue.ToString();
                                     dr["OperationDescEN"] = opData.Rows[0]["DescEN"].ToString();
                                     dr["MachineTypeID"] = opData.Rows[0]["MachineTypeID"].ToString();
-                                    dr["Mold"] = opData.Rows[0]["MoldID"].ToString();
+                                    //dr["Mold"] = opData.Rows[0]["MoldID"].ToString();  //目前看到的都是空，先不塞資料
+                                    //dr["DescEN"] = "";  //目前看到的都是空，先不塞資料
                                     dr["OperationMtlFactorID"] = opData.Rows[0]["MtlFactorID"].ToString();
                                     dr["Frequency"] = 1;
                                     dr["SeamLength"] = MyUtility.Convert.GetDecimal(opData.Rows[0]["SeamLength"]);
@@ -218,6 +223,11 @@ order by td.Seq", masterID);
                         }
                         dr.EndEdit();
                     }
+                    else if(MyUtility.Check.Empty(e.FormattedValue))  //若為空則清空相關資料
+                    {
+                        ChangeToEmptyData(dr);
+                    }
+
                 }
             };
             #endregion
@@ -299,7 +309,6 @@ order by td.Seq", masterID);
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (dr.Table.Columns.IndexOf("DescEN").ToString() != "16") { dr.Table.Columns.Add("DescEN"); }
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["MachineTypeID"].ToString())
                     {
                         if (!MyUtility.Check.Seek(string.Format("select ID,Description from MachineType where Junk = 0 and ID = '{0}'", e.FormattedValue.ToString())))
@@ -329,15 +338,14 @@ order by td.Seq", masterID);
                         if (e.RowIndex != -1 )
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            if (dr.Table.Columns.IndexOf("DescEN").ToString() != "16") { dr.Table.Columns.Add("DescEN"); }
                             string sqlCmd = "select ID,DescEN from Mold where Junk = 0";
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,15", dr["Mold"].ToString());
                             
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             IList<DataRow> selectData = item.GetSelecteds();
-                            dr["Mold"] = item.GetSelectedString();
-                            dr["DescEN"] = item.GetSelectedString();
+                            dr["Mold"] = selectData[0]["ID"];
+                            dr["DescEN"] = selectData[0]["DescEN"];
 
                         }
                     }
@@ -375,7 +383,7 @@ order by td.Seq", masterID);
                             else
                             {
                                 dr["Mold"] = MyUtility.Convert.GetString(e.FormattedValue);
-                                dr["DescEN"] = MyUtility.Convert.GetString(e.FormattedValue);
+                                dr["DescEN"] = MyUtility.Convert.GetString(moldData.Rows[0]["DescEN"]);
                             }
                         }
                         else
@@ -414,6 +422,7 @@ order by td.Seq", masterID);
             dr["OperationDescEN"] = "";
             dr["MachineTypeID"] = "";
             dr["Mold"] = "";
+            dr["DescEN"] = "";
             dr["OperationMtlFactorID"] = "";
             dr["Frequency"] = 0;
             dr["SeamLength"] = 0;
