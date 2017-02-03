@@ -38,21 +38,27 @@
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.panelTop = new System.Windows.Forms.Panel();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelMiddle = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.panelFabric = new Sci.Win.UI.Panel();
+            this.panelColor = new Sci.Win.UI.Panel();
+            this.panelMiddleLeft = new Sci.Win.UI.Panel();
+            this.panelMiddleRight = new Sci.Win.UI.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.gridFab)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridColorDesc)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
-            this.panelTop.SuspendLayout();
             this.panelBottom.SuspendLayout();
             this.panelMiddle.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.panelFabric.SuspendLayout();
+            this.panelColor.SuspendLayout();
+            this.panelMiddleLeft.SuspendLayout();
+            this.panelMiddleRight.SuspendLayout();
             this.SuspendLayout();
             // 
             // gridFab
@@ -83,7 +89,7 @@
             this.gridFab.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridFab.RowTemplate.Height = 24;
             this.gridFab.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridFab.Size = new System.Drawing.Size(661, 457);
+            this.gridFab.Size = new System.Drawing.Size(661, 459);
             this.gridFab.TabIndex = 0;
             this.gridFab.TabStop = false;
             // 
@@ -126,7 +132,7 @@
             this.gridColorDesc.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridColorDesc.RowTemplate.Height = 24;
             this.gridColorDesc.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridColorDesc.Size = new System.Drawing.Size(257, 457);
+            this.gridColorDesc.Size = new System.Drawing.Size(257, 459);
             this.gridColorDesc.TabIndex = 2;
             this.gridColorDesc.TabStop = false;
             // 
@@ -141,23 +147,12 @@
             // 
             // label2
             // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(671, 0);
+            this.label2.Location = new System.Drawing.Point(0, -1);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(111, 23);
             this.label2.TabIndex = 4;
             this.label2.Text = "Color Description";
-            // 
-            // panelTop
-            // 
-            this.panelTop.Controls.Add(this.label1);
-            this.panelTop.Controls.Add(this.label2);
-            this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelTop.Location = new System.Drawing.Point(0, 0);
-            this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(922, 24);
-            this.panelTop.TabIndex = 5;
             // 
             // panelBottom
             // 
@@ -172,9 +167,9 @@
             // 
             this.panelMiddle.Controls.Add(this.splitContainer1);
             this.panelMiddle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMiddle.Location = new System.Drawing.Point(0, 24);
+            this.panelMiddle.Location = new System.Drawing.Point(0, 0);
             this.panelMiddle.Name = "panelMiddle";
-            this.panelMiddle.Size = new System.Drawing.Size(922, 457);
+            this.panelMiddle.Size = new System.Drawing.Size(922, 481);
             this.panelMiddle.TabIndex = 7;
             // 
             // splitContainer1
@@ -185,34 +180,74 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.gridFab);
+            this.splitContainer1.Panel1.Controls.Add(this.panelMiddleLeft);
+            this.splitContainer1.Panel1.Controls.Add(this.panelFabric);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.gridColorDesc);
-            this.splitContainer1.Size = new System.Drawing.Size(922, 457);
+            this.splitContainer1.Panel2.Controls.Add(this.panelMiddleRight);
+            this.splitContainer1.Panel2.Controls.Add(this.panelColor);
+            this.splitContainer1.Size = new System.Drawing.Size(922, 481);
             this.splitContainer1.SplitterDistance = 661;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // panelFabric
+            // 
+            this.panelFabric.Controls.Add(this.label1);
+            this.panelFabric.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelFabric.Location = new System.Drawing.Point(0, 0);
+            this.panelFabric.Name = "panelFabric";
+            this.panelFabric.Size = new System.Drawing.Size(661, 22);
+            this.panelFabric.TabIndex = 1;
+            // 
+            // panelColor
+            // 
+            this.panelColor.Controls.Add(this.label2);
+            this.panelColor.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelColor.Location = new System.Drawing.Point(0, 0);
+            this.panelColor.Name = "panelColor";
+            this.panelColor.Size = new System.Drawing.Size(257, 22);
+            this.panelColor.TabIndex = 3;
+            // 
+            // panelMiddleLeft
+            // 
+            this.panelMiddleLeft.Controls.Add(this.gridFab);
+            this.panelMiddleLeft.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelMiddleLeft.Location = new System.Drawing.Point(0, 22);
+            this.panelMiddleLeft.Name = "panelMiddleLeft";
+            this.panelMiddleLeft.Size = new System.Drawing.Size(661, 459);
+            this.panelMiddleLeft.TabIndex = 2;
+            // 
+            // panelMiddleRight
+            // 
+            this.panelMiddleRight.Controls.Add(this.gridColorDesc);
+            this.panelMiddleRight.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelMiddleRight.Location = new System.Drawing.Point(0, 22);
+            this.panelMiddleRight.Name = "panelMiddleRight";
+            this.panelMiddleRight.Size = new System.Drawing.Size(257, 459);
+            this.panelMiddleRight.TabIndex = 4;
             // 
             // ColorCombination
             // 
             this.ClientSize = new System.Drawing.Size(922, 520);
             this.Controls.Add(this.panelMiddle);
             this.Controls.Add(this.panelBottom);
-            this.Controls.Add(this.panelTop);
             this.Name = "ColorCombination";
             this.Text = "Color Combination";
             ((System.ComponentModel.ISupportInitialize)(this.gridFab)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridColorDesc)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
-            this.panelTop.ResumeLayout(false);
             this.panelBottom.ResumeLayout(false);
             this.panelMiddle.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.panelFabric.ResumeLayout(false);
+            this.panelColor.ResumeLayout(false);
+            this.panelMiddleLeft.ResumeLayout(false);
+            this.panelMiddleRight.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -226,9 +261,12 @@
         private Win.UI.Label label2;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
-        private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Panel panelBottom;
         private System.Windows.Forms.Panel panelMiddle;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private Win.UI.Panel panelMiddleLeft;
+        private Win.UI.Panel panelFabric;
+        private Win.UI.Panel panelMiddleRight;
+        private Win.UI.Panel panelColor;
     }
 }
