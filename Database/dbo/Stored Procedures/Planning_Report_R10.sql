@@ -1,6 +1,6 @@
 ﻿
 
-Alter PROCEDURE [dbo].[Planning_Report_R10]
+CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	@ReportType int = 1 --1:整個月 2:半個月 --3:Production status 2017.01.04 Serena電話確認後，表示不用做了
 	,@BrandID varchar(20)
 	,@M varchar(20)
