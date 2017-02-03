@@ -17,6 +17,8 @@ BEGIN
 --PMS¦h,[OrderShipmodeSeq]
 --      ,[MDivisionID]
 
+select * from Production.dbo.InvAdjust
+
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.InvAdjust(
         ID
@@ -46,7 +48,7 @@ INSERT INTO Production.dbo.InvAdjust(
       ,AdjustDocFee
       ,AddName
       ,AddDate
-      ,Eeit_Name
+      ,Edit_Name
       ,EditDate
       ,PriceCheckID
 
@@ -58,7 +60,7 @@ select
       ,GarmentInvoiceID
       ,OrderID
       ,PullDate
-      ,PulloutUkey
+      ,Ukey_Pullout
       ,BrandID
       ,FactoryID
       ,ARVoucherID
@@ -79,7 +81,7 @@ select
       ,AdjustDocFee
       ,AddName
       ,AddDate
-      ,Eeit_Name
+      ,EditName
       ,EditDate
       ,PriceCheckID
 
