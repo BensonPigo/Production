@@ -175,7 +175,7 @@
             this.dateBox1.Location = new System.Drawing.Point(335, 13);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 1;
+            this.dateBox1.TabIndex = 0;
             // 
             // button6
             // 
@@ -184,7 +184,7 @@
             this.button6.Location = new System.Drawing.Point(945, 47);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(95, 30);
-            this.button6.TabIndex = 14;
+            this.button6.TabIndex = 3;
             this.button6.Text = "Import";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
@@ -198,7 +198,7 @@
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(658, 51);
-            this.editBox1.TabIndex = 60;
+            this.editBox1.TabIndex = 2;
             // 
             // label1
             // 
@@ -219,7 +219,7 @@
             this.comboBox1.Location = new System.Drawing.Point(584, 12);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 62;
+            this.comboBox1.TabIndex = 1;
             this.comboBox1.Validating += new System.ComponentModel.CancelEventHandler(this.comboBox1_Validating);
             // 
             // label2
