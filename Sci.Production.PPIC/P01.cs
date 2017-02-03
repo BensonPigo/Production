@@ -986,7 +986,6 @@ where POID = @poid group by POID,b.spno";
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice.xltx");
                 sxrc sxr = new sxrc(xltPath);
-                sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
                 sxr.dicDatas.Add(sxr._v + "PO_MAKER", drvar["MAKER"].ToString());
                 sxr.dicDatas.Add(sxr._v + "PO_STYLENO", drvar["sty"].ToString());
                 sxr.dicDatas.Add(sxr._v + "PO_QTY", drvar["QTY"]);
@@ -996,6 +995,11 @@ where POID = @poid group by POID,b.spno";
                 DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@POID", poid), new SqlParameter("@WithZ", false), new SqlParameter("@fullsize", 1) }, out dts);
                 
                 sxrc.xltRptTable xltTbl = new sxrc.xltRptTable(dts[0], 1, 0, false, 18, 2);
+
+              
+
+
+
                 for (int i = 3; i <= 18; i++)
                 {
                     sxrc.xlsColumnInfo xcinfo = new sxrc.xlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
@@ -1016,7 +1020,7 @@ where POID = @poid group by POID,b.spno";
                     return ;
                 }
 
-                sxr.CopySheet.Add(2, dt.Rows.Count - 1);
+                sxr.CopySheet.Add(1, dt.Rows.Count - 1);
                 sxr.VarToSheetName = sxr._v + "SP";
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
@@ -1025,6 +1029,7 @@ where POID = @poid group by POID,b.spno";
 
                     res = DBProxy.Current.SelectSP("", "PPIC_Report02", new List<SqlParameter> { new SqlParameter("@ID", ID), new SqlParameter("@WithZ", false) }, out dts);
 
+                    sxr.dicDatas.Add(sxr._v + "Now"+ idxStr, DateTime.Now);
                     sxr.dicDatas.Add(sxr._v + "SP" + idxStr, ID);
                     sxr.dicDatas.Add(sxr._v + "MAKER" + idxStr, dt.Rows[i]["MAKER"].ToString());
                     sxr.dicDatas.Add(sxr._v + "STYLENO" + idxStr, dt.Rows[i]["sty"].ToString());
@@ -1186,5 +1191,30 @@ where POID = @poid group by POID,b.spno";
         }
 
 
+
+        //protected override bool OnToExcel(Win.ReportDefinition report)
+        //{
+        //    return false;
+        //}
+        //void addfilter(Worksheet mySheet, int rowNo, int columnNo)
+        //{
+
+        //    Worksheet wb = new Worksheet();
+        //  //  wb.Worksheet.Add("sh1");
+        //    //ExcelWorksheet Wsheet = wb.Worksheets[0];
+        //    //Wsheet.Cells[0, 0].Value = "test data";
+        //    wb.Password = "asdfgh";
+        //    wb.WriteXLS(@"..\..\..\NewPassword.xls");
+
+
+        //    xltPath.Password = password;
+        //    Worksheet.SaveAs("spreadsheet.xls");
+
+        //}
+        //Microsoft.Office.Interop.Excel._Workbook ff = new Microsoft.Office.Interop.Excel._Workbook();
+        //var WFile = new Excel.Application();
+        //Excel.Workbook Wbook = WFile.Workbooks.Open("myFilepath", ReadOnly: false, Password: "mypassword");
+
     }
+
 }

@@ -45,16 +45,16 @@
             this.displayBox2 = new Sci.Win.UI.DisplayBox();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.txtsewingline1 = new Sci.Production.Class.txtsewingline();
             this.label10 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
             this.label12 = new Sci.Win.UI.Label();
             this.label13 = new Sci.Win.UI.Label();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.txtuser2 = new Sci.Production.Class.txtuser();
             this.dateBox2 = new Sci.Win.UI.DateBox();
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.lbStatus = new Sci.Win.UI.Label();
+            this.txtuser2 = new Sci.Production.Class.txtuser();
+            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.txtsewingline1 = new Sci.Production.Class.txtsewingline();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -136,11 +136,12 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(759, 107);
-            this.gridicon.TabIndex = 13;
+            this.gridicon.TabIndex = 6;
             // 
             // refresh
             // 
             this.refresh.Location = new System.Drawing.Point(788, 0);
+            this.refresh.TabIndex = 3;
             // 
             // detailgridcont
             // 
@@ -180,9 +181,17 @@
             // 
             this.tabs.Size = new System.Drawing.Size(876, 516);
             // 
+            // createby
+            // 
+            this.createby.TabIndex = 1;
+            // 
             // editby
             // 
-            this.editby.TabIndex = 1;
+            this.editby.TabIndex = 2;
+            // 
+            // lblcreateby
+            // 
+            this.lblcreateby.TabIndex = 0;
             // 
             // label1
             // 
@@ -248,6 +257,7 @@
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(110, 23);
             this.dateBox1.TabIndex = 3;
+            this.dateBox1.TabStop = false;
             // 
             // comboBox1
             // 
@@ -259,7 +269,7 @@
             this.comboBox1.Location = new System.Drawing.Point(64, 57);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 6;
+            this.comboBox1.TabIndex = 0;
             this.comboBox1.Validated += new System.EventHandler(this.comboBox1_Validated);
             // 
             // comboBox2
@@ -272,7 +282,7 @@
             this.comboBox2.Location = new System.Drawing.Point(64, 84);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(110, 24);
-            this.comboBox2.TabIndex = 9;
+            this.comboBox2.TabIndex = 1;
             // 
             // textBox1
             // 
@@ -282,7 +292,7 @@
             this.textBox1.Location = new System.Drawing.Point(64, 112);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(616, 23);
-            this.textBox1.TabIndex = 12;
+            this.textBox1.TabIndex = 2;
             // 
             // label6
             // 
@@ -328,7 +338,7 @@
             this.displayBox2.Location = new System.Drawing.Point(323, 4);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(60, 23);
-            this.displayBox2.TabIndex = 1;
+            this.displayBox2.TabIndex = 3;
             // 
             // textBox2
             // 
@@ -338,7 +348,7 @@
             this.textBox2.Location = new System.Drawing.Point(323, 31);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(120, 23);
-            this.textBox2.TabIndex = 4;
+            this.textBox2.TabIndex = 3;
             this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
             // displayBox3
@@ -350,17 +360,6 @@
             this.displayBox3.Name = "displayBox3";
             this.displayBox3.Size = new System.Drawing.Size(120, 23);
             this.displayBox3.TabIndex = 7;
-            // 
-            // txtsewingline1
-            // 
-            this.txtsewingline1.BackColor = System.Drawing.Color.White;
-            this.txtsewingline1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewingline1.factoryobjectName = this.displayBox2;
-            this.txtsewingline1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtsewingline1.Location = new System.Drawing.Point(323, 84);
-            this.txtsewingline1.Name = "txtsewingline1";
-            this.txtsewingline1.Size = new System.Drawing.Size(60, 23);
-            this.txtsewingline1.TabIndex = 10;
             // 
             // label10
             // 
@@ -398,26 +397,6 @@
             this.label13.TabIndex = 22;
             this.label13.Text = "Issue No.";
             // 
-            // txtuser1
-            // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ApplyName", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(560, 4);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(302, 23);
-            this.txtuser1.TabIndex = 2;
-            this.txtuser1.TextBox1Binding = "";
-            // 
-            // txtuser2
-            // 
-            this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ApvName", true));
-            this.txtuser2.DisplayBox1Binding = "";
-            this.txtuser2.Location = new System.Drawing.Point(560, 31);
-            this.txtuser2.Name = "txtuser2";
-            this.txtuser2.Size = new System.Drawing.Size(302, 23);
-            this.txtuser2.TabIndex = 5;
-            this.txtuser2.TextBox1Binding = "";
-            // 
             // dateBox2
             // 
             this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ApvDate", true));
@@ -427,6 +406,7 @@
             this.dateBox2.ReadOnly = true;
             this.dateBox2.Size = new System.Drawing.Size(110, 23);
             this.dateBox2.TabIndex = 8;
+            this.dateBox2.TabStop = false;
             // 
             // displayBox4
             // 
@@ -452,6 +432,38 @@
             this.lbStatus.TextStyle.Color = System.Drawing.Color.Red;
             this.lbStatus.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
             this.lbStatus.TextStyle.GradientColor = System.Drawing.Color.Red;
+            // 
+            // txtuser2
+            // 
+            this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ApvName", true));
+            this.txtuser2.DisplayBox1Binding = "";
+            this.txtuser2.Location = new System.Drawing.Point(560, 31);
+            this.txtuser2.Name = "txtuser2";
+            this.txtuser2.Size = new System.Drawing.Size(302, 23);
+            this.txtuser2.TabIndex = 6;
+            this.txtuser2.TabStop = false;
+            this.txtuser2.TextBox1Binding = "";
+            // 
+            // txtuser1
+            // 
+            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ApplyName", true));
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(560, 4);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(302, 23);
+            this.txtuser1.TabIndex = 5;
+            this.txtuser1.TextBox1Binding = "";
+            // 
+            // txtsewingline1
+            // 
+            this.txtsewingline1.BackColor = System.Drawing.Color.White;
+            this.txtsewingline1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
+            this.txtsewingline1.factoryobjectName = this.displayBox2;
+            this.txtsewingline1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsewingline1.Location = new System.Drawing.Point(323, 84);
+            this.txtsewingline1.Name = "txtsewingline1";
+            this.txtsewingline1.Size = new System.Drawing.Size(60, 23);
+            this.txtsewingline1.TabIndex = 4;
             // 
             // P10
             // 

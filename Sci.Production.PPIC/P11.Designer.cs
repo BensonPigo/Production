@@ -99,7 +99,6 @@
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Size = new System.Drawing.Size(868, 142);
-            this.masterpanel.TabIndex = 1;
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
@@ -137,7 +136,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(759, 107);
-            this.gridicon.TabIndex = 13;
+            this.gridicon.TabIndex = 6;
             // 
             // refresh
             // 
@@ -171,7 +170,7 @@
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 449);
             this.detailbtm.Size = new System.Drawing.Size(868, 38);
-            this.detailbtm.TabIndex = 1;
+            this.detailbtm.TabIndex = 0;
             // 
             // browse
             // 
@@ -249,6 +248,7 @@
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(110, 23);
             this.dateBox1.TabIndex = 3;
+            this.dateBox1.TabStop = false;
             // 
             // comboBox1
             // 
@@ -260,7 +260,7 @@
             this.comboBox1.Location = new System.Drawing.Point(64, 57);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 6;
+            this.comboBox1.TabIndex = 0;
             this.comboBox1.Validated += new System.EventHandler(this.comboBox1_Validated);
             // 
             // comboBox2
@@ -273,7 +273,7 @@
             this.comboBox2.Location = new System.Drawing.Point(64, 84);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(110, 24);
-            this.comboBox2.TabIndex = 9;
+            this.comboBox2.TabIndex = 1;
             // 
             // textBox1
             // 
@@ -283,7 +283,7 @@
             this.textBox1.Location = new System.Drawing.Point(64, 112);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(616, 23);
-            this.textBox1.TabIndex = 12;
+            this.textBox1.TabIndex = 2;
             // 
             // label6
             // 
@@ -339,7 +339,7 @@
             this.textBox2.Location = new System.Drawing.Point(323, 31);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(120, 23);
-            this.textBox2.TabIndex = 4;
+            this.textBox2.TabIndex = 3;
             this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
             // displayBox3
@@ -361,7 +361,7 @@
             this.txtsewingline1.Location = new System.Drawing.Point(323, 84);
             this.txtsewingline1.Name = "txtsewingline1";
             this.txtsewingline1.Size = new System.Drawing.Size(60, 23);
-            this.txtsewingline1.TabIndex = 10;
+            this.txtsewingline1.TabIndex = 4;
             // 
             // label10
             // 
@@ -406,7 +406,7 @@
             this.txtuser1.Location = new System.Drawing.Point(560, 4);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(302, 23);
-            this.txtuser1.TabIndex = 2;
+            this.txtuser1.TabIndex = 5;
             this.txtuser1.TextBox1Binding = "";
             // 
             // txtuser2
@@ -417,6 +417,7 @@
             this.txtuser2.Name = "txtuser2";
             this.txtuser2.Size = new System.Drawing.Size(302, 23);
             this.txtuser2.TabIndex = 5;
+            this.txtuser2.TabStop = false;
             this.txtuser2.TextBox1Binding = "";
             // 
             // dateBox2
@@ -428,6 +429,7 @@
             this.dateBox2.ReadOnly = true;
             this.dateBox2.Size = new System.Drawing.Size(110, 23);
             this.dateBox2.TabIndex = 8;
+            this.dateBox2.TabStop = false;
             // 
             // displayBox4
             // 

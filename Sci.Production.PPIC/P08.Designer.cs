@@ -152,7 +152,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(711, 187);
-            this.gridicon.TabIndex = 19;
+            this.gridicon.TabIndex = 3;
             // 
             // detailgridcont
             // 
@@ -182,7 +182,7 @@
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 452);
             this.detailbtm.Size = new System.Drawing.Size(818, 38);
-            this.detailbtm.TabIndex = 1;
+            this.detailbtm.TabIndex = 0;
             // 
             // browse
             // 
@@ -286,7 +286,7 @@
             this.textSP.Location = new System.Drawing.Point(124, 31);
             this.textSP.Name = "textSP";
             this.textSP.Size = new System.Drawing.Size(120, 23);
-            this.textSP.TabIndex = 3;
+            this.textSP.TabIndex = 0;
             this.textSP.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             this.textSP.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
@@ -326,6 +326,7 @@
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(110, 23);
             this.dateBox1.TabIndex = 1;
+            this.dateBox1.TabStop = false;
             // 
             // displayBox3
             // 
@@ -474,7 +475,7 @@
             this.txtuser2.Location = new System.Drawing.Point(124, 139);
             this.txtuser2.Name = "txtuser2";
             this.txtuser2.Size = new System.Drawing.Size(302, 23);
-            this.txtuser2.TabIndex = 13;
+            this.txtuser2.TabIndex = 2;
             this.txtuser2.TextBox1Binding = "";
             // 
             // txtuser1
@@ -484,7 +485,7 @@
             this.txtuser1.Location = new System.Drawing.Point(124, 112);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(302, 23);
-            this.txtuser1.TabIndex = 11;
+            this.txtuser1.TabIndex = 1;
             this.txtuser1.TextBox1Binding = "";
             // 
             // txttpeuser2
