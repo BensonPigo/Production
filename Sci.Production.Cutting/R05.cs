@@ -25,6 +25,11 @@ namespace Sci.Production.Cutting
             DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder", out WorkOrder);
             MyUtility.Tool.SetupCombox(cmb_M, 1, WorkOrder);           
             cmb_M.Text = Sci.Env.User.Keyword;
+
+             DataTable factory;
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory" , out factory);
+            MyUtility.Tool.SetupCombox(cmb_Factory, 1, factory);
+            cmb_Factory.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
@@ -176,14 +181,6 @@ where 1=1
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
-        }
-
-        private void cmb_M_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DataTable factory;
-            DBProxy.Current.Select(null, string.Format("select '' as ID union all select distinct FtyGroup from Factory where MDivisionID = '{0}'", cmb_M.Text), out factory);
-            MyUtility.Tool.SetupCombox(cmb_Factory, 1, factory);
-            cmb_Factory.SelectedIndex = 0;
         }
     }
 }
