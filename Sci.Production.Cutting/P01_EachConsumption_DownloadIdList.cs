@@ -16,6 +16,7 @@ namespace Sci.Production.Cutting
         public P01_EachConsumption_DownloadIdList()
         {
             InitializeComponent();
+
         }
 
         public P01_EachConsumption_DownloadIdList(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
@@ -48,7 +49,7 @@ namespace Sci.Production.Cutting
             Helper.Controls.Grid.Generator(this.grid)
                 .Text("MarkerDownloadID", header: "Marker Download ID", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(30), iseditingreadonly: true);
-
+            
             return true;
         }
     }

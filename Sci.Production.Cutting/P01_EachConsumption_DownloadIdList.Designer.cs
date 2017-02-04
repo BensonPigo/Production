@@ -36,12 +36,12 @@
             // btmcont
             // 
             this.btmcont.Location = new System.Drawing.Point(0, 301);
-            this.btmcont.Size = new System.Drawing.Size(464, 44);
+            this.btmcont.Size = new System.Drawing.Size(479, 44);
             this.btmcont.TabIndex = 0;
             // 
             // gridcont
             // 
-            this.gridcont.Size = new System.Drawing.Size(440, 283);
+            this.gridcont.Size = new System.Drawing.Size(455, 283);
             // 
             // append
             // 
@@ -65,19 +65,19 @@
             // 
             this.undo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.undo.Dock = System.Windows.Forms.DockStyle.None;
-            this.undo.Location = new System.Drawing.Point(362, 8);
+            this.undo.Location = new System.Drawing.Point(386, 8);
             this.undo.TabIndex = 4;
             // 
             // save
             // 
             this.save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.save.Dock = System.Windows.Forms.DockStyle.None;
-            this.save.Location = new System.Drawing.Point(276, 8);
+            this.save.Location = new System.Drawing.Point(300, 8);
             this.save.TabIndex = 3;
             // 
             // P01_EachConsumption_DownloadIdList
             // 
-            this.ClientSize = new System.Drawing.Size(464, 345);
+            this.ClientSize = new System.Drawing.Size(479, 345);
             this.Name = "P01_EachConsumption_DownloadIdList";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Marker Download ID";
