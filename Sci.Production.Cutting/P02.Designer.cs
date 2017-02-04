@@ -184,7 +184,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(4211, 561);
+            this.refresh.Location = new System.Drawing.Point(4268, 561);
             // 
             // detailgridcont
             // 
@@ -193,7 +193,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(3, 101);
-            this.detailgridcont.Size = new System.Drawing.Size(631, 596);
+            this.detailgridcont.Size = new System.Drawing.Size(631, 593);
             // 
             // detail2
             // 
@@ -531,9 +531,9 @@
             this.label14.Lines = 0;
             this.label14.Location = new System.Drawing.Point(4, 85);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(97, 23);
+            this.label14.Size = new System.Drawing.Size(110, 23);
             this.label14.TabIndex = 30;
-            this.label14.Text = "Lectra Code";
+            this.label14.Text = "Fab_Panel Code";
             // 
             // label15
             // 
@@ -627,9 +627,9 @@
             // 
             this.textBox_LectraCode.BackColor = System.Drawing.Color.White;
             this.textBox_LectraCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox_LectraCode.Location = new System.Drawing.Point(104, 86);
+            this.textBox_LectraCode.Location = new System.Drawing.Point(117, 85);
             this.textBox_LectraCode.Name = "textBox_LectraCode";
-            this.textBox_LectraCode.Size = new System.Drawing.Size(43, 23);
+            this.textBox_LectraCode.Size = new System.Drawing.Size(49, 23);
             this.textBox_LectraCode.TabIndex = 24;
             // 
             // textBox_FabricCombo
@@ -1011,9 +1011,9 @@
             // label25
             // 
             this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(151, 85);
+            this.label25.Location = new System.Drawing.Point(169, 86);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(97, 23);
+            this.label25.Size = new System.Drawing.Size(90, 23);
             this.label25.TabIndex = 58;
             this.label25.Text = "PatternPanel";
             // 
@@ -1021,9 +1021,9 @@
             // 
             this.textBox_PatternPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.textBox_PatternPanel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox_PatternPanel.Location = new System.Drawing.Point(249, 86);
+            this.textBox_PatternPanel.Location = new System.Drawing.Point(262, 86);
             this.textBox_PatternPanel.Name = "textBox_PatternPanel";
-            this.textBox_PatternPanel.Size = new System.Drawing.Size(115, 23);
+            this.textBox_PatternPanel.Size = new System.Drawing.Size(102, 23);
             this.textBox_PatternPanel.TabIndex = 25;
             // 
             // rightpanel

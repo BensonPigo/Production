@@ -308,7 +308,7 @@ namespace Sci.Production.Cutting
                 .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), integer_places: 3).Get(out col_cutno)
                 .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5)).Get(out col_Markername)
                 .Text("Fabriccombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Text("LectraCode", header: "LectraCode", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("LectraCode", header: "Fab_Panel Code", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
