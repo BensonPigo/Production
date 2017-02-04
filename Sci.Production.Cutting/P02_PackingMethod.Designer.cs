@@ -48,7 +48,7 @@
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 51);
-            this.gridcont.Size = new System.Drawing.Size(158, 353);
+            this.gridcont.Size = new System.Drawing.Size(172, 353);
             // 
             // undo
             // 
@@ -92,9 +92,19 @@
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox1.Location = new System.Drawing.Point(368, 49);
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
             this.numericBox1.TabIndex = 102;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // button1
             // 
