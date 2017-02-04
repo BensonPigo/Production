@@ -75,6 +75,7 @@ namespace Sci.Production.Cutting
             base.OnDetailEntered();
             this.label7.Text = CurrentMaintain["Status"].ToString();
             this.displayBox_Requestby.Text = PublicPrg.Prgs.GetAddOrEditBy(CurrentMaintain["AddName"]);
+            this.detailgrid.AutoResizeColumns();
         }
         protected override bool ClickSaveBefore()
         {
