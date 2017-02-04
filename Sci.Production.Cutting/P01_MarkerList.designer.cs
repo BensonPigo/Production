@@ -177,7 +177,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(99, 22);
             this.label4.TabIndex = 106;
-            this.label4.Text = "Lectra Code  ";
+            this.label4.Text = "Fab_Panel Code";
             // 
             // label5
             // 
