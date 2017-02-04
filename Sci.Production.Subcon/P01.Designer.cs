@@ -220,7 +220,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
             this.label3.TabIndex = 1;
-            this.label3.Text = "PO No.";
+            this.label3.Text = "PO #";
             // 
             // label4
             // 
@@ -308,9 +308,9 @@
             this.label14.Lines = 0;
             this.label14.Location = new System.Drawing.Point(502, 116);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(75, 23);
+            this.label14.Size = new System.Drawing.Size(96, 23);
             this.label14.TabIndex = 14;
-            this.label14.Text = "Apv. Date";
+            this.label14.Text = "Approved Date";
             // 
             // label15
             // 
@@ -549,14 +549,14 @@
             this.label12.Lines = 0;
             this.label12.Location = new System.Drawing.Point(16, 116);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(75, 23);
+            this.label12.Size = new System.Drawing.Size(84, 23);
             this.label12.TabIndex = 69;
-            this.label12.Text = "Delivery";
+            this.label12.Text = "DeliveryDate";
             // 
             // dateBox2
             // 
             this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "delivery", true));
-            this.dateBox2.Location = new System.Drawing.Point(94, 115);
+            this.dateBox2.Location = new System.Drawing.Point(103, 116);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
             this.dateBox2.TabIndex = 2;
@@ -577,7 +577,7 @@
             // 
             this.dateBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "apvdate", true));
             this.dateBox3.IsSupportEditMode = false;
-            this.dateBox3.Location = new System.Drawing.Point(580, 116);
+            this.dateBox3.Location = new System.Drawing.Point(601, 116);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
             this.dateBox3.TabIndex = 26;
