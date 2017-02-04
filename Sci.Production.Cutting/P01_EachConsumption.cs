@@ -66,14 +66,7 @@ namespace Sci.Production.Cutting
             else
                 button1.Enabled = false;
         }
-
-        private void autocolumns() 
-        {
-            this.grid.AutoResizeColumns();
-            this.gridSizeQty.AutoResizeColumns();
-            this.detailgrid.AutoResizeColumns();
-        }
-
+        
         protected override Ict.DualResult OnRequery(out DataTable datas)
         {
             //return base.OnRequery();
@@ -149,7 +142,7 @@ namespace Sci.Production.Cutting
                 .Text("SizeCode", header: "Size Code", width: Widths.AnsiChars(8))
                 .Numeric("Qty", header: "Q'ty", width: Widths.Numeric(4), decimal_places: 0);
             this.gridSizeQty.Font = new Font("Arial", 9);
-            autocolumns();
+            this.detailgrid.AutoResizeColumns();
             return true;
         }
 
