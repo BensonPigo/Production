@@ -648,7 +648,7 @@
             this.displayLectraCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayLectraCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LectraCode", true));
             this.displayLectraCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayLectraCode.Location = new System.Drawing.Point(226, 126);
+            this.displayLectraCode.Location = new System.Drawing.Point(228, 126);
             this.displayLectraCode.Name = "displayLectraCode";
             this.displayLectraCode.Size = new System.Drawing.Size(30, 21);
             this.displayLectraCode.TabIndex = 13;
@@ -656,11 +656,11 @@
             // label14
             // 
             this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(140, 126);
+            this.label14.Location = new System.Drawing.Point(125, 126);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(83, 21);
+            this.label14.Size = new System.Drawing.Size(100, 21);
             this.label14.TabIndex = 12;
-            this.label14.Text = "Lectra Code";
+            this.label14.Text = "Fab_Panel Code";
             this.label14.TextStyle.Color = System.Drawing.Color.White;
             // 
             // displayPatternPanel
