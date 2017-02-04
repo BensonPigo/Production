@@ -191,7 +191,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
             this.label3.TabIndex = 1;
-            this.label3.Text = "PO No.";
+            this.label3.Text = "PO #";
             // 
             // label4
             // 
@@ -252,18 +252,18 @@
             this.label11.Lines = 0;
             this.label11.Location = new System.Drawing.Point(512, 14);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(75, 23);
+            this.label11.Size = new System.Drawing.Size(92, 23);
             this.label11.TabIndex = 11;
-            this.label11.Text = "Approve";
+            this.label11.Text = "ApproveName";
             // 
             // label14
             // 
             this.label14.Lines = 0;
             this.label14.Location = new System.Drawing.Point(512, 47);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(75, 23);
+            this.label14.Size = new System.Drawing.Size(92, 23);
             this.label14.TabIndex = 14;
-            this.label14.Text = "Apv. Date";
+            this.label14.Text = "ApprovedDate";
             // 
             // label19
             // 
@@ -363,14 +363,14 @@
             this.label12.Lines = 0;
             this.label12.Location = new System.Drawing.Point(264, 82);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(75, 23);
+            this.label12.Size = new System.Drawing.Size(92, 23);
             this.label12.TabIndex = 69;
-            this.label12.Text = "Delivery";
+            this.label12.Text = "Delivery Date";
             // 
             // dateBox2
             // 
             this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "delivery", true));
-            this.dateBox2.Location = new System.Drawing.Point(342, 81);
+            this.dateBox2.Location = new System.Drawing.Point(359, 81);
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
             this.dateBox2.TabIndex = 6;
@@ -391,7 +391,7 @@
             // 
             this.dateBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "apvdate", true));
             this.dateBox3.IsSupportEditMode = false;
-            this.dateBox3.Location = new System.Drawing.Point(590, 47);
+            this.dateBox3.Location = new System.Drawing.Point(607, 47);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.ReadOnly = true;
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
@@ -413,9 +413,9 @@
             this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
             this.txtuser2.DisplayBox1Binding = "";
             this.txtuser2.Enabled = false;
-            this.txtuser2.Location = new System.Drawing.Point(590, 14);
+            this.txtuser2.Location = new System.Drawing.Point(607, 14);
             this.txtuser2.Name = "txtuser2";
-            this.txtuser2.Size = new System.Drawing.Size(300, 23);
+            this.txtuser2.Size = new System.Drawing.Size(283, 23);
             this.txtuser2.TabIndex = 2;
             this.txtuser2.TextBox1Binding = "";
             // 

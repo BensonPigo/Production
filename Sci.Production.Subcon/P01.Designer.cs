@@ -290,9 +290,9 @@
             this.label11.Lines = 0;
             this.label11.Location = new System.Drawing.Point(502, 82);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(75, 23);
+            this.label11.Size = new System.Drawing.Size(96, 23);
             this.label11.TabIndex = 11;
-            this.label11.Text = "Approve";
+            this.label11.Text = "ApproveName";
             // 
             // label13
             // 
@@ -598,7 +598,7 @@
             this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
             this.txtuser2.DisplayBox1Binding = "";
             this.txtuser2.Enabled = false;
-            this.txtuser2.Location = new System.Drawing.Point(580, 82);
+            this.txtuser2.Location = new System.Drawing.Point(601, 82);
             this.txtuser2.Name = "txtuser2";
             this.txtuser2.Size = new System.Drawing.Size(300, 23);
             this.txtuser2.TabIndex = 24;
