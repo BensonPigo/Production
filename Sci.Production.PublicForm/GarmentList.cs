@@ -22,7 +22,7 @@ namespace Sci.Production.PublicForm
             Styleyukey = cID;
             requery();
             gridSetup();
-
+            this.grid1.AutoResizeColumns();
         }
         private void requery()
         {
