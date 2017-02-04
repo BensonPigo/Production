@@ -20,7 +20,7 @@ namespace Sci.Production.Cutting
             cutid = cID;
             requery();
             gridSetup();
-
+            this.grid1.AutoResizeColumns();
         }
         private void requery()
         {
@@ -37,7 +37,7 @@ namespace Sci.Production.Cutting
         {
             Helper.Controls.Grid.Generator(this.grid1)
                 .Text("bundleno", header: "Bundle No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("orderid", header: "SP No", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                .Text("orderid", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Date("cdate", header: "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("cutref", header: "Cut Ref", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("PatternPanel", header: "Comb", width: Widths.AnsiChars(1), iseditingreadonly: true)
