@@ -246,6 +246,7 @@ namespace Sci.Production.Cutting
         {
             base.OnDetailEntered();
             this.button2.Enabled = (CurrentMaintain["Status"].ToString() != "New");
+            this.detailgrid.AutoResizeColumns();
         }
         protected override void ClickUnconfirm()
         {
