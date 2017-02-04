@@ -86,7 +86,7 @@ namespace Sci.Production.Cutting
              .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), integer_places: 3, iseditingreadonly: true)
              .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5), iseditingreadonly: true)
              .Text("Fabriccombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-             .Text("LectraCode", header: "Lectra Code", width: Widths.AnsiChars(2), iseditingreadonly: true)
+             .Text("LectraCode", header: "Fab_Panel Code", width: Widths.AnsiChars(2), iseditingreadonly: true)
              .Text("Cutcellid", header: "Cell", width: Widths.AnsiChars(2),settings:Cell,iseditingreadonly: false)
              .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
