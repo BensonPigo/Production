@@ -198,7 +198,7 @@ namespace Sci.Production.Cutting
             .Text("Cuttingid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("LectraCode", header: "Lectra code", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("LectraCode", header: "Fab_Panel Code", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
