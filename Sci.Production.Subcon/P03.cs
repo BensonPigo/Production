@@ -23,7 +23,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             this.DefaultFilter = "MdivisionID = '" + Sci.Env.User.Keyword + "'";
-            txtmfactory1.ReadOnly = true;
+            txtmfactory1.ReadOnly = true;            
         }
 
         // detail 新增時設定預設值
@@ -245,6 +245,7 @@ outer apply(
             button2.Enabled = this.EditMode;
             #endregion
 
+            this.detailgrid.AutoResizeColumns();
         }
 
         // Detail Grid 設定
