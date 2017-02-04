@@ -25,7 +25,7 @@ namespace Sci.Production.Cutting
             WorkType = _WorkType;
             requery();
             gridSetup();
-
+            this.grid1.AutoResizeColumns();
         }
         private void requery()
         {
@@ -142,7 +142,7 @@ namespace Sci.Production.Cutting
             };
 
             Helper.Controls.Grid.Generator(this.grid1)
-                .Text("id", header: "SP No", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("id", header: "SP #", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
