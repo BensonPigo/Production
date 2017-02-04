@@ -148,6 +148,7 @@ namespace Sci.Production.Cutting
             this.displayBox_Requestby.Text = PublicPrg.Prgs.GetAddOrEditBy(CurrentMaintain["AddName"]);
             this.label7.Text = CurrentMaintain["Status"].ToString();
             if (!MyUtility.Check.Empty(CurrentMaintain["sendDate"])) displayBox_LastSendDate.Text = Convert.ToDateTime(CurrentMaintain["sendDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+            this.detailgrid.AutoResizeColumns();
         }
         protected override void ClickUnconfirm()
         {
