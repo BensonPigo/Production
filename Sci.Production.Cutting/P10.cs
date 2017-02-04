@@ -81,6 +81,7 @@ namespace Sci.Production.Cutting
             {
                 this.displayBox_PrintDate.Text = "";
             }
+            this.detailgrid.AutoResizeColumns();
         }
         public void queryTable()
         {

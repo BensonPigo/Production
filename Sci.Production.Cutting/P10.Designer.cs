@@ -285,7 +285,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
             this.label4.TabIndex = 3;
-            this.label4.Text = "Line";
+            this.label4.Text = "Line#";
             // 
             // label5
             // 
@@ -757,16 +757,16 @@
             this.label7.Lines = 0;
             this.label7.Location = new System.Drawing.Point(441, 81);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(88, 23);
+            this.label7.Size = new System.Drawing.Size(110, 23);
             this.label7.TabIndex = 48;
-            this.label7.Text = "Lectra Code";
+            this.label7.Text = "Fab_Panel Code";
             // 
             // textBox_LectraCode
             // 
             this.textBox_LectraCode.BackColor = System.Drawing.Color.White;
             this.textBox_LectraCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LectraCode", true));
             this.textBox_LectraCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox_LectraCode.Location = new System.Drawing.Point(532, 81);
+            this.textBox_LectraCode.Location = new System.Drawing.Point(554, 81);
             this.textBox_LectraCode.Name = "textBox_LectraCode";
             this.textBox_LectraCode.Size = new System.Drawing.Size(53, 23);
             this.textBox_LectraCode.TabIndex = 10;
