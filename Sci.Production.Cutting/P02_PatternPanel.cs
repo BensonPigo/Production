@@ -21,7 +21,7 @@ namespace Sci.Production.Cutting
         {
             Helper.Controls.Grid.Generator(this.grid)
                 .Text("PatternPanel", header: "Pattern Panel", width: Widths.AnsiChars(2))
-                .Text("LectraCode", header: "Lectra Code", width: Widths.AnsiChars(2));
+                .Text("LectraCode", header: "Fab_Panel Code", width: Widths.AnsiChars(2));
 
             return true;
         }
