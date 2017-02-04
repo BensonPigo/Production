@@ -149,6 +149,7 @@ namespace Sci.Production.Cutting
             }
             detailgrid.DataSource = gridbs;
             gridbs.DataSource = detailTb;
+            this.detailgrid.AutoResizeColumns();
         }
 
         private void dateBox_newestcutdate_Validating(object sender, CancelEventArgs e)
