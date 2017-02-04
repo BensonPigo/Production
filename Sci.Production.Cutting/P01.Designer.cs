@@ -181,7 +181,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 0;
-            this.label1.Text = "SP#";
+            this.label1.Text = "CuttingSP#";
             // 
             // label2
             // 
@@ -199,7 +199,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
             this.label3.TabIndex = 8;
-            this.label3.Text = "Style";
+            this.label3.Text = "Style#";
             // 
             // label4
             // 
