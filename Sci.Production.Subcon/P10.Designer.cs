@@ -291,7 +291,7 @@
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(75, 23);
             this.label13.TabIndex = 13;
-            this.label13.Text = "Vat";
+            this.label13.Text = "VAT";
             // 
             // label14
             // 
@@ -300,7 +300,7 @@
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(95, 23);
             this.label14.TabIndex = 14;
-            this.label14.Text = "Apv. Date";
+            this.label14.Text = "ApprovedDate";
             // 
             // label15
             // 
