@@ -196,7 +196,7 @@ namespace Sci.Production.Subcon
             #region Batch Import
             button2.Enabled = this.EditMode;
             #endregion
-
+            this.detailgrid.AutoResizeColumns();
         }
 
         // Detail Grid 設定
