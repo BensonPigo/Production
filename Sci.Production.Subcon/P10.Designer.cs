@@ -291,7 +291,7 @@
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(75, 23);
             this.label13.TabIndex = 13;
-            this.label13.Text = "VAT";
+            this.label13.Text = "Vat";
             // 
             // label14
             // 
