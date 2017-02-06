@@ -722,7 +722,7 @@ Where a.id = '{0}'", masterID);
             }
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
-            string Remark = row["Remark"].ToString();
+            string Remark = CurrentMaintain["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
             #region  抓表頭資料
