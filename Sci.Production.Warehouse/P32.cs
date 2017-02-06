@@ -107,7 +107,7 @@ namespace Sci.Production.Warehouse
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
-            string M = row["MdivisionID"].ToString();
+            string M = CurrentMaintain["MdivisionID"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
