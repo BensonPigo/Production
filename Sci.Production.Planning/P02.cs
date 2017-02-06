@@ -368,7 +368,7 @@ namespace Sci.Production.Planning
                 ShowErr(sqlcmd, result);
             }
 
-
+            this.grid1.AutoResizeColumns();
             this.HideWaitMessage();
         }
         
