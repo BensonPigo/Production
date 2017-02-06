@@ -44,7 +44,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(922, 395);
+            this.detail.Size = new System.Drawing.Size(687, 395);
             // 
             // detailcont
             // 
@@ -54,11 +54,11 @@
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(922, 357);
+            this.detailcont.Size = new System.Drawing.Size(687, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(922, 38);
+            this.detailbtm.Size = new System.Drawing.Size(687, 38);
             // 
             // browse
             // 
@@ -66,7 +66,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(930, 424);
+            this.tabs.Size = new System.Drawing.Size(695, 424);
             // 
             // label1
             // 
@@ -80,7 +80,7 @@
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(58, 119);
+            this.label2.Location = new System.Drawing.Point(58, 103);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(89, 23);
             this.label2.TabIndex = 3;
@@ -122,7 +122,7 @@
             this.editBox1.BackColor = System.Drawing.Color.White;
             this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(150, 119);
+            this.editBox1.Location = new System.Drawing.Point(150, 103);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(460, 94);
@@ -130,7 +130,7 @@
             // 
             // B21
             // 
-            this.ClientSize = new System.Drawing.Size(930, 457);
+            this.ClientSize = new System.Drawing.Size(695, 457);
             this.DefaultControl = "textBox1";
             this.DefaultControlForEdit = "editBox1";
             this.IsSupportClip = false;

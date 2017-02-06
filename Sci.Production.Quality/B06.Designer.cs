@@ -41,6 +41,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(677, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.chkJunk);
@@ -48,11 +52,20 @@
             this.detailcont.Controls.Add(this.txtID);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Size = new System.Drawing.Size(677, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(677, 38);
+            // 
+            // tabs
+            // 
+            this.tabs.Size = new System.Drawing.Size(685, 424);
             // 
             // label1
             // 
             this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(92, 45);
+            this.label1.Location = new System.Drawing.Point(44, 38);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 23);
             this.label1.TabIndex = 0;
@@ -61,7 +74,7 @@
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(92, 88);
+            this.label2.Location = new System.Drawing.Point(44, 81);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(89, 23);
             this.label2.TabIndex = 1;
@@ -73,7 +86,7 @@
             this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
             this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtID.IsSupportEditMode = false;
-            this.txtID.Location = new System.Drawing.Point(195, 45);
+            this.txtID.Location = new System.Drawing.Point(147, 38);
             this.txtID.Name = "txtID";
             this.txtID.ReadOnly = true;
             this.txtID.Size = new System.Drawing.Size(100, 23);
@@ -84,7 +97,7 @@
             this.txtDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtDesc.Location = new System.Drawing.Point(195, 88);
+            this.txtDesc.Location = new System.Drawing.Point(147, 81);
             this.txtDesc.Name = "txtDesc";
             this.txtDesc.ReadOnly = true;
             this.txtDesc.Size = new System.Drawing.Size(502, 23);
@@ -95,7 +108,7 @@
             this.chkJunk.AutoSize = true;
             this.chkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkJunk.Location = new System.Drawing.Point(314, 47);
+            this.chkJunk.Location = new System.Drawing.Point(266, 40);
             this.chkJunk.Name = "chkJunk";
             this.chkJunk.Size = new System.Drawing.Size(57, 21);
             this.chkJunk.TabIndex = 1;
@@ -104,7 +117,7 @@
             // 
             // B06
             // 
-            this.ClientSize = new System.Drawing.Size(905, 457);
+            this.ClientSize = new System.Drawing.Size(685, 457);
             this.DefaultControl = "txtID";
             this.DefaultControlForEdit = "txtID";
             this.IsDeleteOnBrowse = false;

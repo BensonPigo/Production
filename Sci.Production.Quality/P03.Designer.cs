@@ -107,7 +107,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(1090, 164);
+            this.masterpanel.Size = new System.Drawing.Size(855, 178);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -141,17 +141,17 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 164);
-            this.detailpanel.Size = new System.Drawing.Size(1090, 309);
+            this.detailpanel.Location = new System.Drawing.Point(0, 178);
+            this.detailpanel.Size = new System.Drawing.Size(855, 295);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(909, 126);
+            this.gridicon.Location = new System.Drawing.Point(909, 140);
             this.gridicon.Visible = false;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1090, 309);
+            this.detailgridcont.Size = new System.Drawing.Size(855, 295);
             // 
             // detail2
             // 
@@ -167,24 +167,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1090, 511);
+            this.detail.Size = new System.Drawing.Size(855, 511);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1090, 473);
+            this.detailcont.Size = new System.Drawing.Size(855, 473);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 473);
-            this.detailbtm.Size = new System.Drawing.Size(1090, 38);
+            this.detailbtm.Size = new System.Drawing.Size(855, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1090, 511);
+            this.browse.Size = new System.Drawing.Size(855, 511);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1098, 540);
+            this.tabs.Size = new System.Drawing.Size(863, 540);
             // 
             // seq1_box
             // 
@@ -192,7 +192,7 @@
             this.seq1_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.seq1_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.seq1_box.IsSupportEditMode = false;
-            this.seq1_box.Location = new System.Drawing.Point(99, 102);
+            this.seq1_box.Location = new System.Drawing.Point(354, 146);
             this.seq1_box.Name = "seq1_box";
             this.seq1_box.Size = new System.Drawing.Size(49, 21);
             this.seq1_box.TabIndex = 1;
@@ -201,7 +201,7 @@
             // 
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(21, 102);
+            this.label14.Location = new System.Drawing.Point(276, 146);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(75, 23);
             this.label14.TabIndex = 86;
@@ -210,9 +210,9 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.button1.Location = new System.Drawing.Point(286, 98);
+            this.button1.Location = new System.Drawing.Point(541, 142);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(64, 27);
+            this.button1.Size = new System.Drawing.Size(109, 27);
             this.button1.TabIndex = 63;
             this.button1.Text = "Find";
             this.button1.UseVisualStyleBackColor = true;
@@ -224,9 +224,9 @@
             this.mtl_box.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "complete", true));
             this.mtl_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.mtl_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.mtl_box.Location = new System.Drawing.Point(934, 72);
+            this.mtl_box.Location = new System.Drawing.Point(656, 50);
             this.mtl_box.Name = "mtl_box";
-            this.mtl_box.Size = new System.Drawing.Size(130, 21);
+            this.mtl_box.Size = new System.Drawing.Size(157, 21);
             this.mtl_box.TabIndex = 85;
             // 
             // insp_box
@@ -234,20 +234,21 @@
             this.insp_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.insp_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.insp_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.insp_box.Location = new System.Drawing.Point(934, 16);
+            this.insp_box.Location = new System.Drawing.Point(656, 18);
             this.insp_box.Name = "insp_box";
-            this.insp_box.Size = new System.Drawing.Size(130, 21);
+            this.insp_box.Size = new System.Drawing.Size(157, 21);
             this.insp_box.TabIndex = 84;
             // 
             // remark_box
             // 
             this.remark_box.BackColor = System.Drawing.Color.White;
+            this.remark_box.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FirLaboratoryRemark", true));
             this.remark_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.remark_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.remark_box.Location = new System.Drawing.Point(488, 72);
+            this.remark_box.Location = new System.Drawing.Point(656, 77);
             this.remark_box.Multiline = true;
             this.remark_box.Name = "remark_box";
-            this.remark_box.Size = new System.Drawing.Size(297, 86);
+            this.remark_box.Size = new System.Drawing.Size(157, 90);
             this.remark_box.TabIndex = 3;
             // 
             // seq2_box
@@ -256,7 +257,7 @@
             this.seq2_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.seq2_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.seq2_box.IsSupportEditMode = false;
-            this.seq2_box.Location = new System.Drawing.Point(235, 102);
+            this.seq2_box.Location = new System.Drawing.Point(490, 146);
             this.seq2_box.Name = "seq2_box";
             this.seq2_box.Size = new System.Drawing.Size(45, 21);
             this.seq2_box.TabIndex = 2;
@@ -266,9 +267,9 @@
             this.brand_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.brand_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.brand_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.brand_box.Location = new System.Drawing.Point(677, 15);
+            this.brand_box.Location = new System.Drawing.Point(99, 105);
             this.brand_box.Name = "brand_box";
-            this.brand_box.Size = new System.Drawing.Size(108, 21);
+            this.brand_box.Size = new System.Drawing.Size(132, 21);
             this.brand_box.TabIndex = 79;
             // 
             // season_box
@@ -276,9 +277,9 @@
             this.season_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.season_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.season_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.season_box.Location = new System.Drawing.Point(514, 15);
+            this.season_box.Location = new System.Drawing.Point(99, 75);
             this.season_box.Name = "season_box";
-            this.season_box.Size = new System.Drawing.Size(82, 21);
+            this.season_box.Size = new System.Drawing.Size(132, 21);
             this.season_box.TabIndex = 78;
             // 
             // style_box
@@ -286,9 +287,9 @@
             this.style_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.style_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.style_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.style_box.Location = new System.Drawing.Point(313, 16);
+            this.style_box.Location = new System.Drawing.Point(99, 48);
             this.style_box.Name = "style_box";
-            this.style_box.Size = new System.Drawing.Size(120, 21);
+            this.style_box.Size = new System.Drawing.Size(132, 21);
             this.style_box.TabIndex = 77;
             // 
             // displayBox1
@@ -299,7 +300,7 @@
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox1.Location = new System.Drawing.Point(99, 16);
             this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(133, 21);
+            this.displayBox1.Size = new System.Drawing.Size(132, 21);
             this.displayBox1.TabIndex = 76;
             // 
             // wk_box
@@ -308,7 +309,7 @@
             this.wk_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.wk_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.wk_box.IsSupportEditMode = false;
-            this.wk_box.Location = new System.Drawing.Point(130, 72);
+            this.wk_box.Location = new System.Drawing.Point(130, 146);
             this.wk_box.Name = "wk_box";
             this.wk_box.Size = new System.Drawing.Size(130, 21);
             this.wk_box.TabIndex = 0;
@@ -317,7 +318,7 @@
             // 
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(157, 102);
+            this.label13.Location = new System.Drawing.Point(412, 146);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(75, 23);
             this.label13.TabIndex = 75;
@@ -327,7 +328,7 @@
             // 
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(21, 72);
+            this.label12.Location = new System.Drawing.Point(21, 146);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(106, 23);
             this.label12.TabIndex = 74;
@@ -337,7 +338,7 @@
             // 
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(819, 70);
+            this.label11.Location = new System.Drawing.Point(541, 48);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(112, 23);
             this.label11.TabIndex = 73;
@@ -347,9 +348,9 @@
             // 
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(407, 70);
+            this.label10.Location = new System.Drawing.Point(541, 77);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(75, 23);
+            this.label10.Size = new System.Drawing.Size(112, 23);
             this.label10.TabIndex = 72;
             this.label10.Text = "Remark:";
             // 
@@ -357,9 +358,9 @@
             // 
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(819, 43);
+            this.label9.Location = new System.Drawing.Point(243, 105);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(112, 23);
+            this.label9.Size = new System.Drawing.Size(137, 23);
             this.label9.TabIndex = 71;
             this.label9.Text = "Completion Date:";
             // 
@@ -367,7 +368,7 @@
             // 
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(819, 14);
+            this.label8.Location = new System.Drawing.Point(541, 16);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(112, 23);
             this.label8.TabIndex = 70;
@@ -377,9 +378,9 @@
             // 
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(294, 43);
+            this.label7.Location = new System.Drawing.Point(243, 46);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(108, 23);
+            this.label7.Size = new System.Drawing.Size(137, 23);
             this.label7.TabIndex = 69;
             this.label7.Text = "Earliest SCI Del:";
             // 
@@ -387,9 +388,9 @@
             // 
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(538, 43);
+            this.label6.Location = new System.Drawing.Point(243, 75);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(114, 23);
+            this.label6.Size = new System.Drawing.Size(137, 23);
             this.label6.TabIndex = 68;
             this.label6.Text = "Target Lead Time:";
             // 
@@ -397,7 +398,7 @@
             // 
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(21, 43);
+            this.label5.Location = new System.Drawing.Point(243, 16);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(137, 23);
             this.label5.TabIndex = 67;
@@ -407,7 +408,7 @@
             // 
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(599, 14);
+            this.label4.Location = new System.Drawing.Point(21, 104);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
             this.label4.TabIndex = 65;
@@ -417,7 +418,7 @@
             // 
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(436, 14);
+            this.label3.Location = new System.Drawing.Point(21, 74);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
             this.label3.TabIndex = 64;
@@ -427,7 +428,7 @@
             // 
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(235, 14);
+            this.label2.Location = new System.Drawing.Point(21, 46);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 23);
             this.label2.TabIndex = 61;
@@ -476,7 +477,7 @@
             // estcutdate_box
             // 
             this.estcutdate_box.IsSupportEditMode = false;
-            this.estcutdate_box.Location = new System.Drawing.Point(161, 43);
+            this.estcutdate_box.Location = new System.Drawing.Point(383, 16);
             this.estcutdate_box.Name = "estcutdate_box";
             this.estcutdate_box.ReadOnly = true;
             this.estcutdate_box.Size = new System.Drawing.Size(130, 23);
@@ -485,7 +486,7 @@
             // scidelivery_box
             // 
             this.scidelivery_box.IsSupportEditMode = false;
-            this.scidelivery_box.Location = new System.Drawing.Point(405, 43);
+            this.scidelivery_box.Location = new System.Drawing.Point(383, 45);
             this.scidelivery_box.Name = "scidelivery_box";
             this.scidelivery_box.ReadOnly = true;
             this.scidelivery_box.Size = new System.Drawing.Size(130, 23);
@@ -494,7 +495,7 @@
             // leadtime_box
             // 
             this.leadtime_box.IsSupportEditMode = false;
-            this.leadtime_box.Location = new System.Drawing.Point(655, 43);
+            this.leadtime_box.Location = new System.Drawing.Point(383, 75);
             this.leadtime_box.Name = "leadtime_box";
             this.leadtime_box.ReadOnly = true;
             this.leadtime_box.Size = new System.Drawing.Size(130, 23);
@@ -503,7 +504,7 @@
             // Complete_box
             // 
             this.Complete_box.IsSupportEditMode = false;
-            this.Complete_box.Location = new System.Drawing.Point(934, 43);
+            this.Complete_box.Location = new System.Drawing.Point(383, 105);
             this.Complete_box.Name = "Complete_box";
             this.Complete_box.ReadOnly = true;
             this.Complete_box.Size = new System.Drawing.Size(130, 23);
@@ -511,7 +512,7 @@
             // 
             // P03
             // 
-            this.ClientSize = new System.Drawing.Size(1098, 573);
+            this.ClientSize = new System.Drawing.Size(863, 573);
             this.DefaultControlForEdit = "wk_box";
             this.DefaultDetailOrder = "Seq,Wkno";
             this.DefaultOrder = "ID";

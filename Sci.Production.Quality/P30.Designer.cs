@@ -111,7 +111,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(788, 314);
+            this.masterpanel.Size = new System.Drawing.Size(767, 314);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -150,17 +150,17 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 314);
-            this.detailpanel.Size = new System.Drawing.Size(788, 206);
+            this.detailpanel.Size = new System.Drawing.Size(767, 206);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(692, 272);
+            this.gridicon.Location = new System.Drawing.Point(655, 272);
             this.gridicon.TabIndex = 15;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(788, 206);
+            this.detailgridcont.Size = new System.Drawing.Size(767, 206);
             // 
             // detail2
             // 
@@ -176,16 +176,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(788, 558);
+            this.detail.Size = new System.Drawing.Size(767, 558);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(788, 520);
+            this.detailcont.Size = new System.Drawing.Size(767, 520);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 520);
-            this.detailbtm.Size = new System.Drawing.Size(788, 38);
+            this.detailbtm.Size = new System.Drawing.Size(767, 38);
             // 
             // browse
             // 
@@ -193,7 +193,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(796, 587);
+            this.tabs.Size = new System.Drawing.Size(775, 587);
             // 
             // label1
             // 
@@ -441,7 +441,7 @@
             // btnFinished
             // 
             this.btnFinished.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnFinished.Location = new System.Drawing.Point(620, 133);
+            this.btnFinished.Location = new System.Drawing.Point(578, 114);
             this.btnFinished.Name = "btnFinished";
             this.btnFinished.Size = new System.Drawing.Size(116, 30);
             this.btnFinished.TabIndex = 4;
@@ -551,7 +551,7 @@
             // 
             // P30
             // 
-            this.ClientSize = new System.Drawing.Size(796, 620);
+            this.ClientSize = new System.Drawing.Size(775, 620);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.DefaultDetailOrder = "Type,Item,Colorid";
             this.DefaultFilter = "orders.IsForecast<>1";

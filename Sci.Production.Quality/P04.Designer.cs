@@ -104,7 +104,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(1062, 270);
+            this.masterpanel.Size = new System.Drawing.Size(1063, 215);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -139,12 +139,12 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 270);
-            this.detailpanel.Size = new System.Drawing.Size(1062, 186);
+            this.detailpanel.Location = new System.Drawing.Point(0, 215);
+            this.detailpanel.Size = new System.Drawing.Size(1063, 241);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(959, 235);
+            this.gridicon.Location = new System.Drawing.Point(959, 180);
             // 
             // refresh
             // 
@@ -152,7 +152,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1062, 186);
+            this.detailgridcont.Size = new System.Drawing.Size(1063, 241);
             // 
             // detail2
             // 
@@ -168,16 +168,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1062, 494);
+            this.detail.Size = new System.Drawing.Size(1063, 494);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1062, 456);
+            this.detailcont.Size = new System.Drawing.Size(1063, 456);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 456);
-            this.detailbtm.Size = new System.Drawing.Size(1062, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1063, 38);
             // 
             // browse
             // 
@@ -185,7 +185,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1070, 523);
+            this.tabs.Size = new System.Drawing.Size(1071, 523);
             // 
             // label1
             // 
@@ -199,7 +199,7 @@
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(30, 59);
+            this.label2.Location = new System.Drawing.Point(30, 48);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(104, 23);
             this.label2.TabIndex = 2;
@@ -208,7 +208,7 @@
             // label3
             // 
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(30, 101);
+            this.label3.Location = new System.Drawing.Point(30, 77);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(104, 23);
             this.label3.TabIndex = 3;
@@ -217,7 +217,7 @@
             // label4
             // 
             this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(30, 140);
+            this.label4.Location = new System.Drawing.Point(30, 104);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(104, 23);
             this.label4.TabIndex = 4;
@@ -226,7 +226,7 @@
             // label5
             // 
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(30, 181);
+            this.label5.Location = new System.Drawing.Point(30, 133);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(104, 23);
             this.label5.TabIndex = 5;
@@ -244,7 +244,7 @@
             // label7
             // 
             this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(322, 59);
+            this.label7.Location = new System.Drawing.Point(322, 48);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(106, 23);
             this.label7.TabIndex = 7;
@@ -253,7 +253,7 @@
             // label8
             // 
             this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(322, 101);
+            this.label8.Location = new System.Drawing.Point(322, 77);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(106, 23);
             this.label8.TabIndex = 8;
@@ -262,7 +262,7 @@
             // label9
             // 
             this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(322, 140);
+            this.label9.Location = new System.Drawing.Point(322, 104);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(106, 23);
             this.label9.TabIndex = 9;
@@ -271,7 +271,7 @@
             // label10
             // 
             this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(30, 221);
+            this.label10.Location = new System.Drawing.Point(30, 162);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(104, 23);
             this.label10.TabIndex = 10;
@@ -280,7 +280,7 @@
             // label11
             // 
             this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(623, 59);
+            this.label11.Location = new System.Drawing.Point(623, 48);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(118, 23);
             this.label11.TabIndex = 11;
@@ -289,7 +289,7 @@
             // label12
             // 
             this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(623, 101);
+            this.label12.Location = new System.Drawing.Point(623, 77);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(118, 23);
             this.label12.TabIndex = 12;
@@ -298,7 +298,7 @@
             // label13
             // 
             this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(623, 140);
+            this.label13.Location = new System.Drawing.Point(623, 104);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(118, 23);
             this.label13.TabIndex = 13;
@@ -316,7 +316,7 @@
             // label15
             // 
             this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(322, 181);
+            this.label15.Location = new System.Drawing.Point(322, 133);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(106, 23);
             this.label15.TabIndex = 15;
@@ -327,7 +327,7 @@
             this.SP_Text.BackColor = System.Drawing.Color.White;
             this.SP_Text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderID", true));
             this.SP_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.SP_Text.Location = new System.Drawing.Point(143, 101);
+            this.SP_Text.Location = new System.Drawing.Point(143, 77);
             this.SP_Text.Name = "SP_Text";
             this.SP_Text.Size = new System.Drawing.Size(140, 23);
             this.SP_Text.TabIndex = 18;
@@ -350,7 +350,7 @@
             this.First_sp_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FirstOrderID", true));
             this.First_sp_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.First_sp_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.First_sp_Text.Location = new System.Drawing.Point(143, 60);
+            this.First_sp_Text.Location = new System.Drawing.Point(143, 49);
             this.First_sp_Text.Name = "First_sp_Text";
             this.First_sp_Text.Size = new System.Drawing.Size(140, 21);
             this.First_sp_Text.TabIndex = 33;
@@ -361,7 +361,7 @@
             this.Factory_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionid", true));
             this.Factory_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.Factory_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Factory_Text.Location = new System.Drawing.Point(143, 142);
+            this.Factory_Text.Location = new System.Drawing.Point(143, 106);
             this.Factory_Text.Name = "Factory_Text";
             this.Factory_Text.Size = new System.Drawing.Size(140, 21);
             this.Factory_Text.TabIndex = 34;
@@ -383,7 +383,7 @@
             this.Brand_Text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Brandid", true));
             this.Brand_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.Brand_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Brand_Text.Location = new System.Drawing.Point(437, 61);
+            this.Brand_Text.Location = new System.Drawing.Point(437, 50);
             this.Brand_Text.Name = "Brand_Text";
             this.Brand_Text.Size = new System.Drawing.Size(140, 21);
             this.Brand_Text.TabIndex = 38;
@@ -395,7 +395,7 @@
             this.Comment_text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "remark", true));
             this.Comment_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.Comment_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Comment_text.Location = new System.Drawing.Point(437, 182);
+            this.Comment_text.Location = new System.Drawing.Point(437, 134);
             this.Comment_text.Multiline = true;
             this.Comment_text.Name = "Comment_text";
             this.Comment_text.Size = new System.Drawing.Size(459, 62);
@@ -415,7 +415,7 @@
             // Last_Date_Text
             // 
             this.Last_Date_Text.IsSupportEditMode = false;
-            this.Last_Date_Text.Location = new System.Drawing.Point(143, 221);
+            this.Last_Date_Text.Location = new System.Drawing.Point(143, 162);
             this.Last_Date_Text.Name = "Last_Date_Text";
             this.Last_Date_Text.ReadOnly = true;
             this.Last_Date_Text.Size = new System.Drawing.Size(140, 23);
@@ -424,7 +424,7 @@
             // Early_inline_Text
             // 
             this.Early_inline_Text.IsSupportEditMode = false;
-            this.Early_inline_Text.Location = new System.Drawing.Point(437, 101);
+            this.Early_inline_Text.Location = new System.Drawing.Point(437, 77);
             this.Early_inline_Text.Name = "Early_inline_Text";
             this.Early_inline_Text.ReadOnly = true;
             this.Early_inline_Text.Size = new System.Drawing.Size(140, 23);
@@ -433,7 +433,7 @@
             // Early_off_Text
             // 
             this.Early_off_Text.IsSupportEditMode = false;
-            this.Early_off_Text.Location = new System.Drawing.Point(437, 140);
+            this.Early_off_Text.Location = new System.Drawing.Point(437, 104);
             this.Early_off_Text.Name = "Early_off_Text";
             this.Early_off_Text.ReadOnly = true;
             this.Early_off_Text.Size = new System.Drawing.Size(140, 23);
@@ -442,7 +442,7 @@
             // DeadLine_Text
             // 
             this.DeadLine_Text.IsSupportEditMode = false;
-            this.DeadLine_Text.Location = new System.Drawing.Point(746, 59);
+            this.DeadLine_Text.Location = new System.Drawing.Point(746, 48);
             this.DeadLine_Text.Name = "DeadLine_Text";
             this.DeadLine_Text.ReadOnly = true;
             this.DeadLine_Text.Size = new System.Drawing.Size(150, 23);
@@ -451,7 +451,7 @@
             // Early_SCI_Text
             // 
             this.Early_SCI_Text.IsSupportEditMode = false;
-            this.Early_SCI_Text.Location = new System.Drawing.Point(746, 101);
+            this.Early_SCI_Text.Location = new System.Drawing.Point(746, 77);
             this.Early_SCI_Text.Name = "Early_SCI_Text";
             this.Early_SCI_Text.ReadOnly = true;
             this.Early_SCI_Text.Size = new System.Drawing.Size(150, 23);
@@ -460,7 +460,7 @@
             // Early_Buyer_Text
             // 
             this.Early_Buyer_Text.IsSupportEditMode = false;
-            this.Early_Buyer_Text.Location = new System.Drawing.Point(746, 142);
+            this.Early_Buyer_Text.Location = new System.Drawing.Point(746, 106);
             this.Early_Buyer_Text.Name = "Early_Buyer_Text";
             this.Early_Buyer_Text.ReadOnly = true;
             this.Early_Buyer_Text.Size = new System.Drawing.Size(150, 23);
@@ -471,7 +471,7 @@
             this.Last_Result_Text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.Last_Result_Text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.Last_Result_Text.IsSupportEditMode = false;
-            this.Last_Result_Text.Location = new System.Drawing.Point(143, 181);
+            this.Last_Result_Text.Location = new System.Drawing.Point(143, 133);
             this.Last_Result_Text.Name = "Last_Result_Text";
             this.Last_Result_Text.ReadOnly = true;
             this.Last_Result_Text.Size = new System.Drawing.Size(140, 23);
@@ -479,7 +479,7 @@
             // 
             // P04
             // 
-            this.ClientSize = new System.Drawing.Size(1070, 556);
+            this.ClientSize = new System.Drawing.Size(1071, 556);
             this.DefaultControlForEdit = "SP_Text";
             this.DefaultOrder = "StyleID";
             this.GridAlias = "Garmenttest_Detail";

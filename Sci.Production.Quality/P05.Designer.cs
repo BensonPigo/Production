@@ -38,7 +38,6 @@
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
-            this.remark_text = new Sci.Win.UI.TextBox();
             this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
             this.createNewTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editThisRecordsDetailToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,6 +51,7 @@
             this.Earliest_text = new Sci.Win.UI.DateBox();
             this.Target_text = new Sci.Win.UI.DateBox();
             this.compl_text = new Sci.Win.UI.DateBox();
+            this.remark_text = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -69,12 +69,12 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.remark_text);
             this.masterpanel.Controls.Add(this.Article_text);
             this.masterpanel.Controls.Add(this.season_text);
             this.masterpanel.Controls.Add(this.style_text);
             this.masterpanel.Controls.Add(this.brand_text);
             this.masterpanel.Controls.Add(this.sp_text);
-            this.masterpanel.Controls.Add(this.remark_text);
             this.masterpanel.Controls.Add(this.label10);
             this.masterpanel.Controls.Add(this.label9);
             this.masterpanel.Controls.Add(this.label8);
@@ -89,7 +89,7 @@
             this.masterpanel.Controls.Add(this.Target_text);
             this.masterpanel.Controls.Add(this.Earliest_text);
             this.masterpanel.Controls.Add(this.Cutting_text);
-            this.masterpanel.Size = new System.Drawing.Size(1143, 150);
+            this.masterpanel.Size = new System.Drawing.Size(904, 147);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.Cutting_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Earliest_text, 0);
@@ -105,25 +105,25 @@
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
             this.masterpanel.Controls.SetChildIndex(this.label9, 0);
             this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.remark_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.sp_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.brand_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.style_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.season_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Article_text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.remark_text, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 150);
-            this.detailpanel.Size = new System.Drawing.Size(1143, 331);
+            this.detailpanel.Location = new System.Drawing.Point(0, 147);
+            this.detailpanel.Size = new System.Drawing.Size(904, 334);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(937, 112);
+            this.gridicon.Location = new System.Drawing.Point(937, 109);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1143, 331);
+            this.detailgridcont.Size = new System.Drawing.Size(904, 334);
             // 
             // detail2
             // 
@@ -139,16 +139,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1143, 519);
+            this.detail.Size = new System.Drawing.Size(904, 519);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1143, 481);
+            this.detailcont.Size = new System.Drawing.Size(904, 481);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 481);
-            this.detailbtm.Size = new System.Drawing.Size(1143, 38);
+            this.detailbtm.Size = new System.Drawing.Size(904, 38);
             // 
             // browse
             // 
@@ -156,7 +156,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1151, 548);
+            this.tabs.Size = new System.Drawing.Size(912, 548);
             // 
             // label1
             // 
@@ -170,7 +170,7 @@
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(659, 16);
+            this.label2.Location = new System.Drawing.Point(29, 114);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 23);
             this.label2.TabIndex = 2;
@@ -179,7 +179,7 @@
             // label3
             // 
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(457, 16);
+            this.label3.Location = new System.Drawing.Point(29, 82);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
             this.label3.TabIndex = 3;
@@ -188,7 +188,7 @@
             // label4
             // 
             this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(241, 16);
+            this.label4.Location = new System.Drawing.Point(29, 49);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
             this.label4.TabIndex = 4;
@@ -197,43 +197,43 @@
             // label5
             // 
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(830, 57);
+            this.label5.Location = new System.Drawing.Point(246, 116);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(122, 23);
+            this.label5.Size = new System.Drawing.Size(163, 23);
             this.label5.TabIndex = 5;
             this.label5.Text = "Completion Date :";
             // 
             // label6
             // 
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(29, 105);
+            this.label6.Location = new System.Drawing.Point(550, 48);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
+            this.label6.Size = new System.Drawing.Size(150, 23);
             this.label6.TabIndex = 6;
             this.label6.Text = "Remark :";
             // 
             // label7
             // 
             this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(584, 57);
+            this.label7.Location = new System.Drawing.Point(246, 84);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(120, 23);
+            this.label7.Size = new System.Drawing.Size(163, 23);
             this.label7.TabIndex = 7;
             this.label7.Text = "Target Lead time :";
             // 
             // label8
             // 
             this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(346, 57);
+            this.label8.Location = new System.Drawing.Point(246, 49);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(108, 23);
+            this.label8.Size = new System.Drawing.Size(163, 23);
             this.label8.TabIndex = 8;
             this.label8.Text = "Earliest SCI Del :";
             // 
             // label9
             // 
             this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(29, 57);
+            this.label9.Location = new System.Drawing.Point(246, 16);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(165, 23);
             this.label9.TabIndex = 9;
@@ -242,21 +242,11 @@
             // label10
             // 
             this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(865, 16);
+            this.label10.Location = new System.Drawing.Point(550, 18);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(150, 23);
             this.label10.TabIndex = 10;
             this.label10.Text = "Article % of Inspection :";
-            // 
-            // remark_text
-            // 
-            this.remark_text.BackColor = System.Drawing.Color.White;
-            this.remark_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OvenLaboratoryRemark", true));
-            this.remark_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.remark_text.Location = new System.Drawing.Point(107, 105);
-            this.remark_text.Name = "remark_text";
-            this.remark_text.Size = new System.Drawing.Size(448, 23);
-            this.remark_text.TabIndex = 17;
             // 
             // contextMenuStrip1
             // 
@@ -300,7 +290,7 @@
             this.brand_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.brand_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.brand_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.brand_text.Location = new System.Drawing.Point(319, 18);
+            this.brand_text.Location = new System.Drawing.Point(107, 49);
             this.brand_text.Name = "brand_text";
             this.brand_text.Size = new System.Drawing.Size(118, 21);
             this.brand_text.TabIndex = 34;
@@ -310,7 +300,7 @@
             this.style_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.style_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.style_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.style_text.Location = new System.Drawing.Point(535, 18);
+            this.style_text.Location = new System.Drawing.Point(107, 84);
             this.style_text.Name = "style_text";
             this.style_text.Size = new System.Drawing.Size(118, 21);
             this.style_text.TabIndex = 35;
@@ -320,7 +310,7 @@
             this.season_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.season_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.season_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.season_text.Location = new System.Drawing.Point(737, 18);
+            this.season_text.Location = new System.Drawing.Point(107, 116);
             this.season_text.Name = "season_text";
             this.season_text.Size = new System.Drawing.Size(118, 21);
             this.season_text.TabIndex = 36;
@@ -330,24 +320,24 @@
             this.Article_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.Article_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.Article_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Article_text.Location = new System.Drawing.Point(1018, 18);
+            this.Article_text.Location = new System.Drawing.Point(703, 20);
             this.Article_text.Name = "Article_text";
-            this.Article_text.Size = new System.Drawing.Size(110, 21);
+            this.Article_text.Size = new System.Drawing.Size(157, 21);
             this.Article_text.TabIndex = 37;
             // 
             // Cutting_text
             // 
             this.Cutting_text.IsSupportEditMode = false;
-            this.Cutting_text.Location = new System.Drawing.Point(195, 57);
+            this.Cutting_text.Location = new System.Drawing.Point(412, 16);
             this.Cutting_text.Name = "Cutting_text";
             this.Cutting_text.ReadOnly = true;
-            this.Cutting_text.Size = new System.Drawing.Size(140, 23);
+            this.Cutting_text.Size = new System.Drawing.Size(120, 23);
             this.Cutting_text.TabIndex = 65;
             // 
             // Earliest_text
             // 
             this.Earliest_text.IsSupportEditMode = false;
-            this.Earliest_text.Location = new System.Drawing.Point(455, 57);
+            this.Earliest_text.Location = new System.Drawing.Point(412, 49);
             this.Earliest_text.Name = "Earliest_text";
             this.Earliest_text.ReadOnly = true;
             this.Earliest_text.Size = new System.Drawing.Size(120, 23);
@@ -356,7 +346,7 @@
             // Target_text
             // 
             this.Target_text.IsSupportEditMode = false;
-            this.Target_text.Location = new System.Drawing.Point(705, 57);
+            this.Target_text.Location = new System.Drawing.Point(412, 84);
             this.Target_text.Name = "Target_text";
             this.Target_text.ReadOnly = true;
             this.Target_text.Size = new System.Drawing.Size(120, 23);
@@ -365,15 +355,27 @@
             // compl_text
             // 
             this.compl_text.IsSupportEditMode = false;
-            this.compl_text.Location = new System.Drawing.Point(953, 57);
+            this.compl_text.Location = new System.Drawing.Point(412, 114);
             this.compl_text.Name = "compl_text";
             this.compl_text.ReadOnly = true;
             this.compl_text.Size = new System.Drawing.Size(120, 23);
             this.compl_text.TabIndex = 68;
             // 
+            // remark_text
+            // 
+            this.remark_text.BackColor = System.Drawing.Color.White;
+            this.remark_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OvenLaboratoryRemark", true));
+            this.remark_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.remark_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.remark_text.Location = new System.Drawing.Point(703, 47);
+            this.remark_text.Multiline = true;
+            this.remark_text.Name = "remark_text";
+            this.remark_text.Size = new System.Drawing.Size(157, 90);
+            this.remark_text.TabIndex = 69;
+            // 
             // P05
             // 
-            this.ClientSize = new System.Drawing.Size(1151, 581);
+            this.ClientSize = new System.Drawing.Size(912, 581);
             this.DefaultControlForEdit = "remark_text";
             this.DefaultDetailOrder = "Testno,InspDate";
             this.DefaultOrder = "id";
@@ -412,7 +414,6 @@
 
         #endregion
 
-        private Win.UI.TextBox remark_text;
         private Win.UI.Label label10;
         private Win.UI.Label label9;
         private Win.UI.Label label8;
@@ -436,5 +437,6 @@
         private Win.UI.DateBox Target_text;
         private Win.UI.DateBox Earliest_text;
         private Win.UI.DateBox Cutting_text;
+        private Win.UI.EditBox remark_text;
     }
 }

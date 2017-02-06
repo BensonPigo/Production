@@ -483,7 +483,7 @@ namespace Sci.Production.Quality
             }
             this.detailgrid.Update();
             this.detailgrid.Refresh();
-            
+
         }
 
 

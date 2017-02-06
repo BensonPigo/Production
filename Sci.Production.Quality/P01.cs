@@ -263,6 +263,7 @@ namespace Sci.Production.Quality
         protected override void OnDetailEntered() 
         {
  	        base.OnDetailEntered();
+            
             DataRow queryDr;
             DualResult dResult = PublicPrg.Prgs.QueryQaInspectionHeader(CurrentMaintain["ID"].ToString(), out queryDr);
             if (!dResult)
@@ -362,7 +363,7 @@ namespace Sci.Production.Quality
         protected override DualResult ClickSave()
         {
             //因為表頭是PO不能覆蓋其他資料，必需自行存檔
-            string save_po_cmd = string.Format("update po set FIRRemark = '{0}' where id = '{1}';", CurrentMaintain["FirRemark"],CurrentMaintain["ID"]);
+            string save_po_cmd = string.Format("update po set FIRRemark = '{0}' where id = '{1}';", remark_box.Text.ToString(), CurrentMaintain["ID"]);
             
             foreach (DataRow dr in DetailDatas)
             {
@@ -565,6 +566,7 @@ namespace Sci.Production.Quality
             detailgrid.SelectRowTo(rowindex);
 
         }
+      
     }
 }
 
