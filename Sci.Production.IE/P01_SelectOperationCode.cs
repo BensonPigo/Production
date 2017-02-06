@@ -93,6 +93,7 @@ namespace Sci.Production.IE
                 gridData.DefaultView.RowFilter = filter;
                 numericBox3.Value = gridData.DefaultView.Count;
             }
+            this.grid1.AutoResizeColumns();
         }
 
         //Select
