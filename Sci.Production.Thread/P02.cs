@@ -262,22 +262,22 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             
             #region set grid
             Helper.Controls.Grid.Generator(this.detailgrid)
-           .Text("Refno", header: "Thread Refno", width: Widths.Auto(false),settings:refno).Get(out col_refno)
-           .Text("description", header: "Thread Desc", width: Widths.Auto(false), iseditingreadonly: true)
-           .Text("ThreadColorid", header: "Thread Color", width: Widths.Auto(false), settings: thcolor).Get(out col_color)
-           .Text("Colordesc", header: "Thread Color Desc", width: Widths.Auto(false), iseditingreadonly: true)
-           .Numeric("ConsumptionQty", header: "Total Cons.(M)", width: Widths.Auto(false), integer_places: 6, settings: cons).Get(out col_cons)
-           .Numeric("MeterToCone", header: "No. of Meters Per Cons", width: Widths.Auto(false), integer_places: 7, decimal_places: 1, iseditingreadonly: true)
-           .Numeric("TotalQty", header: "No. of Cones", width: Widths.Auto(false), integer_places: 6, iseditingreadonly: true, settings: poqty1)
+           .Text("Refno", header: "Thread Refno", width: Widths.AnsiChars(10), settings: refno).Get(out col_refno)
+           .Text("description", header: "Thread Desc", width: Widths.AnsiChars(18), iseditingreadonly: true)
+           .Text("ThreadColorid", header: "Thread\r\nColor", width: Widths.AnsiChars(4), settings: thcolor).Get(out col_color)
+           .Text("Colordesc", header: "Thread Color Desc", width: Widths.AnsiChars(18), iseditingreadonly: true)
+           .Numeric("ConsumptionQty", header: "Total\r\nCons.(M)", width: Widths.AnsiChars(2), integer_places: 6, settings: cons).Get(out col_cons)
+           .Numeric("MeterToCone", header: "No. of Meters\r\nPer Cons", width: Widths.AnsiChars(6), integer_places: 7, decimal_places: 1, iseditingreadonly: true)
+           .Numeric("TotalQty", header: "No. of\r\nCones", width: Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty1)
 
-           .Numeric("AllowanceQty", header: "20% allowance", width: Widths.Auto(false), integer_places: 6, settings: poqty2).Get(out this.col_Allowance)
-           .Numeric("NewCone", header: "New Cone", width: Widths.Auto(false), integer_places: 6, settings: NewCone).Get(out this.col_NewCone)
-           .Numeric("UsedCone", header: "Use Cone", width: Widths.Auto(false), integer_places: 6, settings: UsedCone).Get(out this.col_UsedCone)
+           .Numeric("AllowanceQty", header: "20%\r\nallowance", width: Widths.AnsiChars(2), integer_places: 6, settings: poqty2).Get(out this.col_Allowance)
+           .Numeric("NewCone", header: "New\r\nCone", width: Widths.AnsiChars(2), integer_places: 6, settings: NewCone).Get(out this.col_NewCone)
+           .Numeric("UsedCone", header: "Use\r\nCone", width: Widths.AnsiChars(2), integer_places: 6, settings: UsedCone).Get(out this.col_UsedCone)
 
-           .Numeric("UseStockQty", header: "Use Stock", width: Widths.Auto(false), integer_places: 6, iseditingreadonly: true, settings: poqty3)
-           .Numeric("PurchaseQty", header: "PO Qty", width: Widths.Auto(false), integer_places: 6, iseditingreadonly: true)
-           .Text("Remark", header: "Remark", width: Widths.Auto(false))
-           .Text("POID", header: "PO ID", width: Widths.Auto(false), iseditingreadonly: true);
+           .Numeric("UseStockQty", header: "Use\r\nStock", width: Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty3)
+           .Numeric("PurchaseQty", header: "PO Qty", width: Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
+           .Text("Remark", header: "Remark", width: Widths.AnsiChars(10))
+           .Text("POID", header: "PO ID", width: Widths.AnsiChars(12), iseditingreadonly: true);
             this.detailgrid.Columns["AllowanceQty"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["NewCone"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["UsedCone"].DefaultCellStyle.BackColor = Color.Pink;
@@ -748,68 +748,68 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             //    else e.Control.Enabled = true;
 
             //};
-                col_color.CellFormatting += (s, e) =>
+            col_color.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["autoCreate"].ToString() == "True")
                 {
-                    if (e.RowIndex == -1) return;
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    if (dr["autoCreate"].ToString() == "True")
-                    {
-                        e.CellStyle.BackColor = Color.White;
-                        e.CellStyle.ForeColor = Color.Black;
-                    }
-                    else
-                    {
-                        e.CellStyle.BackColor = Color.Pink;
-                        e.CellStyle.ForeColor = Color.Red;
-                    }
-                };
-                //col_cons.EditingControlShowing += (s, e) =>
-                //{
-                //    if (CurrentDetailData == null) return;
-                //    if (e.RowIndex == -1) return;
-                //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                //    if (dr["autoCreate"].ToString() == "True") e.Control.Enabled = false;
-                //    else e.Control.Enabled = true;
-                //};
-                col_cons.CellFormatting += (s, e) =>
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
                 {
-                    if (e.RowIndex == -1) return;
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    if (dr["autoCreate"].ToString() == "True")
-                    {
-                        e.CellStyle.BackColor = Color.White;
-                        e.CellStyle.ForeColor = Color.Black;
+                    e.CellStyle.BackColor = Color.Pink;
+                    //e.CellStyle.ForeColor = Color.Red;
+                }
+            };
+            //col_cons.EditingControlShowing += (s, e) =>
+            //{
+            //    if (CurrentDetailData == null) return;
+            //    if (e.RowIndex == -1) return;
+            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+            //    if (dr["autoCreate"].ToString() == "True") e.Control.Enabled = false;
+            //    else e.Control.Enabled = true;
+            //};
+            col_cons.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["autoCreate"].ToString() == "True")
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
 
-                    }
-                    else
-                    {
-                        e.CellStyle.BackColor = Color.Pink;
-                        e.CellStyle.ForeColor = Color.Red;
-                    }
-                };                
-                //col_refno.EditingControlShowing += (s, e) =>
-                //{
-                //    if (e.RowIndex == -1) return;
-                //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                //    if (dr["autoCreate"].ToString() == "True") e.Control.Enabled = false;
-                //    else e.Control.Enabled = true;
-                //};
-                col_refno.CellFormatting += (s, e) =>
+                }
+                else
                 {
-                    if (e.RowIndex == -1) return;
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    if (dr["autoCreate"].ToString() == "True")
-                    {
-                        e.CellStyle.BackColor = Color.White;
-                        e.CellStyle.ForeColor = Color.Black;
-                    }
-                    else
-                    {
-                        e.CellStyle.BackColor = Color.Pink;
-                        e.CellStyle.ForeColor = Color.Red;
+                    e.CellStyle.BackColor = Color.Pink;
+                    //e.CellStyle.ForeColor = Color.Red;
+                }
+            };
+            //col_refno.EditingControlShowing += (s, e) =>
+            //{
+            //    if (e.RowIndex == -1) return;
+            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+            //    if (dr["autoCreate"].ToString() == "True") e.Control.Enabled = false;
+            //    else e.Control.Enabled = true;
+            //};
+            col_refno.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["autoCreate"].ToString() == "True")
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    //e.CellStyle.ForeColor = Color.Red;
 
-                    }
-                };
+                }
+            };
             
         }
         #endregion
