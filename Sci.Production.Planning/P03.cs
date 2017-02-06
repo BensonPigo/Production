@@ -435,6 +435,8 @@ and b.tms > 0  and factory.mdivisionid='{2}'"+orderby, numericBox3.Text, numeric
                 }
                 
             }
+            this.grid1.AutoResizeColumns();
+            this.grid2.AutoResizeColumns();
             this.HideWaitMessage();
         }
 
