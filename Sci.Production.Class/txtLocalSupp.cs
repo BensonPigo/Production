@@ -53,6 +53,7 @@ namespace Sci.Production.Class
         {
            // base.OnValidating(e);
             string textValue = this.textBox1.Text;
+
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
                 if (!MyUtility.Check.Seek(textValue, "LocalSupp", "ID"))
@@ -63,12 +64,10 @@ namespace Sci.Production.Class
                     return;
                 }
             }
+           
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID");
-        }
+      
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
@@ -80,6 +79,11 @@ namespace Sci.Production.Class
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
             this.displayBox1.Text = item.GetSelecteds()[0]["Name"].ToString().TrimEnd();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID");
         }
     }
 }
