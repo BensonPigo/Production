@@ -270,7 +270,18 @@ namespace Sci.Production.Subcon
             #region Batch Import, Special record button
             button4.Enabled = this.EditMode;
             #endregion
-
+            this.detailgrid.AutoResizeColumn(0);
+            this.detailgrid.AutoResizeColumn(1);
+            this.detailgrid.AutoResizeColumn(2);
+            this.detailgrid.AutoResizeColumn(4);
+            this.detailgrid.AutoResizeColumn(6);
+            this.detailgrid.AutoResizeColumn(7);
+            this.detailgrid.AutoResizeColumn(8);
+            this.detailgrid.AutoResizeColumn(9);
+            this.detailgrid.AutoResizeColumn(10);
+            this.detailgrid.AutoResizeColumn(11);
+            this.detailgrid.AutoResizeColumn(12);
+            this.detailgrid.AutoResizeColumn(13);
         }
 
         // detail 新增時設定預設值
