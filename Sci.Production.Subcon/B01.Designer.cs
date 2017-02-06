@@ -50,7 +50,7 @@
             this.label22 = new Sci.Win.UI.Label();
             this.label23 = new Sci.Win.UI.Label();
             this.label24 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.textRefno = new Sci.Win.UI.TextBox();
             this.txtunit_fty1 = new Sci.Production.Class.txtunit_fty();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.txtcurrency1 = new Sci.Production.Class.txtcurrency();
@@ -106,7 +106,7 @@
             this.detailcont.Controls.Add(this.txtcurrency1);
             this.detailcont.Controls.Add(this.textBox2);
             this.detailcont.Controls.Add(this.txtunit_fty1);
-            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.textRefno);
             this.detailcont.Controls.Add(this.label22);
             this.detailcont.Controls.Add(this.label11);
             this.detailcont.Controls.Add(this.label10);
@@ -339,15 +339,15 @@
             this.label24.TabIndex = 23;
             this.label24.Text = "H";
             // 
-            // textBox1
+            // textRefno
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "refno", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(92, 12);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(209, 23);
-            this.textBox1.TabIndex = 0;
+            this.textRefno.BackColor = System.Drawing.Color.White;
+            this.textRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "refno", true));
+            this.textRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textRefno.Location = new System.Drawing.Point(92, 12);
+            this.textRefno.Name = "textRefno";
+            this.textRefno.Size = new System.Drawing.Size(209, 23);
+            this.textRefno.TabIndex = 0;
             // 
             // txtunit_fty1
             // 
@@ -861,11 +861,12 @@
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
             this.dateBox1.TabIndex = 8;
+            this.dateBox1.TabStop = false;
             // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(908, 527);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "textRefno";
             this.DefaultControlForEdit = "txtartworktype_fty1";
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
@@ -894,7 +895,7 @@
 
         private Win.UI.TextBox textBox2;
         private Class.txtunit_fty txtunit_fty1;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.TextBox textRefno;
         private Win.UI.Label label24;
         private Win.UI.Label label23;
         private Win.UI.Label label22;
