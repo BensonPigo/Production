@@ -88,7 +88,7 @@ namespace Sci.Production.Warehouse
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
             string CDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
-            string MDivisionID = row["MDivisionID"].ToString();
+            string MDivisionID = CurrentMaintain["MDivisionID"].ToString();
             string Remark = row["Remark"].ToString().Trim();
 
             #region -- 撈表頭資料 --
