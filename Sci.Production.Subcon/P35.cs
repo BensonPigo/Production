@@ -263,6 +263,17 @@ namespace Sci.Production.Subcon
 
             #endregion
 
+            this.detailgrid.AutoResizeColumn(0);
+            this.detailgrid.AutoResizeColumn(1);
+            this.detailgrid.AutoResizeColumn(2);
+            this.detailgrid.AutoResizeColumn(3);
+            this.detailgrid.AutoResizeColumn(5);
+            this.detailgrid.AutoResizeColumn(6);
+            this.detailgrid.AutoResizeColumn(7);
+            this.detailgrid.AutoResizeColumn(8);
+            this.detailgrid.AutoResizeColumn(9);
+            this.detailgrid.AutoResizeColumn(10);
+            this.detailgrid.AutoResizeColumn(11);
         }
         // detail 新增時設定預設值
         protected override void OnDetailGridInsert(int index = -1)
