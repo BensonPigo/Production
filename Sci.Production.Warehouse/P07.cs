@@ -1329,7 +1329,8 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword);
                 .ToList();
 
             P07_Print p = new P07_Print(poidList);
-            p.CurrentDataRow = this.CurrentDataRow;
+            p.CurrentDataRow = this.CurrentMaintain;
+            //p.CurrentDataRow = this.CurrentDataRow;
             p.ShowDialog();
             return true;
         }
