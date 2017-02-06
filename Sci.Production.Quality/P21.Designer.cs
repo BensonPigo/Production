@@ -54,12 +54,8 @@
             this.PO_text = new Sci.Win.UI.TextBox();
             this.InspectStage_combo = new Sci.Win.UI.ComboBox();
             this.Result_combo = new Sci.Win.UI.ComboBox();
-            this.Encode_btn = new Sci.Win.UI.Button();
             this.Audit_Date = new Sci.Win.UI.DateBox();
-            this.CFA1_text = new Sci.Production.Class.txtuser();
-            this.Line_text = new Sci.Production.Class.txtsewingline();
             this.label19 = new Sci.Win.UI.Label();
-            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
             this.Team_combo = new Sci.Win.UI.ComboBox();
             this.txtStageInfo = new Sci.Win.UI.TextBox();
             this.Garment_text = new Sci.Win.UI.NumericBox();
@@ -67,6 +63,10 @@
             this.DefectsQty_text = new Sci.Win.UI.NumericBox();
             this.SQR_text = new Sci.Win.UI.NumericBox();
             this.orderQty_text = new Sci.Win.UI.NumericBox();
+            this.labConfirm = new System.Windows.Forms.Label();
+            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
+            this.Line_text = new Sci.Production.Class.txtsewingline();
+            this.CFA1_text = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -83,6 +83,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labConfirm);
             this.masterpanel.Controls.Add(this.orderQty_text);
             this.masterpanel.Controls.Add(this.SQR_text);
             this.masterpanel.Controls.Add(this.DefectsQty_text);
@@ -94,7 +95,6 @@
             this.masterpanel.Controls.Add(this.label19);
             this.masterpanel.Controls.Add(this.Line_text);
             this.masterpanel.Controls.Add(this.CFA1_text);
-            this.masterpanel.Controls.Add(this.Encode_btn);
             this.masterpanel.Controls.Add(this.Result_combo);
             this.masterpanel.Controls.Add(this.InspectStage_combo);
             this.masterpanel.Controls.Add(this.PO_text);
@@ -151,7 +151,6 @@
             this.masterpanel.Controls.SetChildIndex(this.PO_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.InspectStage_combo, 0);
             this.masterpanel.Controls.SetChildIndex(this.Result_combo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Encode_btn, 0);
             this.masterpanel.Controls.SetChildIndex(this.CFA1_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.Line_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.label19, 0);
@@ -163,6 +162,7 @@
             this.masterpanel.Controls.SetChildIndex(this.DefectsQty_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.SQR_text, 0);
             this.masterpanel.Controls.SetChildIndex(this.orderQty_text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labConfirm, 0);
             // 
             // detailpanel
             // 
@@ -172,6 +172,10 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(918, 242);
+            // 
+            // refresh
+            // 
+            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             // 
             // detailgridcont
             // 
@@ -464,16 +468,6 @@
             this.Result_combo.Size = new System.Drawing.Size(121, 24);
             this.Result_combo.TabIndex = 10;
             // 
-            // Encode_btn
-            // 
-            this.Encode_btn.Location = new System.Drawing.Point(634, 6);
-            this.Encode_btn.Name = "Encode_btn";
-            this.Encode_btn.Size = new System.Drawing.Size(100, 30);
-            this.Encode_btn.TabIndex = 14;
-            this.Encode_btn.Text = "Encode";
-            this.Encode_btn.UseVisualStyleBackColor = true;
-            this.Encode_btn.Click += new System.EventHandler(this.Encode_btn_Click);
-            // 
             // Audit_Date
             // 
             this.Audit_Date.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cDate", true));
@@ -481,27 +475,6 @@
             this.Audit_Date.Name = "Audit_Date";
             this.Audit_Date.Size = new System.Drawing.Size(141, 23);
             this.Audit_Date.TabIndex = 1;
-            // 
-            // CFA1_text
-            // 
-            this.CFA1_text.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "cfa", true));
-            this.CFA1_text.DisplayBox1Binding = "";
-            this.CFA1_text.Location = new System.Drawing.Point(634, 113);
-            this.CFA1_text.Name = "CFA1_text";
-            this.CFA1_text.Size = new System.Drawing.Size(265, 23);
-            this.CFA1_text.TabIndex = 6;
-            this.CFA1_text.TextBox1Binding = "";
-            // 
-            // Line_text
-            // 
-            this.Line_text.BackColor = System.Drawing.Color.White;
-            this.Line_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewinglineID", true));
-            this.Line_text.factoryobjectName = this.Factory_text;
-            this.Line_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Line_text.Location = new System.Drawing.Point(362, 146);
-            this.Line_text.Name = "Line_text";
-            this.Line_text.Size = new System.Drawing.Size(77, 23);
-            this.Line_text.TabIndex = 7;
             // 
             // label19
             // 
@@ -511,19 +484,6 @@
             this.label19.Size = new System.Drawing.Size(28, 23);
             this.label19.TabIndex = 15;
             this.label19.Text = "%";
-            // 
-            // txtdropdownlist1
-            // 
-            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Shift", true));
-            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist1.FormattingEnabled = true;
-            this.txtdropdownlist1.IsSupportUnselect = true;
-            this.txtdropdownlist1.Location = new System.Drawing.Point(634, 145);
-            this.txtdropdownlist1.Name = "txtdropdownlist1";
-            this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist1.TabIndex = 8;
-            this.txtdropdownlist1.Type = "SewingOutput_Shift";
             // 
             // Team_combo
             // 
@@ -684,13 +644,62 @@
             0,
             0});
             // 
+            // labConfirm
+            // 
+            this.labConfirm.AutoSize = true;
+            this.labConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labConfirm.ForeColor = System.Drawing.Color.Red;
+            this.labConfirm.Location = new System.Drawing.Point(809, 16);
+            this.labConfirm.Name = "labConfirm";
+            this.labConfirm.Size = new System.Drawing.Size(108, 31);
+            this.labConfirm.TabIndex = 4;
+            this.labConfirm.Text = "label20";
+            // 
+            // txtdropdownlist1
+            // 
+            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlist1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Shift", true));
+            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlist1.FormattingEnabled = true;
+            this.txtdropdownlist1.IsSupportUnselect = true;
+            this.txtdropdownlist1.Location = new System.Drawing.Point(634, 145);
+            this.txtdropdownlist1.Name = "txtdropdownlist1";
+            this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
+            this.txtdropdownlist1.TabIndex = 8;
+            this.txtdropdownlist1.Type = "SewingOutput_Shift";
+            // 
+            // Line_text
+            // 
+            this.Line_text.BackColor = System.Drawing.Color.White;
+            this.Line_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewinglineID", true));
+            this.Line_text.factoryobjectName = this.Factory_text;
+            this.Line_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Line_text.Location = new System.Drawing.Point(362, 146);
+            this.Line_text.Name = "Line_text";
+            this.Line_text.Size = new System.Drawing.Size(77, 23);
+            this.Line_text.TabIndex = 7;
+            // 
+            // CFA1_text
+            // 
+            this.CFA1_text.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "cfa", true));
+            this.CFA1_text.DisplayBox1Binding = "";
+            this.CFA1_text.Location = new System.Drawing.Point(634, 113);
+            this.CFA1_text.Name = "CFA1_text";
+            this.CFA1_text.Size = new System.Drawing.Size(265, 23);
+            this.CFA1_text.TabIndex = 6;
+            this.CFA1_text.TextBox1Binding = "";
+            // 
             // P21
             // 
+            this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1045, 650);
             this.GridAlias = "CFA_Detail";
+            this.IsSupportConfirm = true;
+            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P21";
             this.Text = "P21 .CFA Inline Record";
+            this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "CFA";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
@@ -714,7 +723,6 @@
 
         #endregion
 
-        private Win.UI.Button Encode_btn;
         private Win.UI.ComboBox Result_combo;
         private Win.UI.ComboBox InspectStage_combo;
         private Win.UI.TextBox PO_text;
@@ -753,5 +761,6 @@
         private Win.UI.NumericBox SQR_text;
         private Win.UI.NumericBox DefectsQty_text;
         private Win.UI.NumericBox orderQty_text;
+        private System.Windows.Forms.Label labConfirm;
     }
 }

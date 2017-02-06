@@ -114,30 +114,15 @@ namespace Sci.Production.Quality
                 this.orderQty_text.Text = "0";      this.InspectQty_text.Text = "0";      this.DefectsQty_text.Text = "0";
                 this.Line_text.Text = "";          this.Garment_text.Text = "";         this.CFA1_text.Text = "";
                 this.SQR_text.Text = "0";   this.Remark_text.Text = "";
-            }
-            #region btnEncode
+            }            
             DataRow drStatus;
-            Encode_btn.Enabled = !this.EditMode;
-            if (MyUtility.Check.Empty(CurrentMaintain))
-            {
-                Encode_btn.Enabled = false;
-            }
-            string sql_Status = string.Format(@"select * from cfa where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
-            if (MyUtility.Check.Seek(sql_Status, out drStatus))
-            {
-                if (drStatus["Status"].ToString().ToUpper().Trim()=="CONFIRMED")
-                {
-                    Encode_btn.Text = "Amend";
-                }
-                else
-                {
-                    Encode_btn.Text = "Encode";
-                }
-            }
-            #endregion
-           
 
-            base.OnDetailEntered();
+            if (MyUtility.Check.Seek(string.Format("select status from cfa where id='{0}'",CurrentMaintain["ID"].ToString().Trim()),out drStatus))
+            {
+                this.labConfirm.Text = drStatus["status"].ToString();
+            }
+
+            base.OnDetailEntered();            
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -368,25 +353,22 @@ where a.ID='{0}'",
             .Text("Action", header: "Action", width: Widths.AnsiChars(5));
             
         }
-
-        private void Encode_btn_Click(object sender, EventArgs e)
+        protected override void ClickConfirm()
         {
+            base.ClickConfirm();
             DataTable dt;
             string cmd = "select * from cfa where orderid=@orderid order by cDate desc";
             List<SqlParameter> spam = new List<SqlParameter>();
             spam.Add(new SqlParameter("@orderid", this.SP_text.Text));
             DBProxy.Current.Select(null, cmd, spam, out dt);
 
-            if (this.Encode_btn.Text=="Encode")
-            {                
-
-                DualResult dResult; 
+                DualResult dResult;
                 List<SqlParameter> spamEncode = new List<SqlParameter>();
                 string updCmd = "  update Cfa  set status='Confirmed',EditName=@user,EditDate=GETDATE() where ID=@id ";
                 spamEncode.Add(new SqlParameter("@id", CurrentMaintain["ID"].ToString()));
-                spamEncode.Add(new SqlParameter("@user", loginID));               
+                spamEncode.Add(new SqlParameter("@user", loginID));
 
-                if (dResult= DBProxy.Current.Execute(null,updCmd,spamEncode))
+                if (dResult = DBProxy.Current.Execute(null, updCmd, spamEncode))
                 {
                     string updOrders = "update orders set inspdate=@insdate,InspResult=@result,inspHandle=@cfa where id=@id";
                     List<SqlParameter> spamO = new List<SqlParameter>();
@@ -398,34 +380,42 @@ where a.ID='{0}'",
                     this.RenewData();
 
                 }
-                this.Encode_btn.Text = "Amend";
-                
-            }
-            // Amend
-            else
-            {
-                DualResult dResult;
-                List<SqlParameter> spamAmend = new List<SqlParameter>();
-                string updCmd = "  update Cfa set status='New',EditName=@user,EditDate=GETDATE() where ID=@id ";
-                spamAmend.Add(new SqlParameter("@id", CurrentMaintain["ID"].ToString()));
-                spamAmend.Add(new SqlParameter("@user", loginID));
-
-                if (dResult = DBProxy.Current.Execute(null, updCmd, spamAmend))
-                {
-                    string updOrders = "update orders set inspdate=@insdate,InspResult=@result,inspHandle=@cfa where id=@id";
-                    List<SqlParameter> spamO = new List<SqlParameter>();
-                    spamO.Add(new SqlParameter("@insdate", Convert.ToDateTime(dt.Rows[0]["cDate"]).ToShortDateString()));
-                    spamO.Add(new SqlParameter("@result", dt.Rows[0]["Result"]));
-                    spamO.Add(new SqlParameter("@cfa", dt.Rows[0]["Cfa"]));
-                    spamO.Add(new SqlParameter("@id", this.SP_text.Text));
-                    DBProxy.Current.Execute(null, updOrders, spamO);
-                    this.RenewData();
-                }
-                this.Encode_btn.Text = "Encode";
-            }
-
-            OnDetailEntered();            
+                OnDetailEntered();
+                this.RenewData();
+                EnsureToolbarExt();
         }
+
+        protected override void ClickUnconfirm()
+        {
+            base.ClickUnconfirm();
+            DualResult dResult;
+            DataTable dt;
+            string cmd = "select * from cfa where orderid=@orderid order by cDate desc";
+            List<SqlParameter> spam = new List<SqlParameter>();
+            spam.Add(new SqlParameter("@orderid", this.SP_text.Text));
+            DBProxy.Current.Select(null, cmd, spam, out dt);
+
+            List<SqlParameter> spamAmend = new List<SqlParameter>();
+            string updCmd = "  update Cfa set status='New',EditName=@user,EditDate=GETDATE() where ID=@id ";
+            spamAmend.Add(new SqlParameter("@id", CurrentMaintain["ID"].ToString()));
+            spamAmend.Add(new SqlParameter("@user", loginID));
+
+            if (dResult = DBProxy.Current.Execute(null, updCmd, spamAmend))
+            {
+                string updOrders = "update orders set inspdate=@insdate,InspResult=@result,inspHandle=@cfa where id=@id";
+                List<SqlParameter> spamO = new List<SqlParameter>();
+                spamO.Add(new SqlParameter("@insdate", Convert.ToDateTime(dt.Rows[0]["cDate"]).ToShortDateString()));
+                spamO.Add(new SqlParameter("@result", dt.Rows[0]["Result"]));
+                spamO.Add(new SqlParameter("@cfa", dt.Rows[0]["Cfa"]));
+                spamO.Add(new SqlParameter("@id", this.SP_text.Text));
+                DBProxy.Current.Execute(null, updOrders, spamO);
+                this.RenewData();
+            }
+            OnDetailEntered();
+            this.RenewData();
+            EnsureToolbarExt();
+        }
+       
         // save 前檢查
         protected override bool ClickSaveBefore()
         {
