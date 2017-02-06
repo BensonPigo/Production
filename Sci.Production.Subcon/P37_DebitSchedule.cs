@@ -48,6 +48,7 @@ namespace Sci.Production.Subcon
             {
                 dr["VOUCHERDATE"] = MyUtility.GetValue.Lookup(string.Format("SELECT VoucherDate from Voucher where id = '{0}'", dr["voucherid"]), "Finance");
             }
+            this.grid.AutoResizeColumns();
         }
 
         protected override void OnEditModeChanged()
