@@ -53,7 +53,7 @@ INSERT INTO Production.dbo.InvAdjust(
 
 )
 select 
-        ID
+        b.ID
       ,IssueDate
       ,REASON
       ,GarmentInvoiceID
@@ -78,15 +78,18 @@ select
       ,AdjustAddCharge
       ,AdjustCommission
       ,AdjustDocFee
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
+      ,b.AddName
+      ,b.AddDate
+      ,b.EditName
+      ,b.EditDate
       ,PriceCheckID
 
-from Trade_To_Pms.dbo.InvAdjust as b
+from Trade_To_Pms.dbo.InvAdjust as b 
+inner join Production.dbo.Factory c on b.FactoryID=c.ID
 where not exists(select id from Production.dbo.InvAdjust as a where a.id = b.id)
 
+
+delete from Production.dbo.InvAdjust
 --InvAdjust_Qty
 --PMS¦h
 --,[Pullout3Qty]
