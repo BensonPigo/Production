@@ -407,7 +407,9 @@ inner join dbo.Factory on factory.id = a.factoryid
                     wkdays = (stdq != '0') ? ' ' : int.Parse(Math.Ceiling((decimal.Parse(item["OrderQty"].ToString()) - decimal.Parse(item["qaqty"].ToString())) / stdq).ToString());
                 }
                 this.HideWaitMessage();
-            }   
+            }
+            this.grid1.AutoResizeColumns();
+            this.grid2.AutoResizeColumns();
         }
     
         //close
