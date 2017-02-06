@@ -58,7 +58,8 @@ over (order by issuedate
 SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], numTotalAmt.Value.ToString()), out dr);
             displayBoxVoucherID.Text = null == dr ? "" : dr["voucherid"].ToString();
             displayBoxSettleDate.Text = null == dr ? "" : dr["voucherdate"].ToString();
-
+            this.displayBox6.Text = Convert.ToDateTime(this.displayBox6.Text).ToString("yyyy/MM/dd");
+            this.detailgrid.AutoResizeColumns();
         }
 
         // Detail Grid 設定
