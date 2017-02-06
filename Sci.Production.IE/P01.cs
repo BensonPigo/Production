@@ -85,6 +85,20 @@ namespace Sci.Production.IE
             button8.Enabled = !this.EditMode && CurrentMaintain != null;
             button5.Enabled = CurrentMaintain != null;
             button6.Enabled = CurrentMaintain != null;
+
+            this.detailgrid.AutoResizeColumn(0);
+            this.detailgrid.AutoResizeColumn(1);
+            this.detailgrid.AutoResizeColumn(2);
+            this.detailgrid.AutoResizeColumn(4);
+            this.detailgrid.AutoResizeColumn(5);
+            this.detailgrid.AutoResizeColumn(6);
+            this.detailgrid.AutoResizeColumn(7);
+            this.detailgrid.AutoResizeColumn(8);
+            this.detailgrid.AutoResizeColumn(9);
+            this.detailgrid.AutoResizeColumn(11);
+            this.detailgrid.AutoResizeColumn(12);
+            this.detailgrid.AutoResizeColumn(13);
+            this.detailgrid.AutoResizeColumn(14);
         }
 
         protected override void OnDetailGridSetup()
