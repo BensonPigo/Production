@@ -457,7 +457,7 @@ where id = '{4}'"
                 if (dResult.ToString().ToUpper() == "NO") return false;
             }
           
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
            
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();

@@ -606,7 +606,7 @@ where localap_detail.id = '{0}'", masterID);
 
         protected override bool ClickPrint()
         {
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 

@@ -672,7 +672,7 @@ namespace Sci.Production.Subcon
         protected override bool ClickPrint()
         {
 
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
