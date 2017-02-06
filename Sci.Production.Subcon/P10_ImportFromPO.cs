@@ -106,6 +106,7 @@ namespace Sci.Production.Subcon
                 }
                 else { ShowErr(strSQLCmd, result); }
             }
+            this.grid1.AutoResizeColumns();
         }
 
         protected override void OnFormLoaded()

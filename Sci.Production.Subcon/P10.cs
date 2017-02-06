@@ -290,6 +290,7 @@ namespace Sci.Production.Subcon
 
             #endregion
 
+            this.detailgrid.AutoResizeColumns();
         }
 
         // Detail Grid 設定 & Detail Vaild
