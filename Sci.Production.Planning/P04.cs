@@ -426,7 +426,9 @@ and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numer
                     wkdays = (stdq != '0') ? ' ' : int.Parse(Math.Ceiling((decimal.Parse(item["OrderQty"].ToString()) - decimal.Parse(item["qaqty"].ToString())) / stdq).ToString());
                 }
                 this.HideWaitMessage();
-            }     
+            }
+            this.grid1.AutoResizeColumns();
+            this.gris2.AutoresizeColumns();
         }
 
         //close
