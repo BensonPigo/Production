@@ -66,7 +66,6 @@ namespace Sci.Production.Subcon
             lblStatus.Text = CurrentMaintain["status"].ToString();
             lblSubconDebitNote.Visible = (!MyUtility.Check.Empty(CurrentMaintain["isSubcon"]));
             numBalance.Value = decimal.Parse(CurrentMaintain["amount"].ToString()) - decimal.Parse(CurrentMaintain["received"].ToString());
-
         }
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
@@ -94,6 +93,7 @@ namespace Sci.Production.Subcon
             CurrentMaintain["Tax"] = 0;
             CurrentMaintain["TaxRate"] = 0;
             CurrentMaintain["Status"] = "New";
+            this.dateBox4.ReadOnly = true;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -120,6 +120,11 @@ from debit_detail Where debit_detail.id = '{0}' order by orderid ", masterID);
         private void masterpanel_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
         }
     }
 }

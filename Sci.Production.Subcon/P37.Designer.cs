@@ -55,7 +55,6 @@
             this.label13 = new Sci.Win.UI.Label();
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.displayBox6 = new Sci.Win.UI.DisplayBox();
-            this.displayBox7 = new Sci.Win.UI.DisplayBox();
             this.label16 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
             this.label14 = new Sci.Win.UI.Label();
@@ -84,6 +83,7 @@
             this.txttpeuser3 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
+            this.dateBox4 = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -184,7 +184,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(2267, 397);
+            this.gridicon.Location = new System.Drawing.Point(2392, 397);
             // 
             // refresh
             // 
@@ -530,16 +530,6 @@
             this.displayBox6.Size = new System.Drawing.Size(169, 23);
             this.displayBox6.TabIndex = 0;
             // 
-            // displayBox7
-            // 
-            this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SettleDate", true));
-            this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox7.Location = new System.Drawing.Point(458, 57);
-            this.displayBox7.Name = "displayBox7";
-            this.displayBox7.Size = new System.Drawing.Size(169, 23);
-            this.displayBox7.TabIndex = 3;
-            // 
             // label16
             // 
             this.label16.Lines = 0;
@@ -776,13 +766,13 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.dateBox4);
             this.groupBox2.Controls.Add(this.label25);
             this.groupBox2.Controls.Add(this.displayBox20);
             this.groupBox2.Controls.Add(this.displayBox5);
             this.groupBox2.Controls.Add(this.label14);
             this.groupBox2.Controls.Add(this.label15);
             this.groupBox2.Controls.Add(this.label16);
-            this.groupBox2.Controls.Add(this.displayBox7);
             this.groupBox2.Controls.Add(this.displayBox6);
             this.groupBox2.Location = new System.Drawing.Point(17, 337);
             this.groupBox2.Name = "groupBox2";
@@ -849,6 +839,16 @@
             this.txttpeuser1.Name = "txttpeuser1";
             this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser1.TabIndex = 3;
+            // 
+            // dateBox4
+            // 
+            this.dateBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SettleDate", true));
+            this.dateBox4.IsSupportEditMode = false;
+            this.dateBox4.Location = new System.Drawing.Point(458, 57);
+            this.dateBox4.Name = "dateBox4";
+            this.dateBox4.ReadOnly = true;
+            this.dateBox4.Size = new System.Drawing.Size(130, 23);
+            this.dateBox4.TabIndex = 98;
             // 
             // P37
             // 
@@ -923,7 +923,6 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.DisplayBox displayBox4;
         private Win.UI.DisplayBox displayBox6;
-        private Win.UI.DisplayBox displayBox7;
         private Win.UI.Label label16;
         private Win.UI.Label label15;
         private Win.UI.Label label14;
@@ -952,5 +951,6 @@
         private Class.txttpeuser txttpeuser3;
         private Class.txttpeuser txttpeuser2;
         private Class.txttpeuser txttpeuser1;
+        private Win.UI.DateBox dateBox4;
     }
 }
