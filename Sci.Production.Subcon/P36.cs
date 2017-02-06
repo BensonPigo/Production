@@ -58,7 +58,6 @@ over (order by issuedate
 SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], numTotalAmt.Value.ToString()), out dr);
             displayBoxVoucherID.Text = null == dr ? "" : dr["voucherid"].ToString();
             displayBoxSettleDate.Text = null == dr ? "" : dr["voucherdate"].ToString();
-            this.displayBox6.Text = Convert.ToDateTime(this.displayBox6.Text).ToString("yyyy/MM/dd");
             this.detailgrid.AutoResizeColumns();
         }
 
@@ -118,14 +117,14 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["SMR"] = MyUtility.GetValue.Lookup("Supervisor", Sci.Env.User.UserID, "Pass1", "ID");
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-           
+            dateBox4.ReadOnly = true;
         }
 
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
         {
             detailgridbs.EndEdit();
-
+            dateBox4.ReadOnly = true;
             #region 必輸檢查
             if (CurrentMaintain["issuedate"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
             {
@@ -241,7 +240,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 this.RenewData();
                 return false;
             }
-
+            dateBox4.ReadOnly = true;
             return base.ClickEditBefore();
         }
 
@@ -255,9 +254,8 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
 ,QTY,UNITID,AMOUNT,ADDITION,TAIPEIREASON,DESCRIPTION 
 from localdebit_detail 
                                                         Where localdebit_detail.id = '{0}' order by orderid ", masterID);
-
+            
             return base.OnDetailSelectCommandPrepare(e);
-
         }
 
         private void updateStatus(string oldvalue, string newValue, bool seleReason, string reasonType = "DebitNote_LS")
@@ -367,6 +365,7 @@ where id = '{4}'"
         protected override void ClickSend()
         {
             base.ClickSend();
+
             updateStatus(CurrentMaintain["status"].ToString(), "Sent", false);
 
         }
@@ -396,6 +395,7 @@ where id = '{4}'"
         }
         protected override bool ClickNew()
         {
+            dateBox4.ReadOnly = true;
             return base.ClickNew();
         }
         protected override void ClickUnconfirm()

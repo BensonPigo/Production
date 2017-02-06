@@ -65,7 +65,6 @@
             this.btnStatusHistory = new Sci.Win.UI.Button();
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
             this.displayBox7 = new Sci.Win.UI.DisplayBox();
             this.displayBoxSettleDate = new Sci.Win.UI.DisplayBox();
             this.txtuser3 = new Sci.Production.Class.txtuser();
@@ -75,6 +74,7 @@
             this.txtAccountNo1 = new Sci.Production.Class.txtAccountNo();
             this.txtuser5 = new Sci.Production.Class.txtuser();
             this.txtuser4 = new Sci.Production.Class.txtuser();
+            this.dateBox4 = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -169,7 +169,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(4017, 184);
+            this.gridicon.Location = new System.Drawing.Point(4142, 184);
             // 
             // refresh
             // 
@@ -204,8 +204,8 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.dateBox4);
             this.detailbtm.Controls.Add(this.displayBoxSettleDate);
-            this.detailbtm.Controls.Add(this.displayBox6);
             this.detailbtm.Controls.Add(this.displayBox7);
             this.detailbtm.Controls.Add(this.displayBoxVoucherID);
             this.detailbtm.Controls.Add(this.label18);
@@ -229,13 +229,13 @@
             this.detailbtm.Controls.SetChildIndex(this.label18, 0);
             this.detailbtm.Controls.SetChildIndex(this.displayBoxVoucherID, 0);
             this.detailbtm.Controls.SetChildIndex(this.displayBox7, 0);
-            this.detailbtm.Controls.SetChildIndex(this.displayBox6, 0);
             this.detailbtm.Controls.SetChildIndex(this.displayBoxSettleDate, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
+            this.detailbtm.Controls.SetChildIndex(this.dateBox4, 0);
             // 
             // browse
             // 
@@ -671,16 +671,6 @@
             this.displayBox5.Size = new System.Drawing.Size(169, 23);
             this.displayBox5.TabIndex = 16;
             // 
-            // displayBox6
-            // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "receiveDate", true));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(800, 16);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(169, 23);
-            this.displayBox6.TabIndex = 2;
-            // 
             // displayBox7
             // 
             this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -771,6 +761,15 @@
             this.txtuser4.Size = new System.Drawing.Size(300, 23);
             this.txtuser4.TabIndex = 1;
             this.txtuser4.TextBox1Binding = "";
+            // 
+            // dateBox4
+            // 
+            this.dateBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "receiveDate", true));
+            this.dateBox4.Location = new System.Drawing.Point(800, 16);
+            this.dateBox4.Name = "dateBox4";
+            this.dateBox4.ReadOnly = true;
+            this.dateBox4.Size = new System.Drawing.Size(130, 23);
+            this.dateBox4.TabIndex = 83;
             // 
             // P36
             // 
@@ -868,7 +867,7 @@
         private Win.UI.DisplayBox displayBox5;
         private Win.UI.DisplayBox displayBox4;
         private Win.UI.DisplayBox displayBoxSettleDate;
-        private Win.UI.DisplayBox displayBox6;
         private Win.UI.DisplayBox displayBox7;
+        private Win.UI.DateBox dateBox4;
     }
 }
