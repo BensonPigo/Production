@@ -72,9 +72,9 @@
             // label4
             // 
             this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 83);
+            this.label4.Location = new System.Drawing.Point(13, 84);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(107, 42);
+            this.label4.Size = new System.Drawing.Size(107, 23);
             this.label4.TabIndex = 97;
             this.label4.Text = "Language";
             // 
