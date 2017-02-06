@@ -247,6 +247,7 @@ namespace Sci.Production.Quality
                 Complete_box.Text = completedate.ToShortDateString();
             }
             else Complete_box.Text = "";
+            this.grid.AutoResizeColumns();
 
         }
         protected override DualResult ClickSave()
