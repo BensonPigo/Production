@@ -28,40 +28,39 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.panel4 = new Sci.Win.UI.Panel();
-            this.panel5 = new Sci.Win.UI.Panel();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.radioGroup1 = new Sci.Win.UI.RadioGroup();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.button1 = new Sci.Win.UI.Button();
             this.radioGroup2 = new Sci.Win.UI.RadioGroup();
-            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
             this.button2 = new Sci.Win.UI.Button();
+            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioButton2 = new Sci.Win.UI.RadioButton();
+            this.radioButton1 = new Sci.Win.UI.RadioButton();
+            this.radioGroup1 = new Sci.Win.UI.RadioGroup();
+            this.button1 = new Sci.Win.UI.Button();
+            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.dateRange1 = new Sci.Win.UI.DateRange();
+            this.label4 = new Sci.Win.UI.Label();
+            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.panel4 = new Sci.Win.UI.Panel();
             this.button3 = new Sci.Win.UI.Button();
+            this.panel5 = new Sci.Win.UI.Panel();
+            this.grid1 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
-            this.panel4.SuspendLayout();
-            this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
-            this.radioGroup1.SuspendLayout();
             this.radioGroup2.SuspendLayout();
             this.radioPanel1.SuspendLayout();
+            this.radioGroup1.SuspendLayout();
+            this.panel4.SuspendLayout();
+            this.panel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -90,71 +89,58 @@
             this.panel3.Size = new System.Drawing.Size(888, 150);
             this.panel3.TabIndex = 3;
             // 
-            // panel4
+            // radioGroup2
             // 
-            this.panel4.Controls.Add(this.button3);
-            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(10, 479);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(888, 42);
-            this.panel4.TabIndex = 4;
+            this.radioGroup2.Controls.Add(this.button2);
+            this.radioGroup2.Controls.Add(this.radioPanel1);
+            this.radioGroup2.Location = new System.Drawing.Point(526, 4);
+            this.radioGroup2.Name = "radioGroup2";
+            this.radioGroup2.Size = new System.Drawing.Size(357, 140);
+            this.radioGroup2.TabIndex = 1;
+            this.radioGroup2.TabStop = false;
             // 
-            // panel5
+            // button2
             // 
-            this.panel5.Controls.Add(this.grid1);
-            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(10, 150);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(888, 329);
-            this.panel5.TabIndex = 5;
+            this.button2.Location = new System.Drawing.Point(272, 15);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(80, 30);
+            this.button2.TabIndex = 1;
+            this.button2.Text = "To Excel";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // grid1
+            // radioPanel1
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle16.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle16.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle16.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle16.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle16.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle16;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle17.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle17.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle17.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle17.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle17.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.grid1.DefaultCellStyle = dataGridViewCellStyle17;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle18.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle18.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle18.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle18.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle18.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle18;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(888, 329);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.radioPanel1.Controls.Add(this.radioButton2);
+            this.radioPanel1.Controls.Add(this.radioButton1);
+            this.radioPanel1.Location = new System.Drawing.Point(7, 15);
+            this.radioPanel1.Name = "radioPanel1";
+            this.radioPanel1.Size = new System.Drawing.Size(255, 63);
+            this.radioPanel1.TabIndex = 0;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioButton2.Location = new System.Drawing.Point(4, 36);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(157, 21);
+            this.radioButton2.TabIndex = 1;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "FormB (for LLL/TNF)";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioButton1.Location = new System.Drawing.Point(4, 8);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(250, 21);
+            this.radioButton1.TabIndex = 0;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "FormA (for Adidas/UA/Saucony/NB)";
+            this.radioButton1.UseVisualStyleBackColor = true;
             // 
             // radioGroup1
             // 
@@ -173,50 +159,32 @@
             this.radioGroup1.TabIndex = 0;
             this.radioGroup1.TabStop = false;
             // 
-            // label1
+            // button1
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(7, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(120, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Garment Booking#";
+            this.button1.Location = new System.Drawing.Point(405, 15);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(80, 30);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "Query";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // label2
+            // txtbrand1
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(7, 76);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(120, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "FCR Date";
+            this.txtbrand1.BackColor = System.Drawing.Color.White;
+            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand1.Location = new System.Drawing.Point(131, 109);
+            this.txtbrand1.Name = "txtbrand1";
+            this.txtbrand1.Size = new System.Drawing.Size(98, 23);
+            this.txtbrand1.TabIndex = 7;
             // 
-            // label3
+            // dateRange1
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(7, 109);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(120, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Brand";
-            // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(131, 15);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(186, 23);
-            this.textBox1.TabIndex = 3;
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(131, 44);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(186, 23);
-            this.textBox2.TabIndex = 4;
+            this.dateRange1.IsRequired = false;
+            this.dateRange1.Location = new System.Drawing.Point(131, 76);
+            this.dateRange1.Name = "dateRange1";
+            this.dateRange1.Size = new System.Drawing.Size(280, 23);
+            this.dateRange1.TabIndex = 6;
             // 
             // label4
             // 
@@ -232,85 +200,59 @@
             this.label4.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label4.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // dateRange1
+            // textBox2
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(131, 76);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 6;
+            this.textBox2.BackColor = System.Drawing.Color.White;
+            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox2.Location = new System.Drawing.Point(131, 44);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(186, 23);
+            this.textBox2.TabIndex = 4;
             // 
-            // txtbrand1
+            // textBox1
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(131, 109);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(98, 23);
-            this.txtbrand1.TabIndex = 7;
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(131, 15);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(186, 23);
+            this.textBox1.TabIndex = 3;
             // 
-            // button1
+            // label3
             // 
-            this.button1.Location = new System.Drawing.Point(405, 15);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.label3.Lines = 0;
+            this.label3.Location = new System.Drawing.Point(7, 109);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(120, 23);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Brand";
             // 
-            // radioGroup2
+            // label2
             // 
-            this.radioGroup2.Controls.Add(this.button2);
-            this.radioGroup2.Controls.Add(this.radioPanel1);
-            this.radioGroup2.Location = new System.Drawing.Point(526, 4);
-            this.radioGroup2.Name = "radioGroup2";
-            this.radioGroup2.Size = new System.Drawing.Size(357, 140);
-            this.radioGroup2.TabIndex = 1;
-            this.radioGroup2.TabStop = false;
+            this.label2.Lines = 0;
+            this.label2.Location = new System.Drawing.Point(7, 76);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(120, 23);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "FCR Date";
             // 
-            // radioPanel1
+            // label1
             // 
-            this.radioPanel1.Controls.Add(this.radioButton2);
-            this.radioPanel1.Controls.Add(this.radioButton1);
-            this.radioPanel1.Location = new System.Drawing.Point(7, 15);
-            this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(255, 63);
-            this.radioPanel1.TabIndex = 0;
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(7, 15);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(120, 23);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Garment Booking#";
             // 
-            // radioButton1
+            // panel4
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(4, 8);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(250, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "FormA (for Adidas/UA/Saucony/NB)";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(4, 36);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(157, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "FormB (for LLL/TNF)";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(272, 15);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "To Excel";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.panel4.Controls.Add(this.button3);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel4.Location = new System.Drawing.Point(10, 479);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(888, 42);
+            this.panel4.TabIndex = 4;
             // 
             // button3
             // 
@@ -322,6 +264,47 @@
             this.button3.Text = "Close";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel5.Location = new System.Drawing.Point(10, 150);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(888, 329);
+            this.panel5.TabIndex = 5;
+            // 
+            // grid1
+            // 
+            this.grid1.AllowUserToAddRows = false;
+            this.grid1.AllowUserToDeleteRows = false;
+            this.grid1.AllowUserToResizeRows = false;
+            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid1.DataSource = this.listControlBindingSource1;
+            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid1.Location = new System.Drawing.Point(0, 0);
+            this.grid1.Name = "grid1";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid1.RowTemplate.Height = 24;
+            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid1.Size = new System.Drawing.Size(888, 329);
+            this.grid1.TabIndex = 0;
+            this.grid1.TabStop = false;
             // 
             // P07
             // 
@@ -340,15 +323,15 @@
             this.Controls.SetChildIndex(this.panel4, 0);
             this.Controls.SetChildIndex(this.panel5, 0);
             this.panel3.ResumeLayout(false);
-            this.panel4.ResumeLayout(false);
-            this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
-            this.radioGroup1.ResumeLayout(false);
-            this.radioGroup1.PerformLayout();
             this.radioGroup2.ResumeLayout(false);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
+            this.radioGroup1.ResumeLayout(false);
+            this.radioGroup1.PerformLayout();
+            this.panel4.ResumeLayout(false);
+            this.panel5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }

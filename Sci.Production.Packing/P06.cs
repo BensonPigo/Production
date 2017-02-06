@@ -47,6 +47,13 @@ namespace Sci.Production.Packing
         {
             base.OnDetailEntered();
 
+            DataRow dr1;
+            string sqlStatus = string.Format(@"select status from PackingList where id='{0}'", CurrentMaintain["ID"].ToString());
+            if (MyUtility.Check.Seek(sqlStatus, out dr1))
+            {
+                labConfirmed.Text = dr1["Status"].ToString();
+            }
+
             //帶出Orders相關欄位
             DataRow dr;
             string sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Customize1,ReadyDate from Orders where ID = '{0}'", CurrentMaintain["OrderID"].ToString());

@@ -70,6 +70,7 @@
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.txtcustcd1 = new Sci.Production.Class.txtcustcd();
             this.txtcountry1 = new Sci.Production.Class.txtcountry();
+            this.labCofirmed = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -86,6 +87,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labCofirmed);
             this.masterpanel.Controls.Add(this.txtcountry1);
             this.masterpanel.Controls.Add(this.txtcustcd1);
             this.masterpanel.Controls.Add(this.txtbrand1);
@@ -172,6 +174,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtbrand1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtcustcd1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtcountry1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labCofirmed, 0);
             // 
             // detailpanel
             // 
@@ -520,7 +523,7 @@
             this.label23.BackColor = System.Drawing.Color.Transparent;
             this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
             this.label23.Lines = 0;
-            this.label23.Location = new System.Drawing.Point(840, 4);
+            this.label23.Location = new System.Drawing.Point(840, 35);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(148, 39);
             this.label23.TabIndex = 47;
@@ -532,7 +535,7 @@
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Location = new System.Drawing.Point(840, 46);
+            this.button1.Location = new System.Drawing.Point(840, 77);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(150, 30);
             this.button1.TabIndex = 48;
@@ -543,7 +546,7 @@
             // button2
             // 
             this.button2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button2.Location = new System.Drawing.Point(840, 83);
+            this.button2.Location = new System.Drawing.Point(840, 114);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(150, 30);
             this.button2.TabIndex = 49;
@@ -554,7 +557,7 @@
             // button3
             // 
             this.button3.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button3.Location = new System.Drawing.Point(840, 118);
+            this.button3.Location = new System.Drawing.Point(840, 149);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(150, 30);
             this.button3.TabIndex = 50;
@@ -674,6 +677,20 @@
             this.txtcountry1.TextBox1Binding = "";
             this.txtcountry1.Validated += new System.EventHandler(this.txtcountry1_Validated);
             // 
+            // labCofirmed
+            // 
+            this.labCofirmed.BackColor = System.Drawing.Color.Transparent;
+            this.labCofirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
+            this.labCofirmed.Lines = 0;
+            this.labCofirmed.Location = new System.Drawing.Point(839, 4);
+            this.labCofirmed.Name = "labCofirmed";
+            this.labCofirmed.Size = new System.Drawing.Size(148, 39);
+            this.labCofirmed.TabIndex = 58;
+            this.labCofirmed.Text = "Shipping Lock";
+            this.labCofirmed.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labCofirmed.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.labCofirmed.TextStyle.Color = System.Drawing.Color.Red;
+            // 
             // P03
             // 
             this.ApvChkValue = "New";
@@ -758,5 +775,6 @@
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.Label label2;
+        private Win.UI.Label labCofirmed;
     }
 }

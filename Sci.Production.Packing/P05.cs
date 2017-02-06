@@ -305,6 +305,17 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
             }
         }
 
+        protected override void OnDetailEntered()
+        {
+            DataRow dr;
+            string sqlStatus = string.Format(@"select status from PackingList where id='{0}'", CurrentMaintain["ID"].ToString());
+            if (MyUtility.Check.Seek(sqlStatus, out dr))
+            {
+                labConfirmed.Text = dr["Status"].ToString();
+            }
+            base.OnDetailEntered();
+        }
+
         //清空Order相關欄位值
         private void ClearGridRowData(DataRow dr)
         {

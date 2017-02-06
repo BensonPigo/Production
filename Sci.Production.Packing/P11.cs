@@ -58,6 +58,13 @@ where od.ID = '{0}'", masterID);
                 displayBox1.Text = "";
                 displayBox2.Text = "";                
             }
+
+            DataRow dr1;
+            string sqlStatus = string.Format(@"select status from OverrunGMT where id='{0}'", CurrentMaintain["ID"].ToString());
+            if (MyUtility.Check.Seek(sqlStatus, out dr1))
+            {
+                labConfirmed.Text = dr1["Status"].ToString();
+            }
         }
 
         protected override void OnDetailGridSetup()

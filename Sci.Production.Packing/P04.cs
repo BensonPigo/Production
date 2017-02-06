@@ -65,6 +65,13 @@ namespace Sci.Production.Packing
 
             //Shipping Lock是否可看見
             label23.Visible = MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]) ? false : true;
+
+            DataRow dr;
+            string sqlStatus = string.Format(@"select status from PackingList where id='{0}'", CurrentMaintain["ID"].ToString());
+            if (MyUtility.Check.Seek(sqlStatus,out dr))
+            {
+                labConfirmed.Text = dr["Status"].ToString();
+            }
         }
 
         protected override void OnDetailGridSetup()

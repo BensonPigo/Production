@@ -77,6 +77,13 @@ namespace Sci.Production.Packing
             //Shipping Lock是否可看見
             label23.Visible = MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]) ? false : true;
 
+            DataRow dr;
+            string sqlStatus = string.Format(@"select * from PackingList where id='{0}'",CurrentMaintain["id"].ToString());
+            if (MyUtility.Check.Seek(sqlStatus,out dr))
+            {
+                labCofirmed.Text = dr["Status"].ToString();
+            }
+
             //Purchase Ctn
             displayBox7.Value = MyUtility.Check.Empty(CurrentMaintain["LocalPOID"]) ? "" : "Y";
 

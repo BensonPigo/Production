@@ -40,6 +40,7 @@
             this.label6 = new Sci.Win.UI.Label();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
+            this.labConfirmed = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -56,6 +57,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labConfirmed);
             this.masterpanel.Controls.Add(this.displayBox3);
             this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.label5);
@@ -82,6 +84,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labConfirmed, 0);
             // 
             // detailpanel
             // 
@@ -246,6 +249,20 @@
             this.displayBox3.Size = new System.Drawing.Size(70, 23);
             this.displayBox3.TabIndex = 12;
             // 
+            // labConfirmed
+            // 
+            this.labConfirmed.BackColor = System.Drawing.Color.Transparent;
+            this.labConfirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
+            this.labConfirmed.Lines = 0;
+            this.labConfirmed.Location = new System.Drawing.Point(580, 16);
+            this.labConfirmed.Name = "labConfirmed";
+            this.labConfirmed.Size = new System.Drawing.Size(148, 25);
+            this.labConfirmed.TabIndex = 58;
+            this.labConfirmed.Text = "status";
+            this.labConfirmed.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labConfirmed.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.labConfirmed.TextStyle.Color = System.Drawing.Color.Red;
+            // 
             // P11
             // 
             this.ApvChkValue = "New";
@@ -300,5 +317,6 @@
         private Win.UI.Label label6;
         private Win.UI.Label label5;
         private Win.UI.TextBox textBox2;
+        private Win.UI.Label labConfirmed;
     }
 }

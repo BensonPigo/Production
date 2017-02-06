@@ -66,6 +66,7 @@
             this.numericBox1 = new Sci.Win.UI.NumericBox();
             this.displayBox5 = new Sci.Win.UI.DisplayBox();
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.labConfirmed = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -82,6 +83,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labConfirmed);
             this.masterpanel.Controls.Add(this.txtfactory1);
             this.masterpanel.Controls.Add(this.displayBox5);
             this.masterpanel.Controls.Add(this.button5);
@@ -120,7 +122,7 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.label23);
-            this.masterpanel.Size = new System.Drawing.Size(992, 190);
+            this.masterpanel.Size = new System.Drawing.Size(992, 230);
             this.masterpanel.Controls.SetChildIndex(this.label23, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -160,15 +162,16 @@
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtfactory1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labConfirmed, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 190);
-            this.detailpanel.Size = new System.Drawing.Size(992, 328);
+            this.detailpanel.Location = new System.Drawing.Point(0, 230);
+            this.detailpanel.Size = new System.Drawing.Size(992, 288);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(739, 152);
+            this.gridicon.Location = new System.Drawing.Point(739, 192);
             // 
             // refresh
             // 
@@ -176,7 +179,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(992, 328);
+            this.detailgridcont.Size = new System.Drawing.Size(992, 288);
             // 
             // detail2
             // 
@@ -314,7 +317,7 @@
             this.editBox1.Location = new System.Drawing.Point(81, 139);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(434, 45);
+            this.editBox1.Size = new System.Drawing.Size(434, 85);
             this.editBox1.TabIndex = 7;
             // 
             // label7
@@ -515,7 +518,7 @@
             this.label23.BackColor = System.Drawing.Color.Transparent;
             this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
             this.label23.Lines = 0;
-            this.label23.Location = new System.Drawing.Point(839, 4);
+            this.label23.Location = new System.Drawing.Point(845, 37);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(148, 25);
             this.label23.TabIndex = 48;
@@ -527,9 +530,9 @@
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Location = new System.Drawing.Point(856, 31);
+            this.button1.Location = new System.Drawing.Point(847, 71);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(134, 30);
+            this.button1.Size = new System.Drawing.Size(145, 30);
             this.button1.TabIndex = 49;
             this.button1.Text = "Carton Summary";
             this.button1.UseVisualStyleBackColor = true;
@@ -538,9 +541,9 @@
             // button2
             // 
             this.button2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button2.Location = new System.Drawing.Point(856, 64);
+            this.button2.Location = new System.Drawing.Point(847, 104);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(134, 30);
+            this.button2.Size = new System.Drawing.Size(145, 30);
             this.button2.TabIndex = 50;
             this.button2.Text = "Batch Import";
             this.button2.UseVisualStyleBackColor = true;
@@ -549,7 +552,7 @@
             // button3
             // 
             this.button3.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button3.Location = new System.Drawing.Point(845, 97);
+            this.button3.Location = new System.Drawing.Point(847, 137);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(145, 30);
             this.button3.TabIndex = 51;
@@ -560,7 +563,7 @@
             // button4
             // 
             this.button4.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button4.Location = new System.Drawing.Point(845, 129);
+            this.button4.Location = new System.Drawing.Point(847, 169);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(145, 55);
             this.button4.TabIndex = 52;
@@ -571,7 +574,7 @@
             // button5
             // 
             this.button5.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button5.Location = new System.Drawing.Point(573, 152);
+            this.button5.Location = new System.Drawing.Point(536, 141);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(148, 30);
             this.button5.TabIndex = 53;
@@ -619,6 +622,20 @@
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
             this.txtfactory1.TabIndex = 0;
+            // 
+            // labConfirmed
+            // 
+            this.labConfirmed.BackColor = System.Drawing.Color.Transparent;
+            this.labConfirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
+            this.labConfirmed.Lines = 0;
+            this.labConfirmed.Location = new System.Drawing.Point(844, 5);
+            this.labConfirmed.Name = "labConfirmed";
+            this.labConfirmed.Size = new System.Drawing.Size(148, 25);
+            this.labConfirmed.TabIndex = 55;
+            this.labConfirmed.Text = "status";
+            this.labConfirmed.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labConfirmed.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.labConfirmed.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // P04
             // 
@@ -700,5 +717,6 @@
         private Win.UI.DisplayBox displayBox5;
         private Win.UI.NumericBox numericBox1;
         private Class.txtfactory txtfactory1;
+        private Win.UI.Label labConfirmed;
     }
 }

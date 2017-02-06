@@ -49,6 +49,7 @@
             this.button1 = new Sci.Win.UI.Button();
             this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.labConfirmed = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -65,6 +66,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labConfirmed);
             this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.displayBox4);
             this.masterpanel.Controls.Add(this.displayBox3);
@@ -88,7 +90,6 @@
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Size = new System.Drawing.Size(850, 142);
             this.masterpanel.Title = "3";
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -110,6 +111,8 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labConfirmed, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
             // 
@@ -390,7 +393,7 @@
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button1.Location = new System.Drawing.Point(734, 5);
+            this.button1.Location = new System.Drawing.Point(734, 34);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(108, 30);
             this.button1.TabIndex = 23;
@@ -420,6 +423,20 @@
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(66, 23);
             this.txtbrand1.TabIndex = 0;
+            // 
+            // labConfirmed
+            // 
+            this.labConfirmed.BackColor = System.Drawing.Color.Transparent;
+            this.labConfirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
+            this.labConfirmed.Lines = 0;
+            this.labConfirmed.Location = new System.Drawing.Point(697, 6);
+            this.labConfirmed.Name = "labConfirmed";
+            this.labConfirmed.Size = new System.Drawing.Size(148, 25);
+            this.labConfirmed.TabIndex = 56;
+            this.labConfirmed.Text = "status";
+            this.labConfirmed.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labConfirmed.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.labConfirmed.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // P05
             // 
@@ -485,5 +502,6 @@
         private Win.UI.DateBox dateBox1;
         private Class.txtshipmode txtshipmode1;
         private Win.UI.Button button1;
+        private Win.UI.Label labConfirmed;
     }
 }
