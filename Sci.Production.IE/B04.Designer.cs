@@ -89,16 +89,16 @@
             this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(70, 96);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(64, 23);
+            this.label4.Size = new System.Drawing.Size(79, 23);
             this.label4.TabIndex = 14;
-            this.label4.Text = "Problem";
+            this.label4.Text = "Description";
             // 
             // label3
             // 
             this.label3.Lines = 0;
             this.label3.Location = new System.Drawing.Point(70, 44);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(64, 23);
+            this.label3.Size = new System.Drawing.Size(79, 23);
             this.label3.TabIndex = 13;
             this.label3.Text = "ID";
             // 
@@ -107,7 +107,7 @@
             this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(137, 44);
+            this.displayBox1.Location = new System.Drawing.Point(152, 44);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(50, 23);
             this.displayBox1.TabIndex = 0;
@@ -118,7 +118,7 @@
             this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editBox1.IsSupportEditMode = false;
-            this.editBox1.Location = new System.Drawing.Point(138, 96);
+            this.editBox1.Location = new System.Drawing.Point(152, 96);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.ReadOnly = true;
