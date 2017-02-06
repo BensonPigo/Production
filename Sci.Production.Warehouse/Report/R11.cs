@@ -248,7 +248,12 @@ from cte t"));
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             this.ShowWaitMessage("Excel Processing...");
-            for (int i = 1; i <= printData.Rows.Count; i++) objSheets.Cells[i + 3, DescIndex] = ((string)((Excel.Range)objSheets.Cells[i + 3, DescIndex]).Value).Trim();
+            for (int i = 1; i <= printData.Rows.Count; i++)
+            {
+                string str = objSheets.Cells[i + 3, DescIndex].Value();
+                str = (MyUtility.Check.Empty(str)) ? "" : str ;
+                objSheets.Cells[i + 3, DescIndex] = str.Trim();
+            }
             objApp.Visible = true;
 
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
