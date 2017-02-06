@@ -143,6 +143,11 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                             left join LocalSupp l on l.ID=ot.LocalSuppID
                             where ot.LocalSuppID='{0}'", CurrentDetailData["localsuppid"]);
                         DualResult result = DBProxy.Current.Select(null, SubconName, out dt);
+                        if (dt.Rows.Count == 0)
+                        { 
+                            this.CurrentDetailData["localsuppname"]="";
+                             return;
+                        }
                         this.CurrentDetailData["localsuppname"] = dt.Rows[0]["Abb"].ToString();
                     }
                 }
@@ -311,6 +316,12 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                             left join LocalSupp l on l.ID=ot.LocalSuppID
                             where ot.LocalSuppID='{0}'", sub);
                 DualResult result = DBProxy.Current.Select(null, SubconName, out dt);
+                if (dt.Rows.Count == 0)
+                {
+                    this.CurrentDetailData["localsuppname"] = "";
+                    CurrentDetailData["inhouseOSP"] = newValue;
+                    return;
+                }
                 this.CurrentDetailData["localsuppname"] = dt.Rows[0]["Abb"].ToString();
 
             }
@@ -328,6 +339,13 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                                                     GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup"
                                                     , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]);
                 DualResult result = DBProxy.Current.Select(null, suppidAndName, out dt);
+                if (dt.Rows.Count == 0)
+                {
+                    this.CurrentDetailData["localsuppname"] ="";
+                    this.CurrentDetailData["localsuppid"] = "";
+                    CurrentDetailData["inhouseOSP"] = newValue;
+                    return;
+                }
                 this.CurrentDetailData["localsuppname"] = dt.Rows[0]["Abb"].ToString();
                 this.CurrentDetailData["localsuppid"] = dt.Rows[0]["LocalSuppId"].ToString();
 
