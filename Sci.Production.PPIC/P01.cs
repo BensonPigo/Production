@@ -1190,31 +1190,6 @@ where POID = @poid group by POID,b.spno";
             return base.ClickEditBefore();
         }
 
-
-
-        //protected override bool OnToExcel(Win.ReportDefinition report)
-        //{
-        //    return false;
-        //}
-        //void addfilter(Worksheet mySheet, int rowNo, int columnNo)
-        //{
-
-        //    Worksheet wb = new Worksheet();
-        //  //  wb.Worksheet.Add("sh1");
-        //    //ExcelWorksheet Wsheet = wb.Worksheets[0];
-        //    //Wsheet.Cells[0, 0].Value = "test data";
-        //    wb.Password = "asdfgh";
-        //    wb.WriteXLS(@"..\..\..\NewPassword.xls");
-
-
-        //    xltPath.Password = password;
-        //    Worksheet.SaveAs("spreadsheet.xls");
-
-        //}
-        //Microsoft.Office.Interop.Excel._Workbook ff = new Microsoft.Office.Interop.Excel._Workbook();
-        //var WFile = new Excel.Application();
-        //Excel.Workbook Wbook = WFile.Workbooks.Open("myFilepath", ReadOnly: false, Password: "mypassword");
-
     }
 
 }
