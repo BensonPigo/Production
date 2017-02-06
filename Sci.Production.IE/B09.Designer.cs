@@ -200,7 +200,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(900, 486);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Picture";
             // 
@@ -381,7 +381,7 @@
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(136, 23);
             this.label13.TabIndex = 10;
-            this.label13.Text = "Bobbin thread";
+            this.label13.Text = "Bottom thread";
             // 
             // label14
             // 
@@ -698,7 +698,7 @@
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(121, 23);
             this.label26.TabIndex = 40;
-            this.label26.Text = "Bobbin length";
+            this.label26.Text = "Bottom length";
             // 
             // label27
             // 
