@@ -55,6 +55,15 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
             CalculateValue(0);
             SaveCalculateValue();
             button1.Enabled = !MyUtility.Check.Empty(CurrentMaintain["IEReasonID"]);
+            this.detailgrid.AutoResizeColumn(0);
+            this.detailgrid.AutoResizeColumn(3);
+            this.detailgrid.AutoResizeColumn(4);
+            this.detailgrid.AutoResizeColumn(5);
+            this.detailgrid.AutoResizeColumn(6);
+            this.detailgrid.AutoResizeColumn(7);
+            this.detailgrid.AutoResizeColumn(8);
+            this.detailgrid.AutoResizeColumn(9);
+            this.detailgrid.AutoResizeColumn(10);
         }
 
         protected override void OnDetailGridSetup()
