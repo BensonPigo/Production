@@ -188,6 +188,7 @@ where ods.finished=0 and ods.isforecast = 0
                 }
                 else { ShowErr(strSQLCmd, result); }
             }
+            this.grid1.AutoResizeColumns();
         }
 
         private void btnClose_Click(object sender, EventArgs e)

@@ -88,6 +88,7 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                 if (result) numericBox_NeedPerDay.Value = decimal.Parse(dr[0].ToString());
             }
             button_batchApprove.Enabled = !this.EditMode;
+            this.detailgrid.AutoResizeColumns();
         }
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
