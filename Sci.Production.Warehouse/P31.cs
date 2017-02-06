@@ -109,7 +109,7 @@ namespace Sci.Production.Warehouse
             string id = row["ID"].ToString();
             string Estbackdate = ((DateTime)MyUtility.Convert.GetDate(row["Estbackdate"])).ToShortDateString();
             string Remark = row["Remark"].ToString();
-            string mdivisionid = row["mdivisionid"].ToString();
+            string mdivisionid = CurrentMaintain["mdivisionid"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
             #region  抓表頭資料
