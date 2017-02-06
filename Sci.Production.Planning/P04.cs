@@ -428,7 +428,7 @@ and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numer
                 this.HideWaitMessage();
             }
             this.grid1.AutoResizeColumns();
-            this.gris2.AutoresizeColumns();
+            this.grid2.AutoResizeColumns();
         }
 
         //close
