@@ -49,6 +49,7 @@ where cc.ID = {0} order by cc.ChgOverCheckListID", this.KeyValue1);
                 return returnResult;
             }
             SetGrid(ChgOverChkList);
+            this.grid.AutoResizeColumns();
             return Result.True;
         }
 
