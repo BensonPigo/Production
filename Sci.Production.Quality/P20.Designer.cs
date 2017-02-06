@@ -52,13 +52,13 @@
             this.lbRFT = new Sci.Win.UI.Label();
             this.lbFactory = new Sci.Win.UI.Label();
             this.DisplayFactory = new Sci.Win.UI.DisplayBox();
-            this.btnEncode = new Sci.Win.UI.Button();
             this.DisplayStyle = new Sci.Win.UI.DisplayBox();
             this.DisplayDest = new Sci.Win.UI.DisplayBox();
-            this.comboShift = new Sci.Production.Class.txtdropdownlist();
             this.comboTeam = new Sci.Win.UI.ComboBox();
             this.NumCPU = new Sci.Win.UI.TextBox();
             this.NumRFT = new Sci.Win.UI.TextBox();
+            this.comboShift = new Sci.Production.Class.txtdropdownlist();
+            this.labConfirm = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,12 +75,12 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labConfirm);
             this.masterpanel.Controls.Add(this.NumRFT);
             this.masterpanel.Controls.Add(this.NumCPU);
             this.masterpanel.Controls.Add(this.comboTeam);
             this.masterpanel.Controls.Add(this.comboShift);
             this.masterpanel.Controls.Add(this.DisplayDest);
-            this.masterpanel.Controls.Add(this.btnEncode);
             this.masterpanel.Controls.Add(this.DisplayFactory);
             this.masterpanel.Controls.Add(this.lbFactory);
             this.masterpanel.Controls.Add(this.lbRFT);
@@ -106,7 +106,7 @@
             this.masterpanel.Controls.Add(this.txtSP);
             this.masterpanel.Controls.Add(this.lbDate);
             this.masterpanel.Controls.Add(this.CDate);
-            this.masterpanel.Size = new System.Drawing.Size(876, 170);
+            this.masterpanel.Size = new System.Drawing.Size(892, 170);
             this.masterpanel.Controls.SetChildIndex(this.CDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSP, 0);
@@ -132,18 +132,18 @@
             this.masterpanel.Controls.SetChildIndex(this.lbRFT, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.DisplayFactory, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnEncode, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.DisplayDest, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboShift, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboTeam, 0);
             this.masterpanel.Controls.SetChildIndex(this.NumCPU, 0);
             this.masterpanel.Controls.SetChildIndex(this.NumRFT, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labConfirm, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 170);
-            this.detailpanel.Size = new System.Drawing.Size(876, 192);
+            this.detailpanel.Size = new System.Drawing.Size(892, 179);
             // 
             // gridicon
             // 
@@ -151,7 +151,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(876, 192);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 179);
             // 
             // detail2
             // 
@@ -167,16 +167,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(876, 400);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(876, 362);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 362);
-            this.detailbtm.Size = new System.Drawing.Size(876, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -446,17 +446,6 @@
             this.DisplayFactory.Size = new System.Drawing.Size(98, 21);
             this.DisplayFactory.TabIndex = 14;
             // 
-            // btnEncode
-            // 
-            this.btnEncode.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnEncode.Location = new System.Drawing.Point(680, 7);
-            this.btnEncode.Name = "btnEncode";
-            this.btnEncode.Size = new System.Drawing.Size(100, 25);
-            this.btnEncode.TabIndex = 15;
-            this.btnEncode.Text = "Encode";
-            this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
-            // 
             // DisplayStyle
             // 
             this.DisplayStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -476,19 +465,6 @@
             this.DisplayDest.Name = "DisplayDest";
             this.DisplayDest.Size = new System.Drawing.Size(252, 21);
             this.DisplayDest.TabIndex = 10;
-            // 
-            // comboShift
-            // 
-            this.comboShift.BackColor = System.Drawing.Color.White;
-            this.comboShift.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Shift", true));
-            this.comboShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboShift.FormattingEnabled = true;
-            this.comboShift.IsSupportUnselect = true;
-            this.comboShift.Location = new System.Drawing.Point(296, 5);
-            this.comboShift.Name = "comboShift";
-            this.comboShift.Size = new System.Drawing.Size(150, 24);
-            this.comboShift.TabIndex = 1;
-            this.comboShift.Type = "SewingOutput_Shift";
             // 
             // comboTeam
             // 
@@ -524,19 +500,47 @@
             this.NumRFT.Size = new System.Drawing.Size(98, 23);
             this.NumRFT.TabIndex = 137;
             // 
+            // comboShift
+            // 
+            this.comboShift.BackColor = System.Drawing.Color.White;
+            this.comboShift.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Shift", true));
+            this.comboShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboShift.FormattingEnabled = true;
+            this.comboShift.IsSupportUnselect = true;
+            this.comboShift.Location = new System.Drawing.Point(296, 5);
+            this.comboShift.Name = "comboShift";
+            this.comboShift.Size = new System.Drawing.Size(150, 24);
+            this.comboShift.TabIndex = 1;
+            this.comboShift.Type = "SewingOutput_Shift";
+            // 
+            // labConfirm
+            // 
+            this.labConfirm.AutoSize = true;
+            this.labConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labConfirm.ForeColor = System.Drawing.Color.Red;
+            this.labConfirm.Location = new System.Drawing.Point(709, 13);
+            this.labConfirm.Name = "labConfirm";
+            this.labConfirm.Size = new System.Drawing.Size(85, 29);
+            this.labConfirm.TabIndex = 138;
+            this.labConfirm.Text = "label1";
+            // 
             // P20
             // 
+            this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(884, 462);
             this.DefaultControl = "CDate";
             this.DefaultDetailOrder = "GarmentDefectTypeid,GarmentDefectCodeID";
             this.DefaultOrder = "ID";
             this.GridAlias = "Rft_Detail";
+            this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
+            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.KeyField2 = "ID";
             this.Name = "P20";
             this.Text = "P20.Right First Time";
+            this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Rft";
             this.Controls.SetChildIndex(this.tabs, 0);
@@ -585,12 +589,12 @@
         private Win.UI.Label lbFactory;
         private Win.UI.Label lbRFT;
         private Win.UI.Label lbCPU;
-        private Win.UI.Button btnEncode;
         private Win.UI.DisplayBox DisplayDest;
         private Win.UI.DisplayBox DisplayStyle;
         private Class.txtdropdownlist comboShift;
         private Win.UI.ComboBox comboTeam;
         private Win.UI.TextBox NumCPU;
         private Win.UI.TextBox NumRFT;
+        private System.Windows.Forms.Label labConfirm;
     }
 }

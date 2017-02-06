@@ -88,19 +88,13 @@ namespace Sci.Production.Quality
                 this.NumRFT.Text = dr["RFT_percentage"].ToString().Trim();
             }
 
-            #region btnEncode
-            DataRow drStatus;
-            btnEncode.Enabled = !this.EditMode;
-            if (MyUtility.Check.Empty(CurrentMaintain)) btnEncode.Enabled = false;
-            string Sql_status = string.Format(@"select * from rft where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
-            if (MyUtility.Check.Seek(Sql_status,out drStatus))
-            {
-                if (drStatus["status"].ToString().Trim() == "Confirmed") btnEncode.Text = "Amend";
-                else btnEncode.Text = "Encode";
-            }
           
-            #endregion
-
+            DataRow drStatus;           
+             string Sql_status = string.Format(@"select Status from rft where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
+            if (MyUtility.Check.Seek(Sql_status, out drStatus))
+            {
+                this.labConfirm.Text = drStatus["Status"].ToString();
+            }
             base.OnDetailEntered();
         }
 
@@ -252,28 +246,30 @@ namespace Sci.Production.Quality
 
         }      
 
-        //[Encode][Amend]
-        private void btnEncode_Click(object sender, EventArgs e)
+   
+        protected override void ClickConfirm()
         {
-            if (btnEncode.Text == "Encode")
-            {
-                sql = string.Format(@"update Rft set Status='Confirmed' , editName='{0}', editDate='{1}'
+            base.ClickConfirm();
+            sql = string.Format(@"update Rft set Status='Confirmed' , editName='{0}', editDate='{1}'
                                       where ID='{2}'"
-                                    , Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), CurrentMaintain["ID"].ToString().Trim());
-                DBProxy.Current.Execute(null, sql);
-                this.RenewData();
-                btnEncode.Text = "Amend";
-            }
-            else if (btnEncode.Text == "Amend")
-            {
-                MyUtility.Msg.InfoBox("Are you sure you want to <Amend> this data !?");
-                sql = string.Format(@"update Rft set Status='New' , editName='{0}', editDate='{1}'
+                                   , Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), CurrentMaintain["ID"].ToString().Trim());
+            DBProxy.Current.Execute(null, sql);
+            this.RenewData();
+            this.OnDetailEntered();
+            this.EnsureToolbarExt();
+        }
+
+        protected override void ClickUnconfirm()
+        {
+            base.ClickUnconfirm();
+            MyUtility.Msg.InfoBox("Are you sure you want to <Amend> this data !?");
+            sql = string.Format(@"update Rft set Status='New' , editName='{0}', editDate='{1}'
                                       where ID='{2}'"
-                                    , Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), CurrentMaintain["ID"].ToString().Trim());
-                DBProxy.Current.Execute(null, sql);
-                this.RenewData();
-                btnEncode.Text = "Encode";
-            }
+                                , Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), CurrentMaintain["ID"].ToString().Trim());
+            DBProxy.Current.Execute(null, sql);
+            this.RenewData();
+            this.OnDetailEntered();
+            this.EnsureToolbarExt();
         }
 
         // save前檢查
