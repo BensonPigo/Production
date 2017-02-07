@@ -5,15 +5,14 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
 using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
 using Sci.Production;
-
 using Sci.Production.PublicPrg;
 using System.Linq;
+
 
 namespace Sci.Production.Planning
 {
@@ -241,33 +240,6 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
             comboBox1_RowSource.Add("I", "InHouse");
 
             Ict.Win.DataGridViewGeneratorComboBoxColumnSettings cs = new DataGridViewGeneratorComboBoxColumnSettings();
-            cs.CellValidating += (s, e) =>
-            {
-                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Check.Empty(CurrentDetailData["localsuppid"]))
-                {
-                    if (e.FormattedValue.ToString() == "O")
-                    {
-                        CurrentDetailData["localsuppid"] = MyUtility.GetValue.Lookup(string.Format(@"SELECT top 1 QU.LocalSuppId
-                                                    FROM Order_TmsCost OT
-                                                    INNER JOIN ORDERS ON OT.ID = ORDERS.ID
-                                                    INNER JOIN Style_Artwork SA ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
-                                                    LEFT JOIN Style_Artwork_Quot QU ON QU.Ukey = SA.Ukey
-                                                    INNER JOIN LocalSupp ON LocalSupp.ID = QU.LocalSuppId
-                                                    WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' 
-                                                        AND OT.ARTWORKTYPEID = '{1}' 
-                                                    GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup"
-                                                    , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]), null);
-                        CurrentDetailData["inhouseOSP"] = e.FormattedValue;
-                    }
-                    if (e.FormattedValue.ToString() == "O" && CurrentDetailData["localsuppid"].ToString() == "")
-                    {
-                        CurrentDetailData["localsuppname"] = "";
-                        CurrentDetailData["localsuppid"] = "";
-
-                        if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"] = DBNull.Value; }
-                    }      
-                }
-            };
             //下拉選項顯示
             cs.EditingControlShowing += (sender, eventArgs) =>
                 {
@@ -335,16 +307,17 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                 if (dt.Rows.Count == 0)
                 {
                     this.CurrentDetailData["localsuppname"] = "";
+                    this.CurrentDetailData["mockupdate"] = DBNull.Value;
                     CurrentDetailData["inhouseOSP"] = newValue;
                     return;
                 }
                 this.CurrentDetailData["localsuppname"] = dt.Rows[0]["Abb"].ToString();
-
+                this.CurrentDetailData["mockupdate"] = DBNull.Value;
             }
             else if (newValue == "O")
             {
                 DataTable dt;
-                string suppidAndName = string.Format(@"SELECT top 1 QU.LocalSuppId,LocalSupp.Abb
+                string suppidAndName = string.Format(@"SELECT top 1 QU.LocalSuppId,LocalSupp.Abb,QU.Mockup
                                                     FROM Order_TmsCost OT
                                                     INNER JOIN ORDERS ON OT.ID = ORDERS.ID
                                                     INNER JOIN Style_Artwork SA ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
@@ -359,25 +332,16 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                 {
                     this.CurrentDetailData["localsuppname"] = "";
                     this.CurrentDetailData["localsuppid"] = "";
+                    this.CurrentDetailData["mockupdate"] = DBNull.Value;
                     CurrentDetailData["inhouseOSP"] = newValue;
                     return;
                 }
                 this.CurrentDetailData["localsuppname"] = dt.Rows[0]["Abb"].ToString();
                 this.CurrentDetailData["localsuppid"] = dt.Rows[0]["LocalSuppId"].ToString();
+                this.CurrentDetailData["mockupdate"] = dt.Rows[0]["Mockup"].ToString();
 
             }
-            //else if (CurrentDetailData["InhouseOSP"].ToString() == "O" && CurrentDetailData["localsuppid"].ToString() == "")
-            //{
-            //   this.CurrentDetailData["localsuppname"] = "";
-            //   this.CurrentDetailData["localsuppid"] = "";
-                
-            //}
-            //else if (CurrentDetailData["InhouseOSP"].ToString() == "I" && CurrentDetailData["localsuppid"].ToString() == "")
-            //{
-            //    this.CurrentDetailData["localsuppname"] = "";
-            //    this.CurrentDetailData["localsuppid"] = "";
-                
-           // }
+
             CurrentDetailData["inhouseOSP"] = newValue;
         }
 
