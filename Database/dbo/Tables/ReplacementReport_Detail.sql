@@ -6,7 +6,7 @@
     [SCIRefno]             VARCHAR (26)   CONSTRAINT [DF_ReplacementReport_Detail_SCIRefno] DEFAULT ('') NULL,
     [INVNo]                VARCHAR (25)   CONSTRAINT [DF_ReplacementReport_Detail_INVNo] DEFAULT ('') NULL,
     [ETA]                  DATE           NULL,
-    [ColorID]              VARCHAR (70)   CONSTRAINT [DF_ReplacementReport_Detail_ColorID] DEFAULT ('') NULL,
+    [ColorID]              VARCHAR (6)   CONSTRAINT [DF_ReplacementReport_Detail_ColorID] DEFAULT ('') NULL,
     [EstInQty]             NUMERIC (8, 2) CONSTRAINT [DF_ReplacementReport_Detail_EstInQty] DEFAULT ((0)) NULL,
     [ActInQty]             NUMERIC (8, 2) CONSTRAINT [DF_ReplacementReport_Detail_ActInQty] DEFAULT ((0)) NULL,
     [AGradeDefect]         VARCHAR (20)   CONSTRAINT [DF_ReplacementReport_Detail_AGradeDefect] DEFAULT ('') NULL,
