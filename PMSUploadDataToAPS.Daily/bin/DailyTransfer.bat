@@ -1,2 +1,1 @@
-Debug\Production.Daily.exe "DailyTransfer"
-
+x86\Release\Production.Daily.exe "DailyTransfer"
