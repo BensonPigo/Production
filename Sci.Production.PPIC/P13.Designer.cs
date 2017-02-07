@@ -40,9 +40,11 @@
             this.textBox4 = new Sci.Win.UI.TextBox();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.textBox3 = new Sci.Win.UI.TextBox();
+            this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.label7 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
+            this.txtstyle1 = new Sci.Production.Class.txtstyle();
             this.label4 = new Sci.Win.UI.Label();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox1 = new Sci.Win.UI.TextBox();
@@ -56,8 +58,6 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.txtstyle1 = new Sci.Production.Class.txtstyle();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -187,6 +187,15 @@
             this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
             this.textBox3.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
             // 
+            // txtbrand1
+            // 
+            this.txtbrand1.BackColor = System.Drawing.Color.White;
+            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand1.Location = new System.Drawing.Point(447, 4);
+            this.txtbrand1.Name = "txtbrand1";
+            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand1.TabIndex = 2;
+            // 
             // label7
             // 
             this.label7.Lines = 0;
@@ -213,6 +222,16 @@
             this.label5.Size = new System.Drawing.Size(44, 23);
             this.label5.TabIndex = 8;
             this.label5.Text = "Brand";
+            // 
+            // txtstyle1
+            // 
+            this.txtstyle1.BackColor = System.Drawing.Color.White;
+            this.txtstyle1.BrandObjectName = null;
+            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle1.Location = new System.Drawing.Point(91, 31);
+            this.txtstyle1.Name = "txtstyle1";
+            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle1.TabIndex = 4;
             // 
             // label4
             // 
@@ -345,25 +364,6 @@
             this.grid1.Size = new System.Drawing.Size(837, 342);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            // 
-            // txtbrand1
-            // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(447, 4);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand1.TabIndex = 2;
-            // 
-            // txtstyle1
-            // 
-            this.txtstyle1.BackColor = System.Drawing.Color.White;
-            this.txtstyle1.BrandObjectName = null;
-            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle1.Location = new System.Drawing.Point(91, 31);
-            this.txtstyle1.Name = "txtstyle1";
-            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 4;
             // 
             // P13
             // 
