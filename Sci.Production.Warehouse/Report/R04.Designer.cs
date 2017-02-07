@@ -31,13 +31,13 @@
             this.dateRange1 = new Sci.Win.UI.DateRange();
             this.label4 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.label6 = new Sci.Win.UI.Label();
             this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.textBox1 = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
             // print
@@ -79,15 +79,6 @@
             this.label8.Size = new System.Drawing.Size(98, 23);
             this.label8.TabIndex = 118;
             this.label8.Text = "Brand";
-            // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(116, 84);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 2;
             // 
             // label6
             // 
@@ -148,16 +139,27 @@
             this.txtbrand1.Size = new System.Drawing.Size(66, 23);
             this.txtbrand1.TabIndex = 3;
             // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(117, 84);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 23);
+            this.textBox1.TabIndex = 132;
+            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            // 
             // R04
             // 
             this.ClientSize = new System.Drawing.Size(531, 221);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.txtbrand1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtMdivision1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtdropdownlist1);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.txtfactory1);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.dateRange1);
@@ -170,13 +172,13 @@
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.txtfactory1, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.txtdropdownlist1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.txtMdivision1, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.txtbrand1, 0);
+            this.Controls.SetChildIndex(this.textBox1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -187,12 +189,12 @@
         private Win.UI.DateRange dateRange1;
         private Win.UI.Label label4;
         private Win.UI.Label label8;
-        private Class.txtfactory txtfactory1;
         private Win.UI.Label label6;
         private Class.txtdropdownlist txtdropdownlist1;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Class.txtMdivision txtMdivision1;
         private Class.txtbrand txtbrand1;
+        private Win.UI.TextBox textBox1;
     }
 }
