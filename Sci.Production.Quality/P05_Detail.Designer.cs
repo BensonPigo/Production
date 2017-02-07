@@ -83,7 +83,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Remark :";
+            this.label1.Text = "Remark";
             // 
             // label2
             // 
@@ -92,7 +92,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(86, 23);
             this.label2.TabIndex = 2;
-            this.label2.Text = "No of Test :";
+            this.label2.Text = "No of Test";
             // 
             // label3
             // 
@@ -101,34 +101,34 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(86, 23);
             this.label3.TabIndex = 3;
-            this.label3.Text = "Inspector :";
+            this.label3.Text = "Inspector";
             // 
             // label4
             // 
             this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(664, 23);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
+            this.label4.Size = new System.Drawing.Size(53, 23);
             this.label4.TabIndex = 4;
-            this.label4.Text = "Article :";
+            this.label4.Text = "Article";
             // 
             // label5
             // 
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(248, 23);
+            this.label5.Location = new System.Drawing.Point(235, 23);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
+            this.label5.Size = new System.Drawing.Size(43, 23);
             this.label5.TabIndex = 5;
-            this.label5.Text = "SP #: ";
+            this.label5.Text = "SP #";
             // 
             // label6
             // 
             this.label6.Lines = 0;
             this.label6.Location = new System.Drawing.Point(865, 23);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
+            this.label6.Size = new System.Drawing.Size(55, 23);
             this.label6.TabIndex = 6;
-            this.label6.Text = "Result :";
+            this.label6.Text = "Result";
             // 
             // label7
             // 
@@ -137,7 +137,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(75, 23);
             this.label7.TabIndex = 7;
-            this.label7.Text = "TestDate :";
+            this.label7.Text = "TestDate ";
             // 
             // testno
             // 
@@ -155,19 +155,19 @@
             this.poid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.poid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.poid.IsSupportEditMode = false;
-            this.poid.Location = new System.Drawing.Point(326, 23);
+            this.poid.Location = new System.Drawing.Point(281, 23);
             this.poid.Name = "poid";
             this.poid.ReadOnly = true;
-            this.poid.Size = new System.Drawing.Size(100, 23);
+            this.poid.Size = new System.Drawing.Size(132, 23);
             this.poid.TabIndex = 1;
             // 
             // article
             // 
             this.article.BackColor = System.Drawing.Color.White;
             this.article.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.article.Location = new System.Drawing.Point(742, 23);
+            this.article.Location = new System.Drawing.Point(720, 23);
             this.article.Name = "article";
-            this.article.Size = new System.Drawing.Size(100, 23);
+            this.article.Size = new System.Drawing.Size(122, 23);
             this.article.TabIndex = 3;
             this.article.TextChanged += new System.EventHandler(this.TextChanged);
             this.article.MouseDown += new System.Windows.Forms.MouseEventHandler(this.article_MouseDown);
@@ -180,10 +180,10 @@
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(943, 23);
+            this.comboBox1.Location = new System.Drawing.Point(923, 23);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.ReadOnly = true;
-            this.comboBox1.Size = new System.Drawing.Size(103, 24);
+            this.comboBox1.Size = new System.Drawing.Size(98, 24);
             this.comboBox1.TabIndex = 4;
             // 
             // remark
@@ -199,7 +199,7 @@
             // encode_btn
             // 
             this.encode_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.encode_btn.Location = new System.Drawing.Point(865, 60);
+            this.encode_btn.Location = new System.Drawing.Point(865, 62);
             this.encode_btn.Name = "encode_btn";
             this.encode_btn.Size = new System.Drawing.Size(96, 30);
             this.encode_btn.TabIndex = 7;

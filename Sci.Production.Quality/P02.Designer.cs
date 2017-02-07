@@ -143,10 +143,6 @@
             // 
             this.gridicon.Location = new System.Drawing.Point(875, 165);
             // 
-            // refresh
-            // 
-            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
-            // 
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(855, 411);
@@ -210,7 +206,7 @@
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.button1.Location = new System.Drawing.Point(529, 158);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(103, 27);
+            this.button1.Size = new System.Drawing.Size(70, 27);
             this.button1.TabIndex = 34;
             this.button1.Text = "Find";
             this.button1.UseVisualStyleBackColor = true;
@@ -221,7 +217,7 @@
             this.mtl_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.mtl_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.mtl_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.mtl_box.Location = new System.Drawing.Point(638, 46);
+            this.mtl_box.Location = new System.Drawing.Point(614, 46);
             this.mtl_box.Name = "mtl_box";
             this.mtl_box.Size = new System.Drawing.Size(178, 21);
             this.mtl_box.TabIndex = 56;
@@ -231,7 +227,7 @@
             this.insp_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.insp_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.insp_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.insp_box.Location = new System.Drawing.Point(638, 17);
+            this.insp_box.Location = new System.Drawing.Point(614, 17);
             this.insp_box.Name = "insp_box";
             this.insp_box.Size = new System.Drawing.Size(178, 21);
             this.insp_box.TabIndex = 55;
@@ -242,7 +238,7 @@
             this.remark_box.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AIRemark", true));
             this.remark_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.remark_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.remark_box.Location = new System.Drawing.Point(638, 79);
+            this.remark_box.Location = new System.Drawing.Point(614, 79);
             this.remark_box.Multiline = true;
             this.remark_box.Name = "remark_box";
             this.remark_box.Size = new System.Drawing.Size(178, 106);
@@ -264,7 +260,7 @@
             this.brand_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.brand_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.brand_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.brand_box.Location = new System.Drawing.Point(90, 106);
+            this.brand_box.Location = new System.Drawing.Point(70, 106);
             this.brand_box.Name = "brand_box";
             this.brand_box.Size = new System.Drawing.Size(132, 21);
             this.brand_box.TabIndex = 50;
@@ -274,7 +270,7 @@
             this.season_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.season_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.season_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.season_box.Location = new System.Drawing.Point(90, 77);
+            this.season_box.Location = new System.Drawing.Point(70, 77);
             this.season_box.Name = "season_box";
             this.season_box.Size = new System.Drawing.Size(132, 21);
             this.season_box.TabIndex = 49;
@@ -284,7 +280,7 @@
             this.style_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.style_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.style_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.style_box.Location = new System.Drawing.Point(90, 48);
+            this.style_box.Location = new System.Drawing.Point(70, 48);
             this.style_box.Name = "style_box";
             this.style_box.Size = new System.Drawing.Size(132, 21);
             this.style_box.TabIndex = 48;
@@ -295,7 +291,7 @@
             this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
             this.displayBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(90, 19);
+            this.displayBox1.Location = new System.Drawing.Point(70, 19);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(132, 21);
             this.displayBox1.TabIndex = 47;
@@ -335,7 +331,7 @@
             // 
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(529, 46);
+            this.label11.Location = new System.Drawing.Point(505, 46);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(105, 23);
             this.label11.TabIndex = 44;
@@ -345,7 +341,7 @@
             // 
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(529, 75);
+            this.label10.Location = new System.Drawing.Point(505, 75);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(105, 23);
             this.label10.TabIndex = 43;
@@ -355,7 +351,7 @@
             // 
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(238, 104);
+            this.label9.Location = new System.Drawing.Point(218, 104);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(137, 23);
             this.label9.TabIndex = 42;
@@ -365,7 +361,7 @@
             // 
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(529, 17);
+            this.label8.Location = new System.Drawing.Point(505, 17);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(105, 23);
             this.label8.TabIndex = 41;
@@ -375,7 +371,7 @@
             // 
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(238, 46);
+            this.label7.Location = new System.Drawing.Point(218, 46);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(137, 23);
             this.label7.TabIndex = 40;
@@ -385,7 +381,7 @@
             // 
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(238, 75);
+            this.label6.Location = new System.Drawing.Point(218, 75);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(137, 23);
             this.label6.TabIndex = 39;
@@ -395,7 +391,7 @@
             // 
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(238, 17);
+            this.label5.Location = new System.Drawing.Point(218, 17);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(137, 23);
             this.label5.TabIndex = 38;
@@ -407,7 +403,7 @@
             this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(12, 106);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
+            this.label4.Size = new System.Drawing.Size(55, 23);
             this.label4.TabIndex = 36;
             this.label4.Text = "Brand";
             // 
@@ -417,7 +413,7 @@
             this.label3.Lines = 0;
             this.label3.Location = new System.Drawing.Point(12, 77);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
+            this.label3.Size = new System.Drawing.Size(55, 23);
             this.label3.TabIndex = 35;
             this.label3.Text = "Season";
             // 
@@ -427,7 +423,7 @@
             this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(12, 48);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.Size = new System.Drawing.Size(55, 23);
             this.label2.TabIndex = 32;
             this.label2.Text = "Style";
             // 
@@ -437,14 +433,14 @@
             this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(12, 19);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.Size = new System.Drawing.Size(55, 23);
             this.label1.TabIndex = 31;
             this.label1.Text = "SP#";
             // 
             // estcutdate_box
             // 
             this.estcutdate_box.IsSupportEditMode = false;
-            this.estcutdate_box.Location = new System.Drawing.Point(379, 17);
+            this.estcutdate_box.Location = new System.Drawing.Point(359, 17);
             this.estcutdate_box.Name = "estcutdate_box";
             this.estcutdate_box.ReadOnly = true;
             this.estcutdate_box.Size = new System.Drawing.Size(132, 23);
@@ -453,7 +449,7 @@
             // scidelivery_box
             // 
             this.scidelivery_box.IsSupportEditMode = false;
-            this.scidelivery_box.Location = new System.Drawing.Point(379, 46);
+            this.scidelivery_box.Location = new System.Drawing.Point(359, 46);
             this.scidelivery_box.Name = "scidelivery_box";
             this.scidelivery_box.ReadOnly = true;
             this.scidelivery_box.Size = new System.Drawing.Size(132, 23);
@@ -462,7 +458,7 @@
             // leadtime_box
             // 
             this.leadtime_box.IsSupportEditMode = false;
-            this.leadtime_box.Location = new System.Drawing.Point(379, 75);
+            this.leadtime_box.Location = new System.Drawing.Point(359, 75);
             this.leadtime_box.Name = "leadtime_box";
             this.leadtime_box.ReadOnly = true;
             this.leadtime_box.Size = new System.Drawing.Size(132, 23);
@@ -471,7 +467,7 @@
             // Complete_box
             // 
             this.Complete_box.IsSupportEditMode = false;
-            this.Complete_box.Location = new System.Drawing.Point(379, 104);
+            this.Complete_box.Location = new System.Drawing.Point(359, 104);
             this.Complete_box.Name = "Complete_box";
             this.Complete_box.ReadOnly = true;
             this.Complete_box.Size = new System.Drawing.Size(132, 23);

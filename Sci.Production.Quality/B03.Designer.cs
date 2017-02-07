@@ -91,7 +91,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(83, 23);
             this.label1.TabIndex = 18;
-            this.label1.Text = "Scale Code:";
+            this.label1.Text = "Scale Code";
             // 
             // B03
             // 

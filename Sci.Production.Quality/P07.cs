@@ -52,6 +52,7 @@ namespace Sci.Production.Quality
         protected override void OnDetailEntered()
         {
             DataRow dr;
+            this.detailgrid.AutoResizeColumns();
             string sql_cmd = string.Format(@"select a.ID , b.StyleID , b.SeasonID , b.BrandID , b.CutInLine
 	                                             ,GetSCI.MinSciDelivery , CASE WHEN a.Complete = 1 THEN 'Y' WHEN a.Complete = 0 THEN 'N' END as Complete , a.AIRLaboratoryRemark
                                             from po a 

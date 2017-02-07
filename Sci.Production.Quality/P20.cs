@@ -63,7 +63,7 @@ namespace Sci.Production.Quality
         //refresh
         protected override void OnDetailEntered()
         {
-           
+            this.detailgrid.AutoResizeColumns();
             //add column 避免add沒有Description可使用
             DataTable dt = (DataTable)detailgridbs.DataSource;
             if (!dt.Columns.Contains("Description"))

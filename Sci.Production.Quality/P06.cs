@@ -35,7 +35,7 @@ namespace Sci.Production.Quality
         {
             List<SqlParameter> spam = new List<SqlParameter>();
             DataRow dr, drEarly, drSci;
-
+            this.detailgrid.AutoResizeColumns();
             string sql_cmd =
                 @"select a.ID,b.StyleID,b.SeasonID,b.BrandID,b.CutInLine,c.Article,c.Result,a.ColorFastnessLaboratoryRemark,b.factoryid 
                 from po a 

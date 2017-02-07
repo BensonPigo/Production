@@ -93,14 +93,14 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.Complete_box);
-            this.masterpanel.Controls.Add(this.leadtime_box);
-            this.masterpanel.Controls.Add(this.scidelivery_box);
-            this.masterpanel.Controls.Add(this.estcutdate_box);
             this.masterpanel.Controls.Add(this.wk_box);
             this.masterpanel.Controls.Add(this.label12);
             this.masterpanel.Controls.Add(this.seq1_box);
             this.masterpanel.Controls.Add(this.label14);
+            this.masterpanel.Controls.Add(this.Complete_box);
+            this.masterpanel.Controls.Add(this.leadtime_box);
+            this.masterpanel.Controls.Add(this.scidelivery_box);
+            this.masterpanel.Controls.Add(this.estcutdate_box);
             this.masterpanel.Controls.Add(this.button1);
             this.masterpanel.Controls.Add(this.mtl_box);
             this.masterpanel.Controls.Add(this.insp_box);
@@ -145,14 +145,14 @@
             this.masterpanel.Controls.SetChildIndex(this.mtl_box, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label14, 0);
-            this.masterpanel.Controls.SetChildIndex(this.seq1_box, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
-            this.masterpanel.Controls.SetChildIndex(this.wk_box, 0);
             this.masterpanel.Controls.SetChildIndex(this.estcutdate_box, 0);
             this.masterpanel.Controls.SetChildIndex(this.scidelivery_box, 0);
             this.masterpanel.Controls.SetChildIndex(this.leadtime_box, 0);
             this.masterpanel.Controls.SetChildIndex(this.Complete_box, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label14, 0);
+            this.masterpanel.Controls.SetChildIndex(this.seq1_box, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
+            this.masterpanel.Controls.SetChildIndex(this.wk_box, 0);
             // 
             // detailpanel
             // 
@@ -223,7 +223,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(904, 668);
+            this.browse.Size = new System.Drawing.Size(837, 668);
             // 
             // tabs
             // 
@@ -255,7 +255,7 @@
             this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(15, 15);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.Size = new System.Drawing.Size(54, 23);
             this.label1.TabIndex = 6;
             this.label1.Text = "SP#";
             // 
@@ -265,7 +265,7 @@
             this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(15, 44);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.Size = new System.Drawing.Size(54, 23);
             this.label2.TabIndex = 7;
             this.label2.Text = "Style";
             // 
@@ -275,7 +275,7 @@
             this.label3.Lines = 0;
             this.label3.Location = new System.Drawing.Point(15, 72);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
+            this.label3.Size = new System.Drawing.Size(54, 23);
             this.label3.TabIndex = 8;
             this.label3.Text = "Season";
             // 
@@ -285,7 +285,7 @@
             this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(15, 102);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
+            this.label4.Size = new System.Drawing.Size(54, 23);
             this.label4.TabIndex = 9;
             this.label4.Text = "Brand";
             // 
@@ -325,7 +325,7 @@
             this.label8.Lines = 0;
             this.label8.Location = new System.Drawing.Point(542, 15);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(105, 23);
+            this.label8.Size = new System.Drawing.Size(95, 23);
             this.label8.TabIndex = 8;
             this.label8.Text = "% of Inspection";
             // 
@@ -345,7 +345,7 @@
             this.label10.Lines = 0;
             this.label10.Location = new System.Drawing.Point(542, 72);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(105, 23);
+            this.label10.Size = new System.Drawing.Size(95, 23);
             this.label10.TabIndex = 10;
             this.label10.Text = "Remark";
             // 
@@ -355,7 +355,7 @@
             this.label11.Lines = 0;
             this.label11.Location = new System.Drawing.Point(542, 44);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(105, 23);
+            this.label11.Size = new System.Drawing.Size(95, 23);
             this.label11.TabIndex = 11;
             this.label11.Text = "MTL Cmlpt(SP)";
             // 
@@ -375,9 +375,9 @@
             this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
             this.displayBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(93, 15);
+            this.displayBox1.Location = new System.Drawing.Point(72, 15);
             this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(132, 21);
+            this.displayBox1.Size = new System.Drawing.Size(158, 21);
             this.displayBox1.TabIndex = 15;
             // 
             // style_box
@@ -385,9 +385,9 @@
             this.style_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.style_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.style_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.style_box.Location = new System.Drawing.Point(93, 43);
+            this.style_box.Location = new System.Drawing.Point(72, 43);
             this.style_box.Name = "style_box";
-            this.style_box.Size = new System.Drawing.Size(132, 21);
+            this.style_box.Size = new System.Drawing.Size(158, 21);
             this.style_box.TabIndex = 16;
             // 
             // season_box
@@ -395,9 +395,9 @@
             this.season_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.season_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.season_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.season_box.Location = new System.Drawing.Point(93, 72);
+            this.season_box.Location = new System.Drawing.Point(72, 72);
             this.season_box.Name = "season_box";
-            this.season_box.Size = new System.Drawing.Size(132, 21);
+            this.season_box.Size = new System.Drawing.Size(158, 21);
             this.season_box.TabIndex = 17;
             // 
             // brand_box
@@ -405,9 +405,9 @@
             this.brand_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.brand_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.brand_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.brand_box.Location = new System.Drawing.Point(93, 102);
+            this.brand_box.Location = new System.Drawing.Point(72, 102);
             this.brand_box.Name = "brand_box";
-            this.brand_box.Size = new System.Drawing.Size(132, 21);
+            this.brand_box.Size = new System.Drawing.Size(158, 21);
             this.brand_box.TabIndex = 18;
             // 
             // seq2_box
@@ -427,7 +427,7 @@
             this.remark_box.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "firremark", true));
             this.remark_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.remark_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.remark_box.Location = new System.Drawing.Point(650, 70);
+            this.remark_box.Location = new System.Drawing.Point(644, 70);
             this.remark_box.Multiline = true;
             this.remark_box.Name = "remark_box";
             this.remark_box.Size = new System.Drawing.Size(161, 96);
@@ -438,7 +438,7 @@
             this.insp_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.insp_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.insp_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.insp_box.Location = new System.Drawing.Point(650, 15);
+            this.insp_box.Location = new System.Drawing.Point(644, 15);
             this.insp_box.Name = "insp_box";
             this.insp_box.Size = new System.Drawing.Size(161, 21);
             this.insp_box.TabIndex = 11;
@@ -448,7 +448,7 @@
             this.mtl_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.mtl_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.mtl_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.mtl_box.Location = new System.Drawing.Point(650, 44);
+            this.mtl_box.Location = new System.Drawing.Point(644, 44);
             this.mtl_box.Name = "mtl_box";
             this.mtl_box.Size = new System.Drawing.Size(161, 21);
             this.mtl_box.TabIndex = 12;

@@ -60,7 +60,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(828, 395);
+            this.browse.Size = new System.Drawing.Size(683, 395);
             // 
             // tabs
             // 
@@ -71,25 +71,25 @@
             this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(70, 51);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(94, 23);
+            this.label1.Size = new System.Drawing.Size(85, 23);
             this.label1.TabIndex = 4;
-            this.label1.Text = "Defect Type:";
+            this.label1.Text = "Defect Type";
             // 
             // label2
             // 
             this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(70, 86);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(94, 23);
+            this.label2.Size = new System.Drawing.Size(85, 23);
             this.label2.TabIndex = 5;
-            this.label2.Text = "Description:";
+            this.label2.Text = "Description";
             // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
             this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(370, 53);
+            this.checkBox1.Location = new System.Drawing.Point(351, 53);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
             this.checkBox1.TabIndex = 2;
@@ -101,7 +101,7 @@
             this.textBox1.BackColor = System.Drawing.Color.White;
             this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(177, 51);
+            this.textBox1.Location = new System.Drawing.Point(158, 51);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(132, 23);
             this.textBox1.TabIndex = 0;
@@ -111,7 +111,7 @@
             this.editBox1.BackColor = System.Drawing.Color.White;
             this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(177, 86);
+            this.editBox1.Location = new System.Drawing.Point(158, 86);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(250, 64);

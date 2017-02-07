@@ -170,7 +170,7 @@
             this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox3.Location = new System.Drawing.Point(283, 19);
             this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(108, 23);
+            this.displayBox3.Size = new System.Drawing.Size(136, 23);
             this.displayBox3.TabIndex = 103;
             // 
             // displayBox4

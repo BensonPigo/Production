@@ -98,9 +98,9 @@
             this.brand_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.brand_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.brand_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.brand_box.Location = new System.Drawing.Point(93, 102);
+            this.brand_box.Location = new System.Drawing.Point(83, 102);
             this.brand_box.Name = "brand_box";
-            this.brand_box.Size = new System.Drawing.Size(78, 21);
+            this.brand_box.Size = new System.Drawing.Size(120, 21);
             this.brand_box.TabIndex = 103;
             // 
             // style_box
@@ -108,7 +108,7 @@
             this.style_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.style_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.style_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.style_box.Location = new System.Drawing.Point(93, 72);
+            this.style_box.Location = new System.Drawing.Point(83, 72);
             this.style_box.Name = "style_box";
             this.style_box.Size = new System.Drawing.Size(120, 21);
             this.style_box.TabIndex = 102;
@@ -118,9 +118,9 @@
             this.sp_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.sp_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.sp_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.sp_box.Location = new System.Drawing.Point(93, 12);
+            this.sp_box.Location = new System.Drawing.Point(83, 12);
             this.sp_box.Name = "sp_box";
-            this.sp_box.Size = new System.Drawing.Size(108, 21);
+            this.sp_box.Size = new System.Drawing.Size(120, 21);
             this.sp_box.TabIndex = 101;
             // 
             // label4
@@ -129,7 +129,7 @@
             this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(15, 101);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
+            this.label4.Size = new System.Drawing.Size(64, 23);
             this.label4.TabIndex = 100;
             this.label4.Text = "Brand";
             // 
@@ -139,7 +139,7 @@
             this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(15, 71);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.Size = new System.Drawing.Size(64, 23);
             this.label2.TabIndex = 99;
             this.label2.Text = "Style";
             // 
@@ -149,7 +149,7 @@
             this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(15, 11);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.Size = new System.Drawing.Size(64, 23);
             this.label1.TabIndex = 98;
             this.label1.Text = "SP#";
             // 
@@ -158,7 +158,7 @@
             this.wk_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.wk_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.wk_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.wk_box.Location = new System.Drawing.Point(93, 42);
+            this.wk_box.Location = new System.Drawing.Point(83, 42);
             this.wk_box.Name = "wk_box";
             this.wk_box.Size = new System.Drawing.Size(120, 21);
             this.wk_box.TabIndex = 105;
@@ -169,7 +169,7 @@
             this.label3.Lines = 0;
             this.label3.Location = new System.Drawing.Point(15, 41);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
+            this.label3.Size = new System.Drawing.Size(64, 23);
             this.label3.TabIndex = 104;
             this.label3.Text = "WKNo";
             // 
@@ -178,7 +178,7 @@
             this.seq_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.seq_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.seq_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.seq_box.Location = new System.Drawing.Point(305, 12);
+            this.seq_box.Location = new System.Drawing.Point(295, 12);
             this.seq_box.Name = "seq_box";
             this.seq_box.Size = new System.Drawing.Size(62, 21);
             this.seq_box.TabIndex = 107;
@@ -187,7 +187,7 @@
             // 
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(227, 11);
+            this.label5.Location = new System.Drawing.Point(217, 11);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(75, 23);
             this.label5.TabIndex = 106;
@@ -197,7 +197,7 @@
             // 
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(227, 41);
+            this.label6.Location = new System.Drawing.Point(217, 41);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(75, 23);
             this.label6.TabIndex = 108;
@@ -207,7 +207,7 @@
             // 
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(227, 71);
+            this.label7.Location = new System.Drawing.Point(217, 71);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(75, 23);
             this.label7.TabIndex = 110;
@@ -218,7 +218,7 @@
             this.scirefno_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.scirefno_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.scirefno_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.scirefno_box.Location = new System.Drawing.Point(305, 102);
+            this.scirefno_box.Location = new System.Drawing.Point(295, 102);
             this.scirefno_box.Name = "scirefno_box";
             this.scirefno_box.Size = new System.Drawing.Size(186, 21);
             this.scirefno_box.TabIndex = 111;
@@ -228,7 +228,7 @@
             this.refdesc_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.refdesc_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.refdesc_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.refdesc_box.Location = new System.Drawing.Point(494, 101);
+            this.refdesc_box.Location = new System.Drawing.Point(484, 101);
             this.refdesc_box.Name = "refdesc_box";
             this.refdesc_box.Size = new System.Drawing.Size(293, 21);
             this.refdesc_box.TabIndex = 112;
@@ -237,7 +237,7 @@
             // 
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(227, 101);
+            this.label8.Location = new System.Drawing.Point(217, 101);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(75, 23);
             this.label8.TabIndex = 113;
@@ -248,7 +248,7 @@
             this.brandrefno_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.brandrefno_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.brandrefno_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.brandrefno_box.Location = new System.Drawing.Point(305, 71);
+            this.brandrefno_box.Location = new System.Drawing.Point(295, 71);
             this.brandrefno_box.Name = "brandrefno_box";
             this.brandrefno_box.Size = new System.Drawing.Size(150, 21);
             this.brandrefno_box.TabIndex = 114;
@@ -258,16 +258,16 @@
             this.color_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.color_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.color_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.color_box.Location = new System.Drawing.Point(551, 12);
+            this.color_box.Location = new System.Drawing.Point(541, 12);
             this.color_box.Name = "color_box";
-            this.color_box.Size = new System.Drawing.Size(78, 21);
+            this.color_box.Size = new System.Drawing.Size(113, 21);
             this.color_box.TabIndex = 115;
             // 
             // label9
             // 
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(473, 11);
+            this.label9.Location = new System.Drawing.Point(463, 11);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(75, 23);
             this.label9.TabIndex = 116;
@@ -277,7 +277,7 @@
             // 
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(473, 41);
+            this.label10.Location = new System.Drawing.Point(463, 41);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(75, 23);
             this.label10.TabIndex = 117;
@@ -288,16 +288,16 @@
             this.arriveqty_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.arriveqty_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.arriveqty_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.arriveqty_box.Location = new System.Drawing.Point(551, 42);
+            this.arriveqty_box.Location = new System.Drawing.Point(541, 42);
             this.arriveqty_box.Name = "arriveqty_box";
-            this.arriveqty_box.Size = new System.Drawing.Size(78, 21);
+            this.arriveqty_box.Size = new System.Drawing.Size(113, 21);
             this.arriveqty_box.TabIndex = 118;
             // 
             // label11
             // 
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(667, 11);
+            this.label11.Location = new System.Drawing.Point(657, 11);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(123, 23);
             this.label11.TabIndex = 120;
@@ -307,7 +307,7 @@
             // 
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(667, 41);
+            this.label12.Location = new System.Drawing.Point(657, 41);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(123, 23);
             this.label12.TabIndex = 121;
@@ -317,7 +317,7 @@
             // 
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(473, 71);
+            this.label13.Location = new System.Drawing.Point(463, 71);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(75, 23);
             this.label13.TabIndex = 124;
@@ -328,7 +328,7 @@
             this.checkBox1.AutoSize = true;
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkBox1.IsSupportEditMode = false;
-            this.checkBox1.Location = new System.Drawing.Point(762, 69);
+            this.checkBox1.Location = new System.Drawing.Point(752, 69);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.ReadOnly = true;
             this.checkBox1.Size = new System.Drawing.Size(133, 21);
@@ -338,7 +338,7 @@
             // 
             // approve_button
             // 
-            this.approve_button.Location = new System.Drawing.Point(793, 129);
+            this.approve_button.Location = new System.Drawing.Point(783, 129);
             this.approve_button.Name = "approve_button";
             this.approve_button.Size = new System.Drawing.Size(90, 30);
             this.approve_button.TabIndex = 127;
@@ -348,7 +348,7 @@
             // 
             // encode_button
             // 
-            this.encode_button.Location = new System.Drawing.Point(793, 93);
+            this.encode_button.Location = new System.Drawing.Point(783, 93);
             this.encode_button.Name = "encode_button";
             this.encode_button.Size = new System.Drawing.Size(90, 30);
             this.encode_button.TabIndex = 128;
@@ -362,7 +362,7 @@
             this.label14.Lines = 0;
             this.label14.Location = new System.Drawing.Point(15, 129);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(75, 23);
+            this.label14.Size = new System.Drawing.Size(64, 23);
             this.label14.TabIndex = 129;
             this.label14.Text = "Approver";
             // 
@@ -371,7 +371,7 @@
             this.approve_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.approve_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.approve_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.approve_box.Location = new System.Drawing.Point(401, 130);
+            this.approve_box.Location = new System.Drawing.Point(391, 130);
             this.approve_box.Name = "approve_box";
             this.approve_box.Size = new System.Drawing.Size(197, 21);
             this.approve_box.TabIndex = 130;
@@ -389,7 +389,7 @@
             // txtuser1
             // 
             this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(93, 129);
+            this.txtuser1.Location = new System.Drawing.Point(83, 129);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(305, 23);
             this.txtuser1.TabIndex = 131;
@@ -398,7 +398,7 @@
             // txtsupplier1
             // 
             this.txtsupplier1.DisplayBox1Binding = "";
-            this.txtsupplier1.Location = new System.Drawing.Point(305, 41);
+            this.txtsupplier1.Location = new System.Drawing.Point(295, 41);
             this.txtsupplier1.Name = "txtsupplier1";
             this.txtsupplier1.Size = new System.Drawing.Size(147, 23);
             this.txtsupplier1.TabIndex = 109;
@@ -409,9 +409,9 @@
             this.result_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.result_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.result_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.result_box.Location = new System.Drawing.Point(551, 72);
+            this.result_box.Location = new System.Drawing.Point(541, 72);
             this.result_box.Name = "result_box";
-            this.result_box.Size = new System.Drawing.Size(78, 21);
+            this.result_box.Size = new System.Drawing.Size(113, 21);
             this.result_box.TabIndex = 133;
             // 
             // textID
@@ -427,7 +427,7 @@
             // 
             // lastinspdate_box
             // 
-            this.lastinspdate_box.Location = new System.Drawing.Point(793, 42);
+            this.lastinspdate_box.Location = new System.Drawing.Point(783, 42);
             this.lastinspdate_box.Name = "lastinspdate_box";
             this.lastinspdate_box.ReadOnly = true;
             this.lastinspdate_box.Size = new System.Drawing.Size(130, 23);
@@ -435,7 +435,7 @@
             // 
             // arrwhdate_box
             // 
-            this.arrwhdate_box.Location = new System.Drawing.Point(793, 12);
+            this.arrwhdate_box.Location = new System.Drawing.Point(783, 12);
             this.arrwhdate_box.Name = "arrwhdate_box";
             this.arrwhdate_box.ReadOnly = true;
             this.arrwhdate_box.Size = new System.Drawing.Size(130, 23);

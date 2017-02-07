@@ -74,13 +74,8 @@
             this.btmcont.Controls.SetChildIndex(this.btnClose, 0);
             this.btmcont.Controls.SetChildIndex(this.btnSave, 0);
             // 
-            // undo
-            // 
-            this.undo.EditMode = Sci.Win.UI.AdvEditModes.None;
-            // 
             // save
             // 
-            this.save.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.save.Enabled = false;
             this.save.Text = "Edit";
             this.save.Visible = false;
@@ -90,7 +85,7 @@
             this.sp_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.sp_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.sp_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.sp_text.Location = new System.Drawing.Point(62, 11);
+            this.sp_text.Location = new System.Drawing.Point(82, 11);
             this.sp_text.Name = "sp_text";
             this.sp_text.Size = new System.Drawing.Size(118, 21);
             this.sp_text.TabIndex = 102;
@@ -100,7 +95,7 @@
             this.lbSP.Lines = 0;
             this.lbSP.Location = new System.Drawing.Point(9, 9);
             this.lbSP.Name = "lbSP";
-            this.lbSP.Size = new System.Drawing.Size(50, 23);
+            this.lbSP.Size = new System.Drawing.Size(70, 23);
             this.lbSP.TabIndex = 101;
             this.lbSP.Text = "SP#";
             // 
@@ -109,7 +104,7 @@
             this.WKNO_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.WKNO_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.WKNO_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.WKNO_text.Location = new System.Drawing.Point(62, 40);
+            this.WKNO_text.Location = new System.Drawing.Point(82, 40);
             this.WKNO_text.Name = "WKNO_text";
             this.WKNO_text.Size = new System.Drawing.Size(118, 21);
             this.WKNO_text.TabIndex = 104;
@@ -119,7 +114,7 @@
             this.lbWKNO.Lines = 0;
             this.lbWKNO.Location = new System.Drawing.Point(9, 38);
             this.lbWKNO.Name = "lbWKNO";
-            this.lbWKNO.Size = new System.Drawing.Size(50, 23);
+            this.lbWKNO.Size = new System.Drawing.Size(70, 23);
             this.lbWKNO.TabIndex = 103;
             this.lbWKNO.Text = "WKNO";
             // 
@@ -137,7 +132,7 @@
             this.Unit_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.Unit_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.Unit_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Unit_text.Location = new System.Drawing.Point(62, 97);
+            this.Unit_text.Location = new System.Drawing.Point(82, 97);
             this.Unit_text.Name = "Unit_text";
             this.Unit_text.Size = new System.Drawing.Size(118, 21);
             this.Unit_text.TabIndex = 108;
@@ -147,7 +142,7 @@
             this.lbUnit.Lines = 0;
             this.lbUnit.Location = new System.Drawing.Point(9, 95);
             this.lbUnit.Name = "lbUnit";
-            this.lbUnit.Size = new System.Drawing.Size(50, 23);
+            this.lbUnit.Size = new System.Drawing.Size(70, 23);
             this.lbUnit.TabIndex = 107;
             this.lbUnit.Text = "Unit";
             // 
@@ -156,7 +151,7 @@
             this.Size_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.Size_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.Size_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Size_text.Location = new System.Drawing.Point(62, 126);
+            this.Size_text.Location = new System.Drawing.Point(82, 126);
             this.Size_text.Name = "Size_text";
             this.Size_text.Size = new System.Drawing.Size(118, 21);
             this.Size_text.TabIndex = 110;
@@ -166,7 +161,7 @@
             this.lbSize.Lines = 0;
             this.lbSize.Location = new System.Drawing.Point(9, 124);
             this.lbSize.Name = "lbSize";
-            this.lbSize.Size = new System.Drawing.Size(50, 23);
+            this.lbSize.Size = new System.Drawing.Size(70, 23);
             this.lbSize.TabIndex = 109;
             this.lbSize.Text = "Size";
             // 
@@ -271,7 +266,7 @@
             this.OvenDate.CausesValidation = false;
             this.OvenDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OvenDate", true));
             this.OvenDate.Enabled = false;
-            this.OvenDate.Location = new System.Drawing.Point(103, 145);
+            this.OvenDate.Location = new System.Drawing.Point(102, 145);
             this.OvenDate.Name = "OvenDate";
             this.OvenDate.ReadOnly = true;
             this.OvenDate.Size = new System.Drawing.Size(120, 23);
@@ -280,7 +275,7 @@
             // lbDate
             // 
             this.lbDate.Lines = 0;
-            this.lbDate.Location = new System.Drawing.Point(15, 145);
+            this.lbDate.Location = new System.Drawing.Point(11, 145);
             this.lbDate.Name = "lbDate";
             this.lbDate.Size = new System.Drawing.Size(85, 23);
             this.lbDate.TabIndex = 122;
@@ -291,7 +286,7 @@
             this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "OvenInspector", true));
             this.txtuser1.DisplayBox1Binding = "";
             this.txtuser1.Enabled = false;
-            this.txtuser1.Location = new System.Drawing.Point(83, 112);
+            this.txtuser1.Location = new System.Drawing.Point(102, 112);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(296, 23);
             this.txtuser1.TabIndex = 121;
@@ -300,9 +295,9 @@
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(15, 112);
+            this.label2.Location = new System.Drawing.Point(11, 112);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 23);
+            this.label2.Size = new System.Drawing.Size(85, 23);
             this.label2.TabIndex = 120;
             this.label2.Text = "Lab Tech";
             // 
@@ -312,17 +307,17 @@
             this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OvenRemark", true));
             this.txtRemark.Enabled = false;
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(73, 82);
+            this.txtRemark.Location = new System.Drawing.Point(99, 82);
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(430, 23);
+            this.txtRemark.Size = new System.Drawing.Size(419, 23);
             this.txtRemark.TabIndex = 119;
             // 
             // lbRemark
             // 
             this.lbRemark.Lines = 0;
-            this.lbRemark.Location = new System.Drawing.Point(15, 82);
+            this.lbRemark.Location = new System.Drawing.Point(11, 82);
             this.lbRemark.Name = "lbRemark";
-            this.lbRemark.Size = new System.Drawing.Size(55, 23);
+            this.lbRemark.Size = new System.Drawing.Size(84, 23);
             this.lbRemark.TabIndex = 118;
             this.lbRemark.Text = "Remark";
             // 
@@ -334,7 +329,7 @@
             this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboResult.FormattingEnabled = true;
             this.comboResult.IsSupportUnselect = true;
-            this.comboResult.Location = new System.Drawing.Point(68, 51);
+            this.comboResult.Location = new System.Drawing.Point(99, 51);
             this.comboResult.Name = "comboResult";
             this.comboResult.ReadOnly = true;
             this.comboResult.Size = new System.Drawing.Size(103, 24);
@@ -343,9 +338,9 @@
             // lbResult
             // 
             this.lbResult.Lines = 0;
-            this.lbResult.Location = new System.Drawing.Point(15, 51);
+            this.lbResult.Location = new System.Drawing.Point(11, 51);
             this.lbResult.Name = "lbResult";
-            this.lbResult.Size = new System.Drawing.Size(50, 23);
+            this.lbResult.Size = new System.Drawing.Size(85, 23);
             this.lbResult.TabIndex = 112;
             this.lbResult.Text = "Result";
             // 
@@ -355,7 +350,7 @@
             this.txtScale.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OvenScale", true));
             this.txtScale.Enabled = false;
             this.txtScale.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtScale.Location = new System.Drawing.Point(68, 19);
+            this.txtScale.Location = new System.Drawing.Point(99, 19);
             this.txtScale.Name = "txtScale";
             this.txtScale.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
             this.txtScale.Size = new System.Drawing.Size(103, 23);
@@ -366,9 +361,9 @@
             // lbScale
             // 
             this.lbScale.Lines = 0;
-            this.lbScale.Location = new System.Drawing.Point(15, 19);
+            this.lbScale.Location = new System.Drawing.Point(11, 19);
             this.lbScale.Name = "lbScale";
-            this.lbScale.Size = new System.Drawing.Size(50, 23);
+            this.lbScale.Size = new System.Drawing.Size(84, 23);
             this.lbScale.TabIndex = 110;
             this.lbScale.Text = "Scale";
             // 
@@ -407,7 +402,7 @@
             0,
             0});
             this.Qty_text.ReadOnly = true;
-            this.Qty_text.Size = new System.Drawing.Size(98, 23);
+            this.Qty_text.Size = new System.Drawing.Size(118, 23);
             this.Qty_text.TabIndex = 121;
             this.Qty_text.Value = new decimal(new int[] {
             0,

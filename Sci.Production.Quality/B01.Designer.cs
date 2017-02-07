@@ -30,11 +30,11 @@
         {
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
             this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.editBox1 = new Sci.Win.UI.EditBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.textBox3 = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -64,7 +64,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(813, 395);
+            this.browse.Size = new System.Drawing.Size(689, 395);
             // 
             // tabs
             // 
@@ -73,56 +73,37 @@
             // label1
             // 
             this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(53, 46);
+            this.label1.Location = new System.Drawing.Point(73, 46);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(100, 23);
+            this.label1.Size = new System.Drawing.Size(80, 23);
             this.label1.TabIndex = 4;
             this.label1.Text = "Code";
             // 
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(53, 82);
+            this.label2.Location = new System.Drawing.Point(73, 110);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(100, 23);
+            this.label2.Size = new System.Drawing.Size(80, 23);
             this.label2.TabIndex = 5;
             this.label2.Text = "Description";
-            // 
-            // label3
-            // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(53, 143);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(100, 23);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "type";
             // 
             // textBox1
             // 
             this.textBox1.BackColor = System.Drawing.Color.White;
             this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(158, 46);
+            this.textBox1.Location = new System.Drawing.Point(156, 46);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
             this.textBox1.TabIndex = 3;
-            // 
-            // textBox3
-            // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Type", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(158, 143);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(100, 23);
-            this.textBox3.TabIndex = 6;
             // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
             this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(393, 46);
+            this.checkBox1.Location = new System.Drawing.Point(280, 48);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(57, 21);
             this.checkBox1.TabIndex = 4;
@@ -134,11 +115,30 @@
             this.editBox1.BackColor = System.Drawing.Color.White;
             this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescriptionEN", true));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(158, 82);
+            this.editBox1.Location = new System.Drawing.Point(156, 110);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.Size = new System.Drawing.Size(292, 50);
             this.editBox1.TabIndex = 5;
+            // 
+            // label3
+            // 
+            this.label3.Lines = 0;
+            this.label3.Location = new System.Drawing.Point(73, 78);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(80, 23);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "type";
+            // 
+            // textBox3
+            // 
+            this.textBox3.BackColor = System.Drawing.Color.White;
+            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Type", true));
+            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox3.Location = new System.Drawing.Point(156, 78);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(100, 23);
+            this.textBox3.TabIndex = 6;
             // 
             // B01
             // 
@@ -169,11 +169,11 @@
         #endregion
 
         private Win.UI.CheckBox checkBox1;
-        private Win.UI.TextBox textBox3;
         private Win.UI.TextBox textBox1;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
-        private Win.UI.Label label3;
         private Win.UI.EditBox editBox1;
+        private Win.UI.TextBox textBox3;
+        private Win.UI.Label label3;
     }
 }

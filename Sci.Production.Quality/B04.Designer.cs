@@ -33,11 +33,12 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.textBox3 = new Sci.Win.UI.TextBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.labConfirm = new System.Windows.Forms.Label();
+            this.label4 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -52,11 +53,12 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label4);
+            this.detailcont.Controls.Add(this.labConfirm);
             this.detailcont.Controls.Add(this.comboBox1);
             this.detailcont.Controls.Add(this.textBox3);
             this.detailcont.Controls.Add(this.textBox2);
             this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.checkBox1);
@@ -70,7 +72,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(846, 395);
+            this.browse.Size = new System.Drawing.Size(686, 395);
             // 
             // tabs
             // 
@@ -105,51 +107,42 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(96, 23);
             this.label1.TabIndex = 21;
-            this.label1.Text = "Level :";
+            this.label1.Text = "Level ";
             // 
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(52, 82);
+            this.label2.Location = new System.Drawing.Point(52, 78);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(96, 23);
             this.label2.TabIndex = 24;
-            this.label2.Text = "Rate Range:";
+            this.label2.Text = "Rate Range";
             // 
             // label3
             // 
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(254, 82);
+            this.label3.Location = new System.Drawing.Point(254, 78);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
+            this.label3.Size = new System.Drawing.Size(24, 23);
             this.label3.TabIndex = 25;
-            this.label3.Text = "%      ~";
-            // 
-            // label4
-            // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(458, 82);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(39, 23);
-            this.label4.TabIndex = 26;
-            this.label4.Text = "%";
+            this.label3.Text = "%";
             // 
             // label5
             // 
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(52, 121);
+            this.label5.Location = new System.Drawing.Point(52, 112);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(96, 23);
             this.label5.TabIndex = 27;
-            this.label5.Text = "Material Type:";
+            this.label5.Text = "Material Type";
             // 
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
             this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Range1", true));
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(151, 82);
+            this.textBox2.Location = new System.Drawing.Point(151, 78);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(100, 23);
             this.textBox2.TabIndex = 5;
@@ -159,7 +152,7 @@
             this.textBox3.BackColor = System.Drawing.Color.White;
             this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Range2", true));
             this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(334, 82);
+            this.textBox3.Location = new System.Drawing.Point(303, 78);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(121, 23);
             this.textBox3.TabIndex = 6;
@@ -171,10 +164,31 @@
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(151, 121);
+            this.comboBox1.Location = new System.Drawing.Point(151, 112);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(178, 24);
             this.comboBox1.TabIndex = 7;
+            // 
+            // labConfirm
+            // 
+            this.labConfirm.AutoSize = true;
+            this.labConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labConfirm.ForeColor = System.Drawing.Color.DimGray;
+            this.labConfirm.Location = new System.Drawing.Point(280, 84);
+            this.labConfirm.Name = "labConfirm";
+            this.labConfirm.Size = new System.Drawing.Size(21, 24);
+            this.labConfirm.TabIndex = 29;
+            this.labConfirm.Text = "~";
+            // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Lines = 0;
+            this.label4.Location = new System.Drawing.Point(427, 78);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(24, 23);
+            this.label4.TabIndex = 30;
+            this.label4.Text = "%";
             // 
             // B04
             // 
@@ -208,11 +222,12 @@
         private Win.UI.TextBox textBox3;
         private Win.UI.TextBox textBox2;
         private Win.UI.Label label5;
-        private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.TextBox textBox1;
         private Win.UI.Label label1;
+        private Win.UI.Label label4;
+        private System.Windows.Forms.Label labConfirm;
     }
 }

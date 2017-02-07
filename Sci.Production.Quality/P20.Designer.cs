@@ -106,7 +106,7 @@
             this.masterpanel.Controls.Add(this.txtSP);
             this.masterpanel.Controls.Add(this.lbDate);
             this.masterpanel.Controls.Add(this.CDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 170);
+            this.masterpanel.Size = new System.Drawing.Size(876, 170);
             this.masterpanel.Controls.SetChildIndex(this.CDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSP, 0);
@@ -143,7 +143,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 170);
-            this.detailpanel.Size = new System.Drawing.Size(892, 179);
+            this.detailpanel.Size = new System.Drawing.Size(876, 192);
             // 
             // gridicon
             // 
@@ -151,7 +151,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 179);
+            this.detailgridcont.Size = new System.Drawing.Size(876, 192);
             // 
             // detail2
             // 
@@ -167,16 +167,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(876, 400);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(876, 362);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 362);
+            this.detailbtm.Size = new System.Drawing.Size(876, 38);
             // 
             // browse
             // 
@@ -205,7 +205,7 @@
             this.lbDate.Name = "lbDate";
             this.lbDate.Size = new System.Drawing.Size(50, 23);
             this.lbDate.TabIndex = 100;
-            this.lbDate.Text = "Date:";
+            this.lbDate.Text = "Date";
             // 
             // CDate
             // 
@@ -222,7 +222,7 @@
             this.lbSP.Name = "lbSP";
             this.lbSP.Size = new System.Drawing.Size(50, 23);
             this.lbSP.TabIndex = 110;
-            this.lbSP.Text = "SP#:";
+            this.lbSP.Text = "SP#";
             // 
             // lbStyle
             // 
@@ -231,7 +231,7 @@
             this.lbStyle.Name = "lbStyle";
             this.lbStyle.Size = new System.Drawing.Size(50, 23);
             this.lbStyle.TabIndex = 111;
-            this.lbStyle.Text = "Style:";
+            this.lbStyle.Text = "Style";
             // 
             // lbLine
             // 
@@ -240,7 +240,7 @@
             this.lbLine.Name = "lbLine";
             this.lbLine.Size = new System.Drawing.Size(50, 23);
             this.lbLine.TabIndex = 113;
-            this.lbLine.Text = "Line#:";
+            this.lbLine.Text = "Line#";
             // 
             // txtLine
             // 
@@ -271,7 +271,7 @@
             this.lbCell.Name = "lbCell";
             this.lbCell.Size = new System.Drawing.Size(50, 23);
             this.lbCell.TabIndex = 115;
-            this.lbCell.Text = "Cell#:";
+            this.lbCell.Text = "Cell#";
             // 
             // txtRemark
             // 
@@ -290,7 +290,7 @@
             this.lbRemark.Name = "lbRemark";
             this.lbRemark.Size = new System.Drawing.Size(60, 23);
             this.lbRemark.TabIndex = 117;
-            this.lbRemark.Text = "Remark:";
+            this.lbRemark.Text = "Remark";
             // 
             // lbShift
             // 
@@ -299,7 +299,7 @@
             this.lbShift.Name = "lbShift";
             this.lbShift.Size = new System.Drawing.Size(50, 23);
             this.lbShift.TabIndex = 119;
-            this.lbShift.Text = "Shift:";
+            this.lbShift.Text = "Shift";
             // 
             // lbInspected
             // 
@@ -308,7 +308,7 @@
             this.lbInspected.Name = "lbInspected";
             this.lbInspected.Size = new System.Drawing.Size(100, 23);
             this.lbInspected.TabIndex = 121;
-            this.lbInspected.Text = "Qty Inspected:";
+            this.lbInspected.Text = "Qty Inspected";
             // 
             // lbRejected
             // 
@@ -317,7 +317,7 @@
             this.lbRejected.Name = "lbRejected";
             this.lbRejected.Size = new System.Drawing.Size(100, 23);
             this.lbRejected.TabIndex = 122;
-            this.lbRejected.Text = "Qty Rejected:";
+            this.lbRejected.Text = "Qty Rejected";
             // 
             // lbDefectQty
             // 
@@ -326,7 +326,7 @@
             this.lbDefectQty.Name = "lbDefectQty";
             this.lbDefectQty.Size = new System.Drawing.Size(100, 23);
             this.lbDefectQty.TabIndex = 123;
-            this.lbDefectQty.Text = "Ttl Defect Qty:";
+            this.lbDefectQty.Text = "Ttl Defect Qty";
             // 
             // lbDestination
             // 
@@ -335,7 +335,7 @@
             this.lbDestination.Name = "lbDestination";
             this.lbDestination.Size = new System.Drawing.Size(100, 23);
             this.lbDestination.TabIndex = 124;
-            this.lbDestination.Text = "Destination:";
+            this.lbDestination.Text = "Destination";
             // 
             // NumInspected
             // 
@@ -406,7 +406,7 @@
             this.lbTeam.Name = "lbTeam";
             this.lbTeam.Size = new System.Drawing.Size(60, 23);
             this.lbTeam.TabIndex = 129;
-            this.lbTeam.Text = "Team:";
+            this.lbTeam.Text = "Team";
             // 
             // lbCPU
             // 
@@ -415,7 +415,7 @@
             this.lbCPU.Name = "lbCPU";
             this.lbCPU.Size = new System.Drawing.Size(60, 23);
             this.lbCPU.TabIndex = 131;
-            this.lbCPU.Text = "CPU:";
+            this.lbCPU.Text = "CPU";
             // 
             // lbRFT
             // 
@@ -424,7 +424,7 @@
             this.lbRFT.Name = "lbRFT";
             this.lbRFT.Size = new System.Drawing.Size(60, 23);
             this.lbRFT.TabIndex = 133;
-            this.lbRFT.Text = "RFT(%):";
+            this.lbRFT.Text = "RFT(%)";
             // 
             // lbFactory
             // 
@@ -433,7 +433,7 @@
             this.lbFactory.Name = "lbFactory";
             this.lbFactory.Size = new System.Drawing.Size(60, 23);
             this.lbFactory.TabIndex = 135;
-            this.lbFactory.Text = "Factory:";
+            this.lbFactory.Text = "Factory";
             // 
             // DisplayFactory
             // 
@@ -443,7 +443,7 @@
             this.DisplayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.DisplayFactory.Location = new System.Drawing.Point(576, 87);
             this.DisplayFactory.Name = "DisplayFactory";
-            this.DisplayFactory.Size = new System.Drawing.Size(98, 21);
+            this.DisplayFactory.Size = new System.Drawing.Size(121, 21);
             this.DisplayFactory.TabIndex = 14;
             // 
             // DisplayStyle
@@ -475,7 +475,7 @@
             this.comboTeam.IsSupportUnselect = true;
             this.comboTeam.Location = new System.Drawing.Point(576, 6);
             this.comboTeam.Name = "comboTeam";
-            this.comboTeam.Size = new System.Drawing.Size(98, 24);
+            this.comboTeam.Size = new System.Drawing.Size(121, 24);
             this.comboTeam.TabIndex = 2;
             // 
             // NumCPU
@@ -486,7 +486,7 @@
             this.NumCPU.Location = new System.Drawing.Point(576, 33);
             this.NumCPU.Name = "NumCPU";
             this.NumCPU.ReadOnly = true;
-            this.NumCPU.Size = new System.Drawing.Size(98, 23);
+            this.NumCPU.Size = new System.Drawing.Size(121, 23);
             this.NumCPU.TabIndex = 136;
             // 
             // NumRFT
@@ -497,7 +497,7 @@
             this.NumRFT.Location = new System.Drawing.Point(576, 60);
             this.NumRFT.Name = "NumRFT";
             this.NumRFT.ReadOnly = true;
-            this.NumRFT.Size = new System.Drawing.Size(98, 23);
+            this.NumRFT.Size = new System.Drawing.Size(121, 23);
             this.NumRFT.TabIndex = 137;
             // 
             // comboShift
@@ -518,7 +518,7 @@
             this.labConfirm.AutoSize = true;
             this.labConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labConfirm.ForeColor = System.Drawing.Color.Red;
-            this.labConfirm.Location = new System.Drawing.Point(709, 13);
+            this.labConfirm.Location = new System.Drawing.Point(724, 13);
             this.labConfirm.Name = "labConfirm";
             this.labConfirm.Size = new System.Drawing.Size(85, 29);
             this.labConfirm.TabIndex = 138;

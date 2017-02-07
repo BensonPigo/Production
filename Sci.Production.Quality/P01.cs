@@ -218,12 +218,12 @@ namespace Sci.Production.Quality
                 .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("WKNO", header: "Wkno", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("whseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(26), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("SuppEn", header: "Supplier", width: Widths.AnsiChars(17), iseditingreadonly: true)
-                .Numeric("ArriveQty", header: "Arrive Qty", width: Widths.AnsiChars(8), integer_places: 10,decimal_places:2,iseditingreadonly:true)
-                .Text("weavetypeid", header: "Weave Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("SuppEn", header: "Supplier", width: Widths.AnsiChars(21), iseditingreadonly: true)
+                .Numeric("ArriveQty", header: "Arrive Qty", width: Widths.AnsiChars(10), integer_places: 10,decimal_places:2,iseditingreadonly:true)
+                .Text("weavetypeid", header: "Weave Type", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Date("InspDeadline", header: "Insp. Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Result", header: "Over all\n Result", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .CheckBox("NonPhysical", header: "Physical N/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonPhy)
@@ -237,7 +237,7 @@ namespace Sci.Production.Quality
                 .Text("Shadebond", header: "Shade\nBond", width: Widths.AnsiChars(4), iseditingreadonly: true,settings: sha)
                 .Date("ShadeBondDate", header: "Last Shade.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:shaD)
                 .CheckBox("NonContinuity", header: "Continuity \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0,settings:nonCon)
-                .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(4), iseditingreadonly: true,settings:Con)
+                .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(5), iseditingreadonly: true,settings:Con)
                 .Date("ContinuityDate", header: "Last Cont.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:ConD)
                 .Text("Approve1", header: "Approve", width: Widths.AnsiChars(10), iseditingreadonly: true) 
                 .Text("ReplacementReportID", header: "1st Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -258,6 +258,7 @@ namespace Sci.Production.Quality
             detailgrid.Columns[22].DefaultCellStyle.BackColor = Color.AntiqueWhite;
             detailgrid.Columns[23].DefaultCellStyle.BackColor = Color.AntiqueWhite;
             #endregion
+            
         }
 
         protected override void OnDetailEntered() 
@@ -358,6 +359,7 @@ namespace Sci.Production.Quality
             sh_box.BackColor = Color.LightGreen;
             co_box.BackColor = Color.AntiqueWhite;
             #endregion
+            this.detailgrid.AutoResizeColumns();
         }
 
         protected override DualResult ClickSave()

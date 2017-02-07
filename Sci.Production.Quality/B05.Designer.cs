@@ -58,7 +58,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(779, 395);
+            this.browse.Size = new System.Drawing.Size(688, 395);
             // 
             // tabs
             // 
@@ -70,7 +70,7 @@
             this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.textBox1.IsSupportEditMode = false;
-            this.textBox1.Location = new System.Drawing.Point(160, 53);
+            this.textBox1.Location = new System.Drawing.Point(140, 53);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(129, 23);
@@ -81,25 +81,25 @@
             this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(82, 53);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.Size = new System.Drawing.Size(55, 23);
             this.label1.TabIndex = 8;
-            this.label1.Text = "Code :";
+            this.label1.Text = "Code ";
             // 
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(82, 99);
+            this.label2.Location = new System.Drawing.Point(82, 86);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.Size = new System.Drawing.Size(55, 23);
             this.label2.TabIndex = 9;
-            this.label2.Text = "Weight:";
+            this.label2.Text = "Weight";
             // 
             // numericBox1
             // 
             this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "weight", true));
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.Location = new System.Drawing.Point(160, 99);
+            this.numericBox1.Location = new System.Drawing.Point(140, 86);
             this.numericBox1.Maximum = new decimal(new int[] {
             99,
             0,

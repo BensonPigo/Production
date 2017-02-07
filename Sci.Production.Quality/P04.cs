@@ -33,6 +33,7 @@ namespace Sci.Production.Quality
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            this.detailgrid.AutoResizeColumns();          
             DataTable dt ;
             DualResult result;
             string cmd = "select * from dbo.GetSCI(@poid,'')";

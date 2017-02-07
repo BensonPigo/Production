@@ -47,7 +47,7 @@ namespace Sci.Production.Quality
         {
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmd = string.Format(
-                @"Select a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,
+                @"Select a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.exportid,
                 ArriveQty,InspDeadline,Result,a.InspQty,a.RejectQty,a.Defect,a.Result,a.InspDate,
                 (
 				select Pass1.Name from Pass1 where a.Inspector = pass1.id
@@ -113,20 +113,20 @@ namespace Sci.Production.Quality
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("SEQ", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("ExportID", header: "WKNO", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("ExportID", header: "WKNO", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Date("whseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(26), iseditingreadonly: true)
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("SuppEn", header: "Supplier", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("Size", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("ArriveQty", header: "Arrive Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
+                .Text("Size", header: "Size", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Numeric("ArriveQty", header: "Arrive Qty", width: Widths.AnsiChars(8), integer_places: 11, decimal_places: 2, iseditingreadonly: true)
                 .Text("unit", header: "Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("InspDeadline", header: "Insp. Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("InspQty", header: "Inspected Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true, settings: detail_Int)
                 .Text("RejectQty", header: "Rehect Qty", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("defect", header: "Defect Type", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
-                .Text("Result", header: "Result", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
+                .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: detail)
                 .Text("Inspdate", header: "Insp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail   )            
@@ -140,7 +140,7 @@ namespace Sci.Production.Quality
             detailgrid.Columns[16].DefaultCellStyle.BackColor = Color.LemonChiffon;
             detailgrid.Columns[17].DefaultCellStyle.BackColor = Color.LemonChiffon;
             #endregion
-         
+           
 
         }
 
@@ -156,6 +156,7 @@ namespace Sci.Production.Quality
         {
             contextMenuStrip();
             base.OnDetailEntered();
+            this.detailgrid.AutoResizeColumns();
 
             DataRow queryDr;
             DualResult dResult = PublicPrg.Prgs.QueryQaInspectionHeader(CurrentMaintain["ID"].ToString(), out queryDr);
@@ -247,7 +248,7 @@ namespace Sci.Production.Quality
                 Complete_box.Text = completedate.ToShortDateString();
             }
             else Complete_box.Text = "";
-            this.grid.AutoResizeColumns();
+            //this.grid.AutoResizeColumns();
 
         }
         protected override DualResult ClickSave()

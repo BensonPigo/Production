@@ -55,14 +55,6 @@ namespace Sci.Production.Quality
                 btnFinished.Enabled = !EditMode;
             }
         }
-        //public void Grid_editingControl(object sender, DataGridViewTextBoxEditingControlEventArgs e)
-        //{
-        //    this.
-        //}
-        //public void Grid_editing(System.Windows.Forms.MouseButtons eButton, int eRowIndex)
-        //{
-        //    DataGridViewTextBoxEditingControl edd = (DataGridViewTextBoxEditingControl)eButton.Control;
-        //}
         public void colorSelect_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             this.colorSelect_CellMouseClick(e.Button, e.RowIndex);

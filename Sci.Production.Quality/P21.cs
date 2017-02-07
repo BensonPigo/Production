@@ -69,7 +69,7 @@ namespace Sci.Production.Quality
         {
             List<SqlParameter> spam = new List<SqlParameter>();
             DataRow dr;
-
+            this.detailgrid.AutoResizeColumns();
             string sql_cmd =
             @"SELECT a.ID,a.cDate,a.OrderID,a.FactoryID,a.InspectQty,
 		a.DefectQty,a.SewingLineID,a.Team,a.GarmentOutput,a.Stage,a.CFA,a.Shift,a.Result,a.Remark,a.Status,

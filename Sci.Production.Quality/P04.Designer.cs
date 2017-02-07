@@ -181,7 +181,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1062, 494);
+            this.browse.Size = new System.Drawing.Size(1063, 494);
             // 
             // tabs
             // 
@@ -221,7 +221,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(104, 23);
             this.label4.TabIndex = 4;
-            this.label4.Text = "MDivisionID :";
+            this.label4.Text = "MDivisionID";
             // 
             // label5
             // 
@@ -275,7 +275,7 @@
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(104, 23);
             this.label10.TabIndex = 10;
-            this.label10.Text = "Last Test Date:";
+            this.label10.Text = "Last Test Date";
             // 
             // label11
             // 

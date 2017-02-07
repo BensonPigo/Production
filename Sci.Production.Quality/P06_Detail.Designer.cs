@@ -95,7 +95,7 @@
             // encode_btn
             // 
             this.encode_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.encode_btn.Location = new System.Drawing.Point(865, 60);
+            this.encode_btn.Location = new System.Drawing.Point(865, 62);
             this.encode_btn.Name = "encode_btn";
             this.encode_btn.Size = new System.Drawing.Size(96, 30);
             this.encode_btn.TabIndex = 110;
@@ -116,7 +116,7 @@
             // txtuser1
             // 
             this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(117, 67);
+            this.txtuser1.Location = new System.Drawing.Point(109, 67);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(296, 23);
             this.txtuser1.TabIndex = 106;
@@ -130,19 +130,19 @@
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(943, 23);
+            this.comboBox1.Location = new System.Drawing.Point(922, 23);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.ReadOnly = true;
-            this.comboBox1.Size = new System.Drawing.Size(103, 24);
+            this.comboBox1.Size = new System.Drawing.Size(89, 24);
             this.comboBox1.TabIndex = 104;
             // 
             // article
             // 
             this.article.BackColor = System.Drawing.Color.White;
             this.article.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.article.Location = new System.Drawing.Point(742, 23);
+            this.article.Location = new System.Drawing.Point(719, 23);
             this.article.Name = "article";
-            this.article.Size = new System.Drawing.Size(100, 23);
+            this.article.Size = new System.Drawing.Size(123, 23);
             this.article.TabIndex = 102;
             this.article.TextChanged += new System.EventHandler(this.TextChanged);
             this.article.MouseDown += new System.Windows.Forms.MouseEventHandler(this.article_MouseDown);
@@ -153,10 +153,10 @@
             this.testno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.testno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.testno.IsSupportEditMode = false;
-            this.testno.Location = new System.Drawing.Point(117, 23);
+            this.testno.Location = new System.Drawing.Point(109, 23);
             this.testno.Name = "testno";
             this.testno.ReadOnly = true;
-            this.testno.Size = new System.Drawing.Size(100, 23);
+            this.testno.Size = new System.Drawing.Size(81, 23);
             this.testno.TabIndex = 99;
             // 
             // label1
@@ -166,25 +166,25 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 100;
-            this.label1.Text = "Remark :";
+            this.label1.Text = "Remark ";
             // 
             // label3
             // 
             this.label3.Lines = 0;
             this.label3.Location = new System.Drawing.Point(28, 67);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(86, 23);
+            this.label3.Size = new System.Drawing.Size(74, 23);
             this.label3.TabIndex = 103;
-            this.label3.Text = "Inspector :";
+            this.label3.Text = "Inspector";
             // 
             // label6
             // 
             this.label6.Lines = 0;
             this.label6.Location = new System.Drawing.Point(865, 23);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
+            this.label6.Size = new System.Drawing.Size(54, 23);
             this.label6.TabIndex = 109;
-            this.label6.Text = "Result :";
+            this.label6.Text = "Result ";
             // 
             // label7
             // 
@@ -193,44 +193,44 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(75, 23);
             this.label7.TabIndex = 111;
-            this.label7.Text = "TestDate :";
+            this.label7.Text = "TestDate ";
             // 
             // label5
             // 
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(248, 23);
+            this.label5.Location = new System.Drawing.Point(205, 23);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
+            this.label5.Size = new System.Drawing.Size(45, 23);
             this.label5.TabIndex = 107;
-            this.label5.Text = "SP #: ";
+            this.label5.Text = "SP #";
             // 
             // label4
             // 
             this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(664, 23);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
+            this.label4.Size = new System.Drawing.Size(52, 23);
             this.label4.TabIndex = 105;
-            this.label4.Text = "Article :";
+            this.label4.Text = "Article ";
             // 
             // label2
             // 
             this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(28, 23);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(86, 23);
+            this.label2.Size = new System.Drawing.Size(74, 23);
             this.label2.TabIndex = 101;
-            this.label2.Text = "No of Test :";
+            this.label2.Text = "No of Test";
             // 
             // poid
             // 
             this.poid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.poid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.poid.IsSupportEditMode = false;
-            this.poid.Location = new System.Drawing.Point(326, 23);
+            this.poid.Location = new System.Drawing.Point(253, 23);
             this.poid.Name = "poid";
             this.poid.ReadOnly = true;
-            this.poid.Size = new System.Drawing.Size(100, 23);
+            this.poid.Size = new System.Drawing.Size(153, 23);
             this.poid.TabIndex = 113;
             // 
             // P06_Detail
