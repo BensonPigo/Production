@@ -26,7 +26,8 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             txtMdivision1.Text = Sci.Env.User.Keyword;
-            txtfactory1.Text = Sci.Env.User.Keyword;
+            txtfactoryByM1.Text = Sci.Env.User.Keyword;
+            txtfactoryByM1.mDivisionID = Sci.Env.User.Keyword;
             MyUtility.Tool.SetupCombox(cbbFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
             cbbFabricType.SelectedIndex = 0;
             txtdropdownlist1.SelectedIndex = 0;
@@ -47,7 +48,7 @@ namespace Sci.Production.Warehouse
             approveDate2 = dateRange2.Value2;
             fabrictype = cbbFabricType.SelectedValue.ToString();
             mdivisionid = txtMdivision1.Text;
-            factory = txtfactory1.Text;
+            factory = txtfactoryByM1.Text;
             shift = txtdropdownlist1.SelectedValue.ToString();
 
             condition.Clear();
@@ -60,7 +61,7 @@ namespace Sci.Production.Warehouse
             condition.Append(string.Format(@"M : {0}" + "   "
                 , txtMdivision1.Text));
             condition.Append(string.Format(@"Factory : {0}" + "   "
-                , txtfactory1.Text));
+                , txtfactoryByM1.Text));
             condition.Append(string.Format(@"Shift : {0}" + "   "
                 , txtdropdownlist1.Text));
             condition.Append(string.Format(@"Fabric Type : {0}"
@@ -207,6 +208,15 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             this.HideWaitMessage();
             return true;
+        }
+
+        private void txtMdivision1_Validated(object sender, EventArgs e)
+        {
+            if (!txtMdivision1.Text.EqualString(txtMdivision1.OldValue))
+            {
+                this.txtfactoryByM1.Text = "";
+            }
+            this.txtfactoryByM1.mDivisionID = txtMdivision1.Text;
         }
     }
 }
