@@ -13,9 +13,9 @@ namespace Sci.Production.Subcon
 {
     public partial class R16 : Sci.Win.Tems.PrintForm
     {
-        string artworktype, factory, brandid, style, mdivision, spno1, spno2, ordertype, ratetype, status;
-        int ordertypeindex, ratetypeindex, statusindex;
-        DateTime? Issuedate1, Issuedate2, GLdate1, GLdate2;
+        string artworktype, factory, style, mdivision, spno1, spno2, ordertype, ratetype;
+        int ordertypeindex, statusindex;
+        DateTime? Issuedate1, Issuedate2;//, GLdate1, GLdate2;
         DataTable printData;
 
         public R16(ToolStripMenuItem menuitem)

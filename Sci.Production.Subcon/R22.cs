@@ -13,7 +13,7 @@ namespace Sci.Production.Subcon
 {
     public partial class R22 : Sci.Win.Tems.PrintForm
     {
-        string category, factory, subcon, mdivision, orderby;
+        string category, factory, subcon, mdivision;
         DateTime? issueDate1, issueDate2, approveDate1, approveDate2;
         DataTable printData;
 

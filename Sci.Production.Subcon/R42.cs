@@ -24,7 +24,7 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             comboload();
         }
-        string date = "";
+        //string date = "";
         private void comboload()
         {
             DataTable dtSubprocessID;

@@ -13,8 +13,8 @@ namespace Sci.Production.Subcon
 {
     public partial class R24 : Sci.Win.Tems.PrintForm
     {
-        string artworktype, factory, brandid, style, mdivision, spno1, spno2, ordertype, ratetype, status;
-        int ordertypeindex, ratetypeindex, statusindex;
+        string artworktype, factory, brandid, style, mdivision, spno1, spno2, ordertype, ratetype;
+        int ordertypeindex, statusindex;
         DateTime? APdate1, APdate2, GLdate1, GLdate2;
         DataTable printData;
 

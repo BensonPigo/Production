@@ -13,7 +13,7 @@ namespace Sci.Production.Subcon
 {
     public partial class R13 : Sci.Win.Tems.PrintForm
     {
-        string artworktype, factory, subcon, mdivision, orderby;
+        string artworktype, factory, subcon, mdivision;
         DateTime? issueDate1, issueDate2, approveDate1, approveDate2;
         DataTable printData;
 
