@@ -8001,7 +8001,7 @@
             Template Used.
             </summary>
         </member>
-        <member name="M:Sci.Win.Tems.Input1.DoDetailView(System.Data.DataRow,System.Boolean,System.Boolean)">
+        <member name="M:Sci.Win.Tems.Input1.DoDetailView(System.Data.DataRow,System.Boolean,System.Boolean,Sci.Win.Tems.Input1.DoDetailViewReason)">
             <summary>
             Template Used.
             </summary>
@@ -8015,7 +8015,7 @@
             <param name="e"></param>
             <returns></returns>
         </member>
-        <member name="M:Sci.Win.Tems.Input1.ToDetailUpdate(System.Data.DataRow)">
+        <member name="M:Sci.Win.Tems.Input1.ToDetailUpdate(System.Data.DataRow,System.Boolean)">
             <summary>
             Template Used.
             </summary>
