@@ -25,7 +25,8 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             txtMdivision1.Text = Sci.Env.User.Keyword;
-            textBox1.Text = Sci.Env.User.Keyword;
+            txtfactoryByM1.Text = Sci.Env.User.Keyword;
+            txtfactoryByM1.mDivisionID = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
@@ -40,7 +41,7 @@ namespace Sci.Production.Warehouse
             cfmdate1 = dateRange1.Value1;
             cfmdate2 = dateRange1.Value2;
             mdivisionid = txtMdivision1.Text;
-            factory = textBox1.Text;
+            factory = txtfactoryByM1.Text;
             brand = txtbrand1.Text;
             operation = txtdropdownlist1.SelectedValue.ToString();
 
@@ -181,39 +182,13 @@ where a.ConfirmDate between '{0} 00:00:00.000' and '{1} 23:59:59.999'"
             return true;
         }
 
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtMdivision1_Validated(object sender, EventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,NameEN from Factory where Junk = 0 and MDivisionID = '{0}' order by ID", txtMdivision1.Text), "8,40", this.Text, false, ",");
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel) { return; }
-            textBox1.Text = item.GetSelectedString();
-        }
-
-        private void textBox1_Validating(object sender, CancelEventArgs e)
-        {
-            string str = textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(str) && str != textBox1.OldValue)
+            if (!txtMdivision1.Text.EqualString(txtMdivision1.OldValue))
             {
-                DataTable dt;
-                DualResult result = DBProxy.Current.Select(null, string.Format("select ID,NameEN from Factory where Junk = 0 and MDivisionID = '{0}' and ID = '{1}'", txtMdivision1.Text, str), out dt);
-                if (result.Result)
-                {
-                    if (dt != null && dt.Rows.Count == 0)
-                    {
-                        MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
-                        textBox1.Text = "";
-                        e.Cancel = true;
-                        return;
-                    }
-                }
-                else
-                {
-                    MyUtility.Msg.WarningBox(result.Description);
-                    textBox1.Text = "";
-                    e.Cancel = true;
-                    return;
-                }
+                this.txtfactoryByM1.Text = "";
             }
+                this.txtfactoryByM1.mDivisionID = txtMdivision1.Text;
         }
     }
 }
