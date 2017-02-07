@@ -320,14 +320,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 #endregion 更新庫存數量  ftyinventory
             }
             #region -- 更新表頭狀態資料 --
-
-            sqlupd3 = string.Format(@"update IssueLack set status='Confirmed', editname = '{0}' , editdate = GETDATE()
-                                where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+            string nowtime = DateTime.Now.ToAppDateTimeFormatString();
+            sqlupd3 = string.Format(@"update IssueLack set status='Confirmed', editname = '{0}' , editdate = '{2}'
+                                where id = '{1}'", Env.User.UserID, CurrentMaintain["id"], nowtime);
 
             #endregion 更新表頭狀態資料
             #region -- update Lack.issuelackid & Lack.issuelackdt
             sqlupd4.Append(string.Format(@"update dbo.Lack set dbo.Lack.IssueLackDT='{0}'
-, IssueLackId = '{1}' where id = '{2}';", DateTime.Parse(CurrentMaintain["issuedate"].ToString()).ToShortDateString(), CurrentMaintain["id"], CurrentMaintain["requestid"]));
+, IssueLackId = '{1}' where id = '{2}';", nowtime, CurrentMaintain["id"], CurrentMaintain["requestid"]));
             sqlupd4.Append(Environment.NewLine);
 
             sqlupd4.Append(string.Format(@"update dbo.Lack_Detail  set IssueQty = t.qty

@@ -331,7 +331,9 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             int tq = Convert.ToInt32(CurrentDetailData["TotalQty"]);
             int aq = Convert.ToInt32(CurrentDetailData["AllowanceQty"]);
-            CurrentDetailData["PurchaseQty"] = tq + aq - usq;
+            int temp =tq + aq - usq;
+            if (temp < 0) temp = 0;
+            CurrentDetailData["PurchaseQty"] = temp;
             this.detailgrid.InvalidateRow(RowIndex);
         }
 
@@ -366,14 +368,14 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 dateBox2.Focus();
                 return false;
             }
-            foreach (DataRow dr in DetailDatas)
-            {
-                if (MyUtility.Check.Empty(dr["PurchaseQty"]))
-                {
-                    MyUtility.Msg.WarningBox("<PO Qty> can not be 0");
-                    return false;
-                }
-            }
+            //foreach (DataRow dr in DetailDatas)
+            //{
+            //    if (MyUtility.Check.Empty(dr["PurchaseQty"]))
+            //    {
+            //        MyUtility.Msg.WarningBox("<PO Qty> can not be 0");
+            //        return false;
+            //    }
+            //}
             return base.ClickSaveBefore();
         }
         protected override bool ClickEditBefore()

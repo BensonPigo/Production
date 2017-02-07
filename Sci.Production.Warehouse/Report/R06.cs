@@ -104,7 +104,7 @@ a.factoryid,a.OrderID
 ,b.FTYInQty
 ,b.RequestQty
 ,iif(a.type='L','Lacking','Replacement') sisType
-,(select PPICReason.Description from dbo.PPICReason where type= iif(a.type='L','FL','AL') and PPICReason.ID = b.PPICReasonID) reason
+,(select PPICReason.Description from dbo.PPICReason where type= iif(a.FabricType='F','FL','AL') and PPICReason.ID = b.PPICReasonID) reason
 ,b.IssueQty
 ,a.IssueLackDT
 ,a.ApvDate
@@ -153,7 +153,7 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
             {
                 sqlCmd.Append(string.Format(@" and c.fabrictype = '{0}'", fabrictype));
             }
-
+            sqlCmd.Append(string.Format(@" ORDER BY ApvDate "));
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
