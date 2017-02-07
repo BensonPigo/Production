@@ -21,11 +21,6 @@ namespace Sci.Production.Win
             this.app = app;
             InitializeComponent();
 
-            // 測試用登入
-            this.act.Text = "MIS";
-            this.pwd.Text = "0000";
-            this.comboBox1.Text = "MAI";
-
             ok.Click += ok_Click;
             exit.Click += exit_Click;
 
