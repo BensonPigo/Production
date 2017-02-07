@@ -82,24 +82,26 @@ namespace Sci.Production.Subcon
                 // 建立可以符合回傳的Cursor - Carton
                 if (dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON")
                 {
-                    strSQLCmd = string.Format(@"select 1 as Selected,c.POID ,b.OrderID ,c.StyleID,c.SeasonID ,b.RefNo 
-                                                                ,dbo.getitemdesc('{2}',b.refno) as description 
-                                                                ,'' as threadcolorid
-                                                                ,sum(b.CTNQty) qty, d.UnitID,d.Price, sum(b.CTNQty) * d.Price as amount 
-                                                                ,'' as remark ,a.EstCTNArrive etd ,a.ID as requestid, '' as id
-                                                                ,c.FactoryID ,c.SewInLine
-                                                                from dbo.PackingList a 
-                                                                        , dbo.PackingList_Detail b 
-                                                                        , dbo.Orders c 
-                                                                        , LocalItem d
-                                                                where a.ID = b.ID 
-                                                                    and b.OrderID = c.ID
-                                                                    and b.RefNo = d.RefNo
-                                                                    and a.ApvToPurchase = 1 
-                                                                    and a.LocalPOID =''
-                                                                    and d.localsuppid= '{3}'
-                                                                    and a.factoryid = '{0}'    
-                                                                    and a.mdivisionid='{1}'"
+                    strSQLCmd = string.Format(@"
+select 1 as Selected,c.POID ,b.OrderID ,c.StyleID,c.SeasonID ,b.RefNo 
+,dbo.getitemdesc('{2}',b.refno) as description 
+,'' as threadcolorid
+,sum(b.CTNQty) qty, d.UnitID,d.Price, sum(b.CTNQty) * d.Price as amount 
+,'' as remark ,a.EstCTNArrive etd ,a.ID as requestid, '' as id
+,c.FactoryID ,c.SewInLine
+from dbo.PackingList a 
+        , dbo.PackingList_Detail b 
+        , dbo.Orders c 
+        , LocalItem d
+where a.ID = b.ID 
+    and b.OrderID = c.ID
+    and b.RefNo = d.RefNo
+    and a.ApvToPurchase = 1 
+    and a.LocalPOID =''
+    and d.localsuppid= '{3}'
+    and a.factoryid = '{0}'    
+    and a.mdivisionid='{1}'
+"
                                                                 , Env.User.Factory, Env.User.Keyword, dr_localPO["category"],dr_localPO["localsuppid"]);
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
@@ -133,27 +135,29 @@ namespace Sci.Production.Subcon
                 }
                 else
                 {
-                    strSQLCmd = string.Format(@"select 1 as Selected,c.POID ,a.OrderID ,a.StyleID,a.SeasonID ,b.RefNo 
-                                                                ,dbo.getitemdesc('{2}',b.refno) as description 
-                                                                ,b.threadcolorid
-                                                                ,b.PurchaseQty as qty
-                                                                ,d.UnitID,d.Price
-                                                                ,b.PurchaseQty * d.Price as amount 
-                                                                ,'' as remark ,a.EstArriveDate etd 
-                                                                ,a.OrderID as requestid
-                                                                , '' as id
-                                                                ,c.FactoryID ,c.SewInLine
-                                                                from dbo.ThreadRequisition a 
-                                                                        , dbo.ThreadRequisition_Detail b 
-                                                                        , dbo.Orders c 
-                                                                        , LocalItem d
-                                                                where a.OrderID = b.OrderID 
-                                                                    and b.OrderID = c.ID
-                                                                    and b.RefNo = d.RefNo
-                                                                    and a.status = 'Approved' 
-                                                                    and a.factoryid = '{0}'
-                                                                    and d.localsuppid= '{3}'
-                                                                    and a.Mdivisionid = '{1}'
+                    strSQLCmd = string.Format(@"
+select 1 as Selected,c.POID ,a.OrderID ,a.StyleID,a.SeasonID ,b.RefNo 
+,dbo.getitemdesc('{2}',b.refno) as description 
+,b.threadcolorid
+,b.PurchaseQty as qty
+,d.UnitID,d.Price
+,b.PurchaseQty * d.Price as amount 
+,'' as remark ,a.EstArriveDate etd 
+,a.OrderID as requestid
+, '' as id
+,c.FactoryID ,c.SewInLine
+from dbo.ThreadRequisition a 
+        , dbo.ThreadRequisition_Detail b 
+        , dbo.Orders c 
+        , LocalItem d
+where a.OrderID = b.OrderID 
+    and b.OrderID = c.ID
+    and b.RefNo = d.RefNo
+    and a.status = 'Approved' 
+    and a.factoryid = '{0}'
+    and d.localsuppid= '{3}'
+    and a.Mdivisionid = '{1}'
+and b.PurchaseQty > 0
                                                                 "
                         , Env.User.Factory, Env.User.Keyword, dr_localPO["category"], dr_localPO["localsuppid"]);
 
