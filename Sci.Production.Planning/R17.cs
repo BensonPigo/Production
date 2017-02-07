@@ -688,7 +688,6 @@ namespace Sci.Production.Planning
                 if (null != excel) excel.Quit();
                 return new DualResult(false, "Export excel error.", ex);
             }
-            return result;
         }
     }
 }

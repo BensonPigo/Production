@@ -287,7 +287,7 @@ namespace Sci.Production.Planning
         {
             numericBox4.Value = 0;
            // DataTable dtData;
-            string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, styleid, seasonid, localsuppid, inhouseosp, factoryid,inline_b,inline_e,artworktypeid;
+            string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, styleid, seasonid, localsuppid, inhouseosp, factoryid,inline_b,inline_e;
             sewinline_b = null;
             sewinline_e = null;
             sciDelivery_b = null;

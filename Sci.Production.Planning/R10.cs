@@ -23,10 +23,10 @@ namespace Sci.Production.Planning
 {
     public partial class R10 : Sci.Win.Tems.PrintForm
     {
-         string temfile;
+         //string temfile;
 
         DateTime currentTime = System.DateTime.Now;
-        DataTable dtPrint;
+        //DataTable dtPrint;
 
         private int ReportType = 1;
         private string BrandID = "";

@@ -18,9 +18,9 @@ namespace Sci.Production.Planning
 {
     public partial class R12 : Sci.Win.Tems.PrintForm
     {
-        DataTable dtPrint, dtPrint_List, dtData, tmpData1, tmpData2, tmpData3, tmpData3_SUM, All_tmpData3, All_tmpData3_SUM, tmpData4, All_tmpData4, tmpStyleDetail, tmpOrderDetail;
-        string SqlData1, SqlData2, SqlData3, SqlData3_SUM, All_SqlData3, All_SqlData3_SUM, SqlData4, All_SqlData4, SqlStyleDetail, SqlOrderDetail, strType1 = "";
-        decimal StandardTms = 0; int intRowsStart = 2;
+        DataTable dtPrint, dtData, tmpData1, tmpData2, tmpData3, tmpData3_SUM, All_tmpData3, All_tmpData3_SUM, tmpData4, All_tmpData4, tmpStyleDetail, tmpOrderDetail;
+        string SqlData1, SqlData2, SqlData3, SqlData3_SUM, All_SqlData3, All_SqlData3_SUM, SqlData4, All_SqlData4, SqlStyleDetail, SqlOrderDetail;//, strType1 = "";
+        decimal StandardTms = 0; //int intRowsStart = 2;
 
         public R12(ToolStripMenuItem menuitem)
             : base(menuitem)

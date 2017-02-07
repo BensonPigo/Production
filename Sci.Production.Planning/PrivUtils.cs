@@ -137,7 +137,7 @@ namespace Sci.Production.Report
                     {
                         file_name = rtn;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                     }
                     if (file_name != "")
@@ -178,7 +178,7 @@ namespace Sci.Production.Report
                     {
                         sheet.Range[range].Value2 = array;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
 
                         string ss = string.Format("Export excel error.{0}", it[0].ToString());

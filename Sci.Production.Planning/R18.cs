@@ -16,7 +16,7 @@ namespace Sci.Production.Planning
     public partial class R18 : Sci.Win.Tems.PrintForm
     {
         int selectindex = 0;
-        decimal months;
+        //decimal months;
         string factory, mdivision;
         DateTime? sewingDate1, sewingDate2;
         DataTable printData, dtDateList;

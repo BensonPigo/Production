@@ -15,7 +15,7 @@ namespace Sci.Production.Planning
     public partial class R02 : Sci.Win.Tems.PrintForm
     {
         int selectindex = 0;
-        string factory, mdivision, orderby, spno1, spno2, artworktype,subcons;
+        string factory, mdivision, spno1, spno2, artworktype,subcons;
         DateTime? sciDelivery1, sciDelivery2, buyerDelivery1, buyerDelivery2, sewinline1, sewinline2
             , cutinline1, cutinline2;
         DataTable printData;

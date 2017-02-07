@@ -15,11 +15,11 @@ namespace Sci.Production.Planning
 {
     public partial class R16 : Sci.Win.Tems.PrintForm
     {
-        int selectindex = 0;
-        decimal months;
+        //int selectindex = 0;
+        //decimal months;
         string factory, mdivision;
         DateTime? sewingDate1, sewingDate2, sciDelivery1, sciDelivery2;
-        DataTable printData, dtDateList;
+        DataTable printData;
         StringBuilder condition = new StringBuilder();
         StringBuilder datelist = new StringBuilder();
 
