@@ -15,11 +15,10 @@ namespace Sci.Production.Cutting
 {
     public partial class P02_Print : Sci.Win.Tems.PrintForm
     {
-        string spreadingType = "";
         string S1, S2,Poid="";
         private string keyword = Sci.Env.User.Keyword;
         int SheetCount = 1;
-        DataTable WorkorderTb, WorkorderSizeTb, WorkorderDisTb, WorkorderPatternTb, CutrefTb, RequestTb, CutDisOrderIDTb, CutSizeTb, SizeTb, CutQtyTb, MarkerTB, FabricComboTb,IssueTb;
+        DataTable WorkorderTb, WorkorderSizeTb, WorkorderDisTb, WorkorderPatternTb, CutrefTb, CutDisOrderIDTb, CutSizeTb, SizeTb, CutQtyTb, MarkerTB, FabricComboTb,IssueTb;
         DataRow detDr, OrderDr;
         public P02_Print(DataRow workorderDr,string poid)
         {
@@ -104,7 +103,6 @@ namespace Sci.Production.Cutting
             this.ShowWaitMessage("Starting EXCEL...");
             if (Cutref_ra.Checked) return ByCutrefExcel();
             else return ByRequestExcel();
-            this.HideWaitMessage();
             //return true;
         }
         
@@ -141,8 +139,6 @@ namespace Sci.Production.Cutting
             DataRow[] FabricComboArry;
             DataRow[] IssueArry;
             string pattern = "", line = "";
-            int nDisCount = 0;
-            Double disRow = 0;
             string size = "", Ratio = "";
             int TotConsRowS = 19, TotConsRowE = 20, nSizeColumn = 0;
             foreach (DataRow Cutrefdr in CutrefTb.Rows)

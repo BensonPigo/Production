@@ -16,20 +16,20 @@ namespace Sci.Production.Cutting
         private Dictionary<DataRow, DataTable> articleDictionary = new Dictionary<DataRow, DataTable>();
         Ict.Win.DataGridViewGeneratorTextColumnSettings size = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
-        private string styleukey;
-        private string ukeyFieldName;
-        private string articleTableName;
-        DataTable MarkerList_Article;
+        //private string styleukey;
+        //private string ukeyFieldName;
+        //private string articleTableName;
+        //DataTable MarkerList_Article;
         DataRow MasterData;
-        DataTable ArticleData;
-        bool isOrder = false;
+        //DataTable ArticleData;
+        //bool isOrder = false;
         public P01_MarkerList(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3,string tablename,DataRow MasterData)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             InitializeComponent();
 
-            this.ukeyFieldName = "Order_MarkerListUkey";
-            this.articleTableName = "Order_MarkerList_Article";
+            //this.ukeyFieldName = "Order_MarkerListUkey";
+            //this.articleTableName = "Order_MarkerList_Article";
             this.DetailGridAlias = "Order_MarkerList_SizeQty";
             this.DetailKeyField = "Order_MarkerListUkey";
             

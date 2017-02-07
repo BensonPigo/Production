@@ -178,7 +178,7 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_Qty", "ID")) button5.ForeColor = Color.Blue;
             else button5.ForeColor = Color.Black;
 
-            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "FIR", "POID"));// button10.ForeColor = Color.Blue;
+            //if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "FIR", "POID"));// button10.ForeColor = Color.Blue;
            // else button10.ForeColor = Color.Black;
 
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_ColorCombo", "ID")) button12.ForeColor = Color.Blue;

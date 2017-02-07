@@ -149,7 +149,6 @@ namespace Sci.Production.Cutting
 
         protected override void OnGridRowChanged()
         {
-            DualResult result;
             if (MyUtility.Check.Empty(CurrentData))
             {
                 return;

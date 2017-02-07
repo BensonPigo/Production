@@ -14,7 +14,6 @@ namespace Sci.Production.Cutting
 {
     public partial class P02_PackingMethod : Sci.Win.Subs.Input4
     {
-        private DataTable packingTb;
         private string cuttingid;
         public P02_PackingMethod(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)

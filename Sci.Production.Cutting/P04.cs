@@ -471,7 +471,7 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
                 {
                     System.IO.File.Delete(pathName);
                 }
-                catch (System.IO.IOException ex)
+                catch (System.IO.IOException)
                 {
                     MyUtility.Msg.WarningBox("Delete excel file fail!!");
                 }
