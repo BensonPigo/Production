@@ -88,8 +88,6 @@ from Trade_To_Pms.dbo.InvAdjust as b
 inner join Production.dbo.Factory c on b.FactoryID=c.ID
 where not exists(select id from Production.dbo.InvAdjust as a where a.id = b.id)
 
-
-delete from Production.dbo.InvAdjust
 --InvAdjust_Qty
 --PMS¦h
 --,[Pullout3Qty]
