@@ -59,18 +59,9 @@ namespace Production.Daily
         private void OnRequery()
         {
             DataTable _mailTo;
-            String sqlCmd;
-            //需要改2個地方, 1是撈取 2是save          
-            
-            if (MyUtility.Check.Seek("select * from Production.dbo.MailTo where id='099'"))
-            {
-                sqlCmd = "Select * From dbo.MailTo Where ID = '099'";    
-            }
-            else
-            {
-                sqlCmd = "Select * From dbo.MailTo Where ID = '001'";
-            }
-
+            String sqlCmd;             
+                       
+            sqlCmd = "Select * From dbo.MailTo Where ID = '001'";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out _mailTo);
 
@@ -87,17 +78,10 @@ namespace Production.Daily
         {
             DualResult result;
             String sqlCmd;
-            List<SqlParameter> paras = new List<SqlParameter>();
-            if (MyUtility.Check.Seek("select * from Production.dbo.MailTo where id='099'"))
-            {
-                sqlCmd = "Update dbo.MailTo Set ToAddress = @ToAddress, CcAddress = @CcAddress, Content = @Content Where ID = '099'";
-            }
-            else
-            {
+            List<SqlParameter> paras = new List<SqlParameter>();            
                 sqlCmd = "Update dbo.MailTo Set ToAddress = @ToAddress, CcAddress = @CcAddress, Content = @Content Where ID = '001'";
-            }
-
-            
+ 
+                        
             paras.Add(new SqlParameter("@ToAddress", editToAddress.Text));
             paras.Add(new SqlParameter("@CcAddress", editCcAddress.Text));
             paras.Add(new SqlParameter("@Content", editContent.Text));
