@@ -24,7 +24,8 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            txtfactory1.Text = Sci.Env.User.Keyword;
+            txtfactoryByM1.Text = Sci.Env.User.Keyword;
+            txtfactoryByM1.mDivisionID = Sci.Env.User.Keyword;
             MyUtility.Tool.SetupCombox(cbbFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
             cbbFabricType.SelectedIndex = 0;
             txtdropdownlist1.SelectedIndex = 0;
@@ -43,7 +44,7 @@ namespace Sci.Production.Warehouse
             eta2 = dateRange1.Value2;
             ordertypeindex = txtdropdownlist1.SelectedIndex;
             fabrictype = cbbFabricType.SelectedValue.ToString();
-            factory = txtfactory1.Text;
+            factory = txtfactoryByM1.Text;
             switch (ordertypeindex)
             {
                 case 0:
@@ -72,7 +73,7 @@ namespace Sci.Production.Warehouse
             condition.Append(string.Format(@"Fabric Type : {0}" + Environment.NewLine
                 , cbbFabricType.Text));
             condition.Append(string.Format(@"Factory : {0}" + Environment.NewLine
-                ,txtfactory1.Text));
+                , txtfactoryByM1.Text));
             condition.Append(string.Format(@"Order Type : {0}" + Environment.NewLine
                 , txtdropdownlist1.Text));
             return base.ValidateInput();

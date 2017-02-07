@@ -32,10 +32,10 @@
             this.label4 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
             this.label6 = new Sci.Win.UI.Label();
             this.cbbFabricType = new System.Windows.Forms.ComboBox();
+            this.txtfactoryByM1 = new Sci.Production.Class.txtfactoryByM();
             this.SuspendLayout();
             // 
             // print
@@ -93,15 +93,6 @@
             this.label2.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label2.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(115, 84);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 2;
-            // 
             // txtdropdownlist1
             // 
             this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
@@ -131,13 +122,23 @@
             this.cbbFabricType.Size = new System.Drawing.Size(121, 24);
             this.cbbFabricType.TabIndex = 1;
             // 
+            // txtfactoryByM1
+            // 
+            this.txtfactoryByM1.BackColor = System.Drawing.Color.White;
+            this.txtfactoryByM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM1.Location = new System.Drawing.Point(115, 84);
+            this.txtfactoryByM1.mDivisionID = null;
+            this.txtfactoryByM1.Name = "txtfactoryByM1";
+            this.txtfactoryByM1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactoryByM1.TabIndex = 126;
+            // 
             // R14
             // 
             this.ClientSize = new System.Drawing.Size(531, 182);
+            this.Controls.Add(this.txtfactoryByM1);
             this.Controls.Add(this.cbbFabricType);
             this.Controls.Add(this.txtdropdownlist1);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.txtfactory1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label4);
@@ -152,10 +153,10 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.label8, 0);
             this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.txtfactory1, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.txtdropdownlist1, 0);
             this.Controls.SetChildIndex(this.cbbFabricType, 0);
+            this.Controls.SetChildIndex(this.txtfactoryByM1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -167,9 +168,9 @@
         private Win.UI.Label label4;
         private Win.UI.Label label8;
         private Win.UI.Label label2;
-        private Class.txtfactory txtfactory1;
         private Class.txtdropdownlist txtdropdownlist1;
         private Win.UI.Label label6;
         private System.Windows.Forms.ComboBox cbbFabricType;
+        private Class.txtfactoryByM txtfactoryByM1;
     }
 }
