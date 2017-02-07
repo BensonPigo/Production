@@ -91,8 +91,22 @@ namespace Sci.Production.PPIC
                 }
                 needSave = false;
             }
-            QueryData();          
-            
+            QueryData();
+            this.grid1.AutoResizeColumn(0);
+            this.grid1.AutoResizeColumn(1);
+            this.grid1.AutoResizeColumn(2);
+            this.grid1.AutoResizeColumn(4);
+            this.grid1.AutoResizeColumn(5);
+            this.grid1.AutoResizeColumn(6);
+            this.grid1.AutoResizeColumn(7);
+            this.grid1.AutoResizeColumn(8);
+            this.grid1.AutoResizeColumn(9);
+            this.grid1.AutoResizeColumn(10);
+            this.grid1.AutoResizeColumn(11);
+            this.grid1.AutoResizeColumn(12);
+            this.grid1.AutoResizeColumn(13);
+            this.grid1.AutoResizeColumn(14);
+            this.grid1.AutoResizeColumn(15);
         }
 
         private void QueryData()
