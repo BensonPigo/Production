@@ -135,6 +135,8 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
             {
                 dateBox1.Value = Convert.ToDateTime(gridData.Rows[0]["TransferDate"]);
             }
+
+            this.grid1.AutoResizeColumns();
         }
 
         //Close
