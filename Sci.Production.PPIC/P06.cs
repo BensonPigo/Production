@@ -310,6 +310,7 @@ namespace Sci.Production.PPIC
                 }
             }
             listControlBindingSource1.DataSource = gridData;
+            this.grid1.AutoResizeColumns();
         }
 
         //Find Now

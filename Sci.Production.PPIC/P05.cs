@@ -241,6 +241,7 @@ iif(AlloQty = OrderQty,'','*') as Inconsistent from tempData");
             dateBox1.ReadOnly = true;
             button1.Enabled = false;
             button5.Enabled = true;
+            this.grid1.AutoResizeColumns();
         }
 
         //Quit or Quit without Save
