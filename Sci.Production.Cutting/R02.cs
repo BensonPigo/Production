@@ -767,7 +767,8 @@ drop table #tmpall");
                         {
                             objSheets.get_Range("A" + (7 + j), "B" + (7 + j)).Merge(false);//合併欄位
                             objSheets.get_Range("A" + (7 + j), "A" + (7 + j)).Font.Bold = true;//指定粗體
-                            objSheets.Cells[7 + j, 1] = "SCI Delivery: " + Convert.ToDateTime(printData[i].Rows[j]["SCI Delivery"]).ToString("d");
+                            if (!MyUtility.Check.Empty(printData[i].Rows[j]["SCI Delivery"]))
+                                objSheets.Cells[7 + j, 1] = "SCI Delivery: " + Convert.ToDateTime(printData[i].Rows[j]["SCI Delivery"]).ToString("d");
                         }
 
                         if (printData[i].Rows[j]["Ref#"].Empty())
