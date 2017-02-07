@@ -153,6 +153,7 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                     }
                 }
             };
+
             ts4.EditingMouseDown += (s, e) =>
             {
                 if (!this.EditMode) { return; } //原本有值就不做任何事
@@ -223,16 +224,15 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                 }
                 if (CurrentDetailData["InhouseOSP"].ToString() == "O" && e.FormattedValue.ToString() == "")
                 {
-                    this.CurrentDetailData["localsuppname"] = "";
-                    this.CurrentDetailData["localsuppid"] = "";
+                    CurrentDetailData["localsuppname"] = "";
+                    CurrentDetailData["localsuppid"] = "";
+                    if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"] = DBNull.Value; }
                 }
                 if (CurrentDetailData["InhouseOSP"].ToString() == "I" && e.FormattedValue.ToString() == "")
                 {
                     CurrentDetailData["localsuppname"] = "";
                     CurrentDetailData["localsuppid"] = "";
                 }
-                  if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"] = DBNull.Value; }
-              
             };
 
             Ict.Win.UI.DataGridViewComboBoxColumn col_inhouse_osp;
@@ -259,9 +259,13 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                                                     , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]), null);
                         CurrentDetailData["inhouseOSP"] = e.FormattedValue;
                     }
-                   
+                    if (e.FormattedValue.ToString() == "O" && CurrentDetailData["localsuppid"].ToString() == "")
+                    {
+                        CurrentDetailData["localsuppname"] = "";
+                        CurrentDetailData["localsuppid"] = "";
+
                         if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"] = DBNull.Value; }
-                       
+                    }      
                 }
             };
             //下拉選項顯示
@@ -362,6 +366,18 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                 this.CurrentDetailData["localsuppid"] = dt.Rows[0]["LocalSuppId"].ToString();
 
             }
+            //else if (CurrentDetailData["InhouseOSP"].ToString() == "O" && CurrentDetailData["localsuppid"].ToString() == "")
+            //{
+            //   this.CurrentDetailData["localsuppname"] = "";
+            //   this.CurrentDetailData["localsuppid"] = "";
+                
+            //}
+            //else if (CurrentDetailData["InhouseOSP"].ToString() == "I" && CurrentDetailData["localsuppid"].ToString() == "")
+            //{
+            //    this.CurrentDetailData["localsuppname"] = "";
+            //    this.CurrentDetailData["localsuppid"] = "";
+                
+           // }
             CurrentDetailData["inhouseOSP"] = newValue;
         }
 
