@@ -1834,8 +1834,12 @@ namespace Sci.Production.Cutting
             if (updateConsPC == true)
                 CurrentDetailData["Conspc"] = Conspc;
             if (updateCons == true)
-                CurrentDetailData["Cons"] = MarkerLengthNum * Convert.ToInt32(CurrentDetailData["Layer"]);
-
+            {
+                if (MyUtility.Check.Empty(CurrentDetailData["Layer"]))
+                    CurrentDetailData["Cons"] = MarkerLengthNum * 0;
+                else
+                    CurrentDetailData["Cons"] = MarkerLengthNum * Convert.ToInt32(CurrentDetailData["Layer"]);
+            }
             //int mllint = int.Parse(numericBox_MarkerLengthY.Text);
             //string mll = mllint.ToString("D2");
             //string mla = mll + "Y" + textBox_MarkerLengthE.Text;

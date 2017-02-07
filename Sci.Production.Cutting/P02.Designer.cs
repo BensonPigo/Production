@@ -184,7 +184,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(4268, 561);
+            this.refresh.Location = new System.Drawing.Point(4325, 561);
             // 
             // detailgridcont
             // 
@@ -193,7 +193,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(3, 101);
-            this.detailgridcont.Size = new System.Drawing.Size(631, 593);
+            this.detailgridcont.Size = new System.Drawing.Size(629, 596);
             // 
             // detail2
             // 
@@ -704,7 +704,7 @@
             this.sizeratio_grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.sizeratio_grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.sizeratio_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.sizeratio_grid.Location = new System.Drawing.Point(0, 281);
+            this.sizeratio_grid.Location = new System.Drawing.Point(1, 281);
             this.sizeratio_grid.Name = "sizeratio_grid";
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
@@ -784,7 +784,7 @@
             this.distribute_grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.distribute_grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.distribute_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.distribute_grid.Location = new System.Drawing.Point(0, 416);
+            this.distribute_grid.Location = new System.Drawing.Point(1, 416);
             this.distribute_grid.Name = "distribute_grid";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
@@ -837,7 +837,7 @@
             this.qtybreak_grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.qtybreak_grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.qtybreak_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.qtybreak_grid.Location = new System.Drawing.Point(1, 551);
+            this.qtybreak_grid.Location = new System.Drawing.Point(1, 550);
             this.qtybreak_grid.Name = "qtybreak_grid";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -1120,6 +1120,7 @@
             this.IsSupportNew = false;
             this.KeyField1 = "id";
             this.Name = "P02";
+            this.Text = "() ";
             this.WorkAlias = "Cutting";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
