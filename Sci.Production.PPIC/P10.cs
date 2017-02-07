@@ -653,6 +653,7 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
         {
             base.OnDetailEntered();
             lbStatus.Text = CurrentMaintain["status"].ToString().Trim();
+            this.detailgrid.AutoResizeColumns();
         }
 
 
