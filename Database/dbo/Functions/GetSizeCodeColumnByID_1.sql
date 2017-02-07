@@ -1,8 +1,8 @@
 ﻿
-Create FUNCTION [dbo].[GetSizeCodeColumnByID]
+CREATE FUNCTION [dbo].[GetSizeCodeColumnByID]
 (
 	@OrderID varchar(13) = ''
-	,@ByType bit = 0 --0單張 , 1 By CustCDID , 2 By PO
+	,@ByType int = 0 --0單張 , 1 By CustCDID , 2 By PO
 )
 RETURNS @tbl table(SizeGroup varchar(1),Seq varchar(2),SizeCode varchar(8))
 AS
