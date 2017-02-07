@@ -13,7 +13,8 @@ namespace Sci.Production.PPIC
 {
     public partial class R03 : Sci.Win.Tems.PrintForm
     {
-        string style,season,brand,custcd,zone,mDivision,factory,subProcess;
+        string style,season,brand,custcd;
+        string zone, mDivision, factory, subProcess;
         bool bulk, sample, material, forecast,hisOrder,artwork,pap,seperate,poCombo;
         DateTime? buyerDlv1, buyerDlv2, sciDlv1, sciDlv2, cutoff1, cutoff2, custRQS1, custRQS2, planDate1, planDate2, orderCfm1, orderCfm2;
         DataTable printData, subprocessColumnName, orderArtworkData;

@@ -664,7 +664,7 @@ If the replacement report can be accept and cfm to proceed, please approve it th
                     {
                         System.IO.File.Delete(excelFile);
                     }
-                    catch (System.IO.IOException e)
+                    catch (System.IO.IOException)
                     {
                         MyUtility.Msg.WarningBox("Delete excel file fail!!");
                     }
