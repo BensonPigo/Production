@@ -219,6 +219,17 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                             return;
                         }  
                     }
+                    
+                }
+                if (CurrentDetailData["InhouseOSP"].ToString() == "O" && e.FormattedValue.ToString() == "")
+                {
+                    this.CurrentDetailData["localsuppname"] = "";
+                    this.CurrentDetailData["localsuppid"] = "";
+                }
+                if (CurrentDetailData["InhouseOSP"].ToString() == "I" && e.FormattedValue.ToString() == "")
+                {
+                    CurrentDetailData["localsuppname"] = "";
+                    CurrentDetailData["localsuppid"] = "";
                 }
                   if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"] = DBNull.Value; }
               
@@ -248,9 +259,9 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                                                     , CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]), null);
                         CurrentDetailData["inhouseOSP"] = e.FormattedValue;
                     }
-                    
+                   
                         if (CurrentDetailData["mockupdate"].ToString() != "") { CurrentDetailData["mockupdate"] = DBNull.Value; }
-                            
+                       
                 }
             };
             //下拉選項顯示
@@ -342,7 +353,7 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                 DualResult result = DBProxy.Current.Select(null, suppidAndName, out dt);
                 if (dt.Rows.Count == 0)
                 {
-                    this.CurrentDetailData["localsuppname"] ="";
+                    this.CurrentDetailData["localsuppname"] = "";
                     this.CurrentDetailData["localsuppid"] = "";
                     CurrentDetailData["inhouseOSP"] = newValue;
                     return;
