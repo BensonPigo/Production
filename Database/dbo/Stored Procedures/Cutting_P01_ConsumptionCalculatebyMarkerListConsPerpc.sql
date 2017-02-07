@@ -5,10 +5,12 @@ AS
 BEGIN
 
 	--抓取ID為POID
+	select @OrderID=POID FROM dbo.Orders where ID = @OrderID
+
 	SELECT
 	ORDERNO=RTRIM(POID) + d.spno ,STYLENO=StyleID+'-'+SeasonID ,QTY=SUM(Qty) ,FACTORY=FactoryID	
 	FROM dbo.Orders
-	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Trade.dbo.Orders WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) d
+	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Production.dbo.Orders WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) d
 	WHERE POID = @OrderID
 	GROUP BY POID,d.spno,StyleID,SeasonID,FactoryID
 	
@@ -38,7 +40,9 @@ BEGIN
 	inner join Order_BOA on Order_BOA.Id = Orders.ID
 	inner join Fabric on Fabric.SCIRefno = Order_BOA.SCIRefno
 	--inner join dbo.GetColorSizeQty(@OrderID) csq on Order_BOA.PatternPanel = csq.Patternpanel and CHARINDEX(Orders.id+'/',csq.OrderList) > 0
-	outer apply(select SizeCode,SizeDesc,ColorDesc,ColorID,Seq,sum(Qty) as Qty from dbo.GetColorSizeQty(@OrderID) tmp where tmp.PatternPanel = Order_BOA.PatternPanel and Order_BOA.SizeItem = tmp.SizeItem group by SizeCode,SizeDesc,ColorDesc,ColorID,Seq ) csq
+	outer apply(select case when SizeItem_Elastic <> '' then Order_BOA.SizeItem_Elastic else Order_BOA.SizeItem end as ssitem) ssitem
+	outer apply(select SizeCode,SizeDesc,ColorDesc,ColorID,Seq,sum(Qty) as Qty from dbo.GetColorSizeQty(@OrderID) tmp 
+	where tmp.PatternPanel = Order_BOA.PatternPanel and ssitem = tmp.SizeItem group by SizeCode,SizeDesc,ColorDesc,ColorID,Seq ) csq
 	outer apply(select dbo.GetUnitQty(Orders.SizeUnit ,Fabric.UsageUnit ,dbo.GetDigitalValue(csq.SizeDesc)) as mSizeSpec) aa
 	inner join Fabric_Supp on Fabric_Supp.SuppID = Order_BOA.SuppID and Fabric.SCIRefno = Fabric_Supp.SCIRefno
 	outer apply( select ROUND(Order_BOA.ConsPC * aa.mSizeSpec * csq.Qty ,2) as UseCons) bb
@@ -53,7 +57,7 @@ BEGIN
 	--mLossQty,mFocQty,mPlusN
 	outer apply (select mLossQty=dbo.GetCeiling(dbo.GetUnitQty(Fabric.UsageUnit,Fabric_Supp.POUnit,LossYds),cc.mUsageUnit,cc.mStep)
 		,mFocQty=LossYds_FOC,mPlusN=PlusName from #LossAcc tmp
-		where tmp.SciRefNo = Order_BOA.SCIRefno AND tmp.ColorID = csq.ColorID --and tmp.Article = csq.Article
+		where tmp.SciRefNo = Order_BOA.SCIRefno --AND tmp.ColorID = csq.ColorID --and tmp.Article = csq.Article
 	) ee
 
 	where Orders.poid = @OrderID and SizeItem <> '' and BomTypeCalculate = 1
