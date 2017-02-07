@@ -84,11 +84,13 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"SELECT a.MDivisionID,a.factoryid,a.OrderID
+            sqlCmd.Append(string.Format(@"SELECT --a.MDivisionID,
+a.factoryid,a.OrderID
 ,(select styleid from dbo.orders where id = a.orderid) style
 ,a.id, (select SewingCell from dbo.SewingLine where id= a.SewingLineID and FactoryID = a.FactoryID) cell
 ,a.SewingLineID
-,b.seq1,b.seq2
+--,b.seq1,b.seq2
+,concat(b.seq1, ' ', b.seq2) as seq
 ,c.Refno
 ,(select t.MtlTypeID from dbo.fabric t where t.SCIRefno = c.SCIRefno) content
 ,dbo.getMtlDesc(c.id,c.seq1,c.seq2,2,0) [description]
@@ -174,12 +176,31 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
                 return false;
             }
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R06.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R06.xltx", 3, showExcel: false, showSaveMsg: true, excelApp: objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R06.xltx", 4, showExcel: false, showSaveMsg: true, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[1, 1] = condition.ToString();   // 條件字串寫入excel
+            //objSheets.Cells[1, 1] = condition.ToString();   // 條件字串寫入excel
+            //Lacking Date (3, 2)
+            objSheets.Cells[3, 2] = string.Format(@"{0} ~ {1}" + "   "
+                , Convert.ToDateTime(issuedate1).ToString("d")
+                , Convert.ToDateTime(issuedate2).ToString("d"));
+            //Approve Date (3, 4)
+            objSheets.Cells[3, 4] = string.Format(@"{0} ~ {1}" + "   "
+                , Convert.ToDateTime(approveDate1).ToString("d")
+                , Convert.ToDateTime(approveDate2).ToString("d"));
+            //Shift (3, 6)
+            objSheets.Cells[3, 6] = string.Format(@"{0}" + "   "
+                , txtdropdownlist1.Text);
+            //Date (3, 11)
+            objSheets.Cells[3, 11] = string.Format("{0:d}", DateTime.Now);
 
             this.ShowWaitMessage("Excel Processing...");
-            for (int i = 1; i <= printData.Rows.Count; i++) objSheets.Cells[i + 3, 12] = ((string)((Excel.Range)objSheets.Cells[i + 3, 12]).Value).Trim();
+            for (int i = 1; i <= printData.Rows.Count; i++) {
+                string str = objSheets.Cells[i + 4, 12].Value;
+                if(!MyUtility.Check.Empty(str))
+                    objSheets.Cells[i + 4, 12] = str.Trim(); 
+            }
+            objSheets.Columns.AutoFit();
+            objSheets.Rows.AutoFit();
             objApp.Visible = true;
 
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
