@@ -55,7 +55,6 @@
             this.dateBox3 = new Sci.Win.UI.DateBox();
             this.dateBox4 = new Sci.Win.UI.DateBox();
             this.editBox1 = new Sci.Win.UI.EditBox();
-            this.label23 = new Sci.Win.UI.Label();
             this.button1 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
             this.button3 = new Sci.Win.UI.Button();
@@ -63,14 +62,14 @@
             this.dateBox6 = new Sci.Win.UI.DateBox();
             this.textBox3 = new Sci.Win.UI.TextBox();
             this.button4 = new Sci.Win.UI.Button();
-            this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.txtcustcd1 = new Sci.Production.Class.txtcustcd();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
             this.labCofirmed = new Sci.Win.UI.Label();
+            this.txtcountry1 = new Sci.Production.Class.txtcountry();
+            this.txtcustcd1 = new Sci.Production.Class.txtcustcd();
+            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -100,7 +99,6 @@
             this.masterpanel.Controls.Add(this.button3);
             this.masterpanel.Controls.Add(this.button2);
             this.masterpanel.Controls.Add(this.button1);
-            this.masterpanel.Controls.Add(this.label23);
             this.masterpanel.Controls.Add(this.editBox1);
             this.masterpanel.Controls.Add(this.displayBox9);
             this.masterpanel.Controls.Add(this.displayBox8);
@@ -161,7 +159,6 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBox8, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox9, 0);
             this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label23, 0);
             this.masterpanel.Controls.SetChildIndex(this.button1, 0);
             this.masterpanel.Controls.SetChildIndex(this.button2, 0);
             this.masterpanel.Controls.SetChildIndex(this.button3, 0);
@@ -518,20 +515,6 @@
             this.editBox1.Size = new System.Drawing.Size(415, 50);
             this.editBox1.TabIndex = 4;
             // 
-            // label23
-            // 
-            this.label23.BackColor = System.Drawing.Color.Transparent;
-            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.label23.Lines = 0;
-            this.label23.Location = new System.Drawing.Point(840, 35);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(148, 39);
-            this.label23.TabIndex = 47;
-            this.label23.Text = "Shipping Lock";
-            this.label23.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label23.TextStyle.BorderColor = System.Drawing.Color.Red;
-            this.label23.TextStyle.Color = System.Drawing.Color.Red;
-            // 
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
@@ -602,20 +585,6 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
-            // txtshipmode1
-            // 
-            this.txtshipmode1.BackColor = System.Drawing.Color.White;
-            this.txtshipmode1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
-            this.txtshipmode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshipmode1.FormattingEnabled = true;
-            this.txtshipmode1.IsSupportUnselect = true;
-            this.txtshipmode1.Location = new System.Drawing.Point(83, 111);
-            this.txtshipmode1.Name = "txtshipmode1";
-            this.txtshipmode1.Size = new System.Drawing.Size(121, 24);
-            this.txtshipmode1.TabIndex = 3;
-            this.txtshipmode1.UseFunction = "ORDER";
-            this.txtshipmode1.Validated += new System.EventHandler(this.txtshipmode1_Validated);
-            // 
             // label2
             // 
             this.label2.Lines = 0;
@@ -643,16 +612,31 @@
             this.label4.TabIndex = 57;
             this.label4.Text = "Destination";
             // 
-            // txtbrand1
+            // labCofirmed
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(83, 31);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(78, 23);
-            this.txtbrand1.TabIndex = 0;
-            this.txtbrand1.Validated += new System.EventHandler(this.txtbrand1_Validated);
+            this.labCofirmed.BackColor = System.Drawing.Color.Transparent;
+            this.labCofirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
+            this.labCofirmed.Lines = 0;
+            this.labCofirmed.Location = new System.Drawing.Point(839, 14);
+            this.labCofirmed.Name = "labCofirmed";
+            this.labCofirmed.Size = new System.Drawing.Size(148, 39);
+            this.labCofirmed.TabIndex = 58;
+            this.labCofirmed.Text = "Shipping Lock";
+            this.labCofirmed.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labCofirmed.TextStyle.BorderColor = System.Drawing.Color.Red;
+            this.labCofirmed.TextStyle.Color = System.Drawing.Color.Red;
+            this.labCofirmed.Visible = false;
+            // 
+            // txtcountry1
+            // 
+            this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Dest", true));
+            this.txtcountry1.DisplayBox1Binding = "";
+            this.txtcountry1.Location = new System.Drawing.Point(83, 85);
+            this.txtcountry1.Name = "txtcountry1";
+            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
+            this.txtcountry1.TabIndex = 2;
+            this.txtcountry1.TextBox1Binding = "";
+            this.txtcountry1.Validated += new System.EventHandler(this.txtcountry1_Validated);
             // 
             // txtcustcd1
             // 
@@ -666,30 +650,30 @@
             this.txtcustcd1.TabIndex = 1;
             this.txtcustcd1.Validated += new System.EventHandler(this.txtcustcd1_Validated);
             // 
-            // txtcountry1
+            // txtbrand1
             // 
-            this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Dest", true));
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Location = new System.Drawing.Point(83, 85);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 2;
-            this.txtcountry1.TextBox1Binding = "";
-            this.txtcountry1.Validated += new System.EventHandler(this.txtcountry1_Validated);
+            this.txtbrand1.BackColor = System.Drawing.Color.White;
+            this.txtbrand1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
+            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand1.Location = new System.Drawing.Point(83, 31);
+            this.txtbrand1.Name = "txtbrand1";
+            this.txtbrand1.Size = new System.Drawing.Size(78, 23);
+            this.txtbrand1.TabIndex = 0;
+            this.txtbrand1.Validated += new System.EventHandler(this.txtbrand1_Validated);
             // 
-            // labCofirmed
+            // txtshipmode1
             // 
-            this.labCofirmed.BackColor = System.Drawing.Color.Transparent;
-            this.labCofirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.labCofirmed.Lines = 0;
-            this.labCofirmed.Location = new System.Drawing.Point(839, 4);
-            this.labCofirmed.Name = "labCofirmed";
-            this.labCofirmed.Size = new System.Drawing.Size(148, 39);
-            this.labCofirmed.TabIndex = 58;
-            this.labCofirmed.Text = "Shipping Lock";
-            this.labCofirmed.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
-            this.labCofirmed.TextStyle.BorderColor = System.Drawing.Color.Red;
-            this.labCofirmed.TextStyle.Color = System.Drawing.Color.Red;
+            this.txtshipmode1.BackColor = System.Drawing.Color.White;
+            this.txtshipmode1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
+            this.txtshipmode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtshipmode1.FormattingEnabled = true;
+            this.txtshipmode1.IsSupportUnselect = true;
+            this.txtshipmode1.Location = new System.Drawing.Point(83, 111);
+            this.txtshipmode1.Name = "txtshipmode1";
+            this.txtshipmode1.Size = new System.Drawing.Size(121, 24);
+            this.txtshipmode1.TabIndex = 3;
+            this.txtshipmode1.UseFunction = "ORDER";
+            this.txtshipmode1.Validated += new System.EventHandler(this.txtshipmode1_Validated);
             // 
             // P03
             // 
@@ -767,7 +751,6 @@
         private Win.UI.Button button3;
         private Win.UI.Button button2;
         private Win.UI.Button button1;
-        private Win.UI.Label label23;
         private Win.UI.EditBox editBox1;
         private Class.txtcountry txtcountry1;
         private Class.txtcustcd txtcustcd1;

@@ -513,6 +513,7 @@
             this.labConfirmed.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
             this.labConfirmed.TextStyle.BorderColor = System.Drawing.Color.Red;
             this.labConfirmed.TextStyle.Color = System.Drawing.Color.Red;
+            this.labConfirmed.Visible = false;
             // 
             // P06
             // 

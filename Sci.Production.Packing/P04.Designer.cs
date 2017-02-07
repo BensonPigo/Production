@@ -57,7 +57,6 @@
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.numericBox3 = new Sci.Win.UI.NumericBox();
             this.numericBox4 = new Sci.Win.UI.NumericBox();
-            this.label23 = new Sci.Win.UI.Label();
             this.button1 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
             this.button3 = new Sci.Win.UI.Button();
@@ -121,9 +120,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.label23);
             this.masterpanel.Size = new System.Drawing.Size(992, 230);
-            this.masterpanel.Controls.SetChildIndex(this.label23, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -513,20 +510,6 @@
             0,
             0});
             // 
-            // label23
-            // 
-            this.label23.BackColor = System.Drawing.Color.Transparent;
-            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.label23.Lines = 0;
-            this.label23.Location = new System.Drawing.Point(845, 37);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(148, 25);
-            this.label23.TabIndex = 48;
-            this.label23.Text = "Shipping Lock";
-            this.label23.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label23.TextStyle.BorderColor = System.Drawing.Color.Red;
-            this.label23.TextStyle.Color = System.Drawing.Color.Red;
-            // 
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
@@ -628,7 +611,7 @@
             this.labConfirmed.BackColor = System.Drawing.Color.Transparent;
             this.labConfirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
             this.labConfirmed.Lines = 0;
-            this.labConfirmed.Location = new System.Drawing.Point(844, 5);
+            this.labConfirmed.Location = new System.Drawing.Point(839, 28);
             this.labConfirmed.Name = "labConfirmed";
             this.labConfirmed.Size = new System.Drawing.Size(148, 25);
             this.labConfirmed.TabIndex = 55;
@@ -713,7 +696,6 @@
         private Win.UI.Button button3;
         private Win.UI.Button button2;
         private Win.UI.Button button1;
-        private Win.UI.Label label23;
         private Win.UI.DisplayBox displayBox5;
         private Win.UI.NumericBox numericBox1;
         private Class.txtfactory txtfactory1;

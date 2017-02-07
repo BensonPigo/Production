@@ -47,6 +47,8 @@ namespace Sci.Production.Packing
         {
             base.OnDetailEntered();
 
+            labConfirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"].ToString()) ? false : true;
+
             DataRow dr1;
             string sqlStatus = string.Format(@"select status from PackingList where id='{0}'", CurrentMaintain["ID"].ToString());
             if (MyUtility.Check.Seek(sqlStatus, out dr1))

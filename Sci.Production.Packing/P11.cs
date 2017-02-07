@@ -28,6 +28,7 @@ namespace Sci.Production.Packing
             this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;
+          
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -45,6 +46,8 @@ where od.ID = '{0}'", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+
+            labConfirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"]) ? false : true;
 
             //帶出Orders相關欄位
             sqlCmd = string.Format("select StyleID,SeasonID from Orders where ID = '{0}'", CurrentMaintain["ID"].ToString());

@@ -63,15 +63,17 @@ namespace Sci.Production.Packing
             //Purchase Ctn
             displayBox5.Value = MyUtility.Check.Empty(CurrentMaintain["LocalPOID"]) ? "" : "Y";
 
-            //Shipping Lock是否可看見
-            label23.Visible = MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]) ? false : true;
-
+            labConfirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"]) ? false : true;
             DataRow dr;
-            string sqlStatus = string.Format(@"select status from PackingList where id='{0}'", CurrentMaintain["ID"].ToString());
-            if (MyUtility.Check.Seek(sqlStatus,out dr))
+            string sqlStatus = string.Format(@"select * from PackingList where id='{0}'", CurrentMaintain["id"].ToString());
+            if (MyUtility.Check.Seek(sqlStatus, out dr))
             {
-                labConfirmed.Text = dr["Status"].ToString();
+                if (dr["Status"].ToString().ToUpper() == "NEW" && MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labConfirmed.Text = "New";
+                else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && !MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labConfirmed.Text = "Confirmed";
+                else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labConfirmed.Text = "Confirmed";
+                else labConfirmed.Text = "Shipping Lock";
             }
+
         }
 
         protected override void OnDetailGridSetup()
