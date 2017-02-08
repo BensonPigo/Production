@@ -324,7 +324,6 @@ namespace Sci.Production.Quality
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            string cmd = "";
             DualResult res = new DualResult(false);
 
             if ("Fabric".EqualString(MaterialType))

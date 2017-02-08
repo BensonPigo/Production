@@ -21,7 +21,6 @@ namespace Sci.Production.Quality
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
 
-        string find = "";
         int index;
         DataRow[] find_dr;
         public P03(ToolStripMenuItem menuitem) : base(menuitem)

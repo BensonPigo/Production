@@ -30,7 +30,6 @@ namespace Sci.Production.Quality
         DualResult result;
         System.Data.DataTable dtt;
         System.Data.DataTable dt;
-        System.Data.DataTable dt_All;
         System.Data.DataTable dtt_All;
         System.Data.DataTable alltemp;
         System.Data.DataTable alltemp_All;
@@ -50,7 +49,6 @@ namespace Sci.Production.Quality
         System.Data.DataTable allFactory = null;
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            dt_All = null;
             dtt_All = null;
             dtt = null;
             dt = null;

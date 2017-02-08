@@ -1,6 +1,5 @@
 ﻿using Ict.Win;
 using System.Data;
-using Ict.Win;
 using Sci.Data;
 using Sci.Win.Tools;
 using System;

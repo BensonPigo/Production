@@ -16,7 +16,6 @@ namespace Sci.Production.Quality
     public partial class B01 : Sci.Win.Tems.Input1
     {
 
-        DualResult result;
         public B01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

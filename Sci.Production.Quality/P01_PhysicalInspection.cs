@@ -24,7 +24,6 @@ namespace Sci.Production.Quality
         private DataRow maindr;
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
-        private bool firstQuery = true;
         DataTable Fir_physical_Defect;
         public P01_PhysicalInspection(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3,DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)

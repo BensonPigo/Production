@@ -120,28 +120,10 @@ namespace Sci.Production.Quality
             datas.Columns.Add("POID", typeof(string));
             datas.Columns.Add("SEQ1", typeof(string));
             datas.Columns.Add("SEQ2", typeof(string));
-            //datas.Columns.Add("WeightM2", typeof(decimal));
-            DataTable dt;
-            //string aaa=CurrentData["SCIRefno"].ToString();
-            
 
             foreach (DataRow dr in datas.Rows)
             {
-                dr["Name"] = MyUtility.GetValue.Lookup("Name", dr["Inspector"].ToString(), "Pass1", "ID");
-//                //待FIR.SCIRefno 資料正確在處理 .willy 20161008
-//                DBProxy.Current.Select(null, string.Format(@"
-//select WeightM2 from Fabric a inner join Fabric_Supp b on a.SCIRefno=b.SCIRefno 
-//where a.SCIRefno='{0}'
-//and b.SuppID='{1}'", maindr["SCIRefno"].ToString(), maindr["Suppid"].ToString()),out dt );
-
-//                if (dt.Rows.Count==0)
-//                {
-//                    dr["WeightM2"] = 0;
-//                }
-//                else
-//                {
-//                    dr["WeightM2"] = dt.Rows[0]["WeightM2"];                
-//                }                
+                dr["Name"] = MyUtility.GetValue.Lookup("Name", dr["Inspector"].ToString(), "Pass1", "ID");            
                 dr["poid"] = maindr["poid"];
                 dr["SEQ1"] = maindr["SEQ1"];
                 dr["SEQ2"] = maindr["SEQ2"];
@@ -500,7 +482,6 @@ namespace Sci.Production.Quality
             DataTable dt;
             DualResult xresult;
             if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,WeightM2,averageWeightM2,Difference,Result,Inspdate,Inspector,Remark from FIR_Weight where id='{0}'", textID.Text), out dt))
-            //if (xresult = DBProxy.Current.Select("Production", "select Roll,Dyelot,WeightM2,averageWeightM2,Difference,Result,Inspdate,Inspector,Remark from FIR_Weight  where id in ('492803')", out dt)) //測試用
             {
                 if (dt.Rows.Count <= 0)
                 {
@@ -514,8 +495,7 @@ namespace Sci.Production.Quality
             string SeasonID = "";
             string ContinuityEncode = "";
             DualResult xresult1;
-            //if (xresult1 = DBProxy.Current.Select("Production",
-            //    "select Roll,Dyelot,WeightM2,averageWeightM2,Difference,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID from FIR_Weight a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID in ('492803')",out dt1))
+           
             if (xresult1 = DBProxy.Current.Select("Production",string.Format(
                "select Roll,Dyelot,WeightM2,averageWeightM2,Difference,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID from FIR_Weight a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'",textID.Text), out dt1))          
             {

@@ -14,8 +14,7 @@ using Sci.Data;
 namespace Sci.Production.Quality
 {
     public partial class B03 : Sci.Win.Tems.Input1
-    {
-        DualResult result;
+    {        
         public B03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

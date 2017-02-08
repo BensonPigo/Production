@@ -41,7 +41,7 @@ namespace Sci.Production.Quality
             this.combo_Brand.SelectedIndex = 0;
             print.Enabled = false;
         }
-        string Brand; string s;
+        string Brand; 
         string Year;
         string Report_Type1;
         string Report_Type2;

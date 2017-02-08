@@ -15,7 +15,7 @@ namespace Sci.Production.Quality
     public partial class R06 : Sci.Win.Tems.PrintForm
     {
         DateTime? DateArrStart; DateTime? DateArrEnd;
-        List<SqlParameter> lis; DualResult res;
+        List<SqlParameter> lis; 
         DataTable dt; string cmd; string Supp,refno,brand,season;
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)

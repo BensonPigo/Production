@@ -69,8 +69,7 @@ namespace Sci.Production.Quality
 
         System.Data.DataTable[] alldatatable;
         System.Data.DataTable fm = null;
-        System.Data.DataTable datatab;
-        System.Data.DataTable[] datatabs;
+        System.Data.DataTable datatab;        
         System.Data.DataTable dt_All;
 
         protected override bool ValidateInput()
