@@ -1494,10 +1494,6 @@
       <Project>{558a6ae9-f802-4d9b-bad4-73fdf0a33326}</Project>
       <Name>Sci.Production.Shipping</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sci.Trade.Class\Sci.Trade.Class.csproj">
-      <Project>{23a1d79e-68ab-4d45-8c1d-11a34edd3369}</Project>
-      <Name>Sci.Trade.Class</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">
