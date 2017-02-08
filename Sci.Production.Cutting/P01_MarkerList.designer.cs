@@ -314,9 +314,9 @@
             // 
             this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label19.Lines = 0;
-            this.label19.Location = new System.Drawing.Point(411, 174);
+            this.label19.Location = new System.Drawing.Point(403, 174);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(73, 23);
+            this.label19.Size = new System.Drawing.Size(81, 23);
             this.label19.TabIndex = 120;
             this.label19.Text = "Efficiency ";
             // 
@@ -589,9 +589,9 @@
             this.txtEfficiency.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Efficiency", true));
             this.txtEfficiency.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtEfficiency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtEfficiency.Location = new System.Drawing.Point(495, 176);
+            this.txtEfficiency.Location = new System.Drawing.Point(487, 176);
             this.txtEfficiency.Name = "txtEfficiency";
-            this.txtEfficiency.Size = new System.Drawing.Size(49, 21);
+            this.txtEfficiency.Size = new System.Drawing.Size(57, 21);
             this.txtEfficiency.TabIndex = 156;
             // 
             // displayStraightLength
