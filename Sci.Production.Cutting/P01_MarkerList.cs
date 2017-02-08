@@ -62,7 +62,7 @@ Where mark.id ='{0}' order by mark.Seq"
                 .Text("FabricCombo", header: "Fabric" + Environment.NewLine + "Combo", width: Widths.AnsiChars(2), iseditingreadonly: true);
 
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8))
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5))
                 .Numeric("Qty", header: "Qty", width: Widths.Numeric(6), maximum: 999999, minimum: 0, decimal_places: 0);
             return true;
         }

@@ -96,13 +96,13 @@
             this.detailgridcont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.detailgridcont.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter;
             this.detailgridcont.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.detailgridcont.Location = new System.Drawing.Point(553, 44);
-            this.detailgridcont.Size = new System.Drawing.Size(168, 151);
+            this.detailgridcont.Location = new System.Drawing.Point(551, 15);
+            this.detailgridcont.Size = new System.Drawing.Size(168, 182);
             // 
             // detailgridicon
             // 
             this.detailgridicon.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.detailgridicon.Location = new System.Drawing.Point(624, 6);
+            this.detailgridicon.Location = new System.Drawing.Point(725, 11);
             this.detailgridicon.Visible = false;
             // 
             // btmcont
@@ -578,7 +578,7 @@
             this.displayDescription.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
             this.displayDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayDescription.Location = new System.Drawing.Point(403, 204);
+            this.displayDescription.Location = new System.Drawing.Point(402, 204);
             this.displayDescription.Name = "displayDescription";
             this.displayDescription.Size = new System.Drawing.Size(435, 21);
             this.displayDescription.TabIndex = 155;
@@ -754,7 +754,7 @@
             // 
             this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label22.Lines = 0;
-            this.label22.Location = new System.Drawing.Point(725, 172);
+            this.label22.Location = new System.Drawing.Point(724, 174);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(40, 23);
             this.label22.TabIndex = 172;
@@ -766,7 +766,7 @@
             this.displayTotal.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FabricWidth", true));
             this.displayTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.displayTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTotal.Location = new System.Drawing.Point(767, 174);
+            this.displayTotal.Location = new System.Drawing.Point(766, 176);
             this.displayTotal.Name = "displayTotal";
             this.displayTotal.Size = new System.Drawing.Size(73, 21);
             this.displayTotal.TabIndex = 173;
