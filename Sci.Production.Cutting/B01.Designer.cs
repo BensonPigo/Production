@@ -50,7 +50,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(676, 395);
+            this.detail.Size = new System.Drawing.Size(626, 395);
             // 
             // detailcont
             // 
@@ -66,12 +66,12 @@
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(676, 357);
+            this.detailcont.Size = new System.Drawing.Size(626, 357);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(676, 38);
+            this.detailbtm.Size = new System.Drawing.Size(626, 38);
             // 
             // browse
             // 
@@ -217,7 +217,7 @@
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(634, 457);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "txtID";
             this.DefaultControlForEdit = "txtartworktype_fty1";
             this.DefaultOrder = "id";
             this.IsSupportClip = false;
