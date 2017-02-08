@@ -18,7 +18,7 @@ namespace Sci.Production.Planning
 {
     public partial class R12 : Sci.Win.Tems.PrintForm
     {
-        DataTable dtPrint, dtData, tmpData1, tmpData2, tmpData3, tmpData3_SUM, All_tmpData3, All_tmpData3_SUM, tmpData4, All_tmpData4, tmpStyleDetail, tmpOrderDetail;
+        DataTable dtData, tmpData1, tmpData2, tmpData3, tmpData3_SUM, All_tmpData3, All_tmpData3_SUM, tmpData4, All_tmpData4, tmpStyleDetail, tmpOrderDetail;
         string SqlData1, SqlData2, SqlData3, SqlData3_SUM, All_SqlData3, All_SqlData3_SUM, SqlData4, All_SqlData4, SqlStyleDetail, SqlOrderDetail;//, strType1 = "";
         decimal StandardTms = 0; //int intRowsStart = 2;
 
@@ -750,7 +750,7 @@ namespace Sci.Production.Planning
         protected override Ict.DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DualResult result = Result.True;
-            if (dtPrint != null) dtPrint.Rows.Clear();
+            //if (dtPrint != null) dtPrint.Rows.Clear();
             string where = " ", GroupBy, select;
             IList<SqlParameter> spList = new List<SqlParameter>();
 
