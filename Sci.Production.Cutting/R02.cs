@@ -20,8 +20,6 @@ namespace Sci.Production.Cutting
         DateTime? dateR_CuttingDate1, dateR_CuttingDate2;
         StringBuilder condition_CuttingDate = new StringBuilder();
         string tmpFile;
-        bool boolshowexcel = false;
-        bool boolsend = false;
         DataTable Cutcelltb;
 
         public R02(ToolStripMenuItem menuitem)
@@ -710,17 +708,15 @@ drop table #tmpall");
             return Result.True;
         }
 
+        bool boolshowexcel = false;
+        bool boolsend = false;
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             createfolder();
             SetCount(printData[0].Rows.Count);
-            if (!boolsend)
-            {
-                tmpFile = Path.Combine(Sci.Env.Cfg.ReportTempDir, Guid.NewGuid() + ".xlsx");//設定存檔路徑字串
-                boolshowexcel = false;
-            }
-
+            if (!boolsend) tmpFile = null;               
+            
             int CutCellcount = Cutcelltb.Rows.Count;//CutCel總數
             bool countrow = false;
             for (int i = 0; i < CutCellcount; i++)
@@ -784,9 +780,11 @@ drop table #tmpall");
                     objSheets.Cells[3, 9] = MD;
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets); //釋放sheet                    
                 }
-                if (!boolsend)
+                if (!boolsend) objApp.Visible = true;
+                if (boolsend)
                 {
-                    objApp.Visible = true;
+                    objApp.SaveWorkspace();
+                    MyUtility.Excel.KillExcelProcess(objApp); 
                 }
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp); //釋放objApp
             }
@@ -842,6 +840,11 @@ drop table #tmpall");
                 {
                     objApp.Visible = true;
                 }
+                if (boolsend)
+                {
+                    objApp.SaveWorkspace();
+                    MyUtility.Excel.KillExcelProcess(objApp);
+                }
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp); //釋放objApp
             }
             #endregion
@@ -879,6 +882,11 @@ drop table #tmpall");
                 if (!boolsend)
                 {
                     objApp.Visible = true;
+                }
+                if (boolsend)
+                {
+                    objApp.SaveWorkspace();
+                    MyUtility.Excel.KillExcelProcess(objApp);
                 }
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
@@ -942,6 +950,16 @@ drop table #tmpall");
                 tmpFile,
                 "\r\nFilter as below description:\r\nCutting Date: " + CuttingDate + "\r\nCut Cell: " + cutcell + "\r\nM: " + MD, false, true);
             email.ShowDialog(this);
+            //tmpFile
+            System.IO.FileInfo fi = new System.IO.FileInfo(tmpFile);
+            try
+            {
+                fi.Delete();
+            }
+            catch (System.IO.IOException e)
+            {
+                MyUtility.Msg.ErrorBox(e.Message);
+            }
         }        
     }
 }
