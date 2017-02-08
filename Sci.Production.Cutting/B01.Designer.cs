@@ -75,11 +75,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(626, 395);
+            this.browse.Size = new System.Drawing.Size(676, 395);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(683, 424);
+            this.tabs.Size = new System.Drawing.Size(684, 424);
             // 
             // editby
             // 
@@ -216,7 +216,7 @@
             // 
             // B01
             // 
-            this.ClientSize = new System.Drawing.Size(683, 457);
+            this.ClientSize = new System.Drawing.Size(684, 457);
             this.DefaultControl = "txtID";
             this.DefaultControlForEdit = "txtartworktype_fty1";
             this.DefaultOrder = "id";
