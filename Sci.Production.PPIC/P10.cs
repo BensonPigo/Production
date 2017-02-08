@@ -23,6 +23,7 @@ namespace Sci.Production.PPIC
             txtuser2.TextBox1.ReadOnly = true;
             txtuser2.TextBox1.IsSupportEditMode = false;
             InsertDetailGridOnDoubleClick = false;
+            displayBox5.ReadOnly = true;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -37,6 +38,7 @@ left join Fabric f on psd.SCIRefno = f.SCIRefno
 left join PPICReason p on p.Type = 'FL' and ld.PPICReasonID = p.ID
 where l.ID = '{0}'
 order by ld.Seq1,ld.Seq2", masterID);
+            
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -45,6 +47,8 @@ order by ld.Seq1,ld.Seq2", masterID);
             base.OnFormLoaded();
             MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "L,Lacking,R,Replacement");
             MyUtility.Tool.SetupCombox(comboBox2, 2, 1, "D,Day,N,Night,O,Subcon-Out");
+
+           
         }
 
         protected override void OnDetailGridSetup()
@@ -653,6 +657,10 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
         {
             base.OnDetailEntered();
             lbStatus.Text = CurrentMaintain["status"].ToString().Trim();
+            if (!MyUtility.Check.Empty(CurrentMaintain["IssueLackDT"]))
+                this.displayBox5.Text = Convert.ToDateTime(CurrentMaintain["IssueLackDT"]).ToString("yyyy/MM/dd HH:mm:ss");
+            else
+                this.displayBox5.Text = "";
             this.detailgrid.AutoResizeColumns();
         }
 

@@ -23,6 +23,8 @@ namespace Sci.Production.PPIC
             txtuser2.TextBox1.ReadOnly = true;
             txtuser2.TextBox1.IsSupportEditMode = false;
             InsertDetailGridOnDoubleClick = false;
+            displayBox5.ReadOnly = true;
+            
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -321,7 +323,7 @@ where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType
             }
             return true;
         }
-
+       
         protected override bool ClickDeleteBefore()
         {
             if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "New")
@@ -669,6 +671,16 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
         {
             base.OnDetailEntered();
             lbStatus.Text = CurrentMaintain["status"].ToString().Trim();
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["IssueLackDT"]))
+            {
+                this.displayBox5.Text = Convert.ToDateTime(this.CurrentMaintain["IssueLackDT"]).ToString("yyyy/MM/dd HH:mm:ss");
+            }
+            else
+            this.displayBox5.Text = "";
+            
+
+
             this.detailgrid.AutoResizeColumns();
         }
 

@@ -52,6 +52,8 @@
             this.dateBox2 = new Sci.Win.UI.DateBox();
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.lbStatus = new Sci.Win.UI.Label();
+            this.label14 = new Sci.Win.UI.Label();
+            this.displayBox5 = new Sci.Win.UI.DisplayBox();
             this.txtuser2 = new Sci.Production.Class.txtuser();
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txtsewingline1 = new Sci.Production.Class.txtsewingline();
@@ -71,6 +73,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayBox5);
+            this.masterpanel.Controls.Add(this.label14);
             this.masterpanel.Controls.Add(this.lbStatus);
             this.masterpanel.Controls.Add(this.displayBox4);
             this.masterpanel.Controls.Add(this.txtuser2);
@@ -127,6 +131,8 @@
             this.masterpanel.Controls.SetChildIndex(this.txtuser2, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbStatus, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label14, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
             // 
             // detailpanel
             // 
@@ -149,15 +155,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(868, 487);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(862, 441);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(862, 40);
             // 
             // detail
             // 
@@ -391,7 +397,7 @@
             // label13
             // 
             this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(492, 84);
+            this.label13.Location = new System.Drawing.Point(393, 84);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(64, 23);
             this.label13.TabIndex = 22;
@@ -413,7 +419,7 @@
             this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueLackId", true));
             this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(560, 84);
+            this.displayBox4.Location = new System.Drawing.Point(461, 84);
             this.displayBox4.Name = "displayBox4";
             this.displayBox4.Size = new System.Drawing.Size(120, 23);
             this.displayBox4.TabIndex = 11;
@@ -423,7 +429,7 @@
             this.lbStatus.BackColor = System.Drawing.Color.Transparent;
             this.lbStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
             this.lbStatus.Lines = 0;
-            this.lbStatus.Location = new System.Drawing.Point(700, 60);
+            this.lbStatus.Location = new System.Drawing.Point(700, 55);
             this.lbStatus.Name = "lbStatus";
             this.lbStatus.Size = new System.Drawing.Size(120, 31);
             this.lbStatus.TabIndex = 36;
@@ -432,6 +438,24 @@
             this.lbStatus.TextStyle.Color = System.Drawing.Color.Red;
             this.lbStatus.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
             this.lbStatus.TextStyle.GradientColor = System.Drawing.Color.Red;
+            // 
+            // label14
+            // 
+            this.label14.Lines = 0;
+            this.label14.Location = new System.Drawing.Point(584, 84);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(108, 23);
+            this.label14.TabIndex = 37;
+            this.label14.Text = "Issue Lack Date";
+            // 
+            // displayBox5
+            // 
+            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox5.Location = new System.Drawing.Point(695, 84);
+            this.displayBox5.Name = "displayBox5";
+            this.displayBox5.Size = new System.Drawing.Size(167, 23);
+            this.displayBox5.TabIndex = 38;
             // 
             // txtuser2
             // 
@@ -535,5 +559,7 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.Label lbStatus;
+        private Win.UI.DisplayBox displayBox5;
+        private Win.UI.Label label14;
     }
 }
