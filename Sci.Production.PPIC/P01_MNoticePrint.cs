@@ -123,9 +123,9 @@ namespace Sci.Production.PPIC
                     sxr.dicDatas.Add(sxr._v + "S2_Tbl4" + idxStr, dts[3]); //COLOR list
                     sxr.dicDatas.Add(sxr._v + "S2_Tbl5" + idxStr, dts[4]); //Fabric list
                     sxr.dicDatas.Add(sxr._v + "S2_Tbl6" + idxStr, dts[5]); //Accessories list
-                    sxr.dicDatas.Add(sxr._v + "S2SHIPINGMARK" + idxStr, new sxrc.xltImageString(dts[6].Rows[0]["shipingMark"].ToString()));
-                    sxr.dicDatas.Add(sxr._v + "S2PACKING" + idxStr, new sxrc.xltImageString(dts[7].Rows[0]["Packing"].ToString()));
-                    sxr.dicDatas.Add(sxr._v + "S2LH" + idxStr, new sxrc.xltImageString(dts[8].Rows[0]["Label"].ToString()));
+                    sxr.dicDatas.Add(sxr._v + "S2SHIPINGMARK" + idxStr, new sxrc.xltLongString(dts[6].Rows[0]["shipingMark"].ToString()));
+                    sxr.dicDatas.Add(sxr._v + "S2PACKING" + idxStr, new sxrc.xltLongString(dts[7].Rows[0]["Packing"].ToString()));
+                    sxr.dicDatas.Add(sxr._v + "S2LH" + idxStr, new sxrc.xltLongString(dts[8].Rows[0]["Label"].ToString()));
 
                 }
 
@@ -182,8 +182,8 @@ namespace Sci.Production.PPIC
                 sxr.dicDatas.Add(sxr._v + "S2_Tbl4", dts[4]); //Fabric list                
                 sxr.dicDatas.Add(sxr._v + "S2_Tbl5", dts[5]); //Accessories list                
                 sxr.dicDatas.Add(sxr._v + "S2_Tbl6", dts[6]);
-                sxr.dicDatas.Add(sxr._v + "S2PACKING", new sxrc.xltImageString(dts[7].Rows[0]["Packing"].ToString()));
-                sxr.dicDatas.Add(sxr._v + "S2LH", new sxrc.xltImageString(dts[8].Rows[0]["Label"].ToString()));
+                sxr.dicDatas.Add(sxr._v + "S2PACKING", new sxrc.xltLongString(dts[7].Rows[0]["Packing"].ToString()));
+                sxr.dicDatas.Add(sxr._v + "S2LH", new sxrc.xltLongString(dts[8].Rows[0]["Label"].ToString()));
 
                 //新增Range Repeat數
                 sxr.dicDatas.Add(sxr._v + "CR", dts[9].Rows.Count);
@@ -202,7 +202,7 @@ namespace Sci.Production.PPIC
                     sxr.dicDatas.Add(sxr._v + "S3_PoNo" + sIdx, dr["CustPONO"].ToString());
                     sxr.dicDatas.Add(sxr._v + "S3_Order" + sIdx, dr["Customize1"].ToString());
                     sxr.dicDatas.Add(sxr._v + "S3_DELIVERY" + sIdx, dr["BuyerDelivery"]);
-                    sxr.dicDatas.Add(sxr._v + "S3_Mark" + sIdx, new sxrc.xltImageString(dr["Mark"].ToString()));
+                    sxr.dicDatas.Add(sxr._v + "S3_Mark" + sIdx, new sxrc.xltLongString(dr["Mark"].ToString()));
 
                     System.Data.DataTable[] dts2;
                     List<SqlParameter> lis2 = new List<SqlParameter>();

@@ -16,15 +16,19 @@ using Sci.Production.Class.Commons;
 //using CSCHEMAS = Sci.Production.Report.Order.Schemas.P01;
 using Microsoft.Office.Interop.Excel;
 using Excel = Microsoft.Office.Interop.Excel;
+using MsExcel = Microsoft.Office.Interop.Excel;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using Sci.Utility.Excel;
 using Sci.Utility.Drawing;
+
+using System.Runtime.InteropServices;
 
 
 namespace Sci.Production.PPIC
 {
     public partial class P01 : Sci.Win.Tems.Input1
     {
+        private ToolStripMenuItem _menuitem;
         private string dataType;
         public P01(ToolStripMenuItem menuitem, string Type)
             : base(menuitem)
@@ -828,9 +832,9 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
                     sxr.dicDatas.Add(sxr._v + "fabcom" + sIdx, tbl2);
                     sxr.dicDatas.Add(sxr._v + "acccom" + sIdx, tbl3);
 
-                    sxr.dicDatas.Add(sxr._v + "shipmark" + sIdx, new sxrc.xltImageString(row["mark"].ToString()));
-                    sxr.dicDatas.Add(sxr._v + "paching" + sIdx, new sxrc.xltImageString(row["packing"].ToString()));
-                    sxr.dicDatas.Add(sxr._v + "labelhantag" + sIdx, new sxrc.xltImageString(row["label"].ToString()));
+                    sxr.dicDatas.Add(sxr._v + "shipmark" + sIdx, new sxrc.xltLongString(row["mark"].ToString()));
+                    sxr.dicDatas.Add(sxr._v + "paching" + sIdx, new sxrc.xltLongString(row["packing"].ToString()));
+                    sxr.dicDatas.Add(sxr._v + "labelhantag" + sIdx, new sxrc.xltLongString(row["label"].ToString()));
                     string UserName;
                     UserPrg.GetName(Env.User.UserID, out UserName, UserPrg.NameType.idAndNameAndExt);
                     sxr.dicDatas.Add(sxr._v + "userid" + sIdx, UserName);
@@ -974,90 +978,48 @@ where POID = @poid group by POID,b.spno";
         }
         
         //M/Notice Sheet
-        private void button26_Click(object sender, EventArgs e)
+     private void button26_Click(object sender, EventArgs e)
+     {
+         if (CurrentMaintain["SMnorderApv"].ToString() == null || CurrentMaintain["SMnorderApv"].ToString() == "")
+         {
+             var dr = this.CurrentMaintain; if (null == dr) return;
+             var frm = new Sci.Production.PPIC.P01_MNoticePrint(_menuitem, dr["ID"].ToString());
+             frm.ShowDialog(this);
+             this.RenewData();
+             return;
+         }
+         else
+         {
+             string poid = CurrentMaintain["POID"].ToString();
+             SMNoticePrg.PrintSMNotice(poid, SMNoticePrg.EnuPrintSMType.Order);
+         }
+     }
+
+        private static void MoveSubBlockIntoMainSheet(MsExcel.Worksheet mainSheet, ref int rowPosition, MsExcel.Worksheet subBlockSheet, int? blankRowsAfterThisBlock = null)
         {
-              string _id = CurrentMaintain["id"].ToString();
+            //把這個Block3完整複製過去主Sheet(參考rowPosition)
+            var thisSheetUsedRange = subBlockSheet.UsedRange;
+            (mainSheet.Rows[rowPosition] as MsExcel.Range).EntireRow.InsertIndent(thisSheetUsedRange.Rows.Count);
 
-              string poid = CurrentMaintain["POID"].ToString(); //MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
+            var rowStart = thisSheetUsedRange.Rows[1].Row;
+            var rowEnd = rowStart + thisSheetUsedRange.Rows.Count;
+            //Full Row Copy for row height copy purpose
+            subBlockSheet.Range[subBlockSheet.Rows[rowStart], subBlockSheet.Rows[rowEnd]].Copy();
+            mainSheet.Range[mainSheet.Rows[rowPosition], mainSheet.Rows[rowPosition + thisSheetUsedRange.Rows.Count]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
 
-                DataRow drvar = GetTitleDataByCustCD(poid, _id);
+            ////Range Copy for content & cell format  <-- because Range Copy ignore Row height copy, so I have to copy full rows before here
+            //thisSheetUsedRange.Copy();
+            //mainSheet.Cells[rowPosition, 1].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
 
-                if (drvar == null) return ;
+            //rowPosition遞移，給下一個區塊使用
+            rowPosition += (thisSheetUsedRange.Rows.Count + blankRowsAfterThisBlock.GetValueOrDefault(0)); //與下個Block空一行
 
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice.xltx");
-                sxrc sxr = new sxrc(xltPath);
-                sxr.dicDatas.Add(sxr._v + "PO_MAKER", drvar["MAKER"].ToString());
-                sxr.dicDatas.Add(sxr._v + "PO_STYLENO", drvar["sty"].ToString());
-                sxr.dicDatas.Add(sxr._v + "PO_QTY", drvar["QTY"]);
-                sxr.dicDatas.Add(sxr._v + "POID", poid);
-
-                System.Data.DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@POID", poid), new SqlParameter("@WithZ", false), new SqlParameter("@fullsize", 1) }, out dts);
-                
-                sxrc.xltRptTable xltTbl = new sxrc.xltRptTable(dts[0], 1, 0, false, 18, 2);
-
-              
-
+            Marshal.ReleaseComObject(thisSheetUsedRange);
+            thisSheetUsedRange = null;
+        }
 
 
-                for (int i = 3; i <= 18; i++)
-                {
-                    sxrc.xlsColumnInfo xcinfo = new sxrc.xlsColumnInfo(i, false, 0, XlHAlign.xlHAlignLeft);
-                    xcinfo.NumberFormate = "@";
-                    xltTbl.lisColumnInfo.Add(xcinfo);
-                }
 
-                sxr.dicDatas.Add(sxr._v + "S1_Tbl1", xltTbl);
-                intSizeSpecRowCnt = dts[0].Rows.Count + 1 + 2; //起始位置加一、格線加二
-                sxrc.ReplaceAction ra = ForSizeSpec;
-                sxr.dicDatas.Add(sxr._v + "ExtraAction", ra);
-
-                System.Data.DataTable dt;
-                DualResult getIds = DBProxy.Current.Select("", "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY from MNorder where poid = @poid", new List<SqlParameter> { new SqlParameter("poid", poid) }, out dt);
-                if (!getIds && dt.Rows.Count <= 0)
-                {
-                    MyUtility.Msg.ErrorBox(getIds.ToString(), "error");
-                    return ;
-                }
-
-                sxr.CopySheet.Add(1, dt.Rows.Count - 1);
-                sxr.VarToSheetName = sxr._v + "SP";
-                for (int i = 0; i < dt.Rows.Count; i++)
-                {
-                    string ID = dt.Rows[i]["ID"].ToString();
-                    string idxStr = (i == 0) ? "" : i.ToString();
-
-                    res = DBProxy.Current.SelectSP("", "PPIC_Report02", new List<SqlParameter> { new SqlParameter("@ID", ID), new SqlParameter("@WithZ", false) }, out dts);
-
-                    sxr.dicDatas.Add(sxr._v + "Now"+ idxStr, DateTime.Now);
-                    sxr.dicDatas.Add(sxr._v + "SP" + idxStr, ID);
-                    sxr.dicDatas.Add(sxr._v + "MAKER" + idxStr, dt.Rows[i]["MAKER"].ToString());
-                    sxr.dicDatas.Add(sxr._v + "STYLENO" + idxStr, dt.Rows[i]["sty"].ToString());
-                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, dt.Rows[i]["QTY"].ToString());
-
-                    sxrc.xltRptTable tbl1 = new sxrc.xltRptTable(dts[0], 1, 2, true);
-                    sxrc.xltRptTable tbl2 = new sxrc.xltRptTable(dts[1], 1, 3);
-                    sxrc.xltRptTable tbl3 = new sxrc.xltRptTable(dts[2], 1, 0);
-                    SetColumn1toText(tbl1);
-                    SetColumn1toText(tbl2);
-                    SetColumn1toText(tbl3);
-
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl1" + idxStr, tbl1);
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl2" + idxStr, tbl2);
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl3" + idxStr, tbl3);
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl4" + idxStr, dts[3]); //COLOR list
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl5" + idxStr, dts[4]); //Fabric list
-                    sxr.dicDatas.Add(sxr._v + "S2_Tbl6" + idxStr, dts[5]); //Accessories list
-                    sxr.dicDatas.Add(sxr._v + "S2SHIPINGMARK" + idxStr, new sxrc.xltImageString(dts[6].Rows[0]["shipingMark"].ToString()));
-                    sxr.dicDatas.Add(sxr._v + "S2PACKING" + idxStr, new sxrc.xltImageString(dts[7].Rows[0]["Packing"].ToString()));
-                    sxr.dicDatas.Add(sxr._v + "S2LH" + idxStr, new sxrc.xltImageString(dts[8].Rows[0]["Label"].ToString()));
-
-                }           
-                sxr.boOpenFile = true;
-                sxr.Save();
-            }
-
-          
         //Q'ty b'down by schedule
         private void button27_Click(object sender, EventArgs e)
         {
