@@ -211,8 +211,6 @@ namespace Sci.Production.Quality
       
             #endregion                         
              
-            // 定義一個 class member
-            Ict.Win.UI.DataGridViewComboBoxColumn cbb_MD_type;
 
             //設定Grid屬性 text 對應欄位值 header :顯示欄位名稱
 
