@@ -71,9 +71,9 @@ namespace Sci.Production.Cutting
 
             //txtsewingline1.factoryobjectName = (Control)factoryid;
 
-            if (!MyUtility.Check.Empty(this.CurrentDataRow["printdate"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["printdate"]))
             {
-                DateTime? lastTime = (DateTime?)this.CurrentDataRow["printdate"];
+                DateTime? lastTime = (DateTime?)this.CurrentMaintain["printdate"];
                 string FtyLastupdate = lastTime == null ? "" : ((DateTime)lastTime).ToString("yyyy/MM/dd HH:mm:ss");
                 this.displayBox_PrintDate.Text = FtyLastupdate;
             }
@@ -722,7 +722,7 @@ namespace Sci.Production.Cutting
         }
         protected override bool ClickPrint()
         {
-            P10_Print p = new P10_Print(this.CurrentDataRow);
+            P10_Print p = new P10_Print(this.CurrentMaintain);
             p.ShowDialog();
             string dtn = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
             this.displayBox_PrintDate.Text = dtn;

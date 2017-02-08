@@ -316,7 +316,7 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
 
         protected override bool ClickPrint()
         {
-            string ID = this.CurrentDataRow["ID"].ToString();
+            string ID = this.CurrentMaintain["ID"].ToString();
             if (tabs.SelectedIndex == 1)
             {
                 P01_Print_OrderList frm = new P01_Print_OrderList(ID);
