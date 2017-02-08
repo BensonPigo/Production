@@ -11,7 +11,6 @@ using Sci.Data;
 using Sci.Win.UI;
 using Ict.Win;
 using Ict;
-using Sci.Data;
 
 namespace Sci.Production.Class
 {
