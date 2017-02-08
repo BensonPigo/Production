@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
+            this.checkBoxJunk = new Sci.Win.UI.CheckBox();
+            this.editBoxRemark = new Sci.Win.UI.EditBox();
             this.label3 = new Sci.Win.UI.Label();
             this.txt_desc = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
@@ -45,50 +45,54 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(676, 250);
+            this.detail.Size = new System.Drawing.Size(676, 228);
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.editBox1);
+            this.detailcont.Controls.Add(this.checkBoxJunk);
+            this.detailcont.Controls.Add(this.editBoxRemark);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.txt_desc);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.txt_ID);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(676, 212);
+            this.detailcont.Size = new System.Drawing.Size(676, 190);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 212);
+            this.detailbtm.Location = new System.Drawing.Point(0, 190);
             this.detailbtm.Size = new System.Drawing.Size(676, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(676, 380);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(684, 279);
+            this.tabs.Size = new System.Drawing.Size(684, 257);
             // 
-            // checkBox1
+            // checkBoxJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(233, 18);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 14;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBoxJunk.AutoSize = true;
+            this.checkBoxJunk.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
+            this.checkBoxJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBoxJunk.Location = new System.Drawing.Point(233, 18);
+            this.checkBoxJunk.Name = "checkBoxJunk";
+            this.checkBoxJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkBoxJunk.TabIndex = 14;
+            this.checkBoxJunk.Text = "Junk";
+            this.checkBoxJunk.UseVisualStyleBackColor = true;
             // 
-            // editBox1
+            // editBoxRemark
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(116, 114);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(473, 50);
-            this.editBox1.TabIndex = 13;
+            this.editBoxRemark.BackColor = System.Drawing.Color.White;
+            this.editBoxRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
+            this.editBoxRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBoxRemark.Location = new System.Drawing.Point(116, 114);
+            this.editBoxRemark.Multiline = true;
+            this.editBoxRemark.Name = "editBoxRemark";
+            this.editBoxRemark.Size = new System.Drawing.Size(473, 70);
+            this.editBoxRemark.TabIndex = 13;
             // 
             // label3
             // 
@@ -97,7 +101,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(88, 23);
             this.label3.TabIndex = 12;
-            this.label3.Text = "Remark:";
+            this.label3.Text = "Remark";
             // 
             // txt_desc
             // 
@@ -116,7 +120,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(89, 23);
             this.label2.TabIndex = 10;
-            this.label2.Text = "Description:";
+            this.label2.Text = "Description";
             // 
             // txt_ID
             // 
@@ -135,11 +139,11 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(88, 23);
             this.label1.TabIndex = 8;
-            this.label1.Text = "ID...............:";
+            this.label1.Text = "ID";
             // 
             // B04
             // 
-            this.ClientSize = new System.Drawing.Size(684, 312);
+            this.ClientSize = new System.Drawing.Size(684, 290);
             this.DefaultFilter = "Type=\'RC\'";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
@@ -165,8 +169,8 @@
 
         #endregion
 
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.EditBox editBox1;
+        private Win.UI.CheckBox checkBoxJunk;
+        private Win.UI.EditBox editBoxRemark;
         private Win.UI.Label label3;
         private Win.UI.TextBox txt_desc;
         private Win.UI.Label label2;
