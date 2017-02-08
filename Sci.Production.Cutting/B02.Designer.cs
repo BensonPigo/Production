@@ -32,9 +32,9 @@
             this.label2 = new Sci.Win.UI.Label();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.label3 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.displayM = new Sci.Win.UI.DisplayBox();
+            this.textCellNo = new Sci.Win.UI.TextBox();
+            this.textDescription = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -43,16 +43,34 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(676, 430);
+            // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.textDescription);
+            this.detailcont.Controls.Add(this.textCellNo);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.displayBox1);
+            this.detailcont.Controls.Add(this.displayM);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Size = new System.Drawing.Size(676, 392);
             this.detailcont.TabIndex = 0;
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 392);
+            this.detailbtm.Size = new System.Drawing.Size(676, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(676, 430);
+            // 
+            // tabs
+            // 
+            this.tabs.Size = new System.Drawing.Size(684, 459);
             // 
             // editby
             // 
@@ -97,41 +115,41 @@
             this.label3.TabIndex = 8;
             this.label3.Text = "Cell No";
             // 
-            // displayBox1
+            // displayM
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "mDivisionid", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(151, 57);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(64, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "mDivisionid", true));
+            this.displayM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayM.Location = new System.Drawing.Point(151, 57);
+            this.displayM.Name = "displayM";
+            this.displayM.Size = new System.Drawing.Size(64, 23);
+            this.displayM.TabIndex = 0;
             // 
-            // textBox1
+            // textCellNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(151, 112);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(43, 23);
-            this.textBox1.TabIndex = 1;
+            this.textCellNo.BackColor = System.Drawing.Color.White;
+            this.textCellNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
+            this.textCellNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textCellNo.Location = new System.Drawing.Point(151, 112);
+            this.textCellNo.Name = "textCellNo";
+            this.textCellNo.Size = new System.Drawing.Size(43, 23);
+            this.textCellNo.TabIndex = 1;
             // 
-            // textBox2
+            // textDescription
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(151, 167);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(172, 23);
-            this.textBox2.TabIndex = 2;
+            this.textDescription.BackColor = System.Drawing.Color.White;
+            this.textDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
+            this.textDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textDescription.Location = new System.Drawing.Point(151, 167);
+            this.textDescription.Name = "textDescription";
+            this.textDescription.Size = new System.Drawing.Size(172, 23);
+            this.textDescription.TabIndex = 2;
             // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(905, 457);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox2";
+            this.ClientSize = new System.Drawing.Size(684, 492);
+            this.DefaultControl = "textCellNo";
+            this.DefaultControlForEdit = "textDescription";
             this.DefaultOrder = "id";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
@@ -159,8 +177,8 @@
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.TextBox textDescription;
+        private Win.UI.TextBox textCellNo;
+        private Win.UI.DisplayBox displayM;
     }
 }
