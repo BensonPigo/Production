@@ -18,31 +18,12 @@ namespace Sci.Production.Cutting
             InitializeComponent();
         }
 
-        //keyvalue1:ID, keyvalue2:Order_EachConsUkey, keyvalue3:ColorID
         public P01_EachConsumption_Detail(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             InitializeComponent();
         }
-
-        protected override Ict.DualResult OnRequery(out DataTable datas)
-        {
-            datas = null;
-            string sqlCmd = "Select Order_EachCons_Color.*, Color.Name as ColorDesc" +
-                            "  From dbo.Order_EachCons_Color" +
-                            "  Left Join dbo.Orders" +
-                            "    On Orders.ID = Order_EachCons_Color.ID" +
-                            "  Left Join dbo.Color" +
-                            "    On     Color.BrandId = Orders.BrandID" +
-                            "       And Color.ID = Order_EachCons_Color.ColorID" +
-                            " Where Order_EachCons_Color.ID = '" + this.KeyValue1 + "'" +
-                            " and Order_EachConsUkey=" + this.KeyValue2 + " and ColorID='" + this.KeyValue3 + "' " +
-                            " Order by Order_EachCons_Color.ColorID";
-            DualResult result;
-            if (!(result = DBProxy.Current.Select(null, sqlCmd, out datas))) return result;
-            return Result.True;
-        }
-
+        
         protected override bool OnGridSetup()
         {
             Helper.Controls.Grid.Generator(this.grid)
@@ -66,19 +47,22 @@ namespace Sci.Production.Cutting
             return true;
         }
 
-        private void btnOrderBy_Click(object sender, EventArgs e)
+        protected override Ict.DualResult OnRequery(out DataTable datas)
         {
-            if (this.btnOrderBy.Text == "Order by Size,Article")
-            {
-                this.DefaultDetailOrder = "SizeCode, Article";
-                this.btnOrderBy.Text = "Order by Article,Size";    
-            }
-            else
-            {
-                this.DefaultDetailOrder = "Article, SizeCode";
-                this.btnOrderBy.Text = "Order by Size,Article";
-            }
-
+            datas = null;
+            string sqlCmd = string.Format(@"
+Select Order_EachCons_Color.*, Color.Name as ColorDesc
+From dbo.Order_EachCons_Color
+Left Join dbo.Orders On Orders.ID = Order_EachCons_Color.ID
+Left Join dbo.Color  On Color.BrandId = Orders.BrandID And Color.ID = Order_EachCons_Color.ColorID
+Where Order_EachCons_Color.ID = '{0}'
+and Order_EachConsUkey='{1}'
+and ColorID='{2}'
+Order by Order_EachCons_Color.ColorID"
+                , this.KeyValue1, this.KeyValue2, this.KeyValue3);
+            DualResult result;
+            if (!(result = DBProxy.Current.Select(null, sqlCmd, out datas))) return result;
+            return Result.True;
         }
     }
 }

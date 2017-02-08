@@ -139,8 +139,8 @@ namespace Sci.Production.Cutting
                 .Numeric("YDS", header: "Cons.(YDS)", width: Widths.Numeric(6),  decimal_places: 2);
 
             Helper.Controls.Grid.Generator(this.gridSizeQty)
-                .Text("SizeCode", header: "Size Code", width: Widths.AnsiChars(8))
-                .Numeric("Qty", header: "Q'ty", width: Widths.Numeric(4), decimal_places: 0);
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5))
+                .Numeric("Qty", header: "Qty", width: Widths.Numeric(4), decimal_places: 0);
             this.gridSizeQty.Font = new Font("Arial", 9);
             this.detailgrid.AutoResizeColumns();
             return true;

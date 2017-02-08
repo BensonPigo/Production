@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.label1 = new Sci.Win.UI.Label();
-            this.btnOrderBy = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -47,16 +46,9 @@
             // 
             // btmcont
             // 
-            this.btmcont.Controls.Add(this.btnOrderBy);
             this.btmcont.Location = new System.Drawing.Point(0, 313);
             this.btmcont.Size = new System.Drawing.Size(784, 40);
             this.btmcont.TabIndex = 1;
-            this.btmcont.Controls.SetChildIndex(this.delete, 0);
-            this.btmcont.Controls.SetChildIndex(this.revise, 0);
-            this.btmcont.Controls.SetChildIndex(this.undo, 0);
-            this.btmcont.Controls.SetChildIndex(this.save, 0);
-            this.btmcont.Controls.SetChildIndex(this.append, 0);
-            this.btmcont.Controls.SetChildIndex(this.btnOrderBy, 0);
             // 
             // gridcont
             // 
@@ -101,17 +93,6 @@
             this.label1.Text = "Details of Article/Size";
             this.label1.TextStyle.Color = System.Drawing.Color.Red;
             // 
-            // btnOrderBy
-            // 
-            this.btnOrderBy.Location = new System.Drawing.Point(13, 8);
-            this.btnOrderBy.Name = "btnOrderBy";
-            this.btnOrderBy.Size = new System.Drawing.Size(164, 30);
-            this.btnOrderBy.TabIndex = 0;
-            this.btnOrderBy.Text = "Order by Size,Article";
-            this.btnOrderBy.UseVisualStyleBackColor = true;
-            this.btnOrderBy.Visible = false;
-            this.btnOrderBy.Click += new System.EventHandler(this.btnOrderBy_Click);
-            // 
             // P01_EachConsumption_Detail
             // 
             this.ClientSize = new System.Drawing.Size(784, 353);
@@ -145,7 +126,6 @@
 
         #endregion
 
-        private Win.UI.Button btnOrderBy;
         private Win.UI.Label label1;
     }
 }

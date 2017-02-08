@@ -85,6 +85,7 @@
             this.label22 = new Sci.Win.UI.Label();
             this.displayTotal = new Sci.Win.UI.DisplayBox();
             this.label1 = new Sci.Win.UI.Label();
+            this.label24 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -102,7 +103,7 @@
             // detailgridicon
             // 
             this.detailgridicon.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.detailgridicon.Location = new System.Drawing.Point(725, 11);
+            this.detailgridicon.Location = new System.Drawing.Point(725, 75);
             this.detailgridicon.Visible = false;
             // 
             // btmcont
@@ -157,7 +158,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(99, 22);
             this.label2.TabIndex = 102;
-            this.label2.Text = "Marker No#";
+            this.label2.Text = "Marker No.";
             // 
             // label3
             // 
@@ -754,7 +755,7 @@
             // 
             this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label22.Lines = 0;
-            this.label22.Location = new System.Drawing.Point(724, 174);
+            this.label22.Location = new System.Drawing.Point(725, 15);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(40, 23);
             this.label22.TabIndex = 172;
@@ -766,7 +767,7 @@
             this.displayTotal.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FabricWidth", true));
             this.displayTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.displayTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTotal.Location = new System.Drawing.Point(766, 176);
+            this.displayTotal.Location = new System.Drawing.Point(767, 17);
             this.displayTotal.Name = "displayTotal";
             this.displayTotal.Size = new System.Drawing.Size(73, 21);
             this.displayTotal.TabIndex = 173;
@@ -779,11 +780,22 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(99, 22);
             this.label1.TabIndex = 174;
-            this.label1.Text = "Seq";
+            this.label1.Text = "Seq#";
+            // 
+            // label24
+            // 
+            this.label24.Lines = 0;
+            this.label24.Location = new System.Drawing.Point(474, 15);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(70, 21);
+            this.label24.TabIndex = 175;
+            this.label24.Text = "Size Ratio";
+            this.label24.TextStyle.Color = System.Drawing.Color.White;
             // 
             // P01_MarkerList
             // 
             this.ClientSize = new System.Drawing.Size(855, 600);
+            this.Controls.Add(this.label24);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.displayTotal);
             this.Controls.Add(this.label22);
@@ -915,6 +927,7 @@
             this.Controls.SetChildIndex(this.label22, 0);
             this.Controls.SetChildIndex(this.displayTotal, 0);
             this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.label24, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -983,5 +996,6 @@
         private Win.UI.Label label22;
         private Win.UI.DisplayBox displayTotal;
         private Win.UI.Label label1;
+        private Win.UI.Label label24;
     }
 }

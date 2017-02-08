@@ -320,9 +320,9 @@
             this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "type2", true));
             this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(276, 304);
+            this.displayBox2.Location = new System.Drawing.Point(256, 304);
             this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(122, 21);
+            this.displayBox2.Size = new System.Drawing.Size(260, 21);
             this.displayBox2.TabIndex = 152;
             // 
             // ConsPC
@@ -330,17 +330,17 @@
             this.ConsPC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.ConsPC.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ConsPC", true));
             this.ConsPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.ConsPC.Location = new System.Drawing.Point(92, 174);
+            this.ConsPC.Location = new System.Drawing.Point(92, 197);
             this.ConsPC.Name = "ConsPC";
-            this.ConsPC.Size = new System.Drawing.Size(93, 21);
+            this.ConsPC.Size = new System.Drawing.Size(48, 21);
             this.ConsPC.TabIndex = 151;
             // 
             // panelSizeQty
             // 
             this.panelSizeQty.Controls.Add(this.gridSizeQty);
-            this.panelSizeQty.Location = new System.Drawing.Point(276, 6);
+            this.panelSizeQty.Location = new System.Drawing.Point(301, 6);
             this.panelSizeQty.Name = "panelSizeQty";
-            this.panelSizeQty.Size = new System.Drawing.Size(186, 114);
+            this.panelSizeQty.Size = new System.Drawing.Size(186, 161);
             this.panelSizeQty.TabIndex = 150;
             // 
             // gridSizeQty
@@ -365,7 +365,7 @@
             this.gridSizeQty.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSizeQty.RowTemplate.Height = 24;
             this.gridSizeQty.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridSizeQty.Size = new System.Drawing.Size(186, 114);
+            this.gridSizeQty.Size = new System.Drawing.Size(186, 161);
             this.gridSizeQty.TabIndex = 0;
             this.gridSizeQty.TabStop = false;
             // 
@@ -375,7 +375,7 @@
             this.numFabricWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FabricWidth", true));
             this.numFabricWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numFabricWidth.IsSupportEditMode = false;
-            this.numFabricWidth.Location = new System.Drawing.Point(276, 174);
+            this.numFabricWidth.Location = new System.Drawing.Point(240, 197);
             this.numFabricWidth.Name = "numFabricWidth";
             this.numFabricWidth.NullValue = new decimal(new int[] {
             0,
@@ -396,7 +396,7 @@
             this.checkAllSize.AutoSize = true;
             this.checkAllSize.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AllSize", true));
             this.checkAllSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkAllSize.Location = new System.Drawing.Point(404, 305);
+            this.checkAllSize.Location = new System.Drawing.Point(522, 304);
             this.checkAllSize.Name = "checkAllSize";
             this.checkAllSize.Size = new System.Drawing.Size(66, 19);
             this.checkAllSize.TabIndex = 32;
@@ -408,7 +408,7 @@
             this.label25.Lines = 0;
             this.label25.Location = new System.Drawing.Point(190, 304);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(83, 21);
+            this.label25.Size = new System.Drawing.Size(62, 21);
             this.label25.TabIndex = 30;
             this.label25.Text = "Type";
             this.label25.TextStyle.Color = System.Drawing.Color.White;
@@ -435,7 +435,7 @@
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.ReadOnly = true;
-            this.editRemark.Size = new System.Drawing.Size(461, 50);
+            this.editRemark.Size = new System.Drawing.Size(496, 50);
             this.editRemark.TabIndex = 28;
             // 
             // label24
@@ -454,17 +454,16 @@
             this.editForArticle.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ForArticle", true));
             this.editForArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editForArticle.IsSupportEditMode = false;
-            this.editForArticle.Location = new System.Drawing.Point(92, 198);
-            this.editForArticle.Multiline = true;
+            this.editForArticle.Location = new System.Drawing.Point(92, 224);
             this.editForArticle.Name = "editForArticle";
             this.editForArticle.ReadOnly = true;
-            this.editForArticle.Size = new System.Drawing.Size(461, 50);
+            this.editForArticle.Size = new System.Drawing.Size(496, 21);
             this.editForArticle.TabIndex = 26;
             // 
             // label23
             // 
             this.label23.Lines = 0;
-            this.label23.Location = new System.Drawing.Point(6, 198);
+            this.label23.Location = new System.Drawing.Point(6, 224);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(83, 21);
             this.label23.TabIndex = 25;
@@ -497,7 +496,7 @@
             this.numTotalQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalQty", true));
             this.numTotalQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalQty.IsSupportEditMode = false;
-            this.numTotalQty.Location = new System.Drawing.Point(545, 6);
+            this.numTotalQty.Location = new System.Drawing.Point(543, 6);
             this.numTotalQty.Name = "numTotalQty";
             this.numTotalQty.NullValue = new decimal(new int[] {
             0,
@@ -516,7 +515,7 @@
             // label22
             // 
             this.label22.Lines = 0;
-            this.label22.Location = new System.Drawing.Point(492, 6);
+            this.label22.Location = new System.Drawing.Point(490, 6);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(50, 21);
             this.label22.TabIndex = 34;
@@ -526,11 +525,11 @@
             // label21
             // 
             this.label21.Lines = 0;
-            this.label21.Location = new System.Drawing.Point(236, 6);
+            this.label21.Location = new System.Drawing.Point(233, 6);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(37, 21);
+            this.label21.Size = new System.Drawing.Size(65, 21);
             this.label21.TabIndex = 33;
-            this.label21.Text = "Ratio";
+            this.label21.Text = "Size Ratio";
             this.label21.TextStyle.Color = System.Drawing.Color.White;
             // 
             // displayWidth
@@ -538,15 +537,15 @@
             this.displayWidth.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Width", true));
             this.displayWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayWidth.Location = new System.Drawing.Point(473, 174);
+            this.displayWidth.Location = new System.Drawing.Point(473, 197);
             this.displayWidth.Name = "displayWidth";
-            this.displayWidth.Size = new System.Drawing.Size(80, 21);
+            this.displayWidth.Size = new System.Drawing.Size(115, 21);
             this.displayWidth.TabIndex = 24;
             // 
             // label20
             // 
             this.label20.Lines = 0;
-            this.label20.Location = new System.Drawing.Point(370, 174);
+            this.label20.Location = new System.Drawing.Point(370, 197);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(100, 21);
             this.label20.TabIndex = 23;
@@ -556,7 +555,7 @@
             // label19
             // 
             this.label19.Lines = 0;
-            this.label19.Location = new System.Drawing.Point(190, 174);
+            this.label19.Location = new System.Drawing.Point(152, 197);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(83, 21);
             this.label19.TabIndex = 21;
@@ -568,15 +567,15 @@
             this.displayFabricDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayFabricDesc.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FabricDesc", true));
             this.displayFabricDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFabricDesc.Location = new System.Drawing.Point(124, 150);
+            this.displayFabricDesc.Location = new System.Drawing.Point(124, 173);
             this.displayFabricDesc.Name = "displayFabricDesc";
-            this.displayFabricDesc.Size = new System.Drawing.Size(429, 21);
+            this.displayFabricDesc.Size = new System.Drawing.Size(464, 21);
             this.displayFabricDesc.TabIndex = 18;
             // 
             // label18
             // 
             this.label18.Lines = 0;
-            this.label18.Location = new System.Drawing.Point(6, 174);
+            this.label18.Location = new System.Drawing.Point(6, 197);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(83, 21);
             this.label18.TabIndex = 19;
@@ -586,7 +585,7 @@
             // label17
             // 
             this.label17.Lines = 0;
-            this.label17.Location = new System.Drawing.Point(276, 126);
+            this.label17.Location = new System.Drawing.Point(152, 149);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(83, 21);
             this.label17.TabIndex = 14;
@@ -598,7 +597,7 @@
             this.displayFabricCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayFabricCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FabricCode", true));
             this.displayFabricCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFabricCode.Location = new System.Drawing.Point(92, 150);
+            this.displayFabricCode.Location = new System.Drawing.Point(92, 173);
             this.displayFabricCode.Name = "displayFabricCode";
             this.displayFabricCode.Size = new System.Drawing.Size(30, 21);
             this.displayFabricCode.TabIndex = 17;
@@ -606,7 +605,7 @@
             // label16
             // 
             this.label16.Lines = 0;
-            this.label16.Location = new System.Drawing.Point(6, 150);
+            this.label16.Location = new System.Drawing.Point(6, 173);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(83, 21);
             this.label16.TabIndex = 16;
@@ -618,7 +617,7 @@
             this.displayFabricCombo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayFabricCombo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FabricCombo", true));
             this.displayFabricCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFabricCombo.Location = new System.Drawing.Point(92, 126);
+            this.displayFabricCombo.Location = new System.Drawing.Point(92, 149);
             this.displayFabricCombo.Name = "displayFabricCombo";
             this.displayFabricCombo.Size = new System.Drawing.Size(30, 21);
             this.displayFabricCombo.TabIndex = 11;
@@ -626,7 +625,7 @@
             // label15
             // 
             this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(6, 126);
+            this.label15.Location = new System.Drawing.Point(6, 149);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(83, 21);
             this.label15.TabIndex = 10;
@@ -638,9 +637,9 @@
             this.displayEfficiency.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayEfficiency.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Efficiency", true));
             this.displayEfficiency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayEfficiency.Location = new System.Drawing.Point(362, 126);
+            this.displayEfficiency.Location = new System.Drawing.Point(238, 149);
             this.displayEfficiency.Name = "displayEfficiency";
-            this.displayEfficiency.Size = new System.Drawing.Size(100, 21);
+            this.displayEfficiency.Size = new System.Drawing.Size(60, 21);
             this.displayEfficiency.TabIndex = 15;
             // 
             // displayLectraCode
@@ -648,7 +647,7 @@
             this.displayLectraCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayLectraCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LectraCode", true));
             this.displayLectraCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayLectraCode.Location = new System.Drawing.Point(228, 126);
+            this.displayLectraCode.Location = new System.Drawing.Point(110, 126);
             this.displayLectraCode.Name = "displayLectraCode";
             this.displayLectraCode.Size = new System.Drawing.Size(30, 21);
             this.displayLectraCode.TabIndex = 13;
@@ -656,7 +655,7 @@
             // label14
             // 
             this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(125, 126);
+            this.label14.Location = new System.Drawing.Point(6, 126);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(100, 21);
             this.label14.TabIndex = 12;
@@ -670,7 +669,7 @@
             this.displayPatternPanel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayPatternPanel.Location = new System.Drawing.Point(92, 102);
             this.displayPatternPanel.Name = "displayPatternPanel";
-            this.displayPatternPanel.Size = new System.Drawing.Size(164, 21);
+            this.displayPatternPanel.Size = new System.Drawing.Size(166, 21);
             this.displayPatternPanel.TabIndex = 9;
             // 
             // label13
@@ -779,9 +778,9 @@
             this.displayMarkerVersion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayMarkerVersion.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MarkerVersion", true));
             this.displayMarkerVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayMarkerVersion.Location = new System.Drawing.Point(462, 6);
+            this.displayMarkerVersion.Location = new System.Drawing.Point(473, 6);
             this.displayMarkerVersion.Name = "displayMarkerVersion";
-            this.displayMarkerVersion.Size = new System.Drawing.Size(100, 21);
+            this.displayMarkerVersion.Size = new System.Drawing.Size(115, 21);
             this.displayMarkerVersion.TabIndex = 5;
             // 
             // displayPhaseID
@@ -797,9 +796,9 @@
             // label8
             // 
             this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(366, 6);
+            this.label8.Location = new System.Drawing.Point(370, 6);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(92, 21);
+            this.label8.Size = new System.Drawing.Size(100, 21);
             this.label8.TabIndex = 4;
             this.label8.Text = "Marker Version";
             this.label8.TextStyle.Color = System.Drawing.Color.White;
