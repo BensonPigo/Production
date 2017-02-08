@@ -35,9 +35,9 @@
             this.checkBox3 = new Sci.Win.UI.CheckBox();
             this.checkBox4 = new Sci.Win.UI.CheckBox();
             this.label3 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox5 = new Sci.Win.UI.TextBox();
+            this.txtID = new Sci.Win.UI.TextBox();
+            this.txtShowSeq = new Sci.Win.UI.TextBox();
+            this.txtBcsDate = new Sci.Win.UI.TextBox();
             this.label5 = new Sci.Win.UI.Label();
             this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
@@ -56,9 +56,9 @@
             // 
             this.detailcont.Controls.Add(this.txtartworktype_fty1);
             this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.textBox5);
-            this.detailcont.Controls.Add(this.textBox3);
-            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.txtBcsDate);
+            this.detailcont.Controls.Add(this.txtShowSeq);
+            this.detailcont.Controls.Add(this.txtID);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.checkBox4);
             this.detailcont.Controls.Add(this.checkBox3);
@@ -160,38 +160,38 @@
             this.label3.TabIndex = 8;
             this.label3.Text = "Artwork Type";
             // 
-            // textBox1
+            // txtID
             // 
-            this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox1.IsSupportEditMode = false;
-            this.textBox1.Location = new System.Drawing.Point(162, 55);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(90, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
+            this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtID.IsSupportEditMode = false;
+            this.txtID.Location = new System.Drawing.Point(162, 55);
+            this.txtID.Name = "txtID";
+            this.txtID.ReadOnly = true;
+            this.txtID.Size = new System.Drawing.Size(90, 23);
+            this.txtID.TabIndex = 0;
             // 
-            // textBox3
+            // txtShowSeq
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "showseq", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(162, 167);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(53, 23);
-            this.textBox3.TabIndex = 2;
+            this.txtShowSeq.BackColor = System.Drawing.Color.White;
+            this.txtShowSeq.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "showseq", true));
+            this.txtShowSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShowSeq.Location = new System.Drawing.Point(162, 167);
+            this.txtShowSeq.Name = "txtShowSeq";
+            this.txtShowSeq.Size = new System.Drawing.Size(53, 23);
+            this.txtShowSeq.TabIndex = 2;
             // 
-            // textBox5
+            // txtBcsDate
             // 
-            this.textBox5.BackColor = System.Drawing.Color.White;
-            this.textBox5.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "bcsdate", true));
-            this.textBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox5.Location = new System.Drawing.Point(162, 221);
-            this.textBox5.MaxLength = 2;
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(66, 23);
-            this.textBox5.TabIndex = 3;
+            this.txtBcsDate.BackColor = System.Drawing.Color.White;
+            this.txtBcsDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "bcsdate", true));
+            this.txtBcsDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBcsDate.Location = new System.Drawing.Point(162, 221);
+            this.txtBcsDate.MaxLength = 2;
+            this.txtBcsDate.Name = "txtBcsDate";
+            this.txtBcsDate.Size = new System.Drawing.Size(66, 23);
+            this.txtBcsDate.TabIndex = 3;
             // 
             // label5
             // 
@@ -249,10 +249,10 @@
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.TextBox txtShowSeq;
+        private Win.UI.TextBox txtID;
         private Win.UI.Label label5;
-        private Win.UI.TextBox textBox5;
+        private Win.UI.TextBox txtBcsDate;
         private Class.txtartworktype_fty txtartworktype_fty1;
     }
 }
