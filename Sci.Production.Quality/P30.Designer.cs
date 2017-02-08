@@ -59,9 +59,8 @@
             this.textBox12 = new Sci.Win.UI.DateBox();
             this.textBox11 = new Sci.Win.UI.DateBox();
             this.textBox15 = new Sci.Win.UI.DateBox();
-            this.textBox9 = new Sci.Production.Class.txtuser();
-            this.dropDownListTableAdapter1 = new Sci.Production.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter();
             this.textBox6 = new Sci.Win.UI.NumericBox();
+            this.textBox9 = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -90,12 +89,12 @@
             this.masterpanel.Controls.Add(this.checkBox3);
             this.masterpanel.Controls.Add(this.checkBox2);
             this.masterpanel.Controls.Add(this.checkBox1);
-            this.masterpanel.Controls.Add(this.textBox15);
-            this.masterpanel.Controls.Add(this.textBox11);
-            this.masterpanel.Controls.Add(this.textBox12);
-            this.masterpanel.Controls.Add(this.textBox14);
-            this.masterpanel.Controls.Add(this.textBox13);
             this.masterpanel.Controls.Add(this.textBox8);
+            this.masterpanel.Controls.Add(this.textBox13);
+            this.masterpanel.Controls.Add(this.textBox14);
+            this.masterpanel.Controls.Add(this.textBox12);
+            this.masterpanel.Controls.Add(this.textBox11);
+            this.masterpanel.Controls.Add(this.textBox15);
             this.masterpanel.Controls.Add(this.comboBox1);
             this.masterpanel.Controls.Add(this.textBox7);
             this.masterpanel.Controls.Add(this.textBox5);
@@ -111,7 +110,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 238);
+            this.masterpanel.Size = new System.Drawing.Size(760, 238);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -128,12 +127,12 @@
             this.masterpanel.Controls.SetChildIndex(this.textBox5, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox7, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox13, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox14, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox12, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox11, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox15, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox11, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox12, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox14, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox13, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox8, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkBox3, 0);
@@ -150,7 +149,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 238);
-            this.detailpanel.Size = new System.Drawing.Size(892, 111);
+            this.detailpanel.Size = new System.Drawing.Size(760, 111);
             // 
             // gridicon
             // 
@@ -160,7 +159,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 111);
+            this.detailgridcont.Size = new System.Drawing.Size(760, 111);
             // 
             // detail2
             // 
@@ -176,16 +175,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(760, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(760, 349);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Size = new System.Drawing.Size(760, 38);
             // 
             // browse
             // 
@@ -193,7 +192,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(296, 587);
+            this.tabs.Size = new System.Drawing.Size(768, 416);
             // 
             // label1
             // 
@@ -509,20 +508,6 @@
             this.textBox15.Size = new System.Drawing.Size(120, 23);
             this.textBox15.TabIndex = 40;
             // 
-            // textBox9
-            // 
-            this.textBox9.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "MCHandle", true));
-            this.textBox9.DisplayBox1Binding = "";
-            this.textBox9.Location = new System.Drawing.Point(422, 64);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(266, 23);
-            this.textBox9.TabIndex = 41;
-            this.textBox9.TextBox1Binding = "";
-            // 
-            // dropDownListTableAdapter1
-            // 
-            this.dropDownListTableAdapter1.ClearBeforeFill = true;
-            // 
             // textBox6
             // 
             this.textBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -549,9 +534,19 @@
             0,
             0});
             // 
+            // textBox9
+            // 
+            this.textBox9.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "MCHandle", true));
+            this.textBox9.DisplayBox1Binding = "";
+            this.textBox9.Location = new System.Drawing.Point(422, 64);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(266, 23);
+            this.textBox9.TabIndex = 41;
+            this.textBox9.TextBox1Binding = "";
+            // 
             // P30
             // 
-            this.ClientSize = new System.Drawing.Size(296, 620);
+            this.ClientSize = new System.Drawing.Size(768, 449);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.DefaultDetailOrder = "Type,Item,Colorid";
             this.DefaultFilter = "orders.IsForecast<>1";
@@ -618,7 +613,6 @@
         private Win.UI.CheckBox checkBox2;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.ComboBox comboBox1;
-        private Production.Report.GSchemas.GLOTableAdapters.DropDownListTableAdapter dropDownListTableAdapter1;
         private Win.UI.DateBox textBox8;
         private Win.UI.DateBox textBox13;
         private Win.UI.DateBox textBox15;

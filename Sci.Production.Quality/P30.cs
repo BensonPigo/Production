@@ -20,12 +20,12 @@ namespace Sci.Production.Quality
 
         bool ISEE = false;
         protected DataRow motherData;
-
+        Size thisSize;
         // (menuitem, args= 參數)
         public P30(ToolStripMenuItem menuitem,String history) : base(menuitem) 
         {
             InitializeComponent();
-
+            thisSize = this.Size;
             ISEE = true;
             string mdClose=this.textBox8.Text;
 
@@ -344,7 +344,7 @@ namespace Sci.Production.Quality
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
+            this.Size = thisSize;
 
             DataTable dtCategory;
             Ict.DualResult cbResult;
