@@ -120,6 +120,7 @@ Database/dbo/Stored[!!-~]Procedures/PPIC_Report02.sql -text
 Database/dbo/Stored[!!-~]Procedures/PPIC_Report03.sql -text
 Database/dbo/Stored[!!-~]Procedures/PPIC_Report04.sql -text
 Database/dbo/Stored[!!-~]Procedures/PPIC_Report_Color_MaterialCode.sql -text
+Database/dbo/Stored[!!-~]Procedures/PPIC_Report_QtyBreakdown.sql -text
 Database/dbo/Stored[!!-~]Procedures/PPIC_Report_SizeSpec.sql -text
 Database/dbo/Stored[!!-~]Procedures/Planning_Report_R10.sql -text
 Database/dbo/Stored[!!-~]Procedures/Planning_Report_R13.sql -text
