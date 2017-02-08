@@ -69,7 +69,6 @@ namespace Sci.Production.Quality
 
         System.Data.DataTable[] alldatatable;
         System.Data.DataTable fm = null;
-        System.Data.DataTable fmo = null;
         System.Data.DataTable datatab;
         System.Data.DataTable[] datatabs;
         System.Data.DataTable dt_All;
@@ -668,8 +667,9 @@ order by Defect_Code", factory);
             SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
 
             #region Defect
-            
-            for (int i = 0; i < dt.Length; i++)
+
+            //for (int i = 0; i < dt.Rows.Count; i++)
+            for (int i = 0; i < dym.Rows.Count; i++)
             {
                 string dyear = dym.Rows[i]["cd"].ToString();
                 string dmonth =dym.Rows[i]["name"].ToString();
@@ -702,7 +702,8 @@ order by Defect_Code", factory);
                
             }
 
-            for (int a = 0; a < dts.Length; a++)
+            //for (int a = 0; a < dts.Length; a++)
+            for (int a = 0; a < dy.Rows.Count; a++)
             {
                 string dyear1 = dy.Rows[a]["yy"].ToString();
 
@@ -738,8 +739,8 @@ order by Defect_Code", factory);
             #endregion
 
             #region Style
-           
-            for (int i = 0; i < da.Length; i++)
+            //for (int i = 0; i < da.Length; i++)
+            for (int i = 0; i < sym.Rows.Count; i++)
             {
                 string syear = sym.Rows[i]["cd"].ToString();
                 string smonth =sym.Rows[i]["name"].ToString();
@@ -771,7 +772,8 @@ order by Defect_Code", factory);
                 sxc.dicDatas.Add("##style" + i, sxt);
             }
 
-            for (int a = 0; a < das.Length; a++)
+            //for (int a = 0; a < das.Length; a++)
+            for (int a = 0; a < sy.Rows.Count; a++)
             {
                 string syear1 = sy.Rows[a]["yy"].ToString();
 
@@ -802,7 +804,8 @@ order by Defect_Code", factory);
 
             #region Country
             
-            for (int i = 0; i < datb.Length; i++)
+            //for (int i = 0; i < datb.Length; i++)
+            for (int i = 0; i < cym.Rows.Count; i++)
             {
                 string cyear = cym.Rows[i]["cd"].ToString();
                 string cmonth =cym.Rows[i]["name"].ToString();
@@ -833,7 +836,8 @@ order by Defect_Code", factory);
                 sxc.dicDatas.Add("##country" + i, cxt);
             }
 
-            for (int a = 0; a < datbs.Length; a++)
+            //for (int a = 0; a < datbs.Length; a++)
+            for (int a = 0; a < cy.Rows.Count; a++)
             {
                 string cyear1 = cy.Rows[a]["yy"].ToString();
 
