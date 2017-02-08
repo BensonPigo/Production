@@ -15,6 +15,5 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
         }
-
     }
 }
