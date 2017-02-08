@@ -30,10 +30,10 @@
         {
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
-            this.checkBox3 = new Sci.Win.UI.CheckBox();
-            this.checkBox4 = new Sci.Win.UI.CheckBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.checkDisplayonreport = new Sci.Win.UI.CheckBox();
+            this.checkSelected = new Sci.Win.UI.CheckBox();
+            this.checkProcess = new Sci.Win.UI.CheckBox();
             this.label3 = new Sci.Win.UI.Label();
             this.txtID = new Sci.Win.UI.TextBox();
             this.txtShowSeq = new Sci.Win.UI.TextBox();
@@ -60,10 +60,10 @@
             this.detailcont.Controls.Add(this.txtShowSeq);
             this.detailcont.Controls.Add(this.txtID);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.checkBox4);
-            this.detailcont.Controls.Add(this.checkBox3);
-            this.detailcont.Controls.Add(this.checkBox2);
-            this.detailcont.Controls.Add(this.checkBox1);
+            this.detailcont.Controls.Add(this.checkProcess);
+            this.detailcont.Controls.Add(this.checkSelected);
+            this.detailcont.Controls.Add(this.checkDisplayonreport);
+            this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Size = new System.Drawing.Size(676, 357);
@@ -75,11 +75,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(676, 395);
+            this.browse.Size = new System.Drawing.Size(626, 395);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(684, 424);
+            this.tabs.Size = new System.Drawing.Size(634, 424);
             // 
             // editby
             // 
@@ -103,53 +103,53 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "Show Seq";
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(315, 59);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 4;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(315, 59);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 4;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // checkDisplayonreport
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsRFIDDefault", true));
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox2.Location = new System.Drawing.Point(412, 112);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(135, 21);
-            this.checkBox2.TabIndex = 7;
-            this.checkBox2.Text = "Display on report";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkDisplayonreport.AutoSize = true;
+            this.checkDisplayonreport.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsRFIDDefault", true));
+            this.checkDisplayonreport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkDisplayonreport.Location = new System.Drawing.Point(412, 112);
+            this.checkDisplayonreport.Name = "checkDisplayonreport";
+            this.checkDisplayonreport.Size = new System.Drawing.Size(135, 21);
+            this.checkDisplayonreport.TabIndex = 7;
+            this.checkDisplayonreport.Text = "Display on report";
+            this.checkDisplayonreport.UseVisualStyleBackColor = true;
             // 
-            // checkBox3
+            // checkSelected
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "isSelection", true));
-            this.checkBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox3.Location = new System.Drawing.Point(315, 112);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(82, 21);
-            this.checkBox3.TabIndex = 6;
-            this.checkBox3.Text = "Selected";
-            this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkSelected.AutoSize = true;
+            this.checkSelected.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "isSelection", true));
+            this.checkSelected.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkSelected.Location = new System.Drawing.Point(315, 112);
+            this.checkSelected.Name = "checkSelected";
+            this.checkSelected.Size = new System.Drawing.Size(82, 21);
+            this.checkSelected.TabIndex = 6;
+            this.checkSelected.Text = "Selected";
+            this.checkSelected.UseVisualStyleBackColor = true;
             // 
-            // checkBox4
+            // checkProcess
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsRFIDProcess", true));
-            this.checkBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox4.Location = new System.Drawing.Point(412, 57);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(78, 21);
-            this.checkBox4.TabIndex = 5;
-            this.checkBox4.Text = "Process";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.checkProcess.AutoSize = true;
+            this.checkProcess.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsRFIDProcess", true));
+            this.checkProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkProcess.Location = new System.Drawing.Point(412, 57);
+            this.checkProcess.Name = "checkProcess";
+            this.checkProcess.Size = new System.Drawing.Size(78, 21);
+            this.checkProcess.TabIndex = 5;
+            this.checkProcess.Text = "Process";
+            this.checkProcess.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -216,7 +216,7 @@
             // 
             // B01
             // 
-            this.ClientSize = new System.Drawing.Size(684, 457);
+            this.ClientSize = new System.Drawing.Size(634, 457);
             this.DefaultControl = "textBox1";
             this.DefaultControlForEdit = "txtartworktype_fty1";
             this.DefaultOrder = "id";
@@ -243,10 +243,10 @@
         #endregion
 
         private Win.UI.Label label3;
-        private Win.UI.CheckBox checkBox4;
-        private Win.UI.CheckBox checkBox3;
-        private Win.UI.CheckBox checkBox2;
-        private Win.UI.CheckBox checkBox1;
+        private Win.UI.CheckBox checkProcess;
+        private Win.UI.CheckBox checkSelected;
+        private Win.UI.CheckBox checkDisplayonreport;
+        private Win.UI.CheckBox checkJunk;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtShowSeq;
