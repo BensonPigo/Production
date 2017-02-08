@@ -1208,15 +1208,27 @@ left join Order_QtyShip oq on oq.Id = a.OrderID and oq.Seq = a.OrderShipmodeSeq"
             {
                 return;
             }
+            SelectReason();
+
+            RenewData();
+            OnDetailEntered();
+            EnsureToolbarExt();
+        }
+
+        private void SelectReason()
+        {
 
             Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason();
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
                 string reasonRemark = callReason.ReturnRemark;
+
                 if (MyUtility.Check.Empty(reasonRemark))
                 {
-                    return;
+                    MyUtility.Msg.InfoBox("Remark cannot be empty!");
+                    SelectReason();
+                    //return;
                 }
                 else
                 {
@@ -1290,10 +1302,6 @@ left join Order_QtyShip oq on oq.Id = a.OrderID and oq.Seq = a.OrderShipmodeSeq"
             {
                 return;
             }
-
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
         }
 
         //Find Now
