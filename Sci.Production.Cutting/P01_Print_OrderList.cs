@@ -85,6 +85,10 @@ namespace Sci.Production.Cutting
 
                     dt.Borders.AllCellsBorders = true;
 
+                    //凍結窗格
+                    dt.boFreezePanes = true;
+                    dt.intFreezeColumn = 3;
+
                     sxr.dicDatas.Add(sxr._v + "tbl1" + idxStr, dt);
                     sxr.dicDatas.Add(sxr._v + "SizeGroup" + idxStr, SizeGroup);
                     //sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
@@ -292,6 +296,11 @@ namespace Sci.Production.Cutting
 
                     //合併儲存格
                     dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 4, dt.Columns.Count - 2) } });
+
+                    //凍結窗格
+                    dt.boFreezePanes = true;
+                    dt.intFreezeColumn = 3;
+
                     sxr.dicDatas.Add(sxr._v + "tbl1" + idxStr, dt);
                     //sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
                     sxr.dicDatas.Add(sxr._v + "SizeGroup" + idxStr, SizeGroup);
