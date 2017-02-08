@@ -1929,6 +1929,9 @@ Sci.Production.PPIC/P01_FactoryCMT.resx -text
 Sci.Production.PPIC/P01_GMTExport.Designer.cs -text
 Sci.Production.PPIC/P01_GMTExport.cs -text
 Sci.Production.PPIC/P01_GMTExport.resx -text
+Sci.Production.PPIC/P01_MNoticePrint.Designer.cs -text
+Sci.Production.PPIC/P01_MNoticePrint.cs -text
+Sci.Production.PPIC/P01_MNoticePrint.resx -text
 Sci.Production.PPIC/P01_MTLImport.Designer.cs -text
 Sci.Production.PPIC/P01_MTLImport.cs -text
 Sci.Production.PPIC/P01_MTLImport.resx -text
