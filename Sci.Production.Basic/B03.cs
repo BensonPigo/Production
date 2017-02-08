@@ -21,5 +21,18 @@ namespace Sci.Production.Basic
             base.ClickEditAfter();
             textM.ReadOnly = true;
         }
+
+        protected override bool ClickSaveBefore()
+        {
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"].ToString()))
+            {
+                MyUtility.Msg.WarningBox("< M > can not be empty!");
+                this.textM.Focus();
+                return false;
+            }
+            return base.ClickSaveBefore();
+        }
+
+
     }
 }
