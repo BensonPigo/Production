@@ -37,7 +37,8 @@ namespace Sci.Production.Warehouse
                 MyUtility.Check.Empty(dateRange2.Value1) &&
                 MyUtility.Check.Empty(dateRange4.Value1) &&
                 MyUtility.Check.Empty(dateRange3.Value1) &&
-                (MyUtility.Check.Empty(txtSpno1.Text) || MyUtility.Check.Empty(txtSpno2.Text)))
+                (MyUtility.Check.Empty(txtSpno1.Text) || MyUtility.Check.Empty(txtSpno2.Text)) &&
+                (MyUtility.Check.Empty(txtRefno1.Text) || MyUtility.Check.Empty(txtRefno2.Text)))
             {
                 MyUtility.Msg.WarningBox("< Supp Delivery > & < SCI Delivery > & < ETA > & < FinalETA >& < SP# > & < Refno > can't be empty!!");
                 return false;
@@ -109,14 +110,6 @@ where 1=1"));
                 {
                     sqlCmd.Append(string.Format(@" and o.SciDelivery between '{0}' and '{1}'",
                     Convert.ToDateTime(sciDelivery1).ToString("d"), Convert.ToDateTime(sciDelivery2).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(spno1))
-                {
-                    sqlCmd.Append(" and o.id >= @spno1 and o.id <= @spno2");
-                    sp_spno1.Value = spno1;
-                    sp_spno2.Value = spno2;
-                    cmds.Add(sp_spno1);
-                    cmds.Add(sp_spno2);
                 }
                 if (!MyUtility.Check.Empty(style))
                 {
@@ -218,9 +211,17 @@ where 1=1 "));
             }
 
             #region --- 條件組合  ---
+            if (!MyUtility.Check.Empty(spno1))
+            {
+                sqlCmd.Append(" and a.id >= @spno1 and a.id <= @spno2");
+                sp_spno1.Value = spno1;
+                sp_spno2.Value = spno2;
+                cmds.Add(sp_spno1);
+                cmds.Add(sp_spno2);
+            }
             if (!MyUtility.Check.Empty(suppDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and b.finaletd between '{0}' and '{1}'"
+                sqlCmd.Append(string.Format(@" and Coalesce(b.finaletd,b.CFMETD,b.SystemETD) between '{0}' and '{1}'"
                 , Convert.ToDateTime(suppDelivery1).ToString("d"), Convert.ToDateTime(suppDelivery2).ToString("d")));
             }
 
@@ -305,7 +306,7 @@ where 1=1 "));
 
             this.ShowWaitMessage("Excel Processing...");
             Excel.Worksheet worksheet = objApp.Sheets[1];
-            for (int i = 1; i <= printData.Rows.Count; i++) worksheet.Cells[i + 1, 11] = ((string)((Excel.Range)worksheet.Cells[i + 1, 11]).Value).Trim();
+            //for (int i = 1; i <= printData.Rows.Count; i++) worksheet.Cells[i + 1, 11] = ((string)((Excel.Range)worksheet.Cells[i + 1, 11]).Value).Trim();
             objApp.Visible = true;
 
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
