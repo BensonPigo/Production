@@ -71,13 +71,13 @@
             this.radioButton_ByCustCD.Name = "radioButton_ByCustCD";
             this.radioButton_ByCustCD.Size = new System.Drawing.Size(213, 21);
             this.radioButton_ByCustCD.TabIndex = 7;
-            this.radioButton_ByCustCD.TabStop = true;
             this.radioButton_ByCustCD.Text = "M/Notice (Combo by CustCD )";
             this.radioButton_ByCustCD.UseVisualStyleBackColor = true;
             // 
             // radioButton_MNotice
             // 
             this.radioButton_MNotice.AutoSize = true;
+            this.radioButton_MNotice.Checked = true;
             this.radioButton_MNotice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioButton_MNotice.Location = new System.Drawing.Point(18, 22);
             this.radioButton_MNotice.Name = "radioButton_MNotice";
