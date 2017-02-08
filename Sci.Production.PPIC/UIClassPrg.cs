@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using Sci;
 using Msg = Sci.MyUtility.Msg;
 using System.Drawing;
-using BrightIdeasSoftware;
+//using BrightIdeasSoftware;
 using System.Runtime.InteropServices;
 using System.Data;
 
@@ -74,60 +74,60 @@ namespace Sci.Production.Class
         }
 
 
-        private static BrightIdeasSoftware.HeaderFormatStyle headerFormatStyle1 = Get_ListViewFormatStyle1();
-        private static BrightIdeasSoftware.HeaderFormatStyle Get_ListViewFormatStyle1(){
-            BrightIdeasSoftware.HeaderStateStyle headerStateStyle4 = new BrightIdeasSoftware.HeaderStateStyle();
-            BrightIdeasSoftware.HeaderStateStyle headerStateStyle5 = new BrightIdeasSoftware.HeaderStateStyle();
-            BrightIdeasSoftware.HeaderStateStyle headerStateStyle6 = new BrightIdeasSoftware.HeaderStateStyle();
-            BrightIdeasSoftware.HeaderFormatStyle headerFormatStyle1 = new BrightIdeasSoftware.HeaderFormatStyle();
-            // 
-            // headerFormatStyle1
-            // 
-            headerStateStyle4.BackColor = System.Drawing.Color.Gray;
-            headerStateStyle4.ForeColor = System.Drawing.Color.White;
-            headerStateStyle4.FrameColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            headerStateStyle4.FrameWidth = 2F;
-            headerFormatStyle1.Hot = headerStateStyle4;
-            headerStateStyle5.BackColor = System.Drawing.Color.DimGray;
-            headerStateStyle5.ForeColor = System.Drawing.Color.White;
-            headerFormatStyle1.Normal = headerStateStyle5;
-            headerFormatStyle1.Pressed = headerStateStyle6;
-            return headerFormatStyle1;
-        }
-        //private static HotItemStyle hotItemStyle1;
-        private static HotItemStyle Get_ListViewHotItemStyle1(){
-            HotItemStyle hotItemStyle1 = new BrightIdeasSoftware.HotItemStyle();
-            hotItemStyle1.BackColor = System.Drawing.Color.PeachPuff;
-            hotItemStyle1.ForeColor = System.Drawing.Color.MediumBlue;
+        //private static BrightIdeasSoftware.HeaderFormatStyle headerFormatStyle1 = Get_ListViewFormatStyle1();
+        //private static BrightIdeasSoftware.HeaderFormatStyle Get_ListViewFormatStyle1(){
+        //    BrightIdeasSoftware.HeaderStateStyle headerStateStyle4 = new BrightIdeasSoftware.HeaderStateStyle();
+        //    BrightIdeasSoftware.HeaderStateStyle headerStateStyle5 = new BrightIdeasSoftware.HeaderStateStyle();
+        //    BrightIdeasSoftware.HeaderStateStyle headerStateStyle6 = new BrightIdeasSoftware.HeaderStateStyle();
+        //    BrightIdeasSoftware.HeaderFormatStyle headerFormatStyle1 = new BrightIdeasSoftware.HeaderFormatStyle();
+        //    // 
+        //    // headerFormatStyle1
+        //    // 
+        //    headerStateStyle4.BackColor = System.Drawing.Color.Gray;
+        //    headerStateStyle4.ForeColor = System.Drawing.Color.White;
+        //    headerStateStyle4.FrameColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+        //    headerStateStyle4.FrameWidth = 2F;
+        //    headerFormatStyle1.Hot = headerStateStyle4;
+        //    headerStateStyle5.BackColor = System.Drawing.Color.DimGray;
+        //    headerStateStyle5.ForeColor = System.Drawing.Color.White;
+        //    headerFormatStyle1.Normal = headerStateStyle5;
+        //    headerFormatStyle1.Pressed = headerStateStyle6;
+        //    return headerFormatStyle1;
+        //}
+        ////private static HotItemStyle hotItemStyle1;
+        //private static HotItemStyle Get_ListViewHotItemStyle1(){
+        //    HotItemStyle hotItemStyle1 = new BrightIdeasSoftware.HotItemStyle();
+        //    hotItemStyle1.BackColor = System.Drawing.Color.PeachPuff;
+        //    hotItemStyle1.ForeColor = System.Drawing.Color.MediumBlue;
 
-            return hotItemStyle1;
-        }
-        public static void SetListView_Style1(ObjectListView listV)
-        {
-            listV.AllowColumnReorder = true;
-            listV.FullRowSelect = true;
-            listV.HideSelection = true;
-            listV.ShowCommandMenuOnRightClick = true;
-            listV.UseFilterIndicator = true;
-            listV.UseFiltering = true;
-            listV.UseHotItem = false;
+        //    return hotItemStyle1;
+        //}
+        //public static void SetListView_Style1(ObjectListView listV)
+        //{
+        //    listV.AllowColumnReorder = true;
+        //    listV.FullRowSelect = true;
+        //    listV.HideSelection = true;
+        //    listV.ShowCommandMenuOnRightClick = true;
+        //    listV.UseFilterIndicator = true;
+        //    listV.UseFiltering = true;
+        //    listV.UseHotItem = false;
             
-            // Header Style
-            listV.HeaderFormatStyle = UIClassPrg.headerFormatStyle1;
-            // HotItemStyle
-            //listV.HotItemStyle = UIClassPrg.hotItemStyle1;
-            // AlternateRowBackColor
-            Color defColor = listV.BackColor;
-            System.Windows.Forms.DataGridViewCellStyle alternatingRowStyle = new System.Windows.Forms.DataGridViewCellStyle();
-            alternatingRowStyle.BackColor = Color.FromArgb(defColor.R - 10, defColor.G, defColor.B - 10);
+        //    // Header Style
+        //    listV.HeaderFormatStyle = UIClassPrg.headerFormatStyle1;
+        //    // HotItemStyle
+        //    //listV.HotItemStyle = UIClassPrg.hotItemStyle1;
+        //    // AlternateRowBackColor
+        //    Color defColor = listV.BackColor;
+        //    System.Windows.Forms.DataGridViewCellStyle alternatingRowStyle = new System.Windows.Forms.DataGridViewCellStyle();
+        //    alternatingRowStyle.BackColor = Color.FromArgb(defColor.R - 10, defColor.G, defColor.B - 10);
 
-            listV.UseAlternatingBackColors = true;
-            listV.AlternateRowBackColor = alternatingRowStyle.BackColor;
+        //    listV.UseAlternatingBackColors = true;
+        //    listV.AlternateRowBackColor = alternatingRowStyle.BackColor;
 
-            //
-            listV.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            listV.GridLines = true;
-        }
+        //    //
+        //    listV.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+        //    listV.GridLines = true;
+        //}
 
         /// <summary>
         ///  請在 form 的Constructor執行 , 放置在 InitializeComponent() 之後跑
