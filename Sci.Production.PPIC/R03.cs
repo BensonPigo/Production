@@ -70,7 +70,11 @@ from Factory f where Zone <> ''", out zone);
             planDate2 = dateRange5.Value2;
             orderCfm1 = dateRange6.Value1;
             orderCfm2 = dateRange6.Value2;
-           
+            style = txtstyle1.Text.Trim();
+            season = txtseason1.Text.Trim();
+            brand = txtbrand1.Text.Trim();
+            custcd = txtcustcd1.Text.Trim();
+
             zone = MyUtility.Convert.GetString(comboBox1.SelectedValue);
             mDivision = comboBox2.Text;
             factory = comboBox3.Text;
