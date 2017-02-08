@@ -216,6 +216,7 @@ namespace Sci.Production.Planning
                 .Text("id", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
                 .Text("article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8,decimal_places:3, iseditingreadonly: true)
+                .Numeric("balance", header: "Bal. M", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
                 .ComboBox("inhouseosp", header: "OSP/Inhouse").Get(out col_inhouseosp)
                 .Text("localSuppid", header: "Supp Id", width: Widths.AnsiChars(6),settings:ts)
                 .Text("suppnm", header: "Supplier", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -357,7 +358,21 @@ namespace Sci.Production.Planning
 ,C.alloqty
 ,(select batchno from embbatch where b.qty >= BeginStitch AND b.qty <=EndStitch) batchno
 ,round(alloqty/({0}*{1}*(select batchno from embbatch where b.qty >= BeginStitch AND b.qty <=EndStitch))*100/{2},3) as totalqty
+,round(IIF(b.tms =0,0,(a.qty-(isnull((select sum(tmp3.qaqty)  
+    from 
+    (SELECT article,min(isnull(qaqty,0)) qaqty
+	    FROM style_location 
+	    left join (
+				    SELECT 
+					      [ComboType]
+					      ,[Article]
+					      ,SUM([QAQty]) QAQTY
+				      FROM [Production].[dbo].[SewingOutput_Detail] WHERE ORDERID=a.id
+				      GROUP BY ComboType,Article) TMP 
+	    on style_location.Location = tmp.ComboType where style_location.StyleUkey = a.styleukey
+	    group by article) tmp3),0)))/(3600*18/b.tms)*100/15.0),3) as balance
 ,b.artworktypeid
+,a.qty * b.tms as totaltms
  FROM (Orders a inner join  Order_tmscost b on a.ID = b.ID) 
 inner join SewingSchedule c on a.id = c.OrderID
 inner join dbo.Factory on factory.id = a.factoryid
@@ -532,7 +547,8 @@ inner join dbo.Factory on factory.id = a.factoryid
                        {
                            Supplier = grouprows.Key.localsuppid + "-" + grouprows.Key.suppnm,
                            TotalQty = grouprows.Sum(r => r.Field<decimal>("totalqty")),
-                           TotalStitch = grouprows.Sum(r => r.Field<decimal>("ttlstitch"))
+                           Balance = grouprows.Sum(r => r.Field<decimal>("balance")),
+                           Totaltms = grouprows.Sum(r => r.Field<decimal>("totaltms")) 
                        }).ToList();
 
             var bs2 = (from rows in ((DataTable)listControlBindingSource1.DataSource).AsEnumerable()
@@ -541,7 +557,8 @@ inner join dbo.Factory on factory.id = a.factoryid
                        {
                            Supplier = grouprows.Key.localsuppid,
                            TotalQty = grouprows.Sum(r =>  r.Field<decimal>("totalqty")),
-                           TotalStitch = grouprows.Sum(r => r.Field<decimal>("ttlstitch"))
+                           Balance = grouprows.Sum(r => r.Field<decimal>("balance")),
+                           Totaltms = grouprows.Sum(r => r.Field<decimal>("totaltms"))
                        }).ToList();
             bs1.AddRange(bs2);
             grid2.DataSource = bs1;
