@@ -25,7 +25,7 @@ namespace Sci.Production.Tools
         private bool different = false;
         private DataTable dtMenuDetail = null;
         private DataRow[] drs = null;
-        private DataRow seekedData = null;
+        //private DataRow seekedData = null;
         private DataRow _refDr = null;
         private string sqlCmd = "";
 

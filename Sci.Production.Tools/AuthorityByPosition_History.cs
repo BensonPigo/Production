@@ -15,8 +15,8 @@ namespace Sci.Production.Tools
 {
     public partial class AuthorityByPosition_History : Sci.Win.Subs.Input4
     {
-        private DataTable dtPass1 = null;
-        private DualResult result = null;
+        //private DataTable dtPass1 = null;
+        //private DualResult result = null;
 
         public AuthorityByPosition_History(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3) : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
