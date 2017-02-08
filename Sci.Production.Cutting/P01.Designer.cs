@@ -94,7 +94,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(961, 442);
+            this.detail.Size = new System.Drawing.Size(893, 442);
             // 
             // detailcont
             // 
@@ -154,21 +154,21 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(961, 404);
+            this.detailcont.Size = new System.Drawing.Size(893, 404);
             this.detailcont.TabIndex = 1;
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 404);
-            this.detailbtm.Size = new System.Drawing.Size(961, 38);
+            this.detailbtm.Size = new System.Drawing.Size(893, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(961, 442);
+            this.browse.Size = new System.Drawing.Size(893, 442);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(969, 471);
+            this.tabs.Size = new System.Drawing.Size(901, 471);
             // 
             // editby
             // 
@@ -740,7 +740,7 @@
             // 
             // P01
             // 
-            this.ClientSize = new System.Drawing.Size(969, 504);
+            this.ClientSize = new System.Drawing.Size(901, 504);
             this.DefaultControl = "textBox1";
             this.DefaultControlForEdit = "textBox1";
             this.DefaultOrder = "id";
@@ -749,6 +749,7 @@
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
             this.Name = "P01";
+            this.Text = "() ";
             this.WorkAlias = "Cutting";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
