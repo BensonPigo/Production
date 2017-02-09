@@ -178,6 +178,7 @@
             this.ClientSize = new System.Drawing.Size(627, 314);
             this.Controls.Add(this.panel1);
             this.Name = "R20";
+            this.Text = "R20.Thread request List";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
