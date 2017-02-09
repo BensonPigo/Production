@@ -101,7 +101,11 @@ size		= p.SizeSpec,
 description	= dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) ,
 roll		= a.Roll,
 dyelot		= a.Dyelot,
-sotckType	= a.StockType,
+sotckType	= case a.StockType
+                when 'b' then 'Bulk'
+                when 'i' then 'Inventory'
+                when 'o' then 'obsolete'
+              end,
 deadline	= (select max(Deadline) from dbo.Inventory i 
 				where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select orders.Factoryid from orders where orders.id = a.poid)),
 InQty		= a.InQty,
@@ -142,7 +146,11 @@ size		= p.SizeSpec,
 description	= dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) ,
 roll		= a.Roll,
 dyelot		= a.Dyelot,
-sotckType	= a.StockType,
+sotckType	= case a.StockType
+                when 'b' then 'Bulk'
+                when 'i' then 'Inventory'
+                when 'o' then 'obsolete'
+              end,
 deadline	= (select max(Deadline) from dbo.Inventory i 
 				where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select FactoryID from orders where id = a.Poid)),
 InQty		= a.InQty,
@@ -186,7 +194,11 @@ size		= p.SizeSpec,
 description	= dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0),
 roll		= a.Roll,
 dyelot		= a.Dyelot,
-sotckType	= a.StockType,
+sotckType	= case a.StockType
+                when 'b' then 'Bulk'
+                when 'i' then 'Inventory'
+                when 'o' then 'obsolete'
+              end,
 deadline	= (select max(Deadline) from dbo.Inventory i 
 				where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.Factoryid),
 InQty		= a.InQty,
@@ -229,7 +241,11 @@ size		= p.SizeSpec,
 description	= dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0),
 roll		= a.Roll,
 dyelot		= a.Dyelot,
-sotckType	= a.StockType,
+sotckType	= case a.StockType
+                when 'b' then 'Bulk'
+                when 'i' then 'Inventory'
+                when 'o' then 'obsolete'
+              end,
 deadline	= (select max(Deadline) from dbo.Inventory i 
 				where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.Factoryid),
 InQty		= a.InQty,
