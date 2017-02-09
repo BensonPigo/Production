@@ -179,7 +179,6 @@
             // textBox3
             // 
             this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Skill", true));
             this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.textBox3.IsSupportEditMode = false;
             this.textBox3.Location = new System.Drawing.Point(132, 182);
