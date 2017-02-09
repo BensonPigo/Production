@@ -42,7 +42,7 @@ namespace Sci.Production.Thread
             Thread = textITEM.Text.ToString();
             LOC1 = textLOC1.Text.ToString();
             LOC2 = textLOC2.Text.ToString();
-            M = comboBox1.SelectedItem.ToString();
+            M = comboBox1.SelectedValue.ToString();
             lis = new List<SqlParameter>();
             string sqlWhere = "";
             List<string> sqlWheres = new List<string>();
@@ -79,7 +79,9 @@ namespace Sci.Production.Thread
                 sqlWheres.Add("ThreadStock.mDivisionid = @M");
                 lis.Add(new SqlParameter("@M", M));
             }
-
+            
+            if (sqlWheres.Count > 0)
+                sqlWhere = " where " + sqlWheres.JoinToString(" and ");
             #endregion
 
             cmd = string.Format(@"
