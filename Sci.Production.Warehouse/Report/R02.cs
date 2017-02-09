@@ -53,7 +53,12 @@ namespace Sci.Production.Warehouse
 
                 this.ShowWaitMessage("Excel Processing...");
                 Excel.Worksheet worksheet = objApp.Sheets[1];
-                for (int i = 1; i <= dt.Rows.Count; i++) worksheet.Cells[i + 1, 7] = ((string)((Excel.Range)worksheet.Cells[i + 1, 7]).Value).Trim();
+                for (int i = 1; i <= dt.Rows.Count; i++)
+                {
+                    string str = worksheet.Cells[i + 1, 7].Value;
+                    if(!MyUtility.Check.Empty(str))
+                        worksheet.Cells[i + 1, 7] = str.Trim();
+                }
                 objApp.Visible = true;
 
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
