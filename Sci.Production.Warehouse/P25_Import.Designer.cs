@@ -177,6 +177,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
+            this.DefaultControl = "txtSeq1";
             this.Name = "P25_Import";
             this.Text = "P25. Import Detail";
             this.groupBox2.ResumeLayout(false);
