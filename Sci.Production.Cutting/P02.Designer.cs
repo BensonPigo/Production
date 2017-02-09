@@ -184,7 +184,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(4325, 561);
+            this.refresh.Location = new System.Drawing.Point(4382, 561);
             // 
             // detailgridcont
             // 
@@ -193,7 +193,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(3, 101);
-            this.detailgridcont.Size = new System.Drawing.Size(629, 596);
+            this.detailgridcont.Size = new System.Drawing.Size(631, 596);
             // 
             // detail2
             // 
@@ -568,7 +568,7 @@
             // 
             this.textBox_MarkerLengthE.BackColor = System.Drawing.Color.White;
             this.textBox_MarkerLengthE.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox_MarkerLengthE.Location = new System.Drawing.Point(168, 4);
+            this.textBox_MarkerLengthE.Location = new System.Drawing.Point(158, 4);
             this.textBox_MarkerLengthE.Mask = "00-0/0+0\"";
             this.textBox_MarkerLengthE.Name = "textBox_MarkerLengthE";
             this.textBox_MarkerLengthE.Size = new System.Drawing.Size(116, 23);
@@ -677,7 +677,7 @@
             this.editBox_desc.Multiline = true;
             this.editBox_desc.Name = "editBox_desc";
             this.editBox_desc.ReadOnly = true;
-            this.editBox_desc.Size = new System.Drawing.Size(235, 47);
+            this.editBox_desc.Size = new System.Drawing.Size(261, 47);
             this.editBox_desc.TabIndex = 29;
             // 
             // label19
@@ -749,7 +749,7 @@
             this.label20.Lines = 0;
             this.label20.Location = new System.Drawing.Point(172, 281);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(68, 23);
+            this.label20.Size = new System.Drawing.Size(86, 23);
             this.label20.TabIndex = 45;
             this.label20.Text = "Cutplan#";
             // 
@@ -766,9 +766,9 @@
             // 
             this.displayBox_Cutplanid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox_Cutplanid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox_Cutplanid.Location = new System.Drawing.Point(243, 281);
+            this.displayBox_Cutplanid.Location = new System.Drawing.Point(262, 281);
             this.displayBox_Cutplanid.Name = "displayBox_Cutplanid";
-            this.displayBox_Cutplanid.Size = new System.Drawing.Size(108, 23);
+            this.displayBox_Cutplanid.Size = new System.Drawing.Size(102, 23);
             this.displayBox_Cutplanid.TabIndex = 32;
             // 
             // distribute_grid
@@ -966,7 +966,7 @@
             this.displayBox_WorkOrderDownloadid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox_WorkOrderDownloadid.Location = new System.Drawing.Point(173, 217);
             this.displayBox_WorkOrderDownloadid.Name = "displayBox_WorkOrderDownloadid";
-            this.displayBox_WorkOrderDownloadid.Size = new System.Drawing.Size(165, 23);
+            this.displayBox_WorkOrderDownloadid.Size = new System.Drawing.Size(191, 23);
             this.displayBox_WorkOrderDownloadid.TabIndex = 30;
             // 
             // displayBox_Downloadid
@@ -975,7 +975,7 @@
             this.displayBox_Downloadid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox_Downloadid.Location = new System.Drawing.Point(173, 244);
             this.displayBox_Downloadid.Name = "displayBox_Downloadid";
-            this.displayBox_Downloadid.Size = new System.Drawing.Size(165, 23);
+            this.displayBox_Downloadid.Size = new System.Drawing.Size(191, 23);
             this.displayBox_Downloadid.TabIndex = 31;
             // 
             // AutoCut
@@ -1091,7 +1091,7 @@
             // 
             this.textBox_MarkerLength.BackColor = System.Drawing.Color.White;
             this.textBox_MarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox_MarkerLength.Location = new System.Drawing.Point(290, 4);
+            this.textBox_MarkerLength.Location = new System.Drawing.Point(280, 4);
             this.textBox_MarkerLength.Name = "textBox_MarkerLength";
             this.textBox_MarkerLength.Size = new System.Drawing.Size(74, 23);
             this.textBox_MarkerLength.TabIndex = 59;

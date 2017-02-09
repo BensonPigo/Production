@@ -42,6 +42,7 @@ namespace Sci.Production.Cutting
         Ict.Win.UI.DataGridViewTextBoxColumn col_dist_sp;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_dist_qty;
         #endregion
+
         public P02(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
         {
@@ -95,9 +96,9 @@ namespace Sci.Production.Cutting
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
+            #region 主Table
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
-            string cmdsql = string.Format(
-            @"
+            string cmdsql = string.Format(@"
             Select a.*,
             (
                 Select distinct Article+'/' 
@@ -167,7 +168,6 @@ namespace Sci.Production.Cutting
 				Where a.ukey = size.WorkOrderUkey
 			) as multisize,
 
-            --617: CUTTING_P02_Cutting Work Order
 			(
 				select SEQ
 				from (select WO.Ukey , max(c.Seq) SEQ
@@ -179,36 +179,24 @@ namespace Sci.Production.Cutting
 				where tmp.Ukey=a.Ukey
 			) as Order_SizeCode_Seq,
 
-            0 As SORT_NUM,  --617: CUTTING_P02_Cutting Work Order
-
+            0 As SORT_NUM,
 			c.MtlTypeID,c.DescDetail,0 as newkey
             ,substring(a.MarkerLength,1,2) as MarkerLengthY
             ,substring(a.MarkerLength,4,13) as MarkerLengthE
 			from Workorder a
 			left join fabric c on c.SCIRefno = a.SCIRefno
             where a.id = '{0}'
-            --order by SORT_NUM,FabricCombo,multisize DESC,Colorid,Order_SizeCode_Seq DESC,MarkerName,Ukey
             ", masterID);
             this.DetailSelectCommand = cmdsql;
+            #endregion
             #region SizeRatio
             cmdsql = string.Format("Select *,0 as newKey from Workorder_SizeRatio where id = '{0}'", masterID);
             DualResult dr = DBProxy.Current.Select(null, cmdsql, out sizeratioTb);
-            if (!dr)
-            {
-                ShowErr(cmdsql, dr);
-
-            }
-            // sizeratioTb.Columns.Add("newKey", typeof(int));
-            #endregion
+            if (!dr) ShowErr(cmdsql, dr);            
+            #endregion            
             #region layer
-            cmdsql = string.Format
-            (
-                @"Select a.MarkerName,a.Colorid,a.Order_EachconsUkey,isnull(sum(a.layer),0) as layer,
-                    
-                    --(Select isnull(sum(c.layer),0) as TL
-				    --from Order_EachCons b, Order_EachCons_Color c 
-				    --where b.id = '{0}' and b.id = c.id and 
-                    --b.ukey=c.Order_EachConsUkey and a.Order_EachconsUkey = b.Ukey ) as TotallayerUkey,
+            cmdsql = string.Format(
+                @"Select a.MarkerName,a.Colorid,a.Order_EachconsUkey,isnull(sum(a.layer),0) as layer,                    
                     (Select isnull(sum(c.layer),0) as TL
 	                from Order_EachCons b, Order_EachCons_Color c 
 	                where b.id = '{0}' and b.id = c.id and a.MarkerName = b.Markername and a.Colorid = c.Colorid
@@ -224,38 +212,20 @@ namespace Sci.Production.Cutting
                 Where a.id = '{0}' 
                 group by a.MarkerName,a.Colorid,a.Order_EachconsUkey
                 Order by a.MarkerName,a.Colorid,a.Order_EachconsUkey
-                ", masterID
-            );
+                ", masterID);
             dr = DBProxy.Current.Select(null, cmdsql, out layersTb);
-            if (!dr)
-            {
-                ShowErr(cmdsql, dr);
-
-            }
-            //layersTb.Columns.Add("newKey", typeof(int));
+            if (!dr) ShowErr(cmdsql, dr);
             #endregion
-            cmdsql = string.Format
-            (
-            @"Select *,0 as newKey From Workorder_distribute Where id='{0}'
-            ", masterID
-            );
+            #region distqtyTb / PatternPanelTb
+            cmdsql = string.Format(@"Select *,0 as newKey From Workorder_distribute Where id='{0}'", masterID);
             dr = DBProxy.Current.Select(null, cmdsql, out distqtyTb);
-            if (!dr)
-            {
-                ShowErr(cmdsql, dr);
-            }
-
-            cmdsql = string.Format
-            (
-            @"Select *,0 as newKey From Workorder_PatternPanel Where id='{0}'
-            ", masterID
-            );
+            if (!dr) ShowErr(cmdsql, dr);
+            
+            cmdsql = string.Format(@"Select *,0 as newKey From Workorder_PatternPanel Where id='{0}'", masterID);
             dr = DBProxy.Current.Select(null, cmdsql, out PatternPanelTb);
-            if (!dr)
-            {
-                ShowErr(cmdsql, dr);
+            if (!dr) ShowErr(cmdsql, dr);
+            #endregion
 
-            }
             getqtybreakdown(masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -283,7 +253,6 @@ namespace Sci.Production.Cutting
             textbox_LastCutRef.Text = MyUtility.GetValue.Lookup(maxcutrefCmd);
             comboBox1.Enabled = !EditMode;  //Sorting於編輯模式時不可選取
 
-            //617: CUTTING_P02_Cutting Work Order，(5) Article值不正確 (最後多了一個/)
             foreach (DataRow dr in DetailDatas) dr["Article"] = dr["Article"].ToString().TrimEnd('/');
             sorting(comboBox1.Text);
             this.detailgrid.SelectRowTo(0);
@@ -301,7 +270,6 @@ namespace Sci.Production.Cutting
                 Sci.Production.Cutting.P01_Cutpartchecksummary callNextForm = new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToString());
                 callNextForm.ShowDialog(this);
             };
-
             #region set grid
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6)).Get(out col_cutref)
@@ -328,7 +296,7 @@ namespace Sci.Production.Cutting
                 .Text("Adduser", header: "Add Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Add Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("UKey", header: "Key", width: Widths.AnsiChars(10), iseditingreadonly: true);
-            #endregion
+            
 
             Helper.Controls.Grid.Generator(this.sizeratio_grid)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5)).Get(out col_sizeRatio_size)
@@ -346,11 +314,12 @@ namespace Sci.Production.Cutting
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(4))
                 .Numeric("Qty", header: "Order \nQty", width: Widths.AnsiChars(5), integer_places: 6)
                 .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(5), integer_places: 6, settings: breakqty);
+            #endregion
 
             changeeditable();
         }
-        #region Grid Cell 物件設定
-        private void changeeditable()
+
+        private void changeeditable()// Grid Cell 物件設定
         {
             #region maingrid
             #region cutref
@@ -1108,7 +1077,6 @@ namespace Sci.Production.Cutting
             };
             #endregion
         }
-        #endregion
         
         //計算Excess
         private void updateExcess(int workorderukey, int newkey, string sizecode)
@@ -1284,14 +1252,12 @@ namespace Sci.Production.Cutting
                 else
                 {
                     TotalLayer.Value = (decimal)laydr[0]["TotalLayerMarker"];
-                    //BalanceLayer.Value = (decimal)laydr[0]["layer"] - (decimal)laydr[0]["TotalLayerMarker"];
                     BalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerMarker"];
                 }
             }
             else
             { //New rule
                 order_EachConsTemp = Convert.ToInt32(CurrentDetailData["Order_EachConsUkey"]);
-                //string selectcondition = string.Format("Order_EachConsUkey = {0}", order_EachConsTemp);  0000617: CUTTING_P02_Cutting Work Order，(6) Total layer & Balance layer資料不正確
                 string selectcondition = string.Format("Order_EachConsUkey = {0} and  Colorid = '{1}'", order_EachConsTemp, CurrentDetailData["Colorid"]);
                 DataRow[] laydr = layersTb.Select(selectcondition);
                 if (laydr.Length == 0)
@@ -1302,7 +1268,6 @@ namespace Sci.Production.Cutting
                 else
                 {
                     TotalLayer.Value = (decimal)laydr[0]["TotalLayerUkey"];
-                    //BalanceLayer.Value = (decimal)laydr[0]["layer"] - (decimal)laydr[0]["TotalLayerUkey"];
                     BalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerUkey"];
                 }
             }
@@ -1392,8 +1357,6 @@ namespace Sci.Production.Cutting
                 DataRow[] gridselect = qtybreakTb.Select(string.Format("id = '{0}' and article = '{1}' and sizecode = '{2}'", dr["orderid"], dr["article"], dr["sizecode"], dr["LectraCode"], dr["Qty"]));
                 if (gridselect.Length != 0)
                 {
-                    //20161007 leo 微調唯一值為LectraCode
-                    //gridselect[0][dr["PatternPanel"].ToString()] = MyUtility.Convert.GetDecimal((gridselect[0][dr["PatternPanel"].ToString()])) + MyUtility.Convert.GetDecimal(dr["Qty"]);
                     gridselect[0][dr["LectraCode"].ToString()] = MyUtility.Convert.GetDecimal((gridselect[0][dr["LectraCode"].ToString()])) + MyUtility.Convert.GetDecimal(dr["Qty"]);
                 }
             }
@@ -1693,11 +1656,9 @@ namespace Sci.Production.Cutting
             newRow["DescDetail"] = OldRow["DescDetail"];
             newRow["MarkerLengthY"] = OldRow["MarkerLengthY"];
             newRow["MarkerLengthE"] = OldRow["MarkerLengthE"];
-            //DataTable detailtmp = (DataTable)detailgridbs.DataSource;
-            //int TEMP = ((DataTable)detailgridbs.DataSource).Rows.Count;
+
             if (index == -1) index = TEMP;
             OldRow.Table.Rows.InsertAt(newRow, index);
-            //1172: CUTTING_P02_Cutting Work Order
             DataRow[] drTEMPS = sizeratioTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
             foreach (DataRow drTEMP in drTEMPS)
             {
@@ -1778,7 +1739,6 @@ namespace Sci.Production.Cutting
             DataRow selectDr = ((DataRowView)sizeratio_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectDr.Delete();
 
-            //cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
             cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
         }
 
@@ -1840,9 +1800,6 @@ namespace Sci.Production.Cutting
                 else
                     CurrentDetailData["Cons"] = MarkerLengthNum * Convert.ToInt32(CurrentDetailData["Layer"]);
             }
-            //int mllint = int.Parse(numericBox_MarkerLengthY.Text);
-            //string mll = mllint.ToString("D2");
-            //string mla = mll + "Y" + textBox_MarkerLengthE.Text;
             this.textBox_MarkerLength.Text = MarkerLengthstr;
             this.textBox_MarkerLength.ValidateControl();
             }
@@ -2100,8 +2057,6 @@ namespace Sci.Production.Cutting
         {
             Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]),"");
             callNextForm.ShowDialog(this);
-            //gridValid();
-            //grid.ValidateControl();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -2109,10 +2064,6 @@ namespace Sci.Production.Cutting
             var dr = this.CurrentDetailData; if (null == dr) return;
             var frm = new Sci.Production.Cutting.P02_PatternPanel(!this.EditMode && MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]), dr["Ukey"].ToString(), null, null, layersTb);
             frm.ShowDialog(this);
-            //1394: CUTTING_P02_Cutting Work Order。(1) 按了Pattern panel按鈕，執行結束回到Workorder作業畫面時不要重新load資料。
-            //this.RenewData();
-            //sorting(comboBox1.Text);  //避免順序亂掉
-            //this.OnDetailEntered();
         }
 
         protected override bool ClickPrint()
