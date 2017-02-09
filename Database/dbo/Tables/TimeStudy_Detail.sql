@@ -2,7 +2,7 @@
     [ID]            BIGINT         CONSTRAINT [DF_TimeStudy_Detail_TimeStudyUKey] DEFAULT ((0)) NOT NULL,
     [Seq]           VARCHAR (4)    CONSTRAINT [DF_TimeStudy_Detail_Seq] DEFAULT ('') NOT NULL,
     [OperationID]   VARCHAR (20)   CONSTRAINT [DF_TimeStudy_Detail_OperationID] DEFAULT ('') NULL,
-    [Annotation]    NVARCHAR (MAX) CONSTRAINT [DF_TimeStudy_Detail_Annotation] DEFAULT ('') NULL,
+    [Annotation]    NVARCHAR (200) CONSTRAINT [DF_TimeStudy_Detail_Annotation] DEFAULT ('') NULL,
     [PcsPerHour]    NUMERIC (8, 1) CONSTRAINT [DF_TimeStudy_Detail_PcsPerHour] DEFAULT ((0)) NULL,
     [Sewer]         NUMERIC (4, 1) CONSTRAINT [DF_TimeStudy_Detail_Sewer] DEFAULT ((0)) NULL,
     [MachineTypeID] VARCHAR (20)   CONSTRAINT [DF_TimeStudy_Detail_MachineTypeID] DEFAULT ('') NULL,
@@ -12,8 +12,11 @@
     [SMV]           NUMERIC (9, 4) CONSTRAINT [DF_TimeStudy_Detail_SMV] DEFAULT ((0)) NULL,
     [OldKey]        VARCHAR (13)   CONSTRAINT [DF_TimeStudy_Detail_OldKey] DEFAULT ('') NULL,
     [SeamLength]    NUMERIC (9, 2) NULL,
-    CONSTRAINT [PK_TimeStudy_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [Seq] ASC)
+    [Ukey]          BIGINT         IDENTITY (1, 1) NOT NULL,
+    CONSTRAINT [PK_TimeStudy_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -70,4 +73,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SMV(秒)', 
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TimeStudy_Detail', @level2type = N'COLUMN', @level2name = N'OldKey';
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDSeq]
+    ON [dbo].[TimeStudy_Detail]([ID] ASC, [Seq] ASC);
 
