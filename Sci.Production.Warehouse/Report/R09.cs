@@ -105,13 +105,13 @@ MtlType				= iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.
 PurchaseUnit		= B.StockUnit,
 Color				= B.ColorID, 
 StockLocation		= C.BLocation, 
-ShipQty				= (isnull(B.ShipQty, 0) + isnull(B.ShipFOC, 0)) * v.RateValue ,
+ShipQty				= (isnull(B.ShipQty, 0) + isnull(B.ShipFOC, 0)) * isnull(v.RateValue, 1),
 ArrivedQty			= isnull(C.InQty, 0), 
 ReleasedQty			= isnull(C.OutQty, 0), 
 AdjustQty			= isnull(C.AdjustQty, 0),
-StockInQty			= isnull(B.InputQty, 0) * v.RateValue,
-StockAllocatedQty	= isnull(B.OutputQty, 0) * v.RateValue , 
-StockBalanceQty		= (isnull(B.InputQty, 0) - isnull(B.OutputQty, 0))*v.RateValue ,
+StockInQty			= isnull(B.InputQty, 0) * isnull(v.RateValue, 1),
+StockAllocatedQty	= isnull(B.OutputQty, 0) * isnull(v.RateValue, 1), 
+StockBalanceQty		= (isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * isnull(v.RateValue, 1),
 InQty				= isnull(x.InQty, 0), 
 OutQty				= isnull(x.OutQty, 0), 
 AdjustQty			= isnull(x.AdjustQty, 0),
@@ -145,13 +145,13 @@ MtlType				= iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.
 PurchaseUnit		= B.StockUnit,
 Color				= B.ColorID, 
 StockLocation		= C.BLocation, 
-ShipQty				= (isnull(B.ShipQty, 0) + isnull(B.ShipFOC, 0)) * v.RateValue ,
+ShipQty				= (isnull(B.ShipQty, 0) + isnull(B.ShipFOC, 0)) * isnull(v.RateValue, 1),
 ArrivedQty			= isnull(C.InQty, 0), 
 ReleasedQty			= isnull(C.OutQty, 0), 
 AdjustQty			= isnull(C.AdjustQty, 0) ,
-StockInQty			= isnull(B.InputQty, 0) * v.RateValue,
-StockAllocatedQty	= isnull(B.OutputQty, 0) * v.RateValue , 
-StockBalanceQty		= (isnull(B.InputQty, 0) - isnull(B.OutputQty, 0))*v.RateValue ,
+StockInQty			= isnull(B.InputQty, 0) * isnull(v.RateValue, 1),
+StockAllocatedQty	= isnull(B.OutputQty, 0) * isnull(v.RateValue, 1), 
+StockBalanceQty		= (isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * isnull(v.RateValue, 1),
 InQty				= isnull(x.InQty, 0), 
 OutQty				= isnull(x.OutQty, 0), 
 AdjustQty			= isnull(x.AdjustQty, 0),
@@ -206,12 +206,12 @@ where b.InputQty> 0"));
 
             if (filterIndex == 0)
             {
-                sqlCmd.Append(" and c.linvQty < (B.InputQty - B.OutputQty)*ISNULL(v.RateValue,1)");
+                sqlCmd.Append(" and c.linvQty < (B.InputQty - B.OutputQty) * ISNULL(v.RateValue, 1)");
             }
 
             if (filterIndex == 1)
             {
-                sqlCmd.Append(" and x.InQty < B.InputQty*v.RateValue");
+                sqlCmd.Append(" and x.InQty < B.InputQty * isnull(v.RateValue, 1)");
             }
             #endregion
 
