@@ -186,7 +186,7 @@ where b.InputQty> 0"));
             }
             if (!MyUtility.Check.Empty(eta1))
             {
-                sqlCmd.Append(string.Format(@" and a.eta between '{0}' and '{1}'"
+                sqlCmd.Append(string.Format(@" and b.ShipEta between '{0}' and '{1}'"
                 , Convert.ToDateTime(eta1).ToString("d"), Convert.ToDateTime(eta2).ToString("d")));
             }
 
@@ -209,6 +209,7 @@ where b.InputQty> 0"));
             if (filterIndex == 0)
             {
                 sqlCmd.Append(" and c.linvQty < (B.InputQty - B.OutputQty) * ISNULL(v.RateValue, 1)");
+                //sqlCmd.Append(" and (isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * isnull(v.RateValue, 1) > isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)");
             }
 
             if (filterIndex == 1)
