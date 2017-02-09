@@ -786,7 +786,8 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                 MyUtility.Msg.WarningBox("< Style > or < Combo Type > or < Season > or < Brand > can't empty!!");
                 return;
             }
-            //表身有資料時，就必須先問是否要將表身資料全部刪除
+
+            #region  表身有資料時，就必須先問是否要將表身資料全部刪除
             if (((DataTable)detailgridbs.DataSource).DefaultView.Count > 0)
             {
                 DialogResult confirmResult;
@@ -796,6 +797,13 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                     return;
                 }
             }
+            #endregion
+
+            #region 若STYLE非套裝(Style.ComboType='')，則不考慮location條件。
+            bool isComboType = true;
+            string sql = string.Format("select ComboType from Style  where BrandID = '{0}' and ID = '{1}' and SeasonID = '{2}'", textBox2.Text, textBox1.Text, txtseason1.Text);
+            isComboType = !MyUtility.Check.Empty(MyUtility.GetValue.Lookup(sql));
+            #endregion
 
             #region 設定sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -808,29 +816,33 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             sp2.Value = txtseason1.Text;
             sp3.ParameterName = "@brandid";
             sp3.Value = textBox2.Text;
-            sp4.ParameterName = "@location";
-            sp4.Value = comboBox1.Text;
+            if (isComboType)
+            {
+                sp4.ParameterName = "@location";
+                sp4.Value = comboBox1.Text;
+            } 
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
             cmds.Add(sp2);
             cmds.Add(sp3);
-            cmds.Add(sp4);
+            if (isComboType)  cmds.Add(sp4);
             #endregion
 
             DataTable ietmsData;
             string sqlCmd = @"select id.SEQ,id.OperationID,o.DescEN as OperationDescEN,id.Annotation,
-iif(round(id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency*60,3) = 0,0,round(3600/round(id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency*60,3),1)) as PcsPerHour,
-id.Frequency as Sewer,o.MachineTypeID,id.Frequency,
-id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency as IETMSSMV,id.Mold,o.MtlFactorID as OperationMtlFactorID,
-round(id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency*60,3) as SMV, id.SeamLength,s.IETMSID,s.IETMSVersion
-from Style s
-inner join IETMS i on s.IETMSID = i.ID and s.IETMSVersion = i.Version
-inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
-left join Operation o on id.OperationID = o.ID
-left join MtlFactor m on o.MtlFactorID = m.ID and m.Type = 'F'
-where s.ID = @id and s.SeasonID = @seasonid and s.BrandID = @brandid and id.Location = @location
-order by id.SEQ";
+                            iif(round(id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency*60,3) = 0,0,round(3600/round(id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency*60,3),1)) as PcsPerHour,
+                            id.Frequency as Sewer,o.MachineTypeID,id.Frequency,
+                            id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency as IETMSSMV,id.Mold,o.MtlFactorID as OperationMtlFactorID,
+                            round(id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency*60,3) as SMV, id.SeamLength,s.IETMSID,s.IETMSVersion
+                            from Style s
+                            inner join IETMS i on s.IETMSID = i.ID and s.IETMSVersion = i.Version
+                            inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
+                            left join Operation o on id.OperationID = o.ID
+                            left join MtlFactor m on o.MtlFactorID = m.ID and m.Type = 'F'
+                            where s.ID = @id and s.SeasonID = @seasonid and s.BrandID = @brandid ";
+            if (isComboType) sqlCmd += " and id.Location = @location ";
+            sqlCmd += " order by id.SEQ";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ietmsData);
             if (!result)
