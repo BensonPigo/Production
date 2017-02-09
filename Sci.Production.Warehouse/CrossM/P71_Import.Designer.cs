@@ -28,10 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btn_Cancel = new Sci.Win.UI.Button();
             this.btn_Import = new Sci.Win.UI.Button();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.TaipeiOutputBS = new Sci.Win.UI.ListControlBindingSource();
+            this.TaipeiOutputBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
             this.button1 = new Sci.Win.UI.Button();
             this.textBox1 = new Sci.Win.UI.TextBox();
@@ -98,7 +99,7 @@
             this.button1.Location = new System.Drawing.Point(715, 8);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 6;
+            this.button1.TabIndex = 1;
             this.button1.Text = "Find Now";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -111,7 +112,7 @@
             this.textBox1.MaxLength = 13;
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(122, 23);
-            this.textBox1.TabIndex = 4;
+            this.textBox1.TabIndex = 0;
             // 
             // label1
             // 
