@@ -223,7 +223,7 @@ namespace Sci.Production.PPIC
                 sxr.boOpenFile = true;
                 sxr.Save();
             }
-            return base.ToExcel();
+            return true;
         }
 
       
