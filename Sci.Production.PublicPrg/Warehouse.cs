@@ -1197,7 +1197,16 @@ drop table #TmpSource
         /// <returns>Sci.Win.Tools.SelectItem2</returns>
         public static Sci.Win.Tools.SelectItem2 SelectLocation(string stocktype, string defaultseq = "")
         {
-            string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", stocktype, Sci.Env.User.Keyword);
+            string sqlcmd = string.Format(@"SELECT id,Description,
+                                                StockType = Case StockType
+                                                                when 'i' then 
+                                                                    'Inventory' 
+                                                                when 'b' then 
+                                                                    'Bulk' 
+                                                                when 'o' then 
+                                                                    'Obsolete' 
+                                                            End
+                                            FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", stocktype, Sci.Env.User.Keyword);
 
             Sci.Win.Tools.SelectItem2 selectlocation = new Win.Tools.SelectItem2(sqlcmd,
                             "Location ID,Description,Stock Type", "13,60,10", defaultseq);
