@@ -116,8 +116,13 @@ Where a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}' and a.type 
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             this.ShowWaitMessage("Excel Processing...");
-            for (int i = 1; i <= printData.Rows.Count; i++) objSheets.Cells[i + 1, 10] = ((string)((Excel.Range)objSheets.Cells[i + 1, 10]).Value).Trim();
-            objApp.Visible = true;
+            for (int i = 1; i <= printData.Rows.Count; i++)
+            {
+                string str = objSheets.Cells[i + 1, 10].Value;
+                if(!MyUtility.Check.Empty(str))
+                    objSheets.Cells[i + 1, 10] = str.Trim();
+            }
+                objApp.Visible = true;
 
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
