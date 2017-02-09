@@ -55,6 +55,7 @@ Database/dbo/Functions/GetInspectionResult.sql -text
 Database/dbo/Functions/GetLossAccessory.sql -text
 Database/dbo/Functions/GetLossAccessory_1.sql -text
 Database/dbo/Functions/GetLossFabric.sql -text
+Database/dbo/Functions/GetOutputInformation.sql -text
 Database/dbo/Functions/GetPriceFromMtl.sql -text
 Database/dbo/Functions/GetRequestETA.sql -text
 Database/dbo/Functions/GetRequestETA_1.sql -text
