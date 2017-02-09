@@ -159,15 +159,16 @@ namespace Sci.Production.Quality
             #endregion
             sqlWhere = string.Join(" and ", sqlWheres);
             OWhere = string.Join(" and ", OWheres);
-            if (!sqlWhere.Empty())
+            RWhere = string.Join(" and ", RWheres);
+            if (sqlWheres.Count!=0)
             {
                 sqlWhere = " where " + sqlWhere;
             }
-            if (!RWhere.Empty())
+            if (!RWheres.Empty())
             {
                 RWhere = " where " + RWhere;
             }
-            if (!OWhere.Empty())
+            if (!OWheres.Empty())
             {
                 OWhere = " where " + OWhere;
             }
