@@ -581,6 +581,10 @@ namespace Sci.Production.IE
             }
             return base.ClickSaveBefore();
         }
+        protected override DualResult OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
+        {
+            return base.OnSaveDetail(details, detailtableschema);
+        }
 
         protected override bool ClickPrint()
         {
