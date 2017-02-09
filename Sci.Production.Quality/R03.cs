@@ -156,12 +156,12 @@ namespace Sci.Production.Quality
             ,(select min(orders.CutInLine) from orders where poid = s.POID and orders.Junk = 0) first_cutinline
             ,getsci.MinSciDelivery
             ,IIF((select min(orders.CutInLine) from orders where poid = s.POID and orders.Junk = 0) > DATEADD(day,(select 0-system.MtlLeadTime from dbo.system),getsci.MinSciDelivery),DATEADD(day,(select 0-system.MtlLeadTime from dbo.system),getsci.MinSciDelivery),(select min(orders.CutInLine) from orders where poid = s.POID and orders.Junk = 0)) [Target Leadtime]
-            ,iif(s.total_cnt!=0, round(s.insp_cnt*1.0/s.total_cnt,2) * 100 ,0) [Insp %]
-            ,iif(s.total_cnt!=0, round(s.lab_cnt*1.0/s.total_cnt,2) * 100 ,0) [Lab %]
-            ,iif(s.total_article_cnt!=0, round(s.oven_cnt*1.0/s.total_article_cnt,2) * 100 ,0) [Oven %]
-            ,iif(s.total_article_cnt!=0, round(s.ColorFastness_cnt*1.0/s.total_article_cnt,2) * 100 ,0) [ColorFastness %]
-            ,iif(s.AIR_Total_cnt!=0, round(s.AIR_Insp_Cnt*1.0/s.AIR_Total_cnt,2) * 100 ,0) [AIR Insp %]
-            ,iif(s.AIR_Laboratory_Total_cnt!=0, round(s.AIR_Laboratory_cnt*1.0/s.AIR_Laboratory_Total_cnt,2) * 100 ,0) [AIR Lab %]
+            ,iif(s.total_cnt!=0, round(s.insp_cnt*1.0/s.total_cnt,4) * 100 ,0) [Insp %]
+            ,iif(s.total_cnt!=0, round(s.lab_cnt*1.0/s.total_cnt,4) * 100 ,0) [Lab %]
+            ,iif(s.total_article_cnt!=0, round(s.oven_cnt*1.0/s.total_article_cnt,4) * 100 ,0) [Oven %]
+            ,iif(s.total_article_cnt!=0, round(s.ColorFastness_cnt*1.0/s.total_article_cnt,4) * 100 ,0) [ColorFastness %]
+            ,iif(s.AIR_Total_cnt!=0, round(s.AIR_Insp_Cnt*1.0/s.AIR_Total_cnt,4) * 100 ,0) [AIR Insp %]
+            ,iif(s.AIR_Laboratory_Total_cnt!=0, round(s.AIR_Laboratory_cnt*1.0/s.AIR_Laboratory_Total_cnt,4) * 100 ,0) [AIR Lab %]
             from summary s inner join orders o on o.ID = s.POID
             cross apply dbo.GetSCI(s.poid,o.Category) getsci");
             #endregion
