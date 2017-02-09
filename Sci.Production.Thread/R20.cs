@@ -61,8 +61,8 @@ namespace Sci.Production.Thread
             EstBook2 = dateRange_book.Value2;
             EstArr1 = dateRange_Arr.Value1;
             EstArr2 = dateRange_Arr.Value2;
-            fac = comboBox1.SelectedItem.ToString();
-            M = comboBox2.SelectedItem.ToString();
+            fac = comboBox1.SelectedValue.ToString();
+            M = comboBox2.SelectedValue.ToString();
             lis = new List<SqlParameter>();
             string sqlWhere = ""; string order = "order by ThreadTypeID,td.ThreadColorID,t.StyleID,t.OrderID";
             List<string> sqlWheres = new List<string>();
@@ -97,6 +97,8 @@ namespace Sci.Production.Thread
                 lis.Add(new SqlParameter("@M", M));
             }
 
+            if(sqlWheres.Count > 0)
+                sqlWhere = " where " + sqlWheres.JoinToString(" and ");
             #endregion
 
             cmd = string.Format(@"
