@@ -133,15 +133,19 @@ namespace Sci.Production.Quality
                 {
                     lis.Add(new SqlParameter("@Cate", "B"));
                 }
-                if (Category == "Sample")
+                else if (Category == "Sample")
                 {
                     lis.Add(new SqlParameter("@Cate", "S"));
                 }
-                if (Category == "Material")
+                else if (Category == "Material")
                 {
                     lis.Add(new SqlParameter("@Cate", "M"));
-                }  
-            } if (this.txtsupplier.Text.Empty())
+                }
+                else
+                {
+                    lis.Add(new SqlParameter("@Cate", "''"));
+                }
+            } if (!this.txtsupplier.Text.Empty())
             {
                 sqlWheres.Add("SP.SuppId = @Supp");
                 lis.Add(new SqlParameter("@Supp", Supp));
@@ -183,7 +187,7 @@ namespace Sci.Production.Quality
 
             cmd = string.Format(@"
                         select  F.POID,(F.SEQ1+'-'+F.SEQ2)SEQ,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
-	                            t.ExportId,t.InvNo,t.WhseArrival,t.StockQty,
+	                            t.ExportId,t.InvNo,t.WhseArrival,SUM(t.StockQty),
 	                            (SELECT MinSciDelivery FROM  DBO.GetSCI(F.Poid,O.Category))[MinSciDelivery],
 	                            (SELECT MinBuyerDelivery  FROM  DBO.GetSCI(F.Poid,O.Category))[MinBuyerDelivery],
 	                            F.Refno,P.ColorID,(SP.SuppID+'-'+s.AbbEN)Supplier,C.WeaveTypeID,
@@ -213,7 +217,15 @@ namespace Sci.Production.Quality
                         )V
                         OUTER APPLY(select cd.Result from dbo.ColorFastness CF inner join dbo.ColorFastness_Detail cd on cd.ID = CF.ID
                         where CF.Status = 'Confirmed' and CF.POID=F.POID and cd.SEQ1=F.Seq1 and cd.seq2=F.Seq2
-                        )CFD" + sqlWhere);
+                        )CFD" + sqlWhere) + @" GROUP BY 
+F.POID,F.SEQ1,F.SEQ2,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
+	    t.ExportId,t.InvNo,t.WhseArrival,
+	    F.Refno,P.ColorID,C.WeaveTypeID,O.Category
+	 ,F.Result,F.Physical,F.PhysicalDate,
+	    F.TotalInspYds,F.Weight,F.WeightDate,F.ShadeBond,F.ShadeBondDate,F.Continuity,
+	    F.ContinuityDate,L.Result,L.Crocking,
+	    L.CrockingDate,L.Heat,L.HeatDate,
+	    L.Wash,L.WashDate,V.Result,CFD.Result,SP.SuppID,S.AbbEN,F.Nonphysical,L.nonCrocking,L.nonHeat,L.nonWash";
             #endregion
             return base.ValidateInput();
         }
