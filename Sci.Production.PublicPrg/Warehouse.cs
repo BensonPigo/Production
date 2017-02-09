@@ -158,6 +158,13 @@ namespace Sci.Production.PublicPrg
             {
                 if (attachLocation)
                 {
+                    /*2017-02-09 Location 更新 
+                        step 1. *** FtyInvetory Location 必須先更新 ***
+                        step 2. MDivisionPoDetail 直接重組 FtyInventory (SQL 註解的地方)
+                        step 3. MDivisionPoDetail Locatio 直接 Update => step 2.
+                        *** 優點：可以確認 Location 是最新的，且不須累加 Location
+                        **  Step 1. 必須確實修改，否則會累加到 FtyInventory 舊的 Location
+                    */
                     string sqlcmdforlocation = @"
 alter table #Tmp alter column mdivisionid varchar(10)
 alter table #Tmp alter column poid varchar(20)
@@ -177,12 +184,12 @@ OUTER APPLY(
 			from #tmp f
 			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
 			and f.seq2 = t.Seq2 and f.stocktype = t.StockType and f.location !=''
-			union
-			select mdivisionid,poid,seq1,seq2,stocktype,[location] = fd.mtllocationid
-			from ftyinventory f 
-			inner join ftyinventory_detail fd on f.ukey = fd.ukey 
-			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
-			and f.seq2 = t.Seq2 and f.stocktype = t.StockType
+--			union
+--			select mdivisionid,poid,seq1,seq2,stocktype,[location] = fd.mtllocationid
+--			from ftyinventory f 
+--			inner join ftyinventory_detail fd on f.ukey = fd.ukey 
+--			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
+--			and f.seq2 = t.Seq2 and f.stocktype = t.StockType
 		)u
 		for xml path('')
 	)
@@ -236,7 +243,7 @@ using  #TmpSource as src
 on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
 when matched and src.stocktype = 'I' then
 	update 
-	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.blocation = src.location
+	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.blocation = target.blocation + src.location
 when not matched by target and src.stocktype = 'I' then
     insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[blocation])
     values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);
@@ -246,7 +253,7 @@ using  #TmpSource as src
 on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
 when matched and src.stocktype = 'B' then
 	update 
-	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.alocation = src.location
+	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.alocation = target.alocation + src.location
 when not matched by target and src.stocktype = 'B' then
     insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[alocation])
     values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);";
@@ -363,7 +370,7 @@ update
                     if (encoded)
                     {
                         sqlcmd += @"
-set target.LInvQty = isnull(target.LInvQty,0.00) + src.qty , target.blocation = src.location
+set target.LInvQty = isnull(target.LInvQty,0.00) + src.qty , target.blocation = target.blocation + src.location
 when not matched then
     insert ([Poid],[Seq1],[Seq2],[MDivisionID],[LInvQty],[blocation])
     values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);
