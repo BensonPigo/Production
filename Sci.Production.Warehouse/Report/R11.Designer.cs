@@ -56,17 +56,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(430, 12);
-            this.print.TabIndex = 12;
+            this.print.TabIndex = 11;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(430, 48);
-            this.toexcel.TabIndex = 13;
+            this.toexcel.TabIndex = 12;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(430, 84);
-            this.close.TabIndex = 14;
+            this.close.TabIndex = 13;
             // 
             // label3
             // 
@@ -146,7 +146,7 @@
             this.checkBox1.Location = new System.Drawing.Point(424, 122);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(86, 21);
-            this.checkBox1.TabIndex = 15;
+            this.checkBox1.TabIndex = 14;
             this.checkBox1.Text = "Summary";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -242,7 +242,7 @@
             this.cbbStockType.Location = new System.Drawing.Point(114, 264);
             this.cbbStockType.Name = "cbbStockType";
             this.cbbStockType.Size = new System.Drawing.Size(121, 24);
-            this.cbbStockType.TabIndex = 9;
+            this.cbbStockType.TabIndex = 8;
             // 
             // label11
             // 
@@ -260,7 +260,7 @@
             this.txtRefno2.Location = new System.Drawing.Point(303, 300);
             this.txtRefno2.Name = "txtRefno2";
             this.txtRefno2.Size = new System.Drawing.Size(164, 23);
-            this.txtRefno2.TabIndex = 11;
+            this.txtRefno2.TabIndex = 10;
             // 
             // txtRefno1
             // 
@@ -269,7 +269,7 @@
             this.txtRefno1.Location = new System.Drawing.Point(114, 300);
             this.txtRefno1.Name = "txtRefno1";
             this.txtRefno1.Size = new System.Drawing.Size(164, 23);
-            this.txtRefno1.TabIndex = 10;
+            this.txtRefno1.TabIndex = 9;
             // 
             // label12
             // 
@@ -286,7 +286,7 @@
             this.cbbFabricType.Location = new System.Drawing.Point(114, 229);
             this.cbbFabricType.Name = "cbbFabricType";
             this.cbbFabricType.Size = new System.Drawing.Size(121, 24);
-            this.cbbFabricType.TabIndex = 124;
+            this.cbbFabricType.TabIndex = 7;
             // 
             // R11
             // 

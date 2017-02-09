@@ -45,17 +45,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(439, 12);
-            this.print.TabIndex = 4;
+            this.print.TabIndex = 6;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(439, 48);
-            this.toexcel.TabIndex = 5;
+            this.toexcel.TabIndex = 7;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(439, 84);
-            this.close.TabIndex = 6;
+            this.close.TabIndex = 8;
             // 
             // dateRange1
             // 
@@ -167,7 +167,7 @@
             this.txtfactoryByM1.mDivisionID = null;
             this.txtfactoryByM1.Name = "txtfactoryByM1";
             this.txtfactoryByM1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactoryByM1.TabIndex = 132;
+            this.txtfactoryByM1.TabIndex = 3;
             // 
             // R06
             // 

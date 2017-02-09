@@ -42,19 +42,19 @@
             // 
             this.print.Enabled = false;
             this.print.Location = new System.Drawing.Point(484, 5);
-            this.print.TabIndex = 7;
+            this.print.TabIndex = 4;
             this.print.Visible = false;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(484, 41);
-            this.toexcel.TabIndex = 8;
+            this.toexcel.TabIndex = 5;
             this.toexcel.Click += new System.EventHandler(this.toexcel_Click);
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(484, 77);
-            this.close.TabIndex = 9;
+            this.close.TabIndex = 6;
             // 
             // tbxSP
             // 
@@ -132,7 +132,7 @@
             this.txtSeq1.seq1 = "";
             this.txtSeq1.seq2 = "";
             this.txtSeq1.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq1.TabIndex = 118;
+            this.txtSeq1.TabIndex = 2;
             // 
             // R19
             // 

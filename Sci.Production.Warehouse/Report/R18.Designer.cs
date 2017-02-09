@@ -51,19 +51,19 @@
             // 
             this.print.Enabled = false;
             this.print.Location = new System.Drawing.Point(484, 5);
-            this.print.TabIndex = 7;
+            this.print.TabIndex = 9;
             this.print.Visible = false;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(484, 41);
-            this.toexcel.TabIndex = 8;
+            this.toexcel.TabIndex = 10;
             this.toexcel.Click += new System.EventHandler(this.toexcel_Click);
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(484, 77);
-            this.close.TabIndex = 9;
+            this.close.TabIndex = 11;
             // 
             // tbxSP
             // 
@@ -105,7 +105,7 @@
             this.tbxRefno.MaxLength = 26;
             this.tbxRefno.Name = "tbxRefno";
             this.tbxRefno.Size = new System.Drawing.Size(118, 23);
-            this.tbxRefno.TabIndex = 1;
+            this.tbxRefno.TabIndex = 2;
             // 
             // label4
             // 
@@ -146,7 +146,7 @@
             this.checkBox1.Location = new System.Drawing.Point(257, 191);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(128, 21);
-            this.checkBox1.TabIndex = 6;
+            this.checkBox1.TabIndex = 8;
             this.checkBox1.Text = "Balance Qty > 0";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -158,7 +158,7 @@
             this.tbxStyle.MaxLength = 20;
             this.tbxStyle.Name = "tbxStyle";
             this.tbxStyle.Size = new System.Drawing.Size(118, 23);
-            this.tbxStyle.TabIndex = 105;
+            this.tbxStyle.TabIndex = 1;
             // 
             // cbxCategory
             // 
@@ -174,7 +174,7 @@
             this.cbxCategory.Location = new System.Drawing.Point(102, 188);
             this.cbxCategory.Name = "cbxCategory";
             this.cbxCategory.Size = new System.Drawing.Size(121, 24);
-            this.cbxCategory.TabIndex = 106;
+            this.cbxCategory.TabIndex = 7;
             // 
             // label7
             // 
@@ -202,7 +202,7 @@
             this.tbxSizeCode.MaxLength = 10;
             this.tbxSizeCode.Name = "tbxSizeCode";
             this.tbxSizeCode.Size = new System.Drawing.Size(121, 23);
-            this.tbxSizeCode.TabIndex = 111;
+            this.tbxSizeCode.TabIndex = 5;
             // 
             // label9
             // 
@@ -221,7 +221,7 @@
             this.txtmfactory1.MaxLength = 8;
             this.txtmfactory1.Name = "txtmfactory1";
             this.txtmfactory1.Size = new System.Drawing.Size(121, 23);
-            this.txtmfactory1.TabIndex = 112;
+            this.txtmfactory1.TabIndex = 6;
             // 
             // tbxColor
             // 
@@ -231,7 +231,7 @@
             this.tbxColor.MaxLength = 10;
             this.tbxColor.Name = "tbxColor";
             this.tbxColor.Size = new System.Drawing.Size(121, 23);
-            this.tbxColor.TabIndex = 113;
+            this.tbxColor.TabIndex = 4;
             // 
             // label1
             // 

@@ -49,17 +49,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(430, 12);
-            this.print.TabIndex = 12;
+            this.print.TabIndex = 8;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(430, 48);
-            this.toexcel.TabIndex = 13;
+            this.toexcel.TabIndex = 9;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(430, 84);
-            this.close.TabIndex = 14;
+            this.close.TabIndex = 10;
             // 
             // label3
             // 
@@ -99,7 +99,7 @@
             this.txtMdivision1.Location = new System.Drawing.Point(115, 148);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 6;
+            this.txtMdivision1.TabIndex = 5;
             // 
             // dateRange2
             // 
@@ -179,7 +179,7 @@
             this.txtRefno2.Location = new System.Drawing.Point(303, 182);
             this.txtRefno2.Name = "txtRefno2";
             this.txtRefno2.Size = new System.Drawing.Size(164, 23);
-            this.txtRefno2.TabIndex = 11;
+            this.txtRefno2.TabIndex = 7;
             // 
             // txtRefno1
             // 
@@ -188,7 +188,7 @@
             this.txtRefno1.Location = new System.Drawing.Point(114, 182);
             this.txtRefno1.Name = "txtRefno1";
             this.txtRefno1.Size = new System.Drawing.Size(164, 23);
-            this.txtRefno1.TabIndex = 10;
+            this.txtRefno1.TabIndex = 6;
             // 
             // label12
             // 
@@ -204,7 +204,7 @@
             this.dateRange3.Location = new System.Drawing.Point(115, 114);
             this.dateRange3.Name = "dateRange3";
             this.dateRange3.Size = new System.Drawing.Size(280, 23);
-            this.dateRange3.TabIndex = 124;
+            this.dateRange3.TabIndex = 4;
             // 
             // label1
             // 

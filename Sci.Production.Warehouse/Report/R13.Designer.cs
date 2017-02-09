@@ -41,17 +41,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(541, 12);
-            this.print.TabIndex = 12;
+            this.print.TabIndex = 4;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(541, 48);
-            this.toexcel.TabIndex = 13;
+            this.toexcel.TabIndex = 5;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(541, 84);
-            this.close.TabIndex = 14;
+            this.close.TabIndex = 6;
             // 
             // dateRange1
             // 
@@ -76,7 +76,7 @@
             this.txtMdivision1.Location = new System.Drawing.Point(114, 84);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 6;
+            this.txtMdivision1.TabIndex = 2;
             // 
             // label8
             // 
@@ -93,7 +93,7 @@
             this.cbbStockType.Location = new System.Drawing.Point(115, 47);
             this.cbbStockType.Name = "cbbStockType";
             this.cbbStockType.Size = new System.Drawing.Size(121, 24);
-            this.cbbStockType.TabIndex = 9;
+            this.cbbStockType.TabIndex = 1;
             // 
             // label1
             // 
@@ -114,7 +114,7 @@
             this.txtReason1.Name = "txtReason1";
             this.txtReason1.ReasonTypeID = "Stock_Adjust";
             this.txtReason1.Size = new System.Drawing.Size(388, 24);
-            this.txtReason1.TabIndex = 121;
+            this.txtReason1.TabIndex = 3;
             // 
             // label2
             // 

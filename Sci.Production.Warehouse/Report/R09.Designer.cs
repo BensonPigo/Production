@@ -51,17 +51,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(485, 12);
-            this.print.TabIndex = 12;
+            this.print.TabIndex = 9;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(485, 48);
-            this.toexcel.TabIndex = 13;
+            this.toexcel.TabIndex = 10;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(485, 84);
-            this.close.TabIndex = 14;
+            this.close.TabIndex = 11;
             // 
             // label3
             // 
@@ -101,7 +101,7 @@
             this.txtMdivision1.Location = new System.Drawing.Point(115, 153);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 6;
+            this.txtMdivision1.TabIndex = 5;
             // 
             // dateRange2
             // 
@@ -181,7 +181,7 @@
             this.txtRefno2.Location = new System.Drawing.Point(303, 187);
             this.txtRefno2.Name = "txtRefno2";
             this.txtRefno2.Size = new System.Drawing.Size(164, 23);
-            this.txtRefno2.TabIndex = 11;
+            this.txtRefno2.TabIndex = 7;
             // 
             // txtRefno1
             // 
@@ -190,7 +190,7 @@
             this.txtRefno1.Location = new System.Drawing.Point(114, 187);
             this.txtRefno1.Name = "txtRefno1";
             this.txtRefno1.Size = new System.Drawing.Size(164, 23);
-            this.txtRefno1.TabIndex = 10;
+            this.txtRefno1.TabIndex = 6;
             // 
             // label12
             // 
@@ -206,7 +206,7 @@
             this.dateRange3.Location = new System.Drawing.Point(115, 117);
             this.dateRange3.Name = "dateRange3";
             this.dateRange3.Size = new System.Drawing.Size(280, 23);
-            this.dateRange3.TabIndex = 124;
+            this.dateRange3.TabIndex = 4;
             // 
             // label1
             // 
@@ -232,7 +232,7 @@
             this.cbbFilter.Location = new System.Drawing.Point(114, 222);
             this.cbbFilter.Name = "cbbFilter";
             this.cbbFilter.Size = new System.Drawing.Size(353, 24);
-            this.cbbFilter.TabIndex = 126;
+            this.cbbFilter.TabIndex = 8;
             // 
             // label2
             // 

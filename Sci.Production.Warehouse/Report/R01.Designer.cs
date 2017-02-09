@@ -64,17 +64,17 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(430, 12);
-            this.print.TabIndex = 12;
+            this.print.TabIndex = 16;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(430, 48);
-            this.toexcel.TabIndex = 13;
+            this.toexcel.TabIndex = 17;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(430, 84);
-            this.close.TabIndex = 14;
+            this.close.TabIndex = 18;
             // 
             // label3
             // 
@@ -127,7 +127,7 @@
             this.txtSpno2.Location = new System.Drawing.Point(267, 155);
             this.txtSpno2.Name = "txtSpno2";
             this.txtSpno2.Size = new System.Drawing.Size(128, 23);
-            this.txtSpno2.TabIndex = 3;
+            this.txtSpno2.TabIndex = 5;
             // 
             // txtSpno1
             // 
@@ -136,7 +136,7 @@
             this.txtSpno1.Location = new System.Drawing.Point(114, 155);
             this.txtSpno1.Name = "txtSpno1";
             this.txtSpno1.Size = new System.Drawing.Size(128, 23);
-            this.txtSpno1.TabIndex = 2;
+            this.txtSpno1.TabIndex = 4;
             // 
             // label10
             // 
@@ -167,7 +167,7 @@
             this.txtRefno2.Location = new System.Drawing.Point(303, 191);
             this.txtRefno2.Name = "txtRefno2";
             this.txtRefno2.Size = new System.Drawing.Size(164, 23);
-            this.txtRefno2.TabIndex = 11;
+            this.txtRefno2.TabIndex = 7;
             // 
             // txtRefno1
             // 
@@ -176,7 +176,7 @@
             this.txtRefno1.Location = new System.Drawing.Point(114, 191);
             this.txtRefno1.Name = "txtRefno1";
             this.txtRefno1.Size = new System.Drawing.Size(164, 23);
-            this.txtRefno1.TabIndex = 10;
+            this.txtRefno1.TabIndex = 6;
             // 
             // label12
             // 
@@ -192,7 +192,7 @@
             this.dateRange3.Location = new System.Drawing.Point(115, 120);
             this.dateRange3.Name = "dateRange3";
             this.dateRange3.Size = new System.Drawing.Size(280, 23);
-            this.dateRange3.TabIndex = 126;
+            this.dateRange3.TabIndex = 3;
             // 
             // label1
             // 
@@ -214,7 +214,7 @@
             this.dateRange4.Location = new System.Drawing.Point(115, 84);
             this.dateRange4.Name = "dateRange4";
             this.dateRange4.Size = new System.Drawing.Size(280, 23);
-            this.dateRange4.TabIndex = 125;
+            this.dateRange4.TabIndex = 2;
             // 
             // label13
             // 
@@ -256,7 +256,7 @@
             this.txtMdivision1.Location = new System.Drawing.Point(115, 373);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 6;
+            this.txtMdivision1.TabIndex = 12;
             // 
             // label4
             // 
@@ -275,7 +275,7 @@
             this.txtseason1.Location = new System.Drawing.Point(115, 265);
             this.txtseason1.Name = "txtseason1";
             this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 5;
+            this.txtseason1.TabIndex = 9;
             // 
             // cbbFabricType
             // 
@@ -283,7 +283,7 @@
             this.cbbFabricType.Location = new System.Drawing.Point(114, 409);
             this.cbbFabricType.Name = "cbbFabricType";
             this.cbbFabricType.Size = new System.Drawing.Size(121, 24);
-            this.cbbFabricType.TabIndex = 124;
+            this.cbbFabricType.TabIndex = 13;
             // 
             // label7
             // 
@@ -300,7 +300,7 @@
             this.txtcountry1.Location = new System.Drawing.Point(115, 301);
             this.txtcountry1.Name = "txtcountry1";
             this.txtcountry1.Size = new System.Drawing.Size(232, 30);
-            this.txtcountry1.TabIndex = 129;
+            this.txtcountry1.TabIndex = 10;
             this.txtcountry1.TextBox1Binding = "";
             // 
             // label11
@@ -333,7 +333,7 @@
             this.txtstyle1.Location = new System.Drawing.Point(114, 227);
             this.txtstyle1.Name = "txtstyle1";
             this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 133;
+            this.txtstyle1.TabIndex = 8;
             // 
             // txtsupplier1
             // 
@@ -341,7 +341,7 @@
             this.txtsupplier1.Location = new System.Drawing.Point(114, 337);
             this.txtsupplier1.Name = "txtsupplier1";
             this.txtsupplier1.Size = new System.Drawing.Size(147, 23);
-            this.txtsupplier1.TabIndex = 134;
+            this.txtsupplier1.TabIndex = 11;
             this.txtsupplier1.TextBox1Binding = "";
             // 
             // label8
@@ -365,7 +365,7 @@
             this.cbbOrderBy.Location = new System.Drawing.Point(114, 449);
             this.cbbOrderBy.Name = "cbbOrderBy";
             this.cbbOrderBy.Size = new System.Drawing.Size(121, 24);
-            this.cbbOrderBy.TabIndex = 136;
+            this.cbbOrderBy.TabIndex = 14;
             // 
             // label15
             // 
@@ -385,7 +385,7 @@
             this.checkBox1.Location = new System.Drawing.Point(267, 452);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(163, 21);
-            this.checkBox1.TabIndex = 138;
+            this.checkBox1.TabIndex = 15;
             this.checkBox1.Text = "Include complete item";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 

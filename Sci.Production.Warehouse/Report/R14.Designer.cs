@@ -130,7 +130,7 @@
             this.txtfactoryByM1.mDivisionID = null;
             this.txtfactoryByM1.Name = "txtfactoryByM1";
             this.txtfactoryByM1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactoryByM1.TabIndex = 126;
+            this.txtfactoryByM1.TabIndex = 2;
             // 
             // R14
             // 

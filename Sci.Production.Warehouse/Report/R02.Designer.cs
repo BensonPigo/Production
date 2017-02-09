@@ -36,22 +36,25 @@
             // 
             this.print.Enabled = false;
             this.print.Location = new System.Drawing.Point(372, 12);
+            this.print.TabIndex = 1;
             this.print.Visible = false;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(372, 48);
+            this.toexcel.TabIndex = 2;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(372, 84);
+            this.close.TabIndex = 3;
             // 
             // dateRange1
             // 
             this.dateRange1.Location = new System.Drawing.Point(86, 19);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 93;
+            this.dateRange1.TabIndex = 0;
             // 
             // label1
             // 
@@ -75,6 +78,7 @@
             this.Controls.SetChildIndex(this.dateRange1, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
