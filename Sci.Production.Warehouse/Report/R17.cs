@@ -75,7 +75,8 @@ namespace Sci.Production.Warehouse
         {
             //return base.OnAsyncDataLoad(e);
             String spno = textBox1.Text.TrimEnd();
-            String seq = textBox2.Text.PadRight(5);
+            string seq1 = txtSeq1.seq1;
+            string seq2 = txtSeq1.seq2;
             String location1 = textBox3.Text.TrimEnd();
             String location2 = textBox4.Text.TrimEnd();
             bool chkbalance = checkBox1.Checked;
@@ -111,7 +112,7 @@ from dbo.FtyInventory a left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 where 1=1");
                     if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@"And a.Poid like '{0}%'", spno));
-                    if (!MyUtility.Check.Empty(seq)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq.Substring(0, 3), seq.Substring(3)));
+                    if (!txtSeq1.checkEmpty(showErrMsg: false)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
                     if (chkbalance) sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
                     switch (selectindex)
                     {
@@ -152,7 +153,7 @@ from dbo.FtyInventory a left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 where 1=1 And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'", location1, location2));
                     if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
-                    if (!MyUtility.Check.Empty(seq)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq.Substring(0, 3), seq.Substring(3)));
+                    if (!txtSeq1.checkEmpty(showErrMsg: false)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
                     if (chkbalance) sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
                     switch (selectindex)
                     {
@@ -198,7 +199,7 @@ inner join dbo.orders on orders.id = p.id
 where 1=1
 And orders.scidelivery between '{0}' and '{1}'", dateRange1.Text1, dateRange1.Text2));
                     if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
-                    if (!MyUtility.Check.Empty(seq)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq.Substring(0, 3), seq.Substring(3)));
+                    if (!txtSeq1.checkEmpty(showErrMsg: false)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
                     if (chkbalance) sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
                     switch (selectindex)
                     {
@@ -243,7 +244,7 @@ where 1=1
 And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'
 And orders.scidelivery between '{2}' and '{3}'", location1, location2, dateRange1.Text1, dateRange1.Text2));
                     if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
-                    if (!MyUtility.Check.Empty(seq)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq.Substring(0, 3), seq.Substring(3)));
+                    if (!txtSeq1.checkEmpty(showErrMsg: false)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
                     if (chkbalance) sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
                     switch (selectindex)
                     {

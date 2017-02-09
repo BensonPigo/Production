@@ -32,7 +32,6 @@
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.textBox3 = new Sci.Win.UI.TextBox();
@@ -42,6 +41,7 @@
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.label7 = new Sci.Win.UI.Label();
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.SuspendLayout();
             // 
             // print
@@ -98,16 +98,6 @@
             this.label3.Size = new System.Drawing.Size(48, 23);
             this.label3.TabIndex = 97;
             this.label3.Text = "Seq#";
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(302, 12);
-            this.textBox2.MaxLength = 5;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(72, 23);
-            this.textBox2.TabIndex = 1;
             // 
             // label1
             // 
@@ -210,9 +200,20 @@
             this.label7.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             this.label7.TextStyle.Color = System.Drawing.Color.LightCoral;
             // 
+            // txtSeq1
+            // 
+            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq1.Location = new System.Drawing.Point(302, 12);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 106;
+            // 
             // R17
             // 
             this.ClientSize = new System.Drawing.Size(559, 237);
+            this.Controls.Add(this.txtSeq1);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.checkBox1);
@@ -222,7 +223,6 @@
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox2);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBox1);
@@ -236,7 +236,6 @@
             this.Controls.SetChildIndex(this.textBox1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.textBox2, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.textBox3, 0);
@@ -246,6 +245,7 @@
             this.Controls.SetChildIndex(this.checkBox1, 0);
             this.Controls.SetChildIndex(this.comboBox1, 0);
             this.Controls.SetChildIndex(this.label7, 0);
+            this.Controls.SetChildIndex(this.txtSeq1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -257,7 +257,6 @@
         private Win.UI.TextBox textBox1;
         private Win.UI.Label label2;
         private Win.UI.Label label3;
-        private Win.UI.TextBox textBox2;
         private Win.UI.Label label1;
         private Win.UI.Label label4;
         private Win.UI.TextBox textBox3;
@@ -267,5 +266,6 @@
         private Win.UI.CheckBox checkBox1;
         private Win.UI.ComboBox comboBox1;
         private Win.UI.Label label7;
+        private Class.txtSeq txtSeq1;
     }
 }
