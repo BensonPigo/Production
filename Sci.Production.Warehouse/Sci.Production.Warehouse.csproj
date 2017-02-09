@@ -1134,6 +1134,9 @@
     <EmbeddedResource Include="Report\R10.resx">
       <DependentUpon>R10.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Report\R11.resx">
+      <DependentUpon>R11.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Report\R13.resx">
       <DependentUpon>R13.cs</DependentUpon>
     </EmbeddedResource>
