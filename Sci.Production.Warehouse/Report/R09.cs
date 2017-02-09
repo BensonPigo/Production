@@ -89,6 +89,7 @@ namespace Sci.Production.Warehouse
 	where o.BuyerDelivery between '{0}' and '{1}' group by POID
 )
 select 
+distinct 
 --a.POID, a.seq1, a.seq2, a.eta, A.Refno
 --, iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)) FabricType
 --, B.StockUnit
@@ -137,6 +138,7 @@ where b.InputQty > 0 ", Convert.ToDateTime(buyerDelivery1).ToString("d"), Conver
 --, (B.InputQty - B.OutputQty)*v.RateValue TaipeiBalance
 --,x.InQty, x.OutQty, x.AdjustQty,x.InQty - x.OutQty + x.AdjustQty balance
 ---------------------------------------------------------------------------
+distinct 
 SP					= a.POID, 
 SEQ					= concat(a.seq1, ' ', a.seq2),  
 ETA					= b.ShipETA,
