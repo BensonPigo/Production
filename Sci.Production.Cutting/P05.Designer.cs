@@ -114,15 +114,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(874, 456);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(868, 410);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(868, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -219,7 +219,7 @@
             this.displayBox_Requestby.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox_Requestby.Location = new System.Drawing.Point(553, 15);
             this.displayBox_Requestby.Name = "displayBox_Requestby";
-            this.displayBox_Requestby.Size = new System.Drawing.Size(193, 23);
+            this.displayBox_Requestby.Size = new System.Drawing.Size(212, 23);
             this.displayBox_Requestby.TabIndex = 2;
             // 
             // dateBox1
@@ -290,7 +290,7 @@
             this.displayBox_LastSendDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox_LastSendDate.Location = new System.Drawing.Point(553, 45);
             this.displayBox_LastSendDate.Name = "displayBox_LastSendDate";
-            this.displayBox_LastSendDate.Size = new System.Drawing.Size(193, 23);
+            this.displayBox_LastSendDate.Size = new System.Drawing.Size(212, 23);
             this.displayBox_LastSendDate.TabIndex = 5;
             // 
             // label7
@@ -298,7 +298,7 @@
             this.label7.BackColor = System.Drawing.Color.Transparent;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(749, 15);
+            this.label7.Location = new System.Drawing.Point(761, 15);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(117, 23);
             this.label7.TabIndex = 39;
