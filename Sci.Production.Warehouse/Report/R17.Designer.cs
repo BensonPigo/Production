@@ -208,7 +208,7 @@
             this.txtSeq1.seq1 = "";
             this.txtSeq1.seq2 = "";
             this.txtSeq1.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq1.TabIndex = 106;
+            this.txtSeq1.TabIndex = 1;
             // 
             // R17
             // 
