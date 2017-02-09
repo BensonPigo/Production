@@ -42,15 +42,8 @@ namespace Sci.Production.Sewing
         {
             base.OnFormLoaded();
             
-            //IsSupportDelete = false;
-            //IsSupportNew = false;
-            //IsSupportUpdate = false;
-            //append.Visible = false;
-            //revise.Visible = false;
-            //delete.Visible = false;
             prev.Visible = false;
             next.Visible = false;
-            this.grid.AutoResizeColumns();
         }
 
         protected override void OnAttached()
@@ -64,6 +57,7 @@ namespace Sci.Production.Sewing
             numericBox2.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(AccumQty)", ""));
             numericBox3.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(Variance)", ""));
             CalculateTotal();
+            this.grid.AutoResizeColumns();
         }
 
         protected override bool OnGridSetup()
