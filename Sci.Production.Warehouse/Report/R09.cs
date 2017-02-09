@@ -99,7 +99,7 @@ select
 ---------------------------------------------------------------------------
 SP					= a.POID, 
 SEQ					= concat(a.seq1, ' ', a.seq2),  
-ETA					= b.ETA,
+ETA					= b.ShipETA,
 REF					= A.Refno, 
 MtlType				= iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)), 
 PurchaseUnit		= B.StockUnit,
@@ -139,7 +139,7 @@ where b.InputQty > 0 ", Convert.ToDateTime(buyerDelivery1).ToString("d"), Conver
 ---------------------------------------------------------------------------
 SP					= a.POID, 
 SEQ					= concat(a.seq1, ' ', a.seq2),  
-ETA					= b.ETA,
+ETA					= b.ShipETA,
 REF					= A.Refno, 
 MtlType				= iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)), 
 PurchaseUnit		= B.StockUnit,
