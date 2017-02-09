@@ -148,12 +148,24 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Bundle", "POID"))
             {
                 button3.ForeColor = Color.Blue;
-                button9.ForeColor = Color.Blue;
             }
             else
             {
                 button3.ForeColor = Color.Black;
-                button9.ForeColor = Color.Black;
+            }
+
+            string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["ID"].ToString(), "Orders", "ID");
+            string patidsql = String.Format(@"SELECT ukey FROM [Production].[dbo].[Pattern]
+WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
+AND EDITdATE = (SELECT MAX(EditDate) from pattern where styleukey = '{0}' and Status = 'Completed')", ukey);
+            string patternukey = MyUtility.GetValue.Lookup(patidsql);
+            if (patternukey != "")
+            {
+                button9.ForeColor = Color.Blue;
+            }
+            else
+            {
+                button9.ForeColor = Color.Black;            
             }
 
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "WorkOrder", "ID"))
