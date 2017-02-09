@@ -395,9 +395,10 @@ namespace Production.Daily
             }
             else
             {
-                if (MyUtility.Check.Empty(((DateTime)orderComparisonList.Rows[0]["TransferDate"]).ToShortDateString()))
+                //if (MyUtility.Check.Empty(((DateTime)orderComparisonList.Rows[0]["TransferDate"]).ToShortDateString()))
+                if (MyUtility.Check.Empty((orderComparisonList.Rows[0]["TransferDate"]).ToString()))
                 {
-                    transferDate = "";
+                    transferDate = "DATA IS EMPTY! ";
                 }
                 else
                 {
@@ -608,13 +609,13 @@ Region      Succeeded       Message
             region.Is_Export = true;
             */
             #region 檢查FTP檔案的日期是否正確
-            //if (!transferPMS.CheckRar_CreateDate(region, region.RarName, false))
-            //{
-            //    String subject = "PMS transfer data (New) ERROR";
-            //    String desc = "Wrong the downloaded file date!!,Pls contact with Taipei.";
-            //    SendMail(subject, desc);
-            //    return Ict.Result.F("Wrong the downloaded file date!!,Pls contact with Taipei.");
-            //}
+            if (!transferPMS.CheckRar_CreateDate(region, region.RarName, false))
+            {
+                String subject = "PMS transfer data (New) ERROR";
+                String desc = "Wrong the downloaded file date!!,Pls contact with Taipei.";
+                SendMail(subject, desc);
+                return Ict.Result.F("Wrong the downloaded file date!!,Pls contact with Taipei.");
+            }
             #endregion
             #region 刪除DataBase
             result = transferPMS.DeleteDatabase(region);
