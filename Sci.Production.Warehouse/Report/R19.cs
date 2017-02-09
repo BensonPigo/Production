@@ -52,7 +52,8 @@ namespace Sci.Production.Warehouse
             String returnDate1 = dateRange_ReturnDate.Text1;
             String returnDate2 = dateRange_ReturnDate.Text2;
             String spno = tbxSP.Text.TrimEnd();
-            String seq = tbxSeq.Text.PadRight(5);
+            string seq1 = txtSeq1.seq1;
+            string seq2 = txtSeq1.seq2;
 
             DualResult result = Result.True;
             StringBuilder sqlcmd = new StringBuilder();
@@ -71,9 +72,9 @@ and a.Status = 'Confirmed'");
             {
                 sqlcmd.Append(string.Format(" And b.frompoid = '{0}'", spno));
             }
-            if (!MyUtility.Check.Empty(seq))
+            if (!txtSeq1.checkEmpty(showErrMsg: false))
             {
-                sqlcmd.Append(string.Format(" And b.fromseq1 = '{0}' and b.FromSeq2 ='{1}'", seq.Substring(0, 3), seq.Substring(3)));
+                sqlcmd.Append(string.Format(" And b.fromseq1 = '{0}' and b.FromSeq2 ='{1}'", seq1, seq2));
             }
 
             switch (selectindex)

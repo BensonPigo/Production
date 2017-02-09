@@ -35,7 +35,7 @@
             this.dateRange_ReturnDate = new Sci.Win.UI.DateRange();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
-            this.tbxSeq = new Sci.Win.UI.TextBox();
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.SuspendLayout();
             // 
             // print
@@ -124,20 +124,20 @@
             this.label3.TabIndex = 117;
             this.label3.Text = "Est. Return Date";
             // 
-            // tbxSeq
+            // txtSeq1
             // 
-            this.tbxSeq.BackColor = System.Drawing.Color.White;
-            this.tbxSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.tbxSeq.Location = new System.Drawing.Point(127, 84);
-            this.tbxSeq.MaxLength = 5;
-            this.tbxSeq.Name = "tbxSeq";
-            this.tbxSeq.Size = new System.Drawing.Size(72, 23);
-            this.tbxSeq.TabIndex = 2;
+            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq1.Location = new System.Drawing.Point(127, 84);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 118;
             // 
             // R19
             // 
             this.ClientSize = new System.Drawing.Size(576, 240);
-            this.Controls.Add(this.tbxSeq);
+            this.Controls.Add(this.txtSeq1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.dateRange_ReturnDate);
@@ -158,7 +158,7 @@
             this.Controls.SetChildIndex(this.dateRange_ReturnDate, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.tbxSeq, 0);
+            this.Controls.SetChildIndex(this.txtSeq1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -173,6 +173,6 @@
         private Win.UI.DateRange dateRange_ReturnDate;
         private Win.UI.Label label2;
         private Win.UI.Label label3;
-        private Win.UI.TextBox tbxSeq;
+        private Class.txtSeq txtSeq1;
     }
 }
