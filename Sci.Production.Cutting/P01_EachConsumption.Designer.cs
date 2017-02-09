@@ -455,6 +455,7 @@
             this.editForArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editForArticle.IsSupportEditMode = false;
             this.editForArticle.Location = new System.Drawing.Point(92, 224);
+            this.editForArticle.Multiline = true;
             this.editForArticle.Name = "editForArticle";
             this.editForArticle.ReadOnly = true;
             this.editForArticle.Size = new System.Drawing.Size(496, 21);

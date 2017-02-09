@@ -30,7 +30,7 @@ namespace Sci.Production.Cutting
         private void requery()
         {
             #region  1203: CUTTING_P01_CutPartsCheck  [Prd Qty]數量計算
-            string sql, sql2;
+            string sql = "", sql2 = "";
             if (WorkType == "1")
             {
                 sql = string.Format(@"with a as (
@@ -54,7 +54,7 @@ namespace Sci.Production.Cutting
 	                                    from (Select id,POID from Orders z where z.cuttingsp = '{0}') as x,order_Qty y 
 	                                    where y.id = x.id", cutid);
             }
-            else  //WorkType == "2"
+            else if (WorkType == "2") //WorkType == "2"
             {
                 sql = string.Format(@"with a as (
 	                    select a.CuttingSP,b.ID,b.Article,b.SizeCode
@@ -78,8 +78,9 @@ namespace Sci.Production.Cutting
 	                                    where y.id = x.id", cutid);
             }
             #endregion
-
-            string sqlcmd = sql + String.Format(
+            if (sql != "" && sql2 != "")
+            {
+                string sqlcmd = sql + String.Format(
             @"
         , b as (
 	        Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel
@@ -105,29 +106,30 @@ namespace Sci.Production.Cutting
         from c
         inner join Order_SizeCode z on z.id = c.CuttingSP and z.SizeCode = c.SizeCode
         order by c.id,article,z.seq,PatternPanel", cutid, sql2);
-            DataTable gridtb;
-            DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
+                DataTable gridtb;
+                DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
 
-            for (int i = gridtb.Rows.Count - 1; i > 0; i--)
-            {
-                if (gridtb.Rows[i]["PatternPanel"].ToString() != "=" &&
-                    MyUtility.Check.Empty(gridtb.Rows[i]["cutqty"]) &&
-                    MyUtility.Check.Empty(gridtb.Rows[i]["Variance"]))
+                for (int i = gridtb.Rows.Count - 1; i > 0; i--)
                 {
-                    if (gridtb.Rows[i][0].ToString() == gridtb.Rows[i - 1][0].ToString() &&
-                        gridtb.Rows[i][1].ToString() == gridtb.Rows[i - 1][1].ToString() &&
-                        gridtb.Rows[i][2].ToString() == gridtb.Rows[i - 1][2].ToString() &&
-                        gridtb.Rows[i][3].ToString() == gridtb.Rows[i - 1][3].ToString() &&
-                        gridtb.Rows[i][4].ToString() == gridtb.Rows[i - 1][4].ToString() &&
-                        gridtb.Rows[i][5].ToString() == gridtb.Rows[i - 1][5].ToString())
+                    if (gridtb.Rows[i]["PatternPanel"].ToString() != "=" &&
+                        MyUtility.Check.Empty(gridtb.Rows[i]["cutqty"]) &&
+                        MyUtility.Check.Empty(gridtb.Rows[i]["Variance"]))
                     {
-                        gridtb.Rows[i].Delete();
+                        if (gridtb.Rows[i][0].ToString() == gridtb.Rows[i - 1][0].ToString() &&
+                            gridtb.Rows[i][1].ToString() == gridtb.Rows[i - 1][1].ToString() &&
+                            gridtb.Rows[i][2].ToString() == gridtb.Rows[i - 1][2].ToString() &&
+                            gridtb.Rows[i][3].ToString() == gridtb.Rows[i - 1][3].ToString() &&
+                            gridtb.Rows[i][4].ToString() == gridtb.Rows[i - 1][4].ToString() &&
+                            gridtb.Rows[i][5].ToString() == gridtb.Rows[i - 1][5].ToString())
+                        {
+                            gridtb.Rows[i].Delete();
+                        }
                     }
                 }
+                grid1.DataSource = gridtb;
             }
-            grid1.DataSource = gridtb;
         }
-        
+
         private void gridSetup()
         {
             grid1.RowPostPaint += (s, e) =>

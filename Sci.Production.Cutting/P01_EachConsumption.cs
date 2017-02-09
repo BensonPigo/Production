@@ -142,7 +142,6 @@ namespace Sci.Production.Cutting
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5))
                 .Numeric("Qty", header: "Qty", width: Widths.Numeric(4), decimal_places: 0);
             this.gridSizeQty.Font = new Font("Arial", 9);
-            this.detailgrid.AutoResizeColumns();
             return true;
         }
 
@@ -155,6 +154,7 @@ namespace Sci.Production.Cutting
             }
             sizetb.DefaultView.RowFilter =string.Format("Order_EachConsUkey = '{0}'", CurrentData["ukey"]);
             base.OnGridRowChanged();
+            this.detailgrid.AutoResizeColumns();
         }
 
         private void btnDetail_Click(object sender, EventArgs e)

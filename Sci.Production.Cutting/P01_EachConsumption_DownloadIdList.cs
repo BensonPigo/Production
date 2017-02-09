@@ -16,7 +16,6 @@ namespace Sci.Production.Cutting
         public P01_EachConsumption_DownloadIdList()
         {
             InitializeComponent();
-
         }
 
         public P01_EachConsumption_DownloadIdList(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
@@ -27,18 +26,18 @@ namespace Sci.Production.Cutting
 
         protected override Ict.DualResult OnRequery(out DataTable datas)
         {
-            //return base.OnRequery();
             datas = null;
-            string sqlCmd =string.Format(@"Select ID, MarkerDownloadID, 
-                                            FabricCombo = (Select FabricCombo+',' 
-                                                           From Order_EachCons as tmp
-                                                           Where tmp.ID = Order_EachCons.ID
-                                                           And IsNull(tmp.MarkerDownloadID, '') 
-                                                               = IsNull(Order_EachCons.MarkerDownloadID, '')
-                                                           Group by FabricCombo Order by FabricCombo for XML path(''))
-                                            From Order_EachCons
-                                            Where Order_EachCons.ID = '{0}'
-                                            Group by ID, MarkerDownloadID", this.KeyValue1);
+            string sqlCmd =string.Format(@"
+Select ID, MarkerDownloadID, 
+FabricCombo = (Select FabricCombo+',' 
+                From Order_EachCons as tmp
+                Where tmp.ID = Order_EachCons.ID
+                And IsNull(tmp.MarkerDownloadID, '') 
+                    = IsNull(Order_EachCons.MarkerDownloadID, '')
+                Group by FabricCombo Order by FabricCombo for XML path(''))
+From Order_EachCons
+Where Order_EachCons.ID = '{0}'
+Group by ID, MarkerDownloadID", this.KeyValue1);
             DualResult result;
             if (!(result = DBProxy.Current.Select(null, sqlCmd, out datas))) return result;
             return Result.True;
@@ -47,8 +46,8 @@ namespace Sci.Production.Cutting
         protected override bool OnGridSetup()
         {
             Helper.Controls.Grid.Generator(this.grid)
-                .Text("MarkerDownloadID", header: "Marker Download ID", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(30), iseditingreadonly: true);
+                .Text("MarkerDownloadID", header: "Marker Download ID", width: Widths.AnsiChars(25), iseditingreadonly: true)
+                .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(25), iseditingreadonly: true);
             
             return true;
         }
