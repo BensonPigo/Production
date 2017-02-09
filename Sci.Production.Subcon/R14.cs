@@ -217,14 +217,14 @@ select aa.FactoryID
 ,y.order_qty
 ,x.ap_qty
 ,round(isnull(x.ap_amt,0.0)+isnull(z.localap_amt,0.0),2) amount
-,round((isnull(x.ap_amt,0.0)+isnull(z.localap_amt,0.0)) / iif(y.order_qty=0,1,y.order_qty),3) ttl_price
+,round(isnull(x.ap_amt,0.0) / iif(y.order_qty=0,1,y.order_qty),3) + round(z.localap_amt / iif(y.order_qty=0,1,y.order_qty),3) ttl_price --P3=P1+P2
 ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
 ,[percentage]=convert(varchar,round((round((isnull(x.ap_amt,0.0)+isnull(z.localap_amt,0.0)) / iif(y.order_qty=0,1,y.order_qty),3))/(round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3))*100,2))+'%'
 ,round(x.ap_amt,2)
-,round(isnull(x.ap_amt,0.0) / iif(x.ap_qty=0,1,x.ap_qty),3) ap_price
+,round(isnull(x.ap_amt,0.0) / iif(y.order_qty=0,1,y.order_qty),3) ap_price  --P1
 ,round(isnull(x.ap_amt,0.0) / iif(y.order_amt=0,1,y.order_amt),2) ap_percentage
 ,round(z.localap_amt,2) localap_amt
-,round(z.localap_amt / iif(y.order_qty=0,1,y.order_qty),3) localap_price
+,round(z.localap_amt / iif(y.order_qty=0,1,y.order_qty),3) localap_price  --P2
 ,round(z.localap_amt / iif(y.order_amt=0,1,y.order_amt),2) local_percentage
 from cte
 left join orders aa on aa.id = cte.orderid
@@ -286,8 +286,6 @@ select aa.FactoryID
 ,x.ap_qty
 ,round(x.ap_amt,2) ap_amt
 ,round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty),3) ap_price
---,y.order_amt
---,y.order_qty
 ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
 ,round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty) / iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2) percentage
 from cte
