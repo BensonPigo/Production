@@ -26,3 +26,6 @@ D:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\obj\Debug\PMSUploadDataT
 D:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\obj\Debug\PMSUploadDataToAPS.Daily.csproj.GenerateResource.Cache
 D:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\obj\Debug\Production.Daily.exe
 D:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\obj\Debug\Production.Daily.pdb
+D:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\bin\Debug\PMSUploadDataToAPS.Daily.exe.config
+D:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\obj\Debug\PMSUploadDataToAPS.Daily.exe
+D:\System2014\Production\trunk\PMSUploadDataToAPS.Daily\obj\Debug\PMSUploadDataToAPS.Daily.pdb
