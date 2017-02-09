@@ -186,6 +186,7 @@ namespace Sci.Production.Cutting
         {
             detailgrid.ValidateControl();
             string update = "";
+            if (MyUtility.Check.Empty(detailTb))return;
             if (detailTb.Rows.Count == 0) return;
             foreach (DataRow dr in detailTb.Rows)
             {
@@ -200,6 +201,7 @@ namespace Sci.Production.Cutting
                     update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate,NewEstCutDate,CutReasonid,ID) Values({0},'{1}','{2}','{3}','{4}');", dr["Ukey"], Convert.ToDateTime(dr["EstCutDate"]).ToShortDateString(), dr["NewEstCutDate"], dr["CutReasonid"], dr["ID"]);
                 }
             }
+            if (update == "") return;
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
