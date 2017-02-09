@@ -288,7 +288,12 @@ where 1=1 and c.ThirdCountry = 1"));
 
             this.ShowWaitMessage("Excel Processing...");
             Excel.Worksheet worksheet = objApp.Sheets[1];
-            for (int i = 1; i <= printData.Rows.Count; i++) worksheet.Cells[i + 1, 4] = ((string)((Excel.Range)worksheet.Cells[i + 1, 4]).Value).Trim();
+            for (int i = 1; i <= printData.Rows.Count; i++) { 
+                string str = worksheet.Cells[i + 1, 4].Value;
+                if(!MyUtility.Check.Empty(str))
+                    worksheet.Cells[i + 1, 4] = str.Trim(); 
+
+            }
 
             worksheet.Columns[4].ColumnWidth = 50;
             worksheet.Rows.AutoFit();
