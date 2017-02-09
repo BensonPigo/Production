@@ -127,6 +127,7 @@ WHERE  A.Eta BETWEEN '{0}' and '{1}' and  D.Category in {2}
                 sqlCmd.Append(string.Format(@" and c.fabrictype = '{0}'", fabrictype));
             }
 
+            sqlCmd.Append(" order by b.id, b.poid, b.seq1, b.seq2, b.refno, c.colorid, c.sizeSpec, c.stockunit");
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
