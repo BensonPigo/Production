@@ -655,12 +655,12 @@ order by Defect_Code", factory);
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }
+            //saveDialog.ShowDialog();
+            //string outpath = saveDialog.FileName;
+            //if (outpath.Empty())
+            //{
+            //    return false;
+            //}
 
             SaveXltReportCls sxc = new SaveXltReportCls("Quality_R41.xltx");
             SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
@@ -1026,7 +1026,7 @@ order by Defect_Code", factory);
             SaveXltReportCls.ReplaceAction d = addfilter;
             sxc.dicDatas.Add("##addfilter", d);
 
-            sxc.Save(outpath, true);
+            sxc.Save();
             return true;
         }
             #endregion

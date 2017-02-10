@@ -79,7 +79,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(51, 23);
             this.label2.TabIndex = 1;
-            this.label2.Text = "Year:";
+            this.label2.Text = "Year";
             // 
             // label1
             // 
@@ -88,7 +88,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(51, 23);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Brand:";
+            this.label1.Text = "Brand";
             // 
             // R41
             // 

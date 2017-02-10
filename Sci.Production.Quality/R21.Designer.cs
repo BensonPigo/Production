@@ -85,7 +85,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(102, 23);
             this.label2.TabIndex = 95;
-            this.label2.Text = "SP# :";
+            this.label2.Text = "SP# ";
             // 
             // label3
             // 
@@ -94,7 +94,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(102, 23);
             this.label3.TabIndex = 96;
-            this.label3.Text = "Audit Date :";
+            this.label3.Text = "Audit Date ";
             // 
             // label4
             // 
@@ -103,7 +103,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(102, 23);
             this.label4.TabIndex = 97;
-            this.label4.Text = "Buyer Delivery :";
+            this.label4.Text = "Buyer Delivery ";
             // 
             // label5
             // 
@@ -112,7 +112,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(102, 23);
             this.label5.TabIndex = 98;
-            this.label5.Text = "Factory :";
+            this.label5.Text = "Factory ";
             // 
             // label6
             // 
@@ -121,7 +121,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(102, 23);
             this.label6.TabIndex = 99;
-            this.label6.Text = "Brand :";
+            this.label6.Text = "Brand ";
             // 
             // label7
             // 
@@ -130,7 +130,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(102, 23);
             this.label7.TabIndex = 100;
-            this.label7.Text = "Format :";
+            this.label7.Text = "Format ";
             // 
             // label8
             // 

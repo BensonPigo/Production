@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.dateAuditDate = new Sci.Win.UI.DateRange();
-            this.radioPerBrand = new Sci.Win.UI.RadioButton();
-            this.radioPerDateFactory = new Sci.Win.UI.RadioButton();
             this.radioPerDateBrand = new Sci.Win.UI.RadioButton();
+            this.radioPerDateFactory = new Sci.Win.UI.RadioButton();
+            this.radioPerBrand = new Sci.Win.UI.RadioButton();
+            this.dateAuditDate = new Sci.Win.UI.DateRange();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -65,31 +65,29 @@
             this.panel1.Size = new System.Drawing.Size(400, 148);
             this.panel1.TabIndex = 94;
             // 
-            // label1
+            // radioPerDateBrand
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(17, 17);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Audit Date:";
+            this.radioPerDateBrand.AutoSize = true;
+            this.radioPerDateBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioPerDateBrand.Location = new System.Drawing.Point(95, 111);
+            this.radioPerDateBrand.Name = "radioPerDateBrand";
+            this.radioPerDateBrand.Size = new System.Drawing.Size(134, 21);
+            this.radioPerDateBrand.TabIndex = 5;
+            this.radioPerDateBrand.Text = "Per Date (Brand)";
+            this.radioPerDateBrand.UseVisualStyleBackColor = true;
+            this.radioPerDateBrand.CheckedChanged += new System.EventHandler(this.radioPerDateBrand_CheckedChanged);
             // 
-            // label2
+            // radioPerDateFactory
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(17, 59);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Format:";
-            // 
-            // dateAuditDate
-            // 
-            this.dateAuditDate.IsRequired = false;
-            this.dateAuditDate.Location = new System.Drawing.Point(95, 17);
-            this.dateAuditDate.Name = "dateAuditDate";
-            this.dateAuditDate.Size = new System.Drawing.Size(280, 23);
-            this.dateAuditDate.TabIndex = 2;
+            this.radioPerDateFactory.AutoSize = true;
+            this.radioPerDateFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioPerDateFactory.Location = new System.Drawing.Point(95, 83);
+            this.radioPerDateFactory.Name = "radioPerDateFactory";
+            this.radioPerDateFactory.Size = new System.Drawing.Size(143, 21);
+            this.radioPerDateFactory.TabIndex = 4;
+            this.radioPerDateFactory.Text = "Per Date (Factory)";
+            this.radioPerDateFactory.UseVisualStyleBackColor = true;
+            this.radioPerDateFactory.CheckedChanged += new System.EventHandler(this.radioPerDateFactory_CheckedChanged);
             // 
             // radioPerBrand
             // 
@@ -105,29 +103,31 @@
             this.radioPerBrand.UseVisualStyleBackColor = true;
             this.radioPerBrand.CheckedChanged += new System.EventHandler(this.radioPerBrand_CheckedChanged);
             // 
-            // radioPerDateFactory
+            // dateAuditDate
             // 
-            this.radioPerDateFactory.AutoSize = true;
-            this.radioPerDateFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioPerDateFactory.Location = new System.Drawing.Point(95, 83);
-            this.radioPerDateFactory.Name = "radioPerDateFactory";
-            this.radioPerDateFactory.Size = new System.Drawing.Size(143, 21);
-            this.radioPerDateFactory.TabIndex = 4;
-            this.radioPerDateFactory.Text = "Per Date (Factory)";
-            this.radioPerDateFactory.UseVisualStyleBackColor = true;
-            this.radioPerDateFactory.CheckedChanged += new System.EventHandler(this.radioPerDateFactory_CheckedChanged);
+            this.dateAuditDate.IsRequired = false;
+            this.dateAuditDate.Location = new System.Drawing.Point(95, 17);
+            this.dateAuditDate.Name = "dateAuditDate";
+            this.dateAuditDate.Size = new System.Drawing.Size(280, 23);
+            this.dateAuditDate.TabIndex = 2;
             // 
-            // radioPerDateBrand
+            // label2
             // 
-            this.radioPerDateBrand.AutoSize = true;
-            this.radioPerDateBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioPerDateBrand.Location = new System.Drawing.Point(95, 111);
-            this.radioPerDateBrand.Name = "radioPerDateBrand";
-            this.radioPerDateBrand.Size = new System.Drawing.Size(134, 21);
-            this.radioPerDateBrand.TabIndex = 5;
-            this.radioPerDateBrand.Text = "Per Date (Brand)";
-            this.radioPerDateBrand.UseVisualStyleBackColor = true;
-            this.radioPerDateBrand.CheckedChanged += new System.EventHandler(this.radioPerDateBrand_CheckedChanged);
+            this.label2.Lines = 0;
+            this.label2.Location = new System.Drawing.Point(17, 59);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Format";
+            // 
+            // label1
+            // 
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(17, 17);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Audit Date";
             // 
             // label9
             // 
@@ -144,6 +144,7 @@
             this.Controls.Add(this.label9);
             this.Controls.Add(this.panel1);
             this.Name = "R22";
+            this.Text = "R22.Pass rate report";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);

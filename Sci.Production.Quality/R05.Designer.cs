@@ -92,7 +92,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(93, 23);
             this.label2.TabIndex = 104;
-            this.label2.Text = "Report Type:";
+            this.label2.Text = "Report Type";
             // 
             // comboMaterialType
             // 
@@ -112,7 +112,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(93, 23);
             this.label1.TabIndex = 102;
-            this.label1.Text = "Material Type:";
+            this.label1.Text = "Material Type";
             // 
             // comboCategory
             // 
@@ -132,7 +132,7 @@
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(93, 23);
             this.label10.TabIndex = 100;
-            this.label10.Text = "Category:";
+            this.label10.Text = "Category";
             // 
             // DateSCIDelivery
             // 
@@ -148,7 +148,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(93, 23);
             this.label3.TabIndex = 98;
-            this.label3.Text = "SCI Delivery:";
+            this.label3.Text = "SCI Delivery";
             // 
             // R05
             // 

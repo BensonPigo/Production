@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.combo_Brand = new Sci.Win.UI.ComboBox();
-            this.radiobtn_pill_snagg_detail = new Sci.Win.UI.RadioButton();
-            this.radiobtn_print_detail = new Sci.Win.UI.RadioButton();
             this.combo_Year = new Sci.Win.UI.ComboBox();
+            this.radiobtn_print_detail = new Sci.Win.UI.RadioButton();
+            this.radiobtn_pill_snagg_detail = new Sci.Win.UI.RadioButton();
+            this.combo_Brand = new Sci.Win.UI.ComboBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,46 +58,28 @@
             this.radioPanel1.TabIndex = 94;
             this.radioPanel1.Value = "Pilling and Snagging Detail ";
             // 
-            // label2
+            // combo_Year
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(28, 26);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(50, 23);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Brand:";
+            this.combo_Year.BackColor = System.Drawing.Color.White;
+            this.combo_Year.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.combo_Year.FormattingEnabled = true;
+            this.combo_Year.IsSupportUnselect = true;
+            this.combo_Year.Location = new System.Drawing.Point(81, 75);
+            this.combo_Year.Name = "combo_Year";
+            this.combo_Year.Size = new System.Drawing.Size(121, 24);
+            this.combo_Year.TabIndex = 1;
             // 
-            // label1
+            // radiobtn_print_detail
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(28, 75);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(50, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Year:";
-            // 
-            // label3
-            // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(28, 136);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(90, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Report Type:";
-            // 
-            // combo_Brand
-            // 
-            this.combo_Brand.BackColor = System.Drawing.Color.White;
-            this.combo_Brand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.combo_Brand.FormattingEnabled = true;
-            this.combo_Brand.IsSupportUnselect = true;
-            this.combo_Brand.Items.AddRange(new object[] {
-            "ADIDAS",
-            "REEBOK"});
-            this.combo_Brand.Location = new System.Drawing.Point(81, 26);
-            this.combo_Brand.Name = "combo_Brand";
-            this.combo_Brand.Size = new System.Drawing.Size(121, 24);
-            this.combo_Brand.TabIndex = 0;
+            this.radiobtn_print_detail.AutoSize = true;
+            this.radiobtn_print_detail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radiobtn_print_detail.Location = new System.Drawing.Point(124, 174);
+            this.radiobtn_print_detail.Name = "radiobtn_print_detail";
+            this.radiobtn_print_detail.Size = new System.Drawing.Size(114, 21);
+            this.radiobtn_print_detail.TabIndex = 3;
+            this.radiobtn_print_detail.TabStop = true;
+            this.radiobtn_print_detail.Text = "Printing Detail";
+            this.radiobtn_print_detail.UseVisualStyleBackColor = true;
             // 
             // radiobtn_pill_snagg_detail
             // 
@@ -113,28 +95,46 @@
             this.radiobtn_pill_snagg_detail.UseVisualStyleBackColor = true;
             this.radiobtn_pill_snagg_detail.Value = "Pilling and Snagging Detail ";
             // 
-            // radiobtn_print_detail
+            // combo_Brand
             // 
-            this.radiobtn_print_detail.AutoSize = true;
-            this.radiobtn_print_detail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radiobtn_print_detail.Location = new System.Drawing.Point(124, 174);
-            this.radiobtn_print_detail.Name = "radiobtn_print_detail";
-            this.radiobtn_print_detail.Size = new System.Drawing.Size(114, 21);
-            this.radiobtn_print_detail.TabIndex = 3;
-            this.radiobtn_print_detail.TabStop = true;
-            this.radiobtn_print_detail.Text = "Printing Detail";
-            this.radiobtn_print_detail.UseVisualStyleBackColor = true;
+            this.combo_Brand.BackColor = System.Drawing.Color.White;
+            this.combo_Brand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.combo_Brand.FormattingEnabled = true;
+            this.combo_Brand.IsSupportUnselect = true;
+            this.combo_Brand.Items.AddRange(new object[] {
+            "ADIDAS",
+            "REEBOK"});
+            this.combo_Brand.Location = new System.Drawing.Point(81, 26);
+            this.combo_Brand.Name = "combo_Brand";
+            this.combo_Brand.Size = new System.Drawing.Size(121, 24);
+            this.combo_Brand.TabIndex = 0;
             // 
-            // combo_Year
+            // label3
             // 
-            this.combo_Year.BackColor = System.Drawing.Color.White;
-            this.combo_Year.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.combo_Year.FormattingEnabled = true;
-            this.combo_Year.IsSupportUnselect = true;
-            this.combo_Year.Location = new System.Drawing.Point(81, 75);
-            this.combo_Year.Name = "combo_Year";
-            this.combo_Year.Size = new System.Drawing.Size(121, 24);
-            this.combo_Year.TabIndex = 1;
+            this.label3.Lines = 0;
+            this.label3.Location = new System.Drawing.Point(28, 136);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(90, 23);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Report Type";
+            // 
+            // label1
+            // 
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(28, 75);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(50, 23);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Year";
+            // 
+            // label2
+            // 
+            this.label2.Lines = 0;
+            this.label2.Location = new System.Drawing.Point(28, 26);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(50, 23);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Brand";
             // 
             // R42
             // 

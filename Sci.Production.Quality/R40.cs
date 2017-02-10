@@ -455,12 +455,12 @@ namespace Sci.Production.Quality
                 //}
 
                 var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-                saveDialog.ShowDialog();
-                string outpath = saveDialog.FileName;
-                if (outpath.Empty())
-                {
-                    return false;
-                }
+                //saveDialog.ShowDialog();
+                //string outpath = saveDialog.FileName;
+                //if (outpath.Empty())
+                //{
+                //    return false;
+                //}
                 Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R40_ByYear.xltx");
                 SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dtt_All);
                 DateTime newtodaty = DateTime.Today;
@@ -494,7 +494,7 @@ namespace Sci.Production.Quality
                 xl.dicDatas.Add("##by_year", xdt_All);
                 SaveXltReportCls.ReplaceAction a = AddRpt;
                 xl.dicDatas.Add("##addrpt", a);
-                xl.Save(outpath, true);
+                xl.Save();
                 #endregion
 
             }
@@ -504,12 +504,12 @@ namespace Sci.Production.Quality
 
 
                 var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-                saveDialog.ShowDialog();
-                string outpath = saveDialog.FileName;
-                if (outpath.Empty())
-                {
-                    return false;
-                }
+                //saveDialog.ShowDialog();
+                //string outpath = saveDialog.FileName;
+                //if (outpath.Empty())
+                //{
+                //    return false;
+                //}
                 Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R40_ByFactory.xltx");
                 SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(alltemp_All);
 
@@ -575,7 +575,7 @@ namespace Sci.Production.Quality
                 SaveXltReportCls.ReplaceAction c = CopySheet;
                 xl.dicDatas.Add("##copyftysheet", c);
 
-                xl.Save(outpath, true);
+                xl.Save();
 
                 #endregion
             }

@@ -251,18 +251,20 @@ namespace Sci.Production.Quality
         }
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            // 顯示筆數於PrintForm上Count欄位
+            SetCount(dt.Rows.Count);
             if (dt == null || dt.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }
+            //saveDialog.ShowDialog();
+            //string outpath = saveDialog.FileName;
+            //if (outpath.Empty())
+            //{
+            //    return false;
+            //}
 
             Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R07.xltx");
 
@@ -287,7 +289,7 @@ namespace Sci.Production.Quality
             xl.dicDatas.Add("##Material", MaterialType);
             xl.dicDatas.Add("##Factory", Factory);
             xl.dicDatas.Add("##body", dt);
-            xl.Save(outpath, false);
+            xl.Save();
             return true;
         }
     }

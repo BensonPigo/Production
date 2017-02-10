@@ -275,12 +275,12 @@ namespace Sci.Production.Quality
         {
 
                 var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-                saveDialog.ShowDialog();
-                string outpath = saveDialog.FileName;
-                if (outpath.Empty())
-                {
-                    return false;
-                }
+                //saveDialog.ShowDialog();
+                //string outpath = saveDialog.FileName;
+                //if (outpath.Empty())
+                //{
+                //    return false;
+                //}
                 Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R42.xltx");
                 SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
 
@@ -346,7 +346,7 @@ namespace Sci.Production.Quality
                 SaveXltReportCls.ReplaceAction d = addfilter;
                 xl.dicDatas.Add("##addfilter", d);
                
-                xl.Save(outpath, true);
+                xl.Save();
 
             return true;
         }

@@ -107,7 +107,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(49, 23);
             this.label3.TabIndex = 2;
-            this.label3.Text = "Month:";
+            this.label3.Text = "Month";
             // 
             // label2
             // 
@@ -116,7 +116,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(49, 23);
             this.label2.TabIndex = 1;
-            this.label2.Text = "Year:";
+            this.label2.Text = "Year";
             // 
             // label1
             // 
@@ -125,13 +125,14 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(49, 23);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Brand:";
+            this.label1.Text = "Brand";
             // 
             // R43
             // 
             this.ClientSize = new System.Drawing.Size(435, 253);
             this.Controls.Add(this.radioPanel1);
             this.Name = "R43";
+            this.Text = "R43.AdiComp Detail Form";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);

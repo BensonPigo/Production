@@ -218,6 +218,8 @@ where a.Status = 'Confirmed'");
         // 產生Excel 必須要有
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            // 顯示筆數於PrintForm上Count欄位
+            SetCount(SummaryData.Rows.Count);
 
             this.ShowWaitMessage("Starting Excel");
             if (S_radioButton.Checked)

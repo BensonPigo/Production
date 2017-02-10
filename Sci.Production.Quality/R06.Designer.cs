@@ -103,7 +103,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(113, 23);
             this.label5.TabIndex = 21;
-            this.label5.Text = "Season.............:";
+            this.label5.Text = "Season";
             // 
             // label4
             // 
@@ -112,7 +112,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(113, 23);
             this.label4.TabIndex = 20;
-            this.label4.Text = "Brand................:";
+            this.label4.Text = "Brand";
             // 
             // label3
             // 
@@ -121,7 +121,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(113, 23);
             this.label3.TabIndex = 19;
-            this.label3.Text = "Ref#..................:";
+            this.label3.Text = "Ref#";
             // 
             // label1
             // 
@@ -130,7 +130,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(113, 23);
             this.label1.TabIndex = 18;
-            this.label1.Text = "Supplier............:";
+            this.label1.Text = "Supplier";
             // 
             // DateArriveWH
             // 
@@ -146,7 +146,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(113, 23);
             this.label2.TabIndex = 16;
-            this.label2.Text = "Arrive W/H Date:";
+            this.label2.Text = "Arrive W/H Date";
             // 
             // R06
             // 

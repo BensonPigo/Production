@@ -30,6 +30,10 @@
         {
             this.label1 = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.comboMaterialType = new Sci.Win.UI.ComboBox();
+            this.txtsupplier = new Sci.Production.Class.txtsupplier();
+            this.comboCategory = new Sci.Win.UI.ComboBox();
             this.txtRefno = new Sci.Win.UI.TextBox();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtseason = new Sci.Production.Class.txtseason();
@@ -51,10 +55,6 @@
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.comboCategory = new Sci.Win.UI.ComboBox();
-            this.txtsupplier = new Sci.Production.Class.txtsupplier();
-            this.comboMaterialType = new Sci.Win.UI.ComboBox();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -65,7 +65,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(135, 23);
             this.label1.TabIndex = 95;
-            this.label1.Text = "Arrive W/H Date......:";
+            this.label1.Text = "Arrive W/H Date";
             // 
             // panel1
             // 
@@ -99,6 +99,48 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(499, 478);
             this.panel1.TabIndex = 96;
+            // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(161, 440);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(142, 24);
+            this.comboFactory.TabIndex = 120;
+            // 
+            // comboMaterialType
+            // 
+            this.comboMaterialType.BackColor = System.Drawing.Color.White;
+            this.comboMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMaterialType.FormattingEnabled = true;
+            this.comboMaterialType.IsSupportUnselect = true;
+            this.comboMaterialType.Location = new System.Drawing.Point(161, 401);
+            this.comboMaterialType.Name = "comboMaterialType";
+            this.comboMaterialType.Size = new System.Drawing.Size(142, 24);
+            this.comboMaterialType.TabIndex = 119;
+            // 
+            // txtsupplier
+            // 
+            this.txtsupplier.DisplayBox1Binding = "";
+            this.txtsupplier.Location = new System.Drawing.Point(161, 361);
+            this.txtsupplier.Name = "txtsupplier";
+            this.txtsupplier.Size = new System.Drawing.Size(155, 23);
+            this.txtsupplier.TabIndex = 118;
+            this.txtsupplier.TextBox1Binding = "";
+            // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(161, 320);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(142, 24);
+            this.comboCategory.TabIndex = 117;
             // 
             // txtRefno
             // 
@@ -192,7 +234,7 @@
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(135, 23);
             this.label12.TabIndex = 106;
-            this.label12.Text = "Factory...................:";
+            this.label12.Text = "Factory";
             // 
             // label11
             // 
@@ -201,7 +243,7 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(135, 23);
             this.label11.TabIndex = 105;
-            this.label11.Text = "Material Type..........:";
+            this.label11.Text = "Material Type";
             // 
             // label10
             // 
@@ -210,7 +252,7 @@
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(135, 23);
             this.label10.TabIndex = 104;
-            this.label10.Text = "Supplier..................:";
+            this.label10.Text = "Supplier";
             // 
             // label9
             // 
@@ -219,7 +261,7 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(135, 23);
             this.label9.TabIndex = 103;
-            this.label9.Text = "Category................:";
+            this.label9.Text = "Category";
             // 
             // label8
             // 
@@ -228,7 +270,7 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(135, 23);
             this.label8.TabIndex = 102;
-            this.label8.Text = "Refno......................:";
+            this.label8.Text = "Refno";
             // 
             // label7
             // 
@@ -237,7 +279,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(135, 23);
             this.label7.TabIndex = 101;
-            this.label7.Text = "Brand......................:";
+            this.label7.Text = "Brand";
             // 
             // label6
             // 
@@ -246,7 +288,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(135, 23);
             this.label6.TabIndex = 100;
-            this.label6.Text = "Season....................:";
+            this.label6.Text = "Season";
             // 
             // label5
             // 
@@ -255,7 +297,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(135, 23);
             this.label5.TabIndex = 99;
-            this.label5.Text = "SP#..........................:";
+            this.label5.Text = "SP#";
             // 
             // label4
             // 
@@ -264,7 +306,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(135, 23);
             this.label4.TabIndex = 98;
-            this.label4.Text = "Est. Cutting Date......:";
+            this.label4.Text = "Est. Cutting Date";
             // 
             // label3
             // 
@@ -273,7 +315,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(135, 23);
             this.label3.TabIndex = 97;
-            this.label3.Text = "Sewing in-line Date..:";
+            this.label3.Text = "Sewing in-line Date";
             // 
             // label2
             // 
@@ -282,49 +324,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(135, 23);
             this.label2.TabIndex = 96;
-            this.label2.Text = "SCI Delivery............:";
-            // 
-            // comboCategory
-            // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(161, 320);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.Size = new System.Drawing.Size(142, 24);
-            this.comboCategory.TabIndex = 117;
-            // 
-            // txtsupplier
-            // 
-            this.txtsupplier.DisplayBox1Binding = "";
-            this.txtsupplier.Location = new System.Drawing.Point(161, 361);
-            this.txtsupplier.Name = "txtsupplier";
-            this.txtsupplier.Size = new System.Drawing.Size(155, 23);
-            this.txtsupplier.TabIndex = 118;
-            this.txtsupplier.TextBox1Binding = "";
-            // 
-            // comboMaterialType
-            // 
-            this.comboMaterialType.BackColor = System.Drawing.Color.White;
-            this.comboMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboMaterialType.FormattingEnabled = true;
-            this.comboMaterialType.IsSupportUnselect = true;
-            this.comboMaterialType.Location = new System.Drawing.Point(161, 401);
-            this.comboMaterialType.Name = "comboMaterialType";
-            this.comboMaterialType.Size = new System.Drawing.Size(142, 24);
-            this.comboMaterialType.TabIndex = 119;
-            // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(161, 440);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.Size = new System.Drawing.Size(142, 24);
-            this.comboFactory.TabIndex = 120;
+            this.label2.Text = "SCI Delivery";
             // 
             // R07
             // 

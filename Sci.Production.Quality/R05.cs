@@ -356,19 +356,21 @@ namespace Sci.Production.Quality
         }
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-           
+      
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }
+            //saveDialog.ShowDialog();
+            //string outpath = saveDialog.FileName;
+            //if (outpath.Empty())
+            //{
+            //    return false;
+            //}
 
             if ("Fabric".EqualString(this.comboMaterialType.Text))
             {
                 if (radioDetail.Checked) //("Detail".EqualString(this.radioDetail.Text))
                 {
+                    // 顯示筆數於PrintForm上Count欄位
+                    SetCount(dtFabricDetail.Rows.Count);
                     if (dtFabricDetail == null || dtFabricDetail.Rows.Count == 0)
                     {
                         MyUtility.Msg.ErrorBox("Data not found");
@@ -376,10 +378,12 @@ namespace Sci.Production.Quality
                     }
                     Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_FabricDetail.xltx");
                     xl.dicDatas.Add("##BODY", dtFabricDetail);
-                    xl.Save(outpath, false);
+                    xl.Save();
                 }
                 if (radioSummary.Checked)//("Summary".EqualString(this.radioSummary.Text))
                 {
+                    // 顯示筆數於PrintForm上Count欄位
+                    SetCount(dtFabricSummary.Rows.Count);
                     if (dtFabricSummary == null || dtFabricSummary.Rows.Count == 0)
                     {
                         MyUtility.Msg.ErrorBox("Data not found");
@@ -387,13 +391,14 @@ namespace Sci.Production.Quality
                     }
                     Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_FabricSummary.xltx");
                     xl.dicDatas.Add("##BODY", dtFabricSummary);
-                    xl.Save(outpath, false);
+                    xl.Save();
                 }
 
             }
             else if ("Accessory".EqualString(this.comboMaterialType.Text))
             {
-               
+                // 顯示筆數於PrintForm上Count欄位
+                SetCount(dtAccessoryDetail.Rows.Count);
                 if (radioDetail.Checked) //("Detail".EqualString(this.radioDetail.Text))
                 {
                     if (dtAccessoryDetail == null || dtAccessoryDetail.Rows.Count == 0)
@@ -403,10 +408,12 @@ namespace Sci.Production.Quality
                     }
                     Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_AccessoryDetail.xltx");
                     xl.dicDatas.Add("##BODY", dtAccessoryDetail);
-                    xl.Save(outpath, false);
+                    xl.Save();
                 }
                 if (radioSummary.Checked)//("Summary".EqualString(this.radioSummary.Text))
                 {
+                    // 顯示筆數於PrintForm上Count欄位
+                    SetCount(dtAccessorySummary.Rows.Count);
                     if (dtAccessorySummary == null || dtAccessorySummary.Rows.Count == 0)
                     {
                         MyUtility.Msg.ErrorBox("Data not found");
@@ -414,7 +421,7 @@ namespace Sci.Production.Quality
                     }
                     Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_AccessorySummary.xltx");
                     xl.dicDatas.Add("##BODY", dtAccessorySummary);
-                    xl.Save(outpath, false);
+                    xl.Save();
                 }
 
             }
