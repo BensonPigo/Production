@@ -15,7 +15,7 @@ namespace Sci.Production.Planning
     public partial class P01_BatchApprove : Sci.Win.Subs.Base
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        public P01_BatchApprove(string orderid)
+        public P01_BatchApprove()
         {
             InitializeComponent();
 
