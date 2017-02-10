@@ -644,6 +644,7 @@ inner join dbo.Factory on factory.id = a.factoryid
 
         private void CheckData()
         {
+            if (listControlBindingSource1.DataSource == null) return;
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             DataRow dr;
             listControlBindingSource1.Filter = "";
