@@ -430,7 +430,7 @@ namespace Sci.Production.Class.Commons
         public static void PrintSMNotice(string ID, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
             var xltFolder = Sci.Production.Class.Commons.TradeSystem.Env.XltPathDir;
-            var xltPath = System.IO.Path.Combine(xltFolder, "Pattern-P01_PrintSMnotice.xlt");
+            var xltPath = System.IO.Path.Combine(xltFolder, "PPIC_Pattern-P01_PrintSMnotice.xlt");
             
             if (System.IO.File.Exists(xltPath) == false)
             {
@@ -480,16 +480,16 @@ namespace Sci.Production.Class.Commons
                 PrintSMNoticeBlock10(mainSheet, ID, ref rowPosition, enuType); //Block10: formal table for sign
                 PrintSMNoticeBlock11(mainSheet, ID, ref rowPosition, pageHBreakList, enuType); //Block11: FabricColor TrimCard
                 //把分業符號整理好，自動產生的移除，加入指定位置的分頁設定
-                mainSheet.PageSetup.PrintArea = "$A$1:$AC$" + rowPosition;
-                while (mainSheet.VPageBreaks.Count > 0)
-                {
-                    mainSheet.VPageBreaks[1].Delete();
-                }
-                while (mainSheet.HPageBreaks.Count > 1)
-                {
-                    mainSheet.HPageBreaks[1].Delete();
-                }
-                mainSheet.VPageBreaks.Add(mainSheet.Range["AD1"]);
+                //mainSheet.PageSetup.PrintArea = "$A$1:$AC$" + rowPosition;
+                //while (mainSheet.VPageBreaks.Count > 0)
+                //{
+                //    mainSheet.VPageBreaks[1].Delete();
+                //}
+                //while (mainSheet.HPageBreaks.Count > 1)
+                //{
+                //    mainSheet.HPageBreaks[1].Delete();
+                //}
+                //mainSheet.VPageBreaks.Add(mainSheet.Range["AD1"]);
                 pageHBreakList.ForEach(hBreakIndex => mainSheet.HPageBreaks.Add(mainSheet.Range["A" + hBreakIndex]));
 
                 mainSheet.Cells[1, 1].Select();
@@ -498,6 +498,7 @@ namespace Sci.Production.Class.Commons
 #if !DEBUG
             app.Visible = true;
 #endif
+                mainSheet.Protect("SCIMIS919", Type.Missing, Type.Missing, Type.Missing, Type.Missing, true, true, true);
             }
             finally
             {
@@ -510,7 +511,7 @@ namespace Sci.Production.Class.Commons
                 System.GC.Collect();
             }
 
-            MyUtility.Msg.InfoBox("print complete");
+         //   MyUtility.Msg.InfoBox("print complete");
         }
 
         /// <summary>
