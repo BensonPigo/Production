@@ -775,17 +775,11 @@ on FB.ID = O.FactoryID
             #endregion
 
             #region tmpData2
-            SqlData2 = string.Format(@"select tmpData1.ID as OrderID , tmpData1.CPU as CPU
-, tmpData1.SMV as SMV, tmpData1.TMS as TMS, tmpData1.FactoryID as Factory, 
-	                                        tmpData1.BrandAreaCode as AGCCode, tmpData1.Qty as [Order Qty]
-, tmpData1.StyleID as Style, tmpData1.CountryID as FactoryCountry, 
-SewingOutput_Detail.QAQty as ProdQty
-, Round(3600 / iif(tmpData1.TMS * Round(SewingOutput.ManPower * SewingOutput_Detail.WorkHour ,1) = 0,null
-,tmpData1.TMS * Round(SewingOutput.ManPower * SewingOutput_Detail.WorkHour ,1)), 0)  as StardQty 
-,CASE WHEN SMV < 40 THEN 'A' WHEN SMV >= 40 and SMV < 50  THEN 'B' 
-WHEN SMV >= 50 and SMV < 60  THEN 'C' WHEN SMV >= 60 and SMV < 70  THEN 'D'
-WHEN SMV >= 70 and SMV < 80  THEN 'E' WHEN SMV >= 80 and SMV < 90  THEN 'F'	
-WHEN SMV >= 90 and SMV < 100 THEN 'G'  ELSE 'H' END as SMVEFFX
+            SqlData2 = string.Format(@"select tmpData1.ID as OrderID , tmpData1.CPU as CPU, tmpData1.SMV as SMV, tmpData1.TMS as TMS, tmpData1.FactoryID as Factory, 
+	                                        tmpData1.BrandAreaCode as AGCCode, tmpData1.Qty as [Order Qty], tmpData1.StyleID as Style, tmpData1.CountryID as FactoryCountry, 
+	                                        SewingOutput_Detail.QAQty as ProdQty, Round(3600 / tmpData1.TMS * Round(SewingOutput.ManPower * SewingOutput_Detail.WorkHour ,1), 0)  as StardQty 
+                                            ,CASE WHEN SMV < 40 THEN 'A' WHEN SMV >= 40 and SMV < 50  THEN 'B' WHEN SMV >= 50 and SMV < 60  THEN 'C' WHEN SMV >= 60 and SMV < 70  THEN 'D'
+	                                        WHEN SMV >= 70 and SMV < 80  THEN 'E' WHEN SMV >= 80 and SMV < 90  THEN 'F'	WHEN SMV >= 90 and SMV < 100 THEN 'G'  ELSE 'H' END as SMVEFFX
                                         from 
                                         ({0}) tmpData1
                                         Left Join SewingOutput_Detail WITH (NOLOCK) on OrderID = tmpData1.ID
@@ -848,30 +842,21 @@ WHEN SMV >= 90 and SMV < 100 THEN 'G'  ELSE 'H' END as SMVEFFX
             }
 
             SqlData4 = string.Format(@"select {1}, tmpData2.FactoryCountry as Country, tmpData2.SMVEFFX 
-	                                    ,CASE WHEN SUM(tmpData2.ProdQty) <= 3000 THEN 'AA' 
-WHEN SUM(tmpData2.ProdQty) >= 3001 and SUM(tmpData2.ProdQty) <= 5000  THEN 'BB' 
-WHEN SUM(tmpData2.ProdQty) >= 5001 and SUM(tmpData2.ProdQty) <= 7000  THEN 'CC' 
-WHEN SUM(tmpData2.ProdQty) >= 7001 and SUM(tmpData2.ProdQty) <= 9000  THEN 'DD'  
-WHEN SUM(tmpData2.ProdQty) >= 9001 and SUM(tmpData2.ProdQty) <= 10000  THEN 'EE' 
-WHEN SUM(tmpData2.ProdQty) >= 10001 THEN 'FF'	 END as QtyEFFX
-,SUM(tmpData2.ProdQty) as StyleProdQty, SUM(tmpData2.StardQty) as StyleStardQty
-,SUM(tmpData2.ProdQty)/iif(SUM(tmpData2.StardQty)=0,null,SUM(tmpData2.StardQty)) as EFFIC
+	                                          ,CASE WHEN SUM(tmpData2.ProdQty) <= 3000 THEN 'AA' WHEN SUM(tmpData2.ProdQty) >= 3001 and SUM(tmpData2.ProdQty) <= 5000  THEN 'BB' WHEN SUM(tmpData2.ProdQty) >= 5001 and SUM(tmpData2.ProdQty) <= 7000  THEN 'CC' 
+		                                      WHEN SUM(tmpData2.ProdQty) >= 7001 and SUM(tmpData2.ProdQty) <= 9000  THEN 'DD'  WHEN SUM(tmpData2.ProdQty) >= 9001 and SUM(tmpData2.ProdQty) <= 10000  THEN 'EE' WHEN SUM(tmpData2.ProdQty) >= 10001 THEN 'FF'	 END as QtyEFFX
+	                                          ,SUM(tmpData2.ProdQty) as StyleProdQty, SUM(tmpData2.StardQty) as StyleStardQty, SUM(tmpData2.ProdQty)/SUM(tmpData2.StardQty) as EFFIC
                                       from  ({0}) tmpData2
-                                    group by {2}, tmpData2.FactoryCountry, tmpData2.SMVEFFX
-                                    order by {2}, tmpData2.FactoryCountry, tmpData2.SMVEFFX"
+                                      group by {2}, tmpData2.FactoryCountry, tmpData2.SMVEFFX
+                                      order by {2}, tmpData2.FactoryCountry, tmpData2.SMVEFFX"
                 , SqlData2, select, GroupBy);
 
             All_SqlData4 = string.Format(@"select   tmpData2.SMVEFFX 
-,CASE WHEN SUM(tmpData2.ProdQty) <= 3000 THEN 'AA' 
-WHEN SUM(tmpData2.ProdQty) >= 3001 and SUM(tmpData2.ProdQty) <= 5000  THEN 'BB' 
-WHEN SUM(tmpData2.ProdQty) >= 5001 and SUM(tmpData2.ProdQty) <= 7000  THEN 'CC' 
-WHEN SUM(tmpData2.ProdQty) >= 7001 and SUM(tmpData2.ProdQty) <= 9000  THEN 'DD'  
-WHEN SUM(tmpData2.ProdQty) >= 9001 and SUM(tmpData2.ProdQty) <= 10000  THEN 'EE' 
-WHEN SUM(tmpData2.ProdQty) >= 10001 THEN 'FF'	 END as QtyEFFX
-, SUM(tmpData2.ProdQty)/iif(SUM(tmpData2.StardQty)=0,null,SUM(tmpData2.StardQty)) as EFFIC
-                                                from  ({0}) tmpData2
-                                            group by   tmpData2.SMVEFFX
-                                            order by   tmpData2.SMVEFFX", SqlData2);
+	                                                ,CASE WHEN SUM(tmpData2.ProdQty) <= 3000 THEN 'AA' WHEN SUM(tmpData2.ProdQty) >= 3001 and SUM(tmpData2.ProdQty) <= 5000  THEN 'BB' WHEN SUM(tmpData2.ProdQty) >= 5001 and SUM(tmpData2.ProdQty) <= 7000  THEN 'CC' 
+		                                            WHEN SUM(tmpData2.ProdQty) >= 7001 and SUM(tmpData2.ProdQty) <= 9000  THEN 'DD'  WHEN SUM(tmpData2.ProdQty) >= 9001 and SUM(tmpData2.ProdQty) <= 10000  THEN 'EE' WHEN SUM(tmpData2.ProdQty) >= 10001 THEN 'FF'	 END as QtyEFFX
+	                                               , SUM(tmpData2.ProdQty)/SUM(tmpData2.StardQty) as EFFIC
+                                           from  ({0}) tmpData2
+                                           group by   tmpData2.SMVEFFX
+                                           order by   tmpData2.SMVEFFX", SqlData2);
 
             BeginInvoke(() => { this.ShowWaitMessage("Wait – Produce tmpEFFIC details (Step 3/5)"); });
             result = DBProxy.Current.Select("", SqlData4, spList, out tmpData4);
