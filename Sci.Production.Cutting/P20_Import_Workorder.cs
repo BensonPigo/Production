@@ -83,7 +83,7 @@ namespace Sci.Production.Cutting
             }
             gridTable.Clear();
             string estcutdate = dateBox1.Text;
-            string condition = string.Join(",", currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + r["CutRef"].ToString() + "'"));
+            string condition = string.Join(",", currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["CutRef"].ToString() : "") + "'"));
             if (MyUtility.Check.Empty(condition)) condition = @"''";
             string sqlcmd = string.Format(
                 @"Select 0 as sel,a.*, a.id as Cuttingid,a.ukey as workorderukey,    
