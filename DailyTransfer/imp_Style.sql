@@ -533,6 +533,7 @@ StyleUkey
 
 from Trade_To_Pms.dbo.Style_SizeCode as b
 where not exists(select 1 from Production.dbo.Style_SizeCode as a where a.Ukey = b.Ukey)
+and b.SizeCode is not null
 --STYLE52
 --STYLE_SICESPEC(需再確認ukey欄位)
 ----------------------刪除主TABLE多的資料
