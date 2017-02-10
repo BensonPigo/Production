@@ -647,6 +647,7 @@ and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numer
 
         private void CheckData()
         {
+            if (listControlBindingSource1.DataSource == null) return;
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             DataRow dr;
             listControlBindingSource1.Filter = "";
