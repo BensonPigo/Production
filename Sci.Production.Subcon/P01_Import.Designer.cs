@@ -59,7 +59,7 @@
             // 
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button3.Location = new System.Drawing.Point(1216, 15);
+            this.button3.Location = new System.Drawing.Point(1268, 15);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(90, 30);
             this.button3.TabIndex = 1;
@@ -99,7 +99,7 @@
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(1120, 16);
+            this.button2.Location = new System.Drawing.Point(1172, 16);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(90, 30);
             this.button2.TabIndex = 0;
@@ -111,7 +111,7 @@
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(1205, 15);
+            this.button1.Location = new System.Drawing.Point(1257, 15);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(101, 30);
             this.button1.TabIndex = 6;
@@ -146,7 +146,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 477);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1312, 53);
+            this.groupBox2.Size = new System.Drawing.Size(1364, 53);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             // 
@@ -165,7 +165,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1312, 93);
+            this.groupBox1.Size = new System.Drawing.Size(1364, 93);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
@@ -232,7 +232,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 93);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1312, 384);
+            this.panel1.Size = new System.Drawing.Size(1364, 384);
             this.panel1.TabIndex = 20;
             // 
             // grid1
@@ -255,13 +255,13 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1312, 384);
+            this.grid1.Size = new System.Drawing.Size(1364, 384);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
             // P01_Import
             // 
-            this.ClientSize = new System.Drawing.Size(1312, 530);
+            this.ClientSize = new System.Drawing.Size(1364, 530);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
