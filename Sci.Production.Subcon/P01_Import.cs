@@ -115,6 +115,7 @@ and a.ArtworkTypeID = oa.ArtworkTypeID and a.LocalSuppID = ot.localsuppid  and a
             ns.CellValidating += (s, e) =>
             {
                 DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                ddr["UnitPrice"] = (decimal)e.FormattedValue;
                 ddr["Price"] = (decimal)e.FormattedValue * (int)ddr["qtygarment"];
                 ddr["Amount"] = (decimal)e.FormattedValue * (int)ddr["poqty"] * (int)ddr["qtygarment"];
             };
@@ -137,18 +138,18 @@ and a.ArtworkTypeID = oa.ArtworkTypeID and a.LocalSuppID = ot.localsuppid  and a
                 .Date("SciDelivery", header: "SciDelivery", iseditingreadonly: true)
                 .Text("artworkid", header: "Artwork", iseditingreadonly: true)      //5
                 .Numeric("coststitch)", header: "Cost(Pcs/Stitch)", iseditingreadonly: true)
-                .Numeric("Stitch", header: "Stitch", iseditable: true)    //7
+                .Numeric("Stitch", header: "Stitch", iseditable: true, iseditingreadonly: true)    //7
                 .Text("PatternCode", header: "Cutpart Id", iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", iseditingreadonly: true)
-                .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2, settings: ns2) //10
+                .Numeric("qtygarment", header: "Qty/GMT", iseditable: true, integer_places: 2, settings: ns2, iseditingreadonly: true) //10
                 .Numeric("Cost", header: "Cost(USD)", settings: ns, iseditingreadonly: true, decimal_places: 4, integer_places: 4)  //11
                 .Numeric("UnitPrice", header: "Unit Price", settings: ns, iseditable: true, decimal_places: 4, integer_places: 4)  //12
                 .Numeric("Price", header: "Price/GMT", iseditingreadonly: true, decimal_places: 4, integer_places: 5)  //13
-                .Numeric("Amount", header: "Amount", iseditingreadonly: true, decimal_places: 4, integer_places: 14);  //14
+                .Numeric("Amount", header: "Amount",width: Widths.AnsiChars(12),iseditingreadonly: true, decimal_places: 4, integer_places: 14);  //14
 
 
-            this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
-            this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;  //Qty/GMT
+            //this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
+            //this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;  //Qty/GMT
             this.grid1.Columns[12].DefaultCellStyle.BackColor = Color.Pink;  //UnitPrice
 
             this.grid1.Columns[11].Visible = flag;
