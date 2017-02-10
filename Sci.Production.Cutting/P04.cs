@@ -376,7 +376,7 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
                 pathName = Sci.Env.Cfg.ReportTempDir + "Cutting_Daily_Plan" + DateTime.Now.ToFileTime() + ".xls";
                 string tmpName = Sci.Env.Cfg.ReportTempDir + "tmp.xls";
 
-                createfolder();
+                //createfolder();
                 if (MyUtility.Excel.CopyToXls(ExcelTb, "", "Cutting_P04.xltx", 5, !autoSave, null, objApp, false))
                 {// 將datatable copy to excel
                     Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -423,15 +423,15 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
             return true;
         }
 
-        protected void createfolder()
-        {
-            if (!Directory.Exists(Sci.Env.Cfg.ReportTempDir))
-                Directory.CreateDirectory(Sci.Env.Cfg.ReportTempDir);
-        }
+        //protected void createfolder()
+        //{
+        //    if (!Directory.Exists(Sci.Env.Cfg.ReportTempDir))
+        //        Directory.CreateDirectory(Sci.Env.Cfg.ReportTempDir);
+        //}
 
         private void button2_Click(object sender, EventArgs e)
         {
-            createfolder();
+            //createfolder();
             if (!ToExcel(true))
             {
                 return;
