@@ -12,6 +12,9 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
+	--避免跳出:Null value is eliminated by an aggregate or other SET operation
+	SET ANSI_WARNINGS OFF
+
     --先撈出應該出現的資料
 	select distinct o.StyleID,o.SeasonID,o.BrandID,oq.Article,o.MDivisionID into #tmpData
 	from Orders o
