@@ -51,17 +51,10 @@ namespace Sci.Production.Subcon
             orderby = cbbOrderBy.Text;
 
             condition.Clear();
+            
             condition.Append(string.Format(@"Issue Date : {0} ~ {1};     " 
                 , Convert.ToDateTime(issuedate1).ToString("d")
                 , Convert.ToDateTime(issuedate2).ToString("d")));
-            condition.Append(string.Format(@"Artworktype Type : {0};     " , artworktype));
-            condition.Append(string.Format(@"M : {0};    " , mdivision));
-            condition.Append(string.Format(@"Factory : {0};   " , factory));
-            condition.Append(string.Format(@"Supplier : {0};   ", subcon));
-            condition.Append(string.Format(@"SP# : {0};   ", spno));
-            condition.Append(string.Format(@"Style : {0};   ", style));
-            condition.Append(string.Format(@"Order by : {0};   ", orderby));
-
             return base.ValidateInput();
         }
 
@@ -73,9 +66,9 @@ namespace Sci.Production.Subcon
             sqlCmd.Append(string.Format(@"Select a.mdivisionid
 ,a.Factoryid
 , a.ID
-, a.issuedate
-, a.localsuppid+'-'+(select abb from localsupp where id = a.localsuppid) supplier
-, a.Delivery
+,convert(varchar(10),a.issuedate,111) issuedate
+,a.localsuppid+'-'+(select abb from localsupp where id = a.localsuppid) supplier
+,convert(varchar(10),a.Delivery,111) Delivery
 , b.ORDERID
 , c.styleid
 , b.patternDesc
@@ -84,10 +77,10 @@ namespace Sci.Production.Subcon
 , b.Stitch
 , b.poqty
 , a.Currencyid
-, b.UnitPrice
-, round(b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD',A.ISSUEDATE),4) UnitPriceUSD
-, b.Cost 
-, b.cost - round(b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD',A.ISSUEDATE),4) variance
+, convert(decimal(20,2),b.UnitPrice) UnitPrice
+, convert(decimal(20,2),b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD',A.ISSUEDATE)) UnitPriceUSD
+, convert(decimal(20,3),b.Cost) Cost
+, b.cost - convert(decimal(20,4),b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD',A.ISSUEDATE)) variance
 from dbo.system s,dbo.Artworkpo a
 inner join artworkpo_detail b on b.id = a.id
 inner join orders c on c.id = b.orderid
@@ -120,38 +113,49 @@ where a.issuedate between '{0}' and '{1}'
                 sqlCmd.Append(" and a.artworktypeid = @artworktype");
                 sp_artworktype.Value = artworktype;
                 cmds.Add(sp_artworktype);
+                condition.Append(string.Format(@"Artworktype Type : {0};     ", artworktype));
             }
             if (!MyUtility.Check.Empty(mdivision))
             {
                 sqlCmd.Append(" and a.mdivisionid = @MDivision");
                 sp_mdivision.Value = mdivision;
                 cmds.Add(sp_mdivision);
+                condition.Append(string.Format(@"M : {0};    ", mdivision));
             }
             if (!MyUtility.Check.Empty(factory))
             {
                 sqlCmd.Append(" and a.factoryid = @factory");
                 sp_factory.Value = factory;
                 cmds.Add(sp_factory);
+                condition.Append(string.Format(@"Factory : {0};   ", factory));
             }
             if (!MyUtility.Check.Empty(subcon))
             {
                 sqlCmd.Append(" and a.localsuppid = @subcon");
                 sp_subcon.Value = subcon;
                 cmds.Add(sp_subcon);
+                condition.Append(string.Format(@"Supplier : {0};   ", subcon));
             }
             if (!MyUtility.Check.Empty(spno))
             {
                 sqlCmd.Append(" and c.id = @spno ");
                 sp_spno.Value = spno;
                 cmds.Add(sp_spno);
+                condition.Append(string.Format(@"SP# : {0};   ", spno));
             }
             if (!MyUtility.Check.Empty(style))
             {
                 sqlCmd.Append(" and c.styleid = @style");
                 sp_style.Value = style;
                 cmds.Add(sp_style);
+                condition.Append(string.Format(@"Style : {0};   ", style));
             }
             sqlCmd.Append(" and a.Status!='Closed'");
+
+            if (!MyUtility.Check.Empty(orderby))
+            {
+                condition.Append(string.Format(@"Order by : {0};   ", orderby));
+            }
 
             if (orderby.ToUpper() == "ISSUE DATE")
                 sqlCmd.Append(" order by a.issuedate ");
@@ -183,8 +187,8 @@ where a.issuedate between '{0}' and '{1}'
             MyUtility.Excel.CopyToXls(printData, "", "Subcon_R15.xltx", 3, true, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 1] = condition.ToString();   // 條件字串寫入excel
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);//釋放sheet
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);//釋放objApp
             return true;
         }
     }
