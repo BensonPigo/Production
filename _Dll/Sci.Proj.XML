@@ -1377,10 +1377,10 @@
             <summary>
             依照長、寬限制文字寬度及自動分區塊
             </summary>
-            <param name="rawString"></param>
-            <param name="sz"></param>
-            <param name="fnt"></param>
-            <returns></returns>
+            <param name="rawString">原始字串</param>
+            <param name="sz">需要的範圍Size</param>
+            <param name="fnt">字體</param>
+            <returns>Key切割後的區塊字串、Value區塊測量的高度</returns>
         </member>
         <member name="M:Sci.Utility.Excel.MyExcelPrg.SaveXlsAs(System.String)">
             <summary>
