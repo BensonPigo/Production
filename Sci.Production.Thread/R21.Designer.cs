@@ -48,6 +48,18 @@
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // print
+            // 
+            this.print.TabIndex = 1;
+            // 
+            // toexcel
+            // 
+            this.toexcel.TabIndex = 2;
+            // 
+            // close
+            // 
+            this.close.TabIndex = 3;
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.comboBox1);
@@ -69,7 +81,7 @@
             this.panel1.Location = new System.Drawing.Point(54, 23);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(422, 253);
-            this.panel1.TabIndex = 94;
+            this.panel1.TabIndex = 0;
             // 
             // comboBox1
             // 
@@ -80,7 +92,7 @@
             this.comboBox1.Location = new System.Drawing.Point(73, 219);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 15;
+            this.comboBox1.TabIndex = 8;
             // 
             // label8
             // 
@@ -120,7 +132,7 @@
             this.textLOC2.Location = new System.Drawing.Point(251, 182);
             this.textLOC2.Name = "textLOC2";
             this.textLOC2.Size = new System.Drawing.Size(113, 23);
-            this.textLOC2.TabIndex = 11;
+            this.textLOC2.TabIndex = 7;
             this.textLOC2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC2_MouseDown);
             // 
             // textLOC1
@@ -130,7 +142,7 @@
             this.textLOC1.Location = new System.Drawing.Point(107, 182);
             this.textLOC1.Name = "textLOC1";
             this.textLOC1.Size = new System.Drawing.Size(113, 23);
-            this.textLOC1.TabIndex = 10;
+            this.textLOC1.TabIndex = 5;
             this.textLOC1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC1_MouseDown);
             // 
             // textITEM
@@ -140,7 +152,7 @@
             this.textITEM.Location = new System.Drawing.Point(107, 139);
             this.textITEM.Name = "textITEM";
             this.textITEM.Size = new System.Drawing.Size(127, 23);
-            this.textITEM.TabIndex = 9;
+            this.textITEM.TabIndex = 4;
             this.textITEM.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textITEM_MouseDown);
             // 
             // textTYPE
@@ -150,7 +162,7 @@
             this.textTYPE.Location = new System.Drawing.Point(72, 96);
             this.textTYPE.Name = "textTYPE";
             this.textTYPE.Size = new System.Drawing.Size(135, 23);
-            this.textTYPE.TabIndex = 8;
+            this.textTYPE.TabIndex = 3;
             this.textTYPE.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textTYPE_MouseDown);
             // 
             // textSHA
@@ -160,7 +172,7 @@
             this.textSHA.Location = new System.Drawing.Point(72, 51);
             this.textSHA.Name = "textSHA";
             this.textSHA.Size = new System.Drawing.Size(122, 23);
-            this.textSHA.TabIndex = 7;
+            this.textSHA.TabIndex = 2;
             this.textSHA.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textSHA_MouseDown);
             // 
             // textBox2
@@ -170,7 +182,7 @@
             this.textBox2.Location = new System.Drawing.Point(251, 8);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(148, 23);
-            this.textBox2.TabIndex = 6;
+            this.textBox2.TabIndex = 1;
             this.textBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox2_MouseDown);
             // 
             // textBox1
@@ -180,7 +192,7 @@
             this.textBox1.Location = new System.Drawing.Point(72, 8);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(148, 23);
-            this.textBox1.TabIndex = 5;
+            this.textBox1.TabIndex = 0;
             this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
             // 
             // label5

@@ -44,6 +44,18 @@
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // print
+            // 
+            this.print.TabIndex = 1;
+            // 
+            // toexcel
+            // 
+            this.toexcel.TabIndex = 2;
+            // 
+            // close
+            // 
+            this.close.TabIndex = 3;
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.comboBox2);
@@ -61,7 +73,7 @@
             this.panel1.Location = new System.Drawing.Point(12, 22);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(497, 233);
-            this.panel1.TabIndex = 94;
+            this.panel1.TabIndex = 0;
             // 
             // comboBox2
             // 
@@ -72,7 +84,7 @@
             this.comboBox2.Location = new System.Drawing.Point(119, 188);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(121, 24);
-            this.comboBox2.TabIndex = 11;
+            this.comboBox2.TabIndex = 5;
             // 
             // comboBox1
             // 
@@ -83,21 +95,21 @@
             this.comboBox1.Location = new System.Drawing.Point(119, 147);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 10;
+            this.comboBox1.TabIndex = 4;
             // 
             // dateRange_Arr
             // 
             this.dateRange_Arr.Location = new System.Drawing.Point(119, 104);
             this.dateRange_Arr.Name = "dateRange_Arr";
             this.dateRange_Arr.Size = new System.Drawing.Size(336, 23);
-            this.dateRange_Arr.TabIndex = 9;
+            this.dateRange_Arr.TabIndex = 3;
             // 
             // dateRange_book
             // 
             this.dateRange_book.Location = new System.Drawing.Point(119, 62);
             this.dateRange_book.Name = "dateRange_book";
             this.dateRange_book.Size = new System.Drawing.Size(336, 23);
-            this.dateRange_book.TabIndex = 8;
+            this.dateRange_book.TabIndex = 2;
             // 
             // label6
             // 
@@ -117,7 +129,7 @@
             this.textBox2.Location = new System.Drawing.Point(306, 23);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(149, 23);
-            this.textBox2.TabIndex = 6;
+            this.textBox2.TabIndex = 1;
             // 
             // textBox1
             // 
@@ -126,7 +138,7 @@
             this.textBox1.Location = new System.Drawing.Point(119, 23);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(149, 23);
-            this.textBox1.TabIndex = 5;
+            this.textBox1.TabIndex = 0;
             // 
             // label5
             // 
