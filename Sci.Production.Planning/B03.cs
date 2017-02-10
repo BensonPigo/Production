@@ -204,6 +204,7 @@ LEFT JOIN ArtworkType B ON t.ArtworkTypeID=B.ID where styleukey={0}", masterID),
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            listControlBindingSource1.DataSource = null;
             listControlBindingSource1.DataSource = style_artwork;
             this.grid1.AutoResizeColumns();
             this.detailgrid.AutoResizeColumns();
