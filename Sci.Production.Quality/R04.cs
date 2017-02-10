@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 
 namespace Sci.Production.Quality
 {
@@ -15,7 +16,7 @@ namespace Sci.Production.Quality
     {   
         DateTime? DateRecStart; DateTime? DateRecEnd;
         DateTime? DateArrStart; DateTime? DateArrEnd;
-        string Category; string factory; string Outstanding = "0";
+        string Category; string factory; string Outstanding = "0"; string M;
         string OUTSTAN = "";
         List<SqlParameter> lis; DualResult res;
         DataTable dt; string cmd;
@@ -36,16 +37,21 @@ namespace Sci.Production.Quality
             this.comboCategory.ValueMember = "Category";
             this.comboCategory.DisplayMember = "Category";
             this.comboCategory.SelectedIndex = 0;
+            DataTable M;
+            DBProxy.Current.Select(null, "select '' as id union all select distinct id from MDivision  ", out M);
+            MyUtility.Tool.SetupCombox(comboM, 1, M);
+            comboM.Text = Sci.Env.User.Keyword;
+
             DataTable factory;
-            DBProxy.Current.Select(null, "select distinct FTYGroup from Factory order by FTYGroup", out factory);
+            DBProxy.Current.Select(null, "select '' as FTYGroup union all select distinct FTYGroup from Factory order by FTYGroup", out factory);
             MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
-            comboFactory.Text = Sci.Env.User.Factory;
+            //comboFactory.Text = Sci.Env.User.Factory;
             print.Enabled = false;
         }
         protected override bool ValidateInput()
         {
             lis = new List<SqlParameter>();
-            bool DateReceived_empty = !DateReceivedSample.HasValue, DateArr_empty = !DateArriveWH.HasValue, Cate_comboBox_Empty = this.comboCategory.Text.Empty(), comboFactory_Empty = this.comboFactory.Text.Empty(),
+            bool DateReceived_empty = !DateReceivedSample.HasValue, DateArr_empty = !DateArriveWH.HasValue, Cate_comboBox_Empty = this.comboCategory.Text.Empty(), comboFactory_Empty = this.comboFactory.Text.Empty(),comboM_Empty=this.comboM.Text.Empty(),
                 checkOuter_empty = checkOutstandingOnly.Checked.Empty();
             if (DateReceived_empty && DateArr_empty)
             {
@@ -59,7 +65,9 @@ namespace Sci.Production.Quality
                 Outstanding = "1";
                 OUTSTAN = "YES";
             }
-            else { OUTSTAN = "NO"; }
+            else { OUTSTAN = "NO";
+            Outstanding = "0";
+            }
             lis.Add(new SqlParameter("@Outstanding", Outstanding));
 
             string sqlWhere = ""; string sqlRec = ""; string sqlArr = "";
@@ -70,6 +78,7 @@ namespace Sci.Production.Quality
             DateArrEnd = DateArriveWH.Value2;
             Category = comboCategory.Text;
             factory = comboFactory.Text;
+            M = comboM.Text;
             List<string> sqlWheres = new List<string>();
             List<string> sqlRecDate = new List<string>();
             List<string> sqlArrDate = new List<string>();
@@ -101,10 +110,18 @@ namespace Sci.Production.Quality
                 {
                     lis.Add(new SqlParameter("@Cate", "M"));
                 }
-            } if (!this.comboFactory.SelectedItem.ToString().Empty())
+            }
+            
+
+            if (!this.comboFactory.Text.ToString().Empty())
             {
                 sqlWheres.Add("Factoryid = @Factory");
                 lis.Add(new SqlParameter("@Factory", factory));
+            }
+            if (!this.comboM.Text.ToString().Empty())
+            {
+                sqlWheres.Add("MDivisionID=@MDivisionID");
+                lis.Add(new SqlParameter("@MDivisionID", M));
             }
 
             #endregion
@@ -117,7 +134,7 @@ namespace Sci.Production.Quality
                 sqlWhere = " AND " + sqlWhere;
             } if (!sqlRec.Empty())
             {
-                sqlRec = " WHERE " + sqlRec;
+                sqlRec = " and " + sqlRec;
             } if (!sqlArr.Empty())
             {
                 sqlArr = " AND " + sqlArr;
@@ -172,32 +189,39 @@ namespace Sci.Production.Quality
         }
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            // 顯示筆數於PrintForm上Count欄位
+            SetCount(dt.Rows.Count);
             if (dt == null || dt.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }
+           // saveDialog.ShowDialog();
+            //string outpath = saveDialog.FileName;
+            //if (outpath.Empty())
+            //{
+            //    return false;
+            //}
             
             Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R04.xltx");
+           // string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir,"Quality_R04.xltx");
+           // Microsoft.Office.Interop.Excel.Application xlt = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R04.xltx");//預先開啟excel app     
           
             string d1 = (MyUtility.Check.Empty(DateRecStart)) ? "" : Convert.ToDateTime(DateRecStart).ToString("yyyy/MM/dd");
             string d2 = (MyUtility.Check.Empty(DateRecEnd)) ? "" : Convert.ToDateTime(DateRecEnd).ToString("yyyy/MM/dd");
             string d3 = (MyUtility.Check.Empty(DateArrStart)) ? "" : Convert.ToDateTime(DateArrStart).ToString("yyyy/MM/dd");
             string d4 = (MyUtility.Check.Empty(DateArrEnd)) ? "" : Convert.ToDateTime(DateArrEnd).ToString("yyyy/MM/dd");
+            //sxrc xl = new sxrc(xltPath);
+
             xl.dicDatas.Add("##QADate", d1 + "~" + d2);
             xl.dicDatas.Add("##ArriveDate", d3 + "~" + d4);
             xl.dicDatas.Add("##Category", Category);
             xl.dicDatas.Add("##Factory", factory);
             xl.dicDatas.Add("##Outstanding", OUTSTAN);
             xl.dicDatas.Add("##body", dt);
-            xl.Save(outpath, false);
+            //xl.Save(outpath, false);
+            xl.Save();
             return true;
         }
     }
