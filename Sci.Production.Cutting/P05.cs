@@ -393,15 +393,15 @@ namespace Sci.Production.Cutting
             }
             return true;
         }
-        protected void createfolder()
-        {
-            if (!Directory.Exists(Sci.Env.Cfg.ReportTempDir))
-                Directory.CreateDirectory(Sci.Env.Cfg.ReportTempDir);
-        }
+        //protected void createfolder()
+        //{
+        //    if (!Directory.Exists(Sci.Env.Cfg.ReportTempDir))
+        //        Directory.CreateDirectory(Sci.Env.Cfg.ReportTempDir);
+        //}
 
         private void button2_Click(object sender, EventArgs e)
         {
-            createfolder();
+            //createfolder();
             if (!ToExcel(true))
             {
                 return;
