@@ -1,4 +1,5 @@
 ﻿
+
 CREATE PROCEDURE [dbo].[usp_APSDataDownLoad]
 @apsservername varchar(50), @apsdatabasename varchar(15), @factoryid varchar(8), @login varchar(10)
 AS
@@ -6,8 +7,13 @@ BEGIN
 	DECLARE @cmd VARCHAR(MAX)
 	DECLARE	@_i int
 
+	--避免Divide by zero error encountered
+	SET ARITHABORT OFF 
+	SET ANSI_WARNINGS OFF
+
 	--SewingLine
 	BEGIN
+
 	--撈APS上SewingLine資料
 	SET @cmd = 'DECLARE cursor_sewingline CURSOR FOR SELECT Facility.GroupName, SUBSTRING(Facility.NAME,1,2) as Name, Facility.Description, Facility.Workernumber 
 	FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility WHERE Factory.CODE = '''+ @factoryid + ''' and Facility.FactoryId = Factory.Id'
@@ -506,7 +512,7 @@ BEGIN
 				select @apseff = Efficiency from #ProdEff
 				
 				IF @apseff is null
-					select @maxeff = IIF(COUNT(ID) = 0,0,(SUM(EFFICIENCY)/COUNT(ID))) from #tmpAPSSchedule where ID = @apsno
+					select @maxeff = isnull(IIF(COUNT(ID) = 0,0,(SUM(EFFICIENCY)/COUNT(ID))),0) from #tmpAPSSchedule where ID = @apsno
 				ELSE
 					SET @maxeff = @apseff
 
@@ -516,7 +522,7 @@ BEGIN
 				--否有設定LearningCurve
 				SET @cmd = 'insert into #LnEff Select Max(ld.Snvalue) as lnEff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApply l,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveDetail ld where la.ProductionEventID = '+CONVERT(varchar(max),@apsno) + ' and l.ID = la.ApplyID and l.LnCurveTemplateID = ld.TemplateID'
 				execute (@cmd)
-				select @apseff = (lnEff/100) from #LnEff
+				select @apseff = isnull((lnEff/100),0) from #LnEff
 
 				IF @apseff is not null
 					SET @maxeff = @maxeff*@apseff
@@ -525,7 +531,7 @@ BEGIN
 
 				SET @apseff = null
 				--是否有設定動態效率
-				SET @cmd = 'insert into #DynamicEff Select TOP(1) fe.BeginDate, (fe.Efficiency/100) as Eff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.FacilityEfficiency fe,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid + ''' and f.Name = ''' + @sewinglineid + ''' and fe.BeginDate <= ''' + CONVERT(char(19),@inline,120) + ''' Order by fe.BeginDate Desc'
+				SET @cmd = 'insert into #DynamicEff Select TOP(1) fe.BeginDate, isnull((fe.Efficiency/100),0) as Eff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.FacilityEfficiency fe,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid + ''' and f.Name = ''' + @sewinglineid + ''' and fe.BeginDate <= ''' + CONVERT(char(19),@inline,120) + ''' Order by fe.BeginDate Desc'
 				execute (@cmd)
 				select @apseff = Eff from #DynamicEff
 				
@@ -593,7 +599,7 @@ BEGIN
 						--否有設定LearningCurve
 						SET @cmd = 'insert into #LnEff Select CONVERT(FLOAT,Max(ld.Snvalue)) as lnEff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApply l,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveDetail ld where la.ProductionEventID = '+CONVERT(varchar(max),@apsno) + ' and l.ID = la.ApplyID and l.LnCurveTemplateID = ld.TemplateID'
 						execute (@cmd)
-						select @apseff = (lnEff/100) from #LnEff
+						select @apseff = isnull((lnEff/100),0) from #LnEff
 						
 						IF @apseff is not null
 							SET @maxeff = @maxeff*@apseff
@@ -602,7 +608,7 @@ BEGIN
 
 						SET @apseff = null
 						--是否有設定動態效率
-						SET @cmd = 'insert into #DynamicEff Select TOP(1) fe.BeginDate, (fe.Efficiency/100) as Eff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.FacilityEfficiency fe,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid + ''' and f.Name = ''' + @sewinglineid + ''' and fe.BeginDate <= ''' + CONVERT(char(19),@inline,120) + ''' Order by fe.BeginDate Desc'
+						SET @cmd = 'insert into #DynamicEff Select TOP(1) fe.BeginDate, isnull((fe.Efficiency/100),0) as Eff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.FacilityEfficiency fe,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa where fe.FacilityID = f.ID And f.FactoryID = fa.ID And fa.Code = '''+@factoryid + ''' and f.Name = ''' + @sewinglineid + ''' and fe.BeginDate <= ''' + CONVERT(char(19),@inline,120) + ''' Order by fe.BeginDate Desc'
 						execute (@cmd)
 						select @apseff = Eff from #DynamicEff
 						
