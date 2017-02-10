@@ -149,6 +149,7 @@
             // 
             // button2
             // 
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.button2.Location = new System.Drawing.Point(801, 7);
             this.button2.Name = "button2";
@@ -160,6 +161,7 @@
             // 
             // button1
             // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.Location = new System.Drawing.Point(706, 7);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
