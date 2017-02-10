@@ -241,6 +241,8 @@ F.POID,F.SEQ1,F.SEQ2,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
         }
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            // 顯示筆數於PrintForm上Count欄位
+            SetCount(dt.Rows.Count);
             if (dt == null || dt.Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found");

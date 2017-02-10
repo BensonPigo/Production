@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtSeason = new Sci.Production.Class.txtseason();
+            this.txtBrand = new Sci.Production.Class.txtbrand();
             this.txtsupplier = new Sci.Production.Class.txtsupplier();
             this.comboOverallResSta = new Sci.Win.UI.ComboBox();
             this.comboCategory = new Sci.Win.UI.ComboBox();
@@ -52,8 +54,6 @@
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtBrand = new Sci.Production.Class.txtbrand();
-            this.txtSeason = new Sci.Production.Class.txtseason();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -88,6 +88,25 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(472, 466);
             this.panel1.TabIndex = 94;
+            // 
+            // txtSeason
+            // 
+            this.txtSeason.BackColor = System.Drawing.Color.White;
+            this.txtSeason.BrandObjectName = null;
+            this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeason.Location = new System.Drawing.Point(174, 215);
+            this.txtSeason.Name = "txtSeason";
+            this.txtSeason.Size = new System.Drawing.Size(135, 23);
+            this.txtSeason.TabIndex = 50;
+            // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(174, 257);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(93, 23);
+            this.txtBrand.TabIndex = 42;
             // 
             // txtsupplier
             // 
@@ -206,7 +225,7 @@
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(154, 23);
             this.label12.TabIndex = 22;
-            this.label12.Text = "Overall Result Status:";
+            this.label12.Text = "Overall Result Status";
             // 
             // label11
             // 
@@ -215,7 +234,7 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(154, 23);
             this.label11.TabIndex = 21;
-            this.label11.Text = "Supplier..................:";
+            this.label11.Text = "Supplier";
             // 
             // label10
             // 
@@ -224,7 +243,7 @@
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(154, 23);
             this.label10.TabIndex = 20;
-            this.label10.Text = "Category.................:";
+            this.label10.Text = "Category";
             // 
             // label9
             // 
@@ -233,7 +252,7 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(154, 23);
             this.label9.TabIndex = 19;
-            this.label9.Text = "Refno......................:";
+            this.label9.Text = "Refno";
             // 
             // label8
             // 
@@ -242,7 +261,7 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(154, 23);
             this.label8.TabIndex = 18;
-            this.label8.Text = "Brand.......................:";
+            this.label8.Text = "Brand";
             // 
             // label7
             // 
@@ -251,7 +270,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(154, 23);
             this.label7.TabIndex = 17;
-            this.label7.Text = "Season.....................:";
+            this.label7.Text = "Season";
             // 
             // label6
             // 
@@ -260,7 +279,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(154, 23);
             this.label6.TabIndex = 16;
-            this.label6.Text = "SP#...........................:";
+            this.label6.Text = "SP#";
             // 
             // label5
             // 
@@ -269,7 +288,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(154, 23);
             this.label5.TabIndex = 15;
-            this.label5.Text = "Est. Cutting Date.......:";
+            this.label5.Text = "Est. Cutting Date";
             // 
             // label4
             // 
@@ -278,7 +297,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(154, 23);
             this.label4.TabIndex = 14;
-            this.label4.Text = "Sewing in-line Date...:";
+            this.label4.Text = "Sewing in-line Date";
             // 
             // label3
             // 
@@ -287,7 +306,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(154, 23);
             this.label3.TabIndex = 13;
-            this.label3.Text = "SCI Delivery..............:";
+            this.label3.Text = "SCI Delivery";
             // 
             // label2
             // 
@@ -296,26 +315,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(154, 23);
             this.label2.TabIndex = 12;
-            this.label2.Text = "Arrive W/H Date........:";
-            // 
-            // txtBrand
-            // 
-            this.txtBrand.BackColor = System.Drawing.Color.White;
-            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand.Location = new System.Drawing.Point(174, 257);
-            this.txtBrand.Name = "txtBrand";
-            this.txtBrand.Size = new System.Drawing.Size(93, 23);
-            this.txtBrand.TabIndex = 42;
-            // 
-            // txtSeason
-            // 
-            this.txtSeason.BackColor = System.Drawing.Color.White;
-            this.txtSeason.BrandObjectName = null;
-            this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeason.Location = new System.Drawing.Point(174, 215);
-            this.txtSeason.Name = "txtSeason";
-            this.txtSeason.Size = new System.Drawing.Size(135, 23);
-            this.txtSeason.TabIndex = 50;
+            this.label2.Text = "Arrive W/H Date";
             // 
             // R02
             // 
