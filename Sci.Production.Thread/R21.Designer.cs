@@ -121,6 +121,7 @@
             this.textLOC2.Name = "textLOC2";
             this.textLOC2.Size = new System.Drawing.Size(113, 23);
             this.textLOC2.TabIndex = 11;
+            this.textLOC2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC2_MouseDown);
             // 
             // textLOC1
             // 
@@ -130,6 +131,7 @@
             this.textLOC1.Name = "textLOC1";
             this.textLOC1.Size = new System.Drawing.Size(113, 23);
             this.textLOC1.TabIndex = 10;
+            this.textLOC1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC1_MouseDown);
             // 
             // textITEM
             // 
@@ -139,6 +141,7 @@
             this.textITEM.Name = "textITEM";
             this.textITEM.Size = new System.Drawing.Size(127, 23);
             this.textITEM.TabIndex = 9;
+            this.textITEM.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textITEM_MouseDown);
             // 
             // textTYPE
             // 
@@ -148,6 +151,7 @@
             this.textTYPE.Name = "textTYPE";
             this.textTYPE.Size = new System.Drawing.Size(135, 23);
             this.textTYPE.TabIndex = 8;
+            this.textTYPE.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textTYPE_MouseDown);
             // 
             // textSHA
             // 
@@ -157,6 +161,7 @@
             this.textSHA.Name = "textSHA";
             this.textSHA.Size = new System.Drawing.Size(122, 23);
             this.textSHA.TabIndex = 7;
+            this.textSHA.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textSHA_MouseDown);
             // 
             // textBox2
             // 
@@ -166,6 +171,7 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(148, 23);
             this.textBox2.TabIndex = 6;
+            this.textBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox2_MouseDown);
             // 
             // textBox1
             // 
@@ -175,6 +181,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(148, 23);
             this.textBox1.TabIndex = 5;
+            this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
             // 
             // label5
             // 

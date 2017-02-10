@@ -60,7 +60,7 @@ namespace Sci.Production.Thread
             }
             if (!this.textTYPE.Text.Empty())
             {
-                sqlWheres.Add("LocalItem.Category = @TYPE");
+                sqlWheres.Add("(select LocalItem.Category from dbo.LocalItem where refno= ThreadStock.Refno) = @TYPE");
                 lis.Add(new SqlParameter("@TYPE", TYPE));  
             }
             if (!this.textITEM.Text.Empty())
@@ -70,7 +70,7 @@ namespace Sci.Production.Thread
             }
             if (!this.textLOC1.Text.Empty())
             {
-                sqlWheres.Add("ThreadStock.threadlocationid between @LOC1 and @LOC2 AND (select LocalItem.Category from dbo.LocalItem where refno= ThreadStock.Refno) ='SP_THREAD'");
+                sqlWheres.Add("ThreadStock.threadlocationid between @LOC1 and @LOC2");
                 lis.Add(new SqlParameter("@LOC1", LOC1));
                 lis.Add(new SqlParameter("@LOC2", LOC2));
             }
@@ -129,6 +129,118 @@ namespace Sci.Production.Thread
             xl.dicDatas.Add("##TSL", dt);
             xl.Save(outpath, false);
             return true;
+        }
+
+        private void textSHA_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sql = @"select   distinct
+                                        threadcolorid, 
+                                        (select tc.Description from dbo.ThreadColor tc where tc.id = ThreadStock.ThreadColorID) [Color_desc] 
+                               from ThreadStock 
+                               order by threadcolorid ";
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "13, 13", null, "Shade, Color desc");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                textSHA.Text = item.GetSelectedString();
+            }
+        }
+
+        private void textTYPE_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sql = @"select distinct 
+                                    l.Category 
+                               from dbo.ThreadStock ts
+                               inner join dbo.LocalItem l on l.refno = ts.Refno
+                               order by l.category";
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20", null, "Type");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                textTYPE.Text = item.GetSelectedString();
+            }
+        }
+
+        private void textITEM_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sql = @"select distinct 
+                                    l.ThreadTypeID
+                               from dbo.LocalItem l
+                               inner join  dbo.ThreadStock ts on l.refno = ts.refno
+                               order by l.ThreadTypeID ";
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "35", null, "Thread Item");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                textITEM.Text = item.GetSelectedString();
+            }
+        }
+
+        private void textBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sql = @"select distinct 
+                                    Refno,
+                                    (select LocalItem.Description from dbo.LocalItem where refno= ThreadStock.Refno) [Description]
+                               from dbo.ThreadStock 
+                               order by Refno";
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                textBox1.Text = item.GetSelectedString();
+            }
+        }
+
+        private void textBox2_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sql = @"select distinct 
+                                    Refno,
+                                    (select LocalItem.Description from dbo.LocalItem where refno= ThreadStock.Refno) [Description]
+                               from dbo.ThreadStock 
+                               order by Refno";
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                textBox2.Text = item.GetSelectedString();
+            }
+        }
+
+        private void textLOC1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sql = @"select distinct 
+                                    ThreadlocationID,
+                                    (select Description from dbo.ThreadLocation where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
+                               from dbo.ThreadStock 
+                               order by ThreadlocationID";
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                textLOC1.Text = item.GetSelectedString();
+            }
+        }
+
+        private void textLOC2_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sql = @"select distinct 
+                                    ThreadlocationID,
+                                    (select Description from dbo.ThreadLocation where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
+                               from dbo.ThreadStock 
+                               order by ThreadlocationID";
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                textLOC2.Text = item.GetSelectedString();
+            }
         }
     }
 }
