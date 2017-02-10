@@ -201,6 +201,7 @@ content, false, false);
         private void button1_Click(object sender, EventArgs e)
         {
             grid.ValidateControl();
+            if (MyUtility.Check.Empty(dateBox2.Value)) return;
             string reDate = dateBox2.Text;
             foreach (DataRow dr in DetailDatas)
             {
