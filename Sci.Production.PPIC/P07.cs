@@ -59,6 +59,7 @@ namespace Sci.Production.PPIC
             {
                 MyUtility.Msg.WaitClear();
                 ShowErr(sqlCmd, Result);
+                this.HideWaitMessage();
                 return;
             }
 
