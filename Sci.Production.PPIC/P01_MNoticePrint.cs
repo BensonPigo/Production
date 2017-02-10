@@ -68,7 +68,7 @@ namespace Sci.Production.PPIC
                 sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
                 sxr.dicDatas.Add(sxr._v + "PO_MAKER", drvar["MAKER"].ToString());
                 sxr.dicDatas.Add(sxr._v + "PO_STYLENO", drvar["sty"].ToString());
-                sxr.dicDatas.Add(sxr._v + "PO_QTY", drvar["QTY"]);
+                sxr.dicDatas.Add(sxr._v + "PO_QTY", drvar["QTY"].ToString());
                 sxr.dicDatas.Add(sxr._v + "POID", poid);
 
                 System.Data.DataTable[] dts;
@@ -164,7 +164,7 @@ namespace Sci.Production.PPIC
                     sxr.dicDatas.Add(sxr._v + "Now" + idxStr, DateTime.Now);
                     sxr.dicDatas.Add(sxr._v + "MAKER" + idxStr, drvar["MAKER"].ToString());
                     sxr.dicDatas.Add(sxr._v + "STYLENO" + idxStr, drvar["sty"].ToString());
-                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, drvar["QTY"]);
+                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, drvar["QTY"].ToString());
                     sxr.dicDatas.Add(sxr._v + "SP" + idxStr, drvar["SPNO"].ToString());
                     sxr.dicDatas.Add(sxr._v + "sname1" + idxStr, CustCDID + "-1");
                     sxr.dicDatas.Add(sxr._v + "sname2" + idxStr, CustCDID + "-2");
