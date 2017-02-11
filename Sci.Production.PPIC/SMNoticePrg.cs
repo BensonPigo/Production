@@ -1531,16 +1531,16 @@ order by q.Article, q.SizeCode
 
                     //換成用LectraCode 和 Article當X座標與Y座標的字典備用
                     var dataZ = drZ.ExtendedData
-                        .AsEnumerable()
-                        .Select(row => new
-                        {
-                            Article = row.Field<string>("Article"),
-                            SizeCode = row.Field<string>("SizeCode"),
-                            Qty = row.Field<decimal?>("Qty"),
-                        })
-                        .ToDictionary(
-                            item => new Tuple<string, string>(item.Article, item.SizeCode),
-                            item => item.Qty);
+                       .AsEnumerable()
+                       .Select(row => new
+                       {
+                           Article = row.Field<string>("Article"),
+                           SizeCode = row.Field<string>("SizeCode"),
+                           Qty = row.Field<int?>("Qty"),
+                       })
+                       .ToDictionary(
+                           item => new Tuple<string, string>(item.Article, item.SizeCode),
+                           item => item.Qty);
 
                     var linesOfExcel = new List<IEnumerable<object>>();
                     linesOfExcel.Add(
