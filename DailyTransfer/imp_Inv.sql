@@ -142,7 +142,7 @@ select
       ,EditDate
       ,ETA
 	  ,SCIRefno
-	  ,(SELECT IIF(MDivisionID IS NULL,'',MDivisionID) FROM Production.dbo.SCIFty WHERE ID= A.FactoryID)
+	  , iif( (SELECT MDivisionID FROM Production.dbo.SCIFty WHERE ID= A.FactoryID ) is null,'',(SELECT MDivisionID FROM Production.dbo.SCIFty WHERE ID= A.FactoryID ))
 from (
 select [SameNo]= ROW_NUMBER() over (partition by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId order by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId)
 ,b.* from Trade_To_Pms.dbo.Inventory as b
