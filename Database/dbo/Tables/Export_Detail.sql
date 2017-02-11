@@ -5,8 +5,8 @@
     [Seq2]           VARCHAR (2)     CONSTRAINT [DF_Export_Detail_Seq2] DEFAULT ('') NOT NULL,
     [ExportIDOld]    VARCHAR (13)    CONSTRAINT [DF_Export_Detail_ExportIDOld] DEFAULT ('') NULL,
     [Ukey]           BIGINT          CONSTRAINT [DF_Export_Detail_Ukey] DEFAULT ((0)) NOT NULL,
-    [Qty]            NUMERIC (8, 2)  CONSTRAINT [DF_Export_Detail_Qty] DEFAULT ((0)) NULL,
-    [Foc]            NUMERIC (8, 2)  CONSTRAINT [DF_Export_Detail_Foc] DEFAULT ((0)) NULL,
+    [Qty]            NUMERIC (9, 2)  CONSTRAINT [DF_Export_Detail_Qty] DEFAULT ((0)) NULL,
+    [Foc]            NUMERIC (9, 2)  CONSTRAINT [DF_Export_Detail_Foc] DEFAULT ((0)) NULL,
     [Carton]         NVARCHAR (500)  CONSTRAINT [DF_Export_Detail_Carton] DEFAULT ('') NULL,
     [Confirm]        BIT             CONSTRAINT [DF_Export_Detail_Confirm] DEFAULT ((0)) NULL,
     [UnitId]         VARCHAR (8)     CONSTRAINT [DF_Export_Detail_UnitId] DEFAULT ('') NOT NULL,
@@ -45,11 +45,13 @@
     [AddDate]        DATETIME        NULL,
     [EditDate]       DATETIME        NULL,
     [EditName]       VARCHAR (10)    CONSTRAINT [DF_Export_Detail_EditName] DEFAULT ('') NULL,
-    [BalanceQty]     NUMERIC (8, 2)  CONSTRAINT [DF_Export_Detail_BalanceQty] DEFAULT ((0)) NULL,
-    [BalanceFOC]     NUMERIC (8, 2)  CONSTRAINT [DF_Export_Detail_BalanceFOC] DEFAULT ((0)) NULL,
+    [BalanceQty]     NUMERIC (9, 2)  CONSTRAINT [DF_Export_Detail_BalanceQty] DEFAULT ((0)) NULL,
+    [BalanceFOC]     NUMERIC (9, 2)  CONSTRAINT [DF_Export_Detail_BalanceFOC] DEFAULT ((0)) NULL,
     [CurrencyId]     VARCHAR (3)     CONSTRAINT [DF_Export_Detail_CurrencyId] DEFAULT ('') NULL,
     CONSTRAINT [PK_Export_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC, [ShipPlanHandle] ASC)
 );
+
+
 
 
 
