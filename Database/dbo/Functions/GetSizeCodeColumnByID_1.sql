@@ -18,9 +18,9 @@ BEGIN
 	if(@ByType = 0)
 		insert into @id select id from dbo.Orders where ID = @OrderID
 	else if(@ByType = 1)
-		insert into @id select id from dbo.Orders where ID in (select id from Trade.dbo.Orders where POID = @poid AND CustCDID = (select CustCDID from Orders where ID = @OrderID) )
+		insert into @id select id from dbo.Orders where ID in (select id from Production.dbo.Orders where POID = @poid AND CustCDID = (select CustCDID from Orders where ID = @OrderID) )
 	else if(@ByType = 2)
-		insert into @id select id from dbo.Orders where ID in (select id from Trade.dbo.Orders where POID = @poid )
+		insert into @id select id from dbo.Orders where ID in (select id from Production.dbo.Orders where POID = @poid )
 		
 			
 	--main2 取得哪些有QTY
