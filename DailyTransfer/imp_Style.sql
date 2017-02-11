@@ -897,6 +897,11 @@ a.StyleUkey	= b.StyleUkey
 ,a.SuppIDBulk	= b.SuppIDBulk
 ,a.SuppIDSample	= b.SuppIDSample
 ,a.consPc = b.consPc
+,a.MatchFabric = b.MatchFabric
+,a.HRepeat = b.HRepeat
+,a.VRepeat = b.VRepeat
+,a.OneTwoWay = b.OneTwoWay
+,a.HorizontalCutting = b.HorizontalCutting
 
 from Production.dbo.Style_BOF as a 
 inner join Trade_To_Pms.dbo.Style_BOF as b ON a.Ukey=b.Ukey
@@ -911,6 +916,11 @@ StyleUkey
 ,SuppIDBulk
 ,SuppIDSample
 ,consPc
+,MatchFabric
+,HRepeat
+,VRepeat
+,OneTwoWay 
+,HorizontalCutting
 )
 select 
 StyleUkey
@@ -922,6 +932,11 @@ StyleUkey
 ,SuppIDBulk
 ,SuppIDSample
 ,consPc
+,MatchFabric
+,HRepeat
+,VRepeat
+,OneTwoWay 
+,HorizontalCutting
 from Trade_To_Pms.dbo.Style_BOF as b
 where not exists(select 1 from Production.dbo.Style_BOF as a where a.Ukey = b.Ukey)
 --STYLE9
