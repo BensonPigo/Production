@@ -55,8 +55,10 @@ SET
       ,a.EditDate	      =b.EditDate
       ,a.ETA	      =b.ETA
 	  ,a.SCIRefno = b.SCIRefno
+	  ,A.MDivisionID = IIF(C.MDivisionID IS NULL,'',C.MDivisionID)
 from Production.dbo.Inventory as a 
 inner join Trade_To_Pms.dbo.Inventory as b ON a.POID=b.POID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2 and a.FactoryID=b.FactoryID and a.UnitID=b.UnitID and a.ProjectID=b.ProjectID and a.InventoryRefnoId=b.InventoryRefnoId
+INNER JOIN Production.DBO.SCIFty C ON A.FactoryID = C.ID 
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.Inventory(
        Ukey
@@ -98,6 +100,7 @@ INSERT INTO Production.dbo.Inventory(
       ,EditDate
       ,ETA
 	  ,SCIRefno
+	  ,MDivisionID
 )
 select 
        Ukey
@@ -139,6 +142,7 @@ select
       ,EditDate
       ,ETA
 	  ,SCIRefno
+	  ,(SELECT IIF(MDivisionID IS NULL,'',MDivisionID) FROM Production.dbo.SCIFty WHERE ID= A.FactoryID)
 from (
 select [SameNo]= ROW_NUMBER() over (partition by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId order by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId)
 ,b.* from Trade_To_Pms.dbo.Inventory as b
