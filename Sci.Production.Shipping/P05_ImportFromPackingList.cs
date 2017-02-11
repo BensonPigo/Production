@@ -83,22 +83,14 @@ InvalidData
 as
 (select distinct ID
  from AllPackData
- where 1=0", txtmultifactory1.Text, MyUtility.Convert.GetString(masterData["ShipModeID"]), MyUtility.Convert.GetString(masterData["BrandID"]), MyUtility.Convert.GetString(masterData["Dest"]), MyUtility.Convert.GetString(masterData["CustCDID"])));
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
+ where 1=1", txtmultifactory1.Text, MyUtility.Convert.GetString(masterData["ShipModeID"]), MyUtility.Convert.GetString(masterData["BrandID"]), MyUtility.Convert.GetString(masterData["Dest"]), MyUtility.Convert.GetString(masterData["CustCDID"])));
+            if (!MyUtility.Check.Empty(dateRange1.Value1) || !MyUtility.Check.Empty(dateRange1.Value2))
             {
-                sqlCmd.Append(string.Format(" and SDPDate <= '{0}'", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and( SDPDate >= '{0}' and SDPDate <= '{1}')", Convert.ToDateTime(dateRange1.Value1).ToString("d"), Convert.ToDateTime(dateRange1.Value2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateRange2.Value1)||!MyUtility.Check.Empty(dateRange2.Value2))
             {
-                sqlCmd.Append(string.Format(" and SDPDate >= '{0}'", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(dateRange2.Value1))
-            {
-                sqlCmd.Append(string.Format(" and BuyerDelivery <= '{0}'", Convert.ToDateTime(dateRange2.Value1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(dateRange2.Value2))
-            {
-                sqlCmd.Append(string.Format(" and BuyerDelivery >= '{0}'", Convert.ToDateTime(dateRange2.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and( BuyerDelivery >= '{0}' and BuyerDelivery <= '{1}')", Convert.ToDateTime(dateRange2.Value1).ToString("d"), Convert.ToDateTime(dateRange2.Value2).ToString("d")));                
             }
 
             sqlCmd.Append(@"
@@ -108,7 +100,7 @@ as
 (select Selected,ID,CustCDID,min(SDPDate) as SDPDate,min(BuyerDelivery) as BuyerDelivery,ShipQty,CTNQty,NW,NNW,
  GMTBookingLock,MDivisionID,CargoReadyDate,PulloutDate,GW,CBM,Status,InspDate,ClogCTNQty
  from AllPackData 
- where id not in (select ID from InvalidData where ID is not null)
+ where id in (select ID from InvalidData where ID is not null)
  group by Selected,ID,CustCDID,ShipQty,CTNQty,NW,NNW,GMTBookingLock,MDivisionID,CargoReadyDate,PulloutDate,GW,CBM,Status,InspDate,ClogCTNQty
 )
 select pd.Selected,pd.ID,((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pl where pl.ID = pd.ID) a for xml path(''))) as OrderID,
