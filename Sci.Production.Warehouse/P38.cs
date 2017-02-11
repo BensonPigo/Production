@@ -31,6 +31,26 @@ namespace Sci.Production.Warehouse
             cbxStockType.SelectedIndex = 0;
             MyUtility.Tool.SetGridFrozen(this.grid1);
             Ict.Win.UI.DataGridViewTextBoxColumn columnStatus = new Ict.Win.UI.DataGridViewTextBoxColumn();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
+            
+            ns.CellMouseDoubleClick += (s, e) =>
+                {
+                    DataRow thisRow = this.grid1.GetDataRow(e.RowIndex);
+                    string dyelot = thisRow["dyelot"].ToString();
+                    DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+                    string tempstatus = thisRow["selected"].ToString();
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        if (dr["dyelot"].ToString() == dyelot)
+                        {
+                            if (tempstatus == "0") dr["selected"] = true;
+                            else dr["selected"] = false;
+
+                        }
+                                             
+                    }
+                };
+            
             #region -- 設定Grid1的顯示欄位 --
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
@@ -40,7 +60,7 @@ namespace Sci.Production.Warehouse
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                   .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
                   .Text("roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                  .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                  .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true,settings: ns)
                   .Text("status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out columnStatus)
                   .DateTime("lockdate", header: "Lock/Unlock" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .Text("lockname", header: "Lock/Unlock" + Environment.NewLine + "Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -59,6 +79,8 @@ namespace Sci.Production.Warehouse
                   .Text("factoryid", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   ;
             columnStatus.DefaultCellStyle.ForeColor = Color.Blue;
+            grid1.Columns[5].HeaderCell.Style.BackColor = Color.Orange;
+            
             #endregion
         }
 
@@ -136,6 +158,11 @@ where fi.MDivisionID = '{0}' and fi.POID like @poid1
                     strSQLCmd.Append(@" and stocktype='I'");
                     break;
             }
+            if (!txtSeq1.checkEmpty(false))
+            {
+                strSQLCmd.Append(string.Format(@" and fi.seq1='{0}' and fi.seq2='{1}'", txtSeq1.seq1, txtSeq1.seq2));
+            }
+            
 
             Ict.DualResult result;
             DataTable dtData;

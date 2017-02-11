@@ -45,6 +45,8 @@
             this.button4 = new Sci.Win.UI.Button();
             this.btnUnlock = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
+            this.label4 = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -54,6 +56,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.txtSeq1);
             this.panel1.Controls.Add(this.cbxStockType);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.textBox1);
@@ -77,7 +81,7 @@
             "ALL",
             "Bulk",
             "Inventory"});
-            this.cbxStockType.Location = new System.Drawing.Point(636, 9);
+            this.cbxStockType.Location = new System.Drawing.Point(766, 10);
             this.cbxStockType.Name = "cbxStockType";
             this.cbxStockType.Size = new System.Drawing.Size(100, 24);
             this.cbxStockType.TabIndex = 2;
@@ -85,7 +89,7 @@
             // label3
             // 
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(538, 9);
+            this.label3.Location = new System.Drawing.Point(668, 10);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(95, 23);
             this.label3.TabIndex = 38;
@@ -113,7 +117,7 @@
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(285, 9);
+            this.label2.Location = new System.Drawing.Point(415, 10);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(74, 23);
             this.label2.TabIndex = 33;
@@ -129,7 +133,7 @@
             "All",
             "Locked",
             "Unlocked"});
-            this.cbxStatus.Location = new System.Drawing.Point(362, 9);
+            this.cbxStatus.Location = new System.Drawing.Point(492, 10);
             this.cbxStatus.Name = "cbxStatus";
             this.cbxStatus.Size = new System.Drawing.Size(121, 24);
             this.cbxStatus.TabIndex = 1;
@@ -234,6 +238,25 @@
             this.btnUnlock.UseVisualStyleBackColor = true;
             this.btnUnlock.Click += new System.EventHandler(this.btnUnlock_Click);
             // 
+            // txtSeq1
+            // 
+            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq1.Location = new System.Drawing.Point(296, 10);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 39;
+            // 
+            // label4
+            // 
+            this.label4.Lines = 0;
+            this.label4.Location = new System.Drawing.Point(234, 10);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(59, 23);
+            this.label4.TabIndex = 40;
+            this.label4.Text = "SEQ";
+            // 
             // P38
             // 
             this.ClientSize = new System.Drawing.Size(1008, 661);
@@ -275,5 +298,7 @@
         private Win.UI.ComboBox cbxStockType;
         private Win.UI.Button btnLock;
         private Win.UI.Button btnExcel;
+        private Class.txtSeq txtSeq1;
+        private Win.UI.Label label4;
     }
 }
