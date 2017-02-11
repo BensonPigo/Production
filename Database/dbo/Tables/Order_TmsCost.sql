@@ -1,23 +1,25 @@
 ﻿CREATE TABLE [dbo].[Order_TmsCost] (
-    [ID]             VARCHAR (13)   CONSTRAINT [DF_Order_TmsCost_ID] DEFAULT ('') NOT NULL,
-    [ArtworkTypeID]  VARCHAR (20)   CONSTRAINT [DF_Order_TmsCost_ArtworkTypeID] DEFAULT ('') NOT NULL,
-    [Seq]            VARCHAR (4)    CONSTRAINT [DF_Order_TmsCost_Seq] DEFAULT ('') NOT NULL,
-    [Qty]            NUMERIC (6)    CONSTRAINT [DF_Order_TmsCost_Qty] DEFAULT ((0)) NULL,
-    [ArtworkUnit]    VARCHAR (10)   CONSTRAINT [DF_Order_TmsCost_ArtworkUnit] DEFAULT ('') NULL,
-    [TMS]            NUMERIC (5)    CONSTRAINT [DF_Order_TmsCost_TMS] DEFAULT ((0)) NULL,
-    [Price]          NUMERIC (6, 3) CONSTRAINT [DF_Order_TmsCost_Price] DEFAULT ((0)) NOT NULL,
-    [InhouseOSP]     VARCHAR (1)    CONSTRAINT [DF_Order_TmsCost_InhouseOSP] DEFAULT ('') NULL,
-    [LocalSuppID]    VARCHAR (8)    CONSTRAINT [DF_Order_TmsCost_LocalSuppID] DEFAULT ('') NULL,
-    [ArtworkInLine]  DATE           NULL,
-    [ArtworkOffLine] DATE           NULL,
-    [ApvDate]        DATE           NULL,
-    [ApvName]        VARCHAR (10)   CONSTRAINT [DF_Order_TmsCost_ApvName] DEFAULT ('') NULL,
-    [AddName]        VARCHAR (10)   CONSTRAINT [DF_Order_TmsCost_AddName] DEFAULT ('') NULL,
-    [AddDate]        DATETIME       NULL,
-    [EditName]       VARCHAR (10)   CONSTRAINT [DF_Order_TmsCost_EditName] DEFAULT ('') NULL,
-    [EditDate]       DATETIME       NULL,
+    [ID]             VARCHAR (13)    CONSTRAINT [DF_Order_TmsCost_ID] DEFAULT ('') NOT NULL,
+    [ArtworkTypeID]  VARCHAR (20)    CONSTRAINT [DF_Order_TmsCost_ArtworkTypeID] DEFAULT ('') NOT NULL,
+    [Seq]            VARCHAR (4)     CONSTRAINT [DF_Order_TmsCost_Seq] DEFAULT ('') NOT NULL,
+    [Qty]            NUMERIC (6)     CONSTRAINT [DF_Order_TmsCost_Qty] DEFAULT ((0)) NULL,
+    [ArtworkUnit]    VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_ArtworkUnit] DEFAULT ('') NULL,
+    [TMS]            NUMERIC (5)     CONSTRAINT [DF_Order_TmsCost_TMS] DEFAULT ((0)) NULL,
+    [Price]          NUMERIC (10, 3) CONSTRAINT [DF_Order_TmsCost_Price] DEFAULT ((0)) NOT NULL,
+    [InhouseOSP]     VARCHAR (1)     CONSTRAINT [DF_Order_TmsCost_InhouseOSP] DEFAULT ('') NULL,
+    [LocalSuppID]    VARCHAR (8)     CONSTRAINT [DF_Order_TmsCost_LocalSuppID] DEFAULT ('') NULL,
+    [ArtworkInLine]  DATE            NULL,
+    [ArtworkOffLine] DATE            NULL,
+    [ApvDate]        DATE            NULL,
+    [ApvName]        VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_ApvName] DEFAULT ('') NULL,
+    [AddName]        VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_AddName] DEFAULT ('') NULL,
+    [AddDate]        DATETIME        NULL,
+    [EditName]       VARCHAR (10)    CONSTRAINT [DF_Order_TmsCost_EditName] DEFAULT ('') NULL,
+    [EditDate]       DATETIME        NULL,
     CONSTRAINT [PK_Order_TmsCost] PRIMARY KEY CLUSTERED ([ID] ASC, [ArtworkTypeID] ASC)
 );
+
+
 
 
 

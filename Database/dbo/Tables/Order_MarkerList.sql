@@ -14,7 +14,7 @@
     [StraightLength]      VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_StraightLength] DEFAULT ('') NULL,
     [CurvedLength]        VARCHAR (15)   CONSTRAINT [DF_Order_MarkerList_CurvedLength] DEFAULT ('') NULL,
     [Efficiency]          VARCHAR (9)    CONSTRAINT [DF_Order_MarkerList_Efficiency] DEFAULT ('') NULL,
-    [Remark]              NVARCHAR (100) CONSTRAINT [DF_Order_MarkerList_Remark] DEFAULT ('') NULL,
+    [Remark]              NVARCHAR (250) CONSTRAINT [DF_Order_MarkerList_Remark] DEFAULT ('') NULL,
     [MixedSizeMarker]     VARCHAR (1)    CONSTRAINT [DF_Order_MarkerList_MultitudeSize] DEFAULT ('') NOT NULL,
     [MarkerNo]            VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_MarkerNo] DEFAULT ('') NULL,
     [MarkerUpdate]        DATETIME       NULL,
@@ -23,7 +23,7 @@
     [PhaseID]             VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_PhaseID] DEFAULT ('') NULL,
     [SMNoticeID]          VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_SMNoticeID] DEFAULT ('') NULL,
     [MarkerVersion]       VARCHAR (3)    CONSTRAINT [DF_Order_MarkerList_MarkerVersion] DEFAULT ('') NULL,
-    [Direction]           NVARCHAR(40)     CONSTRAINT [DF_Order_MarkerList_Direction] DEFAULT ('') NULL,
+    [Direction]           NVARCHAR (40)  CONSTRAINT [DF_Order_MarkerList_Direction] DEFAULT ('') NULL,
     [CuttingWidth]        VARCHAR (8)    CONSTRAINT [DF_Order_MarkerList_CuttingWidth] DEFAULT ('') NULL,
     [Width]               VARCHAR (5)    CONSTRAINT [DF_Order_MarkerList_Width] DEFAULT ('') NULL,
     [Type]                VARCHAR (1)    CONSTRAINT [DF_Order_MarkerList_Type] DEFAULT ('') NULL,
@@ -33,6 +33,8 @@
     [EditDate]            DATETIME       NULL,
     CONSTRAINT [PK_Order_MarkerList] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
