@@ -10,7 +10,7 @@
     [Cutno]              NUMERIC (3)    CONSTRAINT [DF_WorkOrder_Cutno] DEFAULT ((0)) NULL,
     [Layer]              NUMERIC (5)    CONSTRAINT [DF_WorkOrder_Layer] DEFAULT ((0)) NULL,
     [Colorid]            VARCHAR (6)    CONSTRAINT [DF_WorkOrder_Colorid] DEFAULT ('') NULL,
-    [Markername]         VARCHAR (5)    CONSTRAINT [DF_WorkOrder_Markername] DEFAULT ('') NULL,
+    [Markername]         VARCHAR (20)    CONSTRAINT [DF_WorkOrder_Markername] DEFAULT ('') NULL,
     [EstCutDate]         DATE           NULL,
     [CutCellid]          VARCHAR (2)    CONSTRAINT [DF_WorkOrder_Cell] DEFAULT ('') NULL,
     [MarkerLength]       VARCHAR (15)   CONSTRAINT [DF_WorkOrder_MarkerLength] DEFAULT ('') NULL,

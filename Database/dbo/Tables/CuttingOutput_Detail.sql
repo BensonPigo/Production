@@ -3,7 +3,7 @@
     [CutRef]        VARCHAR (6)    CONSTRAINT [DF_CuttingOutput_Detail_CutRef] DEFAULT ('') NOT NULL,
     [CuttingID]     VARCHAR (13)   CONSTRAINT [DF_CuttingOutput_Detail_CuttingID] DEFAULT ('') NOT NULL,
     [Cutno]         NUMERIC (3)    CONSTRAINT [DF_CuttingOutput_Detail_Cutno] DEFAULT ('') NOT NULL,
-    [MarkerName]    VARCHAR (5)    CONSTRAINT [DF_CuttingOutput_Detail_MarkName] DEFAULT ('') NOT NULL,
+    [MarkerName]    VARCHAR (20)    CONSTRAINT [DF_CuttingOutput_Detail_MarkName] DEFAULT ('') NOT NULL,
     [MarkerLength]  VARCHAR (13)   CONSTRAINT [DF_CuttingOutput_Detail_Marker] DEFAULT ('') NOT NULL,
     [Layer]         NUMERIC (5)    CONSTRAINT [DF_CuttingOutput_Detail_Layers] DEFAULT ((0)) NOT NULL,
     [Cons]          NUMERIC (9, 4) CONSTRAINT [DF_CuttingOutput_Detail_Cons] DEFAULT ((0)) NOT NULL,
