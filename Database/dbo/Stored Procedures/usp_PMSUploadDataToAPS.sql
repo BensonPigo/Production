@@ -281,7 +281,7 @@ From (
 	,[sSEASONCD] = SeasonID
 	,[sFULLPATH] = concat((select PicPath from System),Picture1)
 	from Style s
-	inner join [J1-7362].[SCIAPS].[dbo].[IMAGEMAPPING] t 
+	inner join '+@SerDbDboTb2+N' t 
 	on t.STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.ID
 	and t.SEASONCD collate Chinese_Taiwan_Stroke_CI_AS = s.SeasonID
 )s
@@ -295,7 +295,7 @@ Select Distinct  ID
 ,BrandID
 into #tmps
 from Style s
-left join [J1-7362].[SCIAPS].[dbo].[IMAGEMAPPING] t 
+left join '+@SerDbDboTb2+N' t 
 on t.STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.ID 
 and t.SEASONCD collate Chinese_Taiwan_Stroke_CI_AS = s.SeasonID
 where t.STYLENO is null
