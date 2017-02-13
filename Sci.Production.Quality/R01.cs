@@ -171,6 +171,7 @@ namespace Sci.Production.Quality
             #endregion
             sqlWhere = string.Join(" and ", sqlWheres);
             OWhere = string.Join(" and ", OWheres);
+            RWhere = string.Join(" and ", RWheres);
             if (!sqlWhere.Empty())
             {
                 sqlWhere = " where " + sqlWhere;
@@ -249,12 +250,12 @@ F.POID,F.SEQ1,F.SEQ2,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
                 return false;
             } 
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }
+            //saveDialog.ShowDialog();
+            //string outpath = saveDialog.FileName;
+            //if (outpath.Empty())
+            //{
+            //    return false;
+            //}
 
             Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R01.xltx");
 
@@ -278,7 +279,7 @@ F.POID,F.SEQ1,F.SEQ2,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
             xl.dicDatas.Add("##supp", Supp);
             xl.dicDatas.Add("##Over", Over);
             xl.dicDatas.Add("##body", dt);
-            xl.Save(outpath, false);
+            xl.Save();
             return true;
             
         }
