@@ -1561,6 +1561,9 @@ Sci.Production.Class/txtwhseReason.resx -text
 Sci.Production.Class/txtwhseRefundAction.Designer.cs -text
 Sci.Production.Class/txtwhseRefundAction.cs -text
 Sci.Production.Class/txtwhseRefundAction.resx -text
+Sci.Production.Class/userData.Designer.cs -text
+Sci.Production.Class/userData.cs -text
+Sci.Production.Class/userData.resx -text
 Sci.Production.Cutting/B01.Designer.cs -text
 Sci.Production.Cutting/B01.cs -text
 Sci.Production.Cutting/B01.resx -text

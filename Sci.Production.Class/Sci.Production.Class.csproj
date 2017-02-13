@@ -351,6 +351,12 @@
     <Compile Include="txtfactoryByM.Designer.cs">
       <DependentUpon>txtfactoryByM.cs</DependentUpon>
     </Compile>
+    <Compile Include="userData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="userData.Designer.cs">
+      <DependentUpon>userData.cs</DependentUpon>
+    </Compile>
     <Compile Include="VFPColors.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -482,6 +488,9 @@
     <EmbeddedResource Include="txtAccountNo.resx">
       <DependentUpon>txtAccountNo.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="userData.resx">
+      <DependentUpon>userData.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

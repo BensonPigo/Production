@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Data;
 using Sci.Win.UI;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
@@ -59,6 +60,27 @@ namespace Sci.Production.Class
             {
                 this.displayBox2.Text = "";
             }
+        }
+
+        private void displayBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            string sql;
+            List<SqlParameter> sqlpar = new List<SqlParameter>();
+
+            sql = @"select 	ID, 
+		                    Name, 
+		                    Ext= ExtNo, 
+		                    Mail = email
+                    from Production.dbo.TPEPass1 
+                    where id = @id";
+            sqlpar.Add(new SqlParameter("@id", displayBox1.Text.ToString()));
+
+            userData ud = new userData(sql, sqlpar);
+
+            if (ud.errMsg == null)
+                ud.ShowDialog();
+            else
+                MyUtility.Msg.ErrorBox(ud.errMsg);
         }
     }
 }

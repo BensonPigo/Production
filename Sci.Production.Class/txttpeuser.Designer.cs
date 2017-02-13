@@ -39,6 +39,7 @@
             this.displayBox1.Size = new System.Drawing.Size(80, 22);
             this.displayBox1.TabIndex = 0;
             this.displayBox1.TextChanged += new System.EventHandler(this.displayBox1_TextChanged);
+            this.displayBox1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.displayBox1_MouseDoubleClick);
             // 
             // displayBox2
             // 

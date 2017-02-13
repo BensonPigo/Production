@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Sci.Data;
 using Sci.Win.UI;
 using Sci.Production.Class;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
@@ -186,6 +187,27 @@ namespace Sci.Production.Class
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
             this.displayBox1.Text = item.GetSelecteds()[0]["Name"].ToString().TrimEnd()+" #"+ item.GetSelecteds()[0]["EXTNO"].ToString().TrimEnd();
+        }
+
+        private void textBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            string sql;
+            List<SqlParameter> sqlpar = new List<SqlParameter>();
+
+            sql = @"select 	ID, 
+		                    Name, 
+		                    Ext= ExtNo, 
+		                    Mail = email
+                    from Pass1 
+                    where id = @id";
+            sqlpar.Add(new SqlParameter("@id", textBox1.Text.ToString()));
+
+            userData ud = new userData(sql, sqlpar);
+
+            if (ud.errMsg == null)
+                ud.ShowDialog();
+            else
+                MyUtility.Msg.ErrorBox(ud.errMsg);
         }
     }
 }

@@ -40,6 +40,7 @@
             this.textBox1.TabIndex = 0;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.textBox1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDoubleClick);
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // displayBox1
@@ -49,12 +50,12 @@
             this.displayBox1.Size = new System.Drawing.Size(220, 22);
             this.displayBox1.TabIndex = 1;
             // 
-            // txtuser
+            // txttpeuser_canedit
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.Controls.Add(this.displayBox1);
             this.Controls.Add(this.textBox1);
-            this.Name = "txtuser";
+            this.Name = "txttpeuser_canedit";
             this.Size = new System.Drawing.Size(300, 23);
             this.ResumeLayout(false);
             this.PerformLayout();
