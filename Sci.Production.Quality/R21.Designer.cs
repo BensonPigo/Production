@@ -50,7 +50,9 @@
             this.label10 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
             this.d_radioButton = new Sci.Win.UI.RadioButton();
+            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.radioGroup1.SuspendLayout();
+            this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
@@ -183,7 +185,7 @@
             // 
             this.S_radioButton.AutoSize = true;
             this.S_radioButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.S_radioButton.Location = new System.Drawing.Point(147, 258);
+            this.S_radioButton.Location = new System.Drawing.Point(5, 13);
             this.S_radioButton.Name = "S_radioButton";
             this.S_radioButton.Size = new System.Drawing.Size(85, 21);
             this.S_radioButton.TabIndex = 5;
@@ -193,6 +195,7 @@
             // 
             // radioGroup1
             // 
+            this.radioGroup1.Controls.Add(this.radioPanel1);
             this.radioGroup1.Controls.Add(this.dateBox4);
             this.radioGroup1.Controls.Add(this.dateBox3);
             this.radioGroup1.Controls.Add(this.dateBox2);
@@ -201,7 +204,6 @@
             this.radioGroup1.Controls.Add(this.label10);
             this.radioGroup1.Controls.Add(this.comboBox1);
             this.radioGroup1.Controls.Add(this.label9);
-            this.radioGroup1.Controls.Add(this.d_radioButton);
             this.radioGroup1.Location = new System.Drawing.Point(12, 48);
             this.radioGroup1.Name = "radioGroup1";
             this.radioGroup1.Size = new System.Drawing.Size(418, 308);
@@ -282,7 +284,7 @@
             // 
             this.d_radioButton.AutoSize = true;
             this.d_radioButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.d_radioButton.Location = new System.Drawing.Point(135, 236);
+            this.d_radioButton.Location = new System.Drawing.Point(5, 41);
             this.d_radioButton.Name = "d_radioButton";
             this.d_radioButton.Size = new System.Drawing.Size(81, 21);
             this.d_radioButton.TabIndex = 5;
@@ -290,10 +292,18 @@
             this.d_radioButton.Text = "by Detail";
             this.d_radioButton.UseVisualStyleBackColor = true;
             // 
+            // radioPanel1
+            // 
+            this.radioPanel1.Controls.Add(this.S_radioButton);
+            this.radioPanel1.Controls.Add(this.d_radioButton);
+            this.radioPanel1.Location = new System.Drawing.Point(135, 208);
+            this.radioPanel1.Name = "radioPanel1";
+            this.radioPanel1.Size = new System.Drawing.Size(111, 77);
+            this.radioPanel1.TabIndex = 117;
+            // 
             // R21
             // 
             this.ClientSize = new System.Drawing.Size(564, 395);
-            this.Controls.Add(this.S_radioButton);
             this.Controls.Add(this.textBox7);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
@@ -323,9 +333,9 @@
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.textBox7, 0);
-            this.Controls.SetChildIndex(this.S_radioButton, 0);
             this.radioGroup1.ResumeLayout(false);
-            this.radioGroup1.PerformLayout();
+            this.radioPanel1.ResumeLayout(false);
+            this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -355,5 +365,6 @@
         private Win.UI.DateBox dateBox3;
         private Win.UI.DateBox dateBox2;
         private Win.UI.DateBox dateBox1;
+        private Win.UI.RadioPanel radioPanel1;
     }
 }

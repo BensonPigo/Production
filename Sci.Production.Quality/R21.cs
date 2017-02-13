@@ -164,9 +164,6 @@ else ''  end as Stage
 ,a.DefectQty
 ,iif(a.InspectQty=0,0,round(a.DefectQty/a.InspectQty*100,3)) [SQR]
 ,'' as Area
-,d.Qty
-,d.Remark
-,d.Action
 from dbo.Cfa a inner join dbo.Cfa_Detail b
 on b.id = a.ID 
 inner join dbo.orders c
@@ -217,13 +214,12 @@ where a.Status = 'Confirmed'");
         }
         // 產生Excel 必須要有
         protected override bool OnToExcel(Win.ReportDefinition report)
-        {
-            // 顯示筆數於PrintForm上Count欄位
-            SetCount(SummaryData.Rows.Count);
-
+        {   
             this.ShowWaitMessage("Starting Excel");
             if (S_radioButton.Checked)
             {
+                // 顯示筆數於PrintForm上Count欄位
+                SetCount(SummaryData.Rows.Count);
                 if (SummaryData.Rows.Count <= 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
@@ -233,12 +229,18 @@ where a.Status = 'Confirmed'");
                 Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFM_InlineReport_Summary.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(SummaryData,"","Quality_R21_CFM_InlineReport_Summary.xltx",2,true,null,  excel);
                 Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表                 
-                
+
+                excel.Cells.EntireColumn.AutoFit();
+                excel.Cells.EntireRow.AutoFit();
+
                 if (excelSheets != null) Marshal.FinalReleaseComObject(excelSheets);//釋放sheet
                 if (excel != null) Marshal.FinalReleaseComObject(excel);
+                
             }
             if (d_radioButton.Checked)
             {
+                // 顯示筆數於PrintForm上Count欄位
+                SetCount(DetailData.Rows.Count);
                 if (DetailData.Rows.Count <= 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
@@ -246,10 +248,15 @@ where a.Status = 'Confirmed'");
                 }
                 Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_detail.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(DetailData,"", "Quality_R21_CFA_InlineReport_detail.xltx", 2, true, null, excel);
-                 Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表
+                Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表
+
+                excel.Cells.EntireColumn.AutoFit();
+                excel.Cells.EntireRow.AutoFit();
+
                  if (excelSheets != null) Marshal.FinalReleaseComObject(excelSheets);//釋放sheet
-                 if (excel != null) Marshal.FinalReleaseComObject(excel);
+                 if (excel != null) Marshal.FinalReleaseComObject(excel);     
             }
+            
             this.HideWaitMessage();
             return true;
         }
