@@ -3668,6 +3668,7 @@ XLT/Subcon_R37_List.xltx -text
 XLT/Subcon_R41_Bundle[!!-~]tracking[!!-~]list[!!-~](RFID).xltx -text
 XLT/Subcon_R42_Bundle[!!-~]Transaction[!!-~]detail[!!-~](RFID).xltx -text
 XLT/Subcon_R43_Sub-process[!!-~]BCS[!!-~]report[!!-~](RFID).xltx -text
+XLT/Thread_P02.xltx -text
 XLT/Thread_R20.xltx -text
 XLT/Thread_R21.xltx -text
 XLT/Warehouse-P01.TrimCardPrint_A.dot -text
