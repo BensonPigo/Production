@@ -9,7 +9,7 @@ BEGIN
 
 	--避免Divide by zero error encountered
 	SET ARITHABORT ON 
-	SET ANSI_WARNINGS OFF
+	SET ANSI_WARNINGS ON
 
 	--SewingLine
 	BEGIN
