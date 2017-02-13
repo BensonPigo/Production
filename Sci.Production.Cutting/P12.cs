@@ -199,13 +199,13 @@ namespace Sci.Production.Cutting
                                                 ,a.Qty [Qty]
                                                 ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
                                                 ,b.MDivisionid [left]
-                                        from dbo.Bundle_Detail a
-                                        left join dbo.bundle b on a.id=b.ID
-                                        left join dbo.Orders c on c.id=b.Orderid
-                                        left join dbo.WorkOrder e on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
+                                        from dbo.Bundle_Detail a WITH (NOLOCK)
+                                        left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+                                        left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+                                        left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
                                         outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                                         outer apply(select SubProcess = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                                                from dbo.Bundle_Detail_Art e1
+							                                                from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
 							                                                where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
 							                                                for xml path('')))as SubProcess " + sqlWhere + @" and a.Patterncode != 'ALLPARTS' 
                                         
@@ -235,14 +235,14 @@ namespace Sci.Production.Cutting
                                                 ,a.Qty [Qty]
                                                 ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
                                                 ,b.MDivisionid [left]
-                                        from dbo.Bundle_Detail a
-                                        left join dbo.bundle b on a.id=b.ID
-                                        left join dbo.Orders c on c.id=b.Orderid
-                                        left join dbo.Bundle_Detail_Allpart d on d.id=a.Id
-                                        left join dbo.WorkOrder e on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
+                                        from dbo.Bundle_Detail a WITH (NOLOCK)
+                                        left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+                                        left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+                                        left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
+                                        left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
                                         outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                                         outer apply(select SubProcess = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                                                from dbo.Bundle_Detail_Art e1
+							                                                from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
 							                                                where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
 							                                                for xml path('')))as SubProcess " + sqlWhere + @" and a.Patterncode = 'ALLPARTS' "
                                         + sb);
@@ -278,13 +278,13 @@ namespace Sci.Production.Cutting
                                                 ,a.Qty [Qty]
                                                 ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
                                                 ,b.MDivisionid [left]
-                                        from dbo.Bundle_Detail a
-                                        left join dbo.bundle b on a.id=b.ID
-                                        left join dbo.Orders c on c.id=b.Orderid
-                                        left join dbo.WorkOrder e on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
+                                        from dbo.Bundle_Detail a WITH (NOLOCK)
+                                        left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+                                        left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+                                        left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
                                         outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                                         outer apply(select SubProcess = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                                                from dbo.Bundle_Detail_Art e1
+							                                                from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
 							                                                where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
 							                                                for xml path('')))as SubProcess " + sqlWhere + @" and a.Patterncode != 'ALLPARTS' 
                                         
@@ -314,13 +314,13 @@ namespace Sci.Production.Cutting
                                                 ,a.Qty [Qty]
                                                 ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
                                                 ,b.MDivisionid [left]
-                                        from dbo.Bundle_Detail a
-                                        left join dbo.bundle b on a.id=b.ID
-                                        left join dbo.Orders c on c.id=b.Orderid
-                                        left join dbo.WorkOrder e on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
+                                        from dbo.Bundle_Detail a WITH (NOLOCK)
+                                        left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+                                        left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+                                        left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
                                         outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                                         outer apply(select SubProcess = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                                                from dbo.Bundle_Detail_Art e1
+							                                                from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
 							                                                where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
 							                                                for xml path('')))as SubProcess " + sqlWhere + @" and a.Patterncode = 'ALLPARTS' "
                                         + sb);
