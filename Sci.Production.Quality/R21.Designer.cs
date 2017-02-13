@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
@@ -42,6 +41,8 @@
             this.textBox7 = new Sci.Win.UI.TextBox();
             this.S_radioButton = new Sci.Win.UI.RadioButton();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
+            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.d_radioButton = new Sci.Win.UI.RadioButton();
             this.dateBox4 = new Sci.Win.UI.DateBox();
             this.dateBox3 = new Sci.Win.UI.DateBox();
             this.dateBox2 = new Sci.Win.UI.DateBox();
@@ -49,8 +50,6 @@
             this.label11 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
-            this.d_radioButton = new Sci.Win.UI.RadioButton();
-            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.radioGroup1.SuspendLayout();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -58,32 +57,23 @@
             // print
             // 
             this.print.Enabled = false;
-            this.print.Location = new System.Drawing.Point(440, 21);
+            this.print.Location = new System.Drawing.Point(439, 21);
             this.print.Size = new System.Drawing.Size(112, 30);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(440, 57);
+            this.toexcel.Location = new System.Drawing.Point(439, 57);
             this.toexcel.Size = new System.Drawing.Size(112, 30);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(440, 93);
+            this.close.Location = new System.Drawing.Point(439, 93);
             this.close.Size = new System.Drawing.Size(112, 30);
-            // 
-            // label1
-            // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(147, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(157, 33);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "R21. CFA Inline Report";
             // 
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(27, 64);
+            this.label2.Location = new System.Drawing.Point(27, 37);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(102, 23);
             this.label2.TabIndex = 95;
@@ -92,7 +82,7 @@
             // label3
             // 
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(27, 100);
+            this.label3.Location = new System.Drawing.Point(27, 73);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(102, 23);
             this.label3.TabIndex = 96;
@@ -101,7 +91,7 @@
             // label4
             // 
             this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(27, 138);
+            this.label4.Location = new System.Drawing.Point(27, 111);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(102, 23);
             this.label4.TabIndex = 97;
@@ -110,7 +100,7 @@
             // label5
             // 
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(27, 179);
+            this.label5.Location = new System.Drawing.Point(27, 152);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(102, 23);
             this.label5.TabIndex = 98;
@@ -119,7 +109,7 @@
             // label6
             // 
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(27, 218);
+            this.label6.Location = new System.Drawing.Point(27, 191);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(102, 23);
             this.label6.TabIndex = 99;
@@ -128,7 +118,7 @@
             // label7
             // 
             this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(27, 256);
+            this.label7.Location = new System.Drawing.Point(27, 229);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(102, 23);
             this.label7.TabIndex = 100;
@@ -137,7 +127,7 @@
             // label8
             // 
             this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(447, 319);
+            this.label8.Location = new System.Drawing.Point(439, 137);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(112, 23);
             this.label8.TabIndex = 101;
@@ -147,7 +137,7 @@
             // 
             this.textBox1.BackColor = System.Drawing.Color.White;
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(147, 64);
+            this.textBox1.Location = new System.Drawing.Point(147, 37);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
             this.textBox1.TabIndex = 0;
@@ -156,7 +146,7 @@
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(279, 64);
+            this.textBox2.Location = new System.Drawing.Point(279, 37);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(100, 23);
             this.textBox2.TabIndex = 1;
@@ -176,7 +166,7 @@
             // 
             this.textBox7.BackColor = System.Drawing.Color.White;
             this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox7.Location = new System.Drawing.Point(147, 218);
+            this.textBox7.Location = new System.Drawing.Point(147, 191);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(100, 23);
             this.textBox7.TabIndex = 4;
@@ -185,7 +175,7 @@
             // 
             this.S_radioButton.AutoSize = true;
             this.S_radioButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.S_radioButton.Location = new System.Drawing.Point(5, 13);
+            this.S_radioButton.Location = new System.Drawing.Point(5, 7);
             this.S_radioButton.Name = "S_radioButton";
             this.S_radioButton.Size = new System.Drawing.Size(85, 21);
             this.S_radioButton.TabIndex = 5;
@@ -204,11 +194,32 @@
             this.radioGroup1.Controls.Add(this.label10);
             this.radioGroup1.Controls.Add(this.comboBox1);
             this.radioGroup1.Controls.Add(this.label9);
-            this.radioGroup1.Location = new System.Drawing.Point(12, 48);
+            this.radioGroup1.Location = new System.Drawing.Point(12, 21);
             this.radioGroup1.Name = "radioGroup1";
-            this.radioGroup1.Size = new System.Drawing.Size(418, 308);
+            this.radioGroup1.Size = new System.Drawing.Size(393, 308);
             this.radioGroup1.TabIndex = 3;
             this.radioGroup1.TabStop = false;
+            // 
+            // radioPanel1
+            // 
+            this.radioPanel1.Controls.Add(this.S_radioButton);
+            this.radioPanel1.Controls.Add(this.d_radioButton);
+            this.radioPanel1.Location = new System.Drawing.Point(135, 199);
+            this.radioPanel1.Name = "radioPanel1";
+            this.radioPanel1.Size = new System.Drawing.Size(111, 68);
+            this.radioPanel1.TabIndex = 117;
+            // 
+            // d_radioButton
+            // 
+            this.d_radioButton.AutoSize = true;
+            this.d_radioButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.d_radioButton.Location = new System.Drawing.Point(5, 35);
+            this.d_radioButton.Name = "d_radioButton";
+            this.d_radioButton.Size = new System.Drawing.Size(81, 21);
+            this.d_radioButton.TabIndex = 5;
+            this.d_radioButton.TabStop = true;
+            this.d_radioButton.Text = "by Detail";
+            this.d_radioButton.UseVisualStyleBackColor = true;
             // 
             // dateBox4
             // 
@@ -280,30 +291,9 @@
             this.label9.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label9.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // d_radioButton
-            // 
-            this.d_radioButton.AutoSize = true;
-            this.d_radioButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.d_radioButton.Location = new System.Drawing.Point(5, 41);
-            this.d_radioButton.Name = "d_radioButton";
-            this.d_radioButton.Size = new System.Drawing.Size(81, 21);
-            this.d_radioButton.TabIndex = 5;
-            this.d_radioButton.TabStop = true;
-            this.d_radioButton.Text = "by Detail";
-            this.d_radioButton.UseVisualStyleBackColor = true;
-            // 
-            // radioPanel1
-            // 
-            this.radioPanel1.Controls.Add(this.S_radioButton);
-            this.radioPanel1.Controls.Add(this.d_radioButton);
-            this.radioPanel1.Location = new System.Drawing.Point(135, 208);
-            this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(111, 77);
-            this.radioPanel1.TabIndex = 117;
-            // 
             // R21
             // 
-            this.ClientSize = new System.Drawing.Size(564, 395);
+            this.ClientSize = new System.Drawing.Size(563, 357);
             this.Controls.Add(this.textBox7);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
@@ -314,12 +304,10 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.radioGroup1);
             this.Name = "R21";
             this.Text = "R21 .CFA Inline Report";
             this.Controls.SetChildIndex(this.radioGroup1, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.label4, 0);
@@ -343,7 +331,6 @@
 
         #endregion
 
-        private Win.UI.Label label1;
         private Win.UI.Label label2;
         private Win.UI.Label label3;
         private Win.UI.Label label4;

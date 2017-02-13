@@ -26,7 +26,7 @@ namespace Sci.Production.Quality
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory order by FTYGroup", out factory);
             MyUtility.Tool.SetupCombox(comboBox1, 1, factory);
             comboBox1.Text = Sci.Env.User.Factory;
-           
+            this.S_radioButton.Checked = true;
 
         }
         // 驗證輸入條件 必須要有
