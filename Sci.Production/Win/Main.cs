@@ -250,26 +250,26 @@ namespace Sci.Production
 
                 return formObj;
             }
-            else if (!Debugger.IsAttached)
-            {
-                try {
-                    Process myProcess = Process.Start(Application.ExecutablePath
-                    , string.Format("userid:'{0}' factoryID:'{1}' formName:'{2}' menuName:'{3}' args:'{4}'"
-                        , Env.User.UserID
-                        , Env.User.Factory
-                        , formName
-                        , menuItem.Text
-                        , strArg));
-                    myProcess.EnableRaisingEvents = true;
-                    myProcess.Exited += myProcess_Exited;
-                    proList.Add(myProcess, menuItem);
-                    menuItem.Enabled = false;
-                }
-                catch (Exception e) {
+            //else if (!Debugger.IsAttached)
+            //{
+            //    try {
+            //        Process myProcess = Process.Start(Application.ExecutablePath
+            //        , string.Format("userid:'{0}' factoryID:'{1}' formName:'{2}' menuName:'{3}' args:'{4}'"
+            //            , Env.User.UserID
+            //            , Env.User.Factory
+            //            , formName
+            //            , menuItem.Text
+            //            , strArg));
+            //        myProcess.EnableRaisingEvents = true;
+            //        myProcess.Exited += myProcess_Exited;
+            //        proList.Add(myProcess, menuItem);
+            //        menuItem.Enabled = false;
+            //    }
+            //    catch (Exception e) {
 
-                }
-                return null;
-            }
+            //    }
+            //    return null;
+            //}
             else
             {
                 var formObj = CreateFormObject(menuItem, typeofControl, strArg);
