@@ -42,6 +42,8 @@ namespace Sci.Production.Quality
             base.ClickNewAfter();
             CurrentMaintain["CDate"] = DateTime.Now;
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["Mdivisionid"] = Sci.Env.User.Keyword;
+            CurrentMaintain["Status"] = "New";
         }
 
         private void txtSP_Validating(object sender, CancelEventArgs e)
@@ -437,6 +439,7 @@ namespace Sci.Production.Quality
             }
             return base.ClickEditBefore();
         }
+    
 
         protected override bool ClickNew()
         {

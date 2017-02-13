@@ -57,8 +57,8 @@
             this.comboTeam = new Sci.Win.UI.ComboBox();
             this.NumCPU = new Sci.Win.UI.TextBox();
             this.NumRFT = new Sci.Win.UI.TextBox();
-            this.comboShift = new Sci.Production.Class.txtdropdownlist();
             this.labConfirm = new System.Windows.Forms.Label();
+            this.comboShift = new Sci.Production.Class.txtdropdownlist();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -500,6 +500,18 @@
             this.NumRFT.Size = new System.Drawing.Size(121, 23);
             this.NumRFT.TabIndex = 137;
             // 
+            // labConfirm
+            // 
+            this.labConfirm.AutoSize = true;
+            this.labConfirm.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "status", true));
+            this.labConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labConfirm.ForeColor = System.Drawing.Color.Red;
+            this.labConfirm.Location = new System.Drawing.Point(724, 13);
+            this.labConfirm.Name = "labConfirm";
+            this.labConfirm.Size = new System.Drawing.Size(85, 29);
+            this.labConfirm.TabIndex = 138;
+            this.labConfirm.Text = "label1";
+            // 
             // comboShift
             // 
             this.comboShift.BackColor = System.Drawing.Color.White;
@@ -512,17 +524,6 @@
             this.comboShift.Size = new System.Drawing.Size(150, 24);
             this.comboShift.TabIndex = 1;
             this.comboShift.Type = "SewingOutput_Shift";
-            // 
-            // labConfirm
-            // 
-            this.labConfirm.AutoSize = true;
-            this.labConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labConfirm.ForeColor = System.Drawing.Color.Red;
-            this.labConfirm.Location = new System.Drawing.Point(724, 13);
-            this.labConfirm.Name = "labConfirm";
-            this.labConfirm.Size = new System.Drawing.Size(85, 29);
-            this.labConfirm.TabIndex = 138;
-            this.labConfirm.Text = "label1";
             // 
             // P20
             // 
