@@ -11,6 +11,10 @@ using System.Windows.Forms;
 using Sci.Win;
 using Sci.Data;
 using System.Transactions;
+using System.Linq;
+using System.Runtime.InteropServices;
+using Excel = Microsoft.Office.Interop.Excel;
+using System;
 
 namespace Sci.Production.Thread
 {
@@ -820,6 +824,67 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             dr["TotalQty"] = Convert.ToDecimal(dr["MeterToCone"]) != 0 ? Math.Ceiling(Convert.ToDecimal(dr["ConsumptionQty"]) / Convert.ToDecimal(dr["MeterToCone"])) : 0;
             dr["AllowanceQty"] = Convert.ToDouble(dr["TotalQty"]) * 0.2;
             dr["PurchaseQty"] = Convert.ToDecimal(dr["TotalQty"]) + Convert.ToDecimal(dr["AllowanceQty"]) - Convert.ToDecimal(dr["UseStockQty"]);
+        }
+
+        protected override bool ClickPrint()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add(new DataColumn("Refno"));
+            dt.Columns.Add(new DataColumn("description"));
+            dt.Columns.Add(new DataColumn("ThreadColorid"));
+            dt.Columns.Add(new DataColumn("Colordesc"));
+            dt.Columns.Add(new DataColumn("MeterToCone"));
+            dt.Columns.Add(new DataColumn("TotalQty"));
+            dt.Columns.Add(new DataColumn("AllowanceQty"));
+            dt.Columns.Add(new DataColumn("UseStockQty"));
+            dt.Columns.Add(new DataColumn("PurchaseQty"));
+
+            foreach (DataGridViewRow row in detailgrid.Rows)
+            {
+                DataRow dr = dt.NewRow();
+                dr["Refno"] = row.Cells["Refno"].Value.ToString();
+                dr["description"] = row.Cells["description"].Value.ToString();
+                dr["ThreadColorid"] = row.Cells["ThreadColorid"].Value.ToString();
+                dr["Colordesc"] = row.Cells["Colordesc"].Value.ToString();
+                dr["MeterToCone"] = row.Cells["MeterToCone"].Value.ToString();
+                dr["TotalQty"] = row.Cells["TotalQty"].Value.ToString();
+                dr["AllowanceQty"] = row.Cells["AllowanceQty"].Value.ToString();
+                dr["UseStockQty"] = row.Cells["UseStockQty"].Value.ToString();
+                dr["PurchaseQty"] = row.Cells["PurchaseQty"].Value.ToString();
+                dt.Rows.Add(dr);
+            }
+
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_P02.xltx"); //預先開啟excel app
+            bool result = MyUtility.Excel.CopyToXls(dt, "", showExcel: false, xltfile: "Thread_P02.xltx", headerRow: 7, excelApp: objApp);
+
+
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+            }
+            else
+            {
+                Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                objSheets.Cells[3, 2] = textBox1.Text.ToString();
+                objSheets.Cells[3, 6] = dateBox3.Text.ToString();
+
+                objSheets.Cells[4, 2] = displayBox3.Text.ToString();
+                objSheets.Cells[4, 6] = dateBox4.Text.ToString();
+
+                objSheets.Cells[5, 2] = displayBox1.Text.ToString();
+                objSheets.Cells[5, 6] = dateBox1.Text.ToString();
+
+                objSheets.Cells[6, 2] = displayBox2.Text.ToString();
+                objSheets.Cells[6, 6] = dateBox2.Text.ToString();
+
+                objSheets.Columns.AutoFit();
+                objSheets.Rows.AutoFit();
+                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+            }
+            objApp.Visible = true;
+
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            return base.ClickPrint();
         }
     }
 }
