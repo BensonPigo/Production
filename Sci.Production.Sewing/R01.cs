@@ -322,13 +322,17 @@ order by ArtworkTypeID
                         rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
                     }
                     //填入Sub Total資料
-                    selectRow = ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
-                    if (selectRow.Length > 0)
+                    if (ttlData != null)
                     {
-                        worksheet.Cells[insertRow, 5] = MyUtility.Convert.GetDecimal(selectRow[0]["ActManPower"]);
-                        worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetDecimal(selectRow[0]["TMS"]);
-                        worksheet.Cells[insertRow, 16] = MyUtility.Convert.GetDecimal(selectRow[0]["RFT"]);
+                        selectRow = ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
+                        if (selectRow.Length > 0)
+                        {
+                            worksheet.Cells[insertRow, 5] = MyUtility.Convert.GetDecimal(selectRow[0]["ActManPower"]);
+                            worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetDecimal(selectRow[0]["TMS"]);
+                            worksheet.Cells[insertRow, 16] = MyUtility.Convert.GetDecimal(selectRow[0]["RFT"]);
+                        }
                     }
+                    
                     worksheet.Cells[insertRow, 7] = string.Format("=SUM(G{0}:G{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
                     worksheet.Cells[insertRow, 8] = string.Format("=SUM(H{0}:H{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
                     worksheet.Cells[insertRow, 11] = string.Format("=SUM(K{0}:K{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
@@ -395,12 +399,15 @@ order by ArtworkTypeID
                 rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
             }
             //填入Sub Total資料
-            selectRow = ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
-            if (selectRow.Length > 0)
+            if (ttlData != null)
             {
-                worksheet.Cells[insertRow, 5] = MyUtility.Convert.GetDecimal(selectRow[0]["ActManPower"]);
-                worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetDecimal(selectRow[0]["TMS"]);
-                worksheet.Cells[insertRow, 16] = MyUtility.Convert.GetDecimal(selectRow[0]["RFT"]);
+                selectRow = ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
+                if (selectRow.Length > 0)
+                {
+                    worksheet.Cells[insertRow, 5] = MyUtility.Convert.GetDecimal(selectRow[0]["ActManPower"]);
+                    worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetDecimal(selectRow[0]["TMS"]);
+                    worksheet.Cells[insertRow, 16] = MyUtility.Convert.GetDecimal(selectRow[0]["RFT"]);
+                }
             }
             worksheet.Cells[insertRow, 7] = string.Format("=SUM(G{0}:G{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
             worksheet.Cells[insertRow, 8] = string.Format("=SUM(H{0}:H{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
@@ -432,82 +439,85 @@ order by ArtworkTypeID
             insertRow = insertRow + 2;
             //填Grand Total資料
             string ttlManhour, targetCPU, targetQty, qaQty, ttlCPU, prodOutput, diff;
-            selectRow = ttlData.Select("Type = 'Grand'");
-            if (selectRow.Length > 0)
+            if (ttlData != null)
             {
-                for (int i = 0; i < selectRow.Length; i++)
+                selectRow = ttlData.Select("Type = 'Grand'");
+                if (selectRow.Length > 0)
                 {
-                    worksheet.Cells[insertRow, 5] = MyUtility.Convert.GetDecimal(selectRow[i]["ActManPower"]);
-                    worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetDecimal(selectRow[i]["TMS"]);
-                    worksheet.Cells[insertRow, 16] = MyUtility.Convert.GetDecimal(selectRow[i]["RFT"]);
-                    ttlManhour = "=";
-                    targetCPU = "=";
-                    targetQty = "=";
-                    qaQty = "=";
-                    ttlCPU = "=";
-                    prodOutput = "=";
-                    diff = "=";
-                    #region 組公式
-                    if (MyUtility.Convert.GetString(selectRow[i]["Sort"]) == "2")
+                    for (int i = 0; i < selectRow.Length; i++)
                     {
-                        for (int j = 0; j < 8 ; j++)
+                        worksheet.Cells[insertRow, 5] = MyUtility.Convert.GetDecimal(selectRow[i]["ActManPower"]);
+                        worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetDecimal(selectRow[i]["TMS"]);
+                        worksheet.Cells[insertRow, 16] = MyUtility.Convert.GetDecimal(selectRow[i]["RFT"]);
+                        ttlManhour = "=";
+                        targetCPU = "=";
+                        targetQty = "=";
+                        qaQty = "=";
+                        ttlCPU = "=";
+                        prodOutput = "=";
+                        diff = "=";
+                        #region 組公式
+                        if (MyUtility.Convert.GetString(selectRow[i]["Sort"]) == "2")
                         {
-                            if (!MyUtility.Check.Empty(subTtlRowInOut[j]))
+                            for (int j = 0; j < 8; j++)
                             {
-                                ttlManhour = ttlManhour + string.Format("G{0}+", subTtlRowInOut[j]);
-                                targetCPU = targetCPU + string.Format("H{0}+", subTtlRowInOut[j]);
-                                targetQty = targetQty + string.Format("K{0}+", subTtlRowInOut[j]);
-                                qaQty = qaQty + string.Format("L{0}+", subTtlRowInOut[j]);
-                                ttlCPU = ttlCPU + string.Format("M{0}+", subTtlRowInOut[j]);
-                                prodOutput = prodOutput + string.Format("R{0}+", subTtlRowInOut[j]);
-                                diff = diff + string.Format("S{0}+", subTtlRowInOut[j]);
+                                if (!MyUtility.Check.Empty(subTtlRowInOut[j]))
+                                {
+                                    ttlManhour = ttlManhour + string.Format("G{0}+", subTtlRowInOut[j]);
+                                    targetCPU = targetCPU + string.Format("H{0}+", subTtlRowInOut[j]);
+                                    targetQty = targetQty + string.Format("K{0}+", subTtlRowInOut[j]);
+                                    qaQty = qaQty + string.Format("L{0}+", subTtlRowInOut[j]);
+                                    ttlCPU = ttlCPU + string.Format("M{0}+", subTtlRowInOut[j]);
+                                    prodOutput = prodOutput + string.Format("R{0}+", subTtlRowInOut[j]);
+                                    diff = diff + string.Format("S{0}+", subTtlRowInOut[j]);
+                                }
                             }
                         }
-                    }
-                    else if (MyUtility.Convert.GetString(selectRow[i]["Sort"]) == "3")
-                    {
-                        for (int j = 0; j < 8; j++)
+                        else if (MyUtility.Convert.GetString(selectRow[i]["Sort"]) == "3")
                         {
-                            if (!MyUtility.Check.Empty(subTtlRowExOut[j]))
+                            for (int j = 0; j < 8; j++)
                             {
-                                ttlManhour = ttlManhour + string.Format("G{0}+", subTtlRowExOut[j]);
-                                targetCPU = targetCPU + string.Format("H{0}+", subTtlRowExOut[j]);
-                                targetQty = targetQty + string.Format("K{0}+", subTtlRowExOut[j]);
-                                qaQty = qaQty + string.Format("L{0}+", subTtlRowExOut[j]);
-                                ttlCPU = ttlCPU + string.Format("M{0}+", subTtlRowExOut[j]);
-                                prodOutput = prodOutput + string.Format("R{0}+", subTtlRowExOut[j]);
-                                diff = diff + string.Format("S{0}+", subTtlRowExOut[j]);
+                                if (!MyUtility.Check.Empty(subTtlRowExOut[j]))
+                                {
+                                    ttlManhour = ttlManhour + string.Format("G{0}+", subTtlRowExOut[j]);
+                                    targetCPU = targetCPU + string.Format("H{0}+", subTtlRowExOut[j]);
+                                    targetQty = targetQty + string.Format("K{0}+", subTtlRowExOut[j]);
+                                    qaQty = qaQty + string.Format("L{0}+", subTtlRowExOut[j]);
+                                    ttlCPU = ttlCPU + string.Format("M{0}+", subTtlRowExOut[j]);
+                                    prodOutput = prodOutput + string.Format("R{0}+", subTtlRowExOut[j]);
+                                    diff = diff + string.Format("S{0}+", subTtlRowExOut[j]);
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        for (int j = 0; j < 8; j++)
+                        else
                         {
-                            if (!MyUtility.Check.Empty(subTtlRowExInOut[j]))
+                            for (int j = 0; j < 8; j++)
                             {
-                                ttlManhour = ttlManhour + string.Format("G{0}+", subTtlRowExInOut[j]);
-                                targetCPU = targetCPU + string.Format("H{0}+", subTtlRowExInOut[j]);
-                                targetQty = targetQty + string.Format("K{0}+", subTtlRowExInOut[j]);
-                                qaQty = qaQty + string.Format("L{0}+", subTtlRowExInOut[j]);
-                                ttlCPU = ttlCPU + string.Format("M{0}+", subTtlRowExInOut[j]);
-                                prodOutput = prodOutput + string.Format("R{0}+", subTtlRowExInOut[j]);
-                                diff = diff + string.Format("S{0}+", subTtlRowExInOut[j]);
+                                if (!MyUtility.Check.Empty(subTtlRowExInOut[j]))
+                                {
+                                    ttlManhour = ttlManhour + string.Format("G{0}+", subTtlRowExInOut[j]);
+                                    targetCPU = targetCPU + string.Format("H{0}+", subTtlRowExInOut[j]);
+                                    targetQty = targetQty + string.Format("K{0}+", subTtlRowExInOut[j]);
+                                    qaQty = qaQty + string.Format("L{0}+", subTtlRowExInOut[j]);
+                                    ttlCPU = ttlCPU + string.Format("M{0}+", subTtlRowExInOut[j]);
+                                    prodOutput = prodOutput + string.Format("R{0}+", subTtlRowExInOut[j]);
+                                    diff = diff + string.Format("S{0}+", subTtlRowExInOut[j]);
+                                }
                             }
                         }
-                    }
-                    #endregion
+                        #endregion
 
-                    worksheet.Cells[insertRow, 7] = ttlManhour.Substring(0, ttlManhour.Length - 1);
-                    worksheet.Cells[insertRow, 8] = targetCPU.Substring(0, targetCPU.Length - 1);
-                    worksheet.Cells[insertRow, 11] = targetQty.Substring(0, targetQty.Length - 1);
-                    worksheet.Cells[insertRow, 12] = qaQty.Substring(0, qaQty.Length - 1);
-                    worksheet.Cells[insertRow, 13] = ttlCPU.Substring(0, ttlCPU.Length - 1);
-                    worksheet.Cells[insertRow, 14] = string.Format("=M{0}/G{0}", MyUtility.Convert.GetString(insertRow));
-                    worksheet.Cells[insertRow, 15] = string.Format("=ROUND((M{0}/(G{0}*3600/1400))*100,1)", MyUtility.Convert.GetString(insertRow));
-                    worksheet.Cells[insertRow, 18] = prodOutput.Substring(0, prodOutput.Length - 1);
-                    worksheet.Cells[insertRow, 19] = diff.Substring(0, diff.Length - 1);
-                    insertRow++;
+                        worksheet.Cells[insertRow, 7] = ttlManhour.Substring(0, ttlManhour.Length - 1);
+                        worksheet.Cells[insertRow, 8] = targetCPU.Substring(0, targetCPU.Length - 1);
+                        worksheet.Cells[insertRow, 11] = targetQty.Substring(0, targetQty.Length - 1);
+                        worksheet.Cells[insertRow, 12] = qaQty.Substring(0, qaQty.Length - 1);
+                        worksheet.Cells[insertRow, 13] = ttlCPU.Substring(0, ttlCPU.Length - 1);
+                        worksheet.Cells[insertRow, 14] = string.Format("=M{0}/G{0}", MyUtility.Convert.GetString(insertRow));
+                        worksheet.Cells[insertRow, 15] = string.Format("=ROUND((M{0}/(G{0}*3600/1400))*100,1)", MyUtility.Convert.GetString(insertRow));
+                        worksheet.Cells[insertRow, 18] = prodOutput.Substring(0, prodOutput.Length - 1);
+                        worksheet.Cells[insertRow, 19] = diff.Substring(0, diff.Length - 1);
+                        insertRow++;
+                    }
                 }
             }
 
