@@ -36,7 +36,7 @@ Mark=iif(MarkFront<>'','(A) '+@newLine+MarkFront,'')
 +@newLine+iif(MarkBack<>'','(B) '+@newLine+MarkBack,'')
 +@newLine+iif(MarkLeft<>'','(C) '+@newLine+MarkLeft,'')
 +@newLine+iif(MarkRight<>'','(D) '+@newLine+MarkRight,'')
-FROM Trade.dbo.Orders a where POID = @poid AND CustCDID = (select CustCDID from Orders where ID = @ID) 
+FROM MNOrder a where POID = @poid AND CustCDID = (select CustCDID from Orders where ID = @ID) 
 
 
 END
