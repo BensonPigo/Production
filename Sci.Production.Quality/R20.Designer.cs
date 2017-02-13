@@ -340,6 +340,7 @@
             this.Controls.Add(this.label9);
             this.Controls.Add(this.panel1);
             this.Name = "R20";
+            this.Text = "R20.Right First Time Daily Report   ";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
