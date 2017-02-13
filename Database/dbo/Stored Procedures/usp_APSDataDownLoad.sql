@@ -8,7 +8,7 @@ BEGIN
 	DECLARE	@_i int
 
 	--避免Divide by zero error encountered
-	SET ARITHABORT OFF 
+	SET ARITHABORT ON 
 	SET ANSI_WARNINGS OFF
 
 	--SewingLine
