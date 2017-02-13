@@ -37,7 +37,7 @@ namespace Sci.Production.Packing
             if (ListCheck.Checked)
             {
                 #region ListCheck
-                toExcel("Packing_P14.xltx", 1);
+                toExcel("Packing_P14.xltx", 1, dt);
                 #endregion
             }
             if (SlipCheck.Checked)
@@ -57,7 +57,7 @@ namespace Sci.Production.Packing
                                 PONo = m.First()["CustPONo"].ToString(),
                                 Dest = m.First()["Dest"].ToString(),
                                 BuyerDelivery = m.First()["BuyerDelivery"].ToString(),
-                                CartonNum = string.Join(", ", m.Select(r => r["CTNStartNo"].ToString()))
+                                CartonNum = string.Join(", ", m.Select(r => r["CTNStartNo"].ToString().Trim()))
                             }).ToList();
                 //
                 string sql = @"
@@ -75,29 +75,29 @@ namespace Sci.Production.Packing
 
                 DataTable k;
                 MyUtility.Tool.ProcessWithObject(Slip, "", sql, out k, "#Tmp");
-                dt = k;
-                toExcel("Packing_P14_TransferSlip.xltx", 3);
+                toExcel("Packing_P14_TransferSlip.xltx", 3, k);
                 #endregion
             }
             return true;
         }
 
-        private void toExcel(string xltFile, int headerRow)
+        private void toExcel(string xltFile, int headerRow, DataTable ExcelTable)
         {
-            if (dt == null || dt.Rows.Count <= 0)
+            if (ExcelTable == null || ExcelTable.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("No data!!");
                 return;
             }
 
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltFile); //預先開啟excel app
-            bool result = MyUtility.Excel.CopyToXls(dt, "", xltfile: xltFile, headerRow: headerRow, excelApp: objApp);
+            bool result = MyUtility.Excel.CopyToXls(ExcelTable, "", showExcel: false, xltfile: xltFile, headerRow: headerRow, excelApp: objApp);
+            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
             if (!result) { 
                 MyUtility.Msg.WarningBox(result.ToString(), "Warning");
             }
             else if (xltFile.EqualString("Packing_P14_TransferSlip.xltx"))
             {
-                Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 if (date1 != null && date2 != null)
                     objSheets.Cells[2, 2] = date1 + " ~ " + date2;
                 if (packID != null)
@@ -105,9 +105,21 @@ namespace Sci.Production.Packing
                 if (SPNo != null)
                     objSheets.Cells[2, 8] = SPNo;
 
-                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-                
+
+                this.ShowWaitMessage("Excel Processing...");
+                for (int i = 1; i <= ExcelTable.Rows.Count; i++)
+                {
+                    string str = objSheets.Cells[i + headerRow, 8].Value;
+                    if (!MyUtility.Check.Empty(str))
+                        objSheets.Cells[i + headerRow, 8] = str.Trim();
+                }
             }
+
+            objSheets.Columns.AutoFit();
+            objSheets.Rows.AutoFit();
+            objApp.Visible = true;
+
+            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
         }
 
