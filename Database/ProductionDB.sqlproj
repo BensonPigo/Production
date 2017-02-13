@@ -2102,6 +2102,8 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Stored Procedures\imp_BundleTransfer.sql" />
+    <Build Include="dbo\Stored Procedures\PPIC_Report04.sql" />
+    <Build Include="dbo\Stored Procedures\PPIC_Report_QtyBreakdown.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
