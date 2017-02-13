@@ -29,8 +29,9 @@ namespace Sci.Production.Quality
             this.comboBox1.ReadOnly = false;
             maindr = mainDr;
             canedit = CanEdit;
-            button_enable(canedit);
             btn_status(id);
+            button_enable(canedit);
+          
 
             string air_cmd = string.Format("select * from air where id='{0}'", id);
             DataRow dr;
@@ -293,6 +294,7 @@ namespace Sci.Production.Quality
                             btn_status(this.textID.Text);
                             this.save.Text = "Edit";
                             this.Encode.Text = "Encode";
+                            this.save.Enabled = true;
                         }
                         catch (Exception ex)
                         {
@@ -359,6 +361,8 @@ namespace Sci.Production.Quality
                         MyUtility.Msg.WarningBox("Successfully");
                         this.Encode.Text = "Amend";
                         this.save.Text = "Edit";
+                        this.save.Enabled = false;
+                        
                         btn_status(this.textID.Text);
                     }
                     catch (Exception ex)
@@ -393,29 +397,14 @@ namespace Sci.Production.Quality
         }
         private void button_enable(bool canedit)
         {
-            save.Enabled = (bool)canedit;
-            //sender.ToString();
-            string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P02", "MenuDetail", "FormName");
-            string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
-            DataRow pass2_dr;
-            string pass2_cmd = string.Format("Select * from Pass2 Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
-            int lApprove = 0; //有Confirm權限皆可按Pass的Approve, 有Check權限才可按Fail的Approve(TeamLeader 有Approve權限,Supervisor有Check)
-            int lCheck = 0;
-            if (MyUtility.Check.Seek(pass2_cmd, out pass2_dr))
-            {
-                lApprove = pass2_dr["CanConfirm"].ToString() == "True" ? 1 : 0;
-                lCheck = pass2_dr["CanCheck"].ToString() == "True" ? 1 : 0;
-            }
+
+            save.Enabled = (bool)canedit && this.Encode.Text.ToString()=="Encode";
             if (maindr["Result"].ToString() == "Pass")
             {
                 Encode.Enabled = (bool)canedit;
                
             }
-            else
-            {
-                Encode.Enabled = (bool)canedit;
-                
-            }
+        
         }
 
         private void undo_Click(object sender, EventArgs e)
