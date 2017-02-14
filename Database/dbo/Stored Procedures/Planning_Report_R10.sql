@@ -264,10 +264,10 @@ BEGIN
 		select a.CountryID, MDivisionID, a.FactoryID, substring(a.OrderYYMM,5,2) as MONTH, sum(b.OrderLoadingCPU) as Capacity1, sum(c.OrderLoadingCPU) as Capacity2
 		from #tmpFactory a 
 		left join (
-			select FactoryID,substring(OrderYYMM,1,6) as OrderYYMM, OrderLoadingCPU from #tmpFinal where RIGHT(OrderYYMM,1) = 1			
+			select FactoryID,Stuff(OrderYYMM,5,1,'') as OrderYYMM, OrderLoadingCPU from #tmpFinal where RIGHT(OrderYYMM,1) = 1			
 		) b on a.FactoryID = b.FactoryID and a.OrderYYMM = b.OrderYYMM
 		left join (
-			select FactoryID,substring(OrderYYMM,1,6) as OrderYYMM, OrderLoadingCPU from #tmpFinal where RIGHT(OrderYYMM,1) = 2
+			select FactoryID,Stuff(OrderYYMM,5,1,'') as OrderYYMM, OrderLoadingCPU from #tmpFinal where RIGHT(OrderYYMM,1) = 2
 		) c on a.FactoryID = c.FactoryID and a.OrderYYMM = c.OrderYYMM
 		where (@M = '' or MDivisionID = @M)and (@Fty ='' OR a.FactoryID=@Fty)
 		group by a.CountryID,MDivisionID,a.OrderYYMM,a.FactoryID
