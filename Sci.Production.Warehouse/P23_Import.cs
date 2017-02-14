@@ -59,7 +59,7 @@ cross apply
  min(i.ConfirmDate) earliest,max(i.confirmdate) lastest,sum(iif(i.type=2,i.qty,0-i.qty)) taipei_qty 
  from dbo.Invtrans i inner join dbo.Factory f on f.id = i.FactoryID
  where i.InventoryPOID = pd.StockPOID and i.InventorySeq1 = pd.StockSeq1 
-and i.PoID = pd.ID and i.InventorySeq2 = pd.StockSeq2 and f.MDivisionID = o.MDivisionID
+and i.PoID = pd.ID and i.InventorySeq2 = pd.StockSeq2 --and f.MDivisionID = o.MDivisionID
 and (i.type=2 or i.type=6)
 group by i.InventoryPOID,i.InventorySeq1,i.InventorySeq2
 )x
