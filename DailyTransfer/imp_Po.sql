@@ -204,7 +204,7 @@ SET
       -- a.ID	     =b.ID	
       --,a.Seq1	      =b.Seq1	
       --,a.Seq2	      =b.Seq2	
-      a.FactoryID	      =(select distinct a.FactoryID from Orders a where a.POID=b.ID)
+      a.FactoryID	      =(select top 1 a.FactoryID from Orders a where a.POID=b.ID)
       ,a.RefNo	      =b.RefNo	
       ,a.SCIRefNo	      =b.SCIRefNo	
       ,a.FabricType	      =b.FabricType	
