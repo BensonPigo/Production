@@ -644,9 +644,8 @@ where a.ID='{0}'",
             }
             DataTable dt;
             DualResult result;
-            string sqlcmd = string.Format(@"select a.OrderID,a.FactoryID,b.StyleID,b.Dest,b.CustPONo,b.Qty from Cfa a
-inner join Orders b on a.OrderID=b.ID 
-where a.OrderID='{0}'", SP_text.Text);
+            string sqlcmd = string.Format(@"select a.ID,a.FactoryID,a.StyleID,a.Dest,a.CustPONo,a.Qty from Orders a
+where a.ID='{0}'", SP_text.Text);
             result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (result)
             {
@@ -681,9 +680,8 @@ where a.OrderID='{0}'", SP_text.Text);
             }
             DataTable dt;   
             DualResult result;
-            string sqlcmd = string.Format(@"select a.OrderID,a.FactoryID,b.StyleID,b.Dest,b.CustPONo,b.Qty from Cfa a
-inner join Orders b on a.OrderID=b.ID 
-where a.OrderID='{0}'", SP_text.Text);
+            string sqlcmd = string.Format(@"select a.ID,a.FactoryID,a.StyleID,a.Dest,a.CustPONo,a.Qty from Orders a
+where a.ID='{0}'", SP_text.Text);
             result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (result)
             {
