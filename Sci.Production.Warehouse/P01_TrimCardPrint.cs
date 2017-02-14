@@ -47,11 +47,6 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            return true;
-        }
-
-        protected override Ict.DualResult OnAsyncDataLoad(ReportEventArgs e)
-        {
             DualResult result = Result.True;
             if (dtPrint != null) dtPrint.Rows.Clear();
 
@@ -179,20 +174,28 @@ and not ob.SuppID = 'fty-c'
             }
             #endregion
 
+            
+            if (dtPrint != null && dtPrint.Rows.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                SetCount(0);
+                MessageBox.Show("Data not found!!");
+                return false;
+            }
+        }
+
+        protected override Ict.DualResult OnAsyncDataLoad(ReportEventArgs e)
+        {
+            e.Report.ReportDataSource = dtPrint;
+
             try
             {
-                e.Report.ReportDataSource = dtPrint;
+                //顯示筆數
                 SetCount(dtPrint.Rows.Count);
-                if (dtPrint != null && dtPrint.Rows.Count > 0)
-                {
-                    //顯示筆數
-                    SetCount(dtPrint.Rows.Count);
-                    return transferToExcel();
-                }
-                else
-                {
-                    return new DualResult(false, "Data not found.");
-                }
+                return transferToExcel();
             }
             catch (Exception ex)
             {
