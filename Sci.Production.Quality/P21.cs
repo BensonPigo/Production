@@ -540,7 +540,8 @@ where a.ID='{0}'",
             base.ClickNewAfter();
             CurrentMaintain["Status"] = "New";            
             CurrentMaintain["cDate"] = DateTime.Now;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;                        
+            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            CurrentMaintain["MDivisionid"] = Sci.Env.User.Keyword;
         }
         // edit前檢查
         protected override bool ClickEditBefore()
