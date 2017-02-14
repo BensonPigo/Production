@@ -262,7 +262,7 @@ SET
       ,a.EditDate	      =b.EditDate	
 	  ,a.RevisedETD = b.RevisedETD
 	  ,a.CfmETA =b.CfmETA,
-	   a.BrandId = (select distinct a.BrandID from Orders a where a.POID=b.ID)
+	   a.BrandId = (select top 1 a.BrandID from Orders a where a.POID=b.ID)
 	
 
 from Production.dbo.PO_Supp_Detail as a 
@@ -340,7 +340,7 @@ select
        b.ID
       ,Seq1
       ,Seq2
-      ,(select distinct a.FactoryID from Orders a where a.POID=b.ID)
+      ,(select top 1 a.FactoryID from Orders a where a.POID=b.ID)
       ,RefNo
       ,SCIRefNo
       ,FabricType
@@ -398,7 +398,7 @@ select
       ,b.EditDate
 	  ,b.RevisedETD
 	  ,b.CfmETA 
-	  ,(select distinct a.BrandID from Orders a where a.POID=b.ID)
+	  ,(select top 1 a.BrandID from Orders a where a.POID=b.ID)
 from Trade_To_Pms.dbo.PO_Supp_Detail as b inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
 where not exists(select id from Production.dbo.PO_Supp_Detail as a where a.id = b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2	)
 
