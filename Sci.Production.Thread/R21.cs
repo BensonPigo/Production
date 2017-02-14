@@ -217,7 +217,7 @@ namespace Sci.Production.Thread
             {
                 string sql = @"select distinct 
                                     ThreadlocationID,
-                                    (select Description from dbo.ThreadLocation where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
+                                    (select distinct Description from dbo.ThreadLocation where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
                                from dbo.ThreadStock 
                                order by ThreadlocationID";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
@@ -233,7 +233,7 @@ namespace Sci.Production.Thread
             {
                 string sql = @"select distinct 
                                     ThreadlocationID,
-                                    (select Description from dbo.ThreadLocation where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
+                                    (select distinct Description from dbo.ThreadLocation where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
                                from dbo.ThreadStock 
                                order by ThreadlocationID";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
