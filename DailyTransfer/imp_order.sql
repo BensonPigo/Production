@@ -1115,7 +1115,7 @@ s.POID
 		--------------MNOrder_Color---------------------M/NOtice ³æ-Color Description
 		Merge Production.dbo.MNOrder_Color as t
 		Using (select a.* from Trade_To_Pms.dbo.MNOrder_Color a inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.colorid=s.colorid 
+		on t.id=s.id and t.colorid=s.colorid and t.seqno=s.seqno
 		when matched then 
 			update set 
 			t.ColorName= s.ColorName,
