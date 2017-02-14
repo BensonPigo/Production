@@ -915,7 +915,7 @@ order by oa.Seq,os.Seq", orderID, seq);
 
             //檢查PackingList狀態：(1)PackingList如果已經Confirm就出訊息告知使用者且不做任事 (2)如果已經有Invoice No就出訊息告知使用者且不做任事
             DataRow seekData;
-            string seekCmd = "select Status, INVNo from PackingList where ID = '" + CurrentMaintain["ID"].ToString().Trim() + "'";
+            string seekCmd = "select Status, GMTBookingLock from PackingList where ID = '" + CurrentMaintain["ID"].ToString().Trim() + "'";
             if (MyUtility.Check.Seek(seekCmd, out seekData))
             {
                 if (seekData["Status"].ToString() == "Confirmed")
@@ -924,7 +924,7 @@ order by oa.Seq,os.Seq", orderID, seq);
                     return;
                 }
 
-                if (!MyUtility.Check.Empty(seekData["INVNo"]))
+                if (seekData["GMTBookingLock"].ToString() == "Y")
                 {
                     MyUtility.Msg.WarningBox("SP# was booking!! You can't switch to packing list.");
                     return;
