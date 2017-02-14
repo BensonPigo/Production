@@ -9,6 +9,7 @@ using Ict.Win;
 using Sci;
 using Sci.Data;
 using Ict;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
@@ -93,6 +94,76 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                 //};
                 #endregion
 
+                DataGridViewGeneratorNumericColumnSettings inspection = new DataGridViewGeneratorNumericColumnSettings();
+                inspection.CellMouseDoubleClick += (s, e) =>
+                {
+                    string sql = @"
+                                    Select 
+                                        a.id,
+                                        a.poid,
+                                        SEQ1,
+                                        SEQ2,
+                                        Receivingid,
+                                        Refno,
+                                        SCIRefno,
+                                        Suppid,
+                                        ArriveQty,
+                                        InspDeadline,
+                                        Result,
+                                        PhysicalEncode,
+                                        WeightEncode,
+                                        ShadeBondEncode,
+                                        ContinuityEncode,
+                                        NonPhysical,
+                                        Physical,
+                                        TotalInspYds,
+                                        PhysicalDate,
+                                        Physical,
+                                        NonWeight, 
+                                        Weight,
+                                        WeightDate,
+                                        Weight,
+                                        NonShadebond,
+                                        Shadebond,
+                                        ShadebondDate,
+                                        shadebond,
+                                        NonContinuity,
+                                        Continuity,
+                                        ContinuityDate,
+                                        Continuity,
+                                        a.Status,ReplacementReportID,(seq1+seq2) as seq,
+                                        (Select weavetypeid from Fabric b where b.SCIRefno =a.SCIrefno) as weavetypeid,
+                                        c.Exportid,c.whseArrival,dbo.getPass1(a.Approve) as approve1,approveDate,approve,
+                                        (Select d.colorid from PO_Supp_Detail d Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2) as Colorid,
+                                        (Select ID+' - '+ AbbEn From Supp Where a.suppid = supp.id) as SuppEn,
+                                        c.ExportID as Wkno
+                                    From FIR a Left join Receiving c on c.id = a.receivingid
+                                    Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2 order by seq1,seq2 ";
+                    List<SqlParameter> sqlPar = new List<SqlParameter>();
+                    sqlPar.Add(new SqlParameter("@poid", dr["id"].ToString()));
+                    sqlPar.Add(new SqlParameter("@seq1", dr["seq1"].ToString()));
+                    sqlPar.Add(new SqlParameter("@seq2", dr["seq2"].ToString()));
+
+                    DataTable dt;
+                    DualResult result;
+                    if (!(result = DBProxy.Current.Select(null, sql, sqlPar, out dt)))
+                    {
+                        MyUtility.Msg.ErrorBox(result.Description);
+                        return;
+                    }
+                    else if (dt == null || dt.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.ErrorBox("Data not found!!");
+                        return;
+                    }
+                    else
+                    {
+                        DataRow data = dt.Rows[0];
+                        var frm = new Sci.Production.Quality.P01_PhysicalInspection(false, data["ID"].ToString(), null, null, data);
+                        frm.ShowDialog(this);
+                        frm.Dispose();
+                    };
+                };
                 //設定gridFirAir的顯示欄位
                 this.gridFirAir.IsEditingReadOnly = true;
                 this.gridFirAir.DataSource = bsAIR_FIR;
@@ -103,7 +174,7 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                      .Date("ETA", header: "ETA", width: Widths.AnsiChars(11))
                      .Numeric("ArriveQty", header: "Total" + Environment.NewLine + "Ship Qty", width: Widths.AnsiChars(6), integer_places: 9, decimal_places: 2)
                      .Text("Result", header: "Overall" + Environment.NewLine + "Result", width: Widths.AnsiChars(8))
-                     .Numeric("InspRate", header: "% of" + Environment.NewLine + "Inspection", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
+                     .Numeric("InspRate", header: "% of" + Environment.NewLine + "Inspection", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2, settings: inspection)
                      .Numeric("TotalInspYds", header: "Total" + Environment.NewLine + "Inspected YDS", width: Widths.AnsiChars(6), integer_places: 9, decimal_places: 2)
                      .Numeric("TotalDefectPoint", header: "Total Point" + Environment.NewLine + "Defects", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0)
                      .Text("Physical", header: "Physical", width: Widths.AnsiChars(8))
