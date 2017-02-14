@@ -27,7 +27,7 @@ namespace Sci.Production.Warehouse
 
             if (ReportResourceName == "P07_Report2.rdlc")
             {
-                if (!poidList.Contains(this.textBox1.Text.TrimEnd(), StringComparer.OrdinalIgnoreCase))
+                if (!MyUtility.Check.Empty(textBox1.Text) && !poidList.Contains(this.textBox1.Text.TrimEnd(), StringComparer.OrdinalIgnoreCase))
                 {
                     MyUtility.Msg.ErrorBox("SP# is not found.");
                     return false;
@@ -68,8 +68,7 @@ namespace Sci.Production.Warehouse
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FTYID", FTYID));
    
             DataTable dt;
-            DualResult result = DBProxy.Current.Select("",
-            @"select  
+            string sql = @"select  
 			R.Roll,R.Dyelot,R.PoId,R.Seq1+'-'+R.Seq2 AS SEQ
 			,DBO.getMtlDesc(R.POID,R.Seq1,R.Seq2,2,0)[Desc]
 			,R.ShipQty,R.pounit,R.StockQty,R.StockUnit, R.Weight,R.ActualWeight
@@ -80,7 +79,16 @@ namespace Sci.Production.Warehouse
 			,[SubStockQty]=sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
             ,[SubVaniance]=sum(R.ActualWeight - R.Weight)OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )  			
             from dbo.Receiving_Detail R
-            where R.id = @ID", pars, out dt);
+            where R.id = @ID ";
+
+            if (!MyUtility.Check.Empty(textBox1.Text))
+            {
+                pars.Add(new SqlParameter("@poid", textBox1.Text));
+                sql += " and R.Poid = @poid";
+            }
+
+            DualResult result = DBProxy.Current.Select("",
+            sql, pars, out dt);
             if (!result) { return result; }
             if (ReportResourceName == "P07_Report2.rdlc")
             {
