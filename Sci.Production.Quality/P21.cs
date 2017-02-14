@@ -18,8 +18,8 @@ namespace Sci.Production.Quality
 {
     public partial class P21 : Sci.Win.Tems.Input6
     {
+        
         private string loginID = Sci.Env.User.UserID;
-        private string Factory = Sci.Env.User.Keyword;
         string tmpId;
 
         private Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
@@ -160,7 +160,7 @@ where a.ID='{0}'",
                 if (e.Button== System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    string item_cmd = "  select ID from GarmentDefectCode";
+                    string item_cmd = "  select ID,Description from GarmentDefectCode";
                     SelectItem item = new SelectItem(item_cmd, "15", dr["GarmentDefectCodeid"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult== DialogResult.Cancel)
@@ -190,7 +190,7 @@ where a.ID='{0}'",
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    string item_cmd = "  select ID from GarmentDefectCode";
+                    string item_cmd = "  select ID,Description from GarmentDefectCode";
                     SelectItem item = new SelectItem(item_cmd, "15", dr["GarmentDefectCodeid"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -417,6 +417,7 @@ where a.ID='{0}'",
         }
        
         // save 前檢查
+
         protected override bool ClickSaveBefore()
         {
           
@@ -476,23 +477,33 @@ where a.ID='{0}'",
                     return false;
                 }
             }
-            foreach (DataRow dr in afterDT.Rows)
+
+            int t = afterDT.Rows.Count;
+            for (int i = t - 1; i >= 0; i--)
             {
-                if (MyUtility.Check.Empty(dr["GarmentDefectCodeid"]))
+                if (MyUtility.Check.Empty(afterDT.Rows[i]["GarmentDefectCodeid"]) &&
+                    MyUtility.Check.Empty(afterDT.Rows[i]["qty"]))
+                {
+                    gridDT.Rows[i].Delete();
+                    continue;
+                }
+                if (MyUtility.Check.Empty(afterDT.Rows[i]["GarmentDefectCodeid"]))
                 {
                     MyUtility.Msg.WarningBox("<Defect Code> cannot be empty", "Warning");
                     return false;
                 }
-                if (MyUtility.Check.Empty(dr["CFAAreaID"]))
+                if (MyUtility.Check.Empty(afterDT.Rows[i]["CFAAreaID"]))
                 {
                     MyUtility.Msg.WarningBox("<Area Code> cannot be empty", "Warning");
                     return false;
                 }
-                if (MyUtility.Check.Empty(dr["Qty"]))
+                if (MyUtility.Check.Empty(afterDT.Rows[i]["qty"]))
                 {
-                    MyUtility.Msg.WarningBox("<No. of Defects> cannot be empty", "Warning");
+                     MyUtility.Msg.WarningBox("<No. of Defects> cannot be empty", "Warning");
                     return false;
                 }
+            
+           
             }
 
             //取單號
@@ -522,13 +533,14 @@ where a.ID='{0}'",
             }
             return base.ClickSaveBefore();
         }
+  
 
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
             CurrentMaintain["Status"] = "New";            
             CurrentMaintain["cDate"] = DateTime.Now;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Keyword;                        
+            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;                        
         }
         // edit前檢查
         protected override bool ClickEditBefore()
