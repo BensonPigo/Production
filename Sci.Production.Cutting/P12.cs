@@ -106,8 +106,8 @@ namespace Sci.Production.Cutting
             string sqlWhere = ""; string sb = "";
             List<string> sqlWheres = new List<string>();
 
-            sqlWheres.Add("b.MDivisionID=@Factory");
-            lis.Add(new SqlParameter("@Factory", Sci.Env.User.Factory));
+            sqlWheres.Add("b.MDivisionID=@Keyword");
+            lis.Add(new SqlParameter("@Keyword", Sci.Env.User.Keyword));
 
 
             if (!this.textBox1.Text.Empty() && !this.textBox2.Text.Empty())
