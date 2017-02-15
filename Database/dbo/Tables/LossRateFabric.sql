@@ -13,7 +13,7 @@
     [AddDate]        DATETIME       NULL,
     [EditName]       VARCHAR (10)   CONSTRAINT [DF_LossRateFabric_EditName] DEFAULT ('') NULL,
     [EditDate]       DATETIME       NULL,
-    [MaxLossQty] NUMERIC(6) NULL, 
+    [MaxLossQty] NUMERIC(6) NULL DEFAULT ((0)), 
     CONSTRAINT [PK_LossRateFabric] PRIMARY KEY CLUSTERED ([WeaveTypeID] ASC)
 );
 
