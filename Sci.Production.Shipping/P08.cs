@@ -124,7 +124,7 @@ where sd.ID = '{0}'", masterID);
             base.OnDetailEntered();
             ChangeCombo2DataSource();
             bool status = MyUtility.Check.Empty(CurrentMaintain["Accountant"]);
-            button2.Enabled = status ? !EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, this.Text, "CanConfirm") : MyUtility.Check.Empty(CurrentMaintain["VoucherID"]) && Prgs.GetAuthority(CurrentMaintain["Accountant"].ToString(), this.Text, "CanUnConfirm");
+            button2.Enabled = status ? !EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P08. Account Payment - Shipping", "CanConfirm") : MyUtility.Check.Empty(CurrentMaintain["VoucherID"]) && Prgs.GetAuthority(CurrentMaintain["Accountant"].ToString(), "P08. Account Payment - Shipping", "CanUnConfirm");
             button2.Text = status ? "Acct. Approve" : "Acct. Unapprove";
             button2.ForeColor = status ? Color.Blue : Color.Black;
         }
