@@ -125,6 +125,7 @@
             this.txtmultifactory1.IsSupportEditMode = false;
             this.txtmultifactory1.Location = new System.Drawing.Point(75, 13);
             this.txtmultifactory1.Name = "txtmultifactory1";
+            this.txtmultifactory1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
             this.txtmultifactory1.ReadOnly = true;
             this.txtmultifactory1.Size = new System.Drawing.Size(450, 23);
             this.txtmultifactory1.TabIndex = 2;
