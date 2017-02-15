@@ -955,6 +955,7 @@
             this.textBox4.TabIndex = 5;
             this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
             this.textBox4.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
+            this.textBox4.Validated += new System.EventHandler(this.textBox4_Validated);
             // 
             // comboBox1
             // 

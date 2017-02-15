@@ -751,6 +751,14 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             }
         }
 
+        private void textBox4_Validated(object sender, EventArgs e)
+        {
+            if (this.EditMode && !MyUtility.Check.Empty(textBox4.Text) && textBox4.OldValue != textBox4.Text)
+            {
+                CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), textBox4.Text));
+            }
+        }  
+
         //自動帶出PaytermARID
         private void GetPaytermAP()
         {
@@ -1221,7 +1229,8 @@ order by fwd.WhseNo", this.textBox7.Text.ToString().Trim());
         private void maskedTextBox1_Validated(object sender, EventArgs e)
         {
             MyUtility.Msg.InfoBox("validated");
-        }       
+        }
+     
 
     }
 }
