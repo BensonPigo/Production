@@ -12,7 +12,7 @@ using Ict;
 using Ict.Win;
 using Sci.Win;
 using System.IO;
-using Word = Microsoft.Office.Interop.Word;
+//using Word = Microsoft.Office.Interop.Word;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -226,12 +226,12 @@ and not ob.SuppID = 'fty-c'
             //Create a new document
             Microsoft.Office.Interop.Word._Document document = winword.Documents.Add(ref temfile, ref missing, ref missing, ref missing);
 
-            Word.Table tables = null;
+            Microsoft.Office.Interop.Word.Table tables = null;
 
             try
             {
                 document.Activate();
-                Word.Tables table = document.Tables;
+                Microsoft.Office.Interop.Word.Tables table = document.Tables;
 
                 //retreive the first table of the document
                 tables = table[1];
