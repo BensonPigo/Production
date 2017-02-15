@@ -25,6 +25,7 @@ namespace Sci.Production.Sewing
         }
         protected override bool OnSaveBefore()
         {
+            grid.ValidateControl();
             foreach (DataRow row in this.CurrentSubDetailDatas.Rows)
             {
                 if (row.RowState != DataRowState.Deleted)
