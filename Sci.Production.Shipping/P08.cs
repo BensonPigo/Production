@@ -561,9 +561,9 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         //Type
         private void comboBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode == true && MyUtility.Convert.GetString(comboBox1.SelectedValue) != MyUtility.Convert.GetString(CurrentMaintain["Type"]))
+            if (EditMode == true && MyUtility.Convert.GetString(comboBox1.OldValue) != MyUtility.Convert.GetString(comboBox1.SelectedValue))
             {
-                CurrentMaintain["Type"] = comboBox1.SelectedValue;
+                //CurrentMaintain["Type"] = comboBox1.SelectedValue;
                 if (comboBox1.SelectedIndex != -1)
                 {
                     ChangeCombo2DataSource();
