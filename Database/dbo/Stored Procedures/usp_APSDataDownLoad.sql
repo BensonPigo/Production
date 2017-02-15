@@ -512,7 +512,7 @@ BEGIN
 				select @apseff = Efficiency from #ProdEff
 				
 				IF @apseff is null
-					select @maxeff = isnull(IIF(COUNT(ID) = 0,0,(SUM(EFFICIENCY)/COUNT(ID))),0) from #tmpAPSSchedule where ID = @apsno
+					select @maxeff = isnull(IIF(COUNT(ID) = 0,0,(iif(COUNT(ID) = 0,0,SUM(EFFICIENCY)/COUNT(ID)))),0) from #tmpAPSSchedule where ID = @apsno
 				ELSE
 					SET @maxeff = @apseff
 
@@ -548,7 +548,7 @@ BEGIN
 						insert into SewingSchedule(OrderID,ComboType,SewingLineID,AlloQty,Inline,Offline,MDivisionID,FactoryID,Sewer,TotalSewingTime,MaxEff,StandardOutput,WorkDay,WorkHour,APSNo,OrderFinished,AddName,AddDate)
 						values (@orderid,@combotype,@sewinglineid,@alloqty,@inline,@offline,
 						(select MDivisionID from Factory where ID = @factoryid),
-						@factoryid,@sewer,@gsd,CONVERT(numeric(5,2),isnull(@maxeff*100,0)),CONVERT(int,ROUND(isnull((3600/@gsd*@sewer*@maxeff),0),0)),
+						@factoryid,@sewer,@gsd,CONVERT(numeric(5,2),isnull(@maxeff*100,0)),CONVERT(int,ROUND(iif(@gsd*@sewer*@maxeff = 0,0,(3600/@gsd*@sewer*@maxeff)),0)),
 						isnull((select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0),
 						CONVERT(numeric(8,3),@duration),@apsno,(select Finished from Orders where ID = @orderid),@login,@editdate);
 
@@ -589,7 +589,7 @@ BEGIN
 						select @apseff = Efficiency from #ProdEff
 						
 						IF @apseff is null
-							select @maxeff = IIF(COUNT(ID) = 0,0,(SUM(EFFICIENCY)/COUNT(ID))) from #tmpAPSSchedule where ID = @apsno
+							select @maxeff = IIF(COUNT(ID) = 0,0,(iif(COUNT(ID) = 0,0,SUM(EFFICIENCY)/COUNT(ID)))) from #tmpAPSSchedule where ID = @apsno
 						ELSE
 							SET @maxeff = @apseff
 
@@ -622,7 +622,7 @@ BEGIN
 								SET @sewer = isnull((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid),0)
 								update SewingSchedule 
 								set SewingLineID = @sewinglineid, AlloQty = isnull(@alloqty,0), Inline = @inline, Offline = @offline, Sewer = isnull(@sewer,0), 
-									TotalSewingTime = isnull(@gsd,0), MaxEff = CONVERT(numeric(5,2),isnull(@maxeff*100,0)), StandardOutput = IIF(@gsd is null or @gsd = 0 ,0,CONVERT(int,ROUND(isnull((3600/@gsd*@sewer*@maxeff),0),0))), WorkDay = isnull((select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0), 
+									TotalSewingTime = isnull(@gsd,0), MaxEff = CONVERT(numeric(5,2),isnull(@maxeff*100,0)), StandardOutput = IIF(@gsd is null or @gsd = 0 ,0,CONVERT(int,ROUND(iif(@gsd*@sewer*@maxeff = 0,0,(3600/@gsd*@sewer*@maxeff)),0))), WorkDay = isnull((select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0), 
 									WorkHour = CONVERT(numeric(8,3),isnull(@duration,0)), EditName = @login, EditDate = @editdate
 								where ID = @sewingscheduleid;
 
