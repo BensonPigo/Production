@@ -122,8 +122,8 @@ namespace Sci.Production.Cutting
             worksheet.Cells[10, 13] = OrderDr["Sewline"];
             for (int nColumn = 3; nColumn <= 21; nColumn += 3)
             {
-                worksheet.Cells[28, nColumn] = OrderDr["Styleid"];
-                worksheet.Cells[29, nColumn] = detDr["ID"];
+                worksheet.Cells[36, nColumn] = OrderDr["Styleid"];
+                worksheet.Cells[37, nColumn] = detDr["ID"];
             }
 
             int nSheet = 1;
@@ -182,8 +182,8 @@ namespace Sci.Production.Cutting
 
                     for (int nColumn = 3; nColumn <= 22; nColumn += 3)
                     {
-                        worksheet.Cells[25, nColumn] = WorkorderArry[0]["Refno"];
-                        worksheet.Cells[26, nColumn] = WorkorderArry[0]["Colorid"];
+                        worksheet.Cells[33, nColumn] = WorkorderArry[0]["Refno"];
+                        worksheet.Cells[34, nColumn] = WorkorderArry[0]["Colorid"];
                     }
                     #endregion
                 }
@@ -384,7 +384,6 @@ Cutplanid, str_PIVOT);
             excel.Visible = true;
             return true;
         }
-
         public bool ByCutrefExcel()
         {
             int nSizeColumn;
