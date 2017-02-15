@@ -1295,8 +1295,8 @@ s.FabricUkey_Old
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
-declare @Odate_s datetime = (SELECT DateStart FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
-declare @Odate_e datetime = (SELECT DateEnd FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
+declare @Odate_s datetime = (SELECT TOP 1 DateStart FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
+declare @Odate_e datetime = (SELECT TOP 1 DateEnd FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
 
 select * into #tmpOrders 
 from Production.dbo.Orders a
@@ -1327,221 +1327,221 @@ and a.LocalOrder = 0
 -------------------------------------Order_Article
 Delete b
 from Production.dbo.Order_Article b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_Artwork
 Delete b
 from Production.dbo.Order_Artwork b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_BOA_CustCD
 Delete b
 from Production.dbo.Order_BOA_CustCD b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_BOA_Expend
 Delete b
 from Production.dbo.Order_BOA_Expend b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_BOA_KeyWord
 Delete b
 from Production.dbo.Order_BOA_KeyWord b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_BOA_Shell
 Delete b
 from Production.dbo.Order_BOA_Shell b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_BOA
 Delete b
 from Production.dbo.Order_BOA b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_BOF_Expend
 Delete b
 from Production.dbo.Order_BOF_Expend b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_BOF_Shell
 Delete b
 from Production.dbo.Order_BOF_Shell b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_BOF
 Delete b
 from Production.dbo.Order_BOF b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 
 -------------------------------------Order_ColorCombo
 Delete b
 from Production.dbo.Order_ColorCombo b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 
 -------------------------------------Order_CTNData
 Delete b
 from Production.dbo.Order_CTNData b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_EachCons_Article
 Delete b
 from Production.dbo.Order_EachCons_Article b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_EachCons_Color
 Delete b
 from Production.dbo.Order_EachCons_Color b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_EachCons_Color_Article
 Delete b
 from Production.dbo.Order_EachCons_Color_Article b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_EachCons_PatternPanel
 Delete b
 from Production.dbo.Order_EachCons_PatternPanel b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_EachCons_SizeQty
 Delete b
 from Production.dbo.Order_EachCons_SizeQty b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_EachCons
 Delete b
 from Production.dbo.Order_EachCons b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_FabricCode_Article
 Delete b
 from Production.dbo.Order_FabricCode_Article b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_FabricCode_QT
 Delete b
 from Production.dbo.Order_FabricCode_QT b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_FabricCode
 Delete b
 from Production.dbo.Order_FabricCode b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_History
 Delete b
 from Production.dbo.Order_History b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_MarkerList_Article
 Delete b
 from Production.dbo.Order_MarkerList_Article b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_MarkerList_PatternPanel
 Delete b
 from Production.dbo.Order_MarkerList_PatternPanel b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_MarkerList_SizeQty
 Delete b
 from Production.dbo.Order_MarkerList_SizeQty b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_MarkerList
 Delete b
 from Production.dbo.Order_MarkerList b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_PFHis
 Delete b
 from Production.dbo.Order_PFHis b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_Qty
 Delete b
 from Production.dbo.Order_Qty b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_QtyCTN
 Delete b
 from Production.dbo.Order_QtyCTN b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_QtyShip
 Delete b
 from Production.dbo.Order_QtyShip b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_QtyShip_Detail
 Delete b
 from Production.dbo.Order_QtyShip_Detail b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_SizeCode
 Delete b
 from Production.dbo.Order_SizeCode b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_SizeItem
 Delete b
 from Production.dbo.Order_SizeItem b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_SizeSpec
 Delete b
 from Production.dbo.Order_SizeSpec b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_Surcharge
 Delete b
 from Production.dbo.Order_Surcharge b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_TmsCost
 Delete b
 from Production.dbo.Order_TmsCost b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------Order_UnitPrice
 Delete b
 from Production.dbo.Order_UnitPrice b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------MNOrder
 Delete b
 from Production.dbo.MNOrder b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------MNOrder_BOA
 Delete b
 from Production.dbo.MNOrder_BOA b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------MNOrder_BOF
 Delete b
 from Production.dbo.MNOrder_BOF b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------MNOrder_Color
 Delete b
 from Production.dbo.MNOrder_Color b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------MNOrder_ColorCombo
 Delete b
 from Production.dbo.MNOrder_ColorCombo b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------MNOrder_FabricCode
 Delete b
 from Production.dbo.MNOrder_FabricCode b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------MNOrder_Qty
 Delete b
 from Production.dbo.MNOrder_Qty b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------MNOrder_SizeCode
 Delete b
 from Production.dbo.MNOrder_SizeCode b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------MNOrder_SizeItem
 Delete b
 from Production.dbo.MNOrder_SizeItem b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------MNOrder_SizeSpec
 Delete b
 from Production.dbo.MNOrder_SizeSpec b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------[dbo].[PO]
 Delete b
 from Production.dbo.PO b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------[dbo].[PO_Supp]
 Delete b
 from Production.dbo.PO_Supp b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------[dbo].[PO_Supp_Detail]
 Delete b
 from Production.dbo.PO_Supp_Detail b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------[dbo].[PO_Supp_Detail_OrderList]
 Delete b
 from Production.dbo.PO_Supp_Detail_OrderList b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------[dbo].[Cutting]
 Delete b
 from Production.dbo.Cutting b
-where exists(select id from #tmpOrders as a where a.id = b.id)
+where NOT exists(select id from #tmpOrders as a where a.id = b.id)
 -------------------------------------CuttingTape[dbo].[CuttingTape]
 Delete b
 from Production.dbo.CuttingTape b
-where exists(select id from #tmpOrders as a where a.id = b.POID)
+where NOT exists(select id from #tmpOrders as a where a.id = b.POID)
 -------------------------------------[dbo].[CuttingTape_Detail]
 Delete b
 from Production.dbo.CuttingTape_Detail b
-where exists(select id from #tmpOrders as a where a.id = b.POID)
+where NOT exists(select id from #tmpOrders as a where a.id = b.POID)
 -----------------------------------------------------------------------------------------------------------
 
 Merge Production.dbo.OrderComparisonList as t
@@ -1553,14 +1553,15 @@ values('No Change!',@dToDay,    @OldDate,    s.ID);
 -----------------------------------------------------------------------------------------------------------
 drop table #tmpOrders
 drop table #TOrder
-----------------------刪除表頭多的資料order 最後刪除
-Delete Production.dbo.Orders
-from Production.dbo.Orders as a left join Trade_To_Pms.dbo.Orders as b
-on a.id = b.id
-where b.id is null
-AND a.BuyerDelivery = (SELECT DateStart FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
-AND a.SciDelivery = (SELECT DateEnd FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
-AND a.LocalOrder = 0
+------------------------刪除表頭多的資料order 最後刪除
+-- 
+--Delete Production.dbo.Orders
+--from Production.dbo.Orders as a left join Trade_To_Pms.dbo.Orders as b
+--on a.id = b.id
+--where b.id is null
+--AND a.BuyerDelivery = (SELECT TOP 1 DateStart FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
+--AND a.SciDelivery = (SELECT TOP 1 DateEnd FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
+--AND a.LocalOrder = 0
 
 END
 ------------------------------------------------------------------------------------------------------------------------
