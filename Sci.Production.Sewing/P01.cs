@@ -422,7 +422,6 @@ namespace Sci.Production.Sewing
         //重組表身Grid的QA Qty資料
         protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
         {
-            
             if (EditMode && DoSubForm.DialogResult == DialogResult.OK)
             {
                 StringBuilder QAOutput = new StringBuilder();
@@ -438,10 +437,15 @@ namespace Sci.Production.Sewing
                         }
                     }                    
                 }
-                CurrentDetailData["QAOutput"] = QAOutput.Length > 0 ? QAOutput.ToString() : "";
-                CurrentDetailData["QAQty"] = QAQty;
+                //CurrentDetailData["QAOutput"] = QAOutput.Length > 0 ? QAOutput.ToString() : "";
+                //CurrentDetailData["QAQty"] = QAQty;
+                //CurrentDetailData.EndEdit();
+                //CalculateDefectQty(CurrentDetailData);
 
-                CalculateDefectQty(CurrentDetailData);
+                e.Detail["QAOutput"] = QAOutput.Length > 0 ? QAOutput.ToString() : "";
+                e.Detail["QAQty"] = QAQty;
+                //e.Detail.EndEdit();
+                CalculateDefectQty(e.Detail);
             }
             return base.ConvertSubDetailDatasFromDoSubForm(e);
         }
@@ -832,56 +836,182 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             CurrentMaintain["Efficiency"] = MyUtility.Convert.GetDecimal(CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["ManHour"]) == 0 ? 0 : MyUtility.Convert.GetDecimal(gridQaQty) / (3600 / MyUtility.Convert.GetDecimal(CurrentMaintain["TMS"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["ManHour"])) * 100;
             return base.ClickSaveBefore();
         }
-    
+        //protected override DualResult ClickSavePost()
+        //{
+        //    List<DataRow> Inserted = new List<DataRow>();
+        //    List<DataRow> Updated = new List<DataRow>();
+        //    List<DataRow> deleteList = new List<DataRow>();
+        //    ITableSchema sub_Schema;
+        //    var ok = DBProxy.Current.GetTableSchema(null, this.SubGridAlias, out sub_Schema);
+        //    if (!ok) { return ok; };
+
+
+
+        //    foreach (DataRow detail in this.DetailDatas)
+        //    {
+        //        DataTable subDetails;
+        //        var result = this.GetSubDetailDatas(detail, out subDetails);
+        //        if (!result) { return result; }
+        //        foreach (DataRow dr in subDetails.Rows)
+        //        {
+        //            if (MyUtility.Convert.GetInt(dr["QAQty"]) <= 0)
+        //                deleteList.Add(dr);
+        //            else
+        //            {
+        //                if (dr.RowState == DataRowState.Added && MyUtility.Convert.GetInt(dr["QAQty"]) > 0)
+        //                    Updated.Add(dr);
+        //                else if (MyUtility.Convert.GetInt(dr["QAQty"]) != MyUtility.Convert.GetInt(dr["QAQty", DataRowVersion.Original]))
+        //                {
+        //                    Updated.Add(dr);
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    //var newT = Updated[0].Table.Clone();
+        //    //List<DataRow> xx = new List<DataRow>();
+        //    //var newOne = newT.NewRow();
+        //    //newOne.ItemArray = Updated[0].ItemArray;
+        //    //xx.Add(newOne);
+        //    //newT.Rows.Add(newOne);
+        //    //newT.AcceptChanges();
+        //    //newOne["QaQty"] = "3";
+        //    //ok = DBProxy.Current.Batch(null, sub_Schema, xx);
+        //    //if (!ok) { return ok; };
+
+
+        //    ok = DBProxy.Current.Deletes(null, sub_Schema, deleteList);
+        //    if (!ok) { return ok; };
+        //    foreach (var row in Updated) {
+        //        bool xx;
+        //        ok = DBProxy.Current.UpdateByChanged(null, sub_Schema, row,out xx);
+        //        if (!ok) { return ok; };
+        //    }
+            
+
+
+        //    ok = DBProxy.Current.Inserts(null, sub_Schema, Inserted);
+        //    return ok;
+
+        //    //return base.ClickSavePost();
+        //}
         protected override DualResult ClickSaveSubDetial(SubDetailSaveEventArgs e)
         {
+            //return Result.True;
             List<DataRow> Inserted = new List<DataRow>();
             List<DataRow> Updated = new List<DataRow>();
             List<DataRow> deleteList = new List<DataRow>();
+            ITableSchema sub_Schema;
+            var ok = DBProxy.Current.GetTableSchema(null, this.SubGridAlias, out sub_Schema);
+            if (!ok) { return ok; };
+
+
+
             foreach (KeyValuePair<DataRow, DataTable> it in e.SubDetails)
             {
                 foreach (DataRow dr in it.Value.Rows)
                 {
-                    if (dr.RowState == DataRowState.Added)
-                    {
-                        if (MyUtility.Convert.GetInt(dr["QAQty"]) <= 0)
+                    if (MyUtility.Convert.GetInt(dr["QAQty"]) <= 0)
+                        deleteList.Add(dr); 
+                    else{
+                        if (dr.RowState == DataRowState.Added && MyUtility.Convert.GetInt(dr["QAQty"]) > 0)
                         {
                             Inserted.Add(dr);
-                            deleteList.Add(dr);
                         }
-                    }
-                    if (dr.RowState == DataRowState.Modified)
-                    {
-                        if (MyUtility.Convert.GetInt(dr["QAQty"]) <= 0)
+                        else if (MyUtility.Convert.GetInt(dr["QAQty"]) != MyUtility.Convert.GetInt(dr["QAQty", DataRowVersion.Original]))
                         {
                             Updated.Add(dr);
-                            deleteList.Add(dr);
-                            //dr.Delete();
                         }
                     }
+                    //if (dr.RowState == DataRowState.Added)
+                    //{
+                    //    if (MyUtility.Convert.GetInt(dr["QAQty"]) <= 0)
+                    //    {
+                    //        Inserted.Add(dr);
+                    //        deleteList.Add(dr);
+                    //    }
+                    //}
+                    //if (dr.RowState == DataRowState.Modified)
+                    //{
+                    //    if (MyUtility.Convert.GetInt(dr["QAQty"]) <= 0)
+                    //    {
+                    //        Updated.Add(dr);
+                    //        deleteList.Add(dr);
+                    //        //dr.Delete();
+                    //    }
+                    //}
                 }
             }
-            if (deleteList.Count != 0)
-            {
-                foreach (DataRow dr in deleteList)
+
+
+            List<DataRow> NewUpdated = new List<DataRow>();
+            if (Updated.Count > 0) {
+                var newT = Updated[0].Table.Clone();
+                for (int i = 0; i < Updated.Count; i++)
                 {
-                    dr.Delete();
+
+                    var newOne = newT.NewRow();
+                    newOne.ItemArray = Updated[i].ItemArray;
+                    newOne["QaQty"] = Updated[i]["qaqty", DataRowVersion.Original];
+                    NewUpdated.Add(newOne);
+                    newT.Rows.Add(newOne);
+                    //newOne["QaQty"] = Updated[i]["qaqty"];
+                }
+                newT.AcceptChanges();
+                for (int i = 0; i < Updated.Count; i++)
+                {
+                    NewUpdated[i]["QaQty"] = Updated[i]["qaqty"];
                 }
             }
-          DualResult result = base.ClickSaveSubDetial(e);
+
+            List<DataRow> NewDelete = new List<DataRow>();
+            if (deleteList.Count > 0)
+            {
+                var newT = deleteList[0].Table.Clone();
+                for (int i = 0; i < deleteList.Count; i++)
+                {
+
+                    var newOne = newT.NewRow();
+                    newOne.ItemArray = deleteList[i].ItemArray;
+                    newOne["QaQty"] = deleteList[i]["qaqty", DataRowVersion.Original];
+                    NewDelete.Add(newOne);
+                    newT.Rows.Add(newOne);
+                    //newOne["QaQty"] = Updated[i]["qaqty"];
+                }
+                newT.AcceptChanges();
+                for (int i = 0; i < deleteList.Count; i++)
+                {
+                    NewDelete[i]["QaQty"] = 0;
+                }
+            }
+
+            ok = DBProxy.Current.Deletes(null, sub_Schema, NewDelete);
+            if (!ok) { return ok; };
+            ok = DBProxy.Current.Batch(null, sub_Schema, NewUpdated);
+            if (!ok) { return ok; };
+            ok = DBProxy.Current.Inserts(null, sub_Schema, Inserted);
+            return ok;
+          //  if (deleteList.Count != 0)
+          //  {
+          //      foreach (DataRow dr in deleteList)
+          //      {
+          //          dr.Delete();
+          //      }
+          //  }
+          //DualResult result = base.ClickSaveSubDetial(e);
             
-            if (!result)
-            {
-                foreach (DataRow dr in Inserted)
-                {
-                    dr.SetAdded();
-                }
-                foreach (DataRow dr in Updated)
-                {
-                    dr.SetModified();
-                }
-            }
-            return result;
+          //  if (!result)
+          //  {
+          //      foreach (DataRow dr in Inserted)
+          //      {
+          //          dr.SetAdded();
+          //      }
+          //      foreach (DataRow dr in Updated)
+          //      {
+          //          dr.SetModified();
+          //      }
+          //  }
+          //  return result;
         }
 
         //Date
