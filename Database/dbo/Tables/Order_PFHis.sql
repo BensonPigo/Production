@@ -3,7 +3,7 @@
     [NewSciDelivery] DATE           NULL,
     [OldSciDelivery] DATE           NULL,
     [LETA]           DATE           NULL,
-    [Remark]         NVARCHAR (100) CONSTRAINT [DF_Order_PFHis_Reamrk] DEFAULT ('') NULL,
+    [Remark]         NVARCHAR (200) CONSTRAINT [DF_Order_PFHis_Reamrk] DEFAULT ('') NULL,
     [AddName]        VARCHAR (10)   CONSTRAINT [DF_Order_PFHis_AddName] DEFAULT ('') NULL,
     [AddDate]        DATETIME       NULL,
     [Ukey]           BIGINT         CONSTRAINT [DF_Order_PFHis_Ukey] DEFAULT ((0)) NOT NULL,
