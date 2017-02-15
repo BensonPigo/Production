@@ -210,12 +210,12 @@ and not ob.SuppID = 'fty-c'
             Object temfile; ;
 
             if (radioOther.Checked)
-                temfile = Sci.Env.Cfg.XltPathDir + "\\Warehouse-P01.TrimCardPrint_B.dot";
+                temfile = Sci.Env.Cfg.XltPathDir + "\\Warehouse-P01.TrimCardPrint_B.dotx";
             else
-                temfile = Sci.Env.Cfg.XltPathDir + "\\Warehouse-P01.TrimCardPrint_A.dot";
-
+                temfile = Sci.Env.Cfg.XltPathDir + "\\Warehouse-P01.TrimCardPrint_A.dotx";
+            this.ShowWaitMessage(temfile.ToString());
             Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
-
+            winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
             //Set status for word application is to be visible or not.
             winword.Visible = false;
 
