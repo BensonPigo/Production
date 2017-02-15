@@ -446,7 +446,9 @@ namespace Sci.Production.Sewing
                 e.Detail["QAQty"] = QAQty;
                 //e.Detail.EndEdit();
                 CalculateDefectQty(e.Detail);
+                this.numericBox5.Value = QAQty;
             }
+            this.detailgrid.AutoResizeColumns();
             return base.ConvertSubDetailDatasFromDoSubForm(e);
         }
 
