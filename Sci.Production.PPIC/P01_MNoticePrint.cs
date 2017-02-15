@@ -54,7 +54,7 @@ namespace Sci.Production.PPIC
 
         protected override bool ToExcel()
         {
-           if (radioButton_MNotice.Checked == true)
+            if (radioButton_MNotice.Checked == true)
             {
 
                 string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
@@ -119,20 +119,26 @@ namespace Sci.Production.PPIC
                     sxr.dicDatas.Add(sxr._v + "S2_Tbl1" + idxStr, tbl1);
                     sxr.dicDatas.Add(sxr._v + "S2_Tbl2" + idxStr, tbl2);
                     sxr.dicDatas.Add(sxr._v + "S2_Tbl3" + idxStr, tbl3);
+                    if (dts[3].Rows.Count > 0)
                     sxr.dicDatas.Add(sxr._v + "S2_Tbl4" + idxStr, dts[3]); //COLOR list
+                    if (dts[4].Rows.Count > 0)
                     sxr.dicDatas.Add(sxr._v + "S2_Tbl5" + idxStr, dts[4]); //Fabric list
+                    if (dts[5].Rows.Count > 0)
                     sxr.dicDatas.Add(sxr._v + "S2_Tbl6" + idxStr, dts[5]); //Accessories list
-                    sxr.dicDatas.Add(sxr._v + "S2SHIPINGMARK" + idxStr, new sxrc.xltLongString(dts[6].Rows[0]["shipingMark"].ToString()));
-                    sxr.dicDatas.Add(sxr._v + "S2PACKING" + idxStr, new sxrc.xltLongString(dts[7].Rows[0]["Packing"].ToString()));
-                    sxr.dicDatas.Add(sxr._v + "S2LH" + idxStr, new sxrc.xltLongString(dts[8].Rows[0]["Label"].ToString()));
+                    if (dts[6].Rows.Count > 0)
+                        sxr.dicDatas.Add(sxr._v + "S2SHIPINGMARK" + idxStr, new sxrc.xltLongString(dts[6].Rows[0]["shipingMark"].ToString()));
+                    if (dts[7].Rows.Count > 0)
+                        sxr.dicDatas.Add(sxr._v + "S2PACKING" + idxStr, new sxrc.xltLongString(dts[7].Rows[0]["Packing"].ToString()));
+                    if (dts[8].Rows.Count > 0)
+                        sxr.dicDatas.Add(sxr._v + "S2LH" + idxStr, new sxrc.xltLongString(dts[8].Rows[0]["Label"].ToString()));
 
                 }
                 sxr.isProtect = true;
                 sxr.boOpenFile = true;
                 sxr.Save();
             }
-                      
-            //M/Notict (Combo by CustCD)
+
+             //M/Notict (Combo by CustCD)
             else
             {
                 string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
@@ -320,7 +326,7 @@ where POID = @poid group by POID,b.spno";
         void rd_CheckedChanged(object sender, EventArgs e)
         {
             chkAdditional.Visible = false;
-            chkAdditional.Visible = radioButton_MNotice.Checked || radioButton_ByCustCD.Checked; 
+            chkAdditional.Visible = radioButton_MNotice.Checked || radioButton_ByCustCD.Checked;
         }
     }
 }
