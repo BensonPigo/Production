@@ -86,7 +86,7 @@ namespace Sci.Production.PPIC
             (Select distinct c.cuttingsp from orders c, (SELECT orderid
             FROM Sewingschedule b 
             WHERE Inline <= '{0}' And offline is not null and offline !=''
-            AND b.FactoryID = '{1}' group by b.orderid) d where c.id = d.orderid and c.FactoryID = '{1}')) f
+            AND b.FactoryID = '{1}' group by b.orderid) d where c.id = d.orderid and c.FtyGroup = '{1}')) f
             on cutting.id = f.ID", sewdate, Sci.Env.User.Factory);
 
             DBProxy.Current.DefaultTimeout = 300;
@@ -126,7 +126,7 @@ namespace Sci.Production.PPIC
                AND b.FactoryID = '{1}' group by b.orderid) d 
             where c.id = d.orderid and c.IsForecast = 0 and c.LocalOrder = 0 ) e Where e.cuttingsp is not null 
 			and e.cuttingsp not in (Select id from cutting)) cut
-            where ord.cuttingsp = cut.CuttingSP and ord.FactoryID = '{1}'
+            where ord.cuttingsp = cut.CuttingSP and ord.FtyGroup = '{1}'
           group by ord.CuttingSp order by ord.CuttingSP", sewdate, Sci.Env.User.Factory);
             dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);
             string sewin, sewof;
@@ -147,7 +147,7 @@ namespace Sci.Production.PPIC
                AND b.FactoryID = '{1}' group by b.orderid) d 
             where c.id = d.orderid and c.IsForecast = 0 and c.LocalOrder = 0 ) e Where e.cuttingsp is not null 
 			and e.cuttingsp in (Select id from cutting)) cut
-            where ord.cuttingsp = cut.CuttingSP and ord.FactoryID = '{1}'
+            where ord.cuttingsp = cut.CuttingSP and ord.FtyGroup = '{1}'
           group by ord.CuttingSp order by ord.CuttingSP", sewdate, Sci.Env.User.Factory);
             dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);
             foreach (DataRow dr in cuttingtb.Rows)
@@ -186,7 +186,5 @@ namespace Sci.Production.PPIC
             DBProxy.Current.DefaultTimeout = 0;
 
         }
-
-
     }
 }
