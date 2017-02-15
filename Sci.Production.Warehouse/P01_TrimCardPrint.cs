@@ -12,9 +12,8 @@ using Ict;
 using Ict.Win;
 using Sci.Win;
 using System.IO;
-//using Word = Microsoft.Office.Interop.Word;
+using Word = Microsoft.Office.Interop.Word;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 
 namespace Sci.Production.Warehouse
@@ -220,18 +219,15 @@ and not ob.SuppID = 'fty-c'
             //Set status for word application is to be visible or not.
             winword.Visible = false;
 
-            //Create a missing variable for missing value
-            object missing = System.Reflection.Missing.Value;
-
             //Create a new document
-            Microsoft.Office.Interop.Word._Document document = winword.Documents.Add(ref temfile, ref missing, ref missing, ref missing);
+            Microsoft.Office.Interop.Word._Document document = winword.Documents.Add(ref temfile);
 
-            Microsoft.Office.Interop.Word.Table tables = null;
+            Word.Table tables = null;
 
             try
             {
                 document.Activate();
-                Microsoft.Office.Interop.Word.Tables table = document.Tables;
+                Word.Tables table = document.Tables;
 
                 //retreive the first table of the document
                 tables = table[1];
@@ -515,7 +511,7 @@ and not ob.SuppID = 'fty-c'
             catch (Exception ex)
             {
                 if (null != winword)
-                    winword.Quit(ref missing, ref missing, ref missing);
+                    winword.Quit();
                 return new DualResult(false, "Export word error.", ex);
             }
             finally
