@@ -63,6 +63,7 @@
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.button9 = new Sci.Win.UI.Button();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -79,6 +80,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtSeq1);
             this.masterpanel.Controls.Add(this.checkBox1);
             this.masterpanel.Controls.Add(this.button9);
             this.masterpanel.Controls.Add(this.label8);
@@ -149,6 +151,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
             this.masterpanel.Controls.SetChildIndex(this.button9, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSeq1, 0);
             // 
             // detailpanel
             // 
@@ -163,6 +166,7 @@
             // 
             // refresh
             // 
+            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.refresh.Location = new System.Drawing.Point(996, 0);
             this.refresh.TabIndex = 0;
             // 
@@ -303,7 +307,7 @@
             this.dateBox1.Location = new System.Drawing.Point(342, 47);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 4;
+            this.dateBox1.TabIndex = 3;
             // 
             // textBox3
             // 
@@ -313,7 +317,7 @@
             this.textBox3.Location = new System.Drawing.Point(94, 47);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(120, 23);
-            this.textBox3.TabIndex = 1;
+            this.textBox3.TabIndex = 0;
             this.textBox3.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
             // 
             // displayBox2
@@ -324,7 +328,7 @@
             this.displayBox2.Location = new System.Drawing.Point(94, 80);
             this.displayBox2.Name = "displayBox2";
             this.displayBox2.Size = new System.Drawing.Size(120, 23);
-            this.displayBox2.TabIndex = 2;
+            this.displayBox2.TabIndex = 1;
             // 
             // label1
             // 
@@ -343,7 +347,7 @@
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.ReadOnly = true;
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 3;
+            this.dateBox2.TabIndex = 2;
             // 
             // dateBox3
             // 
@@ -351,7 +355,7 @@
             this.dateBox3.Location = new System.Drawing.Point(375, 80);
             this.dateBox3.Name = "dateBox3";
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 5;
+            this.dateBox3.TabIndex = 4;
             // 
             // dateBox4
             // 
@@ -359,7 +363,7 @@
             this.dateBox4.Location = new System.Drawing.Point(613, 47);
             this.dateBox4.Name = "dateBox4";
             this.dateBox4.Size = new System.Drawing.Size(130, 23);
-            this.dateBox4.TabIndex = 7;
+            this.dateBox4.TabIndex = 6;
             // 
             // dateBox5
             // 
@@ -369,7 +373,7 @@
             this.dateBox5.Name = "dateBox5";
             this.dateBox5.ReadOnly = true;
             this.dateBox5.Size = new System.Drawing.Size(130, 23);
-            this.dateBox5.TabIndex = 6;
+            this.dateBox5.TabIndex = 5;
             // 
             // dateBox6
             // 
@@ -380,7 +384,7 @@
             this.dateBox6.Name = "dateBox6";
             this.dateBox6.ReadOnly = true;
             this.dateBox6.Size = new System.Drawing.Size(130, 23);
-            this.dateBox6.TabIndex = 8;
+            this.dateBox6.TabIndex = 7;
             // 
             // btModifyRollDyelot
             // 
@@ -389,7 +393,7 @@
             this.btModifyRollDyelot.Location = new System.Drawing.Point(743, 76);
             this.btModifyRollDyelot.Name = "btModifyRollDyelot";
             this.btModifyRollDyelot.Size = new System.Drawing.Size(131, 43);
-            this.btModifyRollDyelot.TabIndex = 10;
+            this.btModifyRollDyelot.TabIndex = 9;
             this.btModifyRollDyelot.Text = "Modify Roll & Dyelot";
             this.btModifyRollDyelot.UseVisualStyleBackColor = true;
             this.btModifyRollDyelot.Click += new System.EventHandler(this.btModifyRollDyelot_Click);
@@ -401,7 +405,7 @@
             this.btDownloadSample.Location = new System.Drawing.Point(880, 125);
             this.btDownloadSample.Name = "btDownloadSample";
             this.btDownloadSample.Size = new System.Drawing.Size(178, 30);
-            this.btDownloadSample.TabIndex = 13;
+            this.btDownloadSample.TabIndex = 12;
             this.btDownloadSample.Text = "Download Sample File";
             this.btDownloadSample.UseVisualStyleBackColor = true;
             this.btDownloadSample.Click += new System.EventHandler(this.btDownloadSample_Click);
@@ -413,7 +417,7 @@
             this.btPrintSticker.Location = new System.Drawing.Point(880, 76);
             this.btPrintSticker.Name = "btPrintSticker";
             this.btPrintSticker.Size = new System.Drawing.Size(178, 43);
-            this.btPrintSticker.TabIndex = 11;
+            this.btPrintSticker.TabIndex = 10;
             this.btPrintSticker.Text = "Print Fabric Sticker for SMS";
             this.btPrintSticker.UseVisualStyleBackColor = true;
             this.btPrintSticker.Click += new System.EventHandler(this.btPrintSticker_Click);
@@ -425,7 +429,7 @@
             this.button5.Location = new System.Drawing.Point(880, 39);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(178, 31);
-            this.button5.TabIndex = 9;
+            this.button5.TabIndex = 8;
             this.button5.Text = "Accumulated Qty";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.btAccumulated_Click);
@@ -437,7 +441,7 @@
             this.btImportFromExcel.Location = new System.Drawing.Point(743, 175);
             this.btImportFromExcel.Name = "btImportFromExcel";
             this.btImportFromExcel.Size = new System.Drawing.Size(161, 30);
-            this.btImportFromExcel.TabIndex = 19;
+            this.btImportFromExcel.TabIndex = 18;
             this.btImportFromExcel.Text = "Import From Excel";
             this.btImportFromExcel.UseVisualStyleBackColor = true;
             this.btImportFromExcel.Click += new System.EventHandler(this.btImportFromExcel_Click);
@@ -448,7 +452,7 @@
             this.button7.Location = new System.Drawing.Point(743, 125);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(131, 30);
-            this.button7.TabIndex = 12;
+            this.button7.TabIndex = 11;
             this.button7.Text = "Update Act. (kg)";
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.btUpdateActWeight_Click);
@@ -487,7 +491,7 @@
             // button8
             // 
             this.button8.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button8.Location = new System.Drawing.Point(279, 175);
+            this.button8.Location = new System.Drawing.Point(352, 174);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(98, 30);
             this.button8.TabIndex = 15;
@@ -503,7 +507,7 @@
             this.textBox1.Location = new System.Drawing.Point(128, 179);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(145, 23);
-            this.textBox1.TabIndex = 14;
+            this.textBox1.TabIndex = 13;
             // 
             // label5
             // 
@@ -517,7 +521,7 @@
             // label8
             // 
             this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(390, 179);
+            this.label8.Location = new System.Drawing.Point(463, 178);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(75, 23);
             this.label8.TabIndex = 16;
@@ -534,19 +538,19 @@
             "Fabric",
             "Accessory",
             "Other"});
-            this.comboBox1.Location = new System.Drawing.Point(468, 178);
+            this.comboBox1.Location = new System.Drawing.Point(541, 177);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(100, 24);
-            this.comboBox1.TabIndex = 17;
+            this.comboBox1.TabIndex = 16;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // button9
             // 
             this.button9.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button9.Location = new System.Drawing.Point(574, 175);
+            this.button9.Location = new System.Drawing.Point(647, 174);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(80, 30);
-            this.button9.TabIndex = 18;
+            this.button9.TabIndex = 17;
             this.button9.Text = "Delete all";
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.btDeleteAllDetail_Click);
@@ -564,6 +568,16 @@
             this.checkBox1.TabIndex = 62;
             this.checkBox1.Text = "3rd Country";
             this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // txtSeq1
+            // 
+            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq1.Location = new System.Drawing.Point(280, 179);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 14;
             // 
             // P07
             // 
@@ -643,5 +657,6 @@
         private Win.UI.Button button9;
         private Win.UI.Label label8;
         private Win.UI.ComboBox comboBox1;
+        private Class.txtSeq txtSeq1;
     }
 }

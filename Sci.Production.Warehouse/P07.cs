@@ -1124,6 +1124,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
             this.DetailSelectCommand = string.Format(@"select a.id,a.MDivisionID,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+,a.Poid + concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as PoidSeq
 ,(select p1.FabricType from PO_Supp_Detail p1 where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
 ,a.shipqty
 ,a.Weight
@@ -1287,7 +1288,14 @@ where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword);
         private void btFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("poid", textBox1.Text.TrimEnd());
+            int index = -1;
+
+            if(txtSeq1.checkEmpty(showErrMsg: false)) {
+                index = detailgridbs.Find("poid", textBox1.Text.TrimEnd());
+            }else{
+                index = detailgridbs.Find("PoidSeq", textBox1.Text.TrimEnd() + txtSeq1.getSeq());
+            }
+            
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
