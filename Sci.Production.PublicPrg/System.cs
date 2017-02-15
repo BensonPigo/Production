@@ -75,6 +75,9 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             {
                 //Sci.Env.User.PositionID
                 string PositionID = "1";
+                string sql = string.Format("select FKPass0 from Pass1 where ID='{0}'",Sci.Env.User.UserID);
+                PositionID = MyUtility.GetValue.Lookup(sql);
+
                 DataTable dt;
                 DualResult result = DBProxy.Current.Select(null, string.Format("select {0} as Result from Pass2 where FKPass0 = {1} and UPPER(BarPrompt) = N'{2}'", pass2colname, PositionID, formcaption.ToUpper()), out dt);
                 if (!result)
