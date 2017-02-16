@@ -899,6 +899,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
         //}
         protected override DualResult ClickSaveSubDetial(SubDetailSaveEventArgs e)
         {
+            DualResult result = base.ClickSaveSubDetial(e);
             //return Result.True;
             List<DataRow> Inserted = new List<DataRow>();
             List<DataRow> Updated = new List<DataRow>();
@@ -999,33 +1000,18 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
                 }
             }
 
+            foreach (DataRow dr in Inserted)
+            {
+                string x = dr.RowState.ToString();
+            }
+
+            
             ok = DBProxy.Current.Deletes(null, sub_Schema, NewDelete);
             if (!ok) { return ok; };
             ok = DBProxy.Current.Batch(null, sub_Schema, NewUpdated);
             if (!ok) { return ok; };
-            ok = DBProxy.Current.Inserts(null, sub_Schema, Inserted);
+            //ok = DBProxy.Current.Inserts(null, sub_Schema, Inserted);
             return ok;
-          //  if (deleteList.Count != 0)
-          //  {
-          //      foreach (DataRow dr in deleteList)
-          //      {
-          //          dr.Delete();
-          //      }
-          //  }
-          //DualResult result = base.ClickSaveSubDetial(e);
-            
-          //  if (!result)
-          //  {
-          //      foreach (DataRow dr in Inserted)
-          //      {
-          //          dr.SetAdded();
-          //      }
-          //      foreach (DataRow dr in Updated)
-          //      {
-          //          dr.SetModified();
-          //      }
-          //  }
-          //  return result;
         }
 
         //Date
