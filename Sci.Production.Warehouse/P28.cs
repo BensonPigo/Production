@@ -268,7 +268,7 @@ left join dbo.MDivisionPoDetail mpd on mpd.MDivisionID = o.MDivisionID
             {
                 sqlcmd.Append(string.Format(@" cross apply
 (
-	select distinct 1 abc from dbo.Invtrans where type=1 and ConfirmDate >='{0}' and ConfirmDate<='{1}' and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2
+	select distinct 1 abc from dbo.Invtrans where type=1 and (convert(varchar, ConfirmDate, 111) between convert(varchar, '{0}', 111) and convert(varchar, '{1}', 111)) and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2
 ) z ", InputDate_b, InputDate_e));
             }
  sqlcmd.Append(string.Format(@" outer apply
