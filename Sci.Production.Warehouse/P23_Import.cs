@@ -86,7 +86,7 @@ select 0 AS selected,'' as id
 ,fi.Ukey as fromftyinventoryukey 
 ,fi.InQty,fi.OutQty,fi.AdjustQty
 ,fi.InQty - fi.OutQty + fi.AdjustQty as balanceQty
-,0 as qty
+,0.00 as qty
 ,StockUnit
 ,isnull((select inqty from dbo.FtyInventory t 
 	where t.MDivisionID = #tmp.MDivisionID and t.POID = #tmp.POID and t.seq1 = #tmp.seq1 and t.seq2 = #tmp.seq2 and t.StockType = 'B' 
