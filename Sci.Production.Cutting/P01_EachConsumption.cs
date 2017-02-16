@@ -90,7 +90,9 @@ namespace Sci.Production.Cutting
             Fabric.Width as FabricWidth 
             ,type2 = (case when  a.TYPE = 0 then ''
 	           when a.TYPE = 'C' then 'Cutting Piece'
+               when a.TYPE = '1' then 'Cutting Piece'
 	           when a.TYPE = 'T' then 'TAPE'
+               when a.TYPE = '2' then 'TAPE'
 	           end) 
             ,createby2 = concat(a.AddName,' ' ,FORMAT(a.AddDate,'yyyy/MM/dd HH:mm:ss'))
             ,editby2 = concat(a.EditName,' ' , FORMAT(a.EditDate,'yyyy/MM/dd HH:mm:ss'))
