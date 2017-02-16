@@ -375,8 +375,7 @@ namespace Production.Daily
             #region 開始執行轉入
             result = DailyImport(importRegion);
 
-            endDate = DateTime.Now;
-
+            endDate = DateTime.Now;            
             if (!result) 
             {
                 ErrMail("Import", transferPMS.Regions_All); //importRegion);
@@ -470,7 +469,9 @@ Region      Succeeded       Message
 ***--------------------------------------------------------***
 ";
             string totalMsg = "";
-            TransRegion Region = Regions_All[0];
+          
+                TransRegion Region = Regions_All[0];   
+            
             string RegionStr = Region.Region;            
             string Msg = "";//tfTrade.Regions_All[i].Message;
             bool success = Region.Succeeded;
@@ -637,15 +638,33 @@ Region      Succeeded       Message
             {
                 return Ict.Result.True;
             }
-            
             #region 檢查FTP檔案的日期是否正確 
-            if (!transferPMS.CheckRar_CreateDate(region, region.RarName, false))
+            if (isAuto)
             {
-                String subject = "PMS transfer data (New) ERROR";
-                String desc = "Wrong the downloaded file date!!,Pls contact with Taipei.";
-                SendMail(subject, desc);
-                return Ict.Result.F("Wrong the downloaded file date!!,Pls contact with Taipei.");
+                if (!transferPMS.CheckRar_CreateDate(region, region.RarName, false))
+                {
+                    String subject = "PMS transfer data (New) ERROR";
+                    String desc = "Wrong the downloaded file date!!,Pls contact with Taipei.";
+                    SendMail(subject, desc);
+                    return Ict.Result.F("Wrong the downloaded file date!!,Pls contact with Taipei.");
+                }
             }
+            //else
+            //{
+            //    string path = ConfigurationSettings.AppSettings["DataSourcePath"].ToString();
+            //    string sourceFile = path + "\\" + region.RarName;
+            //    string RaRLastEditDate = File.GetLastWriteTime(sourceFile).ToString("yyyyMMdd");
+            //    string Today = DateTime.Now.ToString("yyyyMMdd");
+            //    if (RaRLastEditDate != Today)
+            //    {
+            //        String subject = "PMS transfer data (New) ERROR";
+            //        String desc = "Wrong the downloaded file date!!,Pls Check File is New";
+            //        SendMail(subject, desc);
+            //        return Ict.Result.F("Wrong the downloaded file date!!,Pls Check File is New");
+        
+            //    }
+            //}
+            
             #endregion
             #region 刪除DataBase
             result = transferPMS.DeleteDatabase(region);
@@ -889,7 +908,7 @@ Region      Succeeded       Message
 
             string sourceFile = path + "\\" + region.RarName;
             //copy來源檔案備份            
-            string copyFile = path + "\\COPY_" + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMdd") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + region.RarName;
+            string copyFile = path + "\\COPY_" + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMdd") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) +"_"+ region.RarName;
             //@"D:\SQL_DB\Trade_To_Pms\wt_VN.rar";//目標檔案位置
             string destFile = region.DirName + region.RarName;
             //@"D:\SQL_DB\Trade_To_Pms";//目標資料夾位置
@@ -949,7 +968,7 @@ Region      Succeeded       Message
             }
             return true;
         }
-
+        
 
         //刪除目錄下所有檔案
         private static void DeleteDirectory(string fileName)
