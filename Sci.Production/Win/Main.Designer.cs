@@ -50,7 +50,7 @@
             this.Controls.Add(this.menus);
             this.MainMenuStrip = this.menus;
             this.Name = "Main";
-            this.Text = "Demo";
+            this.Text = "Login";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Controls.SetChildIndex(this.menus, 0);
             this.ResumeLayout(false);
