@@ -88,7 +88,7 @@ namespace Sci.Production.Cutting
             EC_Size.TotalQty , 
             concat(RTrim(Fabric.Refno),'-',Fabric.Description) as FabricDesc,
             Fabric.Width as FabricWidth 
-            ,type2 = (case when  a.TYPE = 0 then ''
+            ,type2 = (case when  a.TYPE = '0' then ''
 	           when a.TYPE = 'C' then 'Cutting Piece'
                when a.TYPE = '1' then 'Cutting Piece'
 	           when a.TYPE = 'T' then 'TAPE'
