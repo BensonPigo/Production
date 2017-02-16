@@ -26,14 +26,17 @@ BEGIN
   DROP TABLE Express_CTNData
 END
 
-SELECT * INTO Express
+SELECT * 
+INTO Express
 FROM [Production].dbo.Express  WHERE (AddDate >= DATEADD(DAY, -30, GETDATE()) or EditDate >= DATEADD(DAY, -30, GETDATE())) ORDER BY Id
 
-SELECT B.* INTO Express_Detail
-FROM  Production.dbo.Express  A, [Production].dbo.Express_Detail  B WHERE A.ID = B.ID ORDER BY B.ID 
+SELECT B.* 
+INTO Express_Detail
+FROM  Pms_To_Trade.dbo.Express  A, [Production].dbo.Express_Detail  B WHERE A.ID = B.ID ORDER BY B.ID 
 
-SELECT B.* INTO  Express_CTNData
-FROM Production.dbo.Express A, [Production].dbo.Express_CTNData B WHERE A.ID = B.ID ORDER BY B.ID 
+SELECT B.* 
+INTO  Express_CTNData
+FROM Pms_To_Trade.dbo.Express A, [Production].dbo.Express_CTNData B WHERE A.ID = B.ID ORDER BY B.ID 
 
 UPDATE [Production].dbo.Express 
 SET  SendDate =GETDATE()
