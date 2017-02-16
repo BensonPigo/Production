@@ -88,6 +88,7 @@ IF OBJECT_ID(N'dbo.MachineIn_Detail') IS NOT NULL
 BEGIN
   DROP TABLE MachineIn_Detail
 END
+
 SELECT * 
 INTO  PartPO
 FROM Machine.dbo.PartPO 
@@ -113,20 +114,22 @@ AND (cdate>=DATEADD(DAY,-7,GETDATE())  OR EditDate >= DATEADD(DAY,-7,GETDATE()))
 And Status <> 'Junked'
 AND PurchaseFrom = 'T'
 ------------------------------------------------
+
 SELECT pod.ID,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.PartBrandID, pod.suppid, pod.SEQ2 
 INTO  PartPO_Detail
-FROM Machine.dbo.PartPO, Machine.dbo.PartPO_Detail  pod
+FROM Pms_To_Trade.dbo.PartPO, Machine.dbo.PartPO_Detail  pod
 WHERE PartPO.id= pod.id  
 ORDER BY PartPO.id 
---SELECT pod.ID,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid, pod.SEQ2 
+
 SELECT pod.ID, pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid, pod.SEQ2 
 INTO  MachinePO_Detail
-FROM Machine.dbo.MachinePO, Machine.dbo.MachinePO_Detail  pod
+FROM Pms_To_Trade.dbo.MachinePO, Machine.dbo.MachinePO_Detail  pod
 WHERE MachinePO.id= pod.id  
 ORDER BY MachinePO.id 
+
 SELECT pod.ID,pod.MiscID, pod.UnitID, pod.PRICE, pod.QTY, pod.MiscBrandID, pod.suppid, pod.SEQ2 
 INTO  MiscPO_Detail
-FROM Machine.dbo.MiscPO, Machine.dbo.MiscPO_Detail  pod
+FROM Pms_To_Trade.dbo.MiscPO, Machine.dbo.MiscPO_Detail  pod
 WHERE MiscPO.id= pod.id  
 ORDER BY MiscPO.id 
 --------------------------------------------------------------
@@ -135,16 +138,13 @@ SET TranstoTPE = CONVERT(date, GETDATE())
 FROM Machine.dbo.PartPO AS Partpo1
 LEFT JOIN PartPO ON Partpo1.ID = PartPO.ID
 WHERE Partpo1.TranstoTPE  IS NULL
+
 UPDATE Machine.dbo.MiscPO
 SET TranstoTPE = CONVERT(date, GETDATE())
 FROM Machine.dbo.MiscPO AS MiscPO1
 LEFT JOIN MiscPO ON MiscPO1.ID = MiscPO.ID
 WHERE MiscPO1.TranstoTPE  IS NULL
---UPDATE Machine.dbo.MachinePO
---SET TranstoTPE = CONVERT(date, GETDATE())
---FROM Machine.dbo.PartPO AS Partpo1
---LEFT JOIN PartPO ON Partpo1.ID = PartPO.ID
---WHERE Partpo1.TranstoTPE  IS NULL
+
 ----------------------------------------------------------------
 SELECT * 
 INTO  PartReturnReceive
@@ -154,7 +154,7 @@ AND (cdate>=DATEADD(DAY,-7,GETDATE()) or EditDate>=DATEADD(DAY,-7,GETDATE()))
 
 SELECT Partrcvre2.* 
 INTO   PartReturnReceive_Detail
-FROM Machine.dbo.PartReturnReceive, Machine.dbo.PartReturnReceive_Detail as Partrcvre2 
+FROM Pms_To_Trade.dbo.PartReturnReceive, Machine.dbo.PartReturnReceive_Detail as Partrcvre2 
 WHERE PartReturnReceive.id=Partrcvre2.id  
 ORDER BY  PartReturnReceive.id 
 
@@ -166,7 +166,7 @@ AND (cdate>=DATEADD(DAY,-7,GETDATE()) or EditDate>=DATEADD(DAY,-7,GETDATE()))
 
 SELECT Partapp2.* 
 INTO  NewPart_Detail
-FROM Machine.dbo.NewPart, Machine.dbo.NewPart_Detail as Partapp2 
+FROM Pms_To_Trade.dbo.NewPart, Machine.dbo.NewPart_Detail as Partapp2 
 WHERE NewPart.id=Partapp2.id 
 ORDER BY NewPart.id 
 
@@ -185,7 +185,7 @@ AND mp.PurchaseFrom = 'T'
 
 SELECT Machreturn2.* 
 INTO MachineReturn_Detail
-FROM Machine.dbo.MachineReturn, Machine.dbo.MachineReturn_Detail as Machreturn2 
+FROM Pms_To_Trade.dbo.MachineReturn, Machine.dbo.MachineReturn_Detail as Machreturn2 
 WHERE MachineReturn.id=Machreturn2.id 
 ORDER BY Machreturn2.id 
 
@@ -212,7 +212,7 @@ AND MachIn1. EditInspDate >=DATEADD(DAY,-7,GETDATE())
 
 SELECT MachIn2.* 
 INTO MachineIn_Detail
-FROM Machine.dbo.MachineIn, Machine.dbo.MachineIn_Detail AS MachIn2
+FROM Pms_To_Trade.dbo.MachineIn, Machine.dbo.MachineIn_Detail AS MachIn2
 WHERE MachineIn.ID = MachIn2.ID ORDER BY MachineIn.ID 
 
 
