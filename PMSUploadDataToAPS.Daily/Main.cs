@@ -151,7 +151,7 @@ namespace PMSUploadDataToAPS.Daily
                     sqlmsg.ToString() + Environment.NewLine;
             #endregion
 
-            subject = mailTo["Subject"].ToString().TrimEnd() + this.CurrentData["RgCode"].ToString();
+            subject = mailTo["Subject"].ToString().TrimEnd() +" - ["+ this.CurrentData["RgCode"].ToString() + "]";
 
             SendMail(subject, desc);
             #endregion
@@ -171,7 +171,7 @@ namespace PMSUploadDataToAPS.Daily
                 {
                     SqlCommand cmd = new SqlCommand("usp_PMSUploadDataToAPS", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.CommandTimeout = 1800;  //30分鐘
+                    cmd.CommandTimeout = 7200;  //12分鐘
 
                     foreach (DataRow drid in tbid.Rows)
                     {
@@ -201,7 +201,7 @@ namespace PMSUploadDataToAPS.Daily
                 {
                     SqlCommand cmd = new SqlCommand("usp_PMSUploadDataToAPS", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.CommandTimeout = 600;  //10分鐘
+                    cmd.CommandTimeout = 3600;  //10分鐘
 
                     foreach (DataRow drid in tbid.Rows)
                     {
