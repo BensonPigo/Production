@@ -20,23 +20,19 @@ namespace Production.Daily
             
             DBProxy.Current.DefaultTimeout = 999999999;
             //pStartForm = "DailyTransfer";
+            //switch (pStartForm)
+            //{
+            //    case "": Application.Run(new Main("")); break;
+            //}
+
 
             switch (pStartForm)
             {
                 case "DailyTransfer": Application.Run(new Main("")); break;
                 case "": Application.Run(new Main()); break;
             }
-           
-            
-            
-            //if (args.Length == 0)
-            //{
-            //    Application.Run(new Main());
-            //}
-            //else
-            //{
-            //    Application.Run(new Main(args[0].ToString()));
-            //}
+                      
+          
             Sci.Env.AppShutdown();
         }
         public class DailyUser : Sci.IUserInfo

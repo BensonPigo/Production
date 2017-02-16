@@ -25,11 +25,17 @@ namespace Production.Daily
         bool isAuto = false;
         DataRow mailTo;
         TransferPms transferPMS = new TransferPms();
+        public int groupID_BeforeTransfer = -99999999;
+        public int groupID_AfterTransfer = 99999999;
+        
 
         public Main()
         {
             InitializeComponent();
             isAuto = false;
+            this.chk_export.Checked = true;
+            this.chk_import.Checked = true;
+
         }
 
         public Main(String _isAuto)
@@ -38,6 +44,8 @@ namespace Production.Daily
             if (String.IsNullOrEmpty(_isAuto))
             {
                 isAuto = true;
+                this.chk_export.Checked = true;
+                this.chk_import.Checked = true;
             }
         }
 
@@ -338,17 +346,18 @@ namespace Production.Daily
             transferPMS.DeleteDatabase(importRegion);
             #endregion
 
-            #region 解壓縮檔案到資料夾裡
-            if (!transferPMS.UnRAR_To_ImportDir(importRegion))
-            {
-                return new DualResult(false, "FTP Download failed!");
-            };
+            //#region 解壓縮檔案到資料夾裡
+            //if (!transferPMS.UnRAR_To_ImportDir(importRegion))
+            //{
+            //    return new DualResult(false, "FTP Download failed!");
+            //};
+         
             string rarFile = ConfigurationSettings.AppSettings["rarexefile"].ToString();
             if (!File.Exists(rarFile))
             {                
                 return new DualResult(false, "Win_RAR File does not exist !");
             }
-            #endregion
+           
             startDate = DateTime.Now;
 
             #region 開始執行轉出
@@ -494,6 +503,30 @@ Region      Succeeded       Message
             String ftpID = this.CurrentData["FtpID"].ToString().Trim();
             String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
 
+            if (this.chk_export.Checked==false)
+            {
+                return Ict.Result.True;
+            }
+            #region 解壓縮檔案到資料夾裡
+            if (isAuto)
+            {
+                //自動的話, 去FTP下載
+                if (!transferPMS.UnRAR_To_ImportDir(importRegion))
+                {
+                    return new DualResult(false, "FTP Download failed!");
+                };
+
+            }
+            else
+            {
+                if (!UnRaR(importRegion))
+                {
+                    return new DualResult(false, "rar file Download failed!");
+                };
+            }         
+           
+            #endregion
+
             #region 刪除原先的壓縮檔
             if (File.Exists(exportRegion.DirName + exportRegion.RarName))
             {
@@ -566,12 +599,14 @@ Region      Succeeded       Message
                 transferPMS.SetupData(transExport);
             }
             #endregion
+           
+           
+                if (!transferPMS.Export_Pms_To_Trade(ftpIP, ftpID, ftpPwd, _fromPath, exportRegion.DBName))
+                {
+                    return new DualResult(false, "Export failed!");
+                }
 
-            //if (!transferPMS.Export_ByRegion())
-            if (!transferPMS.Export_Pms_To_Trade(ftpIP, ftpID, ftpPwd, _fromPath, exportRegion.DBName))
-            {
-                return new DualResult(false, "Export failed!");
-            }
+                
             /*
             #region 卸載DateBase
             result = transferPMS.Detach_Database(exportRegion);
@@ -598,17 +633,12 @@ Region      Succeeded       Message
             String ftpID = this.CurrentData["FtpID"].ToString().Trim();
             String ftpPwd = this.CurrentData["FtpPwd"].ToString().Trim();
 
-            /*
-            TransRegion region = new TransRegion();
-            region.Region = importFileName;
-            region.DirName = importDataPath;
-            region.RarName = importFileName;
-            region.ConnectionName = dataBase;
-            region.DBName = dataBase;
-            region.DBFileName = dataBase;
-            region.Is_Export = true;
-            */
-            #region 檢查FTP檔案的日期是否正確
+            if (this.chk_import.Checked==false)
+            {
+                return Ict.Result.True;
+            }
+            
+            #region 檢查FTP檔案的日期是否正確 
             if (!transferPMS.CheckRar_CreateDate(region, region.RarName, false))
             {
                 String subject = "PMS transfer data (New) ERROR";
@@ -641,11 +671,34 @@ Region      Succeeded       Message
                 transferPMS.SetupData(transImport);
             }
             #endregion
+            #region 解壓縮檔案到資料夾裡
+            if (isAuto)
+            {
+                //自動的話, 去FTP下載
+                if (!transferPMS.UnRAR_To_ImportDir(region))
+                {
+                    return new DualResult(false, "FTP Download failed!");
+                };
+
+            }
+            else
+            {
+                if (!UnRaR(region))
+                {
+                    return new DualResult(false, "rar file Download failed!");
+                };
+            }
+
+            #endregion
             #region 將資料Copy To DB資料夾以掛載
             String fromPath = this.CurrentData["ImportDataPath"].ToString();
             String toPath = transImport.Rows[0]["DirName"].ToString();
-            transferPMS.UnRAR_To_ImportDir(region);
-            // File.Copy(Path.Combine(fromPath, region.DBFileName + ".mdf"), Path.Combine(toPath, region.DBFileName + ".mdf"),true);
+
+            //transferPMS.UnRAR_To_ImportDir(region);
+            //解壓縮到資料夾裡
+            
+
+
             #endregion
             #region 掛載資料庫
             transferPMS.Attach_DataBase(region, 1);
@@ -828,5 +881,108 @@ Region      Succeeded       Message
             DualResult result = DBProxy.Current.ExecuteByConn(conn, script);
             return result;
         }
+        public bool UnRaR(TransRegion region)
+        {
+            string path = ConfigurationSettings.AppSettings["DataSourcePath"].ToString();
+            Random random = new Random();
+
+
+            string sourceFile = path + "\\" + region.RarName;
+            //copy來源檔案備份            
+            string copyFile = path + "\\COPY_" + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMdd") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + region.RarName;
+            //@"D:\SQL_DB\Trade_To_Pms\wt_VN.rar";//目標檔案位置
+            string destFile = region.DirName + region.RarName;
+            //@"D:\SQL_DB\Trade_To_Pms";//目標資料夾位置
+            string destPath = region.DirName.ToString().Substring(0, region.DirName.Length - 1);
+
+            string UnRARpath = region.DirName.ToString().Substring(0, region.DirName.Length - 1);
+            string targetRar = Path.Combine(UnRARpath, region.RarName);
+
+            
+            //刪除Trade_To_Pms資料夾內檔案
+            if (File.Exists(sourceFile))
+            {
+                DeleteDirectory(destPath);    
+            }
+            
+            //複製檔案備份
+            if (File.Exists(sourceFile))
+            {
+                File.Copy(sourceFile, copyFile);
+            }
+            //移動到Trade_To_Pms
+            if (File.Exists(sourceFile))
+            {
+                File.Move(sourceFile, region.DirName+region.RarName);
+            }
+            if (File.Exists(destFile))
+            {
+
+                if (MyUtility.Check.Empty(UnRARpath))
+                {
+                    UnRARpath = targetRar.Substring(0, targetRar.LastIndexOf("\\")) + "\\";
+                }
+                else
+                {
+                    if (!System.IO.Directory.Exists(UnRARpath))
+                    {
+                        try
+                        {
+                            System.IO.Directory.CreateDirectory(UnRARpath);
+                        }
+                        catch (System.IO.IOException ex)
+                        {
+                            return new DualResult(false, "Create directory fail!", ex);
+                        }
+                    }
+                }
+                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(ConfigurationSettings.AppSettings["rarexefile"].ToString());
+                startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                string argu = (true ? "-o+ " : "") +
+                    string.Format(@"x {0} {1}", targetRar, UnRARpath);
+                startInfo.Arguments = argu;
+                System.Diagnostics.Process process = System.Diagnostics.Process.Start(startInfo);
+               
+                // 強制等待process 解壓縮完畢
+                    process.WaitForExit();
+                
+            }
+            return true;
+        }
+
+
+        //刪除目錄下所有檔案
+        private static void DeleteDirectory(string fileName)
+        {
+            try
+            {
+                foreach (string document in Directory.GetFileSystemEntries(fileName))
+                {
+                    if (File.Exists(document))
+                    {
+                        FileInfo fi = new FileInfo(document);
+                        fi.Attributes = FileAttributes.Normal;
+                        File.Delete(document);
+                        
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
+       
+
+        private void displayBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+
+
     }
 }

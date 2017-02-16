@@ -75,6 +75,9 @@
             this.statusStrip = new Sci.Win.UI.StatusStrip();
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.labelProgress = new System.Windows.Forms.ToolStripStatusLabel();
+            this.chk_export = new System.Windows.Forms.CheckBox();
+            this.chk_import = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBS)).BeginInit();
             this.panelFTP.SuspendLayout();
@@ -225,7 +228,7 @@
             this.panelMail.Controls.Add(this.textMailserver);
             this.panelMail.Controls.Add(this.labelMailserver);
             this.panelMail.DrawBorder = true;
-            this.panelMail.Location = new System.Drawing.Point(12, 206);
+            this.panelMail.Location = new System.Drawing.Point(12, 219);
             this.panelMail.Name = "panelMail";
             this.panelMail.Size = new System.Drawing.Size(825, 191);
             this.panelMail.TabIndex = 3;
@@ -418,6 +421,9 @@
             // 
             this.panelPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelPath.Controls.Add(this.label1);
+            this.panelPath.Controls.Add(this.chk_import);
+            this.panelPath.Controls.Add(this.chk_export);
             this.panelPath.Controls.Add(this.btnGetExportDataPath);
             this.panelPath.Controls.Add(this.btnGetImportDataPath);
             this.panelPath.Controls.Add(this.checkDeleteFile);
@@ -428,7 +434,7 @@
             this.panelPath.DrawBorder = true;
             this.panelPath.Location = new System.Drawing.Point(12, 110);
             this.panelPath.Name = "panelPath";
-            this.panelPath.Size = new System.Drawing.Size(712, 90);
+            this.panelPath.Size = new System.Drawing.Size(712, 103);
             this.panelPath.TabIndex = 2;
             // 
             // btnGetExportDataPath
@@ -457,7 +463,7 @@
             // 
             this.checkDeleteFile.AutoSize = true;
             this.checkDeleteFile.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkDeleteFile.Location = new System.Drawing.Point(188, 66);
+            this.checkDeleteFile.Location = new System.Drawing.Point(10, 72);
             this.checkDeleteFile.Name = "checkDeleteFile";
             this.checkDeleteFile.Size = new System.Drawing.Size(197, 19);
             this.checkDeleteFile.TabIndex = 6;
@@ -552,7 +558,7 @@
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusLabel,
             this.labelProgress});
-            this.statusStrip.Location = new System.Drawing.Point(0, 410);
+            this.statusStrip.Location = new System.Drawing.Point(0, 422);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(846, 22);
             this.statusStrip.TabIndex = 8;
@@ -570,13 +576,45 @@
             this.labelProgress.Size = new System.Drawing.Size(65, 17);
             this.labelProgress.Text = "                   ";
             // 
+            // chk_export
+            // 
+            this.chk_export.AutoSize = true;
+            this.chk_export.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chk_export.Location = new System.Drawing.Point(615, 8);
+            this.chk_export.Name = "chk_export";
+            this.chk_export.Size = new System.Drawing.Size(74, 24);
+            this.chk_export.TabIndex = 7;
+            this.chk_export.Text = "Export";
+            this.chk_export.UseVisualStyleBackColor = true;
+            // 
+            // chk_import
+            // 
+            this.chk_import.AutoSize = true;
+            this.chk_import.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chk_import.Location = new System.Drawing.Point(615, 38);
+            this.chk_import.Name = "chk_import";
+            this.chk_import.Size = new System.Drawing.Size(74, 24);
+            this.chk_import.TabIndex = 8;
+            this.chk_import.Text = "Import";
+            this.chk_import.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.Blue;
+            this.label1.Location = new System.Drawing.Point(458, 76);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(251, 15);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Update by Hand .rar document must be in E:\\";
+            // 
             // Main
             // 
             this.AcceptButton = this.btnUpdate;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(846, 432);
+            this.ClientSize = new System.Drawing.Size(846, 444);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.BtnTestMail);
@@ -663,5 +701,8 @@
         private Sci.Win.UI.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel StatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel labelProgress;
+        private System.Windows.Forms.CheckBox chk_import;
+        private System.Windows.Forms.CheckBox chk_export;
+        private System.Windows.Forms.Label label1;
     }
 }
