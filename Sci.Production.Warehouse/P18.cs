@@ -144,7 +144,10 @@ namespace Sci.Production.Warehouse
             DataTable dtDetail;
             result = DBProxy.Current.Select("",
             @"select  a.POID,a.Seq1+'-'+a.seq2 as SEQ,a.Roll,a.Dyelot 
-	        ,dbo.Getmtldesc(a.poid, a.seq1, a.seq2,2,0) [Description]
+	        ,IIF((b.ID =   lag(b.ID,1,'') over (order by b.refno,b.seq1,b.seq2) 
+			  AND(b.seq1 = lag(b.seq1,1,'')over (order by b.refno,b.seq1,b.seq2))
+			  AND(b.seq2 = lag(b.seq2,1,'')over (order by b.refno,b.seq1,b.seq2))) 
+			  ,'',dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))[Description]
             ,b.StockUnit
 	        ,a.Qty
             ,dbo.Getlocation(f.ukey)[Location] 

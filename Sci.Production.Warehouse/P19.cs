@@ -95,14 +95,6 @@ namespace Sci.Production.Warehouse
             return base.ClickEditBefore();
         }
 
-        ////print
-        //protected override bool ClickPrint()
-        //{
-
-
-        //    return base.ClickPrint();
-        //}
-
         private void MySubreportEventHandler(object sender, SubreportProcessingEventArgs e)
         {
             e.DataSources.Add(new ReportDataSource("DataSet1", (DataTable)this.detailgridbs.DataSource));
@@ -696,7 +688,10 @@ Where a.id = '{0}'", masterID);
             @"select a.POID
                     ,a.Seq1+'-'+a.seq2 as SEQ
 	                ,a.Roll,a.Dyelot
-	                ,[DESC]=dbo.getMtlDesc(a.poid,a.seq1,a.Seq2,2,0)
+	                ,IIF((b.ID =   lag(b.ID,1,'') over (order by b.refno,b.seq1,b.seq2) 
+			          AND(b.seq1 = lag(b.seq1,1,'')over (order by b.refno,b.seq1,b.seq2))
+			          AND(b.seq2 = lag(b.seq2,1,'')over (order by b.refno,b.seq1,b.seq2))) 
+			          ,'',dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))[DESC]
 			        ,CASE stocktype
 			               WHEN 'B' THEN 'Bulk'
 			               WHEN 'I' THEN 'Inventory'

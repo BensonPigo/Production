@@ -756,7 +756,10 @@ Where a.id = '{0}'", masterID);
             result = DBProxy.Current.Select("",
             @"select a.FromPOID
                     ,a.FromSeq1+'-'+a.FromSeq2 as SEQ
-	                ,[DESC]=dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.FromSeq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.scirefno , b.seq1, b.seq2),1,0))
+	               ,IIF((b.ID = lag(b.ID,1,'')over (order by b.refno,b.seq1,b.seq2) 
+				      AND(b.seq1 = lag(b.seq1,1,'')over (order by b.refno,b.seq1,b.seq2))
+				      AND(b.seq2 = lag(b.seq2,1,'')over (order by b.refno,b.seq1,b.seq2))) 
+				      ,'',dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,0))[DESC]
 		            ,CASE b.fabrictype
 		                 WHEN 'F' THEN 'Fabric'
 			             WHEN 'A' THEN 'Accessory'

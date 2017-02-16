@@ -165,7 +165,10 @@ namespace Sci.Production.Warehouse
             string sqlcmd = @"select  
 			ROW_NUMBER() OVER(ORDER BY R.POID,R.SEQ1,R.SEQ2) AS NoID
 			,R.poid AS SP,R.seq1  + '-' +R.seq2 as SEQ
-			,Replace(dbo.getMtlDesc(R.POID,R.Seq1,R.Seq2,2,iif(p.scirefno = lag(p.scirefno,1,'') over (order by p.refno,p.seq1,p.seq2),1,0)) , Char(13) + Char(10), '') [desc]
+			,Replace(IIF((p.ID = lag(p.ID,1,'')over (order by p.refno,p.seq1,p.seq2) 
+			          AND(p.seq1 = lag(p.seq1,1,'')over (order by p.refno,p.seq1,p.seq2))
+			          AND(p.seq2 = lag(p.seq2,1,'')over (order by p.refno,p.seq1,p.seq2))) 
+			          ,'',dbo.getMtlDesc(R.POID,R.Seq1,R.Seq2,2,0)) , Char(13) + Char(10), '')[desc]
             ,p.StockUnit,R.Roll,R.dyelot,R.qty
 		    ,case R.StockType
 			WHEN 'I'THEN 'Inventory'

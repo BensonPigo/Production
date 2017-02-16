@@ -562,7 +562,9 @@ Where a.id = '{0}' ", masterID);
             select ld.LocalPoId,
 	               ld.OrderId,
 	               ld.Refno,
-	               dbo.getItemDesc(ld.Category,ld.Refno)[desc],
+	               IIF((ld.OrderId = lag(ld.OrderId,1,'')over (order by ld.LocalPoId,ld.OrderId,lpd.refno)
+				       AND (ld.refno = lag(ld.refno,1,'')over (order by ld.LocalPoId,ld.OrderId,lpd.refno))
+				       ),'',dbo.getItemDesc(ld.Category,ld.Refno))[desc],
 	               lpd.qty [poqty],
 	               lpd.UnitId,
 	               lpd.Price,

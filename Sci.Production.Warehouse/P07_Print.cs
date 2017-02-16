@@ -70,7 +70,10 @@ namespace Sci.Production.Warehouse
             DataTable dt;
             string sql = @"select  
 			R.Roll,R.Dyelot,R.PoId,R.Seq1+'-'+R.Seq2 AS SEQ
-			,DBO.getMtlDesc(R.POID,R.Seq1,R.Seq2,2,0)[Desc]
+            ,IIF((p.ID = lag(p.ID,1,'')over (order by p.refno,p.seq1,p.seq2) 
+			  AND(p.seq1 = lag(p.seq1,1,'')over (order by p.refno,p.seq1,p.seq2))
+			  AND(p.seq2 = lag(p.seq2,1,'')over (order by p.refno,p.seq1,p.seq2))) 
+			  ,'',dbo.getMtlDesc(R.poid,R.seq1,R.seq2,2,0))[Desc]
 			,R.ShipQty,R.pounit,R.StockQty,R.StockUnit, R.Weight,R.ActualWeight
 			,R.ActualWeight - R.Weight AS Vaniance
 			,[SubQty]=sum(R.ShipQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
@@ -79,6 +82,7 @@ namespace Sci.Production.Warehouse
 			,[SubStockQty]=sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
             ,[SubVaniance]=sum(R.ActualWeight - R.Weight)OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )  			
             from dbo.Receiving_Detail R
+            LEFT join dbo.PO_Supp_Detail p on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
             where R.id = @ID ";
 
             if (!MyUtility.Check.Empty(textBox1.Text))

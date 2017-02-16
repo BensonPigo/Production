@@ -995,7 +995,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             DataTable bb;
             string sqlcmd = @"select t.poid
                                     ,t.seq1+ '-' +t.seq2 as SEQ
-                                    ,[desc]=dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0) 
+                                    ,IIF((p.ID = lag(p.ID,1,'')over (order by p.refno,p.seq1,p.seq2) 
+				                      AND(p.seq1 = lag(p.seq1,1,'')over (order by p.refno,p.seq1,p.seq2))
+				                      AND(p.seq2 = lag(p.seq2,1,'')over (order by p.refno,p.seq1,p.seq2))) 
+				                      ,'',dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0))[desc]
                                     ,t.Roll
                                     ,t.Dyelot
                                     ,t.Qty

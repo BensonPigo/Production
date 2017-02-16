@@ -134,7 +134,10 @@ namespace Sci.Production.Warehouse
                     ,a.Seq1+'-'+a.Seq2 [SEQ]
                     ,a.Roll [ROLL]
                     ,a.Dyelot [DYELOT]
-                    ,[DESCRIPTION]=dbo.getMtlDesc(a.poid,a.Seq1,a.Seq2,2,0)
+                    ,IIF((b.ID =   lag(b.ID,1,'') over (order by b.refno,b.seq1,b.seq2) 
+			           AND(b.seq1 = lag(b.seq1,1,'')over (order by b.refno,b.seq1,b.seq2))
+			           AND(b.seq2 = lag(b.seq2,1,'')over (order by b.refno,b.seq1,b.seq2))) 
+			           ,'',dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))[DESCRIPTION]
                     ,b.StockUnit [UNIT]
                     ,a.Qty [RETURN_QTY]
                     ,dbo.Getlocation(a.ftyinventoryukey) [LOCATION]

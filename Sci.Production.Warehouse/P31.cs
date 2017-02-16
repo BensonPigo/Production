@@ -142,7 +142,10 @@ namespace Sci.Production.Warehouse
             result1 = DBProxy.Current.Select("",
             @"select a.FromPOID+'('+a.FromSeq1+'-'+a.Fromseq2+')' as FromSP
 	                ,a.Topoid + '('+a.ToSeq1+'-'+a.ToSeq2+')' as TOSP
-	                ,[DESC]=dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,iif(scirefno = lag(scirefno,1,'') over (order by b.refno, b.seq1,b.seq2),1,0))
+	                ,IIF((b.ID = lag(b.ID,1,'')over (order by b.refno,b.seq1,b.seq2) 
+				      AND(b.seq1 = lag(b.seq1,1,'')over (order by b.refno,b.seq1,b.seq2))
+				      AND(b.seq2 = lag(b.seq2,1,'')over (order by b.refno,b.seq1,b.seq2))) 
+				      ,'',dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,0))[DESC]
 	                ,case a.FromStockType
 	                     when 'B' then 'Bulk'
 	                     when 'I' then 'Inventory'
