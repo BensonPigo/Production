@@ -954,7 +954,13 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
 
                     var newOne = newT.NewRow();
                     newOne.ItemArray = Updated[i].ItemArray;
-                    newOne["QaQty"] = Updated[i]["qaqty", DataRowVersion.Original];
+                    try
+                    {
+                        newOne["QaQty"] = Updated[i]["qaqty", DataRowVersion.Original];
+                    }
+                    catch (Exception ec)
+                    {
+                    }
                     NewUpdated.Add(newOne);
                     newT.Rows.Add(newOne);
                     //newOne["QaQty"] = Updated[i]["qaqty"];
@@ -975,7 +981,13 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
 
                     var newOne = newT.NewRow();
                     newOne.ItemArray = deleteList[i].ItemArray;
-                    newOne["QaQty"] = deleteList[i]["qaqty", DataRowVersion.Original];
+                    try
+                    {
+                        newOne["QaQty"] = deleteList[i]["qaqty", DataRowVersion.Original];
+                    }
+                    catch (Exception ec)
+                    {
+                    }
                     NewDelete.Add(newOne);
                     newT.Rows.Add(newOne);
                     //newOne["QaQty"] = Updated[i]["qaqty"];
