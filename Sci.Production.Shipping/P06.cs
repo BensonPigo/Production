@@ -233,7 +233,7 @@ values('{0}','{1}','{2}','New','{3}',GETDATE());", newID, Convert.ToDateTime(cal
                     DataRow newrow = CurrentDataRow.Table.NewRow();
                     newrow["ID"] = newID;
                     newrow["PulloutDate"] = callNextForm.pulloutDate;
-                    newrow["MDivisionID"] = Sci.Env.User.Keyword;
+                    //newrow["MDivisionID"] = Sci.Env.User.Keyword;
                     newrow["Status"] = "New";
                     newrow["AddName"] = Sci.Env.User.UserID;
                     newrow["AddDate"] = DateTime.Now;
