@@ -945,32 +945,24 @@ Region      Succeeded       Message
 
 
             string sourceFile = path + "\\" + region.RarName;
-            ////copy來源檔案備份            
-            //string copyFile = path + "\\COPY_" + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMdd") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) +"_"+ region.RarName;
-            //@"D:\SQL_DB\Trade_To_Pms\wt_VN.rar";//目標檔案位置
             string destFile = region.DirName + region.RarName;
             //@"D:\SQL_DB\Trade_To_Pms";//目標資料夾位置
             string destPath = region.DirName.ToString().Substring(0, region.DirName.Length - 1);
 
             string UnRARpath = region.DirName.ToString().Substring(0, region.DirName.Length - 1);
             string targetRar = Path.Combine(UnRARpath, region.RarName);
-
+            
             
             //刪除Trade_To_Pms資料夾內檔案
             if (File.Exists(sourceFile))
             {
                 DeleteDirectory(destPath);    
-            }
-            
-            ////複製檔案備份
-            //if (File.Exists(sourceFile))
-            //{
-            //    File.Copy(sourceFile, copyFile);
-            //}
+            }                     
             //移動到Trade_To_Pms
             if (File.Exists(sourceFile))
             {
-                File.Move(sourceFile, region.DirName+region.RarName);
+                System.IO.FileInfo fi = new System.IO.FileInfo(sourceFile);
+                fi.CopyTo(destFile);                             
             }
             if (File.Exists(destFile))
             {
@@ -1037,6 +1029,16 @@ Region      Succeeded       Message
         private void displayBox1_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string ForPath = @"D:\SQL_DB\SourceFile\";
+            string ToDirPath = @"D:\SQL_DB\";
+            string firName = "Test.txt";
+
+            System.IO.FileInfo fi = new System.IO.FileInfo(ForPath + firName);
+            fi.CopyTo(ToDirPath + fi.Name);
         }
 
 

@@ -61,6 +61,9 @@
             this.textMailserver = new Sci.Win.UI.TextBox();
             this.labelMailserver = new Sci.Win.UI.Label();
             this.panelPath = new Sci.Win.UI.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.chk_import = new System.Windows.Forms.CheckBox();
+            this.chk_export = new System.Windows.Forms.CheckBox();
             this.btnGetExportDataPath = new Sci.Win.UI.Button();
             this.btnGetImportDataPath = new Sci.Win.UI.Button();
             this.checkDeleteFile = new Sci.Win.UI.CheckBox();
@@ -75,9 +78,6 @@
             this.statusStrip = new Sci.Win.UI.StatusStrip();
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.labelProgress = new System.Windows.Forms.ToolStripStatusLabel();
-            this.chk_export = new System.Windows.Forms.CheckBox();
-            this.chk_import = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBS)).BeginInit();
             this.panelFTP.SuspendLayout();
@@ -437,6 +437,38 @@
             this.panelPath.Size = new System.Drawing.Size(712, 103);
             this.panelPath.TabIndex = 2;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.Blue;
+            this.label1.Location = new System.Drawing.Point(458, 76);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(251, 15);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Update by Hand .rar document must be in E:\\";
+            // 
+            // chk_import
+            // 
+            this.chk_import.AutoSize = true;
+            this.chk_import.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chk_import.Location = new System.Drawing.Point(615, 38);
+            this.chk_import.Name = "chk_import";
+            this.chk_import.Size = new System.Drawing.Size(74, 24);
+            this.chk_import.TabIndex = 8;
+            this.chk_import.Text = "Import";
+            this.chk_import.UseVisualStyleBackColor = true;
+            // 
+            // chk_export
+            // 
+            this.chk_export.AutoSize = true;
+            this.chk_export.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chk_export.Location = new System.Drawing.Point(615, 8);
+            this.chk_export.Name = "chk_export";
+            this.chk_export.Size = new System.Drawing.Size(74, 24);
+            this.chk_export.TabIndex = 7;
+            this.chk_export.Text = "Export";
+            this.chk_export.UseVisualStyleBackColor = true;
+            // 
             // btnGetExportDataPath
             // 
             this.btnGetExportDataPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
@@ -575,38 +607,6 @@
             this.labelProgress.Name = "labelProgress";
             this.labelProgress.Size = new System.Drawing.Size(65, 17);
             this.labelProgress.Text = "                   ";
-            // 
-            // chk_export
-            // 
-            this.chk_export.AutoSize = true;
-            this.chk_export.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chk_export.Location = new System.Drawing.Point(615, 8);
-            this.chk_export.Name = "chk_export";
-            this.chk_export.Size = new System.Drawing.Size(74, 24);
-            this.chk_export.TabIndex = 7;
-            this.chk_export.Text = "Export";
-            this.chk_export.UseVisualStyleBackColor = true;
-            // 
-            // chk_import
-            // 
-            this.chk_import.AutoSize = true;
-            this.chk_import.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chk_import.Location = new System.Drawing.Point(615, 38);
-            this.chk_import.Name = "chk_import";
-            this.chk_import.Size = new System.Drawing.Size(74, 24);
-            this.chk_import.TabIndex = 8;
-            this.chk_import.Text = "Import";
-            this.chk_import.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.Color.Blue;
-            this.label1.Location = new System.Drawing.Point(458, 76);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(251, 15);
-            this.label1.TabIndex = 9;
-            this.label1.Text = "Update by Hand .rar document must be in E:\\";
             // 
             // Main
             // 
