@@ -270,58 +270,66 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                 return;
             }
 
-            DataRelation relation = new DataRelation("Rol1"
-                , new DataColumn[] { dtFtyinventory.Columns["Roll"], dtFtyinventory.Columns["StockType"] }
-                , new DataColumn[] { dtTrans.Columns["roll"], dtTrans.Columns["stocktype"] }
-                );
+            try
+            {
+                DataRelation relation = new DataRelation("Rol1"
+               , new DataColumn[] { dtFtyinventory.Columns["Roll"], dtFtyinventory.Columns["StockType"] }
+               , new DataColumn[] { dtTrans.Columns["roll"], dtTrans.Columns["stocktype"] }
+               );
 
-            data.Relations.Add(relation);
-            bindingSource1.DataSource = data;
-            bindingSource1.DataMember = "dtFtyinventory";
-            bindingSource2.DataSource = bindingSource1;
-            bindingSource2.DataMember = "Rol1";
+                data.Relations.Add(relation);
+                bindingSource1.DataSource = data;
+                bindingSource1.DataMember = "dtFtyinventory";
+                bindingSource2.DataSource = bindingSource1;
+                bindingSource2.DataMember = "Rol1";
 
-            //設定Grid1的顯示欄位
-            MyUtility.Tool.SetGridFrozen(grid1);
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
-                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8))
-                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4))
-                 .Text("stocktype", header: "Stock Type", width: Widths.AnsiChars(10))
-                 .Numeric("InQty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                 .Numeric("OutQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                 .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                 .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 2)
-                 .Text("MtlLocationID", header: "Location", width: Widths.AnsiChars(10))
-                 ;
+                //設定Grid1的顯示欄位
+                MyUtility.Tool.SetGridFrozen(grid1);
+                this.grid1.IsEditingReadOnly = true;
+                this.grid1.DataSource = bindingSource1;
+                Helper.Controls.Grid.Generator(this.grid1)
+                     .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8))
+                     .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4))
+                     .Text("stocktype", header: "Stock Type", width: Widths.AnsiChars(10))
+                     .Numeric("InQty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     .Numeric("OutQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 2)
+                     .Text("MtlLocationID", header: "Location", width: Widths.AnsiChars(10))
+                     ;
 
-            //設定Grid2的顯示欄位
-            MyUtility.Tool.SetGridFrozen(grid2);
-            this.grid2.IsEditingReadOnly = true;
-            this.grid2.DataSource = bindingSource2;
-            Helper.Controls.Grid.Generator(this.grid2)
-                .Date("issuedate", header: "Date", width: Widths.AnsiChars(10))
-                 .Text("id", header: "Transaction ID", width: Widths.AnsiChars(13))
-                 .Text("name", header: "Name", width: Widths.AnsiChars(13))
-                 .Numeric("inqty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                 .Numeric("outQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                 .Numeric("Adjust", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                 .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2);
+                //設定Grid2的顯示欄位
+                MyUtility.Tool.SetGridFrozen(grid2);
+                this.grid2.IsEditingReadOnly = true;
+                this.grid2.DataSource = bindingSource2;
+                Helper.Controls.Grid.Generator(this.grid2)
+                    .Date("issuedate", header: "Date", width: Widths.AnsiChars(10))
+                     .Text("id", header: "Transaction ID", width: Widths.AnsiChars(13))
+                     .Text("name", header: "Name", width: Widths.AnsiChars(13))
+                     .Numeric("inqty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     .Numeric("outQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     .Numeric("Adjust", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2);
 
-            //設定Grid3的顯示欄位
-            MyUtility.Tool.SetGridFrozen(grid3);
-            this.grid3.IsEditingReadOnly = true;
-            this.grid3.DataSource = bindingSource3;
-            Helper.Controls.Grid.Generator(this.grid3)
-                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6))
-                 .Numeric("rollcount", header: "# of Rolls", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0)
-                 .Text("roll", header: "Rolls", width: Widths.AnsiChars(13))
-                 .Numeric("inqty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                 .Numeric("outQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                 .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                 .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                 ;
+                //設定Grid3的顯示欄位
+                MyUtility.Tool.SetGridFrozen(grid3);
+                this.grid3.IsEditingReadOnly = true;
+                this.grid3.DataSource = bindingSource3;
+                Helper.Controls.Grid.Generator(this.grid3)
+                     .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6))
+                     .Numeric("rollcount", header: "# of Rolls", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0)
+                     .Text("roll", header: "Rolls", width: Widths.AnsiChars(13))
+                     .Numeric("inqty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     .Numeric("outQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     ;
+            }
+            catch
+            {
+                MyUtility.Msg.ErrorBox("Data error ,Please doubleclick 'Balance' field to click 'Re-Calculate' button for recalculate inventory qty, then retry to doubleclick this 'Release Qty' field.!!");
+                return;
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
