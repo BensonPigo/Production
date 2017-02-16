@@ -243,7 +243,7 @@ namespace Sci.Production.Cutting
 
             qtyCell.CellValidating += (s, e) =>
             {
-                DataRow dr = grid_qty.GetDataRow(e.RowIndex);
+                DataRow dr = grid_qty.GetDataRow(listControlBindingSource1.Position);
                 string oldvalue = dr["qty"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 dr["qty"] = newvalue;
@@ -379,7 +379,7 @@ namespace Sci.Production.Cutting
                 }
             };
 
-            grid_qty.DataSource = qtyTb;
+            listControlBindingSource1.DataSource = qtyTb;
             grid_qty.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid_qty)
             .Numeric("No", header: "No", width: Widths.AnsiChars(4), integer_places: 5, iseditingreadonly: true)
@@ -931,6 +931,7 @@ namespace Sci.Production.Cutting
                     }
                 }
             }
+            this.listControlBindingSource1.DataSource = null;
             this.Close();
         }
 
