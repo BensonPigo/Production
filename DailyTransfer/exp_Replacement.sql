@@ -31,7 +31,7 @@ ORDER BY Id
 
 SELECT b.* 
 INTO ReplacementReport_Detail
-FROM Production.dbo.ReplacementReport a, Production.dbo.ReplacementReport_Detail b
+FROM Pms_To_Trade.dbo.ReplacementReport a, Production.dbo.ReplacementReport_Detail b
 WHERE a.Id = b.Id 
 ORDER BY b.Id 
 
