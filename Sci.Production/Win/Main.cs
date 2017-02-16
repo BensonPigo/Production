@@ -11,6 +11,7 @@ using Sci.Production.Basic;
 using Ict;
 using Ict.Win;
 using System.Diagnostics;
+
 namespace Sci.Production
 {
     public partial class Main : Sci.Win.Apps.Base
@@ -82,6 +83,7 @@ namespace Sci.Production
 
         int _isgeneralclosing;
         IList<TemplateInfo> _templates = new List<TemplateInfo>();
+        public static string FormTextSufix = "";
 
         #region 屬性
         private bool IsGeneralClosing { get { return 0 < _isgeneralclosing; } }

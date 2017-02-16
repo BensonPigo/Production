@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Class.Commons;
+using System.IO;
 
 namespace Sci.Production.Win
 {
@@ -69,9 +71,21 @@ namespace Sci.Production.Win
                 ShowErr(result);
                 return;
             }
-            Sci.Env.App.Text = string.Format("Production Management System-({2})-{0}-({1})", Sci.Env.User.Factory, Sci.Env.User.UserID, Environment.MachineName);
+
+            //Sci.Env.App.Text = string.Format("Production Management System-({2})-{0}-({1})", Sci.Env.User.Factory, Sci.Env.User.UserID, Environment.MachineName);
+
+            var appVerText = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+            var appDirName = new DirectoryInfo(Application.StartupPath).Name;
+            Main.FormTextSufix = string.Format("({0}-ver {1}) - ({2})-{3}-({4}))"                
+                , appDirName
+                , appVerText
+                , System.Environment.MachineName
+                , Sci.Env.User.Factory
+                , Sci.Env.User.UserID);
+            Sci.Env.App.Text = "Production Management System - " + Main.FormTextSufix;
 
             DialogResult = DialogResult.OK;
+            
             Close();
         }
 
@@ -121,7 +135,7 @@ namespace Sci.Production.Win
                 comboBox1.DataSource = new BindingSource(factoryOption, null);
                 comboBox1.ValueMember = "Key";
                 comboBox1.DisplayMember = "Value";
-            }
+            }           
         }
 
         public static DualResult UserLogin(string userid, string pwd, string factoryID, UserInfo u)
@@ -176,7 +190,6 @@ namespace Sci.Production.Win
                 Sci.Env.Cfg.ClipDir = drSystem["ClipPath"].ToString().Trim();
             }
             #endregion
-
             return result;
         }
 
