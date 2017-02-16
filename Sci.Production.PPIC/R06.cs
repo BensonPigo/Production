@@ -102,7 +102,7 @@ where o.SciDelivery between '{1}' and '{2}'", excludeReplacement == 1?"and psd.S
 
             if (!MyUtility.Check.Empty(factory))
             {
-                sqlCmd.Append(string.Format(" and o.FactoryID = '{0}'", factory));
+                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", factory));
             }
 
             if (!MyUtility.Check.Empty(orderType))
