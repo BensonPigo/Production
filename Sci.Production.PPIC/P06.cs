@@ -196,7 +196,7 @@ namespace Sci.Production.PPIC
             and o.PulloutComplete = 0
             and o.Finished = 0
             and o.Qty > 0
-            and (oq.EstPulloutDate <= '{1}' or dateadd(day,4,o.SewOffLine) <= '{1}')",
+            and (oq.EstPulloutDate <= '{1}' or oq.EstPulloutDate is null or dateadd(day,4,o.SewOffLine) <= '{1}')",
             Sci.Env.User.Keyword, Convert.ToDateTime(dateBox1.Value).ToString("d")));
             if (txtdropdownlist1.SelectedValue.ToString() == "BS")
             {
