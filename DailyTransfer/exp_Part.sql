@@ -115,19 +115,19 @@ And Status <> 'Junked'
 AND PurchaseFrom = 'T'
 ------------------------------------------------
 
-SELECT pod.ID,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.PartBrandID, pod.suppid, pod.SEQ2 
+SELECT pod.ID,pod.seq1,pod.SEQ2,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.PartBrandID, pod.suppid ,pod.PartReqID
 INTO  PartPO_Detail
 FROM Pms_To_Trade.dbo.PartPO, Machine.dbo.PartPO_Detail  pod
 WHERE PartPO.id= pod.id  
 ORDER BY PartPO.id 
 
-SELECT pod.ID, pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid, pod.SEQ2 
+SELECT pod.ID,pod.seq1, pod.SEQ2 , pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid
 INTO  MachinePO_Detail
 FROM Pms_To_Trade.dbo.MachinePO, Machine.dbo.MachinePO_Detail  pod
 WHERE MachinePO.id= pod.id  
 ORDER BY MachinePO.id 
 
-SELECT pod.ID,pod.MiscID, pod.UnitID, pod.PRICE, pod.QTY, pod.MiscBrandID, pod.suppid, pod.SEQ2 
+SELECT pod.ID,pod.SEQ1, pod.SEQ2, pod.MiscID, pod.UnitID, pod.PRICE, pod.QTY,pod.MiscBrandID, pod.suppid,pod.MiscReqID,pod.DepartmentID
 INTO  MiscPO_Detail
 FROM Pms_To_Trade.dbo.MiscPO, Machine.dbo.MiscPO_Detail  pod
 WHERE MiscPO.id= pod.id  
