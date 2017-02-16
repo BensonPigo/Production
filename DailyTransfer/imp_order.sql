@@ -469,7 +469,7 @@ values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Categ
 		-----------------Order_SizeCode---------------------------尺寸表 Size Spec(存尺寸碼)
 		--20170110 willy 調整順序: 刪除>修改>新增
 		Merge Production.dbo.Order_SizeCode as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_SizeCode a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_SizeCode a inner join #TOrder b on a.id=b.id where a.sizecode is not null) as s
 		on t.id=s.id and t.sizecode=s.sizecode and t.ukey=s.ukey
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete
