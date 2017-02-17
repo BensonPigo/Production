@@ -847,9 +847,9 @@ Where a.id = '{0}'", masterID);
             DataTable dtDetail;
             string sqlcmd = @"select  t.frompoid,t.fromseq1 + '-' +t.fromseq2 as SEQ,
                                       t.topoid,t.toseq1  + '-' +t.toseq2 as TOSEQ
-                             ,IIF((p.ID = lag(p.ID,1,'')over (order by p.refno,p.seq1,p.seq2) 
-			                   AND(p.seq1 = lag(p.seq1,1,'')over (order by p.refno,p.seq1,p.seq2))
-			                   AND(p.seq2 = lag(p.seq2,1,'')over (order by p.refno,p.seq1,p.seq2))) 
+                             ,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
+			                   AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
+			                   AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
 			                   ,'',dbo.getMtlDesc(t.FromPOID,t.FromSeq1,t.FromSeq2,2,0))[desc]
                              ,t.fromroll,t.fromdyelot,p.StockUnit
                              ,dbo.Getlocation(t.FromFtyInventoryUkey) [BULKLOCATION] ,t.Tolocation,t.Qty,[Total]=sum(t.Qty) OVER (PARTITION BY t.frompoid ,t.FromSeq1,t.FromSeq2 )         

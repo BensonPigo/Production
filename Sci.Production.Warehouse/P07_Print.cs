@@ -70,9 +70,9 @@ namespace Sci.Production.Warehouse
             DataTable dt;
             string sql = @"select  
 			R.Roll,R.Dyelot,R.PoId,R.Seq1+'-'+R.Seq2 AS SEQ
-            ,IIF((p.ID = lag(p.ID,1,'')over (order by p.refno,p.seq1,p.seq2) 
-			  AND(p.seq1 = lag(p.seq1,1,'')over (order by p.refno,p.seq1,p.seq2))
-			  AND(p.seq2 = lag(p.seq2,1,'')over (order by p.refno,p.seq1,p.seq2))) 
+            ,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
+			  AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
+			  AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
 			  ,'',dbo.getMtlDesc(R.poid,R.seq1,R.seq2,2,0))[Desc]
 			,R.ShipQty,R.pounit,R.StockQty,R.StockUnit, R.Weight,R.ActualWeight
 			,R.ActualWeight - R.Weight AS Vaniance

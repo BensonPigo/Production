@@ -137,9 +137,9 @@ namespace Sci.Production.Warehouse
             DataTable dtDetail;
             string sqlcmd = @"
             select  t.frompoid+' '+(t.fromseq1 + '-' +t.fromseq2) as StockSEQ,t.topoid+' '+(t.toseq1  + '-' +t.toseq2) as ToSP
-			        ,IIF((p.ID = lag(p.ID,1,'')over (order by p.refno,p.seq1,p.seq2) 
-			          AND(p.seq1 = lag(p.seq1,1,'')over (order by p.refno,p.seq1,p.seq2))
-			          AND(p.seq2 = lag(p.seq2,1,'')over (order by p.refno,p.seq1,p.seq2))) 
+			        ,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
+			          AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
+			          AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
 			          ,'',dbo.getMtlDesc(t.FromPOID,t.FromSeq1,t.FromSeq2,2,0))[desc]
                     ,case t.FromStockType
 			        WHEN 'B'THEN 'Bulk'
