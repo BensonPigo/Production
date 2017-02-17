@@ -22,7 +22,7 @@ namespace Sci.Production.PPIC
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            EditMode = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Poduction Schedule", "CanEdit");
+            EditMode = Prgs.GetAuthority(Sci.Env.User.UserID, "P05. Production Schedule", "CanEdit");
             //EditMode = false;
             InitializeComponent();
             //自動帶出3個月後的最後一天
