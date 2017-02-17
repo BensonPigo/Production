@@ -8,6 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
+using System.IO;
+using System.Configuration;
 
 namespace Sci.Production.Tools
 {
@@ -100,7 +102,15 @@ namespace Sci.Production.Tools
                         ? System.Windows.Forms.DialogResult.OK
                         : System.Windows.Forms.DialogResult.Cancel ;
                 Env.User = user;
-                Sci.Env.App.Text = string.Format("Production Management System-({2})-{0}-({1})", Sci.Env.User.Factory, Sci.Env.User.UserID, Environment.MachineName);
+                //Sci.Env.App.Text = string.Format("Production Management System-({2})-{0}-({1})", Sci.Env.User.Factory, Sci.Env.User.UserID, Environment.MachineName);
+                var appVerText = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+                var appDirName = new DirectoryInfo(Application.StartupPath).Name;
+                string userData = string.Format("-{0}-({1}))"
+                    , Sci.Env.User.Factory
+                    , Sci.Env.User.UserID);
+
+                Sci.Env.App.Text = ConfigurationManager.AppSettings["formTextSufix"] + userData;
+                
                 Close();
             }
         }

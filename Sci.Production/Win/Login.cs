@@ -10,6 +10,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Production.Class.Commons;
 using System.IO;
+using System.Configuration;
 
 namespace Sci.Production.Win
 {
@@ -76,13 +77,16 @@ namespace Sci.Production.Win
 
             var appVerText = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
             var appDirName = new DirectoryInfo(Application.StartupPath).Name;
-            Main.FormTextSufix = string.Format("({0}-ver {1}) - ({2})-{3}-({4}))"                
+            ConfigurationManager.AppSettings["formTextSufix"] = string.Format("Production Management System - ({0}-ver {1}) - ({2})"
                 , appDirName
                 , appVerText
-                , System.Environment.MachineName
+                , System.Environment.MachineName);
+
+            string userData = string.Format("-{0}-({1}))"
                 , Sci.Env.User.Factory
                 , Sci.Env.User.UserID);
-            Sci.Env.App.Text = "Production Management System - " + Main.FormTextSufix;
+
+            Sci.Env.App.Text = ConfigurationManager.AppSettings["formTextSufix"] + userData;
 
             DialogResult = DialogResult.OK;
             
