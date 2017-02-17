@@ -314,6 +314,7 @@ namespace Sci.Production.Warehouse
             .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //6
             .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //7
+            .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
             ;     //
             #endregion 欄位設定
         }
@@ -640,10 +641,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 ,a.Dyelot
 ,a.Qty
 ,a.StockType
+,Isnull(c.inqty-c.outqty + c.adjustqty,0.00) as balance
 ,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FtyInventoryUkey) t 
 	for xml path('')), 1, 1, '') location
 ,a.ukey
 from dbo.issue_detail as a left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+left join dbo.ftyinventory c on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
