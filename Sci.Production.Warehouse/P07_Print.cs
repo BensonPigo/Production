@@ -124,6 +124,8 @@ namespace Sci.Production.Warehouse
                  List<P07_PrintData> data = dt.AsEnumerable()
                                 .Select(row1 => new P07_PrintData()
                                 {
+                                    POID = row1["PoId"].ToString(),
+                                    SEQ = row1["SEQ"].ToString(), 
                                     Roll = row1["Roll"].ToString(),
                                     Desc = row1["Desc"].ToString(),
                                     ShipQty = row1["ShipQty"].ToString(),
