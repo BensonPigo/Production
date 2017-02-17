@@ -25,6 +25,5 @@ namespace Sci.Production.Warehouse
         public string StockQty { get; set; }
         public string StockUnit { get; set; }
         public string SubStockQty { get; set; }
-        public string groupby { get { return this.POID + this.SEQ; } }
     }
 }
