@@ -27,7 +27,7 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string selectCommand1 = string.Format(@"Select a.id, a.ETA, b.qty, b.foc, a.vessel, a.ShipModeID
+            string selectCommand1 = string.Format(@"Select a.id, a.ETA, a.WhseArrival, b.qty, b.foc, a.vessel, a.ShipModeID
                                                                                 From export a, export_detail b
                                                                                 Where a.id = b.id
                                                                                 And b.poid = '{0}'
@@ -46,6 +46,7 @@ namespace Sci.Production.Warehouse
             Helper.Controls.Grid.Generator(this.grid1)
                  .Text("id", header: "WK#", width: Widths.AnsiChars(13))
                  .Date("ETA", header: "ETA", width: Widths.AnsiChars(12))
+                 .Date("WhseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(12))
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(12), integer_places: 6, decimal_places: 4)
                  .Numeric("Foc", header: "FOC", width: Widths.AnsiChars(12), integer_places: 6, decimal_places: 4)
                  .Text("Vessel", header: "Vessel Name", width: Widths.AnsiChars(20))
