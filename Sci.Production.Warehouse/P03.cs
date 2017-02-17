@@ -270,7 +270,17 @@ m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 ,[useqty] = isnull(A.NETQty,0)+isnull(A.lossQty,0)
 ,a.ShipQty,a.ShipFOC
 --,a.ApQty
-,a.InputQty,a.POUnit,iif(a.Complete='1','Y','N') as Complete
+--,a.InputQty
+,InputQty = isnull((select sum(invtQty) from (
+	            SELECT isnull(Qty, 0.00) as invtQty
+	            FROM InvTrans left join invtransReason on invtrans.reasonid = invtransreason.id
+	            INNER JOIN TPEPASS1 ON Invtrans.ConfirmHandle = TPEPASS1.ID
+	            WHERE Invtrans.InventoryPOID = a.id
+	            and InventorySeq1 = a.Seq1
+	            and InventorySeq2 = a.seq2
+	            and Type in (1, 4)
+            )tmp), 0.00)
+,a.POUnit,iif(a.Complete='1','Y','N') as Complete
 ,a.FinalETA,m.InQty,a.StockUnit
 ,iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
 ,iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
@@ -312,7 +322,17 @@ select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varcha
 ,a.ColorID,a.SizeSpec
 ,ROUND(a.UsedQty,4) unitqty,A.Qty,A.NETQty,isnull(A.NETQty,0)+isnull(A.lossQty,0) useqty ,a.ShipQty,a.ShipFOC
 --,a.ApQty
-,a.InputQty,a.POUnit,iif(a.Complete='1','Y','N') as Complete
+--,a.InputQty
+,InputQty = isnull((select sum(invtQty) from (
+	            SELECT isnull(Qty, 0.00) as invtQty
+	            FROM InvTrans left join invtransReason on invtrans.reasonid = invtransreason.id
+	            INNER JOIN TPEPASS1 ON Invtrans.ConfirmHandle = TPEPASS1.ID
+	            WHERE Invtrans.InventoryPOID = m.poid
+	            and InventorySeq1 = m.Seq1
+	            and InventorySeq2 = m.seq2
+	            and Type in (1, 4)
+            )tmp), 0.00)
+,a.POUnit,iif(a.Complete='1','Y','N') as Complete
 ,a.FinalETA,m.InQty,a.StockUnit
 ,iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
 ,iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
