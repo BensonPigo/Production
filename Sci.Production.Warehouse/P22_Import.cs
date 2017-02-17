@@ -80,7 +80,7 @@ select 0 AS selected,'' as id,fi.MDivisionID FromMDivisionID,fi.POID FromPOID,fi
 ,fi.roll FromRoll,fi.dyelot FromDyelot,fi.stocktype FromStockType,fi.Ukey as fromftyinventoryukey 
 ,fi.InQty,fi.OutQty,fi.AdjustQty
 ,fi.InQty - fi.OutQty + fi.AdjustQty as balanceQty
-,0 as qty
+,0.00 as qty
 ,cte.StockUnit
 ,isnull((select inqty from dbo.FtyInventory t 
 	where t.MDivisionID = fi.MDivisionID and t.POID = fi.POID and t.seq1 = fi.seq1 and t.seq2 = fi.seq2 and t.StockType = 'I' 
