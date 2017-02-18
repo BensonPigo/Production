@@ -1017,15 +1017,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
             }
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }
-
-
             DataRow issue = this.CurrentDataRow;
             string id = issue["ID"].ToString();
             string request = issue["cutplanid"].ToString();
@@ -1156,7 +1147,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             string xlt = @"Warehouse_P11.xltx";
             SaveXltReportCls xl = new SaveXltReportCls(xlt);
-
+            xl.boOpenFile = true;
+          
             xl.dicDatas.Add("##name", RptTitle);
             xl.dicDatas.Add("##ID", id);
             xl.dicDatas.Add("##cutplanid", request);
@@ -1169,14 +1161,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             xlTable.lisTitleMerge.Add(new Dictionary<string, string> { 
             { "SIZE", string.Format("{0},{1}", allColumns-sizeColumns+1, allColumns) }}
            );
-            //xlTable.Borders.AllCellsBorders = true;
-            //xlTable.HeaderColor = Color.AliceBlue;
-            //xlTable.ContentColor = Color.LightGreen;
             xlTable.Borders.OnlyHeaderBorders = true;
             xl.dicDatas.Add("##SEQ", xlTable);
 
 
-            xl.Save(outpath, true);
+            xl.Save();
 
             return true;
         }
