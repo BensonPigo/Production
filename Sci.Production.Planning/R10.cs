@@ -23,7 +23,7 @@ namespace Sci.Production.Planning
 {
     public partial class R10 : Sci.Win.Tems.PrintForm
     {
-         //string temfile;
+        //string temfile;
 
         DateTime currentTime = System.DateTime.Now;
         //DataTable dtPrint;
@@ -37,7 +37,18 @@ namespace Sci.Production.Planning
         private string SourceStr;
         private string M;
         private string Fty;
+        string title = "";
+        string cmd, cmd2, cmd3, dStart, dEnd, LastDay, dLoad, STARTday, endDay, o, s;
+        DataTable dt;
+        Dictionary<string, string> dic = new Dictionary<string, string>();
+        DualResult dtresult;
 
+        System.Data.DataTable[] dt2;
+        System.Data.DataTable dt3fty;
+        System.Data.DataTable dt2Factory = null;
+        System.Data.DataTable dt2Date = null;
+        System.Data.DataTable dt2All = null;
+        //    List<SqlParameter> lis;
         public R10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -70,6 +81,7 @@ namespace Sci.Production.Planning
                 return false;
             }
 
+
             ReportType = rdMonth.Checked ? 1 : 2;
             BrandID = txtBrand1.Text;
             M = txtM.Text;
@@ -82,7 +94,277 @@ namespace Sci.Production.Planning
             SourceStr = (chkOrder.Checked ? "Order," : "")
                 + (chkForecast.Checked ? "Forecast," : "")
                 + (chkFty.Checked ? "Fty Local Order," : "");
+            DateTime oDate = new DateTime(intYear, intMonth, 1).AddMonths(1).AddDays(-1);
+            DateTime FDate = new DateTime(intYear, intMonth, 1);
+            #region --Report Title & 撈資料的日期區間
+            if (intMonth == DateTime.Now.Month)
+            {
+                string m = DateTime.Now.AddDays(-1).Month.ToString();//前一天的月
+                string day = DateTime.Now.AddDays(-1).Day.ToString();//前一天的日
+                string w = DateTime.Now.AddDays(-1).DayOfWeek.ToString();
+                title = m + "/" + day + " " + w + "." + " Production Status";
+                dStart = DateTime.Now.AddDays(-1 - DateTime.Now.Day + 1).ToShortDateString();
+                dEnd = DateTime.Now.AddDays(-1).ToShortDateString();//前一天
+                dLoad = DateTime.Now.AddDays(-1).ToShortDateString();//前一天
 
+            }
+            if (intMonth < DateTime.Now.Month)
+            {
+                string LastDayM = oDate.Month.ToString(); // 最後一天的月
+                LastDay = oDate.Day.ToString();   // 最後一天的日
+                string LastDayWeek = oDate.DayOfWeek.ToString();
+                dLoad = oDate.ToShortDateString();//輸入年月的最後一天
+                title = LastDayM + "/" + LastDay + " " + LastDayWeek + "." + " Production Status";
+            }
+            if (intMonth > DateTime.Now.Month)
+            {
+
+                string FirstDayM = FDate.Month.ToString(); //第一天的月
+                string FirstDay = FDate.Day.ToString(); //第一天的日
+                string FirstDayWeek = FDate.DayOfWeek.ToString();
+                dLoad = FDate.ToShortDateString();
+                title = FirstDayM + "/" + FirstDay + " " + FirstDayWeek + "." + " Production Status";
+            }
+            if (intMonth != DateTime.Now.Month)
+            {
+                dStart = intYear + "/" + intMonth + "/01";
+                dEnd = oDate.ToShortDateString();//輸入年月的最後一天
+            }
+            STARTday = FDate.ToShortDateString();//輸入年月的第一天
+            endDay = oDate.ToShortDateString();//輸入年月的最後一天
+            #endregion
+            // lis = new List<SqlParameter>();
+            string sqlWhere = ""; string load = ""; string work = "";
+            List<string> sqlWheres = new List<string>();
+            List<string> LoadingWheres = new List<string>();
+            List<string> WorkWheres = new List<string>();
+            #region --組WHERE--
+            if (!this.txtM.Text.Empty())
+            {
+                sqlWheres.Add(" f.MDivisionID = '" + M + "'");
+                LoadingWheres.Add("o.MDivisionID ='" + M + "'");
+
+                if (!this.txtFactory.Text.Empty())
+                {
+                    WorkWheres.Add(" w.FactoryID ='" + Fty + "'");
+
+                }
+                if (this.txtFactory.Text.Empty())
+                {
+                    WorkWheres.Add(" exists (select 1 from Factory WITH (NOLOCK) where MDivisionID = '" + M + "' and ID = w.FactoryID)");
+                }
+            } if (!this.txtFactory.Text.Empty())
+            {
+                sqlWheres.Add(" f.ID = '" + Fty + "'");
+                LoadingWheres.Add(" o.Factoryid ='" + Fty + "'");
+                if (this.txtM.Text.Empty()) { WorkWheres.Add(" w.FactoryID ='" + Fty + "'"); }
+
+            }
+            if (!this.txtBrand1.Text.Empty())
+            {
+                LoadingWheres.Add("o.BrandID = '" + BrandID + "'");
+            }
+            sqlWhere = string.Join(" and ", sqlWheres);
+            if (!sqlWhere.Empty())
+            {
+                sqlWhere = " and" + sqlWhere;
+            }
+
+            load = string.Join(" and ", LoadingWheres);
+            if (!load.Empty())
+            {
+                load = "and " + load;
+            }
+            work = string.Join("and ", WorkWheres);
+            if (!work.Empty())
+            {
+                work = "where " + work;
+            }
+            #endregion
+            //            List<SqlParameter> pars = new List<SqlParameter>();
+            //            pars.Add(new SqlParameter("@ID", M));
+            //            DualResult result;
+            //            DataTable dtFactoryID;
+            //            string sqlcmd1 = string.Format(@"select distinct FactoryID
+            //	                    from dbo.WorkHour
+            //	                    where FactoryID = @ID order by FactoryID");
+            //            string Factory = "";
+            //            result = DBProxy.Current.Select("", sqlcmd1, pars, out dtFactoryID);
+            //            foreach (DataRow dr in dtFactoryID.Rows)
+            //            {
+            //                Factory += "[" + dr["FactoryID"].ToString() + "]" + ",";
+            //            }
+            //            if (Factory.Length != 0)
+            //            {
+            //                Factory = Factory.Substring(0, Factory.Length - 1);
+            //            }
+
+
+            #region --Prouction Status Excel第一個頁籤SQL
+            cmd = string.Format(@"
+            -- 先撈出工廠的Capacity
+            Select f.CountryID, f.ID, (ft.TMS*3600)/(select StdTMS from System WITH (NOLOCK)) as Capacity 
+            into  #tmpFtyCapacity
+            From Factory f WITH (NOLOCK), Factory_TMS ft WITH (NOLOCK)
+            where f.ID = ft.ID and f.Junk = 0 and ft.Year = '{0}' and ft.Month ='{1}' and ft.ArtworkTypeID = 'SEWING'" + sqlWhere +
+
+            @" 
+            -- 撈出各工廠的Loading
+            Select a.CountryID, a.Alias, a.MDivisionID, a.FactoryID, a.Capacity, SUM(a.LoadCPU) as LoadCPU, Max(a.MaxOutputDate) as MaxOutputDate, sum(a.CPU) as CPU
+            Into #tmpLoad
+            From (Select t.CountryID,
+                         c.Alias,
+                         o.MDivisionID,
+                         o.FactoryID,
+                         t.Capacity,
+                         IIF(o.LocalOrder = 0 and o.IsForecast = 0, ot.TMS/(select StdTMS from System WITH (NOLOCK))*o.CPUFactor*o.Qty, o.Qty*o.CPU*o.CPUFactor) as LoadCPU,
+                         si.MaxOutputDate, 
+                         IIF(o.LocalOrder = 0, st.TMS/(select StdTMS from System WITH (NOLOCK))*si.OutputAmount, IIF(o.IsForecast = 0, ot.TMS/(select StdTMS from System WITH (NOLOCK) )*si.OutputAmount*o.CPUFactor,0)) as CPU
+	              From Orders o WITH (NOLOCK) 
+	              Left Join Style_TmsCost st WITH (NOLOCK) on o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = 'SEWING'
+	              Left Join Order_TmsCost ot WITH (NOLOCK) on o.ID = ot.ID and ot.ArtworkTypeID = 'SEWING'
+	              Left Join #tmpFtyCapacity t on t.ID = o.FactoryID
+	              Left Join Country c WITH (NOLOCK) on c.ID = t.CountryID
+	              Cross Apply getOutputInformation(o.ID, '{3}') si
+	              Where o.BuyerDelivery between '{2}' and '{3}'
+	              And o.Junk = 0
+	              And o.SubconInSisterFty = 0
+	              " + load + @"
+	              ) a
+            Group by a.CountryID, a.Alias, a.MDivisionID, a.FactoryID, a.Capacity
+            
+            --	撈出各工廠每天的平均工時
+            Select DISTINCT w.FactoryID, w.Date, AVG(w.Hours)over (partition by FactoryID,date order by FactoryID, Date) as AVGHours
+            into #tmpWorkHours
+            From WorkHour w WITH (NOLOCK)
+           " + work + @"
+            order by w.FactoryID, w.Date 
+
+            Select a.*, DATENAME(weekday,a. MaxOutputDate) as DateName,
+                   IIF(a.CountDay=0,0,round(a.LoadCPU/a.CountDay,0)) as DailyCPU,
+                   IIF(AccuHours* MonthHours=0,0,round(a.LoadCPU/AccuHours* MonthHours,0)) as AccuLoad
+            into  #printdata
+            From (Select t.*, 
+                        isnull((select sum(AVGHours) 
+                                from #tmpWorkHours 
+                                where FactoryID = t.FactoryID 
+                                      and Date <= '{4}'),0) as AccuHours, 
+                         isnull((select sum(AVGHours) 
+                                 from #tmpWorkHours 
+                                 where FactoryID = t.FactoryID 
+                                       and Date between '{2}' and '{5}'),0) as MonthHours, 
+                         isnull((select Count(FactoryID) 
+                                 from #tmpWorkHours 
+                                 where FactoryID = t.FactoryID 
+                                       and Date between '{2}' and '{5}'  and AVGHours > 0),0) as CountDay
+                    From #tmpLoad t
+            ) a 
+
+            SELECT MDivisionID,
+                   FactoryID,
+	               sum(Capacity)Capacity,
+	               sum(LoadCPU)LoadCPU,
+	               loadingRate= sum(Capacity)/ sum(LoadCPU),
+	               MaxOutputDate,
+	               DateName,
+	               sum(DailyCPU)DailyCPU,
+	               sum(AccuLoad)AccuLoad,
+	               sum(CPU)CPU,
+	               cpuVariance=sum(CPU)- sum(AccuLoad),
+	               percentage=iif(sum(AccuLoad)=0,0,sum(CPU)/sum(AccuLoad)),
+	               equivalent=iif(sum(DailyCPU)=0,0,(sum(CPU)- sum(AccuLoad))/ sum(DailyCPU))
+            FROM #printdata
+            group by MDivisionID,FactoryID,MaxOutputDate,  DateName
+
+
+            DROP TABLE #tmpFtyCapacity
+            DROP TABLE #tmpLoad
+            DROP TABLE #tmpWorkHours
+            DROP TABLE  #printdata
+
+            ", intYear, intMonth, dStart, dEnd, dLoad, endDay);
+            #endregion
+            cmd3 = string.Format(@"
+            --	撈出各工廠每天的平均工時
+            Select DISTINCT w.FactoryID, w.Date, AVG(w.Hours)over (partition by FactoryID,date order by FactoryID, Date) as AVGHours
+            into #tmpWorkHours
+            From WorkHour w WITH (NOLOCK) 
+           " + work + @" 
+            order by w.FactoryID, w.Date 
+
+            -- Excel 第二個頁籤
+            Select  FactoryID, Date, AVGHours, sum(AVGHours) over (partition by FactoryID,date order by FactoryID, Date) as RunningTotal
+            Into  #tmpWorkingHour
+            From #tmpWorkHours WK
+		    order by WK.FactoryID, WK.Date
+            --
+            select DISTINCT FactoryID from #tmpWorkingHour 
+
+            DROP TABLE #tmpWorkHours
+            DROP TABLE #tmpWorkingHour
+            ", STARTday, endDay);
+            dtresult = DBProxy.Current.Select("", cmd3, out dt3fty);
+            if (!dtresult)
+            {
+                ShowErr(dtresult);
+                return dtresult;
+            }
+            dt2Factory = dt3fty;
+            dic.Clear();
+            if (s != null) { s = ""; }
+            // dic.Add(" ", "1,1");
+            for (int i = 0; i < dt2Factory.Rows.Count; i++)
+            {
+
+                dic.Add(dt2Factory.Rows[i]["FactoryID"].ToString(), string.Format("{0},{1}", ((i * 2) + 2), ((i * 2) + 3)));
+                string sss = dt2Factory.Rows[i]["FactoryID"].ToString();
+                o = string.Format(" outer apply (select  AVGHours,RunningTotal from  #tmpWorkingHour k where date between '{0}' and '{1}' and FactoryID='{2}' and w.Date=k.Date )as {2}", STARTday, endDay, sss);
+                s += o + Environment.NewLine;
+            }
+
+            #region --Prouction Status Excel第二個頁籤SQL
+            cmd2 = string.Format(@"
+            --	撈出各工廠每天的平均工時 
+            Select DISTINCT w.FactoryID, w.Date, AVG(w.Hours)over (partition by FactoryID,date order by FactoryID, Date) as AVGHours
+            into #tmpWorkHours
+            From WorkHour w WITH (NOLOCK) 
+           " + work + @" 
+            order by w.FactoryID, w.Date 
+
+            -- Excel 第二個頁籤
+            Select  FactoryID, Date, AVGHours, sum(AVGHours) over (partition by FactoryID,date order by FactoryID, Date) as RunningTotal
+            Into  #tmpWorkingHour
+            From #tmpWorkHours WK
+		    order by WK.FactoryID, WK.Date
+            --
+            select DISTINCT Date into #t from #tmpWorkingHour  where date between '{0}'  and  '{1}'
+            select DISTINCT FactoryID from #tmpWorkingHour 
+            select DISTINCT Date from #tmpWorkingHour  where date between '{0}'  and  '{1}'
+            select distinct * from #t  w  {2}
+            DROP TABLE #tmpWorkHours
+            DROP TABLE #tmpWorkingHour
+            DROP TABLE #t
+            ", STARTday, endDay, s);
+
+
+            dtresult = DBProxy.Current.Select("", cmd, out dt);
+            if (!dtresult)
+            {
+                ShowErr(dtresult);
+                return dtresult;
+            }
+            dtresult = DBProxy.Current.Select("", cmd2, out dt2);
+
+            if (!dtresult)
+            {
+                ShowErr(dtresult);
+                return dtresult;
+            }
+
+
+            dt2All = dt2[2];
+
+            #endregion
             return true;
         }
 
@@ -123,40 +405,45 @@ namespace Sci.Production.Planning
 
         protected override Ict.DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
+
             DualResult result = Result.True;
-            try
-            {
-                DataTable[] datas;
-                DualResult res = DBProxy.Current.SelectSP("", "Planning_Report_R10"
-                , new List<SqlParameter> { new SqlParameter("@ReportType", ReportType)
-                , new SqlParameter("@BrandID", BrandID)
-                , new SqlParameter("@M", M)
-                , new SqlParameter("@Fty", Fty)
-                , new SqlParameter("@ArtWorkType", ArtWorkType)
-                , new SqlParameter("@isSCIDelivery", isSCIDelivery)
-                , new SqlParameter("@Year", intYear)
-                , new SqlParameter("@Month", intMonth)
-                , new SqlParameter("@SourceStr", SourceStr)}, out datas);
 
-                if (res)
+            if (raProductionStatus.Checked != true)
+            {
+                try
                 {
-                    if (ReportType == 1)
+                    DataTable[] datas;
+                    DualResult res = DBProxy.Current.SelectSP("", "Planning_Report_R10"
+                    , new List<SqlParameter> { new SqlParameter("@ReportType", ReportType)
+                    , new SqlParameter("@BrandID", BrandID)
+                    , new SqlParameter("@M", M)
+                    , new SqlParameter("@Fty", Fty)
+                    , new SqlParameter("@ArtWorkType", ArtWorkType)
+                    , new SqlParameter("@isSCIDelivery", isSCIDelivery)
+                    , new SqlParameter("@Year", intYear)
+                    , new SqlParameter("@Month", intMonth)
+                    , new SqlParameter("@SourceStr", SourceStr)}, out datas);
+
+                    if (res)
                     {
-                        transferReport1(datas);
+                        if (ReportType == 1)
+                        {
+                            transferReport1(datas);
+                        }
+                        else
+                        {
+                            transferReport2(datas);
+                        }
                     }
-                    else
-                    {
-                        transferReport2(datas);
-                    }
+
+
                 }
-
-                return new DualResult(true);
+                catch (Exception ex)
+                {
+                    return new DualResult(false, "data loading error.", ex);
+                }
             }
-            catch (Exception ex)
-            {
-                return new DualResult(false, "data loading error.", ex);
-            }
-
+            return new DualResult(true);
         }
 
         /// <summary>
@@ -457,7 +744,7 @@ namespace Sci.Production.Planning
             rg.Columns.AutoFit();
 
             sxrc.dicDatas.Add("##Year", intYear);
-            sxrc.dicDatas.Add("##Month", intMonth);            
+            sxrc.dicDatas.Add("##Month", intMonth);
             sxrc.dicDatas.Add("##ArtworkType", ArtWorkType == "CPU" ? ArtWorkType : ArtWorkType + " TMS/Min");
             sxrc.dicDatas.Add("##Source", SourceStr);
             sxrc.dicDatas.Add("##Brand", BrandID);
@@ -511,7 +798,7 @@ namespace Sci.Production.Planning
                 if (dtCountry.Rows.Count == 0) continue;
                 string CountryName = dtCountry.Rows[0]["CountryName"].ToString();
                 wks.Cells[sheetStart, 1].Value = CountryName;
-                                
+
                 DataTable dtMDVList = safeGetDt(dtList, string.Format("CountryID = '{0}'", CountryID)).DefaultView.ToTable(true, "MDivisionID");
 
                 List<string> lisCapaCty = new List<string>();
@@ -880,10 +1167,61 @@ namespace Sci.Production.Planning
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.ErrorBox("Data not found");
+                return false;
+            }
+            //if (dt2 == null || dt2.Rows.Count == 0)
+            //{
+            //    MyUtility.Msg.ErrorBox("Data not found");
+            //    return false;
+            //}
+            if (raProductionStatus.Checked == true)
+            {
+                //var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+                //saveDialog.ShowDialog();
+                //string outpath = saveDialog.FileName;
+                //if (outpath.Empty())
+                //{
+                //    return false;
+                //}
+
+                Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Planning_R10_ProuctionStatus.xltx");
+                xl.boOpenFile = true;
+
+                xl.dicDatas.Add("##title", title);
+                xl.dicDatas.Add("##dt", dt);
+
+                Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt2 = new SaveXltReportCls.xltRptTable(dt2All);
+                dt2.ShowHeader = false;
+                xl.dicDatas.Add("##dt2", dt2);
+
+                Sci.Utility.Excel.SaveXltReportCls.ReplaceAction a = setRow1;
+                xl.dicDatas.Add("##setRow1", a);
+
+                //xl.Save(outpath, false);
+                xl.Save();
+
+
+            }
+
+
             DualResult result = Result.True;
             //ShowInfo("報表查詢完成"); //自動開啟Excel存檔畫面             
             return true;
         }
+
+        void setRow1(Microsoft.Office.Interop.Excel.Worksheet oSheet, int rowNo, int columnNo)
+        {
+            int idx = 0;
+            foreach (DataRow row in dt2[0].Rows)
+            {
+                oSheet.Cells[1, 2 + idx].Value = row["FactoryID"];
+                idx += 2;
+            }
+        }
+
 
         private void rdMonth_CheckedChanged(object sender, EventArgs e)
         {
@@ -899,6 +1237,20 @@ namespace Sci.Production.Planning
             {
                 numMonth.Value = System.DateTime.Today.Month;
             }
+        }
+
+        private void raProductionStatus_CheckedChanged(object sender, EventArgs e)
+        {
+            lbMonth.Visible = raProductionStatus.Checked;
+            numMonth.Visible = raProductionStatus.Checked;
+            lbDateType.Visible = !raProductionStatus.Checked;
+            cbDateType.Visible = !raProductionStatus.Checked;
+            lbReportType.Visible = !raProductionStatus.Checked;
+            cbReportType.Visible = !raProductionStatus.Checked;
+            lbSource.Visible = !raProductionStatus.Checked;
+            chkOrder.Visible = !raProductionStatus.Checked;
+            chkForecast.Visible = !raProductionStatus.Checked;
+            chkFty.Visible = !raProductionStatus.Checked;
         }
 
     }
