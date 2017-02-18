@@ -30,12 +30,12 @@ namespace Sci.Production.Cutting
             string sqlCmd =string.Format(@"
 Select ID, MarkerDownloadID, 
 FabricCombo = (Select FabricCombo+',' 
-                From Order_EachCons as tmp
+                From Order_EachCons as tmp WITH (NOLOCK) 
                 Where tmp.ID = Order_EachCons.ID
                 And IsNull(tmp.MarkerDownloadID, '') 
                     = IsNull(Order_EachCons.MarkerDownloadID, '')
                 Group by FabricCombo Order by FabricCombo for XML path(''))
-From Order_EachCons
+From Order_EachCons WITH (NOLOCK) 
 Where Order_EachCons.ID = '{0}'
 Group by ID, MarkerDownloadID", this.KeyValue1);
             DualResult result;

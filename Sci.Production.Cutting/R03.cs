@@ -23,9 +23,9 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
             DataTable WorkOrder, factory;
-            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder", out WorkOrder);
+            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
             MyUtility.Tool.SetupCombox(cmb_M, 1, WorkOrder);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory", out factory);//要預設空白
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);//要預設空白
             MyUtility.Tool.SetupCombox(cmd_Factory, 1, factory);
             cmb_M.Text = Sci.Env.User.Keyword;
             cmd_Factory.SelectedIndex = 0;
@@ -85,28 +85,28 @@ select DISTINCT
 	[Consumption] = wo.Cons,
 	[Marker Length] = wo.MarkerLength
 
-from WorkOrder wo
-inner join Orders o on o.CuttingSP = wo.ID
-inner join Cutting c on c.ID = o.CuttingSP
+from WorkOrder wo WITH (NOLOCK) 
+inner join Orders o WITH (NOLOCK) on o.CuttingSP = wo.ID
+inner join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
 outer apply(
 	select MincoDate=(
 		select min(co.cDate)
-		from CuttingOutput co 
-		inner join CuttingOutput_Detail cod on co.ID = cod.ID
+		from CuttingOutput co WITH (NOLOCK) 
+		inner join CuttingOutput_Detail cod WITH (NOLOCK) on co.ID = cod.ID
 		where cod.WorkOrderUkey = wo.Ukey
 	)
 ) as MincDate
 outer apply(
 	select SewInLine=(
 		select SewInLine 
-		from Orders 
+		from Orders WITH (NOLOCK) 
 		where ID = wo.OrderID
 	)
 )as SewInLine
 outer apply(
 	select SewingLineID = (
 		select distinct concat('/',SewingLineID)
-		from SewingSchedule 
+		from SewingSchedule WITH (NOLOCK) 
 		where OrderID = wo.OrderID
 		for xml path('')
 	)
@@ -114,7 +114,7 @@ outer apply(
 outer apply(
 	select SewingCell = (
 		select distinct concat('/',SewingCell)
-		from SewingLine,SewingSchedule
+		from SewingLine,SewingSchedule WITH (NOLOCK) 
 		where SewingSchedule.OrderID = wo.OrderID
 		and SewingLine.ID = SewingSchedule.SewingLineID 
 		and SewingLine.FactoryID = SewingSchedule.FactoryID
@@ -124,7 +124,7 @@ outer apply(
 outer apply(
 	select Article = (
 		select distinct concat('/',Article)
-		from WorkOrder_Distribute 
+		from WorkOrder_Distribute WITH (NOLOCK) 
 		where WorkOrderUKey = wo.UKey
 		and Article != ''
 		for xml path('')
@@ -133,14 +133,14 @@ outer apply(
 outer apply(
 	select Qty = (
 		select sum(Qty)
-		from WorkOrder_Distribute 
+		from WorkOrder_Distribute WITH (NOLOCK) 
 		where WorkOrderUKey = wo.UKey
 	)
 ) as Qty
 outer apply(
 	select SQty = (
 		select distinct concat(',',SizeCode+'/'+Convert(varchar,Qty))
-		from WorkOrder_SizeRatio 
+		from WorkOrder_SizeRatio WITH (NOLOCK) 
 		where WorkOrderUkey = wo.UKey
 		for xml path('')
 	)
@@ -148,7 +148,7 @@ outer apply(
 outer apply(
 	select MinSCI = (
 		select min(SCIDelivery) 
-		from Orders as o
+		from Orders as o WITH (NOLOCK) 
 		where o.ID = wo.OrderID
 	)
 ) as MinSci

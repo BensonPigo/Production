@@ -97,27 +97,27 @@ namespace Sci.Production.Cutting
             ,createby2 = concat(a.AddName,' ' ,FORMAT(a.AddDate,'yyyy/MM/dd HH:mm:ss'))
             ,editby2 = concat(a.EditName,' ' , FORMAT(a.EditDate,'yyyy/MM/dd HH:mm:ss'))
 
-            From dbo.Order_EachCons a 
-            Left Join dbo.Orders b On a.ID = b.ID  
+            From dbo.Order_EachCons a WITH (NOLOCK) 
+            Left Join dbo.Orders b WITH (NOLOCK) On a.ID = b.ID  
 
             outer apply(
 	            select (
 		            select distinct PatternPanel+',' 
-		            From dbo.Order_EachCons_PatternPanel as tmp 
+		            From dbo.Order_EachCons_PatternPanel as tmp WITH (NOLOCK) 
 		            Where tmp.Order_EachConsUkey = a.Ukey
 		            for XML path('')
 		            )
 	            as PatternPanel
             ) d
 
-            outer apply(select sum(Qty) as TotalQty from  dbo.Order_EachCons_SizeQty  where  a.Ukey = Order_EachConsUkey  ) as EC_Size 
-            left join dbo.Order_BOF bof on bof.Id = a.Id and bof.FabricCode = a.FabricCode
-            left join dbo.Fabric on Fabric.SCIRefno = bof.SCIRefno
+            outer apply(select sum(Qty) as TotalQty from  dbo.Order_EachCons_SizeQty WITH (NOLOCK) where  a.Ukey = Order_EachConsUkey  ) as EC_Size 
+            left join dbo.Order_BOF bof WITH (NOLOCK) on bof.Id = a.Id and bof.FabricCode = a.FabricCode
+            left join dbo.Fabric WITH (NOLOCK) on Fabric.SCIRefno = bof.SCIRefno
             Where a.ID = '{0}' Order by a.Seq", KeyValue1);
             DualResult result;
             if (!(result = DBProxy.Current.Select(null, sqlCmd, out datas))) return result;
 
-            sqlCmd = string.Format("Select * from Order_EachCons_SizeQty where id = '{0}'", KeyValue1);
+            sqlCmd = string.Format("Select * from Order_EachCons_SizeQty WITH (NOLOCK) where id = '{0}'", KeyValue1);
             if (!(result = DBProxy.Current.Select(null, sqlCmd, out sizetb))) return result;
 
             gridSizeQty.DataSource = sizetb;

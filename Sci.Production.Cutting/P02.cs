@@ -102,78 +102,78 @@ namespace Sci.Production.Cutting
             Select a.*,
             (
                 Select distinct Article+'/' 
-			    From dbo.WorkOrder_Distribute b
+			    From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
 			    Where b.workorderukey = a.Ukey and b.article!=''
                 For XML path('')
             ) as article,
             (
                 Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-                From WorkOrder_SizeRatio c
+                From WorkOrder_SizeRatio c WITH (NOLOCK) 
                 Where c.WorkOrderUkey =a.Ukey 
                 For XML path('')
             ) as SizeCode,
             (
                 Select c.sizecode+'/ '+convert(varchar(8),c.qty*a.layer)+', ' 
-                From WorkOrder_SizeRatio c
+                From WorkOrder_SizeRatio c WITH (NOLOCK) 
                 Where  c.WorkOrderUkey =a.Ukey 
                 For XML path('')
             ) as CutQty,
             (
                 Select LectraCode+'+ ' 
-                From WorkOrder_PatternPanel c
+                From WorkOrder_PatternPanel c WITH (NOLOCK) 
                 Where c.WorkOrderUkey =a.Ukey 
                 For XML path('')
             ) as LectraCode,
             (
                 Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c
+                From WorkOrder_PatternPanel c WITH (NOLOCK) 
                 Where c.WorkOrderUkey =a.Ukey 
                 For XML path('')
             ) as PatternPanel,
 			(
 				Select iif(e.Complete=1,e.FinalETA,iif(e.Eta is not null,e.eta,iif(e.shipeta is not null,e.shipeta,e.finaletd)))
-				From PO_Supp_Detail e 
-				Where e.id = (Select distinct poid from orders where orders.cuttingsp = '{0}') and e.seq1 = a.seq1 and e.seq2 = a.seq2
+				From PO_Supp_Detail e WITH (NOLOCK) 
+				Where e.id = (Select distinct poid from orders WITH (NOLOCK) where orders.cuttingsp = '{0}') and e.seq1 = a.seq1 and e.seq2 = a.seq2
 			) as fabeta,
 			(
 				Select Min(sew.Inline)
-				From SewingSchedule sew ,SewingSchedule_detail sew_b,WorkOrder_Distribute h
+				From SewingSchedule sew WITH (NOLOCK) ,SewingSchedule_detail sew_b WITH (NOLOCK) ,WorkOrder_Distribute h WITH (NOLOCK) 
 				Where h.WorkOrderUkey = a.ukey and sew.id=sew_b.id and h.orderid = sew_b.OrderID 
 						and h.Article = sew_b.Article and h.SizeCode = h.SizeCode and h.orderid = sew.orderid
 			)  as Sewinline,
 			(
 				Select Min(cut.cdate)
-				From cuttingoutput cut ,cuttingoutput_detail cut_b
+				From cuttingoutput cut WITH (NOLOCK) ,cuttingoutput_detail cut_b WITH (NOLOCK) 
 				Where cut_b.workorderukey = a.Ukey and cut.id = cut_b.id
 			)  as actcutdate,
             (
                 Select Name 
-                From Pass1 ps
+                From Pass1 ps WITH (NOLOCK) 
                 Where ps.id = a.addName
             ) as adduser,
             (
                 Select Name 
-                From Pass1 ps
+                From Pass1 ps WITH (NOLOCK) 
                 Where ps.id = a.editName
             ) as edituser,
             (
                Select sum(layer)
-                From Order_EachCons ea,Order_EachCons_color ea_b
+                From Order_EachCons ea WITH (NOLOCK) ,Order_EachCons_color ea_b WITH (NOLOCK) 
                 Where ea.id = a.id and ea.id = '{0}' and ea.ukey = ea_b.order_eachConsUkey 
                     and ea.Markername = a.markername and ea_b.colorid = a.colorid
             ) as totallayer,
 			(
 				Select iif(count(size.sizecode)>1,2,1) 
-				From WorkOrder_SizeRatio size
+				From WorkOrder_SizeRatio size WITH (NOLOCK) 
 				Where a.ukey = size.WorkOrderUkey
 			) as multisize,
 
 			(
 				select SEQ
 				from (select WO.Ukey , max(c.Seq) SEQ
-						from WorkOrder WO
-						left join WorkOrder_SizeRatio b on b.WorkOrderUkey=WO.Ukey
-						left join Order_SizeCode c on c.Id=b.ID and c.SizeCode=b.SizeCode
+						from WorkOrder WO WITH (NOLOCK) 
+						left join WorkOrder_SizeRatio b WITH (NOLOCK) on b.WorkOrderUkey=WO.Ukey
+						left join Order_SizeCode c WITH (NOLOCK) on c.Id=b.ID and c.SizeCode=b.SizeCode
 						where WO.ID='{0}'
 						group by WO.Ukey) tmp
 				where tmp.Ukey=a.Ukey
@@ -183,14 +183,14 @@ namespace Sci.Production.Cutting
 			c.MtlTypeID,c.DescDetail,0 as newkey
             ,substring(a.MarkerLength,1,2) as MarkerLengthY
             ,substring(a.MarkerLength,4,13) as MarkerLengthE
-			from Workorder a
-			left join fabric c on c.SCIRefno = a.SCIRefno
+			from Workorder a WITH (NOLOCK) 
+			left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
             where a.id = '{0}'
             ", masterID);
             this.DetailSelectCommand = cmdsql;
             #endregion
             #region SizeRatio
-            cmdsql = string.Format("Select *,0 as newKey from Workorder_SizeRatio where id = '{0}'", masterID);
+            cmdsql = string.Format("Select *,0 as newKey from Workorder_SizeRatio WITH (NOLOCK) where id = '{0}'", masterID);
             DualResult dr = DBProxy.Current.Select(null, cmdsql, out sizeratioTb);
             if (!dr) ShowErr(cmdsql, dr);
             #endregion
@@ -198,17 +198,17 @@ namespace Sci.Production.Cutting
             cmdsql = string.Format(
                 @"Select a.MarkerName,a.Colorid,a.Order_EachconsUkey,isnull(sum(a.layer),0) as layer,                    
                     (Select isnull(sum(c.layer),0) as TL
-	                from Order_EachCons b, Order_EachCons_Color c 
+	                from Order_EachCons b WITH (NOLOCK) , Order_EachCons_Color c WITH (NOLOCK) 
 	                where b.id = '{0}' and b.id = c.id and a.MarkerName = b.Markername and a.Colorid = c.Colorid
                     and b.ukey=c.Order_EachConsUkey and a.Order_EachconsUkey = b.Ukey )  as TotallayerUkey,
 
                     (Select isnull(sum(c.layer),0) as TL2
-				    from Order_EachCons b, Order_EachCons_Color c 
+				    from Order_EachCons b WITH (NOLOCK) , Order_EachCons_Color c WITH (NOLOCK) 
 				    where b.id = '{0}' and b.id = c.id and 
                     b.ukey=c.Order_EachConsUkey and a.MarkerName = b.Markername 
                     and a.Colorid = c.Colorid )  
                     as TotallayerMarker
-                From WorkOrder a 
+                From WorkOrder a WITH (NOLOCK) 
                 Where a.id = '{0}' 
                 group by a.MarkerName,a.Colorid,a.Order_EachconsUkey
                 Order by a.MarkerName,a.Colorid,a.Order_EachconsUkey
@@ -217,11 +217,11 @@ namespace Sci.Production.Cutting
             if (!dr) ShowErr(cmdsql, dr);
             #endregion
             #region distqtyTb / PatternPanelTb
-            cmdsql = string.Format(@"Select *,0 as newKey From Workorder_distribute Where id='{0}'", masterID);
+            cmdsql = string.Format(@"Select *,0 as newKey From Workorder_distribute WITH (NOLOCK) Where id='{0}'", masterID);
             dr = DBProxy.Current.Select(null, cmdsql, out distqtyTb);
             if (!dr) ShowErr(cmdsql, dr);
 
-            cmdsql = string.Format(@"Select *,0 as newKey From Workorder_PatternPanel Where id='{0}'", masterID);
+            cmdsql = string.Format(@"Select *,0 as newKey From Workorder_PatternPanel WITH (NOLOCK) Where id='{0}'", masterID);
             dr = DBProxy.Current.Select(null, cmdsql, out PatternPanelTb);
             if (!dr) ShowErr(cmdsql, dr);
             #endregion
@@ -245,7 +245,7 @@ namespace Sci.Production.Cutting
             OnDetailGridRowChanged();
 
             DataRow orderdr;
-            MyUtility.Check.Seek(string.Format("Select * from Orders where id='{0}'", CurrentMaintain["ID"]), out orderdr);
+            MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"]), out orderdr);
 
             textbox_Style.Text = orderdr == null ? "" : orderdr["Styleid"].ToString();
             textbox_Line.Text = orderdr == null ? "" : orderdr["SewLine"].ToString();
@@ -553,8 +553,8 @@ namespace Sci.Production.Cutting
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     DataTable poTb;
-                    string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders where id ='{0}'", CurrentMaintain["ID"]));
-                    DBProxy.Current.Select(null, string.Format("Select SEQ1,SEQ2,Colorid From PO_Supp_Detail Where id='{0}' and SCIRefno ='{1}'", poid, dr["SCIRefno"]), out poTb);
+                    string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", CurrentMaintain["ID"]));
+                    DBProxy.Current.Select(null, string.Format("Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{0}' and SCIRefno ='{1}'", poid, dr["SCIRefno"]), out poTb);
                     sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8", dr["SEQ1"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -596,8 +596,8 @@ namespace Sci.Production.Cutting
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
                 DataRow seledr;
-                string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders where id ='{0}'", CurrentMaintain["ID"]));
-                if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail where id='{0}' and seq1 ='{1}'", poid, newvalue)))
+                string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", CurrentMaintain["ID"]));
+                if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1 ='{1}'", poid, newvalue)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("<SEQ1> : {0} data not found!", newvalue));
                     dr["SEQ1"] = "";
@@ -607,7 +607,7 @@ namespace Sci.Production.Cutting
                 }
                 else
                 {
-                    if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail where id='{0}' and seq1 ='{1}' and seq2 ='{2}'", poid, newvalue, CurrentDetailData["SEQ2"]), out seledr))
+                    if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1 ='{1}' and seq2 ='{2}'", poid, newvalue, CurrentDetailData["SEQ2"]), out seledr))
                     {
                         MyUtility.Msg.WarningBox(string.Format("<SEQ1>:{0},<SEQ2>:{1} data not found!", newvalue, CurrentDetailData["SEQ2"]));
                         dr["SEQ2"] = "";
@@ -633,8 +633,8 @@ namespace Sci.Production.Cutting
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     DataTable poTb;
-                    string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders where id ='{0}'", CurrentMaintain["ID"]));
-                    DBProxy.Current.Select(null, string.Format("Select SEQ1,SEQ2,Colorid From PO_Supp_Detail Where id='{0}' and SCIRefno ='{1}'", poid, dr["SCIRefno"]), out poTb);
+                    string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", CurrentMaintain["ID"]));
+                    DBProxy.Current.Select(null, string.Format("Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{0}' and SCIRefno ='{1}'", poid, dr["SCIRefno"]), out poTb);
                     sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8", dr["SEQ2"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -678,8 +678,8 @@ namespace Sci.Production.Cutting
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
                 DataRow seledr;
-                string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders where id ='{0}'", CurrentMaintain["ID"]));
-                if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail where id='{0}' and seq2 ='{1}'", poid, newvalue)))
+                string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", CurrentMaintain["ID"]));
+                if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq2 ='{1}'", poid, newvalue)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("<SEQ2> : {0} data not found!", newvalue));
                     dr["SEQ2"] = "";
@@ -689,7 +689,7 @@ namespace Sci.Production.Cutting
                 }
                 else
                 {
-                    if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail where id='{0}' and seq1 ='{1}' and seq2 ='{2}'", poid, CurrentDetailData["SEQ1"], newvalue), out seledr))
+                    if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1 ='{1}' and seq2 ='{2}'", poid, CurrentDetailData["SEQ1"], newvalue), out seledr))
                     {
                         MyUtility.Msg.WarningBox(string.Format("<SEQ1>:{0},<SEQ2>:{1} data not found!", newvalue, CurrentDetailData["SEQ1"]));
                         dr["SEQ1"] = "";
@@ -763,7 +763,7 @@ namespace Sci.Production.Cutting
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     DataTable cellTb;
-                    DBProxy.Current.Select(null, string.Format("Select id from Cutcell where mDivisionid = '{0}' and junk=0", keyWord), out cellTb);
+                    DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", keyWord), out cellTb);
                     sele = new SelectItem(cellTb, "ID", "10", dr["CutCellid"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -781,7 +781,7 @@ namespace Sci.Production.Cutting
                 if (oldvalue == newvalue) return;
 
                 DataTable cellTb;
-                DBProxy.Current.Select(null, string.Format("Select id from Cutcell where mDivisionid = '{0}' and junk=0", keyWord), out cellTb);
+                DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", keyWord), out cellTb);
 
                 DataRow[] seledr = cellTb.Select(string.Format("ID='{0}'", newvalue));
                 if (seledr.Length == 0)
@@ -1190,7 +1190,7 @@ namespace Sci.Production.Cutting
             bindingSource2.SetRow(this.CurrentDetailData);
             DataRow fabdr;
 
-            if (MyUtility.Check.Seek(string.Format("Select * from Fabric Where SCIRefno ='{0}'", CurrentDetailData["SCIRefno"]), out fabdr))
+            if (MyUtility.Check.Seek(string.Format("Select * from Fabric WITH (NOLOCK) Where SCIRefno ='{0}'", CurrentDetailData["SCIRefno"]), out fabdr))
             {
                 displayBox_FabricType.Text = fabdr["MtlTypeid"].ToString();
                 editBox_desc.Text = fabdr["Description"].ToString();
@@ -1327,7 +1327,7 @@ namespace Sci.Production.Cutting
 
             #region 找出有哪些部位
             string fabcodesql = string.Format(@"Select distinct a.LectraCode
-            from Order_ColorCombo a ,Order_EachCons b 
+            from Order_ColorCombo a WITH (NOLOCK) ,Order_EachCons b WITH (NOLOCK) 
             where a.id = '{0}' and a.FabricCode is not null and a.FabricCode !='' 
             and b.id = '{0}' and a.id = b.id 
             --and b.cuttingpiece='0' and  b.FabricCombo = a.LectraCode
@@ -1341,7 +1341,7 @@ namespace Sci.Production.Cutting
             {
                 settbsql = settbsql + ", 0 as " + dr["LectraCode"];
             }
-            settbsql = settbsql + string.Format(" From Order_Qty a,orders b Where b.cuttingsp ='{0}' and a.id = b.id order by id,article,sizecode", masterID);
+            settbsql = settbsql + string.Format(" From Order_Qty a WITH (NOLOCK) ,orders b WITH (NOLOCK) Where b.cuttingsp ='{0}' and a.id = b.id order by id,article,sizecode", masterID);
 
             DualResult gridResult = DBProxy.Current.Select(null, settbsql, out qtybreakTb);
             MyUtility.Tool.ProcessWithDatatable(qtybreakTb, "sizecode", "Select distinct SizeCode from #tmp", out sizeGroup);
@@ -1352,7 +1352,7 @@ namespace Sci.Production.Cutting
             #region 寫入部位數量
             string getqtysql = string.Format(
             @"Select b.article,b.sizecode,b.qty,c.LectraCode,b.orderid 
-            From Workorder a, workorder_Distribute b, workorder_PatternPanel c 
+            From Workorder a WITH (NOLOCK) , workorder_Distribute b WITH (NOLOCK) , workorder_PatternPanel c WITH (NOLOCK) 
             Where a.id = '{0}' and a.ukey = b.workorderukey and a.ukey = c.workorderukey 
             and b.workorderukey = c.workorderukey and b.article !=''", masterID);
             DataTable getqtytb;
@@ -1371,7 +1371,7 @@ namespace Sci.Production.Cutting
             #region 判斷是否Complete
             DataTable panneltb;
             fabcodesql = string.Format(@"Select distinct a.Article,a.LectraCode
-            from Order_ColorCombo a ,Order_EachCons b
+            from Order_ColorCombo a WITH (NOLOCK) ,Order_EachCons b WITH (NOLOCK) 
             where a.id = '{0}' and a.FabricCode is not null 
             and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.LectraCode
             and a.FabricCode !='' order by Article,LectraCode", masterID);
@@ -1437,7 +1437,7 @@ namespace Sci.Production.Cutting
             string cmdsql = string.Format(@"
             SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, isnull(CutNo,0) as cutno,
             isnull(MarkerName,'') as MarkerName, estcutdate
-            FROM Workorder
+            FROM Workorder WITH (NOLOCK) 
             WHERE (cutplanid is null or cutplanid ='') AND (CutNo is not null )
                     AND (cutref is not null and cutref !='') and id = '{0}' and mDivisionid = '{1}'
             GROUP BY Cutref, FabricCombo, CutNo, MarkerName, estcutdate", CurrentMaintain["ID"], keyWord);
@@ -1452,7 +1452,7 @@ namespace Sci.Production.Cutting
             DataTable workordertmp;
             cmdsql = string.Format(
                 @"Select * 
-                  From workorder 
+                  From workorder WITH (NOLOCK) 
                   Where (CutNo is not null ) and (cutref is null or cutref ='') 
                     and (estcutdate is not null and estcutdate !='' )
                     and id = '{0}' and mDivisionid = '{1}'
@@ -1464,7 +1464,7 @@ namespace Sci.Production.Cutting
                 return;
             }
             DataTable workorderdt = ((DataTable)detailgridbs.DataSource);
-            string maxref = MyUtility.GetValue.Lookup(string.Format("Select isnull(Max(cutref),'000000') from Workorder where mDivisionid = '{0}'", keyWord)); //找最大Cutref
+            string maxref = MyUtility.GetValue.Lookup(string.Format("Select isnull(Max(cutref),'000000') from Workorder WITH (NOLOCK) where mDivisionid = '{0}'", keyWord)); //找最大Cutref
             string updatecutref = "", newcutref = "";
             foreach (DataRow dr in workordertmp.Rows) //寫入空的Cutref
             {

@@ -38,8 +38,8 @@ namespace Sci.Production.Cutting
                 when 4 then 'Assorted Color/Size'  
                 when 5 then 'Other' 
                 End 'Packingmethod'   
-                From orders a 
-                left join order_QtyCTN b on b.id =a.id  
+                From orders a WITH (NOLOCK) 
+                left join order_QtyCTN b WITH (NOLOCK) on b.id =a.id  
                 Where cuttingsp = '{0}'", cuttingid);
             DualResult dr = DBProxy.Current.Select(null, cmdsql, out datas);
             if (!dr)

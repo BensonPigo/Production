@@ -37,16 +37,16 @@ namespace Sci.Production.Cutting
             Select a.*,
             (
                 Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c
+                From WorkOrder_PatternPanel c WITH (NOLOCK) 
                 Where c.WorkOrderUkey =a.WorkOrderUkey 
                 For XML path('')
             ) as PatternPanel,
             (
-                Select cuttingwidth from Order_EachCons b, WorkOrder e
+                Select cuttingwidth from Order_EachCons b WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
                 where e.Order_EachconsUkey = b.Ukey and a.WorkOrderUkey = e.Ukey  
             ) as cuttingwidth,
             o.styleid,o.seasonid
-            From MarkerReq_Detail a left join Orders o on a.orderid=o.id
+            From MarkerReq_Detail a WITH (NOLOCK) left join Orders o WITH (NOLOCK) on a.orderid=o.id
             where a.id = '{0}'
             ", masterID);
             this.DetailSelectCommand = cmdsql;
@@ -244,7 +244,7 @@ namespace Sci.Production.Cutting
 
             if (!this.EditMode) return;
             if (textBox1.OldValue.ToString() == textBox1.Text) return;
-            string cmd = string.Format("Select * from Cutplan Where id='{0}' and mDivisionid = '{1}'", textBox1.Text, keyWord);
+            string cmd = string.Format("Select * from Cutplan WITH (NOLOCK) Where id='{0}' and mDivisionid = '{1}'", textBox1.Text, keyWord);
             DataRow cutdr;
             if (!MyUtility.Check.Seek(cmd, out cutdr, null))
             {
@@ -274,7 +274,7 @@ namespace Sci.Production.Cutting
         private void textBox1_Validated(object sender, EventArgs e)
         {
             base.OnValidated(e);
-            string cmd = string.Format("Select * from Cutplan Where id='{0}' and mDivisionid = '{1}'", textBox1.Text, keyWord);
+            string cmd = string.Format("Select * from Cutplan WITH (NOLOCK) Where id='{0}' and mDivisionid = '{1}'", textBox1.Text, keyWord);
             DataRow cutdr;
             if (MyUtility.Check.Seek(cmd, out cutdr, null))
             {
@@ -290,11 +290,11 @@ namespace Sci.Production.Cutting
                 b.MarkerNo,a.WorkOrderUkey,b.fabricCombo,
                 (
                     Select c.sizecode+'*'+convert(varchar(8),c.qty)+'/' 
-                    From WorkOrder_SizeRatio c
+                    From WorkOrder_SizeRatio c WITH (NOLOCK) 
                     Where a.WorkOrderUkey =c.WorkOrderUkey            
                     For XML path('')
                 ) as SizeRatio
-                From Cutplan_Detail a, WorkOrder b 
+                From Cutplan_Detail a WITH (NOLOCK) , WorkOrder b WITH (NOLOCK) 
                 Where a.workorderukey = b.ukey and a.id = '{0}'
 			    Group by b.Orderid,b.MarkerName,b.MarkerNo,
                     b.fabricCombo,a.WorkOrderUkey", textBox1.Text);
@@ -325,15 +325,15 @@ namespace Sci.Production.Cutting
                     a.layer,a.fabriccombo,
             (
                 Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c
+                From WorkOrder_PatternPanel c WITH (NOLOCK) 
                 Where c.WorkOrderUkey =a.WorkOrderUkey 
                 For XML path('')
             ) as PatternPanel,
             (
-                Select cuttingwidth from Order_EachCons b, WorkOrder e
+                Select cuttingwidth from Order_EachCons b WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
                 where e.Order_EachconsUkey = b.Ukey and a.WorkOrderUkey = e.Ukey  
             ) as cuttingwidth,ReqQty,ReleaseQty,ReleaseDate
-            From MarkerReq_Detail a left join Orders o on a.orderid=o.id
+            From MarkerReq_Detail a WITH (NOLOCK) left join Orders o WITH (NOLOCK) on a.orderid=o.id
             where a.id = '{0}'
             ", CurrentDetailData["ID"]);
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out ExcelTb);
@@ -407,7 +407,7 @@ namespace Sci.Production.Cutting
                 return;
             }
             DataRow seekdr;
-            if (MyUtility.Check.Seek("select * from mailto where Id='004'", out seekdr))
+            if (MyUtility.Check.Seek("select * from mailto WITH (NOLOCK) where Id='004'", out seekdr))
             {
                 string mailFrom = Sci.Env.User.MailAddress;
                 string mailto = seekdr["ToAddress"].ToString();

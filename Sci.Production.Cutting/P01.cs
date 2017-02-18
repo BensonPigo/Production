@@ -43,7 +43,7 @@ namespace Sci.Production.Cutting
             base.OnDetailEntered();
             #region Base
             DataRow orderdr;
-            if (MyUtility.Check.Seek(String.Format("Select * from Orders where id='{0}'", CurrentMaintain["ID"]), out orderdr))
+            if (MyUtility.Check.Seek(String.Format("Select * from Orders WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"]), out orderdr))
             {
                 displayBox2.Text = orderdr["Styleid"].ToString();
                 displayBox4.Text = orderdr["Seasonid"].ToString();
@@ -84,7 +84,7 @@ namespace Sci.Production.Cutting
             }
             #endregion
             #region Cutinline,Cutoffline 是減System.Cutday計算
-            int cutday = Convert.ToInt16(MyUtility.GetValue.Lookup(String.Format("Select cutday from System")));
+            int cutday = Convert.ToInt16(MyUtility.GetValue.Lookup(String.Format("Select cutday from System WITH (NOLOCK) ")));
             if (CurrentMaintain["sewinline"] == DBNull.Value) dateBox1.Value = null;
             else dateBox1.Value = Convert.ToDateTime(CurrentMaintain["sewinline"]).AddDays(-cutday);
             if (CurrentMaintain["sewoffline"] == DBNull.Value) dateBox2.Value = null;
@@ -96,7 +96,7 @@ namespace Sci.Production.Cutting
             sqlCmd = string.Format(@"
 select isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList,
 isnull([dbo].getCuttingComboList(o.ID,o.CuttingSP),'') as CuttingList
-from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+from Orders o WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out OrdersData);
             if (result)
             {
@@ -119,7 +119,7 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
             }
             #endregion
             #region sum FOC & OrderQty
-            sqlCmd = string.Format("Select isnull(sum(Qty),0) as Qty , isnull(sum(FOCQty),0) as FOC from Orders where CuttingSp = '{0}'"
+            sqlCmd = string.Format("Select isnull(sum(Qty),0) as Qty , isnull(sum(FOCQty),0) as FOC from Orders WITH (NOLOCK) where CuttingSp = '{0}'"
                 , CurrentMaintain["ID"]);
             if (MyUtility.Check.Seek(sqlCmd, out orderdr))
             {
@@ -155,9 +155,9 @@ from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID
             }
 
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["ID"].ToString(), "Orders", "ID");
-            string patidsql = String.Format(@"SELECT ukey FROM [Production].[dbo].[Pattern]
+            string patidsql = String.Format(@"SELECT ukey FROM [Production].[dbo].[Pattern] WITH (NOLOCK) 
 WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
-AND EDITdATE = (SELECT MAX(EditDate) from pattern where styleukey = '{0}' and Status = 'Completed')", ukey);
+AND EDITdATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey = '{0}' and Status = 'Completed')", ukey);
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
             if (patternukey != "")
             {
@@ -182,7 +182,7 @@ AND EDITdATE = (SELECT MAX(EditDate) from pattern where styleukey = '{0}' and St
             if (MyUtility.Check.Empty(StyleUkey))
                 button11.ForeColor = Color.Black;
             else
-                button11.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits where StyleUkey = {0}", StyleUkey)) ? Color.Blue : Color.Black;
+                button11.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0}", StyleUkey)) ? Color.Blue : Color.Black;
 
             #endregion
         }

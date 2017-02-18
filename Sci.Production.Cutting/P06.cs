@@ -35,16 +35,16 @@ namespace Sci.Production.Cutting
             Select a.*,
             (
                 Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c
+                From WorkOrder_PatternPanel c WITH (NOLOCK) 
                 Where c.WorkOrderUkey =a.WorkOrderUkey 
                 For XML path('')
             ) as PatternPanel,
             (
-                Select cuttingwidth from Order_EachCons b, WorkOrder e
+                Select cuttingwidth from Order_EachCons b WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
                 where e.Order_EachconsUkey = b.Ukey and a.WorkOrderUkey = e.Ukey  
             ) as cuttingwidth,
             o.styleid,o.seasonid
-            From MarkerReq_Detail a left join Orders o on a.orderid=o.id
+            From MarkerReq_Detail a WITH (NOLOCK) left join Orders o WITH (NOLOCK) on a.orderid=o.id
             where a.id = '{0}'
             ", masterID);
             this.DetailSelectCommand = cmdsql;            
@@ -124,15 +124,15 @@ namespace Sci.Production.Cutting
                     a.layer,a.fabriccombo,
             (
                 Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c
+                From WorkOrder_PatternPanel c WITH (NOLOCK) 
                 Where c.WorkOrderUkey =a.WorkOrderUkey 
                 For XML path('')
             ) as PatternPanel,
             (
-                Select cuttingwidth from Order_EachCons b, WorkOrder e
+                Select cuttingwidth from Order_EachCons b WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
                 where e.Order_EachconsUkey = b.Ukey and a.WorkOrderUkey = e.Ukey  
             ) as cuttingwidth,ReqQty,ReleaseQty,ReleaseDate
-            From MarkerReq_Detail a left join Orders o on a.orderid=o.id
+            From MarkerReq_Detail a WITH (NOLOCK) left join Orders o WITH (NOLOCK) on a.orderid=o.id
             where a.id = '{0}'
             ", CurrentDetailData["ID"]);
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out ExcelTb);
@@ -178,7 +178,7 @@ namespace Sci.Production.Cutting
                     string fileNameExt = pathName.Substring(pathName.LastIndexOf("\\") + 1);
 
                     DataRow seekdr;
-                    if (MyUtility.Check.Seek("select * from mailto where Id='003'", out seekdr))
+                    if (MyUtility.Check.Seek("select * from mailto WITH (NOLOCK) where Id='003'", out seekdr))
                     {
                         string mailto = seekdr["ToAddress"].ToString();
                         string cc = seekdr["ccAddress"].ToString();

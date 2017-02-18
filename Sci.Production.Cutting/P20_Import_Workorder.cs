@@ -47,7 +47,7 @@ namespace Sci.Production.Cutting
             DBProxy.Current.Select(null,
             @"Select 0 as Sel, '' as cutref,'' as cuttingid,'' as orderid,'' as Fabriccombo,
             '' as LectraCode,'' as cutno, '' as MarkerName, '' as MarkerLength, '' as Colorid, 0 as Layer,
-            0 as Cons, '' as Ratio from Workorder where 1=0", out gridTable);
+            0 as Cons, '' as Ratio from Workorder WITH (NOLOCK) where 1=0", out gridTable);
             base.OnFormLoaded();
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = gridTable;
@@ -89,17 +89,17 @@ namespace Sci.Production.Cutting
                 @"Select 0 as sel,a.*, a.id as Cuttingid,a.ukey as workorderukey,    
                 (
                 Select orderid+'/' 
-                From WorkOrder_Distribute c
+                From WorkOrder_Distribute c WITH (NOLOCK) 
                 Where c.WorkOrderUkey =a.Ukey and orderid!='EXCESS'
                 For XML path('')
                 ) as OrderID ,
                 (
                 Select SizeCode+'/'+convert(varchar,Qty ) 
-                From WorkOrder_SizeRatio c
+                From WorkOrder_SizeRatio c WITH (NOLOCK) 
                 Where c.WorkOrderUkey =a.Ukey 
                 For XML path('')
-                ) as SizeRatio from WorkOrder a where mDivisionid = '{0}' and a.estcutdate = '{1}'
-                and a.Ukey not in (Select WorkOrderUkey from CuttingOutput_Detail) 
+                ) as SizeRatio from WorkOrder a WITH (NOLOCK) where mDivisionid = '{0}' and a.estcutdate = '{1}'
+                and a.Ukey not in (Select WorkOrderUkey from CuttingOutput_Detail WITH (NOLOCK)) 
                 and CutRef != ''
                 and CutRef not in ( {2} )
                 order by cutref", keyWord, estcutdate, condition);

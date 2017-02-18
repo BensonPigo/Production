@@ -74,12 +74,12 @@ namespace Sci.Production.Cutting
                                                     ,Artwork.Artwork [Artwork]
                                                     ,a.Qty [Quantity]
                                                     ,a.BundleNo [Barcode]
-                                            from dbo.Bundle_Detail a
-                                            left join dbo.Bundle b on a.id=b.id
-                                            left join dbo.orders c on c.id=b.Orderid
+                                            from dbo.Bundle_Detail a WITH (NOLOCK) 
+                                            left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
+                                            left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
                                             outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                                             outer apply(select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                                                                        from dbo.Bundle_Detail_Art e1
+							                                                                        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
 							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode != 'ALLPARTS'
@@ -101,13 +101,13 @@ namespace Sci.Production.Cutting
                                                     ,Artwork.Artwork [Artwork]
                                                     ,a.Qty [Quantity]
                                                     ,a.BundleNo [Barcode]
-                                            from dbo.Bundle_Detail a
-                                            left join dbo.Bundle b on a.id=b.id
-                                            left join dbo.orders c on c.id=b.Orderid
-                                            left join dbo.Bundle_Detail_Allpart d on d.id=a.Id
+                                            from dbo.Bundle_Detail a WITH (NOLOCK) 
+                                            left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
+                                            left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
+                                            left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
                                             outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                                             outer apply(select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                                                                        from dbo.Bundle_Detail_Art e1
+							                                                                        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
 							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode = 'ALLPARTS'
@@ -133,12 +133,12 @@ namespace Sci.Production.Cutting
                                                     ,a.Qty [Quantity]
                                                     ,a.BundleNo [Barcode]
 		                                            ,a.Patterncode
-                                            from dbo.Bundle_Detail a
-                                            left join dbo.Bundle b on a.id=b.id
-                                            left join dbo.orders c on c.id=b.Orderid
+                                            from dbo.Bundle_Detail a WITH (NOLOCK) 
+                                            left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
+                                            left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
                                             outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
                                             outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                                                                        from dbo.Bundle_Detail_Art e1
+							                                                                        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
 							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode != 'ALLPARTS'
@@ -161,12 +161,12 @@ namespace Sci.Production.Cutting
                                                     ,a.Qty [Quantity]
                                                     ,a.BundleNo [Barcode]
 		                                            ,a.Patterncode
-                                            from dbo.Bundle_Detail a
-                                            left join dbo.Bundle b on a.id=b.id
-                                            left join dbo.orders c on c.id=b.Orderid
+                                            from dbo.Bundle_Detail a WITH (NOLOCK) 
+                                            left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
+                                            left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
                                             outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
                                             outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                                                                        from dbo.Bundle_Detail_Art e1
+							                                                                        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
 							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode = 'ALLPARTS'
@@ -240,12 +240,12 @@ namespace Sci.Production.Cutting
                                                     ,Artwork.Artwork [SubProcess]
                                                     ,a.Parts [Parts]
                                                     ,a.Qty [Qty]
-                                            from dbo.Bundle_Detail a
-                                            left join dbo.Bundle b on a.id=b.id
-                                            left join dbo.orders c on c.id=b.Orderid
+                                            from dbo.Bundle_Detail a WITH (NOLOCK) 
+                                            left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
+                                            left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
                                             outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                                             outer apply(select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                                                                        from dbo.Bundle_Detail_Art e1
+							                                                                        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
 							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode != 'ALLPARTS'
@@ -269,13 +269,13 @@ namespace Sci.Production.Cutting
                                                     ,Artwork.Artwork [SubProcess]
                                                     ,d.Parts [Parts]
                                                     ,a.Qty [Qty]
-                                            from dbo.Bundle_Detail a
-                                            left join dbo.Bundle b on a.id=b.id
-                                            left join dbo.orders c on c.id=b.Orderid
-                                            left join dbo.Bundle_Detail_Allpart d on d.id=a.Id
+                                            from dbo.Bundle_Detail a WITH (NOLOCK) 
+                                            left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
+                                            left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
+                                            left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
                                             outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
                                             outer apply(select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                                                                        from dbo.Bundle_Detail_Art e1
+							                                                                        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
 							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode = 'ALLPARTS'
@@ -302,12 +302,12 @@ namespace Sci.Production.Cutting
                                                     ,Artwork.Artwork [SubProcess]
                                                     ,a.Parts [Parts]
                                                     ,a.Qty [Qty]
-                                            from dbo.Bundle_Detail a
-                                            left join dbo.Bundle b on a.id=b.id
-                                            left join dbo.orders c on c.id=b.Orderid
+                                            from dbo.Bundle_Detail a WITH (NOLOCK) 
+                                            left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
+                                            left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
                                             outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
                                             outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                                                                        from dbo.Bundle_Detail_Art e1
+							                                                                        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
 							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode != 'ALLPARTS'
@@ -331,12 +331,12 @@ namespace Sci.Production.Cutting
                                                     ,Artwork.Artwork [SubProcess]
                                                     ,a.Parts [Parts]
                                                     ,a.Qty [Qty]
-                                            from dbo.Bundle_Detail a
-                                            left join dbo.Bundle b on a.id=b.id
-                                            left join dbo.orders c on c.id=b.Orderid
+                                            from dbo.Bundle_Detail a WITH (NOLOCK) 
+                                            left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
+                                            left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
                                             outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
                                             outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                                                                        from dbo.Bundle_Detail_Art e1
+							                                                                        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
 							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
 							                                                                        for xml path('')))as Artwork
                                             where a.ID= @ID and a.Patterncode = 'ALLPARTS'

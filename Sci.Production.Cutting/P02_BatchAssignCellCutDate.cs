@@ -43,7 +43,7 @@ namespace Sci.Production.Cutting
                     string keyWord = Sci.Env.User.Keyword;
                     // Parent form 若是非編輯狀態就 return 
                     if (!this.EditMode) { return; }
-                    string CUTCELL= string.Format("Select id from Cutcell where mDivisionid = '{0}' and junk=0", keyWord);
+                    string CUTCELL = string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", keyWord);
                     DR = DBProxy.Current.Select(null, CUTCELL, out DT);
                     S = new SelectItem(DT, "ID", "10",DT.Columns["id"].ToString(), false, ",");
                     DialogResult result = S.ShowDialog();
@@ -63,7 +63,7 @@ namespace Sci.Production.Cutting
                 string oldvalue = dr["Cutcellid"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
-                string CUTCELL = string.Format("Select id from Cutcell where mDivisionid = '{0}' and junk=0", keyWord);
+                string CUTCELL = string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", keyWord);
                 DR = DBProxy.Current.Select(null, CUTCELL, out DT);
               
                 DataRow[] seledr = DT.Select(string.Format("ID='{0}'", newvalue));

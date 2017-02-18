@@ -36,18 +36,18 @@ namespace Sci.Production.Cutting
             Select a.* , e.FabricCombo, e.LectraCode, 
             (
                 Select DISTINCT Orderid+'/' 
-                From WorkOrder_Distribute d
+                From WorkOrder_Distribute d WITH (NOLOCK) 
                 Where d.WorkOrderUkey =a.WorkOrderUkey and Orderid!='EXCESS'
                 For XML path('')
             ) as OrderID,
             (
                 --Select SizeCode+'/'+convert(varchar,Qty )
                 Select SizeCode+'*'+convert(varchar,Qty ) + '/ '
-                From CuttingOutput_Detail_Detail c
+                From CuttingOutput_Detail_Detail c WITH (NOLOCK) 
                 Where c.CuttingOutput_DetailUkey =a.Ukey 
                 For XML path('')
             ) as SizeRatio      
-            From cuttingoutput_Detail a, WorkOrder e
+            From cuttingoutput_Detail a WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
             where a.id = '{0}' and a.WorkOrderUkey = e.Ukey
             ORDER BY CutRef
             ", masterID);
@@ -60,7 +60,7 @@ namespace Sci.Production.Cutting
 
             this.SubDetailSelectCommand = string.Format(
             @"Select a.*
-            from Cuttingoutput_Detail_Detail a
+            from Cuttingoutput_Detail_Detail a WITH (NOLOCK) 
             where a.Cuttingoutput_DetailUkey = '{0}'", masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
         } 
@@ -89,7 +89,7 @@ namespace Sci.Production.Cutting
                 string newvalue = e.FormattedValue.ToString();
                 if (newvalue == oldvalue || newvalue.Trim()=="") return;
                 DataTable dt;
-                if (DBProxy.Current.Select(null, string.Format(@"Select * from WorkOrder a where a.cutref = '{0}'", e.FormattedValue.ToString()), out dt))
+                if (DBProxy.Current.Select(null, string.Format(@"Select * from WorkOrder a WITH (NOLOCK) where a.cutref = '{0}'", e.FormattedValue.ToString()), out dt))
                 {
                     if (dt.Rows.Count==0)
                     {
@@ -139,7 +139,7 @@ namespace Sci.Production.Cutting
                 dr["SizeRatio"] = "";
                 DataTable workorderTb;
                 string str = "";
-                if (DBProxy.Current.Select(null, string.Format("Select * from Workorder_SizeRatio a where a.workorderukey = '{0}'", dr["Workorderukey"]), out workorderTb))
+                if (DBProxy.Current.Select(null, string.Format("Select * from Workorder_SizeRatio a WITH (NOLOCK) where a.workorderukey = '{0}'", dr["Workorderukey"]), out workorderTb))
                 {
                     if (workorderTb.Rows.Count != 0)
                     {
@@ -158,7 +158,7 @@ namespace Sci.Production.Cutting
                     dr["sizeRatio"] = str;
                 }
                 str = "";
-                if (DBProxy.Current.Select(null, string.Format("Select * from Workorder_distribute a where a.workorderukey = '{0}'", dr["Workorderukey"]), out workorderTb))
+                if (DBProxy.Current.Select(null, string.Format("Select * from Workorder_distribute a WITH (NOLOCK) where a.workorderukey = '{0}'", dr["Workorderukey"]), out workorderTb))
                 {
                     if (workorderTb.Rows.Count!=0)
                     {
@@ -249,7 +249,7 @@ namespace Sci.Production.Cutting
             if (this.IsDetailInserting)
             {
                 string date = dateBox1.Text;
-                string sql = string.Format("Select * from Cuttingoutput Where cdate = '{0}' and id !='{1}'", date,CurrentMaintain["ID"]);
+                string sql = string.Format("Select * from Cuttingoutput WITH (NOLOCK) Where cdate = '{0}' and id !='{1}'", date, CurrentMaintain["ID"]);
                 if (MyUtility.Check.Seek(sql, null))
                 {
                     MyUtility.Msg.WarningBox("The <Date> had been existed already.");
@@ -275,12 +275,12 @@ namespace Sci.Production.Cutting
                 cutref = dr["Cutref"].ToString();
                 id = dr["id"].ToString();
                 cuttingid = dr["cuttingid"].ToString();
-                sumsql = string.Format("Select sum(Layer) as tlayer from Workorder where id='{0}' and cutref = '{1}'", cuttingid, cutref);
+                sumsql = string.Format("Select sum(Layer) as tlayer from Workorder WITH (NOLOCK) where id='{0}' and cutref = '{1}'", cuttingid, cutref);
                 string str = MyUtility.GetValue.Lookup(sumsql, null);
                 if (MyUtility.Check.Empty(str)) layer_work = 0;
                 else layer_work = Convert.ToInt32(str);
 
-                sumsql = string.Format("Select sum(Layer) as cuttingL from Cuttingoutput_Detail where id!='{0}' and cutref = '{1}' and cuttingid= '{2}'", id, cutref,cuttingid);
+                sumsql = string.Format("Select sum(Layer) as cuttingL from Cuttingoutput_Detail WITH (NOLOCK) where id!='{0}' and cutref = '{1}' and cuttingid= '{2}'", id, cutref, cuttingid);
                 str = MyUtility.GetValue.Lookup(sumsql, null);
                 if (MyUtility.Check.Empty(str)) layer_cutting = 0;
                 else layer_cutting = Convert.ToInt32(str);
@@ -302,7 +302,7 @@ namespace Sci.Production.Cutting
             #region 掃表身找出有改變的寫入第三層
             DataTable detailTb = ((DataTable)detailgridbs.DataSource);
             DataTable subtb, SizeTb;
-            MyUtility.Tool.ProcessWithDatatable(detailTb, "WorkorderUkey", "Select b.* from #tmp a, workorder_SizeRatio b where a.workorderukey = b.workorderukey", out SizeTb);
+            MyUtility.Tool.ProcessWithDatatable(detailTb, "WorkorderUkey", "Select b.* from #tmp a, workorder_SizeRatio b WITH (NOLOCK) where a.workorderukey = b.workorderukey", out SizeTb);
             DataRow[] dray;
             foreach (DataRow dr in DetailDatas)
             {
@@ -341,8 +341,8 @@ namespace Sci.Production.Cutting
         {
             base.ClickConfirm();
             #region 若前面的單子有尚未Confrim 則不可Confirm
-            
-            string sql = string.Format("Select * from Cuttingoutput where cdate<'{0}' and Status='New' and mDivisionid = '{1}'",CurrentMaintain["cdate"],keyWord);
+
+            string sql = string.Format("Select * from Cuttingoutput WITH (NOLOCK) where cdate<'{0}' and Status='New' and mDivisionid = '{1}'", CurrentMaintain["cdate"], keyWord);
             string msg = "";
             DataTable Dt;
             if (DBProxy.Current.Select(null,sql, out Dt))
@@ -364,17 +364,17 @@ namespace Sci.Production.Cutting
             into #tmp1
             from 
             (Select b.POID,c.ID,c.Article,c.SizeCode,c.Qty from (Select distinct a.id,POID ,w.article
-            from Orders a,CuttingOutput_Detail cu,WorkOrder_Distribute w where a.id = w.OrderID and cu.id='{0}' 
+            from Orders a WITH (NOLOCK) ,CuttingOutput_Detail cu WITH (NOLOCK) ,WorkOrder_Distribute w WITH (NOLOCK)  where a.id = w.OrderID and cu.id='{0}' 
             and w.WorkOrderUkey = cu.WorkOrderUkey) as b,
             order_Qty c where c.id = b.id and b.Article = c.Article) d,Order_ColorCombo e,order_Eachcons cons
             where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and d.poid = cons.id and cons.CuttingPiece='0' and  cons.FabricCombo = e.PatternPanel
 
             Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty 
             into #tmp2
-            from CuttingOutput ma,CuttingOutput_Detail a ,WorkOrder_Distribute b , WorkOrder_PatternPanel c , Orders O
+            from CuttingOutput ma WITH (NOLOCK) ,CuttingOutput_Detail a WITH (NOLOCK) ,WorkOrder_Distribute b WITH (NOLOCK) , WorkOrder_PatternPanel c WITH (NOLOCK) , Orders O WITH (NOLOCK) 
             Where ma.cdate<'{1}' and ma.ID = a.id and ma.Status!='New' 
             and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey   and O.ID=b.OrderID
-            and O.POID in (select CuttingID from CuttingOutput_Detail where CuttingOutput_Detail.ID = '{0}')
+            and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = '{0}')
             group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
 
             Select a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty 
@@ -388,17 +388,17 @@ namespace Sci.Production.Cutting
             into #tmp1
             from 
             (Select b.POID,c.ID,c.Article,c.SizeCode,c.Qty from (Select distinct a.id,POID ,w.article
-            from Orders a,CuttingOutput_Detail cu,WorkOrder_Distribute w where a.id = w.OrderID and cu.id='{0}' 
+            from Orders a WITH (NOLOCK) ,CuttingOutput_Detail cu WITH (NOLOCK) ,WorkOrder_Distribute w  WITH (NOLOCK) where a.id = w.OrderID and cu.id='{0}' 
             and w.WorkOrderUkey = cu.WorkOrderUkey) as b,
             order_Qty c where c.id = b.id and b.Article = c.Article) d,Order_ColorCombo e,order_Eachcons cons
             where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and d.poid = cons.id and cons.CuttingPiece='0' and  cons.FabricCombo = e.PatternPanel
 
             Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty 
             into #tmp2
-            from CuttingOutput ma,CuttingOutput_Detail a ,WorkOrder_Distribute b , WorkOrder_PatternPanel c , Orders O
+            from CuttingOutput ma WITH (NOLOCK) ,CuttingOutput_Detail a WITH (NOLOCK) ,WorkOrder_Distribute b WITH (NOLOCK) , WorkOrder_PatternPanel c WITH (NOLOCK) , Orders O WITH (NOLOCK) 
             Where ma.cdate<='{1}' and ma.ID = a.id and ma.Status!='New' 
             and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey   and O.ID=b.OrderID
-            and O.POID in (select CuttingID from CuttingOutput_Detail where CuttingOutput_Detail.ID = '{0}')
+            and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = '{0}')
             group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
 
             Select a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty 
@@ -424,7 +424,7 @@ namespace Sci.Production.Cutting
 
             foreach (DataRow dr in t2.Rows)
             {
-                if (MyUtility.Check.Seek(string.Format("Select * from CuttingOutput_WIP where Orderid='{0}' and article ='{1}' and size = '{2}'", dr["id"], dr["article"], dr["sizecode"]), out wipRow, null))
+                if (MyUtility.Check.Seek(string.Format("Select * from CuttingOutput_WIP WITH (NOLOCK) where Orderid='{0}' and article ='{1}' and size = '{2}'", dr["id"], dr["article"], dr["sizecode"]), out wipRow, null))
                 {
                     update = update + string.Format("update CuttingOutput_WIP set Qty = {0} where Orderid='{1}' and article ='{2}' and size = '{3}';", dr["cutqty"], dr["id"], dr["article"], dr["sizecode"]);
                     cpu = Convert.ToDecimal(MyUtility.GetValue.Lookup("CPU", dr["id"].ToString(), "Orders", "ID"));
@@ -493,7 +493,7 @@ namespace Sci.Production.Cutting
             base.ClickUnconfirm();
             #region 若前面的單子有UnConfrim 則UnConfirm
 
-            string sql = string.Format("Select * from Cuttingoutput where cdate>'{0}' and Status!='New' and mDivisionid = '{1}'", CurrentMaintain["cdate"], keyWord);
+            string sql = string.Format("Select * from Cuttingoutput  WITH (NOLOCK) where cdate>'{0}' and Status!='New' and mDivisionid = '{1}'", CurrentMaintain["cdate"], keyWord);
             string msg = "";
             DataTable Dt;
             if (DBProxy.Current.Select(null, sql, out Dt))
@@ -515,17 +515,17 @@ namespace Sci.Production.Cutting
             into #tmp1
             from 
             (Select b.POID,c.ID,c.Article,c.SizeCode,c.Qty from (Select distinct a.id,POID ,w.article
-            from Orders a,CuttingOutput_Detail cu,WorkOrder_Distribute w where a.id = w.OrderID and cu.id='{0}' 
+            from Orders a WITH (NOLOCK) ,CuttingOutput_Detail cu WITH (NOLOCK) ,WorkOrder_Distribute w WITH (NOLOCK) where a.id = w.OrderID and cu.id='{0}' 
             and w.WorkOrderUkey = cu.WorkOrderUkey) as b,
             order_Qty c where c.id = b.id and b.Article = c.Article) d,Order_ColorCombo e,order_Eachcons cons
             where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and d.poid = cons.id and cons.CuttingPiece='0' and  cons.FabricCombo = e.PatternPanel
 
             Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty 
             into #tmp2
-            from CuttingOutput ma,CuttingOutput_Detail a ,WorkOrder_Distribute b , WorkOrder_PatternPanel c , Orders O
+            from CuttingOutput ma WITH (NOLOCK) ,CuttingOutput_Detail a WITH (NOLOCK) ,WorkOrder_Distribute b WITH (NOLOCK) , WorkOrder_PatternPanel c WITH (NOLOCK) , Orders O WITH (NOLOCK) 
             Where ma.cdate<'{1}' and ma.ID = a.id and ma.Status!='New' 
             and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey   and O.ID=b.OrderID
-            and O.POID in (select CuttingID from CuttingOutput_Detail where CuttingOutput_Detail.ID = '{0}')
+            and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = '{0}')
             group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
 
             Select a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty 
@@ -540,7 +540,7 @@ namespace Sci.Production.Cutting
             string update = "";
             foreach (DataRow dr in t1.Rows)
             {
-                if (MyUtility.Check.Seek(string.Format("Select * from CuttingOutput_WIP where Orderid='{0}' and article ='{1}' and size = '{2}'", dr["id"], dr["article"], dr["sizecode"]), null))
+                if (MyUtility.Check.Seek(string.Format("Select * from CuttingOutput_WIP WITH (NOLOCK) where Orderid='{0}' and article ='{1}' and size = '{2}'", dr["id"], dr["article"], dr["sizecode"]), null))
                 {
                     update = update + string.Format("update CuttingOutput_WIP set Qty = {0}  where Orderid='{1}' and article ='{2}' and size = '{3}';", dr["CutQty"], dr["id"], dr["article"], dr["sizecode"]);
                 }

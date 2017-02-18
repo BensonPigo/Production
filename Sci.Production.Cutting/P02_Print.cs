@@ -61,20 +61,20 @@ namespace Sci.Production.Cutting
 
             if (Cutref_ra.Checked)  byType = "Cutref";
             else byType = "Cutplanid";
-            
-            string workorder_cmd = string.Format("Select a.*,b.Description,b.width,dbo.MarkerLengthToYDS(MarkerLength) as yds from Workorder a Left Join Fabric b on a.SciRefno = b.SciRefno Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}'", detDr["ID"],byType);
+
+            string workorder_cmd = string.Format("Select a.*,b.Description,b.width,dbo.MarkerLengthToYDS(MarkerLength) as yds from Workorder a WITH (NOLOCK) Left Join Fabric b WITH (NOLOCK) on a.SciRefno = b.SciRefno Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}'", detDr["ID"], byType);
             DualResult dResult = DBProxy.Current.Select(null, workorder_cmd, paras,out WorkorderTb);
             if (!dResult) return dResult;
-            workorder_cmd = string.Format("Select {1},a.Cutno,a.Colorid,a.Layer,a.Cons,b.* from Workorder a,Workorder_Distribute b Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey", detDr["ID"],byType);
+            workorder_cmd = string.Format("Select {1},a.Cutno,a.Colorid,a.Layer,a.Cons,b.* from Workorder a WITH (NOLOCK) ,Workorder_Distribute b WITH (NOLOCK) Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey", detDr["ID"], byType);
             dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out WorkorderDisTb);
             if (!dResult) return dResult;
-            workorder_cmd = string.Format("Select {1},a.MarkerName,a.MarkerNo,MarkerLength,Cons,a.Layer,a.Cutno,a.colorid,c.seq,FabricCombo,b.* from Workorder a,Workorder_SizeRatio b,Order_SizeCode c Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey and a.id = c.id and b.id = c.id and b.sizecode = c.sizecode order by c.seq", detDr["ID"], byType);
+            workorder_cmd = string.Format("Select {1},a.MarkerName,a.MarkerNo,MarkerLength,Cons,a.Layer,a.Cutno,a.colorid,c.seq,FabricCombo,b.* from Workorder a WITH (NOLOCK) ,Workorder_SizeRatio b WITH (NOLOCK) ,Order_SizeCode c WITH (NOLOCK) Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey and a.id = c.id and b.id = c.id and b.sizecode = c.sizecode order by c.seq", detDr["ID"], byType);
             dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out WorkorderSizeTb);
             if (!dResult) return dResult;
             workorder_cmd = string.Format("Select {1},b.*,Markername,FabricCombo from Workorder a,Workorder_PatternPanel b Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey", detDr["ID"], byType);
             dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out WorkorderPatternTb);
             if (!dResult) return dResult;
-            MyUtility.Check.Seek(string.Format("Select * from Orders Where id='{0}'",detDr["ID"]),out OrderDr);
+            MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) Where id='{0}'", detDr["ID"]), out OrderDr);
             MyUtility.Tool.ProcessWithDatatable(WorkorderTb, string.Format("{0},estCutDate",byType), string.Format("Select distinct {0},estCutDate From #tmp ",byType), out CutrefTb);
             MyUtility.Tool.ProcessWithDatatable(WorkorderDisTb, string.Format("{0},OrderID",byType), string.Format("Select distinct {0},OrderID From #tmp",byType), out CutDisOrderIDTb); //整理sp
             MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, string.Format("{0},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricCombo", byType), string.Format("Select distinct {0},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricCombo,dbo.MarkerLengthToYDS(MarkerLength) as yds From #tmp order by FabricCombo,MarkerName,seq", byType), out CutSizeTb); //整理SizeGroup,Qty
@@ -84,7 +84,7 @@ namespace Sci.Production.Cutting
 
             if (Requ_ra.Checked)
             {
-                string Issue_cmd = string.Format("Select a.Cutplanid,b.Qty,b.Dyelot,b.Roll,Max(c.yds) as yds,c.Colorid from Issue a,Issue_Detail b, #tmp c Where a.id=b.id and c.Cutplanid = a.Cutplanid and c.SEQ1 = b.SEQ1 and c.SEQ2 = b.SEQ2 group by a.Cutplanid,b.Qty,b.Dyelot,b.Roll,c.Colorid order by Dyelot,roll", detDr["ID"], byType);
+                string Issue_cmd = string.Format("Select a.Cutplanid,b.Qty,b.Dyelot,b.Roll,Max(c.yds) as yds,c.Colorid from Issue a WITH (NOLOCK) ,Issue_Detail b WITH (NOLOCK) , #tmp c Where a.id=b.id and c.Cutplanid = a.Cutplanid and c.SEQ1 = b.SEQ1 and c.SEQ2 = b.SEQ2 group by a.Cutplanid,b.Qty,b.Dyelot,b.Roll,c.Colorid order by Dyelot,roll", detDr["ID"], byType);
                 MyUtility.Tool.ProcessWithDatatable(WorkorderTb, "Cutplanid,SEQ1,SEQ2,yds,Colorid", Issue_cmd, out IssueTb); //整理FabricCombo     
             }
             return Result.True; 

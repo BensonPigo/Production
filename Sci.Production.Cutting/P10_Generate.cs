@@ -28,14 +28,14 @@ namespace Sci.Production.Cutting
         public P10_Generate(DataRow maindr,DataTable table_bundle_Detail,DataTable table_bundleallpart, DataTable table_bundleart, DataTable table_bundleqty)
         {
 
-            string cmd_st = "Select 0 as Sel, PatternCode,PatternDesc, '' as annotation,parts from Bundle_detail_allpart where 1=0";
+            string cmd_st = "Select 0 as Sel, PatternCode,PatternDesc, '' as annotation,parts from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_st, out allpartTb);
-           
-            string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts from Bundle_Detail Where 1=0"; //左下的Table
+
+            string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts from Bundle_Detail WITH (NOLOCK) Where 1=0"; //左下的Table
             DBProxy.Current.Select(null, pattern_cmd, out patternTb);
 
 
-            string cmd_art = "Select PatternCode,subprocessid from Bundle_detail_art where 1=0";
+            string cmd_art = "Select PatternCode,subprocessid from Bundle_detail_art WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_art, out artTb);
 
             InitializeComponent();
@@ -58,18 +58,18 @@ namespace Sci.Production.Cutting
             {
                 label2.Visible = false;
                 displayBox_Cutoutput.Visible = false;
-                string size_cmd = string.Format("Select distinct sizecode,0  as Qty from order_Qty where id='{0}'", maindr["Orderid"]);
+                string size_cmd = string.Format("Select distinct sizecode,0  as Qty from order_Qty WITH (NOLOCK) where id='{0}'", maindr["Orderid"]);
                 DualResult dResult = DBProxy.Current.Select(null, size_cmd, out sizeTb);
 
             }
             else
             {
-                string size_cmd = string.Format("Select b.sizecode,isnull(sum(b.Qty),0)  as Qty from Workorder a,Workorder_distribute b where a.cutref='{0}' and a.ukey = b.workorderukey and b.orderid='{1}' group by sizeCode", maindr["cutref"],maindr["Orderid"]);
+                string size_cmd = string.Format("Select b.sizecode,isnull(sum(b.Qty),0)  as Qty from Workorder a WITH (NOLOCK) ,Workorder_distribute b WITH (NOLOCK) where a.cutref='{0}' and a.ukey = b.workorderukey and b.orderid='{1}' group by sizeCode", maindr["cutref"], maindr["Orderid"]);
                 DualResult dResult = DBProxy.Current.Select(null, size_cmd, out sizeTb);
                 if (sizeTb.Rows.Count != 0) totalCutQty = Convert.ToInt16(sizeTb.Compute("Sum(Qty)", ""));
                 else
                 {
-                   size_cmd = string.Format("Select distinct sizecode,0  as Qty from order_Qty where id='{0}'", maindr["Orderid"]);
+                    size_cmd = string.Format("Select distinct sizecode,0  as Qty from order_Qty WITH (NOLOCK) where id='{0}'", maindr["Orderid"]);
                    dResult = DBProxy.Current.Select(null, size_cmd, out sizeTb);
 
                 }
@@ -356,7 +356,7 @@ namespace Sci.Production.Cutting
                 if (e.Button == MouseButtons.Right)
                 {
                     SelectItem2 sele;
-                    sele = new SelectItem2("Select id from subprocess where junk=0 and IsRfidProcess=1", "Subprocess", "23", dr["PatternCode"].ToString());
+                    sele = new SelectItem2("Select id from subprocess WITH (NOLOCK) where junk=0 and IsRfidProcess=1", "Subprocess", "23", dr["PatternCode"].ToString());
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     string subpro = sele.GetSelectedString().Replace(",","+");
@@ -599,12 +599,12 @@ namespace Sci.Production.Cutting
             string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
             string patidsql = String.Format(
                             @"SELECT ukey
-                              FROM [Production].[dbo].[Pattern]
+                              FROM [Production].[dbo].[Pattern] WITH (NOLOCK) 
                               WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
                               AND EDITdATE = 
                               (
                                 SELECT MAX(EditDate) 
-                                from pattern 
+                                from pattern WITH (NOLOCK) 
                                 where styleukey = '{0}' and Status = 'Completed'
                               )
              ", Styleyukey);
@@ -612,7 +612,7 @@ namespace Sci.Production.Cutting
            #endregion
            string sqlcmd = String.Format(
             @"Select a.ArticleGroup
-            from Pattern_GL_Article a
+            from Pattern_GL_Article a WITH (NOLOCK) 
             Where a.PatternUkey = '{0}' and article = '{1}'", patternukey,maindatarow["Article"]);
             f_code = MyUtility.GetValue.Lookup(sqlcmd, null);
             if (f_code == "") f_code = "F_Code";
@@ -776,7 +776,7 @@ namespace Sci.Production.Cutting
 
             maindatarow["Qty"] = numericBox_noBundle.Value;
             DataTable bundle_detail_tmp;
-            DBProxy.Current.Select(null, "Select *,0 as ukey1,'' as subprocessid from bundle_Detail where 1=0", out bundle_detail_tmp);
+            DBProxy.Current.Select(null, "Select *,0 as ukey1,'' as subprocessid from bundle_Detail WITH (NOLOCK) where 1=0", out bundle_detail_tmp);
             int bundlegroup = Convert.ToInt16(maindatarow["startno"]);
             int ukey = 1;
             foreach (DataRow dr in qtyTb.Rows)

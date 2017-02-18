@@ -27,7 +27,7 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
             DataTable WorkOrder;
-            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder", out WorkOrder);
+            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
             MyUtility.Tool.SetupCombox(cmb_MDivisionID, 1, WorkOrder);
             cmb_MDivisionID.Text = Sci.Env.User.Keyword;
             //createfolder();
@@ -129,7 +129,7 @@ namespace Sci.Production.Cutting
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             //準備CutCell包含非數字
-            DBProxy.Current.Select(null, string.Format(@"select distinct CutCellID from Cutplan 
+            DBProxy.Current.Select(null, string.Format(@"select distinct CutCellID from Cutplan WITH (NOLOCK) 
 where Cutplan.EstCutdate >= '{0}' and Cutplan.EstCutdate <= '{1}' 
 and Cutplan.MDivisionID ='{2}' and Cutplan.CutCellID >= '{3}' and Cutplan.CutCellID <='{4}' order by CutCellID"
                 ,Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
@@ -184,21 +184,21 @@ select distinct
 into #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
-from Cutplan 
-inner join Cutplan_Detail on Cutplan.ID = Cutplan_Detail.ID
-inner join WorkOrder on Cutplan_Detail.WorkOrderUkey = WorkOrder.Ukey and Cutplan_Detail.ID = WorkOrder.CutplanID
-inner join WorkOrder_SizeRatio on Cutplan_Detail.WorkOrderUkey = WorkOrder_SizeRatio.WorkOrderUkey
-left join Order_SizeCode on Order_SizeCode.ID = (select DISTINCT POID from Orders where Orders.CuttingSP = WorkOrder_SizeRatio.ID) 
+from Cutplan WITH (NOLOCK) 
+inner join Cutplan_Detail WITH (NOLOCK) on Cutplan.ID = Cutplan_Detail.ID
+inner join WorkOrder WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = WorkOrder.Ukey and Cutplan_Detail.ID = WorkOrder.CutplanID
+inner join WorkOrder_SizeRatio WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = WorkOrder_SizeRatio.WorkOrderUkey
+left join Order_SizeCode WITH (NOLOCK) on Order_SizeCode.ID = (select DISTINCT POID from Orders WITH (NOLOCK) where Orders.CuttingSP = WorkOrder_SizeRatio.ID) 
 					      and (Order_SizeCode.SizeCode = WorkOrder_SizeRatio.SizeCode)
 outer apply(
 	select Orders.StyleID 
-	from Orders 
+	from Orders WITH (NOLOCK) 
 	where Orders.ID = Cutplan_Detail.OrderID
 ) as o
 outer apply(
 	select SizeCode= (
 		Select concat(',',(SizeCode+'/'+Convert(varchar,Qty))) 
-		from WorkOrder_SizeRatio
+		from WorkOrder_SizeRatio WITH (NOLOCK) 
 		where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
 		for xml path('')
 	 )
@@ -206,21 +206,21 @@ outer apply(
 outer apply(
 	 select AC= (
 		 Select distinct concat('/', wod.Article)
-		 from WorkOrder_Distribute wod
+		 from WorkOrder_Distribute wod WITH (NOLOCK) 
 		 where WorkOrderUKey = Cutplan_Detail.WorkOrderUKey and Article != ''
 		 for xml path('')
 	 )
 ) as woda
 outer apply(
 	select SizeCode= (
-		Select concat(',',SizeCode+'/'+Convert(varchar,Qty*(select Layer from WorkOrder where UKey = Cutplan_Detail.WorkOrderUKey))) 
-		from WorkOrder_SizeRatio where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
+		Select concat(',',SizeCode+'/'+Convert(varchar,Qty*(select Layer from WorkOrder WITH (NOLOCK) where UKey = Cutplan_Detail.WorkOrderUKey))) 
+		from WorkOrder_SizeRatio  WITH (NOLOCK) where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
 		for xml path('')
 	 )
 ) as cq
 outer apply(
 	select Orders.SCIDelivery
-	from Orders
+	from Orders WITH (NOLOCK) 
 	where Orders.ID = Cutplan_Detail.OrderID
 ) as SCI
 
@@ -255,7 +255,7 @@ from #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@" a
 outer apply(
-	Select [total_qty] = c.qty * a.layer From WorkOrder_SizeRatio c Where  c.WorkOrderUkey = a.WorkOrderUkey and c.WorkOrderUkey = a.Ukey
+	Select [total_qty] = c.qty * a.layer From WorkOrder_SizeRatio c WITH (NOLOCK) Where  c.WorkOrderUkey = a.WorkOrderUkey and c.WorkOrderUkey = a.Ukey
 ) x 
 group by [Request#],[Cutting Date],[Line#],[SP#],[Seq#],[Style#],[Ref#],[Cut#],[Comb.],[Fab_Code],[Size Ratio],[Colorway],[Color],[Cut Qty],[Fab Cons.],[Fab Desc],[Remark],WS1,WS2,[SCI Delivery],[CutCellID]
 drop table #tmpall");
@@ -344,28 +344,28 @@ select
 into #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
-from Cutplan 
-inner join Cutplan_Detail on Cutplan.ID = Cutplan_Detail.ID
-inner join WorkOrder on Cutplan_Detail.WorkOrderUkey = WorkOrder.Ukey and Cutplan_Detail.ID = WorkOrder.CutplanID
-inner join WorkOrder_SizeRatio on Cutplan_Detail.WorkOrderUkey = WorkOrder_SizeRatio.WorkOrderUkey
-left join Order_SizeCode on Order_SizeCode.ID = (select DISTINCT POID from Orders where Orders.CuttingSP = WorkOrder_SizeRatio.ID) 
+from Cutplan WITH (NOLOCK) 
+inner join Cutplan_Detail WITH (NOLOCK) on Cutplan.ID = Cutplan_Detail.ID
+inner join WorkOrder WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = WorkOrder.Ukey and Cutplan_Detail.ID = WorkOrder.CutplanID
+inner join WorkOrder_SizeRatio WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = WorkOrder_SizeRatio.WorkOrderUkey
+left join Order_SizeCode WITH (NOLOCK) on Order_SizeCode.ID = (select DISTINCT POID from Orders WITH (NOLOCK) where Orders.CuttingSP = WorkOrder_SizeRatio.ID) 
 					      and (Order_SizeCode.SizeCode = WorkOrder_SizeRatio.SizeCode)
 outer apply(
 	select PO_Supp_Detail.ETA
-	from PO_Supp_Detail
+	from PO_Supp_Detail WITH (NOLOCK) 
 	where PO_Supp_Detail.ID = Cutplan_Detail.POID 
 	and PO_Supp_Detail.Seq1 = WorkOrder.Seq1 
 	and PO_Supp_Detail.Seq2 = WorkOrder.Seq2 
 ) as fe
 outer apply(
 	select Orders.StyleID 
-	from Orders 
+	from Orders WITH (NOLOCK) 
 	where Orders.ID = Cutplan_Detail.OrderID
 ) as o
 outer apply(
 	select SizeCode= (
 		Select concat(',',(SizeCode+'/'+Convert(varchar,Qty))) 
-		from WorkOrder_SizeRatio
+		from WorkOrder_SizeRatio WITH (NOLOCK) 
 		where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
 		for xml path('')
 	 )
@@ -373,28 +373,28 @@ outer apply(
 outer apply(
 	 select AC= (
 		 Select distinct concat('/', wod.Article)
-		 from WorkOrder_Distribute wod
+		 from WorkOrder_Distribute wod WITH (NOLOCK) 
 		 where WorkOrderUKey = Cutplan_Detail.WorkOrderUKey and Article != ''
 		 for xml path('')
 	 )
 ) as woda
 outer apply(
 	select SizeCode= (
-		Select concat(',',SizeCode+'/'+Convert(varchar,Qty*(select Layer from WorkOrder where UKey = Cutplan_Detail.WorkOrderUKey))) 
-		from WorkOrder_SizeRatio where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
+		Select concat(',',SizeCode+'/'+Convert(varchar,Qty*(select Layer from WorkOrder WITH (NOLOCK) where UKey = Cutplan_Detail.WorkOrderUKey))) 
+		from WorkOrder_SizeRatio WITH (NOLOCK) where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
 		for xml path('')
 	 )
 ) as cq
 outer apply(
 	select PO_Supp_Detail.RefNo
-	from PO_Supp_Detail
+	from PO_Supp_Detail WITH (NOLOCK) 
 	where PO_Supp_Detail.ID = Cutplan_Detail.POID
 	and PO_Supp_Detail.Seq1 = WorkOrder.Seq1 
 	and PO_Supp_Detail.Seq2 = WorkOrder.Seq2
 ) as FabRefno
 outer apply(
 	select Orders.SCIDelivery
-	from Orders
+	from Orders WITH (NOLOCK) 
 	where Orders.ID = Cutplan_Detail.OrderID
 ) as SCI
 
@@ -425,7 +425,7 @@ from #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"  a
 outer apply(
-	Select [total_qty] = c.qty * a.layer From WorkOrder_SizeRatio c Where  c.WorkOrderUkey = a.WorkOrderUkey and c.WorkOrderUkey = a.Ukey
+	Select [total_qty] = c.qty * a.layer From WorkOrder_SizeRatio c WITH (NOLOCK) Where  c.WorkOrderUkey = a.WorkOrderUkey and c.WorkOrderUkey = a.Ukey
 ) x 
 group by [Request#],[Fab ETA],[Line#],[SP#],[Seq#],[Style#],[Ref#],[Cut#],[Comb.],[Fab_Code],[Size Ratio],[Colorway],[Color],[Cut Qty],[Fab Cons.],[Fab Refno],[Remark],WS1,WS2,[SCI Delivery],[CutCellID]
 drop table #tmpall");
@@ -499,13 +499,13 @@ select
 into #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
-from Cutplan
-inner join Cutplan_Detail on Cutplan.ID = Cutplan_Detail.ID and SewingLineID = Cutplan_Detail.SewingLineID 
-inner join WorkOrder on Cutplan_Detail.WorkOrderUkey = WorkOrder.Ukey 
+from Cutplan WITH (NOLOCK) 
+inner join Cutplan_Detail WITH (NOLOCK) on Cutplan.ID = Cutplan_Detail.ID and SewingLineID = Cutplan_Detail.SewingLineID 
+inner join WorkOrder WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = WorkOrder.Ukey 
 	and WorkOrder.CutplanID = Cutplan_Detail.ID
 	and Cutplan_Detail.ID = WorkOrder.CutplanID
-inner join Orders on Orders.ID = Cutplan_Detail.OrderID
-inner join PO_Supp_Detail on PO_Supp_Detail.ID = Cutplan_Detail.POID 
+inner join Orders WITH (NOLOCK) on Orders.ID = Cutplan_Detail.OrderID
+inner join PO_Supp_Detail WITH (NOLOCK) on PO_Supp_Detail.ID = Cutplan_Detail.POID 
 	and PO_Supp_Detail.Seq1 = WorkOrder.Seq1 
 	and PO_Supp_Detail.Seq2 = WorkOrder.Seq2
 
@@ -556,13 +556,13 @@ as G
 outer apply(
 	 select FabDesc= (
 		 Select [Production].dbo.getMtlDesc(Cutplan_Detail.POID, WorkOrder.Seq1, WorkOrder.Seq2,2,0)
-		 from Cutplan_Detail
-		 inner join WorkOrder on Cutplan_Detail.WorkOrderUkey = WorkOrder.Ukey and Cutplan_Detail.ID = WorkOrder.CutplanID
+		 from Cutplan_Detail WITH (NOLOCK) 
+		 inner join WorkOrder WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = WorkOrder.Ukey and Cutplan_Detail.ID = WorkOrder.CutplanID
 		 where Cutplan_Detail.ID = Request#
 		 and SewingLineID = Line#
 		 and Cutplan_Detail.OrderID = SP#
 		 and  (select Seq1+'-'+Seq2 
-			   from WorkOrder 
+			   from WorkOrder WITH (NOLOCK) 
 			   where UKey = Cutplan_Detail.WorkOrderUKey and CutplanID = Cutplan_Detail.ID) = Seq#
 		 for xml path('')
 	 )
@@ -570,12 +570,12 @@ outer apply(
 outer apply(
 	 select cutno= (
 		 Select distinct concat('/', Cutplan_Detail.CutNo)
-		 from Cutplan_Detail
+		 from Cutplan_Detail WITH (NOLOCK) 
 		 where Cutplan_Detail.ID = Request#
 		 and SewingLineID = Line#
 		 and OrderID = SP#
 		 and  (select Seq1+'-'+Seq2 
-			   from WorkOrder 
+			   from WorkOrder WITH (NOLOCK) 
 			   where UKey = Cutplan_Detail.WorkOrderUKey and CutplanID = Cutplan_Detail.ID) = Seq#
 		 for xml path('')
 	 )
@@ -583,13 +583,13 @@ outer apply(
 outer apply(
 	select SizeCode= (
 		Select concat(',',(SizeCode+'/'+Convert(varchar,Qty))) 
-		from WorkOrder_SizeRatio
-		inner join Cutplan_Detail on WorkOrder_SizeRatio.WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
+		from WorkOrder_SizeRatio WITH (NOLOCK) 
+		inner join Cutplan_Detail WITH (NOLOCK) on WorkOrder_SizeRatio.WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
 		 where Cutplan_Detail.ID = Request#
 		 and SewingLineID = Line#
 		 and OrderID = SP#
 		 and  (select Seq1+'-'+Seq2 
-			   from WorkOrder 
+			   from WorkOrder WITH (NOLOCK) 
 			   where UKey = Cutplan_Detail.WorkOrderUKey and CutplanID = Cutplan_Detail.ID) = Seq#		
 		for xml path('')
 	 )
@@ -597,14 +597,14 @@ outer apply(
 outer apply(
 	select SizeCode= (
 		Select concat(',',SizeCode+'/'+Convert(varchar,Qty*
-						(select Layer from WorkOrder where UKey = Cutplan_Detail.WorkOrderUKey))) 
-		from WorkOrder_SizeRatio
-		inner join Cutplan_Detail on WorkOrder_SizeRatio.WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
+						(select Layer from WorkOrder WITH (NOLOCK) where UKey = Cutplan_Detail.WorkOrderUKey))) 
+		from WorkOrder_SizeRatio WITH (NOLOCK) 
+		inner join Cutplan_Detail WITH (NOLOCK) on WorkOrder_SizeRatio.WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
 		 where Cutplan_Detail.ID = Request#
 		 and SewingLineID = Line#
 		 and OrderID = SP#
 		 and  (select Seq1+'-'+Seq2 
-			   from WorkOrder 
+			   from WorkOrder WITH (NOLOCK) 
 			   where UKey = Cutplan_Detail.WorkOrderUKey and CutplanID = Cutplan_Detail.ID) = Seq#
 		for xml path('')
 	 )
@@ -612,14 +612,14 @@ outer apply(
 outer apply(
 	 select AC= (
 		 Select distinct concat('/', WorkOrder_Distribute.Article)
-		 from WorkOrder_Distribute
-		 inner join Cutplan_Detail on workOrder_Distribute.WorkOrderUKey = Cutplan_Detail.WorkOrderUKey
+		 from WorkOrder_Distribute WITH (NOLOCK) 
+		 inner join Cutplan_Detail WITH (NOLOCK) on workOrder_Distribute.WorkOrderUKey = Cutplan_Detail.WorkOrderUKey
 		 where Article != ''
 		 and Cutplan_Detail.ID = Request#
 		 and SewingLineID = Line#
 		 and Cutplan_Detail.OrderID = SP#
 		 and  (select Seq1+'-'+Seq2 
-			   from WorkOrder 
+			   from WorkOrder WITH (NOLOCK) 
 			   where UKey = Cutplan_Detail.WorkOrderUKey and CutplanID = Cutplan_Detail.ID) = Seq#	
 		 for xml path('')
 	 )
@@ -627,12 +627,12 @@ outer apply(
 outer apply(
 	 select Remark= (
 		 Select distinct concat(' ', Cutplan_Detail.Remark)
-		 from Cutplan_Detail
+		 from Cutplan_Detail WITH (NOLOCK) 
 		 where Cutplan_Detail.ID = Request#
 		 and SewingLineID = Line#
 		 and OrderID = SP#
 		 and  (select Seq1+'-'+Seq2 
-			   from WorkOrder 
+			   from WorkOrder WITH (NOLOCK) 
 			   where UKey = Cutplan_Detail.WorkOrderUKey and CutplanID = Cutplan_Detail.ID) = Seq#
 		 for xml path('')
 	 )
@@ -938,7 +938,7 @@ drop table #tmpall");
             {
                 cutcell.Append(string.Format(@"~{0}", CutCell2));
             }
-            string mailcmd = "select * from mailto where id = '005'";
+            string mailcmd = "select * from mailto WITH (NOLOCK) where id = '005'";
             DataTable maildt;
             DBProxy.Current.Select(null, mailcmd, out maildt);
             string ToAddress = MyUtility.Convert.GetString(maildt.Rows[0]["ToAddress"]);

@@ -101,31 +101,31 @@ namespace Sci.Production.Cutting
             Select a.*,
             (
                 Select distinct Article+'/ ' 
-			    From dbo.WorkOrder_Distribute b
+			    From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
 			    Where b.workorderukey = a.Ukey and b.article!=''
                 For XML path('')
             ) as article,
             (
                 Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-                From WorkOrder_SizeRatio c 
+                From WorkOrder_SizeRatio c WITH (NOLOCK) 
                 Where c.WorkOrderUkey =a.Ukey 
                 For XML path('')
             ) as SizeCode,
             (
                 Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c
+                From WorkOrder_PatternPanel c WITH (NOLOCK) 
                 Where c.WorkOrderUkey =a.Ukey 
                 For XML path('')
             ) as PatternPanel,
 			(
 				Select  isnull(CONVERT (DATE, Min(sew.Inline),101),'')  as inline 
-				From SewingSchedule sew ,SewingSchedule_detail sew_b,WorkOrder_Distribute h
+				From SewingSchedule sew WITH (NOLOCK) ,SewingSchedule_detail sew_b,WorkOrder_Distribute h WITH (NOLOCK) 
 				Where h.WorkOrderUkey = a.ukey and sew.id=sew_b.id and h.orderid = sew_b.OrderID 
 						and h.Article = sew_b.Article and h.SizeCode = h.SizeCode and h.orderid = sew.orderid
 			)  as Sewinline,
 			(
 				Select isnull(Min(cut.cdate),'')
-				From cuttingoutput cut ,cuttingoutput_detail cut_b
+				From cuttingoutput cut WITH (NOLOCK) ,cuttingoutput_detail cut_b WITH (NOLOCK) 
 				Where cut_b.workorderukey = a.Ukey and cut.id = cut_b.id
 			)  as actcutdate,
             '' as NewestcutDate, '' as cutreasonid ,0 as sel

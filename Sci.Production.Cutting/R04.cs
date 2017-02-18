@@ -23,7 +23,7 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
             DataTable WorkOrder;
-            DBProxy.Current.Select(null, "select distinct ID from MDivision", out WorkOrder);
+            DBProxy.Current.Select(null, "select distinct ID from MDivision WITH (NOLOCK) ", out WorkOrder);
             MyUtility.Tool.SetupCombox(cmb_M, 1, WorkOrder);
             cmb_M.Text = Sci.Env.User.Keyword;
         }
@@ -105,7 +105,7 @@ namespace Sci.Production.Cutting
                 sqlCmd.Append(@"
 select distinct wo.EstCutDate 
 into #DateRanges 
-from workorder wo
+from workorder wo WITH (NOLOCK) 
 where 1 = 1
 ");
                 if (!MyUtility.Check.Empty(Est_CutDate1))
@@ -116,17 +116,17 @@ where 1 = 1
                 sqlCmd.Append(@"
 select wo.id,co.Status,wo.EstCutDate, wo.mdivisionid,co.CDate,c.Finished,[ATofCES] = d5.ct
 into #tmpWO
-from MDivision
-left join dbo.WorkOrder as wo on MDivision.ID = wo.MDivisionID 
+from MDivision WITH (NOLOCK) 
+left join dbo.WorkOrder  as wo WITH (NOLOCK)on MDivision.ID = wo.MDivisionID 
 and wo.EstCutDate is not null
-inner join Cutting as c on c.ID = wo.ID
-left join CuttingOutput_Detail cod on  cod.WorkOrderUKey = wo.UKey 
-left join CuttingOutput as co on co.ID = cod.ID and Status != 'New'
+inner join Cutting as c WITH (NOLOCK) on c.ID = wo.ID
+left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
+left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'New'
 outer apply(	
 	select Count(co5.ID) as ct 
-	from CuttingOutput co5
-	inner join CuttingOutput_Detail cd5 on co5.ID = cd5.ID 
-	inner join WorkOrder w5 on cd5.WorkOrderUKey = w5.UKey 
+	from CuttingOutput co5 WITH (NOLOCK) 
+	inner join CuttingOutput_Detail cd5 WITH (NOLOCK) on co5.ID = cd5.ID 
+	inner join WorkOrder w5 WITH (NOLOCK) on cd5.WorkOrderUKey = w5.UKey 
 	where 1=1
 		and co5.Status != 'New'
 		and co5.CDate = wo.EstCutDate
@@ -204,7 +204,7 @@ drop table #tmpWO
                 sqlCmd.Append(@"
 select distinct wo.EstCutDate 
 into #DateRanges 
-from workorder wo
+from workorder wo WITH (NOLOCK) 
 where 1 = 1
 ");
                 if (!MyUtility.Check.Empty(Est_CutDate1))
@@ -218,17 +218,17 @@ select wo.id,co.Status
 ,cc.id as ccid,wo.cutcellid,c.Finished
 ,[ATofCES] = d5.ct
 into #tmpWO
-from MDivision
-left join WorkOrder as wo on MDivision.ID = wo.MDivisionID and wo.EstCutDate is not null
-inner join Cutting as c on c.ID = wo.ID 
-inner join CutCell as cc on cc.ID = wo.CutCellID and MDivision.ID = cc.MDivisionID
-left join CuttingOutput_Detail cod on  cod.WorkOrderUKey = wo.UKey 
-left join CuttingOutput as co on co.ID = cod.ID and Status != 'New'
+from MDivision WITH (NOLOCK) 
+left join WorkOrder as wo WITH (NOLOCK) on MDivision.ID = wo.MDivisionID and wo.EstCutDate is not null
+inner join Cutting as c WITH (NOLOCK) on c.ID = wo.ID 
+inner join CutCell as cc WITH (NOLOCK) on cc.ID = wo.CutCellID and MDivision.ID = cc.MDivisionID
+left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
+left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'New'
 outer apply(	
 	select Count(co5.ID) as ct 
-	from CuttingOutput co5
-	inner join CuttingOutput_Detail cd5 on co5.ID = cd5.ID 
-	inner join WorkOrder w5 on cd5.WorkOrderUKey = w5.UKey 
+	from CuttingOutput co5 WITH (NOLOCK) 
+	inner join CuttingOutput_Detail cd5 WITH (NOLOCK) on co5.ID = cd5.ID 
+	inner join WorkOrder w5 WITH (NOLOCK) on cd5.WorkOrderUKey = w5.UKey 
 	where 1=1
 		and co5.Status != 'New'
 		and co5.CDate = wo.EstCutDate
@@ -338,14 +338,14 @@ select
 	[Consumption]=wo.Cons,
 	[Marker Length]=wo.MarkerLength
 
-from WorkOrder wo
-	 left join CuttingOutput_Detail COD on wo.UKey = COD.WorkOrderUKey
-	 left Join CuttingOutput CO on CO.ID = COD.ID and CO.Status != 'New'
-	 Inner Join Cutting C on C.ID = wo.ID
+from WorkOrder wo WITH (NOLOCK) 
+	 left join CuttingOutput_Detail COD WITH (NOLOCK) on wo.UKey = COD.WorkOrderUKey
+	 left Join CuttingOutput CO WITH (NOLOCK) on CO.ID = COD.ID and CO.Status != 'New'
+	 Inner Join Cutting C WITH (NOLOCK) on C.ID = wo.ID
 outer apply(
 	select AC= (
 		Select distinct concat('/', WOD.Article)
-		from WorkOrder_Distribute WOD
+		from WorkOrder_Distribute WOD WITH (NOLOCK) 
 		where WOD.WorkOrderUKey = wo.UKey
 			and WOD.Article != '' 
 		for xml path('')
@@ -353,13 +353,13 @@ outer apply(
 ) as woda
 	 outer apply(
 		Select Sum(Qty) as sqty 
-		from WorkOrder_Distribute 
+		from WorkOrder_Distribute WITH (NOLOCK) 
 		where WorkOrderUKey = wo.UKey
 	 )as SQty	 
 	 outer apply(
 	 select SCQ= (
 		Select  concat(',',(wosr.SizeCode+'/'+Convert(varchar,Qty))) 
-		from WorkOrder_SizeRatio as wosr
+		from WorkOrder_SizeRatio as wosr WITH (NOLOCK) 
 		where wosr.WorkOrderUkey = wo.UKey
 		for xml path('')
 	 )

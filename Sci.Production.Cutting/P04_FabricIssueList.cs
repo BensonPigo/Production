@@ -28,7 +28,7 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
             cutplanid = str;
-            DBProxy.Current.Select(null, string.Format("Select id,issuedate from Issue Where Cutplanid ='{0}'", str), out gridTb);
+            DBProxy.Current.Select(null, string.Format("Select id,issuedate from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", str), out gridTb);
             grid1.DataSource = gridTb;
         }
         protected override void OnFormLoaded()

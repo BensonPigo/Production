@@ -25,8 +25,8 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             InitializeComponent();
-            if (history == "0") this.DefaultFilter = string.Format("Orderid in (Select id from orders where finished=0) and mDivisionid='{0}'", keyword);
-            else this.DefaultFilter = string.Format("Orderid in (Select id from orders where finished=1) and mDivisionid='{0}'",keyword);
+            if (history == "0") this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=0) and mDivisionid='{0}'", keyword);
+            else this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", keyword);
 
         }
         protected override void OnDetailEntered()
@@ -38,7 +38,7 @@ namespace Sci.Production.Cutting
             string cutref = (CurrentMaintain["Cutref"] == null) ? "" : CurrentMaintain["Cutref"].ToString();
             string cuttingid = "";
             DataTable orders;
-            if (DBProxy.Current.Select(null, string.Format("Select * from Orders Where id='{0}'", orderid), out orders))
+            if (DBProxy.Current.Select(null, string.Format("Select * from Orders WITH (NOLOCK) Where id='{0}'", orderid), out orders))
             {
                 if (orders.Rows.Count != 0)
                 {
@@ -57,8 +57,8 @@ namespace Sci.Production.Cutting
                 displayBox_Season.Text = "";
                 displayBox_Style.Text = "";
             }
-             
-            string estcutdate = MyUtility.GetValue.Lookup(string.Format("Select estcutdate from workorder where id='{0}' and cutref = '{1}'", cuttingid, cutref), null);
+
+            string estcutdate = MyUtility.GetValue.Lookup(string.Format("Select estcutdate from workorder WITH (NOLOCK) where id='{0}' and cutref = '{1}'", cuttingid, cutref), null);
             if (!MyUtility.Check.Empty(estcutdate))  displayBox_EstCutdate.Text = Convert.ToDateTime(estcutdate).ToString("yyyy/MM/dd");
             
             int qty = 0;
@@ -67,7 +67,7 @@ namespace Sci.Production.Cutting
            
             numericBox_GroupQty.Value = qty;
 
-            string factoryid = MyUtility.GetValue.Lookup(string.Format("SELECT o.FactoryID FROM Bundle b inner join orders o on b.Orderid=o.ID where b.Orderid='{0}'",orderid), null);
+            string factoryid = MyUtility.GetValue.Lookup(string.Format("SELECT o.FactoryID FROM Bundle b WITH (NOLOCK) inner join orders o WITH (NOLOCK) on b.Orderid=o.ID where b.Orderid='{0}'", orderid), null);
 
             //txtsewingline1.factoryobjectName = (Control)factoryid;
 
@@ -86,9 +86,9 @@ namespace Sci.Production.Cutting
         public void queryTable()
         {
             string masterID = (CurrentMaintain == null) ? "" : CurrentMaintain["id"].ToString();
-            string allPart_cmd = string.Format(@"Select 0 as sel,b.*, 0 as ukey1,'' as annotation from Bundle_Detail a,Bundle_Detail_Allpart b Where a.id ='{0}' and a.id = b.id", masterID);
-            string art_cmd = string.Format(@"Select b.*, 0 as ukey1 from Bundle_Detail a,Bundle_Detail_art b Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
-            string qty_cmd = string.Format(@"Select 0 as No,a.* from Bundle_Detail_qty a Where a.id ='{0}'", masterID);
+            string allPart_cmd = string.Format(@"Select 0 as sel,b.*, 0 as ukey1,'' as annotation from Bundle_Detail a WITH (NOLOCK) ,Bundle_Detail_Allpart b WITH (NOLOCK) Where a.id ='{0}' and a.id = b.id", masterID);
+            string art_cmd = string.Format(@"Select b.*, 0 as ukey1 from Bundle_Detail a WITH (NOLOCK) ,Bundle_Detail_art b WITH (NOLOCK) Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
+            string qty_cmd = string.Format(@"Select 0 as No,a.* from Bundle_Detail_qty a WITH (NOLOCK) Where a.id ='{0}'", masterID);
             DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out bundle_Detail_allpart_Tb);
             if (!dRes)
             {
@@ -137,20 +137,20 @@ namespace Sci.Production.Cutting
             Select a.*,
             (
                 Select Subprocessid+'+' 
-                From Bundle_Detail_art c
+                From Bundle_Detail_art c WITH (NOLOCK) 
                 Where c.bundleno =a.bundleno and c.id = a.id 
                 For XML path('')
             ) as subProcessid, 0 as ukey1
-            From Bundle_Detail a
+            From Bundle_Detail a WITH (NOLOCK) 
             where a.id = '{0}' order by bundlegroup
             ", masterID);
             this.DetailSelectCommand = cmdsql;
             #region 先撈出底層其他Table
             if (!IsDetailInsertByCopy)
             {
-                string allPart_cmd = string.Format(@"Select 0 as sel,b.*, 0 as ukey1,'' as annotation from Bundle_Detail a,Bundle_Detail_Allpart b Where a.id ='{0}' and a.id = b.id", masterID);
-                string art_cmd = string.Format(@"Select b.*, 0 as ukey1 from Bundle_Detail a,Bundle_Detail_art b Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
-                string qty_cmd = string.Format(@"Select 0 as No,a.* from Bundle_Detail_qty a Where a.id ='{0}'", masterID);
+                string allPart_cmd = string.Format(@"Select 0 as sel,b.*, 0 as ukey1,'' as annotation from Bundle_Detail a WITH (NOLOCK) ,Bundle_Detail_Allpart b WITH (NOLOCK) Where a.id ='{0}' and a.id = b.id", masterID);
+                string art_cmd = string.Format(@"Select b.*, 0 as ukey1 from Bundle_Detail a WITH (NOLOCK) ,Bundle_Detail_art b WITH (NOLOCK) Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
+                string qty_cmd = string.Format(@"Select 0 as No,a.* from Bundle_Detail_qty a WITH (NOLOCK) Where a.id ='{0}'", masterID);
                 DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out bundle_Detail_allpart_Tb);
                 if (!dRes)
                 {
@@ -289,9 +289,9 @@ namespace Sci.Production.Cutting
             #region 先撈出實體Table 為了平行判斷筆數 DataTable allparttmp, arttmp, qtytmp
             DataTable allparttmp, arttmp, qtytmp;
             string masterID = (CurrentMaintain == null) ? "" : CurrentMaintain["id"].ToString();
-            string allPart_cmd = string.Format(@"Select b.* from Bundle_Detail_Allpart b left join Bundle_Detail a on a.id = b.id where b.id='{0}' ", masterID);
-            string art_cmd = string.Format(@"Select b.* from Bundle_Detail_art b left join Bundle_Detail a on a.Bundleno = b.bundleno and a.id = b.id where b.id='{0}'", masterID);
-            string qty_cmd = string.Format(@"Select a.* from Bundle_Detail_qty a Where a.id ='{0}'", masterID);
+            string allPart_cmd = string.Format(@"Select b.* from Bundle_Detail_Allpart b WITH (NOLOCK) left join Bundle_Detail a WITH (NOLOCK) on a.id = b.id where b.id='{0}' ", masterID);
+            string art_cmd = string.Format(@"Select b.* from Bundle_Detail_art b WITH (NOLOCK) left join Bundle_Detail a WITH (NOLOCK) on a.Bundleno = b.bundleno and a.id = b.id where b.id='{0}'", masterID);
+            string qty_cmd = string.Format(@"Select a.* from Bundle_Detail_qty a WITH (NOLOCK) Where a.id ='{0}'", masterID);
             DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out allparttmp);
             if (!dRes)
             {
@@ -443,33 +443,33 @@ namespace Sci.Production.Cutting
 
             (
                Select Top(1) OrderID
-                From Workorder_Distribute WD
+                From Workorder_Distribute WD WITH (NOLOCK) 
                 Where a.ukey =WD.workorderukey --and a.orderid=WD.orderid
             ) as Workorder_Distribute_OrderID,
 
              (
                 Select d.SizeCode+'/' 
-                From Workorder_SizeRatio d
+                From Workorder_SizeRatio d WITH (NOLOCK) 
                 Where a.ukey =d.workorderukey
                 For XML path('')
             ) as SizeCode,
              (
                 Select convert(varchar,Qty)+'/' 
-                From Workorder_SizeRatio e
+                From Workorder_SizeRatio e WITH (NOLOCK) 
                 Where a.ukey =e.workorderukey
                 For XML path('')
             ) as Ratio,
             (
                 Select Top(1) Article
-                From Workorder_Distribute f
+                From Workorder_Distribute f WITH (NOLOCK) 
                 Where a.ukey =f.workorderukey --and a.orderid=f.orderid
             ) as article,
             (
                 Select count(id)
-                From Workorder_Distribute g 
-                Where a.ukey =g.workorderukey and g.OrderID=(Select Top(1) OrderID From Workorder_Distribute WD Where a.ukey =WD.workorderukey)
+                From Workorder_Distribute g WITH (NOLOCK) 
+                Where a.ukey =g.workorderukey and g.OrderID=(Select Top(1) OrderID From Workorder_Distribute WD WITH (NOLOCK) Where a.ukey =WD.workorderukey)
             ) as Qty
-            From workorder a ,orders b 
+            From workorder a WITH (NOLOCK) ,orders b WITH (NOLOCK) 
             Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id", textBox_Cutref.Text, keyword);
             DataRow cutdr;
             if (!MyUtility.Check.Seek(cmd, out cutdr, null))
@@ -529,7 +529,7 @@ namespace Sci.Production.Cutting
                 CurrentMaintain["startno"] = startno;
                 #endregion
 
-                string item_cmd = string.Format("Select a.Name from Reason a, Style b where a.Reasontypeid ='Style_Apparel_Type' and b.ukey = '{0}' and b.ApparelType = a.id", cutdr["styleukey"]);
+                string item_cmd = string.Format("Select a.Name from Reason a WITH (NOLOCK) , Style b WITH (NOLOCK) where a.Reasontypeid ='Style_Apparel_Type' and b.ukey = '{0}' and b.ApparelType = a.id", cutdr["styleukey"]);
                 string item = MyUtility.GetValue.Lookup(item_cmd, null);
                 CurrentMaintain["ITEM"] = item;
                 CurrentMaintain["Cutref"] = newvalue;
@@ -546,7 +546,7 @@ namespace Sci.Production.Cutting
             string cuttingid = MyUtility.GetValue.Lookup("Cuttingsp",CurrentMaintain["POID"].ToString(),"Orders","ID");
             //string selectCommand = string.Format("select b.orderid from workorder a, workorder_distribute b where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey and a.id = b.id and b.id = '{1}'", CurrentMaintain["Cutref"], cuttingid);
             string selectCommand = string.Format(@"select distinct b.orderid 
-                                                from workorder a, workorder_distribute b 
+                                                from workorder a WITH (NOLOCK) , workorder_distribute b WITH (NOLOCK) 
                                                 where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
                                                 , CurrentMaintain["Cutref"], cuttingid);
             item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
@@ -571,7 +571,7 @@ namespace Sci.Production.Cutting
                     e.Cancel = true;
                     return;
                 }
-                string work_cmd = string.Format("Select * from workorder a,workorder_Distribute b Where a.ukey = b.workorderukey and a.cutref = '{0}' and b.orderid ='{1}'",CurrentMaintain["Cutref"],newvalue);
+                string work_cmd = string.Format("Select * from workorder a WITH (NOLOCK) ,workorder_Distribute b WITH (NOLOCK) Where a.ukey = b.workorderukey and a.cutref = '{0}' and b.orderid ='{1}'", CurrentMaintain["Cutref"], newvalue);
                 DataTable articleTb;
                 if (DBProxy.Current.Select(null, work_cmd,out articleTb))
                 {
@@ -601,7 +601,7 @@ namespace Sci.Production.Cutting
                 else
                 {
 
-                    string selectCommand = string.Format("select a.* from orders a where a.id = '{0}' and mDivisionid='{1}' ", newvalue, keyword);
+                    string selectCommand = string.Format("select a.* from orders a WITH (NOLOCK) where a.id = '{0}' and mDivisionid='{1}' ", newvalue, keyword);
                     DataRow cutdr;
                     if (MyUtility.Check.Seek(selectCommand, out cutdr, null))
                     {
@@ -611,7 +611,7 @@ namespace Sci.Production.Cutting
                         displayBox_Season.Text = cutdr["Seasonid"].ToString();
                         displayBox_Style.Text = cutdr["Styleid"].ToString();
                         #region Item
-                        string item_cmd = string.Format("Select a.Name from Reason a, Style b where a.Reasontypeid ='Style_Apparel_Type' and b.ukey = '{0}' and b.ApparelType = a.id", cutdr["styleukey"]);
+                        string item_cmd = string.Format("Select a.Name from Reason a WITH (NOLOCK) , Style b WITH (NOLOCK)  where a.Reasontypeid ='Style_Apparel_Type' and b.ukey = '{0}' and b.ApparelType = a.id", cutdr["styleukey"]);
                         string item = MyUtility.GetValue.Lookup(item_cmd, null);
                         CurrentMaintain["ITEM"] = item;
                         #endregion
@@ -630,7 +630,7 @@ namespace Sci.Production.Cutting
                         #region Article colorid
                         if (MyUtility.Check.Empty(CurrentMaintain["PatternPanel"]))
                         {
-                            string ColorComb_cmd = string.Format("Select top(1) article,colorid from order_colorcombo where id ='{0}' and patternpanel = '{1}'", cutdr["POID"], CurrentMaintain["PatternPanel"]);
+                            string ColorComb_cmd = string.Format("Select top(1) article,colorid from order_colorcombo WITH (NOLOCK) where id ='{0}' and patternpanel = '{1}'", cutdr["POID"], CurrentMaintain["PatternPanel"]);
                             DataRow colordr;
                             if(MyUtility.Check.Seek(ColorComb_cmd, out colordr))
                             {
@@ -657,7 +657,7 @@ namespace Sci.Production.Cutting
         public int startNo_Function(string orderid) //Start No 計算
         {
             #region startno
-            string max_cmd = string.Format("Select isnull(Max(startno+Qty),0) as Start from Bundle Where OrderID = '{0}'", orderid);
+            string max_cmd = string.Format("Select isnull(Max(startno+Qty),0) as Start from Bundle  WITH (NOLOCK) Where OrderID = '{0}'", orderid);
             DataTable max_st;
             if (DBProxy.Current.Select(null, max_cmd, out max_st))
             {
@@ -739,9 +739,9 @@ namespace Sci.Production.Cutting
             if (!EditMode) return;
             if (!MyUtility.Check.Empty(CurrentMaintain["cutref"]))
             {
-                selectCommand = string.Format(@"select distinct Article from Workorder_Distribute 
+                selectCommand = string.Format(@"select distinct Article from Workorder_Distribute WITH (NOLOCK) 
                                                 where Article!='' 
-                                                    and WorkorderUkey=(select Ukey from workorder where cutref='{0}' and mDivisionid = '{1}')"
+                                                    and WorkorderUkey=(select Ukey from workorder WITH (NOLOCK) where cutref='{0}' and mDivisionid = '{1}')"
                                 , CurrentMaintain["cutref"].ToString(), keyword);
                 item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
                 DialogResult returnResult = item.ShowDialog();
@@ -752,7 +752,7 @@ namespace Sci.Production.Cutting
             {
                 if (!MyUtility.Check.Empty(CurrentMaintain["Orderid"]))
                 {
-                    selectCommand = string.Format(@"select distinct article from Order_Qty  where Id='{0}'", CurrentMaintain["Orderid"]);
+                    selectCommand = string.Format(@"select distinct article from Order_Qty WITH (NOLOCK) where Id='{0}'", CurrentMaintain["Orderid"]);
                     item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel) { return; }
@@ -770,7 +770,7 @@ namespace Sci.Production.Cutting
             DataTable dtTEMP;
             if (!MyUtility.Check.Empty(CurrentMaintain["cutref"]))
             {
-                sql = string.Format(@"select Article from Workorder_Distribute 
+                sql = string.Format(@"select Article from Workorder_Distribute WITH (NOLOCK) 
                                                 where Article!='' and WorkorderUkey={0} and Article='{1}'", WorkOrder_Ukey, newvalue);
                 if (DBProxy.Current.Select(null, sql, out dtTEMP))
                 {
@@ -787,7 +787,7 @@ namespace Sci.Production.Cutting
             {
                 if (!MyUtility.Check.Empty(CurrentMaintain["Orderid"]))
                 {
-                    sql = string.Format(@"select article from Order_Qty  where Id='{0}' and Article='{1}'", CurrentMaintain["Orderid"], newvalue);
+                    sql = string.Format(@"select article from Order_Qty WITH (NOLOCK) where Id='{0}' and Article='{1}'", CurrentMaintain["Orderid"], newvalue);
                     if (DBProxy.Current.Select(null, sql, out dtTEMP))
                     {
                         if (dtTEMP.Rows.Count == 0)
@@ -806,8 +806,8 @@ namespace Sci.Production.Cutting
         private void txtLine_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode) return;
-            string sql = string.Format(@"Select ID,FactoryID,Description  From SewingLine  
-                                        where FactoryID in (select ID from Factory where MDivisionID='{0}')", Sci.Env.User.Keyword);
+            string sql = string.Format(@"Select ID,FactoryID,Description  From SewingLine WITH (NOLOCK) 
+                                        where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}')", Sci.Env.User.Keyword);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,8,16", this.Text, false, ",");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
@@ -819,8 +819,8 @@ namespace Sci.Production.Cutting
             if (!this.EditMode) return;
             string newvalue = txtLine.Text;
             if (txtLine.OldValue.ToString() == newvalue) return;
-            string sql = string.Format(@"Select ID  From SewingLine  
-                    where FactoryID in (select ID from Factory where MDivisionID='{0}') and ID='{1}'", Sci.Env.User.Keyword, newvalue);
+            string sql = string.Format(@"Select ID  From SewingLine WITH (NOLOCK)  
+                    where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}') and ID='{1}'", Sci.Env.User.Keyword, newvalue);
             string tmp = MyUtility.GetValue.Lookup(sql);
             if (string.IsNullOrWhiteSpace(tmp))
             {

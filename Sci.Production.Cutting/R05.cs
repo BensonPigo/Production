@@ -22,12 +22,12 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
             DataTable WorkOrder;
-            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder", out WorkOrder);
+            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
             MyUtility.Tool.SetupCombox(cmb_M, 1, WorkOrder);           
             cmb_M.Text = Sci.Env.User.Keyword;
 
              DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory" , out factory);
+             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(cmb_Factory, 1, factory);
             cmb_Factory.SelectedIndex = 0;
         }
@@ -74,19 +74,19 @@ select DISTINCT
 	[Cut Qty]=stuff(m.m,1,1,''),
 	[Fab Cons.] = wo.Cons,
 	[Fab Desc] = [Production].dbo.getMtlDesc(o.POID,wo.Seq1,wo.Seq2,2,0)
-from WorkOrder wo 
-inner join Orders o on wo.ID = o.CuttingSP
-inner join Cutting c on c.ID = wo.ID
+from WorkOrder wo WITH (NOLOCK) 
+inner join Orders o WITH (NOLOCK) on wo.ID = o.CuttingSP
+inner join Cutting c WITH (NOLOCK) on c.ID = wo.ID
 outer apply(
 	Select top(1) SewingLineID 
-	from SewingSchedule_Detail 
+	from SewingSchedule_Detail WITH (NOLOCK) 
 	where OrderID = wo.ID
 ) as tmp1
 outer apply(
 	Select top(1) SewingLineID
-	from SewingSchedule_Detail sd, 
+	from SewingSchedule_Detail sd WITH (NOLOCK) , 
 	(select top(1) OrderID, Article, SizeCode 
-		from WorkOrder_Distribute 
+		from WorkOrder_Distribute WITH (NOLOCK) 
 		where WorkOrderUKey = wo.UKey
 	) wd
 	where sd.OrderID = wd.OrderID 
@@ -95,14 +95,14 @@ outer apply(
 ) as tmp2
 outer apply(
 	Select SewingLineID 
-	from Cutplan_Detail 
+	from Cutplan_Detail WITH (NOLOCK) 
 	where ID = wo.CutplanID 
 	and WorkOrderUKey = wo.UKey
 ) as tmp3
 outer apply(
 	select SP=(
 		select distinct concat('/',OrderID )
-		from WorkOrder_Distribute 
+		from WorkOrder_Distribute WITH (NOLOCK) 
 		where WorkOrderUKey  = wo.UKey
 		for xml path('')
 	)
@@ -110,7 +110,7 @@ outer apply(
 outer apply(
 	select Qty=(
 		select concat(',',SizeCode+'/'+Convert(varchar,Qty) )
-		from WorkOrder_SizeRatio
+		from WorkOrder_SizeRatio WITH (NOLOCK) 
 		where WorkOrderUKey  = wo.UKey
 		for xml path('')
 	)
@@ -118,7 +118,7 @@ outer apply(
 outer apply(
 	select Article=(
 		select distinct concat('/',Article )
-		from WorkOrder_Distribute 
+		from WorkOrder_Distribute WITH (NOLOCK) 
 		where WorkOrderUKey  = wo.UKey 
 		and Article != ''
 		for xml path('')
@@ -127,7 +127,7 @@ outer apply(
 outer apply(
 	select m = (
 		select distinct concat(',',SizeCode+'/'+Convert(varchar,Qty*wo.Layer)  )
-		from WorkOrder_SizeRatio 
+		from WorkOrder_SizeRatio WITH (NOLOCK) 
 		where WorkOrderUKey  = wo.UKey
 		for xml path('')
 	)

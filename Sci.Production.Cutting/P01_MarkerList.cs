@@ -37,14 +37,14 @@ Select mark.*
 ,concat(rtrim(mark.MarkerUpdateName),' ', format(mark.MarkerUpdate,'yyyy/MM/dd HH:mm:ss')) MarkerUpdate2
 ,concat(mark.AddName,' ', format(mark.AddDate,'yyyy/MM/dd HH:mm:ss')) createby2
 ,concat(mark.EditName,' ', format(mark.EditDate,'yyyy/MM/dd HH:mm:ss')) editby2
-from dbo.Order_MarkerList mark 
-left join dbo.Order_BOF a on mark.Id = a.Id and mark.FabricCode = a.FabricCode  
-left join dbo.Fabric b on b.SCIRefno = a.SCIRefno  
-left join Order_EachCons OE 
+from dbo.Order_MarkerList mark WITH (NOLOCK) 
+left join dbo.Order_BOF a WITH (NOLOCK) on mark.Id = a.Id and mark.FabricCode = a.FabricCode  
+left join dbo.Fabric b WITH (NOLOCK) on b.SCIRefno = a.SCIRefno  
+left join Order_EachCons OE WITH (NOLOCK) 
     on mark.Id=OE.Id and mark.MarkerNo=OE.MarkerNo and mark.MarkerName=OE.MarkerName 
     and mark.FabricCode=OE.FabricCode and mark.FabricCombo=OE.FabricCombo 
     and mark.LectraCode=OE.LectraCode 
-left join Order_FabricCode OFC 
+left join Order_FabricCode OFC WITH (NOLOCK) 
     on OFC.Id=mark.Id and OFC.Lectracode=mark.LectraCode and OFC.FabricCode=mark.FabricCode
 Where mark.id ='{0}' order by mark.Seq"
                 , this.KeyValue1);

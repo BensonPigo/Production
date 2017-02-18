@@ -73,13 +73,13 @@ namespace Sci.Production.Cutting
 //            where ord.cuttingsp = cut.CuttingSP and ord.mDivisionid = '{1}'
 //            group by ord.CuttingSp order by ord.CuttingSP", sewdate, Sci.Env.User.Keyword);
             sqlcmd = string.Format(@"Select ord.cuttingsp,min(ord.sewinline) as inline ,max(ord.sewoffline) as offlinea 
-            from orders ord,
-            (Select * from (Select distinct c.cuttingsp from orders c, 
-                (SELECT orderid FROM Sewingschedule b 
+            from orders ord WITH (NOLOCK) ,
+            (Select * from (Select distinct c.cuttingsp from orders c WITH (NOLOCK) , 
+                (SELECT orderid FROM Sewingschedule b WITH (NOLOCK) 
                 WHERE Inline <= '{0}' And offline is not null and offline !=''
                AND b.mDivisionid = '{1}' group by b.orderid) d 
             where c.id = d.orderid and c.IsForecast = 0 and c.LocalOrder = 0 ) e Where e.cuttingsp is not null 
-			and e.cuttingsp not in (Select id from cutting)) cut
+			and e.cuttingsp not in (Select id from cutting WITH (NOLOCK) )) cut
             where ord.cuttingsp = cut.CuttingSP and ord.mDivisionid = '{1}'
           group by ord.CuttingSp order by ord.CuttingSP", sewdate, Sci.Env.User.Keyword);
             dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);
@@ -95,13 +95,13 @@ namespace Sci.Production.Cutting
                 updsql = updsql + string.Format("insert into cutting(ID,sewInline,sewoffline,mDivisionid,AddName,AddDate) Values('{0}','{1}','{2}','{3}','{4}',GetDate()); ", dr["cuttingsp"], sewin, sewof, Sci.Env.User.Keyword, Sci.Env.User.UserID);
             }
             sqlcmd = string.Format(@"Select ord.cuttingsp,min(ord.sewinline) as inline ,max(ord.sewoffline) as offlinea 
-            from orders ord,
-            (Select * from (Select distinct c.cuttingsp from orders c, 
-                (SELECT orderid FROM Sewingschedule b 
+            from orders ord WITH (NOLOCK) ,
+            (Select * from (Select distinct c.cuttingsp from orders c WITH (NOLOCK) , 
+                (SELECT orderid FROM Sewingschedule b WITH (NOLOCK) 
                 WHERE Inline <= '{0}' And offline is not null and offline !=''
                AND b.mDivisionid = '{1}' group by b.orderid) d 
             where c.id = d.orderid and c.IsForecast = 0 and c.LocalOrder = 0 ) e Where e.cuttingsp is not null 
-			and e.cuttingsp in (Select id from cutting)) cut
+			and e.cuttingsp in (Select id from cutting WITH (NOLOCK) )) cut
             where ord.cuttingsp = cut.CuttingSP and ord.mDivisionid = '{1}'
           group by ord.CuttingSp order by ord.CuttingSP", sewdate, Sci.Env.User.Keyword);
             dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);

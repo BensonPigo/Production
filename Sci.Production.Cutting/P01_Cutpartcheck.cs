@@ -36,22 +36,22 @@ namespace Sci.Production.Cutting
                 sql = string.Format(@"with a as (
 	                    select a.CuttingSP,b.ID,b.Article,b.SizeCode
                            ,( select sum(OQ.qty)
-		                    from order_Qty OQ
+		                    from order_Qty OQ WITH (NOLOCK) 
 		                    where OQ.ID=b.ID and OQ.Article=b.Article and OQ.SizeCode=b.SizeCode ) Qty
                             ,c.ColorID,c.PatternPanel
-	                    from Orders a
-	                    inner join order_Qty b on a.id = b.id
-	                    inner join Order_ColorCombo c on c.id = a.POID and c.Article = b.Article 
+	                    from Orders a WITH (NOLOCK) 
+	                    inner join order_Qty b WITH (NOLOCK) on a.id = b.id
+	                    inner join Order_ColorCombo c WITH (NOLOCK) on c.id = a.POID and c.Article = b.Article 
                             and c.FabricCode is not null and c.FabricCode != ''
-                            and c.LectraCode in (select distinct LectraCode from Order_EachCons WHERE ID='{0}' and CuttingPiece = 0)  --排除外裁
+                            and c.LectraCode in (select distinct LectraCode from Order_EachCons WITH (NOLOCK) WHERE ID='{0}' and CuttingPiece = 0)  --排除外裁
 	                    where a.cuttingsp = '{0}'
                     ) ", cutid);
                 sql2 = string.Format(@"Select x.poid,y.ID,y.Article,y.SizeCode
                                            ,( select sum(OQ.qty)
-		                                    from order_Qty OQ
+		                                    from order_Qty OQ WITH (NOLOCK) 
 		                                    where OQ.ID=y.ID and OQ.Article=y.Article and OQ.SizeCode=y.SizeCode ) QTY
                                             ,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
-	                                    from (Select id,POID from Orders z where z.cuttingsp = '{0}') as x,order_Qty y 
+	                                    from (Select id,POID from Orders z WITH (NOLOCK) where z.cuttingsp = '{0}') as x,order_Qty y 
 	                                    where y.id = x.id", cutid);
             }
             else if (WorkType == "2") //WorkType == "2"
@@ -59,22 +59,22 @@ namespace Sci.Production.Cutting
                 sql = string.Format(@"with a as (
 	                    select a.CuttingSP,b.ID,b.Article,b.SizeCode
                             ,( select sum(OQ.qty)
-		                    from order_Qty OQ
+		                    from order_Qty OQ WITH (NOLOCK) 
 		                    where OQ.ID=b.ID and OQ.Article=b.Article and OQ.SizeCode=b.SizeCode ) Qty
                             ,c.ColorID,c.PatternPanel
-	                    from Orders a
-	                    inner join order_Qty b on a.id = b.id
-	                    inner join Order_ColorCombo c on c.id = a.POID and c.Article = b.Article 
+	                    from Orders a WITH (NOLOCK) 
+	                    inner join order_Qty b WITH (NOLOCK) on a.id = b.id
+	                    inner join Order_ColorCombo c WITH (NOLOCK) on c.id = a.POID and c.Article = b.Article 
                             and c.FabricCode is not null and c.FabricCode != ''
-                            and c.LectraCode in (select distinct LectraCode from Order_EachCons WHERE ID='{0}' and CuttingPiece = 0)  --排除外裁
+                            and c.LectraCode in (select distinct LectraCode from Order_EachCons WITH (NOLOCK) WHERE ID='{0}' and CuttingPiece = 0)  --排除外裁
 	                    where a.cuttingsp = '{0}'
                     )  ", cutid);
                 sql2 = string.Format(@"Select x.poid,y.ID,y.Article,y.SizeCode
                                             ,( select sum(OQ.qty)
-		                                    from order_Qty OQ
+		                                    from order_Qty OQ WITH (NOLOCK) 
 		                                    where OQ.ID=y.ID and OQ.Article=y.Article and OQ.SizeCode=y.SizeCode ) QTY
                                             ,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
-	                                    from (Select id,POID from Orders z where z.cuttingsp = '{0}') as x,order_Qty y 
+	                                    from (Select id,POID from Orders z WITH (NOLOCK) where z.cuttingsp = '{0}') as x,order_Qty y 
 	                                    where y.id = x.id", cutid);
             }
             #endregion
@@ -85,7 +85,7 @@ namespace Sci.Production.Cutting
         , b as (
 	        Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel
 	        ,isnull(sum(b.qty),0) as cutqty
-	        from WorkOrder a ,WorkOrder_Distribute b , WorkOrder_PatternPanel c 
+	        from WorkOrder a WITH (NOLOCK) ,WorkOrder_Distribute b WITH (NOLOCK) , WorkOrder_PatternPanel c WITH (NOLOCK) 
 	        Where a.id = '{0}' 
 	        and a.ukey = b.WorkOrderUkey
 	        and a.Ukey = c.WorkOrderUkey 
@@ -104,7 +104,7 @@ namespace Sci.Production.Cutting
 
         select c.*,z.seq
         from c
-        inner join Order_SizeCode z on z.id = c.CuttingSP and z.SizeCode = c.SizeCode
+        inner join Order_SizeCode z WITH (NOLOCK) on z.id = c.CuttingSP and z.SizeCode = c.SizeCode
         order by c.id,article,z.seq,PatternPanel", cutid, sql2);
                 DataTable gridtb;
                 DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);

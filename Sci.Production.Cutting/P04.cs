@@ -37,31 +37,31 @@ namespace Sci.Production.Cutting
             Select a.*,e.FabricCombo,e.seq1,e.seq2,e.FabricCode,e.SCIRefno,e.Refno,
             (
                 Select distinct Article+'/ ' 
-			    From dbo.WorkOrder_Distribute b
+			    From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
 			    Where b.workorderukey = a.WorkOrderUkey and b.article!=''
                 For XML path('')
             ) as article,
             (
                 Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-                From WorkOrder_SizeRatio c
+                From WorkOrder_SizeRatio c WITH (NOLOCK) 
                 Where  c.WorkOrderUkey =a.WorkOrderUkey 
                 
                 For XML path('')
             ) as SizeCode,
             (
                 Select c.sizecode+'/ '+convert(varchar(8),c.qty*e.layer)+', ' 
-                From WorkOrder_SizeRatio c 
+                From WorkOrder_SizeRatio c WITH (NOLOCK) 
                 Where  c.WorkOrderUkey =a.WorkOrderUkey and c.WorkOrderUkey = e.Ukey
                
                 For XML path('')
             ) as CutQty,
             (
                 Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c
+                From WorkOrder_PatternPanel c WITH (NOLOCK) 
                 Where c.WorkOrderUkey =a.WorkOrderUkey 
                 For XML path('')
             ) as PatternPanel    
-            From Cutplan_Detail a, WorkOrder e
+            From Cutplan_Detail a WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
             where a.id = '{0}' and a.WorkOrderUkey = e.Ukey
             ", masterID);
             this.DetailSelectCommand = cmdsql;
@@ -122,7 +122,7 @@ namespace Sci.Production.Cutting
             string insert_cons = string.Format(
                         @"insert into Cutplan_Detail_Cons(id,poid,seq1,seq2,cons) 
                         select a.id,a.poid,b.seq1,b.seq2,sum(a.cons) as tt 
-                        from Cutplan_Detail a,workorder b  
+                        from Cutplan_Detail a WITH (NOLOCK) ,workorder b WITH (NOLOCK) 
                         where a.id='{0}' and a.workorderukey = b.Ukey 
                         group by a.id,a.poid,b.seq1,b.seq2", CurrentMaintain["ID"]);
             #endregion
@@ -151,11 +151,11 @@ namespace Sci.Production.Cutting
             b.MarkerNo,a.WorkOrderUkey,b.fabricCombo,
             (
                 Select c.sizecode+'*'+convert(varchar(8),c.qty)+'/' 
-                From WorkOrder_SizeRatio c
+                From WorkOrder_SizeRatio c WITH (NOLOCK) 
                 Where a.WorkOrderUkey =c.WorkOrderUkey            
                 For XML path('')
             ) as SizeRatio
-            From Cutplan_Detail a, WorkOrder b 
+            From Cutplan_Detail a WITH (NOLOCK) , WorkOrder b WITH (NOLOCK) 
             Where a.workorderukey = b.ukey and a.id = '{0}'
 			Group by b.Orderid,b.MarkerName,b.MarkerNo,
                 b.fabricCombo,a.WorkOrderUkey", CurrentMaintain["ID"]);
@@ -260,7 +260,7 @@ namespace Sci.Production.Cutting
             #endregion
             #region 有IssueFabric 不可Uncomfirm
             DataTable queryIssueFabric;
-            string Query = string.Format("Select * from Issue Where Cutplanid ='{0}'", CurrentMaintain["ID"]);
+            string Query = string.Format("Select * from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", CurrentMaintain["ID"]);
             DualResult dResult = DBProxy.Current.Select(null, Query, out queryIssueFabric);
             if (dResult)
             {
@@ -345,26 +345,26 @@ namespace Sci.Production.Cutting
             @"select cd.id,cd.sewinglineid,cd.orderid,w.seq1,w.seq2,cd.StyleID,cd.cutref,cd.cutno,w.FabricCombo,w.FabricCode,
 (
     Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-    From WorkOrder_SizeRatio c
+    From WorkOrder_SizeRatio c WITH (NOLOCK) 
     Where  c.WorkOrderUkey =cd.WorkOrderUkey 
                 
     For XML path('')
 ) as SizeCode,
 (
     Select distinct Article+'/ ' 
-	From dbo.WorkOrder_Distribute b
+	From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
 	Where b.workorderukey = cd.WorkOrderUkey and b.article!=''
     For XML path('')
 ) as article,cd.colorid,
 (
     Select c.sizecode+'/ '+convert(varchar(8),c.qty*w.layer)+', ' 
-    From WorkOrder_SizeRatio c 
+    From WorkOrder_SizeRatio c WITH (NOLOCK) 
     Where  c.WorkOrderUkey =cd.WorkOrderUkey and c.WorkOrderUkey = w.Ukey
                
     For XML path('')
 ) as CutQty,
 cd.cons,isnull(f.DescDetail,'') as DescDetail,cd.remark 
-from Cutplan_Detail cd
+from Cutplan_Detail cd WITH (NOLOCK) 
 inner join WorkOrder w on cd.WorkorderUkey = w.Ukey
 left join Fabric f on f.SCIRefno = w.SCIRefno
 where cd.id = '{0}'", CurrentDetailData["ID"]);
@@ -437,7 +437,7 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
                 return;
             }
             DataRow seekdr;
-            if (MyUtility.Check.Seek("select * from mailto where Id='004'", out seekdr))
+            if (MyUtility.Check.Seek("select * from mailto WITH (NOLOCK) where Id='004'", out seekdr))
             {
                 string mailFrom = Sci.Env.User.MailAddress;
                 string mailto = seekdr["ToAddress"].ToString();

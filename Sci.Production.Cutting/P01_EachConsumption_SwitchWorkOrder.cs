@@ -24,7 +24,7 @@ namespace Sci.Production.Cutting
             cuttingid = cutid;
 
             //589:CUTTING_P01_EachConsumption_SwitchWorkOrder，(1) 若Orders.IsMixmarker=true則只能選第1個選項，第2個選項要disable。
-            string sql = string.Format("SELECT IsMixmarker FROM Orders WHERE ID='{0}'", cuttingid);
+            string sql = string.Format("SELECT IsMixmarker FROM Orders WITH (NOLOCK) WHERE ID='{0}'", cuttingid);
             bool IsMixmarker = Convert.ToBoolean(MyUtility.GetValue.Lookup(sql));
             if (IsMixmarker) BYSP.Enabled = false;
 
@@ -48,7 +48,7 @@ namespace Sci.Production.Cutting
             #region 檢核
 
             #region 若只要有一筆不存在BOF就不可轉
-            cmd = string.Format(@"Select * from Order_EachCons a Left join Order_Bof b on a.id = b.id and a.FabricCode = b.FabricCode Where a.id = '{0}' and b.id is null", cuttingid);
+            cmd = string.Format(@"Select * from Order_EachCons a WITH (NOLOCK) Left join Order_Bof b WITH (NOLOCK) on a.id = b.id and a.FabricCode = b.FabricCode Where a.id = '{0}' and b.id is null", cuttingid);
             DataTable bofnullTb;
             DualResult worRes = DBProxy.Current.Select(null, cmd, out bofnullTb);
             if (!worRes)
@@ -64,7 +64,7 @@ namespace Sci.Production.Cutting
             #endregion
 
             #region 若Cutplanid有值就不可刪除重轉
-            worRes = DBProxy.Current.Select(null,string.Format("Select id from workorder where id = '{0}' and cutplanid  != '' ",cuttingid),out workorder);
+            worRes = DBProxy.Current.Select(null, string.Format("Select id from workorder WITH (NOLOCK) where id = '{0}' and cutplanid  != '' ", cuttingid), out workorder);
             if (!worRes)
             {
                 ShowErr(worRes);

@@ -31,7 +31,7 @@ namespace Sci.Production.Cutting
             #region 找出有哪些部位
             string fabcodesql = string.Format(@"
             Select distinct a.PatternPanel
-            from Order_FabricCode a ,Order_EachCons b 
+            from Order_FabricCode a WITH (NOLOCK) ,Order_EachCons b WITH (NOLOCK) 
             where a.id = '{0}' and a.FabricCode is not null and a.FabricCode !='' 
             and b.id = '{0}' and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel
             order by patternpanel", cutid);
@@ -44,7 +44,7 @@ namespace Sci.Production.Cutting
             {
                 settbsql = settbsql + ", 0 as " + dr["PatternPanel"];
             }
-            settbsql = settbsql + string.Format(@" From Order_Qty a,orders b ,Order_SizeCode c
+            settbsql = settbsql + string.Format(@" From Order_Qty a WITH (NOLOCK) ,orders b WITH (NOLOCK) ,Order_SizeCode c WITH (NOLOCK) 
                                                 Where b.cuttingsp ='{0}' and a.id = b.id 
                                                 and c.id=b.poid and c.SizeCode = a.SizeCode
                                                 order by id,article,c.Seq", 
@@ -57,7 +57,7 @@ namespace Sci.Production.Cutting
             #region 寫入部位數量
             string getqtysql = string.Format(@"
             Select b.article,b.sizecode,b.qty,c.PatternPanel,b.orderid 
-            from Workorder a, workorder_Distribute b, Order_fabriccode c
+            from Workorder a WITH (NOLOCK) , workorder_Distribute b WITH (NOLOCK) , Order_fabriccode c WITH (NOLOCK) 
             Where a.id = '{0}' and a.ukey = b.workorderukey and a.Id  = c.id and a.LectraCode = c.Lectracode 
             and b.article !=''", cutid);
             DataTable getqtytb;
@@ -77,7 +77,7 @@ namespace Sci.Production.Cutting
             bool complete = true;
             DataTable panneltb;
             fabcodesql = string.Format(@"Select distinct a.Article,a.PatternPanel
-            from Order_ColorCombo a ,Order_EachCons b
+            from Order_ColorCombo a WITH (NOLOCK) ,Order_EachCons b WITH (NOLOCK) 
             where a.id = '{0}' and a.FabricCode is not null 
             and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel
             and a.FabricCode !='' order by Article,PatternPanel", cutid);

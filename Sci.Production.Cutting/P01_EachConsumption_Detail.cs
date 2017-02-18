@@ -52,9 +52,9 @@ namespace Sci.Production.Cutting
             datas = null;
             string sqlCmd = string.Format(@"
 Select Order_EachCons_Color.*, Color.Name as ColorDesc
-From dbo.Order_EachCons_Color
-Left Join dbo.Orders On Orders.ID = Order_EachCons_Color.ID
-Left Join dbo.Color  On Color.BrandId = Orders.BrandID And Color.ID = Order_EachCons_Color.ColorID
+From dbo.Order_EachCons_Color WITH (NOLOCK) 
+Left Join dbo.Orders WITH (NOLOCK) On Orders.ID = Order_EachCons_Color.ID
+Left Join dbo.Color  WITH (NOLOCK) On Color.BrandId = Orders.BrandID And Color.ID = Order_EachCons_Color.ColorID
 Where Order_EachCons_Color.ID = '{0}'
 and Order_EachConsUkey='{1}'
 and ColorID='{2}'
