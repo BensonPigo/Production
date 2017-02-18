@@ -41,9 +41,9 @@ namespace Sci.Production.Warehouse
             switch (radioPanel1.Value)
             {
                 case "1":
-                    if (string.IsNullOrWhiteSpace(sp))
+                    if (MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(locationid))
                     {
-                        MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
+                        MyUtility.Msg.WarningBox("< SP# > or < Location > can't be empty!!");
                         textBox1.Focus();
                         return;
                     }
@@ -62,8 +62,12 @@ namespace Sci.Production.Warehouse
 from dbo.FtyInventory a
     left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
     left join dbo.PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0
-and a.poid='{0}'", sp, dr_master["stocktype"].ToString())); // 
+where A.StockType='{0}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 "
+                            ,dr_master["stocktype"].ToString())); // 
+                        if (!MyUtility.Check.Empty(sp))
+                        {
+                            strSQLCmd.Append(string.Format(@" and a.poid='{0}' ", sp));
+                        }
                         if (!txtSeq1.checkEmpty(showErrMsg: false))
                         {
                             strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'", txtSeq1.seq1, txtSeq1.seq2));
