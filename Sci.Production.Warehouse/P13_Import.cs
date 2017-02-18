@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -159,8 +160,10 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and c.m
             dr2 = dtGridBS1.Select("qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll ='{3}'and dyelot='{4}'"
-                    , tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString()));
+                DataRow[] findrow = dt_detail.AsEnumerable().Where(row => row["poid"].EqualString(tmp["poid"].ToString()) && row["seq1"].EqualString(tmp["seq1"]) 
+                                                                          &&  row["seq2"].EqualString(tmp["seq2"].ToString()) && row["roll"].EqualString(tmp["roll"])).ToArray();
+                // .Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll ='{3}'and dyelot='{4}'"
+                    //, tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString()));
 
                 if (findrow.Length > 0)
                 {
