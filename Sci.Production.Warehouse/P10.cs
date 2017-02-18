@@ -996,9 +996,16 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             string sqlcmd = @"select t.poid
                                     ,t.seq1+ '-' +t.seq2 as SEQ
                                     ,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
-				                      AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
-				                      AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
-				                      ,'',dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0))[desc]
+				                          AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
+				                          AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
+				                        ,''
+                                            --,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0))[desc]
+                                        ,(SELECT    Concat(
+                                                        Description
+                                                        , char(10)
+                                                        , (Select concat(ID, '-', Name) from Color where id = iss.ColorId and BrandId = fbr.BrandID)
+                                                    )
+                                            FROM fabric fbr WHERE SCIRefno = p.SCIRefno)) [desc]
                                     ,t.Roll
                                     ,t.Dyelot
                                     ,t.Qty
@@ -1006,6 +1013,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                                     ,[location]=dbo.Getlocation(b.ukey)      
                                     ,[Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.Seq1,t.Seq2 )       
                             from dbo.Issue_Detail t 
+                            inner join Issue_Summary iss on t.Issue_SummaryUkey = iss.Ukey
                             left join dbo.PO_Supp_Detail p   
                                 on p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
                             left join FtyInventory b
@@ -1018,15 +1026,15 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             List<P10_PrintData> data = bb.AsEnumerable()
                 .Select(row1 => new P10_PrintData()
                 {
-                    Poid = row1["poid"].ToString(),
-                    Seq =row1["SEQ"].ToString(),
-                    Desc =row1["desc"].ToString(),
-                    Location =row1["Location"].ToString(),
-                    Unit =row1["StockUnit"].ToString(),
-                    Roll =row1["Roll"].ToString(),
-                    Dyelot=row1["Dyelot"].ToString(),
-                    Qty  =row1["Qty"].ToString(),
-                    Total  =row1["Total"].ToString()
+                    Poid = row1["poid"].ToString().Trim(),
+                    Seq = row1["SEQ"].ToString().Trim(),
+                    Desc = row1["desc"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim(),
+                    Unit = row1["StockUnit"].ToString().Trim(),
+                    Roll = row1["Roll"].ToString().Trim(),
+                    Dyelot = row1["Dyelot"].ToString().Trim(),
+                    Qty = row1["Qty"].ToString().Trim(),
+                    Total = row1["Total"].ToString().Trim()
                 }).ToList();
 
             report.ReportDataSource = data;
