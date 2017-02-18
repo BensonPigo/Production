@@ -38,7 +38,7 @@ SET
       ,a.POHandle	      =b.POHandle	
       ,a.PCHandle	      =b.PCHandle	
       ,a.PCSMR	      =b.PCSMR	
-      ,a.McHandle	      =b.McHandle	
+      --,a.McHandle	      =b.McHandle	
       ,a.ShipMark	      =b.ShipMark	
       ,a.FTYMark	      =b.FTYMark	
       ,a.Complete	      =b.Complete	
@@ -72,7 +72,7 @@ INSERT INTO Production.dbo.PO(
       ,POHandle
       ,PCHandle
       ,PCSMR
-      ,McHandle
+      --,McHandle
       ,ShipMark
       ,FTYMark
       ,Complete
@@ -106,7 +106,7 @@ select
       ,POHandle
       ,PCHandle
       ,PCSMR
-      ,McHandle
+      --,McHandle
       ,ShipMark
       ,FTYMark
       ,Complete
