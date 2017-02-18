@@ -397,7 +397,7 @@ namespace Sci.Production.Cutting
 
                 //凍結窗格
                 dt.boFreezePanes = true;
-                
+                dt.boAutoFitColumn = true;
                 dt.boAddFilter = true;
                 sxr.dicDatas.Add(sxr._v + "tbl1", dt);
 
