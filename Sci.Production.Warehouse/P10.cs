@@ -1001,7 +1001,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 				                        ,''
                                             --,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0))[desc]
                                         ,(SELECT    Concat(
-                                                        Description
+                                                        'Ref#'
+                                                        , fbr.Refno
+                                                        , char(10)
+                                                        , Description
+                                                        , char(10)
                                                         , char(10)
                                                         , (Select concat(ID, '-', Name) from Color where id = iss.ColorId and BrandId = fbr.BrandID)
                                                     )
