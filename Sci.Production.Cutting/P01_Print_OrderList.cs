@@ -10,7 +10,6 @@ using Sci.Data;
 using Ict;
 using Ict.Win;
 using Sci.Win;
-//using Sci.Trade.Class.Commons;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using System.Data.SqlClient;
 using System.Linq;
@@ -33,9 +32,10 @@ namespace Sci.Production.Cutting
         {
             if (rdCheck1.Checked)
             {
-                #region rdCheck1
+                #region Each Consumption (Cutting Combo)
                 System.Data.DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01print_EachConsumption", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01print_EachConsumption"
+                    , new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
 
                 if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
                 if (dts.Length < 2) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
@@ -107,7 +107,7 @@ namespace Sci.Production.Cutting
             }
             if (rdCheck2.Checked)
             {
-                #region rdCheck2
+                #region TTL consumption (PO Combo)
                 System.Data.DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01print_TTLconsumption", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
 
@@ -170,7 +170,7 @@ namespace Sci.Production.Cutting
             }
             if (rdCheck3.Checked)
             {
-                #region rdCheck3
+                #region Color & Q'ty B'Down (PO Combo)
                 System.Data.DataTable rpt3;
                 DualResult res = DBProxy.Current.Select("", "select b.POComboList,Style=StyleID+'-'+SeasonID from dbo.Orders a inner join Order_POComboList b on a.id = b.ID where a.ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) }, out rpt3);
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ColorCombo_SizeBreakdown.xltx");
@@ -207,7 +207,7 @@ namespace Sci.Production.Cutting
             }
             if (rdCheck4.Checked)
             {
-                #region rdCheck4
+                #region Each cons. vs Order Q'ty B'Down (PO Combo)
                 System.Data.DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01print_Eachcons_vs_OrderQtyDown_POCombo", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
 
@@ -252,7 +252,7 @@ namespace Sci.Production.Cutting
             }
             if (rdCheck5.Checked)
             {
-                #region rdCheck5
+                #region Marker List
                 System.Data.DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP("", "cutting_P01_MarkerList", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
 
@@ -318,7 +318,7 @@ namespace Sci.Production.Cutting
             }
             if (rdCheck6.Checked)
             {
-                #region rdCheck6
+                #region Consumption Calculate by Marker List Cons/Per pc
                 System.Data.DataTable[] dts;
                 DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
 
@@ -369,6 +369,47 @@ namespace Sci.Production.Cutting
                 //SaveExcel(sxr, xltPath);
                 #endregion
             }
+            if (rdCheck_CuttingWorkOrder.Checked)
+            {
+                #region rdCheck_CuttingWorkOrder
+                System.Data.DataTable[] dts;
+                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01_print_CuttingWorkOrder", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
+
+                if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
+                if (dts.Length < 2) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
+
+                DataRow dr = dts[0].Rows[0];
+                DataRow dr2 = dts[1].Rows[0];
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_CuttingWorkOrder.xltx");
+                sxrc sxr = new sxrc(xltPath);
+
+                sxr.dicDatas.Add(sxr._v + "PoList", dr["PoList"]);
+                sxr.dicDatas.Add(sxr._v + "StyleID", dr["StyleID"]);
+                sxr.dicDatas.Add(sxr._v + "CutLine", dr["CutLine"]);
+                sxr.dicDatas.Add(sxr._v + "OrderQty", MyUtility.Convert.GetString(dr2["OrderQty"]));
+                
+                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[2]);
+                
+                dt.Borders.AllCellsBorders = true;
+
+                //合併儲存格
+                dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 5, dt.Columns.Count - 11) } });
+
+                //凍結窗格
+                dt.boFreezePanes = true;
+                
+                dt.boAddFilter = true;
+                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
+
+                Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
+                string sc = MyExcelPrg.GetExcelColumnName(dt.Columns.Count);
+                wks.get_Range(string.Format("A1:{0}1",sc)).Merge();
+                wks.get_Range(string.Format("A2:{0}2", sc)).Merge();
+                wks.get_Range(string.Format("B3:{0}3", sc)).Merge();
+                sxr.boOpenFile = true;
+                sxr.Save();
+                #endregion
+            }
             return true;
         }
 
@@ -385,8 +426,7 @@ namespace Sci.Production.Cutting
                 tbl.lisColumnInfo.Add(xlc);
             }
         }
-
-
+        
         void extra_P01_EachConsumptionCuttingCombo(DataTable dt)
         {
             string COMB = "";
@@ -449,7 +489,7 @@ namespace Sci.Production.Cutting
                 }
             }
         }
-        
+
         void extra_P01_Report_TTLconsumptionPOCombo(DataTable dt, int Qty)
         {
             string coltmp = "";
@@ -496,7 +536,7 @@ namespace Sci.Production.Cutting
             dr["CONS/PC"] = Qty == 0 ? 0 : Math.Round(tot / Qty, 3);
             dt.Rows.InsertAt(dr, idx);
         }
-        
+
         void extra_P01_EachconsVSOrderQTYBDownPOCombo(DataTable dt)
         {
             addTotal(dt, 1, "Sub.TTL:", true);
@@ -655,7 +695,7 @@ namespace Sci.Production.Cutting
 
             return true;
         }
-        
+
         void addTotal(DataTable dt, int[] cidx)
         {
             string col2tmp = "";
