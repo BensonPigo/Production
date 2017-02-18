@@ -50,7 +50,7 @@ namespace Sci.Production.Planning
             months = numericUpDown1.Value;
 
             DualResult result;
-            if (!(result = DBProxy.Current.Select("", "select id from dbo.artworktype where istms=1 or isprice= 1 order by seq", out dtArtworkType)))
+            if (!(result = DBProxy.Current.Select("", "select id from dbo.artworktype WITH (NOLOCK) where istms=1 or isprice= 1 order by seq", out dtArtworkType)))
             {
                 MyUtility.Msg.WarningBox(result.ToString());
                 return false;
@@ -93,7 +93,7 @@ namespace Sci.Production.Planning
 (
 SELECT a.FtyGroup,a.Styleid, a.CDCODEID, a.Qty,a.SciDelivery, a.CPU, a.SeasonID 
 , a.id orderid, a.category,a.StyleUkey,a.OrderTypeID,a.ProgramID,a.BrandID
-FROM dbo.Orders a
+FROM dbo.Orders a WITH (NOLOCK)  
 where 1=1 "));
 
             #region --- 條件組合  ---
@@ -148,7 +148,7 @@ where 1=1 "));
 SELECT a.StyleUkey, a.Styleid, a.CDCODEID, a.Qty,a.SciDelivery, a.CPU, a.SeasonID , a.orderid, a.category
 ,b.WorkHour,b.QAQty,c.ManHour,c.Manpower,c.ID,c.OutputDate,c.FactoryID,c.SewingLineID
 ,iif(a.Category='S',round(a.cpu*s.StdTMS,0),round(a.cpu*e.rate/100.00*s.StdTMS,0)) set_tms
-FROM dbo.System s
+FROM dbo.System s WITH (NOLOCK)  
 ,rawdata_order a
 inner join dbo.SewingOutput_Detail b on b.OrderId = a.orderid
 inner join dbo.SewingOutput c on c.id = b.ID 
@@ -177,8 +177,8 @@ where c.FactoryID = a.FtyGroup"));
 (
 select aa.StyleUkey,bb.ArtworkTypeID,max(iif(cc.IsTMS=1,bb.tms,bb.price)) price_tms 
 from rawdata_order aa 
-inner join dbo.Order_TmsCost bb on bb.id = aa.orderid
-inner join dbo.ArtworkType cc on cc.id = bb.ArtworkTypeID
+inner join dbo.Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.orderid
+inner join dbo.ArtworkType cc WITH (NOLOCK) on cc.id = bb.ArtworkTypeID
 where IsTMS =1 or IsPrice = 1
 group by aa.StyleUkey,bb.ArtworkTypeID
 )"));
@@ -197,7 +197,7 @@ group by aa.StyleUkey,bb.ArtworkTypeID
 select a.FtyGroup,a.StyleID,a.SeasonID,a.CdCodeID,a.CPU,a.ttl_qty,a.ttl_cpu
 ,round(B.ttl_output/ NULLIF(ttl_target,0),4) [Avg. Eff.]
 ,iif(xxx.outputdate is null,'Only Sample',xxx.sewinglineid+' ('+convert(varchar,xxx.outputdate)+')')remark
-,(select 'Y' from dbo.Style_TmsCost where StyleUkey = a.StyleUkey and ArtworkTypeID = 'GMT WASH' and price > 0) wash
+,(select 'Y' from dbo.Style_TmsCost WITH (NOLOCK) where StyleUkey = a.StyleUkey and ArtworkTypeID = 'GMT WASH' and price > 0) wash
 ,pvt.*
 from
 (select FtyGroup,styleukey,Styleid,seasonid,cdcodeid,cpu,sum(qty) ttl_qty,sum(qty*cpu) ttl_cpu from rawdata_order group by FtyGroup,styleukey,Styleid,seasonid,cdcodeid,cpu) a

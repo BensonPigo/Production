@@ -105,12 +105,12 @@ select SewingSchedule.id,SewingSchedule.factoryid,sewinglineid
 ,AlloQty
 ,cast(Inline as date) workdate,Inline,Offline,cast(offline as date) offlineDate,StandardOutput,WorkHour,WorkDay,Order_TmsCost.TMS
 ,dbo.checkholiday(SewingSchedule.factoryid,cast(Inline as date),SewingSchedule.SewingLineID) holiday
-,(select AVG(w.hours) avg_workhours from dbo.WorkHour w 
+,(select AVG(w.hours) avg_workhours from dbo.WorkHour w WITH (NOLOCK) 
 	where w.FactoryID = SewingSchedule.FactoryID and w.SewingLineID = SewingSchedule.SewingLineID
 	and w.Date between cast(Inline as date) and cast(offline as date) and w.Holiday = 0) avg_workhours
-from dbo.SewingSchedule 
-inner join dbo.orders on orders.id = SewingSchedule.OrderID
-inner join dbo.Order_TmsCost on Order_TmsCost.ID = orders.id 
+from dbo.SewingSchedule WITH (NOLOCK) 
+inner join dbo.orders WITH (NOLOCK) on orders.id = SewingSchedule.OrderID
+inner join dbo.Order_TmsCost WITH (NOLOCK) on Order_TmsCost.ID = orders.id 
 where Order_TmsCost.ArtworkTypeID='HEAT TRANSFER' 
 AND Order_TmsCost.TMS > 0 
 "));

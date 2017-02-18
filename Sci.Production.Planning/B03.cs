@@ -95,7 +95,7 @@ namespace Sci.Production.Planning
                     Sci.Win.Tools.SelectItem item;
                     string sqlcmd;
 
-                    sqlcmd = "select id,abb,currencyid from localsupp where junk = 0 and IsFactory = 0 order by ID";
+                    sqlcmd = "select id,abb,currencyid from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 0 order by ID";
                     item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,15,5", null);
                     item.Size = new System.Drawing.Size(480, 500);
                     DialogResult result = item.ShowDialog();
@@ -113,7 +113,7 @@ namespace Sci.Production.Planning
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
                     DataRow find;
-                    if (MyUtility.Check.Seek(string.Format("Select * from localsupp where isfactory=0 and junk=0 and id='{0}'", e.FormattedValue), out find))
+                    if (MyUtility.Check.Seek(string.Format("Select * from localsupp WITH (NOLOCK) where isfactory=0 and junk=0 and id='{0}'", e.FormattedValue), out find))
                     {
                         CurrentDetailData["localsuppid"] = find["id"].ToString();
                         CurrentDetailData["suppname"] = find["abb"].ToString();
@@ -190,11 +190,11 @@ namespace Sci.Production.Planning
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ukey"].ToString();
-            this.DetailSelectCommand = string.Format(@"select A.*,S.ABB SuppName from style_artwork_quot a 
-INNER JOIN LocalSupp S ON S.ID = A.LocalSuppId Where a.styleUkey = {0}", masterID);
+            this.DetailSelectCommand = string.Format(@"select A.*,S.ABB SuppName from style_artwork_quot a WITH (NOLOCK)
+INNER JOIN LocalSupp S WITH (NOLOCK) ON S.ID = A.LocalSuppId Where a.styleUkey = {0}", masterID);
 
-            DBProxy.Current.Select(null, string.Format(@"select t.*,B.ArtworkUnit AS unit from style_artwork t 
-LEFT JOIN ArtworkType B ON t.ArtworkTypeID=B.ID where styleukey={0}", masterID), out style_artwork);
+            DBProxy.Current.Select(null, string.Format(@"select t.*,B.ArtworkUnit AS unit from style_artwork t WITH (NOLOCK)
+LEFT JOIN ArtworkType B WITH (NOLOCK) ON t.ArtworkTypeID=B.ID where styleukey={0}", masterID), out style_artwork);
 
             return base.OnDetailSelectCommandPrepare(e);
 

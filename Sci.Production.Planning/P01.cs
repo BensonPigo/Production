@@ -24,7 +24,7 @@ namespace Sci.Production.Planning
             InitializeComponent();
             this.detailgrid.CellValueChanged += new DataGridViewCellEventHandler(ComboxChange);
             this.DefaultFilter = string.Format(@"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 and factoryid  
-in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
+in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.User.Keyword);
         }
         public P01(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
@@ -34,12 +34,12 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
             if (history.ToUpper() == "Y")
             {
                 this.DefaultFilter = string.Format(@"qty > 0 and (category ='B' or category='S') and Finished = 1 and IsForecast = 0 and factoryid  in 
-(select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
+(select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.User.Keyword);
             }
             else
             {
                 this.DefaultFilter = string.Format(@"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 and factoryid  
-in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
+in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.User.Keyword);
             }
             this.Text = "P01 Sub-process master list (History)";
         }
@@ -53,11 +53,11 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                 if (dr["inhouseosp"].ToString() == "O")
                 {
                     dr["localsuppid"] = MyUtility.GetValue.Lookup(string.Format(@"SELECT top 1 QU.LocalSuppId
-                                                    FROM Order_TmsCost OT
-                                                    INNER JOIN ORDERS ON OT.ID = ORDERS.ID
-                                                    INNER JOIN Style_Artwork SA ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
-                                                    LEFT JOIN Style_Artwork_Quot QU ON QU.Ukey = SA.Ukey
-                                                    INNER JOIN LocalSupp ON LocalSupp.ID = QU.LocalSuppId
+                                                    FROM Order_TmsCost OT WITH (NOLOCK)
+                                                    INNER JOIN ORDERS WITH (NOLOCK) ON OT.ID = ORDERS.ID
+                                                    INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
+                                                    LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
+                                                    INNER JOIN LocalSupp WITH (NOLOCK) ON LocalSupp.ID = QU.LocalSuppId
                                                     WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' 
                                                         AND OT.ARTWORKTYPEID = '{1}' 
                                                     GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup"
@@ -80,10 +80,10 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
 
             if (!(CurrentMaintain == null))
             {
-                result = MyUtility.Check.Seek(string.Format(@"select isnull(sum(qty),0) as cutqty from cuttingOutput_detail_detail where CuttingID='{0}'", CurrentMaintain["id"]), out dr, null);
+                result = MyUtility.Check.Seek(string.Format(@"select isnull(sum(qty),0) as cutqty from cuttingOutput_detail_detail WITH (NOLOCK) where CuttingID='{0}'", CurrentMaintain["id"]), out dr, null);
                 if (result) numericBox_cutqty.Value = (decimal)dr[0];
                 dr = null;
-                result = MyUtility.Check.Seek(string.Format(@"select isnull(sum(workday),0) as workday from sewingschedule where orderid ='{0}'", CurrentMaintain["id"]), out dr, null);
+                result = MyUtility.Check.Seek(string.Format(@"select isnull(sum(workday),0) as workday from sewingschedule WITH (NOLOCK) where orderid ='{0}'", CurrentMaintain["id"]), out dr, null);
                 if (result) numericBox_NeedPerDay.Value = decimal.Parse(dr[0].ToString());
             }
             button_batchApprove.Enabled = !this.EditMode;
@@ -99,9 +99,9 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                 {
                     DataTable order_dt;
                     DBProxy.Current.Select(null, string.Format(@"Select max(mockup) as mockup
-                                                                                            from ORDERS 
-                                                                                            INNER JOIN Style_Artwork SA ON ORDERS.StyleUkey = SA.StyleUkey
-                                                                                            LEFT JOIN Style_Artwork_Quot QU ON QU.Ukey = SA.Ukey
+                                                                                            from ORDERS WITH (NOLOCK)
+                                                                                            INNER JOIN Style_Artwork SA WITH (NOLOCK) ON ORDERS.StyleUkey = SA.StyleUkey
+                                                                                            LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
                                                                                             WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL 
                                                                                                 AND ORDERS.ID = '{0}' 
                                                                                                 and SA.ArtworkTypeID ='{1}' 
@@ -139,8 +139,8 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                         CurrentDetailData["localsuppid"] = Env.User.Factory;
                         string SubconName = string.Format(@"
                             SELECT top 1 l.Abb
-                            FROM Order_tmscost ot
-                            left join LocalSupp l on l.ID=ot.LocalSuppID
+                            FROM Order_tmscost ot WITH (NOLOCK)
+                            left join LocalSupp l WITH (NOLOCK) on l.ID=ot.LocalSuppID
                             where ot.LocalSuppID='{0}'", CurrentDetailData["localsuppid"]);
                         DualResult result = DBProxy.Current.Select(null, SubconName, out dt);
                         if (dt.Rows.Count == 0)
@@ -163,11 +163,11 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                     if (CurrentDetailData["InhouseOSP"].ToString() == "O")
                     {
                         sqlcmd = string.Format(@"SELECT QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup
-                                                    FROM Order_TmsCost OT
-                                                    INNER JOIN ORDERS ON OT.ID = ORDERS.ID
-                                                    INNER JOIN Style_Artwork SA ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
-                                                    LEFT JOIN Style_Artwork_Quot QU ON QU.Ukey = SA.Ukey
-                                                    INNER JOIN LocalSupp ON LocalSupp.ID = QU.LocalSuppId
+                                                    FROM Order_TmsCost OT WITH (NOLOCK)
+                                                    INNER JOIN ORDERS WITH (NOLOCK) ON OT.ID = ORDERS.ID
+                                                    INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
+                                                    LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
+                                                    INNER JOIN LocalSupp WITH (NOLOCK) ON LocalSupp.ID = QU.LocalSuppId
                                                     WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' AND OT.ARTWORKTYPEID='{1}'
                                                     GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup", CurrentDetailData["ID"], CurrentDetailData["Artworktypeid"]);
                         item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,15,12", null, null);
@@ -180,7 +180,7 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                     }
                     else
                     {
-                        sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 1 order by ID";
+                        sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 1 order by ID";
                         item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30", null);
                      DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -203,11 +203,11 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                     {
                         bool exist = false;
                         DualResult result = DBProxy.Current.Exists(null, string.Format(@"SELECT QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup
-                                                    FROM Order_TmsCost OT
-                                                    INNER JOIN ORDERS ON OT.ID = ORDERS.ID
-                                                    INNER JOIN Style_Artwork SA ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
-                                                    LEFT JOIN Style_Artwork_Quot QU ON QU.Ukey = SA.Ukey
-                                                    INNER JOIN LocalSupp ON LocalSupp.ID = QU.LocalSuppId
+                                                    FROM Order_TmsCost OT WITH (NOLOCK)
+                                                    INNER JOIN ORDERS WITH (NOLOCK) ON OT.ID = ORDERS.ID
+                                                    INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
+                                                    LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
+                                                    INNER JOIN LocalSupp WITH (NOLOCK) ON LocalSupp.ID = QU.LocalSuppId
                                                     WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' 
                                                         AND OT.ARTWORKTYPEID = '{1}' AND qu.Localsuppid = '{2}'
                                                     GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup"
@@ -300,8 +300,8 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
                 string sub = this.CurrentDetailData["localsuppid"].ToString();
                 string SubconName = string.Format(@"
                             SELECT distinct l.Abb
-                            FROM Order_tmscost ot
-                            left join LocalSupp l on l.ID=ot.LocalSuppID
+                            FROM Order_tmscost ot WITH (NOLOCK)
+                            left join LocalSupp l WITH (NOLOCK) on l.ID=ot.LocalSuppID
                             where ot.LocalSuppID='{0}'", sub);
                 DualResult result = DBProxy.Current.Select(null, SubconName, out dt);
                 if (dt.Rows.Count == 0)
@@ -318,11 +318,11 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
             {
                 DataTable dt;
                 string suppidAndName = string.Format(@"SELECT top 1 QU.LocalSuppId,LocalSupp.Abb,QU.Mockup
-                                                    FROM Order_TmsCost OT
-                                                    INNER JOIN ORDERS ON OT.ID = ORDERS.ID
-                                                    INNER JOIN Style_Artwork SA ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
-                                                    LEFT JOIN Style_Artwork_Quot QU ON QU.Ukey = SA.Ukey
-                                                    INNER JOIN LocalSupp ON LocalSupp.ID = QU.LocalSuppId
+                                                    FROM Order_TmsCost OT WITH (NOLOCK)
+                                                    INNER JOIN ORDERS WITH (NOLOCK) ON OT.ID = ORDERS.ID
+                                                    INNER JOIN Style_Artwork SA WITH (NOLOCK) ON OT.ArtworkTypeID = SA.ArtworkTypeID AND ORDERS.StyleUkey = SA.StyleUkey
+                                                    LEFT JOIN Style_Artwork_Quot QU WITH (NOLOCK) ON QU.Ukey = SA.Ukey
+                                                    INNER JOIN LocalSupp WITH (NOLOCK) ON LocalSupp.ID = QU.LocalSuppId
                                                     WHERE PriceApv ='Y' AND MOCKUP IS NOT NULL AND OT.ID = '{0}' 
                                                         AND OT.ARTWORKTYPEID = '{1}' 
                                                     GROUP BY QU.LocalSuppId,LOCALSUPP.Abb,QU.Mockup"
@@ -359,16 +359,16 @@ in (select id from dbo.factory where mdivisionid='{0}')", Sci.Env.User.Keyword);
             this.DetailSelectCommand = string.Format(@"select convert(date,null) as mockupdate,order_tmscost.*
                                                                     ,osp.poqty osp_qty,osp.farmout as osp_farmout,osp.farmin as osp_farmin
                                                                     ,osp.poqty inhouse_qty,osp.farmout as inhouse_farmout,osp.farmin as inhouse_farmin
-                                                                    ,(select localsupp.abb from localsupp where id = order_tmscost.localsuppid) as localsuppname
-                                                            from order_tmscost 
-                                                            inner join artworktype on order_tmscost.artworktypeid = artworktype.id 
+                                                                    ,(select localsupp.abb from localsupp WITH (NOLOCK) where id = order_tmscost.localsuppid) as localsuppname
+                                                            from order_tmscost WITH (NOLOCK) 
+                                                            inner join artworktype WITH (NOLOCK) on order_tmscost.artworktypeid = artworktype.id 
                                                           left join (select artworkpo.artworktypeid,orderid,poqty,Farmout,farmin 
-                                                                         from artworkpo,artworkpo_detail 
+                                                                         from artworkpo WITH (NOLOCK) ,artworkpo_detail WITH (NOLOCK) 
                                                                         where artworkpo.potype = 'O' and artworkpo.id = artworkpo_detail.id 
                                                                             and artworkpo_detail.orderid = '{0}' and artworkpo.status = 'Approved'  group by artworkpo.artworktypeid,orderid,poqty,Farmout,farmin) osp
                                                                 on Order_TmsCost.id = osp.orderid and osp.artworktypeid = Order_TmsCost.ArtworkTypeID
                                                             left join (select artworkpo.artworktypeid,orderid,poqty,Farmout,farmin 
-                                                                         from artworkpo,artworkpo_detail 
+                                                                         from artworkpo WITH (NOLOCK) ,artworkpo_detail WITH (NOLOCK) 
                                                                         where artworkpo.potype = 'I' and artworkpo.id = artworkpo_detail.id 
                                                                             and artworkpo_detail.orderid = '{0}' and artworkpo.status = 'Approved'  group by artworkpo.artworktypeid,orderid,poqty,Farmout,farmin) inhouse
                                                                 on Order_TmsCost.id = inhouse.orderid and inhouse.artworktypeid = Order_TmsCost.ArtworkTypeID

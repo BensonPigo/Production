@@ -154,9 +154,9 @@ namespace Sci.Production.Planning
                     return;
                 }
                 if (ddr["inhouseosp"].ToString() == "O")
-                    sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 0 order by ID";
+                    sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 0 order by ID";
                 if (ddr["inhouseosp"].ToString() == "I")
-                    sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 1 order by ID";
+                    sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 1 order by ID";
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30", null);
@@ -174,9 +174,9 @@ namespace Sci.Production.Planning
                    string sqlcmd = ""; DataTable dt;
                    DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);//抓到當下的row
                    if (ddr["inhouseosp"].ToString() == "O")
-                       sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 0 order by ID";
+                       sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 0 order by ID";
                    if (ddr["inhouseosp"].ToString() == "I")
-                       sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 1 order by ID";
+                       sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 1 order by ID";
                    Ict.DualResult result;
                    string dtid = ""; string dtabb = "";
                    result = DBProxy.Current.Select(null, sqlcmd, out dt);
@@ -306,9 +306,9 @@ namespace Sci.Production.Planning
             string sqlcmd
                 = string.Format(@"SELECT 0 as selected,a.id, a.SciDelivery, a.CutInline, a.CutOffline, a.FactoryID
 , a.StyleID, a.SeasonID, a.Qty AS OrderQty, a.isforecast,a.poid
-, (select cast(t.article as varchar)+',' from (select article from order_qty where id = a.ID group by article )t for xml path('')) as article
+, (select cast(t.article as varchar)+',' from (select article from order_qty WITH (NOLOCK) where id = a.ID group by article )t for xml path('')) as article
 ,b.qty,b.InhouseOSP,b.LocalSuppID
-,(select Abb from LocalSupp where id = b.LocalSuppID) suppnm
+,(select Abb from LocalSupp WITH (NOLOCK) where id = b.LocalSuppID) suppnm
 ,b.ArtworkInLine
 ,b.ArtworkOffLine
 ,a.SewInLine
@@ -316,17 +316,17 @@ namespace Sci.Production.Planning
 ,a.StyleUkey
 ,isnull((select sum(tmp3.qaqty)  from 
     (SELECT article,min(isnull(qaqty,0)) qaqty
-	    FROM style_location 
+	    FROM style_location WITH (NOLOCK) 
 	    left join (select [ComboType] ,[Article] ,SUM([QAQty]) QAQTY
-				      FROM [Production].[dbo].[SewingOutput_Detail] WHERE ORDERID=a.id
+				      FROM [Production].[dbo].[SewingOutput_Detail] WITH (NOLOCK) WHERE ORDERID=a.id
 				      GROUP BY ComboType,Article) TMP 
 	    on style_location.Location = tmp.ComboType where style_location.StyleUkey = a.styleukey
 	    group by article) tmp3),0) qaqty
 , 0 as stdq
 , 0 as err
 ,'' as msg
- FROM Orders a inner join  Order_tmscost b on a.ID = b.ID
-            inner join factory on factory.id = a.factoryid
+ FROM Orders a WITH (NOLOCK) inner join  Order_tmscost b WITH (NOLOCK) on a.ID = b.ID
+            inner join factory WITH (NOLOCK) on factory.id = a.factoryid
  where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'PRINTING' and factory.mdivisionid='{0}'" + orderby, Sci.Env.User.Keyword);
 
             if (!(MyUtility.Check.Empty(styleid)))
@@ -525,8 +525,9 @@ namespace Sci.Production.Planning
                 if (item["inhouseosp"].ToString() == "O")
                 {
                     found = MyUtility.Check.Seek(string.Format(@"select top 1 b.LocalSuppId 
-                                                                                    ,(select abb from localsupp where id = b.localsuppid) as suppnm
-                                                                                     from Style_Artwork a left join style_artwork_quot b on a.Ukey = b.Ukey
+                                                                                    ,(select abb from localsupp WITH (NOLOCK) where id = b.localsuppid) as suppnm
+                                                                                     from Style_Artwork a WITH (NOLOCK) 
+                                                                                     left join style_artwork_quot b WITH (NOLOCK) on a.Ukey = b.Ukey
                                                                                      where a.StyleUkey={0} AND a.ArtworkTypeID = 'PRINTING' 
                                                                                      and b.PriceApv = 'Y'"
                                                                 , item["styleukey"]), out dr, null);
@@ -591,8 +592,10 @@ namespace Sci.Production.Planning
             {
                 item["msg"] = "";
                 item["err"] = 0;
-                if (MyUtility.Check.Seek(string.Format(@"select b.priceapv,oven,wash,mockup from style_artwork  a inner join style_artwork_quot b 
-                                                on a.ukey = b.ukey where a.styleukey = {0} and b.localsuppid = '{1}'"
+                if (MyUtility.Check.Seek(string.Format(@"select b.priceapv,oven,wash,mockup 
+                                                        from style_artwork  a WITH (NOLOCK) 
+                                                        inner join style_artwork_quot b WITH (NOLOCK) 
+                                                         on a.ukey = b.ukey where a.styleukey = {0} and b.localsuppid = '{1}'"
                     , item["styleukey"], item["localsuppid"]), out dr, null))
                 {
                     if (dr["priceapv"].ToString() != "Y")

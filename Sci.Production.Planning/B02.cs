@@ -64,7 +64,7 @@ namespace Sci.Production.Planning
             #endregion
 
             //string s1 = "SELECT * FROM [Production].[dbo].[EmbBatch] where  not((BeginStitch > @begin  and BeginStitch > @end) or (EndStitch <  @begin and EndStitch < @end))";
-            string s1 = @"SELECT * FROM [Production].[dbo].[EmbBatch] 
+            string s1 = @"SELECT * FROM [Production].[dbo].[EmbBatch] WITH (NOLOCK)
                           where BeginStitch <> @OldBegin and EndStitch <> @OldEnd
                                 and not((BeginStitch > @begin  and BeginStitch > @end) or (EndStitch <  @begin and EndStitch < @end))";
 

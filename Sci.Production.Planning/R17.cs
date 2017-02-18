@@ -61,11 +61,11 @@ namespace Sci.Production.Planning
             try
             {
                 string strSQL = @" SELECT A1.FACTORYID AS A, A3.ALIAS AS B , A1.QTY AS C, SUM(A4.ShipQty) AS D,  SUM(A5.ShipQty) AS E, SUM(A4.ShipQty)  /  case when A1.QTY = 0 then 1 else a1.qty end * 100 AS F
-                                                FROM ORDERS A1
-                                                LEFT JOIN FACTORY A2 ON A1.FACTORYID = A2.ID 
-                                                LEFT JOIN COUNTRY A3 ON A2.COUNTRYID = A3.ID 
-                                                LEFT JOIN PullOut_Detail A4 ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
-                                                LEFT JOIN PullOut_Detail A5 ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
+                                                FROM ORDERS A1 WITH (NOLOCK) 
+                                                LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
+                                                LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
+                                                LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
+                                                LEFT JOIN PullOut_Detail A5 WITH (NOLOCK) ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
                                                 WHERE 1= 1 ";
                 if (dateRange1.Value1 != null)
                     strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
@@ -86,28 +86,28 @@ namespace Sci.Production.Planning
                     strSQL = @" SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D, A1.BRANDID AS E
                                                         , Convert(varchar,A1.BuyerDelivery ) AS F
                                                         , Convert(varchar,cast( A1.FtyKPI as date))  AS G 
-                                                        ,(SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip where id = A1.ID) t for xml path('')) AS H 
+                                                        ,(SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) AS H 
                                                         , A1.QTY AS I 
                                                         , Sum(A4.ShipQty) AS J
                                                         , Sum(A5.ShipQty) AS K
-                                                        , (select strData+',' from (Select convert(varchar,PulloutDate) as strData from Pullout_Detail where OrderID = A1.ID)t for xml path('')) AS L
-                                                        , (select strData+',' from (Select ShipmodeID  as strData from Order_QtyShip  where id = A1.ID  Group by ShipModeID) t for xml path('')) AS M
-                                                        , (Select Count(id) as CountPullOut from Pullout_Detail where OrderID = A1.ID) AS N
+                                                        , (select strData+',' from (Select convert(varchar,PulloutDate) as strData from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID)t for xml path('')) AS L
+                                                        , (select strData+',' from (Select ShipmodeID  as strData from Order_QtyShip  WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) t for xml path('')) AS M
+                                                        , (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) AS N
                                                         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END AS O
-                                                        , (SELECT TOP 1 A1.ReasonID  from Order_History A1 Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery' ) AS P
-                                                        , (Select TOP 1 A2.Name  from Order_History A1
-                                                                          LEFT JOIN Reason A2  ON A2.ID = A1.ReasonID 
+                                                        , (SELECT TOP 1 A1.ReasonID  from Order_History A1 WITH (NOLOCK) Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery' ) AS P
+                                                        , (Select TOP 1 A2.Name  from Order_History A1 WITH (NOLOCK) 
+                                                                          LEFT JOIN Reason A2 WITH (NOLOCK) ON A2.ID = A1.ReasonID 
                                                                           Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery') AS Q
                                                         , dbo.getTPEPass1(A1.MRHandle)  AS R
                                                         , dbo.getTPEPass1(A1.SMR)  AS S
                                                         , dbo.getTPEPass1(A6.POHandle)  AS T
                                                         , dbo.getTPEPass1(A6.POSMR)  AS U
-                                                FROM ORDERS A1
-                                                LEFT JOIN FACTORY A2 ON A1.FACTORYID = A2.ID 
-                                                LEFT JOIN COUNTRY A3 ON A2.COUNTRYID = A3.ID 
-                                                LEFT JOIN PullOut_Detail A4 ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
-                                                LEFT JOIN PullOut_Detail A5 ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
-                                                LEFT JOIN PO A6 ON A1.POID = A6.ID
+                                                FROM ORDERS A1 WITH (NOLOCK) 
+                                                LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
+                                                LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
+                                                LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
+                                                LEFT JOIN PullOut_Detail A5 WITH (NOLOCK) ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
+                                                LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
                                                 WHERE 1= 1 ";
                     if (dateRange1.Value1 != null)
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
@@ -214,17 +214,17 @@ namespace Sci.Production.Planning
                     #region On time Order List by PullOut
                     strSQL = @" SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D
                                                         , Convert(varchar,cast(A1.FtyKPI as date)) AS E
-                                                        , (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip where id = A1.ID) t for xml path('')) AS F
+                                                        , (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) AS F
                                                         , A1.QTY AS G
                                                         , A4.ShipQty AS H
                                                         ,Convert(varchar,A4.PulloutDate) AS I   
                                                         ,J.strData AS J
-                                                      --  , (Select ShipmodeID  as strData from Order_QtyShip  where id = A1.ID  Group by ShipModeID) AS J                                                     
-                                                FROM ORDERS A1
-                                                LEFT JOIN FACTORY A2 ON A1.FACTORYID = A2.ID 
-                                                LEFT JOIN COUNTRY A3 ON A2.COUNTRYID = A3.ID 
-                                                LEFT JOIN PullOut_Detail A4 ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
-                                                OUTER APPLY(Select ShipmodeID  as strData from Order_QtyShip  where id = A1.ID  Group by ShipModeID)J
+                                                      --  , (Select ShipmodeID  as strData from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) AS J                                                     
+                                                FROM ORDERS A1 WITH (NOLOCK) 
+                                                LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
+                                                LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
+                                                LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
+                                                OUTER APPLY(Select ShipmodeID  as strData from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID)J
                                                 WHERE 1= 1 ";
                     if (dateRange1.Value1 != null)
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
@@ -280,17 +280,17 @@ namespace Sci.Production.Planning
                     #region Fail Detail
                     strSQL = @" SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D
                                                         , Convert(varchar,cast(A1.FtyKPI as date))  AS E
-                                                        , (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip where id = A1.ID) t for xml path('')) AS F
+                                                        , (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) AS F
                                                         , A1.QTY AS G
                                                         , A4.ShipQty AS H
                                                         , Convert(varchar,A4.PulloutDate ) AS I   
                                                         ,J.strData AS J 
-                                                       -- , (Select ShipmodeID  as strData from Order_QtyShip  where id = A1.ID  Group by ShipModeID) AS J                                                     
-                                                FROM ORDERS A1
-                                                LEFT JOIN FACTORY A2 ON A1.FACTORYID = A2.ID 
-                                                LEFT JOIN COUNTRY A3 ON A2.COUNTRYID = A3.ID 
-                                                LEFT JOIN PullOut_Detail A4 ON A1.ID = A4.ORDERID AND A4.PullOutDate > A1.FtyKPI 
-                                                OUTER APPLY(Select ShipmodeID  as strData from Order_QtyShip  where id = A1.ID  Group by ShipModeID)J
+                                                       -- , (Select ShipmodeID  as strData from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) AS J                                                     
+                                                FROM ORDERS A1 WITH (NOLOCK) 
+                                                LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
+                                                LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
+                                                LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate > A1.FtyKPI 
+                                                OUTER APPLY(Select ShipmodeID  as strData from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID)J
                                                 WHERE 1= 1 ";
                     if (dateRange1.Value1 != null)
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
@@ -346,28 +346,28 @@ namespace Sci.Production.Planning
                     strSQL = @" SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D, A1.BRANDID AS E
                                                         , Convert(varchar,A1.BuyerDelivery)  AS F
                                                         , Convert(varchar,cast(A1.FtyKPI as date)) AS G 
-                                                        , (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip where id = A1.ID) t for xml path('')) AS H 
+                                                        , (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) AS H 
                                                         , A1.QTY AS I 
                                                         , Sum(A4.ShipQty) AS J
                                                         , Sum(A5.ShipQty) AS K
-                                                        , (select strData+',' from (Select convert(varchar,PulloutDate) as strData from Pullout_Detail where OrderID = A1.ID)t for xml path('')) AS L
-                                                        , (select strData+',' from (Select ShipmodeID  as strData from Order_QtyShip  where id = A1.ID  Group by ShipModeID) t for xml path('')) AS M
-                                                        , (Select Count(id) as CountPullOut from Pullout_Detail where OrderID = A1.ID) AS N
+                                                        , (select strData+',' from (Select convert(varchar,PulloutDate) as strData from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID)t for xml path('')) AS L
+                                                        , (select strData+',' from (Select ShipmodeID  as strData from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) t for xml path('')) AS M
+                                                        , (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) AS N
                                                         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END AS O
-                                                        , (SELECT TOP 1 A1.ReasonID  from Order_History A1 Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery' ) AS P
-                                                        , (Select TOP 1 A2.Name  from Order_History A1
-                                                                          LEFT JOIN Reason A2  ON A2.ID = A1.ReasonID 
+                                                        , (SELECT TOP 1 A1.ReasonID  from Order_History A1 WITH (NOLOCK) Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery' ) AS P
+                                                        , (Select TOP 1 A2.Name  from Order_History A1 WITH (NOLOCK) 
+                                                                          LEFT JOIN Reason A2 WITH (NOLOCK) ON A2.ID = A1.ReasonID 
                                                                           Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery') AS Q
                                                         , dbo.getTPEPass1(A1.MRHandle)  AS R
                                                         , dbo.getTPEPass1(A1.SMR)  AS S
                                                         , dbo.getTPEPass1(A6.POHandle)  AS T
                                                         , dbo.getTPEPass1(A6.POSMR)  AS U
-                                                FROM ORDERS A1
-                                                LEFT JOIN FACTORY A2 ON A1.FACTORYID = A2.ID 
-                                                LEFT JOIN COUNTRY A3 ON A2.COUNTRYID = A3.ID 
-                                                LEFT JOIN PullOut_Detail A4 ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
-                                                LEFT JOIN PullOut_Detail A5 ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
-                                                LEFT JOIN PO A6 ON A1.POID = A6.ID
+                                                FROM ORDERS A1 WITH (NOLOCK) 
+                                                LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
+                                                LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
+                                                LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
+                                                LEFT JOIN PullOut_Detail A5 WITH (NOLOCK) ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
+                                                LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
                                                 WHERE 1= 1 ";
                     if (dateRange1.Value1 != null)
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));

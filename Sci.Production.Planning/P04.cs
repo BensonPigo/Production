@@ -156,9 +156,9 @@ namespace Sci.Production.Planning
                     return;
                 }
                 if (ddr["inhouseosp"].ToString() == "O")
-                    sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 0 order by ID";
+                    sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 0 order by ID";
                 if (ddr["inhouseosp"].ToString() == "I")
-                    sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 1 order by ID";
+                    sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 1 order by ID";
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "10,30", null);
@@ -175,9 +175,9 @@ namespace Sci.Production.Planning
                 string sqlcmd = ""; DataTable dt;
                 DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);//抓到當下的row
                 if (ddr["inhouseosp"].ToString() == "O")
-                    sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 0 order by ID";
+                    sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 0 order by ID";
                 if (ddr["inhouseosp"].ToString() == "I")
-                    sqlcmd = "select id,abb from localsupp where junk = 0 and IsFactory = 1 order by ID";
+                    sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 1 order by ID";
                 Ict.DualResult result;
                 string dtid = ""; string dtabb = "";
                 result = DBProxy.Current.Select(null, sqlcmd, out dt);
@@ -333,10 +333,10 @@ namespace Sci.Production.Planning
 , a.StyleID, a.SeasonID
 , a.Qty AS OrderQty
 , a.isforecast,a.poid
-, (select cast(t.article as varchar)+';' from (select article from order_qty where id = a.ID group by article )t for xml path('')) as article
+, (select cast(t.article as varchar)+';' from (select article from order_qty WITH (NOLOCK) where id = a.ID group by article )t for xml path('')) as article
 ,b.InhouseOSP
 ,b.LocalSuppID
-,(select Abb from LocalSupp where id = b.LocalSuppID) suppnm
+,(select Abb from LocalSupp WITH (NOLOCK) where id = b.LocalSuppID) suppnm
 ,b.ArtworkInLine
 ,b.ArtworkOffLine
 ,convert(date,c.Inline) as sewinline
@@ -345,13 +345,13 @@ namespace Sci.Production.Planning
 ,isnull((select sum(tmp3.qaqty)  
     from 
     (SELECT article,min(isnull(qaqty,0)) qaqty
-	    FROM style_location 
+	    FROM style_location WITH (NOLOCK) 
 	    left join (
 				    SELECT 
 					      [ComboType]
 					      ,[Article]
 					      ,SUM([QAQty]) QAQTY
-				      FROM [Production].[dbo].[SewingOutput_Detail] WHERE ORDERID=a.id
+				      FROM [Production].[dbo].[SewingOutput_Detail] WITH (NOLOCK) WHERE ORDERID=a.id
 				      GROUP BY ComboType,Article) TMP 
 	    on style_location.Location = tmp.ComboType where style_location.StyleUkey = a.styleukey
 	    group by article) tmp3),0) qaqty
@@ -366,13 +366,13 @@ namespace Sci.Production.Planning
 ,round((a.qty-(isnull((select sum(tmp3.qaqty)  
     from 
     (SELECT article,min(isnull(qaqty,0)) qaqty
-	    FROM style_location 
+	    FROM style_location WITH (NOLOCK) 
 	    left join (
 				    SELECT 
 					      [ComboType]
 					      ,[Article]
 					      ,SUM([QAQty]) QAQTY
-				      FROM [Production].[dbo].[SewingOutput_Detail] WHERE ORDERID=a.id
+				      FROM [Production].[dbo].[SewingOutput_Detail] WITH (NOLOCK) WHERE ORDERID=a.id
 				      GROUP BY ComboType,Article) TMP 
 	    on style_location.Location = tmp.ComboType where style_location.StyleUkey = a.styleukey
 	    group by article) tmp3),0)))/(3600*{0}/b.tms)*100/{1},3) as balance
@@ -380,7 +380,7 @@ namespace Sci.Production.Planning
 ,b.qty
 ,a.qty * b.tms as totaltms
 ,b.artworktypeid
- FROM (Orders a inner join  Order_tmscost b on a.ID = b.ID) 
+ FROM (Orders a WITH (NOLOCK) inner join  Order_tmscost b WITH (NOLOCK) on a.ID = b.ID) 
 inner join SewingSchedule c on a.id = c.OrderID
 inner join dbo.factory on factory.id = a.factoryid
  where a.Finished = 0 AND a.Category !='M' 
@@ -550,9 +550,9 @@ and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numer
                        select new
                        {
                            Supplier = grouprows.Key.localsuppid + "-" + grouprows.Key.suppnm,
-                           TotalQty = grouprows.Sum(r => r.Field<decimal>("totalqty")),
-                           Balance = grouprows.Sum(r => r.Field<decimal>("balance")),
-                           Totaltms = grouprows.Sum(r => r.Field<decimal>("totaltms"))
+                           TotalQty = grouprows.Sum(r => r.Field<decimal?>("totalqty").GetValueOrDefault(0)),
+                           Balance = grouprows.Sum(r => r.Field<decimal?>("balance").GetValueOrDefault(0)),
+                           Totaltms = grouprows.Sum(r => r.Field<decimal?>("totaltms").GetValueOrDefault(0))
                        }).ToList();
 
             var bs2 = (from rows in ((DataTable)listControlBindingSource1.DataSource).AsEnumerable()
@@ -560,9 +560,9 @@ and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numer
                        select new
                        {
                            Supplier = grouprows.Key.localsuppid,
-                           TotalQty = grouprows.Sum(r =>  r.Field<decimal>("totalqty")),
-                           Balance = grouprows.Sum(r => r.Field<decimal>("balance")),
-                           Totaltms = grouprows.Sum(r => r.Field<decimal>("totaltms"))
+                           TotalQty = grouprows.Sum(r => r.Field<decimal?>("totalqty").GetValueOrDefault(0)),
+                           Balance = grouprows.Sum(r => r.Field<decimal?>("balance").GetValueOrDefault(0)),
+                           Totaltms = grouprows.Sum(r => r.Field<decimal?>("totaltms").GetValueOrDefault(0))
                        }).ToList();
             bs1.AddRange(bs2);
             grid2.DataSource = bs1;
@@ -590,8 +590,9 @@ and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numer
                 if (item["inhouseosp"].ToString() == "O")
                 {
                     found = MyUtility.Check.Seek(string.Format(@"select top 1 b.LocalSuppId 
-                                                                                    ,(select abb from localsupp where id = b.localsuppid) as suppnm
-                                                                                     from Style_Artwork a left join style_artwork_quot b on a.Ukey = b.Ukey
+                                                                                    ,(select abb from localsupp WITH (NOLOCK) where id = b.localsuppid) as suppnm
+                                                                                     from Style_Artwork a WITH (NOLOCK) 
+                                                                                     left join style_artwork_quot b WITH (NOLOCK) on a.Ukey = b.Ukey
                                                                                      where a.StyleUkey={0} AND a.ArtworkTypeID = 'PRINTING' 
                                                                                      and b.PriceApv = 'Y'"
                                                                 , item["styleukey"]), out dr, null);
@@ -655,7 +656,8 @@ and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numer
             {
                 item["msg"] = "";
                 item["err"] = 0;
-                if (MyUtility.Check.Seek(string.Format(@"select b.priceapv,oven,wash,mockup from style_artwork  a inner join style_artwork_quot b 
+                if (MyUtility.Check.Seek(string.Format(@"select b.priceapv,oven,wash,mockup from style_artwork  a WITH (NOLOCK) 
+                                                        inner join style_artwork_quot b WITH (NOLOCK)
                                                 on a.ukey = b.ukey where a.styleukey = {0} and b.localsuppid = '{1}'"
                     , item["styleukey"], item["localsuppid"]), out dr, null))
                 {

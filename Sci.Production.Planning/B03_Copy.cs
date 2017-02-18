@@ -28,7 +28,7 @@ namespace Sci.Production.Planning
             base.OnFormLoaded();
 
             string strSQLCmd = string.Format(@"select 1 as Selected,*
-FROM DBO.Style_Artwork WHERE StyleUkey={1} and ukey!= {0}", data["ukey"], data["styleukey"]);
+FROM DBO.Style_Artwork WITH (NOLOCK) WHERE StyleUkey={1} and ukey!= {0}", data["ukey"], data["styleukey"]);
                 
                 DataTable dtArtwork;
 
@@ -117,7 +117,7 @@ FROM DBO.Style_Artwork WHERE StyleUkey={1} and ukey!= {0}", data["ukey"], data["
             for (int i = 0; i < dr2.Length; i++)
 			{
                 SqlCommandText tmp = new SqlCommandText(string.Format(@"merge dbo.style_artwork_quot as t
-using (select {0} ukey,localsuppid,currencyid,price,oven,wash,mockup,priceApv,styleukey from dbo.style_artwork_quot where styleukey={1} and ukey = {2}) as s
+using (select {0} ukey,localsuppid,currencyid,price,oven,wash,mockup,priceApv,styleukey from dbo.style_artwork_quot WITH (NOLOCK) where styleukey={1} and ukey = {2}) as s
 on t.localsuppid = s.localsuppid and t.styleukey = s.styleukey and t.ukey =s.ukey
 when matched then
 update 

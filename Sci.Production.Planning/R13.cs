@@ -346,7 +346,7 @@ namespace Sci.Production.Planning
         private void RefreshData()
         {
             dt_source = new DataTable();
-            string sql = string.Format("select * from AdidasKPITarget order by XlsColumn");
+            string sql = string.Format("select * from AdidasKPITarget WITH (NOLOCK) order by XlsColumn");
             DualResult result = DBProxy.Current.Select(null, sql, out dt_source);
             if (!result)
             {

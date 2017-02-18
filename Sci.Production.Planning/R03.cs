@@ -43,12 +43,12 @@ namespace Sci.Production.Planning
             sqlCmd.Append(@"select distinct s.ID,s.BrandID,s.SeasonID,sa.ArtworkTypeID,sa.Article,sa.ArtworkID,sa.ArtworkName,
 sa.PatternCode,sa.PatternDesc,sa.TMS,sa.Qty,isnull(a.ArtworkUnit,'') as ArtworkUnit,sa.Cost,
 saq.LocalSuppId+'-'+isnull(ls.Abb,'') as LocalSupp,saq.CurrencyId,saq.Price,saq.Oven,saq.Wash,saq.Mockup,saq.PriceApv
-from Orders o
-inner join Style s on o.StyleUkey = s.Ukey
-inner join Style_Artwork sa on sa.StyleUkey = o.StyleUkey and sa.StyleUkey = s.Ukey
-inner join Style_Artwork_Quot saq on sa.Ukey = saq.Ukey
-left join LocalSupp ls on ls.ID = saq.LocalSuppId
-left join ArtworkType a on a.ID = sa.ArtworkTypeID
+from Orders o WITH (NOLOCK) 
+inner join Style s  WITH (NOLOCK) on o.StyleUkey = s.Ukey
+inner join Style_Artwork sa WITH (NOLOCK) on sa.StyleUkey = o.StyleUkey and sa.StyleUkey = s.Ukey
+inner join Style_Artwork_Quot saq WITH (NOLOCK) on sa.Ukey = saq.Ukey
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = saq.LocalSuppId
+left join ArtworkType a WITH (NOLOCK) on a.ID = sa.ArtworkTypeID
 where 1 = 1");
 
             if (!MyUtility.Check.Empty(style))

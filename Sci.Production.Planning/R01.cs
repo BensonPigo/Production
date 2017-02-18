@@ -80,9 +80,9 @@ Select ot.ArtworkTypeID
 , sum(o.qty * ot.Qty) target_sum_stitch
 ,ot.ArtworkUnit
 ,sum(o.qty * ot.tms) target_sum_tms
-from dbo.orders o
-inner join dbo.Order_TmsCost ot on ot.ID = o.ID 
-inner join dbo.ArtworkType a on a.id = ot.ArtworkTypeID
+from dbo.orders o WITH (NOLOCK) 
+inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID 
+inner join dbo.ArtworkType a WITH (NOLOCK) on a.id = ot.ArtworkTypeID
 where ot.Price+ot.Qty+ot.TMS > 0
 and a.IsSubprocess = 1"));
 
@@ -142,7 +142,7 @@ targetData as (
 	,sum(t.target_sum_stitch) target_sum_stitch
 	,t.ArtworkUnit
 	,sum(t.target_sum_tms) target_sum_tms
-	from styleData t
+	from styleData t WITH (NOLOCK) 
 	group by t.ArtworkTypeID,t.FtyGroup,t.ArtworkUnit
 )
 , orderData_basic as (
@@ -153,8 +153,8 @@ targetData as (
 	,min(SewInLine) order_min_sewinline
 	,sum(o.qty) order_total_qty
 	,sum(o.qty * t.CpuRate) order_total_cpu
-	from  dbo.orders o 
-	inner join styleData s on s.FtyGroup = o.FtyGroup and s.StyleID = o.StyleID
+	from  dbo.orders o WITH (NOLOCK) 
+	inner join styleData s WITH (NOLOCK) on s.FtyGroup = o.FtyGroup and s.StyleID = o.StyleID
 	cross apply (select * from dbo.GetCPURate(o.OrderTypeID,o.ProgramID,o.Category,o.BrandID,'O')
 	where o.Junk=0 ) t
 	group by o.FtyGroup,o.StyleID
@@ -162,7 +162,7 @@ targetData as (
 , orderDataCount as
 (
 	select a.id artworktypeid,x.* 
-	from dbo.artworktype a 
+	from dbo.artworktype a WITH (NOLOCK) 
 	cross join (select * from (select FtyGroup,sum(order_count_style) order_count_style
 	,sum(order_total_qty) order_total_qty
 	,sum(order_total_cpu) order_total_cpu
@@ -171,7 +171,7 @@ targetData as (
 	where a.IsSubprocess=1
 )
 , orderData as (
-	select a.id artworktypeid,x.* from dbo.artworktype a 
+	select a.id artworktypeid,x.* from dbo.artworktype a WITH (NOLOCK) 
 	cross join (select * from  orderData_basic) x
 	where a.IsSubprocess=1 
 )

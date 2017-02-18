@@ -71,7 +71,7 @@ namespace Sci.Production.Planning
             if (isArtwork)
             {
                 DualResult result;
-                if (!(result = DBProxy.Current.Select("", "select id from dbo.artworktype where istms=1 or isprice= 1 order by seq", out dtArtworkType)))
+                if (!(result = DBProxy.Current.Select("", "select id from dbo.artworktype WITH (NOLOCK) where istms=1 or isprice= 1 order by seq", out dtArtworkType)))
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return false;
@@ -114,7 +114,7 @@ namespace Sci.Production.Planning
                 ,O.StyleUkey
                 ,O.POID
                 into #cte 
-                from dbo.Orders o inner join Order_QtyShip s on s.id = o.ID
+                from dbo.Orders o WITH (NOLOCK) inner join Order_QtyShip s WITH (NOLOCK) on s.id = o.ID
                 WHERE 1=1 
                 "));
 
@@ -225,14 +225,14 @@ namespace Sci.Production.Planning
                 -- 依撈出來的order資料(cte)去找各製程的WIP
                 select 
                  t.OrderID
-                 ,(SELECT SUM(CWIP.Qty) FROM DBO.CuttingOutput_WIP CWIP WHERE CWIP.OrderID = T.OrderID) cut_qty
-                 ,(SELECT MIN(a.cDate) from dbo.CuttingOutput a 
-	                 inner join dbo.CuttingOutput_Detail b on b.id = a.id 
-	                 inner join dbo.WorkOrder_Distribute c on c.WorkOrderUkey = b.WorkOrderUkey
+                 ,(SELECT SUM(CWIP.Qty) FROM DBO.CuttingOutput_WIP CWIP WITH (NOLOCK) WHERE CWIP.OrderID = T.OrderID) cut_qty
+                 ,(SELECT MIN(a.cDate) from dbo.CuttingOutput a WITH (NOLOCK) 
+	                 inner join dbo.CuttingOutput_Detail b WITH (NOLOCK) on b.id = a.id 
+	                 inner join dbo.WorkOrder_Distribute c WITH (NOLOCK) on c.WorkOrderUkey = b.WorkOrderUkey
 	                 where c.OrderID = t.OrderID) first_cut_date
-                ,(select MIN(isnull(tt.qaqty,0)) from dbo.style_location sl left join 
-	                (SELECT b.ComboType,sum(b.QAQty) qaqty FROM DBO.SewingOutput a 
-	                inner join dbo.SewingOutput_Detail b on b.ID = a.ID
+                ,(select MIN(isnull(tt.qaqty,0)) from dbo.style_location sl WITH (NOLOCK) left join 
+	                (SELECT b.ComboType,sum(b.QAQty) qaqty FROM DBO.SewingOutput a WITH (NOLOCK) 
+	                inner join dbo.SewingOutput_Detail b WITH (NOLOCK) on b.ID = a.ID
 	                where b.OrderId = t.OrderID
 	                group by ComboType ) tt on tt.ComboType = sl.Location
 	                where sl.StyleUkey = t.StyleUkey) sewing_output
@@ -240,7 +240,7 @@ namespace Sci.Production.Planning
                 ,t.StyleUkey
                 ,(select min(qty) qty from (
                 select sum(b.Qty) qty ,c.PatternCode,c.ArtworkID 
-                from dbo.farmin a inner join dbo.FarmIn_Detail b on b.id = a.id 
+                from dbo.farmin a WITH (NOLOCK) inner join dbo.FarmIn_Detail b WITH (NOLOCK) on b.id = a.id 
                 right join (select distinct v.ArtworkTypeID, v.Article,v.ArtworkID,v.PatternCode 
                 from dbo.View_Order_Artworks v 
                 where v.ID=t.OrderID) c on c.ArtworkTypeID = a.ArtworkTypeId 
@@ -252,7 +252,7 @@ namespace Sci.Production.Planning
 
                 ,(select min(qty) qty from (
                 select sum(b.Qty) qty ,c.PatternCode,c.ArtworkID 
-                from dbo.farmin a inner join dbo.FarmIn_Detail b on b.id = a.id 
+                from dbo.farmin a WITH (NOLOCK) inner join dbo.FarmIn_Detail b WITH (NOLOCK) on b.id = a.id 
                 right join (select distinct v.ArtworkTypeID,v.ArtworkID,v.PatternCode 
                 from dbo.View_Order_Artworks v where v.ID=t.OrderID) c 
                 on c.ArtworkTypeID = a.ArtworkTypeId 
@@ -264,7 +264,7 @@ namespace Sci.Production.Planning
 
                 ,(select min(qty) qty from (
                 select sum(b.Qty) qty ,c.PatternCode,c.ArtworkID 
-                from dbo.farmin a inner join dbo.FarmIn_Detail b on b.id = a.id 
+                from dbo.farmin a WITH (NOLOCK) inner join dbo.FarmIn_Detail b WITH (NOLOCK) on b.id = a.id 
                 right join (select distinct v.ArtworkTypeID,v.ArtworkID,v.PatternCode 
                 from dbo.View_Order_Artworks v 
                 where v.ID=t.OrderID) c on c.ArtworkTypeID = a.ArtworkTypeId 
@@ -278,8 +278,8 @@ namespace Sci.Production.Planning
                 from #cte t
                 outer apply (SELECT min(X.OutputDate) firstSewingDate, max(X.OutputDate) lastestSewingDate
                 ,sum(X.QAQty) QAQTY ,AVG(X.QAQTY) AVG_QAQTY
-                from (SELECT a.OutputDate,sum(a.QAQty) QAQty FROM DBO.SewingOutput a 
-                inner join dbo.SewingOutput_Detail b on b.ID = a.ID
+                from (SELECT a.OutputDate,sum(a.QAQty) QAQty FROM DBO.SewingOutput a WITH (NOLOCK) 
+                inner join dbo.SewingOutput_Detail b WITH (NOLOCK) on b.ID = a.ID
                 where b.OrderId = t.OrderID group by a.OutputDate ) X) SEWOUTPUT
 
                 select t.MDivisionID,t.FactoryID,t.SewLine,t.BuyerDelivery,t.SewInLine,t.SewOffLine
@@ -294,12 +294,12 @@ namespace Sci.Production.Planning
                 ,IIF(isnull(t.TotalCTN,0)=0, 0, round(t.ClogCTN / (t.TotalCTN*1.0),4) * 100 ) [pack_rate]
                 ,t.TotalCTN, t.FtyCTN, t.ClogCTN, t.InspDate, t.ActPulloutDate,t.FtyKPI,t.KPIChangeReason
                 ,t.PlanDate, dbo.getTPEPass1(t.SMR) [SMR], dbo.getTPEPass1(T.MRHandle) [Handle]
-                ,(select dbo.getTPEPass1(p.POSMR) from dbo.PO p where p.ID =t.POID) [PO SMR]
-                ,(select dbo.getTPEPass1(p.POHandle) from dbo.PO p where p.ID =t.POID) [PO Handle]
-                ,(select dbo.getTPEPass1(p.McHandle) from dbo.PO p where p.ID =t.POID) [MC Handle],t.DoxType
-                ,(select article+',' from (select distinct q.Article  from dbo.Order_Qty q where q.ID = t.OrderID) t for xml path('')) article_list
+                ,(select dbo.getTPEPass1(p.POSMR) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [PO SMR]
+                ,(select dbo.getTPEPass1(p.POHandle) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [PO Handle]
+                ,(select dbo.getTPEPass1(p.McHandle) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [MC Handle],t.DoxType
+                ,(select article+',' from (select distinct q.Article  from dbo.Order_Qty q WITH (NOLOCK) where q.ID = t.OrderID) t for xml path('')) article_list
                 , t.Customize1 [SpecMark], t.GFR, t.SampleReason
-                ,(select s.StdTms * t.CPU from System s) [TMS]"));
+                ,(select s.StdTms * t.CPU from System s WITH (NOLOCK) ) [TMS]"));
             if (isArtwork) 
                 sqlCmd.Append(string.Format(@",{0} ",artworktypes.ToString().Substring(0, artworktypes.ToString().Length - 1)));
             sqlCmd.Append(string.Format(@" from #cte t inner join #cte2 on #cte2.OrderID = t.OrderID"));

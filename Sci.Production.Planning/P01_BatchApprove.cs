@@ -131,10 +131,10 @@ namespace Sci.Production.Planning
 ,ot.ArtworkInLine
 ,ods.SciDelivery
 ,ot.ApvDate
-from Order_TmsCost ot 
-inner join orders ods on ot.ID = ods.ID
-inner join LocalSupp ls on ls.id = ot.LocalSuppID
-inner join dbo.factory on factory.id = ods.factoryid
+from Order_TmsCost ot WITH (NOLOCK)
+inner join orders ods WITH (NOLOCK) on ot.ID = ods.ID
+inner join LocalSupp ls WITH (NOLOCK) on ls.id = ot.LocalSuppID
+inner join dbo.factory WITH (NOLOCK) on factory.id = ods.factoryid
 where ods.finished=0 and ods.isforecast = 0 
     and (ods.category = 'B' or ods.category = 'S')
     and ods.qty > 0 and (ot.qty > 0 or ot.tms > 0)

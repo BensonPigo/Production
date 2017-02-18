@@ -94,11 +94,11 @@ namespace Sci.Production.Planning
 	select o1.MDivisionID,o1.ID,o1.StyleID,o1.StyleUkey,o1.FactoryID,o1.SewLine,o1.SewInLine,o1.SewOffLine
 	,o1.SciDelivery,o1.BuyerDelivery,o1.MTLETA,o1.CutInLine
 	,o2.ArtworkTypeID,o2.Qty stitch,o2.Price,o2.Cost,o2.TMS
-	,(select Article +',' from (select rtrim(article) article from dbo.Order_Article where id = o1.ID) tmp for xml path('')) articles
+	,(select Article +',' from (select rtrim(article) article from dbo.Order_Article WITH (NOLOCK) where id = o1.ID) tmp for xml path('')) articles
 	,o2.ArtworkID,o2.PatternCode,o2.PatternDesc,sum(o2.PoQty) OrderQty 
 ,DBO.GETSTDQTY(o1.id,'A',null,null) as stdqty
 ,DBO.getMinCompleteSewQty(o1.id,null,null) as garments
-	from dbo.orders o1 
+	from dbo.orders o1 WITH (NOLOCK) 
 	inner join dbo.View_Order_Artworks o2 on o2.id = o1.ID
 	where 1=1 "));
 
@@ -181,8 +181,8 @@ namespace Sci.Production.Planning
 	select a1.ID poid,a1.status,a1.LocalSuppID
 	,b1.PoQty poqty ,b1.Farmout,b1.Farmin,b1.ApQty,b1.ukey po_detailukey
 	,orderData.*
-	from dbo.ArtworkPO a1
-	inner join dbo.ArtworkPO_Detail b1 on b1.ID= a1.ID
+	from dbo.ArtworkPO a1 WITH (NOLOCK) 
+	inner join dbo.ArtworkPO_Detail b1 WITH (NOLOCK) on b1.ID= a1.ID
 	inner join orderData on orderData.id = b1.OrderID and orderData.ArtworkTypeID = b1.ArtworkTypeID 
 	and orderData.ArtworkID = b1.ArtworkId and orderData.PatternCode = b1.PatternCode
 	where a1.Status = 'Approved'"));
@@ -194,14 +194,14 @@ sqlCmd.Append(string.Format(@"
 )
 ,  artwork_quot as (
 select x.*,
-x.LocalSuppID+'-'+(select LocalSupp.Abb from dbo.LocalSupp where id = x.LocalSuppID) supplier
+x.LocalSuppID+'-'+(select LocalSupp.Abb from dbo.LocalSupp WITH (NOLOCK) where id = x.LocalSuppID) supplier
 ,x2.Oven
 ,x2.Wash
 ,x2.Mockup
 from artworkpoData x
-outer apply (select t3.Mockup,t3.Oven,t3.Wash from  dbo.style_artwork t2 
-inner join dbo.Style_Artwork_Quot t3 on t3.Ukey = t2.Ukey
-inner join dbo.Order_Article t4 on t4.id = x.ID
+outer apply (select t3.Mockup,t3.Oven,t3.Wash from  dbo.style_artwork t2 WITH (NOLOCK) 
+inner join dbo.Style_Artwork_Quot t3 WITH (NOLOCK) on t3.Ukey = t2.Ukey
+inner join dbo.Order_Article t4 WITH (NOLOCK) on t4.id = x.ID
 where t2.StyleUkey = x.StyleUkey and t2.Article = t4.Article and t2.ArtworkTypeID = x.ArtworkTypeID and
 t2.PatternCode = x.PatternCode and t3.PriceApv = 'Y'
 ) x2
@@ -211,13 +211,13 @@ select *
 from artwork_quot
 left join (select farmin.IssueDate FarmInDate
 			,FarmIn_Detail.Qty FarmInQty,NULL FarmOutDate,0 FarmOutQty,ArtworkPo_DetailUkey 
-			from dbo.FarmIn inner join dbo.FarmIn_Detail on FarmIn_Detail.ID= FarmIn.ID 
+			from dbo.FarmIn WITH (NOLOCK) inner join dbo.FarmIn_Detail WITH (NOLOCK) on FarmIn_Detail.ID= FarmIn.ID 
 			where status='Confirmed' ) m on  m.ArtworkPo_DetailUkey =  artwork_quot.po_detailukey
 union all
 select * 
 from artwork_quot
 left join (select NULL FarmInDate,0 FarmInQty,FarmOut.IssueDate FarmOutDate,FarmOut_Detail.Qty FarmOutQty,ArtworkPo_DetailUkey 
-			from dbo.FarmOut inner join dbo.FarmOut_Detail on FarmOut_Detail.ID= FarmOut.ID where status='Confirmed') n 
+			from dbo.FarmOut WITH (NOLOCK) inner join dbo.FarmOut_Detail WITH (NOLOCK) on FarmOut_Detail.ID= FarmOut.ID where status='Confirmed') n 
 			on n.ArtworkPo_DetailUkey =  artwork_quot.po_detailukey
 )
 "));
