@@ -22,7 +22,7 @@ namespace Sci.Production.Basic
             this.DoubleBuffered = true;
             PropertyInfo info = this.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
             info.SetValue(tableLayoutPanel1, true, null);
-            useAPS = MyUtility.GetValue.Lookup(string.Format("select UseAPS from Factory where ID = '{0}'", Sci.Env.User.Factory)).ToUpper() == "TRUE" ? 1 : 0;
+            useAPS = MyUtility.GetValue.Lookup(string.Format("select UseAPS from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Factory)).ToUpper() == "TRUE" ? 1 : 0;
         }
 
         protected override void OnFormLoaded()
@@ -97,7 +97,7 @@ namespace Sci.Production.Basic
                 holiday.label1.Text = date.Day.ToString();
                 holiday.Today = date;
                 DataTable findData;
-                DBProxy.Current.Select(null, string.Format("select * from holiday where HolidayDate='{0}' and FactoryID = '{1}'", date.ToString("d"), Sci.Env.User.Factory), out findData);
+                DBProxy.Current.Select(null, string.Format("select * from holiday WITH (NOLOCK) where HolidayDate='{0}' and FactoryID = '{1}'", date.ToString("d"), Sci.Env.User.Factory), out findData);
                 if (findData == null || findData.Rows.Count <= 0)
                 {
                     holiday.label2.Text = "";

@@ -32,7 +32,7 @@ namespace Sci.Production.Basic
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Alias from Country where Junk = 0 order by ID", "4,30", dr["CountryID"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Alias from Country WITH (NOLOCK) where Junk = 0 order by ID", "4,30", dr["CountryID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             dr["CountryID"] = item.GetSelectedString();

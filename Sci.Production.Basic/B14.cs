@@ -29,7 +29,7 @@ namespace Sci.Production.Basic
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            string sqlCommand = string.Format("select (select cast(rtrim(ID) as nvarchar) +',' from MachineType where ArtworkTypeID = '{0}' or ArtworkTypeDetail = '{0}' for XML Path('')) as MatchTypeID", CurrentMaintain["ID"]);
+            string sqlCommand = string.Format("select (select cast(rtrim(ID) as nvarchar) +',' from MachineType WITH (NOLOCK) where ArtworkTypeID = '{0}' or ArtworkTypeDetail = '{0}' for XML Path('')) as MatchTypeID", CurrentMaintain["ID"]);
             Ict.DualResult returnResult;
             DataTable machineTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, sqlCommand, out machineTable))

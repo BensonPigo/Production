@@ -54,7 +54,7 @@ namespace Sci.Production.Basic
 
             //設定ComboBox顯示資料
             //comboBox1
-            string selectCommand = "select distinct Year from Factory_TMS where ID = @id";
+            string selectCommand = "select distinct Year from Factory_TMS WITH (NOLOCK) where ID = @id";
 
             Ict.DualResult returnResult;
             DataTable yearTable = new DataTable();
@@ -64,7 +64,7 @@ namespace Sci.Production.Basic
             }
 
             //comboBox2
-            selectCommand = "select distinct ArtworkTypeID from Factory_TMS where ID = @id";
+            selectCommand = "select distinct ArtworkTypeID from Factory_TMS WITH (NOLOCK) where ID = @id";
             DataTable artworkTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, selectCommand, cmds, out artworkTable))
             {
@@ -72,7 +72,7 @@ namespace Sci.Production.Basic
             }
 
             //comboBox3
-            selectCommand = "select distinct Year from Factory_WorkHour where ID = @id";
+            selectCommand = "select distinct Year from Factory_WorkHour WITH (NOLOCK) where ID = @id";
             DataTable yearTable2 = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, selectCommand, cmds, out yearTable2))
             {
@@ -96,12 +96,12 @@ namespace Sci.Production.Basic
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
 
-            string selectCommand1 = "select * from Factory_TMS where ID = @id";
+            string selectCommand1 = "select * from Factory_TMS WITH (NOLOCK) where ID = @id";
             DataTable selectDataTable1;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, cmds, out selectDataTable1);
             listControlBindingSource1.DataSource = selectDataTable1;
 
-            selectCommand1 = "select * from Factory_WorkHour where ID = @id";
+            selectCommand1 = "select * from Factory_WorkHour WITH (NOLOCK) where ID = @id";
             DataTable selectDataTable2;
             DualResult selectResult2 = DBProxy.Current.Select(null, selectCommand1, cmds, out selectDataTable2);
             listControlBindingSource2.DataSource = selectDataTable2;

@@ -31,7 +31,7 @@ namespace Sci.Production.Basic
             cmds.Add(sp1);
 
             //當CDCode_Content中沒有此CDCode資料時，就自動塞一筆空資料進去
-            string selectCommand = "select * from CDCode_Content where ID = @id";
+            string selectCommand = "select * from CDCode_Content WITH (NOLOCK) where ID = @id";
             DataTable selectDataTable;
             DualResult selectResult = DBProxy.Current.Select(null, selectCommand, cmds, out selectDataTable);
             if (selectDataTable.Rows.Count == 0)
@@ -60,7 +60,7 @@ namespace Sci.Production.Basic
             base.OnDetailEntered();
 
             //按鈕變色
-            string sql = string.Format(@"select ID from CDCode_Content where ID = '{0}' and 
+            string sql = string.Format(@"select ID from CDCode_Content WITH (NOLOCK) where ID = '{0}' and 
                         (TopProductionType<>'' or TopFabricType<>'' or BottomProductionType<>'' or BottomFabricType<>'' or
                         InnerProductionType<>'' or InnerFabricType<>'' or OuterProductionType<>'' or OuterFabricType<>'')", CurrentMaintain["ID"].ToString());
             button1.ForeColor = MyUtility.Check.Seek(sql) ? Color.Blue : Color.Black;

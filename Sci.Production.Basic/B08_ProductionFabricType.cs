@@ -23,7 +23,7 @@ namespace Sci.Production.Basic
         {
             Sci.Win.UI.TextBox prodText = (Sci.Win.UI.TextBox)sender;
             Sci.Win.Tools.SelectItem item;
-            string selectCommand = "select Name from Reason where Junk = 0 and ReasonTypeID = 'Style_Apparel_Type' order by ID";
+            string selectCommand = "select Name from Reason WITH (NOLOCK) where Junk = 0 and ReasonTypeID = 'Style_Apparel_Type' order by ID";
 
             item = new Sci.Win.Tools.SelectItem(selectCommand, "20", prodText.Text);
             DialogResult returnResult = item.ShowDialog();
@@ -35,7 +35,7 @@ namespace Sci.Production.Basic
         {
             Sci.Win.UI.TextBox fabricText = (Sci.Win.UI.TextBox)sender;
             Sci.Win.Tools.SelectItem item;
-            string selectCommand = "select Name from Reason where Junk = 0 and ReasonTypeID = 'Fabric_Kind' order by ID";
+            string selectCommand = "select Name from Reason WITH (NOLOCK) where Junk = 0 and ReasonTypeID = 'Fabric_Kind' order by ID";
 
             item = new Sci.Win.Tools.SelectItem(selectCommand, "20", fabricText.Text);
             DialogResult returnResult = item.ShowDialog();
@@ -56,7 +56,7 @@ namespace Sci.Production.Basic
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 cmds.Add(sp1);
 
-                string selectCommand = "select ID from Reason where ReasonTypeID = 'Style_Apparel_Type' and Name = @name";
+                string selectCommand = "select ID from Reason WITH (NOLOCK) where ReasonTypeID = 'Style_Apparel_Type' and Name = @name";
                 DataTable reasonID;
                 DualResult result = DBProxy.Current.Select(null, selectCommand, cmds, out reasonID);
                 if (result)
@@ -92,7 +92,7 @@ namespace Sci.Production.Basic
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 cmds.Add(sp1);
 
-                string selectCommand = "select ID from Reason where ReasonTypeID = 'Fabric_Kind' and Name = @name";
+                string selectCommand = "select ID from Reason WITH (NOLOCK) where ReasonTypeID = 'Fabric_Kind' and Name = @name";
                 DataTable reasonID;
                 DualResult result = DBProxy.Current.Select(null, selectCommand, cmds, out reasonID);
                 if (result)

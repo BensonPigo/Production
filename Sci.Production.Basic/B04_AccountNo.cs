@@ -33,8 +33,8 @@ namespace Sci.Production.Basic
             cmds.Add(sp1);
 
             string selectCommand = @"select @id as ID,a.ID as ArtworkTypeID, a.Seq, b.AccountID, b.AddName,b.AddDate, b.EditName, b.EditDate 
-from (select ID,Seq from ArtworkType where IsSubprocess = 1 or Classify = 'P' or SystemType = 'P') a 
-left join (select ArtworkTypeID,AccountID,AddName,AddDate,EditName,EditDate from LocalSupp_AccountNo where ID = @id) b on a.ID = b.ArtworkTypeID 
+from (select ID,Seq from ArtworkType WITH (NOLOCK) where IsSubprocess = 1 or Classify = 'P' or SystemType = 'P') a 
+left join (select ArtworkTypeID,AccountID,AddName,AddDate,EditName,EditDate from LocalSupp_AccountNo WITH (NOLOCK) where ID = @id) b on a.ID = b.ArtworkTypeID 
 order by a.Seq";
             Ict.DualResult returnResult;
             DataTable ArtworkTable = new DataTable();
@@ -86,7 +86,7 @@ order by a.Seq";
                     }
                     else
                     {
-                        string selectCommand = string.Format("select ID from LocalSupp_AccountNo where ID = '{0}' and ArtworkTypeID = '{1}'", currentRecord["ID"].ToString(), currentRecord["ArtworkTypeID"].ToString());
+                        string selectCommand = string.Format("select ID from LocalSupp_AccountNo WITH (NOLOCK) where ID = '{0}' and ArtworkTypeID = '{1}'", currentRecord["ID"].ToString(), currentRecord["ArtworkTypeID"].ToString());
                         if (!MyUtility.Check.Seek(selectCommand, null))
                         {
                             returnResult = DBProxy.Current.Insert(null, tableSchema, currentRecord);

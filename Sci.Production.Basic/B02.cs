@@ -20,7 +20,7 @@ namespace Sci.Production.Basic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            button1.ForeColor = MyUtility.GetValue.Lookup("select isnull(count(ID),0) from MailTo") == "0" ? Color.Black : Color.Blue;
+            button1.ForeColor = MyUtility.GetValue.Lookup("select isnull(count(ID),0) from MailTo WITH (NOLOCK) ") == "0" ? Color.Black : Color.Blue;
         }
 
         //取Sketch目錄的路徑

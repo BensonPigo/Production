@@ -26,7 +26,7 @@ namespace Sci.Production.Basic
         {
             base.OnFormLoaded();
 
-            string sqlcmd = string.Format("select Name from Holiday where HolidayDate='{0}' and FactoryID = '{1}'", this.textBox1.Text, Sci.Env.User.Factory);
+            string sqlcmd = string.Format("select Name from Holiday WITH (NOLOCK) where HolidayDate='{0}' and FactoryID = '{1}'", this.textBox1.Text, Sci.Env.User.Factory);
             string holidayName = MyUtility.GetValue.Lookup(sqlcmd);
 
             if (MyUtility.Check.Empty(holidayName))
