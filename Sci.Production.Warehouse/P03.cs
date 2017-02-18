@@ -222,6 +222,11 @@ namespace Sci.Production.Warehouse
                         grid1.Rows[i].Cells[6].Style.BackColor = Color.Orange;
                     }
                 }
+
+                if (Convert.ToDecimal(dr["ShipQty"].ToString()) < Convert.ToDecimal(dr["Qty"].ToString()))
+                {
+                    grid1.Rows[i].Cells[16].Style.ForeColor = Color.Red;
+                }
             };
         }
 
