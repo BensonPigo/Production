@@ -95,8 +95,8 @@ and a.poid='{0}'", sp, dr_master["stocktype"].ToString())); //
 ,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation
 , '' id
-,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
 ,a.ukey as ftyinventoryukey
+,(select refno from dbo.PO_Supp_Detail P where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
 from dbo.Receiving r1 
     inner join dbo.Receiving_Detail r2 on r2.id = r1.Id
     inner join dbo.FtyInventory a on a.mdivisionid = r2.mdivisionid and a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
