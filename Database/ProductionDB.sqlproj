@@ -2105,6 +2105,10 @@
     <Build Include="dbo\Stored Procedures\PPIC_Report04.sql" />
     <Build Include="dbo\Stored Procedures\PPIC_Report_QtyBreakdown.sql" />
     <Build Include="dbo\Functions\GetOutputInformation.sql" />
+    <Build Include="dbo\Stored Procedures\Cutting_P01_print_CuttingWorkOrder.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
