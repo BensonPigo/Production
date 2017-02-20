@@ -312,6 +312,20 @@ Where a.id = '{0}'", masterID);
 
             #endregion 必輸檢查
 
+            DataTable detaildata = (DataTable)detailgridbs.DataSource;
+
+            foreach (DataRow Checkduplicate in DetailDatas)
+            {
+                DataRow[] findrow = detaildata.AsEnumerable().Where(row => row["poid"].EqualString(Checkduplicate["poid"].ToString()) && row["seq1"].EqualString(Checkduplicate["seq1"])
+                                                                          && row["seq2"].EqualString(Checkduplicate["seq2"].ToString())).ToArray();
+                if (findrow.Length > 1)
+                {
+                    MyUtility.Msg.WarningBox(string.Format(@"SP#: {0} Seq#: {1}-{2} can't duplicate", Checkduplicate["poid"], Checkduplicate["seq1"], Checkduplicate["seq2"]));
+                    return false;                        
+                }
+            }
+
+            
 
 
             //取單號
