@@ -100,7 +100,7 @@ namespace Sci.Production.Cutting
                 return false;
             }
 
-            this.ShowWaitMessage("Starting EXCEL...");
+            //this.ShowWaitMessage("Starting EXCEL...");
             if (Cutref_ra.Checked) return ByCutrefExcel();
             else return ByRequestExcel();
             //return true;
