@@ -65,7 +65,7 @@ namespace Sci.Production.Packing
                         cmds.Add(sp2);
                         cmds.Add(sp3);
 
-                        string sqlCmd = "Select ID,StyleID,CustPONo from Orders where ID = @orderid and MDivisionID = @mdivisionid  and BrandID = @brandid and IsForecast = 0 and LocalOrder = 0 and Junk = 0";
+                        string sqlCmd = "Select ID,StyleID,CustPONo from Orders WITH (NOLOCK) where ID = @orderid and MDivisionID = @mdivisionid  and BrandID = @brandid and IsForecast = 0 and LocalOrder = 0 and Junk = 0";
 
                         DataTable orderData;
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
@@ -95,7 +95,7 @@ namespace Sci.Production.Packing
                                 dr["SizeCode"] = "";
                                 #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
                                 DataRow orderQtyData;
-                                sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip where ID = '{0}'", dr["OrderID"].ToString());
+                                sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", dr["OrderID"].ToString());
                                 if (MyUtility.Check.Seek(sqlCmd, out orderQtyData))
                                 {
                                     if (orderQtyData["CountID"].ToString() == "1")
@@ -104,7 +104,7 @@ namespace Sci.Production.Packing
                                     }
                                     else
                                     {
-                                        sqlCmd = string.Format("select Seq,BuyerDelivery,ShipmodeID,Qty from Order_QtyShip where ID = '{0}'", dr["OrderID"].ToString());
+                                        sqlCmd = string.Format("select Seq,BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", dr["OrderID"].ToString());
                                         Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
                                         DialogResult returnResult = item.ShowDialog();
                                         if (returnResult == DialogResult.Cancel)
@@ -135,7 +135,7 @@ namespace Sci.Production.Packing
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            sqlCmd = string.Format("select Seq, BuyerDelivery,ShipmodeID,Qty from Order_QtyShip where ID = '{0}'", dr["OrderID"].ToString());
+                            sqlCmd = string.Format("select Seq, BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", dr["OrderID"].ToString());
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -167,9 +167,9 @@ namespace Sci.Production.Packing
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             sqlCmd = string.Format(@"select distinct a.Article
 from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
-      from Order_QtyShip_Detail oqd
-	  left join Order_UnitPrice ou1 on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	  left join Order_UnitPrice ou2 on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
+      from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+	  left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
+	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
 	  where oqd.Id = '{0}'
 	  and oqd.Seq = '{1}') a
 where a.Price = 0", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
@@ -191,9 +191,9 @@ where a.Price = 0", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString())
                     {
                         sqlCmd = string.Format(@"select a.Article
 from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
-      from Order_QtyShip_Detail oqd
-	  left join Order_UnitPrice ou1 on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	  left join Order_UnitPrice ou2 on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
+      from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+	  left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
+	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
 	  where oqd.Id = '{0}'
 	  and oqd.Seq = '{1}') a
 where a.Price = 0 and a.Article = '{2}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), e.FormattedValue.ToString());
@@ -242,13 +242,13 @@ where a.Price = 0 and a.Article = '{2}'", dr["OrderID"].ToString(), dr["OrderShi
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             sqlCmd = string.Format(@"select distinct a.SizeCode as Size,os.Seq
 from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
-      from Order_QtyShip_Detail oqd
-	  left join Order_UnitPrice ou1 on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	  left join Order_UnitPrice ou2 on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
+      from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+	  left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
+	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
 	  where oqd.Id = '{0}'
 	  and oqd.Seq = '{1}') a
-left join Orders o on o.ID = '{0}'
-left join Order_SizeCode os on os.Id = o.POID and os.SizeCode = a.SizeCode
+left join Orders o WITH (NOLOCK) on o.ID = '{0}'
+left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = a.SizeCode
 where a.Price = 0 and a.Article = '{2}'
 order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString());
                             result = DBProxy.Current.Select(null, sqlCmd, out queryData);
@@ -270,9 +270,9 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                     {
                         sqlCmd = string.Format(@"select a.SizeCode
 from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
-      from Order_QtyShip_Detail oqd
-	  left join Order_UnitPrice ou1 on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	  left join Order_UnitPrice ou2 on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
+      from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+	  left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
+	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
 	  where oqd.Id = '{0}'
 	  and oqd.Seq = '{1}') a
 where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), e.FormattedValue.ToString());
@@ -310,7 +310,7 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
             DataRow dr;
             labConfirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"].ToString()) ? false : true  ;
 
-            string sqlStatus = string.Format(@"select status from PackingList where id='{0}'", CurrentMaintain["ID"].ToString());
+            string sqlStatus = string.Format(@"select status from PackingList WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"].ToString());
             if (MyUtility.Check.Seek(sqlStatus, out dr))
             {
                 labConfirmed.Text = dr["Status"].ToString();
@@ -363,7 +363,7 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
             {
                 //Pullout date不可小於System的Pullout lock date
                 //string pullLock = MyUtility.GetValue.Lookup("select PullLock from System");
-                if (MyUtility.Convert.GetDate(CurrentMaintain["PulloutDate"]) < MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select PullLock from System")))
+                if (MyUtility.Convert.GetDate(CurrentMaintain["PulloutDate"]) < MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select PullLock from System WITH (NOLOCK) ")))
                 {
                     MyUtility.Msg.WarningBox("Pullou date less then pullout lock date!!");
                     dateBox1.Focus();
@@ -371,7 +371,7 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 }
 
                 //如果Pullout report已存在且狀態為Confirmed時，需出訊息告知
-                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(CurrentMaintain["PulloutDate"].ToString()).ToString("d"), Sci.Env.User.Keyword), out dr))
+                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(CurrentMaintain["PulloutDate"].ToString()).ToString("d"), Sci.Env.User.Keyword), out dr))
                 {
                     if (dr["Status"].ToString() != "New")
                     {
@@ -405,7 +405,7 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
             DataRow[] detailData;
 
             //準備needPackData的Schema
-            sqlCmd = "select OrderID, OrderShipmodeSeq, Article, SizeCode, ShipQty as Qty from PackingList_Detail where ID = ''";
+            sqlCmd = "select OrderID, OrderShipmodeSeq, Article, SizeCode, ShipQty as Qty from PackingList_Detail WITH (NOLOCK) where ID = ''";
             if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out needPackData)))
             {
                 MyUtility.Msg.WarningBox("Query  schema fail!");
@@ -448,9 +448,9 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 #region 確認每筆資料都是FOC
                 sqlCmd = string.Format(@"select a.SizeCode
 from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
-      from Order_QtyShip_Detail oqd
-	  left join Order_UnitPrice ou1 on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	  left join Order_UnitPrice ou2 on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
+      from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+	  left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
+	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
 	  where oqd.Id = '{0}'
 	  and oqd.Seq = '{1}') a
 where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
@@ -473,10 +473,10 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 {
                     //撈取此SP+Seq尚未裝箱的數量
                     sqlCmd = string.Format(@"select oqd.Id as OrderID, oqd.Seq as OrderShipmodeSeq, oqd.Article, oqd.SizeCode, (oqd.Qty - isnull(sum(pld.ShipQty),0) - isnull(sum(iaq.DiffQty), 0)) as Qty
-from Order_QtyShip_Detail oqd
-left join PackingList_Detail pld on pld.OrderID = oqd.Id and pld.OrderShipmodeSeq = oqd.Seq and pld.ID != '{0}'
-left join InvAdjust ia on ia.OrderID = oqd.ID and ia.OrderShipmodeSeq = oqd.Seq
-left join InvAdjust_Qty iaq on iaq.ID = ia.ID and iaq.Article = oqd.Article and iaq.SizeCode = oqd.SizeCode
+from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+left join PackingList_Detail pld WITH (NOLOCK) on pld.OrderID = oqd.Id and pld.OrderShipmodeSeq = oqd.Seq and pld.ID != '{0}'
+left join InvAdjust ia WITH (NOLOCK) on ia.OrderID = oqd.ID and ia.OrderShipmodeSeq = oqd.Seq
+left join InvAdjust_Qty iaq WITH (NOLOCK) on iaq.ID = ia.ID and iaq.Article = oqd.Article and iaq.SizeCode = oqd.SizeCode
 where oqd.Id = '{1}'
 and oqd.Seq = '{2}'
 group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"].ToString(), dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
@@ -577,7 +577,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
         {
             if (!MyUtility.Check.Empty(dateBox1.Value) && dateBox1.Value != dateBox1.OldValue)
             {
-                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(dateBox1.Value.ToString()).ToString("d"), Sci.Env.User.Keyword), out dr))
+                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(dateBox1.Value.ToString()).ToString("d"), Sci.Env.User.Keyword), out dr))
                 {
                     if (dr["Status"].ToString() != "New")
                     {
@@ -644,7 +644,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             base.ClickUnconfirm();
             //如果Pullout Report已被Confirmed就不可以做UnConfirm
             sqlCmd = string.Format(@"select p.Status
-from PackingList pl, Pullout p
+from PackingList pl WITH (NOLOCK) , Pullout p WITH (NOLOCK) 
 where pl.ID = '{0}'
 and p.ID = pl.PulloutID", CurrentMaintain["ID"].ToString());
              if (MyUtility.Check.Seek(sqlCmd, out dr))

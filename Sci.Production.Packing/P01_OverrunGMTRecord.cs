@@ -25,13 +25,13 @@ namespace Sci.Production.Packing
             base.OnFormLoaded();
             DataTable OverrunData;
             string sqlCmd = string.Format(@"select od.*,pr.Description
-from OverrunGMT_Detail od
-left join Orders o on od.ID = o.ID
-left join Order_Article oa on oa.id = od.ID and oa.Article = od.Article
-left join Order_SizeCode os on o.POID = os.Id and od.SizeCode = os.SizeCode
-left join PackingReason pr on pr.Type = 'OG' and pr.ID = od.PackingReasonID
+from OverrunGMT_Detail od WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on od.ID = o.ID
+left join Order_Article oa WITH (NOLOCK) on oa.id = od.ID and oa.Article = od.Article
+left join Order_SizeCode os WITH (NOLOCK) on o.POID = os.Id and od.SizeCode = os.SizeCode
+left join PackingReason pr WITH (NOLOCK) on pr.Type = 'OG' and pr.ID = od.PackingReasonID
 where od.ID = '{0}'
-order by oa.Seq,os.Seq",orderID);
+order by oa.Seq,os.Seq", orderID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out OverrunData);
             if (!result)
             {

@@ -62,7 +62,7 @@ namespace Sci.Production.Packing
             sqlCmd.Append(@"with OrderData
 as
 (select ID as OrderID,StyleID,SeasonID,CustCDID,OrderTypeID,CustPONo,POID
- from Orders
+ from Orders WITH (NOLOCK) 
  where Category = 'S'
  and BrandID = @brand");
             if (!MyUtility.Check.Empty(txtcustcd1.Text))
@@ -93,7 +93,7 @@ as
 OrderQty
 as
 (select o.*, oqsd.Seq as OrderShipmodeSeq, oqs.ShipmodeID, oqsd.Article, oqsd.SizeCode, oqsd.Qty as ShipQty
-from OrderData o, Order_QtyShip oqs, Order_QtyShip_Detail oqsd
+from OrderData o, Order_QtyShip oqs WITH (NOLOCK) , Order_QtyShip_Detail oqsd WITH (NOLOCK) 
 where oqs.Id = o.OrderID
 and oqs.Id = oqsd.Id
 and oqs.Seq = oqsd.Seq");
@@ -112,7 +112,7 @@ as
  from (select oq.OrderID,oq.StyleID,oq.SeasonID,oq.CustCDID,oq.OrderTypeID,oq.CustPONo,oq.POID,oq.OrderShipmodeSeq,oq.ShipmodeID,oq.Article,oq.SizeCode,(oq.ShipQty-isnull(a.PulloutQty,0)) as ShipQty
        from OrderQty oq
 	   left Join (select oq1.OrderID,oq1.OrderShipmodeSeq,pdd.Article,pdd.SizeCode,sum(pdd.ShipQty) as PulloutQty
-                  from OrderQty oq1, Pullout_Detail pd, Pullout_Detail_Detail pdd
+                  from OrderQty oq1, Pullout_Detail pd WITH (NOLOCK) , Pullout_Detail_Detail pdd WITH (NOLOCK) 
 				  where oq1.OrderID = pd.OrderID
 				  and oq1.OrderShipmodeSeq = pd.OrderShipmodeSeq
 				  and pdd.Pullout_DetailUKey = pd.UKey
@@ -169,7 +169,7 @@ left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Arti
         //Order Type Right Click
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlWhere = string.Format("select ID from OrderType where BrandID = '{0}' order by ID", packingListData["BrandID"].ToString());
+            string sqlWhere = string.Format("select ID from OrderType WITH (NOLOCK) where BrandID = '{0}' order by ID", packingListData["BrandID"].ToString());
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20", this.Text, false, "");
 
             DialogResult result = item.ShowDialog();

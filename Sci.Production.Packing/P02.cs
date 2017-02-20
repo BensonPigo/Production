@@ -30,12 +30,12 @@ namespace Sci.Production.Packing
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"select a.ID,a.Refno,a.Article,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Description
-                                                                                       from PackingGuide_Detail a
-                                                                                       left join PackingGuide b on a.Id = b.Id
-                                                                                       left join LocalItem c on a.RefNo = c.RefNo
-                                                                                       left join Orders d on b.OrderID = d.ID
-                                                                                       left join Order_Article e on b.OrderID = e.Id and a.Article = e.Article
-                                                                                       left join Order_SizeCode f on d.POID = f.Id and a.SizeCode = f.SizeCode
+                                                                                       from PackingGuide_Detail a WITH (NOLOCK) 
+                                                                                       left join PackingGuide b WITH (NOLOCK) on a.Id = b.Id
+                                                                                       left join LocalItem c WITH (NOLOCK) on a.RefNo = c.RefNo
+                                                                                       left join Orders d WITH (NOLOCK) on b.OrderID = d.ID
+                                                                                       left join Order_Article e WITH (NOLOCK) on b.OrderID = e.Id and a.Article = e.Article
+                                                                                       left join Order_SizeCode f WITH (NOLOCK) on d.POID = f.Id and a.SizeCode = f.SizeCode
                                                                                        where a.Id ='{0}'
                                                                                        order by e.Seq,f.Seq", masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -60,7 +60,7 @@ namespace Sci.Production.Packing
             base.OnDetailEntered();
             DataRow orderData;
             string sqlCmd;
-            sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Qty,CtnType from Orders where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
+            sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Qty,CtnType from Orders WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
             if (MyUtility.Check.Seek(sqlCmd, out orderData))
             {
                 displayBox2.Value = orderData["StyleID"].ToString();
@@ -83,7 +83,7 @@ namespace Sci.Production.Packing
                 ttlShipQty = 0;
                 printPackMethod = "";
             }
-            sqlCmd = string.Format("select isnull(SUM(ShipQty),0) from PackingGuide_Detail where Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            sqlCmd = string.Format("select isnull(SUM(ShipQty),0) from PackingGuide_Detail WITH (NOLOCK) where Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             numericBox4.Value = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd));
             ttlShipQty = MyUtility.Convert.GetInt(numericBox4.Value);    
 
@@ -148,7 +148,7 @@ namespace Sci.Production.Packing
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                         cmds.Add(sp1);
 
-                        string sqlCmd = "select Description,CtnWeight from LocalItem where RefNo = @refno";
+                        string sqlCmd = "select Description,CtnWeight from LocalItem WITH (NOLOCK) where RefNo = @refno";
                         DataTable LocalItemData;
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out LocalItemData);
                         if (result)
@@ -193,10 +193,10 @@ namespace Sci.Production.Packing
                     string sqlCmd = @"select isnull(li.Weight, 0) as CTNWeight,
                                                                                      isnull(sw.NW, isnull(sw2.NW, 0)) as NW,
                                                                                      isnull(sw.NNW, isnull(sw2.NNW, 0)) as NNW
-                                                                          from Orders o
-                                                                          left join Style_WeightData sw on sw.StyleUkey = o.StyleUkey and sw.Article = @article and sw.SizeCode = @sizecode
-                                                                          left join Style_WeightData sw2 on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = @sizecode
-                                                                          left join LocalItem li on li.RefNo = @refno and li.Category = 'CARTON'
+                                                                          from Orders o WITH (NOLOCK) 
+                                                                          left join Style_WeightData sw WITH (NOLOCK) on sw.StyleUkey = o.StyleUkey and sw.Article = @article and sw.SizeCode = @sizecode
+                                                                          left join Style_WeightData sw2 WITH (NOLOCK) on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = @sizecode
+                                                                          left join LocalItem li WITH (NOLOCK) on li.RefNo = @refno and li.Category = 'CARTON'
                                                                           where o.ID = @orderid";
                     DataTable selectedData;
                     DualResult result;
@@ -263,7 +263,7 @@ namespace Sci.Production.Packing
             }
 
             //檢查OrderID+Seq不可以重複建立
-            if (MyUtility.Check.Seek(string.Format("select ID from PackingGuide where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), IsDetailInserting ? "" : CurrentMaintain["ID"].ToString())))
+            if (MyUtility.Check.Seek(string.Format("select ID from PackingGuide WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), IsDetailInserting ? "" : CurrentMaintain["ID"].ToString())))
             {
                 MyUtility.Msg.WarningBox("SP No:" + CurrentMaintain["OrderID"].ToString() + ", Seq:" + CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing guide, can't be create again!");
                 return false;
@@ -395,16 +395,16 @@ namespace Sci.Production.Packing
             //如果是單色混碼包裝，就先算出最少箱數
             if (printPackMethod == "2")
             {
-                minCtnQty = MyUtility.GetValue.Lookup(string.Format("select isnull(min(ShipQty/QtyPerCTN),0) from PackingGuide_Detail where Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+                minCtnQty = MyUtility.GetValue.Lookup(string.Format("select isnull(min(ShipQty/QtyPerCTN),0) from PackingGuide_Detail WITH (NOLOCK) where Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
             }
             string sqlCmd = string.Format(@"select pd.Article,pd.Color,pd.SizeCode,pd.QtyPerCTN,pd.ShipQty,isnull((pd.ShipQty/pd.QtyPerCTN),0) as CtnQty,o.CustCDID,o.StyleID,o.CustPONo,o.Customize1,c.Alias,oq.BuyerDelivery
-from PackingGuide p
-left join PackingGuide_Detail pd on p.Id = pd.Id
-left join Orders o on o.ID = p.OrderID
-left join Order_Article oa on oa.id = o.ID and oa.Article = pd.Article
-left join Order_SizeCode os on os.Id = o.POID and os.SizeCode = pd.SizeCode
-left join Country c on c.ID = o.Dest
-left join Order_QtyShip oq on oq.Id = o.ID and oq.Seq = p.OrderShipmodeSeq
+from PackingGuide p WITH (NOLOCK) 
+left join PackingGuide_Detail pd WITH (NOLOCK) on p.Id = pd.Id
+left join Orders o WITH (NOLOCK) on o.ID = p.OrderID
+left join Order_Article oa WITH (NOLOCK) on oa.id = o.ID and oa.Article = pd.Article
+left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = pd.SizeCode
+left join Country c WITH (NOLOCK) on c.ID = o.Dest
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID and oq.Seq = p.OrderShipmodeSeq
 where p.Id = '{0}'
 order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DataTable PrintData;
@@ -422,17 +422,17 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             DataTable CtnDim, QtyCtn;
             sqlCmd = string.Format(@"select distinct pd.RefNo, li.Description, STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension, li.CtnUnit
-from PackingGuide_Detail pd
-left join LocalItem li on li.RefNo = pd.RefNo
-left join LocalSupp ls on ls.ID = li.LocalSuppid
+from PackingGuide_Detail pd WITH (NOLOCK) 
+left join LocalItem li WITH (NOLOCK) on li.RefNo = pd.RefNo
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = li.LocalSuppid
 where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out CtnDim);
 
             sqlCmd = string.Format(@"select isnull(oq.Article,'') as Article,isnull(oq.SizeCode,'') as SizeCode,isnull(oq.Qty,0) as Qty
-from Orders o
-left join Order_QtyCTN oq on o.ID = oq.Id
-left join Order_Article oa on o.ID = oa.id and oq.Article = oa.Article
-left join Order_SizeCode os on o.POID = os.Id and oq.SizeCode = os.SizeCode
+from Orders o WITH (NOLOCK) 
+left join Order_QtyCTN oq WITH (NOLOCK) on o.ID = oq.Id
+left join Order_Article oa WITH (NOLOCK) on o.ID = oa.id and oq.Article = oa.Article
+left join Order_SizeCode os WITH (NOLOCK) on o.POID = os.Id and oq.SizeCode = os.SizeCode
 where o.ID = '{0}'
 order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out QtyCtn);
@@ -632,7 +632,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                     if (!MyUtility.Check.Empty(textBox1.Text))
                     {
                         DataRow orderData;
-                        string sqlCmd = string.Format("select Category, LocalOrder, IsForecast from Orders where ID = '{0}' and MDivisionID = '{1}'", textBox1.Text, Sci.Env.User.Keyword);
+                        string sqlCmd = string.Format("select Category, LocalOrder, IsForecast from Orders WITH (NOLOCK) where ID = '{0}' and MDivisionID = '{1}'", textBox1.Text, Sci.Env.User.Keyword);
                         if (MyUtility.Check.Seek(sqlCmd, out orderData))
                         {
                             string msg = "";
@@ -733,7 +733,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             {
                 DataRow orderData;
                 string sqlCmd;
-                sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Qty,CtnType,Packing,FtyGroup from Orders where ID = '{0}'", orderID);
+                sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Qty,CtnType,Packing,FtyGroup from Orders WITH (NOLOCK) where ID = '{0}'", orderID);
                 if (MyUtility.Check.Seek(sqlCmd, out orderData))
                 {
                     //帶出相關欄位的資料
@@ -747,12 +747,12 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
 
                     #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
                     int orderQty = MyUtility.Convert.GetInt(orderData["Qty"]);
-                    sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip where ID = '{0}'", orderID);
+                    sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", orderID);
                     if (MyUtility.Check.Seek(sqlCmd, out orderData))
                     {
                         if (orderData["CountID"].ToString() == "1")
                         {
-                            sqlCmd = string.Format("select ShipModeID,Seq from Order_QtyShip where ID = '{0}'", orderID);
+                            sqlCmd = string.Format("select ShipModeID,Seq from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", orderID);
                             if (MyUtility.Check.Seek(sqlCmd, out orderData))
                             {
                                 CurrentMaintain["OrderShipmodeSeq"] = orderData["Seq"].ToString();
@@ -763,7 +763,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                         else
                         {
                             IList<DataRow> orderQtyShipData;
-                            sqlCmd = string.Format("select Seq,BuyerDelivery,ShipmodeID,Qty from Order_QtyShip where ID = '{0}'", orderID);
+                            sqlCmd = string.Format("select Seq,BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", orderID);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -802,7 +802,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                 string sqlCmd;
                 if (comboBox1.SelectedValue.ToString() == "2")
                 {
-                    sqlCmd = string.Format("select * from Order_QtyCTN where Id = '{0}'", orderID);
+                    sqlCmd = string.Format("select * from Order_QtyCTN WITH (NOLOCK) where Id = '{0}'", orderID);
                     if (!MyUtility.Check.Seek(sqlCmd))
                     {
                         MyUtility.Msg.WarningBox("No packing data, can't create!!");
@@ -813,14 +813,14 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
 	   isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as NW,
 	   isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as GW,
 	   isnull(sw.NNW, isnull(sw2.NNW, 0))*oqc.Qty as NNW 
-from Order_QtyShip_Detail oqd
-left Join Orders o on o.ID = oqd.Id
-left Join Order_QtyCTN oqc on oqc.id = oqd.Id and oqc.Article = oqd.Article and oqc.SizeCode = oqd.SizeCode
+from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
+left Join Order_QtyCTN oqc WITH (NOLOCK) on oqc.id = oqd.Id and oqc.Article = oqd.Article and oqc.SizeCode = oqd.SizeCode
 left join View_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
-left join Style_WeightData sw on sw.StyleUkey = o.StyleUkey and sw.Article = oqd.Article and sw.SizeCode = oqd.SizeCode
-left join Style_WeightData sw2 on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
-left join Order_SizeCode os on os.id = o.POID and os.SizeCode = oqd.SizeCode
-left join Order_Article oa on oa.id = oqd.Id and oa.Article = oqd.Article
+left join Style_WeightData sw WITH (NOLOCK) on sw.StyleUkey = o.StyleUkey and sw.Article = oqd.Article and sw.SizeCode = oqd.SizeCode
+left join Style_WeightData sw2 WITH (NOLOCK) on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
+left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = oqd.SizeCode
+left join Order_Article oa WITH (NOLOCK) on oa.id = oqd.Id and oa.Article = oqd.Article
 where oqd.ID = '{0}' and oqd.Seq = '{1}'
 order by oa.Seq,os.Seq", orderID, seq);
                 }
@@ -831,13 +831,13 @@ order by oa.Seq,os.Seq", orderID, seq);
 	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW,
 	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW,
 	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW 
-from Order_QtyShip_Detail oqd
-left Join Orders o on o.ID = oqd.Id
+from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
 left join View_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
-left join Style_WeightData sw on sw.StyleUkey = o.StyleUkey and sw.Article = oqd.Article and sw.SizeCode = oqd.SizeCode
-left join Style_WeightData sw2 on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
-left join Order_SizeCode os on os.id = o.POID and os.SizeCode = oqd.SizeCode
-left join Order_Article oa on oa.id = oqd.Id and oa.Article = oqd.Article
+left join Style_WeightData sw WITH (NOLOCK) on sw.StyleUkey = o.StyleUkey and sw.Article = oqd.Article and sw.SizeCode = oqd.SizeCode
+left join Style_WeightData sw2 WITH (NOLOCK) on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
+left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = oqd.SizeCode
+left join Order_Article oa WITH (NOLOCK) on oa.id = oqd.Id and oa.Article = oqd.Article
 where oqd.ID = '{0}' and oqd.Seq = '{1}'
 order by oa.Seq,os.Seq", orderID, seq);
                 }
@@ -861,7 +861,7 @@ order by oa.Seq,os.Seq", orderID, seq);
         private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             IList<DataRow> orderQtyShipData;
-            string sqlCmd = string.Format("select Seq, BuyerDelivery,ShipmodeID,Qty from Order_QtyShip where ID = '{0}'", CurrentMaintain["OrderID"].ToString());
+            string sqlCmd = string.Format("select Seq, BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["OrderID"].ToString());
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -899,14 +899,14 @@ order by oa.Seq,os.Seq", orderID, seq);
         private void button3_Click(object sender, EventArgs e)
         {
             //檢查OrderID+Seq不可以重複建立
-            if (MyUtility.Check.Seek(string.Format("select ID from PackingList where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), CurrentMaintain["ID"].ToString())))
+            if (MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), CurrentMaintain["ID"].ToString())))
             {
                 MyUtility.Msg.WarningBox("SP No:" + CurrentMaintain["OrderID"].ToString() + ", Seq:" + CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing list, can't be create again!");
                 return;
             }
 
             //檢查訂單狀態：如果已經Pullout Complete出訊息告知使用者且不做任何事
-            string lookupReturn = MyUtility.GetValue.Lookup("select PulloutComplete from Orders where ID = '" + CurrentMaintain["OrderID"].ToString() + "'");
+            string lookupReturn = MyUtility.GetValue.Lookup("select PulloutComplete from Orders WITH (NOLOCK) where ID = '" + CurrentMaintain["OrderID"].ToString() + "'");
             if (lookupReturn == "True")
             {
                 MyUtility.Msg.WarningBox("SP# was ship complete!! You can't switch to packing list.");
@@ -915,7 +915,7 @@ order by oa.Seq,os.Seq", orderID, seq);
 
             //檢查PackingList狀態：(1)PackingList如果已經Confirm就出訊息告知使用者且不做任事 (2)如果已經有Invoice No就出訊息告知使用者且不做任事
             DataRow seekData;
-            string seekCmd = "select Status, InvNo from PackingList where ID = '" + CurrentMaintain["ID"].ToString().Trim() + "'";
+            string seekCmd = "select Status, InvNo from PackingList WITH (NOLOCK) where ID = '" + CurrentMaintain["ID"].ToString().Trim() + "'";
             if (MyUtility.Check.Seek(seekCmd, out seekData))
             {
                 if (seekData["Status"].ToString() == "Confirmed")
@@ -932,7 +932,7 @@ order by oa.Seq,os.Seq", orderID, seq);
             }
 
             //檢查PackingList是否已經有箱子送到Clog，若有，就出訊息告知使用者且不做任事
-            seekCmd = "select ID from PackingList_Detail where ID = '" + CurrentMaintain["ID"].ToString() + "' and TransferDate is not null";
+            seekCmd = "select ID from PackingList_Detail WITH (NOLOCK) where ID = '" + CurrentMaintain["ID"].ToString() + "' and TransferDate is not null";
             if (MyUtility.Check.Seek(seekCmd))
             {
                 MyUtility.Msg.WarningBox("SP# has been transfer!! You can't switch to packing list.");
@@ -963,7 +963,7 @@ DECLARE @brandid VARCHAR(8),
 		@dest VARCHAR(2),
 		@custcdid VARCHAR(16)
 --設定變數值
-SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID FROM Orders WHERE ID = @orderid
+SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID FROM Orders WITH (NOLOCK) WHERE ID = @orderid
 
 --建立tmpe table存放展開後結果
 DECLARE @tempPackingList TABLE (
@@ -1003,7 +1003,7 @@ DECLARE @tempRemainder TABLE (
 
 --將PackingGuide_Detail中的Article撈出來
 DECLARE cursor_groupbyarticle CURSOR FOR
-	SELECT Distinct a.Article, b.Seq FROM PackingGuide_Detail a, Order_Article b WHERE a.Id = @id AND b.id = @orderid AND a.Article = b.Article ORDER BY b.Seq
+	SELECT Distinct a.Article, b.Seq FROM PackingGuide_Detail a WITH (NOLOCK) , Order_Article b WITH (NOLOCK) WHERE a.Id = @id AND b.id = @orderid AND a.Article = b.Article ORDER BY b.Seq
 
 --宣告變數: PackingGuide_Detail相關的參數
 DECLARE @refno VARCHAR(21),
@@ -1044,14 +1044,14 @@ BEGIN
 	SET @firstsize = ''
     SET @recordctnno = @recordctnno + @minctn
 	--先算出最少箱數
-	SELECT @minctn = MIN(ShipQty/QtyPerCTN) FROM PackingGuide_Detail WHERE ID = @id AND Article = @article
+	SELECT @minctn = MIN(ShipQty/QtyPerCTN) FROM PackingGuide_Detail WITH (NOLOCK) WHERE ID = @id AND Article = @article
 
 	--撈出PackingGuide_Detail資料
 	DECLARE cursor_packingguide CURSOR FOR
 		SELECT a.RefNo,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW,c.Seq
-		FROM PackingGuide_Detail a
-		LEFT JOIN Orders b ON b.ID = @orderid
-		LEFT JOIN Order_SizeCode c ON c.Id = b.POID AND a.SizeCode = c.SizeCode
+		FROM PackingGuide_Detail a WITH (NOLOCK) 
+		LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
+		LEFT JOIN Order_SizeCode c WITH (NOLOCK) ON c.Id = b.POID AND a.SizeCode = c.SizeCode
 		WHERE a.Id = @id AND a.Article = @article
 		ORDER BY c.Seq
 
@@ -1198,7 +1198,7 @@ SET @adddate = GETDATE()
 SET XACT_ABORT ON;
 BEGIN TRANSACTION
 --PackingList
-SELECT @havepl = count(ID) FROM PackingList WHERE ID = @id
+SELECT @havepl = count(ID) FROM PackingList WITH (NOLOCK) WHERE ID = @id
 IF @havepl = 0
 	BEGIN --新增PackingList
 		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate)
@@ -1270,14 +1270,14 @@ DECLARE @id VARCHAR(13),
 		@remark NVARCHAR(125)
 --設定變數值
 SET @id = '{0}'
-SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @ordershipmodeseq = OrderShipmodeSeq, @shipmodeid = ShipModeID, @ctnstartno = CTNStartNo, @cbm = CBM, @remark = Remark  FROM PackingGuide WHERE Id = @id
+SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @ordershipmodeseq = OrderShipmodeSeq, @shipmodeid = ShipModeID, @ctnstartno = CTNStartNo, @cbm = CBM, @remark = Remark  FROM PackingGuide WITH (NOLOCK) WHERE Id = @id
 
 --宣告變數: Orders相關的參數
 DECLARE @brandid VARCHAR(8),
 		@dest VARCHAR(2),
 		@custcdid VARCHAR(16)
 --設定變數值
-SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID FROM Orders WHERE ID = @orderid
+SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID FROM Orders WITH (NOLOCK) WHERE ID = @orderid
 
 --建立tmpe table存放展開後結果
 DECLARE @tempPackingList TABLE (
@@ -1315,10 +1315,10 @@ DECLARE @tempRemainder TABLE (
 --將PackingGuide_Detail資料存放至Cursor
 DECLARE cursor_packguide CURSOR FOR
 	SELECT a.RefNo,a.Article,a.Color,a.SizeCode,a.QtyPerCTN,a.ShipQty,a.NW,a.GW,a.NNW 
-	FROM PackingGuide_Detail a
-	LEFT JOIN Orders b ON b.ID = @orderid
-	LEFT JOIN Order_Article c  ON c.Id = @orderid AND a.Article = c.Article
-	LEFT JOIN Order_SizeCode d ON d.Id = b.POID AND a.SizeCode = d.SizeCode
+	FROM PackingGuide_Detail a WITH (NOLOCK) 
+	LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
+	LEFT JOIN Order_Article c WITH (NOLOCK) ON c.Id = @orderid AND a.Article = c.Article
+	LEFT JOIN Order_SizeCode d WITH (NOLOCK) ON d.Id = b.POID AND a.SizeCode = d.SizeCode
 	WHERE a.ID = @id ORDER BY c.Seq,d.Seq
 
 --宣告變數: PackingGuide_Detail相關的參數
@@ -1439,7 +1439,7 @@ SET @adddate = GETDATE()
 SET XACT_ABORT ON;
 BEGIN TRANSACTION
 --PackingList
-SELECT @havepl = count(ID) FROM PackingList WHERE ID = @id
+SELECT @havepl = count(ID) FROM PackingList WITH (NOLOCK) WHERE ID = @id
 IF @havepl = 0
 	BEGIN --新增PackingList
 		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate)
@@ -1527,7 +1527,7 @@ ELSE
                 }
                 else
                 {
-                    string sqlCmd = string.Format("select ShipModeID from Order_QtyShip where ID = '{0}' and Seq = '{1}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
+                    string sqlCmd = string.Format("select ShipModeID from Order_QtyShip WITH (NOLOCK) where ID = '{0}' and Seq = '{1}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
                     DataRow qtyShipData;
                     if (MyUtility.Check.Seek(sqlCmd, out qtyShipData))
                     {

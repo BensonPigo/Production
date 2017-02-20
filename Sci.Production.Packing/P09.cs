@@ -66,7 +66,7 @@ namespace Sci.Production.Packing
                 cmds.Add(sp1);
                 cmds.Add(sp2);
 
-                string sqlCmd = "select ID from Orders where MDivisionID = @mdivisioinid and ID = @id";
+                string sqlCmd = "select ID from Orders WITH (NOLOCK) where MDivisionID = @mdivisioinid and ID = @id";
                 DataTable ordersData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ordersData);
                 if (!result || ordersData.Rows.Count <= 0)
@@ -115,7 +115,7 @@ namespace Sci.Production.Packing
             if (!MyUtility.Check.Empty(textBox1.Text) && (textBox1.OldValue != textBox1.Text))
             {
                 DataRow OrdersData;
-                string sqlCmd = string.Format("select StyleID,SeasonID,BrandID,Dest,Qty,Customize1,CustPONo,FtyGroup,isnull((select BuyerID from Brand where ID =  Orders.BrandID),'') as BuyerID from Orders where ID = '{0}'", textBox1.Text);
+                string sqlCmd = string.Format("select StyleID,SeasonID,BrandID,Dest,Qty,Customize1,CustPONo,FtyGroup,isnull((select BuyerID from Brand WITH (NOLOCK) where ID =  Orders.BrandID),'') as BuyerID from Orders WITH (NOLOCK) where ID = '{0}'", textBox1.Text);
                 MyUtility.Check.Seek(sqlCmd, out OrdersData);
                 displayBox1.Value = MyUtility.Convert.GetString(OrdersData["StyleID"]);
                 displayBox2.Value = MyUtility.Convert.GetString(OrdersData["SeasonID"]);
@@ -138,16 +138,16 @@ SUBSTRING(Barcode,1,LEN(Barcode)-1) as Barcode,
 SUBSTRING(ScanQty,1,LEN(ScanQty)-1) as ScanQty
 from (select ID,CTNStartNo,ShipModeID,min(Seq) as Seq,NotYetScan,ShipQty,OrderID,Article,Color,SizeCode,QtyPerCTN,Barcode,ScanQty 
 	  from (select pd.ID,pd.CTNStartNo,p.ShipModeID,Seq,iif(Barcode = '' or Barcode is null, 1,0) as NotYetScan,
-				   (select isnull(sum(ShipQty),0) from PackingList_Detail where ID = pd.ID and CTNStartNo = pd.CTNStartNo) as ShipQty,
-				   (select OrderID+'/' from PackingList_Detail where ID = pd.ID and OrderID = pd.OrderID and CTNStartNo = pd.CTNStartNo for xml path('')) as OrderID,
-				   (select Article+'/' from PackingList_Detail where ID = pd.ID and OrderID = pd.OrderID and CTNStartNo = pd.CTNStartNo for xml path('')) as Article,
-				   (select Color+'/' from PackingList_Detail where ID = pd.ID and OrderID = pd.OrderID and CTNStartNo = pd.CTNStartNo for xml path('')) as Color,
-				   (select SizeCode+'/' from PackingList_Detail where ID = pd.ID and OrderID = pd.OrderID and CTNStartNo = pd.CTNStartNo for xml path('')) as SizeCode,
-				   (select CONCAT(isnull(QtyPerCTN,0),'/') from PackingList_Detail where ID = pd.ID and OrderID = pd.OrderID and CTNStartNo = pd.CTNStartNo for xml path('')) as QtyPerCTN,
-				   (select Barcode+'/' from PackingList_Detail where ID = pd.ID and OrderID = pd.OrderID and CTNStartNo = pd.CTNStartNo for xml path('')) as Barcode,
-				   (select CONCAT(isnull(ScanQty,0),'/') from PackingList_Detail where ID = pd.ID and OrderID = pd.OrderID and CTNStartNo = pd.CTNStartNo for xml path('')) as ScanQty
-			from PackingList_Detail pd
-			left join PackingList p on p.ID = pd.ID 
+				   (select isnull(sum(ShipQty),0) from PackingList_Detail WITH (NOLOCK) where ID = pd.ID and CTNStartNo = pd.CTNStartNo) as ShipQty,
+				   (select OrderID+'/' from PackingList_Detail WITH (NOLOCK) where ID = pd.ID and OrderID = pd.OrderID and CTNStartNo = pd.CTNStartNo for xml path('')) as OrderID,
+				   (select Article+'/' from PackingList_Detail WITH (NOLOCK) where ID = pd.ID and OrderID = pd.OrderID and CTNStartNo = pd.CTNStartNo for xml path('')) as Article,
+				   (select Color+'/' from PackingList_Detail WITH (NOLOCK) where ID = pd.ID and OrderID = pd.OrderID and CTNStartNo = pd.CTNStartNo for xml path('')) as Color,
+				   (select SizeCode+'/' from PackingList_Detail WITH (NOLOCK) where ID = pd.ID and OrderID = pd.OrderID and CTNStartNo = pd.CTNStartNo for xml path('')) as SizeCode,
+				   (select CONCAT(isnull(QtyPerCTN,0),'/') from PackingList_Detail WITH (NOLOCK) where ID = pd.ID and OrderID = pd.OrderID and CTNStartNo = pd.CTNStartNo for xml path('')) as QtyPerCTN,
+				   (select Barcode+'/' from PackingList_Detail WITH (NOLOCK) where ID = pd.ID and OrderID = pd.OrderID and CTNStartNo = pd.CTNStartNo for xml path('')) as Barcode,
+				   (select CONCAT(isnull(ScanQty,0),'/') from PackingList_Detail WITH (NOLOCK) where ID = pd.ID and OrderID = pd.OrderID and CTNStartNo = pd.CTNStartNo for xml path('')) as ScanQty
+			from PackingList_Detail pd WITH (NOLOCK) 
+			left join PackingList p WITH (NOLOCK) on p.ID = pd.ID 
 			where pd.OrderID = '{0}' and pd.QtyPerCTN > 0 and p.Type = 'B') b
 	  group by ID,CTNStartNo,ShipModeID,NotYetScan,ShipQty,OrderID,Article,Color,SizeCode,QtyPerCTN,Barcode,ScanQty) a
 order by ID,Seq", textBox1.Text);
@@ -159,8 +159,8 @@ order by ID,Seq", textBox1.Text);
                 }
                 listControlBindingSource1.DataSource = gridData;
 
-                
-                sqlCmd = string.Format("select distinct ID from PackingList_Detail where OrderID = '{0}'", textBox1.Text);
+
+                sqlCmd = string.Format("select distinct ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}'", textBox1.Text);
                 result = DBProxy.Current.Select(null, sqlCmd, out PackID);
                 if (!result)
                 {

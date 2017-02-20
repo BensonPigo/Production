@@ -55,7 +55,7 @@ namespace Sci.Production.Packing
 
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"select distinct 0 as Selected, pl.ID, iif(pl.Type = 'B','Bulk','Sample') as Type, pld.OrderID, o.SciDelivery, o.SewInLine, pl.EstCTNBooking, pl.EstCTNArrive
-from PackingList pl, PackingList_Detail pld, Orders o
+from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) , Orders o WITH (NOLOCK) 
 where pl.MDivisionID = @mdivisionid
 and (pl.Type = 'B' or pl.Type = 'S')
 and pl.ApvToPurchase = 0

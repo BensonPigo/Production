@@ -66,7 +66,7 @@ namespace Sci.Production.Packing
                         t.PackID, 
                         t.OrderID, 
                         t.PONo, 
-                        ttlCtn = (select count(*) from PackingList_detail pk where t.PackID = pk.ID and t.OrderID = pk.OrderID and ctnQty > 0),
+                        ttlCtn = (select count(*) from PackingList_detail pk WITH (NOLOCK) where t.PackID = pk.ID and t.OrderID = pk.OrderID and ctnQty > 0),
                         t.Dest,
                         t.BuyerDelivery,
                         t.CartonNum

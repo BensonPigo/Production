@@ -27,12 +27,12 @@ namespace Sci.Production.Packing
             string sqlCmd = string.Format(@"select oc.RefNo,oc.QtyPerCTN,oc.GMTQty,oc.CTNQty,isnull(li.Description,'') as Description, isnull(li.CtnUnit,'') as CtnUnit,
 isnull((STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4)),'') as Dimension,
 isnull((ls.ID+'-'+ls.Abb),'') as Supplier,
-isnull((select sum(ld.Qty) from LocalPO l, LocalPO_Detail ld where l.Category = 'CARTON' and l.Id = ld.Id and ld.OrderId = oc.ID and ld.Refno = oc.RefNo),0) as POQty
-from Order_CTNData oc
-left join LocalItem li on oc.RefNo = li.RefNo
-left join LocalSupp ls on li.LocalSuppid = ls.ID
+isnull((select sum(ld.Qty) from LocalPO l WITH (NOLOCK) , LocalPO_Detail ld WITH (NOLOCK) where l.Category = 'CARTON' and l.Id = ld.Id and ld.OrderId = oc.ID and ld.Refno = oc.RefNo),0) as POQty
+from Order_CTNData oc WITH (NOLOCK) 
+left join LocalItem li WITH (NOLOCK) on oc.RefNo = li.RefNo
+left join LocalSupp ls WITH (NOLOCK) on li.LocalSuppid = ls.ID
 where oc.ID = '{0}'
-order by oc.RefNo",masterData["ID"].ToString());
+order by oc.RefNo", masterData["ID"].ToString());
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out CTNData);
             if (!result)

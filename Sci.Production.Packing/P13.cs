@@ -73,11 +73,11 @@ namespace Sci.Production.Packing
                 sqlCmd.Append(string.Format(@"with OrderData
 as
 (select o.BrandID,o.ID,o.SciDelivery,o.SewInLine,o.Dest,c.Alias,ocd.RefNo,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,ocd.CTNQty
- from Orders o
- left join Country c on c.id = o.Dest
- left join Order_CTNData ocd on ocd.ID = o.ID
- left join LocalItem li on li.RefNo = ocd.RefNo
- where o.MDivisionID = '{0}'",Sci.Env.User.Keyword));
+ from Orders o WITH (NOLOCK) 
+ left join Country c WITH (NOLOCK) on c.id = o.Dest
+ left join Order_CTNData ocd WITH (NOLOCK) on ocd.ID = o.ID
+ left join LocalItem li WITH (NOLOCK) on li.RefNo = ocd.RefNo
+ where o.MDivisionID = '{0}'", Sci.Env.User.Keyword));
                 if (!MyUtility.Check.Empty(dateRange1.Value1))
                 {
                     sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'",Convert.ToDateTime(dateRange1.Value1).ToString("d")));
@@ -100,7 +100,7 @@ POData
 as
 (SELECT BrandID,ID,SciDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,SUM(POQty) AS POQty,Delivery
  FROM (select DISTINCT od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,ld.Qty as POQty,ld.Delivery
- from OrderData od, LocalPO_Detail ld, LocalItem li,LocalPO LP
+ from OrderData od , LocalPO_Detail ld WITH (NOLOCK) , LocalItem li WITH (NOLOCK) ,LocalPO LP WITH (NOLOCK) 
  where od.ID = ld.OrderId
  and li.RefNo = ld.Refno
  and LP.id= ld.id
@@ -124,7 +124,7 @@ order by SciDelivery,ID,Refno");
                 sqlCmd.Append(@"with PackData
 as
 (select distinct pld.OrderID
- from PackingList pl, PackingList_Detail pld
+ from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) 
  where pl.ID = pld.ID");
                 if (!MyUtility.Check.Empty(dateRange3.Value1))
                 {
@@ -147,11 +147,11 @@ OrderData
 as
 (select o.BrandID,o.ID,o.SciDelivery,o.SewInLine,o.Dest,c.Alias,ocd.RefNo,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,ocd.CTNQty
  from PackData pd
- left join Orders o on o.ID = pd.OrderID
- left join Country c on c.id = o.Dest
- left join Order_CTNData ocd on ocd.ID = o.ID
- left join LocalItem li on li.RefNo = ocd.RefNo
- where o.MDivisionID = '{0}'",Sci.Env.User.Keyword));
+ left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+ left join Country c WITH (NOLOCK) on c.id = o.Dest
+ left join Order_CTNData ocd WITH (NOLOCK) on ocd.ID = o.ID
+ left join LocalItem li WITH (NOLOCK) on li.RefNo = ocd.RefNo
+ where o.MDivisionID = '{0}'", Sci.Env.User.Keyword));
                 if (!MyUtility.Check.Empty(dateRange1.Value1))
                 {
                     sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'",Convert.ToDateTime(dateRange1.Value1).ToString("d")));
@@ -173,7 +173,7 @@ POData
 as
 (SELECT BrandID,ID,SciDelivery,SewInLine,Alias,LocalPOID,Refno,Dimension,CtnUnit,SUM(POQty) AS POQty,Delivery
  FROM (select DISTINCT od.BrandID,od.ID,od.SciDelivery,od.SewInLine,od.Alias,ld.Id as LocalPOID,ld.Refno,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension,li.CtnUnit,ld.Qty as POQty,ld.Delivery
- from OrderData od, LocalPO_Detail ld, LocalItem li,LocalPO LP
+ from OrderData od, LocalPO_Detail ld WITH (NOLOCK) , LocalItem li WITH (NOLOCK) ,LocalPO LP WITH (NOLOCK) 
  where od.ID = ld.OrderId
  and li.RefNo = ld.Refno
  and LP.id= ld.id

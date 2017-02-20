@@ -36,8 +36,8 @@ namespace Sci.Production.Packing
             masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
             this.DetailSelectCommand = string.Format(@"select od.*,pr.Description
-from OverrunGMT_Detail od
-left join PackingReason pr on pr.Type = 'OG' and pr.ID = od.PackingReasonID
+from OverrunGMT_Detail od WITH (NOLOCK) 
+left join PackingReason pr WITH (NOLOCK) on pr.Type = 'OG' and pr.ID = od.PackingReasonID
 where od.ID = '{0}'", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -50,7 +50,7 @@ where od.ID = '{0}'", masterID);
             labConfirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"]) ? false : true;
 
             //帶出Orders相關欄位
-            sqlCmd = string.Format("select StyleID,SeasonID from Orders where ID = '{0}'", CurrentMaintain["ID"].ToString());
+            sqlCmd = string.Format("select StyleID,SeasonID from Orders WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString());
             if (MyUtility.Check.Seek(sqlCmd, out dr))
             {
                 displayBox1.Value = dr["StyleID"].ToString();
@@ -63,7 +63,7 @@ where od.ID = '{0}'", masterID);
             }
 
             DataRow dr1;
-            string sqlStatus = string.Format(@"select status from OverrunGMT where id='{0}'", CurrentMaintain["ID"].ToString());
+            string sqlStatus = string.Format(@"select status from OverrunGMT WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"].ToString());
             if (MyUtility.Check.Seek(sqlStatus, out dr1))
             {
                 labConfirmed.Text = dr1["Status"].ToString();
@@ -84,7 +84,7 @@ where od.ID = '{0}'", masterID);
                         if (e.RowIndex != -1)
                         {
                             dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            sqlCmd = string.Format("Select Article,SizeCode from Order_Qty where ID = '{0}'", CurrentMaintain["ID"].ToString());
+                            sqlCmd = string.Format("Select Article,SizeCode from Order_Qty WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString());
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["Article"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
@@ -112,7 +112,7 @@ where od.ID = '{0}'", masterID);
                         cmds.Add(sp1);
                         cmds.Add(sp2);
 
-                        string sqlCmd = "Select Article from Order_Qty where ID = @orderid and Article = @article";
+                        string sqlCmd = "Select Article from Order_Qty WITH (NOLOCK) where ID = @orderid and Article = @article";
                         DataTable OrderQtyData;
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderQtyData);
                         if (!result || OrderQtyData.Rows.Count <= 0)
@@ -150,7 +150,7 @@ where od.ID = '{0}'", masterID);
                         if (e.RowIndex != -1)
                         {
                             dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            sqlCmd = string.Format("Select distinct SizeCode from Order_Qty where ID = '{0}' and Article = '{1}'", CurrentMaintain["ID"].ToString(), dr["Article"].ToString());
+                            sqlCmd = string.Format("Select distinct SizeCode from Order_Qty WITH (NOLOCK) where ID = '{0}' and Article = '{1}'", CurrentMaintain["ID"].ToString(), dr["Article"].ToString());
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
@@ -177,7 +177,7 @@ where od.ID = '{0}'", masterID);
                         cmds.Add(sp2);
                         cmds.Add(sp3);
 
-                        string sqlCmd = "Select SizeCode from Order_Qty where ID = @orderid and Article = @article and SizeCode = @sizecode";
+                        string sqlCmd = "Select SizeCode from Order_Qty WITH (NOLOCK) where ID = @orderid and Article = @article and SizeCode = @sizecode";
                         DataTable OrderQtyData;
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderQtyData);
                         if (!result || OrderQtyData.Rows.Count <= 0)
@@ -207,7 +207,7 @@ where od.ID = '{0}'", masterID);
                         if (e.RowIndex != -1)
                         {
                             dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select ID, Description from PackingReason where Type = 'OG' and Junk = 0", "8,30", dr["PackingReasonID"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select ID, Description from PackingReason WITH (NOLOCK) where Type = 'OG' and Junk = 0", "8,30", dr["PackingReasonID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             e.EditingControl.Text = item.GetSelectedString();
@@ -223,7 +223,7 @@ where od.ID = '{0}'", masterID);
                     dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["PackingReasonID"].ToString())
                     {
-                        if (!MyUtility.Check.Seek(string.Format("Select ID, Description from PackingReason where Type = 'OG' and Junk = 0 and ID = '{0}'", e.FormattedValue.ToString()), out dr1))
+                        if (!MyUtility.Check.Seek(string.Format("Select ID, Description from PackingReason WITH (NOLOCK) where Type = 'OG' and Junk = 0 and ID = '{0}'", e.FormattedValue.ToString()), out dr1))
                         {
                             MyUtility.Msg.WarningBox(string.Format("< Reason ID: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["PackingReasonID"] = "";
@@ -341,7 +341,7 @@ where od.ID = '{0}'", masterID);
                         cmds.Add(sp1);
                         cmds.Add(sp2);
 
-                        string sqlCmd = "select ID, StyleID, SeasonID, FtyGroup from Orders where ID = @id and MDivisionID = @mdivisionid and GMTClose is not null";
+                        string sqlCmd = "select ID, StyleID, SeasonID, FtyGroup from Orders WITH (NOLOCK) where ID = @id and MDivisionID = @mdivisionid and GMTClose is not null";
                         DataTable OrdersData;
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrdersData);
                         if (!result || OrdersData.Rows.Count <= 0)

@@ -54,7 +54,7 @@ namespace Sci.Production.Packing
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(string.Format(@"Select Distinct '' as ID, 0 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery 
-                                                         from PackingList a, PackingList_Detail b, Orders c, Country d 
+                                                         from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
                                                          where b.OrderId = c.Id 
                                                          and a.Id = b.Id 
                                                          and b.CTNStartNo != '' 
@@ -100,7 +100,7 @@ namespace Sci.Production.Packing
             {
                 //先將Grid的結構給開出來
                 string selectCommand = @"Select distinct '' as ID, 0 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery 
-                                                             from PackingList a, PackingList_Detail b, Orders c, Country d where 1=0";
+                                                             from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
                 DataTable selectDataTable;
                 DualResult selectResult;
                 if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable)))
@@ -133,7 +133,7 @@ namespace Sci.Production.Packing
                             dr["PackingListID"] = sl[1].Substring(0, 13);
                             dr["CTNStartNo"] = sl[1].Substring(13);
                             string sqlCmd = string.Format(@"select OrderID,OrderShipmodeSeq  
-                                                                                  from PackingList_Detail
+                                                                                  from PackingList_Detail WITH (NOLOCK) 
                                                                                   where ID = '{0}' and CTNStartNo = '{1}' and CTNQty > 0 and TransferDate is null
                                                                                    ", dr["PackingListID"].ToString(), dr["CTNStartNo"].ToString());
                             if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -141,9 +141,9 @@ namespace Sci.Production.Packing
                                 dr["OrderID"] = seekData["OrderID"].ToString().Trim();
                                 string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
                                 sqlCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
-                                                                            from Orders a
-                                                                            left join Country b on b.ID = a.Dest
-                                                                            left join Order_QtyShip oq on oq.ID = a.ID and oq.Seq = '{2}'
+                                                                            from Orders a WITH (NOLOCK) 
+                                                                            left join Country b WITH (NOLOCK) on b.ID = a.Dest
+                                                                            left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
                                                                             where a.ID = '{0}' and a.MDivisionID = '{1}'", dr["OrderID"].ToString(), Sci.Env.User.Keyword, seq);
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {

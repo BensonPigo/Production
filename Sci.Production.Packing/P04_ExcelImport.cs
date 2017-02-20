@@ -224,9 +224,9 @@ namespace Sci.Production.Packing
             {
                 MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource2.DataSource, "OrderID,BuyerDelivery,ShipmodeID,Article,ColorID,SizeCode,Qty", @"select distinct a.*,o.ID,oq.Seq,oqd.Article as oArticle,oqd.SizeCode as oSizeCode,o.StyleID,o.CustPONo,o.Category
 from #tmp a
-left join Orders o on o.ID = a.OrderID
-left join Order_QtyShip oq on oq.Id = o.ID and oq.BuyerDelivery = a.BuyerDelivery and oq.ShipmodeID = a.ShipmodeID
-left join Order_QtyShip_Detail oqd on oqd.Id = oq.Id and oqd.Seq = oq.Seq and oqd.Article = a.Article and oqd.SizeCode = a.SizeCode", out tmpPackData);
+left join Orders o WITH (NOLOCK) on o.ID = a.OrderID
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID and oq.BuyerDelivery = a.BuyerDelivery and oq.ShipmodeID = a.ShipmodeID
+left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id and oqd.Seq = oq.Seq and oqd.Article = a.Article and oqd.SizeCode = a.SizeCode", out tmpPackData);
             }
             catch (Exception ex)
             {

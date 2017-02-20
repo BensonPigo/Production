@@ -57,7 +57,7 @@ namespace Sci.Production.Packing
             sqlCmd.Append(@"with OrderData
 as
 (select o.ID, oq.Seq, o.StyleID, oq.BuyerDelivery, o.CustPONo, oqd.Article, oqd.SizeCode, oqd.Qty, o.POID
- from Orders o, Order_QtyShip oq, Order_QtyShip_Detail oqd
+ from Orders o WITH (NOLOCK) , Order_QtyShip oq WITH (NOLOCK) , Order_QtyShip_Detail oqd WITH (NOLOCK) 
  where o.BrandID = @brand
  and o.MDivisionID = @mdivisionid
  and o.IsForecast = 0
@@ -102,14 +102,14 @@ as
 (select a.*
  from (select dod.ID, dod.Article, dod.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
        from DistOrderData dod
-       left join Order_UnitPrice ou1 on ou1.Id = dod.ID and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-       left join Order_UnitPrice ou2 on ou2.Id = dod.ID and ou1.Article = dod.Article and ou1.SizeCode = dod.SizeCode and ou2.POPrice = 0) a
+       left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = dod.ID and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
+       left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = dod.ID and ou1.Article = dod.Article and ou1.SizeCode = dod.SizeCode and ou2.POPrice = 0) a
  where a.Price = 0
 ),
 PulloutData
 as
 (select pdd.OrderID, pd.OrderShipmodeSeq, pdd.Article, pdd.SizeCode, sum(pdd.ShipQty) as PulloutQty
- from FOCData fd, Pullout_Detail pd, Pullout_Detail_Detail pdd
+ from FOCData fd, Pullout_Detail pd WITH (NOLOCK) , Pullout_Detail_Detail pdd WITH (NOLOCK) 
  where pdd.OrderID = fd.ID
  and pd.UKey = pdd.Pullout_DetailUKey
  group by pdd.OrderID, pd.OrderShipmodeSeq, pdd.Article, pdd.SizeCode

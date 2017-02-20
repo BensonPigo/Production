@@ -76,7 +76,7 @@ namespace Sci.Production.Packing
 
             //撈Grid資料
             string sqlCmd = string.Format(@"select ID,OrderID,CTNStartNo,Article,Color,SizeCode,QtyPerCTN,ScanQty,Barcode,ShipQty
-from PackingList_Detail
+from PackingList_Detail WITH (NOLOCK) 
 where ID = '{0}'
 and CTNStartNo = '{1}'
 order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.GetString(MasterDR["CTNStartNo"]));
@@ -218,7 +218,7 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                 else
                 {
                     //取結構
-                    string sqlCmd = "select OrderID,Article,Color,SizeCode from PackingList_Detail where 1=0";
+                    string sqlCmd = "select OrderID,Article,Color,SizeCode from PackingList_Detail WITH (NOLOCK) where 1=0";
                     DataTable SelectItemData;
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, out SelectItemData);
                     if (!result)

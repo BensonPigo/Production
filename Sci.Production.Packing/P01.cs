@@ -25,24 +25,24 @@ namespace Sci.Production.Packing
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            displayBox6.Value = MyUtility.GetValue.Lookup(string.Format("select Description from style where Ukey = {0}", CurrentMaintain["StyleUkey"].ToString()));
-            displayBox7.Value = MyUtility.GetValue.Lookup(string.Format("select [dbo].getPOComboList('{0}','{1}') as PoList from Orders where ID = '{0}'", CurrentMaintain["ID"].ToString(), CurrentMaintain["POID"].ToString()));
+            displayBox6.Value = MyUtility.GetValue.Lookup(string.Format("select Description from style WITH (NOLOCK) where Ukey = {0}", CurrentMaintain["StyleUkey"].ToString()));
+            displayBox7.Value = MyUtility.GetValue.Lookup(string.Format("select [dbo].getPOComboList('{0}','{1}') as PoList from Orders WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString(), CurrentMaintain["POID"].ToString()));
             button1.Enabled = CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["CtnType"]) == "2" && !EditMode;
             //按鈕變色
             if (MyUtility.Convert.GetString(CurrentMaintain["CtnType"]) == "2")
             {
-                button1.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_QtyCTN where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+                button1.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_QtyCTN WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             }
-            button2.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+            button2.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             button3.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
-            button4.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail where OrderID = '{0}' and ReceiveDate is not null", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
-            button5.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Export_Detail where PoID = '{0}'", CurrentMaintain["POID"].ToString())) ? Color.Blue : Color.Black;
-            button6.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_CTNData where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+            button4.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' and ReceiveDate is not null", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+            button5.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Export_Detail WITH (NOLOCK) where PoID = '{0}'", CurrentMaintain["POID"].ToString())) ? Color.Blue : Color.Black;
+            button6.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_CTNData WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             bool gmtClose = !MyUtility.Check.Empty(CurrentMaintain["GMTClose"]);
             button7.Visible = gmtClose;
             if (gmtClose)
             {
-                button7.ForeColor = MyUtility.Check.Seek(string.Format("select ID from OverrunGMT where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+                button7.ForeColor = MyUtility.Check.Seek(string.Format("select ID from OverrunGMT WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             }
         }
 

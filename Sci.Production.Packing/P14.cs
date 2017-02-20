@@ -49,11 +49,11 @@ namespace Sci.Production.Packing
             sqlCmd.Append(string.Format(@"select t.TransferDate,t.PackingListID,t.OrderID,t.CTNStartNo,
 isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1,
 isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest, isnull(o.FactoryID,'') as FactoryID, convert(varchar, oq.BuyerDelivery, 111) as BuyerDelivery,t.AddDate
-from TransferToClog t
-left join Orders o on t.OrderID =  o.ID
-left join Country c on o.Dest = c.ID
-left join PackingList_Detail pd on pd.ID = t.PackingListID and pd.OrderID = t.OrderID and pd.CTNStartNo = t.CTNStartNo and pd.CTNQty > 0
-left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+from TransferToClog t WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on t.OrderID =  o.ID
+left join Country c WITH (NOLOCK) on o.Dest = c.ID
+left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = t.PackingListID and pd.OrderID = t.OrderID and pd.CTNStartNo = t.CTNStartNo and pd.CTNQty > 0
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(dateRange1.Value1))

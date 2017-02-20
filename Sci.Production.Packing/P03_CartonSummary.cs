@@ -26,9 +26,9 @@ namespace Sci.Production.Packing
             base.OnFormLoaded();
 
             string sqlCmd = string.Format(@"select pd.RefNo, li.LocalSuppid + '-' + ls.Abb as Supplier, li.Description, STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension, li.CtnUnit, sum(pd.CTNQty) as TtlCTNQty
-from PackingList_Detail pd
-left join LocalItem li on li.RefNo = pd.RefNo
-left join LocalSupp ls on ls.ID = li.LocalSuppid
+from PackingList_Detail pd WITH (NOLOCK) 
+left join LocalItem li WITH (NOLOCK) on li.RefNo = pd.RefNo
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = li.LocalSuppid
 where pd.ID = '{0}'
 group by pd.RefNo, li.LocalSuppid + '-' + ls.Abb, li.Description, STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4), li.CtnUnit", packingListID);
 

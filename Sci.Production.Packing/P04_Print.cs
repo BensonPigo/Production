@@ -60,14 +60,14 @@ namespace Sci.Production.Packing
         {
             if (reportType == "1")
             {
-                destination = MyUtility.GetValue.Lookup(string.Format("select Alias from Country where ID = '{0}'", MyUtility.Convert.GetString(masterData["Dest"])));
+                destination = MyUtility.GetValue.Lookup(string.Format("select Alias from Country WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["Dest"])));
                 string sqlCmd = string.Format(@"select pd.OrderID,o.StyleID,o.Customize1,o.CustPONo,pd.CTNStartNo,pd.CTNEndNo,pd.CTNQty,pd.Article,
 pd.Color,pd.SizeCode,pd.ShipQty,pd.NW,pd.GW,pd.NNW,pd.NWPerPcs,pd.NW*pd.CTNQty as TtlNW,
 pd.GW*pd.CTNQty as TtlGW,pd.NNW*pd.CTNQty as TtlNNW
-from PackingList_Detail pd
-left join Orders o on o.ID = pd.OrderID
+from PackingList_Detail pd WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 where pd.ID = '{0}'
-order by pd.Seq",MyUtility.Convert.GetString(masterData["ID"]));
+order by pd.Seq", MyUtility.Convert.GetString(masterData["ID"]));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
                 if (!result)
                 {
@@ -92,7 +92,7 @@ DECLARE @tempPackingListDetail TABLE (
 
 --撈出PackingList_Detail
 DECLARE cursor_PackingListDetail CURSOR FOR
-	SELECT RefNo,CTNStartNo FROM PackingList_Detail WHERE ID = @packinglistid and CTNQty > 0 and RefNo <> '' ORDER BY Seq
+	SELECT RefNo,CTNStartNo FROM PackingList_Detail WITH (NOLOCK) WHERE ID = @packinglistid and CTNQty > 0 and RefNo <> '' ORDER BY Seq
 
 --開始run cursor
 OPEN cursor_PackingListDetail
@@ -141,7 +141,7 @@ DEALLOCATE cursor_PackingListDetail
 
 select distinct t.RefNo,l.Description, STR(l.CtnLength,8,4)+'\'+STR(l.CtnWidth,8,4)+'\'+STR(l.CtnHeight,8,4) as Dimension, l.CtnUnit, 
 (select CTNNo+',' from @tempPackingListDetail where RefNo = t.RefNo for xml path(''))as Ctn,
-l.CBM*(select sum(CTNQty) from PackingList_Detail where ID = @packinglistid and Refno = t.RefNo) as TtlCBM
+l.CBM*(select sum(CTNQty) from PackingList_Detail WITH (NOLOCK) where ID = @packinglistid and Refno = t.RefNo) as TtlCBM
 from @tempPackingListDetail t
 left join LocalItem l on l.RefNo = t.RefNo
 order by RefNo", MyUtility.Convert.GetString(masterData["ID"]));
