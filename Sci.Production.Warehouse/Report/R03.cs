@@ -143,11 +143,11 @@ c.CountryID
 ,b.InputQty
 ,b.POUnit
 ,iif(b.Complete=1,'Y','N')
-,b.ETA
+--,b.ETA
 ,b.FinalETA
 ,(select t.orderid+',' from (select OrderID from DBO.PO_Supp_Detail_OrderList where id=b.id and seq1=b.seq1 and seq2 = b.SEQ2) t for xml path('')) orderlist
-,b.StockUnit
 ,d.InQty
+,b.StockUnit
 ,d.OutQty
 ,d.AdjustQty
 ,d.InQty - d.OutQty + d.AdjustQty balance
@@ -187,11 +187,11 @@ c.CountryID
 ,b.InputQty
 ,b.POUnit
 ,iif(b.Complete=1,'Y','N')
-,b.ETA
+--,b.ETA
 ,b.FinalETA
 ,(select t.orderid+',' from (select OrderID from DBO.PO_Supp_Detail_OrderList where id=b.id and seq1=b.seq1 and seq2 = b.SEQ2) t for xml path('')) orderlist
-,b.StockUnit
 ,d.InQty
+,b.StockUnit
 ,d.OutQty
 ,d.AdjustQty
 ,d.InQty - d.OutQty + d.AdjustQty balance
