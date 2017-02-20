@@ -472,8 +472,8 @@ Cutplanid, str_PIVOT);
 
                     worksheet.Cells[13, 2] = WorkorderArry[0]["FabricCombo"].ToString();
                     worksheet.Cells[13, 5] = pattern;
-                    worksheet.Cells[13, 9] = WorkorderArry[0]["Description"].ToString();
-                    worksheet.Cells[13, 19] = WorkorderArry[0]["width"].ToString();
+                    worksheet.Cells[13, 9] = "#" + WorkorderArry[0]["SCIRefno"].ToString().Trim() + " " + WorkorderArry[0]["Description"].ToString();
+                    worksheet.Cells[13, 20] = WorkorderArry[0]["width"].ToString();
                     #region 從後面開始寫 先寫Refno,Color
 
                     for (int nColumn = 3; nColumn <= 22; nColumn += 3)
