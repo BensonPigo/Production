@@ -21,11 +21,30 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03 : Sci.Win.Tems.QueryForm
     {
+        string userCountry = "";
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
             this.EditMode = true;
+            
+            string sql = "select CountryID from Factory where ID = @ID";
+            List<SqlParameter> sqlPar = new List<SqlParameter>();
+            sqlPar.Add(new SqlParameter("@ID", Sci.Env.User.Factory));
+
+            DataTable dt;
+            DualResult result;
+
+            if (!(result = DBProxy.Current.Select(null, sql, sqlPar, out dt)))
+            {
+                MyUtility.Msg.ErrorBox(result.Description);
+            }
+            else
+            {
+                userCountry = dt.Rows[0]["CountryID"].ToString();
+            }
+            
+            
         }
 
         protected override void OnFormLoaded()
@@ -221,11 +240,17 @@ namespace Sci.Production.Warehouse
                     {
                         grid1.Rows[i].Cells[6].Style.BackColor = Color.Orange;
                     }
-                }
 
-                if (Convert.ToDecimal(dr["ShipQty"].ToString()) < Convert.ToDecimal(dr["Qty"].ToString()))
-                {
-                    grid1.Rows[i].Cells[16].Style.ForeColor = Color.Red;
+                    if (Convert.ToDecimal(dr["ShipQty"].ToString()) < Convert.ToDecimal(dr["Qty"].ToString()))
+                    {
+                        grid1.Rows[i].Cells[16].Style.ForeColor = Color.Red;
+                    }
+
+                    if (dr["SuppCountry"].ToString().EqualString(userCountry))
+                    {
+                        grid1.Rows[i].Cells[1].Style.BackColor = Color.Yellow;
+                        grid1.Rows[i].Cells[2].Style.BackColor = Color.Yellow;
+                    }
                 }
             };
         }
@@ -263,6 +288,7 @@ from (
 select *,-len(description) as len_D from (
 select 
 m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
+,[SuppCountry] = (select CountryID from supp sup where sup.ID = b.SuppID)
 ,[eta] = substring(convert(varchar, a.eta, 101),1,5)
 ,[RevisedETA] = substring(convert(varchar,a.RevisedETA, 101),1,5)
 ,a.Refno,a.SCIRefno
@@ -320,7 +346,9 @@ where orders.poid like @sp1 and orders.mdivisionid= '{0}'
 --很重要要看到,修正欄位要上下一起改
 union
 
-select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID,substring(convert(varchar, a.eta, 101),1,5) as eta
+select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
+,[SuppCountry] = (select CountryID from supp sup where sup.ID = b.SuppID)
+,substring(convert(varchar, a.eta, 101),1,5) as eta
 ,substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETA,a.Refno,a.SCIRefno
 ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
