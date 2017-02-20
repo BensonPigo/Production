@@ -142,7 +142,7 @@ namespace Sci.Production.Logistic
             #region 準備結構
             string selectCommand = @"select '' as ID, b.TransferToClogId, b.ClogLocationId,b.ReceiveDate,b.ClogReceiveID, b.ID as PackingListId, b.OrderId,b.CTNStartNo,a.StyleID,a.SeasonID,
                                                           a.BrandID, a.CustPONo, a.Customize1, a.BuyerDelivery, c.Alias, a.MDivisionID, 1 as InsertData, '' as Remark, b.ClogReturnID
-                                                         from Orders a, PackingList_Detail b, Country c where 1=0";
+                                                         from Orders a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Country c WITH (NOLOCK) where 1=0";
             
             DataTable groupTable;
             DualResult selectResult;
@@ -152,7 +152,7 @@ namespace Sci.Production.Logistic
                 return;
             }
 
-            selectCommand = "Select ID, ReturnDate, MDivisionID from ClogReturn where 1 = 0";
+            selectCommand = "Select ID, ReturnDate, MDivisionID from ClogReturn WITH (NOLOCK) where 1 = 0";
             if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out groupTable)))
             {
                 MyUtility.Msg.WarningBox("Connection faile!\r\n"+selectResult.ToString());
@@ -189,7 +189,7 @@ namespace Sci.Production.Logistic
                                 dr1["MDivisionID"] = Sci.Env.User.Keyword;
                                 dr1["InsertData"] = 1;
                                 string sqlCmd = string.Format(@"select OrderID, TransferToClogID, ClogReceiveID, ClogLocationId, ReceiveDate,ClogReturnID 
-                                                                                      from PackingList_Detail
+                                                                                      from PackingList_Detail WITH (NOLOCK) 
                                                                                       where ID = '{0}' and CTNStartNo = '{1}' and  CTNQty = 1", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekPacklistData))
                                 {
@@ -210,7 +210,7 @@ namespace Sci.Production.Logistic
                                         else
                                         {
                                             sqlCmd = string.Format(@"select a.ID 
-                                                                                    from ClogReturn a, ClogReturn_Detail b 
+                                                                                    from ClogReturn a WITH (NOLOCK) , ClogReturn_Detail b 
                                                                                     where a.ID = b.ID and b.PackingListID = '{0}' and b.CTNStartNo = '{1}'  and a.Status = 'New'
                                                                                     ", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
                                             if (MyUtility.Check.Seek(sqlCmd, out seekClogReturnData))
@@ -227,7 +227,7 @@ namespace Sci.Production.Logistic
                                         dr1["InsertData"] = 0;
                                     }
                                     sqlCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
-                                                                            from Orders a
+                                                                            from Orders a WITH (NOLOCK) 
                                                                              left join Country b on b.ID = a.Dest
                                                                             where a.ID = '{0}'", dr1["OrderID"].ToString());
                                     if (MyUtility.Check.Seek(sqlCmd, out seekOrderdata))

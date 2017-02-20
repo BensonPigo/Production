@@ -142,7 +142,7 @@ namespace Sci.Production.Logistic
             #region 準備結構
             string selectCommand = @"select a.ClogLocationId,a.OrderID,a.CTNStartNo,b.StyleID,b.SeasonID,b.BrandID,b.Customize1,b.CustPONo,c.Alias,
                                                             b.BuyerDelivery,a.ID as PackingListID,a.TransferToClogId,a.ClogReceiveID,'' as ID,'' as Remark, b.MDivisionID, 1 as InsertData 
-                                                            from PackingList_Detail a, Orders b, Country c where 1=0";
+                                                            from PackingList_Detail a WITH (NOLOCK) , Orders b WITH (NOLOCK) , Country c WITH (NOLOCK)  where 1=0";
             DataTable groupTable;
             DualResult selectResult;
             if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out grid2Data)))
@@ -151,7 +151,7 @@ namespace Sci.Production.Logistic
                 return;
             }
 
-            selectCommand = "Select ID, ReceiveDate, MDivisionID from ClogReceive where 1 = 0";
+            selectCommand = "Select ID, ReceiveDate, MDivisionID from ClogReceive WITH (NOLOCK) where 1 = 0";
             if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out groupTable)))
             {
                 MyUtility.Msg.WarningBox("Connection faile!\r\n" + selectResult.ToString());
@@ -189,7 +189,7 @@ namespace Sci.Production.Logistic
                                 dr1["MDivisionID"] = Sci.Env.User.Keyword;
                                 dr1["InsertData"] = 1;
                                 string sqlCmd = string.Format(@"select OrderID, TransferToClogID, ClogReceiveID 
-                                                                                  from PackingList_Detail
+                                                                                  from PackingList_Detail WITH (NOLOCK) 
                                                                                   where ID = '{0}' and CTNStartNo = '{1}' and CTNQty = 1", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekPacklistData))
                                 {
@@ -205,7 +205,7 @@ namespace Sci.Production.Logistic
                                         else
                                         {
                                             sqlCmd = string.Format(@"select a.ID 
-                                                                                    from ClogReceive a, ClogReceive_Detail b 
+                                                                                    from ClogReceive a WITH (NOLOCK) , ClogReceive_Detail b 
                                                                                     where a.ID = b.ID and b.PackingListID = '{0}' and b.CTNStartNo = '{1}'  and a.Status = 'New'
                                                                                     ", dr1["PackingListID"].ToString(), dr1["CTNStartNo"].ToString());
                                             if (MyUtility.Check.Seek(sqlCmd, out seekClogReceiveData))
@@ -222,8 +222,8 @@ namespace Sci.Production.Logistic
                                         dr1["InsertData"] = 0;
                                     }
                                     sqlCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,a.BuyerDelivery 
-                                                                            from Orders a
-                                                                             left join Country b on b.ID = a.Dest
+                                                                            from Orders a WITH (NOLOCK) 
+                                                                             left join Country b WITH (NOLOCK) on b.ID = a.Dest
                                                                             where a.ID = '{0}'", dr1["OrderID"].ToString());
                                     if (MyUtility.Check.Seek(sqlCmd, out seekOrderdata))
                                     {

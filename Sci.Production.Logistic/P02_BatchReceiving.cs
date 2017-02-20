@@ -118,7 +118,7 @@ namespace Sci.Production.Logistic
             return string.Format(@"
 Select '' as ID, 0 as selected,'' as ClogLocationId,a.*,b.StyleID,b.SeasonID,b.BrandID,b.Customize1,b.CustPONo,b.BuyerDelivery,c.Alias 
 from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo 
-	   from TransferToClog_Detail as a, TransferToClog as b 
+	   from TransferToClog_Detail as a  , TransferToClog as b WITH (NOLOCK) 
 	   where a.Id = b.ID
 	   {0}
 	   {1}
@@ -129,8 +129,8 @@ from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo
 	   where 1=1
 	   {2}
 	   {3})) as a 
-left join Orders b On a.OrderID = b.ID 
-left join Country c On b.Dest = c.ID",
+left join Orders b WITH (NOLOCK) On a.OrderID = b.ID 
+left join Country c WITH (NOLOCK) On b.Dest = c.ID",
  MyUtility.Check.Empty(this.textBox1.Text.Trim()) ? "" : " and a.Id >= @id1",
  MyUtility.Check.Empty(this.textBox2.Text.Trim()) ? "" : " and a.Id <= @id2",
  MyUtility.Check.Empty(this.textBox1.Text.Trim()) ? "" : " and TransferToClogId >= @id1",
@@ -143,14 +143,14 @@ left join Country c On b.Dest = c.ID",
             return string.Format(@"
 Select count(TransferToClogId) as TTLCTN 
 from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo 
-	   from TransferToClog_Detail as a, TransferToClog as b 
+	   from TransferToClog_Detail as a, TransferToClog as b WITH (NOLOCK) 
 	   where a.Id = b.ID
 	   {0} 
 	   {1}
 	   and b.MDivisionID = @mdivisionid) 
 	  except 
 	  (Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
-	   from ClogReturn_Detail a, ClogReturn b 
+	   from ClogReturn_Detail a, ClogReturn b WITH (NOLOCK) 
 	   where a.Id = b.Id
 	   and a.TransferToClogId >= '{2}' 
 	   and a.TransferToClogId <= '{3}' 
@@ -167,7 +167,7 @@ from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo
             return string.Format(@"
 Select count(TransferToClogId) as ReceivedCTN 
 from ((Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
-	   from ClogReceive_Detail a, ClogReceive b 
+	   from ClogReceive_Detail a, ClogReceive b WITH (NOLOCK) 
 	   where a.Id = b.Id 
 	   {0}
 	   {1}
@@ -175,7 +175,7 @@ from ((Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo
 	   and b.MDivisionID = @mdivisionid) 
 	  except
 	  (Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo 
-	   from ClogReturn_Detail a, ClogReturn b 
+	   from ClogReturn_Detail a, ClogReturn b WITH (NOLOCK) 
 	   where a.Id = b.Id
 	   {0}
 	   {1}
