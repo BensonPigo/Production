@@ -103,7 +103,7 @@ namespace Sci.Production.Warehouse
             {
                 sqlCmd.Append(string.Format(@";with cte as
 (
-select distinct o.mdivisionid,o.POID,o.StyleID,o.SeasonID from dbo.orders o
+select distinct o.mdivisionid, o.FactoryID, o.POID,o.StyleID,o.SeasonID from dbo.orders o
 where 1=1"));
 
                 if (!MyUtility.Check.Empty(sciDelivery1))
@@ -124,7 +124,7 @@ where 1=1"));
                     cmds.Add(sp_season);
                 }
                 sqlCmd.Append(")");
-                sqlCmd.Append(string.Format(@"select isnull(d.mdivisionid,cte.mdivisionid),a.id,
+                sqlCmd.Append(string.Format(@"select isnull(d.mdivisionid,cte.mdivisionid), cte.FactoryID, a.id,
 cte.StyleID,
 b.FinalETD,
 a.suppid+'-'+c.AbbEN supp,
@@ -168,7 +168,7 @@ where 1= 1 "));
             }
             else
             {
-                sqlCmd.Append(string.Format(@"select isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders where id = a.id)),a.id,
+                sqlCmd.Append(string.Format(@"select isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders where id = a.id)), cte.FactoryID,a.id,
 (select StyleID from dbo.orders where id = a.id) style,
 b.FinalETD,
 a.suppid+'-'+c.AbbEN supp,
@@ -306,7 +306,14 @@ where 1=1 "));
 
             this.ShowWaitMessage("Excel Processing...");
             Excel.Worksheet worksheet = objApp.Sheets[1];
-            //for (int i = 1; i <= printData.Rows.Count; i++) worksheet.Cells[i + 1, 11] = ((string)((Excel.Range)worksheet.Cells[i + 1, 11]).Value).Trim();
+
+            for (int i = 1; i <= printData.Rows.Count; i++)
+            {   
+                string str = worksheet.Cells[i + 1, 12].Value;
+                if(!MyUtility.Check.Empty(str))
+                    worksheet.Cells[i + 1, 12] = str.Trim();
+            }
+            
             objApp.Visible = true;
 
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
