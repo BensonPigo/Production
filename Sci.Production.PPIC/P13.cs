@@ -32,7 +32,7 @@ namespace Sci.Production.PPIC
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            if (MyUtility.GetValue.Lookup(string.Format("select UseAPS from Factory where ID = '{0}'", Sci.Env.User.Factory)) == "True")
+            if (MyUtility.GetValue.Lookup(string.Format("select UseAPS from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Factory)) == "True")
             {
                 MyUtility.Msg.WarningBox("Please use APS system to assign schedule.");
                 Close();
@@ -97,7 +97,7 @@ namespace Sci.Production.PPIC
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("Select ID,Description From SewingLine Where FactoryId = '{0}'", Sci.Env.User.Factory), "2,16", MyUtility.Convert.GetString(dr["SewLine"]));
+                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("Select ID,Description From SewingLine WITH (NOLOCK) Where FactoryId = '{0}'", Sci.Env.User.Factory), "2,16", MyUtility.Convert.GetString(dr["SewLine"]));
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel) { return; }
                         e.EditingControl.Text = item.GetSelectedString();
@@ -119,7 +119,7 @@ namespace Sci.Production.PPIC
                     cmds.Add(sp2);
 
                     DataTable SewLineData;
-                    string sqlCmd = "Select ID From SewingLine Where FactoryId = @factoryid and ID = @sewinglineid";
+                    string sqlCmd = "Select ID From SewingLine WITH (NOLOCK) Where FactoryId = @factoryid and ID = @sewinglineid";
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out SewLineData);
 
                     if (!result || SewLineData.Rows.Count <= 0)
@@ -191,7 +191,7 @@ namespace Sci.Production.PPIC
 
         private string PopUpTPEUser(string userID)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1", "10,23,5", userID);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) ", "10,23,5", userID);
             item.Width = 510;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return ""; }
@@ -239,7 +239,7 @@ namespace Sci.Production.PPIC
 
         private string GetUserName(string UserID)
         {
-            string selectSql = string.Format("Select Name,ExtNo from TPEPass1 Where id='{0}'", UserID);
+            string selectSql = string.Format("Select Name,ExtNo from TPEPass1 WITH (NOLOCK) Where id='{0}'", UserID);
             DataRow dr;
             if (MyUtility.Check.Seek(selectSql, out dr))
             {
@@ -271,18 +271,18 @@ namespace Sci.Production.PPIC
 as
 (select o.ID,o.StyleID,o.BrandID,o.SciDelivery,o.BuyerDelivery,o.CdCodeID,
  o.OrderTypeID,o.Qty,(o.CPU*o.CPUFactor) as CPU,o.SewLine,o.SewInLine,o.SewOffLine,o.CutReadyDate,
- o.LETA,o.SewRemark,isnull((o.MRHandle+' '+(select Name+' #'+ExtNo from TPEPass1 where ID = o.MRHandle)),o.MRHandle) as MR,
- isnull((o.SMR+' '+(select Name+' #'+ExtNo from TPEPass1 where ID = o.SMR)),o.SMR) as SMR,
- (select min(s.OutputDate) from SewingOutput s, SewingOutput_Detail sd where sd.OrderId = o.ID and sd.ID = s.ID and sd.QAQty > 0) as ActSewInLine,
- (select max(s.OutputDate) from SewingOutput s, SewingOutput_Detail sd where sd.OrderId = o.ID and sd.ID = s.ID and sd.QAQty > 0) as tmpActSewOffLine,
- (select min(a.QAQty) from (select ComboType,sum(QAQty) as QAQty from SewingOutput_Detail where OrderId = o.ID group by ComboType) a) as SewOutQty,
+ o.LETA,o.SewRemark,isnull((o.MRHandle+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = o.MRHandle)),o.MRHandle) as MR,
+ isnull((o.SMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = o.SMR)),o.SMR) as SMR,
+ (select min(s.OutputDate) from SewingOutput s WITH (NOLOCK) , SewingOutput_Detail sd WITH (NOLOCK) where sd.OrderId = o.ID and sd.ID = s.ID and sd.QAQty > 0) as ActSewInLine,
+ (select max(s.OutputDate) from SewingOutput s WITH (NOLOCK) , SewingOutput_Detail sd WITH (NOLOCK) where sd.OrderId = o.ID and sd.ID = s.ID and sd.QAQty > 0) as tmpActSewOffLine,
+ (select min(a.QAQty) from (select ComboType,sum(QAQty) as QAQty from SewingOutput_Detail WITH (NOLOCK) where OrderId = o.ID group by ComboType) a) as SewOutQty,
  (select '['+CAST(a.Abbreviation as nvarchar)+'],' from (
- select distinct at.Abbreviation from Order_Artwork oa,ArtworkType at
+ select distinct at.Abbreviation from Order_Artwork oa WITH (NOLOCK) ,ArtworkType at WITH (NOLOCK) 
  where at.IsSubprocess = 1
  and oa.ID = o.ID
  and oa.ArtworkTypeID = at.ID) a
  for xml path('')) as tmpArtworkType,o.CuttingSP
- from Orders o
+ from Orders o WITH (NOLOCK) 
  where o.Finished = 0
  and o.IsForecast = 0
  and o.FtyGroup = '{0}'", Sci.Env.User.Factory));
@@ -372,7 +372,7 @@ select *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLin
                     try
                     {
                         MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource1.DataSource, "Id,SewInLine,SewOffLine",
-                            string.Format("select o.ID,iif(isnull(o.SewInLine,'1900-01-01') <> isnull(t.SewInLine,'1900-01-01'),'1','') as InlineDiff,iif(isnull(o.SewOffLine,'1900-01-01') <> isnull(t.SewOffLine,'1900-01-01'),'1','') as OfflineDiff,o.SewInLine as OInline,t.SewInLine as TInLine,o.SewOffLine as OOffLine,t.SewOffLine as TOffLine from Orders o, #tmp t where o.ID in ({0}) and o.ID = t.ID", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.Convert.GetString(allSP).Length - 1)),
+                            string.Format("select o.ID,iif(isnull(o.SewInLine,'1900-01-01') <> isnull(t.SewInLine,'1900-01-01'),'1','') as InlineDiff,iif(isnull(o.SewOffLine,'1900-01-01') <> isnull(t.SewOffLine,'1900-01-01'),'1','') as OfflineDiff,o.SewInLine as OInline,t.SewInLine as TInLine,o.SewOffLine as OOffLine,t.SewOffLine as TOffLine from Orders o WITH (NOLOCK) , #tmp t where o.ID in ({0}) and o.ID = t.ID", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.Convert.GetString(allSP).Length - 1)),
                             out OrderData);
                     }
                     catch (Exception ex)
@@ -414,7 +414,7 @@ values ('{0}','SewInOffLine',{1},{2},'Sewing Offline Update','{3}',GETDATE()) ",
                     string sqlCmd = string.Format(@"with ttlSewTime
 as
 (select o.ID, isnull(sum(t.TotalSewingTime),0) as ttlSewTime
- from Orders o, TimeStudy t
+ from Orders o WITH (NOLOCK) , TimeStudy t WITH (NOLOCK) 
  where t.BrandID = o.BrandID
  and t.StyleID = o.StyleID
  and t.SeasonID = o.SeasonID
@@ -425,11 +425,11 @@ as
 select isnull(s.ID,0) as ID, o.ID as OrderID, SUBSTRING(o.SewLine,1,2) as SewingLineID,o.Qty as AlloQty,
 o.SewInLine as Inline, o.SewOffLine as Offline,o.FtyGroup as FactoryID,sl.Sewer,st.ttlSewTime as TotalSewingTime,
 100 as MaxEff,iif(st.ttlSewTime*sl.Sewer = 0,0,(3600.0/st.ttlSewTime*sl.Sewer)) as StandardOutput,
-(select count(SewingLineID) from WorkHour where Hours > 0 and FactoryID = o.FtyGroup and Date between o.SewInLine and o.SewOffLine and SewingLineID = o.SewLine) as WorkDay,
+(select count(SewingLineID) from WorkHour WITH (NOLOCK) where Hours > 0 and FactoryID = o.FtyGroup and Date between o.SewInLine and o.SewOffLine and SewingLineID = o.SewLine) as WorkDay,
 iif((3600.0/st.ttlSewTime*sl.Sewer) = 0,0,floor(o.Qty/(3600.0/st.ttlSewTime*sl.Sewer))) as WorkHour,0 as APSNo, o.Finished as OrderFinished,'{1}'as AddName,GETDATE() as AddDate
-from Orders o
-left join SewingSchedule s on s.OrderID = o.ID
-left join SewingLine sl on sl.ID = o.SewLine and sl.FactoryID = o.FtyGroup
+from Orders o WITH (NOLOCK) 
+left join SewingSchedule s WITH (NOLOCK) on s.OrderID = o.ID
+left join SewingLine sl WITH (NOLOCK) on sl.ID = o.SewLine and sl.FactoryID = o.FtyGroup
 left join ttlSewTime st on st.ID = o.ID
 where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.Convert.GetString(allSP).Length - 1), Sci.Env.User.UserID);
 
@@ -453,9 +453,9 @@ and not exists (select * from Order_Qty where ID = OrderID and Article = Article
                         //新增 & 更新資料
                         result1 = DBProxy.Current.Select(null, string.Format(@"select isnull(s.ID,0) as ID,o.ID as OrderID,'' as ComboType,
 o.SewLine as SewingLineID,oq.Article,oq.SizeCode,oq.Qty as AlloQty
-from Orders o
-left join Order_Qty oq on oq.ID = o.ID
-left join SewingSchedule s on oq.ID = s.OrderID
+from Orders o WITH (NOLOCK) 
+left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
+left join SewingSchedule s WITH (NOLOCK) on oq.ID = s.OrderID
 where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.Convert.GetString(allSP).Length - 1)), out SewingData);
                         if (!result1)
                         {
@@ -543,13 +543,13 @@ where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.
             DataTable cuttingtb;
             string updsql = "";
             sqlcmd = string.Format(@"Select ord.cuttingsp,min(ord.sewinline) as inline ,max(ord.sewoffline) as offlinea 
-            from orders ord,
-            (Select * from (Select distinct c.cuttingsp from orders c, 
-                (SELECT orderid FROM Sewingschedule b 
+            from orders ord WITH (NOLOCK) ,
+            (Select * from (Select distinct c.cuttingsp from orders c WITH (NOLOCK) , 
+                (SELECT orderid FROM Sewingschedule b WITH (NOLOCK) 
                 WHERE Inline <= '{0}' And offline is not null and offline !=''
                AND b.FactoryID = '{1}' group by b.orderid) d 
             where c.id = d.orderid and c.IsForecast = 0 and c.LocalOrder = 0 ) e Where e.cuttingsp is not null 
-			and e.cuttingsp not in (Select id from cutting)) cut
+			and e.cuttingsp not in (Select id from cutting WITH (NOLOCK))) cut
             where ord.cuttingsp = cut.CuttingSP and ord.FactoryID = '{1}'
           group by ord.CuttingSp order by ord.CuttingSP", sewdate, Sci.Env.User.Factory);
             dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);
@@ -564,13 +564,13 @@ where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.
                 updsql = updsql + string.Format("insert into cutting(ID,sewInline,sewoffline,mDivisionid,FactoryID,AddName,AddDate) Values('{0}','{1}','{2}','{3}','{4}','{5}',GetDate()); ", dr["cuttingsp"].ToString(), sewin, sewof, Sci.Env.User.Keyword, Sci.Env.User.Factory, Sci.Env.User.UserID);
             }
             sqlcmd = string.Format(@"Select ord.cuttingsp,min(ord.sewinline) as inline ,max(ord.sewoffline) as offlinea 
-            from orders ord,
-            (Select * from (Select distinct c.cuttingsp from orders c, 
-                (SELECT orderid FROM Sewingschedule b 
+            from orders ord WITH (NOLOCK) ,
+            (Select * from (Select distinct c.cuttingsp from orders c WITH (NOLOCK) , 
+                (SELECT orderid FROM Sewingschedule b WITH (NOLOCK) 
                 WHERE Inline <= '{0}' And offline is not null and offline !=''
                AND b.FactoryID = '{1}' group by b.orderid) d 
             where c.id = d.orderid and c.IsForecast = 0 and c.LocalOrder = 0 ) e Where e.cuttingsp is not null 
-			and e.cuttingsp in (Select id from cutting)) cut
+			and e.cuttingsp in (Select id from cutting WITH (NOLOCK) )) cut
             where ord.cuttingsp = cut.CuttingSP and ord.FactoryID = '{1}'
           group by ord.CuttingSp order by ord.CuttingSP", sewdate, Sci.Env.User.Factory);
             dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);

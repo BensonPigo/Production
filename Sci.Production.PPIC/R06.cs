@@ -22,13 +22,13 @@ namespace Sci.Production.PPIC
         {
             InitializeComponent();
             DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
             comboBox1.Text = Sci.Env.User.Keyword;
             MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "Bulk,Sample,Bulk+Sample,Material");
             comboBox2.Text = "Bulk+Sample";
             checkBox2.Checked = true;
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
             comboBox3.Text = Sci.Env.User.Factory; 
         }
@@ -59,22 +59,22 @@ namespace Sci.Production.PPIC
             sqlCmd.Append(string.Format(@"with tmpPO 
 as (
 select ps.ID,ps.SEQ1,Qty,psd.ETA,s.ThirdCountry,isnull(s.AbbEN,'') as SuppAbb
-from PO_Supp ps
+from PO_Supp ps WITH (NOLOCK) 
 inner join (select a.ID,a.SEQ1,sum(a.Qty) as Qty,max(a.ETA) as ETA from (
 select psd.ID,psd.SEQ1,psd.SEQ2,psd.FabricType,psd.ETA,
-IIF(psd.FabricType = 'F',psd.Qty-isnull((select sum(ed.Qty) from Export_Detail ed where ed.PoID = psd.ID and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2),0),0) as Qty
-from PO_Supp_Detail psd
+IIF(psd.FabricType = 'F',psd.Qty-isnull((select sum(ed.Qty) from Export_Detail ed WITH (NOLOCK) where ed.PoID = psd.ID and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2),0),0) as Qty
+from PO_Supp_Detail psd WITH (NOLOCK) 
 where psd.Junk = 0
 and psd.Complete = 0
 {0}
 ) a
 group by a.ID,a.SEQ1) psd on psd.ID = ps.ID and psd.SEQ1 = ps.SEQ1
-left join Supp s on s.ID = ps.SuppID
+left join Supp s WITH (NOLOCK) on s.ID = ps.SuppID
 ),
 PrepareData1
 as (
 select ID,ThirdCountry,SEQ1+'-'+SuppAbb as Seq,
-IIF(Qty > 0,IIF(ETA is null,'',CONVERT(VARCHAR(2),Month(ETA))+'/'+CONVERT(VARCHAR(2),DAY(ETA)))+'-'+CONVERT(VARCHAR(10),Qty)+isnull((select top 1 psd.POUnit from PO_Supp_Detail psd where psd.ID = tmpPO.ID and psd.SEQ1 = tmpPO.SEQ1 and psd.FabricType = 'F' and psd.Junk = 0 and psd.Complete = 0 and psd.POUnit <> '' {0}),''),'') as Qty
+IIF(Qty > 0,IIF(ETA is null,'',CONVERT(VARCHAR(2),Month(ETA))+'/'+CONVERT(VARCHAR(2),DAY(ETA)))+'-'+CONVERT(VARCHAR(10),Qty)+isnull((select top 1 psd.POUnit from PO_Supp_Detail psd WITH (NOLOCK) where psd.ID = tmpPO.ID and psd.SEQ1 = tmpPO.SEQ1 and psd.FabricType = 'F' and psd.Junk = 0 and psd.Complete = 0 and psd.POUnit <> '' {0}),''),'') as Qty
 from tmpPO
 ),
 PrepareData2
@@ -89,8 +89,8 @@ dbo.getTPEPass1(o.SMR) as SMR,dbo.getTPEPass1(p.POSMR) as POSMR,
 dbo.getTPEPass1(p.POHandle) as POHandle,o.Qty,o.CPU*o.Qty*o.CPUFactor as tCPU,o.MTLComplete,
 isnull((select CONCAT(Seq,';') from PrepareData2 where ID = o.POID and ThirdCountry = 0 for XML PATH('')),'') as SeqNo,
 isnull((select CONCAT(Seq,';') from PrepareData2 where ID = o.POID and ThirdCountry = 1 for XML PATH('')),'') as Seq3rd
-from Orders o
-left join PO p on p.ID = o.POID
+from Orders o WITH (NOLOCK) 
+left join PO p WITH (NOLOCK) on p.ID = o.POID
 where o.SciDelivery between '{1}' and '{2}'", excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":"",
                                             Convert.ToDateTime(sciDate1).ToString("d"), Convert.ToDateTime(sciDate2).ToString("d")));
 

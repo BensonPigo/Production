@@ -34,7 +34,7 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
             //撈出所有的Size
-            string sqlCmd = string.Format("select * from Order_SizeCode where ID = '{0}' order by Seq", poID);
+            string sqlCmd = string.Format("select * from Order_SizeCode WITH (NOLOCK) where ID = '{0}' order by Seq", poID);
             DataTable headerData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out headerData);
             StringBuilder pivot = new StringBuilder();
@@ -105,8 +105,8 @@ namespace Sci.Production.PPIC
             sqlCmd = string.Format(@"with tmpData
             as (
             select oq.Article,oq.SizeCode,oq.Qty,oa.Seq
-            from Order_Qty oq
-            left join Order_Article oa on oa.ID = oq.ID and oa.Article = oq.Article
+            from Order_Qty oq WITH (NOLOCK) 
+            left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
             where oq.ID = '{0}'
             ),
             SubTotal
@@ -137,8 +137,8 @@ namespace Sci.Production.PPIC
             sqlCmd = string.Format(@"with tmpData
             as (
             select oq.Article,oq.SizeCode,oq.OriQty,oa.Seq
-            from Order_Qty oq
-            left join Order_Article oa on oa.ID = oq.ID and oa.Article = oq.Article
+            from Order_Qty oq WITH (NOLOCK) 
+            left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
             where oq.ID = '{0}'
             ),
             SubTotal
@@ -171,9 +171,9 @@ namespace Sci.Production.PPIC
             sqlCmd = string.Format(@"with tmpData
             as (
             select o.ID,oq.Article,oq.SizeCode,oq.Qty,oa.Seq,DENSE_RANK() OVER (ORDER BY o.ID) as rnk
-            from Orders o
-            inner join Order_Qty oq on o.ID = oq.ID
-            left join Order_Article oa on oa.ID = oq.ID and oa.Article = oq.Article
+            from Orders o WITH (NOLOCK) 
+            inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+            left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
             where o.POID = '{0}'
             ),
             SubTotal
@@ -204,9 +204,9 @@ namespace Sci.Production.PPIC
             sqlCmd = string.Format(@"with tmpData
             as (
             select o.ID,oq.Article,oq.SizeCode,oq.OriQty,oa.Seq,DENSE_RANK() OVER (ORDER BY o.ID) as rnk
-            from Orders o
-            inner join Order_Qty oq on o.ID = oq.ID
-            left join Order_Article oa on oa.ID = oq.ID and oa.Article = oq.Article
+            from Orders o WITH (NOLOCK) 
+            inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+            left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
             where o.POID = '{0}'
             ),
             SubTotal
@@ -239,9 +239,9 @@ namespace Sci.Production.PPIC
             sqlCmd = string.Format(@"with tmpData
             as (
             select oq.Article,oq.SizeCode,oq.Qty,oa.Seq
-            from Orders o
-            inner join Order_Qty oq on o.ID = oq.ID
-            left join Order_Article oa on oa.ID = oq.ID and oa.Article = oq.Article
+            from Orders o WITH (NOLOCK) 
+            inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+            left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
             where o.POID = '{0}'
             ),
             SubTotal
@@ -272,9 +272,9 @@ namespace Sci.Production.PPIC
             sqlCmd = string.Format(@"with tmpData
             as (
             select oq.Article,oq.SizeCode,oq.OriQty,oa.Seq
-            from Orders o
-            inner join Order_Qty oq on o.ID = oq.ID
-            left join Order_Article oa on oa.ID = oq.ID and oa.Article = oq.Article
+            from Orders o WITH (NOLOCK) 
+            inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+            left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
             where o.POID = '{0}'
             ),
             SubTotal
@@ -307,10 +307,10 @@ namespace Sci.Production.PPIC
             sqlCmd = string.Format(@"with tmpData
             as (
             select oq.BuyerDelivery,oqd.Article,oqd.SizeCode,oqd.Qty,oa.Seq,DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
-            from Orders o
-            inner join Order_QtyShip oq on o.ID = oq.ID
-            inner join Order_QtyShip_Detail oqd on oq.ID = oqd.ID and oq.Seq = oqd.Seq
-            left join Order_Article oa on oa.ID = oqd.ID and oa.Article = oqd.Article
+            from Orders o WITH (NOLOCK) 
+            inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
+            inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
+            left join Order_Article oa WITH (NOLOCK) on oa.ID = oqd.ID and oa.Article = oqd.Article
             where o.POID = '{0}'
             ),
             SubTotal
@@ -341,10 +341,10 @@ namespace Sci.Production.PPIC
             sqlCmd = string.Format(@"with tmpData
             as (
             select oq.BuyerDelivery,oqd.Article,oqd.SizeCode,oqd.OriQty,oa.Seq,DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
-            from Orders o
-            inner join Order_QtyShip oq on o.ID = oq.ID
-            inner join Order_QtyShip_Detail oqd on oq.ID = oqd.ID and oq.Seq = oqd.Seq
-            left join Order_Article oa on oa.ID = oqd.ID and oa.Article = oqd.Article
+            from Orders o WITH (NOLOCK) 
+            inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
+            inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
+            left join Order_Article oa WITH (NOLOCK) on oa.ID = oqd.ID and oa.Article = oqd.Article
             where o.POID = '{0}'
             ),
             SubTotal

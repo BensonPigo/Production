@@ -34,7 +34,7 @@ namespace Sci.Production.PPIC
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from DropDownList where TYPE = 'Location' order by Seq", "5,10", dr["Location"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from DropDownList WITH (NOLOCK) where TYPE = 'Location' order by Seq", "5,10", dr["Location"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             dr["Location"] = item.GetSelectedString();
@@ -57,7 +57,7 @@ namespace Sci.Production.PPIC
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                         cmds.Add(sp1);
                         DataTable ComboType;
-                        string sqlCmd = "select ID from DropDownList where TYPE = 'Location' and ID = @combotype";
+                        string sqlCmd = "select ID from DropDownList WITH (NOLOCK) where TYPE = 'Location' and ID = @combotype";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ComboType);
 
                         if (!result || ComboType.Rows.Count <= 0)

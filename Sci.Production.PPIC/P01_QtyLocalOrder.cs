@@ -129,11 +129,11 @@ namespace Sci.Production.PPIC
 
             _matrix.Clear();
 
-            string sqlCmd = string.Format("select * from Order_SizeCode where ID = '{0}' order by Seq", orderID);
+            string sqlCmd = string.Format("select * from Order_SizeCode WITH (NOLOCK) where ID = '{0}' order by Seq", orderID);
             result = DBProxy.Current.Select(null, sqlCmd, out SizeCode);
-            sqlCmd = string.Format("select *, isnull((select SUM(Qty) from Order_Qty where ID = oa.ID and Article = oa.Article),0) as Total from Order_Article oa where oa.ID = '{0}' order by Seq", orderID);
+            sqlCmd = string.Format("select *, isnull((select SUM(Qty) from Order_Qty WITH (NOLOCK) where ID = oa.ID and Article = oa.Article),0) as Total from Order_Article oa WITH (NOLOCK) where oa.ID = '{0}' order by Seq", orderID);
             result = DBProxy.Current.Select(null, sqlCmd, out Article);
-            sqlCmd = string.Format("select *,CONVERT(varchar(6),Qty) as NewQty from Order_Qty where ID = '{0}'", orderID);
+            sqlCmd = string.Format("select *,CONVERT(varchar(6),Qty) as NewQty from Order_Qty WITH (NOLOCK) where ID = '{0}'", orderID);
             result = DBProxy.Current.Select(null, sqlCmd, out QtyBDown);
 
             if (!(result = _matrix.Sets(QtyBDown, SizeCode, Article))) return result;
@@ -249,16 +249,16 @@ namespace Sci.Production.PPIC
             {
                 updateCmds.Add(string.Format("update Orders set Qty = {0} where ID = '{1}'", MyUtility.Convert.GetString(qty), orderID));
             }
-            if (MyUtility.Check.Seek(string.Format("select ID from Order_QtyShip where ID = '{0}'", orderID)))
+            if (MyUtility.Check.Seek(string.Format("select ID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", orderID)))
             {
-                string ttlQty = MyUtility.GetValue.Lookup(string.Format("select Qty from Order_QtyShip where ID = '{0}'", orderID));
+                string ttlQty = MyUtility.GetValue.Lookup(string.Format("select Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", orderID));
                 if (MyUtility.Convert.GetInt(ttlQty) != qty)
                 {
                     //updateCmds.Add(string.Format("update Order_QtyShip set Qty = {0}, EditName = '{1}', EditDate = GETDATE() where ID = '{2}';", MyUtility.Convert.GetString(qty), Sci.Env.User.UserID, orderID));
                     updateCmds.Add(string.Format("update Order_QtyShip set Qty = {0}, OriQty = {0}, EditName = '{1}', EditDate = GETDATE() where ID = '{2}';", MyUtility.Convert.GetString(qty), Sci.Env.User.UserID, orderID));
                 }
                 DataTable Order_QtyShip_Detail;
-                if (!(result = DBProxy.Current.Select(null, string.Format("select * from Order_QtyShip_Detail where ID = '{0}'", orderID), out Order_QtyShip_Detail))) return result;
+                if (!(result = DBProxy.Current.Select(null, string.Format("select * from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}'", orderID), out Order_QtyShip_Detail))) return result;
                 foreach (DataRow dr in datas.Rows)
                 {
                     if (dr.RowState != DataRowState.Deleted && !MyUtility.Check.Empty(dr["Qty"]))

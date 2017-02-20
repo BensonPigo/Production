@@ -21,10 +21,10 @@ namespace Sci.Production.PPIC
         {
             InitializeComponent();
             DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
             MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "Fabric,Accessory,");
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
             comboBox1.Text = Sci.Env.User.Keyword;
             comboBox2.SelectedIndex = 0;
@@ -56,13 +56,13 @@ rd.AfterCuttingRequest,IIF(rd.Responsibility='M','Mill',IIF(rd.Responsibility = 
 rd.ResponsibilityReason,rd.Suggested,
 IIF(p.POSMR is null,'',iif(tpe.ExtNo='','',dbo.getTPEPass1(p.POSMR)+' #'+tpe.ExtNo)) as POSMR,
 iif(pas.ExtNo='',dbo.getPass1(r.ApplyName),dbo.getPass1(r.ApplyName)+' #'+pas.ExtNo) as Prepare
-from ReplacementReport r
-inner join ReplacementReport_Detail rd on rd.ID = r.ID
-left join Orders o on o.ID = r.POID
-left join Fabric f on f.SCIRefno = rd.SCIRefno
-left join PO p on p.ID = r.POID
-outer apply(select TPEPass1.ExtNo from TPEPass1 where TPEPass1.ID=p.POSMR )tpe
-outer apply(select ExtNo from Pass1 where Pass1.ID=r.ApplyName)pas
+from ReplacementReport r WITH (NOLOCK) 
+inner join ReplacementReport_Detail rd WITH (NOLOCK) on rd.ID = r.ID
+left join Orders o WITH (NOLOCK) on o.ID = r.POID
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = rd.SCIRefno
+left join PO p WITH (NOLOCK) on p.ID = r.POID
+outer apply(select TPEPass1.ExtNo from TPEPass1 WITH (NOLOCK) where TPEPass1.ID=p.POSMR )tpe
+outer apply(select ExtNo from Pass1 WITH (NOLOCK) where Pass1.ID=r.ApplyName)pas
 where 1=1");
 
             if (!MyUtility.Check.Empty(cdate1))

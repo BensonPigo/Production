@@ -22,9 +22,9 @@ namespace Sci.Production.PPIC
         {
             InitializeComponent();
             DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
             comboBox1.Text = Sci.Env.User.Keyword;
             comboBox2.Text = Sci.Env.User.Factory;
@@ -70,9 +70,9 @@ DECLARE cursor_sewingschedule CURSOR FOR
 select s.FactoryID,s.SewingLineID,s.Inline,s.Offline,isnull(o.StyleID,'') as StyleID,
 isnull(o.OrderTypeID,'') as OrderTypeID,o.SciDelivery,o.BuyerDelivery,
 isnull(o.Category,'') as Category,isnull(st.CdCodeID,'') as CdCodeID
-from SewingSchedule s
-left join Orders o on s.OrderID = o.ID
-left join Style st on st.Ukey = o.StyleUkey
+from SewingSchedule s WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
+left join Style st WITH (NOLOCK) on st.Ukey = o.StyleUkey
 where (s.Inline between @sewinginline and @sewingoffline or s.Offline between @sewinginline and @sewingoffline)
 ", startDate.ToString("d"), startDate.AddMonths(1).ToString("d")));
             if (!MyUtility.Check.Empty(mDivision))
@@ -122,7 +122,7 @@ BEGIN
 	SET @sewingdate = IIF(@inline < @sewinginline,@sewinginline,@inline)
 	WHILE (@_i <= DATEDIFF(DAY,IIF(@inline < @sewinginline,@sewinginline,@inline),IIF(@offline > @sewingoffline,DATEADD(DAY,-1,@sewingoffline),@offline)))
 	BEGIN
-		select @workhour = Hours from WorkHour where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
+		select @workhour = Hours from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
 		IF @workhour is not null
 			BEGIN
 				INSERT INTO @tempEveryData (FactoryID,SewingLineID,StyleID,SewingDate,OrderTypeID,SCIDelivery,BuyerDellivery,Category,CDCodeID)
@@ -260,7 +260,7 @@ BEGIN
 							BEGIN
 								--若為工廠假日則補上資料
 								SET @workhour = null
-								select @workhour = Hours from WorkHour where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
+								select @workhour = Hours from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
 								IF @workhour is null
 									BEGIN
 										INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine) VALUES (@factory,@sewingline,'Holiday',@sewingdate,@sewingdate);
@@ -276,7 +276,7 @@ BEGIN
 					BEGIN
 						--若為工廠假日則補上資料
 						SET @workhour = null
-						select @workhour = Hours from WorkHour where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
+						select @workhour = Hours from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
 						IF @workhour is null
 							BEGIN
 								INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine) VALUES (@factory,@sewingline,'Holiday',@sewingdate,@sewingdate);

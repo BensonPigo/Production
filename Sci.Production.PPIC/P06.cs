@@ -129,25 +129,25 @@ namespace Sci.Production.PPIC
             CBM.CBM,
             isnull(stuff(ClogLocationId.ClogLocationId,1,1,''),'') as ClogLocationId
 
-            from Orders o
-            left join Order_QtyShip oq on oq.Id = o.ID
-            left join country c on c.ID = o.Dest
-            left join PackingList_Detail pd on pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
+            from Orders o WITH (NOLOCK) 
+            left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID
+            left join country c WITH (NOLOCK) on c.ID = o.Dest
+            left join PackingList_Detail pd WITH (NOLOCK) on pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
             outer apply(
 	            select isnull(sum(pd.CTNQty),0) as CTNQty
-	            from PackingList_Detail pd
+	            from PackingList_Detail pd WITH (NOLOCK) 
 	            where pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
             )CTNQty
             outer apply(
 	            select isnull(sum(pd.CTNQty),0) as ClogQty
-	            from PackingList_Detail pd
+	            from PackingList_Detail pd WITH (NOLOCK) 
 	            where pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq 
 	            and pd.ReceiveDate is not null
             )ClogQty
             outer apply(
 	            select ClogLocationId = (
 		            select distinct concat('; ',pd.ClogLocationId)
-		            from PackingList_Detail pd
+		            from PackingList_Detail pd WITH (NOLOCK) 
 		            where pd.OrderID = oq.ID and pd.OrderShipmodeSeq = oq.seq
 		            for xml path('')
 	            )
@@ -155,8 +155,8 @@ namespace Sci.Production.PPIC
             outer apply(
 	            select Dimension = (
 		            select distinct concat('; ',L.CtnLength,'*',L.CtnWidth,'*',L.CtnHeight)
-		            from PackingList_Detail pd
-		            inner join LocalItem L on  pd.RefNo = L.RefNo 
+		            from PackingList_Detail pd WITH (NOLOCK) 
+		            inner join LocalItem L WITH (NOLOCK) on  pd.RefNo = L.RefNo 
 		            where pd.OrderID = oq.id and pd.OrderShipmodeSeq = oq.seq
 		            and pd.RefNo is not null and pd.RefNo <> ''
 		            for xml path('')
@@ -165,8 +165,8 @@ namespace Sci.Production.PPIC
             outer apply(
 	            select CBM=(
 		               Select top 1 isnull(p.CBM,0)
-		            from PackingList p
-					inner join PackingList_Detail pd on p.id=pd.id
+		            from PackingList p WITH (NOLOCK) 
+					inner join PackingList_Detail pd WITH (NOLOCK) on p.id=pd.id
 		            where p.OrderID = oq.ID and pd.OrderShipmodeSeq = oq.Seq
 	            )
             )CBM
@@ -179,7 +179,7 @@ namespace Sci.Production.PPIC
 				            min(ed.FormXReceived) as minR,
 				            count(*) as count_All,
 				            count(ed.FormXReceived) as count_NoNull
-			            from Export_Detail ed 
+			            from Export_Detail ed WITH (NOLOCK) 
 			            where ed.PoID = oq.Id
 			            GROUP BY Seq1
 		            ) as s

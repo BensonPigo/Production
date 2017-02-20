@@ -38,10 +38,10 @@ namespace Sci.Production.PPIC
             string sqlCmd = string.Format(@"select s.ID,s.SeasonID,s.BrandID,s.ProgramID,s.Model,s.Description,s.StyleName,
 s.CdCodeID,s.SizePage,s.GMTLT,s.CareCode,s.SizeUnit,s.CPU,s.Gender,s.CTNQty,
 IIF(s.Phase = '1','Sample',IIF(s.Phase = '2','Bulk','')) as Phase,
-isnull((select ID + '-' + Name from TPEPass1 where ID = IIF(s.Phase = '1',s.SampleSMR,IIF(s.Phase = '2',s.BulkSMR,''))),'') as SMR,
-isnull((select ID + '-' + Name from TPEPass1 where ID = IIF(s.Phase = '1',s.SampleMRHandle,IIF(s.Phase = '2',s.BulkMRHandle,''))),'') as Handle,
-isnull((select ID + '-' + Name from Pass1 where ID = s.LocalMR),'') as LocalMR,s.Processes,s.UKey
-from Style s
+isnull((select ID + '-' + Name from TPEPass1 WITH (NOLOCK) where ID = IIF(s.Phase = '1',s.SampleSMR,IIF(s.Phase = '2',s.BulkSMR,''))),'') as SMR,
+isnull((select ID + '-' + Name from TPEPass1 WITH (NOLOCK) where ID = IIF(s.Phase = '1',s.SampleMRHandle,IIF(s.Phase = '2',s.BulkMRHandle,''))),'') as Handle,
+isnull((select ID + '-' + Name from Pass1 WITH (NOLOCK) where ID = s.LocalMR),'') as LocalMR,s.Processes,s.UKey
+from Style s WITH (NOLOCK) 
 where 1 = 1 {0} {1} {2} {3} {4}", MyUtility.Check.Empty(style1) ? "" : "and s.ID >= '" + style1 + "'", MyUtility.Check.Empty(style2) ? "" : "and s.ID <= '" + style2 + "'"
                             , MyUtility.Check.Empty(brand) ? "" : "and s.BrandID = '" + brand + "'", MyUtility.Check.Empty(season) ? "" : "and s.SeasonID = '" + season + "'", MyUtility.Check.Empty(localMR) ? "" : "and s.LocalMR = '" + localMR + "'");
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
@@ -53,13 +53,13 @@ where 1 = 1 {0} {1} {2} {3} {4}", MyUtility.Check.Empty(style1) ? "" : "and s.ID
 
             //組Subprocess欄位名稱
             sqlCmd = @"select *,(ROW_NUMBER() OVER (ORDER BY a.Seq, a.ColumnSeq))+20 as rno from (
-SELECT ID,Seq,ArtworkUnit,SystemType,Seq+'U' as FakeID,RTRIM(ID)+' ('+ArtworkUnit+')' as ColumnN, '1' as ColumnSeq FROM ArtworkType
+SELECT ID,Seq,ArtworkUnit,SystemType,Seq+'U' as FakeID,RTRIM(ID)+' ('+ArtworkUnit+')' as ColumnN, '1' as ColumnSeq FROM ArtworkType WITH (NOLOCK) 
 WHERE ArtworkUnit <> ''
 union all
-SELECT ID,Seq,ArtworkUnit,SystemType,Seq+'TMS' as FakeID,RTRIM(ID)+' (TMS)' as ColumnN, '2' as ColumnSeq FROM ArtworkType
+SELECT ID,Seq,ArtworkUnit,SystemType,Seq+'TMS' as FakeID,RTRIM(ID)+' (TMS)' as ColumnN, '2' as ColumnSeq FROM ArtworkType WITH (NOLOCK) 
 WHERE IsTMS = 1
-union all
-SELECT ID,Seq,ArtworkUnit,SystemType,Seq+'Pri' as FakeID,RTRIM(ID)+' (Price)' as ColumnN, '3' as ColumnSeq FROM ArtworkType
+union all 
+SELECT ID,Seq,ArtworkUnit,SystemType,Seq+'Pri' as FakeID,RTRIM(ID)+' (Price)' as ColumnN, '3' as ColumnSeq FROM ArtworkType WITH (NOLOCK) 
 WHERE IsPrice = 1) a";
             result = DBProxy.Current.Select(null, sqlCmd, out subprocessColumnName);
             if (!result)
@@ -74,17 +74,17 @@ WHERE IsPrice = 1) a";
 as
 (
 select *,(ROW_NUMBER() OVER (ORDER BY a.Seq, a.ColumnSeq))+20 as rno from (
-SELECT ID,Seq,ArtworkUnit,SystemType,Seq+'U' as FakeID,RTRIM(ID)+' ('+ArtworkUnit+')' as ColumnN, '1' as ColumnSeq FROM ArtworkType
+SELECT ID,Seq,ArtworkUnit,SystemType,Seq+'U' as FakeID,RTRIM(ID)+' ('+ArtworkUnit+')' as ColumnN, '1' as ColumnSeq FROM ArtworkType WITH (NOLOCK) 
 WHERE ArtworkUnit <> ''
 union all
-SELECT ID,Seq,ArtworkUnit,SystemType,Seq+'TMS' as FakeID,RTRIM(ID)+' (TMS)' as ColumnN, '2' as ColumnSeq FROM ArtworkType
+SELECT ID,Seq,ArtworkUnit,SystemType,Seq+'TMS' as FakeID,RTRIM(ID)+' (TMS)' as ColumnN, '2' as ColumnSeq FROM ArtworkType WITH (NOLOCK) 
 WHERE IsTMS = 1
 union all
-SELECT ID,Seq,ArtworkUnit,SystemType,Seq+'Pri' as FakeID,RTRIM(ID)+' (Price)' as ColumnN, '3' as ColumnSeq FROM ArtworkType
+SELECT ID,Seq,ArtworkUnit,SystemType,Seq+'Pri' as FakeID,RTRIM(ID)+' (Price)' as ColumnN, '3' as ColumnSeq FROM ArtworkType WITH (NOLOCK) 
 WHERE IsPrice = 1) a
 )
 select st.StyleUkey,st.Qty,st.TMS,st.Price,a.rno as UnitRno, a1.rno as TMSRno, a2.rno as PriRno
-from Style_TmsCost st
+from Style_TmsCost st WITH (NOLOCK) 
 left join ATData a on a.FakeID = st.Seq+'U' 
 left join ATData a1 on a1.FakeID = st.Seq+'TMS'
 left join ATData a2 on a2.FakeID = st.Seq+'Pri'";

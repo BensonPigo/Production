@@ -113,14 +113,14 @@ namespace Sci.Production.PPIC
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"select sp.*,s.ID as StyleID,s.SeasonID,
-(select Name from Reason where ReasonTypeID = 'ProductionKits' and ID = sp.DOC) as ReasonName,
-isnull((sp.MRHandle+' '+(select Name+' #'+ExtNo from TPEPass1 where ID = sp.MRHandle)),sp.MRHandle) as MRName,
-isnull((sp.SMR+' '+(select Name+' #'+ExtNo from TPEPass1 where ID = sp.SMR)),sp.SMR) as SMRName,
-isnull((sp.PoHandle+' '+(select Name+' #'+ExtNo from TPEPass1 where ID = sp.PoHandle)),sp.PoHandle) as POHandleName,
-isnull((sp.POSMR+' '+(select Name+' #'+ExtNo from TPEPass1 where ID = sp.POSMR)),sp.POSMR) as POSMRName,
+(select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'ProductionKits' and ID = sp.DOC) as ReasonName,
+isnull((sp.MRHandle+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.MRHandle)),sp.MRHandle) as MRName,
+isnull((sp.SMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.SMR)),sp.SMR) as SMRName,
+isnull((sp.PoHandle+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.PoHandle)),sp.PoHandle) as POHandleName,
+isnull((sp.POSMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.POSMR)),sp.POSMR) as POSMRName,
 iif(sp.IsPF = 1,'Y','N') as CPF
-from Style_ProductionKits sp
-left join Style s on s.Ukey = sp.StyleUkey
+from Style_ProductionKits sp WITH (NOLOCK) 
+left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
 where sp.ReceiveDate is null
 and sp.MDivisionID = '{0}' ", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(textBox1.Text))

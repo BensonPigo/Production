@@ -14,7 +14,7 @@ namespace Sci.Production.PPIC
         public B07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            string sqlCommand = "select UseAPS from factory where ID = '" + Sci.Env.User.Factory + "'";
+            string sqlCommand = "select UseAPS from factory WITH (NOLOCK) where ID = '" + Sci.Env.User.Factory + "'";
             string useAPS = MyUtility.GetValue.Lookup(sqlCommand, null);
             if (useAPS.ToUpper() == "TRUE")
             {

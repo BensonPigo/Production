@@ -20,7 +20,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             InitializeComponent();
-            string sqlCommand = "select UseAPS from factory where ID = '" + Sci.Env.User.Factory + "'";
+            string sqlCommand = "select UseAPS from factory WITH (NOLOCK) where ID = '" + Sci.Env.User.Factory + "'";
             useAPS = MyUtility.GetValue.Lookup(sqlCommand, null);
             if (useAPS.ToUpper() == "FALSE")
             {
@@ -42,7 +42,7 @@ namespace Sci.Production.PPIC
         private void button1_Click(object sender, EventArgs e)
         {
             DataRow dr;
-            MyUtility.Check.Seek(string.Format("select SQLServerName,APSDatabaseName from MDivision where ID = '{0}'", Sci.Env.User.Keyword), out dr);
+            MyUtility.Check.Seek(string.Format("select SQLServerName,APSDatabaseName from MDivision WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Keyword), out dr);
             if (MyUtility.Check.Empty(dr["SQLServerName"]) || MyUtility.Check.Empty(dr["APSDatabaseName"]))
             {
                 MyUtility.Msg.WarningBox("Still not yet set APS Server data, Please contact Taipei MIS. Thank you.");
@@ -81,10 +81,10 @@ namespace Sci.Production.PPIC
             DualResult dresult;
 
             #region 先刪除不在SewingSchedule 內的Cutting 資料
-            string sqlcmd = string.Format(@"Delete Cutting from Cutting join 
-            (Select a.id from Cutting a where a.FactoryID = '{1}' and a.Finished = 0 and a.id not in 
-            (Select distinct c.cuttingsp from orders c, (SELECT orderid
-            FROM Sewingschedule b 
+            string sqlcmd = string.Format(@"Delete Cutting from Cutting WITH (NOLOCK) join 
+            (Select a.id from Cutting a WITH (NOLOCK) where a.FactoryID = '{1}' and a.Finished = 0 and a.id not in 
+            (Select distinct c.cuttingsp from orders c WITH (NOLOCK) , (SELECT orderid
+            FROM Sewingschedule b WITH (NOLOCK) 
             WHERE Inline <= '{0}' And offline is not null and offline !=''
             AND b.FactoryID = '{1}' group by b.orderid) d where c.id = d.orderid and c.FtyGroup = '{1}')) f
             on cutting.id = f.ID", sewdate, Sci.Env.User.Factory);
@@ -119,13 +119,13 @@ namespace Sci.Production.PPIC
             DataTable cuttingtb;
             string updsql = "";
             sqlcmd = string.Format(@"Select ord.cuttingsp,min(ord.sewinline) as inline ,max(ord.sewoffline) as offlinea 
-            from orders ord,
-            (Select * from (Select distinct c.cuttingsp from orders c, 
-                (SELECT orderid FROM Sewingschedule b 
+            from orders ord WITH (NOLOCK) ,
+            (Select * from (Select distinct c.cuttingsp from orders c WITH (NOLOCK) , 
+                (SELECT orderid FROM Sewingschedule b WITH (NOLOCK) 
                 WHERE Inline <= '{0}' And offline is not null and offline !=''
                AND b.FactoryID = '{1}' group by b.orderid) d 
             where c.id = d.orderid and c.IsForecast = 0 and c.LocalOrder = 0 ) e Where e.cuttingsp is not null 
-			and e.cuttingsp not in (Select id from cutting)) cut
+			and e.cuttingsp not in (Select id from cutting WITH (NOLOCK) )) cut
             where ord.cuttingsp = cut.CuttingSP and ord.FtyGroup = '{1}'
           group by ord.CuttingSp order by ord.CuttingSP", sewdate, Sci.Env.User.Factory);
             dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);
@@ -140,13 +140,13 @@ namespace Sci.Production.PPIC
                 updsql = updsql + string.Format("insert into cutting(ID,sewInline,sewoffline,mDivisionid,FactoryID,AddName,AddDate) Values('{0}','{1}','{2}','{3}','{4}','{5}', GetDate()); ", dr["cuttingsp"], sewin, sewof, Sci.Env.User.Keyword, Sci.Env.User.Factory, Sci.Env.User.UserID);
             }
             sqlcmd = string.Format(@"Select ord.cuttingsp,min(ord.sewinline) as inline ,max(ord.sewoffline) as offlinea 
-            from orders ord,
-            (Select * from (Select distinct c.cuttingsp from orders c, 
-                (SELECT orderid FROM Sewingschedule b 
+            from orders ord WITH (NOLOCK) ,
+            (Select * from (Select distinct c.cuttingsp from orders c WITH (NOLOCK) , 
+                (SELECT orderid FROM Sewingschedule b WITH (NOLOCK) 
                 WHERE Inline <= '{0}' And offline is not null and offline !=''
                AND b.FactoryID = '{1}' group by b.orderid) d 
             where c.id = d.orderid and c.IsForecast = 0 and c.LocalOrder = 0 ) e Where e.cuttingsp is not null 
-			and e.cuttingsp in (Select id from cutting)) cut
+			and e.cuttingsp in (Select id from cutting WITH (NOLOCK) )) cut
             where ord.cuttingsp = cut.CuttingSP and ord.FtyGroup = '{1}'
           group by ord.CuttingSp order by ord.CuttingSP", sewdate, Sci.Env.User.Factory);
             dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);

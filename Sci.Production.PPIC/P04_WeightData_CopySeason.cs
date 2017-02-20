@@ -24,9 +24,9 @@ namespace Sci.Production.PPIC
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item;
-            string sqlCmd = string.Format(@"select s.SeasonID from Style s
-where exists (select 1 from Style ss where ss.Ukey = {0} and ss.ID = s.ID and ss.BrandID = s.BrandID and ss.SeasonID <> s.SeasonID)
-and exists (select 1 from Style_WeightData sw where sw.StyleUkey = s.Ukey)", styleUkey);
+            string sqlCmd = string.Format(@"select s.SeasonID from Style s WITH (NOLOCK) 
+where exists (select 1 from Style ss WITH (NOLOCK) where ss.Ukey = {0} and ss.ID = s.ID and ss.BrandID = s.BrandID and ss.SeasonID <> s.SeasonID)
+and exists (select 1 from Style_WeightData sw WITH (NOLOCK) where sw.StyleUkey = s.Ukey)", styleUkey);
             item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
@@ -45,9 +45,9 @@ and exists (select 1 from Style_WeightData sw where sw.StyleUkey = s.Ukey)", sty
                 cmds.Add(sp1);
                 cmds.Add(sp2);
                 DataTable StyleData;
-                string sqlCmd = @"select s.SeasonID from Style s
-where exists (select 1 from Style ss where ss.Ukey = @styleukey and ss.ID = s.ID and ss.BrandID = s.BrandID)
-and exists (select 1 from Style_WeightData sw where sw.StyleUkey = s.Ukey)
+                string sqlCmd = @"select s.SeasonID from Style s WITH (NOLOCK) 
+where exists (select 1 from Style ss WITH (NOLOCK) where ss.Ukey = @styleukey and ss.ID = s.ID and ss.BrandID = s.BrandID)
+and exists (select 1 from Style_WeightData sw WITH (NOLOCK) where sw.StyleUkey = s.Ukey)
 and s.SeasonID = @seasonid";
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out StyleData);
 

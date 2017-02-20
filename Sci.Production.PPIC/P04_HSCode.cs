@@ -24,8 +24,8 @@ namespace Sci.Production.PPIC
         {
             //撈Grid資料
             string sqlCmd = string.Format(@"select sh.*,sh.CountryID + '-' + isnull(c.Alias,'') as Country, '' as CreateBy,'' as EditBy
-from Style_HSCode sh
-left join Country c on sh.CountryID = c.ID
+from Style_HSCode sh WITH (NOLOCK) 
+left join Country c WITH (NOLOCK) on sh.CountryID = c.ID
 where sh.StyleUkey = {0}
 order by sh.Continent,sh.CountryID,sh.Article", styleUkey);
 

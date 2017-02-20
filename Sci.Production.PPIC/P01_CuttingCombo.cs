@@ -24,7 +24,7 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
             DataTable GridData;
-            string sqlCmd = string.Format("select CuttingSP,ID from Orders where POID = '{0}'", poID);
+            string sqlCmd = string.Format("select CuttingSP,ID from Orders WITH (NOLOCK) where POID = '{0}'", poID);
             DualResult result = DBProxy.Current.Select(null,sqlCmd, out GridData);
             if (!result)
             {

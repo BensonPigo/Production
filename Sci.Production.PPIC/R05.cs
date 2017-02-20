@@ -23,10 +23,10 @@ namespace Sci.Production.PPIC
             MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "Fabric,Accessory");
             comboBox1.SelectedIndex = 0;
             DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox2, 1, mDivision);
             comboBox2.Text = Sci.Env.User.Keyword;
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
             comboBox3.Text = Sci.Env.User.Factory;
         }
@@ -60,15 +60,15 @@ ld.RequestQty,isnull(mpd.InQty,0)+isnull(mpd2.InQty ,0) as InQty,isnull(psd.NETQ
 isnull(psd.POUnit,'') as POUnit,isnull(psd.StockUnit,'') as StockUnit,isnull(psd2.POUnit,'') as INVPOUnit,
 isnull(psd2.StockUnit,'') as INVStockUnit,
 sum(isnull(i.Qty,0)) as StockQty1,sum(isnull(i2.Qty,0)) as StockQty2
-from Lack l
-inner join Lack_Detail ld on ld.ID = l.ID
-left join PO_Supp_Detail psd on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
-left join Fabric f on f.SCIRefno = psd.SCIRefno
-left join MDivisionPoDetail mpd on mpd.MDivisionId = l.MDivisionID and mpd.POID = l.POID and mpd.Seq1 = ld.Seq1 and mpd.Seq2 = ld.Seq2
-left join PO_Supp_Detail psd2 on psd2.ID = l.POID and psd2.SEQ1 = psd.OutputSeq1 and psd2.SEQ2 = psd.OutputSeq2
-left join MDivisionPoDetail mpd2 on mpd2.MDivisionId = l.MDivisionID and mpd2.POID = l.POID and mpd2.Seq1 = psd.OutputSeq1 and mpd2.Seq2 = psd.OutputSeq2
-left join Invtrans i on i.PoID = l.POID and i.Seq1 = ld.Seq1 and i.Seq2 = ld.Seq2 and i.Type = 1
-left join Invtrans i2 on i2.InventoryPOID = l.POID and i2.InventorySeq1 = ld.Seq1 and i2.InventorySeq2 = ld.Seq2 and i2.Type = 4
+from Lack l WITH (NOLOCK) 
+inner join Lack_Detail ld WITH (NOLOCK) on ld.ID = l.ID
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join MDivisionPoDetail mpd WITH (NOLOCK) on mpd.MDivisionId = l.MDivisionID and mpd.POID = l.POID and mpd.Seq1 = ld.Seq1 and mpd.Seq2 = ld.Seq2
+left join PO_Supp_Detail psd2 WITH (NOLOCK) on psd2.ID = l.POID and psd2.SEQ1 = psd.OutputSeq1 and psd2.SEQ2 = psd.OutputSeq2
+left join MDivisionPoDetail mpd2 WITH (NOLOCK) on mpd2.MDivisionId = l.MDivisionID and mpd2.POID = l.POID and mpd2.Seq1 = psd.OutputSeq1 and mpd2.Seq2 = psd.OutputSeq2
+left join Invtrans i WITH (NOLOCK) on i.PoID = l.POID and i.Seq1 = ld.Seq1 and i.Seq2 = ld.Seq2 and i.Type = 1
+left join Invtrans i2 WITH (NOLOCK) on i2.InventoryPOID = l.POID and i2.InventorySeq1 = ld.Seq1 and i2.InventorySeq2 = ld.Seq2 and i2.Type = 4
 where l.ApvDate between '{0}' and '{1}'
 and l.Type = 'R'", Convert.ToDateTime(apvDate1).ToString("d"), Convert.ToDateTime(apvDate2).ToString("d")));
 

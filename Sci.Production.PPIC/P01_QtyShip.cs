@@ -42,16 +42,16 @@ namespace Sci.Production.PPIC
                 .Text("EditName", header: "Edit by", width: Widths.AnsiChars(10))
                 .DateTime("EditDate", header: "Edit at", width: Widths.AnsiChars(18));
 
-            string sqlCmd = string.Format(@"select Seq,ShipmodeID,BuyerDelivery,Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip 
+            string sqlCmd = string.Format(@"select Seq,ShipmodeID,BuyerDelivery,Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip WITH (NOLOCK) 
             where ID = '{0}'
             order by Seq", orderID);
             DualResult result = DBProxy.Current.Select(null,sqlCmd,out grid1Data);
-            sqlCmd = string.Format(@"select Seq,ShipmodeID,BuyerDelivery,OriQty as Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip 
+            sqlCmd = string.Format(@"select Seq,ShipmodeID,BuyerDelivery,OriQty as Qty,AddName,AddDate,EditName,EditDate from Order_QtyShip WITH (NOLOCK) 
             where ID = '{0}'
             order by Seq", orderID);
             result = DBProxy.Current.Select(null, sqlCmd, out grid1Data_OriQty);
 
-            sqlCmd = string.Format("select * from Order_SizeCode where ID = '{0}' order by Seq", poID);
+            sqlCmd = string.Format("select * from Order_SizeCode WITH (NOLOCK) where ID = '{0}' order by Seq", poID);
             DataTable headerData;
             result = DBProxy.Current.Select(null, sqlCmd, out headerData);
             StringBuilder pivot = new StringBuilder();
@@ -77,8 +77,8 @@ namespace Sci.Production.PPIC
             sqlCmd = string.Format(@"with tmpData
             as (
             select oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty,oa.Seq as ASeq
-            from Order_QtyShip_Detail oqd
-            left join Order_Article oa on oa.ID = oqd.ID and oa.Article = oqd.Article
+            from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+            left join Order_Article oa WITH (NOLOCK) on oa.ID = oqd.ID and oa.Article = oqd.Article
             where oqd.ID = '{0}'
             ),
             SubTotal
@@ -109,8 +109,8 @@ namespace Sci.Production.PPIC
             sqlCmd = string.Format(@"with tmpData
             as (
             select oqd.Seq,oqd.Article,oqd.SizeCode,oqd.OriQty,oa.Seq as ASeq
-            from Order_QtyShip_Detail oqd
-            left join Order_Article oa on oa.ID = oqd.ID and oa.Article = oqd.Article
+            from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+            left join Order_Article oa WITH (NOLOCK) on oa.ID = oqd.ID and oa.Article = oqd.Article
             where oqd.ID = '{0}'
             ),
             SubTotal

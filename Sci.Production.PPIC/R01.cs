@@ -22,9 +22,9 @@ namespace Sci.Production.PPIC
         {
             InitializeComponent();
             DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
             comboBox1.Text = Sci.Env.User.Keyword;
             
@@ -46,7 +46,7 @@ namespace Sci.Production.PPIC
 
         private string SelectSewingLine(string line)
         {
-            string sql = string.Format("Select Distinct ID From SewingLine{0}", MyUtility.Check.Empty(comboBox2.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboBox2.Text));
+            string sql = string.Format("Select Distinct ID From SewingLine{0} WITH (NOLOCK) ", MyUtility.Check.Empty(comboBox2.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboBox2.Text));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "3", line, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
@@ -85,7 +85,7 @@ namespace Sci.Production.PPIC
             sqlCmd.Append(@"with tmpAllArtwork
 as (
 select ot.ID,at.Abbreviation,ot.Qty,ot.TMS,at.Classify
-from Order_TmsCost ot, ArtworkType at
+from Order_TmsCost ot WITH (NOLOCK) , ArtworkType at WITH (NOLOCK) 
 where ot.ArtworkTypeID = at.ID
 and (ot.Price > 0 or at.Classify = 'O')
 and (at.Classify = 'S' or at.IsSubprocess = 1)
@@ -108,23 +108,23 @@ StandardOutput,MaxEff,KPILETA,PFRemark,MTLETA,MTLExport,Inline,
 Offline,SciDelivery,BuyerDelivery,CPU,VasShas,ShipModeList,Alias,ArtWork,IIF(Remark = '','',SUBSTRING(Remark,1,LEN(Remark)-1)) as Remark
 from (
 select s.SewingLineID,s.MDivisionID,s.FactoryID,s.OrderID,s.ComboType,
-(select CONCAT(Article,',') from (select distinct Article from SewingSchedule_Detail sd where sd.ID = s.ID) a for xml path('')) as Article,
+(select CONCAT(Article,',') from (select distinct Article from SewingSchedule_Detail sd WITH (NOLOCK) where sd.ID = s.ID) a for xml path('')) as Article,
 o.CdCodeID,o.StyleID,o.Qty,s.AlloQty,
-isnull((select sum(Qty) from CuttingOutput_WIP c where c.OrderID = s.OrderID and c.Article in (select Article from SewingSchedule_Detail sd where sd.ID = s.ID)),0) as CutQty,
-isnull((select sum(sod.QAQty) from SewingOutput so, SewingOutput_Detail sod where so.ID = sod.ID and so.SewingLineID = s.SewingLineID and sod.OrderId = s.OrderID and sod.ComboType = s.ComboType),0) as SewingQty,
-isnull((select sum(pd.ShipQty) from PackingList_Detail pd where pd.OrderID = s.OrderID and pd.ReceiveDate is not null),'') as ClogQty,
+isnull((select sum(Qty) from CuttingOutput_WIP c WITH (NOLOCK) where c.OrderID = s.OrderID and c.Article in (select Article from SewingSchedule_Detail sd WITH (NOLOCK) where sd.ID = s.ID)),0) as CutQty,
+isnull((select sum(sod.QAQty) from SewingOutput so WITH (NOLOCK) , SewingOutput_Detail sod WITH (NOLOCK) where so.ID = sod.ID and so.SewingLineID = s.SewingLineID and sod.OrderId = s.OrderID and sod.ComboType = s.ComboType),0) as SewingQty,
+isnull((select sum(pd.ShipQty) from PackingList_Detail pd WITH (NOLOCK) where pd.OrderID = s.OrderID and pd.ReceiveDate is not null),'') as ClogQty,
 o.InspDate,s.StandardOutput,
-(select IIF(ctn = 0,0,Hours/ctn) from (Select isnull(sum(w.Hours),0) as Hours, Count(w.Date) as ctn from WorkHour w where FactoryID = s.FactoryID and w.SewingLineID = s.SewingLineID and w.Date between Convert(Date,s.Inline) and Convert(Date,s.Offline) and w.Hours > 0) a) as WorkHour,
+(select IIF(ctn = 0,0,Hours/ctn) from (Select isnull(sum(w.Hours),0) as Hours, Count(w.Date) as ctn from WorkHour w WITH (NOLOCK) where FactoryID = s.FactoryID and w.SewingLineID = s.SewingLineID and w.Date between Convert(Date,s.Inline) and Convert(Date,s.Offline) and w.Hours > 0) a) as WorkHour,
 s.MaxEff,o.KPILETA,
-isnull((Select top 1 op.Remark from Order_PFHis op where op.ID = s.OrderID and op.AddDate = (Select Max(AddDate) from Order_PFHis where ID = s.OrderID)),'') as PFRemark,
+isnull((Select top 1 op.Remark from Order_PFHis op WITH (NOLOCK) where op.ID = s.OrderID and op.AddDate = (Select Max(AddDate) from Order_PFHis WITH (NOLOCK) where ID = s.OrderID)),'') as PFRemark,
 o.MTLETA,o.MTLExport,s.Inline,s.Offline,o.SciDelivery,o.BuyerDelivery,
 o.CPU*o.CPUFactor*(isnull(sl.Rate,100)/100) as CPU,IIF(o.VasShas=1,'Y','') as VasShas,o.ShipModeList,isnull(c.Alias,'') as Alias,isnull(SUBSTRING(ta.Artwork,1,LEN(ta.Artwork)-1),'') as ArtWork,
-isnull((select CONCAT(Remark,', ') from (select s1.SewingLineID+'('+s1.ComboType+'):'+CONVERT(varchar,s1.AlloQty) as Remark from SewingSchedule s1 where s1.OrderID = s.OrderID and s1.ID != s.ID) a for xml path('')),'') as Remark
-from SewingSchedule s
-inner join Orders o on o.ID = s.OrderID
-left join Style_Location sl on sl.StyleUkey = o.StyleUkey
+isnull((select CONCAT(Remark,', ') from (select s1.SewingLineID+'('+s1.ComboType+'):'+CONVERT(varchar,s1.AlloQty) as Remark from SewingSchedule s1 WITH (NOLOCK) where s1.OrderID = s.OrderID and s1.ID != s.ID) a for xml path('')),'') as Remark
+from SewingSchedule s WITH (NOLOCK) 
+inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
+left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey
 left join tmpOrderArtwork ta on ta.ID = s.OrderID
-left join Country c on o.Dest = c.ID
+left join Country c WITH (NOLOCK) on o.Dest = c.ID
 where 1 = 1
 ");
             if (!MyUtility.Check.Empty(mDivision))

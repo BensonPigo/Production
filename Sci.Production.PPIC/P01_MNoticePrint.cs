@@ -57,7 +57,7 @@ namespace Sci.Production.PPIC
             if (radioButton_MNotice.Checked == true)
             {
 
-                string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
+                string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
 
                 DataRow drvar = GetTitleDataByCustCD(poid, _id);
 
@@ -88,7 +88,7 @@ namespace Sci.Production.PPIC
                 sxr.dicDatas.Add(sxr._v + "ExtraAction", ra);
 
                 System.Data.DataTable dt;
-                DualResult getIds = DBProxy.Current.Select("", "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY from Orders where poid = @poid", new List<SqlParameter> { new SqlParameter("poid", poid) }, out dt);
+                DualResult getIds = DBProxy.Current.Select("", "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY from Orders WITH (NOLOCK) where poid = @poid", new List<SqlParameter> { new SqlParameter("poid", poid) }, out dt);
                 if (!getIds && dt.Rows.Count <= 0)
                 {
                     MyUtility.Msg.ErrorBox(getIds.ToString(), "error");
@@ -141,7 +141,7 @@ namespace Sci.Production.PPIC
              //M/Notict (Combo by CustCD)
             else
             {
-                string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
+                string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
 
                 System.Data.DataTable dtCustCD = GetDtByCustCD(poid);
 
@@ -258,7 +258,7 @@ namespace Sci.Production.PPIC
             System.Data.DataTable dt;
             DualResult res = DBProxy.Current.Select("", @"
 SELECT CustCDID,ID FROM (
-	SELECT CustCDID,ID,ROW_NUMBER()OVER(partition by CustCDID ORDER BY ID) as idx FROM Orders WHERE POID = @POID
+	SELECT CustCDID,ID,ROW_NUMBER()OVER(partition by CustCDID ORDER BY ID) as idx FROM Orders WITH (NOLOCK) WHERE POID = @POID
 ) C WHERE idx = 1
 order by ID
 ", new List<SqlParameter> { new SqlParameter("@POID", POID) }, out dt);
@@ -303,15 +303,15 @@ order by ID
             {
                 cmd = @"
 
-SELECT MAKER=max(FactoryID),sty=max(StyleID)+'-'+max(SeasonID),QTY=sum(QTY),'SPNO'=RTRIM(POID)+b.spno FROM MNOrder a
-OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WHERE POID = @poid AND CustCDID = (select CustCDID from MNOrder where ID = @ID) 
+SELECT MAKER=max(FactoryID),sty=max(StyleID)+'-'+max(SeasonID),QTY=sum(QTY),'SPNO'=RTRIM(POID)+b.spno FROM MNOrder a WITH (NOLOCK) 
+OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WITH (NOLOCK) WHERE POID = @poid AND CustCDID = (select CustCDID from MNOrder WITH (NOLOCK) where ID = @ID) 
 	order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) b
-where POID = @poid and CustCDID = (select CustCDID from MNOrder where ID = @ID) group by POID,b.spno";
+where POID = @poid and CustCDID = (select CustCDID from MNOrder WITH (NOLOCK) where ID = @ID) group by POID,b.spno";
             }
             else
             {
-                cmd = @"SELECT MAKER=max(FactoryID),sty=max(StyleID)+'-'+max(SeasonID),QTY=sum(QTY),'SPNO'=RTRIM(POID)+b.spno FROM MNOrder a
-OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WHERE POID = @poid
+                cmd = @"SELECT MAKER=max(FactoryID),sty=max(StyleID)+'-'+max(SeasonID),QTY=sum(QTY),'SPNO'=RTRIM(POID)+b.spno FROM MNOrder a WITH (NOLOCK) 
+OUTER APPLY(SELECT STUFF((SELECT '/'+REPLACE(ID,@poid,'') FROM MNOrder WITH (NOLOCK) WHERE POID = @poid
 	order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) b
 where POID = @poid group by POID,b.spno";
             }

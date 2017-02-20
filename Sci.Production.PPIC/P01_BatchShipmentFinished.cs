@@ -29,7 +29,7 @@ namespace Sci.Production.PPIC
 as
 (
 select distinct POID
-from Orders o
+from Orders o WITH (NOLOCK) 
 where o.Finished = 0 
 and o.MDivisionID = '{0}'
 and (o.Junk = 1 or o.PulloutComplete = 1)
@@ -39,7 +39,7 @@ canNotClose
 as
 (
 select distinct POID
-from Orders o
+from Orders o WITH (NOLOCK) 
 where o.Finished = 0 
 and o.MDivisionID = '{0}'
 and o.PulloutComplete = 0
@@ -50,9 +50,9 @@ select 1 as Selected,a.POID,isnull(o.StyleID,'') as StyleID,isnull(b.BuyerID,'')
 from (select * from wantToClose
 	  except
 	  select * from canNotClose) a
-left join Orders o on a.POID = o.ID
-left join Brand b on o.BrandID = b.ID
-left join Pass1 p on p.ID = o.MCHandle", Sci.Env.User.Keyword);
+left join Orders o WITH (NOLOCK) on a.POID = o.ID
+left join Brand b WITH (NOLOCK) on o.BrandID = b.ID
+left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out GridData);
             if (!result)
             {
@@ -102,7 +102,7 @@ left join Pass1 p on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item;
-            string sqlCmd = "select ID,SeasonID,Description,BrandID from Style where Junk = 0 order by ID";
+            string sqlCmd = "select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 order by ID";
             item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,10,50,8", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
@@ -112,7 +112,7 @@ left join Pass1 p on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         //Buyer
         private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = "SELECT Id,NameCH,NameEN FROM Brand WHERE Junk=0  ORDER BY Id";
+            string sqlCmd = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,50,50", this.Text, false, ",");
 
             DialogResult result = item.ShowDialog();

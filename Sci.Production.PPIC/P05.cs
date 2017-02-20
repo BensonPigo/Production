@@ -200,18 +200,18 @@ as
 (select oq.Id,oq.Seq,o.StyleID,oq.SDPDate,o.Qty as OrderQty,oq.Qty,
  (select isnull(MIN(a.AlloQty),0)
   from (select sl.Location,isnull(SUM(ss.AlloQty),0) as AlloQty
-        from Style_Location sl
-	    left join Orders o on o.ID = oq.ID and o.StyleUKey = sl.StyleUkey
-	    left join SewingSchedule ss on ss.OrderID = o.ID and ss.ComboType = sl.Location
+        from Style_Location sl WITH (NOLOCK) 
+	    left join Orders o WITH (NOLOCK) on o.ID = oq.ID and o.StyleUKey = sl.StyleUkey
+	    left join SewingSchedule ss WITH (NOLOCK) on ss.OrderID = o.ID and ss.ComboType = sl.Location
 	    where sl.StyleUkey = o.StyleUkey
 	    group by sl.Location) a) as AlloQty,o.KPILETA,o.MTLETA,o.MTLExport,o.SewETA,o.PackETA,
  o.SewInLine,o.SewOffLine,oq.EstPulloutDate,oq.BuyerDelivery,o.SewLine,o.SciDelivery,oq.ProdRemark,
  iif(oq.ReadyDate is null,iif(o.SewOffLine is null, null,(iif(DATEPART(WEEKDAY,DATEADD(day,s.ReadyDay,o.SewOffLine)) <= s.ReadyDay,DATEADD(day,s.ReadyDay+1,o.SewOffLine),DATEADD(day,s.ReadyDay,o.SewOffLine)))),oq.ReadyDate) as ReadyDate,
  iif(p.MTLDelay is null,'','Y') as MTLDelay
- from Order_QtyShip oq
- left join Orders o on o.ID = oq.Id
- left join PO p on p.ID = o.POID
- left join System s on 1=1
+ from Order_QtyShip oq WITH (NOLOCK) 
+ left join Orders o WITH (NOLOCK) on o.ID = oq.Id
+ left join PO p WITH (NOLOCK) on p.ID = o.POID
+ left join System s WITH (NOLOCK) on 1=1
  where (o.Category = 'B' or o.Category = 'S')
  and o.PulloutComplete = 0
  and oq.Qty > 0

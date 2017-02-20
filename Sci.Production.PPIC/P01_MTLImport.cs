@@ -31,7 +31,7 @@ set @POID = '{0}';
 set @OrderID = '{1}';
 with ExportSeq1
 as 
-(select distinct ID,Seq1 from Export_Detail where PoID = @POID)
+(select distinct ID,Seq1 from Export_Detail WITH (NOLOCK) where PoID = @POID)
 ,
 SeqSum
 as
@@ -40,7 +40,7 @@ as
 ExportData
 as
 (select distinct 'Import Schedule' as Type, e.ID,e.Eta,e.WhseArrival,e.Consignee,e.ShipMark,e.Vessel,e.CYCFS
- from Export e, Export_Detail ed
+ from Export e WITH (NOLOCK) , Export_Detail ed WITH (NOLOCK) 
  where e.ID = ed.ID
  and ed.PoID = @POID)
 ,
@@ -52,7 +52,7 @@ as
 ,
 ReceiveSeq1
 as 
-(select distinct ID,Seq1 from Receiving_Detail where PoID = @POID)
+(select distinct ID,Seq1 from Receiving_Detail WITH (NOLOCK) where PoID = @POID)
 ,
 RecSeqSum
 as
@@ -61,7 +61,7 @@ as
 ReceiveData
 as
 (select distinct 'Material Receiving' as Type, r.ID,null as ETA,r.WhseArrival,'' as Consignee,'' as ShipMark,'' as Vessel,'' as CYCFS
- from Receiving r, Receiving_Detail rd
+ from Receiving r WITH (NOLOCK) , Receiving_Detail rd WITH (NOLOCK) 
  where r.ID = rd.ID
  and rd.PoID = @POID
  and r.Type = 'B')
@@ -75,7 +75,7 @@ as
 tmpLocalReceiving
 as
 (select distinct 'Local Purchase  Receiving' as Type, l.Id, null as ETA, l.IssueDate as WhseArrival, '' as Consignee,'' as ShipMark,'' as Vessel,'' as CYCFS, '' as Seq
- from LocalReceiving l, LocalReceiving_Detail ld
+ from LocalReceiving l WITH (NOLOCK) , LocalReceiving_Detail ld WITH (NOLOCK) 
  where l.Id = ld.Id
  and ld.OrderId = @OrderID
 )

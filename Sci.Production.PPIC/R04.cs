@@ -24,9 +24,9 @@ namespace Sci.Production.PPIC
 
             MyUtility.Tool.SetupCombox(comboBox1,1, 1, "Fabric,Accessory");
             DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox2, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
             comboBox1.SelectedIndex = 0;
             comboBox2.Text = Sci.Env.User.Keyword;
@@ -82,14 +82,14 @@ isnull(psd.Refno,'') as Refno,l.ApvDate,ld.RejectQty,ld.RequestQty,ld.IssueQty,
 IIF(l.Status= 'Received',l.EditDate,null) as FinishedDate,IIF(l.Type='R','Replacement','Lacking') as Type,
 isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),'') as Description,
 IIF(l.Status = 'Received',IIF(DATEDIFF(ss,l.ApvDate,l.EditDate) <= 10800,'Y','N'),'N') as OnTime
-from Lack l
-inner join Lack_Detail ld on l.ID = ld.ID
-left join SewingLine s on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID
-left join Orders o on o.ID = l.OrderID
-left join PO_Supp_Detail psd on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
-left join Color c on c.BrandId = o.BrandID and c.ID = psd.ColorID
-left join PPICReason pr on pr.Type = 'FL' and ld.PPICReasonID = pr.ID
-left join PPICReason pr1 on pr1.Type = 'AL' and ld.PPICReasonID = pr1.ID
+from Lack l WITH (NOLOCK) 
+inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
+left join SewingLine s WITH (NOLOCK) on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID
+left join Orders o WITH (NOLOCK) on o.ID = l.OrderID
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
+left join Color c WITH (NOLOCK) on c.BrandId = o.BrandID and c.ID = psd.ColorID
+left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and ld.PPICReasonID = pr.ID
+left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and ld.PPICReasonID = pr1.ID
 {0} 
 order by l.MDivisionID,l.FactoryID,l.ID", sqlCondition.ToString()));
 
@@ -106,10 +106,10 @@ order by l.MDivisionID,l.FactoryID,l.ID", sqlCondition.ToString()));
                 sqlCmd.Clear();
                 sqlCmd.Append(string.Format(@"select distinct ld.PPICReasonID,
 isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),'') as Description
-from Lack l
-inner join Lack_Detail ld on l.ID = ld.ID
-left join PPICReason pr on pr.Type = 'FL' and ld.PPICReasonID = pr.ID
-left join PPICReason pr1 on pr1.Type = 'AL' and ld.PPICReasonID = pr1.ID
+from Lack l WITH (NOLOCK) 
+inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
+left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and ld.PPICReasonID = pr.ID
+left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and ld.PPICReasonID = pr1.ID
 {0}
 order by PPICReasonID,Description", sqlCondition.ToString()));
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out reasonData);
@@ -123,10 +123,10 @@ order by PPICReasonID,Description", sqlCondition.ToString()));
 from (
 select distinct ld.PPICReasonID+
 isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),'') as Description
-from Lack l
-inner join Lack_Detail ld on l.ID = ld.ID
-left join PPICReason pr on pr.Type = 'FL' and ld.PPICReasonID = pr.ID
-left join PPICReason pr1 on pr1.Type = 'AL' and ld.PPICReasonID = pr1.ID
+from Lack l WITH (NOLOCK) 
+inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
+left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and ld.PPICReasonID = pr.ID
+left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and ld.PPICReasonID = pr1.ID
 {0}) a
 order by Description
 for xml path('')", sqlCondition.ToString()));
@@ -137,10 +137,10 @@ as (
 select l.MDivisionID,l.FactoryID,ld.PPICReasonID+
 isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),'') as Description,
 IIF(l.FabricType = 'F',sum(ld.RejectQty),sum(ld.RequestQty)) as RequestQty
-from Lack l
-inner join Lack_Detail ld on l.ID = ld.ID
-left join PPICReason pr on pr.Type = 'FL' and ld.PPICReasonID = pr.ID
-left join PPICReason pr1 on pr1.Type = 'AL' and ld.PPICReasonID = pr1.ID
+from Lack l WITH (NOLOCK) 
+inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
+left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and ld.PPICReasonID = pr.ID
+left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and ld.PPICReasonID = pr1.ID
 {0}
 group by l.MDivisionID,l.FactoryID,ld.PPICReasonID+isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),''),l.FabricType)
 select  distinct *
@@ -156,7 +156,7 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
                     return failResult;
                 }
 
-                totalFactory = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("select COUNT(distinct FactoryID) from Lack l {0}", sqlCondition.ToString())));
+                totalFactory = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("select COUNT(distinct FactoryID) from Lack l WITH (NOLOCK) {0}", sqlCondition.ToString())));
             }
             return Result.True;
         }

@@ -28,7 +28,7 @@ namespace Sci.Production.PPIC
             DataTable GridData;
             string sqlCmd = string.Format(@"select iif(a.POType = 'O','Subcon','Inhouse') as Type,a.ID,a.IssueDate,l.Abb,a.ArtworkTypeID,
 ad.ArtworkId,ad.PatternCode,ad.PoQty,ad.Farmout,ad.Farmin,ad.ApQty
-from ArtworkPO a, ArtworkPO_Detail ad, LocalSupp l
+from ArtworkPO a WITH (NOLOCK) , ArtworkPO_Detail ad WITH (NOLOCK) , LocalSupp l WITH (NOLOCK) 
 where a.ID = ad.ID
 and a.LocalSuppID = l.ID
 and ad.OrderID = '{0}'", orderID);

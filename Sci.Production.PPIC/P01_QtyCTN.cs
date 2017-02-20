@@ -24,7 +24,7 @@ namespace Sci.Production.PPIC
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string sqlCmd = string.Format("select * from Order_SizeCode where ID = '{0}' order by Seq",MyUtility.Convert.GetString(masterData["POID"]));
+            string sqlCmd = string.Format("select * from Order_SizeCode WITH (NOLOCK) where ID = '{0}' order by Seq", MyUtility.Convert.GetString(masterData["POID"]));
             DataTable headerData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out headerData);
             StringBuilder pivot = new StringBuilder();
@@ -48,8 +48,8 @@ namespace Sci.Production.PPIC
             sqlCmd = string.Format(@"with tmpData
 as (
 select oq.Article,oq.SizeCode,oq.Qty,oa.Seq
-from Order_QtyCTN oq
-left join Order_Article oa on oa.ID = oq.ID and oa.Article = oq.Article
+from Order_QtyCTN oq WITH (NOLOCK) 
+left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
 where oq.ID = '{0}'
 )
 

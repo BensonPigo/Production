@@ -30,7 +30,7 @@ namespace Sci.Production.PPIC
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select rd.*,(left(rd.Seq1+' ',3)+rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as DescriptionDetail,
-isnull((select top(1) ExportId from Receiving where InvNo = rd.INVNo),'') as ExportID,
+isnull((select top(1) ExportId from Receiving WITH (NOLOCK) where InvNo = rd.INVNo),'') as ExportID,
 CASE rd.Responsibility
 WHEN 'M' THEN N'Mill'
 WHEN 'S' THEN N'Subcon in Local'
@@ -38,10 +38,10 @@ WHEN 'F' THEN N'Factory'
 WHEN 'T' THEN N'SCI dep. (purchase / s. mrs / sample room)'
 ELSE N''
 END as CategoryName
-from ReplacementReport r
-inner join ReplacementReport_Detail rd on rd.ID = r.ID
-left join PO_Supp_Detail psd on psd.ID = r.POID and psd.SEQ1 = rd.Seq1 and psd.SEQ2 = rd.Seq2
-left join Fabric f on f.SCIRefno = psd.SCIRefno
+from ReplacementReport r WITH (NOLOCK) 
+inner join ReplacementReport_Detail rd WITH (NOLOCK) on rd.ID = r.ID
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = r.POID and psd.SEQ1 = rd.Seq1 and psd.SEQ2 = rd.Seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 where r.ID = '{0}'
 order by rd.Seq1,rd.Seq2", masterID);
 
@@ -70,7 +70,7 @@ order by rd.Seq1,rd.Seq2", masterID);
             displayBox7.Value = MyUtility.Check.Empty(CurrentMaintain["TPECFMDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPECFMDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
             displayBox2.Value = MyUtility.Check.Empty(CurrentMaintain["TPEEditDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             DataRow POData;
-            if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out POData))
+            if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out POData))
             {
                 txttpeuser1.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
                 txttpeuser2.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POHandle"]);
@@ -226,7 +226,7 @@ order by rd.Seq1,rd.Seq2", masterID);
         {
             List<SqlParameter> cmds = new List<SqlParameter>();
             cmds.Add(new SqlParameter("@ID", CurrentMaintain["ID"].ToString()));
-            string sqlcmd = "Select r.ApvDate From ReplacementReport r where r.ID = @ID";
+            string sqlcmd = "Select r.ApvDate From ReplacementReport r WITH (NOLOCK) where r.ID = @ID";
             DataTable ApvDate;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, cmds, out ApvDate);
             if (!result)
@@ -274,11 +274,11 @@ order by rd.Seq1,rd.Seq2", masterID);
                 }
             }
 
-            string attention = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 where ID = '{0}'", MyUtility.Convert.GetString(this.txttpeuser5.DisplayBox1Binding)));
-            string apply = MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ApplyName"])));
-            string approve = MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ApvName"])));
-            string style = MyUtility.GetValue.Lookup(string.Format("select top 1 StyleID from Orders where POID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])));
-            string confirm = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["TPECFMName"])));
+            string attention = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.txttpeuser5.DisplayBox1Binding)));
+            string apply = MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ApplyName"])));
+            string approve = MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ApvName"])));
+            string style = MyUtility.GetValue.Lookup(string.Format("select top 1 StyleID from Orders WITH (NOLOCK)  where POID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])));
+            string confirm = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["TPECFMName"])));
             int j = 0; int N = 0;
             foreach (DataRow dr in gridData.Rows)
             {
@@ -367,7 +367,7 @@ order by rd.Seq1,rd.Seq2", masterID);
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                     cmds.Add(sp1);
                     cmds.Add(sp2);
-                    string sqlCmd = "select ID,FtyGroup from Orders where POID = @poid and MDivisionID = @mdivisionid";
+                    string sqlCmd = "select ID,FtyGroup from Orders WITH (NOLOCK) where POID = @poid and MDivisionID = @mdivisionid";
                     DataTable OrdersData;
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrdersData);
 
@@ -411,11 +411,11 @@ order by rd.Seq1,rd.Seq2", masterID);
 isnull(psd.ColorID,'') as ColorID,isnull(r.InvNo,'') as InvNo,iif(e.Eta is null,r.ETA,e.ETA) as ETA,
 isnull(r.ExportId,'') as ExportId,
 isnull(sum(rd.ShipQty),0) as EstInQty, isnull(sum(rd.ActualQty),0) as ActInQty
-from AIR a
-left join PO_Supp_Detail psd on a.POID = psd.ID and a.Seq1 = psd.SEQ1 and a.Seq2 = psd.SEQ2
-left join Receiving r on a.ReceivingID = r.Id
-left join Receiving_Detail rd on r.Id = rd.Id and a.Seq1 = rd.SEQ1 and a.Seq2 = rd.SEQ2
-left join Export e on r.ExportId = e.ID
+from AIR a WITH (NOLOCK) 
+left join PO_Supp_Detail psd WITH (NOLOCK) on a.POID = psd.ID and a.Seq1 = psd.SEQ1 and a.Seq2 = psd.SEQ2
+left join Receiving r WITH (NOLOCK) on a.ReceivingID = r.Id
+left join Receiving_Detail rd WITH (NOLOCK) on r.Id = rd.Id and a.Seq1 = rd.SEQ1 and a.Seq2 = rd.SEQ2
+left join Export e WITH (NOLOCK) on r.ExportId = e.ID
 where a.POID = '{0}' and a.Result = 'F'
 group by a.Seq1,a.Seq2, left(a.Seq1+' ',3)+a.Seq2,a.Refno,[dbo].getMtlDesc(a.POID,a.Seq1,a.Seq2,2,0),psd.ColorID,r.InvNo,iif(e.Eta is null,r.ETA,e.ETA),isnull(r.ExportId,'')", textSP.Text);
                 DataTable AIRData;
@@ -435,7 +435,7 @@ group by a.Seq1,a.Seq2, left(a.Seq1+' ',3)+a.Seq2,a.Refno,[dbo].getMtlDesc(a.POI
                 }
                 displayBox4.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(CurrentMaintain["POID"]), "Orders", "ID");
                 DataRow POData;
-                if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out POData))
+                if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out POData))
                 {
                     txttpeuser1.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
                     txttpeuser2.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POHandle"]);
@@ -482,7 +482,7 @@ group by a.Seq1,a.Seq2, left(a.Seq1+' ',3)+a.Seq2,a.Refno,[dbo].getMtlDesc(a.POI
                     check.Append(string.Format("SEQ# {0}\r\n",MyUtility.Convert.GetString(dr["Seq"])));
                 }
                 updateCmds.Add(string.Format(@"update AIR set ReplacementReportID = '{0}' where ReceivingID in (select distinct r.Id
-from ReplacementReport rr
+from ReplacementReport rr 
 inner join ReplacementReport_Detail rrd on rr.ID = rrd.ID
 inner join Receiving r on rrd.INVNo = r.InvNo
 inner join Receiving_Detail rd on rd.Id = r.Id and rr.POID = rd.PoId and rrd.Seq1 = rd.Seq1 and rrd.Seq2 = rd.Seq2
@@ -595,18 +595,18 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain[
         private void SendMail()
         {
                 DataTable allMail;
-                string sqlCmd = string.Format(@"select isnull((select EMail from Pass1 where ID = r.ApplyName),'') as ApplyName,
-isnull((select Name from Pass1 where ID = r.ApvName),'') as ApvName,
-isnull((select Email from Pass1 where ID = r.ApvName),'') as CCMAIL,
-isnull((select EMail from TPEPass1 where ID = o.MRHandle),'') as MRHandle,
-isnull((select EMail from TPEPass1 where ID = o.SMR),'') as SMR,
-isnull((select EMail from TPEPass1 where ID = p.POHandle),'') as POHandle,
-isnull((select EMail from TPEPass1 where ID = p.POSMR),'') as POSMR,
-isnull((select EMail from TPEPass1 where ID = p.PCHandle),'') as PCHandle,
-isnull((select EMail from TPEPass1 where ID = p.PCSMR),'') as PCSMR
-from ReplacementReport r
-left join Orders o on o.ID = r.POID
-left join PO p on p.ID = o.POID
+                string sqlCmd = string.Format(@"select isnull((select EMail from Pass1 WITH (NOLOCK) where ID = r.ApplyName),'') as ApplyName,
+isnull((select Name from Pass1 WITH (NOLOCK) where ID = r.ApvName),'') as ApvName,
+isnull((select Email from Pass1 WITH (NOLOCK) where ID = r.ApvName),'') as CCMAIL,
+isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = o.MRHandle),'') as MRHandle,
+isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = o.SMR),'') as SMR,
+isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = p.POHandle),'') as POHandle,
+isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = p.POSMR),'') as POSMR,
+isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = p.PCHandle),'') as PCHandle,
+isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = p.PCSMR),'') as PCSMR
+from ReplacementReport r WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on o.ID = r.POID
+left join PO p WITH (NOLOCK) on p.ID = o.POID
 where r.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out allMail);
                 if (!result)
@@ -632,7 +632,7 @@ If the replacement report can be accept and cfm to proceed, please approve it th
                 ToExcel(true);
 
                 //帶出夾檔的檔案
-                sqlCmd = string.Format("select *, YEAR(AddDate) as Year, MONTH(AddDate) as Month from Clip where TableName = '{0}' and UniqueKey = '{1}'", "ReplacementReport", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+                sqlCmd = string.Format("select *, YEAR(AddDate) as Year, MONTH(AddDate) as Month from Clip WITH (NOLOCK) where TableName = '{0}' and UniqueKey = '{1}'", "ReplacementReport", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 DataTable clipData;
                 double totalSize = 0;
                 string totalFile;

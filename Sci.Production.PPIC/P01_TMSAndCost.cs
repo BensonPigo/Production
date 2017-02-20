@@ -44,7 +44,7 @@ namespace Sci.Production.PPIC
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
-            string sqlCmd = "select ID,IsTMS,IsPrice,IsTtlTMS,Classify from ArtworkType";
+            string sqlCmd = "select ID,IsTMS,IsPrice,IsTtlTMS,Classify from ArtworkType WITH (NOLOCK) ";
             DataTable ArtworkType;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out ArtworkType);
 
@@ -73,7 +73,7 @@ namespace Sci.Production.PPIC
             }
 
             #region 計算Ttl TMS
-            sqlCmd = string.Format(@"select isnull(sum(TMS),0) as TtlTMS from Order_TmsCost ot, ArtworkType at
+            sqlCmd = string.Format(@"select isnull(sum(TMS),0) as TtlTMS from Order_TmsCost ot WITH (NOLOCK) , ArtworkType at WITH (NOLOCK) 
 where ot.ArtworkTypeID = at.ID
 and at.IsTtlTMS = 1
 and ot.ID = '{0}'",KeyValue1);
@@ -83,8 +83,8 @@ and ot.ID = '{0}'",KeyValue1);
             #region 撈新增的ArtworkType
             sqlCmd = string.Format(@"select a.* from (
 select a.ID,a.Classify,a.Seq,a.ArtworkUnit,a.IsTMS,a.IsPrice,a.IsTtlTMS,isnull(ot.ID,'') as OrderID
-from ArtworkType a
-left join Order_TmsCost ot on a.ID = ot.ArtworkTypeID and ot.ID = '{0}'
+from ArtworkType a WITH (NOLOCK) 
+left join Order_TmsCost ot WITH (NOLOCK) on a.ID = ot.ArtworkTypeID and ot.ID = '{0}'
 where a.SystemType = 'T' and a.Junk = 0) a
 where a.OrderID = ''", KeyValue1);
 

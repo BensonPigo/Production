@@ -22,7 +22,7 @@ namespace Sci.Production.PPIC
         {
             InitializeComponent();
             DataTable mDivision;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
             comboBox1.Text = Sci.Env.User.Keyword;
             MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "ALL,MR Not Send,MR Send Not Receive,Factory Receive");
@@ -64,15 +64,15 @@ namespace Sci.Production.PPIC
             sqlCmd.Append(string.Format(@"select s.BrandID,s.ID,s.SeasonID,sp.MDivisionID,sp.FactoryID,sp.DOC+'-'+isnull(r.Name,'') as Doc,
 sp.SendDate,sp.ReceiveDate,sp.SendToQA,sp.QAReceived,sp.ProvideDate,sp.OrderId,sp.SCIDelivery,
 sp.BuyerDelivery,IIF(sp.IsPF = 1,'Y','N') as PullForward,
-sp.SendName+'-'+isnull((select Name from TPEPass1 where ID = sp.SendName),'') as Handle,
-sp.MRHandle+'-'+isnull((select Name from TPEPass1 where ID = sp.MRHandle),'') as MRHandle,
-sp.SMR+'-'+isnull((select Name from TPEPass1 where ID = sp.SMR),'') as SMR,
-sp.PoHandle+'-'+isnull((select Name from TPEPass1 where ID = sp.PoHandle),'') as POHandle,
-sp.POSMR+'-'+isnull((select Name from TPEPass1 where ID = sp.POSMR),'') as POSMR,
-sp.FtyHandle+'-'+isnull((select Name from Pass1 where ID = sp.FtyHandle),'') as FtyHandle
-from Style_ProductionKits sp
-inner join Style s on s.Ukey = sp.StyleUkey
-left join Reason r on r.ReasonTypeID = 'ProductionKits' and r.ID = sp.DOC
+sp.SendName+'-'+isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = sp.SendName),'') as Handle,
+sp.MRHandle+'-'+isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = sp.MRHandle),'') as MRHandle,
+sp.SMR+'-'+isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = sp.SMR),'') as SMR,
+sp.PoHandle+'-'+isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = sp.PoHandle),'') as POHandle,
+sp.POSMR+'-'+isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = sp.POSMR),'') as POSMR,
+sp.FtyHandle+'-'+isnull((select Name from Pass1 WITH (NOLOCK) where ID = sp.FtyHandle),'') as FtyHandle
+from Style_ProductionKits sp WITH (NOLOCK) 
+inner join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
+left join Reason r WITH (NOLOCK) on r.ReasonTypeID = 'ProductionKits' and r.ID = sp.DOC
 where sp.SCIDelivery between '{0}' and '{1}'", Convert.ToDateTime(sciDate1).ToString("d"), Convert.ToDateTime(sciDate2).ToString("d")));
 
             if (!MyUtility.Check.Empty(prodiveDate1))

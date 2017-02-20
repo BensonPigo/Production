@@ -23,7 +23,7 @@ namespace Sci.Production.PPIC
         {
             InitializeComponent();
             this.Text = "TMS & Cost (" + styleid + ")";
-            stdTMS = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup("select StdTMS from System"));
+            stdTMS = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup("select StdTMS from System WITH (NOLOCK) "));
         }
 
         protected override bool OnGridSetup()
@@ -64,7 +64,7 @@ namespace Sci.Production.PPIC
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
-            string sqlCmd = "select ID,IsTMS,IsPrice,IsTtlTMS,Classify from ArtworkType";
+            string sqlCmd = "select ID,IsTMS,IsPrice,IsTtlTMS,Classify from ArtworkType WITH (NOLOCK) ";
             DataTable ArtworkType;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out ArtworkType);
 
@@ -93,7 +93,7 @@ namespace Sci.Production.PPIC
             }
 
             #region 計算Ttl TMS
-            sqlCmd = string.Format(@"select isnull(sum(TMS),0) as TtlTMS from Style_TmsCost st, ArtworkType at
+            sqlCmd = string.Format(@"select isnull(sum(TMS),0) as TtlTMS from Style_TmsCost st WITH (NOLOCK) , ArtworkType at WITH (NOLOCK) 
 where st.ArtworkTypeID = at.ID
 and at.IsTtlTMS = 1
 and st.StyleUkey = {0}",KeyValue1);
@@ -103,8 +103,8 @@ and st.StyleUkey = {0}",KeyValue1);
             #region 撈新增的ArtworkType
             sqlCmd = string.Format(@"select a.* from (
 select a.ID,a.Classify,a.Seq,a.ArtworkUnit,a.IsTMS,a.IsPrice,a.IsTtlTMS,isnull(st.StyleUkey,'') as StyleUkey
-from ArtworkType a
-left join Style_TmsCost st on a.ID = st.ArtworkTypeID and st.StyleUkey = {0}
+from ArtworkType a WITH (NOLOCK) 
+left join Style_TmsCost st WITH (NOLOCK) on a.ID = st.ArtworkTypeID and st.StyleUkey = {0}
 where a.SystemType = 'T' and a.Junk = 0) a
 where a.StyleUkey = ''", KeyValue1);
 
@@ -221,14 +221,14 @@ where a.StyleUkey = ''", KeyValue1);
 
         protected override DualResult OnSavePost()
         {
-            string sqlCmd = string.Format(@"select isnull(sum(TMS),0) as TtlTMS from Style_TmsCost st, ArtworkType at
+            string sqlCmd = string.Format(@"select isnull(sum(TMS),0) as TtlTMS from Style_TmsCost st WITH (NOLOCK) , ArtworkType at WITH (NOLOCK) 
 where st.ArtworkTypeID = at.ID
 and at.IsTtlTMS = 1
 and st.StyleUkey = {0}", KeyValue1);
             decimal cpu = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlCmd)) / stdTMS, 3);
             IList<String> updateCmds = new List<String>();
             updateCmds.Add(string.Format("update Style set CPU = {0} where Ukey = {1};", MyUtility.Convert.GetString(cpu), KeyValue1));
-            updateCmds.Add(string.Format("update Orders set CPU = {0}, CMPPrice = {0}*12 where StyleUkey = {1} and not exists (select 1 from SewingOutput_Detail where OrderId = Orders.ID);", MyUtility.Convert.GetString(cpu), KeyValue1));
+            updateCmds.Add(string.Format("update Orders set CPU = {0}, CMPPrice = {0}*12 where StyleUkey = {1} and not exists (select 1 from SewingOutput_Detail WITH (NOLOCK) where OrderId = Orders.ID);", MyUtility.Convert.GetString(cpu), KeyValue1));
             #region 組要更新Order_TMSCost的SQL，已經有Sewing Daily Output的Order就不更新
             sqlCmd = string.Format(@"declare @styleukey bigint;
 set @styleukey = {0};
@@ -236,36 +236,36 @@ set @styleukey = {0};
 --撈出屬於此Style的沒有Sewing Daily Output的訂單
 with NoOutputOrderID
 as (select o.ID
-from Orders o
-where o.StyleUkey = @styleukey and not exists (select 1 from SewingOutput_Detail where OrderId = o.ID)
+from Orders o WITH (NOLOCK) 
+where o.StyleUkey = @styleukey and not exists (select 1 from SewingOutput_Detail WITH (NOLOCK) where OrderId = o.ID)
 ),
 --撈出沒有Sewing Daily Output的訂單的TMS & Cost資料
 OrderTMSCost
 as
 (select ot.ID,ot.ArtworkTypeID
 from NoOutputOrderID o
-inner join Order_TmsCost ot on o.ID = ot.ID
-inner join ArtworkType a on ot.ArtworkTypeID = a.ID and a.IsArtwork = 0
+inner join Order_TmsCost ot WITH (NOLOCK) on o.ID = ot.ID
+inner join ArtworkType a on WITH (NOLOCK) ot.ArtworkTypeID = a.ID and a.IsArtwork = 0
 ),
 --撈出應該要有的全部資料
 AllData
 as
 (select isnull(o.ID,'') as ID,st.ArtworkTypeID,st.Seq,st.Qty,st.ArtworkUnit,st.Tms,st.Price
-from Style_TmsCost st
-inner join ArtworkType a on st.ArtworkTypeID = a.ID and a.IsArtwork = 0
+from Style_TmsCost st WITH (NOLOCK) 
+inner join ArtworkType a WITH (NOLOCK) on st.ArtworkTypeID = a.ID and a.IsArtwork = 0
 left join NoOutputOrderID o on 1=1
 where st.StyleUkey = @styleukey
 ),
 --撈出要Insert的資料
 InsertData
 as
-(select *,'I' as Status from AllData a where not exists (select 1 from OrderTMSCost o where o.ID = a.ID and o.ArtworkTypeID = a.ArtworkTypeID)
+(select *,'I' as Status from AllData a where not exists (select 1 from OrderTMSCost o WITH (NOLOCK) where o.ID = a.ID and o.ArtworkTypeID = a.ArtworkTypeID)
 ),
 --撈出要Update的資料
 UpdateData
 as
 (select *,'U' as Status from AllData a 
-where exists (select 1 from OrderTMSCost o where o.ID = a.ID and o.ArtworkTypeID = a.ArtworkTypeID)
+where exists (select 1 from OrderTMSCost o WITH (NOLOCK) where o.ID = a.ID and o.ArtworkTypeID = a.ArtworkTypeID)
 )
 
 select * from InsertData

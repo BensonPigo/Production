@@ -20,7 +20,7 @@ namespace Sci.Production.PPIC
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            numericBox3.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format("select isnull(sum(QAQty),0) as QAQty from SewingOutput_Detail where OrderId = '{0}'",MyUtility.Convert.GetString(CurrentMaintain["ID"]))));
+            numericBox3.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format("select isnull(sum(QAQty),0) as QAQty from SewingOutput_Detail WITH (NOLOCK) where OrderId = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))));
         }
     }
 }

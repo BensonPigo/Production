@@ -24,7 +24,7 @@ namespace Sci.Production.PPIC
         {
             DataRow StyleSimilarData;
             string masterStyleUKey = null;
-            if (MyUtility.Check.Seek(string.Format("select MasterBrandID,MasterStyleID,MasterSeasonID,MasterStyleUkey from Style_SimilarStyle where MasterStyleUkey = {0}", styleUkey), out StyleSimilarData))
+            if (MyUtility.Check.Seek(string.Format("select MasterBrandID,MasterStyleID,MasterSeasonID,MasterStyleUkey from Style_SimilarStyle WITH (NOLOCK) where MasterStyleUkey = {0}", styleUkey), out StyleSimilarData))
             {
                 displayBox1.Value = StyleSimilarData["MasterBrandID"].ToString();
                 displayBox2.Value = StyleSimilarData["MasterStyleID"].ToString();
@@ -33,7 +33,7 @@ namespace Sci.Production.PPIC
             }
             else
             {
-                if (MyUtility.Check.Seek(string.Format("select MasterBrandID,MasterStyleID,MasterSeasonID,MasterStyleUkey from Style_SimilarStyle where ChildrenStyleUkey = {0}", styleUkey), out StyleSimilarData))
+                if (MyUtility.Check.Seek(string.Format("select MasterBrandID,MasterStyleID,MasterSeasonID,MasterStyleUkey from Style_SimilarStyle WITH (NOLOCK) where ChildrenStyleUkey = {0}", styleUkey), out StyleSimilarData))
                 {
                     displayBox1.Value = StyleSimilarData["MasterBrandID"].ToString();
                     displayBox2.Value = StyleSimilarData["MasterStyleID"].ToString();
@@ -43,7 +43,7 @@ namespace Sci.Production.PPIC
             }
 
             //撈Grid資料
-            string sqlCmd = string.Format(@"select *, '' as CreateBy,'' as EditBy  from Style_SimilarStyle where {0} order by ChildrenStyleID", masterStyleUKey == null ? "1=2" : "MasterStyleUkey = " + masterStyleUKey);
+            string sqlCmd = string.Format(@"select *, '' as CreateBy,'' as EditBy  from Style_SimilarStyle WITH (NOLOCK) where {0} order by ChildrenStyleID", masterStyleUKey == null ? "1=2" : "MasterStyleUkey = " + masterStyleUKey);
 
             DataTable selectDataTable;
             DualResult selectResult1 = DBProxy.Current.Select(null, sqlCmd, out selectDataTable);

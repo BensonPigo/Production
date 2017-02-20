@@ -29,8 +29,8 @@ namespace Sci.Production.PPIC
             base.OnFormLoaded();
             DataTable GridData;
             string sqlCmd = string.Format(@"select ot.Seq,ot.ArtworkTypeID,ot.Qty,ot.ArtworkUnit,ot.TMS,ot.Price,iif(a.IsTtlTMS = 1,'Y','N') as ttlTMS,a.Classify
-from Order_TmsCost ot
-left join ArtworkType a on ot.ArtworkTypeID = a.ID
+from Order_TmsCost ot WITH (NOLOCK) 
+left join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID
 where ot.ID = '{0}' 
 and (a.Classify = 'I' or a.Classify = 'A' or a.Classify = 'P')
 order by ot.Seq", orderData["ID"].ToString());
@@ -61,7 +61,7 @@ order by ot.Seq", orderData["ID"].ToString());
             else
             {
                 string sql = string.Format(@"select fd.CpuCost
-                    from FtyShipper_Detail fsd, FSRCpuCost_Detail fd
+                    from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
                     where fsd.BrandID = '{0}'
                     and fsd.FactoryID = '{1}'
                     and '{2}' between fsd.BeginDate and fsd.EndDate
@@ -73,7 +73,7 @@ order by ot.Seq", orderData["ID"].ToString());
             #endregion
 
             numericBox3.Value = MyUtility.Convert.GetDecimal(GridData.Compute("sum(Price)", "Classify = 'I' and ttlTMS = 'N'")) + MyUtility.Convert.GetDecimal(GridData.Compute("sum(Price)", "Classify = 'A'"));
-            if (MyUtility.GetValue.Lookup(string.Format("select LocalCMT from Factory where ID = '{0}'", orderData["FactoryID"].ToString())).ToUpper() == "TRUE")
+            if (MyUtility.GetValue.Lookup(string.Format("select LocalCMT from Factory WITH (NOLOCK) where ID = '{0}'", orderData["FactoryID"].ToString())).ToUpper() == "TRUE")
             {
                 numericBox4.Value = MyUtility.Convert.GetDecimal(GridData.Compute("sum(Price)", "Classify = 'P'"));
             }

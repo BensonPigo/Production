@@ -59,10 +59,10 @@ namespace Sci.Production.PPIC
                 sqlCmd = string.Format(@"with AllPattern
 as (
 select distinct oq.Article,oq.SizeCode,oc.ColorID,oc.PatternPanel
-from Orders o
-inner join Order_Qty oq on o.ID = oq.ID
-inner join Order_ColorCombo oc on o.POID = oc.Id and oq.Article = oc.Article
-inner join Order_EachCons oe on oc.Id = oe.Id 
+from Orders o WITH (NOLOCK) 
+inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+inner join Order_ColorCombo oc WITH (NOLOCK) on o.POID = oc.Id and oq.Article = oc.Article
+inner join Order_EachCons oe WITH (NOLOCK) on oc.Id = oe.Id 
 where {0}
 and oc.FabricCode <> ''
 and oe.CuttingPiece = '0'
@@ -73,11 +73,11 @@ CutQty
 as (
 select c.cDate,isnull(wd.Article,'') as Article,isnull(wd.SizeCode,'') as SizeCode,
 isnull(wp.PatternPanel,'') as PatternPanel,isnull(SUM(wd.Qty),0) as CutQty
-from Orders o
-left join WorkOrder_Distribute wd on wd.OrderID = o.ID
-left join CuttingOutput_Detail cd on cd.WorkOrderUkey = wd.WorkOrderUkey
-left join CuttingOutput c on c.ID = cd.ID
-left join WorkOrder_PatternPanel wp on wd.WorkOrderUkey = wp.WorkOrderUkey
+from Orders o WITH (NOLOCK) 
+left join WorkOrder_Distribute wd WITH (NOLOCK) on wd.OrderID = o.ID
+left join CuttingOutput_Detail cd WITH (NOLOCK) on cd.WorkOrderUkey = wd.WorkOrderUkey
+left join CuttingOutput c WITH (NOLOCK) on c.ID = cd.ID
+left join WorkOrder_PatternPanel wp WITH (NOLOCK) on wd.WorkOrderUkey = wp.WorkOrderUkey
 where {0}
 and c.Status <> 'New'
 group by c.cDate,wd.Article,wd.SizeCode,wp.PatternPanel
@@ -85,7 +85,7 @@ group by c.cDate,wd.Article,wd.SizeCode,wp.PatternPanel
 tmpCutput
 as (
 select ap.Article,ap.SizeCode,ap.PatternPanel,cq.cDate,isnull(cq.CutQty,0) as CutQty
-from AllPattern ap
+from AllPattern ap 
 left join CutQty cq on ap.Article = cq.Article and ap.SizeCode = cq.SizeCode and ap.PatternPanel = cq.PatternPanel
 )
 select cDate, sum(CutQty) as CutQty
@@ -98,12 +98,12 @@ group by cDate", string.Format("o.ID = '{0}'", id));
             else
             {
                 sqlCmd = string.Format(@"select c.cDate,cd.CutRef,wp.PatternPanel,w.LectraCode,CD.Cutno,sum(wd.Qty) as CutQty,Status
-from Orders o
-inner join WorkOrder_Distribute wd on wd.OrderID = o.ID and wd.Article = '{1}' and wd.SizeCode = '{2}'
-inner join WorkOrder_PatternPanel wp on wp.WorkOrderUkey = wd.WorkOrderUkey
-inner join WorkOrder w on w.ID=wp.ID and w.Ukey=wp.WorkOrderUkey
-inner join CuttingOutput_Detail cd on cd.WorkOrderUkey = wd.WorkOrderUkey
-inner join CuttingOutput c on c.ID = cd.ID
+from Orders o WITH (NOLOCK) 
+inner join WorkOrder_Distribute wd WITH (NOLOCK) on wd.OrderID = o.ID and wd.Article = '{1}' and wd.SizeCode = '{2}'
+inner join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
+inner join WorkOrder w WITH (NOLOCK) on w.ID=wp.ID and w.Ukey=wp.WorkOrderUkey
+inner join CuttingOutput_Detail cd WITH (NOLOCK) on cd.WorkOrderUkey = wd.WorkOrderUkey
+inner join CuttingOutput c WITH (NOLOCK) on c.ID = cd.ID
 where {0}
 group by c.cDate,cd.CutRef,wp.PatternPanel,w.LectraCode,CD.Cutno,Status"
                     , string.Format("o.ID = '{0}'", id)

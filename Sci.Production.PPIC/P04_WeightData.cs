@@ -24,8 +24,8 @@ namespace Sci.Production.PPIC
         {
             datas = null;
             string sql = string.Format(@"select *
-                            from Style_WeightData sw where StyleUkey = '{0}'
-                            order by (select seq from Style_SizeCode ss where ss.StyleUkey = sw.StyleUkey and ss.SizeCode = sw.SizeCode)"
+                            from Style_WeightData sw WITH (NOLOCK) where StyleUkey = '{0}'
+                            order by (select seq from Style_SizeCode ss WITH (NOLOCK) where ss.StyleUkey = sw.StyleUkey and ss.SizeCode = sw.SizeCode)"
                             , uk);
             DualResult result;
             return result = DBProxy.Current.Select(null, sql, out datas);
@@ -45,7 +45,7 @@ namespace Sci.Production.PPIC
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select SizeCode from Style_SizeCode where StyleUkey = {0} order by Seq", KeyValue1), "8", dr["SizeCode"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where StyleUkey = {0} order by Seq", KeyValue1), "8", dr["SizeCode"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             dr["SizeCode"] = item.GetSelectedString();
@@ -69,7 +69,7 @@ namespace Sci.Production.PPIC
                         cmds.Add(sp1);
                         cmds.Add(sp2);
                         DataTable StyleSizeCode;
-                        string sqlCmd = "select SizeCode from Style_SizeCode where StyleUkey = @styleukey and SizeCode = @sizecode";
+                        string sqlCmd = "select SizeCode from Style_SizeCode WITH (NOLOCK) where StyleUkey = @styleukey and SizeCode = @sizecode";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out StyleSizeCode);
                         if (!result || StyleSizeCode.Rows.Count <= 0)
                         {
@@ -101,7 +101,7 @@ namespace Sci.Production.PPIC
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select Article from Style_Article where StyleUkey = {0} order by Seq", KeyValue1), "8",dr["Article"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select Article from Style_Article WITH (NOLOCK) where StyleUkey = {0} order by Seq", KeyValue1), "8", dr["Article"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             dr["Article"] = item.GetSelectedString();
@@ -125,7 +125,7 @@ namespace Sci.Production.PPIC
                         cmds.Add(sp1);
                         cmds.Add(sp2);
                         DataTable StyleArticle;
-                        string sqlCmd = "select Article from Style_Article where StyleUkey = @styleukey and Article = @article";
+                        string sqlCmd = "select Article from Style_Article WITH (NOLOCK) where StyleUkey = @styleukey and Article = @article";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out StyleArticle);
                         if (!result || StyleArticle.Rows.Count <= 0)
                         {
@@ -198,13 +198,13 @@ namespace Sci.Production.PPIC
             {
                 DataRow styleData;
 
-                if (MyUtility.Check.Seek(string.Format("select ID,SeasonID,BrandID from Style where UKey = {0}", KeyValue1), out styleData))
+                if (MyUtility.Check.Seek(string.Format("select ID,SeasonID,BrandID from Style WITH (NOLOCK) where UKey = {0}", KeyValue1), out styleData))
                 {
                     if (!MyUtility.Check.Empty(callNextForm.PPICP04CopySeason) && callNextForm.PPICP04CopySeason != styleData["SeasonID"].ToString())
                     {
                         DataTable weightData;
-                        string sqlCmd = string.Format(@"select sw.* from Style s
-left join Style_WeightData sw on sw.StyleUkey = s.Ukey
+                        string sqlCmd = string.Format(@"select sw.* from Style s WITH (NOLOCK) 
+left join Style_WeightData sw WITH (NOLOCK) on sw.StyleUkey = s.Ukey
 where s.ID = '{0}' and s.BrandID = '{1}' and s.SeasonID = '{2}'", styleData["ID"].ToString(), styleData["BrandID"].ToString(), callNextForm.PPICP04CopySeason);
                         DualResult selectResult = DBProxy.Current.Select(null, sqlCmd, out weightData);
                         if (!selectResult)

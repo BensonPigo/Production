@@ -47,16 +47,16 @@ namespace Sci.Production.PPIC
             if (type == "A")
             {
                 sqlCmd = string.Format(@"select s.OutputDate,s.SewingLineID,sd.ComboType,sum(sd.QAQty) as QAQty
-from SewingOutput_Detail sd
-inner join SewingOutput s on sd.ID = s.ID
+from SewingOutput_Detail sd WITH (NOLOCK) 
+inner join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
 where sd.OrderId = '{0}'
 group by s.OutputDate,s.SewingLineID,sd.ComboType", orderID);
             }
             else if (type == "S")
             {
                 sqlCmd = string.Format(@"select s.OutputDate,s.SewingLineID,sdd.ComboType,sum(sdd.QAQty) as QAQty
-from SewingOutput_Detail_Detail sdd
-inner join SewingOutput s on sdd.ID = s.ID
+from SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
+inner join SewingOutput s WITH (NOLOCK) on sdd.ID = s.ID
 where sdd.OrderId = '{0}'
 and sdd.Article = '{1}'
 and sdd.SizeCode = '{2}'
@@ -65,8 +65,8 @@ group by s.OutputDate,s.SewingLineID,sdd.ComboType", orderID, article, sizeCode)
             else
             {
                 sqlCmd = string.Format(@"select s.OutputDate,s.SewingLineID,sdd.ComboType,sum(sdd.QAQty) as QAQty
-from SewingOutput_Detail_Detail sdd
-inner join SewingOutput s on sdd.ID = s.ID
+from SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
+inner join SewingOutput s WITH (NOLOCK) on sdd.ID = s.ID
 where sdd.OrderId = '{0}'
 and sdd.Article = '{1}'
 and sdd.SizeCode = '{2}'

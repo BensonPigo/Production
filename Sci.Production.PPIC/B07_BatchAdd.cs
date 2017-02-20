@@ -46,7 +46,7 @@ namespace Sci.Production.PPIC
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.UI.TextBox sewingLineText = (Sci.Win.UI.TextBox)sender;
-            string sql = "Select ID,Description From SewingLine Where FactoryId = '" + Sci.Env.User.Factory + "' order by ID";
+            string sql = "Select ID,Description From SewingLine WITH (NOLOCK) Where FactoryId = '" + Sci.Env.User.Factory + "' order by ID";
             SelectItem item = new SelectItem(sql, "4,15", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -67,7 +67,7 @@ namespace Sci.Production.PPIC
                 cmds.Add(sp1);
                 cmds.Add(sp2);
 
-                string selectCommand = "select ID from SewingLine where FactoryID = @factoryid and ID = @sewinglineid";
+                string selectCommand = "select ID from SewingLine WITH (NOLOCK) where FactoryID = @factoryid and ID = @sewinglineid";
                 DataTable SewingData;
                 DualResult result = DBProxy.Current.Select(null, selectCommand, cmds, out SewingData);
                 if (!result || SewingData.Rows.Count <= 0)
@@ -104,7 +104,7 @@ namespace Sci.Production.PPIC
 
             //先將屬於登入的工廠的SewingLine資料給撈出來
             DataTable sewingLine;
-            string sqlCommand = "select ID from SewingLine where FactoryID = '" + Sci.Env.User.Factory + "' and ID >= '" + this.textBox1.Text + "' and ID <= '" + this.textBox2.Text + "' order by ID";
+            string sqlCommand = "select ID from SewingLine WITH (NOLOCK) where FactoryID = '" + Sci.Env.User.Factory + "' and ID >= '" + this.textBox1.Text + "' and ID <= '" + this.textBox2.Text + "' order by ID";
             DualResult returnResult = DBProxy.Current.Select(null, sqlCommand, out sewingLine);
             if (!returnResult)
             {
@@ -180,7 +180,7 @@ namespace Sci.Production.PPIC
                     {
                         foreach (DataRow currentRecord in sewingLine.Rows)
                         {
-                            sqlCommand = string.Format("select Date from WorkHour where SewingLineID = '{0}' and FactoryID = '{1}' and Date = '{2}'", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"));
+                            sqlCommand = string.Format("select Date from WorkHour WITH (NOLOCK) where SewingLineID = '{0}' and FactoryID = '{1}' and Date = '{2}'", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"));
                             if (!MyUtility.Check.Seek(sqlCommand, null))
                             {
                                 insertCmds.Add(string.Format(@"Insert into WorkHour (SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)

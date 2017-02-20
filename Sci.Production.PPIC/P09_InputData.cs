@@ -49,11 +49,11 @@ namespace Sci.Production.PPIC
 isnull(psd.SCIRefno,'') as SCIRefno,iif(e.Eta is null, r.ETA, e.Eta) as ETA,isnull(r.ExportId,'') as ExportId,
 isnull(r.InvNo,'') as InvNo,isnull(sum(rd.ShipQty),0) as EstInQty, isnull(sum(rd.ActualQty),0) as ActInQty,
 dbo.getmtldesc(a.POID,a.Seq1,a.Seq2,2,0) as Description
-from AIR a
-left join Receiving r on a.ReceivingID = r.Id
-left join Receiving_Detail rd on r.Id = rd.Id and a.Seq1 = rd.SEQ1 and a.Seq2 = rd.SEQ2
-left join Export e on r.ExportId = e.ID
-left join PO_Supp_Detail psd on a.POID = psd.ID and a.Seq1 = psd.SEQ1 and a.Seq2 = psd.SEQ2
+from AIR a WITH (NOLOCK) 
+left join Receiving r WITH (NOLOCK) on a.ReceivingID = r.Id
+left join Receiving_Detail rd WITH (NOLOCK) on r.Id = rd.Id and a.Seq1 = rd.SEQ1 and a.Seq2 = rd.SEQ2
+left join Export e WITH (NOLOCK) on r.ExportId = e.ID
+left join PO_Supp_Detail psd WITH (NOLOCK) on a.POID = psd.ID and a.Seq1 = psd.SEQ1 and a.Seq2 = psd.SEQ2
 where a.POID = '{0}' and a.Seq1 = '{1}' and a.Seq2 = '{2}' and a.Result = 'F'
 group by a.Seq1,a.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.ETA, e.Eta),r.ExportId,r.InvNo,dbo.getmtldesc(a.POID,a.Seq1,a.Seq2,2,0)
 ", MyUtility.Convert.GetString(masterData["POID"]), textBox1.Text.Length < 3 ? textBox1.Text : textBox1.Text.Substring(0, 3), textBox1.Text.Length < 5 ? textBox1.Text.Length < 4 ? "" : textBox1.Text.ToString().Substring(3,1) : textBox1.Text.ToString().Substring(3, 2));
@@ -77,7 +77,7 @@ group by a.Seq1,a.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.E
                     DataRow poData;
                     sqlCmd = string.Format(@"select psd.Refno,psd.SCIRefno,psd.seq1,psd.seq2,psd.FabricType,psd.ColorID, 
 dbo.getmtldesc(psd.ID,psd.SEQ1,psd.SEQ2,2,0) as Description 
-from dbo.PO_Supp_Detail psd, dbo.MDivisionPoDetail mpd
+from dbo.PO_Supp_Detail psd WITH (NOLOCK) , dbo.MDivisionPoDetail mpd WITH (NOLOCK) 
 where id ='{0}' 
 and psd.seq1 = '{1} ' 
 and psd.seq2 = '{2}' 
@@ -114,11 +114,11 @@ and mpd.InQty > 0", MyUtility.Convert.GetString(masterData["POID"]), textBox1.Te
                     CurrentData["Description"] = poData["Description"];
 
                     sqlCmd = string.Format(@"select distinct r.InvNo,r.ExportId,iif(e.Eta is null, r.ETA,e.Eta) as ETA,
-(select isnull(sum(ShipQty),0) from Receiving_Detail where PoId = rd.PoId and Seq1 = rd.Seq1 and Seq2 = rd.Seq2) as ShipQty,
-(select isnull(sum(ActualQty),0) from Receiving_Detail where PoId = rd.PoId and Seq1 = rd.Seq1 and Seq2 = rd.Seq2) as ActQty
-from Receiving_Detail rd
-left join Receiving r on rd.Id = r.Id
-left join Export e on r.ExportId = e.ID
+(select isnull(sum(ShipQty),0) from Receiving_Detail WITH (NOLOCK) where PoId = rd.PoId and Seq1 = rd.Seq1 and Seq2 = rd.Seq2) as ShipQty,
+(select isnull(sum(ActualQty),0) from Receiving_Detail WITH (NOLOCK) where PoId = rd.PoId and Seq1 = rd.Seq1 and Seq2 = rd.Seq2) as ActQty
+from Receiving_Detail rd WITH (NOLOCK) 
+left join Receiving r WITH (NOLOCK) on rd.Id = r.Id
+left join Export e WITH (NOLOCK) on r.ExportId = e.ID
 where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Confirmed'", MyUtility.Convert.GetString(masterData["POID"]), MyUtility.Convert.GetString(CurrentData["Seq1"]), MyUtility.Convert.GetString(CurrentData["Seq2"]));
                     DataTable ReceiveData;
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, out ReceiveData);
@@ -184,11 +184,11 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
             if (EditMode)
             {
                 string sqlCmd = string.Format(@"select distinct r.InvNo,r.ExportId,iif(e.Eta is null, r.ETA,e.Eta) as ETA,
-(select isnull(sum(ShipQty),0) from Receiving_Detail where PoId = rd.PoId and Seq1 = rd.Seq1 and Seq2 = rd.Seq2) as ShipQty,
-(select isnull(sum(ActualQty),0) from Receiving_Detail where PoId = rd.PoId and Seq1 = rd.Seq1 and Seq2 = rd.Seq2) as ActQty
-from Receiving_Detail rd
-left join Receiving r on rd.Id = r.Id
-left join Export e on r.ExportId = e.ID
+(select isnull(sum(ShipQty),0) from Receiving_Detail WITH (NOLOCK) where PoId = rd.PoId and Seq1 = rd.Seq1 and Seq2 = rd.Seq2) as ShipQty,
+(select isnull(sum(ActualQty),0) from Receiving_Detail WITH (NOLOCK) where PoId = rd.PoId and Seq1 = rd.Seq1 and Seq2 = rd.Seq2) as ActQty
+from Receiving_Detail rd WITH (NOLOCK) 
+left join Receiving r WITH (NOLOCK) on rd.Id = r.Id
+left join Export e WITH (NOLOCK) on r.ExportId = e.ID
 where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Confirmed'", MyUtility.Convert.GetString(masterData["POID"]), MyUtility.Convert.GetString(CurrentData["Seq1"]), MyUtility.Convert.GetString(CurrentData["Seq2"]));
                 DataTable ReceiveData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out ReceiveData);

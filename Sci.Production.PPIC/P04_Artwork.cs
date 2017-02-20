@@ -38,7 +38,7 @@ namespace Sci.Production.PPIC
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,ArtworkUnit from ArtworkType where Junk = 0 and IsArtwork = 1", "20", dr["ArtworkTypeID"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,ArtworkUnit from ArtworkType WITH (NOLOCK) where Junk = 0 and IsArtwork = 1", "20", dr["ArtworkTypeID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             IList<DataRow> list = item.GetSelecteds();
@@ -65,7 +65,7 @@ namespace Sci.Production.PPIC
                         cmds.Add(sp1);
 
                         DataTable artworkType;
-                        string sqlCmd = "select ArtworkUnit from ArtworkType where Junk = 0 and IsArtwork = 1 and ID = @artworktype";
+                        string sqlCmd = "select ArtworkUnit from ArtworkType WITH (NOLOCK) where Junk = 0 and IsArtwork = 1 and ID = @artworktype";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out artworkType);
                         if (!result || artworkType.Rows.Count <= 0)
                         {
@@ -119,9 +119,9 @@ namespace Sci.Production.PPIC
         {
             base.OnRequeryPost(datas);
             string sqlCmd = string.Format(@"select sa.ArtworkTypeID,a.ArtworkUnit 
-from Style_Artwork sa
-left join ArtworkType a on sa.ArtworkTypeID = a.ID
-where StyleUkey = {0}",KeyValue1);
+from Style_Artwork sa WITH (NOLOCK) 
+left join ArtworkType a WITH (NOLOCK) on sa.ArtworkTypeID = a.ID
+where StyleUkey = {0}", KeyValue1);
             DataTable ArtworkUnit;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out ArtworkUnit);
 
@@ -172,15 +172,15 @@ set @styleukey = {0};
 --撈出屬於此Style的沒有Sewing Daily Output的訂單
 with NoOutputOrderID
 as (select o.ID
-from Orders o
-where o.StyleUkey = @styleukey and not exists (select 1 from SewingOutput_Detail where OrderId = o.ID)
+from Orders o WITH (NOLOCK) 
+where o.StyleUkey = @styleukey and not exists (select 1 from SewingOutput_Detail WITH (NOLOCK) where OrderId = o.ID)
 ),
 --撈出沒有Sewing Daily Output的訂單的Artwork資料
 OrderArtwork
 as
 (select oa.ID,oa.ArtworkTypeID,oa.Article,oa.PatternCode,oa.PatternDesc,oa.ArtworkID,oa.ArtworkName,oa.Qty,oa.Tms,oa.Price,oa.Cost,oa.Remark,oa.Ukey
 from NoOutputOrderID o
-inner join Order_Artwork oa on o.ID = oa.ID
+inner join Order_Artwork oa WITH (NOLOCK) on o.ID = oa.ID
 ),
 --撈出應該要有的全部資料
 AllData
@@ -263,15 +263,15 @@ with TMSCost
 as
 (select * from (
 select ArtworkTypeID,isnull(sum(TMS),0) as TMS, isnull(sum(Qty),0) as Stitch, isnull(sum(Cost),0) as Cost, COUNT(ArtworkTypeID) as CNTAID
-from Style_Artwork where StyleUkey = @styleukey group by ArtworkTypeID) a
+from Style_Artwork WITH (NOLOCK) where StyleUkey = @styleukey group by ArtworkTypeID) a
 where a.TMS <> 0 or a.Stitch <> 0 or a.Cost <> 0
 ),
 --撈出屬於此Style的沒有Sewing Daily Output的訂單
 NoOutputOrderID
 as 
 (select o.ID, o.Qty
-from Orders o
-where o.StyleUkey = @styleukey and not exists (select 1 from SewingOutput_Detail where OrderId = o.ID)
+from Orders o WITH (NOLOCK) 
+where o.StyleUkey = @styleukey and not exists (select 1 from SewingOutput_Detail WITH (NOLOCK) where OrderId = o.ID)
 ),
 --撈出要更新的Order_TMSCost資料
 OrderTMSCost
@@ -281,8 +281,8 @@ iif(t.CNTAID <> 0,cast(t.Stitch*n.Qty as float)/(t.CNTAID*n.Qty),0) as Stitch,ii
 n.ID as OrderID, isnull(ot.ArtworkTypeID,'') as OrderArtWork, a.Seq, a.ArtworkUnit,n.Qty
 from TMSCost t 
 inner join NoOutputOrderID n on 1=1
-inner join Order_TmsCost ot on n.ID = ot.ID and t.ArtworkTypeID = ot.ArtworkTypeID
-left join ArtworkType a on ot.ArtworkTypeID = a.ID
+inner join Order_TmsCost ot WITH (NOLOCK) on n.ID = ot.ID and t.ArtworkTypeID = ot.ArtworkTypeID
+left join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID
 ),
 --撈出要更新的Style_TMSCost資料
 StyleTMSCost
@@ -291,8 +291,8 @@ as
 iif(t.CNTAID <> 0,cast(t.Stitch as float)/t.CNTAID,0) as Stitch,iif(t.CNTAID <> 0,cast(t.Cost as float)/t.CNTAID,0) as Cost,
 '' as OrderID, t.ArtworkTypeID as OrderArtWork, a.Seq, a.ArtworkUnit,0 as QTY
 from TMSCost t
-left join Style_TmsCost st on st.StyleUkey = @styleukey and st.ArtworkTypeID = t.ArtworkTypeID
-left join ArtworkType a on st.ArtworkTypeID = a.ID
+left join Style_TmsCost st WITH (NOLOCK) on st.StyleUkey = @styleukey and st.ArtworkTypeID = t.ArtworkTypeID
+left join ArtworkType a WITH (NOLOCK) on st.ArtworkTypeID = a.ID
 )
 
 select * from OrderTMSCost

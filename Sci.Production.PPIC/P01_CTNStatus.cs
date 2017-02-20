@@ -35,7 +35,7 @@ namespace Sci.Production.PPIC
         private void setCombo1Source()
         {
             DataTable PackingID;
-            string sqlCmd = string.Format("select distinct ID from PackingList_Detail where OrderID = '{0}' and CTNStartNo <> '' and CTNQty > 0", orderID);
+            string sqlCmd = string.Format("select distinct ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' and CTNStartNo <> '' and CTNQty > 0", orderID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out PackingID);
             if (!result) { MyUtility.Msg.ErrorBox("Query Packing ID fail !!"); }
             MyUtility.Tool.SetupCombox(comboBox1, 1, PackingID);
@@ -45,7 +45,7 @@ namespace Sci.Production.PPIC
         {
             DataTable CTN;
             string sqlCmd = string.Format(@"select CTNStartNo 
-from (select CTNStartNo, MIN(Seq) as Seq from PackingList_Detail where OrderID = '{0}' and CTNStartNo <> '' and CTNQty > 0 group by CTNStartNo) a
+from (select CTNStartNo, MIN(Seq) as Seq from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' and CTNStartNo <> '' and CTNQty > 0 group by CTNStartNo) a
 order by Seq", orderID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out CTN);
             if (!result) { MyUtility.Msg.ErrorBox("Query CTNStartNo fail !!"); }
@@ -60,24 +60,24 @@ order by Seq", orderID);
             string sqlCmd = string.Format(@"with Transferclog
 as(
 select t.PackingListID,t.CTNStartNo,'Send to clog' as Type,t.ID,t.TransferDate as TypeDate,'' as Location,t.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
-from TransferToClog t 
-left join PackingList_Detail pd on pd.ID = t.PackingListID and pd.OrderID = t.OrderID and pd.CTNStartNo = t.CTNStartNo
+from TransferToClog t WITH (NOLOCK) 
+left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = t.PackingListID and pd.OrderID = t.OrderID and pd.CTNStartNo = t.CTNStartNo
 where t.OrderID = '{0}' and pd.CTNQty > 0
 ),
 CReceive
 as(
 select c.PackingListId,c.CTNStartNo,'Receive' as Type,c.ID,c.ReceiveDate as TypeDate,c.ClogLocationId as Location,
 c.AddDate UpdateDate, isnull(pd.Seq,0) as Seq
-from ClogReceive c
-left join PackingList_Detail pd on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
+from ClogReceive c WITH (NOLOCK) 
+left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
 where c.OrderId = '{0}' and pd.CTNQty > 0
 ),
 CReturn 
 as (
 select c.PackingListId,c.CTNStartNo,'Return' as Type,c.ID,c.ReturnDate as TypeDate,'' as Location,
 c.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
-from ClogReturn c
-left join PackingList_Detail pd on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
+from ClogReturn c WITH (NOLOCK) 
+left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
 where c.OrderId = '{0}' and pd.CTNQty > 0
 )
 select * from Transferclog
@@ -92,7 +92,7 @@ order by PackingListID,Seq,UpdateDate", orderID);
             listControlBindingSource1.DataSource = TransferDetail;
 
             sqlCmd = string.Format(@"select p.ID as PackingListID,pd.CTNStartNo,pd.TransferDate,pd.ReceiveDate,p.PulloutDate,pd.ClogLocationId,pd.Remark,pd.Seq
-from PackingList p,PackingList_Detail pd 
+from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 where pd.OrderID = '{0}' and pd.CTNStartNo <> '' and pd.CTNQty > 0 and p.ID = pd.ID
 order by p.ID,pd.Seq", orderID);
             result = DBProxy.Current.Select(null, sqlCmd, out CTNLastStatus);

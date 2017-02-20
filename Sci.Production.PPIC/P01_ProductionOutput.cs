@@ -26,7 +26,7 @@ namespace Sci.Production.PPIC
             InitializeComponent();
             masterData = MasterData;
             Text = "Production output - " + MyUtility.Convert.GetString(masterData["ID"]);
-            cuttingWorkType = MyUtility.GetValue.Lookup(string.Format("select WorkType from Cutting where ID = '{0}'", MyUtility.Convert.GetString(masterData["CuttingSP"])));
+            cuttingWorkType = MyUtility.GetValue.Lookup(string.Format("select WorkType from Cutting WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["CuttingSP"])));
             //if (cuttingWorkType == "1")
             //{
             //    tabPage2.Text = "Cutting(Comb) - " + MyUtility.Convert.GetString(masterData["CuttingSP"]);
@@ -44,13 +44,13 @@ namespace Sci.Production.PPIC
 
             //撈Summary資料
             string sqlCmd = string.Format(@"select (select Max(s.OutputDate)
-		from SewingOutput_Detail sd
-		inner join SewingOutput s on sd.ID = s.ID
+		from SewingOutput_Detail sd WITH (NOLOCK) 
+		inner join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
 		where sd.OrderId = '{0}') as LastSewingDate,
 isnull((dbo.getMinCompleteSewQty('{0}',null,null)),0) as SewingQty,
 isnull((select SUM(c.Qty)
-	   from Orders o
-	   inner join CuttingOutput_WIP c on o.ID = c.OrderID
+	   from Orders o WITH (NOLOCK) 
+	   inner join CuttingOutput_WIP c WITH (NOLOCK) on o.ID = c.OrderID
 	   where {1}),0) as CutQty", MyUtility.Convert.GetString(masterData["ID"]),
             string.Format("o.ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));
             DataTable summaryQty;
@@ -131,7 +131,7 @@ isnull((select SUM(c.Qty)
             grid1.Columns[7].Visible = false;
             if (MyUtility.Convert.GetString(masterData["StyleUnit"]) == "SETS")
             {
-                sqlCmd = string.Format("select Location from Style_Location where StyleUkey = {0}", MyUtility.Convert.GetString(masterData["StyleUKey"]));
+                sqlCmd = string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(masterData["StyleUKey"]));
                 DataTable styleLocation;
                 result = DBProxy.Current.Select(null, sqlCmd, out styleLocation);
                 if (styleLocation != null)
@@ -210,9 +210,9 @@ isnull((select SUM(c.Qty)
             sqlCmd = string.Format(@"with SewQty
 as (
 select oq.Article,oq.SizeCode,oq.Qty,sdd.ComboType,isnull(sum(sdd.QAQty),0) as QAQty
-from Orders o
-inner join Order_Qty oq on oq.ID = o.ID
-left join SewingOutput_Detail_Detail sdd on sdd.OrderId = o.ID and sdd.Article = oq.Article and sdd.SizeCode = oq.SizeCode
+from Orders o WITH (NOLOCK) 
+inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
+left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = o.ID and sdd.Article = oq.Article and sdd.SizeCode = oq.SizeCode
 where o.ID = '{0}'
 group by oq.Article,oq.SizeCode,oq.Qty,sdd.ComboType
 ),
@@ -232,18 +232,18 @@ FOR ComboType IN ([T],[B],[I],[O])) a
 select p.*,m.QAQty as SewQty,LAG(p.Article,1,null) OVER (Order by oa.Seq,os.Seq) as LastArticle
 from PivotData p
 left join minSewQty m on m.Article = p.Article and m.SizeCode = p.SizeCode
-left join Order_Article oa on oa.ID = '{1}' and oa.Article = p.Article
-left join Order_SizeCode os on os.ID = '{1}' and os.SizeCode = p.SizeCode
+left join Order_Article oa WITH (NOLOCK) on oa.ID = '{1}' and oa.Article = p.Article
+left join Order_SizeCode os WITH (NOLOCK) on os.ID = '{1}' and os.SizeCode = p.SizeCode
 order by oa.Seq,os.Seq", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(masterData["POID"]));
             DataTable SewingData;
             result = DBProxy.Current.Select(null, sqlCmd, out SewingData);
 
             sqlCmd = string.Format(@"select oq.Article,oq.SizeCode,oq.Qty,sum(c.Qty) as CutQty
-from Orders o
-inner join Order_Qty oq on oq.id = o.ID
-left join CuttingOutput_WIP c on c.OrderID = o.ID and c.Article = oq.Article and c.Size = oq.SizeCode
-left join Order_Article oa on oa.ID = o.POID and oa.Article = oq.Article
-left join Order_SizeCode os on os.ID = o.POID and os.SizeCode = oq.SizeCode
+from Orders o WITH (NOLOCK) 
+inner join Order_Qty oq WITH (NOLOCK) on oq.id = o.ID
+left join CuttingOutput_WIP c WITH (NOLOCK) on c.OrderID = o.ID and c.Article = oq.Article and c.Size = oq.SizeCode
+left join Order_Article oa WITH (NOLOCK) on oa.ID = o.POID and oa.Article = oq.Article
+left join Order_SizeCode os WITH (NOLOCK) on os.ID = o.POID and os.SizeCode = oq.SizeCode
 where {0}
 group by oq.Article,oq.SizeCode,oq.Qty,oa.Seq,os.Seq
 order by oa.Seq,os.Seq", string.Format("o.ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));

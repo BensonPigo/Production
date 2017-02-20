@@ -29,9 +29,9 @@ namespace Sci.Production.PPIC
             //left join Country c on sq.CountryID = c.ID order by s.Continent,s.CountryID
            string sqlCmd = string.Format(@"
 SELECT DISTINCT isnull(d.Name,'') as ContinentName,S.CountryID,isnull(c.Alias,'') as Alias,S.CustCDID,S.Qty,S.AddName,S.AddDate,S.EditName,S.EditDate, '' as CreateBy,'' as EditBy 
-FROM Style_QtyCTN S
-LEFT JOIN Country C ON S.CountryID=C.ID
-left join DropDownList d on d.Type = 'Continent' and s.Continent = d.ID
+FROM Style_QtyCTN S WITH (NOLOCK) 
+LEFT JOIN Country C WITH (NOLOCK) ON S.CountryID=C.ID
+left join DropDownList d WITH (NOLOCK) on d.Type = 'Continent' and s.Continent = d.ID
 where s.StyleUkey = {0}", styleUkey);
 
             DataTable selectDataTable;

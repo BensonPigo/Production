@@ -23,7 +23,7 @@ namespace Sci.Production.PPIC
             InitializeComponent();
             DataTable dtFactory;
             DualResult cbResult;
-            if (cbResult = DBProxy.Current.Select(null, string.Format("select ID from Factory where MDivisionID = '{0}'",Sci.Env.User.Keyword), out dtFactory))
+            if (cbResult = DBProxy.Current.Select(null, string.Format("select ID from Factory WITH (NOLOCK) where MDivisionID = '{0}'", Sci.Env.User.Keyword), out dtFactory))
             {
                 MyUtility.Tool.SetupCombox(comboBox1, 1, dtFactory);
             }
@@ -32,9 +32,9 @@ namespace Sci.Production.PPIC
             //comboBox1.SelectedValue = "";
             DataRow drOC;
             if (MyUtility.Check.Seek(string.Format(@"select top 1 UpdateDate 
-from OrderComparisonList
+from OrderComparisonList WITH (NOLOCK) 
 where MDivisionID = '{0}' 
-and UpdateDate = (select max(UpdateDate) from OrderComparisonList where MDivisionID = '{0}')", Sci.Env.User.Keyword), out drOC))
+and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) where MDivisionID = '{0}')", Sci.Env.User.Keyword), out drOC))
             {
                 dateBox2.Value = Convert.ToDateTime(drOC["UpdateDate"]);
             }
@@ -118,7 +118,7 @@ iif(NewCMPQDate is null,'','V') as CMPQDate,
 iif(NewEachConsApv is null,iif(OriginalEachConsApv is null,'','★'),'V') as EachConsApv,
 iif(NewMnorderApv is null,'','V') as NewMnorder,iif(NewSMnorderApv is null,'','V') as NewSMnorderApv,
 iif(MnorderApv2 is null,'','V') as MnorderApv2, TransferDate
-from OrderComparisonList 
+from OrderComparisonList WITH (NOLOCK) 
 where {0} and UpdateDate {1}
 order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword) : string.Format("FactoryID = '{0}'", factoryID), MyUtility.Check.Empty(updateDate) ? "is null" : "='" + Convert.ToDateTime(updateDate).ToString("d") + "'");
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);

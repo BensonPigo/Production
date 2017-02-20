@@ -44,9 +44,9 @@ namespace Sci.Production.PPIC
         {
             base.OnRequeryPost(datas);
             string sqlCmd = string.Format(@"select oa.ArtworkTypeID,a.ArtworkUnit 
-from Order_Artwork oa
-left join ArtworkType a on oa.ArtworkTypeID = a.ID
-where oa.ID = '{0}'",KeyValue1);
+from Order_Artwork oa WITH (NOLOCK) 
+left join ArtworkType a WITH (NOLOCK) on oa.ArtworkTypeID = a.ID
+where oa.ID = '{0}'", KeyValue1);
             DataTable ArtworkUnit;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out ArtworkUnit);
 

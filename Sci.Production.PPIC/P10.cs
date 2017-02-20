@@ -31,11 +31,11 @@ namespace Sci.Production.PPIC
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select ld.*,(left(ld.Seq1+' ',3)+ld.Seq2) as Seq,isnull(psd.Refno,'') as Refno,dbo.getMtlDesc(l.POID,ld.Seq1,ld.Seq2,1,0) as Description,
 isnull(p.Description,'') as PPICReasonDesc
-from Lack l
-inner join Lack_Detail ld on l.ID = ld.ID
-left join PO_Supp_Detail psd on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
-left join Fabric f on psd.SCIRefno = f.SCIRefno
-left join PPICReason p on p.Type = 'FL' and ld.PPICReasonID = p.ID
+from Lack l WITH (NOLOCK) 
+inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
+left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
+left join PPICReason p WITH (NOLOCK) on p.Type = 'FL' and ld.PPICReasonID = p.ID
 where l.ID = '{0}'
 order by ld.Seq1,ld.Seq2", masterID);
             
@@ -89,7 +89,7 @@ order by ld.Seq1,ld.Seq2", masterID);
                             dr["Description"] = selectData[0]["Description"];
 
                             DataTable WHdata;
-                            DualResult whdr = DBProxy.Current.Select(null, string.Format("SELECT InQty,OutQty FROM MDivisionPoDetail WHERE POID = '{0}' AND Seq1 = '{1}' AND Seq2 = '{2}' AND MDivisionID = '{3}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq1"]),MyUtility.Convert.GetString(dr["Seq2"]), Sci.Env.User.Keyword), out WHdata);
+                            DualResult whdr = DBProxy.Current.Select(null, string.Format("SELECT InQty,OutQty FROM MDivisionPoDetail WITH (NOLOCK) WHERE POID = '{0}' AND Seq1 = '{1}' AND Seq2 = '{2}' AND MDivisionID = '{3}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"]), Sci.Env.User.Keyword), out WHdata);
                             if (whdr)
                             {
                                 if (WHdata.Rows.Count > 0)
@@ -144,8 +144,8 @@ order by ld.Seq1,ld.Seq2", masterID);
                         //                                from dbo.PO_Supp_Detail
                         //                                where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 3), MyUtility.Convert.GetString(e.FormattedValue).Substring(2, 2));
                         string sqlCmd = string.Format(@"select left(psd.seq1+' ',3)+psd.seq2 as Seq, psd.Refno,isnull(m.InQty,0) as InQty,isnull(m.OutQty,0) as OutQty,psd.seq1,psd.seq2, dbo.getmtldesc(id,psd.seq1,psd.seq2,2,0) as Description 
-from dbo.PO_Supp_Detail psd
-left join MDivisionPoDetail m on m.POID = psd.ID and m.Seq1 = psd.SEQ1 and m.Seq2 = psd.SEQ2 and m.MDivisionID = '{3}'
+from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+left join MDivisionPoDetail m WITH (NOLOCK) on m.POID = psd.ID and m.Seq1 = psd.SEQ1 and m.Seq2 = psd.SEQ2 and m.MDivisionID = '{3}'
 where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType = 'F'",
                                                                                        MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 2), MyUtility.Convert.GetString(e.FormattedValue).Substring(3, 2),Sci.Env.User.Keyword);
 
@@ -209,7 +209,7 @@ where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,Description from PPICReason where Type = 'FL' and Junk = 0 and TypeForUse = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Type"])), "5,40", MyUtility.Convert.GetString(dr["PPICReasonID"]));
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,Description from PPICReason WITH (NOLOCK) where Type = 'FL' and Junk = 0 and TypeForUse = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Type"])), "5,40", MyUtility.Convert.GetString(dr["PPICReasonID"]));
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             IList<DataRow> selectData = item.GetSelecteds();
@@ -240,7 +240,7 @@ where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType
                         }
 
                         DataRow reasonData;
-                        string sqlCmd = string.Format(@"select ID,Description from PPICReason where Type = 'FL' and Junk = 0 and TypeForUse = '{0}' and ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["Type"]), MyUtility.Convert.GetString(e.FormattedValue));
+                        string sqlCmd = string.Format(@"select ID,Description from PPICReason WITH (NOLOCK) where Type = 'FL' and Junk = 0 and TypeForUse = '{0}' and ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["Type"]), MyUtility.Convert.GetString(e.FormattedValue));
                         if (!MyUtility.Check.Seek(sqlCmd, out reasonData))
                         {
                             MyUtility.Msg.WarningBox(string.Format("< Reason Id: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
@@ -399,7 +399,7 @@ where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType
                 MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource, "Seq,Seq1,Seq2,RequestQty", string.Format(@"select * from (
 SELECT l.Seq,l.Seq1,l.Seq2,l.RequestQty,isnull(mpd.InQty-mpd.OutQty+mpd.AdjustQty-mpd.LInvQty,0) as StockQty
 FROM #tmp l
-left join MDivisionPoDetail mpd on mpd.POID = '{0}' and mpd.SEQ1 = l.Seq1 and mpd.SEQ2 = l.Seq2) a
+left join MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = '{0}' and mpd.SEQ1 = l.Seq1 and mpd.SEQ2 = l.Seq2) a
 where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out ExceedData);
             }
             catch (Exception ex)
@@ -446,8 +446,8 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
             }
             string sqlCmd = string.Format(@"select (left(ld.Seq1+' ',3)+'-'+ld.Seq2) as Seq, dbo.getMtlDesc(l.POID,ld.Seq1,ld.Seq2,1,0) as Description,
             ld.FTYLastRecvDate,ld.FTYInQty,ld.WhseInQty,ld.RequestQty,ld.IssueQty
-            from Lack l
-            left join Lack_Detail ld on l.ID = ld.ID
+            from Lack l WITH (NOLOCK) 
+            left join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
             where l.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             DataTable ExcelData;
@@ -506,7 +506,7 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
         {
             DateTime? maxIssueDate = null;
             DataTable issueData;
-            string sqlCmd = string.Format("select max(i.IssueDate) as IssueDate from Issue i, Issue_Detail id where i.Id = id.Id and id.PoId = '{0}' and id.Seq1 = '{1}' and id.Seq2 = '{2}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), Seq1, Seq2);
+            string sqlCmd = string.Format("select max(i.IssueDate) as IssueDate from Issue i WITH (NOLOCK) , Issue_Detail id WITH (NOLOCK) where i.Id = id.Id and id.PoId = '{0}' and id.Seq1 = '{1}' and id.Seq2 = '{2}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), Seq1, Seq2);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out issueData);
             if (result)
             {
@@ -550,7 +550,7 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                         cmds.Add(sp2);
 
                         DataTable OrderPOID;
-                        string sqlCmd = "select POID,FtyGroup from Orders where ID = @id and MDivisionID = @mdivisionid";
+                        string sqlCmd = "select POID,FtyGroup from Orders WITH (NOLOCK) where ID = @id and MDivisionID = @mdivisionid";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderPOID);
                         if (result && OrderPOID.Rows.Count > 0)
                         {

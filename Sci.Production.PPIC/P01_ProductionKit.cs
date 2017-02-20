@@ -25,15 +25,15 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
             DataTable FactoryData, MRData, SMRData;
-            string sqlcmd = string.Format("select FactoryID,left(FactoryID+'        ',8) + cast(Count(FactoryID) as varchar(3)) from Style_ProductionKits where StyleUkey = {0} group by FactoryID", KeyValue1);
+            string sqlcmd = string.Format("select FactoryID,left(FactoryID+'        ',8) + cast(Count(FactoryID) as varchar(3)) from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0} group by FactoryID", KeyValue1);
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out FactoryData);
             MyUtility.Tool.SetupCombox(comboBox1, 2, FactoryData);
 
-            sqlcmd = string.Format("select MRHandle,left(MRHandle+'          ',10) + cast(Count(MRHandle) as varchar(3)) from Style_ProductionKits where StyleUkey = {0} group by MRHandle", KeyValue1);
+            sqlcmd = string.Format("select MRHandle,left(MRHandle+'          ',10) + cast(Count(MRHandle) as varchar(3)) from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0} group by MRHandle", KeyValue1);
             result = DBProxy.Current.Select(null, sqlcmd, out MRData);
             MyUtility.Tool.SetupCombox(comboBox2, 2, MRData);
 
-            sqlcmd = string.Format("select SMR,left(SMR+'          ',10) + cast(Count(SMR) as varchar(3)) from Style_ProductionKits where StyleUkey = {0} group by SMR", KeyValue1);
+            sqlcmd = string.Format("select SMR,left(SMR+'          ',10) + cast(Count(SMR) as varchar(3)) from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0} group by SMR", KeyValue1);
             result = DBProxy.Current.Select(null, sqlcmd, out SMRData);
             MyUtility.Tool.SetupCombox(comboBox3, 2, SMRData);
 
@@ -45,14 +45,14 @@ namespace Sci.Production.PPIC
         protected override DualResult OnRequery()
         {
             string selectCommand = string.Format(@"select sp.*, iif(sp.IsPF = 1,'Y','N') as CPF, iif(sp.ReasonID = '','N','Y') as Reason, r.Name as ReasonName,
-isnull((sp.MRHandle+' '+(select Name+' #'+ExtNo from TPEPass1 where ID = sp.MRHandle)),sp.MRHandle) as MRName,
-isnull((sp.PoHandle+' '+(select Name+' #'+ExtNo from TPEPass1 where ID = sp.PoHandle)),sp.PoHandle) as POHName,
-isnull((sp.SMR+' '+(select Name+' #'+ExtNo from TPEPass1 where ID = sp.SMR)),sp.SMR) as SMRName,
-isnull((sp.POSMR+' '+(select Name+' #'+ExtNo from TPEPass1 where ID = sp.POSMR)),sp.POSMR) as POSMRName,
+isnull((sp.MRHandle+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.MRHandle)),sp.MRHandle) as MRName,
+isnull((sp.PoHandle+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.PoHandle)),sp.PoHandle) as POHName,
+isnull((sp.SMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.SMR)),sp.SMR) as SMRName,
+isnull((sp.POSMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.POSMR)),sp.POSMR) as POSMRName,
 s.ID as StyleID, s.SeasonID
-from Style_ProductionKits sp
-left join Reason r on r.ID = sp.DOC and r.ReasonTypeID = 'ProductionKits'
-left join Style s on sp.StyleUkey = s.Ukey
+from Style_ProductionKits sp WITH (NOLOCK) 
+left join Reason r WITH (NOLOCK) on r.ID = sp.DOC and r.ReasonTypeID = 'ProductionKits'
+left join Style s WITH (NOLOCK) on sp.StyleUkey = s.Ukey
 where sp.StyleUkey = {0} order by sp.ProductionKitsGroup", this.KeyValue1);
             Ict.DualResult returnResult;
             DataTable ArtworkTable = new DataTable();

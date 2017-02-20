@@ -25,16 +25,16 @@ namespace Sci.Production.PPIC
             base.OnFormLoaded();
             DataTable QtyBDown, PackingList;
             string sqlCmd = string.Format(@"select oq.Article,oq.SizeCode,oq.Qty as OrderQty, 
-isnull((select sum(ShipQty) from PackingList_Detail where OrderID = oq.ID and Article = oq.Article and SizeCode = oq.SizeCode),0) as PacklistQty, 
-isnull((select sum(pd.ShipQty) from PackingList p,PackingList_Detail pd where pd.OrderID = oq.ID and pd.Article = oq.Article and pd.SizeCode = oq.SizeCode and p.ID = pd.ID and p.INVNo <> ''),0) as BookingQty, 
-isnull((select sum(pdd.ShipQty) from Pullout_Detail_Detail pdd where pdd.OrderID = oq.ID and pdd.Article = oq.Article and pdd.SizeCode = oq.SizeCode),0) as PulloutQty, 
-isnull((select sum(iq.DiffQty) from InvAdjust i,InvAdjust_Qty iq where i.ID = iq.ID and i.OrderID = oq.ID and iq.Article = oq.Article and iq.SizeCode = oq.SizeCode),0) as AdjQty 
-from Order_Qty oq
-left join Orders o on o.ID = oq.ID 
-left join Order_Article oa on oa.id = oq.ID and oa.Article = oq.Article
-left join Order_SizeCode os on os.Id = o.POID and os.SizeCode = oq.SizeCode
+isnull((select sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where OrderID = oq.ID and Article = oq.Article and SizeCode = oq.SizeCode),0) as PacklistQty, 
+isnull((select sum(pd.ShipQty) from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) where pd.OrderID = oq.ID and pd.Article = oq.Article and pd.SizeCode = oq.SizeCode and p.ID = pd.ID and p.INVNo <> ''),0) as BookingQty, 
+isnull((select sum(pdd.ShipQty) from Pullout_Detail_Detail pdd WITH (NOLOCK) where pdd.OrderID = oq.ID and pdd.Article = oq.Article and pdd.SizeCode = oq.SizeCode),0) as PulloutQty, 
+isnull((select sum(iq.DiffQty) from InvAdjust i WITH (NOLOCK) ,InvAdjust_Qty iq WITH (NOLOCK) where i.ID = iq.ID and i.OrderID = oq.ID and iq.Article = oq.Article and iq.SizeCode = oq.SizeCode),0) as AdjQty 
+from Order_Qty oq WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on o.ID = oq.ID 
+left join Order_Article oa WITH (NOLOCK) on oa.id = oq.ID and oa.Article = oq.Article
+left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = oq.SizeCode
 where oq.ID = '{0}'
-order by oa.Seq,os.Seq",orderID);
+order by oa.Seq,os.Seq", orderID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out QtyBDown);
             if (!result)
             {
@@ -56,32 +56,32 @@ order by oa.Seq,os.Seq",orderID);
 as (
 select *,
 (select isnull(sum(iq.DiffQty),0) 
-from Pullout_Detail pd, InvAdjust i, InvAdjust_Qty iq 
+from Pullout_Detail pd WITH (NOLOCK) , InvAdjust i WITH (NOLOCK) , InvAdjust_Qty iq WITH (NOLOCK) 
 where pd.ID = a.PulloutID and pd.OrderID = '{0}' and pd.UKey = i.Ukey_Pullout and i.ID = iq.ID) as adjQty
 from (select pl.ShipModeID,pl.FactoryID,pl.ID,pl.INVNo,pl.PulloutID,p.PulloutDate,pl.CTNQty,sum(pd.ShipQty) as ShipQty
-from PackingList pl
-inner join PackingList_Detail pd on pl.ID = pd.ID
-left join Pullout p on pl.PulloutID = p.ID
+from PackingList pl WITH (NOLOCK) 
+inner join PackingList_Detail pd WITH (NOLOCK) on pl.ID = pd.ID
+left join Pullout p WITH (NOLOCK) on pl.PulloutID = p.ID
 where pd.OrderID = '{0}' 
 group by pl.ShipModeID,pl.FactoryID,pl.ID,pl.INVNo,pl.PulloutID,p.PulloutDate,pl.CTNQty) a
 ),
 tmpPullout
 as(
 select *,
-(select isnull(sum(iq.DiffQty),0) from Pullout_Detail pd, InvAdjust i, InvAdjust_Qty iq where pd.ID = a.PulloutID and pd.OrderID = '{0}' and pd.UKey = i.Ukey_Pullout and i.ID = iq.ID) as adjQty
+(select isnull(sum(iq.DiffQty),0) from Pullout_Detail pd WITH (NOLOCK) , InvAdjust i WITH (NOLOCK) , InvAdjust_Qty iq WITH (NOLOCK) where pd.ID = a.PulloutID and pd.OrderID = '{0}' and pd.UKey = i.Ukey_Pullout and i.ID = iq.ID) as adjQty
 from (select '' as ShipModeID,p.FactoryID,'' as ID,'' as INVNo,p.ID as PulloutID, p.PulloutDate,0 as CTNQty, sum(pd.ShipQty) as ShipQty
-from Pullout_Detail pd, Pullout p
+from Pullout_Detail pd WITH (NOLOCK) , Pullout p WITH (NOLOCK) 
 where pd.OrderID = '{0}'
 and pd.ShipQty > 0
 and p.ID = pd.ID
-and not exists (select 1 from PackingList pl, PackingList_Detail pld where pl.ID = pld.ID and pd.OrderID = pld.OrderID and pl.PulloutID = p.ID)
+and not exists (select 1 from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) where pl.ID = pld.ID and pd.OrderID = pld.OrderID and pl.PulloutID = p.ID)
 group by p.FactoryID,p.ID,p.PulloutDate) a
 ),
 tmpInvAdj
 as
 (
 select '' as ShipModeID,''  as FactoryID,'' as ID,i.GarmentInvoiceID as INVNo,'' as PulloutID, null as PulloutDate,0 as CTNQty, 0 as ShipQty,sum(iq.DiffQty) as adjQty
-from InvAdjust i, InvAdjust_Qty iq
+from InvAdjust i WITH (NOLOCK) , InvAdjust_Qty iq WITH (NOLOCK) 
 where i.ID = iq.ID
 and i.OrderID = '{0}'
 and not exists (select 1 from tmpPackingList where INVNo = i.GarmentInvoiceID)
