@@ -128,7 +128,6 @@ Database/dbo/Stored[!!-~]Procedures/PPIC_Report_SizeSpec.sql -text
 Database/dbo/Stored[!!-~]Procedures/Planning_Report_R10.sql -text
 Database/dbo/Stored[!!-~]Procedures/Planning_Report_R13.sql -text
 Database/dbo/Stored[!!-~]Procedures/PoApproveLock.sql -text
-Database/dbo/Stored[!!-~]Procedures/Procedure1_1.sql -text
 Database/dbo/Stored[!!-~]Procedures/Purchase_P01_01.sql -text
 Database/dbo/Stored[!!-~]Procedures/cutting_P01_MarkerList.sql -text
 Database/dbo/Stored[!!-~]Procedures/cutting_P01_MarkerList_1.sql -text
