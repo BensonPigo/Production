@@ -1,10 +1,14 @@
 ﻿
+USE [Production]
+GO
+SET ANSI_NULLS ON
+Go
+SET QUOTED_IDENTIFIER ON
+Go
 CREATE PROCEDURE [dbo].[Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc]
 	@OrderID VARCHAR(13)
 AS
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 
 	--抓取ID為POID
 	select @OrderID=POID FROM dbo.Orders where ID = @OrderID
