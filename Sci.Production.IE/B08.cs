@@ -45,10 +45,10 @@ namespace Sci.Production.IE
             if (excel == null) return;
 
             DataTable ExcelDataTable, MFactory, UpdateData;
-            string sqlCmd = "select FactoryID,ID,Name,Skill,OnBoardDate,ResignationDate,SewingLineID,SPACE(250) as ErrorMsg from Employee where 1 = 0";
+            string sqlCmd = "select FactoryID,ID,Name,Skill,OnBoardDate,ResignationDate,SewingLineID,SPACE(250) as ErrorMsg from Employee WITH (NOLOCK)	where 1 = 0";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelDataTable);
 
-            sqlCmd = string.Format("select * from Factory where MDivisionID = '{0}'",Sci.Env.User.Keyword);
+            sqlCmd = string.Format("select * from Factory WITH (NOLOCK)	where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             result = DBProxy.Current.Select(null, sqlCmd, out MFactory);
             MFactory.PrimaryKey = new DataColumn[] { MFactory.Columns["ID"] };
 
@@ -276,7 +276,7 @@ namespace Sci.Production.IE
             if (this.EditMode)
             {
                 DataTable MachineGroup;
-                Ict.DualResult returnResule = DBProxy.Current.Select("Machine", "select ID,Description from MachineGroup where Junk = 0 order by ID", out MachineGroup);
+                Ict.DualResult returnResule = DBProxy.Current.Select("Machine", "select ID,Description from MachineGroup WITH (NOLOCK)	where Junk = 0 order by ID", out MachineGroup);
                 Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(MachineGroup, "ID,Description", "Group ID,Description", "2,35", textBox3.Text);
 
                 DialogResult returnResult = item.ShowDialog();

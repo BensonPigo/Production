@@ -30,9 +30,9 @@ namespace Sci.Production.IE
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"select ld.*,o.DescEN as Description,e.Name as EmployeeName,e.Skill as EmployeeSkill,iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
-from LineMapping_Detail ld
-left join Employee e on ld.EmployeeID = e.ID
-left join Operation o on ld.OperationID = o.ID
+from LineMapping_Detail ld WITH (NOLOCK) 
+left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
+left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
 where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -40,7 +40,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            string sqlCmd = string.Format("select Description,CPU from Style where Ukey = {0}",CurrentMaintain["StyleUkey"].ToString());
+            string sqlCmd = string.Format("select Description,CPU from Style WITH (NOLOCK) where Ukey = {0}", CurrentMaintain["StyleUkey"].ToString());
             DataRow StyleData;
             if (MyUtility.Check.Seek(sqlCmd, out StyleData))
             {
@@ -128,9 +128,9 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                                             select ld.*,o.DescEN as Description,e.Name as EmployeeName,
                                                     e.Skill as EmployeeSkill,
                                                     iif(ld.Cycle = 0,0,ROUND(ld.GSD/'{1}',2)*100) as Efficiency
-                                            from LineMapping_Detail ld
-                                            left join Employee e on ld.EmployeeID = e.ID
-                                            left join Operation o on ld.OperationID = o.ID
+                                            from LineMapping_Detail ld WITH (NOLOCK) 
+                                            left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
+                                            left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
                                             where ld.ID = '{0}' and ld.No='{2}' and ld.Annotation='{3}' 
                                                   and ld.GroupKey='{4}' and ld.OperationID='{5}' 
                                             order by ld.No,ld.GroupKey", dr["ID"], c, dr["No"], dr["Annotation"], dr["GroupKey"], dr["OperationID"]);
@@ -155,7 +155,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = "select ID,Description from MachineType where Junk = 0";
+                            string sqlCmd = "select ID,Description from MachineType WITH (NOLOCK) where Junk = 0";
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,43", dr["MachineTypeID"].ToString());
                             item.Width = 590;
                             DialogResult returnResult = item.ShowDialog();
@@ -180,7 +180,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                         cmds.Add(sp1);
-                        string sqlCmd = "select ID from MachineType where Junk = 0 and ID = @id";
+                        string sqlCmd = "select ID from MachineType WITH (NOLOCK) where Junk = 0 and ID = @id";
                         DataTable MachineData;
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out MachineData);
                         if (!result)
@@ -343,11 +343,11 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
 
             if (MyUtility.Check.Empty(CurrentMaintain["FactoryID"]))
             {
-                sqlCmd = "select ID,Name,Skill,SewingLineID,FactoryID from Employee where ResignationDate is null" + (ID == null ? "" : " and ID = @id");
+                sqlCmd = "select ID,Name,Skill,SewingLineID,FactoryID from Employee WITH (NOLOCK) where ResignationDate is null" + (ID == null ? "" : " and ID = @id");
             }
             else
             {
-                sqlCmd = "select ID,Name,Skill,SewingLineID,FactoryID from Employee where ResignationDate is null and FactoryID = @factoryid" + (ID == null ? "" : " and ID = @id");
+                sqlCmd = "select ID,Name,Skill,SewingLineID,FactoryID from Employee WITH (NOLOCK) where ResignationDate is null and FactoryID = @factoryid" + (ID == null ? "" : " and ID = @id");
             }
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out EmployeeData);
             if (!result)
@@ -467,7 +467,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
             //Vision為空的話就要填值
             if (MyUtility.Check.Empty(CurrentMaintain["Version"]))
             {
-                string newVersion = MyUtility.GetValue.Lookup(string.Format("select isnull(max(Version),0)+1 as Newversion from LineMapping where StyleUKey =  {0}",CurrentMaintain["StyleUkey"].ToString()));
+                string newVersion = MyUtility.GetValue.Lookup(string.Format("select isnull(max(Version),0)+1 as Newversion from LineMapping WITH (NOLOCK) where StyleUKey =  {0}", CurrentMaintain["StyleUkey"].ToString()));
                 if (MyUtility.Check.Empty(newVersion))
                 {
                     MyUtility.Msg.WarningBox("Get Version fail!!");
@@ -627,7 +627,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         //Factory
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Factory where Junk = 0 order by ID", "8", textBox1.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID", "8", textBox1.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             textBox1.Text = item.GetSelectedString();
@@ -636,7 +636,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         //Style#
         private void textBox7_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = "select ID,SeasonID,BrandID,Description,CPU,Ukey from Style where Junk = 0 order by ID,SeasonID";
+            string sqlCmd = "select ID,SeasonID,BrandID,Description,CPU,Ukey from Style WITH (NOLOCK) where Junk = 0 order by ID,SeasonID";
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,8,10,40,5,6", textBox7.Text, "Style#,Season,Brand,Description,CPU,Key", columndecimals:"0,0,0,0,3,0");
             item.Width = 838;
@@ -651,7 +651,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
             numericBox8.Value = MyUtility.Convert.GetDecimal(styleData[0]["CPU"]);
 
             DataTable ComboType;
-            DualResult result = DBProxy.Current.Select(null, string.Format("select Location from Style_Location where StyleUkey = {0}", CurrentMaintain["StyleUKey"].ToString()), out ComboType);
+            DualResult result = DBProxy.Current.Select(null, string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", CurrentMaintain["StyleUKey"].ToString()), out ComboType);
             if (result)
             {
                 if (ComboType.Rows.Count > 1)
@@ -679,7 +679,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         //Combo Type
         private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select Location from Style_Location where StyleUkey = {0}", CurrentMaintain["StyleUKey"].ToString()), "2", "", "Combo Type");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", CurrentMaintain["StyleUKey"].ToString()), "2", "", "Combo Type");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             CurrentMaintain["ComboType"] = item.GetSelectedString();
@@ -688,8 +688,8 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         //撈出ChgOverTarget資料
         private string FindTarget(string Type)
         {
-            return MyUtility.GetValue.Lookup(string.Format(@"select Target from ChgOverTarget where Type = '{0}' and MDivisionID = '{1}' and EffectiveDate = (
-select MAX(EffectiveDate) from ChgOverTarget where Type = '{0}' and MDivisionID = '{1}' and EffectiveDate <= GETDATE())", Type, Sci.Env.User.Keyword));
+            return MyUtility.GetValue.Lookup(string.Format(@"select Target from ChgOverTarget WITH (NOLOCK) where Type = '{0}' and MDivisionID = '{1}' and EffectiveDate = (
+select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' and MDivisionID = '{1}' and EffectiveDate <= GETDATE())", Type, Sci.Env.User.Keyword));
         }
 
         //Confirm
@@ -722,7 +722,7 @@ select MAX(EffectiveDate) from ChgOverTarget where Type = '{0}' and MDivisionID 
                     msg.Append("LLER is lower than target.\r\n");
                 }
                 MyUtility.Msg.WarningBox(msg.ToString()+"Please select not hit target reason.");
-                string sqlCmd = "select ID, Description from IEReason where Type = 'LM' and Junk = 0";
+                string sqlCmd = "select ID, Description from IEReason WITH (NOLOCK) where Type = 'LM' and Junk = 0";
                 Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "5,30","");
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
@@ -764,7 +764,7 @@ select MAX(EffectiveDate) from ChgOverTarget where Type = '{0}' and MDivisionID 
         private void button1_Click(object sender, EventArgs e)
         {
             //不使用MyUtility.Msg.InfoBox的原因為MyUtility.Msg.InfoBox都有MessageBoxIcon
-            MessageBox.Show(MyUtility.GetValue.Lookup(string.Format("select Description from IEReason where Type = 'LM' and ID = '{0}'", CurrentMaintain["IEReasonID"].ToString())).PadRight(60), caption: "Not hit target reason");
+            MessageBox.Show(MyUtility.GetValue.Lookup(string.Format("select Description from IEReason WITH (NOLOCK) where Type = 'LM' and ID = '{0}'", CurrentMaintain["IEReasonID"].ToString())).PadRight(60), caption: "Not hit target reason");
         }
 
         //Copy from other line mapping
@@ -777,9 +777,9 @@ select MAX(EffectiveDate) from ChgOverTarget where Type = '{0}' and MDivisionID 
                 DataTable copyLineMapDetail;
                 string sqlCmd = string.Format(@"select null as ID,ld.No,ld.Annotation,ld.GSD,ld.TotalGSD,ld.Cycle,ld.TotalCycle,ld.MachineTypeID,ld.OperationID,ld.MoldID,ld.GroupKey,ld.New,ld.EmployeeID,
 o.DescEN as Description,e.Name as EmployeeName,e.Skill as EmployeeSkill,iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
-from LineMapping_Detail ld
-left join Employee e on ld.EmployeeID = e.ID
-left join Operation o on ld.OperationID = o.ID
+from LineMapping_Detail ld WITH (NOLOCK) 
+left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
+left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
 where ld.ID = {0} order by ld.No", callNextForm.P03CopyLineMapping["ID"].ToString());
                 DualResult selectResult = DBProxy.Current.Select(null, sqlCmd, out copyLineMapDetail);
                 if (!selectResult)
@@ -835,7 +835,7 @@ where ld.ID = {0} order by ld.No", callNextForm.P03CopyLineMapping["ID"].ToStrin
             }
             DataRow timeStudy;
             DataTable timeStudy_Detail;
-            string sqlCmd = string.Format(@"select t.* from TimeStudy t, Style s
+            string sqlCmd = string.Format(@"select t.* from TimeStudy t WITH (NOLOCK) , Style s WITH (NOLOCK) 
 where t.StyleID = s.ID 
 and t.BrandID = s.BrandID 
 and t.SeasonID = s.SeasonID 
@@ -849,8 +849,8 @@ and t.ComboType = '{1}'", CurrentMaintain["StyleUkey"].ToString(), CurrentMainta
 
             sqlCmd = string.Format(@"select null as ID,td.Seq as No,td.Annotation,td.SMV as GSD,td.SMV as TotalGSD,td.SMV as Cycle,td.SMV as TotalCycle,td.MachineTypeID,td.OperationID,td.Mold as MoldID,0 as GroupKey,0 as New,'' as EmployeeID,
 o.DescEN as Description,'' as EmployeeName,'' as EmployeeSkill,100 as Efficiency
-from TimeStudy_Detail td
-left join Operation o on td.OperationID = o.ID
+from TimeStudy_Detail td WITH (NOLOCK) 
+left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 where td.ID = {0} order by td.Seq", timeStudy["ID"].ToString());
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out timeStudy_Detail);
             if (!result)

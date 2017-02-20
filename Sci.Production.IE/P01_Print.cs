@@ -23,7 +23,7 @@ namespace Sci.Production.IE
             masterData = MasterData;
             label4.Text = "Language\r\n(For description)";
             DataTable artworkType;
-            string sqlCmd = string.Format("Select distinct ArtworkTypeID from MachineType, TimeStudy_Detail where MachineType.ID = TimeStudy_Detail.MachineTypeID and TimeStudy_Detail.ID = {0}", MyUtility.Convert.GetString(masterData["ID"]));
+            string sqlCmd = string.Format("Select distinct ArtworkTypeID from MachineType WITH (NOLOCK) , TimeStudy_Detail WITH (NOLOCK) where MachineType.ID = TimeStudy_Detail.MachineTypeID and TimeStudy_Detail.ID = {0}", MyUtility.Convert.GetString(masterData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out artworkType);
             MyUtility.Tool.SetupCombox(comboBox1, 1,artworkType);
             MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "English,Chinese,Cambodia,Vietnam");
@@ -50,17 +50,17 @@ namespace Sci.Production.IE
         // 非同步取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            custcdID = MyUtility.GetValue.Lookup(string.Format("select CdCodeID from Style where ID = '{0}' and SeasonID = '{1}' and BrandID = '{2}'", MyUtility.Convert.GetString(masterData["StyleID"]), MyUtility.Convert.GetString(masterData["SeasonID"]), MyUtility.Convert.GetString(masterData["BrandID"])));
+            custcdID = MyUtility.GetValue.Lookup(string.Format("select CdCodeID from Style WITH (NOLOCK) where ID = '{0}' and SeasonID = '{1}' and BrandID = '{2}'", MyUtility.Convert.GetString(masterData["StyleID"]), MyUtility.Convert.GetString(masterData["SeasonID"]), MyUtility.Convert.GetString(masterData["BrandID"])));
             machineID = MyUtility.GetValue.Lookup(string.Format(@"select CONCAT(b.Machine,', ') from (
 select MachineTypeID+'*'+CONVERT(varchar,cnt) as Machine from (
-select td.MachineTypeID,COUNT(td.MachineTypeID) as cnt from TimeStudy_Detail td left join MachineType m on td.MachineTypeID = m.ID where td.ID = {0} and td.MachineTypeID <> ''{1} group by MachineTypeID) a) b
+select td.MachineTypeID,COUNT(td.MachineTypeID) as cnt from TimeStudy_Detail td WITH (NOLOCK) left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID where td.ID = {0} and td.MachineTypeID <> ''{1} group by MachineTypeID) a) b
 FOR XML PATH('')", MyUtility.Convert.GetString(masterData["ID"]), (MyUtility.Check.Empty(artworktype) ? "" : " and m.ArtworkTypeID = '"+artworktype+"'")));
             string sqlCmd = string.Format(@"select td.Seq,td.OperationID,td.MachineTypeID,td.Mold,td.Frequency,td.SMV,td.PcsPerHour,td.Sewer,
 td.Annotation,o.DescEN,od.DescCHS,od.DescKH,od.DescVI 
-from TimeStudy_Detail td
-left join Operation o on td.OperationID = o.ID
-left join OperationDesc od on o.ID = od.ID
-left join MachineType m on td.MachineTypeID = m.ID
+from TimeStudy_Detail td WITH (NOLOCK) 
+left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
+left join OperationDesc od WITH (NOLOCK) on o.ID = od.ID
+left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 where td.ID = {0}{1}", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Check.Empty(artworktype) ? "" : string.Format(" and m.ArtworkTypeID = '{0}'", artworktype));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
             if (!result)
@@ -70,8 +70,8 @@ where td.ID = {0}{1}", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.
             }
 
             sqlCmd = string.Format(@"select isnull(m.ArtworkTypeID,'') as ArtworkTypeID,sum(td.SMV) as ttlSMV
-from TimeStudy_Detail td
-left join MachineType m on td.MachineTypeID = m.ID
+from TimeStudy_Detail td WITH (NOLOCK) 
+left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 where td.ID = {0}{1}
 group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Check.Empty(artworktype) ? "" : string.Format(" and m.ArtworkTypeID = '{0}'", artworktype));
             result = DBProxy.Current.Select(null, sqlCmd, out artworkType);

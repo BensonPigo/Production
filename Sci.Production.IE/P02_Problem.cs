@@ -32,7 +32,7 @@ namespace Sci.Production.IE
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from IEReason where Type = 'CP' and Junk = 0 order by ID", "4,30", dr["IEReasonID"].ToString());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from IEReason WITH (NOLOCK) where Type = 'CP' and Junk = 0 order by ID", "4,30", dr["IEReasonID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             IList<DataRow> selectedData = item.GetSelecteds();
@@ -53,8 +53,8 @@ namespace Sci.Production.IE
         protected override DualResult OnRequery()
         {
             string selectCommand = string.Format(@"select cp.*,ir.Description as IEReasonDesc 
-from ChgOver_Problem cp
-left join IEReason ir on cp.IEReasonID = ir.ID and ir.Type = 'CP'
+from ChgOver_Problem cp WITH (NOLOCK) 
+left join IEReason ir WITH (NOLOCK) on cp.IEReasonID = ir.ID and ir.Type = 'CP'
 where cp.ID = {0}", this.KeyValue1);
             Ict.DualResult returnResult;
             DataTable ChgOverProblem = new DataTable();

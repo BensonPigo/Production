@@ -72,7 +72,7 @@ namespace Sci.Production.IE
         //Brand
         private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WHERE Junk=0  ORDER BY Id";
+            string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK)	WHERE Junk=0  ORDER BY Id";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,30,30", textBox4.Text, false, ",");
             item.Size = new System.Drawing.Size(750, 500);
             DialogResult result = item.ShowDialog();
@@ -85,7 +85,7 @@ namespace Sci.Production.IE
             string textValue = this.textBox4.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox4.OldValue)
             {
-                if (!MyUtility.Check.Seek(string.Format(@"SELECT Id FROM Brand WHERE Junk=0 AND id = '{0}'", textValue)))
+                if (!MyUtility.Check.Seek(string.Format(@"SELECT Id FROM Brand WITH (NOLOCK) WHERE Junk=0 AND id = '{0}'", textValue)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Brand: {0} > not found!!!", textValue));
                     this.textBox4.Text = "";

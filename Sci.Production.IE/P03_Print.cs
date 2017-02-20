@@ -44,15 +44,15 @@ namespace Sci.Production.IE
             string sqlCmd = string.Format(@"with Attachment
 as
 (
- select distinct MachineTypeID,(select CONCAT(MoldID,',') from LineMapping_Detail where ID = 8257 and MoldID <> '' and MachineTypeID = ld.MachineTypeID for xml path('')) as Attach
- from LineMapping_Detail ld
+ select distinct MachineTypeID,(select CONCAT(MoldID,',') from LineMapping_Detail WITH (NOLOCK) where ID = 8257 and MoldID <> '' and MachineTypeID = ld.MachineTypeID for xml path('')) as Attach
+ from LineMapping_Detail ld WITH (NOLOCK) 
  where ID = {0} and MoldID <> ''
 )
 select b.MachineTypeID,b.ctn,iif(a.Attach is null,'',SUBSTRING(a.Attach,1,len(a.Attach)-1)) as Attach 
 from (select a.MachineTypeID, count(a.MachineTypeID) as ctn 
 	  from
 	  (select distinct no,MachineTypeID 
-	   from LineMapping_Detail 
+	   from LineMapping_Detail WITH (NOLOCK) 
 	   where ID = {0}) a
 	  group by a.MachineTypeID) b
 left join Attachment a on b.MachineTypeID = a.MachineTypeID", MyUtility.Convert.GetString(masterData["ID"]));
@@ -64,8 +64,8 @@ left join Attachment a on b.MachineTypeID = a.MachineTypeID", MyUtility.Convert.
             }
 
             sqlCmd = string.Format(@"select ld.No,ld.TotalCycle,ld.TotalGSD,ld.Cycle,ld.GroupKey,ld.MachineTypeID,isnull(e.Name,'') as EmployeeName
-from LineMapping_Detail ld
-left join Employee e on e.ID = ld.EmployeeID
+from LineMapping_Detail ld WITH (NOLOCK) 
+left join Employee e WITH (NOLOCK) on e.ID = ld.EmployeeID
 where ld.ID = {0}
 order by ld.No,ld.GroupKey", MyUtility.Convert.GetString(masterData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out printData);
@@ -76,7 +76,7 @@ order by ld.No,ld.GroupKey", MyUtility.Convert.GetString(masterData["ID"]));
             }
 
             sqlCmd = string.Format(@"select distinct No,TotalCycle,{1} as TaktTime
-from LineMapping_Detail
+from LineMapping_Detail WITH (NOLOCK) 
 where ID = {0}
 order by No", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(masterData["TaktTime"]));
             result = DBProxy.Current.Select(null, sqlCmd, out ttlCycleTime);
@@ -88,11 +88,11 @@ order by No", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.G
 
             sqlCmd = string.Format(@"select a.*,isnull(o.DescEN,'') as DescEN,isnull(od.DescCHS,'') as DescCHS,isnull(od.DescKH,'') as DescKH,isnull(od.DescVI,'') as DescVI
 from (select GroupKey,OperationID,Annotation,max(GSD) as GSD,MachineTypeID
-	  from LineMapping_Detail
+	  from LineMapping_Detail WITH (NOLOCK) 
 	  where ID = {0}
 	  group by GroupKey,OperationID,Annotation,MachineTypeID) a
-left join Operation o on o.ID = a.OperationID
-left join OperationDesc od on od.ID = a.OperationID
+left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
+left join OperationDesc od WITH (NOLOCK) on od.ID = a.OperationID
 order by a.GroupKey", MyUtility.Convert.GetString(masterData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out operationCode);
             if (!result)

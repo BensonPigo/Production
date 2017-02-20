@@ -56,7 +56,7 @@ namespace Sci.Production.IE
 
             //撈CD Code
             DataTable cdCode;
-            string sqlCmd = "select CdCodeID from Style where ID = @styleid and SeasonID = @seasonid and BrandID = @brandid";
+            string sqlCmd = "select CdCodeID from Style WITH (NOLOCK) where ID = @styleid and SeasonID = @seasonid and BrandID = @brandid";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out cdCode);
             if (!result)
             {
@@ -74,9 +74,9 @@ thd.Annotation,thd.Frequency,o.MtlFactorID,thd.SMV,thd.MachineTypeID,thd.Mold,
 thd.PcsPerHour,thd.Sewer,thd.IETMSSMV,
 LEFT(th.Phase+REPLICATE(' ',10),10)+' VER-'+th.Version as Status,
 IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3,4))) as sort
-from TimeStudyHistory th
-left join TimeStudyHistory_Detail thd on th.ID = thd.ID
-left join Operation o on thd.OperationID = o.ID
+from TimeStudyHistory th WITH (NOLOCK) 
+left join TimeStudyHistory_Detail thd WITH (NOLOCK) on th.ID = thd.ID
+left join Operation o WITH (NOLOCK) on thd.OperationID = o.ID
 where StyleID = @styleid and SeasonID = @seasonid and BrandID = @brandid and ComboType = @combotype
 order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3,4))),th.Version,thd.Seq";
             result = DBProxy.Current.Select(null, sqlCmd, cmds, out gridData);

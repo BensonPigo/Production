@@ -42,8 +42,8 @@ namespace Sci.Production.IE
             cmds.Add(sp3);
 
             string sqlCmd = @"select s.Picture1,s.Picture2,s1.PicPath
-from Style s
-left join System s1 on 1=1
+from Style s WITH (NOLOCK) 
+left join System s1 WITH (NOLOCK) on 1=1
 where s.ID = @styleid and s.SeasonID = @seasonid and s.BrandID = @brandid";
             DataTable styleData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleData);

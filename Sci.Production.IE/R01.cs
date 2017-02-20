@@ -25,7 +25,7 @@ namespace Sci.Production.IE
         //Factory
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = "select distinct FTYGroup from Factory where Junk = 0 AND FTYGroup!=''";
+            string sqlCmd = "select distinct FTYGroup from Factory WITH (NOLOCK) where Junk = 0 AND FTYGroup!=''";
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", textBox1.Text, "Factory");
             DialogResult returnResult = item.ShowDialog();
@@ -37,7 +37,7 @@ namespace Sci.Production.IE
         //Style
         private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = "select distinct ID,BrandID,Description from Style where Junk = 0 order by ID";
+            string sqlCmd = "select distinct ID,BrandID,Description from Style WITH (NOLOCK) where Junk = 0 order by ID";
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,10,50", textBox2.Text, "Style#,Brand,Description");
             item.Width = 800;
@@ -49,7 +49,7 @@ namespace Sci.Production.IE
         //Season
         private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = "select distinct ID from Season where Junk = 0 ORDER BY ID DESC";
+            string sqlCmd = "select distinct ID from Season WITH (NOLOCK) where Junk = 0 ORDER BY ID DESC";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", textBox3.Text, "Season");
             item.Width = 300;
             DialogResult returnResult = item.ShowDialog();
@@ -90,10 +90,10 @@ namespace Sci.Production.IE
 	   IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalGSD)/lm.HighestCycle/lm.CurrentOperators) as Eff,
 	   IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) as LB,
 	   IIF(lm.TaktTime*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.TaktTime/lm.CurrentOperators) as LLEF,
-	   IIF(lm.HighestCycle * lm.CurrentOperators = 0,0,(ROUND(3600.0/lm.HighestCycle, 2) * (select isnull(CPU,0) from Style where lm.BrandID = BrandID and lm.StyleID = ID and lm.SeasonID = SeasonID)/lm.CurrentOperators)) as PPH,
-	   isnull((select Name from Pass1 where ID = lm.AddName),'') as CreateBy,lm.AddDate,
-	   isnull((select Name from Pass1 where ID = lm.EditName),'') as EditBy,lm.EditDate
-from LineMapping lm
+	   IIF(lm.HighestCycle * lm.CurrentOperators = 0,0,(ROUND(3600.0/lm.HighestCycle, 2) * (select isnull(CPU,0) from Style WITH (NOLOCK) where lm.BrandID = BrandID and lm.StyleID = ID and lm.SeasonID = SeasonID)/lm.CurrentOperators)) as PPH,
+	   isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.AddName),'') as CreateBy,lm.AddDate,
+	   isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.EditName),'') as EditBy,lm.EditDate
+from LineMapping lm WITH (NOLOCK) 
 where 1 = 1
 ");
             if (!MyUtility.Check.Empty(factory))
@@ -179,7 +179,7 @@ where 1 = 1
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
             DataTable FactoryData; string fac = "";
-            string sqlCmd = "select distinct FTYGroup from Factory where Junk = 0 AND FTYGroup!=''";
+            string sqlCmd = "select distinct FTYGroup from Factory WITH (NOLOCK) where Junk = 0 AND FTYGroup!=''";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out FactoryData);
             foreach (DataRow dr in FactoryData.Rows)
             {
@@ -202,7 +202,7 @@ where 1 = 1
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
             DataTable StyleData; string sty = "";
-            string sqlCmd = "select distinct ID,BrandID,Description from Style where Junk = 0 order by ID";
+            string sqlCmd = "select distinct ID,BrandID,Description from Style WITH (NOLOCK) where Junk = 0 order by ID";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out StyleData);
             foreach (DataRow dr in StyleData.Rows)
             {
@@ -225,7 +225,7 @@ where 1 = 1
         private void textBox3_Validating(object sender, CancelEventArgs e)
         {
             DataTable SeasonData; string season = "";
-            string sqlCmd = "select distinct ID from Season where Junk = 0";
+            string sqlCmd = "select distinct ID from Season WITH (NOLOCK) where Junk = 0";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out SeasonData);
             foreach (DataRow dr in SeasonData.Rows)
             {

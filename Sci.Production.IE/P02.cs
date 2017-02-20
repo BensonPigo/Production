@@ -44,9 +44,9 @@ namespace Sci.Production.IE
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-           
-            string brand  = string.Format( @"SELECT BrandID FROM Orders
-                             left join ChgOver on  Orders.id= ChgOver.OrderID
+
+            string brand = string.Format(@"SELECT BrandID FROM Orders WITH (NOLOCK) 
+                             left join ChgOver WITH (NOLOCK) on  Orders.id= ChgOver.OrderID
                              where ChgOver.OrderID ='{0}'", CurrentMaintain["OrderID"].ToString());
             DataTable brandOutput;
             DualResult res = DBProxy.Current.Select(null, brand, out brandOutput);
@@ -67,7 +67,7 @@ namespace Sci.Production.IE
 as
 (
 select distinct s.OutputDate,s.Manpower,s.ID
-from SewingOutput s, SewingOutput_Detail sd
+from SewingOutput s WITH (NOLOCK) , SewingOutput_Detail sd WITH (NOLOCK) 
 where s.ID = sd.ID
 and sd.OrderId = '{0}'
 and sd.ComboType = '{1}'
@@ -80,8 +80,8 @@ as
 select s.OutputDate,iif(sd.QAQty = 0,s.Manpower,sd.QAQty*s.Manpower) as ActManP,
 (sd.TMS*sd.QAQty) as ttlOutP,sd.QAQty,sd.WorkHour,System.StdTMS
 from tmpSO s
-left join SewingOutput_Detail sd on s.ID = sd.ID
-left join System on 1=1
+left join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
+left join System WITH (NOLOCK) on 1=1
 ),
 SummaryData
 as
@@ -92,7 +92,7 @@ from tmpDetailData
 group by OutputDate,StdTMS
 )
 select top (3) OutputDate,iif(QAQty*WorkHour = 0,0,Round(ttlOutP/(round(ActManP/QAQty*WorkHour,2)*3600)*100,1)) as Eff,
-isnull((select top (1) iif(InspectQty = 0,0,Round((InspectQty-RejectQty)/InspectQty*100,2)) from RFT where OrderID = '{0}' and CDate = SummaryData.OutputDate and SewinglineID = '{2}'),0) as Rft,StdTMS
+isnull((select top (1) iif(InspectQty = 0,0,Round((InspectQty-RejectQty)/InspectQty*100,2)) from RFT WITH (NOLOCK) where OrderID = '{0}' and CDate = SummaryData.OutputDate and SewinglineID = '{2}'),0) as Rft,StdTMS
 from SummaryData
 order by OutputDate
 ", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["ComboType"].ToString(), CurrentMaintain["SewingLineID"].ToString(), CurrentMaintain["FactoryID"].ToString());
@@ -185,11 +185,11 @@ string ExcelDt = string.Format(@"SELECT C.OrderID,
 	                                    c.Inline,
 	                                    c.FirstOutputTime,
                                         c.LastOutputTime
-                                 FROM ChgOver C
-                                 OUTER APPLY (SELECT TOP  1 O.SciDelivery  FROM Orders O WHERE O.POID=C.OrderID)SCI 
-                                 OUTER APPLY(SELECT S.SewingCell FROM SewingLine S WHERE S.ID=C.SewingLineID AND S.FactoryID=C.FactoryID)CELL
-                                 outer apply(select * from style t where t.id=c.StyleID and t.SeasonID=c.SeasonID)sty
-                                 outer apply(select  * from CDCode_Content cd where c.CDCodeID=cd.ID)cd
+                                 FROM ChgOver C WITH (NOLOCK) 
+                                 OUTER APPLY (SELECT TOP  1 O.SciDelivery  FROM Orders O WITH (NOLOCK) WHERE O.POID=C.OrderID)SCI 
+                                 OUTER APPLY(SELECT S.SewingCell FROM SewingLine S WITH (NOLOCK) WHERE S.ID=C.SewingLineID AND S.FactoryID=C.FactoryID)CELL
+                                 outer apply(select * from style t WITH (NOLOCK) where t.id=c.StyleID and t.SeasonID=c.SeasonID)sty
+                                 outer apply(select  * from CDCode_Content cd WITH (NOLOCK) where c.CDCodeID=cd.ID)cd
                                  where c.orderid='{0}'
                                  ORDER BY C.FactoryID,C.SewingLineID,C.Inline", CurrentMaintain["orderid"]);
                 DualResult result1 = DBProxy.Current.Select(null, ExcelDt, out dt1);
@@ -235,7 +235,7 @@ string ExcelDt = string.Format(@"SELECT C.OrderID,
         //FTY GSD
         private void button1_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01 callNextForm = new Sci.Production.IE.P01(CurrentMaintain["StyleID"].ToString(), MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders where ID = '{0}'", CurrentMaintain["OrderID"].ToString())), CurrentMaintain["SeasonID"].ToString(), CurrentMaintain["ComboType"].ToString());
+            Sci.Production.IE.P01 callNextForm = new Sci.Production.IE.P01(CurrentMaintain["StyleID"].ToString(), MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["OrderID"].ToString())), CurrentMaintain["SeasonID"].ToString(), CurrentMaintain["ComboType"].ToString());
             callNextForm.ShowDialog(this);
         }
 
@@ -246,7 +246,7 @@ string ExcelDt = string.Format(@"SELECT C.OrderID,
             {
                 if (type == "1")
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check where ID = '{0}'", CurrentMaintain["ID"].ToString())))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString())))
                     {
                         //sql參數
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -278,7 +278,7 @@ select @id,DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'N' or Use
             {
                 if (type == "1")
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check where ID = '{0}'", CurrentMaintain["ID"].ToString())))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString())))
                     {
                         //sql參數
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -313,10 +313,10 @@ select @id,DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'R' or Use
         {
             if (type == "1")
             {
-                if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Problem where ID = '{0}'", CurrentMaintain["ID"].ToString())))
+                if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Problem WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString())))
                 {
                     string insertCmd = string.Format(@"insert into ChgOver_Problem (ID,IEReasonID,AddName,AddDate)
-select {0},ID,'{1}',GETDATE() from IEReason where Type = 'CP' and Junk = 0", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
+select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                     DualResult result = DBProxy.Current.Execute(null, insertCmd);
                     if (!result)
                     {
@@ -377,10 +377,10 @@ select {0},ID,'{1}',GETDATE() from IEReason where Type = 'CP' and Junk = 0", Cur
             DataTable dtTitle;
 
             string OrderID = dt1.Rows[0]["orderid"].ToString();
-            string BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders where ID = '{0}'", OrderID));
+            string BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", OrderID));
             string StyleID = dt1.Rows[0]["StyleID"].ToString().Trim();
             string SeasonID = dt1.Rows[0]["SeasonID"].ToString().Trim();
-            string CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", BrandID, StyleID, SeasonID));
+            string CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style WITH (NOLOCK) where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", BrandID, StyleID, SeasonID));
             string FirstOutputTime = dt1.Rows[0]["FirstOutputTime"].ToString().Trim();
             FirstOutputTime = MyUtility.Check.Empty(FirstOutputTime) ? "" : FirstOutputTime.Substring(0, 2) + ":" + FirstOutputTime.Substring(2, 2);
             string LastOutputTime = dt1.Rows[0]["LastOutputTime"].ToString().Trim();
@@ -392,10 +392,10 @@ select {0},ID,'{1}',GETDATE() from IEReason where Type = 'CP' and Junk = 0", Cur
             #region 取出ChgOverTarget.Target，然後再依ChgOver.Inline找出最接近但沒有超過這一天的Target
             string MDivisionID = dt1.Rows[0]["MDivisionID"].ToString().Trim();
             DateTime Inline = Convert.ToDateTime(dt1.Rows[0]["Inline"]);
-            string Target_COPT = MyUtility.GetValue.Lookup(string.Format(@"Select top 1 Target from ChgOverTarget 
+            string Target_COPT = MyUtility.GetValue.Lookup(string.Format(@"Select top 1 Target from ChgOverTarget WITH (NOLOCK) 
                                                                         where Type = 'COPT' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
                                                                         Order by EffectiveDate desc", MDivisionID, Inline.ToShortDateString()));
-            string Target_COT = MyUtility.GetValue.Lookup(string.Format(@"Select top 1 Target from ChgOverTarget 
+            string Target_COT = MyUtility.GetValue.Lookup(string.Format(@"Select top 1 Target from ChgOverTarget WITH (NOLOCK) 
                                                                         where Type = 'COT' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
                                                                         Order by EffectiveDate desc", MDivisionID, Inline.ToShortDateString()));
             #endregion
@@ -417,24 +417,24 @@ select {0},ID,'{1}',GETDATE() from IEReason where Type = 'CP' and Junk = 0", Cur
                        c.CDCodeID,
                        cd.TopProductionType,
                        cd.TopFabricType    
-                FROM ChgOver C
-                OUTER APPLY(SELECT S.SewingCell FROM SewingLine S WHERE S.ID=C.SewingLineID AND S.FactoryID=C.FactoryID)CELL
-                outer apply(select  * from CDCode_Content cd where c.CDCodeID=cd.ID)cd
+                FROM ChgOver C WITH (NOLOCK) 
+                OUTER APPLY(SELECT S.SewingCell FROM SewingLine S WITH (NOLOCK) WHERE S.ID=C.SewingLineID AND S.FactoryID=C.FactoryID)CELL
+                outer apply(select  * from CDCode_Content cd WITH (NOLOCK) where c.CDCodeID=cd.ID)cd
                 WHERE Inline >= '{0}'
 		        AND OrderID !='{1}' and StyleID <='{2}' and FactoryID >= '{3}' and SewingLineID >='{4}' and CELL.SewingCell >='{5}'
                 ORDER BY C.FactoryID,C.SewingLineID,C.Inline asc
                 )[Found]", Inline.ToShortDateString(), dt1.Rows[0]["OrderID"], dt1.Rows[0]["StyleID"], dt1.Rows[0]["FactoryID"], dt1.Rows[0]["SewingLineID"], dt1.Rows[0]["SewingCell"]);
                 DualResult result2 = DBProxy.Current.Select(null, exceldt2, out dt2);
                 if (!result2) { this.ShowErr(result2); }
-                string Previous_BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders where ID = '{0}'", dt2.Rows[0]["OrderID"].ToString().Trim()));
+                string Previous_BrandID = MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", dt2.Rows[0]["OrderID"].ToString().Trim()));
                 string Previous_StyleID = dt2.Rows[0]["StyleID"].ToString().Trim();
                 string Previous_SeasonID = dt2.Rows[0]["SeasonID"].ToString().Trim();
-                Previous_CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", Previous_BrandID, Previous_StyleID, Previous_SeasonID));
+                Previous_CPU = MyUtility.GetValue.Lookup(string.Format("select CPU from Style WITH (NOLOCK) where BrandID='{0}' and ID='{1}' and SeasonID='{2}'", Previous_BrandID, Previous_StyleID, Previous_SeasonID));
                 //Previous_TYPE = GetType(PreviousDR["ComboType"].ToString().Trim(), PreviousDR["CDCodeID"].ToString().Trim());
             
             #endregion
 
-            string cmdsql = string.Format("SELECT TOP 1 'CHANGEOVER REPORT'  FROM ChgOver where 1=1");
+                string cmdsql = string.Format("SELECT TOP 1 'CHANGEOVER REPORT'  FROM ChgOver WITH (NOLOCK) where 1=1");
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out dtTitle);
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\IE_P02_ChangeoverReport.xltx"); //預先開啟excel app
@@ -490,59 +490,59 @@ select {0},ID,'{1}',GETDATE() from IEReason where Type = 'CP' and Junk = 0", Cur
 
                     #region 32列
                     string SewingDate = MyUtility.GetValue.Lookup(string.Format(@"select convert(varchar, min(a.OutputDate), 111) as SewingDate
-                                                                        from SewingOutput a
-                                                                        left join SewingOutput_Detail b on a.ID=b.ID
+                                                                        from SewingOutput a WITH (NOLOCK) 
+                                                                        left join SewingOutput_Detail b WITH (NOLOCK) on a.ID=b.ID
                                                                         where b.OrderId='{0}'", OrderID));
                     string Sewers_A = MyUtility.GetValue.Lookup(string.Format(@"Select Distinct a.Manpower 
-                                                                        from SewingOutput a, SewingOutput_Detail b 
+                                                                        from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' 
                                                                         and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
                     string Sewers_B = MyUtility.GetValue.Lookup(string.Format(@"Select Distinct a.Manpower 
-                                                                        from SewingOutput a, SewingOutput_Detail b 
+                                                                        from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' 
                                                                         and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
                     string WorkingHours_A = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.WorkHour)  
-                                                                        from SewingOutput a, SewingOutput_Detail b 
+                                                                        from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' 
                                                                         and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
                     string WorkingHours_B = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.WorkHour)  
-                                                                        from SewingOutput a, SewingOutput_Detail b 
+                                                                        from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' 
                                                                         and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
-                    string Target = MyUtility.GetValue.Lookup(string.Format(@"Select top 1 Target from ChgOverTarget 
+                    string Target = MyUtility.GetValue.Lookup(string.Format(@"Select top 1 Target from ChgOverTarget  WITH (NOLOCK) 
                                                                         where Type = 'EFF.' and MDivisionID = '{0}' and EffectiveDate <= '{1}' 
                                                                         Order by EffectiveDate desc", MDivisionID, Inline.ToShortDateString()));
                     string OutputCMP_A = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.QAQty)  
-                                                                        from SewingOutput a, SewingOutput_Detail b 
+                                                                        from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK)  
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' 
                                                                         and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
                     string OutputCMP_B = MyUtility.GetValue.Lookup(string.Format(@"Select Sum(b.QAQty) 
-                                                                        from SewingOutput a, SewingOutput_Detail b 
+                                                                        from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b  WITH (NOLOCK) 
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' 
                                                                         and a.SewingLineID = '{2}' and b.OrderID = '{3}' and b.ComboType = '{4}'", SewingDate, FactoryID, SewingLineID, OrderID, ComboType));
 
                     if (MyUtility.Check.Empty(CPU)) CPU = "1";
                     string Efficiency_A = MyUtility.GetValue.Lookup(string.Format(@"Select IIF('{6}'=0,0,sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)
-                                                                        from SewingOutput a, SewingOutput_Detail b 
-                                                                        left join Orders c on c.ID=b.OrderId
+                                                                        from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK)  
+                                                                        left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
                                                                         cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
                                                                         and b.OrderID = '{3}' and b.ComboType = '{4}' ", SewingDate, FactoryID, SewingLineID, OrderID, ComboType, CPU, StdTMS));
                     string Efficiency_B = MyUtility.GetValue.Lookup(string.Format(@"Select  IIF('{6}'=0,0,sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour)*3600 / '{6}'/100)  
-                                                                        from SewingOutput a, SewingOutput_Detail b 
-                                                                        left join Orders c on c.ID=b.OrderId
+                                                                        from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
+                                                                        left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
                                                                         cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
                                                                         and b.OrderID = '{3}' and b.ComboType = '{4}' ", SewingDate, FactoryID, SewingLineID, OrderID, ComboType, CPU, StdTMS));
                     string PPH_A = MyUtility.GetValue.Lookup(string.Format(@"Select  sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour) 
-                                                                        from SewingOutput a, SewingOutput_Detail b 
-                                                                        left join Orders c on c.ID=b.OrderId
+                                                                        from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK)  
+                                                                        left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
                                                                         cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'A' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
                                                                         and b.OrderID = '{3}' and b.ComboType = '{4}' ", SewingDate, FactoryID, SewingLineID, OrderID, ComboType, CPU));
                     string PPH_B = MyUtility.GetValue.Lookup(string.Format(@"Select  sum(b.QAQty * {5} * AAA.CpuRate) / Sum(a.Manpower * b.WorkHour) 
-                                                                        from SewingOutput a, SewingOutput_Detail b 
-                                                                        left join Orders c on c.ID=b.OrderId
+                                                                        from SewingOutput a WITH (NOLOCK) , SewingOutput_Detail b WITH (NOLOCK) 
+                                                                        left join Orders c WITH (NOLOCK) on c.ID=b.OrderId
                                                                         cross apply dbo.GetCPURate(c.OrderTypeID,c.ProgramID,c.Category,c.BrandID,'O') as AAA
                                                                         where a.Id = b.ID and a.OutputDate = '{0}' and a.Team = 'B' and a.FactoryID = '{1}' and a.SewingLineID = '{2}' 
                                                                         and b.OrderID = '{3}' and b.ComboType = '{4}' ", SewingDate, FactoryID, SewingLineID, OrderID, ComboType, CPU));
@@ -564,7 +564,7 @@ select {0},ID,'{1}',GETDATE() from IEReason where Type = 'CP' and Junk = 0", Cur
                     #region Problem Encountered
                     DataTable dtProblem;
                     string sql = string.Format(@"Select a.IEReasonID , b.Description, a.ShiftA, a.ShiftB 
-                                            from ChgOver_Problem a, IEReason b 
+                                            from ChgOver_Problem a WITH (NOLOCK) , IEReason b WITH (NOLOCK) 
                                             where a.IEReasonID = b.ID and a.ID = '{0}' and b.Type = 'CP' ", CurrentMaintain["ID"].ToString().Trim());
                     DualResult result = DBProxy.Current.Select(null, sql, out dtProblem);
 
@@ -615,13 +615,13 @@ select {0},ID,'{1}',GETDATE() from IEReason where Type = 'CP' and Junk = 0", Cur
             DataTable dtTemp;
             string sql;
             if (ComboType == "T" || ComboType == "")
-                sql = string.Format("select  TopProductionType as ProdType,TopFabricType as FabricType  from CDCode_Content where ID='{0}'", CDCodeID);
+                sql = string.Format("select  TopProductionType as ProdType,TopFabricType as FabricType  from CDCode_Content WITH (NOLOCK) where ID='{0}'", CDCodeID);
             else if (ComboType == "B")
-                sql = string.Format("select BottomProductionType as ProdType,BottomFabricType as FabricType  from CDCode_Content where ID='{0}'", CDCodeID);
+                sql = string.Format("select BottomProductionType as ProdType,BottomFabricType as FabricType  from CDCode_Content WITH (NOLOCK) where ID='{0}'", CDCodeID);
             else if (ComboType == "I")
-                sql = string.Format("select InnerProductionType as ProdType,InnerFabricType as FabricType  from CDCode_Content where ID='{0}'", CDCodeID);
+                sql = string.Format("select InnerProductionType as ProdType,InnerFabricType as FabricType  from CDCode_Content WITH (NOLOCK) where ID='{0}'", CDCodeID);
             else
-                sql = string.Format("select OuterProductionType as ProdType,OuterFabricType as FabricType  from CDCode_Content where ID='{0}'", CDCodeID);
+                sql = string.Format("select OuterProductionType as ProdType,OuterFabricType as FabricType  from CDCode_Content WITH (NOLOCK) where ID='{0}'", CDCodeID);
             DualResult result = DBProxy.Current.Select(null, sql, out dtTemp);
             if (result && dtTemp.Rows.Count > 0) returnValue = dtTemp.Rows[0];
             return returnValue;

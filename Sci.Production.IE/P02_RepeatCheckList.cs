@@ -38,8 +38,8 @@ namespace Sci.Production.IE
         {
             string selectCommand = string.Format(@"select cc.*,iif(cc.BaseOn = 1,'Change Over','SCI Delivery') as BaseOnDesc,
 cl.Description as ChkListDesc
-from ChgOver_Check cc
-left join ChgOverCheckList cl on cc.ChgOverCheckListID = cl.ID
+from ChgOver_Check cc WITH (NOLOCK) 
+left join ChgOverCheckList cl WITH (NOLOCK) on cc.ChgOverCheckListID = cl.ID
 where cc.ID = {0} order by cc.ChgOverCheckListID", this.KeyValue1);
             Ict.DualResult returnResult;
             DataTable ChgOverChkList = new DataTable();

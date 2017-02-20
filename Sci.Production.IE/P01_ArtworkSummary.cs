@@ -38,8 +38,8 @@ namespace Sci.Production.IE
                  .Numeric("TMS", header: "TMS", decimal_places: 4, iseditingreadonly: true, settings: tms);
 
             string sqlCmd = string.Format(@"select isnull(mt.ArtworkTypeID,'') as ArtworkTypeID, sum(td.SMV) as TMS
-from {0} td
-left join MachineType mt on td.MachineTypeID = mt.ID
+from {0} td WITH (NOLOCK) 
+left join MachineType mt WITH (NOLOCK) on td.MachineTypeID = mt.ID
 where td.ID = {1} and mt.ArtworkTypeID !=''
 group by mt.ArtworkTypeID", tableName, id.ToString());
             DataTable gridData;

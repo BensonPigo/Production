@@ -47,9 +47,9 @@ namespace Sci.Production.IE
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"select 0 as Selected, td.*,o.DescEN as OperationDescEN,o.MtlFactorID as OperationMtlFactorID, m.DescEN
-                                                        from TimeStudy_Detail td
-                                                        left join Operation o on td.OperationID = o.ID
-                                                        left join Mold m on m.ID=td.Mold
+                                                        from TimeStudy_Detail td WITH (NOLOCK) 
+                                                        left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
+                                                        left join Mold m WITH (NOLOCK) on m.ID=td.Mold
                                                         where td.ID = '{0}'
                                                         order by td.Seq", masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -62,7 +62,7 @@ namespace Sci.Production.IE
             MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "Estimate,Initial,Prelim,Final");
 
             #region modify comboBox1 DataSource as Style_Location
-            String sqlCmd = "select distinct Location from Style_Location";
+            String sqlCmd = "select distinct Location from Style_Location WITH (NOLOCK) ";
             DualResult result;
             DataTable dtLocation;
             result = DBProxy.Current.Select(null, sqlCmd, out dtLocation);
@@ -205,7 +205,7 @@ namespace Sci.Production.IE
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                             cmds.Add(sp1);
 
-                            string sqlCmd = "select DescEN,SMV,MachineTypeID,SeamLength,MoldID,MtlFactorID from Operation where CalibratedCode = 1 and ID = @id";
+                            string sqlCmd = "select DescEN,SMV,MachineTypeID,SeamLength,MoldID,MtlFactorID from Operation WITH (NOLOCK) where CalibratedCode = 1 and ID = @id";
                             DataTable opData;
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out opData);
                             if (result)
@@ -257,7 +257,7 @@ namespace Sci.Production.IE
                         if (!MyUtility.Check.Empty(dr["OperationID"]) && dr["OperationID"].ToString().Substring(0, 2) != "--")
                         {
                             dr["Frequency"] = e.FormattedValue.ToString();
-                            string smv = MyUtility.GetValue.Lookup(string.Format("select SMV from Operation where ID = '{0}'", dr["OperationID"].ToString()));
+                            string smv = MyUtility.GetValue.Lookup(string.Format("select SMV from Operation WITH (NOLOCK) where ID = '{0}'", dr["OperationID"].ToString()));
                             if (smv == "")
                             {
                                 dr["SMV"] = 0;
@@ -308,7 +308,7 @@ namespace Sci.Production.IE
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = "select ID,Description from MachineType where Junk = 0";
+                            string sqlCmd = "select ID,Description from MachineType WITH (NOLOCK) where Junk = 0";
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,35", dr["MachineTypeID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
@@ -325,7 +325,7 @@ namespace Sci.Production.IE
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["MachineTypeID"].ToString())
                     {
-                        if (!MyUtility.Check.Seek(string.Format("select ID,Description from MachineType where Junk = 0 and ID = '{0}'", e.FormattedValue.ToString())))
+                        if (!MyUtility.Check.Seek(string.Format("select ID,Description from MachineType WITH (NOLOCK) where Junk = 0 and ID = '{0}'", e.FormattedValue.ToString())))
                         {
                             MyUtility.Msg.WarningBox(string.Format("< M/C: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["MachineTypeID"] = "";
@@ -352,7 +352,7 @@ namespace Sci.Production.IE
                         if (e.RowIndex != -1 )
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = "select ID,DescEN from Mold where Junk = 0";
+                            string sqlCmd = "select ID,DescEN from Mold WITH (NOLOCK) where Junk = 0";
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,15", dr["Mold"].ToString());
                             
                             DialogResult returnResult = item.ShowDialog();
@@ -382,7 +382,7 @@ namespace Sci.Production.IE
                         cmds.Add(sp1);
 
                         DataTable moldData;
-                        string sqlCmd = "select ID,DescEN from Mold where Junk = 0 and ID = @id";
+                        string sqlCmd = "select ID,DescEN from Mold WITH (NOLOCK) where Junk = 0 and ID = @id";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out moldData);
                         if (result)
                         {
@@ -481,7 +481,7 @@ namespace Sci.Production.IE
 
         protected override bool ClickDeleteBefore()
         {
-            if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput_Detail where OrderId in (select ID from Orders where StyleID = '{0}' and BrandID = '{1}' and SeasonID = '{2}')", CurrentMaintain["StyleID"].ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["SeasonID"].ToString())))
+            if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput_Detail WITH (NOLOCK) where OrderId in (select ID from Orders WITH (NOLOCK) where StyleID = '{0}' and BrandID = '{1}' and SeasonID = '{2}')", CurrentMaintain["StyleID"].ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["SeasonID"].ToString())))
             {
                 MyUtility.Msg.WarningBox("Sewing output > 0, can't be deleted!!");
                 return false;
@@ -540,7 +540,7 @@ namespace Sci.Production.IE
             cmds.Add(sp2);
             cmds.Add(sp3);
             cmds.Add(sp4);
-            string sqlCmd = "select sl.Location from Style s, Style_Location sl where s.ID = @styleid and s.SeasonID = @seasonid and s.BrandID = @brandid and s.Ukey = sl.StyleUkey and sl.Location = @combotype";
+            string sqlCmd = "select sl.Location from Style s WITH (NOLOCK) , Style_Location sl WITH (NOLOCK) where s.ID = @styleid and s.SeasonID = @seasonid and s.BrandID = @brandid and s.Ukey = sl.StyleUkey and sl.Location = @combotype";
             DataTable LocationData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out LocationData);
             if (!result)
@@ -609,10 +609,10 @@ namespace Sci.Production.IE
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
 
-            string sqlCmd = "select ID,SeasonID,Description,BrandID,UKey from Style where Junk = 0 order by ID";
+            string sqlCmd = "select ID,SeasonID,Description,BrandID,UKey from Style WITH (NOLOCK) where Junk = 0 order by ID";
             if (!MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
-                sqlCmd = "select ID,SeasonID,Description,BrandID,UKey from Style where Junk = 0 and BrandID = @brandid order by ID";
+                sqlCmd = "select ID,SeasonID,Description,BrandID,UKey from Style WITH (NOLOCK) where Junk = 0 and BrandID = @brandid order by ID";
             }
 
             DataTable styleData;
@@ -631,8 +631,8 @@ namespace Sci.Production.IE
             CurrentMaintain["StyleID"] = item.GetSelectedString();
             CurrentMaintain["SeasonID"] = (selectedData[0])["SeasonID"].ToString();
             CurrentMaintain["BrandID"] = (selectedData[0])["BrandID"].ToString();
-           
-            sqlCmd = string.Format("select Location from Style_Location where StyleUkey = {0}", MyUtility.Convert.GetInt((selectedData[0])["UKey"]).ToString());
+
+            sqlCmd = string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetInt((selectedData[0])["UKey"]).ToString());
             DataTable LocationData;
             result = DBProxy.Current.Select(null, sqlCmd, out LocationData);
             if (result)
@@ -650,7 +650,7 @@ namespace Sci.Production.IE
         //Brand
         private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WHERE Junk=0  ORDER BY Id";
+            string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,30,30", this.Text, false, ",");
             item.Width = 750;
             DialogResult result = item.ShowDialog();
@@ -805,7 +805,7 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
 
             #region 若STYLE非套裝(Style.ComboType='')，則不考慮location條件。
             bool isComboType = true;
-            string sql = string.Format("select ComboType from Style  where BrandID = '{0}' and ID = '{1}' and SeasonID = '{2}'", textBox2.Text, textBox1.Text, txtseason1.Text);
+            string sql = string.Format("select ComboType from Style  WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}' and SeasonID = '{2}'", textBox2.Text, textBox1.Text, txtseason1.Text);
             isComboType = !MyUtility.Check.Empty(MyUtility.GetValue.Lookup(sql));
             #endregion
 
@@ -839,11 +839,11 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                             id.Frequency as Sewer,o.MachineTypeID,id.Frequency,
                             id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency as IETMSSMV,id.Mold,o.MtlFactorID as OperationMtlFactorID,
                             round(id.SMV*(isnull(m.Rate,0)/100+1)*id.Frequency*60,3) as SMV, id.SeamLength,s.IETMSID,s.IETMSVersion
-                            from Style s
-                            inner join IETMS i on s.IETMSID = i.ID and s.IETMSVersion = i.Version
-                            inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
-                            left join Operation o on id.OperationID = o.ID
-                            left join MtlFactor m on o.MtlFactorID = m.ID and m.Type = 'F'
+                            from Style s WITH (NOLOCK) 
+                            inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
+                            inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
+                            left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
+                            left join MtlFactor m WITH (NOLOCK) on o.MtlFactorID = m.ID and m.Type = 'F'
                             where s.ID = @id and s.SeasonID = @seasonid and s.BrandID = @brandid ";
             if (isComboType) sqlCmd += " and id.Location = @location ";
             sqlCmd += " order by id.SEQ";
@@ -900,7 +900,7 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             cmds.Add(sp2);
             cmds.Add(sp3);
 
-            string sqlCmd = "select Ukey from Style where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
+            string sqlCmd = "select Ukey from Style WITH (NOLOCK) where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
             DataTable styleUkey;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleUkey);
             if (!result)
@@ -1007,7 +1007,7 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             cmds.Add(sp3);
 
             DataTable cdCode;
-            string sqlCmd = "select CdCodeID from Style where ID = @styleid and SeasonID = @seasonid and BrandID = @brandid";
+            string sqlCmd = "select CdCodeID from Style WITH (NOLOCK) where ID = @styleid and SeasonID = @seasonid and BrandID = @brandid";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out cdCode);
             if (!result)
             {

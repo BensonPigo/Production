@@ -46,9 +46,9 @@ namespace Sci.Production.IE
         {
             string sqlCmd = string.Format(@"select t.ID,t.Phase,t.Version,td.Seq,td.OperationID,td.MachineTypeID,td.Mold,td.Frequency,
 td.SMV,td.PcsPerHour,td.Sewer,td.Annotation,o.DescEN
-from TimeStudyHistory t
-inner join TimeStudyHistory_Detail td on t.ID = td.ID
-left join Operation o on td.OperationID = o.ID
+from TimeStudyHistory t WITH (NOLOCK) 
+inner join TimeStudyHistory_Detail td WITH (NOLOCK) on t.ID = td.ID
+left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 where t.StyleID = '{0}'
 and t.SeasonID = '{1}'
 and t.ComboType = '{2}'
@@ -68,8 +68,8 @@ order by td.Seq", MyUtility.Convert.GetString(masterData["StyleID"]), MyUtility.
 
             string id = MyUtility.Convert.GetString(printData.Rows[0]["ID"]);
             sqlCmd = string.Format(@"select isnull(m.ArtworkTypeID,'') as ArtworkTypeID,sum(td.SMV) as ttlSMV
-from TimeStudyHistory_Detail td
-left join MachineType m on td.MachineTypeID = m.ID
+from TimeStudyHistory_Detail td WITH (NOLOCK) 
+left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 where td.ID = {0}
 group by isnull(m.ArtworkTypeID,'')", id);
             result = DBProxy.Current.Select(null, sqlCmd, out artworkType);
@@ -81,7 +81,7 @@ group by isnull(m.ArtworkTypeID,'')", id);
 
             machineID = MyUtility.GetValue.Lookup(string.Format(@"select CONCAT(b.Machine,', ') from (
 select MachineTypeID+'*'+CONVERT(varchar,cnt) as Machine from (
-select td.MachineTypeID,COUNT(td.MachineTypeID) as cnt from TimeStudyHistory_Detail td where td.ID = {0} and td.MachineTypeID <> '' group by MachineTypeID) a) b
+select td.MachineTypeID,COUNT(td.MachineTypeID) as cnt from TimeStudyHistory_Detail td WITH (NOLOCK) where td.ID = {0} and td.MachineTypeID <> '' group by MachineTypeID) a) b
 FOR XML PATH('')", id));
             return Result.True;
         }

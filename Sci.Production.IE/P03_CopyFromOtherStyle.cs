@@ -72,7 +72,7 @@ namespace Sci.Production.IE
             cmds.Add(sp2);
             cmds.Add(sp3);
             cmds.Add(sp4);
-            string sqlCmd = "select * from LineMapping where StyleID = @styleid and SeasonID = @seasonid and BrandID = @brandid and Version = @version";
+            string sqlCmd = "select * from LineMapping WITH (NOLOCK) where StyleID = @styleid and SeasonID = @seasonid and BrandID = @brandid and Version = @version";
             DataTable Linemap;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out Linemap);
             if (!result)

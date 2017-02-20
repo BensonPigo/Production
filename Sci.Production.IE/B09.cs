@@ -22,18 +22,18 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             InitializeComponent();
-            destination_path = MyUtility.GetValue.Lookup("select PicPath from System", null);
+            destination_path = MyUtility.GetValue.Lookup("select PicPath from System WITH (NOLOCK)", null);
         }
 
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
             this.displayBox3.Text = MyUtility.GetValue.Lookup("Description", this.displayBox2.Text.ToString(), "MachineType","ID");
-            string selectCommand = string.Format("select Name from IESELECTCODE where ID = '{0}' and  type='00001'", this.displayBox7.Text.ToString());
+            string selectCommand = string.Format("select Name from IESELECTCODE WITH (NOLOCK) where ID = '{0}' and  type='00001'", this.displayBox7.Text.ToString());
             this.displayBox8.Text = MyUtility.GetValue.Lookup(selectCommand,null);
-            selectCommand = string.Format("select Name from IESELECTCODE where  ID = '{0}' and  type='00002'", this.displayBox10.Text.ToString());
+            selectCommand = string.Format("select Name from IESELECTCODE WITH (NOLOCK) where  ID = '{0}' and  type='00002'", this.displayBox10.Text.ToString());
             this.displayBox9.Text = MyUtility.GetValue.Lookup(selectCommand, null);
-            selectCommand = string.Format("select Name from IESELECTCODE where ID = '{0}' and  type='00003'", this.displayBox12.Text.ToString());
+            selectCommand = string.Format("select Name from IESELECTCODE WITH (NOLOCK) where ID = '{0}' and  type='00003'", this.displayBox12.Text.ToString());
             this.displayBox11.Text = MyUtility.GetValue.Lookup(selectCommand, null);
             this.numericBox8.Text = MyUtility.GetValue.Lookup("MachineAllow", this.displayBox2.Text.ToString(), "MachineType", "ID");
             this.numericBox9.Text = MyUtility.GetValue.Lookup("ManAllow", this.displayBox2.Text.ToString(), "MachineType", "ID");

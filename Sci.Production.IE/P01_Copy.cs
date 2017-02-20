@@ -31,7 +31,7 @@ namespace Sci.Production.IE
         {
             Sci.Win.Tools.SelectItem item;
             string selectCommand;
-            selectCommand = "select ID,SeasonID,Description,BrandID from Style where Junk = 0 order by ID";
+            selectCommand = "select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 order by ID";
             
             item = new Sci.Win.Tools.SelectItem(selectCommand, "14,6,50,12", this.Text);
             DialogResult returnResult = item.ShowDialog();
@@ -51,7 +51,7 @@ namespace Sci.Production.IE
         //Brand
         private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WHERE Junk=0  ORDER BY Id";
+            string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,40,40", this.Text, false, ",");
 
             DialogResult result = item.ShowDialog();
@@ -81,7 +81,7 @@ namespace Sci.Production.IE
                 cmds.Add(sp1);
                 cmds.Add(sp2);
                 DataTable styleBrand;
-                string sqlCmd = "select BrandID from Style where ID = @id and SeasonID = @seasonid";
+                string sqlCmd = "select BrandID from Style WITH (NOLOCK) where ID = @id and SeasonID = @seasonid";
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out styleBrand);
                 if (!result)
                 {
@@ -153,8 +153,8 @@ namespace Sci.Production.IE
             cmds.Add(sp4);
             #endregion
             string sqlCmd = @"select s.ID, s.SeasonID, s.BrandID,sl.Location
-from Style s
-inner join Style_Location sl on s.Ukey = sl.StyleUkey
+from Style s WITH (NOLOCK) 
+inner join Style_Location sl WITH (NOLOCK) on s.Ukey = sl.StyleUkey
 where s.ID = @id and s.SeasonID = @seasonid and s.BrandID = @brandid and sl.Location = @location";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out P01CopyStyleData);
