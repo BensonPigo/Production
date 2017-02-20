@@ -113,14 +113,14 @@ namespace Sci.Production.Logistic
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(string.Format(@"select 0 as selected, d.*,iif(d.TotalCTN > 0,ROUND((CONVERT(decimal,d.ClogCTN)/d.TotalCTN),4),0) as TransferPerCent,
-(select sum(QtyPerCTN) from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo) as QtyPerCTN,
-(select sum(ShipQty) from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo) as ShipQty,
-substring((select cast(Article as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Article as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Article, 
-substring((select cast(Color as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Color as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Color,
-substring((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as SizeCode
+(select sum(QtyPerCTN) from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo) as QtyPerCTN,
+(select sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo) as ShipQty,
+substring((select cast(Article as nvarchar) + ',' from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Article as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Article, 
+substring((select cast(Color as nvarchar) + ',' from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(Color as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as Color,
+substring((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail WITH (NOLOCK) where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')),1,len((select cast(SizeCode as nvarchar) + ',' from PackingList_Detail where ID = d.ID and CTNStartNo = d.CTNStartNo for xml path('')))-1) as SizeCode
 from (
 	  select distinct  b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.ClogLocationId, b.Remark, c.BrandID,c.BuyerDelivery,c.StyleID,c.FtyGroup,'('+c.Dest+')'+isnull((select Alias from Country where ID = c.Dest),'') as Dest,c.TotalCTN,c.ClogCTN
-	  from PackingList a, PackingList_Detail b, Orders c
+	  from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) 
 	  where (a.Type = 'B' or a.Type = 'L')
 	  and a.ID = b.ID
 	  and b.ReceiveDate is not null
@@ -343,7 +343,7 @@ from (
             this.comboBox2.SelectedIndex = -1;
 
             string sqlCmd = @"select 0 as selected,  b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.Article, b.Color, b.SizeCode, b.QtyPerCTN, b.ShipQty, b.ClogLocationId, b.Remark
-                                           from PackingList a, PackingList_Detail b, Orders c where 1=0";
+                                           from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) where 1=0";
             DualResult result1 = DBProxy.Current.Select(null, sqlCmd, out gridData);
           
             listControlBindingSource1.DataSource = gridData;
@@ -466,7 +466,7 @@ from (
 
                 rd.ReportResource = reportresource;
                 rd.ReportDataSources.Add(new System.Collections.Generic.KeyValuePair<string, object>("Report_UpdateLocation", Report_UpdateLocation));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("title", MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'",Sci.Env.User.Keyword))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("title", MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Keyword))));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("request", MyUtility.Convert.GetString(comboBox3.SelectedValue)));
                 
                 using (var frm = new Sci.Win.Subs.ReportView(rd))

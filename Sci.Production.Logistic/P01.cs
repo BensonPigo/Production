@@ -22,9 +22,9 @@ namespace Sci.Production.Logistic
         {
             base.OnDetailEntered();
             DataRow brandData;
-            displayBox5.Value = MyUtility.GetValue.Lookup(string.Format("select Description from style where Ukey = {0}",CurrentMaintain["StyleUkey"].ToString()));
-            displayBox10.Value = MyUtility.GetValue.Lookup(string.Format("select [dbo].getPOComboList('{0}','{1}') as PoList from Orders where ID = '{0}'",CurrentMaintain["ID"].ToString(),CurrentMaintain["POID"].ToString()));
-            if (MyUtility.Check.Seek(string.Format("select ID,Customize1,Customize2,Customize3 from Brand where ID = '{0}'", CurrentMaintain["BrandID"].ToString()), out brandData))
+            displayBox5.Value = MyUtility.GetValue.Lookup(string.Format("select Description from style WITH (NOLOCK) where Ukey = {0}", CurrentMaintain["StyleUkey"].ToString()));
+            displayBox10.Value = MyUtility.GetValue.Lookup(string.Format("select [dbo].getPOComboList('{0}','{1}') as PoList from Orders WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString(), CurrentMaintain["POID"].ToString()));
+            if (MyUtility.Check.Seek(string.Format("select ID,Customize1,Customize2,Customize3 from Brand WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["BrandID"].ToString()), out brandData))
             {
                 label19.Text = brandData["Customize1"].ToString();
                 label20.Text = brandData["Customize2"].ToString();
@@ -44,13 +44,13 @@ namespace Sci.Production.Logistic
             numericBox9.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCTN"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["ClogCTN"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCTN"]) * 100, 2);
 
             //按鈕變色
-            bool haveOrder_Qty = MyUtility.Check.Seek(string.Format("select ID from Order_Qty where ID = '{0}'", CurrentMaintain["ID"].ToString()));
+            bool haveOrder_Qty = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString()));
             button1.ForeColor = haveOrder_Qty ? Color.Blue : Color.Black;
-            button2.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_QtyShip where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+            button2.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             button3.ForeColor = haveOrder_Qty ? Color.Blue : Color.Black;
-            button4.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail where OrderID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
-            button5.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_CTNData where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
-            button6.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail where OrderID = '{0}' and ReceiveDate is not null", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+            button4.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+            button5.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_CTNData WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+            button6.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' and ReceiveDate is not null", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             button7.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
             button8.Enabled = !MyUtility.Check.Empty(CurrentMaintain["CMPQDate"]);
             if (button8.Enabled)
@@ -61,9 +61,9 @@ namespace Sci.Production.Logistic
             {
                 button8.ForeColor = Color.Black;
             }
-            button9.ForeColor = MyUtility.Check.Seek(string.Format("select ID from FIR where POID = '{0}'", CurrentMaintain["POID"].ToString())) ? Color.Blue : Color.Black;
-            button10.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Cfa where OrderID = '{0}'", CurrentMaintain["ID"].ToString())) || MyUtility.Check.Seek(string.Format("select OrderID from Rft where OrderID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
-            button11.ForeColor = MyUtility.Check.Seek(string.Format("select ID from AIR where POID = '{0}'", CurrentMaintain["POID"].ToString())) ? Color.Blue : Color.Black;
+            button9.ForeColor = MyUtility.Check.Seek(string.Format("select ID from FIR WITH (NOLOCK) where POID = '{0}'", CurrentMaintain["POID"].ToString())) ? Color.Blue : Color.Black;
+            button10.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Cfa WITH (NOLOCK) where OrderID = '{0}'", CurrentMaintain["ID"].ToString())) || MyUtility.Check.Seek(string.Format("select OrderID from Rft where OrderID = '{0}'", CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
+            button11.ForeColor = MyUtility.Check.Seek(string.Format("select ID from AIR WITH (NOLOCK) where POID = '{0}'", CurrentMaintain["POID"].ToString())) ? Color.Blue : Color.Black;
         }
 
         //Quantity breakdown

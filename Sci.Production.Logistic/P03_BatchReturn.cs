@@ -59,7 +59,7 @@ namespace Sci.Production.Logistic
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(@"select '' as ID, 0 as selected, b.TransferToClogId, b.ClogLocationId,b.ReceiveDate, b.ID as PackingListId, b.OrderId,b.CTNStartNo,a.StyleID,a.SeasonID, a.BrandID, a.CustPONo, a.Customize1, a.BuyerDelivery, c.Alias
-                                           from Orders a, PackingList_Detail b, Country c
+                                           from Orders a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Country c WITH (NOLOCK) 
                                            where a.ID = b.OrderID
                                            and b.CTNQty = 1
                                            and b.ReceiveDate is not null

@@ -37,7 +37,7 @@ namespace Sci.Production.Logistic
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format("select ID from ClogLocation where MDivisionID = '{0}' and Junk = 0", Sci.Env.User.Keyword));
+            sqlCmd.Append(string.Format("select ID from ClogLocation WITH (NOLOCK) where MDivisionID = '{0}' and Junk = 0", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(code1))
             {
                 sqlCmd.Append(string.Format(" and ID >= '{0}'", code1));

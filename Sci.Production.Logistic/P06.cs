@@ -48,11 +48,11 @@ namespace Sci.Production.Logistic
             sqlCmd.Append(string.Format(@"select cr.ReturnDate,cr.PackingListID,cr.OrderID,cr.CTNStartNo,
 isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1,
 isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest, isnull(o.FactoryID,'') as FactoryID,oq.BuyerDelivery,cr.AddDate
-from ClogReturn cr
-left join Orders o on cr.OrderID =  o.ID
-left join Country c on o.Dest = c.ID
-left join PackingList_Detail pd on pd.ID = cr.PackingListID and pd.OrderID = cr.OrderID and pd.CTNStartNo = cr.CTNStartNo and pd.CTNQty > 0
-left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+from ClogReturn cr WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
+left join Country c WITH (NOLOCK) on o.Dest = c.ID
+left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = cr.PackingListID and pd.OrderID = cr.OrderID and pd.CTNStartNo = cr.CTNStartNo and pd.CTNQty > 0
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(dateRange1.Value1))

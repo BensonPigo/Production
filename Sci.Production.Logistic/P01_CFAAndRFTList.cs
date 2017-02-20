@@ -25,11 +25,11 @@ namespace Sci.Production.Logistic
             base.OnFormLoaded();
             DataTable CFA,RFT;
             string sqlCmd = string.Format(@"select c.cDate,c.SewingLineID,isnull(s.SewingCell,'') as SewingCell,c.InspectQty,c.DefectQty,c.Remark,'{0}' as POID,
-isnull((select Alias from Country where ID = '{1}'),'') as Alias,
+isnull((select Alias from Country WITH (NOLOCK) where ID = '{1}'),'') as Alias,
 case when c.Result = 'P' then 'Pass' when c.Result = 'F' then 'Fail' else '' end as Result,
 iif(c.Status = 'New','N','Y') as Status, iif(c.InspectQty = 0,0,round(cast(c.DefectQty as decimal)/c.InspectQty*100,2)) as SQR
-from Cfa c
-left join SewingLine s on c.SewingLineID = s.ID and c.FactoryID = s.FactoryID
+from Cfa c WITH (NOLOCK) 
+left join SewingLine s WITH (NOLOCK) on c.SewingLineID = s.ID and c.FactoryID = s.FactoryID
 where c.OrderID = '{2}'
 order by c.cDate", masterData["POID"].ToString(), masterData["Dest"].ToString(), masterData["ID"].ToString());
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out CFA);
@@ -40,10 +40,10 @@ order by c.cDate", masterData["POID"].ToString(), masterData["Dest"].ToString(),
             listControlBindingSource1.DataSource = CFA;
 
             sqlCmd = string.Format(@"select r.CDate,r.SewinglineID,isnull(s.SewingCell,'') as SewingCell,r.InspectQty,r.RejectQty,r.Remark,
-isnull((select Alias from Country where ID = '{0}'),'') as Alias,
+isnull((select Alias from Country WITH (NOLOCK) where ID = '{0}'),'') as Alias,
 iif(r.Status = 'New','N','Y') as Status, iif(r.InspectQty = 0,0,round(cast((r.InspectQty-r.RejectQty) as decimal)/r.InspectQty*100,2)) as RFT
-from Rft r
-left join SewingLine s on r.SewingLineID = s.ID and r.FactoryID = s.FactoryID
+from Rft r WITH (NOLOCK) 
+left join SewingLine s WITH (NOLOCK) on r.SewingLineID = s.ID and r.FactoryID = s.FactoryID
 where r.OrderID = '{1}'
 order by r.cDate", masterData["Dest"].ToString(), masterData["ID"].ToString());
             result = DBProxy.Current.Select(null, sqlCmd, out RFT);

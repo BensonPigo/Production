@@ -20,7 +20,7 @@ namespace Sci.Production.Logistic
         {
             InitializeComponent();
             DataTable mDivision;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
             comboBox1.Text = Sci.Env.User.Keyword;
         }
@@ -45,10 +45,10 @@ namespace Sci.Production.Logistic
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"select p.MDivisionID,o.FactoryID,pd.OrderID,pd.CTNStartNo,pd.ReceiveDate,o.CustPONo,pd.ClogLocationId,p.BrandID
-from PackingList p
-inner join PackingList_Detail pd on p.ID = pd.ID
-inner join Orders o on o.ID = pd.OrderID
-left join Pullout po on p.PulloutID = po.ID
+from PackingList p WITH (NOLOCK) 
+inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
+inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+left join Pullout po WITH (NOLOCK) on p.PulloutID = po.ID
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
 and (p.PulloutID = '' or po.Status = 'New')");
