@@ -410,6 +410,40 @@ namespace Sci.Production.Cutting
                 sxr.Save();
                 #endregion
             }
+            if (rdcheck_QtyBreakdown_PoCombbySPList.Checked)
+            {
+                #region rdcheck_QtyBreakdown_PoCombbySPList
+                System.Data.DataTable[] dts;
+                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01_QtyBreakdown_PoCombbySPList", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
+
+                if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
+                if (dts.Length < 1) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
+
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_QtyBreakdown_PoCombbySPList.xltx");
+                sxrc sxr = new sxrc(xltPath);
+                
+                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[0]);
+
+                dt.Borders.AllCellsBorders = true;
+
+                //合併儲存格
+                dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE", string.Format("{0},{1}", 9, dt.Columns.Count) } });
+
+                //凍結窗格
+                dt.boFreezePanes = true;
+                dt.boAutoFitColumn = true;
+                dt.boAddFilter = true;
+                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
+
+                Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
+                string sc = MyExcelPrg.GetExcelColumnName(dt.Columns.Count);
+                wks.get_Range(string.Format("A1:{0}1", sc)).Merge();
+                wks.get_Range(string.Format("A2:{0}2", sc)).Merge();
+                sxr.boOpenFile = true;
+                sxr.Save();
+                #endregion
+            }
+
             return true;
         }
 

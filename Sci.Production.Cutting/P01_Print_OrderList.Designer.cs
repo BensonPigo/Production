@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
+            this.rdcheck_QtyBreakdown_PoCombbySPList = new Sci.Win.UI.RadioButton();
             this.rdCheck_CuttingWorkOrder = new Sci.Win.UI.RadioButton();
             this.rdCheck1 = new Sci.Win.UI.RadioButton();
             this.rdCheck6 = new Sci.Win.UI.RadioButton();
@@ -45,7 +45,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.radioButton2);
+            this.groupBox1.Controls.Add(this.rdcheck_QtyBreakdown_PoCombbySPList);
             this.groupBox1.Controls.Add(this.rdCheck_CuttingWorkOrder);
             this.groupBox1.Controls.Add(this.rdCheck1);
             this.groupBox1.Controls.Add(this.rdCheck6);
@@ -59,17 +59,17 @@
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             // 
-            // radioButton2
+            // rdcheck_QtyBreakdown_PoCombbySPList
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(6, 140);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(296, 24);
-            this.radioButton2.TabIndex = 7;
-            this.radioButton2.Text = "Q\'ty Breakdown(Po Comb by SP# List)";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.rdcheck_QtyBreakdown_PoCombbySPList.AutoSize = true;
+            this.rdcheck_QtyBreakdown_PoCombbySPList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.rdcheck_QtyBreakdown_PoCombbySPList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdcheck_QtyBreakdown_PoCombbySPList.Location = new System.Drawing.Point(6, 140);
+            this.rdcheck_QtyBreakdown_PoCombbySPList.Name = "rdcheck_QtyBreakdown_PoCombbySPList";
+            this.rdcheck_QtyBreakdown_PoCombbySPList.Size = new System.Drawing.Size(296, 24);
+            this.rdcheck_QtyBreakdown_PoCombbySPList.TabIndex = 7;
+            this.rdcheck_QtyBreakdown_PoCombbySPList.Text = "Q\'ty Breakdown(Po Comb by SP# List)";
+            this.rdcheck_QtyBreakdown_PoCombbySPList.UseVisualStyleBackColor = true;
             // 
             // rdCheck_CuttingWorkOrder
             // 
@@ -220,7 +220,7 @@
         private Win.UI.Button btnCancel;
         private Win.UI.Button btnToExcel;
         private Win.UI.Label label5;
-        private Win.UI.RadioButton radioButton2;
+        private Win.UI.RadioButton rdcheck_QtyBreakdown_PoCombbySPList;
         private Win.UI.RadioButton rdCheck_CuttingWorkOrder;
     }
 }
