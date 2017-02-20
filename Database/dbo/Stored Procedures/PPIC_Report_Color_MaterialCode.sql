@@ -4,6 +4,8 @@ CREATE PROCEDURE [dbo].[PPIC_Report_Color_MaterialCode]
 	@ID varchar(13)
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	declare @POID varchar(13) = (select POID from MNOrder where ID = @ID)
 
 	select ' ' = c.ID+'-->'+c.Name from MNOrder a

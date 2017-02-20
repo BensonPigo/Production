@@ -6,6 +6,8 @@ CREATE PROCEDURE [dbo].[Create_CDC]
 )
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 --資料庫啟用CDC
 exec sys.sp_cdc_enable_db
 

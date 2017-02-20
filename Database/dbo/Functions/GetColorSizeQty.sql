@@ -21,6 +21,8 @@ RETURNS @tbl table(
 )
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	
 	declare @tmp table(ID varchar(13) ,Article varchar(8) ,SizeCode varchar(8) ,ColorID varchar(6) ,ColorDesc nvarchar(90) 
 	,FabricCode varchar(3) ,LectraCode varchar(2) ,PatternPanel varchar(2) ,Zipper_RL varchar(5)

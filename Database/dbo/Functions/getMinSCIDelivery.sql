@@ -3,6 +3,8 @@
 CREATE FUNCTION [dbo].[getMinSCIDelivery](@poid varchar(13),@category varchar(1))
 RETURNS date
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	DECLARE @minscidlv date --要回傳的數值
 	Select @minscidlv = Min(Orders.SciDelivery)
 	From dbo.Orders as MainPO 

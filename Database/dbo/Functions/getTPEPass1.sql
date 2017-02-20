@@ -11,6 +11,8 @@ CREATE FUNCTION dbo.getTPEPass1
 RETURNS varchar(45)
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	-- Declare the return variable here
 	DECLARE @rtn as varchar(45);
 

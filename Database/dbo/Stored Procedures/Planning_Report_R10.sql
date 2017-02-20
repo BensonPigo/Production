@@ -12,6 +12,8 @@ CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	,@SourceStr varchar(50) = 'Order,Forecast,Fty Local Order'
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 
 	declare @HasOrders bit = 0, @HasForecast bit = 0, @HasFtyLocalOrder bit = 0
 	set @HasOrders = iif(exists(select 1 from dbo.SplitString(@SourceStr,',') where Data = 'Order'), 1, 0)

@@ -11,6 +11,8 @@ Create Procedure [dbo].[BoaExpend]
 )
 As
 Begin
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	Set NoCount On;
 
 	If Object_ID('tempdb..#Tmp_BoaExpend') Is Null

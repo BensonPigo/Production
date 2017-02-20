@@ -12,6 +12,8 @@ Create Function [dbo].[GetSuppColorList]
 Returns VarChar(Max)
 As
 Begin
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	--Set NoCount On;
 	Declare @SuppColorList Varchar(Max);
 

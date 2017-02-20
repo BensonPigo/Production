@@ -2,6 +2,8 @@
 CREATE FUNCTION [dbo].[getCuttingComboList](@orderid varchar(13), @cuttingsp varchar(13))
 RETURNS varchar(max)
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	DECLARE @string nvarchar(max) --要回傳的字串
 	IF @orderid <> @cuttingsp
 		BEGIN

@@ -12,6 +12,8 @@ Create Function [dbo].[GetSuppColor_Solution]
 Returns Varchar(30)
 As
 Begin
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	--Set NoCount On;
 	Declare @SuppColor VarChar(30)
 

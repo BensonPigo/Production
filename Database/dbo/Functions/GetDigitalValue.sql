@@ -6,6 +6,8 @@ Create Function [dbo].[GetDigitalValue]
 Returns Numeric(15,4)
 As
 Begin
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	Declare @ReturnValue Numeric(15,4)
 	Set @ReturnValue = 0;
 	Set @StrValue = LTrim(RTrim(@StrValue));	--將文字前後的空白都去掉

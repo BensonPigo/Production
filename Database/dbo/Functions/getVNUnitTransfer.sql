@@ -2,6 +2,8 @@
 CREATE FUNCTION [dbo].[getVNUnitTransfer](@type varchar(20), @oriunit varchar(8), @customsunit varchar(8), @oriqty numeric(10,2), @width numeric(3,1), @pcswidth numeric(7,4), @pcslength numeric(7,4), @pcskg numeric(7,4),@ratevalue numeric(28,18),@rate varchar(22))
 RETURNS numeric(15,5)
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	DECLARE @returnQty numeric(15,5) --要回傳的數值
 	SET @returnQty = @oriqty
 	IF @oriunit <> @customsunit

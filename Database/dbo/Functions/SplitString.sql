@@ -10,6 +10,8 @@ Data nvarchar(50),no Int
 ) 
 AS 
 BEGIN 
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 Declare @Count int
 Set @Count = 1
 

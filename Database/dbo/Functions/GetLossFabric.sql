@@ -18,6 +18,8 @@ Returns @FabricColorQty Table
 	)
 As
 Begin
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	Set @FabricCode = IsNull(@FabricCode, '');
 
 	Declare @FabricColorQtyRowID Int;		--Row ID

@@ -14,6 +14,8 @@ Returns @tmpRound Table
 	)
 As
 Begin
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	Declare @UnitRound Numeric(2,0);
 	Declare @UsageRound Numeric(2,0);
 	Declare @RoundStep Numeric(4,2);

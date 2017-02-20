@@ -14,6 +14,8 @@ CREATE PROCEDURE [dbo].[usp_StockRecaculate]
 	@Seq2 varchar(2) = null
 AS	 
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	
 	SET NOCOUNT ON;
 

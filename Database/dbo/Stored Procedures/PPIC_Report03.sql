@@ -5,6 +5,8 @@ CREATE PROCEDURE [dbo].[PPIC_Report03]
 	,@ByType int = 0 --0單張 , 1 By CustCDID , 2 By PO
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 
 
 exec Order_Report_QtyBreakdown @OrderID,@ByType

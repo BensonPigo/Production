@@ -9,6 +9,8 @@ create PROCEDURE [dbo].[insertMygridstd2]
 	(@programid as varchar(80), @table as varchar(50))
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	SET NOCOUNT ON;
 
     -- Insert statements for procedure here

@@ -9,6 +9,8 @@ CREATE PROCEDURE [dbo].[usp_PMSUploadDataToAPS]
 @M varchar(10)=''
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varchar(20)='', @LoginPwd varchar(20)=''
 	--select出目標table所在位置
 	BEGIN

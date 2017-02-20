@@ -5,6 +5,8 @@ create PROCEDURE [dbo].[Cutting_Color_P01_OrderQtyDown_POCombo]
 AS
 BEGIN
 
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 
 exec Order_Report_QtyBreakdown @OrderID,@ByType
 exec Order_Report_FabColorCombination @OrderID,@ByType

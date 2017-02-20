@@ -3,6 +3,8 @@
 	,@WithZ bit = 0
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 
 declare @POID varchar(13) = (select POID from Orders where ID = @ID)
 

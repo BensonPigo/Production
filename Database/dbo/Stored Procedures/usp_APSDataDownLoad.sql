@@ -4,6 +4,8 @@ CREATE PROCEDURE [dbo].[usp_APSDataDownLoad]
 @apsservername varchar(50), @apsdatabasename varchar(15), @factoryid varchar(8), @login varchar(10)
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	DECLARE @cmd VARCHAR(MAX)
 	DECLARE	@_i int
 

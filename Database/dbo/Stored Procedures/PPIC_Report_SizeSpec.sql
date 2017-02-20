@@ -6,6 +6,8 @@ CREATE PROCEDURE [dbo].[PPIC_Report_SizeSpec]
 	,@fullsize bit = 0
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	
 	SELECT distinct a.SizeCode,Seq into #tmp_Col FROM MNOrder_SizeCode a inner join MNOrder_Qty b on a.Id = b.ID and (@fullsize = 1 or a.SizeCode = b.SizeCode)
 	where a.Id = @POID

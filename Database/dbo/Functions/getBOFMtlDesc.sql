@@ -2,6 +2,8 @@
 CREATE FUNCTION [dbo].[getBOFMtlDesc](@styleukey bigint)
 RETURNS nvarchar(max)
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	DECLARE @string nvarchar(max),--要回傳的字串
 			@desc nvarchar(max) --暫存Fabric Description
 	DECLARE cursor_FabDesc CURSOR FOR

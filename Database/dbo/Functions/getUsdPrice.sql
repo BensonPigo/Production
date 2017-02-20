@@ -19,6 +19,8 @@ RETURNS @USDPrice TABLE
 )
 AS
 begin
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	insert into @USDPrice (poid,seq1,seq2,usd_price)
 	select a.id,a.seq1,a.seq2,round(a.Price/d.PriceRate * (select StdRate from dbo.currency cur1 where id=c.CurrencyId ) / (select StdRate from dbo.currency cur1 where id='USD' ),4) as USD_Price 
 	from dbo.PO_Supp_Detail a

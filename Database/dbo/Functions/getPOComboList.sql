@@ -2,6 +2,8 @@
 CREATE FUNCTION [dbo].[getPOComboList](@orderid varchar(13), @poid varchar(13))
 RETURNS varchar(max)
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	DECLARE @string nvarchar(max) --要回傳的字串
 	IF @orderid <> @poid
 		BEGIN

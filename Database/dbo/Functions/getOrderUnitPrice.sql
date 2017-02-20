@@ -2,6 +2,8 @@
 CREATE FUNCTION [dbo].[getOrderUnitPrice](@type tinyint, @styleUkey bigint,@orderid varchar(13),@article varchar(8), @sizecode varchar(8))
 RETURNS numeric(7, 2)
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	DECLARE @price numeric(7, 2),
 			@queryorderID varchar(13),
 			@price1 numeric(7, 2),

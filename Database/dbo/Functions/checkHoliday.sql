@@ -13,6 +13,8 @@ CREATE FUNCTION [dbo].[checkHoliday]
 RETURNS bit
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	DECLARE @RTN AS BIT;
 	-- 有設定工時基本檔且有時數，表示非假日(休假)
 	IF EXISTS(SELECT * FROM WorkHour w where w.FactoryID = @factoryid and w.Date = @checkdate 

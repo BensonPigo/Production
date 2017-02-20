@@ -11,6 +11,8 @@ Create Procedure [dbo].[GetKeyword]
 	)
 As
 Begin
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	Set NoCount On;
 	--Declare @Keyword_AfterTrans VarChar(Max);
 	Set @Keyword_AfterTrans = @Keyword;

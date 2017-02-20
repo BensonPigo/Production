@@ -14,6 +14,8 @@ CREATE FUNCTION [dbo].[GetInspectionResult]
 RETURNS varchar(200)
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	DECLARE @result AS VARCHAR(200);
 
 	set @result ='';

@@ -13,6 +13,8 @@ Create Function [dbo].[GetPriceFromMtl]
 Returns Numeric (9,4)
 As
 Begin
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	--Set NoCount On;
 	Declare @PoPrice Numeric (11,4);
 

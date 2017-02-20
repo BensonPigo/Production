@@ -6,6 +6,8 @@ CREATE Function [dbo].[MarkerLengthToYDS]
 Returns Numeric(7,4)
 As
 Begin
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	Declare @MarkerYds Numeric(7,4)
 	Set @MarkerYds = 0;
 	

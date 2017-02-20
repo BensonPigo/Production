@@ -7,6 +7,8 @@ CREATE PROCEDURE [dbo].[Cutting_P01_QtyBreakdown_PoCombbySPList]
 	@OrderID VARCHAR(13)
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	select distinct sizecode
 	into #tmp
 	from WorkOrder_Distribute

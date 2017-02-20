@@ -2,6 +2,8 @@
 CREATE FUNCTION [dbo].[getMinCompleteSewQty](@orderid varchar(13), @article varchar(8), @sizecode varchar(8))
 RETURNS int
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	DECLARE @minSeqQty int --要回傳的數值
 	SET @minSeqQty = 0
 	IF @article is null and @sizecode is null

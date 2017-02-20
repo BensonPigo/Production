@@ -2,6 +2,8 @@
 CREATE FUNCTION [dbo].[getGarmentLT](@styleukey bigint, @factoryid varchar(8))
 RETURNS smallint
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 	DECLARE @smallint smallint --要回傳的數值
 	IF @factoryid <> ''
 		BEGIN

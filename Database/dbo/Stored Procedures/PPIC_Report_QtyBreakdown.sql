@@ -3,6 +3,8 @@
 	,@ByType int = 0 --0單張 , 1 By CustCDID , 2 By PO
 AS
 BEGIN
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 
 declare @poid varchar(13) = (select POID from Orders where ID = @OrderID)
 declare @tbl table (id varchar(13), Article varchar(8))
