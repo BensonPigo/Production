@@ -1092,8 +1092,7 @@ namespace Sci.Production.Cutting
                 if (comput == DBNull.Value) now_distqty = 0;
                 else org_distqty = Convert.ToInt32(comput);
 
-                now_distqty = Convert.ToInt32(dr["Qty"]) * Convert.ToInt32(CurrentDetailData["Layer"]);
-
+                now_distqty = Convert.ToInt32(dr["Qty"]) * Convert.ToInt32(MyUtility.Check.Empty(CurrentDetailData["Layer"]) ? 0 : CurrentDetailData["Layer"]);
                 DataRow[] distdr = distqtyTb.Select(string.Format("WorkOrderUkey={0} and NewKey = {1} and SizeCode ='{2}' ", workorderukey, newkey, dr["SizeCode"]));
                 if (distdr.Length == 0)
                 {
@@ -1825,11 +1824,11 @@ namespace Sci.Production.Cutting
             {
                 if (TotalCutQtystr == "")
                 {
-                    TotalCutQtystr = TotalCutQtystr + dr["SizeCode"].ToString().Trim() + "/" + (Convert.ToDecimal(dr["Qty"]) * Convert.ToDecimal(CurrentDetailData["Layer"])).ToString();
+                    TotalCutQtystr = TotalCutQtystr + dr["SizeCode"].ToString().Trim() + "/" + (Convert.ToDecimal(dr["Qty"]) * Convert.ToDecimal(MyUtility.Check.Empty(CurrentDetailData["Layer"]) ? 0 : CurrentDetailData["Layer"])).ToString();
                 }
                 else
                 {
-                    TotalCutQtystr = TotalCutQtystr + "," + dr["SizeCode"].ToString().Trim() + "/" + (Convert.ToDecimal(dr["Qty"]) * Convert.ToDecimal(CurrentDetailData["Layer"])).ToString();
+                    TotalCutQtystr = TotalCutQtystr + "," + dr["SizeCode"].ToString().Trim() + "/" + (Convert.ToDecimal(dr["Qty"]) * Convert.ToDecimal(MyUtility.Check.Empty(CurrentDetailData["Layer"]) ? 0 : CurrentDetailData["Layer"])).ToString();
                 }
             }
             CurrentDetailData["CutQty"] = TotalCutQtystr;
