@@ -256,7 +256,7 @@ as
 (
 select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,o.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup
 ,rtrim(pd.seq1) seq1,pd.seq2,pd.id stockpoid,pd.seq1 stockseq1,pd.seq2 stockseq2
-,ROUND(pd.inputqty*v.RateValue,2,1) N'inputqty',pd.POUnit,pd.StockUnit
+,ROUND(xz.taipei_qty*v.RateValue,2,1) N'inputqty',pd.POUnit,pd.StockUnit
 ,mpd.InQty
 ,isnull(x.accu_qty,0.00) accu_qty
 from dbo.orders o 
@@ -289,6 +289,11 @@ select sum(sd.Qty) accu_qty from dbo.SubTransfer s inner join dbo.SubTransfer_De
 and sd.FromSeq1 = pd.SEQ1
  and sd.FromSeq2 = pd.SEQ2 and FromStockType = 'B' and toStockType='I'
 ) x
+cross apply
+	(select sum(i.Qty) taipei_qty
+		from dbo.Invtrans i inner join dbo.Factory f on f.ID = i.FactoryID and f.MDivisionID = '{0}'
+		where (i.type=1 OR I.TYPE=4) and i.InventoryPOID = pd.ID and i.InventorySeq1 = pd.seq1 and i.InventorySeq2 = pd.SEQ2
+	) xz
 where pd.inputqty > 0 and o.MDivisionID = '{0}'", Env.User.Keyword));
 
             #region -- 條件 --

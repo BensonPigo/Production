@@ -259,7 +259,7 @@ as
 select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,o.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup,o.CFMDate,o.CutInLine,o.ProjectID
 ,rtrim(pd.seq1) seq1,pd.seq2,pd.StockPOID,pd.StockSeq1,pd.StockSeq2
 --,pd.Qty*v.RateValue PoQty
-,ROUND(pd.Qty*v.RateValue,2,1) N'PoQty'
+,ROUND(x.taipei_qty*v.RateValue,2,1) N'PoQty'
 ,pd.POUnit,pd.StockUnit
 ,mpd.InQty
 from dbo.orders o 
@@ -276,6 +276,14 @@ outer apply(
 	select count(1) cnt from FtyInventory fi left join FtyInventory_Detail fid on fid.Ukey = fi.Ukey 
 	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B' and fi.MDivisionID = o.MDivisionID
 ) yz--Detail資料數量
+cross apply
+(
+select sum(iif(i.type=2,i.qty,0-i.qty)) taipei_qty 
+ from dbo.Invtrans i inner join dbo.Factory f on f.id = i.FactoryID
+ where i.InventoryPOID = pd.StockPOID and i.InventorySeq1 = pd.StockSeq1 
+and i.PoID = pd.ID and i.InventorySeq2 = pd.StockSeq2 --and f.MDivisionID = o.MDivisionID
+and (i.type=2 or i.type=6)
+)x
 where o.MDivisionID = '{0}'
 and pd.seq1 like '7%'", Env.User.Keyword));
 
