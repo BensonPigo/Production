@@ -1,10 +1,4 @@
 ﻿
-USE [Production]
-GO
-SET ANSI_NULLS ON
-Go
-SET QUOTED_IDENTIFIER ON
-Go
 CREATE PROCEDURE [dbo].[Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc]
 	@OrderID VARCHAR(13)
 AS
