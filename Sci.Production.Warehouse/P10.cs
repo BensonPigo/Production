@@ -993,8 +993,21 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable bb;
-            string sqlcmd = @"select t.poid
-                                    ,t.seq1+ '-' +t.seq2 as SEQ
+            string sqlcmd = @"select
+                                    IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
+				                          AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
+				                          AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
+				                        ,''
+                                        ,t.poid
+                                     ) [Poid]
+                                    ,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
+				                          AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
+				                          AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
+				                        ,''
+                                        ,t.seq1+ '-' +t.seq2
+                                     ) [Seq]
+                                    ,t.poid [GroupPoid]
+                                    ,t.seq1+ '-' +t.seq2 as [GroupSeq]
                                     ,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
 				                          AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
 				                          AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
@@ -1009,7 +1022,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                                                         , char(10)
                                                         , (Select concat(ID, '-', Name) from Color where id = iss.ColorId and BrandId = fbr.BrandID)
                                                     )
-                                            FROM fabric fbr WHERE SCIRefno = p.SCIRefno)) [desc]
+                                            FROM fabric fbr WHERE SCIRefno = p.SCIRefno)
+                                     ) [desc]
                                     ,t.Roll
                                     ,t.Dyelot
                                     ,t.Qty
@@ -1030,6 +1044,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             List<P10_PrintData> data = bb.AsEnumerable()
                 .Select(row1 => new P10_PrintData()
                 {
+                    GroupPoid = row1["GroupPoid"].ToString().Trim(),
+                    GroupSeq = row1["GroupSeq"].ToString().Trim(),
                     Poid = row1["poid"].ToString().Trim(),
                     Seq = row1["SEQ"].ToString().Trim(),
                     Desc = row1["desc"].ToString().Trim(),

@@ -399,6 +399,7 @@
                         </Border>
                       </Style>
                     </Rectangle>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -415,7 +416,7 @@
             <TablixMember>
               <Group Name="Seq">
                 <GroupExpressions>
-                  <GroupExpression>=Fields!Seq.Value</GroupExpression>
+                  <GroupExpression>=Fields!GroupSeq.Value</GroupExpression>
                 </GroupExpressions>
               </Group>
               <SortExpressions>
@@ -427,7 +428,7 @@
                 <TablixMember>
                   <Group Name="Poid">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!Poid.Value</GroupExpression>
+                      <GroupExpression>=Fields!GroupPoid.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
@@ -1486,11 +1487,18 @@
       </ConnectionProperties>
       <rd:DataSourceID>4a6497df-45a2-454d-a847-e4c86d3b9f9b</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="SciProductionWarehouse2">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>17b5d4fc-e363-4c63-b030-6c0faa7ffd68</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="DataSet1">
       <Query>
-        <DataSourceName>SciProductionWarehouse1</DataSourceName>
+        <DataSourceName>SciProductionWarehouse2</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -1500,6 +1508,14 @@
         </Field>
         <Field Name="Dyelot">
           <DataField>Dyelot</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="GroupPoid">
+          <DataField>GroupPoid</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="GroupSeq">
+          <DataField>GroupSeq</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Location">

@@ -8,6 +8,8 @@ namespace Sci.Production.Warehouse
 {
     public class P10_PrintData
     {
+        public string GroupPoid { get; set; }
+        public string GroupSeq { get; set; }
         public string Poid { get; set; }
         public string Seq { get; set; }
         public string Desc { get; set; }
