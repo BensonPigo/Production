@@ -106,6 +106,7 @@ Database/dbo/Stored[!!-~]Procedures/Cutting_Color_P01_OrderQtyDown_POCombo.sql -
 Database/dbo/Stored[!!-~]Procedures/Cutting_Color_P01_OrderQtyDown_POCombo_1.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc_1.sql -text
+Database/dbo/Stored[!!-~]Procedures/Cutting_P01_QtyBreakdown_PoCombbySPList.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01_print_CuttingWorkOrder.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_EachConsumption.sql -text
 Database/dbo/Stored[!!-~]Procedures/Cutting_P01print_Eachcons_vs_OrderQtyDown_POCombo.sql -text
