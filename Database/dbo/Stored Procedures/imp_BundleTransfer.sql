@@ -7,8 +7,6 @@ CREATE PROCEDURE [dbo].[imp_BundleTransfer]
 @RFIDServerName varchar(50)='', @RFIDDatabaseName varchar(20)='', @RFIDloginId varchar(20)='', @RFIDLoginPwd varchar(20)='', @RFIDTable varchar(20)=''
 AS
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 --若外部沒傳參數進來,則用system上的欄位資訊
 	IF @RFIDServerName = ''
 	BEGIN

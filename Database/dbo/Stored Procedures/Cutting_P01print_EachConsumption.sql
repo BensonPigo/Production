@@ -3,8 +3,6 @@ CREATE PROCEDURE [dbo].[Cutting_P01print_EachConsumption]
 	@OrderID VARCHAR(13)
 AS
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	
 	--抓取ID為POID
 	select @OrderID=POID FROM dbo.Orders where ID = @OrderID

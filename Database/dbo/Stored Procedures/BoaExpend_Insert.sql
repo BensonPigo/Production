@@ -8,8 +8,6 @@ Create Procedure [dbo].[BoaExpend_Insert]
 	)
 As
 Begin
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	Set NoCount On;
 
 	Begin Try

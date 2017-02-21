@@ -1,4 +1,4 @@
--- =============================================
+﻿-- =============================================
 -- Author:		ALGER
 -- Create date: 2016/11/04
 -- Description:	daily schedule:PoApproveLock
@@ -7,8 +7,6 @@ CREATE PROCEDURE [dbo].[PoApproveLock]
 
 AS
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 
 	SET NOCOUNT ON;
 

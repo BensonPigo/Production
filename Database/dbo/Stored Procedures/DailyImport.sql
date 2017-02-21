@@ -11,8 +11,6 @@ Create Procedure [dbo].[DailyImport]
 As
 
 Begin
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	Set NoCount On;
 	
 	Declare @Progress VarChar(Max);

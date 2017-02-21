@@ -12,8 +12,6 @@ CREATE PROCEDURE [dbo].[usp_getID]
 	@newid varchar(13) out
 AS
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;

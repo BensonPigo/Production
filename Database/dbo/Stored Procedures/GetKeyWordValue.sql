@@ -8,8 +8,6 @@ Create Procedure [dbo].[GetKeyWordValue]
 	)
 As
 Begin
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	Set NoCount On;
 	
 	Declare @FieldName VarChar(40);

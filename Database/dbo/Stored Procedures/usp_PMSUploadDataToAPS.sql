@@ -1,5 +1,4 @@
-﻿
--- =============================================
+﻿-- =============================================
 -- Author:		<JEFF S01952>
 -- Create date: <2016/11/19>
 -- Description:	<PMSUploadDataToAPS>
@@ -9,8 +8,6 @@ CREATE PROCEDURE [dbo].[usp_PMSUploadDataToAPS]
 @M varchar(10)=''
 AS
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varchar(20)='', @LoginPwd varchar(20)=''
 	--select出目標table所在位置
 	BEGIN
@@ -139,7 +136,7 @@ outer apply(
 		and SeasonID = o.SeasonID 
 		and BrandID = o.BrandID 
 		and ComboType 
-			= IIF(o.StyleUnit = ''PCS'', (select top 1  Location from Style_Location where StyleUKey = o.StyleUkey), sl.Location)
+			= IIF(o.StyleUnit = ''PCS'', (select Location from Style_Location where StyleUKey = o.StyleUkey), sl.Location)
 	)
 )GTMH
 outer apply(
@@ -323,28 +320,24 @@ set @cmd4 =N'
 Delete from '+@SerDbDboTb3+N'
 INSERT INTO '+@SerDbDboTb3+N'
 ([POCODE],[PROCESS],[FACILITY],[PDATE],[COLOR],[XSIZE],[QTY],[WORKERS],[HOURS])
-select a.Color,a.Facility,a.PDate,a.POCode,a.Process,a.XSize,sum(Qty) Qty,a.Workers,a.Hours
-from (
-	Select
-	[POCode] = s.FactoryID+sd.OrderID+IIF((select StyleUnit from Orders where ID = sd.OrderID) = ''PCS'', '''', ''(''+sd.ComboType+'')'')
-	,[Process] = ''SEWING''
-	,[Facility] = s.SewingLineID
-	,[PDate] = CONVERT(varchar(10), s.OutputDate, 120)
-	,[Color] = sd.Article
-	,[XSize] = sdd.SizeCode
-	,[Qty] = sdd.QAQty
-	,[Workers] = s.Manpower
-	,[Hours] = (sdd.QAQty/sd.QAQty) * sd.WorkHour
-	from SewingOutput s
-	inner join SewingOutput_Detail sd on s.ID = sd.ID
-	inner join SewingOutput_Detail_Detail sdd on sdd.SewingOutput_DetailUKey = sd.UKey 
-	where sdd.OrderID in (Select distinct sd.OrderID 
-						  from SewingOutput s, SewingOutput_Detail sd
-						  where (s.LockDate is null or s.LockDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
-						  and s.ID = sd.ID
-						  and s.MDivisionID ='''+@M+N''')
-) a
-group by a.Color,a.Facility,a.PDate,a.POCode,a.Process,a.XSize,a.Workers,a.Hours'
+Select
+[POCode] = s.FactoryID+sd.OrderID+IIF((select StyleUnit from Orders where ID = sd.OrderID) = ''PCS'', '''', ''(''+sd.ComboType+'')'')
+,[Process] = ''SEWING''
+,[Facility] = s.SewingLineID
+,[PDate] = CONVERT(varchar(10), s.OutputDate, 120)
+,[Color] = sd.Article
+,[XSize] = sdd.SizeCode
+,[Qty] = sdd.QAQty
+,[Workers] = s.Manpower
+,[Hours] = (sdd.QAQty/sd.QAQty) * sd.WorkHour
+from SewingOutput s
+inner join SewingOutput_Detail sd on s.ID = sd.ID
+inner join SewingOutput_Detail_Detail sdd on sdd.SewingOutput_DetailUKey = sd.UKey 
+where sdd.OrderID in (Select distinct sd.OrderID 
+					  from SewingOutput s, SewingOutput_Detail sd
+					  where (s.LockDate is null or s.LockDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
+					  and s.ID = sd.ID
+					  and s.MDivisionID ='''+@M+N''')'
 	END
 
 	Begin Try

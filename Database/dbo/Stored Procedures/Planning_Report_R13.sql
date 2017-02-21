@@ -9,8 +9,6 @@ CREATE PROCEDURE [dbo].[Planning_Report_R13]
 	,@isDetail bit = 0
 AS
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 
 	--準備額外的參數，非C#傳入的
 	declare @date_S date = DATEFROMPARTS(@Year , @Month , 1)

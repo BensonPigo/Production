@@ -4,16 +4,12 @@ CREATE PROCEDURE usp_closeOrder
 AS
 IF @type = '1'
 	BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 		update ChgOver set Status = 'Closed' where OrderID in (select ID from [dbo].Orders where POID = @poid);
 		update Orders set Finished = 1,GMTClose = GETDATE(),MDClose = iif(MDClose is null,GETDATE(),Orders.MDClose) where ID in (select ID from [dbo].Orders where POID = @poid);
 	END
 ELSE
 	IF @type = '2'
 		BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 			update ChgOver set Status = iif(ApvDate is null,'New','Approved') where OrderID in (select ID from [dbo].Orders where POID = @poid);
 			update Orders set Finished = 0,GMTClose = null,MDClose = null where ID in (select ID from [dbo].Orders where POID = @poid);
 		END

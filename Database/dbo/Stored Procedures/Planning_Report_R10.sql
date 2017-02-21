@@ -12,8 +12,6 @@ CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	,@SourceStr varchar(50) = 'Order,Forecast,Fty Local Order'
 AS
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 
 	declare @HasOrders bit = 0, @HasForecast bit = 0, @HasFtyLocalOrder bit = 0
 	set @HasOrders = iif(exists(select 1 from dbo.SplitString(@SourceStr,',') where Data = 'Order'), 1, 0)
@@ -266,10 +264,10 @@ SET QUOTED_IDENTIFIER ON
 		select a.CountryID, MDivisionID, a.FactoryID, substring(a.OrderYYMM,5,2) as MONTH, sum(b.OrderLoadingCPU) as Capacity1, sum(c.OrderLoadingCPU) as Capacity2
 		from #tmpFactory a 
 		left join (
-			select FactoryID,Stuff(OrderYYMM,5,1,'') as OrderYYMM, OrderLoadingCPU from #tmpFinal where RIGHT(OrderYYMM,1) = 1			
+			select FactoryID,substring(OrderYYMM,1,6) as OrderYYMM, OrderLoadingCPU from #tmpFinal where RIGHT(OrderYYMM,1) = 1			
 		) b on a.FactoryID = b.FactoryID and a.OrderYYMM = b.OrderYYMM
 		left join (
-			select FactoryID,Stuff(OrderYYMM,5,1,'') as OrderYYMM, OrderLoadingCPU from #tmpFinal where RIGHT(OrderYYMM,1) = 2
+			select FactoryID,substring(OrderYYMM,1,6) as OrderYYMM, OrderLoadingCPU from #tmpFinal where RIGHT(OrderYYMM,1) = 2
 		) c on a.FactoryID = c.FactoryID and a.OrderYYMM = c.OrderYYMM
 		where (@M = '' or MDivisionID = @M)and (@Fty ='' OR a.FactoryID=@Fty)
 		group by a.CountryID,MDivisionID,a.OrderYYMM,a.FactoryID
@@ -278,10 +276,10 @@ SET QUOTED_IDENTIFIER ON
 		select a.CountryID, MDivisionID, a.FactoryID, substring(a.OrderYYMM,5,2) as MONTH, sum(b.ForecastCapacity) as Capacity1, sum(c.ForecastCapacity) as Capacity2
 		from #tmpFactory a 
 		left join (
-			select FactoryID,Stuff(OrderYYMM,5,1,'') as OrderYYMM, ForecastCapacity from #tmpForecast1 where RIGHT(OrderYYMM,1) = 1
+			select FactoryID,substring(OrderYYMM,1,6) as OrderYYMM, ForecastCapacity from #tmpForecast1 where RIGHT(OrderYYMM,1) = 1
 		) b on a.FactoryID = b.FactoryID and a.OrderYYMM = b.OrderYYMM
 		left join (
-			select FactoryID,Stuff(OrderYYMM,5,1,'') as OrderYYMM, ForecastCapacity from #tmpForecast1 where RIGHT(OrderYYMM,1) = 2
+			select FactoryID,substring(OrderYYMM,1,6) as OrderYYMM, ForecastCapacity from #tmpForecast1 where RIGHT(OrderYYMM,1) = 2
 		) c on a.FactoryID = c.FactoryID and a.OrderYYMM = c.OrderYYMM	
 		where (@M = '' or MDivisionID = @M)and (@Fty ='' OR a.FactoryID=@Fty)	
 		group by a.CountryID,MDivisionID,a.OrderYYMM,a.FactoryID
