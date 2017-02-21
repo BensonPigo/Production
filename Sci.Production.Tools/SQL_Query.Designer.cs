@@ -31,20 +31,20 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.grid = new Sci.Win.UI.Grid();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.Query = new Sci.Win.UI.Button();
             this.editBox = new Sci.Win.UI.EditBox();
+            this.Query = new Sci.Win.UI.Button();
+            this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -66,12 +66,51 @@
             this.splitContainer1.SplitterDistance = 99;
             this.splitContainer1.TabIndex = 1;
             // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.editBox);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.Query);
+            this.splitContainer2.Size = new System.Drawing.Size(801, 99);
+            this.splitContainer2.SplitterDistance = 723;
+            this.splitContainer2.TabIndex = 0;
+            // 
+            // editBox
+            // 
+            this.editBox.BackColor = System.Drawing.Color.White;
+            this.editBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.editBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBox.IsSupportEditMode = false;
+            this.editBox.Location = new System.Drawing.Point(0, 0);
+            this.editBox.Multiline = true;
+            this.editBox.Name = "editBox";
+            this.editBox.Size = new System.Drawing.Size(723, 99);
+            this.editBox.TabIndex = 11;
+            // 
+            // Query
+            // 
+            this.Query.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Query.Location = new System.Drawing.Point(0, 0);
+            this.Query.Name = "Query";
+            this.Query.Size = new System.Drawing.Size(74, 99);
+            this.Query.TabIndex = 12;
+            this.Query.Text = "Query";
+            this.Query.UseVisualStyleBackColor = true;
+            this.Query.Click += new System.EventHandler(this.Query_Click);
+            // 
             // grid
             // 
             this.grid.AllowUserToAddRows = false;
             this.grid.AllowUserToDeleteRows = false;
             this.grid.AllowUserToResizeRows = false;
-            this.grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader;
             this.grid.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -99,50 +138,11 @@
             this.grid.TabIndex = 1;
             this.grid.TabStop = false;
             // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.editBox);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.Query);
-            this.splitContainer2.Size = new System.Drawing.Size(801, 99);
-            this.splitContainer2.SplitterDistance = 723;
-            this.splitContainer2.TabIndex = 0;
-            // 
-            // Query
-            // 
-            this.Query.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Query.Location = new System.Drawing.Point(0, 0);
-            this.Query.Name = "Query";
-            this.Query.Size = new System.Drawing.Size(74, 99);
-            this.Query.TabIndex = 12;
-            this.Query.Text = "Query";
-            this.Query.UseVisualStyleBackColor = true;
-            this.Query.Click += new System.EventHandler(this.Query_Click);
-            // 
-            // editBox
-            // 
-            this.editBox.BackColor = System.Drawing.Color.White;
-            this.editBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.editBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox.IsSupportEditMode = false;
-            this.editBox.Location = new System.Drawing.Point(0, 0);
-            this.editBox.Multiline = true;
-            this.editBox.Name = "editBox";
-            this.editBox.Size = new System.Drawing.Size(723, 99);
-            this.editBox.TabIndex = 11;
-            // 
             // SQL_Query
             // 
             this.ClientSize = new System.Drawing.Size(801, 502);
             this.Controls.Add(this.splitContainer1);
+            this.IsSupportEdit = false;
             this.Name = "SQL_Query";
             this.Text = "() ";
             this.Controls.SetChildIndex(this.splitContainer1, 0);
@@ -150,12 +150,12 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
