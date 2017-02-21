@@ -28,8 +28,6 @@ Returns @AccessoryColorQty Table
 	)
 As
 Begin
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	Set @SCIRefNo = IsNull(@SCIRefNo, '');
 
 	Declare @Category VarChar(1);

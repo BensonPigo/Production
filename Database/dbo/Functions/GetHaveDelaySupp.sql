@@ -7,8 +7,6 @@ CREATE FUNCTION [dbo].[GetHaveDelaySupp]
 RETURNS bit
 AS
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	Declare @mtldelay date,
 			@returnvalue bit;
 	select @mtldelay = MTLDelay from PO where ID = @poid

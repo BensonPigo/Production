@@ -17,8 +17,6 @@ Returns @Tmp_SuppColor Table
 	)
 As
 Begin
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	--Set NoCount On;
 	Declare @SuppColor Varchar(30);
 	Declare @ShowSuppColor Bit;

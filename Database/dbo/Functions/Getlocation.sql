@@ -12,8 +12,6 @@ CREATE FUNCTION [dbo].[Getlocation]
 RETURNS varchar(300)
 AS
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	-- Declare the return variable here
 	DECLARE @locationStr as varchar(300);
 

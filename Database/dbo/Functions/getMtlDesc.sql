@@ -4,8 +4,6 @@
 CREATE FUNCTION [dbo].[getMtlDesc](@poid varchar(13),@seq1 varchar(3),@seq2 varchar(2),@type int,@repeat bit) 
 RETURNS nvarchar(max)  -- 回傳Description
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	DECLARE @fabric_detaildesc nvarchar(max); -- 暫存fabric description
 	DECLARE @suppcolor nvarchar(max); -- 暫存 supplier color
 	DECLARE @po_desc nvarchar(max); -- 暫存 po_supp_detail 相關欄位
@@ -69,7 +67,7 @@ SET QUOTED_IDENTIFIER ON
 
 	IF left(@SEQ1,1) = '7'
 	BEGIN
-		SET @string = '**PLS USE STOCK FROM SP#:' + iif(@StockSP='','',@StockSP) + '**' + CHAR(13) + isnull(@string, '');
+		SET @string = '**PLS USE STOCK FROM SP#:' + iif(@StockSP='','',@StockSP) + '**' + CHAR(13) + @string;
 	END 
 
     RETURN rtrim(@string)

@@ -11,8 +11,6 @@ CREATE FUNCTION dbo.getStockUnit
 RETURNS varchar(8)
 AS
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	-- Declare the return variable here
 	DECLARE @stockunit varchar(8);
 	DECLARE @mtltypeid varchar(20);

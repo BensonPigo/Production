@@ -13,8 +13,6 @@ Returns @tmpCpuRate Table
 	)
 As
 Begin
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	Declare @CpuRate Numeric(3,1) = 0;
 	Declare @SampleRate Numeric(2,0) = 0;
 

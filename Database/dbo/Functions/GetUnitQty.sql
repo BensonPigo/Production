@@ -8,8 +8,6 @@ Create Function [dbo].[GetUnitQty]
 Returns Numeric(15,4)
 As
 Begin
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	Return (
 		select iif( @UnitFrom = @UnitTo 
 				, @Qty

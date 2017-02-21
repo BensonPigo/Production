@@ -2,8 +2,6 @@
 CREATE FUNCTION [dbo].[getSewingOutputCumulateOfDays](@style VARCHAR(15), @sewingline VARCHAR(2), @outputdate DATE, @factory VARCHAR(8))
 RETURNS varchar(max)
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	DECLARE @cumulate int --要回傳的字串
 
 	DECLARE cursor_SewingData CURSOR FOR

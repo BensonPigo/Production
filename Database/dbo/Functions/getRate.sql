@@ -14,8 +14,6 @@ CREATE FUNCTION [dbo].[getRate]
 RETURNS decimal(18,8) 
 AS
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	if @from_currencyid = @to_currencyid
 	begin
 		return 1;

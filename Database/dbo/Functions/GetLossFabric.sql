@@ -1,4 +1,5 @@
-﻿Create Function [dbo].[GetLossFabric]
+﻿
+Create Function [dbo].[GetLossFabric]
 (
 	  @PoID			VarChar(13)		--採購母單
 	 ,@FabricCode	VarChar(3)		--Fabric Code(空值表示為全部計算)
@@ -18,8 +19,6 @@ Returns @FabricColorQty Table
 	)
 As
 Begin
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	Set @FabricCode = IsNull(@FabricCode, '');
 
 	Declare @FabricColorQtyRowID Int;		--Row ID
@@ -73,13 +72,13 @@ SET QUOTED_IDENTIFIER ON
 	 Where ID = @PoID;
 	
 	Select @FabricType = FabricType
-	  From Production.dbo.Style
+	  From Trade.dbo.Style
 	 Where BrandID = @BrandID
 	   And ID = @StyleID
 	   And SeasonID = @SeasonID;
 	
 	Select @LossSampleFabric = LossSampleFabric
-	  From Production.dbo.Brand
+	  From Trade.dbo.Brand
 	 Where ID = @BrandID;
 	
 	Set @LimitUP_Rate = 0;
@@ -88,7 +87,7 @@ SET QUOTED_IDENTIFIER ON
 	Select @LimitUP_Rate = TWLimitUp
 		 , @LimitUP_Allowance = Allowance
 		 , @LimitUP_LossQty = MaxLossQty
-	  From Production.dbo.LossRateFabric
+	  From Trade.dbo.LossRateFabric
 	 Where WeaveTypeID = @FabricType;
 	---------------------------------------------------------------------------
 	--取得各Article/Size的Qty數、By Article加總的Qty數、Qty總數
@@ -310,7 +309,7 @@ SET QUOTED_IDENTIFIER ON
 			Begin
 				Set @WeaveTypeID = '';
 				Select @WeaveTypeID = Fabric.WeaveTypeID
-				  From Production.dbo.Fabric
+				  From Trade.dbo.Fabric
 				 Where SciRefNo = @SciRefNo;
 				
 				--Loss by Dafault And Category = 'Sample'
@@ -460,8 +459,8 @@ SET QUOTED_IDENTIFIER ON
 		
 		Set @WeaveTypeID = '';
 		Select @WeaveTypeID = Fabric.WeaveTypeID
-		  From Production.dbo.Fabric
-		  Join Production.dbo.LossRateFabric
+		  From Trade.dbo.Fabric
+		  Join Trade.dbo.LossRateFabric
 			On LossRateFabric.WeaveTypeID = Fabric.WeaveTypeID
 		 Where SciRefNo = @SciRefNo;
 

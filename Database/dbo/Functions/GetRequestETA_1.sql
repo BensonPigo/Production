@@ -8,8 +8,6 @@ Create Function [dbo].[GetRequestETA]
 Returns Date
 As
 Begin
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	--Set NoCount On;
 	Declare @RequestETA Date;
 	

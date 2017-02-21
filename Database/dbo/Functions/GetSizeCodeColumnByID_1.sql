@@ -7,8 +7,6 @@ CREATE FUNCTION [dbo].[GetSizeCodeColumnByID]
 RETURNS @tbl table(SizeGroup varchar(1),Seq varchar(2),SizeCode varchar(8))
 AS
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	
 	declare @main table(id varchar(13),SizeGroup varchar(1),Seq varchar(2),SizeCode varchar(8))
 	--main1 取得全部SizeCode

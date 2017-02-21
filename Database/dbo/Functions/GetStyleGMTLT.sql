@@ -13,8 +13,6 @@ Returns numeric(3, 0)
 As
  
 Begin
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
   
    Declare @GMTLT Numeric(3,0)
    Declare @isFty bit
