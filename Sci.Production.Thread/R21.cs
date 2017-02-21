@@ -81,7 +81,7 @@ namespace Sci.Production.Thread
             }
             
             if (sqlWheres.Count > 0)
-                sqlWhere = " where " + sqlWheres.JoinToString(" and ");
+                sqlWheres.JoinToString(" and ");
             #endregion
 
             cmd = string.Format(@"
@@ -96,7 +96,8 @@ namespace Sci.Production.Thread
                     ,NewCone
                     ,UsedCone
                     ,ThreadLocationID
-             from dbo.ThreadStock" + sqlWhere);
+             from dbo.ThreadStock
+             where isnull(NewCone+UsedCone,0)>0" + sqlWhere);
 
             return base.ValidateInput();
         }

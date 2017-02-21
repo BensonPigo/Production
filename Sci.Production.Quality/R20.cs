@@ -150,7 +150,7 @@ Select
 into #tmpall
 from RFT A WITH (NOLOCK) 
 INNER JOIN DBO.ORDERS C WITH (NOLOCK) ON C.ID = A.OrderID
-WHERE 1=1
+WHERE 1=1 AND A.InspectQty<>0 
 ");
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(Period1))
@@ -236,7 +236,7 @@ Outer Apply(
 	FROM SewingLine WITH (NOLOCK) 
 	WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID
 ) as SewingCell
-WHERE 1=1
+WHERE 1=1 AND A.InspectQty<>0 
 ");
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(Period1))
