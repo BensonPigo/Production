@@ -384,7 +384,7 @@ namespace Sci.Production.Cutting
                 sxrc sxr = new sxrc(xltPath);
 
                 sxr.dicDatas.Add(sxr._v + "PoList", dr["PoList"]);
-                sxr.dicDatas.Add(sxr._v + "StyleID", dr["StyleID"]);
+                sxr.dicDatas.Add(sxr._v + "StyleID", dr["Style"]);
                 sxr.dicDatas.Add(sxr._v + "CutLine", dr["CutLine"]);
                 sxr.dicDatas.Add(sxr._v + "OrderQty", MyUtility.Convert.GetString(dr2["OrderQty"]));
                 
