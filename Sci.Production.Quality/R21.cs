@@ -23,7 +23,7 @@ namespace Sci.Production.Quality
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select distinct FTYGroup from Factory order by FTYGroup", out factory);
+            DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
             factory.Rows.Add(new string[] { "" });
             factory.DefaultView.Sort = "FTYGroup";
             MyUtility.Tool.SetupCombox(comboBox1, 1, factory);
@@ -86,9 +86,9 @@ else ''  end as Stage
 ,a.InspectQty
 ,a.DefectQty
 ,iif(a.InspectQty=0,0,round(a.DefectQty/a.InspectQty*100,3)) [SQR]
-from dbo.Cfa a inner join dbo.Cfa_Detail b
+from dbo.Cfa a WITH (NOLOCK) inner join dbo.Cfa_Detail b WITH (NOLOCK) 
 on b.id = a.ID 
-inner join dbo.orders c
+inner join dbo.orders c WITH (NOLOCK) 
 on c.id = a.OrderID
 where a.Status = 'Confirmed'");
             if (!MyUtility.Check.Empty(id1))
@@ -166,9 +166,9 @@ else ''  end as Stage
 ,a.DefectQty
 ,iif(a.InspectQty=0,0,round(a.DefectQty/a.InspectQty*100,3)) [SQR]
 ,'' as Area
-from dbo.Cfa a inner join dbo.Cfa_Detail b
+from dbo.Cfa a WITH (NOLOCK) inner join dbo.Cfa_Detail b WITH (NOLOCK) 
 on b.id = a.ID 
-inner join dbo.orders c
+inner join dbo.orders c WITH (NOLOCK) 
 on c.id = a.OrderID
 where a.Status = 'Confirmed'");
             if (!MyUtility.Check.Empty(id1))

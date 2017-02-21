@@ -52,7 +52,7 @@ namespace Sci.Production.Quality
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtSP.OldValue)
             {
                 // 20161101 willy 修改and to or 原因文件上所示：編輯狀態下判斷若RFT.OrderID # Order.ID 或　Order.Factoryid # 登入工廠
-                if (!MyUtility.Check.Seek(string.Format(@"select id from Orders where ID='{0}' or MDivisionID='{1}'", textValue, Sci.Env.User.Keyword)))
+                if (!MyUtility.Check.Seek(string.Format(@"select id from Orders WITH (NOLOCK) where ID='{0}' or MDivisionID='{1}'", textValue, Sci.Env.User.Keyword)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< SP# > does not exist OR Factory is not match !!", textValue));
                     this.txtSP.Text = "";                                       
@@ -76,10 +76,10 @@ namespace Sci.Production.Quality
 
             DataRow dr;
             sql = string.Format(@"select B.StyleID , C.SewingCell , case when B.Dest is null then '' else B.Dest+'-'+D.NameEN end as Dest , B.CPU , Convert(varchar(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))) as RFT_percentage
-                                from Rft A
-                                left join Orders B on B.ID=A.OrderID
-                                left join SewingLine C on C.ID=A.SewinglineID and C.FactoryID=A.FactoryID
-                                left join Country D on D.ID=B.Dest
+                                from Rft A WITH (NOLOCK) 
+                                left join Orders B WITH (NOLOCK) on B.ID=A.OrderID
+                                left join SewingLine C WITH (NOLOCK) on C.ID=A.SewinglineID and C.FactoryID=A.FactoryID
+                                left join Country D WITH (NOLOCK) on D.ID=B.Dest
                                 where A.ID={0}", CurrentMaintain["ID"].ToString().Trim());
             if (MyUtility.Check.Seek(sql, out dr))
             {
@@ -91,8 +91,8 @@ namespace Sci.Production.Quality
             }
 
           
-            DataRow drStatus;           
-             string Sql_status = string.Format(@"select Status from rft where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
+            DataRow drStatus;
+            string Sql_status = string.Format(@"select Status from rft WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
             if (MyUtility.Check.Seek(Sql_status, out drStatus))
             {
                 this.labConfirm.Text = drStatus["Status"].ToString();
@@ -107,7 +107,7 @@ namespace Sci.Production.Quality
 
             foreach (DataRow dr in dt.Rows)
             {
-                sql = string.Format(@"select Description from GarmentDefectCode where ID='{0}'", dr["GarmentDefectCodeID"].ToString().Trim());
+                sql = string.Format(@"select Description from GarmentDefectCode WITH (NOLOCK) where ID='{0}'", dr["GarmentDefectCodeID"].ToString().Trim());
                 if (MyUtility.Check.Seek(sql, out ROW))
                 {
                     dr["Description"] = ROW["Description"];
@@ -134,7 +134,7 @@ namespace Sci.Production.Quality
                 {
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
 
-                    string item_cmd = @"  select distinct  b.GarmentDefectCodeID,a.GarmentDefectTypeID,a.Description from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID
+                    string item_cmd = @"  select distinct  b.GarmentDefectCodeID,a.GarmentDefectTypeID,a.Description from GarmentDefectCode a WITH (NOLOCK) inner join Rft_Detail b WITH (NOLOCK) on a.id=b.GarmentDefectCodeID
  order by GarmentDefectCodeID,GarmentDefectTypeID
 ";
 
@@ -142,7 +142,7 @@ namespace Sci.Production.Quality
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel) return;
                     dr["GarmentDefectCodeID"] = item.GetSelectedString();
-                    string sqlcmd = string.Format(@"select Description,a.GarmentDefectTypeID from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", item.GetSelectedString());
+                    string sqlcmd = string.Format(@"select Description,a.GarmentDefectTypeID from GarmentDefectCode a WITH (NOLOCK) inner join Rft_Detail b WITH (NOLOCK) on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", item.GetSelectedString());
                     if (MyUtility.Check.Seek(sqlcmd, out drDesc))
                     {
                         dr["Description"] = drDesc["Description"];
@@ -166,7 +166,7 @@ namespace Sci.Production.Quality
                 {
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
 
-                    string item_cmd = @"  select distinct  b.GarmentDefectCodeID,a.GarmentDefectTypeID,a.Description from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID
+                    string item_cmd = @"  select distinct  b.GarmentDefectCodeID,a.GarmentDefectTypeID,a.Description from GarmentDefectCode a WITH (NOLOCK) inner join Rft_Detail b WITH (NOLOCK) on a.id=b.GarmentDefectCodeID
  order by GarmentDefectCodeID,GarmentDefectTypeID
 ";
 
@@ -174,7 +174,7 @@ namespace Sci.Production.Quality
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel) return;
                     dr["GarmentDefectCodeID"] = item.GetSelectedString();
-                    string sqlcmd = string.Format(@"select Description,a.GarmentDefectTypeID from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", item.GetSelectedString());
+                    string sqlcmd = string.Format(@"select Description,a.GarmentDefectTypeID from GarmentDefectCode a WITH (NOLOCK) inner join Rft_Detail b WITH (NOLOCK) on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", item.GetSelectedString());
                     if (MyUtility.Check.Seek(sqlcmd, out drDesc))
                     {
                         dr["Description"] = drDesc["Description"];
@@ -204,8 +204,8 @@ namespace Sci.Production.Quality
                 }
                 DataTable dt;
                 DataRow drDesc;
-               
-                string cmd = "select ID from GarmentDefectCode where ID=@ID";
+
+                string cmd = "select ID from GarmentDefectCode WITH (NOLOCK) where ID=@ID";
                 List<SqlParameter> spam = new List<SqlParameter>();
                 spam.Add(new SqlParameter("@ID", e.FormattedValue));
 
@@ -221,7 +221,7 @@ namespace Sci.Production.Quality
                 }
 
                 //帶出 Type and desc 資料
-                string sqlcmd1 = string.Format(@"select Description,a.GarmentDefectTypeID from GarmentDefectCode a inner join Rft_Detail b on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", e.FormattedValue);
+                string sqlcmd1 = string.Format(@"select Description,a.GarmentDefectTypeID from GarmentDefectCode a WITH (NOLOCK) inner join Rft_Detail b WITH (NOLOCK) on a.id=b.GarmentDefectCodeID where b.GarmentDefectCodeID='{0}'", e.FormattedValue);
 
               
                 if (MyUtility.Check.Seek(sqlcmd1, out drDesc))
@@ -357,7 +357,7 @@ namespace Sci.Production.Quality
             }   
           
             DataTable dt;
-            string sql = string.Format(@"select * from rft where OrderID='{0}' and CDate='{1}' and SewinglineID = '{2}' 
+            string sql = string.Format(@"select * from rft WITH (NOLOCK) where OrderID='{0}' and CDate='{1}' and SewinglineID = '{2}' 
   and FactoryID='{3}' and [Shift]='{4}' and Team='{5}' ", txtSP.Text,((DateTime)CDate.Value).ToShortDateString(), txtLine.Text, DisplayFactory.Text, comboShift.SelectedValue, comboTeam.Text);
             DBProxy.Current.Select(null, sql, out dt);
             if (dt.Rows.Count > 0 && isNew)// 如果是新增,才判斷ＳＰ＃是否存在
@@ -374,11 +374,11 @@ namespace Sci.Production.Quality
             DataRow dr;
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || txtLine.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"select distinct sewinglineid from Rft where OrderID='{0}'",this.txtSP.Text), "10", this.txtLine.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"select distinct sewinglineid from Rft WITH (NOLOCK) where OrderID='{0}'", this.txtSP.Text), "10", this.txtLine.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.txtLine.Text = item.GetSelectedString();
-            string sqlcmd=string.Format(@"select sewingcell from Sewingline where id='{0}'",item.GetSelectedString());
+            string sqlcmd = string.Format(@"select sewingcell from Sewingline WITH (NOLOCK) where id='{0}'", item.GetSelectedString());
             if (MyUtility.Check.Seek(sqlcmd,out dr))
             {
                 this.DisplayCell.Text = dr["sewingcell"].ToString();
@@ -395,15 +395,15 @@ namespace Sci.Production.Quality
             string textValue = this.txtLine.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtLine.OldValue)
             {
-                if (!MyUtility.Check.Seek(string.Format(@"select id from SewingLine where id = '{0}'", textValue)))
+                if (!MyUtility.Check.Seek(string.Format(@"select id from SewingLine WITH (NOLOCK) where id = '{0}'", textValue)))
                 {                   
                     MyUtility.Msg.WarningBox(string.Format("< Line# : {0} > not found !!", textValue));
                     this.txtLine.Text = "";
                     e.Cancel = true;
                     return;                   
                 }
-                
-                if (!MyUtility.Check.Seek(string.Format(@"select id from Rft where orderid = '{0}' and sewingLineID='{1}'", this.txtSP.Text, textValue)))
+
+                if (!MyUtility.Check.Seek(string.Format(@"select id from Rft WITH (NOLOCK) where orderid = '{0}' and sewingLineID='{1}'", this.txtSP.Text, textValue)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Line# : {0} > not found !!", textValue));
                     this.txtLine.Text = "";
@@ -430,7 +430,7 @@ namespace Sci.Production.Quality
         {           
             DataTable dt;
             isNew = false;
-            string sql = string.Format(@"select * from rft where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
+            string sql = string.Format(@"select * from rft WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
             DBProxy.Current.Select(null, sql,out dt);
             if (dt.Rows[0]["status"].ToString().ToUpper() == "CONFIRMED")
             {
@@ -458,7 +458,7 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Empty(this.txtSP.Text)) return;
             DataTable dt;
             DualResult result;
-            string sqlcmd = string.Format(@"select StyleID,Dest,CPU from Orders where id='{0}' ", txtSP.Text.ToString());
+            string sqlcmd = string.Format(@"select StyleID,Dest,CPU from Orders WITH (NOLOCK) where id='{0}' ", txtSP.Text.ToString());
             result = DBProxy.Current.Select(null, sqlcmd,out dt);            
             if (result)
             {

@@ -50,27 +50,27 @@ namespace Sci.Production.Quality
                 @"Select a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.exportid,
                 ArriveQty,InspDeadline,Result,a.InspQty,a.RejectQty,a.Defect,a.Result,a.InspDate,
                 (
-				select Pass1.Name from Pass1 where a.Inspector = pass1.id
+				select Pass1.Name from Pass1 WITH (NOLOCK) where a.Inspector = pass1.id
 				) AS Inspector,
                 a.Remark,a.ReplacementReportID,
                 a.Status,ReplacementReportID,(seq1+seq2) as seq,
                 (
-                Select weavetypeid from Fabric b where b.SCIRefno =a.SCIrefno
+                Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno
                 ) as weavetypeid,
                 c.ID AS ReceivingID,c.whseArrival,
                 (
-                Select d.colorid from PO_Supp_Detail d Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+                Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
                 ) as Colorid,
                 (
-                Select d.SizeSpec from PO_Supp_Detail d Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+                Select d.SizeSpec from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
                 ) as Size,
                 (
-                Select d.StockUnit from PO_Supp_Detail d Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+                Select d.StockUnit from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
                 ) as unit,
                 (
-                Select AbbEn From Supp Where a.suppid = supp.id
+                Select AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id
                 ) as SuppEn
-	                From AIR a Left join Receiving c on c.id = a.receivingid
+	                From AIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
                 Where a.poid='{0}' order by seq1,seq2  ", masterID);
             this.DetailSelectCommand = cmd;
             return base.OnDetailSelectCommandPrepare(e);

@@ -51,12 +51,12 @@ namespace Sci.Production.Quality
                 @"select distinct a.Poid,a.SEQ1+a.SEQ2 as seq,a.ArriveQty,
 				b.styleid,b.BrandID,c.ExportId,c.WhseArrival,f.SuppID,a.SCIRefno,a.Refno,d.ColorID,
 				e.CrockingDate,e.Crocking,e.nonCrocking												
-				 from FIR a
-				left join Orders b on a.POID=b.POID
-				left join Receiving c on a.ReceivingID=c.Id
-				left join PO_Supp_Detail d on d.ID=a.POID and a.SEQ1=d.SEQ1 and a.seq2=d.SEQ2
-				left join FIR_Laboratory e on a.ID=e.ID
-                left join PO_Supp f on d.ID=f.ID and d.SEQ1=f.SEQ1
+				 from FIR a WITH (NOLOCK) 
+				left join Orders b WITH (NOLOCK) on a.POID=b.POID
+				left join Receiving c WITH (NOLOCK) on a.ReceivingID=c.Id
+				left join PO_Supp_Detail d WITH (NOLOCK) on d.ID=a.POID and a.SEQ1=d.SEQ1 and a.seq2=d.SEQ2
+				left join FIR_Laboratory e WITH (NOLOCK) on a.ID=e.ID
+                left join PO_Supp f WITH (NOLOCK) on d.ID=f.ID and d.SEQ1=f.SEQ1
 				where a.ID='{0}'", ID);
             DataRow fir_dr;
             if (MyUtility.Check.Seek(fir_cmd, out fir_dr))
@@ -125,7 +125,7 @@ namespace Sci.Production.Quality
                     if (e.Button==System.Windows.Forms.MouseButtons.Right)
                     {
                         DataRow dr = grid.GetDataRow(e.RowIndex);
-                        string sqlcmd = string.Format(@"Select roll,dyelot from Receiving_Detail Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+                        string sqlcmd = string.Format(@"Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
                         SelectItem item = new SelectItem(sqlcmd, "15,12", dr["roll"].ToString(),false,",");
                         DialogResult result = item.ShowDialog();
                         if (result==DialogResult.Cancel)
@@ -143,7 +143,7 @@ namespace Sci.Production.Quality
                         if (e.Button==System.Windows.Forms.MouseButtons.Right)
                         {
                             DataRow dr = grid.GetDataRow(e.RowIndex);
-                            string scalecmd = @"select id from Scale where junk!=1";
+                            string scalecmd = @"select id from Scale WITH (NOLOCK) where junk!=1";
                             SelectItem item1 = new SelectItem(scalecmd, "15", dr["DryScale"].ToString());
                             DialogResult result = item1.ShowDialog();
                             if (result==DialogResult.Cancel)
@@ -164,7 +164,7 @@ namespace Sci.Production.Quality
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
                     {
                         DataRow dr = grid.GetDataRow(e.RowIndex);
-                        string scalecmd = @"select id from Scale where junk!=1";
+                        string scalecmd = @"select id from Scale WITH (NOLOCK) where junk!=1";
                         SelectItem item1 = new SelectItem(scalecmd, "15", dr["WetScale"].ToString());
                         DialogResult result = item1.ShowDialog();
                         if (result == DialogResult.Cancel)
@@ -183,7 +183,7 @@ namespace Sci.Production.Quality
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
                     {
                         DataRow dr = grid.GetDataRow(e.RowIndex);
-                        string scalecmd = @"select id,name from Pass1 ";
+                        string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) ";
                         SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Inspector"].ToString());
                         DialogResult result = item1.ShowDialog();
                         if (result == DialogResult.Cancel)
@@ -214,9 +214,9 @@ namespace Sci.Production.Quality
                     if (this.EditMode == false) return;
                     if (dr.RowState!=DataRowState.Added) {
                         if (oldvalue == newvalue) return;
-                    }                   
-                    
-                    string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from Receiving_Detail Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                    }
+
+                    string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
                     DataRow roll_dr;
                     if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                     {
@@ -244,9 +244,9 @@ namespace Sci.Production.Quality
                         if (dr.RowState != DataRowState.Added)
                         {
                             if (oldvalue == newvalue) return;
-                        }  
-                        
-                        string dryScale_cmd = string.Format(@"	select DryScale from FIR_Laboratory_Crocking a left join Scale b on a.DryScale=b.id where a.id ='{0}'", maindr["id"]);
+                        }
+
+                        string dryScale_cmd = string.Format(@"	select DryScale from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Scale b WITH (NOLOCK) on a.DryScale=b.id where a.id ='{0}'", maindr["id"]);
                         DataRow roll_dr;
                         if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
                         {
@@ -267,9 +267,9 @@ namespace Sci.Production.Quality
                     if (dr.RowState != DataRowState.Added)
                     {
                         if (oldvalue == newvalue) return;
-                    }  
-                    
-                    string dryScale_cmd = string.Format(@"select wetScale from FIR_Laboratory_Crocking a left join Scale b on a.DryScale=b.id where a.id ='{0}'", maindr["id"]);
+                    }
+
+                    string dryScale_cmd = string.Format(@"select wetScale from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Scale b WITH (NOLOCK) on a.DryScale=b.id where a.id ='{0}'", maindr["id"]);
                     DataRow roll_dr;
                     if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
                     {
@@ -290,8 +290,8 @@ namespace Sci.Production.Quality
                     if (dr.RowState != DataRowState.Added)
                     {
                         if (oldvalue == newvalue) return;
-                    }                      
-                    string dryScale_cmd = string.Format(@"select Inspector from FIR_Laboratory_Crocking a	left join Pass1 b on a.Inspector=b.ID and b.Resign is not null where a.id ='{0}'", maindr["id"]);
+                    }
+                    string dryScale_cmd = string.Format(@"select Inspector from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID and b.Resign is not null where a.id ='{0}'", maindr["id"]);
                     DataRow roll_dr;
                     if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
                     {
@@ -306,7 +306,7 @@ namespace Sci.Production.Quality
                 };
                 ResultCell.CellValidating += (s, e) =>
                 {
-                    string result_cmd = string.Format(@"select result from FIR_Laboratory_Crocking where id ='{0}'", maindr["id"]);
+                    string result_cmd = string.Format(@"select result from FIR_Laboratory_Crocking WITH (NOLOCK) where id ='{0}'", maindr["id"]);
                     DataRow drResult;
                     if (!MyUtility.Check.Seek(result_cmd,out drResult))
                     {
@@ -316,7 +316,7 @@ namespace Sci.Production.Quality
                 };
                 InspDateCell.CellValidating += (s, e) =>
                 {
-                    string result_cmd = string.Format(@"select inspdate from FIR_Laboratory_Crocking where id ='{0}'", maindr["id"]);
+                    string result_cmd = string.Format(@"select inspdate from FIR_Laboratory_Crocking WITH (NOLOCK) where id ='{0}'", maindr["id"]);
                     DataRow drResult;
                     if (!MyUtility.Check.Seek(result_cmd, out drResult))
                     {
@@ -502,10 +502,10 @@ namespace Sci.Production.Quality
                     //至少檢驗一卷 並且出現在Fir_Continuity.Roll
                     DataTable rolldt;
                     string cmd= string.Format(
-                        @"Select roll from Receiving_Detail a where 
+                        @"Select roll from Receiving_Detail a WITH (NOLOCK) where 
                         a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
                         and exists 
-                        (Select distinct dyelot from FIR_Continuity b where b.id='{1}' and a.roll = b.roll)"
+                        (Select distinct dyelot from FIR_Continuity b WITH (NOLOCK) where b.id='{1}' and a.roll = b.roll)"
                         , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
                     DualResult dResult;
                     if (dResult =  DBProxy.Current.Select(null, cmd, out rolldt))
@@ -602,7 +602,7 @@ namespace Sci.Production.Quality
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P03", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
             DataRow pass2_dr;
-            string pass2_cmd = string.Format("Select * from Pass2 Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
+            string pass2_cmd = string.Format("Select * from Pass2 WITH (NOLOCK) Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
             int lApprove = 0; //有Confirm權限皆可按Pass的Approve, 有Check權限才可按Fail的Approve(TeamLeader 有Approve權限,Supervisor有Check)
             int lCheck = 0;
             if (MyUtility.Check.Seek(pass2_cmd, out pass2_dr))
@@ -634,7 +634,7 @@ namespace Sci.Production.Quality
             DataTable dtSeason;
             string SeasonID;
             DBProxy.Current.Select("Production", string.Format(
-            "select C.SeasonID from FIR_Laboratory_Crocking a left join FIR_Laboratory b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", maindr["ID"]), out dtSeason);
+            "select C.SeasonID from FIR_Laboratory_Crocking a WITH (NOLOCK) left join FIR_Laboratory b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C WITH (NOLOCK) ON B.POID=C.ID where a.ID='{0}'", maindr["ID"]), out dtSeason);
             if (dtSeason.Rows.Count == 0) { SeasonID = ""; }
             else { SeasonID = dtSeason.Rows[0]["SeasonID"].ToString(); }
            
@@ -674,16 +674,16 @@ namespace Sci.Production.Quality
                 b.CrockingEncode,b.HeatEncode,b.WashEncode,
                 ArriveQty,
 				 (
-                Select d.colorid from PO_Supp_Detail d Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+                Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
                 ) as Colorid,
 				(
-				select Suppid+f.AbbEN as supplier from Supp f where a.Suppid=f.ID
+				select Suppid+f.AbbEN as supplier from Supp f WITH (NOLOCK) where a.Suppid=f.ID
 				) as Supplier,
 				b.ReceiveSampleDate,b.InspDeadline,b.Result,b.Crocking,b.nonCrocking,b.CrockingDate,b.nonHeat,Heat,b.HeatDate,
 				b.nonWash,b.Wash,b.WashDate
-				from FIR a 
-				left join FIR_Laboratory b on a.ID=b.ID
-				left join Receiving c on c.id = a.receivingid
+				from FIR a WITH (NOLOCK) 
+				left join FIR_Laboratory b WITH (NOLOCK) on a.ID=b.ID
+				left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 				Where a.poid=@poid  and a.id=@id order by a.seq1,a.seq2,Refno ";
             List<SqlParameter> spam = new List<SqlParameter>();
             spam.Add(new SqlParameter("@id", ID));

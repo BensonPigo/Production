@@ -37,7 +37,7 @@ namespace Sci.Production.Quality
            
 
             DataTable Month = null;
-            string scmd = (@"select  distinct month(startdate) as md from dbo.ADIDASComplain");
+            string scmd = (@"select  distinct month(startdate) as md from dbo.ADIDASComplain WITH (NOLOCK) ");
             DBProxy.Current.Select("", scmd, out Month);
             Month.DefaultView.Sort = "md";
             this.comboBox_month.DataSource = Month;
@@ -111,10 +111,10 @@ namespace Sci.Production.Quality
                                                   ,b.ValueINExRate [Exrate]
                                                   ,c.Name [Defect_Main_Name]
                                                   ,d.SubName [Defect_Sub_Name]
-                                         from dbo.ADIDASComplain a
-                                         inner join dbo.ADIDASComplain_Detail b on a.id=b.ID
-                                         left join dbo.ADIDASComplainDefect c on b.DefectMainID=c.ID
-                                         left join dbo.ADIDASComplainDefect_Detail d on d.ID=b.DefectMainID and d.SubID=b.DefectSubID " + sqlWhere);
+                                         from dbo.ADIDASComplain a WITH (NOLOCK) 
+                                         inner join dbo.ADIDASComplain_Detail b WITH (NOLOCK) on a.id=b.ID
+                                         left join dbo.ADIDASComplainDefect c WITH (NOLOCK) on b.DefectMainID=c.ID
+                                         left join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on d.ID=b.DefectMainID and d.SubID=b.DefectSubID " + sqlWhere);
            result = DBProxy.Current.Select("", sqlcmd,lis, out dt);
             
 

@@ -121,13 +121,13 @@ namespace Sci.Production.Quality
              {
                  DataTable dtMaxDate;
                  string sqlDate = string.Format(@"select max(date) as MaxDate from (
-select  MAX(CrockingDate) AS date  from FIR_Laboratory
+select  MAX(CrockingDate) AS date  from FIR_Laboratory WITH (NOLOCK) 
 where POID='{0}'
 union all
-select  MAX(HeatDate) as date from FIR_Laboratory
+select  MAX(HeatDate) as date from FIR_Laboratory WITH (NOLOCK) 
 where POID='{0}'
 union all
-select  MAX(WashDate) AS date from FIR_Laboratory
+select  MAX(WashDate) AS date from FIR_Laboratory WITH (NOLOCK) 
 where POID='{0}'
 ) a", CurrentMaintain["ID"]);
                  DBProxy.Current.Select(null, sqlDate, out dtMaxDate);
@@ -159,16 +159,16 @@ where POID='{0}'
                 b.CrockingEncode,b.HeatEncode,b.WashEncode,
                 ArriveQty,
 				 (
-                Select d.colorid from PO_Supp_Detail d Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+                Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
                 ) as Colorid,
 				(
-				select Suppid+f.AbbEN as supplier from Supp f where a.Suppid=f.ID
+				select Suppid+f.AbbEN as supplier from Supp f WITH (NOLOCK) where a.Suppid=f.ID
 				) as Supplier,
 				b.ReceiveSampleDate,b.InspDeadline,b.Result,b.Crocking,b.nonCrocking,b.CrockingDate,b.nonHeat,Heat,b.HeatDate,
 				b.nonWash,b.Wash,b.WashDate,a.ReceivingID
-				from FIR a 
-				left join FIR_Laboratory b on a.ID=b.ID
-				left join Receiving c on c.id = a.receivingid
+				from FIR a WITH (NOLOCK) 
+				left join FIR_Laboratory b WITH (NOLOCK) on a.ID=b.ID
+				left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 				Where a.poid='{0}' order by a.seq1,a.seq2,Refno ", masterID);
             this.DetailSelectCommand = cmd;
             return base.OnDetailSelectCommandPrepare(e);
@@ -468,7 +468,7 @@ where POID='{0}'
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P03", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
             DataRow pass2_dr;
-            string pass2_cmd = string.Format("Select * from Pass2 Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
+            string pass2_cmd = string.Format("Select * from Pass2 WITH (NOLOCK) Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
             int lApprove = 0; //有Confirm權限皆可按Pass的Approve, 有Check權限才可按Fail的Approve(TeamLeader 有Approve權限,Supervisor有Check)
             int lCheck = 0;
             if (MyUtility.Check.Seek(pass2_cmd, out pass2_dr))

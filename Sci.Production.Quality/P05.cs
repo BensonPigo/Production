@@ -42,9 +42,9 @@ namespace Sci.Production.Quality
             this.detailgrid.AutoResizeColumns();
             string sql_cmd =
                 @"select a.ID,b.StyleID,b.SeasonID,b.BrandID,b.CutInLine,c.Article,c.Result,a.OvenLaboratoryRemark,b.factoryid 
-                from po a 
-                left join Orders b on a.ID = b.POID
-                left join Oven c on a.ID=c.POID
+                from po a WITH (NOLOCK) 
+                left join Orders b WITH (NOLOCK) on a.ID = b.POID
+                left join Oven c WITH (NOLOCK) on a.ID=c.POID
                 where a.id=@id";
             spam.Add(new SqlParameter("@id", CurrentMaintain["ID"].ToString()));
 
@@ -57,7 +57,7 @@ namespace Sci.Production.Quality
                 this.remark_text.Text = dr["OvenLaboratoryRemark"].ToString();
             }
 
-            if (MyUtility.Check.Seek(string.Format("select min(a.CutInLine) as CutInLine from Orders a where a.POID='{0}'", CurrentMaintain["id"].ToString()), out drEarly))
+            if (MyUtility.Check.Seek(string.Format("select min(a.CutInLine) as CutInLine from Orders a WITH (NOLOCK) where a.POID='{0}'", CurrentMaintain["id"].ToString()), out drEarly))
             {
                 if (drEarly["CutInLine"] == DBNull.Value) Cutting_text.Text = "";
                 else Cutting_text.Value = Convert.ToDateTime(drEarly["CutInLine"]);
@@ -222,7 +222,7 @@ namespace Sci.Production.Quality
         private void CreateNewTest()
         {
             DataTable dt;
-            DBProxy.Current.Select(null, "select Max(id) as id from Oven", out dt);
+            DBProxy.Current.Select(null, "select Max(id) as id from Oven WITH (NOLOCK) ", out dt);
         
                int ID = MyUtility.Convert.GetInt(dt.Rows[0]["id"]);
                 ID = ID + 1;
@@ -305,8 +305,8 @@ namespace Sci.Production.Quality
             }
             else // oven 有東西
             {
-                DBProxy.Current.Select(null, string.Format("select * from oven where POID='{0}'", sp_text.Text.ToString()), out dtCheckDelete);
-                DBProxy.Current.Select(null, string.Format("select * from oven where id='{0}'", CurrentDetailData["ID"].ToString()), out dtCheck);
+                DBProxy.Current.Select(null, string.Format("select * from oven WITH (NOLOCK) where POID='{0}'", sp_text.Text.ToString()), out dtCheckDelete);
+                DBProxy.Current.Select(null, string.Format("select * from oven WITH (NOLOCK) where id='{0}'", CurrentDetailData["ID"].ToString()), out dtCheck);
                 if (dtCheckDelete.Rows.Count <= 0)
                 {
                     edit.Enabled = false;

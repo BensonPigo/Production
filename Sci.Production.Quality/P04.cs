@@ -194,7 +194,7 @@ namespace Sci.Production.Quality
                 {
                     DataRow dr_showname;
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    string scalecmd = @"select id,name from Pass1 where Resign is null";
+                    string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) where Resign is null";
                     SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Inspector"].ToString());
                     DialogResult result = item1.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -216,7 +216,7 @@ namespace Sci.Production.Quality
                 {
                     DataRow dr_showname;
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    string scalecmd = @"select id,name from Pass1 where Resign is null";
+                    string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) where Resign is null";
                     SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Inspector"].ToString());
                     DialogResult result = item1.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -243,8 +243,8 @@ namespace Sci.Production.Quality
                     dr["inspector"] = "";
                     dr["Showname"] = "";
                     return; // 沒資料 return
-                } 
-                string cmd = string.Format(@"select * from pass1 where id='{0}' and Resign is null",e.FormattedValue);                    
+                }
+                string cmd = string.Format(@"select * from pass1 WITH (NOLOCK) where id='{0}' and Resign is null", e.FormattedValue);                    
                     
                 if (MyUtility.Check.Seek(cmd,out dr_cmd))
                 {
@@ -451,7 +451,7 @@ namespace Sci.Production.Quality
                     if (!MyUtility.Check.Empty(dr["senddate", DataRowVersion.Original])) return new DualResult(false, "SendDate is existed, can not delete.", "Warning");
 
                     List<SqlParameter> spamDet = new List<SqlParameter>();
-                    update_cmd = "Delete From GarmentTest_Detail Where id =@id and no=@no";
+                    update_cmd = "Delete From GarmentTest_Detail WITH (NOLOCK) Where id =@id and no=@no";
                     spamDet.Add(new SqlParameter("@id", dr["ID", DataRowVersion.Original]));
                     spamDet.Add(new SqlParameter("@no", dr["NO", DataRowVersion.Original]));
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
@@ -491,9 +491,9 @@ namespace Sci.Production.Quality
         {
             DataTable dt;
             DualResult result;
-            string cmd = @"select b.* from Orders a
-left join GarmentTest b on a.ID=b.OrderID and a.StyleID=b.StyleID and a.SeasonID=b.SeasonID and a.BrandID=b.BrandID and a.FactoryID=b.MDivisionid
-left join Order_Qty c on a.ID=c.ID and c.Article=b.Article where a.id=@orderID";
+            string cmd = @"select b.* from Orders a WITH (NOLOCK) 
+left join GarmentTest b WITH (NOLOCK) on a.ID=b.OrderID and a.StyleID=b.StyleID and a.SeasonID=b.SeasonID and a.BrandID=b.BrandID and a.FactoryID=b.MDivisionid
+left join Order_Qty c WITH (NOLOCK) on a.ID=c.ID and c.Article=b.Article where a.id=@orderID";
             List<SqlParameter> spam = new List<SqlParameter>();
             spam.Add(new SqlParameter("@orderID", this.SP_Text.Text));
             if (result = DBProxy.Current.Select(null, cmd, spam, out dt))

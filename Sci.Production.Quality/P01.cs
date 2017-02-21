@@ -57,12 +57,12 @@ namespace Sci.Production.Quality
                 NonShadebond,Shadebond,ShadebondDate,shadebond,
                 NonContinuity,Continuity,ContinuityDate,Continuity,
                 a.Status,ReplacementReportID,(seq1+seq2) as seq,
-                (Select weavetypeid from Fabric b where b.SCIRefno =a.SCIrefno) as weavetypeid,
+                (Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno) as weavetypeid,
                 c.Exportid,c.whseArrival,dbo.getPass1(a.Approve) as approve1,approveDate,approve,
-                (Select d.colorid from PO_Supp_Detail d Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2) as Colorid,
-                (Select ID+' - '+ AbbEn From Supp Where a.suppid = supp.id) as SuppEn,
+                (Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2) as Colorid,
+                (Select ID+' - '+ AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id) as SuppEn,
                 c.ExportID as Wkno
-                From FIR a Left join Receiving c on c.id = a.receivingid
+                From FIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
                 Where a.poid='{0}' order by seq1,seq2  ", masterID);
             this.DetailSelectCommand = cmd;
             return base.OnDetailSelectCommandPrepare(e);

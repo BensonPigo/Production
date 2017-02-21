@@ -90,7 +90,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
 ;with cte as
 (
 select FactoryID, CDate, OrderID, SewingLineID, Shift, a.GarmentOutput,Result ,min(AddDate) min_addDate
-from dbo.Cfa a
+from dbo.Cfa a WITH (NOLOCK) 
 where 1=1 
 and a.Status = 'Confirmed' 
 ");
@@ -112,7 +112,7 @@ select cte.FactoryID,o.BrandID
 	, cast (count(*) as numeric(15,4)) inspTimes
 	, cast (sum(iif(Result = 'Pass',1,0)) as numeric(15,4)) passTimes
 	, cast (ROUND(sum(iif(Result = 'Pass',1.0,0.0))/count(*), 4) * 100 as numeric(15,4)) [pass_rate]
-from cte inner join dbo.orders o on o.id = cte.OrderID
+from cte inner join dbo.orders o WITH (NOLOCK) on o.id = cte.OrderID
 group by cte.FactoryID,o.BrandID
 )
 
@@ -166,7 +166,7 @@ DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
 ;with cte as
 (select FactoryID, CDate, OrderID, SewingLineID, Shift, a.GarmentOutput,Result ,min(AddDate) min_addDate
-from dbo.Cfa a
+from dbo.Cfa a WITH (NOLOCK) 
 where 1=1
 and a.Status = ''Confirmed'' 
 ");
@@ -187,7 +187,7 @@ group by FactoryID, CDate, OrderID, SewingLineID, Shift, a.GarmentOutput,Result
 	, cast (count(*) as numeric(15,4)) inspTimes
 	, cast (sum(iif(Result = ''Pass'',1,0)) as numeric(15,4)) passTimes
 	, cast (ROUND(sum(iif(Result = ''Pass'',1.0,0.0))/count(*), 4) * 100 as numeric(15,4)) [pass_rate]
-from cte inner join dbo.orders o on o.id = cte.OrderID
+from cte inner join dbo.orders o WITH (NOLOCK) on o.id = cte.OrderID
 group by cte.FactoryID,o.BrandID
 )
 
@@ -294,7 +294,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
 ;with cte as
 (
 select FactoryID, CDate, OrderID, SewingLineID, Shift, a.GarmentOutput,Result ,min(AddDate) min_addDate
-from dbo.Cfa a
+from dbo.Cfa a WITH (NOLOCK) 
 where 1=1 
 and a.Status = 'Confirmed' 
 ");
@@ -320,7 +320,7 @@ select cte.CDate, cte.FactoryID
 	, cast (count(*) as numeric(15,4)) inspTimes
 	, cast (sum(iif(Result = 'Pass',1,0)) as numeric(15,4)) passTimes
 	, cast (ROUND(sum(iif(Result = 'Pass',1.0,0.0))/count(*), 4) * 100 as numeric(15,4)) [pass_rate]
-from cte inner join dbo.orders o on o.id = cte.OrderID
+from cte inner join dbo.orders o WITH (NOLOCK) on o.id = cte.OrderID
 group by cte.CDate, cte.FactoryID
 )
 
@@ -511,7 +511,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
 ;with cte as
 (
 select FactoryID, CDate, OrderID, SewingLineID, Shift, a.GarmentOutput,Result ,min(AddDate) min_addDate
-from dbo.Cfa a
+from dbo.Cfa a WITH (NOLOCK) 
 where 1=1 
 and a.Status = 'Confirmed' 
 ");
@@ -537,7 +537,7 @@ select cte.CDate,o.BrandID
 	, cast (count(*) as numeric(15,4)) inspTimes
 	, cast (sum(iif(Result = 'Pass',1,0)) as numeric(15,4)) passTimes
 	, cast (ROUND(sum(iif(Result = 'Pass',1.0,0.0))/count(*), 4) * 100 as numeric(15,4)) [pass_rate]
-from cte inner join dbo.orders o on o.id = cte.OrderID
+from cte inner join dbo.orders o WITH (NOLOCK) on o.id = cte.OrderID
 group by cte.CDate,o.BrandID
 )
 
@@ -595,7 +595,7 @@ SET @sql = N'
 ;with cte as
 (
 select FactoryID, CDate, OrderID, SewingLineID, Shift, a.GarmentOutput,Result ,min(AddDate) min_addDate
-from dbo.Cfa a
+from dbo.Cfa a WITH (NOLOCK) 
 where 1=1 
 and a.Status = ''Confirmed'' 
 ");
@@ -621,7 +621,7 @@ select cte.CDate,o.BrandID
 	, cast (count(*) as numeric(15,4)) inspTimes
 	, cast (sum(iif(Result = ''Pass'',1,0)) as numeric(15,4)) passTimes
 	, cast (ROUND(sum(iif(Result = ''Pass'',1.0,0.0))/count(*), 4) * 100 as numeric(15,4)) [pass_rate]
-from cte inner join dbo.orders o on o.id = cte.OrderID
+from cte inner join dbo.orders o WITH (NOLOCK) on o.id = cte.OrderID
 group by cte.CDate,o.BrandID
 )
 

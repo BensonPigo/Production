@@ -151,9 +151,9 @@ namespace Sci.Production.Quality
                                                   ,row_number() over (partition by YEAR(A.StartDate),MONTH(A.StartDate) 
 					                               order by SUM(B.Qty) desc) as rnk
                                             into #temp
-                                            from dbo.ADIDASComplain a
-                                            inner join dbo.ADIDASComplain_Detail b on a.id=b.id
-                                            left join dbo.ADIDASComplainDefect_Detail c on c.id=b.DefectMainID AND C.SubID=B.DefectSubID" + " " + sqlWhere + " " + gb + " " +
+                                            from dbo.ADIDASComplain a WITH (NOLOCK) 
+                                            inner join dbo.ADIDASComplain_Detail b WITH (NOLOCK) on a.id=b.id
+                                            left join dbo.ADIDASComplainDefect_Detail c WITH (NOLOCK) on c.id=b.DefectMainID AND C.SubID=B.DefectSubID" + " " + sqlWhere + " " + gb + " " +
 
                                          @"declare @d date = '{0}' --getdate()
 											 declare @y1 varchar(4) = cast(datepart(year, dateadd(year,-2, @d) ) as varchar(4))
@@ -242,8 +242,8 @@ namespace Sci.Production.Quality
                                           ,row_number() over (partition by YEAR(A.StartDate),MONTH(A.StartDate) 
                                            order by SUM(B.Qty) desc) as rnk
                                            into #temp
-                                           from dbo.ADIDASComplain a
-                                           inner join dbo.ADIDASComplain_Detail b on a.id=b.id" + " " + sqlWhere + " " + gb1 + " " + ob + " " +
+                                           from dbo.ADIDASComplain a WITH (NOLOCK) 
+                                           inner join dbo.ADIDASComplain_Detail b WITH (NOLOCK) on a.id=b.id" + " " + sqlWhere + " " + gb1 + " " + ob + " " +
 
                                          @"declare @d date = '{0}' --getdate()
 											 declare @y1 varchar(4) = cast(datepart(year, dateadd(year,-2, @d) ) as varchar(4))
@@ -328,8 +328,8 @@ namespace Sci.Production.Quality
                                           ,row_number() over (partition by YEAR(A.StartDate),MONTH(A.StartDate) 
                                            order by SUM(B.Qty) desc) as rnk
                                            into #temp
-                                           from dbo.ADIDASComplain a
-                                           inner join dbo.ADIDASComplain_Detail b on a.id=b.id" + " " + sqlWhere + " " + gb2 + " " + ob + " " +
+                                           from dbo.ADIDASComplain a WITH (NOLOCK) 
+                                           inner join dbo.ADIDASComplain_Detail b WITH (NOLOCK) on a.id=b.id" + " " + sqlWhere + " " + gb2 + " " + ob + " " +
 
                                          @"declare @d date = '{0}' --getdate()
 											 declare @y1 varchar(4) = cast(datepart(year, dateadd(year,-2, @d) ) as varchar(4))
@@ -421,9 +421,9 @@ namespace Sci.Production.Quality
                                                 ,row_number() over (partition by YEAR(A.StartDate),MONTH(A.StartDate) 
 					                                                order by SUM(B.Qty) desc) as rnk
                                                 into #temp
-                                                FROM dbo.ADIDASComplain A 
-                                                INNER JOIN dbo.ADIDASComplain_Detail B on b.ID = A.ID
-                                                left join (dbo.ADIDASComplainDefect c inner join dbo.ADIDASComplainDefect_Detail d on c.id = d.ID)
+                                                FROM dbo.ADIDASComplain A WITH (NOLOCK) 
+                                                INNER JOIN dbo.ADIDASComplain_Detail B WITH (NOLOCK) on b.ID = A.ID
+                                                left join (dbo.ADIDASComplainDefect c WITH (NOLOCK) inner join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on c.id = d.ID)
 		                                                    on c.ID = b.DefectMainID  and d.SubID = b.DefectSubID" + " " + sqlWh1 + " " + gb3 + " " + ob1 + " " +
 
                                                 @"select distinct [yn]=name,[yt]=DefectMainID into #title from #temp

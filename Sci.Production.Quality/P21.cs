@@ -36,7 +36,7 @@ namespace Sci.Production.Quality
                 #region Combox setting
                 DataTable dtTeam;
                 Ict.DualResult tResult;
-                if (tResult = DBProxy.Current.Select(null, "select distinct team  from Cfa", out dtTeam))
+                if (tResult = DBProxy.Current.Select(null, "select distinct team  from Cfa WITH (NOLOCK) ", out dtTeam))
                 {
                     this.Team_combo.DataSource = dtTeam;
                     this.Team_combo.DisplayMember = "Team";
@@ -74,8 +74,8 @@ namespace Sci.Production.Quality
             @"SELECT a.ID,a.cDate,a.OrderID,a.FactoryID,a.InspectQty,
 		a.DefectQty,a.SewingLineID,a.Team,a.GarmentOutput,a.Stage,a.CFA,a.Shift,a.Result,a.Remark,a.Status,
 		b.StyleID,b.Dest,b.CustPONo,b.Qty	
-		 FROM [Production].[dbo].[Cfa] a
-        left join Orders b on a.OrderID=b.ID where a.id=@id";
+		 FROM [Production].[dbo].[Cfa] a WITH (NOLOCK) 
+        left join Orders b WITH (NOLOCK) on a.OrderID=b.ID where a.id=@id";
             spam.Add(new SqlParameter("@id", CurrentMaintain["ID"].ToString()));
 
             if (MyUtility.Check.Seek(sql_cmd,spam,out dr))
@@ -117,7 +117,7 @@ namespace Sci.Production.Quality
             }            
             DataRow drStatus;
 
-            if (MyUtility.Check.Seek(string.Format("select status from cfa where id='{0}'",CurrentMaintain["ID"].ToString().Trim()),out drStatus))
+            if (MyUtility.Check.Seek(string.Format("select status from cfa WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"].ToString().Trim()), out drStatus))
             {
                 this.labConfirm.Text = drStatus["status"].ToString();
             }
@@ -137,9 +137,9 @@ a.Qty,
 a.Action,
 [CFAAreaID] =d.Id,
 d.Description as AreaDesc
-from CFA_Detail a
-left join GarmentDefectCode b on b.ID=a.GarmentDefectCodeID
-left join CFAArea d on a.CFAAreaID=d.Id 
+from CFA_Detail a WITH (NOLOCK) 
+left join GarmentDefectCode b WITH (NOLOCK) on b.ID=a.GarmentDefectCodeID
+left join CFAArea d WITH (NOLOCK) on a.CFAAreaID=d.Id 
 where a.ID='{0}'",
  masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -160,7 +160,7 @@ where a.ID='{0}'",
                 if (e.Button== System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    string item_cmd = "  select ID,Description from GarmentDefectCode";
+                    string item_cmd = "  select ID,Description from GarmentDefectCode WITH (NOLOCK) ";
                     SelectItem item = new SelectItem(item_cmd, "15", dr["GarmentDefectCodeid"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult== DialogResult.Cancel)
@@ -168,7 +168,7 @@ where a.ID='{0}'",
                         return;
                     }
                     dr["GarmentDefectCodeid"] = item.GetSelectedString();
-                    string sqlcmd = string.Format(@"select GarmentDefectTypeID,Description from GarmentDefectCode  where id='{0}'", item.GetSelectedString());
+                    string sqlcmd = string.Format(@"select GarmentDefectTypeID,Description from GarmentDefectCode WITH (NOLOCK)  where id='{0}'", item.GetSelectedString());
                     if (MyUtility.Check.Seek(sqlcmd, out drDesc))
                     {
                         dr["Description"] = drDesc["Description"];
@@ -190,7 +190,7 @@ where a.ID='{0}'",
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    string item_cmd = "  select ID,Description from GarmentDefectCode";
+                    string item_cmd = "  select ID,Description from GarmentDefectCode WITH (NOLOCK) ";
                     SelectItem item = new SelectItem(item_cmd, "15", dr["GarmentDefectCodeid"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -198,7 +198,7 @@ where a.ID='{0}'",
                         return;
                     }
                     dr["GarmentDefectCodeid"] = item.GetSelectedString();
-                    string sqlcmd = string.Format(@"select GarmentDefectTypeID,Description from GarmentDefectCode  where id='{0}'", item.GetSelectedString());
+                    string sqlcmd = string.Format(@"select GarmentDefectTypeID,Description from GarmentDefectCode WITH (NOLOCK) where id='{0}'", item.GetSelectedString());
                     if (MyUtility.Check.Seek(sqlcmd, out drDesc))
                     {
                         dr["Description"] = drDesc["Description"];
@@ -219,7 +219,7 @@ where a.ID='{0}'",
                 if (e.Button== System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    string item_cmd = "select id,Description from CfaArea";
+                    string item_cmd = "select id,Description from CfaArea WITH (NOLOCK) ";
                     SelectItem item = new SelectItem(item_cmd, "10", dr["id"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -227,7 +227,7 @@ where a.ID='{0}'",
                         return;
                     }
                     dr["CFAAreaID"] = item.GetSelectedString();
-                    string sqlcmd = string.Format(@"select id,Description from CfaArea where id='{0}'", item.GetSelectedString());
+                    string sqlcmd = string.Format(@"select id,Description from CfaArea WITH (NOLOCK) where id='{0}'", item.GetSelectedString());
                     if (MyUtility.Check.Seek(sqlcmd, out drDesc))
                     {
                         dr["AreaDesc"] = drDesc["Description"];
@@ -247,7 +247,7 @@ where a.ID='{0}'",
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    string item_cmd = "select id,Description from CfaArea";
+                    string item_cmd = "select id,Description from CfaArea WITH (NOLOCK) ";
                     SelectItem item = new SelectItem(item_cmd, "10", dr["id"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -255,7 +255,7 @@ where a.ID='{0}'",
                         return;
                     }
                     dr["CFAAreaID"] = item.GetSelectedString();
-                    string sqlcmd = string.Format(@"select id,Description from CfaArea where id='{0}'", item.GetSelectedString());
+                    string sqlcmd = string.Format(@"select id,Description from CfaArea WITH (NOLOCK) where id='{0}'", item.GetSelectedString());
                     if (MyUtility.Check.Seek(sqlcmd, out drDesc))
                     {
                         dr["AreaDesc"] = drDesc["Description"];
@@ -276,7 +276,7 @@ where a.ID='{0}'",
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 DataTable dt;
                 DualResult result;
-                string cmd = "  select * from GarmentDefectCode where id =@id";
+                string cmd = "  select * from GarmentDefectCode WITH (NOLOCK) where id =@id";
                 List<SqlParameter> spam = new List<SqlParameter>();
                 spam.Add(new SqlParameter("@id",e.FormattedValue));
                 if (result=DBProxy.Current.Select(null,cmd,spam,out dt))
@@ -292,7 +292,7 @@ where a.ID='{0}'",
                     }
                 }
                 DataRow drDesc;
-                string sqlcmd = string.Format(@"select GarmentDefectTypeID,Description from GarmentDefectCode  where id='{0}'", e.FormattedValue);
+                string sqlcmd = string.Format(@"select GarmentDefectTypeID,Description from GarmentDefectCode WITH (NOLOCK)  where id='{0}'", e.FormattedValue);
                 if (MyUtility.Check.Seek(sqlcmd, out drDesc))
                 {
                     dr["GarmentDefectCodeid"] = e.FormattedValue;
@@ -326,12 +326,11 @@ where a.ID='{0}'",
                 if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 DataRow drDesc;
-                string sqlcmd = string.Format(@"select id,Description from CfaArea where id='{0}'",e.FormattedValue);
+                string sqlcmd = string.Format(@"select id,Description from CfaArea WITH (NOLOCK)  vwhere id='{0}'", e.FormattedValue);
                 if (MyUtility.Check.Seek(sqlcmd, out drDesc))
                 {
                     dr["AreaDesc"] = drDesc["Description"];
-                    dr["CFAAreaID"] = e.FormattedValue;
-                }
+                    dr["CFAAreaID"] = e.FormattedValue;                }
                 else
                 {
                     MyUtility.Msg.InfoBox("<Area Code> is not exist");
@@ -357,7 +356,7 @@ where a.ID='{0}'",
         {
             base.ClickConfirm();
             DataTable dt;
-            string cmd = "select * from cfa where orderid=@orderid order by cDate desc";
+            string cmd = "select * from cfa WITH (NOLOCK) where orderid=@orderid order by cDate desc";
             List<SqlParameter> spam = new List<SqlParameter>();
             spam.Add(new SqlParameter("@orderid", this.SP_text.Text));
             DBProxy.Current.Select(null, cmd, spam, out dt);
@@ -390,7 +389,7 @@ where a.ID='{0}'",
             base.ClickUnconfirm();
             DualResult dResult;
             DataTable dt;
-            string cmd = "select * from cfa where orderid=@orderid order by cDate desc";
+            string cmd = "select * from cfa WITH (NOLOCK) where orderid=@orderid order by cDate desc";
             List<SqlParameter> spam = new List<SqlParameter>();
             spam.Add(new SqlParameter("@orderid", this.SP_text.Text));
             DBProxy.Current.Select(null, cmd, spam, out dt);
@@ -547,7 +546,7 @@ where a.ID='{0}'",
         protected override bool ClickEditBefore()
         {
             DataTable dt;
-            string sql = string.Format(@"select * from cfa where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
+            string sql = string.Format(@"select * from cfa WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"].ToString().Trim());
             DBProxy.Current.Select(null,sql,out dt);
             if (dt.Rows[0]["status"].ToString().ToUpper()== "CONFIRMED")
             {
@@ -657,7 +656,7 @@ where a.ID='{0}'",
             }
             DataTable dt;
             DualResult result;
-            string sqlcmd = string.Format(@"select a.ID,a.FactoryID,a.StyleID,a.Dest,a.CustPONo,a.Qty from Orders a
+            string sqlcmd = string.Format(@"select a.ID,a.FactoryID,a.StyleID,a.Dest,a.CustPONo,a.Qty from Orders a WITH (NOLOCK) 
 where a.ID='{0}'", SP_text.Text);
             result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (result)
@@ -693,7 +692,7 @@ where a.ID='{0}'", SP_text.Text);
             }
             DataTable dt;   
             DualResult result;
-            string sqlcmd = string.Format(@"select a.ID,a.FactoryID,a.StyleID,a.Dest,a.CustPONo,a.Qty from Orders a
+            string sqlcmd = string.Format(@"select a.ID,a.FactoryID,a.StyleID,a.Dest,a.CustPONo,a.Qty from Orders a WITH (NOLOCK) 
 where a.ID='{0}'", SP_text.Text);
             result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (result)

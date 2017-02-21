@@ -54,7 +54,7 @@ namespace Sci.Production.Quality
 
             this.save.Enabled = !MyUtility.Convert.GetBool(maindr["PhysicalEncode"]);
 
-            string order_cmd = string.Format("Select * from orders where id='{0}'", maindr["POID"]);
+            string order_cmd = string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", maindr["POID"]);
             DataRow order_dr;
             if (MyUtility.Check.Seek(order_cmd, out order_dr))
             {
@@ -66,7 +66,7 @@ namespace Sci.Production.Quality
                 brand_box.Text = "";
                 style_box.Text = "";
             }
-            string Receiving_cmd = string.Format("select a.exportid,a.WhseArrival ,b.Refno from Receiving a inner join FIR b on a.Id=b.Receivingid where b.id='{0}'", maindr["id"]);
+            string Receiving_cmd = string.Format("select a.exportid,a.WhseArrival ,b.Refno from Receiving a WITH (NOLOCK) inner join FIR b WITH (NOLOCK) on a.Id=b.Receivingid where b.id='{0}'", maindr["id"]);
             DataRow rec_dr;
             if (MyUtility.Check.Seek(Receiving_cmd, out rec_dr))
             {               
@@ -76,7 +76,7 @@ namespace Sci.Production.Quality
             {  
                 brandrefno_box.Text = "";
             }
-            string po_cmd = string.Format("Select * from po_supp where id='{0}' and seq1 = '{1}'", maindr["POID"], maindr["seq1"]);
+            string po_cmd = string.Format("Select * from po_supp WITH (NOLOCK) where id='{0}' and seq1 = '{1}'", maindr["POID"], maindr["seq1"]);
             DataRow po_dr;
             if (MyUtility.Check.Seek(po_cmd, out po_dr))
             {
@@ -87,7 +87,7 @@ namespace Sci.Production.Quality
             {
                 txtsupplier1.TextBox1.Text = "";
             }
-            string po_supp_detail_cmd = string.Format("select SCIRefno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}'", maindr["POID"], maindr["seq1"], maindr["seq2"]);
+            string po_supp_detail_cmd = string.Format("select SCIRefno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2}'", maindr["POID"], maindr["seq1"], maindr["seq2"]);
             DataRow po_supp_detail_dr;
             if (MyUtility.Check.Seek(po_supp_detail_cmd, out po_supp_detail_dr))
             {               
@@ -134,7 +134,7 @@ namespace Sci.Production.Quality
                 i++;
             }
             #region 撈取下一層資料Defect
-            string str_defect = string.Format("Select a.* ,b.NewKey from Fir_physical_Defect a,#tmp b Where a.id = b.id and a.FIR_PhysicalDetailUKey = b.DetailUkey");
+            string str_defect = string.Format("Select a.* ,b.NewKey from Fir_physical_Defect a WITH (NOLOCK) ,#tmp b Where a.id = b.id and a.FIR_PhysicalDetailUKey = b.DetailUkey");
 
             MyUtility.Tool.ProcessWithDatatable(datas, "ID,NewKey,DetailUkey", str_defect, out Fir_physical_Defect);
             #endregion
@@ -167,7 +167,7 @@ namespace Sci.Production.Quality
                     // Parent form 若是非編輯狀態就 return 
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
-                    string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+                    string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
                     sele = new SelectItem(roll_cmd, "15,10,10",dr["roll"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -181,7 +181,7 @@ namespace Sci.Production.Quality
                 string newvalue = e.FormattedValue.ToString();
                 if (this.EditMode == false) return;
                 if (oldvalue == newvalue) return;
-                string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"],e.FormattedValue);
+                string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                 {
@@ -445,10 +445,10 @@ Where DetailUkey = {15};",
                     //至少收料的每ㄧ缸都要有檢驗紀錄 ,找尋有收料的缸沒在檢驗出現
                     DataTable dyeDt;
                     string cmd = string.Format(
-                        @"Select distinct dyelot from Receiving_Detail a where 
+                        @"Select distinct dyelot from Receiving_Detail a WITH (NOLOCK) where 
                         a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
                         and not exists 
-                        (Select distinct dyelot from FIR_Physical b where b.id={1} and a.dyelot = b.dyelot)"
+                        (Select distinct dyelot from FIR_Physical b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)"
                         , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
                     DualResult dResult = DBProxy.Current.Select(null, cmd, out dyeDt);
                     if (dResult)
@@ -597,7 +597,7 @@ Where DetailUkey = {15};",
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P01", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
             DataRow pass2_dr;
-            string pass2_cmd = string.Format("Select * from Pass2 Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
+            string pass2_cmd = string.Format("Select * from Pass2 WITH (NOLOCK) Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
             int lApprove = 0; //有Confirm權限皆可按Pass的Approve, 有Check權限才可按Fail的Approve(TeamLeader 有Approve權限,Supervisor有Check)
             int lCheck = 0;
             if (MyUtility.Check.Seek(pass2_cmd, out pass2_dr))
@@ -621,7 +621,7 @@ Where DetailUkey = {15};",
             //FabricDefect 基本資料 DB
             DataTable dtBasic;
             DualResult bResult;
-            if (bResult = DBProxy.Current.Select("Production", "SELECT id,type,DescriptionEN FROM FabricDefect order by ID", out dtBasic))
+            if (bResult = DBProxy.Current.Select("Production", "SELECT id,type,DescriptionEN FROM FabricDefect WITH (NOLOCK) order by ID", out dtBasic))
             {
                 if (dtBasic.Rows.Count < 1)
                 {
@@ -632,7 +632,7 @@ Where DetailUkey = {15};",
             //FIR_Physical_Defect DB
             DataTable dt;
             DualResult dResult;
-            if (dResult = DBProxy.Current.Select("Production", string.Format("select * from FIR_Physical A left JOIN FIR_Physical_Defect B ON A.DetailUkey = B.FIR_PhysicalDetailUKey WHERE A.ID='{0}'", textID.Text), out dt))
+            if (dResult = DBProxy.Current.Select("Production", string.Format("select * from FIR_Physical A WITH (NOLOCK) left JOIN FIR_Physical_Defect B WITH (NOLOCK) ON A.DetailUkey = B.FIR_PhysicalDetailUKey WHERE A.ID='{0}'", textID.Text), out dt))
             {
                 if (dt.Rows.Count < 1 )
                 {
@@ -642,7 +642,7 @@ Where DetailUkey = {15};",
              DataTable dt1;
             DualResult xresult1;           
             if (xresult1 = DBProxy.Current.Select("Production",string.Format(
-               "select Roll,Dyelot,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID,B.TotalInspYds,B.ArriveQty,B.PhysicalEncode  from FIR_Physical a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", textID.Text), out dt1))          
+               "select Roll,Dyelot,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID,B.TotalInspYds,B.ArriveQty,B.PhysicalEncode  from FIR_Physical a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", textID.Text), out dt1))          
             {
                 if (dt1.Rows.Count<=0)
                 {
@@ -652,7 +652,7 @@ Where DetailUkey = {15};",
             }
             DataTable dtSupvisor;
             DualResult suResult;
-            if (suResult = DBProxy.Current.Select("Production",string.Format("select * from Pass1 where id='{0}'",loginID),out dtSupvisor))
+            if (suResult = DBProxy.Current.Select("Production", string.Format("select * from Pass1 WITH (NOLOCK) where id='{0}'", loginID), out dtSupvisor))
             {
                 if (dtSupvisor.Rows.Count<=0)
                 {
@@ -662,7 +662,7 @@ Where DetailUkey = {15};",
             }
             DataTable dtSumQty;
             DualResult SumQtyR;
-            if (SumQtyR = DBProxy.Current.Select("Production", string.Format("select sum(ticketYds) as TotalTicketYds from FIR_Physical where id='{0}'", textID.Text), out dtSumQty))
+            if (SumQtyR = DBProxy.Current.Select("Production", string.Format("select sum(ticketYds) as TotalTicketYds from FIR_Physical WITH (NOLOCK) where id='{0}'", textID.Text), out dtSumQty))
             {
                 if (dtSumQty.Rows.Count<=0)
                 {
@@ -773,7 +773,7 @@ Where DetailUkey = {15};",
                 #region FIR_Physical_Defect
                 
                  DataTable dtDefect;
-                 DBProxy.Current.Select("Production", string.Format("select * from  FIR_Physical_Defect WHERE FIR_PhysicalDetailUKey='{0}'", dtGrid.Rows[rowcount - 1]["detailUkey"]), out dtDefect);
+                 DBProxy.Current.Select("Production", string.Format("select * from  FIR_Physical_Defect WITH (NOLOCK) WHERE FIR_PhysicalDetailUKey='{0}'", dtGrid.Rows[rowcount - 1]["detailUkey"]), out dtDefect);
                  int PDrowcount = 0;
                 int dtRowCount = (int)dtDefect.Rows.Count;
                 for (int ii = 1; ii < 11; ii++)
@@ -812,10 +812,10 @@ Where DetailUkey = {15};",
 
                 if (dcResult = DBProxy.Current.Select("Production", string.Format(
         @"select a.ID,a.Roll,'Continuity' type_c,d.Result as Result_c,d.Remark as Remark_c,d.Inspector as Inspector_c,'Shadebond' type_s,b.Result as Result_s,b.Remark as Remark_s,b.Inspector as Inspector_s,'Weight' type_w,c.Result as Result_w,c.Remark as Remark_w,c.Inspector as Inspector_w,'' as Comment 
-        from FIR_Physical a
-		left join FIR_Shadebone b on a.ID=b.ID and a.Roll=b.Roll
-		left join FIR_Weight c on a.ID=c.ID and a.Roll=c.Roll
-		left join FIR_Continuity d on a.id=d.ID and a.Roll=d.roll
+        from FIR_Physical a WITH (NOLOCK) 
+		left join FIR_Shadebone b WITH (NOLOCK) on a.ID=b.ID and a.Roll=b.Roll
+		left join FIR_Weight c WITH (NOLOCK) on a.ID=c.ID and a.Roll=c.Roll
+		left join FIR_Continuity d WITH (NOLOCK) on a.id=d.ID and a.Roll=d.roll
 		where a.ID='{0}' and a.Roll='{1}'", textID.Text,dt.Rows[i]["roll"].ToString()), out dtcombo))
                 {
                     if (dtcombo.Rows.Count < 1 )

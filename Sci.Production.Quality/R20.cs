@@ -22,7 +22,7 @@ namespace Sci.Production.Quality
         {
             DataTable factory;
             InitializeComponent();
-            DBProxy.Current.Select(null, "select distinct FtyGroup from Factory", out factory);
+            DBProxy.Current.Select(null, "select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(ComboFactory, 1, factory);
             ComboFactory.Text = Sci.Env.User.Keyword;
         }
@@ -125,7 +125,7 @@ SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(CDate),N',' + QUOTENAME(CDate))
 FROM 
 (
     SELECT DISTINCT(CDate) 
-    FROM RFT 
+    FROM RFT WITH (NOLOCK) 
 ) t
 WHERE 1=1
 ");
@@ -148,8 +148,8 @@ Select
 	[CDate] = A.CDATE,
 	[RFT] = Round(sum(Round(( A.InspectQty - A.RejectQty ) / A.InspectQty * 100,2))/count(*),2)
 into #tmpall
-from RFT A
-INNER JOIN DBO.ORDERS C ON C.ID = A.OrderID
+from RFT A WITH (NOLOCK) 
+INNER JOIN DBO.ORDERS C WITH (NOLOCK) ON C.ID = A.OrderID
 WHERE 1=1
 ");
                 #region Append畫面上的條件
@@ -175,7 +175,7 @@ WHERE 1=1
 
                 if (!MyUtility.Check.Empty(Cell))
                 {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = ''0{0}'' ", Cell));
+                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = ''0{0}'' ", Cell));
                 }
                 #endregion
 
@@ -206,7 +206,7 @@ SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(CDate),N',' + QUOTENAME(CDate))
 FROM 
 (
     SELECT DISTINCT(CDate) 
-    FROM RFT 
+    FROM RFT WITH (NOLOCK) 
 ) t
 WHERE 1=1
 ");
@@ -229,11 +229,11 @@ Select
 	[CDate] = A.CDATE,
 	[RFT] = Round(sum(Round(( A.InspectQty - A.RejectQty ) / A.InspectQty * 100,2))/count(*),2)
 into #tmpall
-from RFT A
+from RFT A WITH (NOLOCK) 
 INNER JOIN DBO.ORDERS C ON C.ID = A.OrderID
 Outer Apply(
 	SELECT SewingCell 
-	FROM SewingLine 
+	FROM SewingLine WITH (NOLOCK) 
 	WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID
 ) as SewingCell
 WHERE 1=1
@@ -261,7 +261,7 @@ WHERE 1=1
 
                 if (!MyUtility.Check.Empty(Cell))
                 {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = ''0{0}'' ", Cell));
+                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = ''0{0}'' ", Cell));
                 }
                 #endregion
 
@@ -304,12 +304,12 @@ select
 	[Over] = A.Status,
 	[QC] = D.CpuRate * C.CPU * A.RejectQty 
 
-From DBO.Rft A
+From DBO.Rft A WITH (NOLOCK) 
 INNER JOIN DBO.ORDERS C ON C.ID = A.OrderID
 OUTER APPLY DBO.GetCPURate(C.OrderTypeID,C.ProgramID,C.Category,C.BrandID,'O')D
 Outer Apply (
 	SELECT SewingCell 
-	FROM SewingLine 
+	FROM SewingLine WITH (NOLOCK) 
 	WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID
 ) E
 
@@ -339,7 +339,7 @@ WHERE 1=1
 
                 if (!MyUtility.Check.Empty(Cell))
                 {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
+                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
                 }
                 #endregion
 
@@ -377,18 +377,18 @@ select
 	[Qty] = B.Qty,
 	[QC] = D.CpuRate * C.CPU * A.RejectQty 
 
-From DBO.Rft A
-INNER JOIN DBO.Rft_Detail B ON B.ID = A.ID
-INNER JOIN DBO.ORDERS C ON C.ID = A.OrderID
+From DBO.Rft A WITH (NOLOCK) 
+INNER JOIN DBO.Rft_Detail B WITH (NOLOCK) ON B.ID = A.ID
+INNER JOIN DBO.ORDERS C WITH (NOLOCK) ON C.ID = A.OrderID
 OUTER APPLY DBO.GetCPURate(C.OrderTypeID,C.ProgramID,C.Category,C.BrandID,'O')D
 Outer Apply (
 	SELECT SewingCell 
-	FROM SewingLine 
+	FROM SewingLine WITH (NOLOCK) 
 	WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID
 ) E
 Outer Apply (
 	select g.Description 
-	from dbo.GarmentDefectCode g 
+	from dbo.GarmentDefectCode g WITH (NOLOCK) 
 	where id = B.GarmentDefectCodeID
 ) F
 
@@ -418,7 +418,7 @@ WHERE 1=1
 
                 if (!MyUtility.Check.Empty(Cell))
                 {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
+                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
                 }
 
                 if (!MyUtility.Check.Empty(DefectCode))
@@ -448,7 +448,7 @@ select
 	[Factory] = A.FACTORYID,
 	[OrderID] = A.ORDERID
 into #tmpall
-From DBO.Rft A
+From DBO.Rft A WITH (NOLOCK) 
 
 WHERE 1=1
 ");
@@ -495,17 +495,17 @@ select
 	[Description] = F.Description,
 	[Qty] = B.Qty
 from #tmpall as Z
-Inner Join DBO.Rft A on Z.OrderID = A.OrderID
-Inner Join DBO.Rft_Detail B ON B.ID = A.ID
-Inner Join DBO.ORDERS C ON C.ID = Z.OrderID
+Inner Join DBO.Rft A WITH (NOLOCK) on Z.OrderID = A.OrderID
+Inner Join DBO.Rft_Detail B WITH (NOLOCK) ON B.ID = A.ID
+Inner Join DBO.ORDERS C WITH (NOLOCK) ON C.ID = Z.OrderID
 Outer Apply (
 	SELECT SewingCell 
-	FROM SewingLine 
+	FROM SewingLine WITH (NOLOCK) 
 	WHERE FactoryID = Z.Factory AND ID = A.SewinglineID
 ) E
 Outer Apply (
 	select g.Description 
-	from dbo.GarmentDefectCode g 
+	from dbo.GarmentDefectCode g WITH (NOLOCK) 
 	where id = B.GarmentDefectCodeID
 ) F
 
@@ -521,7 +521,7 @@ WHERE 1=1
 
                 if (!MyUtility.Check.Empty(Cell))
                 {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
+                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
                 }
 
                 if (!MyUtility.Check.Empty(DefectCode))
@@ -554,8 +554,8 @@ select
 	[Brand] = C.BRANDID,
 	[Style] = C.STYLEID
 into #tmpall
-From DBO.Rft A
-INNER JOIN DBO.ORDERS C ON C.ID = A.OrderID
+From DBO.Rft A WITH (NOLOCK) 
+INNER JOIN DBO.ORDERS C WITH (NOLOCK) ON C.ID = A.OrderID
 WHERE 1=1
 ");
                 #region Append畫面上的條件
@@ -605,17 +605,17 @@ select
 	[Description] = F.Description,
 	[Qty] = B.Qty
 from #tmpall as Z
-Inner Join DBO.Rft A on Z.Factory = A.FactoryID
-Inner Join DBO.Rft_Detail B ON B.ID = A.ID
-Inner Join DBO.ORDERS C ON C.ID = A.OrderID and Z.Style = C.STYLEID
+Inner Join DBO.Rft A WITH (NOLOCK) on Z.Factory = A.FactoryID
+Inner Join DBO.Rft_Detail B WITH (NOLOCK) ON B.ID = A.ID
+Inner Join DBO.ORDERS C WITH (NOLOCK) ON C.ID = A.OrderID and Z.Style = C.STYLEID
 Outer Apply (
 	SELECT SewingCell 
-	FROM SewingLine 
+	FROM SewingLine WITH (NOLOCK) 
 	WHERE FactoryID = Z.Factory AND ID = A.SewinglineID
 ) E
 Outer Apply (
 	select g.Description 
-	from dbo.GarmentDefectCode g 
+	from dbo.GarmentDefectCode g WITH (NOLOCK) 
 	where id = B.GarmentDefectCodeID
 ) F
 
@@ -625,7 +625,7 @@ WHERE 1=1
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(Cell))
                 {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
+                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
                 }
 
                 if (!MyUtility.Check.Empty(DefectCode))
@@ -659,8 +659,8 @@ select
 	[Brand] = C.BRANDID,
 	[Style] = C.STYLEID
 into #tmpall
-From DBO.Rft A
-INNER JOIN DBO.ORDERS C ON C.ID = A.OrderID
+From DBO.Rft A WITH (NOLOCK) 
+INNER JOIN DBO.ORDERS C WITH (NOLOCK) ON C.ID = A.OrderID
 WHERE 1=1
 ");
                 #region Append畫面上的條件
@@ -711,17 +711,17 @@ select
 	[Description] = F.Description,
 	[Qty] = B.Qty
 from #tmpall as Z
-Inner Join DBO.Rft A on Z.Factory = A.FactoryID
-Inner Join DBO.Rft_Detail B ON B.ID = A.ID
-Inner Join DBO.ORDERS C ON C.ID = A.OrderID and Z.Style = C.STYLEID
+Inner Join DBO.Rft A WITH (NOLOCK) on Z.Factory = A.FactoryID
+Inner Join DBO.Rft_Detail B WITH (NOLOCK) ON B.ID = A.ID
+Inner Join DBO.ORDERS C WITH (NOLOCK) ON C.ID = A.OrderID and Z.Style = C.STYLEID
 Outer Apply (
 	SELECT SewingCell 
-	FROM SewingLine 
+	FROM SewingLine WITH (NOLOCK) 
 	WHERE FactoryID = Z.Factory AND ID = A.SewinglineID
 ) E
 Outer Apply (
 	select g.Description 
-	from dbo.GarmentDefectCode g 
+	from dbo.GarmentDefectCode g WITH (NOLOCK) 
 	where id = B.GarmentDefectCodeID
 ) F
 
@@ -731,7 +731,7 @@ WHERE 1=1
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(Cell))
                 {
-                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
+                    sqlCmd.Append(string.Format(" and (SELECT SewingCell FROM SewingLine WITH (NOLOCK) WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID) = '0{0}' ", Cell));
                 }
 
                 if (!MyUtility.Check.Empty(DefectCode))

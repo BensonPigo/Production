@@ -48,7 +48,7 @@ namespace Sci.Production.Quality
         {
             base.OnFormLoaded();
             DataTable dt;
-            var result = DBProxy.Current.Select(null, string.Format("select * from oven_detail where id='{0}'", ID), out dt);
+            var result = DBProxy.Current.Select(null, string.Format("select * from oven_detail WITH (NOLOCK) where id='{0}'", ID), out dt);
             //ＣreateNew open EditMode
             if (dt.Rows.Count == 0 && canEdit)
             {
@@ -61,7 +61,7 @@ namespace Sci.Production.Quality
         protected override void OnEditModeChanged()
         {
             DataTable dt;
-            var result =DBProxy.Current.Select(null,string.Format("select * from oven_detail where id='{0}'",ID),out dt);
+            var result = DBProxy.Current.Select(null, string.Format("select * from oven_detail WITH (NOLOCK) where id='{0}'", ID), out dt);
             if (dt.Rows.Count>=1)
             {
                 newOven = false;
@@ -88,7 +88,7 @@ namespace Sci.Production.Quality
             #region 表頭設定
                 
             Ict.DualResult dResult;
-            string cmd = "select * from oven where id=@id";      
+            string cmd = "select * from oven WITH (NOLOCK) where id=@id";      
                       
             List<SqlParameter> sqm = new List<SqlParameter>();
             sqm.Add(new SqlParameter("@id",ID));
@@ -154,7 +154,7 @@ namespace Sci.Production.Quality
                     return;
                 }   
                 List<SqlParameter> spm = new List<SqlParameter>();
-                string cmdd = "select * from PO_Supp_Detail where id=@id and seq1=@seq1 and seq2=@seq2 and FabricType='F'";
+                string cmdd = "select * from PO_Supp_Detail WITH (NOLOCK) where id=@id and seq1=@seq1 and seq2=@seq2 and FabricType='F'";
                 spm.Add(new SqlParameter("@id", PoID));
                 spm.Add(new SqlParameter("@seq1", datas.Rows[i]["seq1"]));
                 spm.Add(new SqlParameter("@seq2", datas.Rows[i]["seq2"]));
@@ -163,8 +163,8 @@ namespace Sci.Production.Quality
                 List<SqlParameter> spmSupp = new List<SqlParameter>();
                 string cmddSupp =
 @"SELECT a.ID,a.SuppID,a.SEQ1,a.SuppID+'-'+b.AbbEN as supplier 
-from PO_Supp a
-left join supp b on a.SuppID=b.ID
+from PO_Supp a WITH (NOLOCK) 
+left join supp b WITH (NOLOCK) on a.SuppID=b.ID
 where a.ID=@id
 and a.seq1=@seq1";
                 spmSupp.Add(new SqlParameter("@id", PoID));
@@ -269,7 +269,7 @@ and a.seq1=@seq1";
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = string.Format("select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
+                    string item_cmd = string.Format("select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,refno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and FabricType='F'", PoID);
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -299,7 +299,7 @@ and a.seq1=@seq1";
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = string.Format("select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and FabricType='F'", PoID);
+                    string item_cmd = string.Format("select RTRIM(seq1) +'-'+ RTRIM(seq2) AS SEQ,scirefno,refno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and FabricType='F'", PoID);
                     SelectItem item = new SelectItem(item_cmd, "5,5,15,12", dr["SEQ"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -341,7 +341,7 @@ and a.seq1=@seq1";
                     dr["SEQ"] = dr["seq1"] + "-" + dr["seq2"];
                 }
                 // dr["SEQ"] = e.FormattedValue;
-                string sql_cmd = string.Format("select seq1,seq2 from PO_Supp_Detail where id='{0}' and FabricType='F' and seq1='{1}' and seq2='{2}'", PoID, dr["seq1"].ToString().Trim(), dr["seq2"].ToString().Trim());
+                string sql_cmd = string.Format("select seq1,seq2 from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and FabricType='F' and seq1='{1}' and seq2='{2}'", PoID, dr["seq1"].ToString().Trim(), dr["seq2"].ToString().Trim());
                 DBProxy.Current.Select(null, sql_cmd, out dt1);
                 if (dt1.Rows.Count <= 0)
                 {
@@ -359,14 +359,14 @@ and a.seq1=@seq1";
                 dr["SEQ"].ToString().Replace("_", " ");
 
                 DBProxy.Current.Select(null,
-                   string.Format("select scirefno,refno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}' and FabricType='F'", PoID, dr["seq1"], dr["seq2"]), out dt1);
+                   string.Format("select scirefno,refno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2}' and FabricType='F'", PoID, dr["seq1"], dr["seq2"]), out dt1);
                 dr["scirefno"] = dt1.Rows[0]["scirefno"].ToString();
                 dr["refno"] = dt1.Rows[0]["refno"].ToString();
                 dr["colorid"] = dt1.Rows[0]["colorid"].ToString();
 
                 // SEQ changed 判斷Roll# 是否存在
                 if (MyUtility.Check.Empty(dr["Roll"])) return;
-                string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2 and Roll=@Roll ";
+                string cmd = "SELECT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 and Roll=@Roll ";
                 List<SqlParameter> spam = new List<SqlParameter>();
                 spam.Add(new SqlParameter("@poid", PoID));
                 spam.Add(new SqlParameter("@seq1", dr["seq1"]));
@@ -413,7 +413,7 @@ and a.seq1=@seq1";
                     //{
                     #endregion                    
 
-                    string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll";
+                    string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll";
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@poid", PoID));
                     spam.Add(new SqlParameter("@seq1", dr["seq1"]));
@@ -459,7 +459,7 @@ and a.seq1=@seq1";
                     //{
                     #endregion                   
 
-                    string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll";
+                    string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll";
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@poid", PoID));
                     spam.Add(new SqlParameter("@seq1", dr["seq1"]));
@@ -508,8 +508,8 @@ and a.seq1=@seq1";
                 //else
                 //{                
                 #endregion
-                    
-                string cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and Seq1=@seq1 and Seq2=@seq2 and Roll=@Roll ";
+
+                string cmd = "SELECT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 and Roll=@Roll ";
                 List<SqlParameter> spam = new List<SqlParameter>();
                 spam.Add(new SqlParameter("@poid", PoID));
                 spam.Add(new SqlParameter("@seq1", dr["seq1"]));
@@ -543,7 +543,7 @@ and a.seq1=@seq1";
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = "select id from Scale where Junk=0 ";
+                    string item_cmd = "select id from Scale WITH (NOLOCK) where Junk=0 ";
 
                     SelectItem item = new SelectItem(item_cmd, "10", dr["Changescale"].ToString());
                     DialogResult dresult = item.ShowDialog();
@@ -562,7 +562,7 @@ and a.seq1=@seq1";
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = "select id from Scale where Junk=0 ";
+                    string item_cmd = "select id from Scale WITH (NOLOCK) where Junk=0 ";
 
                     SelectItem item = new SelectItem(item_cmd, "10", dr["Changescale"].ToString());
                     DialogResult dresult = item.ShowDialog();
@@ -580,7 +580,7 @@ and a.seq1=@seq1";
                 if (MyUtility.Check.Empty(e.FormattedValue)) return;
                 DataTable dt;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string cmd = "select id from Scale where Junk=0  and id=@ChangeScale";
+                string cmd = "select id from Scale WITH (NOLOCK) where Junk=0  and id=@ChangeScale";
                 List<SqlParameter> spam = new List<SqlParameter>();
                 spam.Add(new SqlParameter("@ChangeScale", e.FormattedValue));
 
@@ -604,7 +604,7 @@ and a.seq1=@seq1";
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = "select id from Scale where Junk=0 ";
+                    string item_cmd = "select id from Scale WITH (NOLOCK) where Junk=0 ";
 
                     SelectItem item = new SelectItem(item_cmd, "10", dr["StainingScale"].ToString());
                     DialogResult dresult = item.ShowDialog();
@@ -623,7 +623,7 @@ and a.seq1=@seq1";
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = "select id from Scale where Junk=0 ";
+                    string item_cmd = "select id from Scale WITH (NOLOCK) where Junk=0 ";
 
                     SelectItem item = new SelectItem(item_cmd, "10", dr["StainingScale"].ToString());
                     DialogResult dresult = item.ShowDialog();
@@ -641,7 +641,7 @@ and a.seq1=@seq1";
                 if (MyUtility.Check.Empty(e.FormattedValue )) return;
                 DataTable dt;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string cmd = "select id from Scale where Junk=0  and id=@StainingScale";
+                string cmd = "select id from Scale WITH (NOLOCK) where Junk=0  and id=@StainingScale";
                 List<SqlParameter> spam = new List<SqlParameter>();
                 spam.Add(new SqlParameter("@StainingScale", e.FormattedValue));
 
@@ -721,7 +721,7 @@ and a.seq1=@seq1";
             string update_cmd = "";
             DataTable dt;
 
-            string sqlcmd=string.Format(@"select Max(TestNO) as MaxNO from oven where poid='{0}'",PoID);
+            string sqlcmd = string.Format(@"select Max(TestNO) as MaxNO from oven WITH (NOLOCK) where poid='{0}'", PoID);
             DBProxy.Current.Select(null,sqlcmd,out dt);
             int testno = MyUtility.Convert.GetInt(dt.Rows[0]["MaxNO"]);
             
@@ -803,10 +803,10 @@ SET IDENTITY_INSERT oven off";
             DataTable dt;
 
             DataTable dtGrid = (DataTable)gridbs.DataSource;
-            DBProxy.Current.Select(null, string.Format("select * from oven_detail where id='{0}'", ID), out dt);
+            DBProxy.Current.Select(null, string.Format("select * from oven_detail WITH (NOLOCK) where id='{0}'", ID), out dt);
 
             DataTable dtGrid_Max = (DataTable)gridbs.DataSource;
-            DBProxy.Current.Select(null, string.Format("select  max(OvenGroup) as max from oven_detail where id='{0}'", ID), out dtGrid_Max);
+            DBProxy.Current.Select(null, string.Format("select  max(OvenGroup) as max from oven_detail WITH (NOLOCK) where id='{0}'", ID), out dtGrid_Max);
             int Max = MyUtility.Convert.GetInt(dtGrid_Max.Rows[0]["max"]);
             int Data_rows = dt.Rows.Count;
             int Grid_rows = dtGrid.Rows.Count;
@@ -869,8 +869,8 @@ SET IDENTITY_INSERT oven off";
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
                 string cmd =
-@"select a.Article from Order_Qty a
-left join Oven b on a.ID=b.POID
+@"select a.Article from Order_Qty a WITH (NOLOCK) 
+left join Oven b WITH (NOLOCK) on a.ID=b.POID
 where a.id=@poid
 group by a.Article";
                 List<SqlParameter> spm = new List<SqlParameter>();
@@ -891,7 +891,7 @@ group by a.Article";
             if (!this.EditMode || this.article.Text.Empty()) { return; }
             DualResult dresult;
             DataTable dt;
-            string cmd = "select * from order_qty where article=@art";
+            string cmd = "select * from order_qty WITH (NOLOCK) where article=@art";
             List<SqlParameter> spm = new List<SqlParameter>();
             spm.Add(new SqlParameter("@art", article.Text));
             if (dresult = DBProxy.Current.Select(null,cmd,spm,out dt))
@@ -998,7 +998,7 @@ group by a.Article";
             string SeasonID;
             string status;
             string BrandID;
-            DBProxy.Current.Select(null, string.Format("select * from PO where id='{0}'", PoID), out dtPo);
+            DBProxy.Current.Select(null, string.Format("select * from PO WITH (NOLOCK) where id='{0}'", PoID), out dtPo);
             if (dtPo.Rows.Count==0)
             {
                  StyleID="";

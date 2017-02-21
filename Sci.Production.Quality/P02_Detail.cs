@@ -31,9 +31,9 @@ namespace Sci.Production.Quality
             canedit = CanEdit;
             btn_status(id);
             button_enable(canedit);
-          
 
-            string air_cmd = string.Format("select * from air where id='{0}'", id);
+
+            string air_cmd = string.Format("select * from air WITH (NOLOCK) where id='{0}'", id);
             DataRow dr;
 
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
@@ -46,7 +46,7 @@ namespace Sci.Production.Quality
             // 串接table Po_Supp_Detail
             DataTable dtPoSuppDetail;
             Ict.DualResult pstResult;
-            if (pstResult = DBProxy.Current.Select(null, string.Format("select B.SCIRefno,B.Refno,a.ColorID,a.ColorID,a.StockUnit,a.SizeSpec from PO_Supp_Detail a left join AIR b on a.ID=b.POID and a.SEQ1=b.SEQ1 and a.SEQ2=b.SEQ2 where b.ID='{0}'", id), out dtPoSuppDetail))
+            if (pstResult = DBProxy.Current.Select(null, string.Format("select B.SCIRefno,B.Refno,a.ColorID,a.ColorID,a.StockUnit,a.SizeSpec from PO_Supp_Detail a WITH (NOLOCK) left join AIR b WITH (NOLOCK) on a.ID=b.POID and a.SEQ1=b.SEQ1 and a.SEQ2=b.SEQ2 where b.ID='{0}'", id), out dtPoSuppDetail))
             {
                 if (dtPoSuppDetail.Rows.Count != 0)
                 {
@@ -59,7 +59,7 @@ namespace Sci.Production.Quality
 
             }
             DataTable dtSupplier;
-            DBProxy.Current.Select(null, string.Format(@"select a.Suppid,b.AbbEN from AIR a inner join Supp b on a.Suppid=b.ID
+            DBProxy.Current.Select(null, string.Format(@"select a.Suppid,b.AbbEN from AIR a WITH (NOLOCK) inner join Supp b WITH (NOLOCK) on a.Suppid=b.ID
                                   where a.ID='{0}'", id), out dtSupplier);
             if (dtSupplier.Rows.Count != 0)
             {
@@ -74,7 +74,7 @@ namespace Sci.Production.Quality
             //串接table Receiving
             DataTable dtRec;
             Ict.DualResult wknoResult;
-            if (wknoResult = DBProxy.Current.Select(null, string.Format("select * from Receiving a left join AIR b on a.Id=b.ReceivingID where b.ID='{0}' ", id), out dtRec))
+            if (wknoResult = DBProxy.Current.Select(null, string.Format("select * from Receiving a WITH (NOLOCK) left join AIR b WITH (NOLOCK) on a.Id=b.ReceivingID where b.ID='{0}' ", id), out dtRec))
             {
                 if (dtRec.Rows.Count>0)
                 {
@@ -134,7 +134,7 @@ namespace Sci.Production.Quality
 
             DualResult result;
             DataTable dt;
-            strSqlcmd = string.Format("Select * from AIR where ID='{0}' ", textID.Text);          
+            strSqlcmd = string.Format("Select * from AIR WITH (NOLOCK) where ID='{0}' ", textID.Text);          
             if (result = DBProxy.Current.Select(null, strSqlcmd, null, out dt))
             {
                 if (dt.Rows.Count > 0)
@@ -386,7 +386,7 @@ namespace Sci.Production.Quality
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
-                string sqlcmd = "select id,description from AccessoryDefect";
+                string sqlcmd = "select id,description from AccessoryDefect WITH (NOLOCK) ";
                 SelectItem2 item = new SelectItem2(sqlcmd, "15,12", null);
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
@@ -414,7 +414,7 @@ namespace Sci.Production.Quality
 
         private void btn_status(object id)
         {
-            string air_cmd = string.Format("select * from air where id='{0}'", id);
+            string air_cmd = string.Format("select * from air WITH (NOLOCK) where id='{0}'", id);
             DataTable dt;
             DualResult result;
             if (result=DBProxy.Current.Select(null,air_cmd, out dt))

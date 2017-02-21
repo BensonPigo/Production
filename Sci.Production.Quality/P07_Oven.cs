@@ -95,11 +95,11 @@ namespace Sci.Production.Quality
         {
              sql = string.Format(@"select  C.ExportId , B.ArriveQty , E.StockUnit , E.SizeSpec , B.SCIRefno
 	                                    , B.Refno , B.Suppid + '-' + D.AbbEN as supplier , E.ColorID
-                                    from AIR_Laboratory A
-                                    left join AIR B on A.id=B.id
-                                    left join Receiving C on C.id=B.receivingID
-                                    left join Supp D on D.ID=B.Suppid
-                                    left join PO_Supp_Detail E on E.ID=A.POID and E.SEQ1=A.SEQ1 and E.SEQ2=A.SEQ2
+                                    from AIR_Laboratory A WITH (NOLOCK) 
+                                    left join AIR B WITH (NOLOCK) on A.id=B.id
+                                    left join Receiving C WITH (NOLOCK) on C.id=B.receivingID
+                                    left join Supp D WITH (NOLOCK) on D.ID=B.Suppid
+                                    left join PO_Supp_Detail E WITH (NOLOCK) on E.ID=A.POID and E.SEQ1=A.SEQ1 and E.SEQ2=A.SEQ2
                                     where A.id={0} and A.POID='{1}' and A.SEQ1='{2}' and A.SEQ2='{3}'", ID,PoID,SEQ1,SEQ2);
             if (MyUtility.Check.Seek(sql, out DR))
             {
@@ -122,7 +122,7 @@ namespace Sci.Production.Quality
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (!EDIT) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select id from Scale where junk=0", "10", this.txtScale.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select id from Scale WITH (NOLOCK) where junk=0", "10", this.txtScale.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.txtScale.Text = item.GetSelectedString();
@@ -133,7 +133,7 @@ namespace Sci.Production.Quality
             string textValue = this.txtScale.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtScale.OldValue)
             {
-                if (!MyUtility.Check.Seek(string.Format(@"Select id from Scale where junk=0 and id = '{0}'", textValue)))
+                if (!MyUtility.Check.Seek(string.Format(@"Select id from Scale WITH (NOLOCK) where junk=0 and id = '{0}'", textValue)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Scale: {0} > not found!!!", textValue));
                     this.txtScale.Text = "";

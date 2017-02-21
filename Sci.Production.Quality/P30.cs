@@ -73,7 +73,7 @@ namespace Sci.Production.Quality
                 {
                     return;
                 }
-                string sqlcmd = string.Format(@" select colorid from po_supp_detail a,Orders b  where a.id=b.POID and a.fabrictype='A' and colorid is not null and b.id='{0}' group by colorid"
+                string sqlcmd = string.Format(@" select colorid from po_supp_detail a WITH (NOLOCK) ,Orders b WITH (NOLOCK)  where a.id=b.POID and a.fabrictype='A' and colorid is not null and b.id='{0}' group by colorid"
                     , textBox1.Text.ToString());
                 SelectItem item = new SelectItem(sqlcmd, "30", dr["ColorID"].ToString());
                 DialogResult result = item.ShowDialog();
@@ -107,7 +107,7 @@ namespace Sci.Production.Quality
                 {
                     return;
                 }
-                string sqlcmd1 = string.Format(@"select distinct refno from PO_Supp_Detail a,Orders b where a.id=b.POID and a.fabrictype='A'
+                string sqlcmd1 = string.Format(@"select distinct refno from PO_Supp_Detail a WITH (NOLOCK) ,Orders b WITH (NOLOCK)  where a.id=b.POID and a.fabrictype='A'
                 and a.Scirefno is not null 
                 and b.id='{0}' group by a.refno"
                     ,textBox1.Text.ToString());
@@ -147,7 +147,7 @@ namespace Sci.Production.Quality
                 if (MyUtility.Check.Empty(e.FormattedValue)) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 DataRow dr1;
-                string sqlcmd = string.Format(@"select  refno from PO_Supp_Detail a,Orders b where a.id=b.POID and a.fabrictype='A'
+                string sqlcmd = string.Format(@"select  refno from PO_Supp_Detail a WITH (NOLOCK) ,Orders b WITH (NOLOCK) where a.id=b.POID and a.fabrictype='A'
                 and a.Scirefno is not null 
                 and b.id='{0}' and a.refno='{1}'"
                    , textBox1.Text.ToString(),e.FormattedValue);
@@ -186,7 +186,7 @@ namespace Sci.Production.Quality
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 DataRow dr1;
 
-                string sqlcmd = string.Format(@" select colorid from po_supp_detail a,Orders b  
+                string sqlcmd = string.Format(@" select colorid from po_supp_detail WITH (NOLOCK) a,Orders b  WITH (NOLOCK) 
                 where a.id=b.POID and a.fabrictype='A' 
                 and colorid is not null  and b.id='{0}' and a.colorid='{1}'"
                   , textBox1.Text.ToString(), e.FormattedValue);
@@ -346,7 +346,7 @@ namespace Sci.Production.Quality
 
             DataTable dtCategory;
             Ict.DualResult cbResult;
-            if (cbResult = DBProxy.Current.Select(null, " select ID,Name from DropDownList where type='category'", out dtCategory))
+            if (cbResult = DBProxy.Current.Select(null, " select ID,Name from DropDownList WITH (NOLOCK) where type='category'", out dtCategory))
             {
                 this.comboBox1.DataSource = dtCategory;
                 this.comboBox1.DisplayMember = "Name";

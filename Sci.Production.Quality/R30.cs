@@ -22,7 +22,7 @@ namespace Sci.Production.Quality
         {
             DataTable dtfactory;
             InitializeComponent();
-            DBProxy.Current.Select(null, "select distinct factoryid from Orders", out dtfactory);//要預設空白
+            DBProxy.Current.Select(null, "select distinct factoryid from Orders WITH (NOLOCK) ", out dtfactory);//要預設空白
             comboFactory.Empty();
             MyUtility.Tool.SetupCombox(comboFactory, 1, dtfactory);
             comboFactory.Text = Sci.Env.User.Keyword;
@@ -64,8 +64,8 @@ select
 ,[Inspection Date]=b.InspDate
 ,[Result]=b.Result
 
-from dbo.orders a 
-LEFT join dbo.MD b on b.ID = a.ID
+from dbo.orders a WITH (NOLOCK) 
+LEFT join dbo.MD b WITH (NOLOCK) on b.ID = a.ID
 where 1=1
 ");
             #region Append畫面上的條件

@@ -28,7 +28,7 @@ namespace Sci.Production.Quality
             string sqlm = (@" 
                         select
                              Category=name
-                        from  dbo.DropDownList
+                        from  dbo.DropDownList WITH (NOLOCK) 
                         where type = 'Category' and id != 'O'
                         ");
             DBProxy.Current.Select("", sqlm, out ORS);
@@ -39,7 +39,7 @@ namespace Sci.Production.Quality
             this.comboCategory.DisplayMember = "Category";
             this.comboCategory.SelectedIndex = 1;
             DataTable factory;
-            DBProxy.Current.Select(null, "select distinct FTYGroup from Factory order by FTYGroup", out factory);
+            DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
             factory.Rows.Add(new string[] { "" });
             factory.DefaultView.Sort = "FTYGroup";
             MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
@@ -133,44 +133,44 @@ namespace Sci.Production.Quality
             cmd = string.Format(@" 
             with rawdata as 
             (
-            select distinct poid from dbo.orders
+            select distinct poid from dbo.orders WITH (NOLOCK) 
             where 1=1
            " + sqlWhere + @"
             ) 
             ,summary as
             (
             select a.POID
-            ,(select count(1) total_cnt from dbo.FIR where poid = a.POID) total_cnt
-            ,(select count(1) from dbo.fir f
+            ,(select count(1) total_cnt from dbo.FIR WITH (NOLOCK) where poid = a.POID) total_cnt
+            ,(select count(1) from dbo.fir f WITH (NOLOCK) 
             where POID = a.poid and (Result!='' or (f.Result='' and f.nonContinuity =1 and f.Nonphysical = 1 and f.nonShadebond = 1 and f.nonWeight =1))
             ) insp_cnt
-            ,(select count(1) from dbo.FIR_Laboratory l where POID = a.POID and (l.Result!='' or (l.Result='' and l.nonCrocking=1 and l.nonHeat=1 and l.nonWash=1))
+            ,(select count(1) from dbo.FIR_Laboratory l WITH (NOLOCK) where POID = a.POID and (l.Result!='' or (l.Result='' and l.nonCrocking=1 and l.nonHeat=1 and l.nonWash=1))
             ) lab_cnt
-            ,(SELECT count(1) from (select distinct o.poid,q.Article from dbo.orders o inner join dbo.Order_Qty q on q.id =o.id where o.poid = a.poid) t
+            ,(SELECT count(1) from (select distinct o.poid,q.Article from dbo.orders o WITH (NOLOCK) inner join dbo.Order_Qty q WITH (NOLOCK) on q.id =o.id where o.poid = a.poid) t
             ) total_article_cnt
-            ,(SELECT count(1) from dbo.oven where poid=a.POID) oven_cnt
-            ,(select count(1) from dbo.ColorFastness where poid=a.POID) ColorFastness_cnt
-            ,(select count(1) from dbo.AIR where poid = a.POID) AIR_Total_cnt
-            ,(select count(1) from dbo.AIR where poid = a.POID and air.Status = 'Confirmed' and Result!='') AIR_Insp_Cnt
-            ,(select count(1) from dbo.AIR_Laboratory where poid = a.POID) AIR_Laboratory_Total_cnt
-            ,(select count(1) from dbo.AIR_Laboratory al where poid = a.POID and (result !='' or (al.NonOven =1 and al.NonWash = 1))) AIR_Laboratory_cnt
-             from dbo.FIR a inner join rawdata r on r.POID = a.POID
+            ,(SELECT count(1) from dbo.oven WITH (NOLOCK) where poid=a.POID) oven_cnt
+            ,(select count(1) from dbo.ColorFastness WITH (NOLOCK) where poid=a.POID) ColorFastness_cnt
+            ,(select count(1) from dbo.AIR WITH (NOLOCK) where poid = a.POID) AIR_Total_cnt
+            ,(select count(1) from dbo.AIR WITH (NOLOCK) where poid = a.POID and air.Status = 'Confirmed' and Result!='') AIR_Insp_Cnt
+            ,(select count(1) from dbo.AIR_Laboratory WITH (NOLOCK) where poid = a.POID) AIR_Laboratory_Total_cnt
+            ,(select count(1) from dbo.AIR_Laboratory al WITH (NOLOCK) where poid = a.POID and (result !='' or (al.NonOven =1 and al.NonWash = 1))) AIR_Laboratory_cnt
+             from dbo.FIR a WITH (NOLOCK) inner join rawdata r on r.POID = a.POID
             )
             select distinct O.POID 
             ,o.FactoryID
             ,o.BrandID
             ,o.StyleID
             ,o.SeasonID
-            ,(select min(orders.CutInLine) from orders where poid = s.POID and orders.Junk = 0) first_cutinline
+            ,(select min(orders.CutInLine) from orders WITH (NOLOCK) where poid = s.POID and orders.Junk = 0) first_cutinline
             ,getsci.MinSciDelivery
-            ,IIF((select min(orders.CutInLine) from orders where poid = s.POID and orders.Junk = 0) > DATEADD(day,(select 0-system.MtlLeadTime from dbo.system),getsci.MinSciDelivery),DATEADD(day,(select 0-system.MtlLeadTime from dbo.system),getsci.MinSciDelivery),(select min(orders.CutInLine) from orders where poid = s.POID and orders.Junk = 0)) [Target Leadtime]
+            ,IIF((select min(orders.CutInLine) from orders WITH (NOLOCK) where poid = s.POID and orders.Junk = 0) > DATEADD(day,(select 0-system.MtlLeadTime from dbo.system WITH (NOLOCK) ),getsci.MinSciDelivery),DATEADD(day,(select 0-system.MtlLeadTime from dbo.system WITH (NOLOCK) ),getsci.MinSciDelivery),(select min(orders.CutInLine) from orders WITH (NOLOCK) where poid = s.POID and orders.Junk = 0)) [Target Leadtime]
             ,iif(s.total_cnt!=0, round(s.insp_cnt*1.0/s.total_cnt,4) * 100 ,0) [Insp %]
             ,iif(s.total_cnt!=0, round(s.lab_cnt*1.0/s.total_cnt,4) * 100 ,0) [Lab %]
             ,iif(s.total_article_cnt!=0, round(s.oven_cnt*1.0/s.total_article_cnt,4) * 100 ,0) [Oven %]
             ,iif(s.total_article_cnt!=0, round(s.ColorFastness_cnt*1.0/s.total_article_cnt,4) * 100 ,0) [ColorFastness %]
             ,iif(s.AIR_Total_cnt!=0, round(s.AIR_Insp_Cnt*1.0/s.AIR_Total_cnt,4) * 100 ,0) [AIR Insp %]
             ,iif(s.AIR_Laboratory_Total_cnt!=0, round(s.AIR_Laboratory_cnt*1.0/s.AIR_Laboratory_Total_cnt,4) * 100 ,0) [AIR Lab %]
-            from summary s inner join orders o on o.ID = s.POID
+            from summary s inner join orders o WITH (NOLOCK) on o.ID = s.POID
             cross apply dbo.GetSCI(s.poid,o.Category) getsci");
             #endregion
 

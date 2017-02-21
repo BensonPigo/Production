@@ -51,8 +51,8 @@ namespace Sci.Production.Quality
             txtsupplier1.TextBox1.ReadOnly = true;
             txtuser1.TextBox1.IsSupportEditMode = false;
             txtuser1.TextBox1.ReadOnly = true;
-            
-            string order_cmd = string.Format("Select * from orders where id='{0}'", maindr["POID"]);
+
+            string order_cmd = string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", maindr["POID"]);
             DataRow order_dr;
             if (MyUtility.Check.Seek(order_cmd, out order_dr))
             {
@@ -64,7 +64,7 @@ namespace Sci.Production.Quality
                 brand_box.Text = "";
                 style_box.Text = "";
             }
-            string po_cmd = string.Format("Select * from po_supp where id='{0}' and seq1 = '{1}'", maindr["POID"], maindr["seq1"]);
+            string po_cmd = string.Format("Select * from po_supp WITH (NOLOCK) where id='{0}' and seq1 = '{1}'", maindr["POID"], maindr["seq1"]);
             DataRow po_dr;
             if (MyUtility.Check.Seek(po_cmd, out po_dr))
             {
@@ -75,7 +75,7 @@ namespace Sci.Production.Quality
             {
                 txtsupplier1.TextBox1.Text = "";
             }
-            string Receiving_cmd = string.Format("select a.exportid,a.WhseArrival ,b.Refno from Receiving a inner join FIR b on a.Id=b.Receivingid where b.id='{0}'", maindr["id"]);
+            string Receiving_cmd = string.Format("select a.exportid,a.WhseArrival ,b.Refno from Receiving a WITH (NOLOCK) inner join FIR b WITH (NOLOCK) on a.Id=b.Receivingid where b.id='{0}'", maindr["id"]);
             DataRow rec_dr;
             if (MyUtility.Check.Seek(Receiving_cmd,out rec_dr))
             {
@@ -88,7 +88,7 @@ namespace Sci.Production.Quality
                 wk_box.Text = "";
                 brandrefno_box.Text = "";
             }
-            string po_supp_detail_cmd = string.Format("select SCIRefno,colorid from PO_Supp_Detail where id='{0}' and seq1='{1}' and seq2='{2}'", maindr["POID"], maindr["seq1"], maindr["seq2"]);
+            string po_supp_detail_cmd = string.Format("select SCIRefno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2}'", maindr["POID"], maindr["seq1"], maindr["seq2"]);
             DataRow po_supp_detail_dr;
             if (MyUtility.Check.Seek(po_supp_detail_cmd, out po_supp_detail_dr))
             {                            
@@ -146,7 +146,7 @@ namespace Sci.Production.Quality
                     // Parent form 若是非編輯狀態就 return 
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
-                    string roll_cmd = string.Format("Select roll,dyelot from Receiving_Detail Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+                    string roll_cmd = string.Format("Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
                     sele = new SelectItem(roll_cmd, "15,10,10",dr["roll"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -160,7 +160,7 @@ namespace Sci.Production.Quality
                 string newvalue = e.FormattedValue.ToString();
                 if (this.EditMode == false) return;
                 if (oldvalue == newvalue) return;
-                string roll_cmd = string.Format("Select roll,dyelot from Receiving_Detail Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"],e.FormattedValue);
+                string roll_cmd = string.Format("Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                 {
@@ -294,10 +294,10 @@ namespace Sci.Production.Quality
                         //當Fabric.WeaveTypdID = 'Knit' 時必須每ㄧ缸都要有檢驗
                         DataTable dyeDt;
                         string cmd = string.Format(
-                        @"Select distinct dyelot from Receiving_Detail a where 
+                        @"Select distinct dyelot from Receiving_Detail a WITH (NOLOCK) where 
                         a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
                         and not exists 
-                        (Select distinct dyelot from FIR_Continuity b where b.id={1} and a.dyelot = b.dyelot)"
+                        (Select distinct dyelot from FIR_Continuity b WITH (NOLOCK) where b.id={1} and a.dyelot = b.dyelot)"
                            , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
 
                         DualResult dResult = DBProxy.Current.Select(null, cmd, out dyeDt);
@@ -448,7 +448,7 @@ namespace Sci.Production.Quality
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P01", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
             DataRow pass2_dr;
-            string pass2_cmd = string.Format("Select * from Pass2 Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
+            string pass2_cmd = string.Format("Select * from Pass2 WITH (NOLOCK) Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
             int lApprove = 0; //有Confirm權限皆可按Pass的Approve, 有Check權限才可按Fail的Approve(TeamLeader 有Approve權限,Supervisor有Check)
             int lCheck = 0;
             if (MyUtility.Check.Seek(pass2_cmd, out pass2_dr))
@@ -472,7 +472,7 @@ namespace Sci.Production.Quality
             #region Excel Grid Value
             DataTable dt;
             DualResult xresult;
-             if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Continuity where id='{0}'", textID.Text), out dt))
+            if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Continuity WITH (NOLOCK) where id='{0}'", textID.Text), out dt))
             {
                 if (dt.Rows.Count <= 0)
                 {
@@ -487,7 +487,7 @@ namespace Sci.Production.Quality
             string ContinuityEncode = "";
             string SeasonID = "";            
             if (xresult1 = DBProxy.Current.Select("Production", string.Format(
-            "select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Continuity a left join FIR b on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", textID.Text), out dt1))
+            "select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Continuity a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", textID.Text), out dt1))
             {
                 if (dt1.Rows.Count > 0)
                 {

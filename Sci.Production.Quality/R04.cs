@@ -28,7 +28,7 @@ namespace Sci.Production.Quality
             string sqlm = (@" 
                         select
                              Category=name
-                        from  dbo.DropDownList
+                        from  dbo.DropDownList WITH (NOLOCK) 
                         where type = 'Category' and id != 'O'
                         ");
             DBProxy.Current.Select("", sqlm, out ORS);
@@ -38,12 +38,12 @@ namespace Sci.Production.Quality
             this.comboCategory.DisplayMember = "Category";
             this.comboCategory.SelectedIndex = 0;
             DataTable M;
-            DBProxy.Current.Select(null, "select '' as id union all select distinct id from MDivision  ", out M);
+            DBProxy.Current.Select(null, "select '' as id union all select distinct id from MDivision WITH (NOLOCK)  ", out M);
             MyUtility.Tool.SetupCombox(comboM, 1, M);
             comboM.Text = Sci.Env.User.Keyword;
 
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as FTYGroup union all select distinct FTYGroup from Factory order by FTYGroup", out factory);
+            DBProxy.Current.Select(null, "select '' as FTYGroup union all select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
             MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
             //comboFactory.Text = Sci.Env.User.Factory;
             print.Enabled = false;
@@ -145,34 +145,34 @@ namespace Sci.Production.Quality
             cmd = string.Format(@" 
             with order_rawdata as
             (
-	            select distinct poid from dbo.orders
+	            select distinct poid from dbo.orders WITH (NOLOCK) 
 	            where 1=1 and orders.Junk = 0
            " + sqlWhere + @"
             )
-                select (select exportid from dbo.Receiving where id = b.ReceivingID) [exportid]
-                ,(select WhseArrival from dbo.Receiving where id = b.ReceivingID) [WhseArrival]
-                ,(select top 1 orders.FactoryID from orders where id = b.POID) [factory]
+                select (select exportid from dbo.Receiving WITH (NOLOCK) where id = b.ReceivingID) [exportid]
+                ,(select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = b.ReceivingID) [WhseArrival]
+                ,(select top 1 orders.FactoryID from orders WITH (NOLOCK) where id = b.POID) [factory]
                 ,b.POID,b.seq1+'-'+b.seq2 [seq],c.ReceiveSampleDate
-                ,(select suppid+'-'+supp.AbbEN from dbo.po_supp p inner join dbo.supp on supp.id = p.SuppID where p.id = b.POID and seq1 = b.seq1) [supplier]
+                ,(select suppid+'-'+supp.AbbEN from dbo.po_supp p WITH (NOLOCK) inner join dbo.supp WITH (NOLOCK) on supp.id = p.SuppID where p.id = b.POID and seq1 = b.seq1) [supplier]
                 ,b.Refno
-                ,(select p.ColorID from dbo.PO_Supp_Detail p where p.id = b.POID and seq1 = b.seq1 AND seq2 = b.SEQ2) color
-                ,(select top 1 orders.[category] from orders where id = b.POID) [category]
+                ,(select p.ColorID from dbo.PO_Supp_Detail p WITH (NOLOCK) where p.id = b.POID and seq1 = b.seq1 AND seq2 = b.SEQ2) color
+                ,(select top 1 orders.[category] from orders WITH (NOLOCK) where id = b.POID) [category]
                 ,b.ArriveQty,oven_result.Result,c.Crocking,c.Heat,ColorFastness_result.Result,c.Wash
-                from  FIR b
-                inner join (select distinct a.id,a1.PoId,a1.Seq1,a1.seq2 from Receiving a
-				                inner join Receiving_Detail a1 on a1.Id = a.Id
+                from  FIR b WITH (NOLOCK) 
+                inner join (select distinct a.id,a1.PoId,a1.Seq1,a1.seq2 from Receiving a WITH (NOLOCK) 
+				                inner join Receiving_Detail a1 WITH (NOLOCK) on a1.Id = a.Id
                             where 1=1" + sqlArr + @")
                 r on r.id = b.ReceivingID and r.PoId = b.POID and r.seq1 = b.seq1 and r.seq2 = b.SEQ2
-                inner join FIR_Laboratory c on c.ID = b.Id
+                inner join FIR_Laboratory c WITH (NOLOCK) on c.ID = b.Id
                 inner join order_rawdata d on d.POID = b.POID
                 OUTER APPLY(
-	                select o1.Result from Oven o1 inner join Oven_Detail o2 on o2.Id = o1.ID
+	                select o1.Result from Oven o1 WITH (NOLOCK) inner join Oven_Detail o2 WITH (NOLOCK) on o2.Id = o1.ID
 	                where o1.POID = b.POID and o2.seq1 = b.seq1 and o2.seq2 = b.SEQ2 and o1.Status = 'Confirmed')oven_result
                 OUTER APPLY(
-	                select  c1.Result from ColorFastness c1 inner join ColorFastness_Detail c2 on c2.id = c1.id
+	                select  c1.Result from ColorFastness c1 WITH (NOLOCK) inner join ColorFastness_Detail  c2 WITH (NOLOCK) on c2.id = c1.id
 	                where c1.POID = b.POID and c2.seq1 = b.seq1 and c2.seq2 = b.SEQ2 and c1.Status = 'Confirmed')ColorFastness_result
                 where 1=1 and (@Outstanding = 1 and (C.Crocking ='' or C.Wash ='' or C.Heat ='' or oven_result.Result='' or ColorFastness_result.Result=''))
-                "+sqlRec+@"
+                " + sqlRec+@"
             ");
             #endregion
 

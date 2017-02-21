@@ -186,12 +186,12 @@ namespace Sci.Production.Quality
             #region Grade,Result
            // string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", CurrentData["SCiRefno"].ToString(), "Fabric", "SciRefno");
             string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", mainrow["SCiRefno"].ToString(), "Fabric", "SciRefno");
-            string grade_cmd = String.Format("SELECT MIN(GRADE) grade FROM FIR_Grade WHERE WEAVETYPEID = '{0}' AND PERCENTAGE >= IIF({1} > 100,100,{1})", WeaveTypeid, CurrentData["PointRate"]);
+            string grade_cmd = String.Format("SELECT MIN(GRADE) grade FROM FIR_Grade WITH (NOLOCK) WHERE WEAVETYPEID = '{0}' AND PERCENTAGE >= IIF({1} > 100,100,{1})", WeaveTypeid, CurrentData["PointRate"]);
             DataRow grade_dr;
             if (MyUtility.Check.Seek(grade_cmd, out grade_dr))
             {
                 CurrentData["Grade"] = grade_dr["grade"];
-                CurrentData["Result"] = MyUtility.GetValue.Lookup(string.Format("Select Result from Fir_Grade where WEAVETYPEID = '{0}' and Grade = '{1}'", WeaveTypeid, grade_dr["grade"]), null);
+                CurrentData["Result"] = MyUtility.GetValue.Lookup(string.Format("Select Result from Fir_Grade WITH (NOLOCK) where WEAVETYPEID = '{0}' and Grade = '{1}'", WeaveTypeid, grade_dr["grade"]), null);
             }
             #endregion
             return base.DoSave();

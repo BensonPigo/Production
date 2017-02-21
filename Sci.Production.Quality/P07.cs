@@ -55,8 +55,8 @@ namespace Sci.Production.Quality
             this.detailgrid.AutoResizeColumns();
             string sql_cmd = string.Format(@"select a.ID , b.StyleID , b.SeasonID , b.BrandID , b.CutInLine
 	                                             ,GetSCI.MinSciDelivery , CASE WHEN a.Complete = 1 THEN 'Y' WHEN a.Complete = 0 THEN 'N' END as Complete , a.AIRLaboratoryRemark
-                                            from po a 
-                                            left join Orders b on a.ID = b.POID
+                                            from po a WITH (NOLOCK) 
+                                            left join Orders b WITH (NOLOCK) on a.ID = b.POID
                                             cross apply dbo.GetSCI(a.id,'') as GetSCI
                                             where a.id='{0}'", CurrentMaintain["ID"].ToString().Trim());
             if (MyUtility.Check.Seek(sql_cmd, out dr))
@@ -373,11 +373,11 @@ namespace Sci.Production.Quality
                 SEQ2 = dr["SEQ2"].ToString().Trim();
                 sql = string.Format(@"select C.ExportID , C.WhseArrival , B.SCIRefno , B.Refno , B.Suppid + '-' + D.AbbEN as supplier
                                             ,E.ColorID , E.Sizespec , B.ArriveQty , B.ReceivingID
-                                    from AIR_Laboratory A
-                                    left join AIR B on A.id=B.id
-                                    left join Receiving C on C.id=B.receivingID
-                                    left join Supp D on D.ID=B.Suppid
-                                    left join PO_Supp_Detail E on E.ID=A.POID and E.SEQ1=A.SEQ1 and E.SEQ2=A.SEQ2
+                                    from AIR_Laboratory A WITH (NOLOCK) 
+                                    left join AIR B WITH (NOLOCK) on A.id=B.id
+                                    left join Receiving C WITH (NOLOCK) on C.id=B.receivingID
+                                    left join Supp D WITH (NOLOCK) on D.ID=B.Suppid
+                                    left join PO_Supp_Detail E WITH (NOLOCK) on E.ID=A.POID and E.SEQ1=A.SEQ1 and E.SEQ2=A.SEQ2
                                     where A.id={0} and A.poid='{1}' and A.seq1='{2}' and A.seq2='{3}'"
                                     , ID, POID, SEQ1, SEQ2);
                 MyUtility.Check.Seek(sql, out ROW);

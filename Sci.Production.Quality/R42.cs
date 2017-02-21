@@ -120,8 +120,8 @@ namespace Sci.Production.Quality
                                     ,sum(b.qty) qty
                                     ,sum(b.ValueinUSD) ValueinUSD
                                     into #temp
-                                    FROM DBO.ADIDASComplain A 
-                                    INNER JOIN DBO.ADIDASComplain_Detail B ON B.ID = A.ID" + " " + sqlWhere + " " + rt + " " + gb + " " +
+                                    FROM DBO.ADIDASComplain A WITH (NOLOCK) 
+                                    INNER JOIN DBO.ADIDASComplain_Detail B WITH (NOLOCK) ON B.ID = A.ID" + " " + sqlWhere + " " + rt + " " + gb + " " +
 
                                    @"select name as mon from (select DISTINCT dRanges.name,dRanges.starts from #temp T 
 				                      left join #dRanges as dRanges on dRanges.starts between dRanges.starts and dRanges.ends
@@ -252,10 +252,10 @@ namespace Sci.Production.Quality
                     ,B.ValueinUSD [Complaint_Value]
                     ,B.ValueINExRate[Exrate]
                     FROM 
-                    DBO.ADIDASComplain A 
-                    INNER JOIN DBO.ADIDASComplain_Detail B ON B.ID = A.ID
-                    left join dbo.ADIDASComplainDefect c on c.ID=b.DefectMainID
-                    left join dbo.ADIDASComplainDefect_Detail d on d.id=b.DefectMainID and d.SubID=b.DefectSubID" + " " + sqlWhere + "and supplier='{0}'" + rt + " " + ob, sss);
+                    DBO.ADIDASComplain A WITH (NOLOCK) 
+                    INNER JOIN DBO.ADIDASComplain_Detail B WITH (NOLOCK) ON B.ID = A.ID
+                    left join dbo.ADIDASComplainDefect c WITH (NOLOCK) on c.ID=b.DefectMainID
+                    left join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on d.id=b.DefectMainID and d.SubID=b.DefectSubID" + " " + sqlWhere + "and supplier='{0}'" + rt + " " + ob, sss);
 
                     result = DBProxy.Current.SelectByConn(conn, scmd, out dat);
                     dicSUP.Add(sss, dat);

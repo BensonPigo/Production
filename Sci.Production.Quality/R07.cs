@@ -29,7 +29,7 @@ namespace Sci.Production.Quality
             string sqlm = (@" 
                         select
                              Category=name
-                        from  dbo.DropDownList
+                        from  dbo.DropDownList WITH (NOLOCK) 
                         where type = 'Category' and id != 'O'
                         ");
             DBProxy.Current.Select("", sqlm, out OrdersCategory);
@@ -44,7 +44,7 @@ namespace Sci.Production.Quality
                                when 'F' then 'Fabric' 
 	                           when 'A' then 'Accessory'
                                end fabrictype
-                        FROM Po_supp_detail 
+                        FROM Po_supp_detail  WITH (NOLOCK) 
                         where fabrictype !='O'  AND fabrictype !=''
                         ");
             DBProxy.Current.Select("", sqlM, out Material);
@@ -54,7 +54,7 @@ namespace Sci.Production.Quality
             this.comboMaterialType.DisplayMember = "fabrictype";
             this.comboMaterialType.SelectedIndex = 1;
             DataTable factory;
-            DBProxy.Current.Select(null, "select distinct FTYGroup from Factory order by FTYGroup", out factory);
+            DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
             MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
             comboFactory.Text = Sci.Env.User.Factory;
             print.Enabled = false;
@@ -215,15 +215,15 @@ namespace Sci.Production.Quality
             ,Weave.WeaveTypeID
             ,t.id [ReceivingID]
             from (select r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2,sum(stockqty) stockqty
-			             from dbo.Receiving r
-			            inner join dbo.Receiving_Detail rd on rd.Id = r.Id 
-			            where r.type='A'"+RWhere+@"
+			             from dbo.Receiving r WITH (NOLOCK) 
+			            inner join dbo.Receiving_Detail rd WITH (NOLOCK) on rd.Id = r.Id 
+			            where r.type='A'" + RWhere+ @"
 			            group by r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2) t
-            inner join (select distinct poid,Category,KPILETA from dbo.Orders o 
+            inner join (select distinct poid,Category,KPILETA from dbo.Orders o WITH (NOLOCK) 
 			            where 1=1
-			           "+OWhere+@" ) x on x.poid = T.POID
-            inner join dbo.PO_Supp ps on ps.id = T.POID and ps.SEQ1 = T.SEQ1
-            inner join dbo.PO_Supp_Detail psd on psd.ID = T.POID and psd.SEQ1 = T.SEQ1 and psd.SEQ2 = T.SEQ2
+			           " + OWhere+ @" ) x on x.poid = T.POID
+            inner join dbo.PO_Supp ps WITH (NOLOCK) on ps.id = T.POID and ps.SEQ1 = T.SEQ1
+            inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = T.POID and psd.SEQ1 = T.SEQ1 and psd.SEQ2 = T.SEQ2
             outer apply dbo.getsci(t.poid,x.category) as w
             outer apply(select case when x.Category='M' then DATEADD(day,7,t.WhseArrival)
 	            when Datediff(day,w.MinSciDelivery,x.kpileta) >=21 
@@ -233,9 +233,9 @@ namespace Sci.Production.Quality
 		            then iif(DATEADD(day,-21,w.MinSciDelivery) <= DATEADD(day,3,t.WhseArrival)
 	            ,DATEADD(day,7,t.WhseArrival),DATEADD(day,-21,w.MinSciDelivery))
             end  inspection)Est
-            outer apply((select min(orders.CutInLine)cutinline from dbo.orders where orders.poid= t.PoId))[First] 
-            outer apply(select o.factoryid,o.BrandId,o.StyleID,o.SeasonId from dbo.orders o where o.id = t.PoId)O
-            outer apply(select f.WeaveTypeID from dbo.Fabric f where f.scirefno = psd.SCIRefno)Weave" + sqlWhere);
+            outer apply((select min(orders.CutInLine)cutinline from dbo.orders WITH (NOLOCK) where orders.poid= t.PoId))[First] 
+            outer apply(select o.factoryid,o.BrandId,o.StyleID,o.SeasonId from dbo.orders o WITH (NOLOCK) where o.id = t.PoId)O
+            outer apply(select f.WeaveTypeID from dbo.Fabric f WITH (NOLOCK) where f.scirefno = psd.SCIRefno)Weave" + sqlWhere);
             #endregion
             return base.ValidateInput();
         }

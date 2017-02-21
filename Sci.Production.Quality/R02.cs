@@ -28,7 +28,7 @@ namespace Sci.Production.Quality
             string sqlm = (@" 
                         select
                              Category=name
-                        from  dbo.DropDownList
+                        from  dbo.DropDownList WITH (NOLOCK) 
                         where type = 'Category' and id != 'O'
                         ");
             DBProxy.Current.Select("", sqlm, out ORS);
@@ -185,21 +185,21 @@ namespace Sci.Production.Quality
 	                   ,IIF(A.Status='Confirme',A.InspDate,NULL)[Inspection Date]
 	                   ,AIRL.Result,AIRL.NonOven,AIRL.Oven,AIRL.OvenScale,AIRL.OvenDate,AIRL.NonWash,AIRL.Wash,AIRL.WashScale,
 	                   AIRL.WashDate
-                from dbo.AIR A
-                inner join (select distinct r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2,RD.StockQty from dbo.Receiving r
-			                inner join dbo.Receiving_Detail rd on rd.Id = r.Id "
-			     + RWhere + @"
+                from dbo.AIR A WITH (NOLOCK) 
+                inner join (select distinct r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2,RD.StockQty from dbo.Receiving r WITH (NOLOCK) 
+			                inner join dbo.Receiving_Detail rd WITH (NOLOCK) on rd.Id = r.Id "
+                 + RWhere + @"
 			                ) t
                 on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2
-                inner join (select distinct O.POID,O.Factoryid,O.BrandId,O.StyleID,O.SeasonId,O.Category from dbo.Orders o "
+                inner join (select distinct O.POID,O.Factoryid,O.BrandId,O.StyleID,O.SeasonId,O.Category from dbo.Orders o WITH (NOLOCK) "
                  + OWhere + @"
 			                 ) x on x. poid = A.POID
-                inner join dbo.PO_Supp P on P.id = A.POID and P.SEQ1 = A.SEQ1 
-                inner join dbo.PO_Supp_Detail PS on PS.ID = A.POID and PS.SEQ1 = A.SEQ1 and PS.SEQ2 = A.SEQ2
-                INNER join dbo.Color C on C.ID = PS.ColorID and C.BrandId = PS.BrandId
-                inner join supp s on s.id = P.SuppID
-                OUTER APPLY(select * from dbo.AIR_Laboratory AL where AL.OvenEncode = 1 and AL.ID = A.ID)AIRL
-               " +sqlWhere);
+                inner join dbo.PO_Supp P WITH (NOLOCK) on P.id = A.POID and P.SEQ1 = A.SEQ1 
+                inner join dbo.PO_Supp_Detail PS WITH (NOLOCK) on PS.ID = A.POID and PS.SEQ1 = A.SEQ1 and PS.SEQ2 = A.SEQ2
+                INNER join dbo.Color C WITH (NOLOCK) on C.ID = PS.ColorID and C.BrandId = PS.BrandId
+                inner join supp s WITH (NOLOCK) on s.id = P.SuppID
+                OUTER APPLY(select * from dbo.AIR_Laboratory AL WITH (NOLOCK) where AL.OvenEncode = 1 and AL.ID = A.ID)AIRL
+               " + sqlWhere);
             #endregion
             return base.ValidateInput();
         }

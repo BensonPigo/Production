@@ -82,16 +82,16 @@ namespace Sci.Production.Quality
 
                     select Target,Claimed.Claimed,sh.qty[Shipped],convert(varchar(10),Claimed.month1)[month1],convert(varchar(10),Claimed.YEAR1)[YEAR1]
                     into #temp
-                    from dbo.ADIDASComplainTarget 
+                    from dbo.ADIDASComplainTarget WITH (NOLOCK) 
                     outer apply(SELECT left(cast(a.StartDate as varchar(10)),7) ym , sum(b.Qty) Claimed,convert(varchar(10),dateadd(MONTH,-3,a.StartDate)) themonth ,convert(varchar(10),MONTH(a.StartDate))[month1],convert(varchar(10),YEAR(a.StartDate)) [YEAR1]
-			                    FROM dbo.ADIDASComplain a
-			                    INNER JOIN DBO.ADIDASComplain_Detail b ON B.ID = a.ID
+			                    FROM dbo.ADIDASComplain a WITH (NOLOCK) 
+			                    INNER JOIN DBO.ADIDASComplain_Detail b WITH (NOLOCK) ON B.ID = a.ID
 			                    where year(a.StartDate) in (@y1,@y2,@y3)
 			                    group by a.StartDate) Claimed
                    outer apply (SELECT startMonth = format(dateadd(month,-3, concat(Claimed.YEAR1,'/',Claimed.month1,'/1' )),'yyyyMM'),
 					            EndMonth = format(dateadd(month,2, concat(Claimed.YEAR1,'/',Claimed.month1,'/1' )),'yyyyMM') ) as ff 
 
-                   outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a
+                   outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a WITH (NOLOCK) 
 		                         WHERE a.YearMonth BETWEEN ff.startMonth AND ff.EndMonth and a.BrandID = 'ADIDAS')sh
                     where year in (@y1,@y2,@y3)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1
@@ -216,19 +216,19 @@ namespace Sci.Production.Quality
                  declare @y3 varchar(4) = cast(datepart(year,@d) as varchar(4))
 
 
-                 select distinct id,CountryID  into #Tfactory from dbo.SCIFty 
-                 where CountryID= (select f.CountryID from dbo.Factory f where f.id=" + "'" + userfactory + "'" + @")
+                 select distinct id,CountryID  into #Tfactory from dbo.SCIFty WITH (NOLOCK) 
+                 where CountryID= (select f.CountryID from dbo.Factory f WITH (NOLOCK) where f.id=" + "'" + userfactory + "'" + @")
 
                  --select * from #Tfactory
 
-                 select Target,year[year2] into #Ttarget from dbo.ADIDASComplainTarget where Year in (@y1,@y2,@y3)
+                 select Target,year[year2] into #Ttarget from dbo.ADIDASComplainTarget WITH (NOLOCK) where Year in (@y1,@y2,@y3)
 
                  --select * from #Ttarget
 
                   SELECT sum(b.Qty) Claimed,convert(varchar(10),dateadd(MONTH,-3,a.StartDate)) themonth ,MONTH(a.StartDate)[month1],YEAR(a.StartDate) [YEAR1],b.FactoryID [factory],left(cast(a.StartDate as varchar(10)),7) ym
                   into #TClaimed
-                  FROM dbo.ADIDASComplain a
-                  INNER JOIN DBO.ADIDASComplain_Detail b ON B.ID = a.ID
+                  FROM dbo.ADIDASComplain a WITH (NOLOCK) 
+                  INNER JOIN DBO.ADIDASComplain_Detail b WITH (NOLOCK) ON B.ID = a.ID
                   where year(a.StartDate) in (@y1,@y2,@y3)
                   group by a.StartDate,B.FactoryID
 
@@ -241,7 +241,7 @@ namespace Sci.Production.Quality
                  outer apply (SELECT 
 					startMonth = format(dateadd(month,-3, concat(t.YEAR1,'/',t.month1,'/1' )),'yyyyMM'),
 					EndMonth = format(dateadd(month,2, concat(t.YEAR1,'/',t.month1,'/1' )),'yyyyMM') ) as ff 
-                 outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a
+                 outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a WITH (NOLOCK) 
 		                      WHERE a.YearMonth BETWEEN ff.startMonth AND ff.EndMonth and a.BrandID = 'ADIDAS')sh
 
                  --select * from #Shipped
@@ -389,7 +389,7 @@ namespace Sci.Production.Quality
 		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=round(sum(s.Claimed)/sum(s.Shipped),6)*100 FROM #AllTemp as s WHERE YEAR1=@y2 and dRanges.starts=month1 and fty='{0}' group by s.Claimed,s.Shipped)AS year2
 		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=round(sum(s.Claimed)/sum(s.Shipped),6)*100 FROM #AllTemp as s WHERE YEAR1=@y3 and dRanges.starts=month1 and fty='{0}' group by s.Claimed,s.Shipped)AS year3
 		            outer apply(select Target1=isnull(sum(s.Target),0) from #AllTemp as s where YEAR1 in (@y1,@y2,@y3) and dRanges.starts=month1)AS tg1
-					where  t.CountryID= (select f.CountryID from dbo.Factory f where f.id='" + userfactory + @"') and t.fty=t.factoryid and t.year1 in (@y1,@y2,@y3) 
+					where  t.CountryID= (select f.CountryID from dbo.Factory f WITH (NOLOCK) where f.id='" + userfactory + @"') and t.fty=t.factoryid and t.year1 in (@y1,@y2,@y3) 
 					GROUP BY dRanges.name,tg1.Target1,year1.Claimed,year1.Shipped,year2.Claimed,year2.Shipped,year3.Claimed,year3.Shipped,dRanges.starts,year1.adicomp,year2.adicomp,year3.adicomp
                     order by dRanges.starts
 --DROP TABLE #temp", sss);
