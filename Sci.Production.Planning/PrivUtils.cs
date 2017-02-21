@@ -294,7 +294,7 @@ namespace Sci.Production.Report
             string rtn = "";
             if (Sci.Env.Cfg.XltPathDir != "")
             {
-                rtn = Sci.Production.Class.Commons.TradeSystem.Env.XltPathDir;
+                rtn = Sci.Env.Cfg.XltPathDir;
             }
             else
             {
