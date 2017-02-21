@@ -144,7 +144,7 @@
             this.Controls.Add(this.splitContainer1);
             this.IsSupportEdit = false;
             this.Name = "SQL_Query";
-            this.Text = "() ";
+            this.Text = "SQL_Query";
             this.Controls.SetChildIndex(this.splitContainer1, 0);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
