@@ -72,13 +72,13 @@ Begin
 	 Where ID = @PoID;
 	
 	Select @FabricType = FabricType
-	  From Trade.dbo.Style
+	  From Production.dbo.Style
 	 Where BrandID = @BrandID
 	   And ID = @StyleID
 	   And SeasonID = @SeasonID;
 	
 	Select @LossSampleFabric = LossSampleFabric
-	  From Trade.dbo.Brand
+	  From Production.dbo.Brand
 	 Where ID = @BrandID;
 	
 	Set @LimitUP_Rate = 0;
@@ -87,7 +87,7 @@ Begin
 	Select @LimitUP_Rate = TWLimitUp
 		 , @LimitUP_Allowance = Allowance
 		 , @LimitUP_LossQty = MaxLossQty
-	  From Trade.dbo.LossRateFabric
+	  From Production.dbo.LossRateFabric
 	 Where WeaveTypeID = @FabricType;
 	---------------------------------------------------------------------------
 	--取得各Article/Size的Qty數、By Article加總的Qty數、Qty總數
@@ -309,7 +309,7 @@ Begin
 			Begin
 				Set @WeaveTypeID = '';
 				Select @WeaveTypeID = Fabric.WeaveTypeID
-				  From Trade.dbo.Fabric
+				  From Production.dbo.Fabric
 				 Where SciRefNo = @SciRefNo;
 				
 				--Loss by Dafault And Category = 'Sample'
@@ -459,8 +459,8 @@ Begin
 		
 		Set @WeaveTypeID = '';
 		Select @WeaveTypeID = Fabric.WeaveTypeID
-		  From Trade.dbo.Fabric
-		  Join Trade.dbo.LossRateFabric
+		  From Production.dbo.Fabric
+		  Join Production.dbo.LossRateFabric
 			On LossRateFabric.WeaveTypeID = Fabric.WeaveTypeID
 		 Where SciRefNo = @SciRefNo;
 
