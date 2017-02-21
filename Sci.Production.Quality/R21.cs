@@ -24,6 +24,8 @@ namespace Sci.Production.Quality
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory order by FTYGroup", out factory);
+            factory.Rows.Add(new string[] { "" });
+            factory.DefaultView.Sort = "FTYGroup";
             MyUtility.Tool.SetupCombox(comboBox1, 1, factory);
             comboBox1.Text = Sci.Env.User.Factory;
             this.S_radioButton.Checked = true;

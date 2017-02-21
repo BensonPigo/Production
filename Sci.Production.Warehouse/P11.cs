@@ -320,7 +320,7 @@ Where a.id = '{0}'", masterID);
                                                                           && row["seq2"].EqualString(Checkduplicate["seq2"].ToString())).ToArray();
                 if (findrow.Length > 1)
                 {
-                    MyUtility.Msg.WarningBox(string.Format(@"SP#: {0} Seq#: {1}-{2} can't duplicate", Checkduplicate["poid"], Checkduplicate["seq1"], Checkduplicate["seq2"]));
+                    MyUtility.Msg.WarningBox(string.Format(@"SP#: {0} Seq#: {1}-{2} duplicate, SP# and Seq# can't duplicate", Checkduplicate["poid"], Checkduplicate["seq1"], Checkduplicate["seq2"]));
                     return false;                        
                 }
             }

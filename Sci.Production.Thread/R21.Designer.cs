@@ -51,6 +51,7 @@
             // print
             // 
             this.print.TabIndex = 1;
+            this.print.Visible = false;
             // 
             // toexcel
             // 

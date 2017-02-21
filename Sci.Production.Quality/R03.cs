@@ -40,6 +40,8 @@ namespace Sci.Production.Quality
             this.comboCategory.SelectedIndex = 1;
             DataTable factory;
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory order by FTYGroup", out factory);
+            factory.Rows.Add(new string[] { "" });
+            factory.DefaultView.Sort = "FTYGroup";
             MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
             comboFactory.Text = Sci.Env.User.Factory;
             print.Enabled = false;
@@ -76,25 +78,30 @@ namespace Sci.Production.Quality
                 sqlWheres.Add("SciDelivery between @SCIDate1 and @SCIDate2");
                 lis.Add(new SqlParameter("@SCIDate1", DateSCIStart));
                 lis.Add(new SqlParameter("@SCIDate2", DateSCIEnd));
-            } if (!this.DateSewInLine.Value1.Empty() && !this.DateSewInLine.Value2.Empty())
+            } 
+            if (!this.DateSewInLine.Value1.Empty() && !this.DateSewInLine.Value2.Empty())
             {
                 sqlWheres.Add("SewInLine between @SewDate1 and @SewDate2");
                 lis.Add(new SqlParameter("@SewDate1", DateSewStart));
                 lis.Add(new SqlParameter("@SewDate2", DateSewEnd));
-            } if (!this.DateEstCutting.Value1.Empty() && !this.DateEstCutting.Value2.Empty())
+            } 
+            if (!this.DateEstCutting.Value1.Empty() && !this.DateEstCutting.Value2.Empty())
             {
                 sqlWheres.Add("CutInLine between @Est1 and @Est2");
                 lis.Add(new SqlParameter("@Est1", DateEstStart));
                 lis.Add(new SqlParameter("@Est2", DateEstEnd));
-            } if (!this.txtSeason.Text.Empty())
+            } 
+            if (!this.txtSeason.Text.Empty())
             {
                 sqlWheres.Add("SeasonID = @Sea");
                 lis.Add(new SqlParameter("@Sea", Sea));
-            } if (!this.txtBrand.Text.Empty())
+            } 
+            if (!this.txtBrand.Text.Empty())
             {
                 sqlWheres.Add("BrandID = @Brand");
                 lis.Add(new SqlParameter("@Brand", Brand));
-            } if (!this.comboCategory.SelectedItem.ToString().Empty())
+            }
+            if (!this.comboCategory.SelectedValue.Empty())
             {
                 sqlWheres.Add("Category = @Cate");
                 if (Category == "Bulk")
@@ -109,7 +116,8 @@ namespace Sci.Production.Quality
                 {
                     lis.Add(new SqlParameter("@Cate", "M"));
                 }
-            } if (!this.comboFactory.SelectedItem.ToString().Empty())
+            }
+            if (!this.comboFactory.SelectedValue.Empty())
                 {
                     sqlWheres.Add("Factoryid = @Factory");
                     lis.Add(new SqlParameter("@Factory", Factory));
