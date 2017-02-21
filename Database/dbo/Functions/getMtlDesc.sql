@@ -69,7 +69,7 @@ SET QUOTED_IDENTIFIER ON
 
 	IF left(@SEQ1,1) = '7'
 	BEGIN
-		SET @string = '**PLS USE STOCK FROM SP#:' + iif(@StockSP='','',@StockSP) + '**' + CHAR(13) + @string;
+		SET @string = '**PLS USE STOCK FROM SP#:' + iif(@StockSP='','',@StockSP) + '**' + CHAR(13) + isnull(@string, '');
 	END 
 
     RETURN rtrim(@string)
