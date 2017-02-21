@@ -165,6 +165,12 @@
       <DependentUpon>AuthorityByPosition_Setting.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SQL_Query.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SQL_Query.Designer.cs">
+      <DependentUpon>SQL_Query.cs</DependentUpon>
+    </Compile>
     <Compile Include="SwitchFactory.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -184,6 +190,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AuthorityByPosition_Setting.resx">
       <DependentUpon>AuthorityByPosition_Setting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SQL_Query.resx">
+      <DependentUpon>SQL_Query.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SwitchFactory.resx">
       <DependentUpon>SwitchFactory.cs</DependentUpon>

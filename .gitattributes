@@ -2977,6 +2977,9 @@ Sci.Production.Tools/PasswordByUser.Designer.cs -text
 Sci.Production.Tools/PasswordByUser.cs -text
 Sci.Production.Tools/PasswordByUser.resx -text
 Sci.Production.Tools/Properties/AssemblyInfo.cs -text
+Sci.Production.Tools/SQL_Query.Designer.cs -text
+Sci.Production.Tools/SQL_Query.cs -text
+Sci.Production.Tools/SQL_Query.resx -text
 Sci.Production.Tools/Sci.Production.Tools.csproj -text
 Sci.Production.Tools/SwitchFactory.Designer.cs -text
 Sci.Production.Tools/SwitchFactory.cs -text
