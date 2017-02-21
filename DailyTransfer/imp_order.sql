@@ -425,7 +425,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 	-----------Order_QtyShip_Detail--------------------------調整: 來源比對Production表頭資料 
 		Merge Production.dbo.Order_QtyShip_detail as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_QtyShip_detail as a inner join Production.dbo.Order_QtyShip b on a.id=b.id ) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_QtyShip_detail as a inner join #TOrder b on a.id=b.id  ) as s
 		on t.ukey=s.ukey
 		when matched then
 			update set
@@ -636,7 +636,8 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 		---------Order_Bof_Expend--------------Bill of Fabric -用量展開
 		Merge Production.dbo.Order_Bof_Expend as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_Bof_Expend a
-		inner join Production.dbo.Order_Bof b on a.id=b.id) as s
+		inner join #Torder b on a.id=b.id) as s
+		--inner join Production.dbo.Order_Bof b on a.id=b.id) as s
 		on t.ukey=s.ukey
 		when matched then 
 			update set
@@ -705,7 +706,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 		-----------------Order_BOA_Expend----------------Bill of accessory -用量展開
 		Merge Production.dbo.Order_BOA_Expend as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_Expend a	
-		inner join Production.dbo.Order_BOA b on a.id=b.id) as s
+		inner join #Torder b on a.id=b.id) as s
 		on t.ukey=s.ukey
 		when matched then 
 			update set
@@ -785,7 +786,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		------Order_MarkerList_SizeQty----------------
 		Merge Production.dbo.Order_MarkerList_SizeQty as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_MarkerList_SizeQty a inner join Production.dbo.Order_MarkerList b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_MarkerList_SizeQty a inner join #Torder b on a.id=b.id) as s
 		on t.order_MarkerListUkey=s.order_MarkerListUkey and t.sizecode=s.sizecode
 		when matched then 
 			update set
@@ -875,7 +876,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		--------Order_EachCons_SizeQty----------------Each cons - Size & Qty
 		Merge Production.dbo.Order_EachCons_SizeQty as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_SizeQty a inner join Production.dbo.Order_EachCons b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_SizeQty a inner join #Torder b on a.id=b.id) as s
 		on t.Order_EachConsUkey=s.Order_EachConsUkey and t.sizecode=s.sizecode	
 		when matched then 
 			update set 
@@ -890,7 +891,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		-------Order_EachCons_Color--------------------Each cons - 用量展開
 		Merge Production.dbo.Order_EachCons_Color as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_Color a inner join Production.dbo.Order_EachCons b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_Color a inner join #Torder b on a.id=b.id) as s
 		on t.Ukey=s.Ukey	
 		when matched then 
 			update set 
@@ -912,7 +913,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 		
 		---------Order_EachCons_Color_Article-------Each cons - 用量展開明細
 		Merge Production.dbo.Order_EachCons_Color_Article as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_Color_Article a inner join Production.dbo.Order_EachCons b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_Color_Article a inner join #Torder b on a.id=b.id) as s
 		on t.Ukey=s.Ukey	
 		when matched then 
 			update set 
@@ -933,7 +934,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		----------Order_EachCons_PatternPanel---------------PatternPanel
 			Merge Production.dbo.Order_EachCons_PatternPanel as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_PatternPanel a inner join Production.dbo.Order_EachCons b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_PatternPanel a inner join #Torder b on a.id=b.id) as s
 		on t.PatternPanel=s.PatternPanel and t.Order_EachConsUkey=s.Order_EachConsUkey and t.LectraCode=s.LectraCode
 		When matched then 
 			update set 
@@ -969,7 +970,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 		-----------Order_BOA_KeyWord---------------------Bill of Other - Key word
 
 		Merge Production.dbo.Order_BOA_KeyWord as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_KeyWord a inner join Production.dbo.Order_BOA b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_KeyWord a inner join #TOrder b on a.id=b.id) as s
 		on t.ukey=s.ukey
 		when matched then 
 			update set 
@@ -986,7 +987,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		------------Order_BOA_CustCD----------Bill of Other - 用量展開
 		Merge Production.dbo.Order_BOA_CustCD as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_CustCD a inner join Production.dbo.Order_BOA b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_CustCD a inner join #TOrder b on a.id=b.id) as s
 		on t.Order_BOAUkey=s.Order_BOAUkey and t.custcdid=s.custcdid and t.refno=s.refno
 		when matched then 
 			update set 
@@ -1270,12 +1271,6 @@ and a.LocalOrder = 0
 
 ----刪除的判斷必須要依照#Torder的區間作刪除
 
---
--- #Torder 不存在於 tmpOrder 
-select * from Production.dbo.Order_Artwork b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
-
 -------------------------------------Order_Article
 Delete b
 from Production.dbo.Order_Article b
@@ -1515,7 +1510,7 @@ where id in (select id from #tmpOrders as t
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------[dbo].[PO]
 Delete b
-select * from Production.dbo.PO b
+from Production.dbo.PO b
 where id in (select POID from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------[dbo].[PO_Supp]
@@ -1550,13 +1545,15 @@ from Production.dbo.CuttingTape_Detail b
 where POID in (select POID from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
 
-drop table #tmpOrders
-drop table #TOrder
 ------------------------刪除表頭多的資料order 最後刪除
 Delete a
 from Production.dbo.Orders as a 
 where a.id in (select id from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
+
+
+drop table #tmpOrders
+drop table #TOrder
 
 
 END
