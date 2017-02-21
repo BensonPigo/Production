@@ -14,6 +14,7 @@ SET QUOTED_IDENTIFIER ON
 
 	select 
 	PoList = isnull([dbo].getPOComboList(o.ID,o.POID),''),
+	o.StyleID,
 	[CutLine] = concat(format(c.CutInLine,'yyyy/MM/dd'),'~',format(c.CutOffLine,'yyyy/MM/dd'))
 	from Orders o ,Cutting c
 	where  o.ID = c.ID and o.id = @OrderID
