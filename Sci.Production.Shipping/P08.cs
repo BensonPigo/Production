@@ -100,7 +100,7 @@ namespace Sci.Production.Shipping
             this.DetailSelectCommand = string.Format(@"select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountID,'') + '-' + isnull(a.Name,'')) as Account
 from ShippingAP_Detail sd
 left join ShipExpense se on se.ID = sd.ShipExpenseID
-left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
 where sd.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -561,7 +561,9 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         //Type
         private void comboBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode == true && MyUtility.Convert.GetString(comboBox1.OldValue) != MyUtility.Convert.GetString(comboBox1.SelectedValue))
+                        
+            //if (EditMode == true && MyUtility.Convert.GetString(CurrentMaintain["type"]) != MyUtility.Convert.GetString(comboBox1.SelectedValue))
+                if (EditMode == true && MyUtility.Convert.GetString(comboBox1.OldValue) != MyUtility.Convert.GetString(comboBox1.SelectedValue))
             {
                 //CurrentMaintain["Type"] = comboBox1.SelectedValue;
                 if (comboBox1.SelectedIndex != -1)
