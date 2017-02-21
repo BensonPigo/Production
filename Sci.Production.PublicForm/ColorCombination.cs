@@ -49,7 +49,7 @@ namespace Sci.Production.PublicForm
             string createheader = "Select Article";
             string headername;
             //Order_Fabric
-            string headersql = string.Format("Select distinct FabricCode,PatternPanel,LectraCode from Order_FabricCode where id = '{0}' order by PatternPanel,FabricCode", cutid);
+            string headersql = string.Format("Select distinct FabricCode,PatternPanel,LectraCode from Order_FabricCode WITH (NOLOCK) where id = '{0}' order by PatternPanel,FabricCode", cutid);
             DataTable headertb0, headertb;
             DualResult sqlresult = DBProxy.Current.Select(null, headersql, out headertb0);
             if (!sqlresult)
@@ -66,7 +66,7 @@ namespace Sci.Production.PublicForm
                 .Text(headername, header: headername, width: Widths.AnsiChars(8), iseditingreadonly: true);
             }
             //BOA
-            headersql = string.Format("Select distinct PatternPanel from Order_BOA where id = '{0}' and patternpanel!='' order by PatternPanel", cutid);
+            headersql = string.Format("Select distinct PatternPanel from Order_BOA WITH (NOLOCK) where id = '{0}' and patternpanel!='' order by PatternPanel", cutid);
             sqlresult = DBProxy.Current.Select(null, headersql, out headertb);
             if (!sqlresult)
             {
@@ -82,8 +82,8 @@ namespace Sci.Production.PublicForm
                 .Text(headername, header: headername, width: Widths.AnsiChars(8), iseditingreadonly: true);
             }
 
-            string createtable = createheader + string.Format(" From Order_ColorCombo a where id ='{0}' ", cutid); //create data
-            createheader = createheader + " From Order_ColorCombo a where 1=0"; //empty table
+            string createtable = createheader + string.Format(" From Order_ColorCombo a WITH (NOLOCK) where id ='{0}' ", cutid); //create data
+            createheader = createheader + " From Order_ColorCombo a WITH (NOLOCK) where 1=0"; //empty table
 
             DataTable gridtb, datatb;
             sqlresult = DBProxy.Current.Select(null, createheader, out gridtb);
@@ -96,7 +96,7 @@ namespace Sci.Production.PublicForm
             #endregion
 
             #region QT 塞資料
-            string qtsql = string.Format("Select * from order_FabricCode_Qt a where a.id = '{0}'", cutid);
+            string qtsql = string.Format("Select * from order_FabricCode_Qt a WITH (NOLOCK) where a.id = '{0}'", cutid);
             DataTable qttb;
             sqlresult = DBProxy.Current.Select(null, qtsql, out qttb);
             DataTable qttb2 = qttb.Copy();
@@ -186,38 +186,38 @@ namespace Sci.Production.PublicForm
                             @"select distinct * from 
                             (
                                 Select d.id as mid, d.id,d.name
-                                from Color d, 
+                                from Color d WITH (NOLOCK) , 
                                         (
                                         select distinct a.colorid
-	                                        from Order_ColorCombo a 
+	                                        from Order_ColorCombo a WITH (NOLOCK) 
                                             where a.id='{0}'
                                         ) c 
 	                            where d.id = c.colorid and d.BrandId = 'ADIDAS' 
 	                            and d.ukey not in 
                                     (
                                         Select ColorUkey 
-                                        from Color_Multiple 
+                                        from Color_Multiple WITH (NOLOCK) 
                                         where brandid = '{1}'
                                     )
 	                            union all
                                 select mid,g.id,g.name
-                                from Color g,
+                                from Color g WITH (NOLOCK) ,
                                 (
 	                                Select mid,f.colorid,f.brandid 
-                                    from Color_Multiple f,
+                                    from Color_Multiple f WITH (NOLOCK) ,
 	                                (
                                         Select  d.id as mid,d.ukey 
-                                        from Color d, 
+                                        from Color d WITH (NOLOCK) , 
                                         (
                                             select distinct a.colorid 
-                                            from Order_ColorCombo a 
+                                            from Order_ColorCombo a WITH (NOLOCK) 
                                             where a.id='{0}' 
                                         ) c 
 	                                    where d.id = c.colorid and d.BrandId = '{1}' 
 	                                    and d.ukey in 
                                         (
                                             Select ColorUkey 
-                                            from Color_Multiple 
+                                            from Color_Multiple WITH (NOLOCK) 
                                             where brandid = '{1}'
                                         )
                                     ) e
@@ -239,12 +239,12 @@ namespace Sci.Production.PublicForm
         private void GetQTWith()
         {
             string sql = string.Format(@"with 
-	            fabericCode as (Select StyleUkey as myKey, Style_BOFUkey as parentKey, * From Style_FabricCode where StyleUkey = '{0}'),
-	            bof as (Select StyleUkey as myKey, * From Style_BOF where StyleUkey = '{0}'),
-	            boa as (Select StyleUkey as myKey, * From Style_BOA where StyleUkey = '{0}'),
-	            article as (Select StyleUkey as myKey, * From Style_Article where StyleUKey = '{0}'),
-	            colorCombo as (Select StyleUkey as myKey, * From Style_ColorCombo where StyleUkey = '{0}'),
-	            qt as (Select StyleUkey as myKey, * From Style_FabricCode_QT where StyleUkey = '{0}')
+	            fabericCode as (Select StyleUkey as myKey, Style_BOFUkey as parentKey, * From Style_FabricCode WITH (NOLOCK) where StyleUkey = '{0}'),
+	            bof as (Select StyleUkey as myKey, * From Style_BOF WITH (NOLOCK) where StyleUkey = '{0}'),
+	            boa as (Select StyleUkey as myKey, * From Style_BOA WITH (NOLOCK) where StyleUkey = '{0}'),
+	            article as (Select StyleUkey as myKey, * From Style_Article WITH (NOLOCK) where StyleUKey = '{0}'),
+	            colorCombo as (Select StyleUkey as myKey, * From Style_ColorCombo WITH (NOLOCK) where StyleUkey = '{0}'),
+	            qt as (Select StyleUkey as myKey, * From Style_FabricCode_QT WITH (NOLOCK) where StyleUkey = '{0}')
 
             Select f.myKey, f.StyleUkey, f.LectraCode, f.PatternPanel, f.FabricCode, IsNull(q.IsQt, '') as IsQT
             from bof b

@@ -33,7 +33,7 @@ namespace Sci.Production.PublicPrg
 	                                                if  DATEPART(WEEKDAY, dateadd(day, @count,@bascidate)) >1
 	                                                begin
 		                                                DECLARE _cursor CURSOR FOR
-		                                                select h.HolidayDate from Holiday h
+		                                                select h.HolidayDate from Holiday h WITH (NOLOCK) 
 		                                                where h.FactoryID='{2}'
 		                                                and h.HolidayDate = dateadd(day, @count,@bascidate);
 		                                                OPEN _cursor;
@@ -79,7 +79,7 @@ namespace Sci.Production.PublicPrg
                     ,a.FactoryID
                     ,iif(a.WorkDay=0,(a.WorkHour / 1 * a.StandardOutput),(a.WorkHour / a.WorkDay * a.StandardOutput)) stdq
                     ,a.ComboType
-	  FROM SewingSchedule A WHERE ORDERID='{0}'
+	  FROM SewingSchedule A WITH (NOLOCK) WHERE ORDERID='{0}'
       UNION ALL  
       SELECT DD,num + 1, DATEADD(DAY,1,INLINE) ,ORDERID,sewinglineid,FactoryID,stdq,ComboType
 	  FROM cte a where num < DD  AND ORDERID='{0}'
@@ -87,7 +87,7 @@ namespace Sci.Production.PublicPrg
 	select min(stdq) stdq
 	from (
 	 SELECT a.orderid,a.sewinglineid,a.ComboType,a.INLINE,sum(a.stdq) stdq, isnull(b.hours,0) workhours
-	 FROM cte a left join WorkHour b on convert(date,a.inline) = b.date and a.sewinglineid = b.SewingLineID and a.FactoryID=b.FactoryID 
+	 FROM cte a left join WorkHour b WITH (NOLOCK) on convert(date,a.inline) = b.date and a.sewinglineid = b.SewingLineID and a.FactoryID=b.FactoryID 
 	 group by a.orderid,a.sewinglineid,a.ComboType,a.INLINE,b.Hours
 	 having isnull(b.hours,0) > 0) tmp", orderid);
             DBProxy.Current.Select(null,sqlcmd,out dt);

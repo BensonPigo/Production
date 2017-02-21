@@ -30,19 +30,19 @@ namespace Sci.Production.PublicForm
             #region 撈取Pattern Ukey  找最晚Edit且Status 為Completed
             string patidsql = String.Format(
                             @"SELECT ukey
-                              FROM [Production].[dbo].[Pattern]
+                              FROM [Production].[dbo].[Pattern] WITH (NOLOCK) 
                               WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
                               AND EDITdATE = 
                               (
                                 SELECT MAX(EditDate) 
-                                from pattern 
+                                from pattern WITH (NOLOCK) 
                                 where styleukey = '{0}' and Status = 'Completed'
                               )
              ", Styleyukey);
             patternukey = MyUtility.GetValue.Lookup(patidsql);
             #endregion
             #region 找ArticleGroup 當Table Header
-            string headercodesql = string.Format("Select distinct ArticleGroup from Pattern_GL_LectraCode where PatternUkey = '{0}' and ArticleGroup !='F_CODE' order by ArticleGroup",patternukey);
+            string headercodesql = string.Format("Select distinct ArticleGroup from Pattern_GL_LectraCode WITH (NOLOCK) where PatternUkey = '{0}' and ArticleGroup !='F_CODE' order by ArticleGroup", patternukey);
             
             DualResult headerResult = DBProxy.Current.Select(null, headercodesql, out headertb);
             if (!headerResult)
@@ -57,7 +57,7 @@ namespace Sci.Production.PublicForm
             {
                 tablecreatesql = tablecreatesql + string.Format(" ,'' as {0}", dr["ArticleGroup"]);
             }
-            tablecreatesql = tablecreatesql + string.Format(@" from Pattern_GL a Where a.PatternUkey = '{0}'", patternukey);
+            tablecreatesql = tablecreatesql + string.Format(@" from Pattern_GL a WITH (NOLOCK) Where a.PatternUkey = '{0}'", patternukey);
             DataTable gridtb;
             DualResult tablecreateResult= DBProxy.Current.Select(null, tablecreatesql, out gridtb);
             if (!tablecreateResult)
@@ -68,7 +68,7 @@ namespace Sci.Production.PublicForm
             #endregion 
             #region 寫入FCode~CodeA~CodeZ
             string lecsql = "";
-            lecsql = string.Format("Select * from Pattern_GL_LectraCode a where a.PatternUkey = '{0}'", patternukey);
+            lecsql = string.Format("Select * from Pattern_GL_LectraCode a WITH (NOLOCK) where a.PatternUkey = '{0}'", patternukey);
             DataTable drtb;
             DualResult drre = DBProxy.Current.Select(null, lecsql, out drtb);
             if (!drre)

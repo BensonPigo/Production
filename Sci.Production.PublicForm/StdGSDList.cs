@@ -33,12 +33,12 @@ isnull(o.MtlFactorID,'') as MtlFactorID,isnull(o.SMV,0) as SMV,isnull(o.SeamLeng
 iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
 round(isnull(o.smv,0)*id.Frequency*(isnull(mf.Rate,0)/100+1),4) as newSMV,isnull(o.SeamLength,0)*id.Frequency as ttlSeamLength,
 round(isnull(o.smv,0)*id.Frequency*(isnull(mf.Rate,0)/100+1)*60,4) as gsdsec
-from Style s
-inner join IETMS i on s.IETMSID = i.ID and s.IETMSVersion = i.Version
-inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
-left join Operation o on id.OperationID = o.ID
-left join MachineType m on o.MachineTypeID = m.ID
-left join MtlFactor mf on mf.Type = 'F' and o.MtlFactorID = mf.ID
+from Style s WITH (NOLOCK) 
+inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
+inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
+left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
+left join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
+left join MtlFactor mf WITH (NOLOCK) on mf.Type = 'F' and o.MtlFactorID = mf.ID
 where s.Ukey = {0} order by id.SEQ", styleUkey);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData1);
             if (!result)
@@ -52,12 +52,12 @@ where s.Ukey = {0} order by id.SEQ", styleUkey);
             sqlCmd = string.Format(@"select id.Location,m.ArtworkTypeID,
 iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
 round(sum(isnull(o.smv,0)*id.Frequency*(isnull(mf.Rate,0)/100+1)*60),0) as tms
-from Style s
-inner join IETMS i on s.IETMSID = i.ID and s.IETMSVersion = i.Version
-inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
-inner join Operation o on id.OperationID = o.ID
-inner join MachineType m on o.MachineTypeID = m.ID
-left join MtlFactor mf on mf.Type = 'F' and o.MtlFactorID = mf.ID
+from Style s WITH (NOLOCK) 
+inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
+inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
+inner join Operation o WITH (NOLOCK) on id.OperationID = o.ID
+inner join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
+left join MtlFactor mf WITH (NOLOCK) on mf.Type = 'F' and o.MtlFactorID = mf.ID
 where s.Ukey = {0}
 group by id.Location,m.ArtworkTypeID", styleUkey);
             result = DBProxy.Current.Select(null, sqlCmd, out gridData2);
@@ -73,12 +73,12 @@ group by id.Location,m.ArtworkTypeID", styleUkey);
 isnull(m.RPM,0) as RPM,isnull(m.Stitches,0.0) as Stitches,
 iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
 round(sum(isnull(o.smv,0)*id.Frequency*(isnull(mf.Rate,0)/100+1)*60),0) as tms
-from Style s
-inner join IETMS i on s.IETMSID = i.ID and s.IETMSVersion = i.Version
-inner join IETMS_Detail id on i.Ukey = id.IETMSUkey
-inner join Operation o on id.OperationID = o.ID
-left join MachineType m on o.MachineTypeID = m.ID
-left join MtlFactor mf on mf.Type = 'F' and o.MtlFactorID = mf.ID
+from Style s WITH (NOLOCK) 
+inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
+inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
+inner join Operation o WITH (NOLOCK) on id.OperationID = o.ID
+left join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
+left join MtlFactor mf WITH (NOLOCK) on mf.Type = 'F' and o.MtlFactorID = mf.ID
 where s.Ukey = {0}
 group by id.Location,o.MachineTypeID,isnull(m.Description,''),isnull(m.DescCH,''),isnull(m.RPM,0),isnull(m.Stitches,0.0)
 ORDER BY id.Location,o.MachineTypeID", styleUkey);
@@ -148,13 +148,13 @@ ORDER BY id.Location,o.MachineTypeID", styleUkey);
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"select s.ID,s.SeasonID,i.ActFinDate,s.IETMSID,s.IETMSVersion,
  round(sum(isnull(o.SMV,0)*isnull(id.Frequency,0)*(isnull(m.Rate,0)/100+1)*60),4) as ttlTMS
- from Style s
- left join IETMS i on s.IETMSID = i.ID and s.IETMSVersion = i.Version
- left join IETMS_Detail id on i.Ukey = id.IETMSUkey
- left join Operation o on id.OperationID = o.ID
- left join MtlFactor m on m.Type = 'F' and o.MtlFactorID = m.ID
- left join MachineType mt on o.MachineTypeID = mt.ID
- left join ArtworkType a on mt.ArtworkTypeID = a.ID and a.IsTMS = 1
+ from Style s WITH (NOLOCK) 
+ left join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
+ left join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
+ left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
+ left join MtlFactor m WITH (NOLOCK) on m.Type = 'F' and o.MtlFactorID = m.ID
+ left join MachineType mt WITH (NOLOCK) on o.MachineTypeID = mt.ID
+ left join ArtworkType a WITH (NOLOCK) on mt.ArtworkTypeID = a.ID and a.IsTMS = 1
  where s.Ukey = {0}", styleUkey.ToString()));
             if (comboBox1.SelectedIndex != -1 && comboBox1.SelectedValue.ToString() != "A")
             {

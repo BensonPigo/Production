@@ -29,8 +29,8 @@ namespace Sci.Production.PublicForm
         {
             string sqlcmd = String.Format(
             @"Select a.*
-            from Pattern_GL_Article a
-            Where a.PatternUkey = '{0}'",cutid);
+            from Pattern_GL_Article a WITH (NOLOCK) 
+            Where a.PatternUkey = '{0}'", cutid);
             DataTable gridtb;
             DualResult sqldr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
             if(!sqldr)

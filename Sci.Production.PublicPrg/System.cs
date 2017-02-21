@@ -22,7 +22,7 @@ namespace Sci.Production.PublicPrg
 
         static Prgs()
         {
-            DBProxy.Current.Select(null, "SELECT ID, Name, ExtNo FROM Pass1", out dtPass1);
+            DBProxy.Current.Select(null, "SELECT ID, Name, ExtNo FROM Pass1 WITH (NOLOCK) ", out dtPass1);
             if (dtPass1 != null) { dtPass1.PrimaryKey = new DataColumn[] { dtPass1.Columns["ID"] }; }
         }
 
@@ -42,10 +42,10 @@ namespace Sci.Production.PublicPrg
             {
                 string sqlCmd = string.Format(@"with handlepass1
 as
-(select ID,Supervisor,Deputy from Pass1 where ID = '{0}'),
+(select ID,Supervisor,Deputy from Pass1 WITH (NOLOCK) where ID = '{0}'),
 superpass1
 as
-(select Pass1.ID,Pass1.Supervisor,Pass1.Deputy from Pass1,handlepass1 where Pass1.ID = handlepass1.Supervisor),
+(select Pass1.ID,Pass1.Supervisor,Pass1.Deputy from Pass1 WITH (NOLOCK) ,handlepass1 where Pass1.ID = handlepass1.Supervisor),
 allpass1
 as
 (select * from handlepass1
@@ -75,11 +75,11 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             {
                 //Sci.Env.User.PositionID
                 string PositionID = "1";
-                string sql = string.Format("select FKPass0 from Pass1 where ID='{0}'",Sci.Env.User.UserID);
+                string sql = string.Format("select FKPass0 from Pass1 WITH (NOLOCK) where ID='{0}'", Sci.Env.User.UserID);
                 PositionID = MyUtility.GetValue.Lookup(sql);
 
                 DataTable dt;
-                DualResult result = DBProxy.Current.Select(null, string.Format("select {0} as Result from Pass2 where FKPass0 = {1} and UPPER(BarPrompt) = N'{2}'", pass2colname, PositionID, formcaption.ToUpper()), out dt);
+                DualResult result = DBProxy.Current.Select(null, string.Format("select {0} as Result from Pass2 WITH (NOLOCK) where FKPass0 = {1} and UPPER(BarPrompt) = N'{2}'", pass2colname, PositionID, formcaption.ToUpper()), out dt);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString());
@@ -93,10 +93,10 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
 
                 string sqlCmd = string.Format(@"with handlepass1
 as
-(select ID,Supervisor,Deputy from Pass1 where ID = '{0}'),
+(select ID,Supervisor,Deputy from Pass1 WITH (NOLOCK) where ID = '{0}'),
 superpass1
 as
-(select Pass1.ID,Pass1.Supervisor,Pass1.Deputy from Pass1,handlepass1 where Pass1.ID = handlepass1.Supervisor),
+(select Pass1.ID,Pass1.Supervisor,Pass1.Deputy from Pass1 WITH (NOLOCK) ,handlepass1 where Pass1.ID = handlepass1.Supervisor),
 allpass1
 as
 (select * from handlepass1
@@ -185,12 +185,12 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             OutTb = null;
             string patidsql = String.Format(
                             @"SELECT ukey
-                              FROM [Production].[dbo].[Pattern]
+                              FROM [Production].[dbo].[Pattern] WITH (NOLOCK) 
                               WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
                               AND EDITdATE = 
                               (
                                 SELECT MAX(EditDate) 
-                                from pattern 
+                                from pattern WITH (NOLOCK) 
                                 where styleukey = '{0}' and Status = 'Completed'
                               )
              ", Styleyukey);
@@ -198,7 +198,7 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             #endregion
             DataTable headertb;
             #region 找ArticleGroup 當Table Header
-            string headercodesql = string.Format("Select distinct ArticleGroup from Pattern_GL_LectraCode where PatternUkey = '{0}' and ArticleGroup !='F_CODE' order by ArticleGroup", patternukey);
+            string headercodesql = string.Format("Select distinct ArticleGroup from Pattern_GL_LectraCode WITH (NOLOCK) where PatternUkey = '{0}' and ArticleGroup !='F_CODE' order by ArticleGroup", patternukey);
 
             DualResult headerResult = DBProxy.Current.Select(null, headercodesql, out headertb);
             if (!headerResult)
@@ -212,7 +212,7 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             {
                 tablecreatesql = tablecreatesql + string.Format(" ,'' as {0}", dr["ArticleGroup"]);
             }
-            tablecreatesql = tablecreatesql + string.Format(" from Pattern_GL a Where PatternUkey = '{0}'", patternukey);
+            tablecreatesql = tablecreatesql + string.Format(" from Pattern_GL a WITH (NOLOCK) Where PatternUkey = '{0}'", patternukey);
             DualResult tablecreateResult = DBProxy.Current.Select(null, tablecreatesql, out garmentListTb);
             if (!tablecreateResult)
             {
@@ -221,7 +221,7 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             #endregion
             #region 寫入FCode~CodeA~CodeZ
             string lecsql = "";
-            lecsql = string.Format("Select * from Pattern_GL_LectraCode a where a.PatternUkey = '{0}'", patternukey);
+            lecsql = string.Format("Select * from Pattern_GL_LectraCode a WITH (NOLOCK) where a.PatternUkey = '{0}'", patternukey);
             DataTable drtb;
             DualResult drre = DBProxy.Current.Select(null, lecsql, out drtb);
             if (!drre)

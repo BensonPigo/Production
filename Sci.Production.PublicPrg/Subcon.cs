@@ -24,7 +24,7 @@ namespace Sci.Production.PublicPrg
         public static string GetItemDesc(string category, string refno)
         {
             string desc = MyUtility.GetValue.Lookup(string.Format(@"
-                    select description from localitem where refno = '{0}' and category = '{1}'",refno,category));
+                    select description from localitem WITH (NOLOCK) where refno = '{0}' and category = '{1}'", refno, category));
             string[] descs = desc.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             if (descs.Length == 0)
                 return "";

@@ -186,8 +186,8 @@ OUTER APPLY(
 			and f.seq2 = t.Seq2 and f.stocktype = t.StockType and f.location !=''
 --			union
 --			select mdivisionid,poid,seq1,seq2,stocktype,[location] = fd.mtllocationid
---			from ftyinventory f 
---			inner join ftyinventory_detail fd on f.ukey = fd.ukey 
+--			from ftyinventory f WITH (NOLOCK) 
+--			inner join ftyinventory_detail fd WITH (NOLOCK) on f.ukey = fd.ukey 
 --			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
 --			and f.seq2 = t.Seq2 and f.stocktype = t.StockType
 		)u
@@ -268,7 +268,7 @@ alter table #TmpSource alter column seq2 varchar(3)
 
 update t
 set t.inqty = isnull(t.inqty,0.00) + s.qty
-from mdivisionpodetail t
+from mdivisionpodetail t WITH (NOLOCK) 
 inner join #TmpSource s
 on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
                     }
@@ -776,9 +776,9 @@ when not matched then
 select location,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
-left join ftyinventory f on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
+left join ftyinventory f WITH (NOLOCK) on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
 						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype
-merge dbo.ftyinventory_detail as t
+merge dbo.ftyinventory_detail as t WITH (NOLOCK) 
 using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.location,'')
 when not matched then
     insert ([ukey],[mtllocationid]) 
@@ -991,7 +991,7 @@ when not matched then
 select location,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
-left join ftyinventory f on mdivisionid = s.mdivisionid and poid = s.poid 
+left join ftyinventory f WITH (NOLOCK) on mdivisionid = s.mdivisionid and poid = s.poid 
                          and seq1 = s.seq1 and seq2 = s.seq2 and roll = s.roll and f.stocktype = s.stocktype
 merge dbo.ftyinventory_detail as t
 using #tmp_L_K as s on t.ukey = s.ukey and t.mtllocationid = s.location
@@ -1109,7 +1109,7 @@ alter table #TmpSource alter column roll varchar(15)
 select tolocation,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
-left join ftyinventory f on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
+left join ftyinventory f WITH (NOLOCK) on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
                                            and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype
 
 delete t from FtyInventory_Detail t
@@ -1153,11 +1153,11 @@ drop table #TmpSource
                                                     ,p.seq2
                                                     ,p.scirefno
                                                     ,p.qty
-                                                    from dbo.PO_Supp_Detail p
-                                                    left join dbo.mdivisionpodetail m  on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2 and m.mdivisionid = '{1}'
-                                                    inner join [dbo].[Fabric] ff on p.SCIRefno= ff.SCIRefno
-                                                    inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
-                                                    inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
+                                                    from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+                                                    left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2 and m.mdivisionid = '{1}'
+                                                    inner join [dbo].[Fabric] ff WITH (NOLOCK) on p.SCIRefno= ff.SCIRefno
+                                                    inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
+                                                    inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
                                                     inner join View_unitrate v on v.FROM_U = p.POUnit 
 	                                                    and v.TO_U = (
 	                                                    iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
@@ -1213,7 +1213,7 @@ drop table #TmpSource
                                                                 when 'o' then 
                                                                     'Obsolete' 
                                                             End
-                                            FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", stocktype, Sci.Env.User.Keyword);
+                                            FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", stocktype, Sci.Env.User.Keyword);
 
             Sci.Win.Tools.SelectItem2 selectlocation = new Win.Tools.SelectItem2(sqlcmd,
                             "Location ID,Description,Stock Type", "13,60,10", defaultseq);
@@ -1231,14 +1231,14 @@ drop table #TmpSource
             if (null == conn)
             {
                 MyUtility.Check.Seek(string.Format(@"select cast(tmp.MtlLocationID as nvarchar) +','
-from (select f.MtlLocationID from dbo.FtyInventory_Detail f where f.Ukey = {0}) tmp
+from (select f.MtlLocationID from dbo.FtyInventory_Detail f WITH (NOLOCK) where f.Ukey = {0}) tmp
 for xml path('') ", ukey), out dr);
                 if (MyUtility.Check.Empty(dr)) return "";
             }
             else
             {
                 DBProxy.Current.SelectByConn(conn, string.Format(@"select cast(tmp.MtlLocationID as nvarchar) +','
-from (select f.MtlLocationID from dbo.FtyInventory_Detail f where f.Ukey = {0}) tmp
+from (select f.MtlLocationID from dbo.FtyInventory_Detail f WITH (NOLOCK) where f.Ukey = {0}) tmp
 for xml path('') ", ukey), out dt);
                 if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return "";
                 dr = dt.Rows[0];
@@ -1275,14 +1275,14 @@ for xml path('') ", ukey), out dt);
             if (isIssue)
             {
                 sqlcmd = string.Format(@"
-select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail where ukey = a.Ukey)t for xml path('')) location
+select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')) location
 ,a.Ukey as FtyInventoryUkey,MDivisionID,POID,a.seq1,a.Seq2,roll,stocktype,Dyelot,inqty-OutQty+AdjustQty qty
 ,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
 ,sum(inqty-OutQty+AdjustQty) 
-over (order by a.Dyelot,(select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail where ukey = a.Ukey)t for xml path(''))
+over (order by a.Dyelot,(select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path(''))
 ,a.Seq1,a.seq2,inqty-OutQty+AdjustQty desc
 rows between unbounded preceding and current row) as running_total
-from dbo.FtyInventory a inner join dbo.PO_Supp_Detail p on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
+from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
 where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
 and MDivisionID = '{0}' and p.SCIRefno = '{2}' and p.ColorID = '{3}' and a.Seq1 BETWEEN '00' AND '99'
 order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["poid"], materials["scirefno"], materials["colorid"], stocktype);
@@ -1290,14 +1290,14 @@ order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["p
             else if (isIssue==false && stocktype == "B")//P28 Auto Pick
             {
                 sqlcmd = string.Format(@"
-select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail where ukey = a.Ukey)t for xml path('')) location
+select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')) location
 ,a.Ukey as FtyInventoryUkey,MDivisionID,POID,a.seq1,a.Seq2,roll,stocktype,Dyelot,inqty-OutQty+AdjustQty qty
 ,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
 ,sum(inqty-OutQty+AdjustQty) 
-over (order by a.Dyelot,(select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail where ukey = a.Ukey)t for xml path(''))
+over (order by a.Dyelot,(select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path(''))
 ,a.Seq1,a.seq2,inqty-OutQty+AdjustQty desc
 rows between unbounded preceding and current row) as running_total
-from dbo.FtyInventory a inner join dbo.PO_Supp_Detail p on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
+from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
 where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
 and MDivisionID = '{0}' and p.seq1 = '{2}' and p.seq2 = '{3}'
 order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["poid"], materials["seq1"], materials["seq2"], stocktype);
@@ -1305,14 +1305,14 @@ order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["p
             else//P29 Auto Pick
             {
                 sqlcmd = string.Format(@"
-select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail where ukey = a.Ukey)t for xml path('')) location
+select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')) location
 ,a.Ukey as FtyInventoryUkey,MDivisionID,POID,a.seq1,a.Seq2,roll,stocktype,Dyelot,inqty-OutQty+AdjustQty qty
 ,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
 ,sum(inqty-OutQty+AdjustQty) 
-over (order by a.Dyelot,(select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail where ukey = a.Ukey)t for xml path(''))
+over (order by a.Dyelot,(select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path(''))
 ,a.Seq1,a.seq2,inqty-OutQty+AdjustQty desc
 rows between unbounded preceding and current row) as running_total
-from dbo.FtyInventory a inner join dbo.PO_Supp_Detail p on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
+from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
 where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
 and MDivisionID = '{0}' and p.seq1 = '{2}' and p.seq2 = '{3}'
 order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["StockPOID"], materials["StockSeq1"], materials["StockSeq2"], stocktype);

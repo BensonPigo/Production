@@ -49,13 +49,13 @@ BEGIN TRANSACTION
 --Insert & Update資料
 DECLARE cursor_PackingListGroup CURSOR FOR
 	SELECT OrderID AS ID, RefNo, MAX(QtyPerCTN) AS QtyPerCTN, SUM(ShipQty) AS GMTQty, SUM(CTNQty) AS CTNQty 
-	FROM PackingList_Detail 
-	WHERE OrderID in (SELECT Distinct OrderID FROM PackingList_Detail WHERE ID = @packinglistid) GROUP BY OrderID, RefNo
+	FROM PackingList_Detail WITH (NOLOCK) 
+	WHERE OrderID in (SELECT Distinct OrderID FROM PackingList_Detail WITH (NOLOCK) WHERE ID = @packinglistid) GROUP BY OrderID, RefNo
 OPEN cursor_PackingListGroup
 FETCH NEXT FROM cursor_PackingListGroup INTO @orderid,@refno,@qtyperctn,@gmtqty,@ctnqty
 WHILE @@FETCH_STATUS = 0
 BEGIN
-	SELECT @reccount = COUNT(ID) FROM Order_CTNData WHERE ID = @orderid AND RefNo = @refno
+	SELECT @reccount = COUNT(ID) FROM Order_CTNData WITH (NOLOCK) WHERE ID = @orderid AND RefNo = @refno
 	IF @reccount = 0
 		BEGIN
 			INSERT INTO Order_CTNData(ID,RefNo,QtyPerCTN,GMTQty,CTNQty,AddName,AddDate)
@@ -92,7 +92,7 @@ BEGIN
 	DELETE FROM Order_CTNData 
 	WHERE ID = @orderid AND RefNo in (SELECT RefNo 
 									  FROM (SELECT distinct ocd.RefNo as RefNo, tad.RefNo as nRefNo 
-											FROM Order_CTNData ocd 
+											FROM Order_CTNData ocd WITH (NOLOCK) 
 											LEFT JOIN @tempAllData tad ON tad.ID = ocd.ID AND tad.RefNo = ocd.RefNo
 											WHERE ocd.ID = @orderid) a
 									  WHERE a.nRefNo IS NULL)
@@ -132,7 +132,7 @@ ELSE
             string sqlCmd = string.Format(@"with PulloutQty
 as
 (select isnull(sum(pdd.ShipQty),0) as ShipQty
- from Pullout p, Pullout_Detail pd, Pullout_Detail_Detail pdd
+ from Pullout p WITH (NOLOCK) , Pullout_Detail pd WITH (NOLOCK) , Pullout_Detail_Detail pdd WITH (NOLOCK) 
  where p.Status != 'New'
  and p.id = pd.ID
  and pd.OrderID = '{0}'
@@ -145,7 +145,7 @@ as
 InvadjQty
 as
 (select isnull(sum(iaq.DiffQty),0) as DiffQty
- from InvAdjust ia, InvAdjust_Qty iaq
+ from InvAdjust ia WITH (NOLOCK) , InvAdjust_Qty iaq WITH (NOLOCK) 
  where ia.OrderID = '{0}'
  and ia.OrderShipmodeSeq = '{1}'
  and ia.ID = iaq.ID
@@ -154,7 +154,7 @@ as
 )
 
 select isnull(oqd.Qty,0) as OrderQty,(select ShipQty from PulloutQty)+(select DiffQty from InvadjQty) as ShipQty
-from Order_QtyShip_Detail oqd
+from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 where oqd.Id = '{0}'
 and oqd.Seq = '{1}'
 and oqd.Article = '{2}'
@@ -197,7 +197,7 @@ and oqd.SizeCode = '{3}'", orderID, orderShipmodeSeq, article, sizeCode);
             DataRow[] weight;
             string message = "";
             DualResult result;
-            if (!(result = DBProxy.Current.Select(null, "select '' as BrandID, '' as StyleID, '' as SeasonID, Article, SizeCode, NW, NNW from Style_WeightData where StyleUkey = ''", out weightData)))
+            if (!(result = DBProxy.Current.Select(null, "select '' as BrandID, '' as StyleID, '' as SeasonID, Article, SizeCode, NW, NNW from Style_WeightData WITH (NOLOCK) where StyleUkey = ''", out weightData)))
             {
                 MyUtility.Msg.WarningBox("Query 'weightData' schema fail!");
                 return;
@@ -212,8 +212,8 @@ and oqd.SizeCode = '{3}'", orderID, orderShipmodeSeq, article, sizeCode);
                 {
                     //先將屬於此訂單的Style_WeightData給撈出來
                     string sqlCmd = string.Format(@"select a.ID as StyleID,a.BrandID,a.SeasonID,isnull(b.Article,'') as Article,isnull(b.SizeCode,'') as SizeCode,isnull(b.NW,0) as NW,isnull(b.NNW,0) as NNW
-from Style a
-left join Style_WeightData b on b.StyleUkey = a.Ukey
+from Style a WITH (NOLOCK) 
+left join Style_WeightData b WITH (NOLOCK) on b.StyleUkey = a.Ukey
 where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].ToString(), PackingListData["BrandID"].ToString(), dr["SeasonID"].ToString());
                     if (!(result = DBProxy.Current.Select(null, sqlCmd, out tmpWeightData)))
                     {
@@ -254,7 +254,7 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
             double nw = 0, nnw = 0, ctnWeight = 0;
             string localItemWeight;
             DataTable tmpPacklistWeight;
-            result = DBProxy.Current.Select(null, "select CTNStartNo, NW, NNW, GW from PackingList_Detail where 1=0", out tmpPacklistWeight);
+            result = DBProxy.Current.Select(null, "select CTNStartNo, NW, NNW, GW from PackingList_Detail WITH (NOLOCK) where 1=0", out tmpPacklistWeight);
             DataRow tmpPacklistRow;
             string ctnNo = PackingListDetaildata.Rows[0]["CTNStartNo"].ToString();
 
@@ -344,7 +344,7 @@ where a.ID = '{0}' and a.BrandID = '{1}' and a.SeasonID = '{2}'", dr["StyleID"].
         public static bool CheckPulloutQtyWithOrderQty(string packingListID)
         {
             string sqlCmd = string.Format(@"select OrderID,OrderShipmodeSeq,Article,SizeCode,sum(ShipQty) as ShipQty 
-from PackingList_Detail
+from PackingList_Detail WITH (NOLOCK) 
 where ID = '{0}'
 group by OrderID,OrderShipmodeSeq,Article,SizeCode", packingListID);
             DataTable queryData;
@@ -385,14 +385,14 @@ group by OrderID,OrderShipmodeSeq,Article,SizeCode", packingListID);
             string sqlCmd = string.Format(@"with PackOrderID
 as
 (select distinct pld.OrderID
- from PackingList pl, PackingList_Detail pld
+ from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) 
  where pl.ID = '{0}'
  and pld.ID = pl.ID
 ),
 PackedData
 as
 (select pld.OrderID,pld.Article,pld.SizeCode,sum(pld.ShipQty) as PackedShipQty
- from PackingList pl, PackingList_Detail pld, PackOrderID poid
+ from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) , PackOrderID poid 
  where pld.OrderID = poid.OrderID
  and pl.ID = pld.ID
  and pl.Status = 'Confirmed'
@@ -401,14 +401,14 @@ as
 PackingData
 as
 (select pld.OrderID,pld.Article,pld.SizeCode,sum(pld.ShipQty) as ShipQty
- from PackingList_Detail pld
+ from PackingList_Detail pld WITH (NOLOCK) 
  where pld.ID = '{0}'
  group by pld.OrderID,pld.Article,pld.SizeCode
 ),
 InvadjQty
 as
 (select ia.OrderID,iaq.Article, iaq.SizeCode,sum(iaq.DiffQty) as DiffQty
- from InvAdjust ia, InvAdjust_Qty iaq, PackOrderID poid
+ from InvAdjust ia WITH (NOLOCK) , InvAdjust_Qty iaq WITH (NOLOCK) , PackOrderID poid
  where ia.OrderID = poid.OrderID
  and ia.ID = iaq.ID
  group by ia.OrderID,iaq.Article, iaq.SizeCode
@@ -418,16 +418,16 @@ as
 (select a.OrderID,a.Article,a.SizeCode,MIN(a.QAQty) as QAQty
  from (select poid.OrderID,oq.Article,oq.SizeCode, sl.Location, isnull(sum(sodd.QAQty),0) as QAQty
 	   from PackOrderID poid
-	   left join Orders o on o.ID = poid.OrderID
-	   left join Order_Qty oq on oq.ID = o.ID
-	   left join Style_Location sl on sl.StyleUkey = o.StyleUkey
-	   left join SewingOutput_Detail_Detail sodd on sodd.OrderId = o.ID and sodd.Article = oq.Article  and sodd.SizeCode = oq.SizeCode and sodd.ComboType = sl.Location
+	   left join Orders o WITH (NOLOCK) on o.ID = poid.OrderID
+	   left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
+	   left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey
+	   left join SewingOutput_Detail_Detail sodd WITH (NOLOCK) on sodd.OrderId = o.ID and sodd.Article = oq.Article  and sodd.SizeCode = oq.SizeCode and sodd.ComboType = sl.Location
 	   group by poid.OrderID,oq.Article,oq.SizeCode, sl.Location) a
  group by a.OrderID,a.Article,a.SizeCode
 )
 select poid.OrderID,isnull(oq.Article,'') as Article,isnull(oq.SizeCode,'') as SizeCode, isnull(oq.Qty,0) as Qty, isnull(pedd.PackedShipQty,0)+isnull(pingd.ShipQty,0) as PackQty,isnull(iq.DiffQty,0) as DiffQty, isnull(sd.QAQty,0) as QAQty
 from PackOrderID poid
-left join Order_Qty oq on oq.ID = poid.OrderID
+left join Order_Qty oq WITH (NOLOCK) on oq.ID = poid.OrderID
 left join PackedData pedd on pedd.Article = oq.Article and pedd.SizeCode = oq.SizeCode
 left join PackingData pingd on pingd.Article = oq.Article and pingd.SizeCode = oq.SizeCode
 left join InvadjQty iq on iq.Article = oq.Article and iq.SizeCode = oq.SizeCode
@@ -474,13 +474,13 @@ order by poid.OrderID,oq.Article,oq.SizeCode", packingListID);
             return string.Format(@"with AllOrderID
 as
 (select Distinct OrderID,OrderShipmodeSeq
- from PackingList_Detail
+ from PackingList_Detail WITH (NOLOCK) 
  where ID = '{0}'
 ),
 AccuPKQty
 as
 (select pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode,sum(pd.ShipQty) as TtlShipQty
- from PackingList_Detail pd, AllOrderID a
+ from PackingList_Detail pd WITH (NOLOCK) , AllOrderID a
  where ID != '{0}'
  and a.OrderID = pd.OrderID
  and a.OrderShipmodeSeq = pd.OrderShipmodeSeq
@@ -489,7 +489,7 @@ as
 PulloutAdjQty
 as
 (select ia.OrderID,ia.OrderShipmodeSeq,iaq.Article,iaq.SizeCode,sum(iaq.DiffQty) as TtlDiffQty
- from InvAdjust ia, InvAdjust_Qty iaq, AllOrderID a
+ from InvAdjust ia WITH (NOLOCK) , InvAdjust_Qty iaq WITH (NOLOCK) , AllOrderID a
  where ia.OrderID = a.OrderID
  and ia.OrderShipmodeSeq = a.OrderShipmodeSeq
  and ia.ID = iaq.ID
@@ -498,18 +498,18 @@ as
 PackQty
 as
 (select OrderID,OrderShipmodeSeq,Article,SizeCode,sum(ShipQty) as ShipQty
- from PackingList_Detail
+ from PackingList_Detail WITH (NOLOCK) 
  where ID = '{0}'
  group by OrderID,OrderShipmodeSeq,Article,SizeCode
 )
 select a.*, b.Description, oqd.Qty-isnull(pd.TtlShipQty,0)+isnull(paq.TtlDiffQty,0)-pk.ShipQty as BalanceQty,o.StyleID,o.CustPONo,o.SeasonID
-from PackingList_Detail a
-left join LocalItem b on b.RefNo = a.RefNo
+from PackingList_Detail a WITH (NOLOCK) 
+left join LocalItem b WITH (NOLOCK) on b.RefNo = a.RefNo
 left join AccuPKQty pd on a.OrderID = pd.OrderID and a.OrderShipmodeSeq = pd.OrderShipmodeSeq and pd.Article = a.Article and pd.SizeCode = a.SizeCode
 left join PulloutAdjQty paq on a.OrderID = paq.OrderID and a.OrderShipmodeSeq = paq.OrderShipmodeSeq and paq.Article = a.Article and paq.SizeCode = a.SizeCode
 left join PackQty pk on a.OrderID = pk.OrderID and a.OrderShipmodeSeq = pk.OrderShipmodeSeq and pk.Article = a.Article and pk.SizeCode = a.SizeCode
-left join Order_QtyShip_Detail oqd on oqd.Id = a.OrderID and oqd.Seq = a.OrderShipmodeSeq and oqd.Article = a.Article and oqd.SizeCode = a.SizeCode
-left join Orders o on o.ID = a.OrderID
+left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = a.OrderID and oqd.Seq = a.OrderShipmodeSeq and oqd.Article = a.Article and oqd.SizeCode = a.SizeCode
+left join Orders o WITH (NOLOCK) on o.ID = a.OrderID
 where a.id = '{0}'
 order by a.Seq", packingListID);
         }
@@ -536,20 +536,20 @@ order by a.Seq", packingListID);
 as
 (
 select OrderID,OrderShipmodeSeq,Article,Color,SizeCode,QtyPerCTN,NW,GW,NNW,NWPerPcs,min(Seq) as MinSeq, max(Seq) as MaxSeq 
-from PackingList_Detail 
+from PackingList_Detail WITH (NOLOCK) 
 where ID = '{0}'
 group by OrderID,OrderShipmodeSeq,Article,Color,SizeCode,QtyPerCTN,NW,GW,NNW,NWPerPcs
 )
 select t.*,o.StyleID,o.Customize1,o.CustPONo,c.Alias,oq.EstPulloutDate,os.SizeSpec,isnull(o.MarkFront,'') as MarkFront,
 isnull(o.MarkBack,'') as MarkBack,isnull(o.MarkLeft,'') as MarkLeft,isnull(o.MarkRight,'') as MarkRight,
-(select sum(CTNQty) from PackingList_Detail where Id = '{0}' and ReceiveDate is not null) as InClogQty,
-(select CTNStartNo from PackingList_Detail where ID = '{0}' and Seq = t.MinSeq) as CTNStartNo,
-(select CTNStartNo from PackingList_Detail where ID = '{0}' and Seq = t.MaxSeq) as CTNEndNo
+(select sum(CTNQty) from PackingList_Detail WITH (NOLOCK) where Id = '{0}' and ReceiveDate is not null) as InClogQty,
+(select CTNStartNo from PackingList_Detail WITH (NOLOCK) where ID = '{0}' and Seq = t.MinSeq) as CTNStartNo,
+(select CTNStartNo from PackingList_Detail WITH (NOLOCK) where ID = '{0}' and Seq = t.MaxSeq) as CTNEndNo
 from tmpGroup t
-left join Orders o on o.ID = t.OrderID
-left join Order_QtyShip oq on oq.Id = t.OrderID and oq.Seq = t.OrderShipmodeSeq
-left join Country c on c.ID = o.Dest
-left join Order_SizeSpec os on os.Id = o.POID and SizeItem = 'S01' and os.SizeCode = t.SizeCode
+left join Orders o WITH (NOLOCK) on o.ID = t.OrderID
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = t.OrderID and oq.Seq = t.OrderShipmodeSeq
+left join Country c WITH (NOLOCK) on c.ID = o.Dest
+left join Order_SizeSpec os WITH (NOLOCK) on os.Id = o.POID and SizeItem = 'S01' and os.SizeCode = t.SizeCode
 order by MinSeq", PackingListID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
             if (!result)
@@ -575,7 +575,7 @@ DECLARE @tempPackingListDetail TABLE (
 
 --撈出PackingList_Detail
 DECLARE cursor_PackingListDetail CURSOR FOR
-	SELECT RefNo,CTNStartNo FROM PackingList_Detail WHERE ID = @packinglistid and CTNQty > 0 ORDER BY Seq
+	SELECT RefNo,CTNStartNo FROM PackingList_Detail WITH (NOLOCK) WHERE ID = @packinglistid and CTNQty > 0 ORDER BY Seq
 
 --開始run cursor
 OPEN cursor_PackingListDetail
@@ -632,7 +632,7 @@ DEALLOCATE cursor_PackingListDetail
 
 select distinct t.RefNo,l.Description, STR(l.CtnLength,8,4)+'\'+STR(l.CtnWidth,8,4)+'\'+STR(l.CtnHeight,8,4) as Dimension, l.CtnUnit, 
 (select CTNNo+',' from @tempPackingListDetail where RefNo = t.RefNo for xml path(''))as Ctn,
-l.CBM*(select sum(CTNQty) from PackingList_Detail where ID = @packinglistid and Refno = t.RefNo) as TtlCBM
+l.CBM*(select sum(CTNQty) from PackingList_Detail WITH (NOLOCK) where ID = @packinglistid and Refno = t.RefNo) as TtlCBM
 from @tempPackingListDetail t
 left join LocalItem l on l.RefNo = t.RefNo
 order by RefNo", PackingListID);
@@ -660,23 +660,23 @@ order by RefNo", PackingListID);
 SET @packinglistid = '{0}'
 SET @reporttype = {1} --1:for Adidas/UA/Saucony/NB, 2:for LLL/TNF
 
-select distinct @orderid = OrderID from PackingList_Detail where ID = @packinglistid
-select @sizecount = count(distinct SizeCode) from PackingList_Detail where ID = @packinglistid
-select @poid = POID from Orders where ID = @orderid
+select distinct @orderid = OrderID from PackingList_Detail WITH (NOLOCK) where ID = @packinglistid
+select @sizecount = count(distinct SizeCode) from PackingList_Detail WITH (NOLOCK) where ID = @packinglistid
+select @poid = POID from Orders WITH (NOLOCK) where ID = @orderid
 
 --撈出此次出貨的Size Code
 DECLARE cursor_SizeData CURSOR FOR
 	SELECT distinct rtrim(pd.SizeCode),os.Seq 
-	FROM PackingList_Detail pd
-	LEFT JOIN Order_SizeCode os on os.Id = @poid and os.SizeCode = pd.SizeCode
+	FROM PackingList_Detail pd WITH (NOLOCK) 
+	LEFT JOIN Order_SizeCode os WITH (NOLOCK) on os.Id = @poid and os.SizeCode = pd.SizeCode
 	WHERE pd.ID = @packinglistid
 	order by os.Seq
 
 --撈出此次出貨的Article
 DECLARE cursor_ArticleData CURSOR FOR
 	SELECT distinct rtrim(pd.Article),oa.Seq 
-	FROM PackingList_Detail pd
-	LEFT JOIN Order_Article oa on oa.id = pd.OrderID and oa.Article = pd.Article
+	FROM PackingList_Detail pd WITH (NOLOCK) 
+	LEFT JOIN Order_Article oa WITH (NOLOCK) on oa.id = pd.OrderID and oa.Article = pd.Article
 	WHERE pd.ID = @packinglistid
 	order by oa.Seq
 
@@ -730,7 +730,7 @@ BEGIN
 	FETCH NEXT FROM cursor_SizeData INTO @sizecode, @dataseq
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-		select @qty = sum(ShipQty) from PackingList_Detail where Id = @packinglistid and Article = @article and SizeCode = @sizecode
+		select @qty = sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where Id = @packinglistid and Article = @article and SizeCode = @sizecode
 		SET @datalen = len(@qty)
 		SET @tmpdata = IIF(@datalen = 1,'    ',IIF(@datalen = 2 or @datalen = 3,'   ',IIF(@datalen = 4,'  ',IIF(@datalen = 5 or @datalen = 6,' ','')))) + CONVERT(VARCHAR,@qty) + IIF(@datalen = 1 or @datalen = 2,'    ',IIF(@datalen = 3 or @datalen = 4 or @datalen = 5,'   ',IIF(@datalen = 6 or @datalen = 7,'  ',' ')))
 		SET @tmpdatalist = @tmpdatalist  + @tmpdata
@@ -739,16 +739,16 @@ BEGIN
 	END
 	CLOSE cursor_SizeData
 	
-	select @qty = sum(ShipQty) from PackingList_Detail where Id = @packinglistid and Article = @article
+	select @qty = sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where Id = @packinglistid and Article = @article
 	SET @datalen = len(@qty)
 	SET @tmpdata2 = IIF(@datalen = 1,'    ',IIF(@datalen = 2 or @datalen = 3,'   ',IIF(@datalen = 4,'  ',IIF(@datalen = 5 or @datalen = 6,' ','')))) + convert(VARCHAR,@qty) + IIF(@datalen = 1 or @datalen = 2,'    ',IIF(@datalen = 3 or @datalen = 4 or @datalen = 5,'   ',IIF(@datalen = 6 or @datalen = 7,'  ',' ')))
 	IF(@reporttype = 2)
 		BEGIN
-			select @qty = Sum(CTNQty) from PackingList_Detail where Id = @packinglistid and Article = @article
+			select @qty = Sum(CTNQty) from PackingList_Detail WITH (NOLOCK) where Id = @packinglistid and Article = @article
 			SET @datalen = len(@qty)
 			SET @tmpdata2 = @tmpdata2 + IIF(@datalen = 1,'      ',IIF(@datalen = 2 or @datalen = 3,'     ',IIF(@datalen = 4 or @datalen = 5,'    ',IIF(@datalen = 6 or @datalen = 7,'   ',IIF(@datalen = 8 or @datalen = 9 or @datalen = 10,'  ',IIF(@datalen = 11 or @datalen = 12,' ','')))))) + convert(VARCHAR,@qty) + IIF(@datalen = 1 or @datalen = 2,'        ',IIF(@datalen = 3 or @datalen = 4,'       ',IIF(@datalen = 5 or @datalen = 6,'      ',IIF(@datalen = 7 or @datalen = 8,'     ',IIF(@datalen = 9,'    ',IIF(@datalen = 10 or @datalen = 11,'   ',IIF(@datalen = 12 or @datalen = 13,'  ',' ')))))))
 
-			select @cbm = sum(pd.CTNQty*l.CBM) from PackingList_Detail pd left join LocalItem l on l.RefNo = pd.RefNo where pd.ID = @packinglistid and pd.Article = @article
+			select @cbm = sum(pd.CTNQty*l.CBM) from PackingList_Detail pd WITH (NOLOCK) left join LocalItem l WITH (NOLOCK) on l.RefNo = pd.RefNo where pd.ID = @packinglistid and pd.Article = @article
 			SET @datalen = len(@cbm)
 			SET @tmpdata2 = @tmpdata2 + IIF(@datalen = 1,'      ',IIF(@datalen = 2 or @datalen = 3,'     ',IIF(@datalen = 4 or @datalen = 5,'    ',IIF(@datalen = 6 or @datalen = 7,'   ',IIF(@datalen = 8 or @datalen = 9 or @datalen = 10,'  ',IIF(@datalen = 11 or @datalen = 12,' ','')))))) + convert(VARCHAR,@cbm) + IIF(@datalen = 1 or @datalen = 2,'        ',IIF(@datalen = 3 or @datalen = 4,'       ',IIF(@datalen = 5 or @datalen = 6,'      ',IIF(@datalen = 7 or @datalen = 8,'     ',IIF(@datalen = 9,'    ',IIF(@datalen = 10 or @datalen = 11,'   ',IIF(@datalen = 12 or @datalen = 13,'  ',' ')))))))
 		END
@@ -776,7 +776,7 @@ OPEN cursor_SizeData
 FETCH NEXT FROM cursor_SizeData INTO @sizecode, @dataseq
 WHILE @@FETCH_STATUS = 0
 BEGIN
-	select @qty = sum(ShipQty) from PackingList_Detail where Id = @packinglistid and SizeCode = @sizecode
+	select @qty = sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where Id = @packinglistid and SizeCode = @sizecode
 	SET @datalen = len(@qty)
 	SET @tmpdata2 = IIF(@datalen = 1,'    ',IIF(@datalen = 2 or @datalen = 3,'   ',IIF(@datalen = 4,'  ',IIF(@datalen = 5 or @datalen = 6,' ','')))) + convert(VARCHAR,@qty) + IIF(@datalen = 1 or @datalen = 2,'    ',IIF(@datalen = 3 or @datalen = 4 or @datalen = 5,'   ',IIF(@datalen = 6 or @datalen = 7,'  ',' ')))
 	SET @tmpdatalist = @tmpdatalist  + @tmpdata2
@@ -784,17 +784,17 @@ BEGIN
 	FETCH NEXT FROM cursor_SizeData INTO @sizecode, @dataseq
 END
 CLOSE cursor_SizeData
-select @qty = sum(ShipQty) from PackingList_Detail where Id = @packinglistid
+select @qty = sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where Id = @packinglistid
 SET @datalen = len(@qty)
 SET @tmpdata2 = IIF(@datalen = 1,'    ',IIF(@datalen = 2 or @datalen = 3,'   ',IIF(@datalen = 4,'  ',IIF(@datalen = 5 or @datalen = 6,' ','')))) + convert(VARCHAR,@qty) + IIF(@datalen = 1 or @datalen = 2,'    ',IIF(@datalen = 3 or @datalen = 4 or @datalen = 5,'   ',IIF(@datalen = 6 or @datalen = 7,'  ',' ')))
 
 IF(@reporttype = 2)
 BEGIN
-	select @qty = Sum(CTNQty) from PackingList_Detail where Id = @packinglistid
+	select @qty = Sum(CTNQty) from PackingList_Detail WITH (NOLOCK) where Id = @packinglistid
 	SET @datalen = len(@qty)
 	SET @tmpdata2 = @tmpdata2 + IIF(@datalen = 1,'      ',IIF(@datalen = 2 or @datalen = 3,'     ',IIF(@datalen = 4 or @datalen = 5,'    ',IIF(@datalen = 6 or @datalen = 7,'   ',IIF(@datalen = 8 or @datalen = 9 or @datalen = 10,'  ',IIF(@datalen = 11 or @datalen = 12,' ','')))))) + convert(VARCHAR,@qty) + IIF(@datalen = 1 or @datalen = 2,'        ',IIF(@datalen = 3 or @datalen = 4,'       ',IIF(@datalen = 5 or @datalen = 6,'      ',IIF(@datalen = 7 or @datalen = 8,'     ',IIF(@datalen = 9,'    ',IIF(@datalen = 10 or @datalen = 11,'   ',IIF(@datalen = 12 or @datalen = 13,'  ',' ')))))))
 
-	select @cbm = sum(pd.CTNQty*l.CBM) from PackingList_Detail pd left join LocalItem l on l.RefNo = pd.RefNo where pd.ID = @packinglistid
+	select @cbm = sum(pd.CTNQty*l.CBM) from PackingList_Detail pd WITH (NOLOCK) left join LocalItem l WITH (NOLOCK) on l.RefNo = pd.RefNo where pd.ID = @packinglistid
 	SET @datalen = len(@cbm)
 	SET @tmpdata2 = @tmpdata2 + IIF(@datalen = 1,'      ',IIF(@datalen = 2 or @datalen = 3,'     ',IIF(@datalen = 4 or @datalen = 5,'    ',IIF(@datalen = 6 or @datalen = 7,'   ',IIF(@datalen = 8 or @datalen = 9 or @datalen = 10,'  ',IIF(@datalen = 11 or @datalen = 12,' ','')))))) + convert(VARCHAR,@cbm) + IIF(@datalen = 1 or @datalen = 2,'        ',IIF(@datalen = 3 or @datalen = 4,'       ',IIF(@datalen = 5 or @datalen = 6,'      ',IIF(@datalen = 7 or @datalen = 8,'     ',IIF(@datalen = 9,'    ',IIF(@datalen = 10 or @datalen = 11,'   ',IIF(@datalen = 12 or @datalen = 13,'  ',' ')))))))
 END
@@ -968,18 +968,18 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             articleSizeTtlShipQty = null;
             printGroupData = null;
             clipData = null;
-            specialInstruction = MyUtility.GetValue.Lookup(string.Format("select top 1 isnull(o.Packing,'') as Packing from PackingList_Detail pd, Orders o where pd.ID = '{0}' and pd.OrderID = o.ID", PackingListID));
+            specialInstruction = MyUtility.GetValue.Lookup(string.Format("select top 1 isnull(o.Packing,'') as Packing from PackingList_Detail pd WITH (NOLOCK) , Orders o WITH (NOLOCK) where pd.ID = '{0}' and pd.OrderID = o.ID", PackingListID));
 
             string sqlCmd = string.Format(@"select pd.OrderID,isnull(o.StyleID,'') as StyleID,isnull(o.Customize1,'') as Customize1,
 isnull(o.CustPONo,'') as CustPONo,p.CTNQty,isnull(c.Alias,'') as DestAlias,pd.Article,pd.Color,
 pd.SizeCode,pd.CTNStartNo,pd.QtyPerCTN,pd.ShipQty,pd.CTNQty,isnull(o.Packing,'') as PackInstruction,pd.Seq,
-isnull(os.SizeSpec,'') as SizeSpec,(select sum(ShipQty) from PackingList_Detail where Id = p.ID and Article = pd.Article and SizeCode = pd.SizeCode) as TtlShipQty,
-(select Qty from Order_QtyShip_Detail where Id = pd.OrderID and Seq = pd.OrderShipmodeSeq and Article = pd.Article and SizeCode = pd.SizeCode) as OQty
-from PackingList p
-inner join PackingList_Detail pd on p.ID = pd.ID
-left join Orders o on pd.OrderID = o.ID
-left join Country c on o.Dest = c.ID
-left join Order_SizeSpec os on os.Id = o.POID and SizeItem = 'S01' and os.SizeCode = pd.SizeCode
+isnull(os.SizeSpec,'') as SizeSpec,(select sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where Id = p.ID and Article = pd.Article and SizeCode = pd.SizeCode) as TtlShipQty,
+(select Qty from Order_QtyShip_Detail WITH (NOLOCK) where Id = pd.OrderID and Seq = pd.OrderShipmodeSeq and Article = pd.Article and SizeCode = pd.SizeCode) as OQty
+from PackingList p WITH (NOLOCK) 
+inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
+left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
+left join Country c WITH (NOLOCK) on o.Dest = c.ID
+left join Order_SizeSpec os WITH (NOLOCK) on os.Id = o.POID and SizeItem = 'S01' and os.SizeCode = pd.SizeCode
 where p.ID = '{0}'
 order by pd.Seq", PackingListID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
@@ -989,9 +989,9 @@ order by pd.Seq", PackingListID);
             }
 
             sqlCmd = string.Format(@"select distinct pd.RefNo, li.Description, STR(li.CtnLength,8,4)+'\'+STR(li.CtnWidth,8,4)+'\'+STR(li.CtnHeight,8,4) as Dimension, li.CtnUnit
-from PackingGuide_Detail pd
-left join LocalItem li on li.RefNo = pd.RefNo
-left join LocalSupp ls on ls.ID = li.LocalSuppid
+from PackingGuide_Detail pd WITH (NOLOCK) 
+left join LocalItem li WITH (NOLOCK) on li.RefNo = pd.RefNo
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = li.LocalSuppid
 where pd.ID = '{0}'", PackingListID);
             result = DBProxy.Current.Select(null, sqlCmd, out ctnDim);
             if (!result)
@@ -1000,11 +1000,11 @@ where pd.ID = '{0}'", PackingListID);
             }
 
             sqlCmd = string.Format(@"select distinct oa.Seq as Seq1,os.Seq as Seq2, isnull(oq.Article,'') as Article,isnull(oq.SizeCode,'') as SizeCode,isnull(oq.Qty,0) as Qty
-from PackingList_Detail pd
-left join Orders o on pd.OrderID = o.ID
-left join Order_QtyCTN oq on o.ID = oq.Id
-left join Order_Article oa on o.ID = oa.id and oq.Article = oa.Article
-left join Order_SizeCode os on o.POID = os.Id and oq.SizeCode = os.SizeCode
+from PackingList_Detail pd WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
+left join Order_QtyCTN oq WITH (NOLOCK) on o.ID = oq.Id
+left join Order_Article oa WITH (NOLOCK) on o.ID = oa.id and oq.Article = oa.Article
+left join Order_SizeCode os WITH (NOLOCK) on o.POID = os.Id and oq.SizeCode = os.SizeCode
 where pd.ID = '{0}'", PackingListID);
             result = DBProxy.Current.Select(null, sqlCmd, out qtyCtn);
             if (!result)
@@ -1012,20 +1012,20 @@ where pd.ID = '{0}'", PackingListID);
                 return result;
             }
 
-            sqlCmd = string.Format(@"select Article,SizeCode,sum(ShipQty) as TtlShipQty from PackingList_Detail where ID = '{0}' group by Article,SizeCode", PackingListID);
+            sqlCmd = string.Format(@"select Article,SizeCode,sum(ShipQty) as TtlShipQty from PackingList_Detail WITH (NOLOCK) where ID = '{0}' group by Article,SizeCode", PackingListID);
             result = DBProxy.Current.Select(null, sqlCmd, out articleSizeTtlShipQty);
             if (!result)
             {
                 return result;
             }
 
-            sqlCmd = string.Format(@"select a.*,(select sum(ShipQty) from PackingList_Detail where Id = a.ID and Article = a.Article and SizeCode = a.SizeCode) as TtlShipQty,
-(select Qty from Order_QtyShip_Detail where Id = a.OrderID and Seq = a.OrderShipmodeSeq and Article = a.Article and SizeCode = a.SizeCode) as OQty
+            sqlCmd = string.Format(@"select a.*,(select sum(ShipQty) from PackingList_Detail WITH (NOLOCK) where Id = a.ID and Article = a.Article and SizeCode = a.SizeCode) as TtlShipQty,
+(select Qty from Order_QtyShip_Detail WITH (NOLOCK) where Id = a.OrderID and Seq = a.OrderShipmodeSeq and Article = a.Article and SizeCode = a.SizeCode) as OQty
 from (
 select pd.ID,pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.Color,pd.SizeCode,isnull(os.SizeSpec,'') as SizeSpec,pd.QtyPerCTN,pd.CTNQty,min(pd.Seq) as MinSeq,max(pd.Seq) as MaxSeq
-from PackingList_Detail pd
-left join Orders o on pd.OrderID = o.ID
-left join Order_SizeSpec os on os.Id = o.POID and SizeItem = 'S01' and os.SizeCode = pd.SizeCode
+from PackingList_Detail pd WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
+left join Order_SizeSpec os WITH (NOLOCK) on os.Id = o.POID and SizeItem = 'S01' and os.SizeCode = pd.SizeCode
 where pd.ID = '{0}'
 group by pd.ID,pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.Color,pd.SizeCode,isnull(os.SizeSpec,''),pd.QtyPerCTN,pd.CTNQty) a
 order by a.MinSeq", PackingListID);
@@ -1036,7 +1036,7 @@ order by a.MinSeq", PackingListID);
             }
 
             sqlCmd = string.Format(@"select isnull(c.PKey,'') as PKey,isnull(c.TableName,'') as TableName,isnull(c.SourceFile,'') as SourceFile, YEAR(c.AddDate) as Year, MONTH(c.AddDate) as Month 
-from Clip c, PackingList p
+from Clip c WITH (NOLOCK) , PackingList p WITH (NOLOCK) 
 where p.ID = '{0}'
 and c.TableName = 'CustCD' 
 and c.UniqueKey = p.BrandID+p.CustCDID
@@ -1267,9 +1267,9 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
         {
             printBarcodeData = null;
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"select pd.ID,pd.OrderID,pd.CTNStartNo,(select CTNQty from PackingList where ID = pd.ID) as CTNQty,
-isnull((select CustPONo from Orders where ID = pd.OrderID),'') as PONo
-from PackingList_Detail pd
+            sqlCmd.Append(@"select pd.ID,pd.OrderID,pd.CTNStartNo,(select CTNQty from PackingList WITH (NOLOCK) where ID = pd.ID) as CTNQty,
+isnull((select CustPONo from Orders WITH (NOLOCK) where ID = pd.OrderID),'') as PONo
+from PackingList_Detail pd WITH (NOLOCK) 
 where pd.CTNQty > 0");
             if (!MyUtility.Check.Empty(packingListID))
             {
