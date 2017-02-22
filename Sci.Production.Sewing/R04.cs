@@ -23,9 +23,9 @@ namespace Sci.Production.Sewing
             InitializeComponent();
             MyUtility.Tool.SetupCombox(comboBox1, 1, 1, ",Bulk,Sample,Local Order,Mockup,Bulk+Sample");
             DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox2, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
             comboBox1.SelectedIndex = 0;
             comboBox2.Text = Sci.Env.User.Keyword;
@@ -66,13 +66,13 @@ isnull(o.ProgramID,'') as OrderProgram,isnull(mo.ProgramID,'') as MockupProgram,
 isnull(o.CPU,0) as OrderCPU,isnull(o.CPUFactor,0) as OrderCPUFactor,isnull(mo.Cpu,0) as MockupCPU,
 isnull(mo.CPUFactor,0) as MockupCPUFactor,isnull(o.StyleID,'') as OrderStyle,isnull(mo.StyleID,'') as MockupStyle,
 isnull(o.SeasonID,'') as OrderSeason,isnull(mo.SeasonID,'') as MockupSeason,isnull(sl.Rate,100)/100 as Rate,
-(select StdTMS from System) as StdTMS,isnull(r.InspectQty,0) as InspectQty,isnull(r.RejectQty,0) as RejectQty
-from SewingOutput s
-inner join SewingOutput_Detail sd on sd.ID = s.ID
-left join Orders o on o.ID = sd.OrderId
-left join MockupOrder mo on mo.ID = sd.OrderId
-left join Style_Location sl on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType
-left join Rft r on r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
+(select StdTMS from System WITH (NOLOCK) ) as StdTMS,isnull(r.InspectQty,0) as InspectQty,isnull(r.RejectQty,0) as RejectQty
+from SewingOutput s WITH (NOLOCK) 
+inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
+left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
+left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType
+left join Rft r WITH (NOLOCK) on r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
 where s.OutputDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
             if (!MyUtility.Check.Empty(mDivision))
             {

@@ -25,7 +25,7 @@ namespace Sci.Production.Sewing
             DataTable factory;
             DBProxy.Current.Select(null, @"select '' as FtyGroup 
 union all
-select distinct FTYGroup from Factory order by FTYGroup", out factory);
+select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
 
             MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "Included,Excluded");
             MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "Included,Excluded");
@@ -69,7 +69,7 @@ select distinct FTYGroup from Factory order by FTYGroup", out factory);
 
         private string SelectSewingLine(string line)
         {
-            string sql = string.Format("Select Distinct ID From SewingLine{0}", MyUtility.Check.Empty(comboBox4.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboBox4.Text));
+            string sql = string.Format("Select Distinct ID From SewingLine{0} WITH (NOLOCK) ", MyUtility.Check.Empty(comboBox4.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboBox4.Text));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "3", line, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
@@ -160,12 +160,12 @@ s.Team,sd.OrderId,sd.ComboType,sd.WorkHour,sd.QAQty,sd.InlineQty,isnull(o.Catego
 o.LocalOrder,s.FactoryID,isnull(o.ProgramID,'') as OrderProgram,isnull(mo.ProgramID,'') as MockupProgram,
 isnull(o.CPU,0) as OrderCPU,isnull(o.CPUFactor,0) as OrderCPUFactor,isnull(mo.Cpu,0) as MockupCPU,
 isnull(mo.CPUFactor,0) as MockupCPUFactor,isnull(o.StyleID,'') as OrderStyle,isnull(mo.StyleID,'') as MockupStyle,isnull(sl.Rate,100)/100 as Rate,
-(select StdTMS from System) as StdTMS
-from SewingOutput s
-inner join SewingOutput_Detail sd on sd.ID = s.ID
-left join Orders o on o.ID = sd.OrderId
-left join MockupOrder mo on mo.ID = sd.OrderId
-left join Style_Location sl on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType
+(select StdTMS from System WITH (NOLOCK) ) as StdTMS
+from SewingOutput s WITH (NOLOCK) 
+inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
+left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
+left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType
 where s.OutputDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
             if (!MyUtility.Check.Empty(line1))
             {
@@ -197,7 +197,7 @@ tmp1stFilter
 as (
 select t.*,isnull(w.Holiday,0) as Holiday,IIF(isnull(QAQty,0)=0,ActManPower1,(ActManPower1/QAQty)) as ActManPower
 from tmpSewingGroup t
-left join WorkHour w on w.FactoryID = t.FactoryID and w.Date = t.OutputDate and w.SewingLineID = t.SewingLineID
+left join WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.Date = t.OutputDate and w.SewingLineID = t.SewingLineID
 where 1 = 1");
             if (excludeSubconin == 1)
             {
@@ -437,16 +437,16 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor",
                     MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OrderId,ComboType,QAQty,LastShift",
                         @";with tmpArtwork
 as (
-Select ID from ArtworkType where Classify in ('I','A','P') and IsTtlTMS = 0
+Select ID from ArtworkType WITH (NOLOCK) where Classify in ('I','A','P') and IsTtlTMS = 0
 ),
 tmpAllSubprocess
 as (
 select ot.ArtworkTypeID,a.OrderId,a.ComboType,Round(sum(a.QAQty)*ot.Price*(isnull(sl.Rate,100)/100),2) as Price
 from #tmp a
-inner join Order_TmsCost ot on ot.ID = a.OrderId
-inner join Orders o on o.ID = a.OrderId
+inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
+inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId
 inner join tmpArtwork ta on ta.ID = ot.ArtworkTypeID
-left join Style_Location sl on sl.StyleUkey = o.StyleUkey and sl.Location = a.ComboType
+left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = a.ComboType
 where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
 and ot.Price > 0
 group by ot.ArtworkTypeID,a.OrderId,a.ComboType,ot.Price,sl.Rate
@@ -482,7 +482,7 @@ tmpSubconOut
 as (
 Select 'O' as Type,s.Description as Company,sum(t.QAQty*IIF(t.Category = 'M', t.MockupCPU * t.MockupCPUFactor, t.OrderCPU * t.OrderCPUFactor * t.Rate)) as TtlCPU, t.SewingLineID
 from #tmp t
-left join SewingLine s on s.ID = t.SewingLineID and s.FactoryID = t.FactoryID
+left join SewingLine s WITH (NOLOCK) on s.ID = t.SewingLineID and s.FactoryID = t.FactoryID
 where LastShift = 'O'
 group by s.Description,t.SewingLineID
 )
@@ -498,7 +498,7 @@ select * from tmpSubconOut",
                 }
             }
             #endregion
-            factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'", Sci.Env.User.Factory));
+            factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Factory));
             return Result.True;
         }
 

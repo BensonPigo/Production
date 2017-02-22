@@ -23,9 +23,9 @@ namespace Sci.Production.Sewing
         {
             InitializeComponent();
             DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
             comboBox1.Text = Sci.Env.User.Keyword;
             comboBox2.Text = Sci.Env.User.Factory;
@@ -65,13 +65,13 @@ select distinct o.ID,o.ProgramID,o.StyleID,o.SeasonID,o.BrandID,o.MDivisionID,o.
 o.CdCodeID,o.CPU,o.POID,so.SewingLineID,so.Manpower,sod.WorkHour,sod.QAQty,
 o.CPUFactor,isnull(sl.Rate/100,0) as Rate,s.Description as StyleDesc,c.Description as CDDesc,
 s.ModularParent,s.CPUAdjusted
-from Orders o
-inner join SewingOutput_Detail sod on sod.OrderId = o.ID
-inner join SewingOutput so on so.ID = sod.ID
-inner join Order_QtyShip oq on oq.Id = o.ID
-inner join Style s on s.Ukey = o.StyleUkey
-inner join CDCode c on c.ID = o.CdCodeID
-left join Style_Location sl on sl.StyleUkey = s.Ukey and sl.Location = sod.ComboType
+from Orders o WITH (NOLOCK) 
+inner join SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
+inner join SewingOutput so WITH (NOLOCK) on so.ID = sod.ID
+inner join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID
+inner join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
+inner join CDCode c WITH (NOLOCK) on c.ID = o.CdCodeID
+left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = s.Ukey and sl.Location = sod.ComboType
 where o.LocalOrder = 0
 and so.Shift <> 'O'
 ");
@@ -169,7 +169,7 @@ select MDivisionID, FactoryID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, S
 from tmp3rdData
 group by MDivisionID, FactoryID
 )
-select MDivisionID, FactoryID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System))*100, 2)) as EFF 
+select MDivisionID, FactoryID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
 Order by MDivisionID,FactoryID", sqlCmd.ToString());
             result = DBProxy.Current.Select(null, querySql, out Factory);
@@ -187,7 +187,7 @@ select BrandID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) 
 from tmp3rdData
 group by BrandID
 )
-select BrandID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System))*100, 2)) as EFF 
+select BrandID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
 Order by BrandID", sqlCmd.ToString());
             result = DBProxy.Current.Select(null, querySql, out Brand);
@@ -205,7 +205,7 @@ select BrandID,MDivisionID,FactoryID, sum(Output) AS TtlQty, SUM(TotalCPU) AS Tt
 from tmp3rdData
 group by BrandID,MDivisionID,FactoryID
 )
-select BrandID,MDivisionID,FactoryID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System))*100, 2)) as EFF 
+select BrandID,MDivisionID,FactoryID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
 Order by BrandID,MDivisionID,FactoryID", sqlCmd.ToString());
             result = DBProxy.Current.Select(null, querySql, out BrandFactory);
@@ -223,7 +223,7 @@ select StyleID,ModularParent,CPUAdjusted,BrandID,CdCodeID,CDDesc,StyleDesc,Seaso
 from tmp3rdData
 group by StyleID,ModularParent,CPUAdjusted,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID
 )
-select StyleID,ModularParent,CPUAdjusted,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System))*100, 2)) as EFF 
+select StyleID,ModularParent,CPUAdjusted,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
 Order by StyleID,SeasonID", sqlCmd.ToString());
             result = DBProxy.Current.Select(null, querySql, out Style);
@@ -241,7 +241,7 @@ select CdCodeID,CDDesc, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlM
 from tmp3rdData
 group by CdCodeID,CDDesc
 )
-select CdCodeID,CDDesc, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System))*100, 2)) as EFF 
+select CdCodeID,CDDesc, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
 Order by CdCodeID", sqlCmd.ToString());
             result = DBProxy.Current.Select(null, querySql, out CD);
@@ -259,7 +259,7 @@ select MDivisionID,FactoryID,SewingLineID, sum(Output) AS TtlQty, SUM(TotalCPU) 
 from tmp3rdData
 group by MDivisionID,FactoryID,SewingLineID
 )
-select MDivisionID,FactoryID,SewingLineID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System))*100, 2)) as EFF 
+select MDivisionID,FactoryID,SewingLineID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
 Order by MDivisionID,FactoryID,SewingLineID", sqlCmd.ToString());
             result = DBProxy.Current.Select(null, querySql, out FactoryLine);
@@ -277,7 +277,7 @@ select BrandID,MDivisionID,FactoryID,CdCodeID,CDDesc, sum(Output) AS TtlQty, SUM
 from tmp3rdData
 group by BrandID,MDivisionID,FactoryID,CdCodeID,CDDesc
 )
-select BrandID,MDivisionID,FactoryID,CdCodeID,CDDesc, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System))*100, 2)) as EFF 
+select BrandID,MDivisionID,FactoryID,CdCodeID,CDDesc, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
 Order by BrandID,MDivisionID,FactoryID,CdCodeID", sqlCmd.ToString());
             result = DBProxy.Current.Select(null, querySql, out BrandFactoryCD);
@@ -295,7 +295,7 @@ select POID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID,ProgramID, sum(Ou
 from tmp3rdData
 group by POID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID,ProgramID
 )
-select POID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID,ProgramID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System))*100, 2)) as EFF 
+select POID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID,ProgramID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
 Order by POID,StyleID,BrandID,CdCodeID,SeasonID", sqlCmd.ToString());
             result = DBProxy.Current.Select(null, querySql, out POCombo);
@@ -313,7 +313,7 @@ select ProgramID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID, sum(Output)
 from tmp3rdData
 group by ProgramID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID
 )
-select ProgramID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System))*100, 2)) as EFF 
+select ProgramID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
 Order by ProgramID,StyleID,BrandID,CdCodeID,SeasonID", sqlCmd.ToString());
             result = DBProxy.Current.Select(null, querySql, out Program);

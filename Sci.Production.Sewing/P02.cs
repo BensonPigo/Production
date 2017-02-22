@@ -28,7 +28,7 @@ namespace Sci.Production.Sewing
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "' and Category = 'M'";
 
             DataRow sysData;
-            if (MyUtility.Check.Seek("select SewLock,StdTMS from System", out sysData))
+            if (MyUtility.Check.Seek("select SewLock,StdTMS from System WITH (NOLOCK) ", out sysData))
             {
                 systemLockDate = (DateTime)MyUtility.Convert.GetDate(sysData["SewLock"]);
                 systemTMS = MyUtility.Convert.GetDecimal(sysData["StdTMS"]);
@@ -42,12 +42,12 @@ namespace Sci.Production.Sewing
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select sd.*,mo.MockupID,mo.Qty,(select isnull(sum(QAQty),0) from SewingOutput_Detail where OrderId = sd.OrderId and ID != sd.ID) as AccuQty,
-mo.Qty-(select isnull(sum(QAQty),0) from SewingOutput_Detail where OrderId = sd.OrderId and ID != sd.ID) as VarQty,
-mo.Qty-(select isnull(sum(QAQty),0) from SewingOutput_Detail where OrderId = sd.OrderId and ID != sd.ID)-sd.QAQty as BalQty,
+            this.DetailSelectCommand = string.Format(@"select sd.*,mo.MockupID,mo.Qty,(select isnull(sum(QAQty),0) from SewingOutput_Detail WITH (NOLOCK) where OrderId = sd.OrderId and ID != sd.ID) as AccuQty,
+mo.Qty-(select isnull(sum(QAQty),0) from SewingOutput_Detail WITH (NOLOCK) where OrderId = sd.OrderId and ID != sd.ID) as VarQty,
+mo.Qty-(select isnull(sum(QAQty),0) from SewingOutput_Detail WITH (NOLOCK) where OrderId = sd.OrderId and ID != sd.ID)-sd.QAQty as BalQty,
 round(iif(sd.InlineQty = 0,0,sd.QAQty/sd.InlineQty),2)*100 as RFT
-from SewingOutput_Detail sd
-left join MockupOrder mo on mo.ID = sd.OrderId
+from SewingOutput_Detail sd WITH (NOLOCK) 
+left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 where sd.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -65,7 +65,7 @@ where sd.ID = '{0}'", masterID);
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = string.Format("select ID,MockupID,StyleID,SeasonID,BrandID from MockupOrder where Junk = 0 and FTYGroup = '{0}'", Sci.Env.User.Factory);
+                            string sqlCmd = string.Format("select ID,MockupID,StyleID,SeasonID,BrandID from MockupOrder WITH (NOLOCK) where Junk = 0 and FTYGroup = '{0}'", Sci.Env.User.Factory);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,13,15,5,10", dr["OrderID"].ToString(), "ID,MockupID,Style,Season,Brand");
                             item.Size = new System.Drawing.Size(700, 600);
                             DialogResult returnResult = item.ShowDialog();
@@ -83,7 +83,7 @@ where sd.ID = '{0}'", masterID);
                                     cmdse.Add(sp1e);
                                     cmdse.Add(sp2e);
                                     DataTable moDatae;
-                                    string sqlCmde = "select * from MockupOrder where Junk = 0 and FTYGroup = @factoryid and ID = @id";
+                                    string sqlCmde = "select * from MockupOrder WITH (NOLOCK) where Junk = 0 and FTYGroup = @factoryid and ID = @id";
                                     DualResult result = DBProxy.Current.Select(null, sqlCmde, cmdse, out moDatae);
                                     if (!result || moDatae.Rows.Count <= 0)
                                     {
@@ -117,7 +117,7 @@ where sd.ID = '{0}'", masterID);
                                         dr["TMS"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(moDatae.Rows[0]["CPU"]) * MyUtility.Convert.GetDecimal(moDatae.Rows[0]["CPUFactor"]) * systemTMS);
                                         dr["MockupID"] = MyUtility.Convert.GetString(moDatae.Rows[0]["MockupID"]);
                                         dr["Qty"] = MyUtility.Convert.GetInt(moDatae.Rows[0]["Qty"]);
-                                        dr["AccuQty"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("select isnull(sum(QAQty),0) from SewingOutput_Detail where OrderId = '{0}'", MyUtility.Convert.GetString(dr["OrderID"]))));
+                                        dr["AccuQty"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("select isnull(sum(QAQty),0) from SewingOutput_Detail WITH (NOLOCK) where OrderId = '{0}'", MyUtility.Convert.GetString(dr["OrderID"]))));
                                         dr["VarQty"] = MyUtility.Convert.GetInt(dr["Qty"]) - MyUtility.Convert.GetInt(dr["AccuQty"]);
                                         dr["QAQty"] = 0;
                                         dr["BalQty"] = MyUtility.Convert.GetInt(dr["Qty"]) - MyUtility.Convert.GetInt(dr["AccuQty"]) - MyUtility.Convert.GetInt(dr["QAQty"]);
@@ -149,7 +149,7 @@ where sd.ID = '{0}'", masterID);
                         cmds.Add(sp2);
 
                         DataTable moData;
-                        string sqlCmd = "select * from MockupOrder where Junk = 0 and FTYGroup = @factoryid and ID = @id";
+                        string sqlCmd = "select * from MockupOrder WITH (NOLOCK) where Junk = 0 and FTYGroup = @factoryid and ID = @id";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out moData);
                         if (!result || moData.Rows.Count <= 0)
                         {
@@ -183,7 +183,7 @@ where sd.ID = '{0}'", masterID);
                             dr["TMS"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(moData.Rows[0]["CPU"]) * MyUtility.Convert.GetDecimal(moData.Rows[0]["CPUFactor"]) * systemTMS);
                             dr["MockupID"] = MyUtility.Convert.GetString(moData.Rows[0]["MockupID"]);
                             dr["Qty"] = MyUtility.Convert.GetInt(moData.Rows[0]["Qty"]);
-                            dr["AccuQty"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("select isnull(sum(QAQty),0) from SewingOutput_Detail where OrderId = '{0}'", MyUtility.Convert.GetString(dr["OrderID"]))));
+                            dr["AccuQty"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("select isnull(sum(QAQty),0) from SewingOutput_Detail WITH (NOLOCK) where OrderId = '{0}'", MyUtility.Convert.GetString(dr["OrderID"]))));
                             dr["VarQty"] = MyUtility.Convert.GetInt(dr["Qty"]) - MyUtility.Convert.GetInt(dr["AccuQty"]);
                             dr["QAQty"] = 0;
                             dr["BalQty"] = MyUtility.Convert.GetInt(dr["Qty"]) - MyUtility.Convert.GetInt(dr["AccuQty"]) - MyUtility.Convert.GetInt(dr["QAQty"]);

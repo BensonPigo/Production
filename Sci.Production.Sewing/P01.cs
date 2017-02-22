@@ -27,7 +27,7 @@ namespace Sci.Production.Sewing
             InitializeComponent();
             DefaultFilter = string.Format("FactoryID = '{0}' and Category = 'O'", Sci.Env.User.Factory);
             MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "A,B");
-            systemLockDate = Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System"));
+            systemLockDate = Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) "));
             DoSubForm = new P01_QAOutput();
 
             //當Grid目前在最後一筆的最後一欄時，按Enter要自動新增一筆Record
@@ -53,11 +53,11 @@ namespace Sci.Production.Sewing
             this.DetailSelectCommand = string.Format(@"
                 select sd.*,
                 [RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%'  ),                 
-                [Remark] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') ,
-                [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
-                from SewingOutput_Detail sd 
-                left join SewingOutput s on sd.ID = s.ID
-                left join Rft on rft.OrderID = sd.OrderId and rft.CDate = s.OutputDate 
+                [Remark] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') ,
+                [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
+                from SewingOutput_Detail sd WITH (NOLOCK) 
+                left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
+                left join Rft WITH (NOLOCK) on rft.OrderID = sd.OrderId and rft.CDate = s.OutputDate 
 			                  and rft.SewinglineID = s.SewingLineID and rft.Shift = s.Shift 
 			                  and rft.Team = s.Team
                 where sd.ID = '{0}'", masterID);
@@ -74,36 +74,36 @@ namespace Sci.Production.Sewing
 	            select 
                     '' as ID ,--sd.ID, 
                     sd.UKey as SewingOutput_DetailUkey, sd.OrderId, sd.ComboType,oq.Article,oq.SizeCode,oq.Qty as OrderQty,
-	            isnull((select QAQty from SewingOutput_Detail_Detail where SewingOutput_DetailUkey = sd.UKey and SizeCode = oq.SizeCode and orderid = sd.OrderId),0) as QAQty ,
+	            isnull((select QAQty from SewingOutput_Detail_Detail WITH (NOLOCK) where SewingOutput_DetailUkey = sd.UKey and SizeCode = oq.SizeCode and orderid = sd.OrderId),0) as QAQty ,
 	            isnull(
 			            (
 				            select sum(QAQty) 
-				            from SewingOutput_Detail_Detail 
+				            from SewingOutput_Detail_Detail WITH (NOLOCK) 
 				            where OrderId = sd.OrderId and ComboType = sd.ComboType and Article = oq.Article and SizeCode = oq.SizeCode and ID != sd.ID
 			            ),0
 		                ) as AccumQty
-	            from SewingOutput_Detail sd,Order_Qty oq 
+	            from SewingOutput_Detail sd WITH (NOLOCK) ,Order_Qty oq WITH (NOLOCK)  
 	            where sd.UKey = '{0}' and sd.OrderId = oq.ID
 	            union all
 	            select sdd.ID, sdd.SewingOutput_DetailUkey, sdd.OrderId, sdd.ComboType,sdd.Article,sdd.SizeCode,0 as OrderQty,sdd.QAQty,
 	            isnull(
 			            (
 				            select sum(QAQty) 
-				            from SewingOutput_Detail_Detail 
+				            from SewingOutput_Detail_Detail WITH (NOLOCK)  
 				            where OrderId = sdd.OrderId and ComboType = sdd.ComboType and Article = sdd.Article and SizeCode = sdd.SizeCode and ID != sdd.ID
 			            ),0
 		                ) as AccumQty 
-	            from SewingOutput_Detail_Detail sdd 
+	            from SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
 	            where SewingOutput_DetailUKey = '{0}'
-	            and not exists (select 1 from Order_Qty where ID = sdd.OrderId and Article = sdd.Article and SizeCode = sdd.SizeCode)
+	            and not exists (select 1 from Order_Qty WITH (NOLOCK) where ID = sdd.OrderId and Article = sdd.Article and SizeCode = sdd.SizeCode)
             )
             select a.*,
             [Variance] = a.OrderQty-a.AccumQty, 
             [BalQty] = a.OrderQty-a.AccumQty-a.QAQty,
             [Seq] = isnull(os.Seq,0)
             from AllQty a
-            left join Orders o on a.OrderId = o.ID
-            left join Order_SizeCode os on os.Id = o.POID and os.SizeCode = a.SizeCode
+            left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
+            left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = a.SizeCode
             order by a.OrderId,os.Seq", masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
         }
@@ -128,7 +128,7 @@ namespace Sci.Production.Sewing
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = string.Format("select distinct OrderID from SewingSchedule where FactoryID = '{0}' and SewingLineID = '{1}' and OrderFinished=0", Sci.Env.User.Factory, MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]));
+                            string sqlCmd = string.Format("select distinct OrderID from SewingSchedule WITH (NOLOCK) where FactoryID = '{0}' and SewingLineID = '{1}' and OrderFinished=0", Sci.Env.User.Factory, MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]));
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", dr["OrderID"].ToString());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
@@ -169,7 +169,7 @@ namespace Sci.Production.Sewing
                         cmds.Add(sp2);
 
                         DataTable OrdersData;
-                        string sqlCmd = "select IsForecast,SewLine,CPU,CPUFactor,StyleUkey,(select StdTMS from System) as StdTMS from Orders where FtyGroup = @factoryid and ID = @id";
+                        string sqlCmd = "select IsForecast,SewLine,CPU,CPUFactor,StyleUkey,(select StdTMS from System WITH (NOLOCK) ) as StdTMS from Orders WITH (NOLOCK) where FtyGroup = @factoryid and ID = @id";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrdersData);
                         if (!result || OrdersData.Rows.Count <= 0)
                         {
@@ -195,7 +195,7 @@ namespace Sci.Production.Sewing
                                 return;
                             }
                             //當該SP#+Line不屬於排程時，跳出確認訊息
-                            if (!MyUtility.Check.Seek(string.Format("select ID from SewingSchedule where OrderID = '{0}' and SewingLineID = '{1}' and OrderFinished=0", MyUtility.Convert.GetString(e.FormattedValue), MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]))))
+                            if (!MyUtility.Check.Seek(string.Format("select ID from SewingSchedule WITH (NOLOCK) where OrderID = '{0}' and SewingLineID = '{1}' and OrderFinished=0", MyUtility.Convert.GetString(e.FormattedValue), MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]))))
                             {
                                 //問是否要繼續，確定才繼續往下做
                                 DialogResult buttonResult = MyUtility.Msg.WarningBox("This SP# dosen't belong to this line, please inform scheduler.\r\n\r\nDo you want to continue?", "Warning", MessageBoxButtons.YesNo);
@@ -219,7 +219,7 @@ namespace Sci.Production.Sewing
                             GetRFT(dr);
 
                             #region 若此SP是套裝的話，就跳出視窗讓使用者選擇部位
-                            sqlCmd = string.Format("select Location,Rate from Style_Location where StyleUkey = {0}", MyUtility.Convert.GetString(OrdersData.Rows[0]["StyleUkey"]));
+                            sqlCmd = string.Format("select Location,Rate from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(OrdersData.Rows[0]["StyleUkey"]));
                             DataTable StyleLocation;
                             result = DBProxy.Current.Select(null, sqlCmd, out StyleLocation);
                             if (!result || StyleLocation.Rows.Count < 0)
@@ -269,7 +269,7 @@ namespace Sci.Production.Sewing
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = string.Format("select sl.Location,sl.Rate,o.CPU,o.CPUFactor,(select StdTMS from System) as StdTMS from Orders o, Style_Location sl where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(dr["OrderID"]));
+                            string sqlCmd = string.Format("select sl.Location,sl.Rate,o.CPU,o.CPUFactor,(select StdTMS from System WITH (NOLOCK) ) as StdTMS from Orders o WITH (NOLOCK) , Style_Location sl WITH (NOLOCK) where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(dr["OrderID"]));
                             DataTable LocationData;
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, out LocationData);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(LocationData, "Location", "10", MyUtility.Convert.GetString(dr["ComboType"]), headercaptions: "*");
@@ -482,7 +482,7 @@ namespace Sci.Production.Sewing
             cmds.Add(sp5);
             
             string sqlCmd = @"select iif(rft.InspectQty is null or rft.InspectQty = 0,0, round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2)) as RFT
-from RFT
+from RFT WITH (NOLOCK) 
 where OrderID = @orderid
 and CDate = @cdate
 and SewinglineID = @sewinglineid
@@ -541,15 +541,15 @@ and Team = @team";
 as
 (
 select '' as ID, @ukey as SewingOutput_DetailUkey, oq.ID as OrderId, @combotype  as ComboType,oq.Article,oq.SizeCode,oq.Qty as OrderQty,0 as QAQty ,
-isnull((select sum(QAQty) from SewingOutput_Detail_Detail where OrderId = oq.ID and ComboType = @combotype and Article = oq.Article and SizeCode = oq.SizeCode),0) as AccumQty
-from Order_Qty oq
+isnull((select sum(QAQty) from SewingOutput_Detail_Detail WITH (NOLOCK) where OrderId = oq.ID and ComboType = @combotype and Article = oq.Article and SizeCode = oq.SizeCode),0) as AccumQty
+from Order_Qty oq WITH (NOLOCK) 
 where oq.ID = @orderid
 and oq.Article = @article
 )
 select a.*,a.OrderQty-a.AccumQty as Variance, a.OrderQty-a.AccumQty-a.QAQty as BalQty,isnull(os.Seq,0) as Seq
 from AllQty a
-left join Orders o on a.OrderId = o.ID
-left join Order_SizeCode os on os.Id = o.POID and os.SizeCode = a.SizeCode
+left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
+left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = a.SizeCode
 order by a.OrderId,os.Seq";
             DataTable OrderQtyData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderQtyData);
@@ -591,7 +591,7 @@ order by a.OrderId,os.Seq";
             base.ClickEditAfter();
             dateBox1.ReadOnly = true;
             txtsewingline1.ReadOnly = true;
-            if (MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System")))
+            if (MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")))
             {
                 txtdropdownlist1.ReadOnly = true;
                 comboBox1.ReadOnly = true;
@@ -608,7 +608,7 @@ order by a.OrderId,os.Seq";
                 return false;
             }
 
-            if (MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System")))
+            if (MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")))
             {
                 MyUtility.Msg.WarningBox("The date earlier than Sewing Lock Date, can't delete.");
                 return false;
@@ -672,9 +672,9 @@ order by a.OrderId,os.Seq";
             #region 新增時檢查Date不可早於Sewing Lock Date
             if (IsDetailInserting)
             {
-                if (MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System")))
+                if (MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System")).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
+                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
                     dateBox1.Focus();
                     return false;
                 }
@@ -682,7 +682,7 @@ order by a.OrderId,os.Seq";
             #endregion
 
             #region 檢查資料是否已存在
-                if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput where OutputDate = '{0}' and SewingLineID = '{1}' and Shift = '{2}' and Team = '{3}' and FactoryID = '{4}' and ID <> '{5}'",Convert.ToDateTime(CurrentMaintain["OutputDate"]).ToString("d"), MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(CurrentMaintain["Shift"]), MyUtility.Convert.GetString(CurrentMaintain["Team"]), MyUtility.Convert.GetString(CurrentMaintain["FactoryID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
+            if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput WITH (NOLOCK) where OutputDate = '{0}' and SewingLineID = '{1}' and Shift = '{2}' and Team = '{3}' and FactoryID = '{4}' and ID <> '{5}'", Convert.ToDateTime(CurrentMaintain["OutputDate"]).ToString("d"), MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(CurrentMaintain["Shift"]), MyUtility.Convert.GetString(CurrentMaintain["Team"]), MyUtility.Convert.GetString(CurrentMaintain["FactoryID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
                 {
                     MyUtility.Msg.WarningBox(string.Format("Date:{0}, Line:{1}, Shift:{2}, Team:{3} already exist, can't save!!",
                         Convert.ToDateTime(CurrentMaintain["OutputDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)), MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(CurrentMaintain["Shift"]), MyUtility.Convert.GetString(CurrentMaintain["Team"]), MyUtility.Convert.GetString(CurrentMaintain["FactoryID"])));
@@ -695,7 +695,7 @@ order by a.OrderId,os.Seq";
             try
             {
                 MyUtility.Tool.ProcessWithDatatable(((DataTable)detailgridbs.DataSource), "OrderID,ComboType", string.Format(@"select a.OrderId,a.ComboType,s.StandardOutput 
-from #tmp a, SewingSchedule s
+from #tmp a, SewingSchedule s WITH (NOLOCK) 
 where a.OrderId = s.OrderID
 and a.ComboType = s.ComboType
 and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"])), out SewingData, "#tmp");
@@ -797,7 +797,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
 
             #region 若sewingoutput.outputDate <= system.sewlock 表身Qty要等於表頭的Qty            
             DataTable sys;
-            DBProxy.Current.Select(null,"select sewlock from system",out sys);
+            DBProxy.Current.Select(null, "select sewlock from system WITH (NOLOCK) ", out sys);
             DateTime? Sod = MyUtility.Convert.GetDate(CurrentMaintain["outputDate"]);
             DateTime? sl = MyUtility.Convert.GetDate(sys.Rows[0][0]);
             if (Sod<=sl)
@@ -1026,9 +1026,9 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
                     e.Cancel = true;
                     return;
                 }
-                if (dateBox1.Value <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System")))
+                if (dateBox1.Value <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System")).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
+                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
                     dateBox1.Value = null;
                     e.Cancel = true;
                     return;
