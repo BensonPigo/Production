@@ -23,7 +23,9 @@ namespace Sci.Production.Shipping
         {
             base.OnDetailGridSetup();
             Helper.Controls.Grid.Generator(this.detailgrid)
+                .Text("Address", header: "Address", width: Widths.AnsiChars(30))
                 .Text("WhseNo", header: "Warehouse#", width: Widths.AnsiChars(50));
+                
         }
 
         protected override bool ClickSaveBefore()
