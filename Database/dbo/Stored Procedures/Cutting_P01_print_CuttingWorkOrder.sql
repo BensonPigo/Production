@@ -49,7 +49,8 @@ BEGIN
 
 	select 
 	[CutRef#] = w.CutRef,
-	[MarkerName]=w.Markername,w.FabricCombo,w.Cutno,
+	[Marker Name]=w.Markername,
+	[Fabric Combo] = w.FabricCombo,w.Cutno,
 	'+@cols+N',
 	[SP#]=w.OrderID,
 	w.MarkerLength,
