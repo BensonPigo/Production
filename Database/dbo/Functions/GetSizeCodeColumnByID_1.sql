@@ -7,13 +7,12 @@ CREATE FUNCTION [dbo].[GetSizeCodeColumnByID]
 RETURNS @tbl table(SizeGroup varchar(1),Seq varchar(2),SizeCode varchar(8))
 AS
 BEGIN
-	
-	declare @main table(id varchar(13),SizeGroup varchar(1),Seq varchar(2),SizeCode varchar(8))
-	--main1 取得全部SizeCode
-	insert into @main select id,SizeGroup,Seq,SizeCode from Order_SizeCode WHERE ID IN (SELECT POID FROM Orders where Id = @OrderID)	
-	
 	declare @poid varchar(13) = (select POID from Orders where ID = @OrderID)
 
+	declare @main table(id varchar(13),SizeGroup varchar(1),Seq varchar(2),SizeCode varchar(8))
+	--main1 取得全部SizeCode
+	insert into @main select id,SizeGroup,Seq,SizeCode from Order_SizeCode WHERE ID = @poid
+	
 	declare @id table (id varchar(13))
 	if(@ByType = 0)
 		insert into @id select id from dbo.Orders where ID = @OrderID
