@@ -45,7 +45,7 @@ namespace Sci.Production.Shipping
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 cmds.Add(sp1);
 
-                string sqlCmd = "select ID from Orders where ID = @id";
+                string sqlCmd = "select ID from Orders WITH (NOLOCK) where ID = @id";
                 DataTable OrderData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderData);
 
@@ -73,7 +73,7 @@ namespace Sci.Production.Shipping
             {
                 DataRow OrderData;
                 if (MyUtility.Check.Seek(string.Format(@"select SeasonID,StyleID,BrandID,SMR,[dbo].[getBOFMtlDesc](StyleUkey) as Description
-from Orders where ID = '{0}'", textBox1.Text), out OrderData))
+from Orders WITH (NOLOCK) where ID = '{0}'", textBox1.Text), out OrderData))
                 {
                     CurrentData["OrderID"] = textBox1.Text;
                     CurrentData["SeasonID"] = OrderData["SeasonID"];
@@ -100,7 +100,7 @@ from Orders where ID = '{0}'", textBox1.Text), out OrderData))
         {
             DataRow dr;
             if (MyUtility.Check.Seek(string.Format(@"select s.BulkSMR,[dbo].[getBOFMtlDesc](s.Ukey) as Description
-from Style s where s.ID = '{0}' and s.SeasonID = '{1}'",txtstyle1.Text,txtseason1.Text),out dr))
+from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'", txtstyle1.Text, txtseason1.Text), out dr))
             {
                 CurrentData["Leader"] = dr["BulkSMR"];
                 CurrentData["Description"] = dr["Description"];
@@ -196,7 +196,7 @@ from Style s where s.ID = '{0}' and s.SeasonID = '{1}'",txtstyle1.Text,txtseason
             {
                 DataRow Seq;
                 if (!MyUtility.Check.Seek(string.Format(@"select RIGHT(REPLICATE('0',3)+CAST(MAX(CAST(Seq1 as int))+1 as varchar),3) as Seq1
-from Express_Detail where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString(CurrentData["ID"])), out Seq))
+from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString(CurrentData["ID"])), out Seq))
                 {
                     MyUtility.Msg.WarningBox("Get seq fail, pls try again");
                     return false;
@@ -233,7 +233,7 @@ from Express_Detail where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString
         //Team Leader
         private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 order by ID", "15,30,10,150", textBox4.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) order by ID", "15,30,10,150", textBox4.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             textBox4.Text = item.GetSelectedString();
@@ -265,7 +265,7 @@ from Express_Detail where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString
 
         private void GetLeaderName()
         {
-            string selectSql = string.Format("Select Name,ExtNo from TPEPass1 Where id='{0}'", MyUtility.Convert.GetString(CurrentData["Leader"]));
+            string selectSql = string.Format("Select Name,ExtNo from TPEPass1 WITH (NOLOCK) Where id='{0}'", MyUtility.Convert.GetString(CurrentData["Leader"]));
             DataRow dr;
             if (MyUtility.Check.Seek(selectSql, out dr))
             {

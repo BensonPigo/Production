@@ -63,12 +63,12 @@ isnull(f.DescDetail,'') as Description,isnull(psd.FabricType,'') as FabricType,
 (case when psd.FabricType = 'F' then 'Fabric' when psd.FabricType = 'A' then 'Accessory' else '' end) as Type,
 isnull(f.MtlTypeID,'') as MtlTypeID,isnull(psd.StockUnit,'') as UnitId,td.Qty,0.0 as NetKg,0.0 as WeightKg,
 o.BuyerDelivery,isnull(o.BrandID,'') as BrandID,isnull(o.FactoryID,'') as FactoryID,o.SciDelivery
-from TransferOut_Detail td
-left join PO_Supp ps on ps.ID = td.Poid and ps.SEQ1 = td.Seq1
-left join PO_Supp_Detail psd on psd.ID = td.Poid and psd.SEQ1= td.Seq1 and psd.SEQ2 = td.Seq2
-left join Supp s on s.ID = ps.SuppID
-left join Fabric f on f.SCIRefno = psd.SCIRefno
-left join Orders o on o.ID = td.Poid
+from TransferOut_Detail td WITH (NOLOCK) 
+left join PO_Supp ps WITH (NOLOCK) on ps.ID = td.Poid and ps.SEQ1 = td.Seq1
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = td.Poid and psd.SEQ1= td.Seq1 and psd.SEQ2 = td.Seq2
+left join Supp s WITH (NOLOCK) on s.ID = ps.SuppID
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join Orders o WITH (NOLOCK) on o.ID = td.Poid
 where td.ID = @id";
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out selectData);

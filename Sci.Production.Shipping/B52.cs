@@ -26,7 +26,7 @@ namespace Sci.Production.Shipping
         {
             base.OnDetailEntered();
             label14.Text = string.Format("Weight\r\n(kgs/{0})", MyUtility.Convert.GetString(CurrentMaintain["UsageUnit"]));
-            textBox1.Text = MyUtility.GetValue.Lookup(string.Format("select GoodsDescription from KHGoodsHSCode where NLCode = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["NLCode"])));
+            textBox1.Text = MyUtility.GetValue.Lookup(string.Format("select GoodsDescription from KHGoodsHSCode WITH (NOLOCK) where NLCode = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["NLCode"])));
         }
 
         protected override bool ClickEditBefore()
@@ -74,10 +74,10 @@ namespace Sci.Production.Shipping
             if (EditMode)
             {
                 Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(@"select g.GoodsDescription, g.Category, isnull(cd.UnitID,'') as UnitID, g.NLCode
-from KHGoodsHSCode g
+from KHGoodsHSCode g WITH (NOLOCK) 
 left join KHContract_Detail cd on g.NLCode = cd.NLCode
 where g.Junk = 0
-and cd.ID in (select ID from (select ID,MAX(StartDate) as MaxDate from KHContract where Status = 'Confirmed' group by ID) a)
+and cd.ID in (select ID from (select ID,MAX(StartDate) as MaxDate from KHContract WITH (NOLOCK) where Status = 'Confirmed' group by ID) a)
 and Category <> 'MACHINERY'
 order by GoodsDescription", "50,10,8,0", this.Text, false, ",", headercaptions: "Good's Description,Category,Unit,");
                 DialogResult result = item.ShowDialog();
@@ -103,11 +103,11 @@ order by GoodsDescription", "50,10,8,0", this.Text, false, ",", headercaptions: 
                 else
                 {
                     DataRow NLCodeDate;
-                    if (MyUtility.Check.Seek(string.Format(@"select GoodsDescription,NLCode from KHGoodsHSCode where GoodsDescription = '{0}'", textBox1.Text), out NLCodeDate))
+                    if (MyUtility.Check.Seek(string.Format(@"select GoodsDescription,NLCode from KHGoodsHSCode WITH (NOLOCK) where GoodsDescription = '{0}'", textBox1.Text), out NLCodeDate))
                     {
                         textBox1.Text = textBox1.Text;
                         CurrentMaintain["NLCode"] = NLCodeDate["NLCode"];
-                        CurrentMaintain["CustomsUnit"] = MyUtility.GetValue.Lookup(string.Format("select TOP(1) UnitID from KHContract_Detail where NLCode = '{0}' and ID in (select ID from (select ID,MAX(StartDate) as MaxDate from KHContract where Status = 'Confirmed' group by ID) a)", MyUtility.Convert.GetString(NLCodeDate["NLCode"])));
+                        CurrentMaintain["CustomsUnit"] = MyUtility.GetValue.Lookup(string.Format("select TOP(1) UnitID from KHContract_Detail WITH (NOLOCK) where NLCode = '{0}' and ID in (select ID from (select ID,MAX(StartDate) as MaxDate from KHContract WITH (NOLOCK) where Status = 'Confirmed' group by ID) a)", MyUtility.Convert.GetString(NLCodeDate["NLCode"])));
                     }
                     else
                     {

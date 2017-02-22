@@ -27,12 +27,12 @@ namespace Sci.Production.Shipping
         {
              string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
              this.DetailSelectCommand = string.Format(@"select ed.*,isnull(o.FactoryID,'') as FactoryID,isnull(o.BrandID,'') as BrandID,o.BuyerDelivery,o.SciDelivery,
-(left(ed.Seq1+' ',3)+'-'+ed.Seq2) as Seq,(ed.SuppID+'-'+iif(fe.Type = 4,(select Abb from LocalSupp where ID = ed.SuppID),(select AbbEN from Supp where ID = ed.SuppID))) as Supp,
-ed.RefNo,isnull(iif(fe.Type = 4,(select Description from LocalItem where RefNo = ed.RefNo),(select DescDetail from Fabric where SCIRefno = ed.SCIRefNo)),'') as Description,
+(left(ed.Seq1+' ',3)+'-'+ed.Seq2) as Seq,(ed.SuppID+'-'+iif(fe.Type = 4,(select Abb from LocalSupp WITH (NOLOCK) where ID = ed.SuppID),(select AbbEN from Supp WITH (NOLOCK) where ID = ed.SuppID))) as Supp,
+ed.RefNo,isnull(iif(fe.Type = 4,(select Description from LocalItem WITH (NOLOCK) where RefNo = ed.RefNo),(select DescDetail from Fabric WITH (NOLOCK) where SCIRefno = ed.SCIRefNo)),'') as Description,
 (case when ed.FabricType = 'F' then 'Fabric' when ed.FabricType = 'A' then 'Accessory' else '' end) as Type
-from FtyExport_Detail ed
-left join FtyExport fe on fe.ID = ed.ID
-left join Orders o on o.ID = ed.PoID
+from FtyExport_Detail ed WITH (NOLOCK) 
+left join FtyExport fe WITH (NOLOCK) on fe.ID = ed.ID
+left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 where ed.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -89,7 +89,7 @@ where ed.ID = '{0}'", masterID);
                     return false;
                 }
 
-                string sqlCmd = string.Format("select ID from FtyExport where BLNo = '{0}' and ID != '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BLNo"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+                string sqlCmd = string.Format("select ID from FtyExport WITH (NOLOCK) where BLNo = '{0}' and ID != '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BLNo"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 if (MyUtility.Check.Seek(sqlCmd))
                 {
                     MyUtility.Msg.WarningBox("B/L(AWB) No. already exist.");
@@ -113,7 +113,7 @@ where ed.ID = '{0}'", masterID);
 
             if (IsDetailInserting)
             {
-                string newID = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("select RgCode from System").Trim() + "FE", "FtyExport", DateTime.Today, 2, "Id", null);
+                string newID = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("select RgCode from System WITH (NOLOCK) ").Trim() + "FE", "FtyExport", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(newID))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -128,7 +128,7 @@ where ed.ID = '{0}'", masterID);
         protected override bool ClickDeleteBefore()
         {
             //已經有做出口費用分攤就不可以被刪除
-            if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from ShareExpense where InvNo = '{0}' or WKNO = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
+            if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from ShareExpense WITH (NOLOCK) where InvNo = '{0}' or WKNO = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
             {
                 MyUtility.Msg.WarningBox("This record have expense data, can't be deleted!");
                 return false;
@@ -139,7 +139,7 @@ where ed.ID = '{0}'", masterID);
         //Port of Loading按右鍵
         private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlWhere = "select ID,CountryID from Port where Junk = 0";
+            string sqlWhere = "select ID,CountryID from Port WITH (NOLOCK) where Junk = 0";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20,3", textBox3.Text);
 
             DialogResult result = item.ShowDialog();
@@ -153,7 +153,7 @@ where ed.ID = '{0}'", masterID);
         //Port of Discharge按右鍵
         private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlWhere = "select ID,CountryID from Port where Junk = 0";
+            string sqlWhere = "select ID,CountryID from Port WITH (NOLOCK) where Junk = 0";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20,3", textBox4.Text);
 
             DialogResult result = item.ShowDialog();

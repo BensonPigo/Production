@@ -56,7 +56,7 @@ namespace Sci.Production.Shipping
                 .CheckBox("NecessaryItem", header: "Cons. Necessary item", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
 
             DataTable gridData;
-            string sqlCmd = "select *,0 as WrongUnit from VNContract_Detail where 1=0";
+            string sqlCmd = "select *,0 as WrongUnit from VNContract_Detail WITH (NOLOCK) where 1=0";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             listControlBindingSource1.DataSource = gridData;
         }
@@ -92,7 +92,7 @@ namespace Sci.Production.Shipping
             if (excel == null) return;
 
             DataTable ExcelDataTable, UpdateData;
-            string sqlCmd = "select *,0 as WrongUnit from VNContract_Detail where 1 = 0";
+            string sqlCmd = "select *,0 as WrongUnit from VNContract_Detail WITH (NOLOCK) where 1 = 0";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelDataTable);
 
             UpdateData = ((DataTable)listControlBindingSource1.DataSource).Clone();
@@ -168,7 +168,7 @@ MyUtility.Convert.GetString(dr["NLCode"]),MyUtility.Convert.GetString(dr["Qty"])
 MyUtility.Convert.GetString(dr["UnitID"]), MyUtility.Convert.GetString(dr["Waste"]),
 MyUtility.Convert.GetString(dr["Price"]), MyUtility.Convert.GetString(dr["LocalPurchase"]).ToUpper() == "TRUE" ? "1" : "0",
 MyUtility.Convert.GetString(dr["NecessaryItem"]).ToUpper() == "TRUE" ? "1" : "0", Sci.Env.User.UserID));
-                if (MyUtility.Check.Seek(string.Format("select ID from VNContract_Detail where ID = '{0}' and NLCode = '{1}'", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dr["NLCode"]))))
+                if (MyUtility.Check.Seek(string.Format("select ID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dr["NLCode"]))))
                 {
                     dupNLCode.Append(string.Format("NL Code: {0}\r\n", MyUtility.Convert.GetString(dr["NLCode"])));
                 }

@@ -57,7 +57,7 @@ namespace Sci.Production.Shipping
             //填入NL Code
             if (IsDetailInserting)
             {
-                string nlcode = MyUtility.GetValue.Lookup("select CONVERT(int,isnull(max(NLCode),0)) from KHGoodsHSCode");
+                string nlcode = MyUtility.GetValue.Lookup("select CONVERT(int,isnull(max(NLCode),0)) from KHGoodsHSCode WITH (NOLOCK) ");
                 CurrentMaintain["NLCode"] = (MyUtility.Convert.GetInt(nlcode)+1).ToString("00000");
             }
 

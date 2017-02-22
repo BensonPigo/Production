@@ -23,10 +23,10 @@ namespace Sci.Production.Shipping
         {
             InitializeComponent();
             DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
             comboBox1.Text = Sci.Env.User.Keyword;
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
             comboBox2.SelectedIndex = -1;
             MyUtility.Tool.SetupCombox(comboBox3, 1, 1, "Bulk,Sample,Bulk+Sample");
@@ -66,11 +66,11 @@ as (
 select o.ID,o.BrandID,o.CustCDID,o.StyleID,o.SeasonID,o.Customize1,o.CustPONo,o.MDivisionID,
 o.FactoryID,o.Dest+'-'+ISNULL(c.Alias,'') as Dest, oq.BuyerDelivery,o.SciDelivery,oq.SDPDate,
 oqd.Article,oqd.SizeCode,oqd.Qty as ShipQty,oq.Seq,q.qty as ASQty
-from Orders o
-inner join Order_Qty q on q.ID = o.ID
-inner join Order_QtyShip oq on o.ID = oq.Id
-inner join Order_QtyShip_Detail oqd on oq.Id = oqd.Id and oq.Seq = oqd.Seq and q.Article = oqd.Article and q.SizeCode = oqd.SizeCode
-left join Country c on o.Dest = c.ID
+from Orders o WITH (NOLOCK) 
+inner join Order_Qty q WITH (NOLOCK) on q.ID = o.ID
+inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
+inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.Id = oqd.Id and oq.Seq = oqd.Seq and q.Article = oqd.Article and q.SizeCode = oqd.SizeCode
+left join Country c WITH (NOLOCK) on o.Dest = c.ID
 where 1=1");
 
             if (!MyUtility.Check.Empty(sciDlv1))
@@ -142,15 +142,15 @@ as (
 select t.ID,t.Seq,pd.Article,pd.SizeCode,sum(pd.ShipQty) as PackQty,p.INVNo,p.PulloutDate,
 pd.ID as PackID
 from tmpOrder t
-inner join PackingList_Detail pd on t.ID = pd.OrderID and t.Seq = pd.OrderShipmodeSeq
-inner join PackingList p on pd.ID = p.ID
+inner join PackingList_Detail pd WITH (NOLOCK) on t.ID = pd.OrderID and t.Seq = pd.OrderShipmodeSeq
+inner join PackingList p WITH (NOLOCK) on pd.ID = p.ID
 group by t.ID,t.Seq,pd.Article,pd.SizeCode,p.INVNo,p.PulloutDate,pd.ID
 ),
 tempdata
 as (
 select t.*,isnull(p.PackQty,0) as PackQty,isnull(p.INVNo,'') as INVNo,p.PulloutDate,isnull(p.PackID,'') as PackID,
 isnull([dbo].getMinCompleteSewQty(t.ID,t.Article,t.SizeCode),0) as SewQty,
-isnull((select sum(isnull(pdd.ShipQty,0)) from Pullout_Detail pd, Pullout_Detail_Detail pdd where pd.UKey = pdd.Pullout_DetailUKey and pd.OrderID = t.ID and pd.OrderShipmodeSeq = t.Seq and pdd.Article = t.Article and pdd.SizeCode = t.SizeCode),0) as PullQty
+isnull((select sum(isnull(pdd.ShipQty,0)) from Pullout_Detail pd WITH (NOLOCK) , Pullout_Detail_Detail pdd WITH (NOLOCK) where pd.UKey = pdd.Pullout_DetailUKey and pd.OrderID = t.ID and pd.OrderShipmodeSeq = t.Seq and pdd.Article = t.Article and pdd.SizeCode = t.SizeCode),0) as PullQty
 from tmpOrder t
 left join PackData p on t.ID = p.ID and t.Seq = p.Seq and t.Article = p.Article and t.SizeCode = p.SizeCode)
 select *,IIF(ASQty <> SewQty,'Sewing Qty is not equal to Order Qty.','')+IIF(ShipQty <> PackQty,'Packing Qty '+IIF(ShipQty <> PullQty,'and Pullout Qty ','')+'is not equal to Order Qty by ship.',IIF(ShipQty <> PullQty,'Pullout Qty is not equal to Order Qty by ship.','')) as Reason

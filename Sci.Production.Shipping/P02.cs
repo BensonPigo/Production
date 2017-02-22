@@ -141,17 +141,17 @@ with NewCtn
 as
 (
 select distinct ed.ID,ed.CTNNo,'N' as Status 
-from Express_Detail ed
+from Express_Detail ed WITH (NOLOCK) 
 where ed.ID = '{0}'
-and not exists (select 1 from Express_CTNData ec where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
+and not exists (select 1 from Express_CTNData ec WITH (NOLOCK) where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
 ),
 DeleteCtn
 as
 (
 select distinct ec.ID,ec.CTNNo,'D' as Status 
-from Express_CTNData ec
+from Express_CTNData ec WITH (NOLOCK) 
 where ec.ID = '{0}'
-and not exists (select 1 from Express_Detail ed where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
+and not exists (select 1 from Express_Detail ed WITH (NOLOCK) where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
 )
 select * from NewCtn
 union
@@ -235,17 +235,17 @@ with NewCtn
 as
 (
 select distinct ed.ID,ed.CTNNo,'N' as Status 
-from Express_Detail ed
+from Express_Detail ed WITH (NOLOCK) 
 where ed.ID = '{0}'
-and not exists (select 1 from Express_CTNData ec where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
+and not exists (select 1 from Express_CTNData ec WITH (NOLOCK) where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
 ),
 DeleteCtn
 as
 (
 select distinct ec.ID,ec.CTNNo,'D' as Status 
-from Express_CTNData ec
+from Express_CTNData ec WITH (NOLOCK) 
 where ec.ID = '{0}'
-and not exists (select 1 from Express_Detail ed where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
+and not exists (select 1 from Express_Detail ed WITH (NOLOCK) where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
 )
 select * from NewCtn
 union
@@ -342,7 +342,7 @@ where id='{0}' ", CurrentMaintain["ID"]);
                 }
             }
             numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
-            displayBox4.Value = MyUtility.GetValue.Lookup(string.Format("select c.SuppID + '-' + s.AbbEN from Carrier c left join Supp s on c.SuppID = s.ID where c.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["CarrierID"])));
+            displayBox4.Value = MyUtility.GetValue.Lookup(string.Format("select c.SuppID + '-' + s.AbbEN from Carrier c WITH (NOLOCK) left join Supp s WITH (NOLOCK) on c.SuppID = s.ID where c.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["CarrierID"])));
             if (MyUtility.Check.Empty(CurrentMaintain["StatusUpdateDate"]))
             {
                 displayBox6.Value = null;
@@ -388,9 +388,9 @@ where id='{0}' ", CurrentMaintain["ID"]);
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select ed.*,p.Refno,ed.SuppID+'-'+isnull(s.AbbEN,'') as Supplier,ec.CTNNW,dbo.getMtlDesc(ed.OrderID,ed.Seq1,ed.Seq2,1,0) as MtlDesc,
 isnull(cast(ec.CtnLength as varchar),'')+'*'+isnull(cast(ec.CtnWidth as varchar),'')+'*'+isnull(cast(ec.CtnHeight as varchar),'') as Dimension,
-isnull((ed.InCharge+' '+(select Name+' #'+ExtNo from Pass1 where ID = ed.InCharge)),ed.InCharge) as InChargeName,
-isnull((ed.Receiver+' '+(select Name+' #'+ExtNo from TPEPass1 where ID = ed.Receiver)),ed.Receiver) as ReceiverName,
-isnull((ed.Leader+' '+(select Name+' #'+ExtNo from TPEPass1 where ID = ed.Leader)),ed.Leader) as LeaderName,
+isnull((ed.InCharge+' '+(select Name+' #'+ExtNo from Pass1 WITH (NOLOCK) where ID = ed.InCharge)),ed.InCharge) as InChargeName,
+isnull((ed.Receiver+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Receiver)),ed.Receiver) as ReceiverName,
+isnull((ed.Leader+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = ed.Leader)),ed.Leader) as LeaderName,
 CASE ed.Category
 WHEN '1' THEN N'Sample'
 WHEN '2' THEN N'SMS'
@@ -403,10 +403,10 @@ WHEN '8' THEN N'Other Sample'
 WHEN '9' THEN N'Other Material'
 ELSE N''
 END as CategoryName
-from Express_Detail ed
-left join PO_Supp_Detail p on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
-left join Supp s on ed.SuppID = s.ID
-left join Express_CTNData ec on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
+from Express_Detail ed WITH (NOLOCK) 
+left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
+left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID
+left join Express_CTNData ec WITH (NOLOCK) on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
 where ed.ID = '{0}'
 Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -684,12 +684,12 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             Sci.Win.Tools.SelectItem item;
             if (MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "1")
             {
-                sqlCmd = "select ID from Factory where Junk = 0 and ExpressGroup <> ''";
+                sqlCmd = "select ID from Factory WITH (NOLOCK) where Junk = 0 and ExpressGroup <> ''";
                 item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", textBox1.Text);
             }
             else
             {
-                sqlCmd = "select ID,NameEN from Brand where Junk = 0";
+                sqlCmd = "select ID,NameEN from Brand WITH (NOLOCK) where Junk = 0";
                 item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,50", textBox1.Text);
             }
 
@@ -724,7 +724,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                     if (MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "1")
                     {
                         DataTable FactoryData;
-                        string sqlCmd = "select ID from Factory where Junk = 0 and ExpressGroup <> '' and ID = @id";
+                        string sqlCmd = "select ID from Factory WITH (NOLOCK) where Junk = 0 and ExpressGroup <> '' and ID = @id";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out FactoryData);
                         if (!result || FactoryData.Rows.Count <= 0)
                         {
@@ -753,7 +753,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                         if (MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "2")
                         {
                             DataTable BrandData;
-                            string sqlCmd = "select NameEN from Brand where Junk = 0 and ID = @id";
+                            string sqlCmd = "select NameEN from Brand WITH (NOLOCK) where Junk = 0 and ID = @id";
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out BrandData);
 
                             if (!result || BrandData.Rows.Count <= 0)
@@ -812,19 +812,19 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             Sci.Win.Tools.SelectItem item;
             if (CurrentMaintain["ToTag"].ToString() == "2")
             {
-                sqlCmd = "select ID from SCIFty where Junk = 0 AND ExpressGroup <> ''";
+                sqlCmd = "select ID from SCIFty WITH (NOLOCK) where Junk = 0 AND ExpressGroup <> ''";
                 item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", textBox2.Text);
             }
             else
             {
                 if (CurrentMaintain["ToTag"].ToString() == "3")
                 {
-                    sqlCmd = "select ID,AbbCH,AbbEN from Supp where Junk = 0";
+                    sqlCmd = "select ID,AbbCH,AbbEN from Supp WITH (NOLOCK) where Junk = 0";
                     item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,20,20", textBox2.Text);
                 }
                 else
                 {
-                    sqlCmd = "select ID,NameEN,CountryID from Brand where Junk = 0";
+                    sqlCmd = "select ID,NameEN,CountryID from Brand WITH (NOLOCK) where Junk = 0";
                     item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,20,0", textBox2.Text);
                 }
             }
@@ -865,7 +865,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                     if (MyUtility.Convert.GetString(CurrentMaintain["ToTag"]) == "2")
                     {
                         DataTable SCIFtyData;
-                        string sqlCmd = "select ID,ExpressGroup,CountryID,PortAir from SCIFty where Junk = 0 AND ExpressGroup <> '' and ID = @id";
+                        string sqlCmd = "select ID,ExpressGroup,CountryID,PortAir from SCIFty WITH (NOLOCK) where Junk = 0 AND ExpressGroup <> '' and ID = @id";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out SCIFtyData);
 
                         if (!result || SCIFtyData.Rows.Count <= 0)
@@ -901,7 +901,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                         if (MyUtility.Convert.GetString(CurrentMaintain["ToTag"]) == "3")
                         {
                             DataTable SuppData;
-                            string sqlCmd = "select AbbEN from Supp where Junk = 0 and ID = @id";
+                            string sqlCmd = "select AbbEN from Supp WITH (NOLOCK) where Junk = 0 and ID = @id";
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out SuppData);
 
                             if (!result || SuppData.Rows.Count <= 0)
@@ -932,7 +932,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                             if (MyUtility.Convert.GetString(CurrentMaintain["ToTag"]) == "4")
                             {
                                 DataTable BrandData;
-                                string sqlCmd = "select NameEN,CountryID from Brand where Junk = 0 and ID = @id";
+                                string sqlCmd = "select NameEN,CountryID from Brand WITH (NOLOCK) where Junk = 0 and ID = @id";
                                 DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out BrandData);
 
                                 if (!result || BrandData.Rows.Count <= 0)
@@ -972,7 +972,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             {
                 string fromSite = "", toSite = "", fromCountry = "", toCountry = "";
                 fromSite = MyUtility.Convert.GetString(CurrentMaintain["FromSite"]);
-                fromCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from Factory where ID = '{0}'", fromSite));
+                fromCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from Factory WITH (NOLOCK) where ID = '{0}'", fromSite));
                 toSite = MyUtility.Convert.GetString(CurrentMaintain["ToSite"]);
                 switch (MyUtility.Convert.GetString(CurrentMaintain["ToTag"]))
                 {
@@ -980,13 +980,13 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                         toCountry = "TW";
                         break;
                     case "2":
-                        toCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from SCIFty where ID = '{0}'", toSite));
+                        toCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from SCIFty WITH (NOLOCK) where ID = '{0}'", toSite));
                         break;
                     case "3":
-                        toCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from Supp where ID = '{0}'", toSite));
+                        toCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from Supp WITH (NOLOCK) where ID = '{0}'", toSite));
                         break;
                     case "4":
-                        toCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from Brand where ID = '{0}'", toSite));
+                        toCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from Brand WITH (NOLOCK) where ID = '{0}'", toSite));
                         break;
                 }
 
@@ -999,8 +999,8 @@ select @4th=ID from Carrier_FtyRule where FromCountry = '{1}' and ToCountry = '{
 select @5th=ID from Carrier_FtyRule where FromSite = '{0}';
 select @6th=ID from Carrier_FtyRule where FromCountry = '{1}';
 
-select c.ID,c.Account,c.SuppID,isnull(s.AbbEN,'') as Abb from Carrier c
-left join Supp s on c.SuppID = s.ID
+select c.ID,c.Account,c.SuppID,isnull(s.AbbEN,'') as Abb from Carrier c WITH (NOLOCK) 
+left join Supp s WITH (NOLOCK) on c.SuppID = s.ID
 where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4th is null,iif(@5th is null,@6th,@5th),@4th),@3rd),@2nd)),@1st));",
                                                                                                                           fromSite, fromCountry, toSite, toCountry);
                 DataTable CarrierData;
@@ -1082,8 +1082,8 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
         private void CarrierPopup()
         {
             string sqlCmd = @"select c.ID,c.SuppID,isnull(s.AbbEN,'') as Abb,c.Account
-from Carrier c
-left join Supp s on c.SuppID = s.ID";
+from Carrier c WITH (NOLOCK) 
+left join Supp s WITH (NOLOCK) on c.SuppID = s.ID";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "5,8,20,20", textBox5.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
@@ -1121,17 +1121,17 @@ left join Supp s on c.SuppID = s.ID";
 as
 (
 select distinct ed.ID,ed.CTNNo,'N' as Status 
-from Express_Detail ed
+from Express_Detail ed WITH (NOLOCK) 
 where ed.ID = '{0}'
-and not exists (select 1 from Express_CTNData ec where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
+and not exists (select 1 from Express_CTNData ec WITH (NOLOCK) where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
 ),
 DeleteCtn
 as
 (
 select distinct ec.ID,ec.CTNNo,'D' as Status 
-from Express_CTNData ec
+from Express_CTNData ec WITH (NOLOCK) 
 where ec.ID = '{0}'
-and not exists (select 1 from Express_Detail ed where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
+and not exists (select 1 from Express_Detail ed WITH (NOLOCK) where ec.ID = ed.ID and ec.CTNNo = ed.CTNNo)
 )
 select * from NewCtn
 union
@@ -1269,7 +1269,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("You don't have permission to approve.");
                 return;
             }
-            if (!MyUtility.Check.Seek(string.Format("select ID from Express_Detail where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
+            if (!MyUtility.Check.Seek(string.Format("select ID from Express_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
             {
                 MyUtility.Msg.WarningBox("There's no detail data, don't need to approve.");
                 return;
@@ -1292,19 +1292,19 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 return;
             }
 
-            if (MyUtility.Check.Seek(string.Format("select ID from Express_Detail where ID = '{0}' and NW <= 0", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
+            if (MyUtility.Check.Seek(string.Format("select ID from Express_Detail WITH (NOLOCK) where ID = '{0}' and NW <= 0", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
             {
                 MyUtility.Msg.WarningBox("N.W. detail data can't be 0.");
                 return;
             }
 
-            if (MyUtility.Check.Seek(string.Format("select ID from Express_Detail where ID = '' and Qty <= 0", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
+            if (MyUtility.Check.Seek(string.Format("select ID from Express_Detail WITH (NOLOCK) where ID = '' and Qty <= 0", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
             {
                 MyUtility.Msg.WarningBox("Q'ty detail data can't be 0.");
                 return;
             }
 
-            if (MyUtility.Check.Seek(string.Format("select ID from Express_CTNData where ID = '{0}' and (CtnLength <= 0 or CtnWidth <= 0 or CtnHeight <= 0 or CTNNW <= 0)", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
+            if (MyUtility.Check.Seek(string.Format("select ID from Express_CTNData WITH (NOLOCK) where ID = '{0}' and (CtnLength <= 0 or CtnWidth <= 0 or CtnHeight <= 0 or CTNNW <= 0)", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
             {
                 MyUtility.Msg.WarningBox("Carton Dimension & Weight data can't empty!");
                 return;
@@ -1372,7 +1372,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         private void SendMail()
         {
             DataRow dr;
-            if (MyUtility.Check.Seek("select * from MailTo where ID = '003'", out dr))
+            if (MyUtility.Check.Seek("select * from MailTo WITH (NOLOCK) where ID = '003'", out dr))
             {
                 string mailto = MyUtility.Convert.GetString(dr["ToAddress"]);
                 string cc = MyUtility.Convert.GetString(dr["CcAddress"]);
@@ -1394,7 +1394,7 @@ When first applicant's team leader approval, anyone can not do any modification.
 ---If the goods belong to BULK ORDER, pls must fill in the system with ICR# or Debit note#.
 ---Applicant need to notify factory & supplier's attn. to arrange the shipping time by oneself before export the goods.
 ---Applicant also need to notify factory , supplier & customer's attn. to make sure that they can receive the goods by oneself after shipped out  the goods.
-", MyUtility.Convert.GetString(CurrentMaintain["Manager"]) + "-" + MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Manager"]))),
+", MyUtility.Convert.GetString(CurrentMaintain["Manager"]) + "-" + MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Manager"]))),
  MyUtility.Convert.GetString(CurrentMaintain["FromSite"]), MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "1" ? MyUtility.Convert.GetString(CurrentMaintain["FromSite"]) : MyUtility.Convert.GetString(displayBox2.Value),
  MyUtility.Convert.GetString(CurrentMaintain["ToSite"]), MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "3" ? "-" + MyUtility.Convert.GetString(displayBox3.Value) : "",
  MyUtility.Check.Empty(CurrentMaintain["ShipDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ShipDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));

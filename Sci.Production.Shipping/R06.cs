@@ -25,7 +25,7 @@ namespace Sci.Production.Shipping
             dateRange1.Value2 = DateTime.Today;
             dateRange2.Value2 = DateTime.Today;
             DataTable mDivision;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
             comboBox1.Text = Sci.Env.User.Keyword;
 
@@ -61,9 +61,9 @@ namespace Sci.Production.Shipping
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"select s.Type,s.LocalSuppID+'-'+ISNULL(l.Abb,'') as Supplier,s.ID,s.VoucherID,
 s.CDate,s.ApvDate,s.MDivisionID,s.CurrencyID,s.Amount+s.VAT as Amt,s.BLNo,s.Remark,s.InvNo,
-isnull((select CONCAT(InvNo,'/') from (select distinct InvNo from ShareExpense where ShippingAPID = s.ID) a for xml path('')),'') as ExportInv
-from ShippingAP s
-left join LocalSupp l on s.LocalSuppID = l.ID
+isnull((select CONCAT(InvNo,'/') from (select distinct InvNo from ShareExpense WITH (NOLOCK) where ShippingAPID = s.ID) a for xml path('')),'') as ExportInv
+from ShippingAP s WITH (NOLOCK) 
+left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
 where s.Status = 'Approved'");
 
             if (!MyUtility.Check.Empty(date1))

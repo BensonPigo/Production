@@ -23,7 +23,7 @@ namespace Sci.Production.Shipping
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = string.Format("select distinct Receiver from Express_Detail where ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"]));
+            string sqlCmd = string.Format("select distinct Receiver from Express_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"]));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", textBox1.Text, false, ",");
 
             DialogResult result = item.ShowDialog();
@@ -48,7 +48,7 @@ namespace Sci.Production.Shipping
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlCmd = string.Format(@"select OrderID,Seq1,Seq2,BrandID,Receiver,'*'+ID+OrderID+Seq1+Seq2+Category+'*' as BarCode 
-from Express_Detail 
+from Express_Detail WITH (NOLOCK) 
 where ID = '{0}'
 Order by CTNNo,Seq1,seq2", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Check.Empty(receiver) ? "" : " and Receiver = '" + receiver + "'", MyUtility.Check.Empty(incharge) ? "" : " and InCharge = '" + incharge + "'",
                  MyUtility.Check.Empty(ctnno)?"":" and CTNNo = '"+ctnno+"'",MyUtility.Check.Empty(orderid)?"":" and OrderID = '"+orderid+"'",

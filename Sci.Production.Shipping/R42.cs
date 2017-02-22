@@ -23,9 +23,9 @@ namespace Sci.Production.Shipping
             InitializeComponent();
             MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "Bulk,Sample,Bulk+Sample");
             DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox2, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
             comboBox1.SelectedIndex = 2;
             comboBox2.Text = Sci.Env.User.Keyword;
@@ -67,15 +67,15 @@ from (
 select o.MDivisionID,o.FactoryID,o.ID,o.StyleID,o.SeasonID,o.BrandID,IIF(o.Category  = 'B','Bulk','Sample') as Category,
 o.SciDelivery,oq.BuyerDelivery,o.OrderTypeID,oqd.Article,oqd.SizeCode,oqd.Qty,oa.Seq as ASeq,os.Seq as SSeq,
 isnull((select CONCAT(CustomSP, ',') from (
-select distinct v.CustomSP+'('+v.VNContractID+')' as CustomSP from VNConsumption v,VNConsumption_Article va,VNConsumption_SizeCode vs
+select distinct v.CustomSP+'('+v.VNContractID+')' as CustomSP from VNConsumption v WITH (NOLOCK) ,VNConsumption_Article va WITH (NOLOCK) ,VNConsumption_SizeCode vs WITH (NOLOCK) 
 where v.ID = va.ID and v.ID = vs.ID and v.StyleID = o.StyleID and v.BrandID = o.BrandID and va.Article = oqd.Article and vs.SizeCode = oqd.SizeCode) a
 ORDER BY CustomSP
 FOR XML PATH('')),'') as CustomSP
-from Order_QtyShip oq
-inner join Order_QtyShip_Detail oqd on oq.Id = oqd.Id and oq.Seq = oqd.Seq
-inner join Orders o on o.ID = oq.Id
-left join Order_Article oa on o.ID = oa.ID and oa.Article = oqd.Article
-left join Order_SizeCode os on o.ID = os.ID and os.SizeCode = oqd.SizeCode
+from Order_QtyShip oq WITH (NOLOCK) 
+inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.Id = oqd.Id and oq.Seq = oqd.Seq
+inner join Orders o WITH (NOLOCK) on o.ID = oq.Id
+left join Order_Article oa WITH (NOLOCK) on o.ID = oa.ID and oa.Article = oqd.Article
+left join Order_SizeCode os WITH (NOLOCK) on o.ID = os.ID and os.SizeCode = oqd.SizeCode
 where oq.BuyerDelivery between '{0}' and '{1}'
 and {2}
 and o.LocalOrder = 0

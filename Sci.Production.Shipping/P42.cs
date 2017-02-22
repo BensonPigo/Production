@@ -41,9 +41,9 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? "1=0" : "v.ID = "+MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select vd.*,c.HSCode,c.UnitID
-from VNContractQtyAdjust v
-inner join VNContractQtyAdjust_Detail vd on v.ID = vd.ID
-left join VNContract_Detail c on c.ID = v.VNContractID and c.NLCode = vd.NLCode
+from VNContractQtyAdjust v WITH (NOLOCK) 
+inner join VNContractQtyAdjust_Detail vd WITH (NOLOCK) on v.ID = vd.ID
+left join VNContract_Detail c WITH (NOLOCK) on c.ID = v.VNContractID and c.NLCode = vd.NLCode
 where {0}
 order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -62,7 +62,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                             if (MyUtility.Convert.GetString(dr["nlcode"]) != MyUtility.Convert.GetString(e.FormattedValue))
                             {
                                 DataRow seekData;
-                                if (!MyUtility.Check.Seek(string.Format("select HSCode,UnitID from VNContract_Detail where ID = '{0}' and NLCode = '{1}'",
+                                if (!MyUtility.Check.Seek(string.Format("select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'",
                                     MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(e.FormattedValue)), out seekData))
                                 {
                                     MyUtility.Msg.WarningBox("NL Code not found!!");
@@ -105,7 +105,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             base.ClickNewAfter();
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["CDate"] = DateTime.Today;
-            CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup("select top 1 ID from VNContract where StartDate <= GETDATE() and EndDate >= GETDATE() and Status = 'Confirmed'");
+            CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup("select top 1 ID from VNContract WITH (NOLOCK) where StartDate <= GETDATE() and EndDate >= GETDATE() and Status = 'Confirmed'");
         }
 
         protected override void ClickEditAfter()
@@ -250,7 +250,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 range = worksheet.Range[String.Format("A{0}:D{0}", intRowsRead)];
                 objCellArray = range.Value;
 
-                if (!MyUtility.Check.Seek(string.Format("select HSCode,UnitID from VNContract_Detail where ID = '{0}' and NLCode = '{1}'",
+                if (!MyUtility.Check.Seek(string.Format("select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'",
                     MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"))), out seekData))
                 {
                     errNLCode.Append(string.Format("NL Code: {0}\r\n",MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"))));

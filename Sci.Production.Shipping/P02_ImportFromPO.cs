@@ -91,13 +91,13 @@ namespace Sci.Production.Shipping
 from (
 select psd.ID,psd.SEQ1,psd.SEQ2,psd.Price,psd.POUnit as UnitID,isnull(o.BrandID,'') as BrandID,
 isnull(t.Name,'') as Leader, o.SMR  as LeaderID,ps.SuppID,ps.SuppID+'-'+s.AbbEN as Supplier,psd.Qty as POQty,
-(select isnull(sum(ed.Qty),0) from Express_Detail ed where ed.OrderID = psd.ID and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2) as ExpressQty,
+(select isnull(sum(ed.Qty),0) from Express_Detail ed WITH (NOLOCK) where ed.OrderID = psd.ID and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2) as ExpressQty,
 '' as Receiver,'' as CTNNo, 0.0 as NW
-from PO_Supp_Detail psd
-left join PO_Supp ps on psd.ID = ps.ID and psd.SEQ1 = ps.SEQ1
-left join Supp s on ps.SuppID = s.ID
-left join Orders o on psd.ID = o.ID
-left join TPEPass1 t on o.SMR = t.ID
+from PO_Supp_Detail psd WITH (NOLOCK) 
+left join PO_Supp ps WITH (NOLOCK) on psd.ID = ps.ID and psd.SEQ1 = ps.SEQ1
+left join Supp s WITH (NOLOCK) on ps.SuppID = s.ID
+left join Orders o WITH (NOLOCK) on psd.ID = o.ID
+left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
 where psd.ID = '{0}'{1}{2}) a", textBox1.Text, MyUtility.Check.Empty(textBox2.Text) ? "" : " and psd.SEQ1 = '" + textBox2.Text+"'",
                                MyUtility.Check.Empty(textBox3.Text) ? "" : " and psd.SEQ2 = '" + textBox3.Text+"'");
             DataTable selectData;
@@ -213,7 +213,7 @@ where psd.ID = '{0}'{1}{2}) a", textBox1.Text, MyUtility.Check.Empty(textBox2.Te
                 MyUtility.Tool.ProcessWithDatatable(dt, "Selected,ID,Seq1,Seq2,Qty,POQty", @"select a.ID,a.Seq1,a.Seq2
 from (
 select e.ID,e.Seq1,e.Seq2,e.POQty,
-e.Qty+(select isnull(sum(ed.Qty),0) as Qty from Express_Detail ed where ed.OrderID = e.ID and ed.Seq1 = e.Seq1 and ed.Seq2 = e.Seq2) as TtlQty
+e.Qty+(select isnull(sum(ed.Qty),0) as Qty from Express_Detail ed WITH (NOLOCK) where ed.OrderID = e.ID and ed.Seq1 = e.Seq1 and ed.Seq2 = e.Seq2) as TtlQty
 from #tmp e
 where e.Selected = 1) a
 where a.TtlQty > a.POQty", out checkData);

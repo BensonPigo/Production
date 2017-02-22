@@ -66,7 +66,7 @@ namespace Sci.Production.Shipping
         //檢查是否還有建立的紀錄尚未被confirm，若有則無法新增資料
         protected override bool ClickNewBefore()
         {
-            string sqlCmd = string.Format("select ID from ShipExpense_CanVass where ID = '{0}' and Status = 'New'", MyUtility.Convert.GetString(motherData["ID"]));
+            string sqlCmd = string.Format("select ID from ShipExpense_CanVass WITH (NOLOCK) where ID = '{0}' and Status = 'New'", MyUtility.Convert.GetString(motherData["ID"]));
             if (MyUtility.Check.Seek(sqlCmd, null))
             {
                 MyUtility.Msg.WarningBox("Still have data not yet confirm, so can't create new record!");

@@ -28,7 +28,7 @@ namespace Sci.Production.Shipping
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format("select *,IIF(NewItem = 1,'Y','') as New from InvAdjust_Qty where ID = '{0}'", masterID);
+            this.DetailSelectCommand = string.Format("select *,IIF(NewItem = 1,'Y','') as New from InvAdjust_Qty WITH (NOLOCK) where ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 

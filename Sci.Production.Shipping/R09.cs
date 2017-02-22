@@ -57,10 +57,10 @@ as (
 select e.InvNo,'Material' as Type,e.ID as WKNo,'' as FtyWKNo,e.ShipModeID,
 e.CYCFS,e.Packages,e.Blno,e.WeightKg,e.Cbm,e.Forwarder+'-'+isnull(supp.AbbEN,'') as Forwarder,
 e.PortArrival,e.DocArrival,se.CurrencyID,se.Amount,se.AccountID
-from ShippingAP s
-inner join ShareExpense se on se.ShippingAPID = s.ID
-inner join Export e on se.WKNo = e.ID
-left join Supp on supp.ID = e.Forwarder
+from ShippingAP s WITH (NOLOCK) 
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
+left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
 where s.Type = 'IMPORT'");
                 if (!MyUtility.Check.Empty(arrivePortDate1))
                 {
@@ -101,10 +101,10 @@ as (
 select fe.InvNo,IIF(fe.Type = 1,'3rd Country',IIF(fe.Type = 2,'Transfer In','Local Purchase')) as Type,'' as WKNo,fe.ID as FtyWKNo,fe.ShipModeID,
 fe.CYCFS,fe.Packages,fe.Blno,fe.WeightKg,fe.Cbm,fe.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
 fe.PortArrival,fe.DocArrival,se.CurrencyID,se.Amount,se.AccountID
-from ShippingAP s
-inner join ShareExpense se on se.ShippingAPID = s.ID
-left join FtyExport fe on se.InvNo = fe.ID
-left join LocalSupp ls on ls.ID = fe.Forwarder
+from ShippingAP s WITH (NOLOCK) 
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+left join FtyExport fe WITH (NOLOCK) on se.InvNo = fe.ID
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = fe.Forwarder
 where fe.Type <> 3");
                 if (!MyUtility.Check.Empty(arrivePortDate1))
                 {
@@ -184,10 +184,10 @@ select e.InvNo,'Material' as Type,s.MDivisionID,e.Consignee,e.ID as WKNo,'' as F
 e.CYCFS,e.Packages,e.Blno,e.WeightKg,e.Cbm,e.Forwarder+'-'+isnull(supp.AbbEN,'') as Forwarder,
 e.PortArrival,e.DocArrival,se.AccountID+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.CurrencyID,se.ShippingAPID,
 s.CDate,s.ApvDate,s.VoucherID,s.SubType
-from ShippingAP s
-inner join ShareExpense se on se.ShippingAPID = s.ID
-inner join Export e on se.WKNo = e.ID
-left join Supp on supp.ID = e.Forwarder
+from ShippingAP s WITH (NOLOCK) 
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
+left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
 left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'IMPORT'");
                 if (!MyUtility.Check.Empty(arrivePortDate1))
@@ -230,10 +230,10 @@ select fe.InvNo,IIF(fe.Type = 1,'3rd Country',IIF(fe.Type = 2,'Transfer In','Loc
 fe.CYCFS,fe.Packages,fe.Blno,fe.WeightKg,fe.Cbm,fe.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
 fe.PortArrival,fe.DocArrival,se.AccountID+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.CurrencyID,se.ShippingAPID,
 s.CDate,s.ApvDate,s.VoucherID,s.SubType
-from ShippingAP s
-inner join ShareExpense se on se.ShippingAPID = s.ID
-left join FtyExport fe on se.InvNo = fe.ID
-left join LocalSupp ls on ls.ID = fe.Forwarder
+from ShippingAP s WITH (NOLOCK) 
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+left join FtyExport fe WITH (NOLOCK) on se.InvNo = fe.ID
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = fe.Forwarder
 left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where fe.Type <> 3");
                 if (!MyUtility.Check.Empty(arrivePortDate1))
@@ -394,9 +394,9 @@ select * from FtyExportData");
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string selectCommand;
-            selectCommand = @"select ID,Abb from LocalSupp
+            selectCommand = @"select ID,Abb from LocalSupp WITH (NOLOCK) 
 union all
-select ID,AbbEN from Supp
+select ID,AbbEN from Supp WITH (NOLOCK) 
 order by ID";
             
             DataTable tbSelect;
@@ -418,9 +418,9 @@ order by ID";
                 {
                     DataRow inputData;
                     string Sql = string.Format(@"select * from (
-select ID,Abb from LocalSupp
+select ID,Abb from LocalSupp WITH (NOLOCK) 
 union all
-select ID,AbbEN from Supp) a
+select ID,AbbEN from Supp WITH (NOLOCK) ) a
 where a.ID = '{0}'", textBox1.Text);
                     if (!MyUtility.Check.Seek(Sql, out inputData))
                     {

@@ -22,7 +22,7 @@ namespace Sci.Production.Shipping
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select *,0 as WrongUnit from VNContract_Detail where ID = '{0}' order by CONVERT(int,SUBSTRING(NLCode,3,3))", masterID);
+            this.DetailSelectCommand = string.Format(@"select *,0 as WrongUnit from VNContract_Detail WITH (NOLOCK) where ID = '{0}' order by CONVERT(int,SUBSTRING(NLCode,3,3))", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -211,7 +211,7 @@ namespace Sci.Production.Shipping
             if (excel == null) return;
 
             DataTable ExcelDataTable, UpdateData;
-            string sqlCmd = "select *,0 as WrongUnit from VNContract_Detail where 1 = 0";
+            string sqlCmd = "select *,0 as WrongUnit from VNContract_Detail WITH (NOLOCK) where 1 = 0";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelDataTable);
 
             UpdateData = ((DataTable)gridbs.DataSource).Clone();

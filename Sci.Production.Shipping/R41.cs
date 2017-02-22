@@ -139,8 +139,8 @@ namespace Sci.Production.Shipping
         private Ict.DualResult QueryImport(string sqlCondition)
         {
             string sqlCmd = string.Format(@"select v.ID,v.CDate,v.VNContractID,v.DeclareNo,IIF(v.BLNo='',v.WKNo,v.BLNo) as BLWK,vd.NLCode,vd.HSCode,vd.Qty,vd.UnitID,vd.Remark
-from VNImportDeclaration v
-inner join VNImportDeclaration_Detail vd on v.ID = vd.ID
+from VNImportDeclaration v WITH (NOLOCK) 
+inner join VNImportDeclaration_Detail vd WITH (NOLOCK) on v.ID = vd.ID
 where {0} and v.Status = 'Confirmed'
 order by v.ID", sqlCondition);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printImport);
@@ -155,11 +155,11 @@ isnull(vd.NLCode,'') as NLCode,isnull(vd.HSCode,'') as HSCode,isnull(vd.Qty,0) a
 isnull(vd.UnitID,'') as UnitID,isnull(vcd.Waste,0) as Waste,
 Round(ed.ExportQty*isnull(vd.Qty,0)*(1+isnull(vcd.Waste,0)),3) as Total,
 IIF(v.Status = 'Junked','Y','') as Cancel
-from VNExportDeclaration v
-inner join VNExportDeclaration_Detail ed on v.ID = ed.ID
-left join VNConsumption c on c.VNContractID = v.VNContractID and c.CustomSP = ed.CustomSP
-left join VNConsumption_Detail vd on c.ID = vd.ID
-left join VNContract_Detail vcd on vcd.ID = v.VNContractID and vcd.NLCode = vd.NLCode
+from VNExportDeclaration v WITH (NOLOCK) 
+inner join VNExportDeclaration_Detail ed WITH (NOLOCK) on v.ID = ed.ID
+left join VNConsumption c WITH (NOLOCK) on c.VNContractID = v.VNContractID and c.CustomSP = ed.CustomSP
+left join VNConsumption_Detail vd WITH (NOLOCK) on c.ID = vd.ID
+left join VNContract_Detail vcd WITH (NOLOCK) on vcd.ID = v.VNContractID and vcd.NLCode = vd.NLCode
 where {0} and (v.Status = 'Confirmed' or v.Status = 'Junked')
 order by v.ID", sqlCondition);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printExport);
@@ -170,9 +170,9 @@ order by v.ID", sqlCondition);
         private Ict.DualResult QueryAdjust(string sqlCondition)
         {
             string sqlCmd = string.Format(@"select v.CDate,v.VNContractID,v.DeclareNo,vd.NLCode,isnull(cd.HSCode,'') as HSCode,vd.Qty,isnull(cd.UnitID,'') as UnitID,v.Remark
-from VNContractQtyAdjust v
-inner join VNContractQtyAdjust_Detail vd on v.ID =vd.ID
-left join VNContract_Detail cd on cd.ID = v.VNContractID and cd.NLCode = vd.NLCode
+from VNContractQtyAdjust v WITH (NOLOCK) 
+inner join VNContractQtyAdjust_Detail vd WITH (NOLOCK) on v.ID =vd.ID
+left join VNContract_Detail cd WITH (NOLOCK) on cd.ID = v.VNContractID and cd.NLCode = vd.NLCode
 where {0} and v.Status = 'Confirmed'
 order by v.CDate", sqlCondition);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printAdjust);

@@ -40,9 +40,9 @@ namespace Sci.Production.Shipping
                 .Numeric("NewShipQty", header: "New Q'ty", width: Widths.AnsiChars(6));
 
             string sqlCmd = string.Format(@"select * 
-from Pullout_Revise_Detail prd
-left join Orders o on o.ID = prd.OrderID
-left join Order_SizeCode os on os.Id = o.POID and os.SizeCode = prd.SizeCode
+from Pullout_Revise_Detail prd WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on o.ID = prd.OrderID
+left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = prd.SizeCode
 where Pullout_ReviseReviseKey = {0}
 order by os.Seq", MyUtility.Convert.GetString(masterData["ReviseKey"]));
 

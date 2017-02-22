@@ -34,9 +34,9 @@ namespace Sci.Production.Shipping
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string selectCommand;
-            selectCommand = @"select ID,Abb from LocalSupp
+            selectCommand = @"select ID,Abb from LocalSupp WITH (NOLOCK) 
 union all
-select ID,AbbEN from Supp
+select ID,AbbEN from Supp WITH (NOLOCK) 
 order by ID";
 
             DataTable tbSelect;
@@ -58,9 +58,9 @@ order by ID";
                 {
                     DataRow inputData;
                     string Sql = string.Format(@"select * from (
-select ID,Abb from LocalSupp
+select ID,Abb from LocalSupp WITH (NOLOCK) 
 union all
-select ID,AbbEN from Supp) a
+select ID,AbbEN from Supp WITH (NOLOCK)) a
 where a.ID = '{0}'", textBox1.Text);
                     if (!MyUtility.Check.Seek(Sql, out inputData))
                     {
@@ -131,15 +131,15 @@ as (
 select distinct 'Export' as IE, 'GARMENT' as Type,g.ID,g.Shipper,g.BrandID,
 IIF(p.Type = 'B','Bulk',IIF(p.Type = 'S','Sample','')) as Category,
 isnull((select sum(a.Qty) from (
-select distinct oq.Id,oq.Seq,oq.Qty from PackingList_Detail pd, Order_QtyShip oq
+select distinct oq.Id,oq.Seq,oq.Qty from PackingList_Detail pd WITH (NOLOCK) , Order_QtyShip oq WITH (NOLOCK) 
 where pd.ID = p.ID and pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq) a),0) as OrderQty,
 g.CustCDID,g.Dest,g.ShipModeID,
-(select MAX(PulloutDate) from PackingList where INVNo = g.ID) as PulloutDate,g.TotalShipQty,
+(select MAX(PulloutDate) from PackingList WITH (NOLOCK) where INVNo = g.ID) as PulloutDate,g.TotalShipQty,
 g.TotalCTNQty,g.TotalGW,g.TotalCBM,g.Forwarder+'-'+isnull(l.Abb,'') as Forwarder,'' as BLNo
-from GMTBooking g
-inner join PackingList p on p.INVNo = g.ID
-left join LocalSupp l on l.ID = g.Forwarder
-where not exists (select 1 from ShareExpense where InvNo = g.ID)");
+from GMTBooking g WITH (NOLOCK) 
+inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
+left join LocalSupp l WITH (NOLOCK) on l.ID = g.Forwarder
+where not exists (select 1 from ShareExpense WITH (NOLOCK) where InvNo = g.ID)");
                 if (!MyUtility.Check.Empty(date1))
                 {
                     sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(date1).ToString("d")));
@@ -172,16 +172,16 @@ where not exists (select 1 from ShareExpense where InvNo = g.ID)");
 PLData
 as (
 select  'Export' as IE, 'GARMENT' as Type,p.ID,p.MDivisionID,p.BrandID,
-IIF((select top 1 o.Category from Orders o, PackingList_Detail pd 
+IIF((select top 1 o.Category from Orders o WITH (NOLOCK) , PackingList_Detail pd WITH (NOLOCK) 
 where pd.ID = p.ID and o.ID = pd.OrderID)='B','Bulk','Sample') as Category,
 isnull((select sum(a.Qty) from (
-select distinct oq.Id,oq.Seq,oq.Qty from PackingList_Detail pd, Order_QtyShip oq
+select distinct oq.Id,oq.Seq,oq.Qty from PackingList_Detail pd WITH (NOLOCK) , Order_QtyShip oq WITH (NOLOCK) 
 where pd.ID = p.ID and pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq) a),0) as OrderQty,
 p.CustCDID,'' as Dest,p.ShipModeID,p.PulloutDate,p.ShipQty,p.CTNQty,p.GW,p.CBM,'' as Forwarder,
 '' as BLNo
-from PackingList p
+from PackingList p WITH (NOLOCK) 
 where (p.Type = 'F' or p.Type = 'L')
-and not exists (select 1 from ShareExpense where InvNo = p.ID)");
+and not exists (select 1 from ShareExpense WITH (NOLOCK) where InvNo = p.ID)");
                 if (!MyUtility.Check.Empty(date1))
                 {
                     sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(date1).ToString("d")));
@@ -216,10 +216,10 @@ select * from PLData");
 as (
 select 'Import' as IE,'MATERIAL' as Type,e.ID,e.ImportCountry,e.ShipModeID,e.PortArrival,e.WeightKg,
 e.Cbm,e.Forwarder+'-'+isnull(s.AbbEN,'') as Forwarder,e.Blno,
-(select top 1 ShippingAPID from ShareExpense where Blno = e.Blno) as APId1,
-(select top 1 ShippingAPID from ShareExpense where WKNo = e.ID) as APId2
-from Export e
-left join Supp s on s.ID = e.Forwarder
+(select top 1 ShippingAPID from ShareExpense WITH (NOLOCK) where Blno = e.Blno) as APId1,
+(select top 1 ShippingAPID from ShareExpense WITH (NOLOCK) where WKNo = e.ID) as APId2
+from Export e WITH (NOLOCK) 
+left join Supp s WITH (NOLOCK) on s.ID = e.Forwarder
 where e.Junk = 0");
                 if (!MyUtility.Check.Empty(date1))
                 {
@@ -248,9 +248,9 @@ select IIF(f.Type = 3,'Export','Import') as IE,
 IIF(f.Type = 1,'3rd Country',IIF(f.Type = 2,'Transfer In',IIF(f.Type = 3,'Transfer Out','Local Purchase'))) as Type,
 f.ID,f.ImportCountry,f.ShipModeID,f.PortArrival,f.WeightKg,f.Cbm,f.Forwarder+'-'+isnull(l.Abb,'') as Forwarder,
 f.Blno
-from FtyExport f
-left join LocalSupp l on l.ID = f.Forwarder
-where not exists (select 1 from ShareExpense where WKNo = f.ID)");
+from FtyExport f WITH (NOLOCK) 
+left join LocalSupp l WITH (NOLOCK) on l.ID = f.Forwarder
+where not exists (select 1 from ShareExpense WITH (NOLOCK) where WKNo = f.ID)");
                 if (!MyUtility.Check.Empty(date1))
                 {
                     sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(date1).ToString("d")));

@@ -33,20 +33,20 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? "1=0" : string.Format("p.ShipPlanID ='{0}'", MyUtility.Convert.GetString(e.Master["ID"]));
             string sqlCmd = string.Format(@"select p.ID,
-(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = p.id) a for xml path('')) as OrderID,
-(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
-p.Status,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogCTNQty,
+(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')) as OrderID,
+(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
+p.Status,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogCTNQty,
 p.InspDate,p.InspStatus,p.PulloutDate,p.InvNo,p.MDivisionID
-from PackingList p
+from PackingList p WITH (NOLOCK) 
 where {0} order by p.ID", masterID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out plData);
 
 
             masterID = (e.Master == null) ? "1=0" : string.Format("g.ShipPlanID ='{0}'", MyUtility.Convert.GetString(e.Master["ID"]));
-            this.DetailSelectCommand = string.Format(@"select g.ID,g.BrandID,g.ShipModeID,(g.Forwarder+' - '+(select ls.Abb from LocalSupp ls where ls.ID = g.Forwarder)) as Forwarder,g.CYCFS,g.SONo,g.CutOffDate,g.ForwarderWhse_DetailUKey, isnull(fd.WhseNo,'') as WhseNo,iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')) as Status,g.TotalCTNQty,g.TotalCBM,
-(select isnull(sum(pd.CTNQty),0) from PackingList p,PackingList_Detail pd where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null) as ClogCTNQty
-from GMTBooking g
-left join ForwarderWhse_Detail fd on g.ForwarderWhse_DetailUKey = fd.UKey
+            this.DetailSelectCommand = string.Format(@"select g.ID,g.BrandID,g.ShipModeID,(g.Forwarder+' - '+(select ls.Abb from LocalSupp ls WITH (NOLOCK) where ls.ID = g.Forwarder)) as Forwarder,g.CYCFS,g.SONo,g.CutOffDate,g.ForwarderWhse_DetailUKey, isnull(fd.WhseNo,'') as WhseNo,iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')) as Status,g.TotalCTNQty,g.TotalCBM,
+(select isnull(sum(pd.CTNQty),0) from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null) as ClogCTNQty
+from GMTBooking g WITH (NOLOCK) 
+left join ForwarderWhse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
 where {0} order by g.ID", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -304,15 +304,15 @@ where {0} order by g.ID", masterID);
 g.SONo,g.CutOffDate,isnull(fd.WhseNo,'') as WhseNo,
 iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')) as Status,
 g.TotalCTNQty,g.TotalCBM,
-(select isnull(sum(pd1.CTNQty),0) from PackingList p1,PackingList_Detail pd1 where p1.INVNo = g.ID and p1.ID = pd1.ID and pd1.ReceiveDate is not null) as ClogCTNQty,
-p.ID,(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = p.id) a for xml path('')) as OrderID,
-(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
-p.Status as PLStatus,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ReceiveDate is not null) as PLClogCTNQty,
+(select isnull(sum(pd1.CTNQty),0) from PackingList p1 WITH (NOLOCK) ,PackingList_Detail pd1 WITH (NOLOCK) where p1.INVNo = g.ID and p1.ID = pd1.ID and pd1.ReceiveDate is not null) as ClogCTNQty,
+p.ID,(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')) as OrderID,
+(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
+p.Status as PLStatus,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID and pd.ReceiveDate is not null) as PLClogCTNQty,
 p.InspDate,p.InspStatus,p.PulloutDate
-from PackingList p
-left join GMTBooking g on p.INVNo = g.ID
-left join ForwarderWhse_Detail fd on g.ForwarderWhse_DetailUKey = fd.UKey
-left join LocalSupp ls on g.Forwarder = ls.ID
+from PackingList p WITH (NOLOCK) 
+left join GMTBooking g WITH (NOLOCK) on p.INVNo = g.ID
+left join ForwarderWhse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
+left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
 where p.ShipPlanID = '{0}'
 order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DataTable ExcelData;
@@ -382,7 +382,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         //檢查Pullout report是否已經Confirm
         private bool CheckPullout(DateTime pulloutDate, string mdivisionid)
         {
-            return MyUtility.Check.Seek(string.Format("select ID from Pullout where PulloutDate = '{0}' and MDivisionID = '{1}' and Status <> 'New'", Convert.ToDateTime(pulloutDate).ToString("d"), mdivisionid));
+            return MyUtility.Check.Seek(string.Format("select ID from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}' and Status <> 'New'", Convert.ToDateTime(pulloutDate).ToString("d"), mdivisionid));
         }
 
         //Process Pullout Date Message
@@ -471,7 +471,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         {
             base.ClickConfirm();
             //Pullout Date有空值就不可以Confirm
-            string sqlCmd = string.Format("select ID,InvNo from PackingList where ShipPlanID = '{0}' and PulloutDate is null", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string sqlCmd = string.Format("select ID,InvNo from PackingList WITH (NOLOCK) where ShipPlanID = '{0}' and PulloutDate is null", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
             if (!result)
@@ -493,7 +493,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 }
             }
             //Inspection date不為空但是Inspection status為空就不可以Confirm
-            sqlCmd = string.Format("select ID,InvNo from PackingList where ShipPlanID = '{0}' and InspDate is not null and InspStatus = ''", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            sqlCmd = string.Format("select ID,InvNo from PackingList WITH (NOLOCK) where ShipPlanID = '{0}' and InspDate is not null and InspStatus = ''", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out dt);
             if (!result)
             {
@@ -515,7 +515,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             }
 
             //Garment Booking還沒Confirm就不可以做Confirm
-            sqlCmd = string.Format("select ID from GMTBooking where ShipPlanID = '{0}' and Status = 'New'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            sqlCmd = string.Format("select ID from GMTBooking WITH (NOLOCK) where ShipPlanID = '{0}' and Status = 'New'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out dt);
             if (!result)
             {

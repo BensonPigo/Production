@@ -22,8 +22,8 @@ namespace Sci.Production.Shipping
             InitializeComponent();
             MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "B,Bulk,S,Sample");
             //取VNConsumption_Article, VNConsumption_SizeCode結構，存檔時使用
-            DBProxy.Current.Select(null, "select * from VNConsumption_Article where 1 = 0", out tmpConsumptionArticle);
-            DBProxy.Current.Select(null, "select * from VNConsumption_SizeCode where 1 = 0", out tmpConsumptionSizecode);
+            DBProxy.Current.Select(null, "select * from VNConsumption_Article WITH (NOLOCK) where 1 = 0", out tmpConsumptionArticle);
+            DBProxy.Current.Select(null, "select * from VNConsumption_SizeCode WITH (NOLOCK) where 1 = 0", out tmpConsumptionSizecode);
         }
 
         protected override void OnFormLoaded()
@@ -52,8 +52,8 @@ namespace Sci.Production.Shipping
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             string contraceNo = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["VNContractID"]);
             this.DetailSelectCommand = string.Format(@"select vd.*,cd.Waste
-from VNConsumption_Detail vd
-left join VNContract_Detail cd on cd.NLCode = vd.NLCode and cd.ID = '{0}'
+from VNConsumption_Detail vd WITH (NOLOCK) 
+left join VNContract_Detail cd WITH (NOLOCK) on cd.NLCode = vd.NLCode and cd.ID = '{0}'
 where vd.ID = '{1}'
 order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", contraceNo, masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -63,11 +63,11 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", contraceNo, masterID);
         {
             base.OnDetailEntered();
             numericBox3.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["Qty"]) - MyUtility.Convert.GetDecimal(CurrentMaintain["PulloutQty"]);
-            string colorWay = MyUtility.GetValue.Lookup(string.Format("select CONCAT(Article, ',') from VNConsumption_Article where ID = '{0}' order by Article for xml path('')", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            string colorWay = MyUtility.GetValue.Lookup(string.Format("select CONCAT(Article, ',') from VNConsumption_Article WITH (NOLOCK) where ID = '{0}' order by Article for xml path('')", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
             editBox1.Text = MyUtility.Check.Empty(colorWay) ? "" : colorWay.Substring(0, colorWay.Length - 1);
-            string sizeGroup = MyUtility.GetValue.Lookup(string.Format("select CONCAT(SizeCode, ',') from VNConsumption_SizeCode where ID = '{0}' order by SizeCode for xml path('')", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            string sizeGroup = MyUtility.GetValue.Lookup(string.Format("select CONCAT(SizeCode, ',') from VNConsumption_SizeCode WITH (NOLOCK) where ID = '{0}' order by SizeCode for xml path('')", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
             editBox2.Text = MyUtility.Check.Empty(sizeGroup) ? "" : sizeGroup.Substring(0, sizeGroup.Length - 1);
-            DBProxy.Current.Select(null, string.Format("select * from VNConsumption_Detail_Detail where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])), out VNConsumption_Detail_Detail);
+            DBProxy.Current.Select(null, string.Format("select * from VNConsumption_Detail_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])), out VNConsumption_Detail_Detail);
         }
 
         protected override void OnDetailGridSetup()
@@ -94,8 +94,8 @@ IIF(a.LocalItem = 1,a.LUnit,a.FUnit) as UnitID,a.Qty
 from (
 select t.NLCode,t.SCIRefno,t.RefNo,t.Qty,t.LocalItem,f.DescDetail,f.Type,f.CustomsUnit as FUnit,l.Description,l.Category,l.LocalSuppid,l.CustomsUnit as LUnit
 from #tmp t
-left join Fabric f on t.SCIRefno = f.SCIRefno
-left join LocalItem l on t.RefNo = l.RefNo
+left join Fabric f WITH (NOLOCK) on t.SCIRefno = f.SCIRefno
+left join LocalItem l WITH (NOLOCK) on t.RefNo = l.RefNo
 where t.NLCode = '{0}') a
 order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])), out detail2s);
                         }
@@ -142,10 +142,10 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])), out detail2s);
             base.ClickNewAfter();
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Category"] = "B";
-            CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup(@"select ID from VNContract where StartDate = (
-select MAX(StartDate) from VNContract where GETDATE() between StartDate and EndDate and Status = 'Confirmed')");
-            CurrentMaintain["CustomSP"] = "SP" + MyUtility.Convert.GetString(MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("select isnull(MAX(CustomSP), 'SP000000') as CustomSP from VNConsumption where VNContractID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]))).Substring(2)) + 1).PadLeft(6, '0');
-            CurrentMaintain["VNMultiple"] = MyUtility.GetValue.Lookup("select VNMultiple from System");
+            CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup(@"select ID from VNContract WITH (NOLOCK) where StartDate = (
+select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed')");
+            CurrentMaintain["CustomSP"] = "SP" + MyUtility.Convert.GetString(MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("select isnull(MAX(CustomSP), 'SP000000') as CustomSP from VNConsumption WITH (NOLOCK) where VNContractID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]))).Substring(2)) + 1).PadLeft(6, '0');
+            CurrentMaintain["VNMultiple"] = MyUtility.GetValue.Lookup("select VNMultiple from System WITH (NOLOCK) ");
         }
 
         protected override bool ClickEditBefore()
@@ -286,7 +286,7 @@ select MAX(StartDate) from VNContract where GETDATE() between StartDate and EndD
                 }
                 CurrentMaintain["ID"] = newID;
 
-                string maxVersion = MyUtility.GetValue.Lookup(string.Format("select isnull(MAX(Version),0) as MaxVersion from VNConsumption where StyleUKey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])));
+                string maxVersion = MyUtility.GetValue.Lookup(string.Format("select isnull(MAX(Version),0) as MaxVersion from VNConsumption WITH (NOLOCK) where StyleUKey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])));
                 CurrentMaintain["Version"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(maxVersion) + 1).PadLeft(3, '0');
             }
 
@@ -389,7 +389,7 @@ select MAX(StartDate) from VNContract where GETDATE() between StartDate and EndD
         {
             if (EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract where GETDATE() between StartDate and EndDate and Status = 'Confirmed'", "15,10,10", textBox3.Text, headercaptions: "Contract No.,Start Date, End Date");
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed'", "15,10,10", textBox3.Text, headercaptions: "Contract No.,Start Date, End Date");
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
                 textBox3.Text = item.GetSelectedString();
@@ -401,14 +401,14 @@ select MAX(StartDate) from VNContract where GETDATE() between StartDate and EndD
         {
             if (EditMode && textBox3.OldValue != textBox3.Text && !MyUtility.Check.Empty(textBox3.Text))
             {
-                if (!MyUtility.Check.Seek(string.Format("select ID from VNContract where ID = '{0}'", textBox3.Text)))
+                if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", textBox3.Text)))
                 {
                     MyUtility.Msg.WarningBox("Contract no. not found!!");
                     textBox3.Text = "";
                     e.Cancel = true;
                     return;
                 }
-                else if (!MyUtility.Check.Seek(string.Format("select ID from VNContract where ID = '{0}' and GETDATE() between StartDate and EndDate'", textBox3.Text)))
+                else if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}' and GETDATE() between StartDate and EndDate'", textBox3.Text)))
                 {
                     MyUtility.Msg.WarningBox("This Contract can't use.");
                     textBox3.Text = "";
@@ -423,7 +423,7 @@ select MAX(StartDate) from VNContract where GETDATE() between StartDate and EndD
         {
             if (EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select ID, SeasonID, BrandID,Ukey,CPU from Style Order By BrandID, ID, SeasonID", "15,10,10,0", textBox3.Text, headercaptions: "Contract No.,Start Date, End Date,");
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select ID, SeasonID, BrandID,Ukey,CPU from Style WITH (NOLOCK) Order By BrandID, ID, SeasonID", "15,10,10,0", textBox3.Text, headercaptions: "Contract No.,Start Date, End Date,");
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
                 IList<DataRow> selectedData = item.GetSelecteds();
@@ -440,7 +440,7 @@ select MAX(StartDate) from VNContract where GETDATE() between StartDate and EndD
         {
             if (EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select SizeCode from Style_SizeCode where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "15,10,10,0", textBox2.Text, headercaptions: "Size");
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "15,10,10,0", textBox2.Text, headercaptions: "Size");
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
                 CurrentMaintain["SizeCode"] = item.GetSelectedString();
@@ -452,7 +452,7 @@ select MAX(StartDate) from VNContract where GETDATE() between StartDate and EndD
         {
             if (EditMode)
             {
-                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select Article from Style_Article where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "Color Way", "8", editBox1.Text);
+                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select Article from Style_Article WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "Color Way", "8", editBox1.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
                 editBox1.Text = item.GetSelectedString();
@@ -464,7 +464,7 @@ select MAX(StartDate) from VNContract where GETDATE() between StartDate and EndD
         {
             if (EditMode)
             {
-                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select SizeCode from Style_SizeCode where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "Color Way", "8", editBox2.Text);
+                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "Color Way", "8", editBox2.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
                 editBox2.Text = item.GetSelectedString();
@@ -510,11 +510,11 @@ with tmpMarkerData
 as (
 select sm.MarkerName,sm.StyleUkey,sm.LectraCode,sma.Article,sms.SizeCode,dbo.MarkerLengthToYDS(sm.MarkerLength) as markerYDS,
 sm.Width,sms.Qty,sc.FabricCode,sfqt.QTFabricCode
-from Style_MarkerList sm
-inner join Style_MarkerList_SizeQty sms on sm.Ukey = sms.Style_MarkerListUkey and sms.SizeCode = @sizecode
-inner join Style_ColorCombo sc on sc.StyleUkey = sm.StyleUkey and sc.LectraCode = sm.LectraCode
-left join Style_MarkerList_Article sma on sm.Ukey = sma.Style_MarkerListUkey 
-left join Style_FabricCode_QT sfqt on sm.LectraCode = sfqt.LectraCode and sm.StyleUkey = sfqt.StyleUkey
+from Style_MarkerList sm WITH (NOLOCK) 
+inner join Style_MarkerList_SizeQty sms WITH (NOLOCK) on sm.Ukey = sms.Style_MarkerListUkey and sms.SizeCode = @sizecode
+inner join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sm.StyleUkey and sc.LectraCode = sm.LectraCode
+left join Style_MarkerList_Article sma WITH (NOLOCK) on sm.Ukey = sma.Style_MarkerListUkey 
+left join Style_FabricCode_QT sfqt WITH (NOLOCK) on sm.LectraCode = sfqt.LectraCode and sm.StyleUkey = sfqt.StyleUkey
 where sm.MixedSizeMarker = 1 and sm.StyleUkey = @styleukey and (sma.Article is null or sma.Article = @article)
 and sc.Article = @article
 ),
@@ -523,8 +523,8 @@ as (
 select t.markerYDS,t.Width,t.Qty, IIF(t.QTFabricCode is null, sb.SCIRefno, sb1.SCIRefno) as SCIRefNo,
 IIF(t.QTFabricCode is null, sb.SuppIDBulk, sb1.SuppIDBulk) as SuppIDBulk
 from tmpMarkerData t
-left join Style_BOF sb on sb.StyleUkey = t.StyleUkey and sb.FabricCode = t.FabricCode
-left join Style_BOF sb1 on sb1.StyleUkey = t.StyleUkey and sb1.FabricCode = t.QTFabricCode
+left join Style_BOF sb WITH (NOLOCK) on sb.StyleUkey = t.StyleUkey and sb.FabricCode = t.FabricCode
+left join Style_BOF sb1 WITH (NOLOCK) on sb1.StyleUkey = t.StyleUkey and sb1.FabricCode = t.QTFabricCode
 ),
 tmpBOFRateData
 as (
@@ -532,10 +532,10 @@ select t.markerYDS,'YDS' as UsageUnit,t.Qty,f.SCIRefno,f.Refno,f.BrandID,f.NLCod
 f.PcsWidth,f.PcsLength,f.PcsKg,
 isnull((select RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = f.CustomsUnit),1) as RateValue,
 (select RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = 'M') as M2RateValue,
-isnull((select Rate from Unit_Rate where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate where UnitFrom = 'YDS' and UnitTo = 'M'),'') as M2UnitRate
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit),'') as UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M'),'') as M2UnitRate
 from tmpFabricCode t
-inner join Fabric f on f.SCIRefno = t.SCIRefno
+inner join Fabric f WITH (NOLOCK) on f.SCIRefno = t.SCIRefno
 where (t.SuppIDBulk <> 'FTY' or t.SuppIDBulk <> 'FTY-C')
 and f.NoDeclare = 0),
 tmpBOFNewQty
@@ -552,20 +552,20 @@ tmpBOA
 as (
 select sb.StyleUkey,sb.Ukey,sb.Refno,sb.SCIRefno,sb.SuppIDBulk,sb.SizeItem,sb.PatternPanel,sb.BomTypeArticle,sb.BomTypeColor,sb.ConsPC,
 sc.ColorID,f.UsageUnit,f.HSCode,f.NLCode,f.CustomsUnit,f.PcsWidth,f.PcsLength,f.PcsKg,f.BomTypeCalculate,f.Type,f.BrandID
-from Style_BOA sb
-left join Style_ColorCombo sc on sc.StyleUkey = sb.StyleUkey and sc.PatternPanel = sb.PatternPanel and sc.Article = @article
-left join Fabric f on sb.SCIRefno = f.SCIRefno
+from Style_BOA sb WITH (NOLOCK) 
+left join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sb.StyleUkey and sc.PatternPanel = sb.PatternPanel and sc.Article = @article
+left join Fabric f WITH (NOLOCK) on sb.SCIRefno = f.SCIRefno
 where sb.StyleUkey = @styleukey
 and sb.IsCustCD <> 2
 and (sb.SuppIDBulk <> 'FTY' and sb.SuppIDBulk <> 'FTY-C')
 ),
 tmpBOAPrepareData
 as (
-select t.*,IIF(BomTypeCalculate = 1,(select dbo.GetDigitalValue(SizeSpec) from Style_SizeSpec where StyleUkey = t.StyleUkey and SizeItem = t.SizeItem and SizeCode = @sizecode),ConsPC) as SizeSpec,
+select t.*,IIF(BomTypeCalculate = 1,(select dbo.GetDigitalValue(SizeSpec) from Style_SizeSpec WITH (NOLOCK) where StyleUkey = t.StyleUkey and SizeItem = t.SizeItem and SizeCode = @sizecode),ConsPC) as SizeSpec,
 isnull((select RateValue from dbo.View_Unitrate where FROM_U = t.UsageUnit and TO_U = t.CustomsUnit),1) as RateValue,
 (select RateValue from dbo.View_Unitrate where FROM_U = t.UsageUnit and TO_U = 'M') as M2RateValue,
-isnull((select Rate from Unit_Rate where UnitFrom = t.UsageUnit and UnitTo = t.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate where UnitFrom = t.UsageUnit and UnitTo = 'M'),'') as M2UnitRate
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = t.UsageUnit and UnitTo = t.CustomsUnit),'') as UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = t.UsageUnit and UnitTo = 'M'),'') as M2UnitRate
 from tmpBOA t
 where (t.BomTypeArticle = 0 and t.BomTypeColor = 0) or ((t.BomTypeArticle = 1 or t.BomTypeColor = 1) and t.ColorID is not null)
 ),
@@ -583,11 +583,11 @@ group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit),
 tmpLocalPO
 as (
 select ld.Refno,ld.Qty,ld.UnitId,li.MeterToCone,li.NLCode,li.HSCode,li.CustomsUnit,li.PcsWidth,li.PcsLength,li.PcsKg,o.Qty as OrderQty,isnull(vd.Waste,0) as Waste
-from LocalPO_Detail ld
-left join LocalItem li on li.RefNo = ld.Refno
-left join Orders o on ld.OrderId = o.ID
+from LocalPO_Detail ld WITH (NOLOCK) 
+left join LocalItem li WITH (NOLOCK) on li.RefNo = ld.Refno
+left join Orders o WITH (NOLOCK) on ld.OrderId = o.ID
 left join VNContract_Detail vd on vd.ID = @vncontractid and vd.NLCode = li.NLCode
-where ld.OrderId = (select TOP 1 ID from Orders where StyleUkey = @styleukey and Category = @category order by BuyerDelivery,ID)
+where ld.OrderId = (select TOP 1 ID from Orders WITH (NOLOCK) where StyleUkey = @styleukey and Category = @category order by BuyerDelivery,ID)
 and li.NoDeclare = 0
 ),
 tmpConeToM
@@ -600,8 +600,8 @@ as (
 select Refno,Qty/OrderQty as Qty,UnitId,NLCode,HSCode,CustomsUnit,PcsWidth,PcsLength,PcsKg,Waste,
 isnull((select RateValue from dbo.View_Unitrate where FROM_U = UnitId and TO_U = CustomsUnit),1) as RateValue,
 (select RateValue from dbo.View_Unitrate where FROM_U = UnitId and TO_U = 'M') as M2RateValue,
-isnull((select Rate from Unit_Rate where UnitFrom = UnitId and UnitTo = CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate where UnitFrom = UnitId and UnitTo = 'M'),'') as M2UnitRate
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = CustomsUnit),'') as UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = 'M'),'') as M2UnitRate
 from tmpConeToM),
 tmpLocalNewQty
 as (
@@ -648,9 +648,9 @@ group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,LocalItem", MyUtility.
             sqlCmd.Append(string.Format(@"with tmpFixDeclare
 as (
 select vfd.* ,sa.TissuePaper as ArticleTissuePaper,isnull(s.CTNQty,0) as CTNQty
-from VNFixedDeclareItem vfd
-left join Style_Article sa on sa.StyleUkey = {0} and sa.Article = '{1}'
-left join Style s on s.Ukey = {0}
+from VNFixedDeclareItem vfd WITH (NOLOCK) 
+left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = {0} and sa.Article = '{1}'
+left join Style s WITH (NOLOCK) on s.Ukey = {0}
 )
 select NLCode,HSCode,UnitID as CustomsUnit,IIF(Type = 1, Qty, IIF(CTNQty = 0,0,ROUND(Qty/CTNQty,3))) as Qty
 from tmpFixDeclare
@@ -682,7 +682,7 @@ where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)", MyUtilit
 
             sqlCmd.Clear();
             #region 檢查是否有每次都該要出現的項目
-            sqlCmd.Append(string.Format("select NLCode from VNContract_Detail where ID = '{0}' and NecessaryItem = 1", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
+            sqlCmd.Append(string.Format("select NLCode from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NecessaryItem = 1", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"])));
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out necessaryItem);
             if (!result)
             {
@@ -716,11 +716,11 @@ with tmpMarkerData
 as (
 select sm.MarkerName,sm.StyleUkey,sm.LectraCode,sma.Article,sms.SizeCode,dbo.MarkerLengthToYDS(sm.MarkerLength) as markerYDS,
 sm.Width,sms.Qty,sc.FabricCode,sfqt.QTFabricCode
-from Style_MarkerList sm
-inner join Style_MarkerList_SizeQty sms on sm.Ukey = sms.Style_MarkerListUkey and sms.SizeCode = @sizecode
-inner join Style_ColorCombo sc on sc.StyleUkey = sm.StyleUkey and sc.LectraCode = sm.LectraCode
-left join Style_MarkerList_Article sma on sm.Ukey = sma.Style_MarkerListUkey 
-left join Style_FabricCode_QT sfqt on sm.LectraCode = sfqt.LectraCode and sm.StyleUkey = sfqt.StyleUkey
+from Style_MarkerList sm WITH (NOLOCK) 
+inner join Style_MarkerList_SizeQty sms WITH (NOLOCK) on sm.Ukey = sms.Style_MarkerListUkey and sms.SizeCode = @sizecode
+inner join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sm.StyleUkey and sc.LectraCode = sm.LectraCode
+left join Style_MarkerList_Article sma WITH (NOLOCK) on sm.Ukey = sma.Style_MarkerListUkey 
+left join Style_FabricCode_QT sfqtWITH (NOLOCK)  on sm.LectraCode = sfqt.LectraCode and sm.StyleUkey = sfqt.StyleUkey
 where sm.MixedSizeMarker = 1 and sm.StyleUkey = @styleukey and (sma.Article is null or sma.Article = @article)
 and sc.Article = @article
 ),
@@ -729,25 +729,25 @@ as (
 select t.markerYDS,t.Width,t.Qty, IIF(t.QTFabricCode is null, sb.SCIRefno, sb1.SCIRefno) as SCIRefNo,
 IIF(t.QTFabricCode is null, sb.SuppIDBulk, sb1.SuppIDBulk) as SuppIDBulk
 from tmpMarkerData t
-left join Style_BOF sb on sb.StyleUkey = t.StyleUkey and sb.FabricCode = t.FabricCode
-left join Style_BOF sb1 on sb1.StyleUkey = t.StyleUkey and sb1.FabricCode = t.QTFabricCode
+left join Style_BOF sb WITH (NOLOCK) on sb.StyleUkey = t.StyleUkey and sb.FabricCode = t.FabricCode
+left join Style_BOF sb1 WITH (NOLOCK) on sb1.StyleUkey = t.StyleUkey and sb1.FabricCode = t.QTFabricCode
 ),
 tmpBOFRateData
 as (
 select 'YDS' as UsageUnit,f.SCIRefno,f.Refno,f.BrandID,f.NLCode,f.CustomsUnit,f.Type,
-isnull((select Rate from Unit_Rate where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate where UnitFrom = 'YDS' and UnitTo = 'M'),'') as M2UnitRate
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit),'') as UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M'),'') as M2UnitRate
 from tmpFabricCode t
-inner join Fabric f on f.SCIRefno = t.SCIRefno
+inner join Fabric f WITH (NOLOCK) on f.SCIRefno = t.SCIRefno
 where (t.SuppIDBulk <> 'FTY' or t.SuppIDBulk <> 'FTY-C')
 and f.NoDeclare = 0),
 tmpBOA
 as (
 select sb.StyleUkey,sb.Ukey,sb.Refno,sb.SCIRefno,sb.SuppIDBulk,sb.SizeItem,sb.PatternPanel,sb.BomTypeArticle,sb.BomTypeColor,sb.ConsPC,
 sc.ColorID,f.UsageUnit,f.HSCode,f.NLCode,f.CustomsUnit,f.PcsWidth,f.PcsLength,f.PcsKg,f.BomTypeCalculate,f.Type,f.BrandID
-from Style_BOA sb
-left join Style_ColorCombo sc on sc.StyleUkey = sb.StyleUkey and sc.LectraCode = sb.PatternPanel and sc.Article = @article
-left join Fabric f on sb.SCIRefno = f.SCIRefno
+from Style_BOA sb WITH (NOLOCK) 
+left join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sb.StyleUkey and sc.LectraCode = sb.PatternPanel and sc.Article = @article
+left join Fabric f WITH (NOLOCK) on sb.SCIRefno = f.SCIRefno
 where sb.StyleUkey = @styleukey
 and sb.IsCustCD <> 2
 and (sb.SuppIDBulk <> 'FTY' and sb.SuppIDBulk <> 'FTY-C')
@@ -755,19 +755,19 @@ and (sb.SuppIDBulk <> 'FTY' and sb.SuppIDBulk <> 'FTY-C')
 tmpBOAPrepareData
 as (
 select t.UsageUnit,t.SCIRefno,t.Refno,t.BrandID,t.NLCode,t.CustomsUnit,t.Type,
-isnull((select Rate from Unit_Rate where UnitFrom = t.UsageUnit and UnitTo = t.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate where UnitFrom = t.UsageUnit and UnitTo = 'M'),'') as M2UnitRate
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = t.UsageUnit and UnitTo = t.CustomsUnit),'') as UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = t.UsageUnit and UnitTo = 'M'),'') as M2UnitRate
 from tmpBOA t
 where (t.BomTypeArticle = 0 and t.BomTypeColor = 0) or ((t.BomTypeArticle = 1 or t.BomTypeColor = 1) and t.ColorID is not null)
 ),
 tmpLocalPO
 as (
 select ld.Refno,ld.Qty,ld.UnitId,li.MeterToCone,li.NLCode,li.HSCode,li.CustomsUnit,li.PcsWidth,li.PcsLength,li.PcsKg,o.Qty as OrderQty,isnull(vd.Waste,0) as Waste
-from LocalPO_Detail ld
-left join LocalItem li on li.RefNo = ld.Refno
-left join Orders o on ld.OrderId = o.ID
-left join VNContract_Detail vd on vd.ID = @vncontractid and vd.NLCode = li.NLCode
-where ld.OrderId = (select TOP 1 ID from Orders where StyleUkey = @styleukey and Category = @category order by BuyerDelivery,ID)
+from LocalPO_Detail ld WITH (NOLOCK) 
+left join LocalItem li WITH (NOLOCK) on li.RefNo = ld.Refno
+left join Orders o WITH (NOLOCK) on ld.OrderId = o.ID
+left join VNContract_Detail vd WITH (NOLOCK) on vd.ID = @vncontractid and vd.NLCode = li.NLCode
+where ld.OrderId = (select TOP 1 ID from Orders WITH (NOLOCK) where StyleUkey = @styleukey and Category = @category order by BuyerDelivery,ID)
 and li.NoDeclare = 0
 ),
 tmpConeToM
@@ -778,8 +778,8 @@ from tmpLocalPO),
 tmpPrepareRate
 as (
 select UnitId as UsageUnit,Refno as SCIRefno,Refno,'' as BrandID,NLCode,CustomsUnit,'' as Type,
-isnull((select Rate from Unit_Rate where UnitFrom = UnitId and UnitTo = CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate where UnitFrom = UnitId and UnitTo = 'M'),'') as M2UnitRate
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = CustomsUnit),'') as UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = 'M'),'') as M2UnitRate
 from tmpConeToM),
 tmpfinal
 as (
@@ -862,7 +862,7 @@ order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMainta
                     newRow["HSCode"] = dr["HSCode"];
                     newRow["UnitID"] = dr["CustomsUnit"];
                     newRow["Qty"] = dr["Qty"];
-                    newRow["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format("select isnull(Waste,0) from VNContract_Detail where ID = '{0}' and NLCode = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(dr["NLCode"]))));
+                    newRow["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format("select isnull(Waste,0) from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(dr["NLCode"]))));
                     newRow["UserCreate"] = 0;
                     ((DataTable)detailgridbs.DataSource).Rows.Add(newRow);
                 }
@@ -927,9 +927,9 @@ order by DataType,SCIRefno,UsageUnit", MyUtility.Convert.GetString(CurrentMainta
         {
             base.ClickConfirm();
             //檢查表身Grid資料是否有缺一必輸的NLCode資料，若有，就出訊息告知使用者
-            string sqlCmd = string.Format(@"select NLCode from VNContract_Detail where ID = '{0}' and NecessaryItem = 1
+            string sqlCmd = string.Format(@"select NLCode from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NecessaryItem = 1
 except
-select NLCode from VNConsumption_Detail where ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+select NLCode from VNConsumption_Detail WITH (NOLOCK) where ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DataTable LackData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out LackData);
             if (LackData.Rows.Count > 0)

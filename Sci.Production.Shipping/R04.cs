@@ -22,9 +22,9 @@ namespace Sci.Production.Shipping
         {
             InitializeComponent();
             DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
             MyUtility.Tool.SetupCombox(comboBox3, 1, 1, "Bulk+Sample,Bulk,Sample");
             comboBox1.Text = Sci.Env.User.Keyword;
@@ -62,16 +62,16 @@ namespace Sci.Production.Shipping
             sqlCmd.Append(string.Format(@"select oq.BuyerDelivery,oq.EstPulloutDate,o.BrandID,o.ID,IIF(o.Category = 'B','Bulk','Sample') as Category,o.CustPONo,
 o.StyleID,o.SeasonID,oq.Qty,o.MDivisionID,o.FactoryID,isnull(c.Alias,'') as Alias,o.PoPrice,o.Customize1,o.Customize2,
 oq.ShipmodeID,IIF(o.ScanAndPack = 1,'Y','') as SMP,IIF(o.VasShas = 1,'Y','') as VasShas,
-(select isnull(sum(ShipQty),0) from Pullout_Detail where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) - [dbo].getInvAdjQty(o.ID,oq.Seq) as ShipQty,
-isnull((select Term from PayTermAR where ID = o.PayTermARID),'') as Payment,
-o.MRHandle+' - '+isnull((select Name + ' #' + ExtNo from TPEPass1 where ID = o.MRHandle),'') as Handle,
-o.SMR+' - '+isnull((select Name + ' #' + ExtNo from TPEPass1 where ID = o.SMR),'') as SMR,
-o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo from Pass1 where ID = o.LocalMR),'') as LocalMR,
-oq.OutstandingReason + ' - ' + isnull((select Name from Reason where ReasonTypeID = 'Delivery_OutStand' and Id = oq.OutstandingReason),'') as OSReason,
+(select isnull(sum(ShipQty),0) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) - [dbo].getInvAdjQty(o.ID,oq.Seq) as ShipQty,
+isnull((select Term from PayTermAR WITH (NOLOCK) where ID = o.PayTermARID),'') as Payment,
+o.MRHandle+' - '+isnull((select Name + ' #' + ExtNo from TPEPass1 WITH (NOLOCK) where ID = o.MRHandle),'') as Handle,
+o.SMR+' - '+isnull((select Name + ' #' + ExtNo from TPEPass1 WITH (NOLOCK) where ID = o.SMR),'') as SMR,
+o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo from Pass1 WITH (NOLOCK) where ID = o.LocalMR),'') as LocalMR,
+oq.OutstandingReason + ' - ' + isnull((select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Delivery_OutStand' and Id = oq.OutstandingReason),'') as OSReason,
 oq.OutstandingRemark
-from Orders o
-inner join Order_QtyShip oq on o.ID = oq.Id
-left join Country c on o.Dest = c.ID
+from Orders o WITH (NOLOCK) 
+inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
+left join Country c WITH (NOLOCK) on o.Dest = c.ID
 where oq.BuyerDelivery between '{0}' and '{1}'", Convert.ToDateTime(buyerDlv1).ToString("d"), Convert.ToDateTime(buyerDlv2).ToString("d")));
 
             if (!MyUtility.Check.Empty(estPullout1))

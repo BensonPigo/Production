@@ -22,7 +22,7 @@ namespace Sci.Production.Shipping
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox1, 1, factory);
             comboBox1.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "All,Confirmed,UnConfirmed");
@@ -63,11 +63,11 @@ namespace Sci.Production.Shipping
             {
                 sqlCmd.Append(string.Format(@"select g.ID,g.Shipper,g.BrandID,g.InvDate,g.FCRDate,g.CustCDID,(g.Dest+' - '+isnull(c.Alias,'')) as Dest,g.ShipModeID,g.ShipTermID,
 g.Handle,(g.Forwarder+' - '+isnull(ls.Abb,'')) as Forwarder,g.Vessel,g.ETD,g.ETA,g.SONo,g.SOCFMDate,g.TotalShipQty,g.TotalCTNQty,
-isnull((select CTNRNo+'/'+TruckNo+',' from GMTBooking_CTNR where ID = g.ID for xml path('')),'') as CTNTruck,
+isnull((select CTNRNo+'/'+TruckNo+',' from GMTBooking_CTNR WITH (NOLOCK) where ID = g.ID for xml path('')),'') as CTNTruck,
 g.TotalGW,g.TotalCBM,g.AddDate,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate,g.Remark
-from GMTBooking g
-left join Country c on c.ID = g.Dest
-left join LocalSupp ls on ls.ID = g.Forwarder
+from GMTBooking g WITH (NOLOCK) 
+left join Country c WITH (NOLOCK) on c.ID = g.Dest
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
 where g.InvDate between '{0}' and '{1}'", Convert.ToDateTime(invdate1).ToString("d"), Convert.ToDateTime(invdate2).ToString("d")));
             }
             else
@@ -76,13 +76,13 @@ where g.InvDate between '{0}' and '{1}'", Convert.ToDateTime(invdate1).ToString(
 isnull(pl.ShipQty,0) as ShipQty,isnull(pl.CTNQty,0) as CTNQty,isnull(pl.GW,0) as GW,isnull(pl.CBM,0) as CBM,g.CustCDID,
 (g.Dest+' - '+isnull(c.Alias,'')) as Dest,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate,
 g.AddName+' '+isnull(p.Name,'') as AddName,g.AddDate,g.Remark,
-isnull((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = pl.ID) a for xml path('')),'') as OrderID,
-(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = pl.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
-(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = pl.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate
-from GMTBooking g
-left join PackingList pl on pl.INVNo = g.ID
-left join Country c on c.ID = g.Dest
-left join Pass1 p on p.ID = g.AddName
+isnull((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a for xml path('')),'') as OrderID,
+(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
+(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate
+from GMTBooking g WITH (NOLOCK) 
+left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
+left join Country c WITH (NOLOCK) on c.ID = g.Dest
+left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
 where pl.ID<>'' and g.InvDate between '{0}' and '{1}' ", Convert.ToDateTime(invdate1).ToString("d"), Convert.ToDateTime(invdate2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(shipper))

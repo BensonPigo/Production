@@ -34,7 +34,7 @@ namespace Sci.Production.Shipping
             //組Grid資料
             DataRow[] selectedData = middetaildata.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and Deleted = 0", styleUKey, sizeCode, article));
             DataTable gridData;
-            DualResult result = DBProxy.Current.Select(null, "select NLCode,'' as HSCode,'' as Unit,0.0 as Qty, 0.0 as Waste, 0 as UserCreate from VNConsumption_Detail_Detail where 1 = 0", out gridData);
+            DualResult result = DBProxy.Current.Select(null, "select NLCode,'' as HSCode,'' as Unit,0.0 as Qty, 0.0 as Waste, 0 as UserCreate from VNConsumption_Detail_Detail WITH (NOLOCK) where 1 = 0", out gridData);
 
             for (int i = 0; i < selectedData.Length; i++)
             {
@@ -73,7 +73,7 @@ namespace Sci.Production.Shipping
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                        Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select distinct NLCode,HSCode,UnitID,Waste from VNContract_Detail where ID = '{0}'", contract), "5,8,8,5", MyUtility.Convert.GetString(dr["NLCode"]), headercaptions: "NL Code,HS Code,Unit, Waste", columndecimals: "0,0,0,3");
+                        Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select distinct NLCode,HSCode,UnitID,Waste from VNContract_Detail WITH (NOLOCK) where ID = '{0}'", contract), "5,8,8,5", MyUtility.Convert.GetString(dr["NLCode"]), headercaptions: "NL Code,HS Code,Unit, Waste", columndecimals: "0,0,0,3");
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel) { return; }
 
@@ -95,7 +95,7 @@ namespace Sci.Production.Shipping
                     if (!MyUtility.Check.Empty(e.FormattedValue))
                     {
                         DataRow seekrow;
-                        if (!MyUtility.Check.Seek(string.Format("select UnitID,Waste,HSCode from VNContract_Detail where ID = '{0}' and NLCode = '{1}'", contract, e.FormattedValue.ToString()), out seekrow))
+                        if (!MyUtility.Check.Seek(string.Format("select UnitID,Waste,HSCode from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'", contract, e.FormattedValue.ToString()), out seekrow))
                         {
                             MyUtility.Msg.WarningBox("NL Code not found!!");
                             dr["NLCode"] = "";
@@ -141,7 +141,7 @@ namespace Sci.Production.Shipping
                     {
                         DataTable detail2s;
                         DataRow[] selectData = detaildata.Select(string.Format("StyleUKey = {0} and SizeCode = '{1}' and Article = '{2}' and NLCode = '{3}' and RefNo <> '' ", styleUKey, sizeCode, article, MyUtility.Convert.GetString(dr["NLCode"])));
-                        DualResult result1 = DBProxy.Current.Select(null, "select RefNo,'' as Description, '' as SuppID, '' as Type, '' as UnitID, Qty from VNConsumption_Detail_Detail where 1 = 0", out detail2s);
+                        DualResult result1 = DBProxy.Current.Select(null, "select RefNo,'' as Description, '' as SuppID, '' as Type, '' as UnitID, Qty from VNConsumption_Detail_Detail WITH (NOLOCK) where 1 = 0", out detail2s);
                         for (int i = 0; i < selectData.Length; i++)
                         {
                             DataRow newrow = detail2s.NewRow();

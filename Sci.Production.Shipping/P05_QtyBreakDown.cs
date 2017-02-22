@@ -39,19 +39,19 @@ namespace Sci.Production.Shipping
             base.OnAttached(data);
             string sqlCmd = string.Format(@"select a.OrderID,a.OrderShipmodeSeq,a.Article,a.SizeCode,oqd.Qty as OrderQty,a.ShipQty,isnull(ou2.POPrice,ou1.POPrice) as POPrice,
 (select round(sum(iif(os.PriceType = '1',(os.Price/o.Qty),os.Price)),4)
-from Order_Surcharge os, Orders o
+from Order_Surcharge os WITH (NOLOCK) , Orders o WITH (NOLOCK) 
 where os.Id = o.ID
 and o.ID = a.OrderID) as Surcharge
 from (select pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode,sum(pd.ShipQty) as ShipQty
-      from PackingList_Detail pd
+      from PackingList_Detail pd WITH (NOLOCK) 
       where pd.ID = '{0}'
       group by pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode) a
-left join Order_UnitPrice ou1 on ou1.Id = a.OrderID and ou1.Article = '----' and ou1.SizeCode = '----'
-left join Order_UnitPrice ou2 on ou2.Id = a.OrderID and ou2.Article = a.Article and ou2.SizeCode = a.SizeCode
-left join Order_QtyShip_Detail oqd on oqd.Id = a.OrderID and oqd.Seq = a.OrderShipmodeSeq and oqd.Article = a.Article and oqd.SizeCode = a.SizeCode
-left join Orders o on o.ID = a.OrderID
-left join Order_Article oa on oa.ID = o.POID and oa.Article = a.Article
-left join Order_SizeCode os on os.ID = o.POID and os.SizeCode = a.SizeCode
+left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = a.OrderID and ou1.Article = '----' and ou1.SizeCode = '----'
+left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = a.OrderID and ou2.Article = a.Article and ou2.SizeCode = a.SizeCode
+left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = a.OrderID and oqd.Seq = a.OrderShipmodeSeq and oqd.Article = a.Article and oqd.SizeCode = a.SizeCode
+left join Orders o WITH (NOLOCK) on o.ID = a.OrderID
+left join Order_Article oa WITH (NOLOCK) on oa.ID = o.POID and oa.Article = a.Article
+left join Order_SizeCode os WITH (NOLOCK) on os.ID = o.POID and os.SizeCode = a.SizeCode
 order by a.OrderID,a.OrderShipmodeSeq,oa.Seq,os.Seq", displayBox2.Text);
             DataTable gridData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);

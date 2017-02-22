@@ -22,7 +22,7 @@ namespace Sci.Production.Shipping
         {
             InitializeComponent();
             DataTable mDivision;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
             comboBox1.Text = Sci.Env.User.Keyword;
         }
@@ -60,14 +60,14 @@ isnull((o.Dest+'-'+c.Alias),'') as Dest,isnull(o.StyleUnit,'') as StyleUnit,o.Sc
 oq.BuyerDelivery,p.PulloutDate,isnull(oq.Qty,0) as Qty,IIF(pl.Type = 'B' or pl.Type = 'F',pl.CTNQty,0) as TtlCtn,
 pd.ShipQty,isnull(pl.ShipModeID,'') as ShipModeID,pd.INVNo,g.InvDate,
 case pd.Status when 'P' then 'Partial' when 'C' then 'Complete' when 'E' then 'Exceed'when 'S' then 'Shortage' else '' end as StatusExp
-from Pullout p
-inner join Pullout_Detail pd on p.ID = pd.ID
-left join Orders o on o.ID = pd.OrderID
-left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join Country c on c.ID = o.Dest
-left join GMTBooking g on g.ID = pd.INVNo
-left join PackingList pl on pl.ID = pd.PackingListID
-left join LocalSupp ls on g.Forwarder = ls.ID
+from Pullout p WITH (NOLOCK) 
+inner join Pullout_Detail pd WITH (NOLOCK) on p.ID = pd.ID
+left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+left join Country c WITH (NOLOCK) on c.ID = o.Dest
+left join GMTBooking g WITH (NOLOCK) on g.ID = pd.INVNo
+left join PackingList pl WITH (NOLOCK) on pl.ID = pd.PackingListID
+left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
 where p.PulloutDate between '{0}' and '{1}'", Convert.ToDateTime(pulloutDate1).ToString("d"), Convert.ToDateTime(pulloutDate2).ToString("d")));
 
             if (!MyUtility.Check.Empty(sdpDate1))

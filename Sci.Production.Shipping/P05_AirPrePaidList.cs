@@ -28,9 +28,9 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
             string sqlCmd = string.Format(@"select p.ID as PackID,p.OrderID,p.OrderShipmodeSeq,isnull(a.ID,'') as AirPPID
 from (select distinct pd.ID,pd.OrderID,pd.OrderShipmodeSeq 
-      from PackingList p, PackingList_Detail pd
+      from PackingList p WITH (NOLOCK) , PackingList_Detail pd WITH (NOLOCK) 
 	  where p.INVNo = '{0}' and p.ID = pd.ID) p
-left join AirPP a on a.OrderID = p.OrderID and a.OrderShipmodeSeq = p.OrderShipmodeSeq", gmtBookingID);
+left join AirPP a WITH (NOLOCK) on a.OrderID = p.OrderID and a.OrderShipmodeSeq = p.OrderShipmodeSeq", gmtBookingID);
 
             if (result = DBProxy.Current.Select(null, sqlCmd, out gridData))
             {

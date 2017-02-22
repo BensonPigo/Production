@@ -52,10 +52,10 @@ namespace Sci.Production.Shipping
             sqlCmd.Append(string.Format(@"with IniBulkPack
 as
 (select 1 as Selected,p.id,pd.OrderID,p.CustCDID,oq.SDPDate,oq.BuyerDelivery,p.ShipQty,p.CTNQty,p.NW,p.NNW,
-'Y' as GMTBookingLock,p.MDivisionID,p.CargoReadyDate,p.PulloutDate,p.GW,p.CBM,p.Status,p.InspDate,(select sum(CTNQty) from PackingList_Detail pd1 where pd1.ID = p.ID and pd1.ReceiveDate is not null) as ClogCTNQty
- from PackingList p 
- left Join PackingList_Detail pd on p.ID = pd.ID
- Left Join Order_QtyShip oq on pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
+'Y' as GMTBookingLock,p.MDivisionID,p.CargoReadyDate,p.PulloutDate,p.GW,p.CBM,p.Status,p.InspDate,(select sum(CTNQty) from PackingList_Detail pd1 WITH (NOLOCK) where pd1.ID = p.ID and pd1.ReceiveDate is not null) as ClogCTNQty
+ from PackingList p WITH (NOLOCK) 
+ left Join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
+ Left Join Order_QtyShip oq WITH (NOLOCK) on pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
  where p.Type = 'B'
  and '{0}' like '%'+rtrim(p.FactoryID)+'%'
  and p.INVNo = ''
@@ -68,9 +68,9 @@ IniSamplePack
 as
 (select iif(p.CustCDID = '{4}',1,0) as Selected,p.id,p.OrderID,p.CustCDID,oq.SDPDate,oq.BuyerDelivery,p.ShipQty,p.CTNQty,p.NW,p.NNW,
  'Y' as GMTBookingLock,p.MDivisionID,p.CargoReadyDate,p.PulloutDate,p.GW,p.CBM,p.Status,p.InspDate,0 as ClogCTNQty
- from PackingList p
- left join PackingList_Detail pd on pd.ID = p.ID
- left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+ from PackingList p WITH (NOLOCK) 
+ left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
  where p.INVNo = '' and p.Type = 'S' and '{0}' like '%'+rtrim(p.FactoryID)+'%' and p.Dest = '{3}' and p.ShipModeID = '{1}'
 ),
 AllPackData
@@ -103,7 +103,7 @@ as
  where id in (select ID from InvalidData where ID is not null)
  group by Selected,ID,CustCDID,ShipQty,CTNQty,NW,NNW,GMTBookingLock,MDivisionID,CargoReadyDate,PulloutDate,GW,CBM,Status,InspDate,ClogCTNQty
 )
-select pd.Selected,pd.ID,((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pl where pl.ID = pd.ID) a for xml path(''))) as OrderID,
+select pd.Selected,pd.ID,((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pl WITH (NOLOCK) where pl.ID = pd.ID) a for xml path(''))) as OrderID,
 pd.CustCDID,pd.SDPDate,pd.BuyerDelivery,pd.ShipQty,pd.CTNQty,pd.NW,pd.NNW,pd.GMTBookingLock,pd.MDivisionID,pd.CargoReadyDate,pd.PulloutDate,pd.GW,pd.CBM,pd.Status,pd.InspDate,pd.ClogCTNQty
 from PackData pd");
             #endregion
@@ -156,7 +156,7 @@ from PackData pd");
                     {
                         string sqlCmd = string.Format(@"select distinct b.OrderID,b.ID
 from (select OrderID,COUNT(OrderID) as CNT
-      from (select distinct ID,OrderID from PackingList_Detail where ID in ({0})) a
+      from (select distinct ID,OrderID from PackingList_Detail WITH (NOLOCK) where ID in ({0})) a
       group by OrderID
       Having COUNT(OrderID) > 1) a, PackingList_Detail b
 where b.ID in ({0})

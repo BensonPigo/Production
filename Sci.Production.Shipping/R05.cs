@@ -24,7 +24,7 @@ namespace Sci.Production.Shipping
             dateRange1.Value1 = new DateTime(DateTime.Now.Year, 1, 1); //預設帶入登入系統當年的第一天
             dateRange1.Value2 = DateTime.Today;
             DataTable mDivision;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
             comboBox1.Text = Sci.Env.User.Keyword;
 
@@ -55,11 +55,11 @@ namespace Sci.Production.Shipping
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"select s.LocalSuppID + ' - ' + isnull(l.Abb,'') as Supplier,s.ID,s.Type,s.CDate,
-s.Handle + ' - ' + isnull((select Name +' #'+ExtNo from Pass1 where ID = s.Handle),'') as Handle,
+s.Handle + ' - ' + isnull((select Name +' #'+ExtNo from Pass1 WITH (NOLOCK) where ID = s.Handle),'') as Handle,
 s.MDivisionID,s.CurrencyID,s.Amount+s.VAT as Amount,s.BLNo,s.InvNo,
-isnull((select CONCAT(InvNo,'/') from (select distinct InvNo from ShareExpense where ShippingAPID = s.ID) a for xml path('')),'') as ExportInv
-from ShippingAP s
-left join LocalSupp l on s.LocalSuppID = l.ID
+isnull((select CONCAT(InvNo,'/') from (select distinct InvNo from ShareExpense WITH (NOLOCK) where ShippingAPID = s.ID) a for xml path('')),'') as ExportInv
+from ShippingAP s WITH (NOLOCK) 
+left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
 where s.ApvDate is null
 and s.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
 

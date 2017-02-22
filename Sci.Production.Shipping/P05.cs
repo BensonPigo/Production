@@ -48,14 +48,14 @@ namespace Sci.Production.Shipping
         {
             masterID = (e.Master == null) ? "1=0" : string.Format("p.INVNo = '{0}'",MyUtility.Convert.GetString(e.Master["ID"]));
             this.DetailSelectCommand = string.Format(@"select p.GMTBookingLock,p.FactoryID,p.ID,
-(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd where pd.ID = p.id) a for xml path('')) as OrderID,
-p.CargoReadyDate,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
-(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate,
+(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')) as OrderID,
+p.CargoReadyDate,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
+(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate,
 p.PulloutDate,p.ShipQty,p.CTNQty,p.GW,p.CBM,p.InvNo,
-(select o.CustCDID from Orders o, (select top 1 OrderID from PackingList_Detail pd where pd.ID = p.ID) a where o.ID = a.OrderID) as CustCDID,
-(select o.Dest from Orders o, (select top 1 OrderID from PackingList_Detail pd where pd.ID = p.ID) a where o.ID = a.OrderID) as Dest,
-p.NW,p.NNW,p.Status,(select sum(CTNQty) from PackingList_Detail pd where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogCTNQty,p.InspDate,p.ShipModeID
-from PackingList p
+(select o.CustCDID from Orders o WITH (NOLOCK) , (select top 1 OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a where o.ID = a.OrderID) as CustCDID,
+(select o.Dest from Orders o WITH (NOLOCK) , (select top 1 OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a where o.ID = a.OrderID) as Dest,
+p.NW,p.NNW,p.Status,(select sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogCTNQty,p.InspDate,p.ShipModeID
+from PackingList p WITH (NOLOCK) 
 where {0}", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -80,7 +80,7 @@ where {0}", masterID);
             if (!this.EditMode)
             {
                 string sqlCmd = string.Format(@"select pd.ID
-from PackingList p, PackingList_Detail pd, AirPP a
+from PackingList p WITH (NOLOCK) , PackingList_Detail pd WITH (NOLOCK) , AirPP a WITH (NOLOCK) 
 where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShipmodeSeq = pd.OrderShipmodeSeq", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
                 if (MyUtility.Check.Seek(sqlCmd))
@@ -185,7 +185,7 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                                 if (dr["GMTBookingLock"].ToString() == "Y")
                                 {
                                     string sqlCmd = string.Format(@"select p.ID
-from PackingList pl, Pullout p
+from PackingList pl WITH (NOLOCK) , Pullout p WITH (NOLOCK) 
 where pl.ID = '{0}'
 and pl.PulloutID = p.ID
 and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
@@ -294,7 +294,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
             }
 
             //已經有做出口費用分攤就不可以被刪除
-            if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from ShareExpense where InvNo = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
+            if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from ShareExpense WITH (NOLOCK) where InvNo = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
             {
                 MyUtility.Msg.WarningBox("This record have expense data, can't be deleted!");
                 return false;
@@ -302,7 +302,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
 
             //只要Pullout Report已經Confirmed就不可以被刪除
             string sqlCmd = string.Format(@"select distinct pl.PulloutID
-from PackingList pl, Pullout p
+from PackingList pl WITH (NOLOCK) , Pullout p WITH (NOLOCK) 
 where pl.INVNo = '{0}'
 and pl.PulloutID = p.ID
 and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
@@ -446,7 +446,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))
                 string sqlCmd = string.Format(@"with OrderData
 as
 (select distinct pd.ID,pd.OrderID,o.CurrencyID,o.PayTermARID
- from PackingList_Detail pd, Orders o
+ from PackingList_Detail pd WITH (NOLOCK) , Orders o WITH (NOLOCK) 
  where pd.ID in ({0})
  and pd.OrderID = o.ID
  ),
@@ -499,7 +499,7 @@ order by cc.CNT desc", allPackID.ToString().Substring(0, allPackID.Length - 1));
                 string sqlCmd = string.Format(@"with OrderData
 as
 (select distinct o.Category,o.SeasonID
- from PackingList_Detail pd, Orders o
+ from PackingList_Detail pd WITH (NOLOCK) , Orders o WITH (NOLOCK) 
  where pd.ID in ({0})
  and pd.OrderID = o.ID
 )
@@ -579,11 +579,11 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             worksheet.Cells[7, 2] = MyUtility.Convert.GetString(CurrentMaintain["BrandID"]);
             worksheet.Cells[8, 2] = MyUtility.Check.Empty(CurrentMaintain["FCRDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["FCRDate"]).ToString("d");
             worksheet.Cells[9, 2] = MyUtility.Convert.GetString(CurrentMaintain["CustCDID"]);
-            worksheet.Cells[10, 2] = MyUtility.Convert.GetString(CurrentMaintain["PayTermARID"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Description from PayTermAR where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["PayTermARID"])));
+            worksheet.Cells[10, 2] = MyUtility.Convert.GetString(CurrentMaintain["PayTermARID"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Description from PayTermAR WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["PayTermARID"])));
             worksheet.Cells[11, 2] = MyUtility.Convert.GetString(CurrentMaintain["Description"]);
             worksheet.Cells[12, 2] = MyUtility.Convert.GetString(CurrentMaintain["Remark"]);
 
-            worksheet.Cells[3, 5] = MyUtility.Convert.GetString(CurrentMaintain["Dest"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select NameEN from Country where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Dest"])));
+            worksheet.Cells[3, 5] = MyUtility.Convert.GetString(CurrentMaintain["Dest"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select NameEN from Country WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Dest"])));
             worksheet.Cells[4, 5] = MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]);
             worksheet.Cells[5, 5] = MyUtility.Convert.GetString(CurrentMaintain["ShipTermID"]);
             worksheet.Cells[6, 5] = MyUtility.Convert.GetInt(CurrentMaintain["TotalShipQty"]);
@@ -593,8 +593,8 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             worksheet.Cells[10, 5] = MyUtility.Convert.GetDecimal(CurrentMaintain["TotalNW"]);
             worksheet.Cells[11, 5] = MyUtility.Convert.GetDecimal(CurrentMaintain["TotalNNW"]);
 
-            worksheet.Cells[3, 9] = MyUtility.Convert.GetString(CurrentMaintain["Handle"]) + "  " + MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Handle"])));
-            worksheet.Cells[4, 9] = MyUtility.Convert.GetString(CurrentMaintain["Forwarder"]) + "  " + MyUtility.GetValue.Lookup(string.Format("select Name from LocalSupp where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Forwarder"])));
+            worksheet.Cells[3, 9] = MyUtility.Convert.GetString(CurrentMaintain["Handle"]) + "  " + MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Handle"])));
+            worksheet.Cells[4, 9] = MyUtility.Convert.GetString(CurrentMaintain["Forwarder"]) + "  " + MyUtility.GetValue.Lookup(string.Format("select Name from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Forwarder"])));
             worksheet.Cells[5, 9] = MyUtility.Convert.GetString(CurrentMaintain["CYCFS"]);
             worksheet.Cells[6, 9] = MyUtility.Convert.GetString(CurrentMaintain["SONo"]);
             worksheet.Cells[7, 9] = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
@@ -694,14 +694,14 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 Sci.Win.Tools.SelectItem item;
                 if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
                 {
-                    item = new Sci.Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD where BrandID = '{0}' order by ID", MyUtility.Convert.GetString(CurrentMaintain["BrandID"])), "17,3,17", textBox4.Text);
+                    item = new Sci.Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' order by ID", MyUtility.Convert.GetString(CurrentMaintain["BrandID"])), "17,3,17", textBox4.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel) { return; }
                     textBox4.Text = item.GetSelectedString();
                 }
                 else
                 {
-                    item = new Sci.Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD where BrandID = '{0}' and CountryID = '{1}' order by ID", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(CurrentMaintain["Dest"])), "17,3,17", textBox4.Text);
+                    item = new Sci.Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' and CountryID = '{1}' order by ID", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(CurrentMaintain["Dest"])), "17,3,17", textBox4.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel) { return; }
                     textBox4.Text = item.GetSelectedString();
@@ -725,7 +725,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                     cmds.Add(sp2);
 
                     DataTable CustCDData;
-                    string sqlCmd = "select ID, CountryID, City from CustCD where BrandID = @brandid and ID = @custcdid order by ID";
+                    string sqlCmd = "select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = @brandid and ID = @custcdid order by ID";
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out CustCDData);
 
                     if (!result || CustCDData.Rows.Count <= 0)
@@ -755,7 +755,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         {
             if (this.EditMode && !MyUtility.Check.Empty(textBox4.Text) && textBox4.OldValue != textBox4.Text)
             {
-                CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), textBox4.Text));
+                CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), textBox4.Text));
             }
         }  
 
@@ -775,7 +775,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 }
                 else
                 {
-                    paytermAR = MyUtility.GetValue.Lookup(string.Format("select PayTermARIDBulk from CustCD where BrandID = '{0}' and ID = '{1}'", txtbrand1.Text, textBox4.Text));
+                    paytermAR = MyUtility.GetValue.Lookup(string.Format("select PayTermARIDBulk from CustCD WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}'", txtbrand1.Text, textBox4.Text));
                 }
 
                 if (paytermAR != "")
@@ -864,7 +864,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             //檢查此筆記錄的Pullout Report是否已經Confirmed，若是則出訊息告知且無法刪除
             if (this.DetailDatas.Count > 0)
             {
-                if (MyUtility.GetValue.Lookup(string.Format("select p.Status from Pullout p, PackingList pl where pl.ID = '{0}' and p.ID = pl.PulloutID", MyUtility.Convert.GetString(CurrentDetailData["ID"]))) == "Confirmed")
+                if (MyUtility.GetValue.Lookup(string.Format("select p.Status from Pullout p WITH (NOLOCK) , PackingList pl WITH (NOLOCK) where pl.ID = '{0}' and p.ID = pl.PulloutID", MyUtility.Convert.GetString(CurrentDetailData["ID"]))) == "Confirmed")
                 {
                     MyUtility.Msg.WarningBox("Pullout report already confirmed, can't be deleted!");
                     return;
@@ -912,7 +912,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                     return;
                 }
 
-                bool firstCFM = !MyUtility.Check.Seek(string.Format("select ID from GMTBooking_History where ID = '{0}' and HisType = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "SOCFMDate"));
+                bool firstCFM = !MyUtility.Check.Seek(string.Format("select ID from GMTBooking_History WITH (NOLOCK) where ID = '{0}' and HisType = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "SOCFMDate"));
                 string insertCmd = string.Format(@"insert into GMTBooking_History (ID,HisType,OldValue,NewValue,AddName,AddDate)
 values ('{0}','{1}','{2}','{3}','{4}',GETDATE())", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "SOCFMDate", firstCFM ? "" : "CFM", "Un CFM", Sci.Env.User.UserID);
                 string updateCmd = string.Format(@"update GMTBooking set SOCFMDate = '{0}' where ID = '{1}';
@@ -1074,13 +1074,13 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())", MyUtility.Convert
             }
 
             //當ShipMode為A/P,A/P-C,E/P,S-A/P時，要檢查是否都有AirPP單號
-            if (MyUtility.Check.Seek(string.Format("select ID from ShipMode where UseFunction like '%AirPP%' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]))))
+            if (MyUtility.Check.Seek(string.Format("select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]))))
             {
                 string sqlCmd = string.Format(@"select p.OrderID, p.OrderShipmodeSeq, isnull(a.ID,'') as AirPPID
 from (Select distinct b.OrderID,b.OrderShipmodeSeq 
-      from PackingList a, PackingList_Detail b 
+      from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) 
       where a.INVNo = '{0}' and a.ID = b.ID) p
-left join AirPP a on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipmodeSeq and a.Status != 'Junked'",MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+left join AirPP a WITH (NOLOCK) on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipmodeSeq and a.Status != 'Junked'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
                 if (result)
                 {
@@ -1099,7 +1099,7 @@ left join AirPP a on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipm
             }
             //Check PackingList 全部是否都Confirmed
             DualResult resultPkl;
-            if (resultPkl = DBProxy.Current.Select(null, string.Format(@"select * from PackingList where  invno='{0}' ",MyUtility.Convert.GetString(CurrentMaintain["ID"])),out selectData))
+            if (resultPkl = DBProxy.Current.Select(null, string.Format(@"select * from PackingList WITH (NOLOCK) where  invno='{0}' ", MyUtility.Convert.GetString(CurrentMaintain["ID"])), out selectData))
             {
                 if (selectData.Rows.Count>0)
                 {
@@ -1178,7 +1178,7 @@ left join AirPP a on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipm
         private void textBox7_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             DataTable dt;
-            string sqlCmd = string.Format(@"select fwd.WhseNo,fwd.UKey from ForwarderWhse fw, ForwarderWhse_Detail fwd
+            string sqlCmd = string.Format(@"select fwd.WhseNo,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
 where fw.ID = fwd.ID
 and fw.BrandID = '{0}'
 and fw.Forwarder = '{1}'
@@ -1204,7 +1204,7 @@ order by fwd.WhseNo", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), M
                 return;
             }
             DataTable dt;
-            string sqlCmd = string.Format(@"select fwd.WhseNo,fwd.UKey from ForwarderWhse fw, ForwarderWhse_Detail fwd
+            string sqlCmd = string.Format(@"select fwd.WhseNo,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
 where fw.ID = fwd.ID
 and fwd.whseno = '{0}'
 order by fwd.WhseNo", this.textBox7.Text.ToString().Trim());

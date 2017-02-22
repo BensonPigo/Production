@@ -79,9 +79,9 @@ namespace Sci.Production.Shipping
             string sqlCmd = string.Format(@"select pd.ID,pd.OrderID,o.SeasonID,o.StyleID,'Sample' as Category,
 '' as CTNNo, 0.0 as NW, 0.0 as Price,pd.ShipQty,o.StyleUnit as UnitID,'' as Receiver,o.SMR as LeaderID,
 t.Name as Leader, o.BrandID, [dbo].[getBOFMtlDesc](o.StyleUkey) as Description
-from PackingList_Detail pd
-left join Orders o on pd.OrderID = o.ID
-left join TPEPass1 t on o.SMR = t.ID
+from PackingList_Detail pd WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
+left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
 where pd.ID = '{0}'", textBox1.Text);
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
@@ -103,7 +103,7 @@ where pd.ID = '{0}'", textBox1.Text);
             cmds.Add(sp1);
 
             DataTable PackListData;
-            string sqlCmd = "select ExpressID from PackingList where ID = @id and Type = 'F'";
+            string sqlCmd = "select ExpressID from PackingList WITH (NOLOCK) where ID = @id and Type = 'F'";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out PackListData);
             if (result && PackListData.Rows.Count > 0)
             {

@@ -36,7 +36,7 @@ namespace Sci.Production.Shipping
 as(
 select a.ID,a.EditDate from (
 select ID, max(EditDate) as EditDate
-from ShipExpense_CanVass 
+from ShipExpense_CanVass WITH (NOLOCK) 
 where Status = 'Confirmed'
 group by ID) a
 where 1=1{0}{1}),
@@ -46,22 +46,22 @@ select s.ID,s.EditDate,
 (case s.ChooseSupp when 1 then s.LocalSuppID1 when 2 then s.LocalSuppID2 when 3 then s.LocalSuppID3 else s.LocalSuppID4 end) as LastLocalSuppID,
 (case s.ChooseSupp when 1 then s.CurrencyID1 when 2 then s.CurrencyID2 when 3 then s.CurrencyID3 else s.CurrencyID4 end) as LastCurrencyID,
 (case s.ChooseSupp when 1 then s.Price1 when 2 then s.Price2 when 3 then s.Price3 else s.Price4 end) as LastPrice
-from ShipExpense_CanVass s, tmpCode t where s.ID = t.ID and s.EditDate = t.EditDate),
+from ShipExpense_CanVass s WITH (NOLOCK) , tmpCode t where s.ID = t.ID and s.EditDate = t.EditDate),
 Last2Record
 as(
 select s.ID, 
 (case s.ChooseSupp when 1 then s.LocalSuppID1 when 2 then s.LocalSuppID2 when 3 then s.LocalSuppID3 else s.LocalSuppID4 end) as LocalSuppID,
 (case s.ChooseSupp when 1 then s.CurrencyID1 when 2 then s.CurrencyID2 when 3 then s.CurrencyID3 else s.CurrencyID4 end) as CurrencyID,
 (case s.ChooseSupp when 1 then s.Price1 when 2 then s.Price2 when 3 then s.Price3 else s.Price4 end) as Price
-from ShipExpense_CanVass s, (select sc.ID,max(sc.EditDate) as EditDate from ShipExpense_CanVass sc, tmpCode t where sc.Status = 'Confirmed' and sc.ID = t.ID and sc.EditDate < t.EditDate group by sc.ID) a
+from ShipExpense_CanVass s WITH (NOLOCK) , (select sc.ID,max(sc.EditDate) as EditDate from ShipExpense_CanVass sc WITH (NOLOCK) , tmpCode t where sc.Status = 'Confirmed' and sc.ID = t.ID and sc.EditDate < t.EditDate group by sc.ID) a
 where s.ID = a.ID and s.EditDate = a.EditDate)
 
 select l.*,l2.LocalSuppID,l2.CurrencyID,l2.Price,s.Description,
-(select StdRate from Currency where ID = l.LastCurrencyID)*l.LastPrice as StdRateLPrice,
-(select StdRate from Currency where ID = l2.CurrencyID)*l2.Price as StdRateL2Price
+(select StdRate from Currency WITH (NOLOCK) where ID = l.LastCurrencyID)*l.LastPrice as StdRateLPrice,
+(select StdRate from Currency WITH (NOLOCK) where ID = l2.CurrencyID)*l2.Price as StdRateL2Price
 from LastRecord l
 left join Last2Record l2 on l.ID = l2.ID
-left join ShipExpense s on s.ID = l.ID
+left join ShipExpense s WITH (NOLOCK) on s.ID = l.ID
 WHERE s.Junk = 0
 and l2.LocalSuppID is not null
 order by l.EditDate,l.ID", (MyUtility.Check.Empty(reviseDate1) ? "" : " and a.EditDate >= '" + reviseDate1 + "'"), (MyUtility.Check.Empty(reviseDate2) ? "" : " and a.EditDate <= '" + reviseDate2 + "'"));

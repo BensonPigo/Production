@@ -31,18 +31,18 @@ namespace Sci.Production.Shipping
             {
                 case "InvNo":
                     sqlCmd = string.Format(@"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.ShippingAPID
-from ShareExpense se
+from ShareExpense se WITH (NOLOCK) 
 LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
 where se.InvNo = '{0}'", id);
                     break;
                 case "WKNo":
                     sqlCmd = string.Format(@"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.ShippingAPID
-from ShareExpense se
+from ShareExpense se WITH (NOLOCK) 
 LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
 where se.WKNo = '{0}'", id);
                     break;
                 default:
-                    sqlCmd = "select Type,CurrencyID,Amount,ShippingAPID from ShareExpense where 1=2";
+                    sqlCmd = "select Type,CurrencyID,Amount,ShippingAPID from ShareExpense WITH (NOLOCK) where 1=2";
                     break;
             }
             if (result = DBProxy.Current.Select(null, sqlCmd, out gridData))

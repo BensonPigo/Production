@@ -37,15 +37,15 @@ namespace Sci.Production.Shipping
         {
             if (reportType == "1")
             {
-                handleName = MyUtility.GetValue.Lookup(string.Format("select Name+ ' #' + ExtNo as Incharge from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(masterData["AddName"])));
-                managerName = MyUtility.GetValue.Lookup(string.Format("select Name+ ' #' + ExtNo as Incharge from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(masterData["Manager"])));
-                destination = MyUtility.GetValue.Lookup(string.Format("select Alias from Country where ID = '{0}'", MyUtility.Convert.GetString(masterData["Dest"])));
-                carrier = MyUtility.GetValue.Lookup(string.Format("select (c.SuppID + '-' + s.AbbEN) as Supplier from Carrier c left join Supp s on c.SuppID = s.ID where c.ID = '{0}'", MyUtility.Convert.GetString(masterData["CarrierID"])));
+                handleName = MyUtility.GetValue.Lookup(string.Format("select Name+ ' #' + ExtNo as Incharge from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["AddName"])));
+                managerName = MyUtility.GetValue.Lookup(string.Format("select Name+ ' #' + ExtNo as Incharge from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["Manager"])));
+                destination = MyUtility.GetValue.Lookup(string.Format("select Alias from Country WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["Dest"])));
+                carrier = MyUtility.GetValue.Lookup(string.Format("select (c.SuppID + '-' + s.AbbEN) as Supplier from Carrier c WITH (NOLOCK) left join Supp s WITH (NOLOCK) on c.SuppID = s.ID where c.ID = '{0}'", MyUtility.Convert.GetString(masterData["CarrierID"])));
             }
             else
             {
                 DataRow dr;
-                if (MyUtility.Check.Seek(string.Format("select NameEN,AddressEN,Tel from Factory where ID = '{0}'", MyUtility.Convert.GetString(masterData["MDivisionID"])), out dr))
+                if (MyUtility.Check.Seek(string.Format("select NameEN,AddressEN,Tel from Factory WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["MDivisionID"])), out dr))
                 {
                     mdivisionName = MyUtility.Convert.GetString(dr["NameEN"]);
                     mdivisionAddr = MyUtility.Convert.GetString(dr["AddressEN"]);
@@ -61,32 +61,32 @@ namespace Sci.Production.Shipping
                 messrs = "";
                 if (MyUtility.Convert.GetString(masterData["ToTag"]) == "1" || MyUtility.Convert.GetString(masterData["ToTag"]) == "3")
                 {
-                    if (MyUtility.Check.Seek(string.Format("select AbbEN,AddressEN,Tel from Supp where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"])), out dr))
+                    if (MyUtility.Check.Seek(string.Format("select AbbEN,AddressEN,Tel from Supp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"])), out dr))
                     {
                         messrs = string.Format("{0}\r\n{1}\r\nTEL: {2}", MyUtility.Convert.GetString(dr["AbbEN"]), MyUtility.Convert.GetString(dr["AddressEN"]), MyUtility.Convert.GetString(dr["Tel"]));
                     }
                 }
                 else if (MyUtility.Convert.GetString(masterData["ToTag"]) == "4")
                 {
-                    if (MyUtility.Check.Seek(string.Format("select NameEN,AddressEN,Tel from Brand where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"])), out dr))
+                    if (MyUtility.Check.Seek(string.Format("select NameEN,AddressEN,Tel from Brand WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"])), out dr))
                     {
                         messrs = string.Format("{0}\r\n{1}\r\nTEL: {2}", MyUtility.Convert.GetString(dr["NameEN"]), MyUtility.Convert.GetString(dr["AddressEN"]), MyUtility.Convert.GetString(dr["Tel"]));
                     }
                 }
                 else if (MyUtility.Convert.GetString(masterData["ToTag"]) == "2")
                 {
-                    if (MyUtility.Check.Seek(string.Format("select Abb,AddressEN,Tel from SCIFty where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"])), out dr))
+                    if (MyUtility.Check.Seek(string.Format("select Abb,AddressEN,Tel from SCIFty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"])), out dr))
                     {
                         messrs = string.Format("{0}\r\n{1}\r\nTEL: {2}", MyUtility.Convert.GetString(dr["Abb"]), MyUtility.Convert.GetString(dr["AddressEN"]), MyUtility.Convert.GetString(dr["Tel"]));
                     }
                 }
 
-                courierAWB = string.Format("{0}# {1}", MyUtility.GetValue.Lookup(string.Format("select AbbEN from Supp where ID = (select SuppID from Carrier where ID = '{0}')", MyUtility.Convert.GetString(masterData["CarrierID"]))), MyUtility.Convert.GetString(masterData["BLNo"]));
-                shipmentPort = MyUtility.Convert.GetString(masterData["FromTag"]) == "1" ? MyUtility.GetValue.Lookup(string.Format("select PortAir+', '+CountryID from SCIFty where ID = '{0}'", MyUtility.Convert.GetString(masterData["FromSite"]))) : "";
-                destinationPort = MyUtility.Convert.GetString(masterData["ToTag"]) == "2" ? MyUtility.GetValue.Lookup(string.Format("select PortAir+', '+CountryID from SCIFty where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"]))) : "";
+                courierAWB = string.Format("{0}# {1}", MyUtility.GetValue.Lookup(string.Format("select AbbEN from Supp where ID = (select SuppID from Carrier WITH (NOLOCK) where ID = '{0}')", MyUtility.Convert.GetString(masterData["CarrierID"]))), MyUtility.Convert.GetString(masterData["BLNo"]));
+                shipmentPort = MyUtility.Convert.GetString(masterData["FromTag"]) == "1" ? MyUtility.GetValue.Lookup(string.Format("select PortAir+', '+CountryID from SCIFty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["FromSite"]))) : "";
+                destinationPort = MyUtility.Convert.GetString(masterData["ToTag"]) == "2" ? MyUtility.GetValue.Lookup(string.Format("select PortAir+', '+CountryID from SCIFty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["ToSite"]))) : "";
 
                 string sqlCmd = string.Format(@"select sum(Qty) as ttlQty,UnitID,sum(Qty*Price) as TtlAmount 
-from Express_Detail where ID = '{0}'
+from Express_Detail WITH (NOLOCK) where ID = '{0}'
 group by UnitID", MyUtility.Convert.GetString(masterData["ID"]));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out detailSummary);
             }

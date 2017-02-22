@@ -111,7 +111,7 @@ namespace Sci.Production.Shipping
                     return;
                 }
 
-                string selectCommand = string.Format("select ID from ShipExpense where ID = '{0}'", txtCode.Text);
+                string selectCommand = string.Format("select ID from ShipExpense WITH (NOLOCK) where ID = '{0}'", txtCode.Text);
                 if (MyUtility.Check.Seek(selectCommand, null))
                 {
                     MyUtility.Msg.WarningBox(string.Format("Code: '{0}' is duplicate!", txtCode.Text.Trim()));

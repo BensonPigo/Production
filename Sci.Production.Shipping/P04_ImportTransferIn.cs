@@ -73,21 +73,21 @@ namespace Sci.Production.Shipping
 psd.FabricType, (case when psd.FabricType = 'F' then 'Fabric' when psd.FabricType = 'A' then 'Accessory' else '' end) as Type,
 isnull(f.MtlTypeID,'') as MtlTypeID,psd.POUnit as UnitID,(isnull(psd.ShipQty,0)+isnull(psd.ShipFOC,0)) as Qty,0.0 as NetKg,0.0 as WeightKg,
 o.BuyerDelivery,isnull(o.BrandID,'') as BrandID,isnull(o.FactoryID,'') as FactoryID,o.SciDelivery
-from PO_Supp ps
-left join PO_Supp_Detail psd on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
-left join Supp s on s.ID = ps.SuppID
-left join Fabric f on f.SCIRefno = psd.SCIRefno
-left join Orders o on o.ID = ps.ID
+from PO_Supp ps WITH (NOLOCK) 
+left join PO_Supp_Detail psd WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
+left join Supp s WITH (NOLOCK) on s.ID = ps.SuppID
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join Orders o WITH (NOLOCK) on o.ID = ps.ID
 where ps.ID = '{0}'", textBox1.Text.Trim());
             }
             else
             {
                 sqlCmd = string.Format(@"select 1 as Selected,i.InventoryPOID as POID,i.InventorySeq1 as Seq1,i.InventorySeq2 as Seq2,
 (SUBSTRING(i.InventorySeq1,1,3)+'-'+InventorySeq2) as Seq,'' as SuppID,'' as Supp,
-i.Refno,'' as SCIRefNo,'' as Description,(select top 1 type from Fabric where Refno = i.Refno) as FabricType,
-(select top 1 MtlTypeID from Fabric where Refno = i.Refno) as MtlTypeID,i.UnitID,i.Qty,0.0 as NetKg,0.0 as WeightKg,
+i.Refno,'' as SCIRefNo,'' as Description,(select top 1 type from Fabric WITH (NOLOCK) where Refno = i.Refno) as FabricType,
+(select top 1 MtlTypeID from Fabric WITH (NOLOCK) where Refno = i.Refno) as MtlTypeID,i.UnitID,i.Qty,0.0 as NetKg,0.0 as WeightKg,
 null as BuyerDelivery,'' as BrandID,i.FactoryID,null as SciDelivery
-from Invtrans i
+from Invtrans i WITH (NOLOCK) 
 where i.InventoryPOID = '{0}'
 and (i.Type = '2' or i.Type = '3')
 and i.FactoryID = '{1}'

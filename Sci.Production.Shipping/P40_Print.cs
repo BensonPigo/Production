@@ -40,12 +40,12 @@ namespace Sci.Production.Shipping
             if (type == "1")
             {
                 sqlCmd.Append(string.Format(@"select idd.ID,idd.NLCode,idd.Qty,idd.UnitID,idd.Price,nd.DescEN,vc.SubConName,vc.SubConAddress,f.NameEN,f.AddressEN,c.Alias
-from VNImportDeclaration_Detail idd
-inner join VNImportDeclaration id on idd.ID = id.ID
-left join VNNLCodeDesc nd on idd.NLCode = nd.NLCode
-left join VNContract vc on vc.ID = '{0}'
-left join Factory f on f.ID = '{1}'
-left join Country c on id.FromSite = c.ID
+from VNImportDeclaration_Detail idd WITH (NOLOCK) 
+inner join VNImportDeclaration id WITH (NOLOCK) on idd.ID = id.ID
+left join VNNLCodeDesc nd WITH (NOLOCK) on idd.NLCode = nd.NLCode
+left join VNContract vc WITH (NOLOCK) on vc.ID = '{0}'
+left join Factory f WITH (NOLOCK) on f.ID = '{1}'
+left join Country c WITH (NOLOCK) on id.FromSite = c.ID
 where idd.ID = '{2}'
 order by idd.NLCode", MyUtility.Convert.GetString(masterData["VNContractID"]), Sci.Env.User.Keyword, MyUtility.Convert.GetString(masterData["ID"])));
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
@@ -57,7 +57,7 @@ order by idd.NLCode", MyUtility.Convert.GetString(masterData["VNContractID"]), S
 
                 sqlCmd.Clear();
                 sqlCmd.Append(string.Format(@"select sum(Qty) as Qty,UnitID
-from VNImportDeclaration_Detail
+from VNImportDeclaration_Detail WITH (NOLOCK) 
 where ID = '{0}'
 group by UnitID", MyUtility.Convert.GetString(masterData["ID"])));
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out summaryData);
@@ -70,7 +70,7 @@ group by UnitID", MyUtility.Convert.GetString(masterData["ID"])));
             else
             {
                 sqlCmd.Append(string.Format(@"select HSCode,NLCode,Qty,UnitID,Price,Round(Qty*Price,2) as Amount,Remark
-from VNImportDeclaration_Detail
+from VNImportDeclaration_Detail WITH (NOLOCK) 
 where ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
                 if (!result)
@@ -111,7 +111,7 @@ where ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));
                 worksheet.Cells[6, 2] = MyUtility.Convert.GetString(printData.Rows[0]["NameEN"]);
                 worksheet.Cells[7, 2] = MyUtility.Convert.GetString(printData.Rows[0]["AddressEN"]);
                 worksheet.Cells[8, 2] = MyUtility.Convert.GetString(masterData["ShipModeID"]);
-                worksheet.Cells[8, 4] = MyUtility.GetValue.Lookup(string.Format("select Vessel from {0} where {1}", MyUtility.Convert.GetString(masterData["IsFtyExport"]).ToUpper() == "TRUE" ? "FtyExport" : "Export", MyUtility.Check.Empty(masterData["BLNo"]) ? "ID = '" + MyUtility.Convert.GetString(masterData["WKNo"]) + "'" : "BLNo = '" + MyUtility.Convert.GetString(masterData["BLNo"]) + "'"));
+                worksheet.Cells[8, 4] = MyUtility.GetValue.Lookup(string.Format("select Vessel from {0} WITH (NOLOCK) where {1}", MyUtility.Convert.GetString(masterData["IsFtyExport"]).ToUpper() == "TRUE" ? "FtyExport" : "Export", MyUtility.Check.Empty(masterData["BLNo"]) ? "ID = '" + MyUtility.Convert.GetString(masterData["WKNo"]) + "'" : "BLNo = '" + MyUtility.Convert.GetString(masterData["BLNo"]) + "'"));
                 worksheet.Cells[9, 1] = "COUNTRY OF ORIGIN : " + MyUtility.Convert.GetString(printData.Rows[0]["Alias"]);
                 worksheet.Cells[9, 4] = MyUtility.Convert.GetString(printData.Rows[0]["Alias"]);
 

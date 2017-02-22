@@ -59,7 +59,7 @@ namespace Sci.Production.Shipping
                 #region FtyExport (Type = 3)
                 sqlCmd.Append(@"select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, ID as InvNo, '' as ShippingAPID, 
 '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
-from FtyExport
+from FtyExport WITH (NOLOCK) 
 where Type = 3 ");
                 if (!MyUtility.Check.Empty(dateRange1.Value1))
                 {
@@ -96,7 +96,7 @@ where Type = 3 ");
 as 
 (select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
- from Export
+ from Export WITH (NOLOCK) 
  where 1 = 1 ");
                     if (!MyUtility.Check.Empty(dateRange1.Value1))
                     {
@@ -130,7 +130,7 @@ as
 as 
 (select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
- from Export where 1 = 0), ");
+ from Export WITH (NOLOCK) where 1 = 0), ");
                 }
 
                 if (MyUtility.Convert.GetString(apData["SubType"]) == "SISTER FACTORY TRANSFER" || MyUtility.Convert.GetString(apData["SubType"]) == "Other")
@@ -139,7 +139,7 @@ as
 as 
 (select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, ID as InvNo, '' as ShippingAPID, 
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
- from FtyExport
+ from FtyExport WITH (NOLOCK) 
  where Type <> 3 ");
                     if (!MyUtility.Check.Empty(dateRange1.Value1))
                     {
@@ -173,7 +173,7 @@ as
 as 
 (select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
- from FtyExport
+ from FtyExport WITH (NOLOCK) 
  where 1=0 ) ");
                 }
 

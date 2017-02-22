@@ -90,14 +90,14 @@ as (
 select distinct 'GARMENT' as Type,g.ID,g.Shipper,g.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 isnull(oq.Qty,0) as OQty,g.CustCDID,g.Dest,g.ShipModeID,p.PulloutDate,p.ShipQty,p.CTNQty,
 p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.CurrencyID,se.AccountID,se.Amount
-from ShippingAP s
-inner join ShareExpense se on se.ShippingAPID = s.ID
-inner join GMTBooking g on g.ID = se.InvNo
-inner join PackingList p on p.INVNo = g.ID
-inner join PackingList_Detail pd on pd.ID = p.ID
-left join Orders o on o.ID = pd.OrderID
-left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join LocalSupp ls on ls.ID = g.Forwarder
+from ShippingAP s WITH (NOLOCK) 
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
+inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
+inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
 where s.Type = 'EXPORT'");
                         if (!MyUtility.Check.Empty(date1))
                         {
@@ -140,12 +140,12 @@ as (
 select distinct 'GARMENT' as Type,p.ID,'' as Shipper,o.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 isnull(oq.Qty,0) as OQty,o.CustCDID,o.Dest,p.ShipModeID,p.PulloutDate,p.ShipQty,p.CTNQty,
 p.GW,p.CBM,'' as Forwarder,s.BLNo,se.CurrencyID,se.AccountID,se.Amount
-from ShippingAP s
-inner join ShareExpense se on se.ShippingAPID = s.ID
-inner join PackingList p on p.ID = se.InvNo
-inner join PackingList_Detail pd on pd.ID = p.ID
-left join Orders o on o.ID = pd.OrderID
-left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+from ShippingAP s WITH (NOLOCK) 
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
+inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                         if (!MyUtility.Check.Empty(date1))
@@ -191,14 +191,14 @@ as (
 select distinct 'GARMENT' as Type,g.ID,g.Shipper,g.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,g.CustCDID,g.Dest,g.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
 p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.CurrencyID,se.AccountID,se.Amount
-from ShippingAP s
-inner join ShareExpense se on se.ShippingAPID = s.ID
-inner join GMTBooking g on g.ID = se.InvNo
-inner join PackingList p on p.INVNo = g.ID
-inner join PackingList_Detail pd on pd.ID = p.ID
-left join Orders o on o.ID = pd.OrderID
-left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join LocalSupp ls on ls.ID = g.Forwarder
+from ShippingAP s WITH (NOLOCK) 
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
+inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
+inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
 where s.Type = 'EXPORT'");
                         if (!MyUtility.Check.Empty(date1))
                         {
@@ -241,12 +241,12 @@ as (
 select distinct 'GARMENT' as Type,p.ID,'' as Shipper,o.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,o.CustCDID,o.Dest,p.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
 p.GW,p.CBM,'' as Forwarder,s.BLNo,se.CurrencyID,se.AccountID,se.Amount
-from ShippingAP s
-inner join ShareExpense se on se.ShippingAPID = s.ID
-inner join PackingList p on p.ID = se.InvNo
-inner join PackingList_Detail pd on pd.ID = p.ID
-left join Orders o on o.ID = pd.OrderID
-left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+from ShippingAP s WITH (NOLOCK) 
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
+inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                         if (!MyUtility.Check.Empty(date1))
@@ -324,14 +324,14 @@ select distinct 'GARMENT' as Type,g.ID,g.Shipper,g.BrandID,IIF(o.Category = 'B',
 pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,g.CustCDID,g.Dest,g.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
 p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,
 s.ID as APID,s.CDate,s.ApvDate,s.VoucherID,s.SubType
-from ShippingAP s
-inner join ShareExpense se on se.ShippingAPID = s.ID
-inner join GMTBooking g on g.ID = se.InvNo
-inner join PackingList p on p.INVNo = g.ID
-inner join PackingList_Detail pd on pd.ID = p.ID
-left join Orders o on o.ID = pd.OrderID
-left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join LocalSupp ls on ls.ID = g.Forwarder
+from ShippingAP s WITH (NOLOCK) 
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
+inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
+inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
 left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(date1))
@@ -377,12 +377,12 @@ select distinct 'GARMENT' as Type,p.ID,'' as Shipper,o.BrandID,IIF(o.Category = 
 pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,o.CustCDID,o.Dest,p.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
 p.GW,p.CBM,'' as Forwarder,s.BLNo,se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,
 s.ID as APID,s.CDate,s.ApvDate,s.VoucherID,s.SubType
-from ShippingAP s
-inner join ShareExpense se on se.ShippingAPID = s.ID
-inner join PackingList p on p.ID = se.InvNo
-inner join PackingList_Detail pd on pd.ID = p.ID
-left join Orders o on o.ID = pd.OrderID
-left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+from ShippingAP s WITH (NOLOCK) 
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
+inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(date1))
@@ -438,10 +438,10 @@ select 'MATERIAL' as Type, f.ID,s.MDivisionID as Shipper,'' as BrandID,'' as Cat
 0 as OQty,'' as CustCDID,f.ImportCountry as Dest,f.ShipModeID,f.PortArrival as PulloutDate,0 as ShipQty,
 0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,se.CurrencyID,se.AccountID,
 se.Amount
-from ShippingAP s
-inner join ShareExpense se on se.ShippingAPID = s.ID
-inner join FtyExport f on f.ID = se.InvNo
-left join LocalSupp ls on ls.ID = f.Forwarder
+from ShippingAP s WITH (NOLOCK) 
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
 where s.Type = 'EXPORT'");
                         #endregion
                     }
@@ -454,10 +454,10 @@ select 'MATERIAL' as Type, f.ID,s.MDivisionID as Shipper,'' as BrandID,'' as Cat
 0 as OQty,'' as CustCDID,f.ImportCountry as Dest,f.ShipModeID,'' as PackID,'' as PulloutID,f.PortArrival as PulloutDate,
 0 as ShipQty,0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,
 se.CurrencyID,se.AccountID,se.Amount
-from ShippingAP s
-inner join ShareExpense se on se.ShippingAPID = s.ID
-inner join FtyExport f on f.ID = se.InvNo
-left join LocalSupp ls on ls.ID = f.Forwarder
+from ShippingAP s WITH (NOLOCK) 
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
 where s.Type = 'EXPORT'");
                         #endregion
                     }
@@ -519,10 +519,10 @@ FOR AccountID IN ({0})) a", allAccno.ToString()));
 0 as OQty,'' as CustCDID,f.ImportCountry as Dest,f.ShipModeID,'' as PackID,'' as PulloutID,f.PortArrival as PulloutDate,
 0 as ShipQty,0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,
 se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,s.ID as APID,s.CDate,s.ApvDate,s.VoucherID,s.SubType
-from ShippingAP s
-inner join ShareExpense se on se.ShippingAPID = s.ID
-inner join FtyExport f on f.ID = se.InvNo
-left join LocalSupp ls on ls.ID = f.Forwarder
+from ShippingAP s WITH (NOLOCK) 
+inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
+inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
 left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(date1))

@@ -27,8 +27,8 @@ namespace Sci.Production.Shipping
 
             string selectCommand = string.Format(@"select iif(a.Status = 'Junked','Y','') as Cancel,a.TaskApvDate,a.ID,a.CDate,a.OrderShipmodeSeq,
 oq.BuyerDelivery,oq.ShipmodeID,a.ShipQty,a.EstAmount,a.ActualAmount
-from AirPP a
-left join Order_QtyShip oq on oq.Id = a.OrderID and oq.Seq = a.OrderShipmodeSeq
+from AirPP a WITH (NOLOCK) 
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.OrderShipmodeSeq
 where OrderID = '{0}'", orderID);
             DataTable selectDataTable;
             DualResult selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable);

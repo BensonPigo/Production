@@ -26,7 +26,7 @@ namespace Sci.Production.Shipping
         {
             base.OnFormLoaded();
 
-            string selectCommand = string.Format("select a.CDate, a.ID, b.Qty, b.CurrencyID, b.Price,b.Rate, b.Amount, c.Abb from ShippingAP a, ShippingAP_Detail b, LocalSupp c where a.ID = b.ID and b.ShipExpenseID = '{0}' and a.LocalSuppID = c.ID order by a.CDate,a.ID", MyUtility.Convert.GetString(motherData["ID"]));
+            string selectCommand = string.Format("select a.CDate, a.ID, b.Qty, b.CurrencyID, b.Price,b.Rate, b.Amount, c.Abb from ShippingAP a WITH (NOLOCK) , ShippingAP_Detail b WITH (NOLOCK) , LocalSupp c WITH (NOLOCK) where a.ID = b.ID and b.ShipExpenseID = '{0}' and a.LocalSuppID = c.ID order by a.CDate,a.ID", MyUtility.Convert.GetString(motherData["ID"]));
             DataTable selectDataTable;
             DualResult selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable);
             bindingSource1.DataSource = selectDataTable;

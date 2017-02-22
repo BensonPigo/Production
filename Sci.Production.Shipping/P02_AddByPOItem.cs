@@ -69,17 +69,17 @@ namespace Sci.Production.Shipping
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 cmds.Add(sp1);
 
-                string sqlCmd = "select ID from Orders where ID = @id";
+                string sqlCmd = "select ID from Orders WITH (NOLOCK) where ID = @id";
                 DataTable OrderData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderData);
                 if (result && OrderData.Rows.Count > 0)
                 {
                     if (!MyUtility.Check.Seek(string.Format(@"select oq.Id
-from Order_QtyShip oq
-inner join ShipMode s on UseFunction like '%AirPP%' and oq.ShipmodeID = s.ID
+from Order_QtyShip oq WITH (NOLOCK) 
+inner join ShipMode s WITH (NOLOCK) on UseFunction like '%AirPP%' and oq.ShipmodeID = s.ID
 where oq.Id = '{0}'", textBox1.Text)))
                     {
-                        string shipMode = MyUtility.GetValue.Lookup(@"select (select ID+',' from ShipMode where UseFunction like '%AirPP%'
+                        string shipMode = MyUtility.GetValue.Lookup(@"select (select ID+',' from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%'
 for xml path('')) as ShipModeID");
                         if (shipMode != "")
                         {
@@ -115,7 +115,7 @@ for xml path('')) as ShipModeID");
             {
                 DataRow OrderData;
                 if (MyUtility.Check.Seek(string.Format(@"select SeasonID,StyleID,BrandID,SMR,[dbo].[getBOFMtlDesc](StyleUkey) as Description
-from Orders where ID = '{0}'",textBox1.Text), out OrderData))
+from Orders WITH (NOLOCK) where ID = '{0}'", textBox1.Text), out OrderData))
                 {
                     CurrentData["OrderID"] = textBox1.Text;
                     CurrentData["SeasonID"] = OrderData["SeasonID"];
@@ -155,7 +155,7 @@ from Orders where ID = '{0}'",textBox1.Text), out OrderData))
         private bool ChkAirPP()
         {
             DataRow AirPPData;
-            if (!MyUtility.Check.Seek(string.Format("select OrderID from AirPP where ID = '{0}'  and Status <> 'Junked'", textBox4.Text), out AirPPData))
+            if (!MyUtility.Check.Seek(string.Format("select OrderID from AirPP WITH (NOLOCK) where ID = '{0}'  and Status <> 'Junked'", textBox4.Text), out AirPPData))
             {
                 MyUtility.Msg.WarningBox("Air PP No. not found!!");
                 return false;
@@ -170,8 +170,8 @@ from Orders where ID = '{0}'",textBox1.Text), out OrderData))
             }
 
             if (MyUtility.Check.Seek(string.Format(@"select ed.ID 
-from Express_Detail ed
-inner join Express e on ed.ID = e.ID and e.Status <> 'Junked'
+from Express_Detail ed WITH (NOLOCK) 
+inner join Express e WITH (NOLOCK) on ed.ID = e.ID and e.Status <> 'Junked'
 where DutyNo = '{0}' and ed.ID <> '{1}'", textBox4.Text, MyUtility.Convert.GetString(CurrentData["ID"])), out AirPPData))
             {
                 MyUtility.Msg.WarningBox(string.Format("This Air PP No. already in HC#{0}, so can't be assign!!", MyUtility.Convert.GetString(AirPPData["ID"])));
@@ -248,7 +248,7 @@ where DutyNo = '{0}' and ed.ID <> '{1}'", textBox4.Text, MyUtility.Convert.GetSt
                 }
                 DataRow Seq;
                 if (!MyUtility.Check.Seek(string.Format(@"select RIGHT(REPLICATE('0',3)+CAST(MAX(CAST(Seq1 as int))+1 as varchar),3) as Seq1
-from Express_Detail where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString(CurrentData["ID"])), out Seq))
+from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Convert.GetString(CurrentData["ID"])), out Seq))
                 {
                     MyUtility.Msg.WarningBox("Get seq fail, pls try again");
                     return false;

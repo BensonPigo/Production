@@ -69,7 +69,7 @@ namespace Sci.Production.Shipping
 o.BuyerDelivery,isnull(o.BrandID,'') as BrandID,isnull(o.FactoryID,'') as FactoryID,o.SciDelivery,0.0 as NetKg,0.0 as WeightKg,
 '' as Seq1,'' as Seq2,'' as Seq,'' as FabricType
 from (select l.Id as LocalPOID,ld.OrderId as POID,l.LocalSuppID as SuppID,SUBSTRING(ld.Id+ld.ThreadColorID,1,26) as SCIRefno,ld.Refno,ld.ThreadColorID,ld.UnitId,ld.Qty,ld.Price
-      from LocalPO l, LocalPO_Detail ld
+      from LocalPO l WITH (NOLOCK) , LocalPO_Detail ld WITH (NOLOCK) 
 	  where l.Id = ld.Id");
             if (!MyUtility.Check.Empty(textBox2.Text))
             {

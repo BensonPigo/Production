@@ -50,7 +50,7 @@ namespace Sci.Production.Shipping
                         else
                         {
                             DataRow dr;
-                            if (MyUtility.Check.Seek(string.Format("select * from LocalSupp where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"])), out dr))
+                            if (MyUtility.Check.Seek(string.Format("select * from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"])), out dr))
                             {
                                 CurrentMaintain["CurrencyID"] = dr["CurrencyID"];
                                 CurrentMaintain["PayTermID"] = dr["PayTermID"];
@@ -98,8 +98,8 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountID,'') + '-' + isnull(a.Name,'')) as Account
-from ShippingAP_Detail sd
-left join ShipExpense se on se.ID = sd.ShipExpenseID
+from ShippingAP_Detail sd WITH (NOLOCK) 
+left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
 left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
 where sd.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -145,7 +145,7 @@ where sd.ID = '{0}'", masterID);
                             {
                                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                                 string localSuppID = MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"]);
-                                string sqlCmd = string.Format("select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense where Junk = 0 and LocalSuppID = '{0}' and AccountID != ''", localSuppID);
+                                string sqlCmd = string.Format("select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense WITH (NOLOCK) where Junk = 0 and LocalSuppID = '{0}' and AccountID != ''", localSuppID);
                                 Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,50,6,3,11,8", MyUtility.Convert.GetString(dr["ShipExpenseID"]));
                                 DialogResult returnResult = item.ShowDialog();
                                 if (returnResult == DialogResult.Cancel) { return; }
@@ -172,7 +172,7 @@ where sd.ID = '{0}'", masterID);
                         cmds.Add(sp2);
 
                         DataTable ExpenseData;
-                        string sqlCmd = "select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense where Junk = 0 and LocalSuppID = @localsuppid and ID = @shipexpenseid  and AccountID != ''";
+                        string sqlCmd = "select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense WITH (NOLOCK) where Junk = 0 and LocalSuppID = @localsuppid and ID = @shipexpenseid  and AccountID != ''";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ExpenseData);
                         if (!result || ExpenseData.Rows.Count <= 0)
                         {
@@ -351,7 +351,7 @@ where sd.ID = '{0}'", masterID);
             if (!MyUtility.Check.Empty(CurrentMaintain["InvNo"]))
             {
                 DataRow dr;
-                if (MyUtility.Check.Seek(string.Format("select ID from ShippingAp where InvNo = '{0}' and BLNo = '{1}' and ID != '{2}'", MyUtility.Convert.GetString(CurrentMaintain["InvNo"]), MyUtility.Convert.GetString(CurrentMaintain["Handle"]), MyUtility.Convert.GetString(CurrentMaintain["ID"])), out dr))
+                if (MyUtility.Check.Seek(string.Format("select ID from ShippingAp WITH (NOLOCK) where InvNo = '{0}' and BLNo = '{1}' and ID != '{2}'", MyUtility.Convert.GetString(CurrentMaintain["InvNo"]), MyUtility.Convert.GetString(CurrentMaintain["Handle"]), MyUtility.Convert.GetString(CurrentMaintain["ID"])), out dr))
                 {
                     MyUtility.Msg.WarningBox("< Invoice# > and < B/L No. > duplicate with No."+ MyUtility.Convert.GetString(dr["ID"]));
                     return false;
@@ -383,7 +383,7 @@ where sd.ID = '{0}'", masterID);
             if (!IsDetailInserting)
             {
                 DataRow seekRow;
-                if (MyUtility.Check.Seek(string.Format("select Type,SubType from ShippingAP where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])), out seekRow))
+                if (MyUtility.Check.Seek(string.Format("select Type,SubType from ShippingAP WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])), out seekRow))
                 {
                     if (MyUtility.Convert.GetString(CurrentMaintain["Type"]) != MyUtility.Convert.GetString(seekRow["Type"]))
                     {
@@ -496,7 +496,7 @@ where sd.ID = '{0}'", masterID);
             else
             {
                 DataTable FactoryData,LocalSpuuData,Report_ShippingAPDetail;
-                string sqlCmd = string.Format("select NameEN, AddressEN,Tel from Factory where ID = '{0}'",MyUtility.Convert.GetString(CurrentMaintain["MDivisionID"]));
+                string sqlCmd = string.Format("select NameEN, AddressEN,Tel from Factory WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["MDivisionID"]));
                 result = DBProxy.Current.Select(null,sqlCmd,out FactoryData);
                 if(!result)
                 {
@@ -506,8 +506,8 @@ where sd.ID = '{0}'", masterID);
                 sqlCmd = string.Format(@"select ls.Name,ls.Address,ls.Tel,isnull(lsb.AccountNo,'') as AccountNo, 
 isnull(lsb.AccountName,'') as AccountName, isnull(lsb.BankName,'') as BankName,
 isnull(lsb.CountryID,'') as CountryID, isnull(lsb.City,'') as City, isnull(lsb.SWIFTCode,'') as SWIFTCode
-from LocalSupp ls
-left join LocalSupp_Bank lsb on ls.ID = lsb.ID and lsb.IsDefault = 1
+from LocalSupp ls WITH (NOLOCK) 
+left join LocalSupp_Bank lsb WITH (NOLOCK) on ls.ID = lsb.ID and lsb.IsDefault = 1
 where ls.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out LocalSpuuData);
                 if (!result)
@@ -517,8 +517,8 @@ where ls.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"]
                 }
 
                 sqlCmd = string.Format(@"select sd.ShipExpenseID,isnull(se.Description,'') as Description,sd.CurrencyID,sd.Price,sd.Qty,sd.Rate,sd.Amount 
-from ShippingAP_Detail sd
-left join ShipExpense se on sd.ShipExpenseID = se.ID
+from ShippingAP_Detail sd WITH (NOLOCK) 
+left join ShipExpense se WITH (NOLOCK) on sd.ShipExpenseID = se.ID
 where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out Report_ShippingAPDetail);
 
@@ -534,7 +534,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("address", MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["Address"])));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("tel", MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["Tel"])));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("blNo", MyUtility.Convert.GetString(CurrentMaintain["BLNo"])));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("payTerm", MyUtility.GetValue.Lookup(string.Format("select Name from PayTerm where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["PayTermID"])))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("payTerm", MyUtility.GetValue.Lookup(string.Format("select Name from PayTerm WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["PayTermID"])))));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("invNo", MyUtility.Convert.GetString(CurrentMaintain["InvNo"])));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", MyUtility.Convert.GetString(CurrentMaintain["Remark"])));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("acNo", MyUtility.Convert.GetString(LocalSpuuData.Rows[0]["AccountNo"])));
@@ -548,7 +548,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vatRate", MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(CurrentMaintain["VATRate"])/100)));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", MyUtility.Convert.GetString(CurrentMaintain["VAT"])));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(CurrentMaintain["Amount"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["VAT"]))));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("handle", MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Handle"])))));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("handle", MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Handle"])))));
 
                 using (var frm = new Sci.Win.Subs.ReportView(rd))
                 {
@@ -646,10 +646,10 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         //Acct. Approve
         private void button2_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format("select Accountant from ShippingAP where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])))))
+            if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format("select Accountant from ShippingAP WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])))))
             {
                 //Approve
-                if (MyUtility.Check.Empty(CurrentMaintain["SubType"]) || (MyUtility.Convert.GetString(CurrentMaintain["SubType"]) != "OTHER" && !MyUtility.Check.Seek(string.Format("select ShippingAPID from ShareExpense where ShippingAPID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])))))
+                if (MyUtility.Check.Empty(CurrentMaintain["SubType"]) || (MyUtility.Convert.GetString(CurrentMaintain["SubType"]) != "OTHER" && !MyUtility.Check.Seek(string.Format("select ShippingAPID from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])))))
                 {
                     MyUtility.Msg.WarningBox("No share expense, can't approve!");
                     return;

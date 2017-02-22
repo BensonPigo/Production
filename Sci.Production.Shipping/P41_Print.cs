@@ -50,20 +50,20 @@ IIF(e.DataFrom = 'PACKINGLIST',pl.ShipQty,g.TotalShipQty) as ShipQty,
 IIF(e.DataFrom = 'PACKINGLIST',pl.CTNQty,g.TotalCTNQty) as CTNQty,
 IIF(e.DataFrom = 'PACKINGLIST',pl.GW,g.TotalGW) as GW,
 IIF(e.DataFrom = 'PACKINGLIST',pl.NW,g.TotalNW) as NW,
-IIF(e.DataFrom = 'PACKINGLIST',(select Dest from Orders where ID = (select top 1 OrderID from PackingList_Detail where ID = pl.ID)),g.Dest) as Dest,
-IIF(e.DataFrom = 'PACKINGLIST',(select ShipTermID from Orders where ID = (select top 1 OrderID from PackingList_Detail where ID = pl.ID)),g.ShipTermID) as ShipTerm
-from VNExportDeclaration e
-left join VNExportPort ep on e.VNExportPortID = ep.ID
-left join GMTBooking g on e.InvNo = g.ID
-left join PackingList pl on e.InvNo = pl.INVNo
+IIF(e.DataFrom = 'PACKINGLIST',(select Dest from Orders WITH (NOLOCK) where ID = (select top 1 OrderID from PackingList_Detail WITH (NOLOCK) where ID = pl.ID)),g.Dest) as Dest,
+IIF(e.DataFrom = 'PACKINGLIST',(select ShipTermID from Orders WITH (NOLOCK) where ID = (select top 1 OrderID from PackingList_Detail WITH (NOLOCK) where ID = pl.ID)),g.ShipTermID) as ShipTerm
+from VNExportDeclaration e WITH (NOLOCK) 
+left join VNExportPort ep WITH (NOLOCK) on e.VNExportPortID = ep.ID
+left join GMTBooking g WITH (NOLOCK) on e.InvNo = g.ID
+left join PackingList pl WITH (NOLOCK) on e.InvNo = pl.INVNo
 where e.CDate between '{0}' and '{1}'
 and e.Status = 'Confirmed'
 ),
 SecondStepFilterData
 as (
 select *,(select sum(ROUND(ed.ExportQty*c.CPU*c.VNMultiple,2))
-from VNExportDeclaration_Detail ed
-inner join VNConsumption c on c.CustomSP = ed.CustomSP
+from VNExportDeclaration_Detail ed WITH (NOLOCK) 
+inner join VNConsumption c WITH (NOLOCK) on c.CustomSP = ed.CustomSP
 where ed.ID = FirstStepFilterData.ID
 and c.VNContractID = FirstStepFilterData.VNContractID) as CMP from FirstStepFilterData where {2}
 ),
@@ -71,7 +71,7 @@ tmpDetail
 as (
 select distinct e.InvNo,ed.OrderID,ed.StyleID,ed.SizeCode,ed.CustomSP,ed.ExportQty,[dbo].getOrderUnitPrice(2,ed.StyleUKey,ed.OrderID,ed.Article,ed.SizeCode) as FOB
 from SecondStepFilterData e
-inner join VNExportDeclaration_Detail ed on e.ID = ed.ID
+inner join VNExportDeclaration_Detail ed WITH (NOLOCK) on e.ID = ed.ID
 ),
 tmpSumDetail
 as (
@@ -84,7 +84,7 @@ as (
 select distinct sd.InvNo,sd.VNExportPortID,sd.ExportPort,sd.Dest,isnull(c.Alias,'') as CountryAlias,sd.ShipTerm,sd.ShipQty,
 CTNQty,sd.GW,sd.NW,sd.CMP
 from SecondStepFilterData sd
-left join Country c on sd.Dest = c.ID
+left join Country c WITH (NOLOCK) on sd.Dest = c.ID
 )
 select '0' as Type,count(InvNo)  as rno,'' as InvNo,'' as VNExportPortID,'' as ExportPort,'' as Dest,'' as CountryAlias,'' as ShipTerm,0 as ShipQty,0 as CTNQty,0 as GW,0 as NW,0 as CMP,
 '' as InvNo1,'' as OrderID,'' as StyleID,'' as SizeCode,'' as CustomSP,0 as TtlExportQty,0.0 as FOB from tmpSummaryData

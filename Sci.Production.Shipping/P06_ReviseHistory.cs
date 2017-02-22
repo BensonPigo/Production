@@ -69,10 +69,10 @@ namespace Sci.Production.Shipping
 case pr.Type when 'R' then 'Revised' when 'M' then 'Missing' else 'Deleted' end as ReviseStatus,
 case pr.OldStatus when 'P' then 'Partial' when 'C' then 'Complete' when 'E' then 'Exceed' when 'E' then 'Shortage' else '' end as OldStatusExp,
 case pr.NewStatus when 'P' then 'Partial' when 'C' then 'Complete' when 'E' then 'Exceed' when 'E' then 'Shortage' else '' end as NewStatusExp
-from Pullout_Revise pr
-left join Orders o on o.ID = pr.OrderID
-left join PackingList_Detail pd on pd.ID = pr.PackingListID and pd.OrderID = pr.OrderID
-left join Order_QtyShip oq on oq.Id = pr.OrderID and oq.Seq = pd.OrderShipmodeSeq
+from Pullout_Revise pr WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on o.ID = pr.OrderID
+left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = pr.PackingListID and pd.OrderID = pr.OrderID
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pr.OrderID and oq.Seq = pd.OrderShipmodeSeq
 where pr.ID = '{0}'", pulloutID);
 
             DataTable gridData;

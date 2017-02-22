@@ -74,7 +74,7 @@ namespace Sci.Production.Shipping
         private void QueryData()
         {
             DataRow queryData;
-            string sqlCmd = string.Format("select isnull(sum(GW),0) as GW,isnull(sum(CBM),0) as CBM,isnull(Count(BLNo),0) as RecCount from (select distinct BLNo,WKNo,InvNo,GW,CBM from ShareExpense where ShippingAPID = '{0}') a", MyUtility.Convert.GetString(apData["ID"]));
+            string sqlCmd = string.Format("select isnull(sum(GW),0) as GW,isnull(sum(CBM),0) as CBM,isnull(Count(BLNo),0) as RecCount from (select distinct BLNo,WKNo,InvNo,GW,CBM from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}') a", MyUtility.Convert.GetString(apData["ID"]));
             MyUtility.Check.Seek(sqlCmd, out queryData);
             numericBox2.Value = MyUtility.Convert.GetDecimal(queryData["GW"]);
             numericBox3.Value = MyUtility.Convert.GetDecimal(queryData["CBM"]);
@@ -82,7 +82,7 @@ namespace Sci.Production.Shipping
 
             sqlCmd = string.Format(@"select sh.*,an.Name as AccountName,
 case when sh.ShareBase = 'G' then 'G.W.' when sh.ShareBase = 'C' then 'CBM' else ' Number od Deliver Sheets' end as ShareRule 
-from ShareExpense sh
+from ShareExpense sh WITH (NOLOCK) 
 left join [FinanceEN].dbo.AccountNo an on an.ID = sh.AccountID
 where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetString(apData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out SEData);
@@ -93,7 +93,7 @@ where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetStrin
             }
             listControlBindingSource2.DataSource = SEData;
 
-            sqlCmd = string.Format("select ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK,isnull(sum(Amount),0) as Amount from ShareExpense where ShippingAPID = '{0}' group by ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK", MyUtility.Convert.GetString(apData["ID"]));
+            sqlCmd = string.Format("select ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK,isnull(sum(Amount),0) as Amount from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK", MyUtility.Convert.GetString(apData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out SEGroupData);
             if (!result)
             {
@@ -183,10 +183,10 @@ where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetStrin
             }
             else
             {
-                bool forwarderFee = MyUtility.Check.Seek(string.Format("select se.AccountID from ShippingAP_Detail sd, ShipExpense se where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and (se.AccountID = '61022001' or se.AccountID = '61012001')", MyUtility.Convert.GetString(apData["ID"])));
+                bool forwarderFee = MyUtility.Check.Seek(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and (se.AccountID = '61022001' or se.AccountID = '61012001')", MyUtility.Convert.GetString(apData["ID"])));
                 bool haveSea = false, noExistNotSea = true;
                 DataTable duplicData;
-                DBProxy.Current.Select(null, "select BLNo,WKNo,InvNo from ShareExpense where 1=0", out duplicData);
+                DBProxy.Current.Select(null, "select BLNo,WKNo,InvNo from ShareExpense WITH (NOLOCK) where 1=0", out duplicData);
                 StringBuilder msg = new StringBuilder();
 
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).ToList<DataRow>())
@@ -242,7 +242,7 @@ where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetStrin
                 IList<string> deleteCmds = new List<string>();
                 IList<string> addCmds = new List<string>();
 
-                string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd, ShipExpense se where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(apData["ID"])));
+                string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(apData["ID"])));
                 //刪除實體資料
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
                 {
@@ -383,7 +383,7 @@ where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetStrin
 SET @apid = '{0}'
 DECLARE cursor_allExport CURSOR FOR
 	select e.ID,e.ShipModeID,e.Blno,e.WeightKg,e.Cbm,s.CurrencyID,s.SubType
-	from Export e, ShareExpense se, ShippingAP s
+	from Export e WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) 
 	where e.ID = se.WKNo
 	and s.ID = se.ShippingAPID
 	and s.ID = @apid
@@ -429,7 +429,7 @@ CLOSE cursor_allExport", MyUtility.Convert.GetString(apData["ID"]));
 SET @apid = '{0}'
 DECLARE cursor_GB CURSOR FOR
 	select g.ID,g.ShipModeID,g.TotalGW,g.TotalCBM,s.CurrencyID,s.SubType, '' as BLNo
-	from GMTBooking g, ShippingAP s, ShareExpense se
+	from GMTBooking g WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) 
 	where g.ID = se.InvNo
 	and s.id = se.ShippingAPID
 	and se.FtyWK = 0
@@ -437,7 +437,7 @@ DECLARE cursor_GB CURSOR FOR
 
 DECLARE cursor_FtyWK CURSOR FOR
 	select f.ID,f.ShipModeID,f.WeightKg,f.Cbm,s.CurrencyID,s.SubType, f.Blno
-	from FtyExport f, ShippingAP s, ShareExpense se
+	from FtyExport f WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) 
 	where f.ID = se.InvNo
 	and s.id = se.ShippingAPID
 	and se.FtyWK = 1
@@ -445,7 +445,7 @@ DECLARE cursor_FtyWK CURSOR FOR
 
 DECLARE cursor_PackingList CURSOR FOR
 	select p.ID,p.ShipModeID,p.GW,p.CBM,s.CurrencyID,s.SubType, '' as BLNo
-	from PackingList p, ShippingAP s, ShareExpense se
+	from PackingList p WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) 
 	where p.ID = se.InvNo
 	and (p.Type = 'F' or p.Type = 'L')
 	and s.id = se.ShippingAPID
@@ -486,7 +486,7 @@ BEGIN
 
 	FETCH NEXT FROM cursor_PackingList INTO @id,@shipmode,@gw,@cbm,@currency,@subtype,@blno
 END
-CLOSE cursor_PackingList",MyUtility.Convert.GetString(apData["ID"]));
+CLOSE cursor_PackingList", MyUtility.Convert.GetString(apData["ID"]));
                 #endregion
                 result = DBProxy.Current.Execute(null, updateCmd);
                 if (!result)

@@ -64,9 +64,9 @@ as
 (select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
  '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
  '' as ShareBase, 0 as FtyWK 
- from GMTBooking g 
- left join GMTBooking_CTNR gc on gc.ID = g.ID 
- left Join PackingList p on p.INVNo = g.ID 
+ from GMTBooking g  WITH (NOLOCK) 
+ left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
+ left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
  where 1=1 ");
 
                 if (!MyUtility.Check.Empty(dateRange1.Value1))
@@ -122,7 +122,7 @@ as
 (select 0 as Selected,'' as InvNo,'' as ShipModeID,0 as GW, 0 as CBM, 
  '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
  '' as ShareBase, 0 as FtyWK 
- from GMTBooking where 1=0 
+ from GMTBooking WITH (NOLOCK) where 1=0 
 ), ");
             }
             #endregion
@@ -135,7 +135,7 @@ as
 (select 0 as Selected,'' as InvNo,'' as ShipModeID,0 as GW, 0 as CBM, 
  '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
  '' as ShareBase, 0 as FtyWK 
- from PackingList where 1=0 
+ from PackingList WITH (NOLOCK) where 1=0 
 ) ");
             }
             else
@@ -145,7 +145,7 @@ as
 (select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, 
 '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
 '' as ShareBase, 0 as FtyWK 
- from PackingList 
+ from PackingList WITH (NOLOCK) 
  where ");
                 if (MyUtility.Check.Empty(comboBox1.SelectedValue))
                 {

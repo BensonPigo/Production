@@ -36,8 +36,8 @@ namespace Sci.Production.Shipping
             button5.Enabled = MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Approved";
 
             if (MyUtility.GetValue.Lookup(string.Format(@"select a.ShipQty-b.Qty as BalQty from 
-(select isnull(sum(ShipQty),0) as ShipQty from AirPP where Status <> 'Junked' and OrderID = '{0}') a,
-(select isnull(sum(Qty),0) as Qty from Order_QtyShip where Id = '{0}' and ShipmodeID in (select ID from ShipMode where UseFunction like '%AirPP%')) b
+(select isnull(sum(ShipQty),0) as ShipQty from AirPP WITH (NOLOCK) where Status <> 'Junked' and OrderID = '{0}') a,
+(select isnull(sum(Qty),0) as Qty from Order_QtyShip WITH (NOLOCK) where Id = '{0}' and ShipmodeID in (select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%')) b
 ", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]))) != "0")
             {
                 this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
@@ -51,9 +51,9 @@ namespace Sci.Production.Shipping
 
             DataTable orderData;
             DualResult result = DBProxy.Current.Select(null, string.Format(@"select o.FactoryID,o.BrandID,o.StyleID,o.Dest,isnull(oq.ShipmodeID,'') as ShipmodeID,isnull(oq.Qty,0) as Qty,oq.BuyerDelivery,isnull(s.Description,'') as Description
-from Orders o
-left join Order_QtyShip oq on oq.Id = o.ID and oq.Seq = '{1}'
-left join Style s on s.Ukey = o.StyleUkey
+from Orders o WITH (NOLOCK) 
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID and oq.Seq = '{1}'
+left join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
 where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), MyUtility.Convert.GetString(CurrentMaintain["OrderShipmodeSeq"])), out orderData);
 
             if (!result || orderData.Rows.Count == 0)
@@ -83,7 +83,7 @@ where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), My
                 txtcountry1.TextBox1.Text = MyUtility.Convert.GetString(orderData.Rows[0]["Dest"]);
             }
 
-            displayBox8.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason where ReasonTypeID = 'Air_Prepaid_Reason' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ReasonID"])));
+            displayBox8.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Air_Prepaid_Reason' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ReasonID"])));
             displayBox19.Value = MyUtility.Check.Empty(CurrentMaintain["TPEEditDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             displayBox20.Value = MyUtility.Check.Empty(CurrentMaintain["FtySendDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["FtySendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             //狀態顯示
@@ -319,22 +319,22 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
             worksheet.Cells[3, 8] = Convert.ToDateTime(DateTime.Today).ToString("d");
             worksheet.Cells[4, 2] = MyUtility.Convert.GetString(CurrentMaintain["ID"]);
             worksheet.Cells[4, 7] = MyUtility.Check.Empty(dateBox2.Value)?"": Convert.ToDateTime(dateBox2.Value).ToString("d");
-            worksheet.Cells[5, 7] = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["MRHandle"])));
+            worksheet.Cells[5, 7] = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["MRHandle"])));
             worksheet.Cells[6, 2] = MyUtility.Convert.GetString(CurrentMaintain["OrderID"]);
             worksheet.Cells[6, 6] = displayBox5.Value;
             worksheet.Cells[7, 2] = displayBox3.Value;
-            worksheet.Cells[7, 4] = MyUtility.GetValue.Lookup(string.Format("select Alias from Country where ID = '{0}'", txtcountry1.TextBox1.Text));
+            worksheet.Cells[7, 4] = MyUtility.GetValue.Lookup(string.Format("select Alias from Country WITH (NOLOCK) where ID = '{0}'", txtcountry1.TextBox1.Text));
             worksheet.Cells[8, 2] = displayBox2.Value;
             worksheet.Cells[8, 4] = displayBox4.Value;
             worksheet.Cells[9, 2] = numericBox1.Value;
             worksheet.Cells[10, 2] = MyUtility.Convert.GetString(CurrentMaintain["ShipQty"]);
-            worksheet.Cells[10, 4] = MyUtility.Convert.GetString(CurrentMaintain["Forwarder"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Forwarder"])));
+            worksheet.Cells[10, 4] = MyUtility.Convert.GetString(CurrentMaintain["Forwarder"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Forwarder"])));
             worksheet.Cells[10, 6] = MyUtility.Convert.GetString(CurrentMaintain["Quotation"]) + "/KG";
             worksheet.Cells[11, 2] = MyUtility.Convert.GetString(CurrentMaintain["GW"]);
-            worksheet.Cells[11, 4] = MyUtility.Convert.GetString(CurrentMaintain["Forwarder1"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Forwarder1"])));
+            worksheet.Cells[11, 4] = MyUtility.Convert.GetString(CurrentMaintain["Forwarder1"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Forwarder1"])));
             worksheet.Cells[11, 6] = MyUtility.Convert.GetString(CurrentMaintain["Quotation1"]) + "/KG";
             worksheet.Cells[12, 2] = MyUtility.Convert.GetString(CurrentMaintain["VW"]);
-            worksheet.Cells[12, 4] = MyUtility.Convert.GetString(CurrentMaintain["Forwarder2"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Forwarder2"])));
+            worksheet.Cells[12, 4] = MyUtility.Convert.GetString(CurrentMaintain["Forwarder2"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Forwarder2"])));
             worksheet.Cells[12, 6] = MyUtility.Convert.GetString(CurrentMaintain["Quotation2"]) + "/KG";
             worksheet.Cells[13, 2] = MyUtility.Convert.GetString(CurrentMaintain["Rate"]);
             worksheet.Cells[13, 5] = MyUtility.Convert.GetString(CurrentMaintain["EstAmount"]);
@@ -387,7 +387,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         {
             if (this.EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from Reason where ReasonTypeID = 'Air_Prepaid_Reason' and Junk = 0 order by ID", "5,50", this.Text, false, ",");
+                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Air_Prepaid_Reason' and Junk = 0 order by ID", "5,50", this.Text, false, ",");
 
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
@@ -556,7 +556,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
                         cmds.Add(sp2);
 
                         DataTable orderData;
-                        string sqlCmd = "select ID from Orders where ID = @id and MDivisionID = @mdivisionid";
+                        string sqlCmd = "select ID from Orders WITH (NOLOCK) where ID = @id and MDivisionID = @mdivisionid";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
                         if (!result || orderData.Rows.Count <= 0)
                         {
@@ -607,9 +607,9 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
                 DataRow orderData;
                 string sqlCmd;
                 sqlCmd = string.Format(@"select o.FactoryID,o.FtyGroup,o.BrandID,o.StyleID,o.Dest,isnull(s.Description,'') as Description,p.POHandle,p.POSMR,o.MRHandle,o.SMR
-from Orders o
-left join Style s on s.Ukey = o.StyleUkey
-left join PO p on p.ID = o.POID
+from Orders o WITH (NOLOCK) 
+left join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
+left join PO p WITH (NOLOCK) on p.ID = o.POID
 where o.Id = '{0}'", orderID);
                 if (MyUtility.Check.Seek(sqlCmd, out orderData))
                 {
@@ -626,11 +626,11 @@ where o.Id = '{0}'", orderID);
                     CurrentMaintain["FtyMgr"] = MyUtility.GetValue.Lookup("Manager", MyUtility.Convert.GetString(orderData["FtyGroup"]),"Factory","ID");
 
                     #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
-                    sqlCmd = string.Format(@"select oq.Seq,oq.BuyerDelivery,oq.ShipmodeID,oq.Qty from Order_QtyShip oq,(
-select Id,Seq from Order_QtyShip where Id = '{0}' and 
-ShipmodeID in (select ID from ShipMode where UseFunction like '%AirPP%')
+                    sqlCmd = string.Format(@"select oq.Seq,oq.BuyerDelivery,oq.ShipmodeID,oq.Qty from Order_QtyShip oq WITH (NOLOCK) ,(
+select Id,Seq from Order_QtyShip WITH (NOLOCK) where Id = '{0}' and 
+ShipmodeID in (select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%')
 except
-select OrderID as ID,OrderShipmodeSeq as Seq from AirPP where OrderID = '{0}' and ID != '{1}' and Status <> 'Junked') b
+select OrderID as ID,OrderShipmodeSeq as Seq from AirPP WITH (NOLOCK) where OrderID = '{0}' and ID != '{1}' and Status <> 'Junked') b
 where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                     DataTable orderQtyData;
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, out orderQtyData);
@@ -697,11 +697,11 @@ where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(Cur
         //Seq按右鍵
         private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = string.Format(@"select oq.Seq,oq.BuyerDelivery,oq.ShipmodeID,oq.Qty from Order_QtyShip oq,(
-select Id,Seq from Order_QtyShip where Id = '{0}' and 
-ShipmodeID in (select ID from ShipMode where UseFunction like '%AirPP%')
+            string sqlCmd = string.Format(@"select oq.Seq,oq.BuyerDelivery,oq.ShipmodeID,oq.Qty from Order_QtyShip oq WITH (NOLOCK) ,(
+select Id,Seq from Order_QtyShip WITH (NOLOCK) where Id = '{0}' and 
+ShipmodeID in (select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%')
 except
-select OrderID as ID,OrderShipmodeSeq as Seq from AirPP where OrderID = '{0}' and ID != '{1}' and Status <> 'Junked') b
+select OrderID as ID,OrderShipmodeSeq as Seq from AirPP WITH (NOLOCK) where OrderID = '{0}' and ID != '{1}' and Status <> 'Junked') b
 where oq.Id = b.Id and oq.Seq = b.Seq", MyUtility.Check.Empty(CurrentMaintain["OrderID"]) ? "" : CurrentMaintain["OrderID"], MyUtility.Check.Empty(CurrentMaintain["ID"]) ? "" : CurrentMaintain["ID"].ToString());
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
             DialogResult returnResult = item.ShowDialog();
@@ -1010,30 +1010,30 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert
         private void SendMail(bool visibleForm)
         {
             DataRow dr;
-            if (MyUtility.Check.Seek("select * from MailTo where ID = '008'", out dr))
+            if (MyUtility.Check.Seek("select * from MailTo WITH (NOLOCK) where ID = '008'", out dr))
             {
                 DataTable allMail;
-                string sqlCmd = string.Format(@"select isnull((select EMail from Pass1 where ID = a.PPICMgr),'') as PPICMgrMail,
-isnull((select Name from Pass1 where ID = a.PPICMgr),'') as PPICMgrName,
-isnull((select ExtNo from Pass1 where ID = a.PPICMgr),'') as PPICMgrExtNo,
-isnull((select EMail from Pass1 where ID = a.FtyMgr),'') as FtyMgrMail,
-isnull((select Name from Pass1 where ID = a.FtyMgr),'') as FtyMgrName,
-isnull((select ExtNo from Pass1 where ID = a.FtyMgr),'') as FtyMgrExtNo,
-isnull((select EMail from TPEPass1 where ID = o.MRHandle),'') as MRHandleMail,
-isnull((select Name from TPEPass1 where ID = o.MRHandle),'') as MRHandleName,
-isnull((select ExtNo from TPEPass1 where ID = o.MRHandle),'') as MRHandleExtNo,
-isnull((select EMail from TPEPass1 where ID = o.SMR),'') as SMRMail,
-isnull((select Name from TPEPass1 where ID = o.SMR),'') as SMRName,
-isnull((select ExtNo from TPEPass1 where ID = o.SMR),'') as SMRExtNo,
-isnull((select EMail from TPEPass1 where ID = p.POHandle),'') as POHandleMail,
-isnull((select Name from TPEPass1 where ID = p.POHandle),'') as POHandleName,
-isnull((select ExtNo from TPEPass1 where ID = p.POHandle),'') as POHandleExtNo,
-isnull((select EMail from TPEPass1 where ID = p.POSMR),'') as POSMRMail,
-isnull((select Name from TPEPass1 where ID = p.POSMR),'') as POSMRName,
-isnull((select ExtNo from TPEPass1 where ID = p.POSMR),'') as POSMRExtNo
-from AirPP a
-left join Orders o on o.ID = a.OrderID
-left join PO p on p.ID = o.POID
+                string sqlCmd = string.Format(@"select isnull((select EMail from Pass1 WITH (NOLOCK) where ID = a.PPICMgr),'') as PPICMgrMail,
+isnull((select Name from Pass1 WITH (NOLOCK) where ID = a.PPICMgr),'') as PPICMgrName,
+isnull((select ExtNo from Pass1 WITH (NOLOCK) where ID = a.PPICMgr),'') as PPICMgrExtNo,
+isnull((select EMail from Pass1 WITH (NOLOCK) where ID = a.FtyMgr),'') as FtyMgrMail,
+isnull((select Name from Pass1 WITH (NOLOCK) where ID = a.FtyMgr),'') as FtyMgrName,
+isnull((select ExtNo from Pass1 WITH (NOLOCK) where ID = a.FtyMgr),'') as FtyMgrExtNo,
+isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = o.MRHandle),'') as MRHandleMail,
+isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = o.MRHandle),'') as MRHandleName,
+isnull((select ExtNo from TPEPass1 WITH (NOLOCK) where ID = o.MRHandle),'') as MRHandleExtNo,
+isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = o.SMR),'') as SMRMail,
+isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = o.SMR),'') as SMRName,
+isnull((select ExtNo from TPEPass1 WITH (NOLOCK) where ID = o.SMR),'') as SMRExtNo,
+isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = p.POHandle),'') as POHandleMail,
+isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = p.POHandle),'') as POHandleName,
+isnull((select ExtNo from TPEPass1 WITH (NOLOCK) where ID = p.POHandle),'') as POHandleExtNo,
+isnull((select EMail from TPEPass1 WITH (NOLOCK) where ID = p.POSMR),'') as POSMRMail,
+isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = p.POSMR),'') as POSMRName,
+isnull((select ExtNo from TPEPass1 WITH (NOLOCK) where ID = p.POSMR),'') as POSMRExtNo
+from AirPP a WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on o.ID = a.OrderID
+left join PO p WITH (NOLOCK) on p.ID = o.POID
 where a.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out allMail);
                 if (!result)
@@ -1099,7 +1099,7 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
         //Q'ty B'down by Shipmode
         private void button1_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(MyUtility.Convert.GetString(CurrentMaintain["OrderID"]),MyUtility.GetValue.Lookup(string.Format("select POID from Orders where ID = '{0}'",MyUtility.Convert.GetString(CurrentMaintain["OrderID"]))));
+            Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), MyUtility.GetValue.Lookup(string.Format("select POID from Orders WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]))));
             callNextForm.ShowDialog(this);
         }
 
@@ -1107,7 +1107,7 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
         private void button3_Click(object sender, EventArgs e)
         {
             string sqlCmd = string.Format(@"select o.POID,isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList
-from Orders o
+from Orders o WITH (NOLOCK) 
 where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
             DataTable OrderData;
             DBProxy.Current.Select(null, sqlCmd, out OrderData);
@@ -1130,7 +1130,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
             DataRow dr;
             if (!MyUtility.Check.Empty(this.textBox8.Text))
             {
-                string cmd = string.Format(@"select ID,Name from Reason where ReasonTypeID = 'Air_Prepaid_Reason' and Junk = 0 and id='{0}' order by ID",this.textBox8.Text);
+                string cmd = string.Format(@"select ID,Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Air_Prepaid_Reason' and Junk = 0 and id='{0}' order by ID", this.textBox8.Text);
                 if (!MyUtility.Check.Seek(cmd,out dr))
                 {
                     e.Cancel = true;

@@ -21,9 +21,9 @@ namespace Sci.Production.Shipping
         {
             InitializeComponent();
             DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
             MyUtility.Tool.SetupCombox(comboBox3, 1, 1, "Bulk+Sample,Bulk,Sample");
             comboBox1.Text = Sci.Env.User.Keyword;
@@ -61,13 +61,13 @@ isnull(IIF(o.LocalOrder = 1, o.PoPrice,o.CMPPrice),0) as CMP,
 isnull(IIF(o.LocalOrder = 1, Round(o.PoPrice*pd.ShipQty,3),Round(o.CPU*o.CPUFactor*pd.ShipQty,3)),0) as CMPAmt,
 isnull(o.PoPrice,0) as PoPrice,isnull(o.PoPrice,0)*pd.ShipQty as FOBAmt, isnull(o.BrandID,'') as BrandID,isnull(o.MDivisionID,'') as MDivisionID,
 isnull(o.FactoryID,'') as FactoryID,isnull(oq.ShipmodeID,'') as ShipmodeID,isnull(c.Alias,'') as Alias,
-isnull(IIF(ct.WorkType = '1',(select sum(cw.Qty) from CuttingOutput_WIP cw, Orders os where cw.OrderID = os.ID and os.CuttingSP = o.CuttingSP),(select sum(Qty) from CuttingOutput_WIP where OrderID = pd.OrderID)),0) as CutQty
-from Pullout p
-inner join Pullout_Detail pd on p.ID = pd.ID
-left join Orders o on pd.OrderID = o.ID
-left join Order_QtyShip oq on pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
-left join Country c on o.Dest = c.ID
-left join Cutting ct on ct.ID = o.CuttingSP
+isnull(IIF(ct.WorkType = '1',(select sum(cw.Qty) from CuttingOutput_WIP cw WITH (NOLOCK) , Orders os WITH (NOLOCK) where cw.OrderID = os.ID and os.CuttingSP = o.CuttingSP),(select sum(Qty) from CuttingOutput_WIP WITH (NOLOCK) where OrderID = pd.OrderID)),0) as CutQty
+from Pullout p WITH (NOLOCK) 
+inner join Pullout_Detail pd WITH (NOLOCK) on p.ID = pd.ID
+left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
+left join Order_QtyShip oq WITH (NOLOCK) on pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
+left join Country c WITH (NOLOCK) on o.Dest = c.ID
+left join Cutting ct WITH (NOLOCK) on ct.ID = o.CuttingSP
 where p.Status = 'Confirmed'
 and p.PulloutDate between '{0}' and '{1}'", Convert.ToDateTime(pulloutDate1).ToString("d"), Convert.ToDateTime(pulloutDate2).ToString("d")));
             if (!MyUtility.Check.Empty(brand))

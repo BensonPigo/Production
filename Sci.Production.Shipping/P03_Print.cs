@@ -57,7 +57,7 @@ namespace Sci.Production.Shipping
         {
             if (reportType == "1")
             {
-                string sqlCmd = string.Format("select * from TPEPass1 where ID = '{0}'", MyUtility.Convert.GetString(masterData["Handle"]));
+                string sqlCmd = string.Format("select * from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["Handle"]));
                 DataTable TPEPass1;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out TPEPass1);
                 if (!result || TPEPass1.Rows.Count <= 0)
@@ -77,8 +77,8 @@ namespace Sci.Production.Shipping
             {
                 string sqlCmd = string.Format(@"select e.ID,e.Eta,e.Blno,e.InvNo,e.PackingArrival,e.PortArrival,e.WhseArrival,e.DocArrival,e.Sono,e.Vessel,isnull(t.Name,'') as Name,isnull(t.ExtNo,'') as ExtNo,isnull(t.EMail,'') as EMail ,
 case when e.Payer= 'S' then 'By Sci Taipei Office(Sender)' when e.Payer= 'M' then 'By Mill(Sender)' when e.Payer= 'F' then 'By Factory(Receiver)' else '' end as Payer
-from Export e
-left join TPEPass1 t on e.Handle = t.ID
+from Export e WITH (NOLOCK) 
+left join TPEPass1 t WITH (NOLOCK) on e.Handle = t.ID
 where 1=1{0}{1}{2}
 order by e.ID", (MyUtility.Check.Empty(eta1) ? "" : " and e.Eta >= '" + eta1 + "'"), (MyUtility.Check.Empty(eta2) ? "" : " and e.Eta <= '" + eta2 + "'"), (MyUtility.Check.Empty(factory) ? "" : " and e.FactoryID = '" + factory + "'"));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);

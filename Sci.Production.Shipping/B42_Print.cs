@@ -65,9 +65,9 @@ namespace Sci.Production.Shipping
             if (reportType == "1")
             {
                 sqlCmd.Append(string.Format(@"select vcd.NLCode,vcd.Qty,isnull(vd.Waste,0)*100 as Waste,'' as Orignal,vc.CustomSP,vc.VNContractID
-from VNConsumption vc
-inner join VNConsumption_Detail vcd on vc.ID = vcd.ID
-left join VNContract_Detail vd on vc.VNContractID = vd.ID and vcd.NLCode = vd.NLCode
+from VNConsumption vc WITH (NOLOCK) 
+inner join VNConsumption_Detail vcd WITH (NOLOCK) on vc.ID = vcd.ID
+left join VNContract_Detail vd WITH (NOLOCK) on vc.VNContractID = vd.ID and vcd.NLCode = vd.NLCode
 where vc.CDate between '{0}' and '{1}'
 and vc.Status = 'Confirmed'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
                 if (!MyUtility.Check.Empty(customSP1))
@@ -87,7 +87,7 @@ and vc.Status = 'Confirmed'", Convert.ToDateTime(date1).ToString("d"), Convert.T
             else if (reportType == "2")
             {
                 sqlCmd.Append(string.Format(@"select count(CustomSP) as RecCount
-from VNConsumption
+from VNConsumption WITH (NOLOCK) 
 where Status = 'Confirmed'
 and CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
                 if (!MyUtility.Check.Empty(customSP1))
@@ -100,14 +100,14 @@ and CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Con
 isnull(v.SubConAddress,'') as SubConAddress,isnull(v.TotalQty,0) as TotalQty,
 vc.CustomSP,vc.Qty as GMTQty,isnull(vn.DescVI,'') as DescVI,isnull(vcd.NLCode,'') as NLCode,
 isnull(vn.UnitVI,'') as UnitVI,isnull(vcd.Qty,0) as Qty,isnull(vd.Waste,0)*100 as Waste,
-isnull(IIF(vd.LocalPurchase = 1,(select DescVI from VNNLCodeDesc where NLCode = 'VNBUY'),(select DescVI from VNNLCodeDesc where NLCode = 'NOVNBUY')),'') as Original,
-isnull(s.Picture1,'') as Picture1,isnull(s.Picture2,'') as Picture2,(select PicPath from System) as PicPath,vc.StyleID
-from VNConsumption vc
-left join VNConsumption_Detail vcd on vcd.ID = vc.ID
-left join VNContract v on v.ID = vc.VNContractID
-left join VNContract_Detail vd on vd.ID = vc.VNContractID and vd.NLCode = vcd.NLCode
-left join VNNLCodeDesc vn on vn.NLCode = vcd.NLCode
-left join Style s on s.Ukey = vc.StyleUKey
+isnull(IIF(vd.LocalPurchase = 1,(select DescVI from VNNLCodeDesc WITH (NOLOCK) where NLCode = 'VNBUY'),(select DescVI from VNNLCodeDesc WITH (NOLOCK) where NLCode = 'NOVNBUY')),'') as Original,
+isnull(s.Picture1,'') as Picture1,isnull(s.Picture2,'') as Picture2,(select PicPath from System WITH (NOLOCK) ) as PicPath,vc.StyleID
+from VNConsumption vc WITH (NOLOCK) 
+left join VNConsumption_Detail vcd WITH (NOLOCK) on vcd.ID = vc.ID
+left join VNContract v WITH (NOLOCK) on v.ID = vc.VNContractID
+left join VNContract_Detail vd WITH (NOLOCK) on vd.ID = vc.VNContractID and vd.NLCode = vcd.NLCode
+left join VNNLCodeDesc vn WITH (NOLOCK) on vn.NLCode = vcd.NLCode
+left join Style s WITH (NOLOCK) on s.Ukey = vc.StyleUKey
 where vc.Status = 'Confirmed'
 and vc.CDate between '{0}' and '{1}' order by CustomSP,NLCode", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
                 if (!MyUtility.Check.Empty(customSP1))
@@ -130,10 +130,10 @@ isnull(r2.Name,'') as ApparelType, isnull(s.Lining,'') as Lining,v.SizeCode, v.C
 v.Qty,isnull(s.StyleUnit,'') as StyleUnit, (v.CPU*v.VNMultiple) as CMP,(v.CPU*v.VNMultiple*v.Qty) as TtlCMP,
 [dbo].getOrderUnitPrice(1,v.StyleUKey,'','',v.SizeCode) as FOB,
 [dbo].getOrderUnitPrice(1,v.StyleUKey,'','',v.SizeCode)*v.Qty as TtlFOB
-from VNConsumption v
-left join Style s on s.Ukey = v.StyleUKey
-left join Reason r1 on r1.ReasonTypeID = 'Fabric_Kind' and r1.ID = s.FabricType
-left join Reason r2 on r2.ReasonTypeID = 'Style_Apparel_Type' and r2.ID = s.ApparelType
+from VNConsumption v WITH (NOLOCK) 
+left join Style s WITH (NOLOCK) on s.Ukey = v.StyleUKey
+left join Reason r1 WITH (NOLOCK) on r1.ReasonTypeID = 'Fabric_Kind' and r1.ID = s.FabricType
+left join Reason r2 WITH (NOLOCK) on r2.ReasonTypeID = 'Style_Apparel_Type' and r2.ID = s.ApparelType
 where v.Status = 'Confirmed' 
 and v.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
                 if (!MyUtility.Check.Empty(customSP1))

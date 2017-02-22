@@ -26,7 +26,7 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
             DualResult result;
             #region Combox
-            if (result = DBProxy.Current.Select(null, "select distinct MDivisionID from Factory where Junk = 0 ", out MDivision))
+            if (result = DBProxy.Current.Select(null, "select distinct MDivisionID from Factory WITH (NOLOCK) where Junk = 0 ", out MDivision))
             {
                 MyUtility.Tool.SetupCombox(comboBox1, 1, MDivision);
             }
@@ -73,12 +73,12 @@ namespace Sci.Production.Shipping
 as 
 (select o.ID,oq.Seq,o.StyleID,o.BrandID,o.FactoryID,o.CustPONo,o.Customize1,o.CustCDID,
  c.Alias,oq.Qty,oq.BuyerDelivery,oq.EstPulloutDate,
- (select max(PulloutDate) from Pullout_Detail where OrderID = o.ID and OrderShipmodeSeq = oq.Seq and ShipQty > 0) as PulloutDate,
+ (select max(PulloutDate) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq and ShipQty > 0) as PulloutDate,
  oq.OutstandingReason+' - '+isnull(r.Name,'') as OSReason,o.OutstandingRemark
- from Orders o 
- left join Order_QtyShip oq on oq.Id = o.ID 
- left join Country c on c.ID = o.Dest 
- left join Reason r on r.ReasonTypeID = 'Delivery_OutStand' and r.ID = oq.OutstandingReason 
+ from Orders o WITH (NOLOCK) 
+ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID 
+ left join Country c WITH (NOLOCK) on c.ID = o.Dest 
+ left join Reason r WITH (NOLOCK) on r.ReasonTypeID = 'Delivery_OutStand' and r.ID = oq.OutstandingReason 
  where o.IsForecast = 0 
  and o.LocalOrder = 0 
  and oq.BuyerDelivery >= '{0}' 

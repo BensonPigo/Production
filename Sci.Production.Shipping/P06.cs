@@ -39,8 +39,8 @@ namespace Sci.Production.Shipping
             #region 取TableSchema & 結構
             DBProxy.Current.GetTableSchema(null, "Pullout_Revise", out revisedTS);
             DBProxy.Current.GetTableSchema(null, "Pullout_Revise_Detail", out revised_detailTS);
-            
-            string sqlCmd = "select * from Pullout_Revise where 1=0";
+
+            string sqlCmd = "select * from Pullout_Revise WITH (NOLOCK) where 1=0";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out PulloutReviseData);
             if (!result)
             {
@@ -48,7 +48,7 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            sqlCmd = "select * from Pullout_Revise_Detail where 1=0";
+            sqlCmd = "select * from Pullout_Revise_Detail WITH (NOLOCK) where 1=0";
             result = DBProxy.Current.Select(null, sqlCmd, out PulloutReviseDetailData);
             if (!result)
             {
@@ -62,7 +62,7 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select pd.*,o.StyleID,o.BrandID,o.Dest,
-(pd.OrderQty - isnull((select sum(ShipQty) from Pullout_Detail where OrderID = pd.OrderID),0)) as Variance,
+(pd.OrderQty - isnull((select sum(ShipQty) from Pullout_Detail WITH (NOLOCK) where OrderID = pd.OrderID),0)) as Variance,
 case pd.Status 
 when 'P' then 'Partial'
 when 'C' then 'Complete'
@@ -70,8 +70,8 @@ when 'E' then 'Exceed'
 when 'S' then 'Shortage'
 else ''
 end as StatusExp
-from Pullout_Detail pd
-left join Orders o on o.ID = pd.OrderID
+from Pullout_Detail pd WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 where pd.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -81,11 +81,11 @@ where pd.ID = '{0}'", masterID);
             string masterID = (e.Detail == null) ? "0" : MyUtility.Convert.GetString(e.Detail["UKey"]);
 
             this.SubDetailSelectCommand = string.Format(@"select pdd.*,oqd.Qty,(oqd.Qty-pdd.ShipQty) as Variance
-from Pullout_Detail_Detail pdd
-left join Pullout_Detail pd on pd.UKey = pdd.Pullout_DetailUKey
-left join Orders o on o.ID = pdd.OrderID
-left join Order_SizeCode os on o.POID = os.Id and os.SizeCode = pdd.SizeCode
-left join Order_QtyShip_Detail oqd on oqd.Id = pdd.OrderID and oqd.Seq = pd.OrderShipmodeSeq and oqd.Article = pdd.Article and oqd.SizeCode = pdd.SizeCode
+from Pullout_Detail_Detail pdd WITH (NOLOCK) 
+left join Pullout_Detail pd WITH (NOLOCK) on pd.UKey = pdd.Pullout_DetailUKey
+left join Orders o WITH (NOLOCK) on o.ID = pdd.OrderID
+left join Order_SizeCode os WITH (NOLOCK) on o.POID = os.Id and os.SizeCode = pdd.SizeCode
+left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = pdd.OrderID and oqd.Seq = pd.OrderShipmodeSeq and oqd.Article = pdd.Article and oqd.SizeCode = pdd.SizeCode
 where pdd.Pullout_DetailUKey = {0}
 order by os.Seq", masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
@@ -95,8 +95,8 @@ order by os.Seq", masterID);
         {
             base.OnDetailEntered();
             label6.Visible = MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "LOCKED" ? true : false;
-            button2.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Pullout_History where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
-            button3.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Pullout_Revise where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+            button2.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Pullout_History WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+            button3.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Pullout_Revise WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
         }
 
         protected override void OnDetailGridSetup()
@@ -205,14 +205,14 @@ order by os.Seq", masterID);
             if (dr == System.Windows.Forms.DialogResult.OK)
             {
                 // 檢查此日期是否已存在資料庫
-                if (MyUtility.Check.Seek(string.Format("select ID from Pullout where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(callNextForm.pulloutDate).ToString("d"), Sci.Env.User.Keyword)))
+                if (MyUtility.Check.Seek(string.Format("select ID from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(callNextForm.pulloutDate).ToString("d"), Sci.Env.User.Keyword)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("Pull-out date:{0} already exists!!", callNextForm.pulloutDate.ToAppDateFormatString()));
                     return false;
                 }
 
                 //檢查此日期是否小於System.PullLock
-                if (callNextForm.pulloutDate <= (DateTime)MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select PullLock from System")))
+                if (callNextForm.pulloutDate <= (DateTime)MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select PullLock from System WITH (NOLOCK) ")))
                 {
                     MyUtility.Msg.WarningBox("Pull-out date can't be earlier than pull-out lock date!!");
                     return false;
@@ -266,7 +266,7 @@ values('{0}','{1}','{2}','New','{3}',GETDATE());", newID, Convert.ToDateTime(cal
 
         protected override bool ClickDeleteBefore()
         {
-            if (MyUtility.Check.Seek(string.Format("select ID from Pullout_Detail where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
+            if (MyUtility.Check.Seek(string.Format("select ID from Pullout_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
             {
                 MyUtility.Msg.WarningBox("The pullout has detail data, it can't be deleted!!");
                 return false;
@@ -351,12 +351,12 @@ where ID in (select distinct OrderID from Pullout_Detail where ID = '{0}');", My
             }
 
             string sqlCmd = string.Format(@"select pd.OrderID,o.StyleID,o.CustPONo,o.BrandID,c.NameEN,o.StyleUnit,o.Qty,pd.ShipQty,
-(select isnull(sum(ShipQty),0) from Pullout_Detail where OrderID = pd.OrderID) as TtlShipQty,
-(select isnull(sum(CTNQty),0) from PackingList_Detail where ID = pd.PackingListID and OrderID = pd.OrderID) as CtnQty,
+(select isnull(sum(ShipQty),0) from Pullout_Detail WITH (NOLOCK) where OrderID = pd.OrderID) as TtlShipQty,
+(select isnull(sum(CTNQty),0) from PackingList_Detail WITH (NOLOCK) where ID = pd.PackingListID and OrderID = pd.OrderID) as CtnQty,
 pd.Remark,pd.ShipmodeID,pd.INVNo
-from Pullout_Detail pd
-left join Orders o on pd.OrderID = o.ID
-left join Country c on o.Dest = c.ID
+from Pullout_Detail pd WITH (NOLOCK) 
+left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
+left join Country c WITH (NOLOCK) on o.Dest = c.ID
 where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
             DataTable ExcelData;
@@ -499,7 +499,7 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                         MyUtility.Convert.GetString(CurrentMaintain["ID"]), Sci.Env.User.UserID));
             }
 
-            string sqlCmd = string.Format("select distinct OrderID from Pullout_Detail where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+            string sqlCmd = string.Format("select distinct OrderID from Pullout_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DataTable PullOrder;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out PullOrder);
             if (!result)
@@ -549,13 +549,13 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 as
 (
 select distinct OrderID 
-from Pullout_Detail
+from Pullout_Detail WITH (NOLOCK) 
 where ID = '{0}' and ShipQty > 0
 ),
 PulloutDate
 as
 (
-select pd.OrderID, max(pd.PulloutDate) as PulloutDate from Pullout_Detail pd, Pullout p 
+select pd.OrderID, max(pd.PulloutDate) as PulloutDate from Pullout_Detail pd WITH (NOLOCK) , Pullout p WITH (NOLOCK) 
 where exists (select 1 from PulloutOrder where OrderID = pd.OrderID)
 and pd.ID <> '{0}'
 and pd.ID = p.ID
@@ -563,7 +563,7 @@ and p.Status <> 'New'
 group by pd.OrderID
 )
 select po.OrderID,pd.PulloutDate
-from PulloutOrder po
+from PulloutOrder po 
 left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DataTable updateOrderData;
             DualResult result = DBProxy.Current.Select(null, selectCmd, out updateOrderData);
@@ -611,7 +611,7 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
         {
             #region 檢查資料是否有還沒做Confirmed的
             StringBuilder msgString = new StringBuilder();
-            string sqlCmd = string.Format(@"select distinct ID from PackingList 
+            string sqlCmd = string.Format(@"select distinct ID from PackingList WITH (NOLOCK) 
 where PulloutDate = '{0}' 
 and MDivisionID = '{1}'
 and Status = 'New' 
@@ -640,8 +640,8 @@ and (Type = 'F' or Type = 'L')", Convert.ToDateTime(CurrentMaintain["PulloutDate
             }
 
             sqlCmd = string.Format(@"select distinct p.ShipPlanID
-from PackingList p
-left join ShipPlan s on s.ID = p.ShipPlanID
+from PackingList p WITH (NOLOCK) 
+left join ShipPlan s WITH (NOLOCK) on s.ID = p.ShipPlanID
 where p.PulloutDate = '{0}' 
 and p.MDivisionID = '{1}'
 and p.ShipPlanID != ''
@@ -686,12 +686,12 @@ and (s.Status != 'Confirmed' or p.Status = 'New')", Convert.ToDateTime(CurrentMa
 as
 (
 select pd.ID as PackingListID,p.Type,p.ShipModeID,pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode,o.Qty as OrderQty,oq.Qty as OrderShipQty,oqd.Qty as SeqQty,sum(pd.ShipQty) as Shipqty,p.INVNo,o.StyleID,o.BrandID,o.Dest
-from PackingList p
-left join PackingList_Detail pd on pd.ID = p.ID
-left join ShipPlan s on s.ID = p.ShipPlanID
-left join Orders o on o.ID = pd.OrderID
-left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join Order_QtyShip_Detail oqd on oqd.Id = pd.OrderID and oqd.Seq = pd.OrderShipmodeSeq and oqd.Article = pd.Article and oqd.SizeCode = pd.SizeCode
+from PackingList p WITH (NOLOCK) 
+left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
+left join ShipPlan s WITH (NOLOCK) on s.ID = p.ShipPlanID
+left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = pd.OrderID and oqd.Seq = pd.OrderShipmodeSeq and oqd.Article = pd.Article and oqd.SizeCode = pd.SizeCode
 where (p.Type = 'B' or p.Type = 'S')
 and s.Status = 'Confirmed'
 and p.MDivisionID = '{0}'
@@ -704,11 +704,11 @@ FLPacking
 as
 (
 select pd.ID as PackingListID,p.Type,p.ShipModeID,pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode,o.Qty as OrderQty,oq.Qty as OrderShipQty,oqd.Qty as SeqQty,sum(pd.ShipQty) as Shipqty,p.INVNo,o.StyleID,o.BrandID,o.Dest
-from PackingList p
-left join PackingList_Detail pd on p.ID = pd.ID
-left join Orders o on o.ID = pd.OrderID
-left join Order_QtyShip oq on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join Order_QtyShip_Detail oqd on oqd.Id = pd.OrderID and oqd.Seq = pd.OrderShipmodeSeq and oqd.Article = pd.Article and oqd.SizeCode = pd.SizeCode
+from PackingList p WITH (NOLOCK) 
+left join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
+left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
+left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = pd.OrderID and oqd.Seq = pd.OrderShipmodeSeq and oqd.Article = pd.Article and oqd.SizeCode = pd.SizeCode
 where (p.Type = 'F' or p.Type = 'L')
 and p.Status = 'Confirmed'
 and p.MDivisionID = '{0}'
@@ -732,10 +732,10 @@ group by PackingListID,Type,ShipModeID,OrderID,OrderShipmodeSeq,OrderQty,OrderSh
 )
 select 'D' as DataType,*, 0 as AllShipQty from ShipPlanData
 union all
-select 'S' as DataType,*,(isnull((select sum(ShipQty) from Pullout_Detail where ID <> '{2}'  and OrderID = SummaryData.OrderID),0) + 
-isnull((select sum(DiffQty) from InvAdjust_Qty iq
+select 'S' as DataType,*,(isnull((select sum(ShipQty) from Pullout_Detail WITH (NOLOCK) where ID <> '{2}'  and OrderID = SummaryData.OrderID),0) + 
+isnull((select sum(DiffQty) from InvAdjust_Qty iq WITH (NOLOCK) 
 --20161208.willy修改
-inner join InvAdjust i on iq.ID=i.id 
+inner join InvAdjust i WITH (NOLOCK) on iq.ID=i.id 
 inner join SummaryData b on i.OrderID=b.OrderID  
 ),0))as AllShipQty 
 from SummaryData

@@ -25,11 +25,11 @@ namespace Sci.Production.Shipping
         {
             InitializeComponent();
             //建立NoNLCode, NotInPO, UnitNotFound的結構
-            string sqlCmd = "select '' as SCIRefno,'' as Refno,'' as BrandID,'' as Type,'' as Description,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare from VNImportDeclaration where 1=0";
+            string sqlCmd = "select '' as SCIRefno,'' as Refno,'' as BrandID,'' as Type,'' as Description,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare from VNImportDeclaration WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, sqlCmd, out NoNLCode);
-            sqlCmd = "select '' as ID,'' as POID,'' as Seq1,'' as Seq2,'' as Seq,'' as Description,'' as Type,'' as OriUnit,0.0 as OriImportQty,0.0 as Width,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare from VNImportDeclaration where 1=0";
+            sqlCmd = "select '' as ID,'' as POID,'' as Seq1,'' as Seq2,'' as Seq,'' as Description,'' as Type,'' as OriUnit,0.0 as OriImportQty,0.0 as Width,'' as NLCode,'' as HSCode,'' as CustomsUnit,0.0 as PcsWidth,0.0 as PcsLength,0.0 as PcsKg,0 as NoDeclare from VNImportDeclaration WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, sqlCmd, out NotInPO);
-            sqlCmd = "select '' as OriUnit,'' as CustomsUnit,'' as RefNo from VNImportDeclaration where 1=0";
+            sqlCmd = "select '' as OriUnit,'' as CustomsUnit,'' as RefNo from VNImportDeclaration WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, sqlCmd, out UnitNotFound);
            
         }
@@ -102,7 +102,7 @@ namespace Sci.Production.Shipping
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select * from VNImportDeclaration_Detail where ID = '{0}' order by CONVERT(int,SUBSTRING(NLCode,3,3))", masterID);
+            this.DetailSelectCommand = string.Format(@"select * from VNImportDeclaration_Detail WITH (NOLOCK) where ID = '{0}' order by CONVERT(int,SUBSTRING(NLCode,3,3))", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -119,7 +119,7 @@ namespace Sci.Production.Shipping
                         if (MyUtility.Convert.GetString(dr["nlcode"]) != MyUtility.Convert.GetString(e.FormattedValue))
                         {
                             DataRow seekData;
-                            if (!MyUtility.Check.Seek(string.Format("select HSCode,UnitID from VNContract_Detail where ID = '{0}' and NLCode = '{1}'",
+                            if (!MyUtility.Check.Seek(string.Format("select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'",
                                 MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(e.FormattedValue)), out seekData))
                             {
                                 MyUtility.Msg.WarningBox("NL Code not found!!");
@@ -178,7 +178,7 @@ namespace Sci.Production.Shipping
             base.ClickNewAfter();
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["CDate"] = DateTime.Today;
-            CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup("select top 1 ID from VNContract where StartDate <= GETDATE() and EndDate >= GETDATE() and Status = 'Confirmed'");
+            CurrentMaintain["VNContractID"] = MyUtility.GetValue.Lookup("select top 1 ID from VNContract WITH (NOLOCK) where StartDate <= GETDATE() and EndDate >= GETDATE() and Status = 'Confirmed'");
         }
 
         protected override bool ClickDeleteBefore()
@@ -211,7 +211,7 @@ namespace Sci.Production.Shipping
             #region 檢查BL No.與WK No.不可重複
             if (!MyUtility.Check.Empty(CurrentMaintain["BLNo"]))
             {
-                if (MyUtility.Check.Seek(string.Format("select ID from VNImportDeclaration where ID <> '{0}' and BLNo = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["BLNo"]))))
+                if (MyUtility.Check.Seek(string.Format("select ID from VNImportDeclaration WITH (NOLOCK) where ID <> '{0}' and BLNo = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["BLNo"]))))
                 {
                     MyUtility.Msg.WarningBox("This B/L No. already exist!!");
                     return false;
@@ -219,7 +219,7 @@ namespace Sci.Production.Shipping
             }
             if (!MyUtility.Check.Empty(CurrentMaintain["WKNo"]))
             {
-                if (MyUtility.Check.Seek(string.Format("select ID from VNImportDeclaration where ID <> '{0}' and WKNo = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["WKNo"]))))
+                if (MyUtility.Check.Seek(string.Format("select ID from VNImportDeclaration WITH (NOLOCK) where ID <> '{0}' and WKNo = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["WKNo"]))))
                 {
                     MyUtility.Msg.WarningBox("This WK No. already exist!!");
                     return false;
@@ -314,7 +314,7 @@ namespace Sci.Production.Shipping
         //Contract No.
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = string.Format("select ID from VNContract where StartDate <= {0} and EndDate >= {0} and Status = 'Confirmed'", MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'");
+            string sqlCmd = string.Format("select ID from VNContract WITH (NOLOCK) where StartDate <= {0} and EndDate >= {0} and Status = 'Confirmed'", MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'");
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -326,9 +326,9 @@ namespace Sci.Production.Shipping
         {
             if (EditMode && !MyUtility.Check.Empty(textBox1.Text) && textBox1.Text != textBox1.OldValue)
             {
-                if (MyUtility.Check.Seek(string.Format("select ID from VNContract where ID = '{0}'", textBox1.Text)))
+                if (MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", textBox1.Text)))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from VNContract where  ID = '{0}' and StartDate <= {1} and EndDate >= {1} and Status = 'Confirmed'", textBox1.Text, MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'")))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where  ID = '{0}' and StartDate <= {1} and EndDate >= {1} and Status = 'Confirmed'", textBox1.Text, MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'")))
                     {
                         MyUtility.Msg.WarningBox("This Contract can't use.");
                         textBox1.Text = "";
@@ -371,12 +371,12 @@ namespace Sci.Production.Shipping
                     else
                     {
                         DataRow export;
-                        if (MyUtility.Check.Seek(string.Format("select ShipModeID,ExportCountry from Export where BLNo = '{0}'", textBox2.Text), out export))
+                        if (MyUtility.Check.Seek(string.Format("select ShipModeID,ExportCountry from Export WITH (NOLOCK) where BLNo = '{0}'", textBox2.Text), out export))
                         {
                             isFtyExport = 0;
                             localPurchase = false;
                         }
-                        else if (MyUtility.Check.Seek(string.Format("select Type,ShipModeID,ExportCountry from FtyExport where BLNo = '{0}'", textBox2.Text), out export))
+                        else if (MyUtility.Check.Seek(string.Format("select Type,ShipModeID,ExportCountry from FtyExport WITH (NOLOCK) where BLNo = '{0}'", textBox2.Text), out export))
                         {
                             isFtyExport = 1;
                             localPurchase = MyUtility.Convert.GetString(export["Type"]) == "4" ? true : false;
@@ -462,7 +462,7 @@ namespace Sci.Production.Shipping
                     else
                     {
                         DataRow export;
-                        if (MyUtility.Check.Seek(string.Format("select BLNo,ShipModeID,ExportCountry from Export where ID = '{0}'", textBox4.Text), out export))
+                        if (MyUtility.Check.Seek(string.Format("select BLNo,ShipModeID,ExportCountry from Export WITH (NOLOCK) where ID = '{0}'", textBox4.Text), out export))
                         {
                             if (!MyUtility.Check.Empty(export["BLNo"]))
                             {
@@ -483,7 +483,7 @@ namespace Sci.Production.Shipping
                             CurrentMaintain["IsSystemCalculate"] = 1;
                             localPurchase = false;
                         }
-                        else if (MyUtility.Check.Seek(string.Format("select * from FtyExport where ID = '{0}'", textBox4.Text), out export))
+                        else if (MyUtility.Check.Seek(string.Format("select * from FtyExport WITH (NOLOCK) where ID = '{0}'", textBox4.Text), out export))
                         {
                             if (MyUtility.Convert.GetString(export["Type"]) == "1")
                             {
@@ -621,12 +621,12 @@ ed.RefNo as SCIRefno,ed.RefNo,'' as BrandID,ed.MtlTypeID as Type,li.Description,
 isnull(li.NLCode,'') as NLCode,isnull(li.HSCode,'') as HSCode,isnull(li.CustomsUnit,'') as CustomsUnit,
 isnull(li.PcsLength,0.0) as PcsLength,isnull(li.PcsWidth,0.0) as PcsWidth,isnull(li.PcsKg,0.0) as PcsKg,
 isnull(li.NoDeclare,0) as NoDeclare,ed.Price,
-isnull((select Rate from Unit_Rate where UnitFrom = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and UnitTo = li.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate where UnitFrom = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and UnitTo = 'M'),'') as M2UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and UnitTo = li.CustomsUnit),'') as UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and UnitTo = 'M'),'') as M2UnitRate,
 '01' as POSeq
-from FtyExport e
-inner join FtyExport_Detail ed on e.ID = ed.ID
-left join LocalItem li on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
+from FtyExport e WITH (NOLOCK) 
+inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
 where {0}", sqlWhere);
                 }
                 else
@@ -637,13 +637,13 @@ isnull(f.Type,'') as Type,isnull(f.Description,'') as Description,isnull(f.DescD
 isnull(f.NLCode,'') as NLCode,isnull(f.HSCode,'') as HSCode,isnull(f.CustomsUnit,'') as CustomsUnit,
 isnull(f.PcsLength,0.0) as PcsLength,isnull(f.PcsWidth,0.0) as PcsWidth,isnull(f.PcsKg,0.0) as PcsKg, 
 isnull(f.NoDeclare,0) as NoDeclare,ed.Price,
-isnull((select Rate from Unit_Rate where UnitFrom = ed.UnitId and UnitTo = f.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate where UnitFrom = ed.UnitId and UnitTo = 'M'),'') as M2UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = f.CustomsUnit),'') as UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = 'M'),'') as M2UnitRate,
 isnull(psd.Seq1,'') as POSeq
-from FtyExport e
-inner join FtyExport_Detail ed on e.ID = ed.ID
-left join PO_Supp_Detail psd on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
-left join Fabric f on f.SCIRefno = psd.SCIRefno
+from FtyExport e WITH (NOLOCK) 
+inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 where {0}", sqlWhere);
                 }
             }
@@ -655,13 +655,13 @@ isnull(f.Type,'') as Type,isnull(f.Description,'') as Description,isnull(f.DescD
 isnull(f.NLCode,'') as NLCode,isnull(f.HSCode,'') as HSCode,isnull(f.CustomsUnit,'') as CustomsUnit,
 isnull(f.PcsLength,0.0) as PcsLength,isnull(f.PcsWidth,0.0) as PcsWidth,isnull(f.PcsKg,0.0) as PcsKg, 
 isnull(f.NoDeclare,0) as NoDeclare,ed.Price,
-isnull((select Rate from Unit_Rate where UnitFrom = ed.UnitId and UnitTo = f.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate where UnitFrom = ed.UnitId and UnitTo = 'M'),'') as M2UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = f.CustomsUnit),'') as UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = 'M'),'') as M2UnitRate,
 isnull(psd.Seq1,'') as POSeq
-from Export e
-inner join Export_Detail ed on e.ID = ed.ID
-left join PO_Supp_Detail psd on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
-left join Fabric f on f.SCIRefno = psd.SCIRefno
+from Export e WITH (NOLOCK) 
+inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 where {0}", sqlWhere);
             }
                 #endregion
@@ -766,11 +766,11 @@ isnull(li.PcsLength,0.0) as PcsLength,isnull(li.PcsWidth,0.0) as PcsWidth,isnull
 isnull(li.NoDeclare,0) as NoDeclare,0.0 as Width,
 isnull((select RateValue from dbo.View_Unitrate where FROM_U = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and TO_U = li.CustomsUnit),1) as RateValue,
 (select RateValue from dbo.View_Unitrate where FROM_U = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and TO_U = 'M') as M2RateValue,
-isnull((select Rate from Unit_Rate where UnitFrom = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and UnitTo = li.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate where UnitFrom = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and UnitTo = 'M'),'') as M2UnitRate
-from FtyExport e
-inner join FtyExport_Detail ed on e.ID = ed.ID
-left join LocalItem li on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and UnitTo = li.CustomsUnit),'') as UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = IIF(ed.UnitID = 'CONE','M',ed.UnitID) and UnitTo = 'M'),'') as M2UnitRate
+from FtyExport e WITH (NOLOCK) 
+inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
 where {0}", sqlWhere));
                 }
                 else
@@ -782,12 +782,12 @@ isnull(f.PcsLength,0.0) as PcsLength,isnull(f.PcsWidth,0.0) as PcsWidth,isnull(f
 isnull(f.NoDeclare,0) as NoDeclare,isnull(f.Width,0) as Width,
 isnull((select RateValue from dbo.View_Unitrate where FROM_U = ed.UnitId and TO_U = f.CustomsUnit),1) as RateValue,
 (select RateValue from dbo.View_Unitrate where FROM_U = ed.UnitId and TO_U = 'M') as M2RateValue,
-isnull((select Rate from Unit_Rate where UnitFrom = ed.UnitId and UnitTo = f.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate where UnitFrom = ed.UnitId and UnitTo = 'M'),'') as M2UnitRate
-from FtyExport e
-inner join FtyExport_Detail ed on e.ID = ed.ID
-left join PO_Supp_Detail psd on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
-left join Fabric f on f.SCIRefno = psd.SCIRefno
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = f.CustomsUnit),'') as UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = 'M'),'') as M2UnitRate
+from FtyExport e WITH (NOLOCK) 
+inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 where {0}", sqlWhere));
                 }
             }
@@ -800,12 +800,12 @@ isnull(f.PcsLength,0.0) as PcsLength,isnull(f.PcsWidth,0.0) as PcsWidth,isnull(f
 isnull(f.NoDeclare,0) as NoDeclare,isnull(f.Width,0) as Width,
 isnull((select RateValue from dbo.View_Unitrate where FROM_U = ed.UnitId and TO_U = f.CustomsUnit),1) as RateValue,
 (select RateValue from dbo.View_Unitrate where FROM_U = ed.UnitId and TO_U = 'M') as M2RateValue,
-isnull((select Rate from Unit_Rate where UnitFrom = ed.UnitId and UnitTo = f.CustomsUnit),'') as UnitRate,
-isnull((select Rate from Unit_Rate where UnitFrom = ed.UnitId and UnitTo = 'M'),'') as M2UnitRate
-from Export e
-inner join Export_Detail ed on e.ID = ed.ID
-left join PO_Supp_Detail psd on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
-left join Fabric f on f.SCIRefno = psd.SCIRefno
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = f.CustomsUnit),'') as UnitRate,
+isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = ed.UnitId and UnitTo = 'M'),'') as M2UnitRate
+from Export e WITH (NOLOCK) 
+inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 where {0}", sqlWhere));
             }
             #endregion
@@ -813,7 +813,7 @@ where {0}", sqlWhere));
 )
 select NLCode,HSCode,CustomsUnit,sum(NewQty) as NewQty, sum(NewQty*Price) as Price from (
 select *,[dbo].getVNUnitTransfer(Type,OriUnit,CustomsUnit,OriImportQty,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)) as NewQty
-from ExportDetail
+from ExportDetail WITH (NOLOCK) 
 where NoDeclare = 0) a
 group by NLCode,HSCode,CustomsUnit");
 

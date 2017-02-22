@@ -43,10 +43,10 @@ as (
             if (MyUtility.Convert.GetString(masterData["IsFtyExport"]).ToUpper() == "FALSE")
             {
                     sqlCmd.Append(string.Format(@"select f.Refno,f.BrandID,f.Type,ed.UnitId,sum(ed.Qty+ed.Foc) as Qty,e.ID 
-from Export e
-inner join Export_Detail ed on e.ID = ed.ID
-inner join PO_Supp_Detail psd on ed.PoID = psd.ID and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
-inner join Fabric f on psd.SCIRefno = f.SCIRefno
+from Export e WITH (NOLOCK) 
+inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+inner join PO_Supp_Detail psd WITH (NOLOCK) on ed.PoID = psd.ID and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
+inner join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
 where {0}
 and f.NLCode = '{1}'
 group by f.Refno,f.BrandID,f.Type,ed.UnitId,e.ID",
@@ -57,9 +57,9 @@ group by f.Refno,f.BrandID,f.Type,ed.UnitId,e.ID",
                 if (MyUtility.Convert.GetString(masterData["IsLocalPO"]).ToUpper() == "TRUE")
                 {
                     sqlCmd.Append(string.Format(@"select f.Refno,'' as BrandID,f.Category as Type,ed.UnitId,sum(ed.Qty) as Qty,e.ID 
-from FtyExport e
-inner join FtyExport_Detail ed on e.ID = ed.ID
-inner join LocalItem f on ed.Refno = f.Refno
+from FtyExport e WITH (NOLOCK) 
+inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+inner join LocalItem f WITH (NOLOCK) on ed.Refno = f.Refno
 where {0}
 and f.NLCode = '{1}'
 group by f.Refno,f.Category,ed.UnitId,e.ID",
@@ -68,10 +68,10 @@ group by f.Refno,f.Category,ed.UnitId,e.ID",
                 else
                 {
                     sqlCmd.Append(string.Format(@"select f.Refno,f.BrandID,f.Type,ed.UnitId,sum(ed.Qty) as Qty,e.ID 
-from FtyExport e
-inner join FtyExport_Detail ed on e.ID = ed.ID
-inner join PO_Supp_Detail psd on ed.PoID = psd.ID and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
-inner join Fabric f on psd.SCIRefno = f.SCIRefno
+from FtyExport e WITH (NOLOCK) 
+inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+inner join PO_Supp_Detail psd WITH (NOLOCK) on ed.PoID = psd.ID and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
+inner join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
 where {0}
 and f.NLCode = '{1}'
 group by f.Refno,f.BrandID,f.Type,ed.UnitId,e.ID",

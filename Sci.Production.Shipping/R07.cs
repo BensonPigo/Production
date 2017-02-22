@@ -24,7 +24,7 @@ namespace Sci.Production.Shipping
             dateRange1.Value2 = DateTime.Today;
             dateRange2.Value2 = DateTime.Today;
             DataTable mDivision;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision", out mDivision);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
             comboBox1.Text = Sci.Env.User.Keyword;
         }
@@ -53,9 +53,9 @@ namespace Sci.Production.Shipping
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"select s.LocalSuppID+'-'+ISNULL(l.Abb,'') as Supplier,
 s.MDivisionID,s.CurrencyID,SUM(s.Amount+s.VAT) as Amt,s.PayTermID+'-'+ISNULL(p.Name,'') as Terms
-from ShippingAP s
-left join LocalSupp l on s.LocalSuppID = l.ID
-left join PayTerm p on s.PayTermID = p.ID
+from ShippingAP s WITH (NOLOCK) 
+left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
+left join PayTerm p WITH (NOLOCK) on s.PayTermID = p.ID
 where s.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
 
             if (!MyUtility.Check.Empty(apvDate1))

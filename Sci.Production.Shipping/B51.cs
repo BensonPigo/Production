@@ -24,8 +24,8 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"select kd.*,kd.Qty*kd.Price as TotalPrice,kh.GoodsDescription,kh.Category
-from KHContract_Detail kd
-left join KHGoodsHSCode kh on kd.NLCode = kh.NLCode
+from KHContract_Detail kd WITH (NOLOCK) 
+left join KHGoodsHSCode kh WITH (NOLOCK) on kd.NLCode = kh.NLCode
 where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len(Seq)))", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -181,10 +181,10 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
             if (excel == null) return;
 
             DataTable ExcelDataTable, UpdateData;
-            string sqlCmd = "select *,0.0 as TotalPrice,'' as GoodsDescription,'' as Category from KHContract_Detail where 1 = 0";
+            string sqlCmd = "select *,0.0 as TotalPrice,'' as GoodsDescription,'' as Category from KHContract_Detail WITH (NOLOCK) where 1 = 0";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelDataTable);
 
-            sqlCmd = "select UnitID from KHContract_Detail where 1 = 0";
+            sqlCmd = "select UnitID from KHContract_Detail WITH (NOLOCK) where 1 = 0";
             result = DBProxy.Current.Select(null, sqlCmd, out WrongUnitID);
 
             UpdateData = ((DataTable)gridbs.DataSource).Clone();
@@ -209,7 +209,7 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
 
                 range = worksheet.Range[String.Format("A{0}:F{0}", intRowsRead)];
                 objCellArray = range.Value;
-                if (MyUtility.Check.Seek(string.Format("select * from KHGoodsHSCode where GoodsDescription = '{0}'", MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C")).ToUpper()), out seekData))
+                if (MyUtility.Check.Seek(string.Format("select * from KHGoodsHSCode WITH (NOLOCK) where GoodsDescription = '{0}'", MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C")).ToUpper()), out seekData))
                 {
                     DataRow newRow = ExcelDataTable.NewRow();
                     newRow["Seq"] = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C")) + "-" + MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"));
