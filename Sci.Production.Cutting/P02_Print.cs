@@ -424,8 +424,8 @@ Cutplanid, str_PIVOT);
             worksheet.Cells[10, 13] = OrderDr["Sewline"];
             for (int nColumn = 3; nColumn <= 21; nColumn += 3)
             {
-                worksheet.Cells[32, nColumn] = OrderDr["Styleid"];
-                worksheet.Cells[33, nColumn] = detDr["ID"];
+                worksheet.Cells[40, nColumn] = OrderDr["Styleid"];
+                worksheet.Cells[41, nColumn] = detDr["ID"];
             }
 
             #endregion
@@ -500,8 +500,8 @@ Cutplanid, str_PIVOT);
 
                     for (int nColumn = 3; nColumn <= 22; nColumn += 3)
                     {
-                        worksheet.Cells[29, nColumn] = WorkorderArry[0]["Refno"];
-                        worksheet.Cells[30, nColumn] = WorkorderArry[0]["Colorid"];
+                        worksheet.Cells[37, nColumn] = WorkorderArry[0]["Refno"];
+                        worksheet.Cells[38, nColumn] = WorkorderArry[0]["Colorid"];
                     }
                     #endregion
                 }
