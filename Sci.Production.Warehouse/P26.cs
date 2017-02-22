@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -244,8 +245,8 @@ namespace Sci.Production.Warehouse
             StringBuilder sqlupd2 = new StringBuilder();
             String sqlupd3 = "";
             DualResult result, result2;
-            string sqlupd2_A = "";
-            string sqlupd2_FIO = "";
+            string upd_MD_2T = "";
+            string upd_Fty_26F = "";
 
             #region 更新表頭狀態資料
 
@@ -254,30 +255,7 @@ namespace Sci.Production.Warehouse
 
             #endregion 更新表頭狀態資料
 
-            #region 更新庫存數量 mdivisionPoDetail
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                       group b by new
-                       {
-                           mdivisionid = b.Field<string>("mdivisionid"),
-                           poid = b.Field<string>("poid"),
-                           seq1 = b.Field<string>("seq1"),
-                           seq2 = b.Field<string>("seq2")
-                       } into m
-                       select new Prgs_POSuppDetailData
-                       {
-                           mdivisionid = m.First().Field<string>("mdivisionid"),
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           location = string.Join(",", m.Select(r => r.Field<string>("ToLocation")).Distinct()),
-                           qty = 0,
-                           stocktype = CurrentMaintain["stocktype"].ToString()
-                       }).ToList();
-
-            sqlupd2_A = Prgs.UpdateMPoDetail(2, bs1, true);
-
-            #endregion
-            #region 更新庫存數量 po_supp_detail & ftyinventory
+            #region 更新庫存數量 ftyinventory
 
             DataTable newDt = ((DataTable)detailgridbs.DataSource).Clone();
             foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
@@ -303,7 +281,7 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            var bsfio = (from b in newDt.AsEnumerable()
+            var data_Fty_26F = (from b in newDt.AsEnumerable()
                          select new
                          {
                              mdivisionid = b.Field<string>("mdivisionid"),
@@ -317,27 +295,64 @@ namespace Sci.Production.Warehouse
                              dyelot = b.Field<string>("dyelot"),
                          }).ToList();
 
-            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(26, null, false);
+            upd_Fty_26F = Prgs.UpdateFtyInventory_IO(26, null, false);
             #endregion 更新庫存數量 po_supp_detail & ftyinventory
 
+            #region 更新庫存數量 mdivisionPoDetail
+            var data_MD_2T = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                       group b by new
+                       {
+                           mdivisionid = b.Field<string>("mdivisionid"),
+                           poid = b.Field<string>("poid"),
+                           seq1 = b.Field<string>("seq1"),
+                           seq2 = b.Field<string>("seq2")
+                       } into m
+                       select new Prgs_POSuppDetailData
+                       {
+                           mdivisionid = m.First().Field<string>("mdivisionid"),
+                           poid = m.First().Field<string>("poid"),
+                           seq1 = m.First().Field<string>("seq1"),
+                           seq2 = m.First().Field<string>("seq2"),
+                           location = string.Join(",", m.Select(r => r.Field<string>("ToLocation")).Distinct()),
+                           qty = 0,
+                           stocktype = CurrentMaintain["stocktype"].ToString()
+                       }).ToList();
+            #endregion            
+
             TransactionScope _transactionscope = new TransactionScope();
+            SqlConnection sqlConn = null;
+            DBProxy.Current.OpenConnection(null, out sqlConn);
             using (_transactionscope)
+            using (sqlConn)
             {
                 try
                 {
+                    /*
+                     * 先更新 FtyInventory 後更新 MDivisionPoDetail
+                     * 所有 MDivisionPoDetail 資料都在 Transaction 中更新，
+                     * 因為要在同一 SqlConnection 之下執行
+                     */
                     DataTable resulttb;
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_A, out resulttb, "#TmpSource")))
+                    #region FtyInventory
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_26F, "", upd_Fty_26F, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    #endregion
+
+                    #region MDivisionPoDetail
+                    upd_MD_2T = Prgs.UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
+
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, "", upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
                         return;
                     }
+                    #endregion
+
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
@@ -354,9 +369,10 @@ namespace Sci.Production.Warehouse
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
+
             }
-            _transactionscope.Dispose();
-            _transactionscope = null;
+            //_transactionscope.Dispose();
+            //_transactionscope = null;
             this.RenewData();
             this.OnDetailEntered();
             this.EnsureToolbarExt();
