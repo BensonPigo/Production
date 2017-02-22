@@ -33,15 +33,29 @@ Begin
 
 	Set @Yds = Cast(SubString(@MarkerLength, 1, @LocateYd - 1) as Numeric(7,4));
 	Set @Inch = Cast(SubString(@MarkerLength, @LocateYd + 1, @LocateInch - @LocateYd - 1) as Numeric(7,4));
-	Set @M1 = Cast(SubString(@MarkerLength, @LocateInch + 1, @LocateS1 - @LocateInch - 1) as Numeric(7,4));
+	
+	if(@LocateInch + 1 = @LocateS2) --表示沒有M1,M2
+		Set @M1 = 0;
+	else
+		Set @M1 = Cast(SubString(@MarkerLength, @LocateInch + 1, @LocateS1 - @LocateInch - 1) as Numeric(7,4));
+
+
 	If @LocateS2 = 0
 	Begin
-		Set @M2 = Cast(SubString(@MarkerLength, @LocateS1 + 1, @LocateS3 - @LocateS1 - 1) as Numeric(7,4));
+		if(@LocateInch+1 = @LocateS2)
+			Set @M2 = 0;
+		else
+			Set @M2 = Cast(SubString(@MarkerLength, @LocateS1 + 1, @LocateS3 - @LocateS1 - 1) as Numeric(7,4));		
+
 		Set @M3 = 0;
 	End;
 	Else
 	Begin
-		Set @M2 = Cast(SubString(@MarkerLength, @LocateS1 + 1, @LocateS2 - @LocateS1 - 1) as Numeric(7,4));
+		if(@LocateInch+1 = @LocateS2)
+			Set @M2 = 0;
+		else
+			Set @M2 = Cast(SubString(@MarkerLength, @LocateS1 + 1, @LocateS2 - @LocateS1 - 1) as Numeric(7,4));
+	
 		Set @M3 = Cast(SubString(@MarkerLength, @LocateS2 + 1, @LocateS3 - @LocateS2 - 1) as Numeric(7,4));
 	End;
 	
