@@ -2198,6 +2198,7 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Views\Test.sql" />
+    <Build Include="dbo\Views\test2.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
