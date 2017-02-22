@@ -391,13 +391,22 @@ namespace Sci.Production.Cutting
                 sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[2]);
                 
                 dt.Borders.AllCellsBorders = true;
+                
 
                 //合併儲存格
                 dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 5, dt.Columns.Count - 11) } });
 
+                //自動欄位寬度
+                dt.boAutoFitColumn = true;
+
+                for (int i = 5; i <= dt.Columns.Count - 11; i++)
+                {
+                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(i) { ColumnWidth = (decimal)5.38 });                    
+                }
+
                 //凍結窗格
                 dt.boFreezePanes = true;
-                dt.boAutoFitColumn = true;
+
                 dt.boAddFilter = true;
                 sxr.dicDatas.Add(sxr._v + "tbl1", dt);
 
