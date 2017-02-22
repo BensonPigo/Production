@@ -9,6 +9,7 @@ using Sci;
 using Ict;
 using Ict.Win;
 using System.Text.RegularExpressions;
+using System.Data.SqlClient;
 
 namespace Sci.Production.PublicPrg
 {
@@ -150,7 +151,7 @@ namespace Sci.Production.PublicPrg
         //        }
         #endregion
         //新(整批) A & B倉
-        public static string UpdateMPoDetail(int type, List<Prgs_POSuppDetailData> datas, bool encoded, bool attachLocation = true)
+        public static string UpdateMPoDetail(int type, List<Prgs_POSuppDetailData> datas, bool encoded, bool attachLocation = true, SqlConnection sqlConn = null)
         {
             #region 以原本的datas的5keys 去ftyinventory撈location和原本loction重組以逗號分開,塞回原本資料
             DataTable TBattachlocation;
@@ -158,9 +159,9 @@ namespace Sci.Production.PublicPrg
             {
                 if (attachLocation)
                 {
-                    /*2017-02-09 Location 更新 
+                    /*Location 更新 
                         step 1. *** FtyInvetory Location 必須先更新 ***
-                        step 2. MDivisionPoDetail 直接重組 FtyInventory (SQL 註解的地方)
+                        step 2. MDivisionPoDetail 直接重組 FtyInventory
                         step 3. MDivisionPoDetail Locatio 直接 Update => step 2.
                         *** 優點：可以確認 Location 是最新的，且不須累加 Location
                         **  Step 1. 必須確實修改，否則會累加到 FtyInventory 舊的 Location
@@ -180,21 +181,22 @@ OUTER APPLY(
 		select distinct concat(',',u.location)
 		from 
 		(
-			select mdivisionid,poid,seq1,seq2,stocktype,location
-			from #tmp f
-			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
-			and f.seq2 = t.Seq2 and f.stocktype = t.StockType and f.location !=''
---			union
---			select mdivisionid,poid,seq1,seq2,stocktype,[location] = fd.mtllocationid
---			from ftyinventory f WITH (NOLOCK) 
---			inner join ftyinventory_detail fd WITH (NOLOCK) on f.ukey = fd.ukey 
+--			select mdivisionid,poid,seq1,seq2,stocktype,location
+--			from #tmp f
 --			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
---			and f.seq2 = t.Seq2 and f.stocktype = t.StockType
+--			and f.seq2 = t.Seq2 and f.stocktype = t.StockType and f.location !=''
+--			union
+			select mdivisionid,poid,seq1,seq2,stocktype,[location] = fd.mtllocationid
+			from ftyinventory f WITH (NOLOCK) 
+			inner join ftyinventory_detail fd WITH (NOLOCK) on f.ukey = fd.ukey 
+			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
+			and f.seq2 = t.Seq2 and f.stocktype = t.StockType
 		)u
 		for xml path('')
 	)
-)L";
-                    MyUtility.Tool.ProcessWithObject(datas, "", sqlcmdforlocation, out TBattachlocation, "#Tmp");
+)L
+;drop Table #Tmp;";
+                    MyUtility.Tool.ProcessWithObject(datas, "", sqlcmdforlocation, out TBattachlocation, "#Tmp", sqlConn);
                     var newDatas = TBattachlocation.AsEnumerable().Select(w =>
                             new Prgs_POSuppDetailData
                             {
@@ -243,7 +245,7 @@ using  #TmpSource as src
 on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
 when matched and src.stocktype = 'I' then
 	update 
-	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.blocation = target.blocation + src.location
+	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.blocation = src.location
 when not matched by target and src.stocktype = 'I' then
     insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[blocation])
     values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);
@@ -253,7 +255,7 @@ using  #TmpSource as src
 on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
 when matched and src.stocktype = 'B' then
 	update 
-	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.alocation = target.alocation + src.location
+	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.alocation = src.location
 when not matched by target and src.stocktype = 'B' then
     insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[alocation])
     values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);";
@@ -268,10 +270,11 @@ alter table #TmpSource alter column seq2 varchar(3)
 
 update t
 set t.inqty = isnull(t.inqty,0.00) + s.qty
-from mdivisionpodetail t WITH (NOLOCK) 
+from mdivisionpodetail t
 inner join #TmpSource s
 on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
                     }
+                    sqlcmd += @";drop Table #TmpSource";
                     #endregion
                     break;
                 case 4:
@@ -316,7 +319,9 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.m
                     set t.OutQty = isnull(t.OutQty,0.00) + s.qty
                     from mdivisionpodetail t
                     inner join #TmpSource s
-                    on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
+                    on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;
+
+                    drop Table #TmpSource;";
                     #endregion
                     break;
                 case 8:
@@ -370,7 +375,7 @@ update
                     if (encoded)
                     {
                         sqlcmd += @"
-set target.LInvQty = isnull(target.LInvQty,0.00) + src.qty , target.blocation = target.blocation + src.location
+set target.LInvQty = isnull(target.LInvQty,0.00) + src.qty , target.blocation = src.location
 when not matched then
     insert ([Poid],[Seq1],[Seq2],[MDivisionID],[LInvQty],[blocation])
     values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);
@@ -380,6 +385,7 @@ when not matched then
                     {
                         sqlcmd += @" set target.LInvQty = isnull(target.LInvQty,0.00) + src.qty;";
                     }
+                    sqlcmd += @";drop Table #TmpSource";
                     #endregion                    
                     break;
                 case 16:
@@ -424,7 +430,9 @@ update t
 set t.LObQty = isnull(t.LObQty,0.00) + s.qty
 from mdivisionpodetail t
 inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
+
+;drop Table #TmpSource";
                     #endregion
                     break;
                 case 32:
@@ -469,7 +477,9 @@ update t
 set t.AdjustQty = isnull(t.AdjustQty,0.00) + s.qty
 from mdivisionpodetail t
 inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
+
+;drop Table #TmpSource";
                     #endregion
                     break;            
             }
@@ -778,7 +788,7 @@ into #tmp_L_K
 from #TmpSource s
 left join ftyinventory f WITH (NOLOCK) on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
 						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype
-merge dbo.ftyinventory_detail as t WITH (NOLOCK) 
+merge dbo.ftyinventory_detail as t 
 using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.location,'')
 when not matched then
     insert ([ukey],[mtllocationid]) 
@@ -789,7 +799,8 @@ when not matched then
 drop table #tmp_L_K 
 ";//↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
                     }
-                    sqlcmd += "drop table #tmpS1 ";
+                    sqlcmd += @"drop table #tmpS1; 
+                                drop table #TmpSource;";
                     #endregion
                     break;
                 case 4:
@@ -879,7 +890,8 @@ when not matched then
 			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
 			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
 
-drop table #tmpS1";
+drop table #tmpS1;
+drop table #TmpSource;";
                     #endregion
                     break;
                 case 6:
@@ -1004,7 +1016,8 @@ when not matched then
 drop table #tmp_L_K
 ";//↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
                     }
-                    sqlcmd += "drop table #tmpS1";
+                    sqlcmd += @"drop table #tmpS1;
+                                drop table #TmpSource;";
                     #endregion
                     break;
                 case 8:
@@ -1094,7 +1107,8 @@ when not matched then
              where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
              ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
 
-drop table #tmpS1 ";
+drop table #tmpS1 
+drop table #TmpSource;";
                     #endregion
                     break;
                 case 26:
