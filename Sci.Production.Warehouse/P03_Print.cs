@@ -89,7 +89,7 @@ namespace Sci.Production.Warehouse
 			                                       ,a.ShipQty [Ship Qty]
 			                                       ,a.ShipFOC [F.O.C]
 			                                       ,a.ApQty [AP Qty]
-			                                       ,IIF(EXISTS(SELECT * FROM DBO.Export_Detail g
+			                                       ,IIF(EXISTS(SELECT * FROM DBO.Export_Detail g WITH (NOLOCK) 
 			                                            WHERE g.PoID = a.id
 			                                            AND g.SEQ1 = a.seq1
 			                                            AND g.SEQ2 =a.seq2
@@ -99,9 +99,9 @@ namespace Sci.Production.Warehouse
 			                                       ,a.Complete [Cmplt]
 			                                       ,substring(convert(varchar, a.FinalETA, 101),1,5) [Act. Eta]
 			                                       ,(select id+',' from 
-			                                           (select distinct id from export_detail  where poid =a.id and seq1=a.seq1 and seq2=a.seq2) t for xml path(''))  [WK#]
+			                                           (select distinct id from export_detail WITH (NOLOCK)  where poid =a.id and seq1=a.seq1 and seq2=a.seq2) t for xml path(''))  [WK#]
 			                                       ,(select orderid+',' from 
-			                                           (select ol.orderid  from PO_Supp_Detail_OrderList ol  where id =a.id and seq1=a.seq1 and seq2=a.seq2) ol for xml path(''))  [Order List]
+			                                           (select ol.orderid  from PO_Supp_Detail_OrderList ol WITH (NOLOCK)  where id =a.id and seq1=a.seq1 and seq2=a.seq2) ol for xml path(''))  [Order List]
 			                                       ,i.InQty [Arrived Qty]
 			                                       ,a.StockUnit [Unit]
 			                                       ,i.OutQty [Released Qty]
@@ -113,15 +113,15 @@ namespace Sci.Production.Warehouse
 			                                       ,i.BLocation [Stock Location]
                                                    ,[FIR]=dbo.getinspectionresult(a.id,a.seq1,a.seq2)
 			                                       ,(select Remark+',' from 
-			                                          (select r.Remark  from dbo.Receiving_Detail r where POID =a.id and seq1=a.seq1 and seq2=a.seq2 and remark !='') r for xml path('')) [Remark]
-			                                from dbo.PO_Supp_Detail a
-			                                left join dbo.Orders b on a.id=b.id
-			                                left join dbo.PO_Supp c on c.id=a.id and c.SEQ1=a.SEQ1
-			                                left join dbo.supp d on d.id=c.SuppID
-			                                left join dbo.Fabric_Supp e on e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID
-			                                left join dbo.Fabric_HsCode f on f.SCIRefno=a.SCIRefno and f.SuppID=c.SuppID and f.Year=Year(a.eta)
-		                                    left join dbo.supp h on h.id=c.SuppID
-			                                left join dbo.MDivisionPoDetail i on i.POID=a.ID and a.SEQ1=i.Seq1 and a.SEQ2=i.Seq2
+			                                          (select r.Remark  from dbo.Receiving_Detail r WITH (NOLOCK) where POID =a.id and seq1=a.seq1 and seq2=a.seq2 and remark !='') r for xml path('')) [Remark]
+			                                from dbo.PO_Supp_Detail a WITH (NOLOCK) 
+			                                left join dbo.Orders b WITH (NOLOCK) on a.id=b.id
+			                                left join dbo.PO_Supp c WITH (NOLOCK) on c.id=a.id and c.SEQ1=a.SEQ1
+			                                left join dbo.supp d WITH (NOLOCK) on d.id=c.SuppID
+			                                left join dbo.Fabric_Supp e WITH (NOLOCK) on e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID
+			                                left join dbo.Fabric_HsCode f WITH (NOLOCK) on f.SCIRefno=a.SCIRefno and f.SuppID=c.SuppID and f.Year=Year(a.eta)
+		                                    left join dbo.supp h WITH (NOLOCK) on h.id=c.SuppID
+			                                left join dbo.MDivisionPoDetail i WITH (NOLOCK) on i.POID=a.ID and a.SEQ1=i.Seq1 and a.SEQ2=i.Seq2
 			                                where a.id=@ID", pars, out dt);			       
           }
           else  
@@ -151,18 +151,18 @@ namespace Sci.Production.Warehouse
                                               ,ty=convert(numeric(5,2), iif( isnull(a.Qty,0)=0,100,a.shipqty/a.qty*100))
                                               ,OK=a.Complete
                                               ,Exp_Date=substring(convert(varchar,a.eta, 101),1,5)
-                                              ,FormA=IIF(EXISTS(SELECT * FROM DBO.Export_Detail g
+                                              ,FormA=IIF(EXISTS(SELECT * FROM DBO.Export_Detail g WITH (NOLOCK) 
                                                     WHERE g.PoID =a.id
                                                     AND g.SEQ1 = a.seq1
                                                     AND g.SEQ2 = a.seq2
                                                     AND IsFormA = 1)
                                               ,'Y','')
-                                       from dbo.PO_Supp_Detail a
-                                       left join dbo.orders b on a.id=b.id
-                                       left join dbo.PO_Supp c on a.id=c.id and a.SEQ1=c.SEQ1
-                                       left join dbo.Fabric_Supp d on d.SCIRefno=a.SCIRefno and d.SuppID=c.SuppID
-                                       left join dbo.Fabric_HsCode e on e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA)
-                                       left join dbo.Supp f on f.id=c.SuppID
+                                       from dbo.PO_Supp_Detail a WITH (NOLOCK) 
+                                       left join dbo.orders b WITH (NOLOCK) on a.id=b.id
+                                       left join dbo.PO_Supp c WITH (NOLOCK) on a.id=c.id and a.SEQ1=c.SEQ1
+                                       left join dbo.Fabric_Supp d WITH (NOLOCK) on d.SCIRefno=a.SCIRefno and d.SuppID=c.SuppID
+                                       left join dbo.Fabric_HsCode e WITH (NOLOCK) on e.SCIRefno=a.SCIRefno and e.SuppID=c.SuppID and e.year=year(a.ETA)
+                                       left join dbo.Supp f WITH (NOLOCK) on f.id=c.SuppID
                                        where a.id=@ID", pars, out dt);                          
           }
           //SaveXltReportCls xl = new SaveXltReportCls(xlt);

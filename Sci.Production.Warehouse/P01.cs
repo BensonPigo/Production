@@ -90,13 +90,13 @@ namespace Sci.Production.Warehouse
                 ControlButton();
             }
 
-            displayBox6.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason where ReasonTypeID = 'Order_BuyerDelivery' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["KPIChangeReason"])));
-            displayBox14.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason where ReasonTypeID = 'Style_SpecialMark' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["SpecialMark"])));
+            displayBox6.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["KPIChangeReason"])));
+            displayBox14.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Style_SpecialMark' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["SpecialMark"])));
             displayBox17.Value = MyUtility.Convert.GetString(CurrentMaintain["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : "";
 
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
             DataRow StyleData;
-            string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate from Style where Ukey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUkey"]));
+            string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate from Style WITH (NOLOCK) where Ukey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUkey"]));
             if (MyUtility.Check.Seek(sqlCmd, out StyleData))
             {
                 displayBox5.Value = MyUtility.Convert.GetString(StyleData["Description"]);
@@ -113,7 +113,7 @@ namespace Sci.Production.Warehouse
             #endregion
             #region 填Buyer欄位值, 修改Special id1, Special id2, Special id3顯示值
             DataRow brandData;
-            if (MyUtility.Check.Seek(string.Format("select ID,Customize1,Customize2,Customize3,BuyerID from Brand where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"])), out brandData))
+            if (MyUtility.Check.Seek(string.Format("select ID,Customize1,Customize2,Customize3,BuyerID from Brand WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"])), out brandData))
             {
                 displayBox2.Value = MyUtility.Convert.GetString(brandData["BuyerID"]);
                 label32.Text = MyUtility.Convert.GetString(brandData["Customize1"]);
@@ -130,7 +130,7 @@ namespace Sci.Production.Warehouse
             #endregion
             #region 填PO SMR, PO Handle欄位值
             DataRow POData;
-            sqlCmd = string.Format("select POSMR,POHandle from PO where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]));
+            sqlCmd = string.Format("select POSMR,POHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]));
             if (MyUtility.Check.Seek(sqlCmd, out POData))
             {
                 txttpeuser3.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
@@ -148,7 +148,7 @@ namespace Sci.Production.Warehouse
 isnull([dbo].getCuttingComboList(o.ID,o.CuttingSP),'') as CuttingList,
 isnull([dbo].getMTLExport(o.POID,o.MTLExport),'') as MTLExport,
 isnull([dbo].getPulloutComplete(o.ID,o.PulloutComplete),'') as PulloutComplete,
-isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out OrdersData);
             if (result)
             {
@@ -179,25 +179,25 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o whe
             bool lConfirm = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P01. PPIC Master List", "CanConfirm");
 
             //按鈕變色
-            bool haveTmsCost = MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            bool haveTmsCost = MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
 
-            button3.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+            button3.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button4.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
 
             button6.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Label"]) ? Color.Blue : Color.Black;
 
 
-            button14.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Artwork where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+            button14.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Artwork WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
-            button19.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Export_Detail where PoID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]))) ? Color.Blue : Color.Black;
+            button19.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Export_Detail WITH (NOLOCK) where PoID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]))) ? Color.Blue : Color.Black;
 
-            button25.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"]))) ? Color.Blue : Color.Black;
+            button25.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"]))) ? Color.Blue : Color.Black;
             
             button29.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
 
-            button23.ForeColor = MyUtility.Check.Seek(string.Format("select ID From dbo.Order_EachCons a  where a.id ='{0}'", CurrentMaintain["id"].ToString())) ? Color.Blue : Color.Black;
+            button23.ForeColor = MyUtility.Check.Seek(string.Format("select ID From dbo.Order_EachCons a WITH (NOLOCK)  where a.id ='{0}'", CurrentMaintain["id"].ToString())) ? Color.Blue : Color.Black;
 
-            button8.ForeColor = MyUtility.Check.Seek(string.Format(@"select oq.Article from Orders o inner join Order_Qty oq on oq.ID = o.ID
+            button8.ForeColor = MyUtility.Check.Seek(string.Format(@"select oq.Article from Orders o WITH (NOLOCK) inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
 where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
             button4.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
@@ -328,7 +328,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
         //Pull forward remark
         private void button30_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(MyUtility.GetValue.Lookup(string.Format("select Remark from Order_PFHis where Id = '{0}' order by AddDate desc", MyUtility.Convert.GetString(CurrentMaintain["ID"]))), "Pull Forward Remark");
+            MessageBox.Show(MyUtility.GetValue.Lookup(string.Format("select Remark from Order_PFHis WITH (NOLOCK) where Id = '{0}' order by AddDate desc", MyUtility.Convert.GetString(CurrentMaintain["ID"]))), "Pull Forward Remark");
         }
 
         //Shipment Finished
@@ -337,9 +337,9 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             string sqlCmd;
             if (MyUtility.Convert.GetString(CurrentMaintain["Category"]) == "M")
             {
-                if (!MyUtility.Check.Seek(string.Format("select ID from PO where ID = '{0}' and Complete = 1", MyUtility.Convert.GetString(CurrentMaintain["POID"]))))
+                if (!MyUtility.Check.Seek(string.Format("select ID from PO WITH (NOLOCK) where ID = '{0}' and Complete = 1", MyUtility.Convert.GetString(CurrentMaintain["POID"]))))
                 {
-                    if (MyUtility.Check.Seek(string.Format("select ID from PO_Supp_Detail where ID = '{0}' and (ETA > GETDATE() or InQty <> OutQty - AdjustQty)", MyUtility.Convert.GetString(CurrentMaintain["POID"]))))
+                    if (MyUtility.Check.Seek(string.Format("select ID from PO_Supp_Detail WITH (NOLOCK) where ID = '{0}' and (ETA > GETDATE() or InQty <> OutQty - AdjustQty)", MyUtility.Convert.GetString(CurrentMaintain["POID"]))))
                     {
                         MyUtility.Msg.WarningBox("Warehouse still have material, so can't finish shipment.");
                         return;
@@ -348,7 +348,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             }
             else
             {
-                sqlCmd = string.Format("select (select ID+',' from Orders where POID = '{0}' and Qty > 0 and PulloutComplete = 0 for xml path('')) as SP", MyUtility.Convert.GetString(CurrentMaintain["POID"]));
+                sqlCmd = string.Format("select (select ID+',' from Orders WITH (NOLOCK) where POID = '{0}' and Qty > 0 and PulloutComplete = 0 for xml path('')) as SP", MyUtility.Convert.GetString(CurrentMaintain["POID"]));
                 string spList = MyUtility.GetValue.Lookup(sqlCmd);
                 if (!MyUtility.Check.Empty(spList))
                 {
@@ -383,7 +383,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
         //Back to P01. PPIC Master List
         private void button33_Click(object sender, EventArgs e)
         {
-            if (MyUtility.GetValue.Lookup(string.Format("select iif(WhseClose is null, 'TRUE','FALSE') as WHouseClose from Orders where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) == "FALSE")
+            if (MyUtility.GetValue.Lookup(string.Format("select iif(WhseClose is null, 'TRUE','FALSE') as WHouseClose from Orders WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) == "FALSE")
             {
                 MyUtility.Msg.WarningBox("W/House already closed R/mtl, so can not 'Back to P01. PPIC Master List'!!");
                 return;

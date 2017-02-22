@@ -27,8 +27,8 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             this.EditMode = true;
-            
-            string sql = "select CountryID from Factory where ID = @ID";
+
+            string sql = "select CountryID from Factory WITH (NOLOCK) where ID = @ID";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
             sqlPar.Add(new SqlParameter("@ID", Sci.Env.User.Factory));
 
@@ -273,12 +273,12 @@ namespace Sci.Production.Warehouse
 	Select POID,SEQ1,SEQ2,CASE 
 	when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
 	else a.result
-	END as [Result] from dbo.FIR a where a.POID LIKE @sp1 
+	END as [Result] from dbo.FIR a WITH (NOLOCK) where a.POID LIKE @sp1 
 	and (a.ContinuityEncode = 1 or a.PhysicalEncode = 1 or a.ShadebondEncode =1 or a.WeightEncode = 1 
 	or (a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1))
 	UNION ALL
 	Select POID,SEQ1,SEQ2,a.result as [Result] 
-	from dbo.AIR a where a.POID LIKE @sp1 and a.Result !=''
+	from dbo.AIR a WITH (NOLOCK) where a.POID LIKE @sp1 and a.Result !=''
 ) 
 
 select *
@@ -288,7 +288,7 @@ from (
 select *,-len(description) as len_D from (
 select 
 m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
-,[SuppCountry] = (select CountryID from supp sup where sup.ID = b.SuppID)
+,[SuppCountry] = (select CountryID from supp sup WITH (NOLOCK) where sup.ID = b.SuppID)
 ,[eta] = substring(convert(varchar, a.eta, 101),1,5)
 ,[RevisedETA] = substring(convert(varchar,a.RevisedETA, 101),1,5)
 ,a.Refno,a.SCIRefno
@@ -304,8 +304,8 @@ m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 --,a.InputQty
 ,InputQty = isnull((select sum(invtQty) from (
 	            SELECT isnull(Qty, 0.00) as invtQty
-	            FROM InvTrans left join invtransReason on invtrans.reasonid = invtransreason.id
-	            INNER JOIN TPEPASS1 ON Invtrans.ConfirmHandle = TPEPASS1.ID
+	            FROM InvTrans WITH (NOLOCK) left join invtransReason WITH (NOLOCK) on invtrans.reasonid = invtransreason.id
+	            INNER JOIN TPEPASS1 WITH (NOLOCK) ON Invtrans.ConfirmHandle = TPEPASS1.ID
 	            WHERE Invtrans.InventoryPOID = a.id
 	            and InventorySeq1 = a.Seq1
 	            and InventorySeq2 = a.seq2
@@ -324,8 +324,8 @@ m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 ,(Select cast(tmp.Remark as nvarchar)+',' 
   from (
 			select b1.remark 
-			from receiving a1 
-			inner join receiving_detail b1 on a1.id = b1.id 
+			from receiving a1 WITH (NOLOCK) 
+			inner join receiving_detail b1 WITH (NOLOCK) on a1.id = b1.id 
 			where a1.status = 'Confirmed' and (b1.Remark is not null or b1.Remark !='')
 			and b1.poid = a.id
 			and b1.seq1 = a.seq1
@@ -335,19 +335,19 @@ m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
  ) as  Remark
 ,[OrderIdList]=e.OrderID
 
-from Orders inner join PO_Supp_Detail a on a.id = orders.poid
-	left join dbo.MDivisionPoDetail m on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 AND m.MDivisionID='{0}'
-    left join fabric on fabric.SCIRefno = a.scirefno
-	left join po_supp b on a.id = b.id and a.SEQ1 = b.SEQ1
-    left join supp s on s.id = b.suppid
-    left join PO_Supp_Detail_OrderList e on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
+from Orders WITH (NOLOCK) inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
+	left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 AND m.MDivisionID='{0}'
+    left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
+	left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
+    left join supp s WITH (NOLOCK) on s.id = b.suppid
+    left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
 where orders.poid like @sp1 and orders.mdivisionid= '{0}' 
 
 --很重要要看到,修正欄位要上下一起改
 union
 
 select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
-,[SuppCountry] = (select CountryID from supp sup where sup.ID = b.SuppID)
+,[SuppCountry] = (select CountryID from supp sup WITH (NOLOCK) where sup.ID = b.SuppID)
 ,substring(convert(varchar, a.eta, 101),1,5) as eta
 ,substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETA,a.Refno,a.SCIRefno
 ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
@@ -358,8 +358,8 @@ select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 --,a.InputQty
 ,InputQty = isnull((select sum(invtQty) from (
 	            SELECT isnull(Qty, 0.00) as invtQty
-	            FROM InvTrans left join invtransReason on invtrans.reasonid = invtransreason.id
-	            INNER JOIN TPEPASS1 ON Invtrans.ConfirmHandle = TPEPASS1.ID
+	            FROM InvTrans WITH (NOLOCK) left join invtransReason WITH (NOLOCK) on invtrans.reasonid = invtransreason.id
+	            INNER JOIN TPEPASS1 WITH (NOLOCK) ON Invtrans.ConfirmHandle = TPEPASS1.ID
 	            WHERE Invtrans.InventoryPOID = m.poid
 	            and InventorySeq1 = m.Seq1
 	            and InventorySeq2 = m.seq2
@@ -378,8 +378,8 @@ select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 ,(Select cast(tmp.Remark as nvarchar)+',' 
   from (
 			select b1.remark 
-			from receiving a1 
-			inner join receiving_detail b1 on a1.id = b1.id 
+			from receiving a1 WITH (NOLOCK) 
+			inner join receiving_detail b1 WITH (NOLOCK) on a1.id = b1.id 
 			where a1.status = 'Confirmed' and (b1.Remark is not null or b1.Remark !='')
 			and b1.poid = a.id
 			and b1.seq1 = a.seq1
@@ -388,12 +388,12 @@ select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
   for XML PATH('')
 ) as  Remark
 ,[OrderIdList]=e.OrderID
-from dbo.MDivisionPoDetail m
-left join  PO_Supp_Detail a on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 AND m.MDivisionID='{0}' and m.poid like @sp1  
-left join fabric on fabric.SCIRefno = a.scirefno
-left join po_supp b on a.id = b.id and a.SEQ1 = b.SEQ1
-left join supp s on s.id = b.suppid
-left join PO_Supp_Detail_OrderList e on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
+from dbo.MDivisionPoDetail m WITH (NOLOCK) 
+left join  PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 AND m.MDivisionID='{0}' and m.poid like @sp1  
+left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
+left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
+left join supp s WITH (NOLOCK) on s.id = b.suppid
+left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
 where 1=1
     AND a.id IS NOT NULL --0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
 ) as xxx

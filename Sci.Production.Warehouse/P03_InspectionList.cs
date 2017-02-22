@@ -57,7 +57,7 @@ namespace Sci.Production.Warehouse
 		when a.nonContinuity=1 then  'N/A' else '' end AS [Continuity]
 ,a.ContinuityDate
 ,a.id
- from dbo.FIR a inner join dbo.Receiving b on b.Id= a.ReceivingID
+ from dbo.FIR a WITH (NOLOCK) inner join dbo.Receiving b WITH (NOLOCK) on b.Id= a.ReceivingID
 where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr["seq2"]));
 
                 selectResult1 = DBProxy.Current.Select(null, sqlcmd.ToString(), out dtFIR_AIR);
@@ -132,12 +132,12 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                                         ContinuityDate,
                                         Continuity,
                                         a.Status,ReplacementReportID,(seq1+seq2) as seq,
-                                        (Select weavetypeid from Fabric b where b.SCIRefno =a.SCIrefno) as weavetypeid,
+                                        (Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno) as weavetypeid,
                                         c.Exportid,c.whseArrival,dbo.getPass1(a.Approve) as approve1,approveDate,approve,
-                                        (Select d.colorid from PO_Supp_Detail d Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2) as Colorid,
-                                        (Select ID+' - '+ AbbEn From Supp Where a.suppid = supp.id) as SuppEn,
+                                        (Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2) as Colorid,
+                                        (Select ID+' - '+ AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id) as SuppEn,
                                         c.ExportID as Wkno
-                                    From FIR a Left join Receiving c on c.id = a.receivingid
+                                    From FIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
                                     Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2 order by seq1,seq2 ";
                     List<SqlParameter> sqlPar = new List<SqlParameter>();
                     sqlPar.Add(new SqlParameter("@poid", dr["id"].ToString()));
@@ -197,7 +197,7 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
 
                 sqlcmd.Clear();
                 sqlcmd.Append(string.Format(@"select c.MDivisionID,c.InvNo,c.ExportId
-,iif(c.InvNo = '' or c.InvNo is null,c.ETA,(select export.eta from dbo.export where export.id= c.exportid )) as [ETA]
+,iif(c.InvNo = '' or c.InvNo is null,c.ETA,(select export.eta from dbo.export WITH (NOLOCK) where export.id= c.exportid )) as [ETA]
 ,b.ArriveQty
 ,a.ReceiveSampleDate
 ,CASE WHEN a.[Crocking] = 'P' THEN 'Pass'
@@ -219,9 +219,9 @@ ELSE ''
 END AS [Wash]
 ,a.WashDate
 ,a.id
-from dbo.FIR_Laboratory a 
-inner join dbo.FIR b on b.id = a.id
-inner join dbo.Receiving c on c.Id = b.ReceivingID
+from dbo.FIR_Laboratory a WITH (NOLOCK) 
+inner join dbo.FIR b WITH (NOLOCK) on b.id = a.id
+inner join dbo.Receiving c WITH (NOLOCK) on c.Id = b.ReceivingID
 where a.POID='{0}' and a.seq1='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr["seq2"]));
                 DataTable dtFIR_Laboratory;
                 selectResult1 = DBProxy.Current.Select(null, sqlcmd.ToString(), out dtFIR_Laboratory);
@@ -298,7 +298,7 @@ END as [Result]--,a.seq1,a.seq2
 ,a.RejectQty
 ,a.Defect
 ,a.id
- from dbo.AIR a inner join dbo.Receiving b on b.Id= a.ReceivingID
+ from dbo.AIR a WITH (NOLOCK) inner join dbo.Receiving b WITH (NOLOCK) on b.Id= a.ReceivingID
 where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr["seq2"]));
                 DataTable dtFIR_Laboratory;
                 selectResult1 = DBProxy.Current.Select(null, sqlcmd.ToString(), out dtFIR_Laboratory);

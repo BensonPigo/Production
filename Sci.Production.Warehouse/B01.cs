@@ -43,7 +43,7 @@ namespace Sci.Production.Warehouse
             if (String.IsNullOrWhiteSpace(CurrentMaintain["id"].ToString()))
             {
                 CurrentMaintain["type"] = "IR";
-                if (cbResult = DBProxy.Current.Select(null, "select max(id) max_id from whsereason where type='IR'", out whseReasonDt))
+                if (cbResult = DBProxy.Current.Select(null, "select max(id) max_id from whsereason WITH (NOLOCK) where type='IR'", out whseReasonDt))
                 {
                     string id = whseReasonDt.Rows[0]["max_id"].ToString();
                     if (string.IsNullOrWhiteSpace(id))

@@ -36,7 +36,7 @@ namespace Sci.Production.Warehouse
 , b.ToLocation
 , a.EditName
 , a.EditDate
-FROM LocationTrans a inner join  LocationTrans_detail as b on a.ID = b.ID 
+FROM LocationTrans a WITH (NOLOCK) inner join  LocationTrans_detail as b WITH (NOLOCK) on a.ID = b.ID 
 WHERE a.status = 'Confirmed' and a.stocktype='{3}'
 AND B.Poid='{0}' and b.Seq1='{1}' and b.Seq2='{2}'
 and a.mdivisionid='{4}'
@@ -47,7 +47,7 @@ select issuedate,id,sum(qty) qty
 ,(select FromLocation+',' from (select distinct tmp_b.FromLocation from tmp tmp_b where tmp_b.id=a.ID) t for xml path('') ) fromlocation
 ,(select tolocation+',' from (select distinct tmp_c.ToLocation from tmp tmp_c where tmp_c.id=a.ID) t for xml path('') ) tolocation
 ,remark
-,EditName+'-'+ isnull((select pass1.NAME from pass1 where id = a.EditName),'') editname
+,EditName+'-'+ isnull((select pass1.NAME from pass1 WITH (NOLOCK) where id = a.EditName),'') editname
 ,EditDate from  tmp a
 group by EditName,ID,issuedate, Remark,EditDate
 order by EditName,ID"

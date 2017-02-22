@@ -67,7 +67,7 @@ namespace Sci.Production.Warehouse
 
             strSQLCmd.Append(string.Format(@"with cte_order as
                                                                (
-	                                                            select distinct poid from dbo.orders 
+	                                                            select distinct poid from dbo.orders WITH (NOLOCK) 
 	                                                            where orders.Finished=1 and Orders.WhseClose is null and MDivisionID = '{0}'
                                                                 ", Sci.Env.User.Keyword));
 
@@ -110,14 +110,14 @@ namespace Sci.Production.Warehouse
             strSQLCmd.Append(string.Format(@"
 	                    EXCEPT
 	                    select temp.POID from ( 
-							                    select distinct poid from dbo.orders 
+							                    select distinct poid from dbo.orders WITH (NOLOCK) 
 							                    where orders.Finished=0 and Orders.WhseClose is null and MDivisionID = '{0}'
 						                      ) temp
                 )select * into #cte_temp from cte_order
 
 
             select fty.POID,fty.Seq1,fty.Seq2 from #cte_temp cte 
-		                                      left join FtyInventory fty on cte.POID=fty.POID 
+		                                      left join FtyInventory fty WITH (NOLOCK) on cte.POID=fty.POID 
 		                                      where fty.Lock=1 and StockType='B'
 
                 select 0 Selected
@@ -133,17 +133,17 @@ namespace Sci.Production.Warehouse
                 from (
                     select a.POID
                     ,max(a.ActPulloutDate) ActPulloutDate, max(a.gmtclose) ppicClose
-                    from dbo.orders a 
+                    from dbo.orders a WITH (NOLOCK) 
                     inner join (select poid from #cte_temp 
 								EXCEPT
 								select distinct fty.POID from #cte_temp cte 
-														 left join FtyInventory fty on cte.POID=fty.POID 
+														 left join FtyInventory fty WITH (NOLOCK) on cte.POID=fty.POID 
 														 where fty.Lock=1 and StockType='B'
 							   ) b on b.POID = a.POID
                     where  a.MDivisionID = '{0}' and a.Finished=1 and a.WhseClose is null 
                     group by a.poid
                 ) m
-                cross apply (select * from dbo.orders a1 where a1.id=m.POID and MDivisionID = '{0}' {1} ) x
+                cross apply (select * from dbo.orders a1 WITH (NOLOCK) where a1.id=m.POID and MDivisionID = '{0}' {1} ) x
                 order by m.POID
                 Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
 

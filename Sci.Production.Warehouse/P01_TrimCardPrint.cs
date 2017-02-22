@@ -54,30 +54,30 @@ namespace Sci.Production.Warehouse
             {
                 #region FABRIC
                 sql = string.Format(@"select  A.PatternPanel , A.FabricCode , B.Refno , C.Description , A.Lectracode
-                                from Order_FabricCode A
-                                left join Order_BOF B on B.Id=A.Id and B.FabricCode=A.FabricCode
-                                left join Fabric C on C.SCIRefno=B.SCIRefno
+                                from Order_FabricCode A WITH (NOLOCK) 
+                                left join Order_BOF B WITH (NOLOCK) on B.Id=A.Id and B.FabricCode=A.FabricCode
+                                left join Fabric C WITH (NOLOCK) on C.SCIRefno=B.SCIRefno
                                 where A.ID='{0}'
                                 order by FabricCode", orderID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint);
                 if (!result) return result;
 
                 sql = string.Format(@"select distinct Article 
-                                from Order_ColorCombo 
+                                from Order_ColorCombo WITH (NOLOCK) 
                                 where Id='{0}' 
-                                and LectraCode in (select LectraCode from Order_FabricCode where ID='{0}')", orderID);
+                                and LectraCode in (select LectraCode from Order_FabricCode WITH (NOLOCK) where ID='{0}')", orderID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint2);
                 if (!result) return result;
 
                 sql = string.Format(@"select ColorID , B.Name , LectraCode , Article
-                                from Order_ColorCombo A
-                                left join Color B on B.BrandId='{0}' and B.ID=A.ColorID
+                                from Order_ColorCombo A WITH (NOLOCK) 
+                                left join Color B WITH (NOLOCK) on B.BrandId='{0}' and B.ID=A.ColorID
                                 where A.Id='{1}'
                                 and LectraCode in (
 	                                select A.Lectracode 
-	                                from Order_FabricCode A
-	                                left join Order_BOF B on B.Id=A.Id and B.FabricCode=A.FabricCode
-	                                left join Fabric C on C.SCIRefno=B.SCIRefno
+	                                from Order_FabricCode A WITH (NOLOCK) 
+	                                left join Order_BOF B WITH (NOLOCK) on B.Id=A.Id and B.FabricCode=A.FabricCode
+	                                left join Fabric C WITH (NOLOCK) on C.SCIRefno=B.SCIRefno
 	                                where A.ID='{1}'
                                 )"
                                 , BrandID, orderID);
@@ -90,17 +90,17 @@ namespace Sci.Production.Warehouse
             {
                 #region ACCESSORY
                 sql = string.Format(@"select A.Refno, B.Description 
-                                    from Order_BOA_Expend A
-                                    left join Fabric B on B.SCIRefno=A.SCIRefno
+                                    from Order_BOA_Expend A WITH (NOLOCK) 
+                                    left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
                                     where Id='{0}' and Article<>'' and ColorId<>''
-                                    and b.MtlTypeID in (select id from MtlType where IsTrimcardOther=0)
+                                    and b.MtlTypeID in (select id from MtlType WITH (NOLOCK) where IsTrimcardOther=0)
                                     group by A.Refno, B.Description ", orderID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint);
                 if (!result) return result;
 
                 sql = string.Format(@"select distinct article 
-                                    from Order_BOA_Expend A
-                                    left join Fabric B on B.SCIRefno=A.SCIRefno
+                                    from Order_BOA_Expend A WITH (NOLOCK) 
+                                    left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
                                     where Id='{0}' and Article<>'' and ColorId<>''
                                     group by A.Refno, B.Description , article, ColorId
                                     order by Article", orderID);
@@ -108,14 +108,14 @@ namespace Sci.Production.Warehouse
                 if (!result) return result;
 
                 sql = string.Format(@"select distinct A.Refno, article , ColorId,c.Name
-                                    from Order_BOA_Expend A
-                                    left join Fabric B on B.SCIRefno=A.SCIRefno
-                                    left join Color C on C.BrandId='{1}' and C.ID=A.ColorID
+                                    from Order_BOA_Expend A WITH (NOLOCK) 
+                                    left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
+                                    left join Color C WITH (NOLOCK) on C.BrandId='{1}' and C.ID=A.ColorID
                                     where A.Id='{0}' and Article<>'' and ColorId<>''
                                     and a.Refno in (
 	                                    select A.Refno
-	                                    from Order_BOA_Expend A
-	                                    left join Fabric B on B.SCIRefno=A.SCIRefno
+	                                    from Order_BOA_Expend A WITH (NOLOCK) 
+	                                    left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
 	                                    where Id='{0}' and Article<>'' and ColorId<>''
 	                                    group by A.Refno, B.Description 
                                     )"
@@ -123,7 +123,7 @@ namespace Sci.Production.Warehouse
                 result = DBProxy.Current.Select(null, sql, out dtColor);
                 if (!result) return result;
 
-                sql = string.Format(@"select ID , Name from Color where BrandId='{0}' and JUNK=0", BrandID);
+                sql = string.Format(@"select ID , Name from Color WITH (NOLOCK) where BrandId='{0}' and JUNK=0", BrandID);
                 result = DBProxy.Current.Select(null, sql, out dtColor2);
                 if (!result) return result;
                 #endregion
@@ -134,11 +134,11 @@ namespace Sci.Production.Warehouse
                 //架構要調，先HOLD住
                 sql = string.Format(@"
 select distinct A.Refno,B.DescDetail
-from Order_BOA_Expend A
-inner join Order_BOA ob on A.Order_BOAUkey = ob.Ukey
-left join Fabric B on B.SCIRefno=A.SCIRefno
+from Order_BOA_Expend A WITH (NOLOCK) 
+inner join Order_BOA ob WITH (NOLOCK) on A.Order_BOAUkey = ob.Ukey
+left join Fabric B WITH (NOLOCK) on B.SCIRefno=A.SCIRefno
 where a.Id='{0}'
-and b.MtlTypeID in (select id from MtlType where IsTrimcardOther=1)
+and b.MtlTypeID in (select id from MtlType WITH (NOLOCK) where IsTrimcardOther=1)
 and not ob.SuppID = 'fty' 
 and not ob.SuppID = 'fty-c'
                                     ", orderID);
@@ -146,7 +146,7 @@ and not ob.SuppID = 'fty-c'
                 if (!result) return result;
 
                 sql = string.Format(@"select distinct orders.ID 
-                                    from orders
+                                    from orders WITH (NOLOCK) 
                                     where orders.POID='{0}'", POID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint2);
                 if (!result) return result;
@@ -156,15 +156,15 @@ and not ob.SuppID = 'fty-c'
             {//jimmy 記得把 註解 & isnull 拿掉
                 #region Thread
                 sql = string.Format(@"select distinct B.Article
-                                    from ThreadRequisition_Detail A
-                                    left join ThreadRequisition_Detail_Cons B on B.Ukey=A.Ukey
+                                    from ThreadRequisition_Detail A WITH (NOLOCK) 
+                                    left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.Ukey=A.Ukey
                                     where A.orderid= '{0}' and article<>''", POID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint2);
                 if (!result) return result;
 
                 sql = string.Format(@"select B.Article, A.ThreadColorID
-                                    from ThreadRequisition_Detail A
-                                    left join ThreadRequisition_Detail_Cons B on B.Ukey=A.Ukey
+                                    from ThreadRequisition_Detail A WITH (NOLOCK) 
+                                    left join ThreadRequisition_Detail_Cons B WITH (NOLOCK) on B.Ukey=A.Ukey
                                     where A.orderid= '{0}' and article<>''
                                     group by article, threadcolorid", POID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint);

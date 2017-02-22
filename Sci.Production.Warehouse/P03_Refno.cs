@@ -41,9 +41,9 @@ namespace Sci.Production.Warehouse
 , a.sewline, b.FinalETA
 , md.inqty - md.outqty + md.adjustqty Balance
 , b.stockunit 
-from orders a
-, po_supp_detail b inner join dbo.MDivisionPoDetail md on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
-, po_supp c
+from orders a WITH (NOLOCK) 
+, po_supp_detail b WITH (NOLOCK) inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
+, po_supp c WITH (NOLOCK) 
 where b.scirefno = '{0}'
 and a.id = b.id
 and a.id = c.id

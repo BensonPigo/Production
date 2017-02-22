@@ -43,7 +43,7 @@ namespace Sci.Production.Warehouse
             if (String.IsNullOrWhiteSpace(CurrentMaintain["id"].ToString()))
             {
                 CurrentMaintain["type"] = "RR";
-                if (cbResult = DBProxy.Current.Select(null, "select max(id) max_id from whsereason where type='RR'", out whseReasonDt))
+                if (cbResult = DBProxy.Current.Select(null, "select max(id) max_id from whsereason WITH (NOLOCK) where type='RR'", out whseReasonDt))
                 {
                     string id = whseReasonDt.Rows[0]["max_id"].ToString();
                     if (string.IsNullOrWhiteSpace(id))
@@ -68,7 +68,7 @@ namespace Sci.Production.Warehouse
 
         private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select id,description from whseReason where type='RA' and junk = 0", "10,20", textBox2.Text,true,",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select id,description from whseReason WITH (NOLOCK) where type='RA' and junk = 0", "10,20", textBox2.Text, true, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.CurrentMaintain["ActionCode"] = item.GetSelectedString();
