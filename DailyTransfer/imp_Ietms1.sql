@@ -3,7 +3,7 @@
 -- Create date:20160903
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE [dbo].[imp_Ietms1]
+Alter PROCEDURE [dbo].[imp_Ietms1]
 	
 AS
 BEGIN
@@ -63,8 +63,8 @@ ID
 ,EditName
 ,EditDate
 
-from Trade_To_Pms.dbo.IETMS as b
-where not exists(select id from Production.dbo.IETMS as a where a.id = b.id AND a.Version = b.Version)
+from Trade_To_Pms.dbo.IETMS as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.IETMS as a WITH (NOLOCK) where a.id = b.id AND a.Version = b.Version)
 --IETMS1
 --IETMS_Detail
 
@@ -117,8 +117,8 @@ IETMSUkey
 ,SeamLength
 ,UKey
 
-from Trade_To_Pms.dbo.IETMS_Detail as b
-where not exists(select 1 from Production.dbo.IETMS_Detail as a where a.UKey = b.UKey)
+from Trade_To_Pms.dbo.IETMS_Detail as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.IETMS_Detail as a WITH (NOLOCK) where a.UKey = b.UKey)
 
 -------------------------------------------------------aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 --Operation

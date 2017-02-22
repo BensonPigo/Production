@@ -4,7 +4,7 @@
 -- Create date:20160903
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE imp_Po
+Alter PROCEDURE imp_Po
 	---- Add the parameters for the stored procedure here
 	--<@Param1, sysname, @p1> <Datatype_For_Param1, , int> = <Default_Value_For_Param1, , 0>, 
 	--<@Param2, sysname, @p2> <Datatype_For_Param2, , int> = <Default_Value_For_Param2, , 0>
@@ -16,7 +16,7 @@ BEGIN
 
    SELECT b.*
 INTO #Trade_To_Pms_PO --先下條件把PO成為工廠別
- FROM  Trade_To_Pms.dbo.PO b inner join Production.dbo.Factory c on b.FactoryID = c.ID
+ FROM  Trade_To_Pms.dbo.PO b WITH (NOLOCK) inner join Production.dbo.Factory c WITH (NOLOCK) on b.FactoryID = c.ID
 
 --PO1 PO
 --PMS多的
@@ -129,9 +129,9 @@ select
       ,EditDate
       ,MTLDelay
 
-from #Trade_To_Pms_PO as b
+from #Trade_To_Pms_PO as b WITH (NOLOCK)
 where not exists(
-select id from Production.dbo.PO as a where a.id = b.id )
+select id from Production.dbo.PO as a WITH (NOLOCK) where a.id = b.id )
 
 --PO2
 
@@ -183,8 +183,8 @@ select
       ,b.EditName
       ,b.EditDate
 
-from Trade_To_Pms.dbo.PO_Supp as b inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
-where not exists(select id from Production.dbo.PO_Supp as a where a.id = b.id and a.SEQ1=b.SEQ1)
+from Trade_To_Pms.dbo.PO_Supp as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c WITH (NOLOCK) ON b.ID = c.ID
+where not exists(select id from Production.dbo.PO_Supp as a WITH (NOLOCK) where a.id = b.id and a.SEQ1=b.SEQ1)
 
 
 ------------------------------------------------------------------PO2 END
@@ -398,9 +398,9 @@ select
       ,b.EditDate
 	  ,b.RevisedETD
 	  ,b.CfmETA 
-	  ,(select top 1 a.BrandID from Orders a where a.POID=b.ID)
-from Trade_To_Pms.dbo.PO_Supp_Detail as b inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
-where not exists(select id from Production.dbo.PO_Supp_Detail as a where a.id = b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2	)
+	  ,(select top 1 a.BrandID from Orders a WITH (NOLOCK) where a.POID=b.ID)
+from Trade_To_Pms.dbo.PO_Supp_Detail as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
+where not exists(select id from Production.dbo.PO_Supp_Detail as a WITH (NOLOCK) where a.id = b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2	)
 
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.PO_Supp_Detail
@@ -473,8 +473,8 @@ select
       ,b.EditDate
 
 
-from Trade_To_Pms.dbo.PO_Supp_Detail_OrderList as b inner join  #Trade_To_Pms_PO c ON b.ID = c.ID 
-where not exists(select id from Production.dbo.PO_Supp_Detail_OrderList as a where a.id = b.id and a.SEQ1 = b.SEQ1 and a.SEQ2 = b.SEQ2 and a.OrderID=b.OrderID)
+from Trade_To_Pms.dbo.PO_Supp_Detail_OrderList as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c ON b.ID = c.ID 
+where not exists(select id from Production.dbo.PO_Supp_Detail_OrderList as a WITH (NOLOCK) where a.id = b.id and a.SEQ1 = b.SEQ1 and a.SEQ2 = b.SEQ2 and a.OrderID=b.OrderID)
 
 ------------------------------------------------------------------PO4 END
 ------------------------------------------------------
@@ -588,8 +588,8 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-from Trade_To_Pms.dbo.Fabric as b
-where not exists(select SCIRefno from Production.dbo.Fabric as a where a.SCIRefno = b.SCIRefno)
+from Trade_To_Pms.dbo.Fabric as b WITH (NOLOCK)
+where not exists(select SCIRefno from Production.dbo.Fabric as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno)
 
 
 --Fab_Content
@@ -639,8 +639,8 @@ select
       ,EditName
       ,EditDate
       ,OldSys_GroupKey
-from Trade_To_Pms.dbo.Fabric_Content as b
-where not exists(select Ukey from Production.dbo.Fabric_Content as a where a.Ukey = b.Ukey)
+from Trade_To_Pms.dbo.Fabric_Content as b WITH (NOLOCK)
+where not exists(select Ukey from Production.dbo.Fabric_Content as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 
 
 
@@ -709,8 +709,8 @@ select
       ,OldSys_Ukey
       ,OldSys_Ver
 
-from Trade_To_Pms.dbo.Fabric_HsCode as b
-where not exists(select SCIRefno from Production.dbo.Fabric_HsCode as a where a.SCIRefno = b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year)
+from Trade_To_Pms.dbo.Fabric_HsCode as b WITH (NOLOCK)
+where not exists(select SCIRefno from Production.dbo.Fabric_HsCode as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year)
 
 
 

@@ -3,13 +3,13 @@
 -- Create date: <2016/08/25>
 -- Description:	<import order>
 -- =============================================
-Create PROCEDURE [dbo].[imp_Order]
+Alter PROCEDURE [dbo].[imp_Order]
 AS
 BEGIN
 
 	SET NOCOUNT ON;
 
-	declare @OldDate date = (select max(UpdateDate) from Production.dbo.OrderComparisonList) --最後匯入資料日期
+	declare @OldDate date = (select max(UpdateDate) from Production.dbo.OrderComparisonList WITH (NOLOCK)) --最後匯入資料日期
 	declare @dToDay date = CONVERT(date, GETDATE()) --今天日期
 -----------------匯入訂單檢核表------------------------
 	delete from Production.dbo.OrderComparisonList
@@ -24,8 +24,8 @@ BEGIN
 	cast('' as varchar(10) ) as MCHandle,
 	cast(null as date) as MDClose
 	into #TOrder
-	from Trade_To_Pms.dbo.Orders a
-	inner join Production.dbo.Factory b on a.FactoryID=b.ID
+	from Trade_To_Pms.dbo.Orders a WITH (NOLOCK)
+	inner join Production.dbo.Factory b WITH (NOLOCK) on a.FactoryID=b.ID
 
 	update #TOrder
 	set FTY_Group =IIF(b.FTYGroup is null,a.FactoryID,b.FTYGroup) , MDivisionID=b.MDivisionID
@@ -37,7 +37,7 @@ BEGIN
 	Merge Production.dbo.OrderComparisonList as t
 	Using (select c.*, a.StyleID as AStyleID,a.FactoryID as AFactory 
 		from #TOrder a
-		inner join Production.dbo.Orders c on a.id=c.id
+		inner join Production.dbo.Orders c WITH (NOLOCK) on a.id=c.id
 		where a.qty > 0 and a.IsForecast = '0'
 	) as s
 	on t.orderid=s.id and t.factoryid=s.factoryid and t.updateDate = @dToDay
@@ -48,7 +48,7 @@ BEGIN
 		t.OriginalBuyerDelivery=s.BuyerDelivery,
 		t.DeleteOrder=1,
 		t.OriginalStyleID=s.AStyleID,
-		t.TransferToFactory =iif(s.AFactory is not null and s.AFactory in (select id from Production.dbo.Factory),s.AFactory,t.TransferToFactory)		
+		t.TransferToFactory =iif(s.AFactory is not null and s.AFactory in (select id from Production.dbo.Factory WITH (NOLOCK)),s.AFactory,t.TransferToFactory)		
 	when not matched by target then
 		insert(OrderId,UpdateDate,FactoryID)
 		values(s.id,@dToDay,s.FactoryID);
@@ -92,7 +92,7 @@ BEGIN
 		Using (select b.id,b.qty,b.FactoryID,b.BuyerDelivery,
 		 a.StyleID as AStyleID,a.FactoryID as AFactory 
 		from #TOrder a		
-		inner join Production.dbo.Orders b on a.id=b.id and a.factoryid <> b.factoryid
+		inner join Production.dbo.Orders b WITH (NOLOCK) on a.id=b.id and a.factoryid <> b.factoryid
 		where a.qty > 0 and a.IsForecast = '0'
 		) as s
 		on t.orderid=s.id and t.factoryid<>s.factoryid and t.updateDate = @dToDay
@@ -103,12 +103,12 @@ BEGIN
 			t.OriginalBuyerDelivery=s.BuyerDelivery,
 			t.DeleteOrder=1,
 			t.OriginalStyleID=s.AStyleID,
-			t.TransferToFactory =iif(s.AFactory is not null and s.AFactory in (select id from Production.dbo.Factory),s.AFactory,t.TransferToFactory)
+			t.TransferToFactory =iif(s.AFactory is not null and s.AFactory in (select id from Production.dbo.Factory WITH (NOLOCK)),s.AFactory,t.TransferToFactory)
 		when not matched by target then 
 		insert(OrderId,UpdateDate,FactoryID,TransferDate,OriginalQty,OriginalBuyerDelivery,DeleteOrder,OriginalStyleID,
 		TransferToFactory)
 		values(s.id,@dToDay,s.FactoryID,@OldDate,s.qty,s.BuyerDelivery,1,s.AStyleID,
-		iif(s.AFactory is not null and s.AFactory in (select id from Production.dbo.Factory),s.AFactory,''));
+		iif(s.AFactory is not null and s.AFactory in (select id from Production.dbo.Factory WITH (NOLOCK)),s.AFactory,''));
 
 		
 
@@ -118,7 +118,7 @@ BEGIN
 		,a.EachConsApv,a.MnorderApv,a.SMnorderApv,a.MnorderApv2
 		, b.StyleID as AStyleID,b.FactoryID as AFactory 
 		from #TOrder a		
-		inner join Production.dbo.Orders b on a.id=b.id and a.factoryid <> b.factoryid
+		inner join Production.dbo.Orders b WITH (NOLOCK) on a.id=b.id and a.factoryid <> b.factoryid
 		where a.qty > 0 and a.IsForecast = '0'
 		) as s
 		on t.orderid=s.id and t.factoryid=s.factoryid and t.updateDate = @dToDay
@@ -337,7 +337,7 @@ A.Junk,b.Junk as AJunk,iif(a.Junk <> b.Junk,1,0) as diffJunk,
 A.KPILETA,b.LETA as AKPILETA,iif(a.KPILETA <> b.KPILETA,1,0) as diffKPILETA,
 A.LETA, b.LETA as ALETA , IIF( A.LETA <> B.LETA,1,0) AS diffLETA,		
 a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
-		from Production.dbo.Orders a 
+		from Production.dbo.Orders a WITH (NOLOCK)
 		inner join #Torder b on a.id=b.id
 		where a.id in (select id from @OrderT where isInsert=0)
 			and (A.QTY <> B.QTY OR 
@@ -385,7 +385,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 	--------------Order_Qty--------------------------Qty BreakDown
 
 	Merge Production.dbo.Order_Qty as t
-	Using (select a.* from Trade_To_Pms.dbo.order_qty a inner join #Torder  b on a.id=b.id) as s
+	Using (select a.* from Trade_To_Pms.dbo.order_qty a WITH (NOLOCK) inner join #Torder  b on a.id=b.id) as s
 	on t.id=s.id AND T.ARTICLE=S.ARTICLE AND t.sizeCode=s.sizeCode
 	when matched then
 		update set
@@ -403,7 +403,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 	----------Order_QtyShip--------------
 	Merge Production.dbo.Order_QtyShip as t
-	using (select a.* from Trade_To_Pms.dbo.Order_QtyShip a inner join #Torder b on a.id=b.id) as s
+	using (select a.* from Trade_To_Pms.dbo.Order_QtyShip a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
 	on t.id=s.id and t.seq=s.seq
 		when matched then 
 		update set
@@ -425,7 +425,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 	-----------Order_QtyShip_Detail--------------------------調整: 來源比對Production表頭資料 
 		Merge Production.dbo.Order_QtyShip_detail as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_QtyShip_detail as a inner join #TOrder b on a.id=b.id  ) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_QtyShip_detail as a WITH (NOLOCK) inner join #TOrder b on a.id=b.id  ) as s
 		on t.ukey=s.ukey
 		when matched then
 			update set
@@ -447,7 +447,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		-----------------Order_UnitPrice------------
 		Merge Production.dbo.Order_UnitPrice as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_UnitPrice a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_UnitPrice a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.article=s.article and t.sizecode=s.sizecode
 		when Matched then
 			update set			
@@ -466,7 +466,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		--------------Order_TmsCost-----TMS & Cost
 		Merge  Production.dbo.Order_TmsCost as t
-		Using  (select a.* from Trade_To_Pms.dbo.Order_TmsCost a inner join #TOrder b on a.id=b.id) as s
+		Using  (select a.* from Trade_To_Pms.dbo.Order_TmsCost a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.ArtworkTypeID=s.ArtworkTypeID
 		when matched then 
 			update set			
@@ -486,24 +486,24 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			INSERT INTO Production.dbo.Order_TmsCost(ID,ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,InhouseOSP,LocalSuppID,AddName,AddDate,EditName,EditDate)
 		SELECT A.ID,A.ArtworkTypeID,A.Seq,A.Qty,A.ArtworkUnit,A.TMS,A.Price,C.InhouseOSP,
 		IIF(C.InhouseOSP='O',
-			(SELECT top 1 t.LocalSuppId FROM Production.dbo.Style_Artwork_Quot T
-			inner join  production.dbo.Style_Artwork a on t.Ukey=a.Ukey
-			inner join Trade_To_Pms.DBO.Order_TmsCost  b on a.ArtworkTypeID=b.ArtworkTypeID
+			(SELECT top 1 t.LocalSuppId FROM Production.dbo.Style_Artwork_Quot T WITH (NOLOCK)
+			inner join  production.dbo.Style_Artwork a WITH (NOLOCK) on t.Ukey=a.Ukey
+			inner join Trade_To_Pms.DBO.Order_TmsCost  b WITH (NOLOCK) on a.ArtworkTypeID=b.ArtworkTypeID
 			WHERE T.Ukey IN (SELECT A.Ukey 
-			FROM Production.dbo.Style A	
+			FROM Production.dbo.Style A	WITH (NOLOCK)
 			INNER JOIN #TOrder B ON A.ID=B.StyleID AND A.BRANDID=B.BrandID AND A.SeasonID=B.SeasonID) ),
-			(SELECT LocalSuppID FROM Production.dbo.Order_TmsCost WHERE ID=A.ID)),
+			(SELECT LocalSuppID FROM Production.dbo.Order_TmsCost WITH (NOLOCK) WHERE ID=A.ID)),
 			A.AddName,A.AddDate,A.EditName,A.EditDate 
-		FROM Trade_To_Pms.dbo.Order_TmsCost A
+		FROM Trade_To_Pms.dbo.Order_TmsCost A WITH (NOLOCK)
 		INNER JOIN #TOrder B ON A.ID=B.ID
-		INNER JOIN Production.dbo.ArtworkType C ON A.ArtworkTypeID=C.ID
-		where a.Id not in (select id from Production.dbo.Order_TmsCost)
+		INNER JOIN Production.dbo.ArtworkType C WITH (NOLOCK) ON A.ArtworkTypeID=C.ID
+		where a.Id not in (select id from Production.dbo.Order_TmsCost WITH (NOLOCK))
 	
 	
 		-----------------Order_SizeCode---------------------------尺寸表 Size Spec(存尺寸碼)
 		--20170110 willy 調整順序: 刪除>修改>新增
 		Merge Production.dbo.Order_SizeCode as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_SizeCode a inner join #TOrder b on a.id=b.id where a.sizecode is not null) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_SizeCode a WITH (NOLOCK) inner join #TOrder b on a.id=b.id where a.sizecode is not null) as s
 		on t.id=s.id and t.sizecode=s.sizecode and t.ukey=s.ukey
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete
@@ -517,7 +517,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		----------------Order_Sizeitem------------------------------尺寸表 Size Spec(存量法資料)
 		Merge Production.dbo.Order_Sizeitem as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_Sizeitem a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_Sizeitem a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.ukey=s.ukey
 		when matched then 
 			update set 			
@@ -531,7 +531,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 	
 		-------------Order_SizeSpec--------------------------------尺寸表 Size Spec(存尺寸碼)
 		Merge Production.dbo.Order_SizeSpec as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_SizeSpec a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_SizeSpec a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on  t.ukey=s.ukey
 		when matched then 
 			update set
@@ -544,7 +544,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 ------------Order_ColorCombo---------------(主料配色表)
 		Merge Production.dbo.Order_ColorCombo as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_ColorCombo a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_ColorCombo a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.article=s.article and t.lectracode=s.lectracode
 		when matched then 
 			update set
@@ -564,7 +564,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 	
 		-------------Order_FabricCode------------------部位vs布別vsQT
 		Merge Production.dbo.Order_FabricCode as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_FabricCode a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_FabricCode a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.Lectracode=s.Lectracode
 		when matched then 
 			update set
@@ -584,7 +584,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 -------------Order_FabricCode_QT-----------------
 		Merge Production.dbo.Order_FabricCode_QT as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_FabricCode_QT a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_FabricCode_QT a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.Lectracode=s.Lectracode and t.seqno=s.seqno
 		when matched then 
 			update set
@@ -605,7 +605,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 		-------------Order_Bof -----------------------Bill of Fabric
 
 		Merge Production.dbo.Order_Bof as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_Bof a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_Bof a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.ukey=s.ukey	
 		when matched then 
 			update set
@@ -635,7 +635,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		---------Order_Bof_Expend--------------Bill of Fabric -用量展開
 		Merge Production.dbo.Order_Bof_Expend as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_Bof_Expend a
+		Using (select a.* from Trade_To_Pms.dbo.Order_Bof_Expend a WITH (NOLOCK)
 		inner join #Torder b on a.id=b.id) as s
 		--inner join Production.dbo.Order_Bof b on a.id=b.id) as s
 		on t.ukey=s.ukey
@@ -667,7 +667,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 		-------------Order_BOA------------------Bill of Accessory
 
 		Merge Production.dbo.Order_BOA as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_BOA a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_BOA a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.ukey=s.ukey
 		when matched then 
 			update set
@@ -705,7 +705,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		-----------------Order_BOA_Expend----------------Bill of accessory -用量展開
 		Merge Production.dbo.Order_BOA_Expend as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_Expend a	
+		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_Expend a WITH (NOLOCK)	
 		inner join #Torder b on a.id=b.id) as s
 		on t.ukey=s.ukey
 		when matched then 
@@ -743,7 +743,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 		---------------Order_MarkerList------------Marker List
 
 		Merge Production.dbo.Order_MarkerList as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_MarkerList a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_MarkerList a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.ukey=s.ukey	
 		when matched then 
 			update set
@@ -786,7 +786,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		------Order_MarkerList_SizeQty----------------
 		Merge Production.dbo.Order_MarkerList_SizeQty as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_MarkerList_SizeQty a inner join #Torder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_MarkerList_SizeQty a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
 		on t.order_MarkerListUkey=s.order_MarkerListUkey and t.sizecode=s.sizecode
 		when matched then 
 			update set
@@ -801,7 +801,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		--------Order_ArtWork-----------------
 		Merge Production.dbo.Order_ArtWork as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_ArtWork a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_ArtWork a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.ukey=s.ukey	
 		when matched then 
 			update set
@@ -830,7 +830,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		---------Order_EachCons--------------------Each Cons
 		Merge Production.dbo.Order_EachCons as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.ukey=s.ukey	
 		when matched then 
 			update set 
@@ -876,7 +876,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		--------Order_EachCons_SizeQty----------------Each cons - Size & Qty
 		Merge Production.dbo.Order_EachCons_SizeQty as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_SizeQty a inner join #Torder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_SizeQty a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
 		on t.Order_EachConsUkey=s.Order_EachConsUkey and t.sizecode=s.sizecode	
 		when matched then 
 			update set 
@@ -891,7 +891,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		-------Order_EachCons_Color--------------------Each cons - 用量展開
 		Merge Production.dbo.Order_EachCons_Color as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_Color a inner join #Torder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_Color a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
 		on t.Ukey=s.Ukey	
 		when matched then 
 			update set 
@@ -913,7 +913,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 		
 		---------Order_EachCons_Color_Article-------Each cons - 用量展開明細
 		Merge Production.dbo.Order_EachCons_Color_Article as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_Color_Article a inner join #Torder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_Color_Article a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
 		on t.Ukey=s.Ukey	
 		when matched then 
 			update set 
@@ -934,7 +934,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		----------Order_EachCons_PatternPanel---------------PatternPanel
 			Merge Production.dbo.Order_EachCons_PatternPanel as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_PatternPanel a inner join #Torder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_PatternPanel a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
 		on t.PatternPanel=s.PatternPanel and t.Order_EachConsUkey=s.Order_EachConsUkey and t.LectraCode=s.LectraCode
 		When matched then 
 			update set 
@@ -955,7 +955,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 		
 		------------Order_Article----------------------Art
 		Merge Production.dbo.Order_Article as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_Article a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_Article a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.article=s.article
 		when matched then 
 			update set 
@@ -970,7 +970,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 		-----------Order_BOA_KeyWord---------------------Bill of Other - Key word
 
 		Merge Production.dbo.Order_BOA_KeyWord as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_KeyWord a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_KeyWord a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.ukey=s.ukey
 		when matched then 
 			update set 
@@ -987,7 +987,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		------------Order_BOA_CustCD----------Bill of Other - 用量展開
 		Merge Production.dbo.Order_BOA_CustCD as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_CustCD a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_BOA_CustCD a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.Order_BOAUkey=s.Order_BOAUkey and t.custcdid=s.custcdid and t.refno=s.refno
 		when matched then 
 			update set 
@@ -1007,7 +1007,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		-----------------Order_PFHis-----------Pull forward歷史記錄
 		Merge Production.dbo.Order_PFHis as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_PFHis a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_PFHis a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.Ukey=s.Ukey
 		when matched then 
 			update set 
@@ -1025,7 +1025,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			delete;
 		----------------Order_QtyCTN------------Qty breakdown per Carton
 		Merge Production.dbo.Order_QtyCTN as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_QtyCTN a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.Order_QtyCTN a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.article=s.article and t.sizecode=s.sizecode
 		when matched then 
 			update set 
@@ -1044,7 +1044,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		--------------------MNOder-------------------------M/NOtice
 		Merge Production.dbo.MNOrder as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.MNOrder a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id
 		when matched then 
 			update set 
@@ -1079,7 +1079,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 		
 		----------------MNOrder_Qty---------------------------M/NOtice Qty breakdown
 		Merge Production.dbo.MNOrder_Qty as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_Qty a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.MNOrder_Qty a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.article=s.article and t.sizecode=s.sizecode
 		when matched then 
 			update set 
@@ -1098,7 +1098,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		--------------MNOrder_Color---------------------M/NOtice 單-Color Description
 		Merge Production.dbo.MNOrder_Color as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_Color a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.MNOrder_Color a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.colorid=s.colorid and t.seqno=s.seqno
 		when matched then 
 			update set 
@@ -1114,7 +1114,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		--------------MNOrder_SizeCode-----------------M/NOtice-尺寸表 Size Spec(存尺寸碼)
 		Merge Production.dbo.MNOrder_SizeCode as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_SizeCode a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.MNOrder_SizeCode a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.SizeCode=s.SizeCode 
 		when matched then 
 			update set 
@@ -1128,7 +1128,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		--------------MNOrder_SizeItem-----------------M/NOtice-尺寸表 Size Spec(存量法資料)
 		Merge Production.dbo.MNOrder_SizeItem as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_SizeItem a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.MNOrder_SizeItem a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.SizeItem=s.SizeItem 
 		when matched then 
 			update set 
@@ -1143,7 +1143,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		--------------MNOrder_SizeSpec-----------------M/NOtice-尺寸表 Size Spec(存尺寸碼)
 		Merge Production.dbo.MNOrder_SizeSpec as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_SizeSpec a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.MNOrder_SizeSpec a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.SizeItem=s.SizeItem and t.SizeCode=s.SizeCode and t.ukey=s.ukey
 		when matched then 
 			update set 
@@ -1157,7 +1157,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 		--------------MNOrder_ColorCombo-----------------M/NOtice-Color Comb. (主料-配色表)
 
 		Merge Production.dbo.MNOrder_ColorCombo as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_ColorCombo a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.MNOrder_ColorCombo a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.Article=s.Article and t.LectraCode=s.LectraCode
 		when matched then 
 			update set 
@@ -1172,7 +1172,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		--------------MNOrder_FabricCode-----------------M/NOtice-配色表 Color Comb. (主料-部位vs布別vsQT)
 		Merge Production.dbo.MNOrder_FabricCode as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_FabricCode a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.MNOrder_FabricCode a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.LectraCode=s.LectraCode
 		when matched then 
 			update set 
@@ -1186,7 +1186,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		--------------MNOrder_BOF-----------------M/NOtice-Fabric
 		Merge Production.dbo.MNOrder_BOF as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_BOF a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.MNOrder_BOF a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id=s.id and t.FabricCode=s.FabricCode
 		when matched then 
 			update set 
@@ -1204,7 +1204,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 			--------------MNOrder_BOA-----------------M/NOtice-Fabric
 		Merge Production.dbo.MNOrder_BOA as t
-		Using (select a.* from Trade_To_Pms.dbo.MNOrder_BOA a inner join #TOrder b on a.id=b.id) as s
+		Using (select a.* from Trade_To_Pms.dbo.MNOrder_BOA a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.ukey=s.ukey
 		when matched then 
 			update set 
@@ -1236,7 +1236,7 @@ declare @Odate_e datetime = (SELECT TOP 1 DateEnd FROM Trade_To_Pms.dbo.DateInfo
 
 
 --32246
-select * into #tmpOrders from Production.dbo.Orders a
+select * into #tmpOrders from Production.dbo.Orders a WITH (NOLOCK)
 where (
 a.BuyerDelivery between @Odate_s and @Odate_e
 or a.SciDelivery between @Odate_s and @Odate_e)

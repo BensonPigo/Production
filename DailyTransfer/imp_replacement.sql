@@ -4,7 +4,7 @@
 -- Create date: <2016/08/19>
 -- Description:	<import Replacement>
 -- =============================================
-CREATE PROCEDURE [dbo].[imp_Replacement]
+Alter PROCEDURE [dbo].[imp_Replacement]
 	
 AS
 BEGIN
@@ -16,7 +16,7 @@ BEGIN
 
 	--Merge Replace1
 	Merge Production.dbo.ReplacementReport as t
-	Using (select * from Trade_To_Pms.dbo.ReplacementReport where factoryid in (select id from @Sayfty))as s
+	Using (select * from Trade_To_Pms.dbo.ReplacementReport WITH (NOLOCK) where factoryid in (select id from @Sayfty))as s
 	on t.id=s.id 
 		When matched and t.TPECFMDate <> s.TPECFMDate then
 		update set
@@ -28,7 +28,7 @@ BEGIN
 
 	--Merge Replace2
 	Merge Production.dbo.ReplacementReport_Detail as t
-	Using (select * from Trade_To_Pms.dbo.ReplacementReport_Detail where id in (select id from @tReplace)) as s
+	Using (select * from Trade_To_Pms.dbo.ReplacementReport_Detail WITH (NOLOCK) where id in (select id from @tReplace)) as s
 	on t.ukey=s.ukey
 		when matched then
 		update set

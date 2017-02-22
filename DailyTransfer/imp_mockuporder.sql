@@ -5,22 +5,22 @@
 -- Create date: <2016/08/24>
 -- Description:	<import MockupOrder>
 -- =============================================
-CREATE PROCEDURE [dbo].[imp_MockupOrder]
+Alter PROCEDURE [dbo].[imp_MockupOrder]
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	declare @oldDate date = (select max(UpdateDate) from Production.dbo.OrderComparisonList) --上次匯入的最後日期
+	declare @oldDate date = (select max(UpdateDate) from Production.dbo.OrderComparisonList WITH (NOLOCK)) --上次匯入的最後日期
 
 	declare @Sayfty table(id varchar(10)) --工廠代碼
 	insert @Sayfty select id from Production.dbo.Factory
 
 	declare @dToDay date = CONVERT(date, GETDATE()) --今天日期
-	declare @Odate_s date  = (select DateStart from Trade_To_Pms.dbo.DateInfo where name='MockupOrder')
+	declare @Odate_s date  = (select DateStart from Trade_To_Pms.dbo.DateInfo WITH (NOLOCK) where name='MockupOrder')
 			
 
 		---------------新增 Temp MockupOrder ----------------------------
-		select * into #tempMO from Trade_To_Pms.dbo.MockupOrder a
+		select * into #tempMO from Trade_To_Pms.dbo.MockupOrder a WITH (NOLOCK)
 		where a.FactoryID in (select id from @Sayfty)
 		--新增欄位FTY_Group
 		ALTER TABLE  #tempMO ADD FTY_Group varchar(8)
@@ -91,7 +91,7 @@ BEGIN
 		Using (select a.*,iif(a.qty <> b.qty,1,0) as diffQty,iif(a.styleid <> b.styleid,1,0) as diffStyle, iif(a.SCIDelivery <> b.SCIDelivery,1,0) as diffScid,
 			b.Qty as Pqty, b.SCIDelivery as Pscidlv, b.styleid as Pstyle
 			from  #tempMO  a
-			inner join Production.dbo.MockupOrder b on a.id=b.id		
+			inner join Production.dbo.MockupOrder b WITH (NOLOCK) on a.id=b.id		
 			where (a.qty <> b.qty or a.styleid <> b.styleid or a.SCIDelivery <> b.SCIDelivery)
 			and a.id not in (select id from @mockT where isInsert=1)
 			) as s
@@ -114,8 +114,8 @@ BEGIN
 	-----------------MockupOrder again------------------------
 	
 	Merge Production.dbo.OrderComparisonList as t
-	Using (select a.*,b.factoryid as Tfactoryid from Production.dbo.MockupOrder a 
-		inner join Trade_To_Pms.dbo.MockupOrder b on a.id=b.id
+	Using (select a.*,b.factoryid as Tfactoryid from Production.dbo.MockupOrder a  WITH (NOLOCK)
+		inner join Trade_To_Pms.dbo.MockupOrder b WITH (NOLOCK) on a.id=b.id
 		where a.SCIDelivery >=@Odate_s
 		and b.factoryID in (select id from @Sayfty)) as s
 	on t.orderid=s.id and t.factoryid=s.factoryid and t.updateDate = @dToDay

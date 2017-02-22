@@ -3,7 +3,7 @@
 -- Create date: 20160903
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE imp_Inv
+Alter PROCEDURE imp_Inv
 	-- Add the parameters for the stored procedure here
 	
 AS
@@ -142,11 +142,11 @@ select
       ,EditDate
       ,ETA
 	  ,SCIRefno
-	  , iif( (SELECT MDivisionID FROM Production.dbo.SCIFty WHERE ID= A.FactoryID ) is null,'',(SELECT MDivisionID FROM Production.dbo.SCIFty WHERE ID= A.FactoryID ))
+	  , iif( (SELECT MDivisionID FROM Production.dbo.SCIFty WITH (NOLOCK) WHERE ID= A.FactoryID ) is null,'',(SELECT MDivisionID FROM Production.dbo.SCIFty WITH (NOLOCK) WHERE ID= A.FactoryID ))
 from (
 select [SameNo]= ROW_NUMBER() over (partition by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId order by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId)
-,b.* from Trade_To_Pms.dbo.Inventory as b
-where not exists(select distinct POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId from Production.dbo.Inventory as a where a.POID=b.POID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2 and a.FactoryID=iif(B.FactoryID is null,'',B.FactoryID)
+,b.* from Trade_To_Pms.dbo.Inventory as b WITH (NOLOCK)
+where not exists(select distinct POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId from Production.dbo.Inventory as a WITH (NOLOCK) where a.POID=b.POID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2 and a.FactoryID=iif(B.FactoryID is null,'',B.FactoryID)
 and a.UnitID=b.UnitID and a.ProjectID=b.ProjectID and a.InventoryRefnoId=b.InventoryRefnoId)) as a
 where sameno=1
 
@@ -212,8 +212,8 @@ select
       ,ProdID_Old
       ,AddName
       ,AddDate
-from Trade_To_Pms.dbo.InventoryRefno as b
-where not exists(select id from Production.dbo.InventoryRefno as a where a.id = b.id)
+from Trade_To_Pms.dbo.InventoryRefno as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.InventoryRefno as a WITH (NOLOCK) where a.id = b.id)
 
 --Invtrans
 ----------------------刪除主TABLE多的資料
@@ -398,9 +398,9 @@ select
       ,Seq70PoID
       ,Seq70Seq1
       ,Seq70Seq2
-from Trade_To_Pms.dbo.Invtrans as b
-left JOIN Production.dbo.SCIFty c on b.TransferFactory=c.ID
-where not exists(select id from Production.dbo.Invtrans  as a where a.id = b.id  and a.Ukey = b.Ukey)
+from Trade_To_Pms.dbo.Invtrans as b WITH (NOLOCK)
+left JOIN Production.dbo.SCIFty c WITH (NOLOCK) on b.TransferFactory=c.ID
+where not exists(select id from Production.dbo.Invtrans  as a WITH (NOLOCK) where a.id = b.id  and a.Ukey = b.Ukey)
 AND b.Confirmed=1
 --InReason  InvtransReason
 
@@ -458,8 +458,8 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-from Trade_To_Pms.dbo.InvtransReason as b
-where not exists(select id from Production.dbo.InvtransReason as a where a.id = b.id)
+from Trade_To_Pms.dbo.InvtransReason as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.InvtransReason as a WITH (NOLOCK) where a.id = b.id)
 
 
 

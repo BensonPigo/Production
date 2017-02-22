@@ -3,13 +3,13 @@
 -- Create date: <2016/11/08>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE  Update_LockDate	
+Alter PROCEDURE  Update_LockDate	
 AS
 BEGIN
 
-declare @Lockdate date = (select sewlock from Trade_To_Pms.dbo.TradeSystem)
+declare @Lockdate date = (select sewlock from Trade_To_Pms.dbo.TradeSystem WITH (NOLOCK))
 
-declare @PullOutLock date = (select PullOutLock from Trade_To_Pms.dbo.TradeSystem)
+declare @PullOutLock date = (select PullOutLock from Trade_To_Pms.dbo.TradeSystem WITH (NOLOCK))
 
 
 -- SewingOutput/Cutting

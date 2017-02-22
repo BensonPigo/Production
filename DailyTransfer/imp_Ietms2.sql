@@ -5,7 +5,7 @@
 -- Create date:20160903
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE [dbo].[imp_Ietms2]
+Alter PROCEDURE [dbo].[imp_Ietms2]
 	
 AS
 BEGIN
@@ -134,8 +134,8 @@ ID
 ,EditName
 ,EditDate
 
-from Trade_To_Pms.dbo.Operation as b
-where not exists(select id from Production.dbo.Operation as a where a.id = b.id)
+from Trade_To_Pms.dbo.Operation as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Operation as a WITH (NOLOCK) where a.id = b.id)
 
 --MACHTYPE
 --MachineType
@@ -231,8 +231,8 @@ ID
 ,EditName
 ,EditDate
 
-from Trade_To_Pms.dbo.MachineType as b
-where not exists(select id from Production.dbo.MachineType as a where a.id = b.id)
+from Trade_To_Pms.dbo.MachineType as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.MachineType as a WITH (NOLOCK) where a.id = b.id)
 
 --ATTACH
 --MOLD
@@ -279,15 +279,15 @@ ID
 ,EditName
 ,EditDate
 
-from Trade_To_Pms.dbo.Mold as b
-where not exists(select id from Production.dbo.Mold as a where a.id = b.id)
+from Trade_To_Pms.dbo.Mold as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Mold as a WITH (NOLOCK) where a.id = b.id)
 --aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 --SMNotice
 --SMNotice
 
 --Table:IESelectCode--
 merge IESelectCode t
-using (select * from trade_to_pms.dbo.IESelectCode) s
+using (select * from trade_to_pms.dbo.IESelectCode WITH (NOLOCK)) s
 on t.id = s.id and t.type = s.type
 when matched then
 	update set 

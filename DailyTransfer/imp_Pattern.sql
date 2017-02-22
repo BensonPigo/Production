@@ -4,7 +4,7 @@
 -- Create date: 20160903
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE imp_Pattern
+Alter PROCEDURE imp_Pattern
 	-- Add the parameters for the stored procedure here
 	
 AS
@@ -97,8 +97,8 @@ ID
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.Pattern as b
-where not exists(select id from Production.dbo.Pattern as a where a.id = b.id and a.Version=b.Version)
+from Trade_To_Pms.dbo.Pattern as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Pattern as a WITH (NOLOCK) where a.id = b.id and a.Version=b.Version)
 
 --表身
 --Pattern_GL
@@ -154,8 +154,8 @@ select
       ,DV
       ,Remarks
 
-from Trade_To_Pms.dbo.Pattern_GL as b inner join Trade_To_Pms.dbo.Pattern as c on b.ID=c.ID and b.Version=c.Version
-where not exists(select id from Production.dbo.Pattern_GL as a where a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ)
+from Trade_To_Pms.dbo.Pattern_GL as b WITH (NOLOCK) inner join Trade_To_Pms.dbo.Pattern as c WITH (NOLOCK) on b.ID=c.ID and b.Version=c.Version
+where not exists(select id from Production.dbo.Pattern_GL as a WITH (NOLOCK) where a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ)
 
 --表身Pattern_GL_LectraCode
 
@@ -206,8 +206,8 @@ select
       ,PatternPanel
       ,FabricCode
 
-from Trade_To_Pms.dbo.Pattern_GL_LectraCode as b inner join Trade_To_Pms.dbo.Pattern as c on b.ID=c.ID and b.Version=c.Version
-where not exists(select id from Production.dbo.Pattern_GL_LectraCode as a where  a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ and a.ArticleGroup=b.ArticleGroup)
+from Trade_To_Pms.dbo.Pattern_GL_LectraCode as b WITH (NOLOCK) inner join Trade_To_Pms.dbo.Pattern as c WITH (NOLOCK) on b.ID=c.ID and b.Version=c.Version
+where not exists(select id from Production.dbo.Pattern_GL_LectraCode as a WITH (NOLOCK) where  a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ and a.ArticleGroup=b.ArticleGroup)
 
 
 --表身Pattern_GL_Article
@@ -266,9 +266,9 @@ select
       ,b.EditName
       ,b.EditDate
 
-from Trade_To_Pms.dbo.Pattern_GL_Article as b
-inner join Trade_To_Pms.dbo.Pattern as c on b.ID=c.ID and b.Version=c.Version
-where not exists(select id from Production.dbo.Pattern_GL_Article as a where a.id = b.id and a.SEQ=b.SEQ and a.Version=b.Version and a.ArticleGroup=b.ArticleGroup and a.Article=b.Article)
+from Trade_To_Pms.dbo.Pattern_GL_Article as b WITH (NOLOCK)
+inner join Trade_To_Pms.dbo.Pattern as c WITH (NOLOCK) on b.ID=c.ID and b.Version=c.Version
+where not exists(select id from Production.dbo.Pattern_GL_Article as a WITH (NOLOCK) where a.id = b.id and a.SEQ=b.SEQ and a.Version=b.Version and a.ArticleGroup=b.ArticleGroup and a.Article=b.Article)
 
 
 

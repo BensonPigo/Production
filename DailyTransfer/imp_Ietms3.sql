@@ -4,7 +4,7 @@
 -- Create date:20160903
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE [dbo].[imp_Ietms3]
+Alter PROCEDURE [dbo].[imp_Ietms3]
 	
 AS
 BEGIN
@@ -93,8 +93,8 @@ ID
 ,EditName
 ,EditDate
 
-from Trade_To_Pms.dbo.SMNotice as b
-where not exists(select id from Production.dbo.SMNotice as a where a.id = b.id)
+from Trade_To_Pms.dbo.SMNotice as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.SMNotice as a WITH (NOLOCK) where a.id = b.id)
 
 --MarkerSend
 --Marker_Send
@@ -147,8 +147,8 @@ ID
 ,AddName
 ,AddDate
  
-from Trade_To_Pms.dbo.Marker_Send as b
-where not exists(select 1 from Production.dbo.Marker_Send as a where a.id = b.id and a.SEQ=b.SEQ and a.MarkerVersion = b.MarkerVersion)
+from Trade_To_Pms.dbo.Marker_Send as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Marker_Send as a WITH (NOLOCK) where a.id = b.id and a.SEQ=b.SEQ and a.MarkerVersion = b.MarkerVersion)
 
 END
 

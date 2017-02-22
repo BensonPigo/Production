@@ -4,7 +4,7 @@
 -- Create date: 20160903
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE imp_Prokit
+Alter PROCEDURE imp_Prokit
 	-- Add the parameters for the stored procedure here
 	
 AS
@@ -123,8 +123,8 @@ select
       ,Reasonid
       ,StyleCUkey1_Old
 
-from Trade_To_Pms.dbo.Style_ProductionKits as b
-where not exists(select Ukey from Production.dbo.Style_ProductionKits as a where a.Ukey = b.Ukey)
+from Trade_To_Pms.dbo.Style_ProductionKits as b WITH (NOLOCK)
+where not exists(select Ukey from Production.dbo.Style_ProductionKits as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 
 
 

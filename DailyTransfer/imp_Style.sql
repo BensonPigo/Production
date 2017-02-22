@@ -4,7 +4,7 @@
 -- Create date: 20160903
 -- Description:	<Description,,>
 -- =============================================
-Create PROCEDURE imp_Style 
+Alter PROCEDURE imp_Style 
 	-- Add the parameters for the stored procedure here
 
 AS
@@ -49,8 +49,8 @@ StyleUkey
       ,AddDate
       ,EditName
       ,EditDate
-from Trade_To_Pms.dbo.Style_Location as b
-where not exists(select 1 from Production.dbo.Style_Location as a where a.StyleUkey=b.StyleUkey AND a.Location	= b.Location)
+from Trade_To_Pms.dbo.Style_Location as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_Location as a WITH (NOLOCK) where a.StyleUkey=b.StyleUkey AND a.Location	= b.Location)
 
 --  STYLE
 --PMS多的欄位
@@ -308,9 +308,9 @@ ID
 ,ModularParent
 ,CPUAdjusted
 ,0
-from Trade_To_Pms.dbo.Style as b
-where not exists(select id from Production.dbo.Style as a where a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID and a.LocalStyle=1)
-AND not exists(select id from Production.dbo.Style as a where a.Ukey=b.Ukey )
+from Trade_To_Pms.dbo.Style as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID and a.LocalStyle=1)
+AND not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.Ukey=b.Ukey )
 
 
 --Style4
@@ -445,8 +445,8 @@ StyleUkey
 ,TMS
 ,Ukey
 
-from Trade_To_Pms.dbo.Style_Artwork as b
-where not exists(select 1 from Production.dbo.Style_Artwork as a where a.TradeUkey = b.Ukey)
+from Trade_To_Pms.dbo.Style_Artwork as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_Artwork as a WITH (NOLOCK) where a.TradeUkey = b.Ukey)
 
 
 --STYLE1
@@ -493,8 +493,8 @@ StyleUkey
 ,EditDate
 ,UKey
 
-from Trade_To_Pms.dbo.Style_QtyCTN as b
-where not exists(select 1 from Production.dbo.Style_QtyCTN as a where a.UKey = b.UKey)
+from Trade_To_Pms.dbo.Style_QtyCTN as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_QtyCTN as a WITH (NOLOCK) where a.UKey = b.UKey)
 
 --STYLE5
 --Style_SizeCode(需再確認ukey欄位)
@@ -531,8 +531,8 @@ StyleUkey
 ,SizeCode
 ,UKey
 
-from Trade_To_Pms.dbo.Style_SizeCode as b
-where not exists(select 1 from Production.dbo.Style_SizeCode as a where a.Ukey = b.Ukey)
+from Trade_To_Pms.dbo.Style_SizeCode as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_SizeCode as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 and b.SizeCode is not null
 --STYLE52
 --STYLE_SICESPEC(需再確認ukey欄位)
@@ -569,8 +569,8 @@ StyleUkey
 ,SizeSpec
 ,UKey
 
-from Trade_To_Pms.dbo.Style_SizeSpec as b
-where not exists(select 1 from Production.dbo.Style_SizeSpec as a where a.Ukey = b.Ukey)
+from Trade_To_Pms.dbo.Style_SizeSpec as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_SizeSpec as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 --STYLEG
 --STYLE_ARTICLE
 ----------------------刪除主TABLE多的資料
@@ -607,8 +607,8 @@ StyleUkey
 ,TissuePaper
 ,ArticleName
 ,Contents
-from Trade_To_Pms.dbo.Style_Article as b
-where not exists(select 1 from Production.dbo.Style_Article as a where a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article)
+from Trade_To_Pms.dbo.Style_Article as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_Article as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article)
 --STYLEA
 --Style_MarkerList
 ----------------------刪除主TABLE多的資料
@@ -723,8 +723,8 @@ select
 ,EditName
 ,EditDate
 
-from Trade_To_Pms.dbo.Style_MarkerList as b
-where not exists(select 1 from Production.dbo.Style_MarkerList as a where a.Ukey = b.Ukey)
+from Trade_To_Pms.dbo.Style_MarkerList as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_MarkerList as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 
 -----------------Style_MarkerList_Article-------------------
 
@@ -874,8 +874,8 @@ StyleUkey
 ,EditDate
 ,Style_BOFUkey
 ,QTWidth
-from Trade_To_Pms.dbo.Style_FabricCode as b
-where not exists(select 1 from Production.dbo.Style_FabricCode as a where a.StyleUkey = b.StyleUkey AND a.LectraCode	= b.LectraCode)
+from Trade_To_Pms.dbo.Style_FabricCode as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_FabricCode as a WITH (NOLOCK) where a.StyleUkey = b.StyleUkey AND a.LectraCode	= b.LectraCode)
 --STYLE8
 --Style_BOF
 ----------------------刪除主TABLE多的資料
@@ -937,8 +937,8 @@ StyleUkey
 ,VRepeat
 ,OneTwoWay 
 ,HorizontalCutting
-from Trade_To_Pms.dbo.Style_BOF as b
-where not exists(select 1 from Production.dbo.Style_BOF as a where a.Ukey = b.Ukey)
+from Trade_To_Pms.dbo.Style_BOF as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_BOF as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 --STYLE9
 --Style_BOA
 --Pms多的欄位
@@ -1033,8 +1033,8 @@ StyleUkey
 ,EditName
 ,EditDate
 
-from Trade_To_Pms.dbo.Style_BOA as b
-where not exists(select 1 from Production.dbo.Style_BOA as a where a.Ukey = b.Ukey)
+from Trade_To_Pms.dbo.Style_BOA as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 
 -----------------------[Style_BOA_CustCD]-----------------------
 
@@ -1151,7 +1151,7 @@ select
 ,EditName
 ,EditDate
 from Trade_To_Pms.dbo.Style_ColorCombo as b
-where not exists(select 1 from Production.dbo.Style_ColorCombo as a where a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.LectraCode	= b.LectraCode)
+where not exists(select 1 from Production.dbo.Style_ColorCombo as a WITH (NOLOCK) where a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.LectraCode	= b.LectraCode)
 --STYLEJ
 --Style_HSCode
 ----------------------刪除主TABLE多的資料
@@ -1212,8 +1212,8 @@ StyleUkey
 ,EditName
 ,EditDate
 
-from Trade_To_Pms.dbo.Style_HSCode as b
-where not exists(select 1 from Production.dbo.Style_HSCode as a where a.UKEY = b.UKEY)
+from Trade_To_Pms.dbo.Style_HSCode as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_HSCode as a WITH (NOLOCK) where a.UKEY = b.UKEY)
 --STYLEMI
 --Style_MiAdidasColorCombo
 ----------------------刪除主TABLE多的資料
@@ -1258,8 +1258,8 @@ StyleUkey
 ,EditDate
 ,Ukey_old
 
-from Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b
-where not exists(select 1 from Production.dbo.Style_MiAdidasColorCombo as a where a.StyleUkey	= b.StyleUkey AND a.LectraCode	= b.LectraCode AND a.Ukey_old	= b.Ukey_old)
+from Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_MiAdidasColorCombo as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.LectraCode	= b.LectraCode AND a.Ukey_old	= b.Ukey_old)
 --STYLELT
 --Style_GMTLTFty
 ----------------------刪除主TABLE多的資料
@@ -1299,8 +1299,8 @@ StyleUkey
 ,AddDate
 ,EditName
 ,EditDate
-from Trade_To_Pms.dbo.Style_GMTLTFty as b
-where not exists(select 1 from Production.dbo.Style_GMTLTFty as a where a.StyleUkey	= b.StyleUkey AND a.FactoryID	= b.FactoryID)
+from Trade_To_Pms.dbo.Style_GMTLTFty as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_GMTLTFty as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.FactoryID	= b.FactoryID)
 --STYLEK
 --Style_SimilarStyle
 ----------------------刪除主TABLE多的資料
@@ -1358,8 +1358,8 @@ MasterBrandID
 ,EditName
 ,EditDate
 
-from Trade_To_Pms.dbo.Style_SimilarStyle as b
-where not exists(select 1 from Production.dbo.Style_SimilarStyle as a where a.MasterStyleUkey	= b.MasterStyleUkey AND a.ChildrenStyleUkey	= b.ChildrenStyleUkey)
+from Trade_To_Pms.dbo.Style_SimilarStyle as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_SimilarStyle as a WITH (NOLOCK) where a.MasterStyleUkey	= b.MasterStyleUkey AND a.ChildrenStyleUkey	= b.ChildrenStyleUkey)
 
 
 
@@ -1479,10 +1479,10 @@ b.Ukey
 --,SendToQA
 --,QAReceived
 ,b.StyleCUkey1_Old
-from Trade_To_Pms.dbo.Style_ProductionKits as b
-left join Trade_To_Pms.dbo.Factory as c ON c.ID=b.FactoryID
-where not exists(select 1 from Production.dbo.Style_ProductionKits as a where a.ukey=b.ukey AND a.FactoryID=b.FactoryID)
-	and b.FactoryID in (select id from Production.dbo.Factory)
+from Trade_To_Pms.dbo.Style_ProductionKits as b WITH (NOLOCK)
+left join Trade_To_Pms.dbo.Factory as c WITH (NOLOCK) ON c.ID=b.FactoryID
+where not exists(select 1 from Production.dbo.Style_ProductionKits as a WITH (NOLOCK) where a.ukey=b.ukey AND a.FactoryID=b.FactoryID)
+	and b.FactoryID in (select id from Production.dbo.Factory WITH (NOLOCK))
 
 
 

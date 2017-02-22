@@ -4,7 +4,7 @@
 -- Create date: 20160903
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE [dbo].[imp_Invadj]
+Alter PROCEDURE [dbo].[imp_Invadj]
 	-- Add the parameters for the stored procedure here
 
 AS
@@ -84,8 +84,8 @@ select
       ,b.EditDate
       ,PriceCheckID
 
-from Trade_To_Pms.dbo.InvAdjust as b 
-inner join Production.dbo.Factory c on b.FactoryID=c.ID
+from Trade_To_Pms.dbo.InvAdjust as b WITH (NOLOCK)
+inner join Production.dbo.Factory c WITH (NOLOCK) on b.FactoryID=c.ID
 where not exists(select id from Production.dbo.InvAdjust as a where a.id = b.id)
 
 --InvAdjust_Qty
@@ -113,8 +113,8 @@ select
       ,b.Price
       ,b.NewItem
       ,b.DiffQty
-from Trade_To_Pms.dbo.InvAdjust_Qty as b inner join Trade_To_Pms.dbo.InvAdjust as c on b.ID=c.ID 
-where not exists(select id from Production.dbo.InvAdjust_Qty as a where a.id = b.id and a.Article=b.Article and a.SizeCode = b.SizeCode)
+from Trade_To_Pms.dbo.InvAdjust_Qty as b WITH (NOLOCK) inner join Trade_To_Pms.dbo.InvAdjust as c WITH (NOLOCK) on b.ID=c.ID 
+where not exists(select id from Production.dbo.InvAdjust_Qty as a WITH (NOLOCK) where a.id = b.id and a.Article=b.Article and a.SizeCode = b.SizeCode)
 
 --pullout2
 --select SUM(ShipQty) from Production.dbo.Pullout_Detail A inner join Trade_To_Pms.dbo.InvAdjust B ON A.OrderID=B.OrderID
@@ -124,8 +124,8 @@ where not exists(select id from Production.dbo.InvAdjust_Qty as a where a.id = b
 
 SELECT MAX(PulloutDate) as PulloutDate --,a.ID
 INTO #TMPPullout2Cdate
-FROM  Production.dbo.Pullout_Detail A
-inner join Trade_To_Pms.dbo.InvAdjust B ON A.OrderID=B.OrderID AND ShipQty <> 0
+FROM  Production.dbo.Pullout_Detail A WITH (NOLOCK)
+inner join Trade_To_Pms.dbo.InvAdjust B WITH (NOLOCK) ON A.OrderID=B.OrderID AND ShipQty <> 0
 
 
 UPDATE a

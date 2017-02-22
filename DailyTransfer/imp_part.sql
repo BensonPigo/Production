@@ -3,15 +3,15 @@
 -- Create date: <2016/08/22>
 -- Description:	<import part>
 -- =============================================
-CREATE PROCEDURE [dbo].[imp_part]
+Alter PROCEDURE [dbo].[imp_part]
 AS
 BEGIN
 
 	---------- Parts, type='P'---------------------
 	Merge Machine.dbo.Part as t
-	Using (select * from Trade_To_Pms.dbo.Part where type='P' and refno <>'EM-DBXK5 #8'
+	Using (select * from Trade_To_Pms.dbo.Part WITH (NOLOCK) where type='P' and refno <>'EM-DBXK5 #8'
 union all
-select top 1 * from Trade_To_Pms.dbo.Part where type='P' and refno ='EM-DBXK5 #8')as s
+select top 1 * from Trade_To_Pms.dbo.Part WITH (NOLOCK) where type='P' and refno ='EM-DBXK5 #8')as s
 	on t.id=s.Refno --and t.purchasefrom='T'
 	when matched then 
 	update set 
@@ -144,7 +144,7 @@ s.EditDate
 
 	------------------Machine type=M ------------------------
 	Merge Machine.dbo.Machine as t
-	Using (select * from Trade_TO_Pms.dbo.Part where type='M') as s
+	Using (select * from Trade_TO_Pms.dbo.Part WITH (NOLOCK) where type='M') as s
 	on t.id=s.refno
 		when matched then
 		update set	
@@ -183,7 +183,7 @@ s.EditDate
 	-----------------PartQuot , type='P'-----------------------------
 
 	Merge [Machine].[dbo].[PartQuot] as t
-	Using (select distinct a.* from [Trade_To_Pms].[dbo].[MmsQuot] a  inner join  [Trade_To_Pms].[dbo].Part b
+	Using (select distinct a.* from [Trade_To_Pms].[dbo].[MmsQuot] a WITH (NOLOCK) inner join  [Trade_To_Pms].[dbo].Part b WITH (NOLOCK)
 	on a.refno=b.refno where a.type='P')	 as s
 	on t.id=s.refno and  t.ukey=s.id --and t.purchaseFrom='T' 
 	when matched then
@@ -223,7 +223,7 @@ s.EditDate
 		s.mmsBrandID,
 		S.IsDefault
 		)
-	when not matched by source and t.purchaseFrom='T' and t.id in (select refno from [Trade_To_Pms].[dbo].Part)  then
+	when not matched by source and t.purchaseFrom='T' and t.id in (select refno from [Trade_To_Pms].[dbo].Part WITH (NOLOCK))  then
 		delete;
 
 		
@@ -231,7 +231,7 @@ s.EditDate
 
 	---------------PartBrand-------------------------------
 	Merge Machine.dbo.PartBrand as t
-	Using (select * from [Trade_To_Pms].[dbo].[MmsBrand] where type='P') as s
+	Using (select * from [Trade_To_Pms].[dbo].[MmsBrand] WITH (NOLOCK) where type='P') as s
 	on t.id=s.id
 	when matched then 
 		update set
@@ -267,7 +267,7 @@ s.EditDate
 --------------MiscBrand--------------------------------------
 	-- O: Miscellaneous         
 	Merge [Machine].[dbo].[MiscBrand] as t
-	Using (select * from [Trade_To_Pms].[dbo].[MmsBrand] where type='O') as s
+	Using (select * from [Trade_To_Pms].[dbo].[MmsBrand] WITH (NOLOCK) where type='O') as s
 	on t.id=s.id
 	when matched then
 			update set
@@ -303,7 +303,7 @@ s.EditDate
 	---------------MachBrand-----------------------------------
 
 	Merge [Machine].[dbo].[MachineBrand] as t
-	Using (select * from [Trade_To_Pms].[dbo].[MmsBrand] where type='M') as s
+	Using (select * from [Trade_To_Pms].[dbo].[MmsBrand] WITH (NOLOCK) where type='M') as s
 	on t.id=s.id
 	when matched then
 			update set
@@ -367,7 +367,7 @@ s.EditDate
 	declare @T table (id varchar(13))
 
 		Merge Machine.dbo.MachinePO as t
-	Using (select a.*,b.MdivisionID from Trade_To_Pms.DBO.MmsPO a left join Production.dbo.scifty b on a.factoryid = b.id
+	Using (select a.*,b.MdivisionID from Trade_To_Pms.DBO.MmsPO a WITH (NOLOCK) left join Production.dbo.scifty b WITH (NOLOCK) on a.factoryid = b.id
 	 where a.factoryid in (select id from @Sayfty) and type = 'M')  as s
 	on t.id=s.id
 	when matched  then
@@ -422,7 +422,7 @@ update t
 ------------------MachinePO_Detail Type='M'----------------------
 
 	Merge Machine.[dbo].[MachinePO_Detail] as t
-	using (select * from Trade_To_PMS.dbo.MachinePO_Detail a
+	using (select * from Trade_To_PMS.dbo.MachinePO_Detail a WITH (NOLOCK)
 where a.id in (select id from @T)) as s
 	on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
 	when matched then 

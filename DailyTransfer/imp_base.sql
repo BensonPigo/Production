@@ -3,7 +3,7 @@
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE [dbo].[imp_Base]
+Alter PROCEDURE [dbo].[imp_Base]
 	
 AS
 BEGIN
@@ -130,8 +130,8 @@ SELECT ID
       ,EditName
       ,EditDate
 	  ,LossSampleAccessory
-from Trade_To_Pms.dbo.Brand as b
-where not exists(select id from Production.dbo.Brand as a where a.id = b.id)
+from Trade_To_Pms.dbo.Brand as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Brand as a WITH (NOLOCK) where a.id = b.id)
 
 --Season
 --ASeason Season
@@ -181,8 +181,8 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-from Trade_To_Pms.dbo.Season as b
-where not exists(select id from Production.dbo.Season as a where a.id = b.id and a.BrandID = b.BrandID)
+from Trade_To_Pms.dbo.Season as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Season as a WITH (NOLOCK) where a.id = b.id and a.BrandID = b.BrandID)
 
 
 --Supp  Supp
@@ -267,8 +267,8 @@ select
       ,EditName
       ,EditDate
       ,Currencyid
-from Trade_To_Pms.dbo.Supp as b
-where not exists(select id from Production.dbo.Supp as a where a.id = b.id)
+from Trade_To_Pms.dbo.Supp as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Supp as a WITH (NOLOCK) where a.id = b.id)
 
 
 --Ability
@@ -314,8 +314,8 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-from Trade_To_Pms.dbo.CDCode as b
-where not exists(select id from Production.dbo.CDCode as a where a.id = b.id)
+from Trade_To_Pms.dbo.CDCode as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.CDCode as a WITH (NOLOCK) where a.id = b.id)
 
 
 --Country Country
@@ -366,8 +366,8 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-from Trade_To_Pms.dbo.Country as b
-where not exists(select id from Production.dbo.Country as a where a.id = b.id)
+from Trade_To_Pms.dbo.Country as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Country as a WITH (NOLOCK) where a.id = b.id)
 
 
 --Mtltype Mtltype  
@@ -452,8 +452,8 @@ ID
       ,EditDate
 	  ,isTrimCardOther
 
-from Trade_To_Pms.dbo.MtlType as b
-where not exists(select id from Production.dbo.MtlType as a where a.id = b.id)
+from Trade_To_Pms.dbo.MtlType as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.MtlType as a WITH (NOLOCK) where a.id = b.id)
 
 
 --Artworktype Artworktype 
@@ -537,8 +537,8 @@ select
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.ArtworkType as b
-where not exists(select id from Production.dbo.ArtworkType as a where a.id = b.id)
+from Trade_To_Pms.dbo.ArtworkType as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.ArtworkType as a WITH (NOLOCK) where a.id = b.id)
 
 
 
@@ -614,8 +614,8 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-from Trade_To_Pms.dbo.MachineType as b
-where not exists(select id from Production.dbo.MachineType as a where a.id = b.id)
+from Trade_To_Pms.dbo.MachineType as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.MachineType as a WITH (NOLOCK) where a.id = b.id)
 
 
 --CustCD CustCD
@@ -733,8 +733,8 @@ BrandID
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.CustCD as b
-where not exists(select id from Production.dbo.CustCD as a where a.id = b.id and a.BrandID=b.BrandID)
+from Trade_To_Pms.dbo.CustCD as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.CustCD as a WITH (NOLOCK) where a.id = b.id and a.BrandID=b.BrandID)
 
 
 --Reason ReasonType
@@ -798,8 +798,8 @@ select
       ,EditDate
       ,Junk
 
-from Trade_To_Pms.dbo.Reason as b
-where not exists(select id from Production.dbo.Reason as a where a.id = b.id and a.ReasonTypeID = b.ReasonTypeID)
+from Trade_To_Pms.dbo.Reason as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Reason as a WITH (NOLOCK) where a.id = b.id and a.ReasonTypeID = b.ReasonTypeID)
 
 
 --SHIPTerm SHIPTerm
@@ -836,8 +836,8 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-from Trade_To_Pms.dbo.SHIPTerm as b
-where not exists(select id from Production.dbo.SHIPTerm as a where a.id = b.id)
+from Trade_To_Pms.dbo.SHIPTerm as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.SHIPTerm as a WITH (NOLOCK) where a.id = b.id)
 
 --Factory
 --PMS 多的欄位
@@ -914,8 +914,8 @@ select
       ,Month
       ,TMS
 
-from Trade_To_Pms.dbo.Factory_Tms as b
-where not exists(select id from Production.dbo.Factory_Tms as a where a.id = b.id and a.Year=b.Year and a.ArtworkTypeID=b.ArtworkTypeID and a.Month=b.Month)
+from Trade_To_Pms.dbo.Factory_Tms as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Factory_Tms as a WITH (NOLOCK) where a.id = b.id and a.Year=b.Year and a.ArtworkTypeID=b.ArtworkTypeID and a.Month=b.Month)
 
 
 
@@ -983,8 +983,8 @@ ID
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.Factory_BrandDefinition as b
-where not exists(select id from Production.dbo.Factory_BrandDefinition as a where a.id = b.id and a.BrandID=b.BrandID and a.CDCodeID=b.CDCodeID)
+from Trade_To_Pms.dbo.Factory_BrandDefinition as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Factory_BrandDefinition as a WITH (NOLOCK) where a.id = b.id and a.BrandID=b.BrandID and a.CDCodeID=b.CDCodeID)
 
 
 
@@ -1017,8 +1017,8 @@ select
       ,HalfMonth1
       ,HalfMonth2
 
-from Trade_To_Pms.dbo.Factory_WorkHour as b
-where not exists(select id from Production.dbo.Factory_WorkHour as a where a.id = b.id and a.Year=b.Year and a.Month=b.Month)
+from Trade_To_Pms.dbo.Factory_WorkHour as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Factory_WorkHour as a WITH (NOLOCK) where a.id = b.id and a.Year=b.Year and a.Month=b.Month)
 
 
 
@@ -1098,8 +1098,8 @@ select
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.Factory as b
-where not exists(select id from Production.dbo.SCIFty as a where a.id = b.id)
+from Trade_To_Pms.dbo.Factory as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.SCIFty as a WITH (NOLOCK) where a.id = b.id)
 and b.IsSCI=1
 
 --Unit   Unit 
@@ -1155,8 +1155,8 @@ select
 	  ,MiAdidasRound
 	  ,RoundStep
 
-from Trade_To_Pms.dbo.Unit as b
-where not exists(select id from Production.dbo.Unit as a where a.id = b.id)
+from Trade_To_Pms.dbo.Unit as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Unit as a WITH (NOLOCK) where a.id = b.id)
 
 
 --這邊開始用PMS_TEST做測試喔
@@ -1202,8 +1202,8 @@ select
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.Unit_Rate as b
-where not exists(select UnitFrom from Production.dbo.Unit_Rate as a where a.UnitFrom = b.UnitFrom  and a.UnitTo = b.UnitTo)
+from Trade_To_Pms.dbo.Unit_Rate as b WITH (NOLOCK)
+where not exists(select UnitFrom from Production.dbo.Unit_Rate as a WITH (NOLOCK) where a.UnitFrom = b.UnitFrom  and a.UnitTo = b.UnitTo)
 
 
 --TPI_Pass1 
@@ -1234,8 +1234,8 @@ select
       ,Name
       ,ExtNo
       ,EMail
-from Trade_To_Pms.dbo.Pass1 as b
-where not exists(select id from Production.dbo.TPEPass1 as a where a.id = b.id)
+from Trade_To_Pms.dbo.Pass1 as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.TPEPass1 as a WITH (NOLOCK) where a.id = b.id)
 
 --Color  PMS多一個[Ukey]
 --Color
@@ -1285,8 +1285,8 @@ select
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.Color as b
-where not exists(select id from Production.dbo.Color as a where a.id = b.id and a.BrandId = b.BrandId)
+from Trade_To_Pms.dbo.Color as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Color as a WITH (NOLOCK) where a.id = b.id and a.BrandId = b.BrandId)
 
 
 --Currency
@@ -1340,8 +1340,8 @@ ID
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.Currency as b
-where not exists(select id from Production.dbo.Currency as a where a.id = b.id)
+from Trade_To_Pms.dbo.Currency as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Currency as a WITH (NOLOCK) where a.id = b.id)
 
 
 --Fab_Loss
@@ -1402,8 +1402,8 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-from Trade_To_Pms.dbo.LossRateFabric as b
-where not exists(select WeaveTypeID from Production.dbo.LossRateFabric as a where a.WeaveTypeID = b.WeaveTypeID)
+from Trade_To_Pms.dbo.LossRateFabric as b WITH (NOLOCK)
+where not exists(select WeaveTypeID from Production.dbo.LossRateFabric as a WITH (NOLOCK) where a.WeaveTypeID = b.WeaveTypeID)
 --Acc_Loss
 --LossRateAccessory
 --PMS多一個,[Waste] 自己記算
@@ -1448,8 +1448,8 @@ MtltypeId
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.LossRateAccessory as b
-where not exists(select MtltypeId from Production.dbo.LossRateAccessory as a where a.MtltypeId = b.MtltypeId)
+from Trade_To_Pms.dbo.LossRateAccessory as b WITH (NOLOCK)
+where not exists(select MtltypeId from Production.dbo.LossRateAccessory as a WITH (NOLOCK) where a.MtltypeId = b.MtltypeId)
 
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.LossRateAccessory_Limit
@@ -1476,8 +1476,8 @@ select
 	  ,EditName
 	  ,EditDate
 
-from Trade_To_Pms.dbo.LossRateAccessory_Limit as b
-where not exists(select MtltypeId from Production.dbo.LossRateAccessory_Limit as a
+from Trade_To_Pms.dbo.LossRateAccessory_Limit as b WITH (NOLOCK)
+where not exists(select MtltypeId from Production.dbo.LossRateAccessory_Limit as a WITH (NOLOCK)
 				 where a.MtltypeId = b.MtltypeId and a.UsageUnit = b.UsageUnit)
 
 
@@ -1569,8 +1569,8 @@ select
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.Carrier as b
-where not exists(select id from Production.dbo.Carrier as a where a.id = b.id)
+from Trade_To_Pms.dbo.Carrier as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Carrier as a WITH (NOLOCK) where a.id = b.id)
 
 
 
@@ -1645,8 +1645,8 @@ select
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.PayTermAP as b
-where not exists(select id from Production.dbo.PayTermAP as a where a.id = b.id)
+from Trade_To_Pms.dbo.PayTermAP as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.PayTermAP as a WITH (NOLOCK) where a.id = b.id)
 
 
 -----------------PayTermAR 20161209 add
@@ -1774,8 +1774,8 @@ ID
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.MachineGroup as b
-where not exists(select id from Machine.dbo.MachineGroup as a where a.id = b.id)
+from Trade_To_Pms.dbo.MachineGroup as b WITH (NOLOCK)
+where not exists(select id from Machine.dbo.MachineGroup as a WITH (NOLOCK) where a.id = b.id)
 
 
 --Mockup
@@ -1820,8 +1820,8 @@ select
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.Mockup as b
-where not exists(select id from Production.dbo.Mockup as a where a.id = b.id)
+from Trade_To_Pms.dbo.Mockup as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Mockup as a WITH (NOLOCK) where a.id = b.id)
 
 
 --OrderType  不用寫DELETE
@@ -1885,8 +1885,8 @@ select
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.OrderType as b
-where not exists(select id from Production.dbo.OrderType as a where a.id = b.id and a.BrandID =b.BrandID)
+from Trade_To_Pms.dbo.OrderType as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.OrderType as a WITH (NOLOCK) where a.id = b.id and a.BrandID =b.BrandID)
 
 
 --CustPrg
@@ -1931,8 +1931,8 @@ select
       ,EditDate
 	  ,MiAdidas
 
-from Trade_To_Pms.dbo.Program as b
-where not exists(select id from Production.dbo.Program as a where a.id = b.id and a.BrandID = b.BrandID)
+from Trade_To_Pms.dbo.Program as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Program as a WITH (NOLOCK) where a.id = b.id and a.BrandID = b.BrandID)
 
 
 --FabFactor
@@ -1992,8 +1992,8 @@ select
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.MtlFactor as b
-where not exists(select id from Production.dbo.MtlFactor as a where a.id = b.id and a.Type = b.Type)
+from Trade_To_Pms.dbo.MtlFactor as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.MtlFactor as a WITH (NOLOCK) where a.id = b.id and a.Type = b.Type)
 
 
 --Cstrutype
@@ -2038,8 +2038,8 @@ select
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.Construction as b
-where not exists(select id from Production.dbo.Construction as a where a.id = b.id)
+from Trade_To_Pms.dbo.Construction as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Construction as a WITH (NOLOCK) where a.id = b.id)
 
 
 --Port
@@ -2084,8 +2084,8 @@ ID
       ,EditDate
       ,Junk
 
-from Trade_To_Pms.dbo.Port as b
-where not exists(select id from Production.dbo.Port as a where a.id = b.id)
+from Trade_To_Pms.dbo.Port as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Port as a WITH (NOLOCK) where a.id = b.id)
 
 
 
@@ -2126,8 +2126,8 @@ select
       ,EditDate
       ,EditName
 
-from Trade_To_Pms.dbo.FSRCpuCost as b
-where not exists(select ShipperID from Production.dbo.FSRCpuCost as a where a.ShipperID = b.ShipperID)
+from Trade_To_Pms.dbo.FSRCpuCost as b WITH (NOLOCK)
+where not exists(select ShipperID from Production.dbo.FSRCpuCost as a WITH (NOLOCK) where a.ShipperID = b.ShipperID)
 
 
 --DO releasememvar WITH 'FS_CMTPlus1'
@@ -2171,8 +2171,8 @@ select
       ,EditDate
       ,EditName
 
-from Trade_To_Pms.dbo.FSRCpuCost_Detail as b
-where not exists(select ShipperID from Production.dbo.FSRCpuCost_Detail as a where a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate)
+from Trade_To_Pms.dbo.FSRCpuCost_Detail as b WITH (NOLOCK)
+where not exists(select ShipperID from Production.dbo.FSRCpuCost_Detail as a WITH (NOLOCK) where a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate)
 
 
 
@@ -2212,8 +2212,8 @@ select
       ,EditDate
       ,EditName
 
-from Trade_To_Pms.dbo.FtyShipper as b
-where not exists(select BrandID from Production.dbo.FtyShipper as a where a.BrandID = b.BrandID and a.FactoryID=b.FactoryID	)
+from Trade_To_Pms.dbo.FtyShipper as b WITH (NOLOCK)
+where not exists(select BrandID from Production.dbo.FtyShipper as a WITH (NOLOCK) where a.BrandID = b.BrandID and a.FactoryID=b.FactoryID	)
 
 --FtyShipper_Detail
 --DO releasememvar WITH 'FtyShipper1'
@@ -2248,8 +2248,8 @@ select
       ,EndDate
       ,ShipperID
 
-from Trade_To_Pms.dbo.FtyShipper_Detail as b
-where not exists(select BrandID from Production.dbo.FtyShipper_Detail as a where a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate)
+from Trade_To_Pms.dbo.FtyShipper_Detail as b WITH (NOLOCK)
+where not exists(select BrandID from Production.dbo.FtyShipper_Detail as a WITH (NOLOCK) where a.BrandID = b.BrandID and a.FactoryID =b.FactoryID  and a.BeginDate	=b.BeginDate)
 
 
 
@@ -2301,8 +2301,8 @@ select
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.Phrase as b
-where not exists(select PhraseTypeName from Production.dbo.Phrase as a where a.PhraseTypeName = b.PhraseTypeName and a.Name = b.Name)
+from Trade_To_Pms.dbo.Phrase as b WITH (NOLOCK)
+where not exists(select PhraseTypeName from Production.dbo.Phrase as a WITH (NOLOCK) where a.PhraseTypeName = b.PhraseTypeName and a.Name = b.Name)
 
 
 --Company
@@ -2380,8 +2380,8 @@ select
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.Company as b
-where not exists(select id from Production.dbo.Company as a where a.id = b.id)
+from Trade_To_Pms.dbo.Company as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Company as a WITH (NOLOCK) where a.id = b.id)
 
 
 --MiFabCode
@@ -2426,8 +2426,8 @@ ID
       ,EditName
       ,EditDate
 
-from Trade_To_Pms.dbo.ADIDASMiSetup_ColorComb as b
-where not exists(select id from Production.dbo.ADIDASMiSetup_ColorComb as a where a.id = b.id)
+from Trade_To_Pms.dbo.ADIDASMiSetup_ColorComb as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.ADIDASMiSetup_ColorComb as a WITH (NOLOCK) where a.id = b.id)
 
 
 --------------------------ShipMode-------
@@ -2660,8 +2660,8 @@ on t.type=s.type and t.id=s.id
 				,SuppID
 				,SCIRefno
 
-		from Trade_To_Pms.dbo.Fabric_Supp as b
-		where not exists(select SuppID from Production.dbo.Fabric_Supp as a where a.SuppID = b.SuppID)
+		from Trade_To_Pms.dbo.Fabric_Supp as b WITH (NOLOCK)
+		where not exists(select SuppID from Production.dbo.Fabric_Supp as a WITH (NOLOCK) where a.SuppID = b.SuppID)
 
 --------Color_Multiple---------------
 
