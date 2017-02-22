@@ -21,7 +21,7 @@ namespace Sci.Production.Thread
         {
             InitializeComponent();
             DataTable m = null;
-            string sqlm = (@"select ID FROM DBO.MDivision");
+            string sqlm = (@"select ID FROM DBO.MDivision WITH (NOLOCK) ");
             DBProxy.Current.Select("", sqlm, out m);
             m.Rows.Add(new string[] { "" });
             m.DefaultView.Sort = "ID";
@@ -60,7 +60,7 @@ namespace Sci.Production.Thread
             }
             if (!this.textTYPE.Text.Empty())
             {
-                sqlWheres.Add("(select LocalItem.Category from dbo.LocalItem where refno= ThreadStock.Refno) = @TYPE");
+                sqlWheres.Add("(select LocalItem.Category from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) = @TYPE");
                 lis.Add(new SqlParameter("@TYPE", TYPE));  
             }
             if (!this.textITEM.Text.Empty())
@@ -86,17 +86,17 @@ namespace Sci.Production.Thread
 
             cmd = string.Format(@"
              select Refno
-                    ,(select LocalItem.Description from dbo.LocalItem where refno= ThreadStock.Refno) [Description]
-                    ,(select LocalItem.Category from dbo.LocalItem where refno= ThreadStock.Refno) [Category]
-                    ,(select LocalItem.ThreadTypeID from dbo.LocalItem where refno= ThreadStock.Refno) [ThreadTypeID]
+                    ,(select LocalItem.Description from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [Description]
+                    ,(select LocalItem.Category from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [Category]
+                    ,(select LocalItem.ThreadTypeID from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [ThreadTypeID]
                     ,ThreadColorID
-                    ,(select tc.Description from dbo.ThreadColor tc where tc.id = ThreadStock.ThreadColorID) [Color_desc]
-                    ,(select LocalItem.Weight from dbo.LocalItem where refno= ThreadStock.Refno) [Weight]
-                    ,(select LocalItem.AxleWeight from dbo.LocalItem where refno= ThreadStock.Refno) [AxleWeight]
+                    ,(select tc.Description from dbo.ThreadColor tc WITH (NOLOCK) where tc.id = ThreadStock.ThreadColorID) [Color_desc]
+                    ,(select LocalItem.Weight from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [Weight]
+                    ,(select LocalItem.AxleWeight from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [AxleWeight]
                     ,NewCone
                     ,UsedCone
                     ,ThreadLocationID
-             from dbo.ThreadStock
+             from dbo.ThreadStock WITH (NOLOCK) 
              where isnull(NewCone+UsedCone,0)>0" + sqlWhere);
 
             return base.ValidateInput();
@@ -139,7 +139,7 @@ namespace Sci.Production.Thread
                 string sql = @"select   distinct
                                         threadcolorid, 
                                         (select tc.Description from dbo.ThreadColor tc where tc.id = ThreadStock.ThreadColorID) [Color_desc] 
-                               from ThreadStock 
+                               from ThreadStock WITH (NOLOCK) 
                                order by threadcolorid ";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "13, 13", null, "Shade, Color desc");
                 DialogResult result = item.ShowDialog();
@@ -154,8 +154,8 @@ namespace Sci.Production.Thread
             {
                 string sql = @"select distinct 
                                     l.Category 
-                               from dbo.ThreadStock ts
-                               inner join dbo.LocalItem l on l.refno = ts.Refno
+                               from dbo.ThreadStock ts WITH (NOLOCK) 
+                               inner join dbo.LocalItem l WITH (NOLOCK) on l.refno = ts.Refno
                                order by l.category";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20", null, "Type");
                 DialogResult result = item.ShowDialog();
@@ -170,8 +170,8 @@ namespace Sci.Production.Thread
             {
                 string sql = @"select distinct 
                                     l.ThreadTypeID
-                               from dbo.LocalItem l
-                               inner join  dbo.ThreadStock ts on l.refno = ts.refno
+                               from dbo.LocalItem l WITH (NOLOCK) 
+                               inner join  dbo.ThreadStock ts WITH (NOLOCK) on l.refno = ts.refno
                                order by l.ThreadTypeID ";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "35", null, "Thread Item");
                 DialogResult result = item.ShowDialog();
@@ -186,8 +186,8 @@ namespace Sci.Production.Thread
             {
                 string sql = @"select distinct 
                                     Refno,
-                                    (select LocalItem.Description from dbo.LocalItem where refno= ThreadStock.Refno) [Description]
-                               from dbo.ThreadStock 
+                                    (select LocalItem.Description from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [Description]
+                               from dbo.ThreadStock  WITH (NOLOCK) 
                                order by Refno";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
                 DialogResult result = item.ShowDialog();
@@ -202,8 +202,8 @@ namespace Sci.Production.Thread
             {
                 string sql = @"select distinct 
                                     Refno,
-                                    (select LocalItem.Description from dbo.LocalItem where refno= ThreadStock.Refno) [Description]
-                               from dbo.ThreadStock 
+                                    (select LocalItem.Description from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [Description]
+                               from dbo.ThreadStock WITH (NOLOCK) 
                                order by Refno";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
                 DialogResult result = item.ShowDialog();
@@ -218,8 +218,8 @@ namespace Sci.Production.Thread
             {
                 string sql = @"select distinct 
                                     ThreadlocationID,
-                                    (select distinct Description from dbo.ThreadLocation where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
-                               from dbo.ThreadStock 
+                                    (select distinct Description from dbo.ThreadLocation WITH (NOLOCK) where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
+                               from dbo.ThreadStock  WITH (NOLOCK) 
                                order by ThreadlocationID";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
                 DialogResult result = item.ShowDialog();
@@ -234,8 +234,8 @@ namespace Sci.Production.Thread
             {
                 string sql = @"select distinct 
                                     ThreadlocationID,
-                                    (select distinct Description from dbo.ThreadLocation where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
-                               from dbo.ThreadStock 
+                                    (select distinct Description from dbo.ThreadLocation WITH (NOLOCK) where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
+                               from dbo.ThreadStock WITH (NOLOCK) 
                                order by ThreadlocationID";
                 Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
                 DialogResult result = item.ShowDialog();

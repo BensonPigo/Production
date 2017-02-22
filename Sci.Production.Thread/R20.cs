@@ -21,7 +21,7 @@ namespace Sci.Production.Thread
         {
             InitializeComponent();
             DataTable factory = null;
-            string sqlcmd = (@"select DISTINCT FTYGroup FROM DBO.Factory");
+            string sqlcmd = (@"select DISTINCT FTYGroup FROM DBO.Factory WITH (NOLOCK) ");
             DBProxy.Current.Select("", sqlcmd, out factory);
             factory.Rows.Add(new string[] { "" });
             factory.DefaultView.Sort = "FTYGroup";
@@ -32,7 +32,7 @@ namespace Sci.Production.Thread
             this.comboBox1.Text = Sci.Env.User.Factory;
 
             DataTable m = null;
-            string sqlm = (@"select ID FROM DBO.MDivision");
+            string sqlm = (@"select ID FROM DBO.MDivision WITH (NOLOCK) ");
             DBProxy.Current.Select("", sqlm, out m);
             m.Rows.Add(new string[] { "" });
             m.DefaultView.Sort = "ID";
@@ -104,13 +104,13 @@ namespace Sci.Production.Thread
             cmd = string.Format(@"
              select 
                t.FactoryID,t.BrandID,t.StyleID,t.SeasonID,t.EstBookDate,t.EstArriveDate,t.OrderID,o.SciDelivery,o.SewInLine
-               ,(select li.ThreadTypeID from dbo.LocalItem li where li.RefNo = td.Refno) [ThreadTypeID]
+               ,(select li.ThreadTypeID from dbo.LocalItem li WITH (NOLOCK) where li.RefNo = td.Refno) [ThreadTypeID]
                ,td.ConsumptionQty,td.Refno,td.ThreadColorID
-               ,(select c.Description from dbo.ThreadColor c where c.id = td.ThreadColorID) [color_desc]
+               ,(select c.Description from dbo.ThreadColor c WITH (NOLOCK) where c.id = td.ThreadColorID) [color_desc]
                ,td.PurchaseQty,td.TotalQty,td.AllowanceQty,td.UseStockQty
-             from dbo.ThreadRequisition t
-             inner join dbo.ThreadRequisition_Detail td on td.orderid = t.OrderID
-             left join dbo.orders o on o.id = t.OrderID" + sqlWhere + ' ' + order);
+             from dbo.ThreadRequisition t WITH (NOLOCK) 
+             inner join dbo.ThreadRequisition_Detail td WITH (NOLOCK) on td.orderid = t.OrderID
+             left join dbo.orders o WITH (NOLOCK) on o.id = t.OrderID" + sqlWhere + ' ' + order);
 
             return base.ValidateInput();
         }

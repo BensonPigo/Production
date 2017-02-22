@@ -37,10 +37,10 @@ namespace Sci.Production.Thread
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"select a.*,b.description,c.description as colordesc,
             b.threadTex,b.category,b.Localsuppid,newcone - newconebook as newConevar,usedcone - usedconebook as usedConevar,b.threadtypeid,
-            (b.Localsuppid+'-'+(Select name from LocalSupp d where b.localsuppid = d.id)) as supp
-            from ThreadInventory_Detail a 
-            left join Localitem b on a.refno = b.refno 
-            left join threadcolor c on a.threadcolorid = c.id where a.id = '{0}'", masterID);
+            (b.Localsuppid+'-'+(Select name from LocalSupp d WITH (NOLOCK) where b.localsuppid = d.id)) as supp
+            from ThreadInventory_Detail a WITH (NOLOCK) 
+            left join Localitem b WITH (NOLOCK) on a.refno = b.refno 
+            left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
         protected override bool OnGridSetup()
@@ -60,7 +60,7 @@ namespace Sci.Production.Thread
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
                 DataRow refdr;
-                if (MyUtility.Check.Seek(string.Format("Select * from Localitem where refno = '{0}' and junk = 0", newvalue), out refdr))
+                if (MyUtility.Check.Seek(string.Format("Select * from Localitem WITH (NOLOCK) where refno = '{0}' and junk = 0", newvalue), out refdr))
                 {
                     CurrentDetailData["Description"] = refdr["Description"];
                     CurrentDetailData["Refno"] = refdr["refno"];
@@ -85,7 +85,7 @@ namespace Sci.Production.Thread
                     CurrentDetailData["NewCone"] = 0;
                     CurrentDetailData["UsedCone"] = 0;
                 }
-                string sql = string.Format("Select newcone, usedcone from ThreadStock where refno ='{1}' and threadcolorid = '{0}' and threadlocationid = '{2}' and mDivisionid = '{3}'", CurrentDetailData["threadColorid"], newvalue, CurrentDetailData["threadlocationid"],keyWord);
+                string sql = string.Format("Select newcone, usedcone from ThreadStock WITH (NOLOCK) where refno ='{1}' and threadcolorid = '{0}' and threadlocationid = '{2}' and mDivisionid = '{3}'", CurrentDetailData["threadColorid"], newvalue, CurrentDetailData["threadlocationid"], keyWord);
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
                     CurrentDetailData["newconebook"] = refdr["newcone"];
@@ -110,7 +110,7 @@ namespace Sci.Production.Thread
                 if (oldvalue == newvalue) return;
                 
                 DataRow refdr;
-                if (MyUtility.Check.Seek(string.Format("Select * from ThreadColor where id = '{0}' and junk = 0", newvalue), out refdr))
+                if (MyUtility.Check.Seek(string.Format("Select * from ThreadColor WITH (NOLOCK) where id = '{0}' and junk = 0", newvalue), out refdr))
                 {
                     CurrentDetailData["ThreadColorid"] = refdr["ID"];
                     CurrentDetailData["Colordesc"] = refdr["Description"];
@@ -121,7 +121,7 @@ namespace Sci.Production.Thread
                     CurrentDetailData["Colordesc"] = "";
 
                 }
-                string sql = string.Format("Select newcone,usedcone from ThreadStock where refno ='{0}' and threadcolorid = '{1}' and threadlocationid = '{2}' and mDivisionid = '{3}'", CurrentDetailData["Refno"], newvalue, CurrentDetailData["threadlocationid"],keyWord);
+                string sql = string.Format("Select newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and threadlocationid = '{2}' and mDivisionid = '{3}'", CurrentDetailData["Refno"], newvalue, CurrentDetailData["threadlocationid"], keyWord);
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
                     CurrentDetailData["newconebook"] = refdr["newcone"];
@@ -146,7 +146,7 @@ namespace Sci.Production.Thread
                     if (oldvalue == newvalue) return;
                     DataRow refdr;
 
-                    string sql = string.Format("Select newcone,usedcone from ThreadStock where refno ='{0}' and threadcolorid = '{1}' and threadlocationid = '{2}' and mDivisionid = '{3}'", CurrentDetailData["Refno"], CurrentDetailData["threadcolorid"], newvalue,keyWord);
+                    string sql = string.Format("Select newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and threadlocationid = '{2}' and mDivisionid = '{3}'", CurrentDetailData["Refno"], CurrentDetailData["threadcolorid"], newvalue, keyWord);
                     if (MyUtility.Check.Seek(sql, out refdr))
                     {
                         CurrentDetailData["newconebook"] = refdr["newcone"];
@@ -294,7 +294,7 @@ namespace Sci.Production.Thread
         {
             try
             {
-                if (MyUtility.Check.Seek(string.Format("Select id from ThreadInventory where status = 'New' and mDivisionid ='{0}'", keyWord)))
+                if (MyUtility.Check.Seek(string.Format("Select id from ThreadInventory WITH (NOLOCK) where status = 'New' and mDivisionid ='{0}'", keyWord)))
                 {
                     MyUtility.Msg.WarningBox("Some inventory not yet confirm.");
                     return false;
@@ -328,7 +328,7 @@ namespace Sci.Production.Thread
 
             foreach (DataRow dr in this.DetailDatas)
             {
-                checksql = string.Format("Select * from ThreadStock where refno ='{0}' and threadLocationid = '{1}' and threadcolorid = '{2}' and mDivisionid = '{3}'", dr["refno"], dr["threadlocationid"], dr["threadcolorid"], keyWord);
+                checksql = string.Format("Select * from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadLocationid = '{1}' and threadcolorid = '{2}' and mDivisionid = '{3}'", dr["refno"], dr["threadlocationid"], dr["threadcolorid"], keyWord);
                 if (MyUtility.Check.Seek(checksql))
                 {
                     insertSql = insertSql + string.Format("Update ThreadStock set NewCone = NewCone+({0}),UsedCone = UsedCone + ({1}) where refno='{2}' and mDivisionid = '{3}' and ThreadColorid = '{4}' and ThreadLocationid = '{5}';", (decimal)dr["NewCone"] - (decimal)dr["NewConeBook"], (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"], dr["refno"], keyWord, dr["ThreadColorid"], dr["ThreadLocationid"]);

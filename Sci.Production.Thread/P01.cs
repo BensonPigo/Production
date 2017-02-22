@@ -37,8 +37,8 @@ namespace Sci.Production.Thread
         protected override Ict.DualResult OnSubDetailSelectCommandPrepare(Win.Tems.Input8.PrepareSubDetailSelectCommandEventArgs e)
         {
             this.SubDetailSelectCommand = string.Format(@"select Operationid,DescEN, SeamLength  
-                                            from ThreadColorComb_Operation a,Operation b 
-                                            where b.Id = a.OperationId and a.id='{0}'",CurrentDetailData["id"]);
+                                            from ThreadColorComb_Operation a WITH (NOLOCK),Operation b WITH (NOLOCK)
+                                            where b.Id = a.OperationId and a.id='{0}'", CurrentDetailData["id"]);
             return base.OnSubDetailSelectCommandPrepare(e);
         }
 

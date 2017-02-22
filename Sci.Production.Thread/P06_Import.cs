@@ -30,7 +30,7 @@ namespace Sci.Production.Thread
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string sql = string.Format(@"Select 1 as sel,a.*,'' as description,'' as colordesc,'' as threadtypeid,0 as threadtex,'' as category,'' as localsuppid , '' as supp, 0 as newconevar,0 as UsedConevar from threadInventory_Detail a where 1!=1", keyword);
+            string sql = string.Format(@"Select 1 as sel,a.*,'' as description,'' as colordesc,'' as threadtypeid,0 as threadtex,'' as category,'' as localsuppid , '' as supp, 0 as newconevar,0 as UsedConevar from threadInventory_Detail a WITH (NOLOCK) where 1!=1", keyword);
             DBProxy.Current.Select("Production", sql, out gridTable);
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = gridTable;
@@ -69,9 +69,9 @@ namespace Sci.Production.Thread
                     isnull(a.usedcone,0) as usedconebook,0 as usedCone,-(a.usedCone) as UsedconeVar,
                     b.description,c.description as colordesc,
                     b.category,b.Localsuppid,b.threadtypeid,b.ThreadTex,
-                    (b.Localsuppid+'-'+(Select name from LocalSupp d where b.localsuppid = d.id)) as supp
-                    from Localitem b 
-                    left join ThreadStock a on a.refno = b.refno and a.mdivisionid = '{0}'", keyword);
+                    (b.Localsuppid+'-'+(Select name from LocalSupp d WITH (NOLOCK) where b.localsuppid = d.id)) as supp
+                    from Localitem b  WITH (NOLOCK) 
+                    left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno and a.mdivisionid = '{0}'", keyword);
 
             if (!MyUtility.Check.Empty(threadlocation1) || !MyUtility.Check.Empty(threadlocation2))
             {
@@ -81,8 +81,8 @@ namespace Sci.Production.Thread
             if (!MyUtility.Check.Empty(color1) || !MyUtility.Check.Empty(color2))
             {
                 sql = sql + string.Format(" and a.Threadcolorid >= '{0}' and a.Threadcolorid <= '{1}'", color1, color2);
-            }                 
-            sql = sql + " left join ThreadColor c on c.id = a.threadcolorid ";
+            }
+            sql = sql + " left join ThreadColor c WITH (NOLOCK) on c.id = a.threadcolorid ";
             sql = sql + " where (a.newcone !=0 or a.usedcone!=0)";
             if (!MyUtility.Check.Empty(thradrefno1) || !MyUtility.Check.Empty(thradrefno2))
             {

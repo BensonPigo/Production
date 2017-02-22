@@ -49,7 +49,7 @@ namespace Sci.Production.Thread
         
         private void generateGrid() //建立Gird
         {
-            string articleSql = string.Format("Select Article from Style_Article where styleukey='{0}'", styleUkey);
+            string articleSql = string.Format("Select Article from Style_Article WITH (NOLOCK) where styleukey='{0}'", styleUkey);
             StringBuilder art_col = new StringBuilder();
             if (!art_col.Empty())
             {
@@ -126,7 +126,7 @@ namespace Sci.Production.Thread
                     DataRow row = grid1.GetDataRow<DataRow>(e.RowIndex);
                     SelectItem sele;
                     string header = grid1.Columns[e.ColumnIndex].HeaderText;
-                    sele = new SelectItem("Select id, description From ThreadColor where junk=0", "23", row[header].ToString(), false, ",");
+                    sele = new SelectItem("Select id, description From ThreadColor WITH (NOLOCK) where junk=0", "23", row[header].ToString(), false, ",");
 
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -145,7 +145,7 @@ namespace Sci.Production.Thread
                 String oldValue = row[header].ToString();
                 String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
 
-                sql = string.Format("Select id, description From ThreadColor where junk=0 and id='{0}'", newValue);
+                sql = string.Format("Select id, description From ThreadColor WITH (NOLOCK) where junk=0 and id='{0}'", newValue);
                 if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
                 {
                     if (!MyUtility.Check.Seek(sql))
@@ -185,7 +185,7 @@ namespace Sci.Production.Thread
                 op.Append(string.Format(@"
                         outer apply (
 	                        select t.ThreadColorid as '{0}'
-	                        from ThreadColorComb_Detail t
+	                        from ThreadColorComb_Detail t WITH (NOLOCK) 
 	                        where Machinetypeid=MT.ID
                             and SEQ = MT.SEQ
 	                        and Article='{0}'
@@ -201,10 +201,10 @@ namespace Sci.Production.Thread
                         TD.id,
                         TD.Refno
                         {1}
-                    from MachineType_ThreadRatio MT 
+                    from MachineType_ThreadRatio MT WITH (NOLOCK) 
                     outer apply (
 	                    select t.Refno,t.id
-	                    from ThreadColorComb_Detail t
+	                    from ThreadColorComb_Detail t WITH (NOLOCK) 
 	                    where Machinetypeid=MT.ID
 						and SEQ = MT.SEQ
                         and t.id ='{3}'
@@ -268,7 +268,7 @@ namespace Sci.Production.Thread
                         }
                     }
 
-                    refnoSql = string.Format("Select * from ThreadColorComb_Detail where id = '{0}' and seq='{1}' and ThreadLocationID='{2}'", detailRow["id"].ToString(), dr["SEQ"].ToString(), dr["ThreadLocation"].ToString());
+                    refnoSql = string.Format("Select * from ThreadColorComb_Detail WITH (NOLOCK) where id = '{0}' and seq='{1}' and ThreadLocationID='{2}'", detailRow["id"].ToString(), dr["SEQ"].ToString(), dr["ThreadLocation"].ToString());
                     DualResult dResult = DBProxy.Current.Select(null, refnoSql, out refDT);
                     if (!dResult)
                     {

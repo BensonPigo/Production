@@ -38,7 +38,7 @@ namespace Sci.Production.Thread
         {
             base.OnDetailEntered();
             DataRow dr;
-            if (MyUtility.Check.Seek(string.Format("Select * from orders where id='{0}'", CurrentMaintain["OrderID"].ToString()), out dr))
+            if (MyUtility.Check.Seek(string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", CurrentMaintain["OrderID"].ToString()), out dr))
             {
                 if (!MyUtility.Check.Empty(dr["SciDelivery"]))
                 dateBox3.Value = Convert.ToDateTime(dr["SciDelivery"]);
@@ -60,10 +60,10 @@ namespace Sci.Production.Thread
             string masterID = (e.Master == null) ? "" : e.Master["OrderID"].ToString();
             this.DetailSelectCommand = string.Format(
             @"SELECT a.*, b.description, b.MetertoCone ,c.description as colordesc,isnull(d.newCone,0) as newCone,isnull(d.usedcone,0) as usedcone
-            FROM ThreadRequisition_Detail a
-            Left Join Localitem b on a.refno = b.refno
-            Left join ThreadColor c on c.id = a.ThreadColorid
-            Left join ThreadStock d on d.refno = a.refno and d.Threadcolorid = a.threadcolorid and d.mDivisionid = '{1}'
+            FROM ThreadRequisition_Detail a WITH (NOLOCK) 
+            Left Join Localitem b WITH (NOLOCK) on a.refno = b.refno
+            Left join ThreadColor c WITH (NOLOCK) on c.id = a.ThreadColorid
+            Left join ThreadStock d WITH (NOLOCK) on d.refno = a.refno and d.Threadcolorid = a.threadcolorid and d.mDivisionid = '{1}'
             WHERE a.OrderID = '{0}'", masterID,keyWord);
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -76,9 +76,9 @@ namespace Sci.Production.Thread
             this.SubDetailSelectCommand = string.Format(
 @"Select a.*, b.description as Threadcombdesc,c.name as ThreadLocation, isnull(seamlength * UseRatioNumeric,0) as uselength,
 OrderQty,isnull(seamlength * UseRatioNumeric * OrderQty,0) as TotalLength
-from ThreadRequisition_Detail_Cons a
-Left join ThreadComb b on b.id = a.threadcombid
-Left join Reason c on c.reasontypeid = 'ThreadLocation' and c.id = a.threadlocationid
+from ThreadRequisition_Detail_Cons a WITH (NOLOCK) 
+Left join ThreadComb b WITH (NOLOCK) on b.id = a.threadcombid
+Left join Reason c WITH (NOLOCK) on c.reasontypeid = 'ThreadLocation' and c.id = a.threadlocationid
 where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
         }
@@ -105,7 +105,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 if (!this.EditMode || oldvalue == newvalue) return;
                 if (CurrentDetailData["autoCreate"].ToString() == "True") return;
                 DataRow refdr;
-                if (MyUtility.Check.Seek(string.Format("Select * from Localitem where refno = '{0}' and junk = 0", newvalue), out refdr))
+                if (MyUtility.Check.Seek(string.Format("Select * from Localitem WITH (NOLOCK) where refno = '{0}' and junk = 0", newvalue), out refdr))
                 {
                     CurrentDetailData["Description"] = refdr["Description"];
                     CurrentDetailData["Refno"] = refdr["refno"];
@@ -117,7 +117,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                     CurrentDetailData["Refno"] = "";
                     CurrentDetailData["MeterToCone"] = 0;  
                 }
-                string sql = string.Format("Select newCone,usedCone from ThreadStock where refno ='{0}' and threadcolorid = '{1}' and mDivisionid ='{2}' ", newvalue, CurrentDetailData["ThreadColorid"].ToString(),keyWord);
+                string sql = string.Format("Select newCone,usedCone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and mDivisionid ='{2}' ", newvalue, CurrentDetailData["ThreadColorid"].ToString(), keyWord);
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
                     CurrentDetailData["NewCone"] = refdr["NewCone"];
@@ -141,7 +141,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 if (!this.EditMode || oldvalue == newvalue) return;
                 if (CurrentDetailData["autoCreate"].ToString() == "True") return;
                 DataRow refdr;
-                if (MyUtility.Check.Seek(string.Format("Select * from ThreadColor where id = '{0}' and junk = 0", newvalue), out refdr))
+                if (MyUtility.Check.Seek(string.Format("Select * from ThreadColor WITH (NOLOCK) where id = '{0}' and junk = 0", newvalue), out refdr))
                 {
                     CurrentDetailData["ThreadColorid"] = refdr["ID"];
                     CurrentDetailData["Colordesc"] = refdr["Description"];
@@ -153,7 +153,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                     MyUtility.Msg.WarningBox(string.Format("< Thread Color : {0} > not found!!!", e.FormattedValue.ToString()));
                     return;                   
                 }
-                string sql = string.Format("Select newCone,usedCone from ThreadStock where refno ='{0}' and threadcolorid = '{1}' and mDivisionid ='{2}' ", CurrentDetailData["Refno"].ToString(), newvalue,keyWord);
+                string sql = string.Format("Select newCone,usedCone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and mDivisionid ='{2}' ", CurrentDetailData["Refno"].ToString(), newvalue, keyWord);
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
                     CurrentDetailData["NewCone"] = refdr["NewCone"];
@@ -177,7 +177,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                         if (e.RowIndex != -1)
                         {
                             if (CurrentDetailData["autoCreate"].ToString() == "True") return;
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ThreadColor where junk = 0 order by ID", "10,40", CurrentDetailData["ThreadColorid"].ToString().Trim());
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ThreadColor WITH (NOLOCK) where junk = 0 order by ID", "10,40", CurrentDetailData["ThreadColorid"].ToString().Trim());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }                           
                             var sellist = item.GetSelecteds();
@@ -415,7 +415,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             if (textBox1.Text == "") return;
             //確認order.poid 同(po.id)有沒有這筆,沒有則return
-            if (!MyUtility.Check.Seek(string.Format("Select * from PO where id='{0}'", id)))
+            if (!MyUtility.Check.Seek(string.Format("Select * from PO WITH (NOLOCK) where id='{0}'", id)))
             {
                 MyUtility.Msg.WarningBox("This order is not purchase master!!!");
                 e.Cancel = true;
@@ -423,7 +423,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 return;
             }
             //確認ThreadRequisition有沒有這筆,有則return
-            if (MyUtility.Check.Seek(string.Format("Select * from ThreadRequisition where OrderID='{0}'", id)))
+            if (MyUtility.Check.Seek(string.Format("Select * from ThreadRequisition WITH (NOLOCK) where OrderID='{0}'", id)))
             {
                 MyUtility.Msg.WarningBox("Order number exists!!!");
                 e.Cancel = true;
@@ -431,7 +431,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 return;
             }
             //輸入的POno帶出其他6個表頭
-            if (!MyUtility.Check.Seek(string.Format("Select * from Orders where poid='{0}'", id), out drOrder)) return;
+            if (!MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) where poid='{0}'", id), out drOrder)) return;
             dateBox3.Value = MyUtility.Convert.GetDate(drOrder["SciDelivery"]);
             dateBox4.Value = MyUtility.Convert.GetDate(drOrder["SewInLine"]);
             CurrentMaintain["Styleid"] = drOrder["Styleid"].ToString();
@@ -444,18 +444,18 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 	                                b.OperationId,e.SeamLength,a.Seq, a.ThreadLocationId, a.Refno,d.UseRatioNumeric,
 	                                a.MachineTypeId,  isnull(f.OrderQty,0) as OrderQty ,g.MeterToCone,
 	                                g.Description as Threadcombdesc,h.Description as colordesc
-	                                from ThreadColorComb_Detail a 
-	                                cross join ThreadColorComb_Operation b
-	                                left join ThreadColorcomb c on a.id=c.id 
-	                                left join MachineType_ThreadRatio d on a.Machinetypeid=d.Id and a.seq=d.seq
-	                                left join Operation e on b.OperationId= e.Id
+	                                from ThreadColorComb_Detail a WITH (NOLOCK) 
+	                                cross join ThreadColorComb_Operation b WITH (NOLOCK) 
+	                                left join ThreadColorcomb c WITH (NOLOCK) on a.id=c.id 
+	                                left join MachineType_ThreadRatio d WITH (NOLOCK) on a.Machinetypeid=d.Id and a.seq=d.seq
+	                                left join Operation e WITH (NOLOCK) on b.OperationId= e.Id
 	                                Left join (Select a.Article,sum(a.qty) as OrderQty 
-                                               from Order_Qty a inner join orders b on a.id=b.id  where b.POID='{0}' group by Article) f 
+                                               from Order_Qty a WITH (NOLOCK) inner join orders b WITH (NOLOCK) on a.id=b.id  where b.POID='{0}' group by Article) f 
                                               on a.Article=f.Article
-	                                Left join LocalItem g on a.Refno=g.Refno
-	                                Left join threadcolor h on h.id = a.threadcolorid
+	                                Left join LocalItem g WITH (NOLOCK) on a.Refno=g.Refno
+	                                Left join threadcolor h WITH (NOLOCK) on h.id = a.threadcolorid
                                     
-	                                where c.Styleukey =(select o.Styleukey from Orders o where o.id = '{0}')
+	                                where c.Styleukey =(select o.Styleukey from Orders o WITH (NOLOCK) where o.id = '{0}')
 	                                and a.ThreadColorId is not null and a.ThreadColorId !=''
 	                                and a.Refno is not null and a.Refno !='' and Seamlength !=0
 	                                and a.id=b.id

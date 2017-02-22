@@ -38,8 +38,8 @@ namespace Sci.Production.Thread
             string masterID = (e.Master == null) ? "" : e.Master["refno"].ToString();
 
             this.DetailSelectCommand = string.Format(@"select a.*,b.description as colordesc
-            from threadstock a 
-            left join threadcolor b on a.threadcolorid = b.id 
+            from threadstock a WITH (NOLOCK)
+            left join threadcolor b WITH (NOLOCK)on a.threadcolorid = b.id 
             where a.refno = '{0}' and mDivisionid = '{1}'", masterID, keyWord);
 
 //            string sql = @"Select cdate, id, '' as name, 0.0 as Newin,0.0 as Newout,0.0 as Newbalance, 0.0 as Usedin,0.0 as Usedout ,
@@ -90,7 +90,7 @@ namespace Sci.Production.Thread
             base.OnDetailEntered();
             string sql = @"Select cdate, id, '' as name, 0.0 as Newin,0.0 as Newout,0.0 as Newbalance, 0.0 as Usedin,0.0 as Usedout ,
                             0.0 as Usedbalance,'' as ThreadColorid,'' as ThreadLocationid, '' as editname 
-                            from ThreadIncoming a where 1=0";
+                            from ThreadIncoming a WITH (NOLOCK)where 1=0";
             DualResult sqlReault = DBProxy.Current.Select(null, sql, out gridTb);
             grid1.DataSource = gridTb; //因重新Generator 所以要重給
             detailgridbs.Filter = ""; //清空Filter

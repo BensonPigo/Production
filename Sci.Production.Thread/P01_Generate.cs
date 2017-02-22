@@ -32,15 +32,15 @@ namespace Sci.Production.Thread
             string sql = string.Format(
             @"with a as (
             Select threadcombid,operationid ,isnull(a.id,'') as id,f.id as styleid,f.seasonid,f.brandid
-            from threadcolorcomb a, threadcolorcomb_Operation b ,style f
+            from threadcolorcomb a WITH (NOLOCK) , threadcolorcomb_Operation b WITH (NOLOCK) ,style f WITH (NOLOCK) 
             where a.id = b.id and a.styleukey = f.ukey and 
             f.id = '{0}' and f.seasonid = '{1}' and f.brandid = '{2}'),
             b as(
             Select seq,operationid,annotation,d.SeamLength,d.MachineTypeID,descEN,styleid,seasonid,brandid
-            from timestudy c,timestudy_Detail d 
+            from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK) 
             join operation e on e.id = d.operationid
             where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and d.SeamLength>0)
-            select 0 as sel,a.id,b.*,a.threadcombid from b left join a 
+            select 0 as sel,a.id,b.*,a.threadcombid from b WITH (NOLOCK) left join a WITH (NOLOCK) 
 			on a.operationid = b.operationid and b.styleid = a.styleid 
             and a.seasonid  = b.seasonid and a.brandid = b.brandid order by seq
             ", str_styleid, str_season, str_brandid);
@@ -231,7 +231,7 @@ namespace Sci.Production.Thread
                                     DataRow[] rowSelect = operTable.Select(gridList[i]);
                                     for (int j = 0; j < rowSelect.Length; j++)
                                     {
-                                        if (!MyUtility.Check.Seek(string.Format("Select * from ThreadColorComb_operation where id='{0}' and operationid = '{1}'", dt.Rows[0]["ii"].ToString(), rowSelect[j]["operationid"].ToString())))
+                                        if (!MyUtility.Check.Seek(string.Format("Select * from ThreadColorComb_operation WITH (NOLOCK) where id='{0}' and operationid = '{1}'", dt.Rows[0]["ii"].ToString(), rowSelect[j]["operationid"].ToString())))
                                         {
                                             sql2.Append(string.Format("Insert into ThreadColorComb_operation (id,operationid) values({0},'{1}');", dt.Rows[0]["ii"].ToString(), rowSelect[j]["operationid"].ToString()));
                                         }
@@ -278,8 +278,8 @@ namespace Sci.Production.Thread
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"Select distinct d.MachineTypeID
-            from timestudy c,timestudy_Detail d 
-            join operation e on e.id = d.operationid
+            from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK) 
+            join operation e WITH (NOLOCK) on e.id = d.operationid
             where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and d.SeamLength>0 ", strstyleid, strseason, strbrandid), "23", this.textBox1.Text, false, ",");
             //
             DialogResult result = item.ShowDialog();

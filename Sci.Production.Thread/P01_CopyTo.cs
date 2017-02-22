@@ -38,7 +38,7 @@ namespace Sci.Production.Thread
             }
 
             //同ID,品牌會有一筆以上的Seasonid,找出ukey
-            string styleSql = string.Format("Select Ukey from Style where id='{0}' and Seasonid = '{1}' and Brandid = '{2}'", master["id"].ToString(), season, master["Brandid"].ToString());
+            string styleSql = string.Format("Select Ukey from Style WITH (NOLOCK) where id='{0}' and Seasonid = '{1}' and Brandid = '{2}'", master["id"].ToString(), season, master["Brandid"].ToString());
             string ukey_byNewSeason = MyUtility.GetValue.Lookup(styleSql);
             if (MyUtility.Check.Empty(ukey_byNewSeason))
             {
@@ -50,7 +50,7 @@ namespace Sci.Production.Thread
             StringBuilder del3table = new StringBuilder();
 
             //如果複製目的有舊資料是否刪除
-            string threadColorCombSql = string.Format("Select id from ThreadColorComb where StyleUkey = '{0}'", ukey_byNewSeason);
+            string threadColorCombSql = string.Format("Select id from ThreadColorComb WITH (NOLOCK) where StyleUkey = '{0}'", ukey_byNewSeason);
             if (MyUtility.Check.Seek(threadColorCombSql))
             {
                 DialogResult diaRes = MyUtility.Msg.QuestionBox("Are you sure delete old data and copy data to this season?");
@@ -59,10 +59,10 @@ namespace Sci.Production.Thread
                 #region 刪除字串
                 string id_old = MyUtility.GetValue.Lookup(threadColorCombSql);
                 //準備:刪除threadcolorcomb資料
-                del3table.Append(String.Format(@"Delete from threadcolorcomb where StyleUkey = '{0}' ", ukey_byNewSeason));
+                del3table.Append(String.Format(@"Delete from threadcolorcomb WITH (NOLOCK) where StyleUkey = '{0}' ", ukey_byNewSeason));
                 ////準備:刪除 ThreadColorComb_Detail, 和ThreadColorComb_operation
-                del3table.Append(string.Format(@"Delete from ThreadColorComb_Detail where id='{0}' ", id_old));
-                del3table.Append(string.Format(@"Delete from ThreadColorComb_operation where id='{0}' ", id_old));
+                del3table.Append(string.Format(@"Delete from ThreadColorComb_Detail WITH (NOLOCK) where id='{0}' ", id_old));
+                del3table.Append(string.Format(@"Delete from ThreadColorComb_operation WITH (NOLOCK) where id='{0}' ", id_old));
                 #endregion
             }         
 
@@ -73,7 +73,7 @@ namespace Sci.Production.Thread
             List<string> gridList = new List<string>();
             //準備ThreadColorComb新增(新season)
             threadColorCombSql =string.Format(@"Select * 
-                                from ThreadColorComb 
+                                from ThreadColorComb WITH (NOLOCK)
                                 where StyleUkey = '{0}' 
                                 order by StyleUkey", master["Ukey"].ToString());
 
@@ -127,7 +127,7 @@ namespace Sci.Production.Thread
                             oid = threadColorCombListid[i].ToString();//原ID
 
                             string sqlTdetail = string.Format(@"select distinct td.ThreadLocationID
-                                                                from threadcolorcomb t inner join ThreadColorComb_Detail td on td.id = t.id 
+                                                                from threadcolorcomb t WITH (NOLOCK) inner join ThreadColorComb_Detail td WITH (NOLOCK) on td.id = t.id 
                                                                 where t.id='{0}'", oid);
                             if (!(upResult = DBProxy.Current.Select(null, sqlTdetail, out Tdeatil)))
                             {
@@ -140,7 +140,7 @@ namespace Sci.Production.Thread
                             if (Tdeatil.Rows.Count!=0)
                             {
 
-                                string sqlArticle = string.Format(@"select Article from ThreadColorComb_Detail 
+                                string sqlArticle = string.Format(@"select Article from ThreadColorComb_Detail WITH (NOLOCK) 
                                                        where id='{0}' and ThreadLocationID='{1}' order by Ukey",
                                                     oid, Tdeatil.Rows[0]["ThreadLocationID"].ToString());
                                 if (!(ArticleResult = DBProxy.Current.Select(null, sqlArticle, out tbArticle)))//以原ID取得Article(多筆)
