@@ -7,11 +7,15 @@ CREATE PROCEDURE [dbo].[Cutting_P01_print_CuttingWorkOrder]
 	@OrderID VARCHAR(13)
 AS
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	--抓取ID為POID
 	select @OrderID=POID FROM dbo.Orders where ID = @OrderID
-
+	
+	DECLARE @Id VARCHAR(13) = ''
+	SELECT TOP 1 @Id = ID FROM WorkOrder WHERE ID = @OrderID
+	IF @Id = ''
+	BEGIN
+		RETURN;
+	END
 	select 
 	PoList = isnull([dbo].getPOComboList(o.ID,o.POID),''),
 	o.StyleID,
