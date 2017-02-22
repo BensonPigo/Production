@@ -92,7 +92,7 @@ BEGIN
 	DELETE FROM Order_CTNData 
 	WHERE ID = @orderid AND RefNo in (SELECT RefNo 
 									  FROM (SELECT distinct ocd.RefNo as RefNo, tad.RefNo as nRefNo 
-											FROM Order_CTNData ocd WITH (NOLOCK) 
+											FROM Order_CTNData ocd 
 											LEFT JOIN @tempAllData tad ON tad.ID = ocd.ID AND tad.RefNo = ocd.RefNo
 											WHERE ocd.ID = @orderid) a
 									  WHERE a.nRefNo IS NULL)

@@ -24,7 +24,7 @@ namespace Sci.Production.PublicPrg
         {
             
             DataTable queryTb;
-            string query = string.Format("Select distinct a.styleid, a.seasonid,a.brandid,a.cutinline,a.category from Orders a Where a.poid ='{0}'", poid);
+            string query = string.Format("Select distinct a.styleid, a.seasonid,a.brandid,a.cutinline,a.category from Orders a WITH (NOLOCK) Where a.poid ='{0}'", poid);
             DualResult dResult = DBProxy.Current.Select(null, query, out queryTb);
             if (dResult && queryTb.Rows.Count > 0) orderDr = queryTb.Rows[0];
             else orderDr = null;
@@ -47,7 +47,7 @@ namespace Sci.Production.PublicPrg
             if (del == DBNull.Value) sciDelv = null;
             else sciDelv = Convert.ToDateTime(del);
             DateTime? TargetSciDel;
-            double mtlLeadT = Convert.ToDouble(MyUtility.GetValue.Lookup("Select MtlLeadTime from System", null));
+            double mtlLeadT = Convert.ToDouble(MyUtility.GetValue.Lookup("Select MtlLeadTime from System WITH (NOLOCK) ", null));
             if (sciDelv == null) return null;
             if (MyUtility.Check.Empty(mtlLeadT)) TargetSciDel = sciDelv; 
             else TargetSciDel = ((DateTime)sciDelv).AddDays(Convert.ToDouble(mtlLeadT));
@@ -65,7 +65,7 @@ namespace Sci.Production.PublicPrg
         public static string[] GetOverallResult_Status(object fir_id)
         {
             DataRow maindr;
-            MyUtility.Check.Seek(string.Format("Select * from Fir Where id={0}", fir_id), out maindr);
+            MyUtility.Check.Seek(string.Format("Select * from Fir WITH (NOLOCK) Where id={0}", fir_id), out maindr);
             string allResult = "";
             string status = "New";
             
@@ -97,7 +97,7 @@ namespace Sci.Production.PublicPrg
         public static string[] GetOverallResult_Lab(object fir_id)
         {
             DataRow maindr;
-            MyUtility.Check.Seek(string.Format("Select * from FIR_Laboratory Where id={0}", fir_id), out maindr);
+            MyUtility.Check.Seek(string.Format("Select * from FIR_Laboratory WITH (NOLOCK) Where id={0}", fir_id), out maindr);
             string allResult = "";
 
             //當(FIR_Laboratory.Crocking 有值或FIR_Laboratory.nonCrocking=T) 且(FIR_Laboratory.Wash有值或FIR_Laboratory.nonWash=T)且(FIR_Laboratory.Heat或FIR_Laboratory.nonHeat=T) 才回寫FIR_Laboratory.Result，只要其中一個FIR_Laboratory.Crocking, FIR_Laboratory.Wash, FIR_Laboratory.Heat 的值為’F’，Fir.Result 就回寫’F’ 
