@@ -579,7 +579,6 @@ Database/dbo/Tables/WorkOrder_SizeRatio.sql -text
 Database/dbo/Tables/dbo.InventoryRefno.sql -text
 Database/dbo/Views/GetName.sql -text
 Database/dbo/Views/Order_POComboList.sql -text
-Database/dbo/Views/Test.sql -text
 Database/dbo/Views/View_OrderFAColor.sql -text
 Database/dbo/Views/View_Order_Artworks.sql -text
 Database/dbo/Views/View_Orders_subprocess.sql -text
@@ -587,7 +586,6 @@ Database/dbo/Views/View_ShowName.sql -text
 Database/dbo/Views/View_TransactionList.sql -text
 Database/dbo/Views/View_Unitrate.sql -text
 Database/dbo/Views/dbo.View_Unitrate.sql -text
-Database/dbo/Views/test2.sql -text
 Database/匯入結構描述記錄/ProductionDB_20151006014853.log -text
 PMSUploadDataToAPS.Daily/ALLservers/ESP/DailyTransfer.bat -text
 PMSUploadDataToAPS.Daily/ALLservers/ESP/Debug/Ict.Win.App.dll -text
