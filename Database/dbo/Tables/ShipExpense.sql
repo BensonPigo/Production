@@ -5,13 +5,14 @@
     [Description] NVARCHAR (MAX)  CONSTRAINT [DF_ShipExpense_Description] DEFAULT ('') NOT NULL,
     [LocalSuppID] VARCHAR (6)     CONSTRAINT [DF_ShipExpense_LocalSuppID] DEFAULT ('') NULL,
     [Price]       NUMERIC (12, 4) CONSTRAINT [DF_ShipExpense_Price] DEFAULT ((0)) NULL,
+	[UnitID] VARCHAR(8) NULL DEFAULT (''),
     [CanvassDate] DATE            NULL,
     [AccountID]   VARCHAR (8)     CONSTRAINT [DF_ShipExpense_AccountNo] DEFAULT ('') NULL,
     [CurrencyID]  VARCHAR (3)     CONSTRAINT [DF_ShipExpense_CurrencyID] DEFAULT ('') NULL,
     [AddName]     VARCHAR (10)    CONSTRAINT [DF_ShipExpense_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME        NULL,
     [EditName]    VARCHAR (10)    CONSTRAINT [DF_ShipExpense_EditName] DEFAULT ('') NULL,
-    [EditDate]    DATETIME        NULL,
+    [EditDate]    DATETIME        NULL, 
     CONSTRAINT [PK_ShipExpense] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
