@@ -83,7 +83,7 @@ namespace Sci.Production.Sewing
 			            ),0
 		                ) as AccumQty
 	            from SewingOutput_Detail sd WITH (NOLOCK) ,Order_Qty oq WITH (NOLOCK)  
-	            where sd.UKey = '{0}' and sd.OrderId = oq.ID
+	            where sd.UKey = '{0}' and sd.OrderId = oq.ID and sd.Article=oq.Article
 	            union all
 	            select sdd.ID, sdd.SewingOutput_DetailUkey, sdd.OrderId, sdd.ComboType,sdd.Article,sdd.SizeCode,0 as OrderQty,sdd.QAQty,
 	            isnull(
