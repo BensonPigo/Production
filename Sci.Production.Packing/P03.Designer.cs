@@ -636,7 +636,7 @@
             this.txtcountry1.Size = new System.Drawing.Size(232, 22);
             this.txtcountry1.TabIndex = 2;
             this.txtcountry1.TextBox1Binding = "";
-            this.txtcountry1.Validated += new System.EventHandler(this.txtcountry1_Validated);
+            this.txtcountry1.TextBox1.Validated += new System.EventHandler(this.txtcountry1_Validated);
             // 
             // txtcustcd1
             // 

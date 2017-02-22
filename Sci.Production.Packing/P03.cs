@@ -523,6 +523,12 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             base.ClickEditAfter();
             comboBox1.Text = "";
 
+            if (CurrentMaintain["ID"].ToString().Substring(3,2).ToUpper()=="PG")
+            {
+                txtbrand1.ReadOnly = true;
+                txtcustcd1.ReadOnly = true;
+                txtcountry1.TextBox1.ReadOnly = true;
+            }
             //部分欄位會依某些條件來決定是否可以被修改
             if (!MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
             {
@@ -977,9 +983,10 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         //Brand
         private void txtbrand1_Validated(object sender, EventArgs e)
         {
+            
             if (EditMode && txtbrand1.OldValue != txtbrand1.Text)
             {
-                DeleteDetailData();
+                DeleteDetailData(txtbrand1, txtbrand1.OldValue);
             }
         }
 
@@ -988,7 +995,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         {
             if (EditMode && txtcustcd1.OldValue != txtcustcd1.Text)
             {
-                DeleteDetailData();
+                DeleteDetailData(txtcustcd1, txtcustcd1.OldValue);
             }
         }
 
@@ -997,22 +1004,46 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         {
             if (EditMode && txtcountry1.TextBox1.OldValue != txtcountry1.TextBox1.Text)
             {
-                DeleteDetailData();
+                DeleteDetailData(txtcountry1.TextBox1, txtcountry1.TextBox1.OldValue);
+                txtcountry1.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
         }
-
-        //ShipMode
+        
+        //ShipMode        
         private void txtshipmode1_Validated(object sender, EventArgs e)
         {
             if (EditMode && txtshipmode1.OldValue != txtshipmode1.SelectedValue)
             {
-                DeleteDetailData();
+                if (MyUtility.Check.Empty(DetailDatas.Count)) return;
+                string tempOldValue = txtshipmode1.OldValue.ToString();
+
+                DialogResult diresult = MyUtility.Msg.QuestionBox("The detail grid will be cleared, are you sure change type?");
+                if (diresult == DialogResult.No)
+                {
+                    txtshipmode1.OldValue = tempOldValue;
+                    txtshipmode1.SelectedValue = tempOldValue;
+                    txtshipmode1.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+                    return;
+                }
+                // 清空表身Grid資料
+                foreach (DataRow dr in DetailDatas)
+                {
+                    dr.Delete();
+                }
+                //DeleteDetailData();
             }
         }
 
         //刪除表身Grid的資料
-        private void DeleteDetailData()
+        private void DeleteDetailData(TextBoxBase textbox,string oldvalue)
         {
+            DialogResult diresult = MyUtility.Msg.QuestionBox("The detail grid will be cleared, are you sure change type?");
+            if (diresult == DialogResult.No)
+            {
+                textbox.Text = oldvalue;
+                textbox.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+                return;
+            }
             // 清空表身Grid資料
             foreach (DataRow dr in DetailDatas)
             {
@@ -1339,5 +1370,6 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             else
             { detailgridbs.Position = index; }
         }
+
     }
 }
