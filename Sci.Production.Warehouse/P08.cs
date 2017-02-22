@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -391,8 +392,8 @@ namespace Sci.Production.Warehouse
             var dr = this.CurrentMaintain;
             if (null == dr) return;
 
-            string sqlupd2_A = "";
-            string sqlupd2_FIO = "";
+            string upd_MD_2T = "";
+            string upd_Fty_2T = "";
 
             StringBuilder sqlupd2 = new StringBuilder();
             String sqlcmd = "", sqlupd3 = "", ids = "";
@@ -489,7 +490,7 @@ drop table #tmp2
             #endregion 更新表頭狀態資料
 
             #region 更新倉數量
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            var data_MD_2T = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            mdivisionid = b.Field<string>("mdivisionid"),
@@ -507,44 +508,84 @@ drop table #tmp2
                            stocktype = m.First().Field<string>("stocktype"),
                            qty = m.Sum(w => w.Field<decimal>("stockqty"))
                        }).ToList();
-            sqlupd2_A = Prgs.UpdateMPoDetail(2, bs1, true);
+
             #endregion
 
             #region 更新庫存數量  ftyinventory
-            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            DataTable newDt = ((DataTable)detailgridbs.DataSource).Clone();
+            foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+                string[] dtrLocation = dtr["Location"].ToString().Split(',');
+                dtrLocation = dtrLocation.Distinct().ToArray();
+
+                if (dtrLocation.Length == 1)
+                {
+                    DataRow newDr = newDt.NewRow();
+                    newDr.ItemArray = dtr.ItemArray;
+                    newDt.Rows.Add(newDr);
+                }
+                else
+                {
+                    foreach (string location in dtrLocation)
+                    {
+                        DataRow newDr = newDt.NewRow();
+                        newDr.ItemArray = dtr.ItemArray;
+                        newDr["location"] = location;
+                        newDt.Rows.Add(newDr);
+                    }
+                }
+            }
+
+            var data_Fty_2T = (from b in newDt.AsEnumerable()
                          select new
                          {
-                             mdivisionid = m.Field<string>("mdivisionid"),
-                             poid = m.Field<string>("poid"),
-                             seq1 = m.Field<string>("seq1"),
-                             seq2 = m.Field<string>("seq2"),
-                             stocktype = m.Field<string>("stocktype"),
-                             qty = m.Field<decimal>("stockqty"),
-                             location = m.Field<string>("location"),
-                             roll = m.Field<string>("roll"),
-                             dyelot = m.Field<string>("dyelot"),
+                             mdivisionid = b.Field<string>("mdivisionid"),
+                             poid = b.Field<string>("poid"),
+                             seq1 = b.Field<string>("seq1"),
+                             seq2 = b.Field<string>("seq2"),
+                             stocktype = b.Field<string>("stocktype"),
+                             qty = b.Field<decimal>("stockqty"),
+                             location = b.Field<string>("location"),
+                             roll = b.Field<string>("roll"),
+                             dyelot = b.Field<string>("dyelot"),
                          }).ToList();
-            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(2, null, true);
+            upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
+            SqlConnection sqlConn = null;
+            DBProxy.Current.OpenConnection(null, out sqlConn);
             using (_transactionscope)
+            using (sqlConn)
             {
                 try
                 {
+                    /*
+                     * 先更新 FtyInventory 後更新 MDivisionPoDetail
+                     * 所有 MDivisionPoDetail 資料都在 Transaction 中更新，
+                     * 因為要在同一 SqlConnection 之下執行
+                     */
                     DataTable resulttb;
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_A, out resulttb, "#TmpSource")))
+                    #region FtyInventory
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, "", upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    #endregion 
+
+                    #region MDivisionPoDetail
+                    upd_MD_2T = Prgs.UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
+
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, "", upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
                         return;
                     }
+                    #endregion 
+
                     if (//!(result = DBProxy.Current.Execute(null, sqlupd3)))  jimmy 105/11/15
                         !(result = MyUtility.Tool.ProcessWithDatatable(detailDt, string.Join(",", detailDt.Columns.Cast<DataColumn>().Select(col => col.ColumnName).ToArray()), sqlupd3, out dtOut)))
                     {
@@ -577,8 +618,8 @@ drop table #tmp2
             DataTable datacheck;
             DataTable dt = (DataTable)detailgridbs.DataSource;
 
-            string sqlupd2_A = "";
-            string sqlupd2_FIO = "";
+            string upd_MD_2F = "";
+            string upd_Fty_2F = "";
 
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unconfirme it?");
             if (dResult.ToString().ToUpper() == "NO") return;
@@ -651,7 +692,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
             #endregion 更新表頭狀態資料
 
             #region 更新倉數量
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            var data_MD_2F = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            mdivisionid = b.Field<string>("mdivisionid"),
@@ -669,11 +710,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                            stocktype = m.First().Field<string>("stocktype"),
                            qty = - (m.Sum(w => w.Field<decimal>("stockqty")))
                        }).ToList();            
-            sqlupd2_A = Prgs.UpdateMPoDetail(2, bs1, false);
+
             #endregion 
 
             #region 更新庫存數量  ftyinventory
-            var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            var data_Fty_2F = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                          select new
                          {
                              mdivisionid = m.Field<string>("mdivisionid"),
@@ -686,27 +727,43 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                              roll = m.Field<string>("roll"),
                              dyelot = m.Field<string>("dyelot"),
                          }).ToList();
-            sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(2, null, false);
+            upd_Fty_2F = Prgs.UpdateFtyInventory_IO(2, null, false);
             #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
+            SqlConnection sqlConn = null;
+            DBProxy.Current.OpenConnection(null, out sqlConn);
             using (_transactionscope)
+            using (sqlConn)
             {
                 try
                 {
+                    /*
+                     * 先更新 FtyInventory 後更新 MDivisionPoDetail
+                     * 所有 MDivisionPoDetail 資料都在 Transaction 中更新，
+                     * 因為要在同一 SqlConnection 之下執行
+                     */
                     DataTable resulttb;
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_A, out resulttb, "#TmpSource")))
+                    #region FtyInventory
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F, "", upd_Fty_2F, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, "", sqlupd2_FIO, out resulttb, "#TmpSource")))
+                    #endregion 
+
+                    #region MDivisionPoDetal
+                    upd_MD_2F = Prgs.UpdateMPoDetail(2, data_MD_2F, false, sqlConn: sqlConn);
+
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2F, "", upd_MD_2F, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
                         return;
                     }
+                    #endregion 
+
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
