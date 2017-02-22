@@ -241,6 +241,16 @@ namespace Sci.Production.Cutting
                     }
                     worksheet.Cells[8, 2] = spList;
                     worksheet.Cells[10, 13] = line;
+                    int l = 55;
+                    int la = spList.Length / l;
+                    for (int i = 1; i <= la; i++)
+                    {
+                        if (spList.Length > l * i)
+                        {
+                            Microsoft.Office.Interop.Excel.Range rangeRow8 = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[8, System.Type.Missing];
+                            rangeRow8.RowHeight = 20.25 * (i + 1);
+                        }
+                    }
                 }
                 #endregion
 
@@ -278,7 +288,19 @@ namespace Sci.Production.Cutting
 
                         worksheet.Cells[nRow, 10] = size;
                         worksheet.Cells[nRow, 12] = Ratio;
-                        
+
+                        int l = 12;
+                        int la = size.Length / l;
+                        int la2 = Ratio.Length / l;
+                        for (int i = 1; i <= la; i++)
+                        {
+                            if (size.Length > l * i)
+                            {
+                                Microsoft.Office.Interop.Excel.Range rangeRow12 = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[nRow, System.Type.Missing];
+                                rangeRow12.RowHeight = 16.875 * (i + 1);
+                            }
+                        }
+                          
                     }
                     #endregion   
                 }
@@ -497,7 +519,18 @@ Cutplanid, str_PIVOT);
                         line = line + MyUtility.GetValue.Lookup("Sewline", DisDr["OrderID"].ToString(), "Orders", "ID") + "\\";
                         #endregion
                     }
+                    
                     worksheet.Cells[8, 2] = spList;
+                    int l = 55;
+                    int la = spList.Length / l;
+                    for (int i = 1; i <= la; i++)
+                    {
+                        if (spList.Length > l*i)
+                        {
+                            Microsoft.Office.Interop.Excel.Range rangeRow8 = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[8, System.Type.Missing];
+                            rangeRow8.RowHeight = 20.25*(i+1);
+                        }  
+                    }                                      
                 }
                 #endregion
 
@@ -524,7 +557,17 @@ Cutplanid, str_PIVOT);
                     worksheet.Cells[12, 6] = WorkorderArry[0]["MarkerLength"].ToString() + "\n" + WorkorderArry[0]["yds"].ToString();
                     worksheet.Cells[12, 10] = size;
                     worksheet.Cells[12, 12] = Ratio;
-
+                    int l = 12;
+                    int la = size.Length / l;
+                    int la2 = Ratio.Length / l;
+                    for (int i = 1; i <= la; i++)
+                    {
+                        if (size.Length > l * i)
+                        {
+                            Microsoft.Office.Interop.Excel.Range rangeRow12 = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[12, System.Type.Missing];
+                            rangeRow12.RowHeight = 16.875 * (i + 1);
+                        }
+                    }                 
 
                 }
                 #endregion
