@@ -46,6 +46,8 @@
             this.button2 = new Sci.Win.UI.Button();
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.txtunit1 = new Sci.Production.Class.txtunit();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -60,6 +62,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.txtunit1);
             this.detailcont.Controls.Add(this.button2);
             this.detailcont.Controls.Add(this.button1);
             this.detailcont.Controls.Add(this.checkBox1);
@@ -122,7 +126,7 @@
             // label6
             // 
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(27, 155);
+            this.label6.Location = new System.Drawing.Point(27, 187);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(90, 23);
             this.label6.TabIndex = 7;
@@ -131,7 +135,7 @@
             // label7
             // 
             this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(27, 190);
+            this.label7.Location = new System.Drawing.Point(27, 222);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(90, 23);
             this.label7.TabIndex = 8;
@@ -140,7 +144,7 @@
             // label8
             // 
             this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(27, 225);
+            this.label8.Location = new System.Drawing.Point(27, 257);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(90, 23);
             this.label8.TabIndex = 9;
@@ -149,7 +153,7 @@
             // label9
             // 
             this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(27, 260);
+            this.label9.Location = new System.Drawing.Point(27, 292);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(90, 23);
             this.label9.TabIndex = 10;
@@ -182,7 +186,7 @@
             this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CurrencyID", true));
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(120, 190);
+            this.displayBox1.Location = new System.Drawing.Point(120, 222);
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(40, 23);
             this.displayBox1.TabIndex = 11;
@@ -194,7 +198,7 @@
             this.numericBox1.DecimalPlaces = 4;
             this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(161, 190);
+            this.numericBox1.Location = new System.Drawing.Point(161, 222);
             this.numericBox1.Name = "numericBox1";
             this.numericBox1.NullValue = new decimal(new int[] {
             0,
@@ -214,7 +218,7 @@
             // 
             this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CanvassDate", true));
             this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(120, 225);
+            this.dateBox1.Location = new System.Drawing.Point(120, 257);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
@@ -225,7 +229,7 @@
             this.textBox2.BackColor = System.Drawing.Color.White;
             this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountID", true));
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(120, 260);
+            this.textBox2.Location = new System.Drawing.Point(120, 292);
             this.textBox2.Mask = "9999-9999";
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(70, 23);
@@ -273,7 +277,7 @@
             this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID", true));
             this.txtsubcon1.DisplayBox1Binding = "";
             this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(120, 155);
+            this.txtsubcon1.Location = new System.Drawing.Point(120, 187);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
             this.txtsubcon1.TabIndex = 10;
@@ -288,6 +292,25 @@
             this.txtbrand1.Name = "txtbrand1";
             this.txtbrand1.Size = new System.Drawing.Size(66, 23);
             this.txtbrand1.TabIndex = 1;
+            // 
+            // txtunit1
+            // 
+            this.txtunit1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "UnitID", true));
+            this.txtunit1.DisplayBox1Binding = "";
+            this.txtunit1.Location = new System.Drawing.Point(120, 154);
+            this.txtunit1.Name = "txtunit1";
+            this.txtunit1.Size = new System.Drawing.Size(320, 23);
+            this.txtunit1.TabIndex = 18;
+            this.txtunit1.TextBox1Binding = "";
+            // 
+            // label1
+            // 
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(27, 154);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(90, 23);
+            this.label1.TabIndex = 19;
+            this.label1.Text = "Unit";
             // 
             // B03
             // 
@@ -333,5 +356,7 @@
         private Win.UI.Button button2;
         private Win.UI.Button button1;
         private Win.UI.CheckBox checkBox1;
+        private Win.UI.Label label1;
+        private Class.txtunit txtunit1;
     }
 }
