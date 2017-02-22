@@ -1,6 +1,6 @@
 ﻿	              
 
-Create Procedure [dbo].[GetKeyWordValue]
+CREATE Procedure [dbo].[GetKeyWordValue]
 	(
 	  @OrderID		VarChar(13)
 	 ,@KeyWordID	VarChar(30)
@@ -17,7 +17,7 @@ Begin
 	 Where KeywordCommon.ID = @KeyWordID;
 	*/
 	Select @FieldName = Keyword.FieldName
-	  From dbo.Keyword
+	  From dbo.Keyword WITH (NOLOCK)
 	 Where Keyword.ID = @KeyWordID;
 	
 	Create Table #FieldCursor
@@ -27,7 +27,7 @@ Begin
 
 	Set @SqlCmd = N'Insert Into #FieldCursor'+
 				   '	Select ' + IIF(IsNull(@FieldName, '') = '', Char(39) + '{' + @KeyWordID + '}' + Char(39), @FieldName) +
-				   '	  From dbo.Orders' +
+				   '	  From dbo.Orders WITH (NOLOCK)' +
 				   '	  Left Join dbo.Style' +
 				   '		On	   Style.BrandID = Orders.BrandID' +
 				   '		   And Style.ID = Orders.StyleID' +

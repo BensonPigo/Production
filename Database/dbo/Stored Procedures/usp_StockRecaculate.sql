@@ -44,7 +44,7 @@ BEGIN
 
 	IF (@Seq1 IS NOT NULL AND @SEQ1 !='')
 	BEGIN
-		SELECT @tUkey = M.Ukey FROM DBO.MDivisionPoDetail M 
+		SELECT @tUkey = M.Ukey FROM DBO.MDivisionPoDetail M  WITH (NOLOCK)
 		WHERE M.MDivisionID = @MDivisionid AND M.POID = @Poid AND M.SEQ1 = @Seq1 AND M.Seq2 = @Seq2;
 
 		EXEC usp_SingleItemRecaculate @Ukey = @tUkey, @MDivisionid = @MDivisionid,@Poid = @Poid,@Seq1 = @Seq1,@Seq2 = @Seq2;
@@ -52,13 +52,13 @@ BEGIN
 	ELSE
 	BEGIN
 	-- 先抓出要重算庫存的目標群
-	select * into #tmp_table from dbo.View_TransactionList where 1=2 ;
+	select * into #tmp_table from dbo.View_TransactionList WITH (NOLOCK) where 1=2 ;
 
 	select @currentDT = CONVERT(VARCHAR,GETDATE(),13)
 	RAISERROR ('%s on %s', 1,1, 'Beginning to Insert #tmp_table',@currentDT);
 
 	SET @SQLCMD = N'Insert into #tmp_table SELECT *
-	From DBO.View_TransactionList WHERE MDivisionid = @pMDivisionid ';
+	From DBO.View_TransactionList WITH (NOLOCK) WHERE MDivisionid = @pMDivisionid ';
 
 	IF @TransID is not null
 	SET @SQLCMD = @SQLCMD + ' AND ID = @pTransID';
@@ -99,7 +99,7 @@ BEGIN
 
 		--- 依PO抓出MDivisionPoDetail的資料
 		DECLARE MYCURSOR CURSOR FOR  
-		select distinct B.Ukey,B.MDivisionid,B.seq1,B.seq2  from dbo.MDivisionPoDetail B 
+		select distinct B.Ukey,B.MDivisionid,B.seq1,B.seq2  from dbo.MDivisionPoDetail B WITH (NOLOCK)
 		WHERE B.MDivisionID = @MDivisionid AND B.POID = @tPoid;
 
 		OPEN MYCURSOR ;

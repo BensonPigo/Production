@@ -4,7 +4,7 @@
 -- Create date: <2016/09/07>
 -- Description:	<>
 -- =============================================
-Create Procedure [dbo].[DailyImport]
+CREATE Procedure [dbo].[DailyImport]
 (
 	@GroupID	Int = 0
 )
@@ -21,7 +21,7 @@ Begin
 
 	Select Identity(BigInt, 1, 1) as RowID, *
 	  Into #tmpExport
-	  From Production.dbo.TransImport
+	  From Production.dbo.TransImport WITH (NOLOCK)
 	 Where (   (IsNull(@GroupID, 0) = 0)
 			Or (IsNull(@GroupID, 0) > 0 And TransImport.GroupID = @GroupID)
 		   )

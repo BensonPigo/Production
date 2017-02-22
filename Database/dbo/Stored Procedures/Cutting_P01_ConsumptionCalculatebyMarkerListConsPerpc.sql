@@ -5,12 +5,12 @@ AS
 BEGIN
 
 	--抓取ID為POID
-	select @OrderID=POID FROM dbo.Orders where ID = @OrderID
+	select @OrderID=POID FROM dbo.Orders WITH (NOLOCK) where ID = @OrderID
 
 	SELECT
 	ORDERNO=RTRIM(POID) + d.spno ,STYLENO=StyleID+'-'+SeasonID ,QTY=SUM(Qty) ,FACTORY=FactoryID	
-	FROM dbo.Orders
-	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Production.dbo.Orders WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) d
+	FROM dbo.Orders WITH (NOLOCK)
+	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Production.dbo.Orders WITH (NOLOCK) WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) d
 	WHERE POID = @OrderID
 	GROUP BY POID,d.spno,StyleID,SeasonID,FactoryID
 	
@@ -36,15 +36,15 @@ BEGIN
 	,mPlusN
 	,csq.Seq
 	into #main
-	from Orders
-	inner join Order_BOA on Order_BOA.Id = Orders.ID
-	inner join Fabric on Fabric.SCIRefno = Order_BOA.SCIRefno
+	from Orders WITH (NOLOCK)
+	inner join Order_BOA WITH (NOLOCK) on Order_BOA.Id = Orders.ID
+	inner join Fabric WITH (NOLOCK) on Fabric.SCIRefno = Order_BOA.SCIRefno
 	--inner join dbo.GetColorSizeQty(@OrderID) csq on Order_BOA.PatternPanel = csq.Patternpanel and CHARINDEX(Orders.id+'/',csq.OrderList) > 0
 	outer apply(select case when SizeItem_Elastic <> '' then Order_BOA.SizeItem_Elastic else Order_BOA.SizeItem end as ssitem) ssitem
 	outer apply(select SizeCode,SizeDesc,ColorDesc,ColorID,Seq,sum(Qty) as Qty from dbo.GetColorSizeQty(@OrderID) tmp 
 	where tmp.PatternPanel = Order_BOA.PatternPanel and ssitem = tmp.SizeItem group by SizeCode,SizeDesc,ColorDesc,ColorID,Seq ) csq
 	outer apply(select dbo.GetUnitQty(Orders.SizeUnit ,Fabric.UsageUnit ,dbo.GetDigitalValue(csq.SizeDesc)) as mSizeSpec) aa
-	inner join Fabric_Supp on Fabric_Supp.SuppID = Order_BOA.SuppID and Fabric.SCIRefno = Fabric_Supp.SCIRefno
+	inner join Fabric_Supp WITH (NOLOCK) on Fabric_Supp.SuppID = Order_BOA.SuppID and Fabric.SCIRefno = Fabric_Supp.SCIRefno
 	outer apply( select ROUND(Order_BOA.ConsPC * aa.mSizeSpec * csq.Qty ,2) as UseCons) bb
 	
 	--Round,UsageUnit,Step

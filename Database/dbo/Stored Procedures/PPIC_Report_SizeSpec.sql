@@ -7,7 +7,7 @@ CREATE PROCEDURE [dbo].[PPIC_Report_SizeSpec]
 AS
 BEGIN
 	
-	SELECT distinct a.SizeCode,Seq into #tmp_Col FROM MNOrder_SizeCode a inner join MNOrder_Qty b on a.Id = b.ID and (@fullsize = 1 or a.SizeCode = b.SizeCode)
+	SELECT distinct a.SizeCode,Seq into #tmp_Col FROM MNOrder_SizeCode a WITH (NOLOCK) inner join MNOrder_Qty b WITH (NOLOCK) on a.Id = b.ID and (@fullsize = 1 or a.SizeCode = b.SizeCode)
 	where a.Id = @POID
 
 	if exists(select 1 from #tmp_Col)
@@ -16,10 +16,10 @@ BEGIN
 			select @str1=STUFF((
 				SELECT ',['+SizeCode+']' FROM #tmp_Col order by Seq FOR XML PATH('')
 				),1,1,'')
-			select top 1 @Unit = SizeUnit from MNOrder_SizeItem where Id = @POID
+			select top 1 @Unit = SizeUnit from MNOrder_SizeItem WITH (NOLOCK) where Id = @POID
 			declare @sql nvarchar(max) = 'select SizeItem,[SizeDesc          Unit : '+ @Unit +']=SizeDesc,'+ @str1 +' from (
-				select a.SizeItem,a.SizeDesc,b.SizeCode,b.SizeSpec from MNOrder_SizeItem a
-				left join MNOrder_SizeSpec b on a.Id = b.Id and a.SizeItem = b.SizeItem
+				select a.SizeItem,a.SizeDesc,b.SizeCode,b.SizeSpec from MNOrder_SizeItem a WITH (NOLOCK)
+				left join MNOrder_SizeSpec b WITH (NOLOCK) on a.Id = b.Id and a.SizeItem = b.SizeItem
 				where a.Id = '''+ @poid +''' AND ('+ cast(@WithZ as varchar(1)) +' = ''1'' or A.SizeItem like ''S%'')
 			) a pivot (max(SizeSpec) for SizeCode in ('+ @str1 +')) b
 			order by SizeItem'

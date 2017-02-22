@@ -1,6 +1,6 @@
 ﻿	              
 
-Create Procedure [dbo].[BoaExpend]
+CREATE Procedure [dbo].[BoaExpend]
 (
 	  @ID				VarChar(13)				--採購母單
 	 ,@Order_BOAUkey	BigInt		= 0			--BOA Ukey
@@ -35,8 +35,8 @@ Begin
 	If Object_ID('tempdb..#Tmp_Order_Qty') Is Null
 	Begin
 		Select Order_Qty.* Into #Tmp_Order_Qty
-		  From dbo.Order_Qty
-		 Inner Join dbo.Orders
+		  From dbo.Order_Qty WITH (NOLOCK)
+		 Inner Join dbo.Orders WITH (NOLOCK)
 			On Orders.ID = Order_Qty.ID
 		 Where Orders.PoID = @ID;
 	End;
@@ -57,7 +57,7 @@ Begin
 		 , @ProgramID = Orders.ProgramID
 		 , @Category = Orders.Category
 		 , @CfmDate = Orders.CfmDate
-	  From dbo.Orders
+	  From dbo.Orders WITH (NOLOCK)
 	 Where ID = @ID;
 
 	--定義欄位
@@ -105,19 +105,19 @@ Begin
 			 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
 			 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
 			 , IsNull(Tmp_Order_Qty.Qty, 0) Qty
-		  From dbo.Orders
-		  Left Join dbo.Order_SizeCode
+		  From dbo.Orders WITH (NOLOCK)
+		  Left Join dbo.Order_SizeCode WITH (NOLOCK)
 			On Order_SizeCode.ID = Orders.POID
-		  Left Join dbo.Order_Article
+		  Left Join dbo.Order_Article WITH (NOLOCK)
 			On Order_Article.ID = Orders.ID
 		  Left Join #Tmp_Order_Qty as Tmp_Order_Qty
 			On	   Tmp_Order_Qty.ID = Orders.ID
 			   And Tmp_Order_Qty.SizeCode = Order_SizeCode.SizeCode
 			   And Tmp_Order_Qty.Article = Order_Article.Article
-		  Left Join dbo.CustCD
+		  Left Join dbo.CustCD WITH (NOLOCK)
 			On	   CustCD.BrandID = Orders.BrandID
 			   And CustCD.ID = Orders.CustCDID
-		  Left Join dbo.Factory
+		  Left Join dbo.Factory WITH (NOLOCK)
 			On Factory.ID = Orders.FactoryID
 		 Where Orders.POID = @ID
 		   And Orders.Junk = 0
@@ -161,7 +161,7 @@ Begin
 		)
 		Select Ukey, SCIRefNo, SuppID, PatternPanel, SizeItem, SizeItem_Elastic, ConsPC, Remark
 			 , BomTypeZipper, BomTypePo, BomTypeSize, BomTypeColor, Keyword
-		  From dbo.Order_BOA
+		  From dbo.Order_BOA WITH (NOLOCK)
 		 Where ID = @ID
 		   And (   IsNull(@Order_BOAUkey, 0) = 0
 				Or Ukey = @Order_BOAUkey
@@ -196,7 +196,7 @@ Begin
 			 , @UsageUnit = UsageUnit
 			 , @BomTypeCalculate = BomTypeCalculate
 			 , @NoSizeUnit = NoSizeUnit
-		  From dbo.Fabric
+		  From dbo.Fabric WITH (NOLOCK)
 		 Where SCIRefNo = @SciRefNo;
 		
 		--取得SizeItem,當為Elastic，且SizeItem為S開頭時，改取SizeItem_Elastic
@@ -204,7 +204,7 @@ Begin
 		
 		--取得SizeUnit
 		Select @SizeUnit = IIF(@NoSizeUnit = 0, Order_SizeItem.SizeUnit, '')
-		  From dbo.Order_SizeItem
+		  From dbo.Order_SizeItem WITH (NOLOCK)
 		 Where Order_SizeItem.ID = @ID
 		   And Order_SizeItem.SizeItem = @SizeItem
 		
@@ -238,21 +238,21 @@ Begin
 						 , Qty as OrderQty
 						 , (Qty * IIF(IsNull(@SizeItem, '') = '', 1, IsNull(tmpOrder_SizeSpec.SizeSpec_Cal, IIF(@BomTypeCalculate = 1, 0, 1))) * @BoaConsPC) as UsageQty
 					  From @tmpOrder_Qty as tmpQtyBreakDown
-					  Left Join dbo.Order_ColorCombo
+					  Left Join dbo.Order_ColorCombo WITH (NOLOCK)
 						On	   Order_ColorCombo.ID = @ID
 						   And Order_ColorCombo.Article = tmpQtyBreakDown.Article
 						   --And Order_ColorCombo.LectraCode = @BoaPatternPanel
 						   And Order_ColorCombo.PatternPanel = @BoaPatternPanel
 					  Left Join (Select ID, SizeItem, SizeCode, SizeSpec
 									  , IIF(@BomTypeCalculate = 1, IIF(@UsageUnit = 'CM' Or @UsageUnit = 'INCH', dbo.GetDigitalValue(SizeSpec), 0), 1) as SizeSpec_Cal
-								   From dbo.Order_SizeSpec
+								   From dbo.Order_SizeSpec WITH (NOLOCK)
 								) tmpOrder_SizeSpec
 					    On	   tmpOrder_SizeSpec.ID = @ID
 						   And tmpOrder_SizeSpec.SizeItem = @SizeItem
 						   And tmpOrder_SizeSpec.SizeCode = tmpQtyBreakDown.SizeCode
 					  Left Join (Select Order_BOA_CustCD.*
 									  , Convert(Bit, 1) as IsExist
-								   From dbo.Order_BOA_CustCD
+								   From dbo.Order_BOA_CustCD WITH (NOLOCK)
 								) as tmpBOA_CustCD
 						On tmpBOA_CustCD.Order_BOAUkey = @BoaUkey
 					 Where (IsNull(tmpBOA_CustCD.IsExist, 0) = 0)
@@ -328,17 +328,17 @@ Begin
 				(ID, ExpendUkey, OrderID)
 				Select @ID, @ExpendUkey, tmpQtyBreakDown.ID
 				  From @tmpOrder_Qty as tmpQtyBreakDown
-				  Left Join dbo.Order_ColorCombo
+				  Left Join dbo.Order_ColorCombo WITH (NOLOCK)
 					On	   Order_ColorCombo.ID = @ID
 					   And Order_ColorCombo.Article = tmpQtyBreakDown.Article
 					   And Order_ColorCombo.LectraCode = @BoaPatternPanel
-				  Left Join dbo.Order_SizeSpec
+				  Left Join dbo.Order_SizeSpec WITH (NOLOCK)
 				    On	   Order_SizeSpec.ID = @ID
 					   And Order_SizeSpec.SizeItem = @SizeItem
 					   And Order_SizeSpec.SizeCode = tmpQtyBreakDown.SizeCode
 				  Left Join (Select Order_BOA_CustCD.*
 								  , Convert(Bit, 1) as IsExist
-							   From dbo.Order_BOA_CustCD
+							   From dbo.Order_BOA_CustCD WITH (NOLOCK)
 							) as tmpBOA_CustCD
 					On tmpBOA_CustCD.Order_BOAUkey = @BoaUkey
 				 Where IIF(@BoaBomTypeColor = 1 Or @IsExpendDetail = 1, Order_ColorCombo.ColorID, '') = @ColorID

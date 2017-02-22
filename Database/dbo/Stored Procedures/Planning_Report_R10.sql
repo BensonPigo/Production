@@ -34,14 +34,14 @@ BEGIN
 	,Capacity * fw.HalfMonth1 / (fw.HalfMonth1 + fw.HalfMonth2) as HalfCapacity1
 	,Capacity * fw.HalfMonth2 / (fw.HalfMonth1 + fw.HalfMonth2) as HalfCapacity2
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
-	into #tmpFactory From Factory
-	inner join Country on Factory.CountryID = Country.ID 
-	left join Factory_TMS on Factory.ID = Factory_Tms.ID
+	into #tmpFactory From Factory WITH (NOLOCK)
+	inner join Country WITH (NOLOCK) on Factory.CountryID = Country.ID 
+	left join Factory_TMS WITH (NOLOCK) on Factory.ID = Factory_Tms.ID
 		And ((@ReportType = 1 and Factory_Tms.Year = @Year)
 		or (@ReportType = 2 and DATEFROMPARTS(Factory_Tms.Year,Factory_Tms.Month,8) between @date_s and @date_e))
 	outer apply (select DATEFROMPARTS(Factory_Tms.Year,Factory_Tms.Month,8) as OrderDate) od
-	left join ArtworkType on ArtworkType.Id = Factory_TMS.ArtworkTypeID
-	left join Factory_WorkHour fw on Factory.ID = fw.ID and fw.Year = Factory_TMS.Year and fw.Month = Factory_Tms.Month	
+	left join ArtworkType WITH (NOLOCK) on ArtworkType.Id = Factory_TMS.ArtworkTypeID
+	left join Factory_WorkHour fw WITH (NOLOCK) on Factory.ID = fw.ID and fw.Year = Factory_TMS.Year and fw.Month = Factory_Tms.Month	
 	outer apply (select iif(@ArtWorkType = 'CPU', Round(Factory_Tms.TMS * 3600 / @mStandardTMS ,0), Factory_Tms.TMS) as Capacity) cc
 	outer apply (select substring(CONVERT(char(10), OrderDate, 111),6,2)  as Date1) odd1
 	--outer apply (select dbo.GetHalfMonWithYear(OrderDate) as Date2) odd2
@@ -58,10 +58,10 @@ BEGIN
 	,(cCPU * Orders.Qty * CpuRate) as OrderCapacity
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,OrderDate
-	into #tmpOrder1 from Orders
-	inner join Factory on Orders.FactoryID = Factory.ID and orders.MDivisionID=Factory.MDivisionID
-	left Join Order_TmsCost on @ArtWorkType != 'CPU' and Orders.ID = Order_TmsCost.ID And Order_TmsCost.ArtworkTypeID = @ArtWorkType
-	left join ArtworkType on ArtworkType.Id = Order_TmsCost.ArtworkTypeID
+	into #tmpOrder1 from Orders WITH (NOLOCK)
+	inner join Factory WITH (NOLOCK) on Orders.FactoryID = Factory.ID and orders.MDivisionID=Factory.MDivisionID
+	left Join Order_TmsCost WITH (NOLOCK) on @ArtWorkType != 'CPU' and Orders.ID = Order_TmsCost.ID And Order_TmsCost.ArtworkTypeID = @ArtWorkType
+	left join ArtworkType WITH (NOLOCK) on ArtworkType.Id = Order_TmsCost.ArtworkTypeID
 	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Order_TmsCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Order_TmsCost.Qty, Order_TmsCost.Tms )) as cTms) amt
 	outer apply (select cTms / @mStandardTMS as OrderTMSCPU) otmc
 	outer apply (select iif(@ArtWorkType = 'CPU', Orders.CPU, OrderTMSCPU) as cCPU) ccpu
@@ -99,11 +99,11 @@ BEGIN
 	,(cCPU * Orders.Qty * CPURate) as FactoryOrderCapacity
 	,Orders.BuyerDelivery
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
-	into #tmpFactoryOrder1 from Orders
-	inner join Factory on Orders.FactoryID = Factory.ID and orders.MDivisionID=factory.MDivisionID
-	left join Style on Style.Ukey = Orders.StyleUkey
-	left join Style_TmsCost on @ArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
-	left join ArtworkType on ArtworkType.Id = Style_TmsCost.ArtworkTypeID
+	into #tmpFactoryOrder1 from Orders WITH (NOLOCK)
+	inner join Factory WITH (NOLOCK) on Orders.FactoryID = Factory.ID and orders.MDivisionID=factory.MDivisionID
+	left join Style WITH (NOLOCK) on Style.Ukey = Orders.StyleUkey
+	left join Style_TmsCost WITH (NOLOCK) on @ArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
+	left join ArtworkType WITH (NOLOCK) on ArtworkType.Id = Style_TmsCost.ArtworkTypeID
 	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty, Style_TMSCost.Tms )) as cTms) amt
 	outer apply (select cTms / @mStandardTMS as FactoryOrderTMSCPU ) fotmc
 	outer apply (select iif(@ArtWorkType = 'CPU', Orders.CPU, FactoryOrderTMSCPU) as cCPU) ccpu
@@ -124,8 +124,8 @@ BEGIN
 	,Sewingoutput.OutputDate as SewingYYMM_Ori
 	,(cCPU * SewingOutput_Detail.QAQty * CpuRate) as SewCapacity
 	into #tmpFactoryOrder2 From #tmpFactoryOrder1
-	left join Sewingoutput_Detail on #tmpFactoryOrder1.ID = Sewingoutput_Detail.OrderID
-	left join Sewingoutput on Sewingoutput.ID = Sewingoutput_Detail.ID
+	left join Sewingoutput_Detail WITH (NOLOCK) on #tmpFactoryOrder1.ID = Sewingoutput_Detail.OrderID
+	left join Sewingoutput WITH (NOLOCK) on Sewingoutput.ID = Sewingoutput_Detail.ID
 	outer apply (select substring(CONVERT(char(10), Sewingoutput.OutputDate, 111),6,2)  as Date1) odd1
 	outer apply (select substring(CONVERT(char(10), Sewingoutput.OutputDate),1,7) as Date2) odd2
 
@@ -140,11 +140,11 @@ BEGIN
 	,(cCPU * Orders.Qty * CpuRate) as ForecastCapacity
 	,Orders.BuyerDelivery
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
-	into #tmpForecast1 from Orders
-	left join Factory on Factory.ID = Orders.FactoryID and orders.MDivisionID=factory.MDivisionID
-	left join Style on Style.Ukey = Orders.StyleUkey
-	left join Style_TmsCost on @ArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
-	left join ArtworkType on ArtworkType.Id = Style_TmsCost.ArtworkTypeID
+	into #tmpForecast1 from Orders WITH (NOLOCK)
+	left join Factory WITH (NOLOCK) on Factory.ID = Orders.FactoryID and orders.MDivisionID=factory.MDivisionID
+	left join Style WITH (NOLOCK) on Style.Ukey = Orders.StyleUkey
+	left join Style_TmsCost WITH (NOLOCK) on @ArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
+	left join ArtworkType WITH (NOLOCK) on ArtworkType.Id = Style_TmsCost.ArtworkTypeID
 	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty, Style_TMSCost.Tms )) as cTms) amt
 	outer apply (select cTms / @mStandardTMS as ForecastTMSCPU ) fotmc
 	outer apply (select iif(@ArtWorkType = 'CPU', Orders.CPU, ForecastTMSCPU) as cCPU) ccpu
@@ -216,7 +216,7 @@ BEGIN
 		) a
 		left join (
 			select ID,ArtworkTypeID,SUM(Tms) as Tms 
-			from Factory_Tms where YEAR = @Year and ArtworkTypeID = iif(@ArtWorkType = 'CPU', 'SEWING', @ArtWorkType)
+			from Factory_Tms WITH (NOLOCK) where YEAR = @Year and ArtworkTypeID = iif(@ArtWorkType = 'CPU', 'SEWING', @ArtWorkType)
 			GROUP BY ID,ArtworkTypeID
 		) c on a.FactoryID = c.ID
 		where (@M = '' or MDivisionID = @M)and (@Fty ='' OR FactoryID=@Fty)

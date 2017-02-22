@@ -1,6 +1,6 @@
 ﻿	              
 
-Create Procedure [dbo].[GetKeyword]
+CREATE Procedure [dbo].[GetKeyword]
 	(
 	  @OrderID				VarChar(13)
 	 ,@Order_BoaUkey		BigInt
@@ -36,7 +36,7 @@ Begin
 	
 	Select @PoID = PoID
 		 , @BrandID = BrandID
-	  From dbo.Orders
+	  From dbo.Orders WITH (NOLOCK)
 	 Where ID = @OrderID;
 
 	With Cte_Keyword (Keyword, StartPos, EndPos) As
@@ -48,14 +48,14 @@ Begin
 		Select Keyword
 			 , CharIndex('{',Keyword, EndPos + 1) as StartPos
 			 , CharIndex('}',Keyword, EndPos + 1) as EndPos
-		  From Cte_Keyword
+		  From Cte_Keyword 
 		 Where StartPos > 0
 		   And EndPos > 0
 	)
 	Insert Into @tmp_Keyword
 		(KeywordID)
 		Select SubString(Keyword, StartPos + 1, (EndPos - StartPos) - 1) as KeywordID
-		  From Cte_Keyword
+		  From Cte_Keyword WITH (NOLOCK)
 		 Where StartPos > 0
 		   And EndPos > 0
 		 Order by StartPos;
@@ -70,7 +70,7 @@ Begin
 			 , @IsKeyworExist = IsNull(tmp.IsExist, 0)
 		  From @tmp_Keyword as tmp_Keyword
 		  Outer Apply (	Select *, 1 as IsExist
-						  From dbo.Keyword
+						  From dbo.Keyword WITH (NOLOCK)
 						 Where Keyword.ID = tmp_Keyword.KeywordID
 					  ) as tmp
 		 Where RowID = @Keyword_RowID;
@@ -94,14 +94,14 @@ Begin
 				Else
 				Begin
 					Select @SizeItem = Left(Relation, 3)
-					  From dbo.Order_BOA_KeyWord
+					  From dbo.Order_BOA_KeyWord WITH (NOLOCK)
 					 Where ID = @PoID
 					   And Order_BOAUkey = @Order_BoaUkey
 					   And KeywordID = @KeywordID;
 				End;
 
 				Select @KeyValue = IsNull(SizeSpec, '')
-				  From dbo.Order_SizeSpec
+				  From dbo.Order_SizeSpec WITH (NOLOCK)
 				 Where ID = @PoID
 				   And SizeItem = @SizeItem
 				   And SizeCode = @SizeCode;
@@ -112,7 +112,7 @@ Begin
 				Set @PatternPanel = '';
 
 				Select @PatternPanel = Left(Relation, 2)
-				  From dbo.Order_BOA_KeyWord
+				  From dbo.Order_BOA_KeyWord WITH (NOLOCK)
 				 Where ID = @PoID
 				   And Order_BOAUkey = @Order_BoaUkey
 				   And KeywordID = @KeywordID;
@@ -120,7 +120,7 @@ Begin
 				If IsNull(@PatternPanel, '') != ''
 				Begin
 					Select @KeyValue = ColorID
-					  From dbo.Order_ColorCombo
+					  From dbo.Order_ColorCombo WITH (NOLOCK)
 					 Where ID = @PoID
 					   And Article = @Article
 					   And PatternPanel = @PatternPanel;

@@ -17,8 +17,8 @@ BEGIN
 
     --先撈出應該出現的資料
 	select distinct o.StyleID,o.SeasonID,o.BrandID,oq.Article,o.MDivisionID into #tmpData
-	from Orders o
-	inner join Order_Qty oq on o.ID = oq.ID
+	from Orders o WITH (NOLOCK)
+	inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
 	where o.Category = 'B' 
 	and o.SciDelivery >= DATEADD(DAY,-30,CONVERT(date,GETDATE()))
 	and o.Junk = 0
@@ -30,7 +30,7 @@ BEGIN
 	from (
 	select StyleID,SeasonID,BrandID,Article,MDivisionID from #tmpData
 	except
-	select StyleID,SeasonID,BrandID,Article,MDivisionID from GarmentTest) t
+	select StyleID,SeasonID,BrandID,Article,MDivisionID from GarmentTest WITH (NOLOCK)) t
 
 	--撈出需要更新GarmentTest的資料
 	select * into #tmpUpdateData from (
@@ -42,9 +42,9 @@ BEGIN
 	Insert into GarmentTest (MDivisionid,BrandID,StyleID,SeasonID,Article,OrderID,DeadLine,SewingInline,SewingOffline)
 	select TOP 1 t.MDivisionID,t.BrandID,t.StyleID,t.SeasonID,t.Article, 
 	isnull((select top(1) a.OrderID from (
-	select sd.OrderID,s.OutputDate from SewingOutput_Detail sd
-	left join SewingOutput s on sd.ID = s.ID
-	where sd.OrderId in (select o.ID from Orders o 
+	select sd.OrderID,s.OutputDate from SewingOutput_Detail sd WITH (NOLOCK)
+	left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
+	where sd.OrderId in (select o.ID from Orders o WITH (NOLOCK)
 						 where o.BrandID = t.BrandID 
 						 and o.StyleID = t.StyleID 
 						 and o.SeasonID = t.SeasonID 
@@ -54,19 +54,19 @@ BEGIN
 	and s.Status <> 'New') a
 	where a.OutputDate is not null
 	order by a.OutputDate),'') OrderID , 
-	(select min(o.SCIDelivery) from Orders o 
+	(select min(o.SCIDelivery) from Orders o WITH (NOLOCK)
 	where o.BrandID = t.BrandID 
 	and o.StyleID = t.StyleID 
 	and o.SeasonID = t.SeasonID 
 	and o.MDivisionID = t.MDivisionID
 	and o.Category = 'B') DeadLine ,
-	(select min(o.SewInLine) from Orders o 
+	(select min(o.SewInLine) from Orders o WITH (NOLOCK)
 	where o.BrandID = t.BrandID 
 	and o.StyleID = t.StyleID 
 	and o.SeasonID = t.SeasonID 
 	and o.MDivisionID = t.MDivisionID
 	and o.Category = 'B') SewingInline ,
-	(select min(o.SewOffLine) from Orders o 
+	(select min(o.SewOffLine) from Orders o WITH (NOLOCK)
 	where o.BrandID = t.BrandID 
 	and o.StyleID = t.StyleID 
 	and o.SeasonID = t.SeasonID 
@@ -95,9 +95,9 @@ BEGIN
 
 			--OrderID
 			SELECT @OrderID = isnull((select top(1) a.OrderID from (
-			select sd.OrderID,s.OutputDate from SewingOutput_Detail sd
-			left join SewingOutput s on sd.ID = s.ID
-			where sd.OrderId in (select o.ID from Orders o 
+			select sd.OrderID,s.OutputDate from SewingOutput_Detail sd WITH (NOLOCK)
+			left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
+			where sd.OrderId in (select o.ID from Orders o WITH (NOLOCK)
 			where o.BrandID = @BrandID 
 			and o.StyleID = @StyleID 
 			and o.SeasonID = @SeasonID 
@@ -109,7 +109,7 @@ BEGIN
 			order by a.OutputDate),'') 
 
 			--DeadLine
-			select @DeadLine = min(o.SCIDelivery) from Orders o 
+			select @DeadLine = min(o.SCIDelivery) from Orders o WITH (NOLOCK)
 			where o.BrandID = @BrandID  
 			and o.StyleID = @StyleID
 			and o.SeasonID = @SeasonID 
@@ -117,7 +117,7 @@ BEGIN
 			and o.Category = 'B'
 
 			--SewingInline
-			select @SewingInline = min(o.SewInLine) from Orders o 
+			select @SewingInline = min(o.SewInLine) from Orders o WITH (NOLOCK)
 			where o.BrandID = @BrandID
 			and o.StyleID = @StyleID
 			and o.SeasonID = @SeasonID
@@ -125,7 +125,7 @@ BEGIN
 			and o.Category = 'B'
 
 			--SewingOffline
-			select @SewingOffline = min(o.SewOffLine) from Orders o 
+			select @SewingOffline = min(o.SewOffLine) from Orders o WITH (NOLOCK)
 			where o.BrandID = @BrandID
 			and o.StyleID = @StyleID
 			and o.SeasonID = @SeasonID
@@ -150,7 +150,7 @@ BEGIN
 	--刪除GarmentTest不存在Orders的資料
 	delete GarmentTest
 	where SewingInline > Convert(Date,GETDATE())
-	and not exists (select 1 from Orders o, Order_Qty oq 
+	and not exists (select 1 from Orders o WITH (NOLOCK), Order_Qty oq WITH (NOLOCK)
 					where o.ID = oq.ID
 					and o.MDivisionID = GarmentTest.MDivisionid 
 					and o.BrandID = GarmentTest.BrandID 

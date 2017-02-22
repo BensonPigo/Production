@@ -21,7 +21,7 @@ BEGIN
 	select @dMonth1 as 'Month' into #dates union select @dMonth2 union select @dMonth3
 	select * from #dates
 
-	select *,dateadd(day,15,CRDDate) as CRDDate15 into #tmpOrders from Orders 
+	select *,dateadd(day,15,CRDDate) as CRDDate15 into #tmpOrders from Orders WITH (NOLOCK)
 	where Orders.Category = 'B'
 	and ((Orders.PlanDate between @date_S and @date_E and Orders.CRDDate is not null) 
 		or (Orders.BuyerDelivery between @date_S and @date_E and Orders.CRDDate is not null) 
@@ -34,7 +34,7 @@ BEGIN
 
 	--select * from AdidasKPITarget
 
-	select PulloutDate,ShipQty,OrderID into #tmpPullout from Pullout_Detail where OrderID in (select tmp.ID from #tmpOrders tmp) --order by PulloutDate,
+	select PulloutDate,ShipQty,OrderID into #tmpPullout from Pullout_Detail WITH (NOLOCK) where OrderID in (select tmp.ID from #tmpOrders tmp) --order by PulloutDate,
 	--select pd.LastDate as PulloutDate, pd.Qty as ShipQty, o.ID as OrderID into #tmpPullout from #tmpOrders o outer apply (select LastDate,Qty from dbo.GetPulloutData_All(o.ID)) pd
 
 	declare @dNow date = getdate()
@@ -76,8 +76,8 @@ BEGIN
 	,substring(CONVERT(char(10), o.PlanDate, 112),1,6) as ddPlanDate
 	into #tmpOrderDetail
 	from #tmpOrders o 
-	inner join Factory f on f.ID = o.FactoryID
-	left join Country cty on f.CountryID = cty.ID
+	inner join Factory f WITH (NOLOCK) on f.ID = o.FactoryID
+	left join Country cty WITH (NOLOCK) on f.CountryID = cty.ID
 	outer apply ( select max(pd.PulloutDate) as PulloutDate from #tmpPullout pd where pd.OrderID = o.ID) pd
 	outer apply ( select iif(o.Plandate > o.CRDDate ,o.BuyerDelivery, iif(o.SciDelivery > o.Plandate,o.SciDelivery,o.Plandate) ) as dLastProduction) dpro
 	outer apply ( select iif(o.OrderTypeID not in ('CC','CM','CR'),

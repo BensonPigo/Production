@@ -3,7 +3,7 @@
 -- Create date: 2015/12/31
 -- Description:	BOA AutoPick Prepare
 -- =============================================
-Create PROCEDURE [dbo].[usp_BoaByIssueBreakDown]
+CREATE PROCEDURE [dbo].[usp_BoaByIssueBreakDown]
 	@IssueID varchar(13)	--	Issue ID
 	,@POID				VarChar(13)				--採購母單
 	,@OrderID			VarChar(13)				--訂單子單
@@ -29,19 +29,19 @@ BEGIN
 			 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
 			 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
 			 , IsNull(Issue_Breakdown.Qty, 0) Qty
-		  From dbo.Orders
-		  Left Join dbo.Order_SizeCode
+		  From dbo.Orders WITH (NOLOCK)
+		  Left Join dbo.Order_SizeCode WITH (NOLOCK)
 			On Order_SizeCode.ID = Orders.POID
-		  Left Join dbo.Order_Article
+		  Left Join dbo.Order_Article WITH (NOLOCK)
 			On Order_Article.ID = Orders.ID
-		  Left Join dbo.Issue_Breakdown
+		  Left Join dbo.Issue_Breakdown WITH (NOLOCK)
 			On	   Issue_Breakdown.OrderID = Orders.ID
 			   And Issue_Breakdown.SizeCode = Order_SizeCode.SizeCode
 			   And Issue_Breakdown.Article = Order_Article.Article
-		  Left Join dbo.CustCD
+		  Left Join dbo.CustCD WITH (NOLOCK)
 			On	   CustCD.BrandID = Orders.BrandID
 			   And CustCD.ID = Orders.CustCDID
-		  Left Join dbo.Factory
+		  Left Join dbo.Factory WITH (NOLOCK)
 			On Factory.ID = Orders.FactoryID
 		 Where Orders.POID = @POID
 		   And Orders.Junk = 0
@@ -57,19 +57,19 @@ BEGIN
 			 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
 			 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
 			 , IsNull(Order_Qty.Qty, 0) Qty
-		  From dbo.Orders
-		  Left Join dbo.Order_SizeCode
+		  From dbo.Orders WITH (NOLOCK)
+		  Left Join dbo.Order_SizeCode WITH (NOLOCK)
 			On Order_SizeCode.ID = Orders.POID
-		  Left Join dbo.Order_Article
+		  Left Join dbo.Order_Article WITH (NOLOCK)
 			On Order_Article.ID = Orders.ID
-		  Left Join dbo.Order_Qty
+		  Left Join dbo.Order_Qty WITH (NOLOCK)
 			On	   Order_Qty.ID = Orders.ID
 			   And Order_Qty.SizeCode = Order_SizeCode.SizeCode
 			   And Order_Qty.Article = Order_Article.Article
-		  Left Join dbo.CustCD
+		  Left Join dbo.CustCD WITH (NOLOCK)
 			On	   CustCD.BrandID = Orders.BrandID
 			   And CustCD.ID = Orders.CustCDID
-		  Left Join dbo.Factory
+		  Left Join dbo.Factory WITH (NOLOCK)
 			On Factory.ID = Orders.FactoryID
 		 Where Orders.POID = @POID
 		   And Orders.Junk = 0
@@ -84,19 +84,19 @@ BEGIN
 				 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
 				 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
 				 , IsNull(Order_Qty.Qty, 0) Qty
-			  From dbo.Orders
-			  Left Join dbo.Order_SizeCode
+			  From dbo.Orders WITH (NOLOCK)
+			  Left Join dbo.Order_SizeCode WITH (NOLOCK)
 				On Order_SizeCode.ID = Orders.POID
-			  Left Join dbo.Order_Article
+			  Left Join dbo.Order_Article WITH (NOLOCK)
 				On Order_Article.ID = Orders.ID
-			  Left Join dbo.Order_Qty
+			  Left Join dbo.Order_Qty WITH (NOLOCK)
 				On	   Order_Qty.ID = Orders.ID
 				   And Order_Qty.SizeCode = Order_SizeCode.SizeCode
 				   And Order_Qty.Article = Order_Article.Article
-			  Left Join dbo.CustCD
+			  Left Join dbo.CustCD WITH (NOLOCK)
 				On	   CustCD.BrandID = Orders.BrandID
 				   And CustCD.ID = Orders.CustCDID
-			  Left Join dbo.Factory
+			  Left Join dbo.Factory WITH (NOLOCK)
 				On Factory.ID = Orders.FactoryID
 			 Where Orders.POID = @POID
 			   And Orders.Junk = 0
@@ -121,22 +121,22 @@ BEGIN
 
 	select p.id as [poid], p.seq1, p.seq2, p.SCIRefno,dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
 	,p.ColorID, p.SizeSpec, p.Spec, p.Special, p.Remark into #tmpPO_supp_detail
-		from dbo.PO_Supp_Detail as p 
-	inner join dbo.Fabric f on f.SCIRefno = p.SCIRefno
-	inner join dbo.MtlType m on m.id = f.MtlTypeID
+		from dbo.PO_Supp_Detail as p WITH (NOLOCK)
+	inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
+	inner join dbo.MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID
 	where p.id=@POID and p.FabricType = 'A' and m.IssueType=@IssueType
 
 	;with cte2 
 	as
 	(
 		select m.*,m.InQty-m.OutQty+m.AdjustQty as [balanceqty]
-		from #tmpPO_supp_detail inner join dbo.FtyInventory m on m.POID = #tmpPO_supp_detail.poid and m.seq1 = #tmpPO_supp_detail.seq1 and m.seq2 = #tmpPO_supp_detail.SEQ2
+		from #tmpPO_supp_detail inner join dbo.FtyInventory m WITH (NOLOCK) on m.POID = #tmpPO_supp_detail.poid and m.seq1 = #tmpPO_supp_detail.seq1 and m.seq2 = #tmpPO_supp_detail.SEQ2
 		and m.MDivisionID = @MDivisionId and m.StockType = 'B' and Roll=''
 		where lock = 0
 	)
 	select 0 as [Selected],''as id,b.*,isnull(sum(a.OrderQty),0.00) qty,left(b.seq1+'   ',3)+b.seq2 as seq,cte2.MDivisionID,cte2.balanceqty,cte2.Ukey as ftyinventoryukey,cte2.StockType,cte2.Roll,cte2.Dyelot
 	from #tmpPO_supp_detail b
-	left join cte2 on cte2.poid = b.poid and cte2.seq1 = b.seq1 and cte2.SEQ2 = b.SEQ2
+	left join cte2 WITH (NOLOCK) on cte2.poid = b.poid and cte2.seq1 = b.seq1 and cte2.SEQ2 = b.SEQ2
 	left join #Tmp_BoaExpend a on b.SCIRefno = a.scirefno and b.poid = a.ID
 	 and (b.SizeSpec = a.SizeSpec) and (b.ColorID = a.ColorID)
 	 group by b.poid,b.seq1,b.seq2,b.[description],b.ColorID,b.SizeSpec,b.SCIRefno,b.Spec,b.Special,b.Remark,cte2.MDivisionID,cte2.balanceqty,cte2.Ukey,cte2.StockType,cte2.Roll,cte2.Dyelot
@@ -152,10 +152,10 @@ BEGIN
 	 
 	 select z.*,isnull(cte.qty,0) as qty,isnull(cte.qty,0) as ori_qty from
 	 (select x.poid,x.seq1,x.seq2,order_sizecode.SizeCode,Order_SizeCode.Seq 
-		from dbo.order_sizecode 
-			,(select distinct poid,seq1,seq2 from cte) as x
+		from dbo.order_sizecode WITH (NOLOCK)
+			,(select distinct poid,seq1,seq2 from cte WITH (NOLOCK)) as x
 		where Order_SizeCode.id = @POID) z 
-	left join cte on cte.SizeCode = z.SizeCode and cte.poid = z.poid and cte.seq1 = z.seq1 and cte.seq2 = z.seq2
+	left join cte WITH (NOLOCK) on cte.SizeCode = z.SizeCode and cte.poid = z.poid and cte.seq1 = z.seq1 and cte.seq2 = z.seq2
 	order by z.seq1,z.seq2,z.Seq
 
 

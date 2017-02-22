@@ -15,18 +15,18 @@ BEGIN
 	DECLARE @err_msg nvarchar(2000);
 
 	BEGIN TRY
-	IF EXISTS(SELECT * FROM DBO.FIR WHERE ID = @FirID AND PhysicalEncode = 0) -- Not Encoded
+	IF EXISTS(SELECT * FROM DBO.FIR WITH (NOLOCK) WHERE ID = @FirID AND PhysicalEncode = 0) -- Not Encoded
 	BEGIN
-		IF EXISTS(SELECT * FROM DBO.FIR WHERE ID = @FirID AND nonPhysical = 0) -- 需檢驗的要作缸號檢查 (每批來料要每缸都有檢查資料)
+		IF EXISTS(SELECT * FROM DBO.FIR WITH (NOLOCK) WHERE ID = @FirID AND nonPhysical = 0) -- 需檢驗的要作缸號檢查 (每批來料要每缸都有檢查資料)
 		BEGIN
 			DECLARE dyelot_cursor CURSOR FOR 
 			select r.Dyelot from (
-									Select distinct a.Dyelot from dbo.Receiving_Detail a 
-									inner join dbo.FIR b 
+									Select distinct a.Dyelot from dbo.Receiving_Detail a WITH (NOLOCK)
+									inner join dbo.FIR b WITH (NOLOCK)
 									on b.POID = a.PoId and b.SEQ1 =a.Seq1 and b.SEQ2 = a.Seq2 and b.ReceivingID = a.Id
 									where b.Id=@FirID
 								 ) r
-					left join (select distinct dyelot from dbo.FIR_Physical where id = @FirID ) i 
+					left join (select distinct dyelot from dbo.FIR_Physical WITH (NOLOCK) where id = @FirID ) i 
 					on i.Dyelot = r.Dyelot
 					where i.Dyelot is null
 
@@ -57,9 +57,9 @@ BEGIN
 						,PhysicalEncode=1
 						,EditName=@Login
 						,EditDate = GetDate()
-						,Physical = IIF(EXISTS(SELECT * FROM DBO.FIR_Physical WHERE ID = @FirID and result = 'Fail'),'Fail','Pass')
-						,TotalDefectPoint = (select sum(t.TotalPoint) from dbo.FIR_Physical t where t.ID =@FirID)
-						,TotalInspYds = (select sum(t.ActualYds) from dbo.FIR_Physical t where t.ID =@FirID)
+						,Physical = IIF(EXISTS(SELECT * FROM DBO.FIR_Physical WITH (NOLOCK) WHERE ID = @FirID and result = 'Fail'),'Fail','Pass')
+						,TotalDefectPoint = (select sum(t.TotalPoint) from dbo.FIR_Physical t WITH (NOLOCK) where t.ID =@FirID)
+						,TotalInspYds = (select sum(t.ActualYds) from dbo.FIR_Physical t WITH (NOLOCK) where t.ID =@FirID)
 						,Status='Confirmed' 
 				where id =@FirID;
 

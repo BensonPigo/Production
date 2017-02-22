@@ -8,8 +8,8 @@ BEGIN
 	DECLARE	@_i int
 
 	--避免Divide by zero error encountered
-	SET ARITHABORT ON 
-	SET ANSI_WARNINGS ON
+	SET ARITHABORT OFF 
+	SET ANSI_WARNINGS OFF
 
 	--SewingLine
 	BEGIN
@@ -37,7 +37,7 @@ BEGIN
 		declare @tmpcell varchar(2),
 				@tmpdesc nvarchar(500),
 				@tmpsewer int
-		select @tmpcell = SewingCell,@tmpdesc = Description, @tmpsewer = Sewer from SewingLine where ID = @sewinglineid and FactoryID = @factoryid
+		select @tmpcell = SewingCell,@tmpdesc = Description, @tmpsewer = Sewer from SewingLine WITH (NOLOCK) where ID = @sewinglineid and FactoryID = @factoryid
 		IF @tmpcell is not null
 			BEGIN
 				--當資料已存在PMS且值有改變就更新
@@ -61,7 +61,7 @@ BEGIN
 	execute (@cmd);
 
 	DECLARE cursor_sewingline CURSOR FOR
-	select ID from SewingLine where FactoryID = @factoryid
+	select ID from SewingLine WITH (NOLOCK) where FactoryID = @factoryid
 	except
 	select ID from #tmpSewingLine;
 
@@ -110,7 +110,7 @@ BEGIN
 		BEGIN
 			declare @tmpname nvarchar(20)
 			SET @tmpname = null   --初始化
-			select @tmpname = Name from Holiday where FactoryID = @factoryid and HolidayDate = DATEADD(DAY,@_i,@startdate)
+			select @tmpname = Name from Holiday WITH (NOLOCK) where FactoryID = @factoryid and HolidayDate = DATEADD(DAY,@_i,@startdate)
 			IF @tmpname is not null
 				BEGIN
 					--當資料已存在PMS且值有改變就更新
@@ -163,7 +163,7 @@ BEGIN
 
 	DECLARE cursor_holiday CURSOR FOR 
 	select a.HolidayDate 
-	from (select h.HolidayDate,IIF(t.FromDate is null,0,1) as Found from Holiday h
+	from (select h.HolidayDate,IIF(t.FromDate is null,0,1) as Found from Holiday h WITH (NOLOCK)
 		  left join  #tmpHoliday t on h.HolidayDate between CONVERT(DATE,t.FromDate) and CONVERT(DATE,t.ToDate)
 		  where h.FactoryID = @factoryid and h.HolidayDate >= CONVERT(DATE,DATEADD(DAY,-10,GETDATE()))) a
 	where a.Found = 0;
@@ -215,7 +215,7 @@ BEGIN
 	order by TemplateID,DayOfWeekIndex'
 	execute (@cmd)
 
-	DECLARE cursor_sewingline CURSOR FOR select ID from SewingLine where FactoryID = @factoryid order by ID
+	DECLARE cursor_sewingline CURSOR FOR select ID from SewingLine WITH (NOLOCK) where FactoryID = @factoryid order by ID
 
 	declare @workdate date,
 			@apsworkhour float,
@@ -241,10 +241,10 @@ BEGIN
 					IF @apsworkhour is not null
 						BEGIN
 							SET @foundworkhour = null
-							select @foundworkhour = Hours from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+							select @foundworkhour = Hours from WorkHour WITH (NOLOCK) where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
 							IF @foundworkhour is null
 								insert into WorkHour(SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
-								values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
+								values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday WITH (NOLOCK) where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
 							ELSE
 								BEGIN
 									IF @foundworkhour <> @apsworkhour
@@ -254,7 +254,7 @@ BEGIN
 					ELSE --檢查PMS是否有這筆資料，若有就把workhour改成0
 						BEGIN
 							SET @foundworkhour = null
-							select @foundworkhour = Hours from WorkHour where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate and Hours > 0
+							select @foundworkhour = Hours from WorkHour WITH (NOLOCK) where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate and Hours > 0
 							IF @foundworkhour is not null
 								update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
 						END
@@ -262,7 +262,7 @@ BEGIN
 			ELSE  --檢查PMS是否有這筆資料，若有就把workhour改成0
 				BEGIN
 					SET @foundworkhour = null
-					select @foundworkhour = Hours from WorkHour where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate and Hours > 0
+					select @foundworkhour = Hours from WorkHour WITH (NOLOCK)where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate and Hours > 0
 					IF @foundworkhour is not null
 						update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
 				END
@@ -308,10 +308,10 @@ BEGIN
 					IF @apsworkhour is not null
 						BEGIN
 							SET @foundworkhour = null
-							select @foundworkhour = Hours from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
+							select @foundworkhour = Hours from WorkHour WITH (NOLOCK) where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
 							IF @foundworkhour is null
 								insert into WorkHour(SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
-								values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
+								values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday WITH (NOLOCK) where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
 							ELSE
 								BEGIN
 									IF @foundworkhour <> @apsworkhour
@@ -321,7 +321,7 @@ BEGIN
 					ELSE --檢查PMS是否有這筆資料，若有就把workhour改成0
 						BEGIN
 							SET @foundworkhour = null
-							select @foundworkhour = Hours from WorkHour where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate and Hours > 0
+							select @foundworkhour = Hours from WorkHour WITH (NOLOCK) where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate and Hours > 0
 							IF @foundworkhour is not null
 								update WorkHour set Hours = 0, EditName = @login, EditDate = GETDATE() where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date = @workdate
 						END
@@ -355,13 +355,13 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @foundworkhour = null
-		select @foundworkhour = Hours from WorkHour where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate
+		select @foundworkhour = Hours from WorkHour WITH (NOLOCK) where FactoryID = @factoryid and SewingLineID = @sewinglineid and Date = @workdate
 
 		IF @foundworkhour is null
 			BEGIN
 				IF @specialtype = 1
 					insert into WorkHour(SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
-					values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
+					values (@sewinglineid,@factoryid,@workdate,@apsworkhour,(select COUNT(FactoryID) from Holiday WITH (NOLOCK) where FactoryID = @factoryid and HolidayDate = @workdate),@login,GETDATE());
 			END
 		ELSE
 			BEGIN
@@ -435,10 +435,10 @@ BEGIN
 	execute (@cmd)
 
 	--DECLARE cursor_sewingschedule CURSOR FOR
-	select SALESORDERNO as OrderID,IIF(REFNO is null or REFNO = '', isnull((select TOP (1) sl.Location from Orders o, Style_Location sl where o.ID = SALESORDERNO and o.StyleUkey = sl.StyleUkey),''),REFNO) as ComboType,ID as APSNo into #tmpCheckData from #tmpAPSSchedule
+	select SALESORDERNO as OrderID,IIF(REFNO is null or REFNO = '', isnull((select TOP (1) sl.Location from Orders o WITH (NOLOCK), Style_Location sl WITH (NOLOCK) where o.ID = SALESORDERNO and o.StyleUkey = sl.StyleUkey),''),REFNO) as ComboType,ID as APSNo into #tmpCheckData from #tmpAPSSchedule
 	--刪除PMS存在但APS不存在的Schedule
 	DECLARE cursor_needtodeletesewingschedule CURSOR FOR
-	select APSNo,OrderID,ComboType from SewingSchedule where FactoryID = @factoryid and CONVERT(DATE,Offline) >= CONVERT(DATE,DATEADD(DAY,-20,GETDATE()))
+	select APSNo,OrderID,ComboType from SewingSchedule WITH (NOLOCK) where FactoryID = @factoryid and CONVERT(DATE,Offline) >= CONVERT(DATE,DATEADD(DAY,-20,GETDATE()))
 	except
 	select APSNo,OrderID,ComboType from #tmpCheckData
 
@@ -452,8 +452,8 @@ BEGIN
 	BEGIN
 		Begin Try
 			Begin Transaction
-				delete from SewingSchedule_Detail where ID in (select ID from SewingSchedule where FactoryID = @factoryid and APSNo = @apsno and OrderID = @orderid and ComboType = @combotype);
-				delete from SewingSchedule where FactoryID = @factoryid and APSNo = @apsno and OrderID = @orderid and ComboType = @combotype;
+				delete from SewingSchedule_Detail where ID in (select ID from SewingSchedule WITH (NOLOCK) where FactoryID = @factoryid and APSNo = @apsno and OrderID = @orderid and ComboType = @combotype);
+				delete from SewingSchedule  where FactoryID = @factoryid and APSNo = @apsno and OrderID = @orderid and ComboType = @combotype;
 			Commit Transaction;
 		End Try
 		Begin Catch
@@ -499,10 +499,10 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		IF @combotype is null or @combotype = ''
-			SET @combotype = isnull((select TOP (1) sl.Location from Orders o, Style_Location sl where o.ID = @orderid and o.StyleUkey = sl.StyleUkey),'')
+			SET @combotype = isnull((select TOP (1) sl.Location from Orders o WITH (NOLOCK), Style_Location sl WITH (NOLOCK) where o.ID = @orderid and o.StyleUkey = sl.StyleUkey),'')
 
 		SET @sewingscheduleid = null
-		select @sewingscheduleid = ID, @pmsassdate = AddDate, @pmseditdate = EditDate from SewingSchedule where FactoryID = @factoryid and OrderID = @orderid and ComboType = @combotype and APSNo = @apsno
+		select @sewingscheduleid = ID, @pmsassdate = AddDate, @pmseditdate = EditDate from SewingSchedule WITH (NOLOCK) where FactoryID = @factoryid and OrderID = @orderid and ComboType = @combotype and APSNo = @apsno
 		IF @sewingscheduleid is null
 			BEGIN
 				--找生產單效率
@@ -538,7 +538,7 @@ BEGIN
 				IF @apseff is not null
 					SET @maxeff = @maxeff*@apseff
 				
-				SET @sewer = isnull((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid),0)
+				SET @sewer = isnull((select Sewer from SewingLine WITH (NOLOCK) where FactoryID = @factoryid and ID = @sewinglineid),0)
 
 				delete from #DynamicEff
 
@@ -547,13 +547,13 @@ BEGIN
 					Begin Transaction
 						insert into SewingSchedule(OrderID,ComboType,SewingLineID,AlloQty,Inline,Offline,MDivisionID,FactoryID,Sewer,TotalSewingTime,MaxEff,StandardOutput,WorkDay,WorkHour,APSNo,OrderFinished,AddName,AddDate)
 						values (@orderid,@combotype,@sewinglineid,@alloqty,@inline,@offline,
-						(select MDivisionID from Factory where ID = @factoryid),
+						(select MDivisionID from Factory WITH (NOLOCK) where ID = @factoryid),
 						@factoryid,@sewer,@gsd,CONVERT(numeric(5,2),isnull(@maxeff*100,0)),CONVERT(int,ROUND(isnull((3600/@gsd*@sewer*@maxeff),0),0)),
-						isnull((select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0),
-						CONVERT(numeric(8,3),@duration),@apsno,(select Finished from Orders where ID = @orderid),@login,@editdate);
+						isnull((select COUNT(*) from WorkHour WITH (NOLOCK) where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0),
+						CONVERT(numeric(8,3),@duration),@apsno,(select Finished from Orders WITH (NOLOCK) where ID = @orderid),@login,@editdate);
 
 						--取最新的ID
-						select @sewingscheduleid = ID from SewingSchedule where FactoryID = @factoryid and OrderID = @orderid and ComboType = @combotype and APSNo = @apsno
+						select @sewingscheduleid = ID from SewingSchedule WITH (NOLOCK) where FactoryID = @factoryid and OrderID = @orderid and ComboType = @combotype and APSNo = @apsno
 
 						DECLARE cursor_apsscheduledetail CURSOR FOR
 						SELECT POCOLOR, POSIZE, PLANAMOUNT from #tmpAPSSchedule where ID = @apsno and SALESORDERNO = @orderid and POID = @apspoid
@@ -619,17 +619,17 @@ BEGIN
 
 						Begin Try
 							Begin Transaction
-								SET @sewer = isnull((select Sewer from SewingLine where FactoryID = @factoryid and ID = @sewinglineid),0)
+								SET @sewer = isnull((select Sewer from SewingLine WITH (NOLOCK) where FactoryID = @factoryid and ID = @sewinglineid),0)
 								update SewingSchedule 
 								set SewingLineID = @sewinglineid, AlloQty = isnull(@alloqty,0), Inline = @inline, Offline = @offline, Sewer = isnull(@sewer,0), 
-									TotalSewingTime = isnull(@gsd,0), MaxEff = CONVERT(numeric(5,2),isnull(@maxeff*100,0)), StandardOutput = IIF(@gsd is null or @gsd = 0 ,0,CONVERT(int,ROUND(isnull((3600/@gsd*@sewer*@maxeff),0),0))), WorkDay = isnull((select COUNT(*) from WorkHour where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0), 
+									TotalSewingTime = isnull(@gsd,0), MaxEff = CONVERT(numeric(5,2),isnull(@maxeff*100,0)), StandardOutput = IIF(@gsd is null or @gsd = 0 ,0,CONVERT(int,ROUND(isnull((3600/@gsd*@sewer*@maxeff),0),0))), WorkDay = isnull((select COUNT(*) from WorkHour WITH (NOLOCK) where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0), 
 									WorkHour = CONVERT(numeric(8,3),isnull(@duration,0)), EditName = @login, EditDate = @editdate
 								where ID = @sewingscheduleid;
 
 								--更新SewingSchedule_Detail
 								--刪除資料
 								DECLARE cursor_deletescheduledetail CURSOR FOR
-								select Article,SizeCode from SewingSchedule_Detail where ID = @sewingscheduleid
+								select Article,SizeCode from SewingSchedule_Detail WITH (NOLOCK) where ID = @sewingscheduleid
 								except
 								select RTRIM(POCOLOR) as Article,POSIZE as SizeCode from #tmpAPSSchedule where ID = @apsno and SALESORDERNO = @orderid and POID = @apspoid
 
@@ -637,7 +637,7 @@ BEGIN
 								FETCH NEXT FROM cursor_deletescheduledetail INTO @article,@sizecode
 								WHILE @@FETCH_STATUS = 0
 								BEGIN
-									delete from SewingSchedule_Detail where ID = @sewingscheduleid and OrderID = @orderid and ComboType = @combotype and Article = @article and SizeCode = @sizecode;
+									delete from SewingSchedule_Detail  where ID = @sewingscheduleid and OrderID = @orderid and ComboType = @combotype and Article = @article and SizeCode = @sizecode;
 									FETCH NEXT FROM cursor_deletescheduledetail INTO @article,@sizecode
 								END
 								CLOSE cursor_deletescheduledetail
@@ -651,7 +651,7 @@ BEGIN
 								FETCH NEXT FROM cursor_apsscheduledetail INTO @article,@sizecode,@detailalloqty
 								WHILE @@FETCH_STATUS = 0
 								BEGIN
-									IF EXISTS(select 1 from SewingSchedule_Detail where ID = @sewingscheduleid and OrderID = @orderid and ComboType = @combotype and Article = @article and SizeCode = @sizecode)
+									IF EXISTS(select 1 from SewingSchedule_Detail WITH (NOLOCK) where ID = @sewingscheduleid and OrderID = @orderid and ComboType = @combotype and Article = @article and SizeCode = @sizecode)
 										update SewingSchedule_Detail set SewingLineID = @sewinglineid, AlloQty = isnull(@detailalloqty,0) where ID = @sewingscheduleid and OrderID = @orderid and ComboType = @combotype and Article = @article and SizeCode = @sizecode;
 									ELSE
 										insert into SewingSchedule_Detail (ID, OrderID, ComboType,SewingLineID, Article,SizeCode, AlloQty)
@@ -684,10 +684,10 @@ BEGIN
 	BEGIN
 	DECLARE cursor_orders CURSOR FOR
 	select o.ID,o.SewInLine,o.SewOffLine,o.SewLine,
-	CONVERT(date,(select MIN(Inline) from SewingSchedule where OrderID = o.ID)) as SewingInline,
-	CONVERT(date,(select MAX(Offline) from SewingSchedule where OrderID = o.ID)) as SewingOffline,
-	(select CONCAT(a.SewingLineID,'/') from (select distinct SewingLineID from SewingSchedule where OrderID = o.ID) a order by SewingLineID for xml path('')) as SewingLine
-	from Orders o
+	CONVERT(date,(select MIN(Inline) from SewingSchedule WITH (NOLOCK) where OrderID = o.ID)) as SewingInline,
+	CONVERT(date,(select MAX(Offline) from SewingSchedule WITH (NOLOCK) where OrderID = o.ID)) as SewingOffline,
+	(select CONCAT(a.SewingLineID,'/') from (select distinct SewingLineID from SewingSchedule WITH (NOLOCK) where OrderID = o.ID) a order by SewingLineID for xml path('')) as SewingLine
+	from Orders o WITH (NOLOCK)
 	where o.FtyGroup = @factoryid
 	and o.Finished = 0
 

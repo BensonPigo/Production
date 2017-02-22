@@ -84,19 +84,19 @@ BEGIN
 				With group6key as(
 					SELECT b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,
 						sum(AInqty) AInqty,sum(AOutqty) AOutqty,sum(AAdjustQty) AAdjustQty 
-						FROM View_TransactionList b
+						FROM View_TransactionList b WITH (NOLOCK)
 						where b.MDivisionid = @MDivisionid and b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status='confirmed'
 						group by b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll
 				), groupDyelot as(
 					SELECT b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,Dyelot
-						FROM View_TransactionList b
+						FROM View_TransactionList b WITH (NOLOCK)
 						where b.MDivisionid = @MDivisionid and b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status='confirmed'
 						group by b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,Dyelot
 				)				
 				MERGE  DBO.FTYINVENTORY AS T
 				USING (SELECT g.*,
-						Dyelot = (select top 1 gd.Dyelot from groupDyelot gd where g.Roll = gd.Roll and g.seq1 = gd.seq1 and g.seq2 = gd.seq2 and g.PoId = gd.PoId and g.MDivisionID = gd.MDivisionID)
-						FROM group6key g) AS S
+						Dyelot = (select top 1 gd.Dyelot from groupDyelot gd WITH (NOLOCK) where g.Roll = gd.Roll and g.seq1 = gd.seq1 and g.seq2 = gd.seq2 and g.PoId = gd.PoId and g.MDivisionID = gd.MDivisionID)
+						FROM group6key g WITH (NOLOCK)) AS S
 				ON T.MDIVISIONID = S.MDivisionid AND T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL and t.stocktype='B'
 				WHEN MATCHED THEN UPDATE set inqty = S.AInqty, outqty = s.AOutqty , adjustQty = AAdjustqty
 				WHEN NOT MATCHED BY TARGET THEN 
@@ -108,19 +108,19 @@ BEGIN
 				With group6key as(
 					SELECT b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,
 						sum(BInqty) BInqty,sum(BOutqty) BOutqty,sum(BAdjustQty) BAdjustQty 
-						FROM View_TransactionList b
+						FROM View_TransactionList b WITH (NOLOCK)
 						where b.MDivisionid = @MDivisionid and b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status='confirmed'
 						group by b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll
 				), groupDyelot as(
 					SELECT b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,Dyelot
-						FROM View_TransactionList b
+						FROM View_TransactionList b WITH (NOLOCK)
 						where b.MDivisionid = @MDivisionid and b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status='confirmed'
 						group by b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,Dyelot
 				)
 				MERGE  DBO.FTYINVENTORY AS T
 				USING (SELECT g.*,
-						Dyelot = (select top 1 gd.Dyelot from groupDyelot gd where g.Roll = gd.Roll and g.seq1 = gd.seq1 and g.seq2 = gd.seq2 and g.PoId = gd.PoId and g.MDivisionID = gd.MDivisionID)
-						FROM group6key g) AS S
+						Dyelot = (select top 1 gd.Dyelot from groupDyelot gd WITH (NOLOCK) where g.Roll = gd.Roll and g.seq1 = gd.seq1 and g.seq2 = gd.seq2 and g.PoId = gd.PoId and g.MDivisionID = gd.MDivisionID)
+						FROM group6key g WITH (NOLOCK)) AS S
 				ON T.MDIVISIONID = S.MDivisionid AND T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL and t.stocktype='I'
 				WHEN MATCHED THEN UPDATE set inqty = S.BInqty, outqty = s.BOutqty , adjustQty = BAdjustQty
 				WHEN NOT MATCHED BY TARGET THEN 
@@ -132,19 +132,19 @@ BEGIN
 				With group6key as(
 					SELECT b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,
 						sum(CInqty) CInqty,sum(COutqty) COutqty,sum(CAdjustQty) CAdjustQty 
-						FROM View_TransactionList b
+						FROM View_TransactionList b WITH (NOLOCK)
 						where b.MDivisionid = @MDivisionid and b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status='confirmed'
 						group by b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll
 				), groupDyelot as(
 					SELECT b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,Dyelot
-						FROM View_TransactionList b
+						FROM View_TransactionList b WITH (NOLOCK)
 						where b.MDivisionid = @MDivisionid and b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status='confirmed'
 						group by b.MDivisionid,b.poid,b.seq1,b.seq2,b.roll,Dyelot
 				)
 				MERGE  DBO.FTYINVENTORY AS T
 				USING (SELECT g.*,
-						Dyelot = (select top 1 gd.Dyelot from groupDyelot gd where g.Roll = gd.Roll and g.seq1 = gd.seq1 and g.seq2 = gd.seq2 and g.PoId = gd.PoId and g.MDivisionID = gd.MDivisionID)
-						FROM group6key g) AS S
+						Dyelot = (select top 1 gd.Dyelot from groupDyelot gd WITH (NOLOCK) where g.Roll = gd.Roll and g.seq1 = gd.seq1 and g.seq2 = gd.seq2 and g.PoId = gd.PoId and g.MDivisionID = gd.MDivisionID)
+						FROM group6key g WITH (NOLOCK)) AS S
 				ON T.MDIVISIONID = S.MDivisionid AND T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL and t.stocktype='O'
 				WHEN MATCHED THEN UPDATE set inqty = S.CInqty, outqty = s.COutqty , adjustQty = CAdjustQty
 				WHEN NOT MATCHED BY TARGET THEN 
@@ -155,12 +155,12 @@ BEGIN
 				-- Update MDivisionPoDetail
 				 UPDATE MDivisionPoDetail 
 				 SET INQTY = t.inqty, OutQty = t.outqty , AdjustQty = t.adjustqty , LInvQty = t.BBalance , LObQty = t.CBalance
-				 FROM MDivisionPoDetail
+				 FROM MDivisionPoDetail WITH (NOLOCK)
 				 JOIN (SELECT a.MDivisionID,a.PoId,a.seq1,a.seq2
 						 , sum(inqty) inqty, sum(outqty) outqty, sum(adjustqty) adjustqty
 						 , sum(BInqty) - sum(Boutqty) + sum(BAdjustQty) BBalance  
 						 , sum(CInqty) - sum(COutqty) + sum(CAdjustQty) CBalance
-						 FROM View_TransactionList a
+						 FROM View_TransactionList a WITH (NOLOCK)
 						 where a.MDivisionID = @MDivisionid and a.PoId = @Poid and a.seq1 = @Seq1 and a.seq2 = @Seq2 AND a.status='confirmed'
 						 group by a.MDivisionID,a.PoId,a.seq1,a.seq2
 						) T

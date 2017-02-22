@@ -15,7 +15,7 @@ BEGIN
    --刪除不存在Sewing Schedule的資料
 	select distinct s.APSNo,s.FactoryID
 	into #checker
-	from SewingSchedule s
+	from SewingSchedule s WITH (NOLOCK)
 
 	create index chkExists on #checker(APSNo,FactoryID)
 
@@ -35,9 +35,9 @@ BEGIN
 	select s.FactoryID,s.SewingLineID,s.Inline,s.APSNo,s.ComboType,s.AlloQty,s.TotalSewingTime,s.StandardOutput,
 	isnull(o.StyleID,'') as StyleID,isnull(o.SeasonID,'') as SeasonID,o.CdCodeID,s.OrderID,
 	LAG(isnull(o.StyleID,'')+s.ComboType,1,'') OVER (Partition by s.FactoryID,s.SewingLineID Order by s.FactoryID,s.SewingLineID,s.Inline) as Compare
-	from SewingSchedule s
-	left join Orders o on s.OrderID = o.ID
-	left join Factory f on s.FactoryID = f.ID
+	from SewingSchedule s WITH (NOLOCK)
+	left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
+	left join Factory f WITH (NOLOCK) on s.FactoryID = f.ID
 	where s.Inline is not null 
 	and s.Offline > DATEADD(MONTH,-1,GETDATE()) 
 	and f.IsSampleRoom = 0
@@ -72,10 +72,10 @@ BEGIN
 			BEGIN
 				IF @styleid+@combotype <> @compare --換款式
 					BEGIN
-						IF EXISTS(select 1 from ChgOver where APSNo = @apsno and FactoryID = @factoryid and SewingLineID = @sewinglineid and OrderID = @orderid and ComboType = @combotype)
+						IF EXISTS(select 1 from ChgOver WITH (NOLOCK) where APSNo = @apsno and FactoryID = @factoryid and SewingLineID = @sewinglineid and OrderID = @orderid and ComboType = @combotype)
 							BEGIN
 								select @chgoverid = ID,@chgoverinline = Inline
-								from ChgOver 
+								from ChgOver WITH (NOLOCK)
 								where FactoryID = @factoryid and SewingLineID = @sewinglineid and StyleID = @styleid and ComboType = @combotype;
 								IF @chgoverinline < @inline
 									SET @type = 'R'
@@ -84,13 +84,13 @@ BEGIN
 										SET @type = 'N'
 										update ChgOver set Type = 'R' where ID = @chgoverid
 									END
-								select @chgoverid = ID from ChgOver where APSNo = @apsno and FactoryID = @factoryid and SewingLineID = @sewinglineid and OrderID = @orderid and ComboType = @combotype
+								select @chgoverid = ID from ChgOver WITH (NOLOCK) where APSNo = @apsno and FactoryID = @factoryid and SewingLineID = @sewinglineid and OrderID = @orderid and ComboType = @combotype
 								update ChgOver set Type = @type, Inline = @inline where ID = @chgoverid
 							END
 						ELSE
 							BEGIN
 								select @chgoverid = ID,@chgoverinline = Inline
-								from ChgOver 
+								from ChgOver WITH (NOLOCK)
 								where FactoryID = @factoryid and SewingLineID = @sewinglineid and StyleID = @styleid and ComboType = @combotype;
 								IF @chgoverinline < @inline
 									SET @type = 'R'
@@ -112,7 +112,7 @@ BEGIN
 	--刪除連續的StyleID+ComboType
 	select *
 	from (select ID,StyleID,ComboType,FactoryID,SewingLineID,StyleID+ComboType as CurrentRec,LAG(StyleID+ComboType,1,'') OVER (Partition by FactoryID,SewingLineID Order by FactoryID,SewingLineID,Inline,ID) as LastRec
-		  from ChgOver) a
+		  from ChgOver WITH (NOLOCK)) a
 	where a.LastRec <> ''
 	and a.CurrentRec = a.LastRec;
 
@@ -134,8 +134,8 @@ BEGIN
 				from (select co.ID,co.FactoryID,co.SewingLineID,co.StyleID,co.ComboType,co.Inline,
 						  isnull(case when co.ComboType = 'T' then cc.TopProductionType when co.ComboType = 'B' then cc.BottomProductionType when co.ComboType = 'I' then cc.InnerProductionType when co.ComboType = 'O' then cc.OuterProductionType else '' end,'') as ProductionType,
 						  isnull(case when co.ComboType = 'T' then cc.TopFabricType when co.ComboType = 'B' then cc.BottomFabricType when co.ComboType = 'I' then cc.InnerFabricType when co.ComboType = 'O' then cc.OuterFabricType else '' end,'') as FabricType
-					  from ChgOver co
-					  left join CDCode_Content cc on co.CDCodeID = cc.ID) a) b
+					  from ChgOver co WITH (NOLOCK)
+					  left join CDCode_Content cc WITH (NOLOCK) on co.CDCodeID = cc.ID) a) b
 		  where b.LastProdType <> '') c
 	where c.ID = ChgOver.ID
 

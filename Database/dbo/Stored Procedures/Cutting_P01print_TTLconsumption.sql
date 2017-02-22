@@ -5,14 +5,14 @@ AS
 BEGIN
 
 	--抓取ID為POID
-	select @OrderID=POID FROM dbo.Orders where ID = @OrderID
+	select @OrderID=POID FROM dbo.Orders WITH (NOLOCK) where ID = @OrderID
 
 	SELECT ORDERNO=RTRIM(POID) + d.spno ,STYLENO=StyleID+'-'+a.SeasonID ,QTY=SUM(Qty) ,FACTORY=FactoryID ,FABTYPE=b.FabricType ,FLP=cast(c.TWLimitUp as varchar)+'%' ,e.MarkerDownloadID
-	FROM dbo.Orders a
-	inner join dbo.Style b on a.StyleID = b.Id and a.BrandID = b.BrandID and a.SeasonID = b.SeasonID
-	inner join dbo.LossRateFabric c on b.FabricType = c.WeaveTypeID
-	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Production.dbo.Orders WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno ) d
-	OUTER APPLY(SELECT STUFF((SELECT '/'+rtrim(MarkerDownloadID) FROM Production.dbo.Order_EachCons WHERE Id = @OrderID and MarkerDownloadID <> '' group by MarkerDownloadID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as MarkerDownloadID ) e
+	FROM dbo.Orders a WITH (NOLOCK)
+	inner join dbo.Style b WITH (NOLOCK) on a.StyleID = b.Id and a.BrandID = b.BrandID and a.SeasonID = b.SeasonID
+	inner join dbo.LossRateFabric c WITH (NOLOCK) on b.FabricType = c.WeaveTypeID
+	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Production.dbo.Orders WITH (NOLOCK) WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno ) d
+	OUTER APPLY(SELECT STUFF((SELECT '/'+rtrim(MarkerDownloadID) FROM Production.dbo.Order_EachCons WITH (NOLOCK) WHERE Id = @OrderID and MarkerDownloadID <> '' group by MarkerDownloadID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as MarkerDownloadID ) e
 	WHERE POID = @OrderID
 	GROUP BY CuttingSP,POID,d.spno,StyleID,a.SeasonID,FactoryID,b.FabricType,c.TWLimitUp,e.MarkerDownloadID
 
@@ -31,16 +31,16 @@ BEGIN
 	,Orders.IsMixMarker
 	into #tmp
 	FROM DBO.Order_EachCons
-	inner join Order_EachCons_Color on Order_EachCons.Id = Order_EachCons_Color.Id and Order_EachCons.Ukey = Order_EachCons_Color.Order_EachConsUkey
-	inner join Order_BOF on Order_EachCons.Id = ORDER_BOF.Id and Order_EachCons.FabricCode = ORDER_BOF.FabricCode
-	inner join Fabric on ORDER_BOF.SCIRefno = Fabric.SCIRefno
-	inner join Fabric_Supp on ORDER_BOF.SCIRefno = Fabric_Supp.SCIRefno and ORDER_BOF.SuppID = Fabric_Supp.SuppID
+	inner join Order_EachCons_Color WITH (NOLOCK) on Order_EachCons.Id = Order_EachCons_Color.Id and Order_EachCons.Ukey = Order_EachCons_Color.Order_EachConsUkey
+	inner join Order_BOF WITH (NOLOCK) on Order_EachCons.Id = ORDER_BOF.Id and Order_EachCons.FabricCode = ORDER_BOF.FabricCode
+	inner join Fabric WITH (NOLOCK) on ORDER_BOF.SCIRefno = Fabric.SCIRefno
+	inner join Fabric_Supp WITH (NOLOCK) on ORDER_BOF.SCIRefno = Fabric_Supp.SCIRefno and ORDER_BOF.SuppID = Fabric_Supp.SuppID
 	inner join Production.dbo.System on 1 = 1--from Trade
-	inner join Orders on Orders.ID = Order_EachCons.Id
-	inner join Program on Orders.BrandID = Program.BrandID and Orders.ProgramID = Program.ID
+	inner join Orders WITH (NOLOCK) on Orders.ID = Order_EachCons.Id
+	inner join Program WITH (NOLOCK) on Orders.BrandID = Program.BrandID and Orders.ProgramID = Program.ID
 	outer apply (select * from dbo.GetUnitRound(Orders.BrandID, Orders.ProgramID, Orders.Category, Fabric.UsageUnit)) Unit
-	inner join Color on Color.ID = Order_EachCons_Color.ColorID and Color.BrandId = Orders.BrandID
-	inner join Style_BOF on Orders.StyleUkey = Style_BOF.StyleUkey and Fabric.SCIRefno = Style_BOF.SCIRefno and Order_BOF.FabricCode = Style_BOF.FabricCode
+	inner join Color WITH (NOLOCK) on Color.ID = Order_EachCons_Color.ColorID and Color.BrandId = Orders.BrandID
+	inner join Style_BOF WITH (NOLOCK) on Orders.StyleUkey = Style_BOF.StyleUkey and Fabric.SCIRefno = Style_BOF.SCIRefno and Order_BOF.FabricCode = Style_BOF.FabricCode
 	left join DBO.GetLossFabric(@OrderID, '') lf on lf.FabricCode = ORDER_BOF.FabricCode and lf.ColorID = Order_EachCons_Color.ColorID
 	where Order_EachCons.Id = @OrderID
 	--where Orders.POID = @OrderID

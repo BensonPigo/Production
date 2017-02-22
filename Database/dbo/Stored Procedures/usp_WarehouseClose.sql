@@ -38,7 +38,7 @@ BEGIN
   --             );
 		--END
 
-		IF EXISTS(SELECT * FROM DBO.Orders A WHERE A.POID = @poid AND A.Finished =0 and a.Junk = 0)
+		IF EXISTS(SELECT * FROM DBO.Orders A WITH (NOLOCK) WHERE A.POID = @poid AND A.Finished =0 and a.Junk = 0)
 		BEGIN
 			SET @msg = N'Please PPIC Department to close related orders('+@poid+') first!!'
 			RAISERROR (@msg, -- Message text.
@@ -47,7 +47,7 @@ BEGIN
                );
 		END
 
-		IF EXISTS(SELECT * FROM DBO.FtyInventory A WHERE A.StockType = 'B' AND A.Lock =1 and a.POID = @poid)
+		IF EXISTS(SELECT * FROM DBO.FtyInventory A WITH (NOLOCK) WHERE A.StockType = 'B' AND A.Lock =1 and a.POID = @poid)
 		BEGIN
 			SET @msg = N'All materials('+@poid+') in Bulk stock must be not locked before close R''Mtl, Please check!!'
 			RAISERROR (@msg, -- Message text.
@@ -56,14 +56,14 @@ BEGIN
                );
 		END
 
-		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WHERE S.ID = @poid AND S.Status!='Confirmed')
+		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WITH (NOLOCK)WHERE S.ID = @poid AND S.Status!='Confirmed')
 		BEGIN
 			Delete FROM dbo.SubTransfer WHERE ID = @poid  
 			Delete FROM dbo.SubTransfer_Detail WHERE ID = @poid  
 		END
 
 		-- 新增 報廢單主檔 & 明細檔
-		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WHERE S.ID = @poid AND S.Status='Confirmed')
+		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WITH (NOLOCK) WHERE S.ID = @poid AND S.Status='Confirmed')
 			update [dbo].[SubTransfer] set [EditName]= @loginid , [EditDate] = GETDATE()		
 		ELSE 
 		BEGIN
@@ -110,12 +110,12 @@ BEGIN
 			,'O'	[ToStock]
 			,[Dyelot]
 			,(InQty - OutQty + AdjustQty) [Qty]
-			FROM DBO.FtyInventory sd 
+			FROM DBO.FtyInventory sd WITH (NOLOCK)
 			WHERE sd.poid = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 and lock=0;
 
 		-- 更新庫存 MDivisionPoDetail & FtyInventory
 		Select sd.MDivisionID,sd.POID,sd.seq1,sd.Seq2,sum(ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0)) ScrapQty into #tmpScrap
-		FROM DBO.FtyInventory sd 
+		FROM DBO.FtyInventory sd WITH (NOLOCK)
 		WHERE sd.mdivisionid=@mdivisionid and sd.POID = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 and lock=0
 		group by sd.MDivisionID,sd.POID,sd.seq1,sd.Seq2
 			
@@ -142,7 +142,7 @@ BEGIN
 		-- Insert Update FtyInventory (Scrap) 要先做Scrap倉再更新Bulk！！
 		MERGE INTO dbo.FtyInventory AS t
 		USING (SELECT mdivisionid,poid,seq1,seq2,roll,dyelot,ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0),'O' 
-		FROM dbo.FtyInventory sd 
+		FROM dbo.FtyInventory sd WITH (NOLOCK)
 		WHERE sd.mdivisionid=@mdivisionid and sd.POID = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 and lock=0 ) 
 		AS s (mdivisionid,poid,seq1,seq2,roll,dyelot,qty,stocktype)
 		ON (t.MDivisionID = s.mdivisionid 

@@ -4,15 +4,15 @@
 AS
 BEGIN
 
-declare @poid varchar(13) = (select POID from Orders where ID = @OrderID)
+declare @poid varchar(13) = (select POID from Orders WITH (NOLOCK) where ID = @OrderID)
 declare @tbl table (id varchar(13), Article varchar(8))
 
 if(@ByType = 0)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID = @OrderID
+	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WITH (NOLOCK) WHERE ID = @OrderID
 else if(@ByType = 1)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Trade.dbo.Orders where POID = @poid AND CustCDID = (select CustCDID from Orders where ID = @OrderID) )
+	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WITH (NOLOCK) WHERE ID in (select id from dbo.Orders WITH (NOLOCK) where POID = @poid AND CustCDID = (select CustCDID from Orders WITH (NOLOCK) where ID = @OrderID) )
 else if(@ByType = 2)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Trade.dbo.Orders where POID = @poid )
+	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WITH (NOLOCK) WHERE ID in (select id from dbo.Orders WITH (NOLOCK) where POID = @poid )
 
 
 --主要資料

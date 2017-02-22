@@ -32,7 +32,7 @@ BEGIN
                );
 		END
 
-		IF EXISTS(SELECT * FROM DBO.Adjust A WHERE A.StocktakingID = @StocktakingID)
+		IF EXISTS(SELECT * FROM DBO.Adjust A WITH (NOLOCK) WHERE A.StocktakingID = @StocktakingID)
 		BEGIN
 			RAISERROR (N'There is a adjust transaction belong to this stocktaking ID', -- Message text.
                16, -- Severity.
@@ -40,7 +40,7 @@ BEGIN
                );
 		END
 
-		SELECT @Stocktype=S.Stocktype FROM DBO.Stocktaking S WHERE ID=@StocktakingID;
+		SELECT @Stocktype=S.Stocktype FROM DBO.Stocktaking S WITH (NOLOCK) WHERE ID=@StocktakingID;
 		IF @Stocktype='' OR @Stocktype IS NULL
 		BEGIN
 			RAISERROR (N'Stocktype of stocktaking can not be empty!', -- Message text.
@@ -52,8 +52,8 @@ BEGIN
 		-- 檢查欲產生的調整單明細是否有LOCK;無法調整的項目
 		DECLARE CheckLock_cursor CURSOR FOR
 		select f.POID,f.seq1,f.seq2,f.Roll,f.Dyelot --into #tmpCheckLock
-		from dbo.Stocktaking_Detail sd 
-		inner join dbo.FtyInventory f on f.Ukey = sd.FtyInventoryUkey
+		from dbo.Stocktaking_Detail sd WITH (NOLOCK)
+		inner join dbo.FtyInventory f WITH (NOLOCK) on f.Ukey = sd.FtyInventoryUkey
 		where sd.id = @StocktakingID and sd.QtyBefore != sd.QtyAfter and f.Lock = 1;
 		OPEN CheckLock_cursor;
 			FETCH NEXT FROM CheckLock_cursor INTO @poid,@seq1,@seq2,@roll,@dyelot;
@@ -78,8 +78,8 @@ BEGIN
 		-- 檢查欲產生的調整單明細是否數量不足;無法調整的項目
 		DECLARE CheckBalanceQty_cursor CURSOR FOR
 		select f.POID,f.seq1,f.seq2,f.Roll,f.Dyelot --into #tmpCheckLock
-		from dbo.Stocktaking_Detail sd 
-		inner join dbo.FtyInventory f on f.Ukey = sd.FtyInventoryUkey
+		from dbo.Stocktaking_Detail sd WITH (NOLOCK)
+		inner join dbo.FtyInventory f WITH (NOLOCK) on f.Ukey = sd.FtyInventoryUkey
 		where sd.id = @StocktakingID and sd.QtyBefore != sd.QtyAfter 
 		and f.InQty-f.OutQty+f.AdjustQty + (sd.QtyAfter - sd.QtyBefore) < 0;
 		OPEN CheckBalanceQty_cursor;
@@ -170,12 +170,12 @@ BEGIN
         ,[Dyelot]
         ,[StockType]
         ,[QtyBefore]
-        ,[QtyAfter],IIF(QTYAFTER>QTYBEFORE,'00010','00011') FROM DBO.STOCKTAKING_DETAIL sd 
+        ,[QtyAfter],IIF(QTYAFTER>QTYBEFORE,'00010','00011') FROM DBO.STOCKTAKING_DETAIL sd WITH (NOLOCK)
 		WHERE sd.id = @StocktakingID and sd.QtyBefore != sd.QtyAfter;
 
 		-- 更新庫存 MDivisionPoDetail & FtyInventory
 		Select sd.MDivisionID,sd.POID,sd.seq1,sd.Seq2,sum(QtyAfter - QtyBefore) AdjustQty into #tmpAdjust1
-		FROM DBO.STOCKTAKING_DETAIL sd 
+		FROM DBO.STOCKTAKING_DETAIL sd WITH (NOLOCK)
 		WHERE sd.id = @StocktakingID and sd.QtyBefore != sd.QtyAfter 
 		group by sd.MDivisionID,sd.POID,sd.seq1,sd.Seq2
 			
@@ -187,7 +187,7 @@ BEGIN
 			--	and t.poid = MDivisionPoDetail.POID and t.seq1 = MDivisionPoDetail.Seq1 and t.Seq2 = MDivisionPoDetail.seq2)
 			update a
 			set a.AdjustQty = isnull(a.AdjustQty, 0) + ISNULL(b.AdjustQty, 0)
-			from dbo.MDivisionPoDetail a 
+			from dbo.MDivisionPoDetail a
 			inner join #tmpAdjust1 b on a.MDivisionID = b.MDivisionID and a.POID = b.POID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2
 		END
 		ELSE
@@ -203,7 +203,7 @@ BEGIN
 		
 		-- 更新 FtyInventory
 		update dbo.FtyInventory set AdjustQty = AdjustQty + sd.QtyAfter - sd.QtyBefore
-		FROM dbo.FtyInventory inner join DBO.STOCKTAKING_DETAIL sd 
+		FROM dbo.FtyInventory inner join DBO.STOCKTAKING_DETAIL sd
 		on sd.id = @StocktakingID and sd.QtyBefore != sd.QtyAfter and sd.FtyInventoryUkey = FtyInventory.Ukey
 
 		-- 更新StockTaking 狀態
