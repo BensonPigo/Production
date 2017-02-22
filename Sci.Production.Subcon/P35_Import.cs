@@ -75,7 +75,7 @@ namespace Sci.Production.Subcon
                                                                                 ,'' id
                                                                                 
                                                                                 ,0.0 amount
-                                                                        from localpo a, localpo_detail b 
+                                                                        from localpo a WITH (NOLOCK) , localpo_detail b WITH (NOLOCK) 
                                                                         where a.id = b.id and a.status='Approved' and b.apqty < inqty
                                                                         and a.category = '{0}' 
                                                                         and a.localsuppid = '{1}' and a.mdivisionid = '{2}'", dr_localAp["category"],

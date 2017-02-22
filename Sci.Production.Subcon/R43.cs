@@ -29,7 +29,7 @@ namespace Sci.Production.Subcon
         {
             DataTable dtSubprocessID;
             DualResult Result;
-            if (Result = DBProxy.Current.Select(null, "select 'ALL' as id,1 union select id,2 from Subprocess where Junk = 0 ",
+            if (Result = DBProxy.Current.Select(null, "select 'ALL' as id,1 union select id,2 from Subprocess WITH (NOLOCK) where Junk = 0 ",
                 out dtSubprocessID))
             {
                 this.comboSubProcess.DataSource = dtSubprocessID;
@@ -38,7 +38,7 @@ namespace Sci.Production.Subcon
             else { ShowErr(Result); }
 
             DataTable dtM;
-            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory", out dtM))
+            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out dtM))
             {
                 this.comboM.DataSource = dtM;
                 this.comboM.DisplayMember = "ID";
@@ -78,12 +78,12 @@ namespace Sci.Production.Subcon
             [Release Qty] = (select sum(bd.qty)  where (bio.InComing-bio.OutGoing) <= s.BCSDate),
             [BCS] = sum(bd.qty) /(select sum(bd.qty)  where (bio.InComing-bio.OutGoing) <= s.BCSDate)
 
-            from Bundle b
-            inner join Bundle_Detail bd on bd.Id = b.Id
-            inner join Bundle_Detail_Art bda on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-            inner join orders o on o.Id = b.OrderId
-            left join BundleInOut bio on bio.Bundleno = bd.Bundleno
-            left join SubProcess s on s.Id = bio.SubprocessId
+            from Bundle b WITH (NOLOCK) 
+            inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
+            inner join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
+            inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+            left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno = bd.Bundleno
+            left join SubProcess s WITH (NOLOCK) on s.Id = bio.SubprocessId
 
             where 1=1
             ");

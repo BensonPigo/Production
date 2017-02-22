@@ -25,7 +25,7 @@ namespace Sci.Production.Subcon
         {
             base.OnFormLoaded();
             string selectCommand1 = string.Format(@"select B.id, A.issuedate,B.QTY,a.Status, A.ADDDATE 
-                                                    FROM FarmOut A,FarmOut_Detail B 
+                                                    FROM FarmOut A WITH (NOLOCK) ,FarmOut_Detail B WITH (NOLOCK) 
                                                     WHERE b.artworkpoid = '{0}' AND A.id = B. ID AND b.artworkpo_detailukey = {1}"
                                                     , dr["id"].ToString(), dr["ukey"].ToString());
             DataTable selectDataTable1;

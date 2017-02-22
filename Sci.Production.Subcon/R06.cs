@@ -22,7 +22,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
             txtMdivision1.Text = Sci.Env.User.Keyword;
@@ -66,7 +66,7 @@ a.MDivisionID
 ,c.StyleID
 ,d.Article
 ,a.artworktypeid
-,f.LocalSuppID+'-'+(select abb from LocalSupp where id = f.LocalSuppID) supplier
+,f.LocalSuppID+'-'+(select abb from LocalSupp WITH (NOLOCK) where id = f.LocalSuppID) supplier
 ,a.FactoryId
 ,b.ArtworkPoid
 ,e.BundleGroup
@@ -75,12 +75,12 @@ a.MDivisionID
 ,d.Sizecode
 ,b.Qty
 ,a.IssueDate farmoutDate
-,(select max(farmin.IssueDate) from FarmIn inner join FarmIn_Detail on farmin.ID = FarmIn_Detail.ID where farmin.Status = 'Confirmed' and FarmIn_Detail.ArtworkPo_DetailUkey = b.ArtworkPo_DetailUkey) farminDate
-from farmout a 
-inner join farmout_detail b on a.id = b.id
-inner join orders c on b.orderid = c.id
-inner join ArtworkPO f on f.ID = b.ArtworkPoid
-left join ( bundle d inner join Bundle_Detail e on e.id = d.ID) on e.BundleNo = b.BundleNo
+,(select max(farmin.IssueDate) from FarmIn WITH (NOLOCK) inner join FarmIn_Detail WITH (NOLOCK) on farmin.ID = FarmIn_Detail.ID where farmin.Status = 'Confirmed' and FarmIn_Detail.ArtworkPo_DetailUkey = b.ArtworkPo_DetailUkey) farminDate
+from farmout a WITH (NOLOCK) 
+inner join farmout_detail b WITH (NOLOCK) on a.id = b.id
+inner join orders c WITH (NOLOCK) on b.orderid = c.id
+inner join ArtworkPO f WITH (NOLOCK) on f.ID = b.ArtworkPoid
+left join ( bundle d WITH (NOLOCK) inner join Bundle_Detail e WITH (NOLOCK) on e.id = d.ID) on e.BundleNo = b.BundleNo
 where a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}'
 ", Convert.ToDateTime(farmoutdate1).ToString("d"), Convert.ToDateTime(farmoutdate2).ToString("d")));
             #endregion

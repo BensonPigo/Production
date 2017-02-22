@@ -22,7 +22,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
             MyUtility.Tool.SetupCombox(cbbOrderBy, 1, 1, "Issue date,Supplier");
@@ -61,7 +61,7 @@ namespace Sci.Production.Subcon
 ,a.FactoryId
 ,a.ID
 ,a.IssueDate
-,a.LocalSuppID+'-'+(select abb from localsupp where id = a.localsuppid) as localsupp
+,a.LocalSuppID+'-'+(select abb from localsupp WITH (NOLOCK) where id = a.localsuppid) as localsupp
 ,a.ArtworkTypeID
 ,a.Delivery
 ,b.OrderID
@@ -79,9 +79,9 @@ namespace Sci.Production.Subcon
 ,b.ApQty
 ,b.Farmin - b.ApQty as ap_balance
 ,(b.Farmin - b.ApQty) * b.UnitPrice as ap_amt
-from artworkpo a
-inner join  artworkpo_detail b on a.id = b.ID
-inner join  orders c on b.OrderID = c.ID
+from artworkpo a WITH (NOLOCK) 
+inner join  artworkpo_detail b WITH (NOLOCK) on a.id = b.ID
+inner join  orders c WITH (NOLOCK) on b.OrderID = c.ID
 where a.issuedate between '{0}' and '{1}'
 ", Convert.ToDateTime(issuedate1).ToString("d"), Convert.ToDateTime(issuedate2).ToString("d")));
 

@@ -22,7 +22,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
             MyUtility.Tool.SetupCombox(cbbOrderBy, 1, 1, "Supplier,Handle");
@@ -61,11 +61,11 @@ namespace Sci.Production.Subcon
         {
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"Select (select FactoryId from orders where id = b.OrderId) order_factory
+            sqlCmd.Append(string.Format(@"Select (select FactoryId from orders WITH (NOLOCK) where id = b.OrderId) order_factory
                                                  ,a.MDivisionID
                                                  ,a.FactoryID
                                                  ,a.LocalSuppID
-                                                 ,(select abb from LocalSupp where id = a.LocalSuppID) supplier
+                                                 ,(select abb from LocalSupp WITH (NOLOCK) where id = a.LocalSuppID) supplier
                                                  ,a.Id
                                                  ,a.Status
                                                  ,a.IssueDate
@@ -85,13 +85,13 @@ namespace Sci.Production.Subcon
                                                  ,c.Amount+c.Vat poAmount
                                                  ,c.IssueDate poDate
                                                  ,a.InvNo
-                                       from localap a 
+                                       from localap a WITH (NOLOCK) 
                                        inner join LocalAP_Detail b on a.id = b.id 
                                        left join LocalPO c on c.ID = b.LocalPoId
                                        outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
                                        outer apply (select * from dbo.View_ShowName vs where vs.id = c.AddName) vs2
                                        where a.ApvDate is null and a.issuedate between '{0}' and '{1}'"
-                                     ,Convert.ToDateTime(APdate1).ToString("d")
+                                     , Convert.ToDateTime(APdate1).ToString("d")
                                      ,Convert.ToDateTime(APdate2).ToString("d")));
             #endregion
 

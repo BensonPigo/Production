@@ -23,7 +23,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
             txtMdivision1.Text = Sci.Env.User.Keyword;
@@ -127,8 +127,8 @@ namespace Sci.Production.Subcon
 as
 (
 	select t.*,ArtworkType.ID artworktypeid
-	from dbo.ArtworkType,(select distinct (select orders.poid from orders where id=b.OrderId) orderid 
-from dbo.ArtworkAP a inner join dbo.ArtworkAP_Detail b on b.id = a.id " );
+	from dbo.ArtworkType WITH (NOLOCK) ,(select distinct (select orders.poid from orders WITH (NOLOCK) where id=b.OrderId) orderid 
+from dbo.ArtworkAP a WITH (NOLOCK) inner join dbo.ArtworkAP_Detail b WITH (NOLOCK) on b.id = a.id ");
 
             #region -- 條件組合 --
             switch (statusindex)
@@ -238,17 +238,17 @@ outer apply (
 			apd.apQty ap_qty
 			,apd.apQty*apd.Price*dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) ap_amt
 			,dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) rate
-	from ArtworkAP ap 
-    inner join ArtworkAP_Detail apd on apd.id = ap.Id 
-    inner join orders ON orders.id = apd.orderid
+	from ArtworkAP ap WITH (NOLOCK) 
+    inner join ArtworkAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
+    inner join orders WITH (NOLOCK) ON orders.id = apd.orderid
 		where ap.ArtworkTypeID = cte.artworktypeid and orders.POId = aa.POID AND ap.Status = 'Approved') t
 		) x
 outer apply(
 	select orders.POID
 	,sum(orders.qty) order_qty
 	,sum(orders.qty*Price) order_amt 
-	from orders 
-	inner join Order_TmsCost on Order_TmsCost.id = orders.ID 
+	from orders WITH (NOLOCK) 
+	inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
 	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid
 	group by orders.poid,ArtworkTypeID) y
 outer apply (
@@ -259,9 +259,9 @@ outer apply (
 			            apd.Qty localap_qty
 			            ,apd.Qty*apd.Price*dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) localap_amt
 			            ,dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) rate
-	            from localap ap 
-                inner join Localap_Detail apd on apd.id = ap.Id 
-                inner join orders ON orders.id = apd.orderid
+	            from localap ap WITH (NOLOCK) 
+                inner join Localap_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
+                inner join orders WITH (NOLOCK) ON orders.id = apd.orderid
 		            where ap.Category = 'EMB_THREAD' and orders.POId = aa.POID AND ap.Status = 'Approved'
             ) tt
 		) z
@@ -289,8 +289,8 @@ select aa.FactoryID
 ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
 ,round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty) / iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2) percentage
 from cte
-left join orders aa on aa.id = cte.orderid
-left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
+left join orders aa WITH (NOLOCK) on aa.id = cte.orderid
+left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
 outer apply (
 	select isnull(sum(t.ap_amt),0.00) ap_amt
 , isnull(sum(t.ap_qty),0) ap_qty from (
@@ -299,17 +299,17 @@ outer apply (
 			apd.apQty ap_qty
 			,apd.apQty * apd.Price * dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) ap_amt
 			,dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) rate
-	from ArtworkAP ap 
-    inner join ArtworkAP_Detail apd on apd.id = ap.Id 
-    inner join orders on orders.id = apd.orderid
+	from ArtworkAP ap WITH (NOLOCK) 
+    inner join ArtworkAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
+    inner join orders WITH (NOLOCK) on orders.id = apd.orderid
 		where ap.ArtworkTypeID = cte.artworktypeid and orders.POId = aa.POID AND ap.Status = 'Approved') t
 		) x		
 outer apply(
 	select orders.POID
 	,sum(orders.qty) order_qty
 	,sum(orders.qty*Price) order_amt 
-	from orders 
-	inner join Order_TmsCost on Order_TmsCost.id = orders.ID 
+	from orders WITH (NOLOCK) 
+	inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
 	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid
 	group by orders.poid,ArtworkTypeID) y
 where ap_qty > 0

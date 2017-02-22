@@ -33,7 +33,7 @@ namespace Sci.Production.Subcon
             this.numericBox1.Text = dr["poqty"].ToString();
 
             DataTable tmpdt;
-            Sci.Data.DBProxy.Current.Select(null, string.Format("select sum(qty) from order_qty where id = '{0}'", data["orderid"]), out tmpdt);
+            Sci.Data.DBProxy.Current.Select(null, string.Format("select sum(qty) from order_qty WITH (NOLOCK) where id = '{0}'", data["orderid"]), out tmpdt);
             if (MyUtility.Check.Empty(tmpdt.Rows[0][0]))
             { this.displayBox8.Text = ""; }
             else
@@ -81,7 +81,7 @@ namespace Sci.Production.Subcon
             {
                 try
                 {
-                    string sqlcmd = string.Format(@" select id from artworkpo_detail
+                    string sqlcmd = string.Format(@" select id from artworkpo_detail WITH (NOLOCK) 
                                 where exceedqty > 0 and id = '{0}'
                                 and orderid != '{1}'
                                 and artworktypeid != '{2}'

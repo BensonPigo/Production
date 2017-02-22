@@ -110,7 +110,7 @@ rtrim(order_tmscost.LocalSuppID) LocalSuppID,
 v.Cost,                                       
 v.qty costStitch,                          
 v.qty stitch,                                     
-isnull((select b.Price from style_artwork a,Style_Artwork_Quot b where a.StyleUkey = orders.StyleUkey and a.Ukey = b.Ukey and a.Article =v.article and a.ArtworkTypeID=v.ArtworkTypeID 
+isnull((select b.Price from style_artwork a WITH (NOLOCK) ,Style_Artwork_Quot b WITH (NOLOCK) where a.StyleUkey = orders.StyleUkey and a.Ukey = b.Ukey and a.Article =v.article and a.ArtworkTypeID=v.ArtworkTypeID 
             and a.ArtworkID = v.ArtworkID and a.PatternCode = v.PatternCode and b.LocalSuppId = Order_TmsCost.LocalSuppID and b.PriceApv = 'Y'),0) as unitprice,
 order_tmscost.Qty qtygarment, 
 sum(v.poqty) poqty , 
@@ -118,10 +118,10 @@ Order_TmsCost.ArtworkInLine,
 Order_TmsCost.artworkoffline,
 '' message            
 ,Order_TmsCost.apvdate 
-FROM Order_TmsCost inner join Orders on Order_TmsCost.id = Orders.id
-inner join factory on orders.ftygroup = factory.id
+FROM Order_TmsCost WITH (NOLOCK) inner join Orders WITH (NOLOCK) on Order_TmsCost.id = Orders.id
+inner join factory WITH (NOLOCK) on orders.ftygroup = factory.id
 inner join view_order_artworks v on v.id = Order_TmsCost.id and v.artworktypeid = Order_TmsCost.artworktypeid
-WHERE not exists(select * from artworkpo a inner join artworkpo_detail ap on ap.id = a.id where a.potype='{0}' and a.localsuppid = Order_TmsCost.localsuppid 
+WHERE not exists(select * from artworkpo a WITH (NOLOCK) inner join artworkpo_detail ap WITH (NOLOCK) on ap.id = a.id where a.potype='{0}' and a.localsuppid = Order_TmsCost.localsuppid 
 and a.artworktypeid = Order_TmsCost.artworktypeid and ap.OrderID = orders.ID) 
 and orders.Finished=0                                                                 
 AND orders.IsForecast = 0                                                             
@@ -179,7 +179,7 @@ rtrim(order_tmscost.LocalSuppID) LocalSuppID,
 0.0 Cost,                                    
 1 costStitch,                              
 1 stitch,                                  
-isnull((select b.Price from style_artwork a,Style_Artwork_Quot b where a.StyleUkey = orders.StyleUkey and a.Ukey = b.Ukey and a.Article =v.article and b.LocalSuppId = Order_TmsCost.LocalSuppID and b.PriceApv = 'Y'),0) as unitprice,
+isnull((select b.Price from style_artwork a WITH (NOLOCK) ,Style_Artwork_Quot b WITH (NOLOCK) where a.StyleUkey = orders.StyleUkey and a.Ukey = b.Ukey and a.Article =v.article and b.LocalSuppId = Order_TmsCost.LocalSuppID and b.PriceApv = 'Y'),0) as unitprice,
 isnull(order_tmscost.Qty,1) qtygarment,
 sum(v.Qty) poqty ,
 Order_TmsCost.ArtworkInLine,
@@ -187,10 +187,10 @@ Order_TmsCost.artworkoffline,
 Orders.SewInLine,
 Order_TmsCost.ApvDate,
 '' message
-FROM Order_TmsCost inner join Orders on orders.id = order_tmscost.id
-inner join factory on orders.ftygroup = factory.id
-inner join order_qty v on v.id = order_tmscost.id
-WHERE not exists(select * from artworkpo a inner join artworkpo_detail ap on ap.id = a.id where a.potype='{0}' and a.localsuppid = Order_TmsCost.localsuppid 
+FROM Order_TmsCost WITH (NOLOCK) inner join Orders WITH (NOLOCK) on orders.id = order_tmscost.id
+inner join factory WITH (NOLOCK) on orders.ftygroup = factory.id
+inner join order_qty v WITH (NOLOCK) on v.id = order_tmscost.id
+WHERE not exists(select * from artworkpo a WITH (NOLOCK) inner join artworkpo_detail ap WITH (NOLOCK) on ap.id = a.id where a.potype='{0}' and a.localsuppid = Order_TmsCost.localsuppid 
 and a.artworktypeid = Order_TmsCost.artworktypeid and ap.OrderID = orders.ID ) 
 and factory.mdivisionid = '{1}' 
 and orders.Finished=0
@@ -392,7 +392,7 @@ Order_TmsCost.ApvDate
                         try
                         {
                             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
-                            string ftyKeyWord = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory where id='{0}'", q.ftygroup));
+                            string ftyKeyWord = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where id='{0}'", q.ftygroup));
                             
                             string id = Sci.MyUtility.GetValue.GetID(ftyKeyWord + "OS", "artworkpo", DateTime.Parse(dateBox1.Text));
                             if (MyUtility.Check.Empty(id))
@@ -410,7 +410,7 @@ Order_TmsCost.ApvDate
                             if (poType == "O")
                             {
                                 currency = MyUtility.GetValue.Lookup("CurrencyID", q.localsuppid, "LocalSupp", "ID");
-                                str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency where id = '{0}'", currency), null);
+                                str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", currency), null);
                                 if (str == null || string.IsNullOrWhiteSpace(str))
                                 {
                                     continue;
@@ -648,7 +648,7 @@ Order_TmsCost.ApvDate
 
         private void txtartworktype_fty1_Validating(object sender, CancelEventArgs e)
         {
-            isArtwork = MyUtility.GetValue.Lookup(string.Format("select isartwork from artworktype where id = '{0}'"
+            isArtwork = MyUtility.GetValue.Lookup(string.Format("select isartwork from artworktype WITH (NOLOCK) where id = '{0}'"
                 , ((Sci.Production.Class.txtartworktype_fty)sender).Text), null);
         }
     }

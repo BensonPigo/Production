@@ -114,15 +114,15 @@ namespace Sci.Production.Subcon
                 string strSQLCmd = string.Format("Select 0 as Selected, '' as id, aaa.id as orderid, sum(bbb.qty) poqty ,0.0000 as unitprice,0.0000 as price,1 as qtygarment,0.0000 as pricegmt," +
                  " 0.0000 as amount ,ccc.id as artworktypeid, rtrim(ccc.id) as artworkid, ccc.id as  patterncode  ,"+
                  " ccc.id as  patterndesc "+
-                 " from orders aaa, order_qty bbb, artworktype  ccc "+
+                 " from orders aaa WITH (NOLOCK) , order_qty bbb WITH (NOLOCK) , artworktype  ccc WITH (NOLOCK) " +
                  " ,(Select a.id orderid,c.id as artworktypeid, rtrim(c.id) as artwork, c.id as  patterncode "+
-	             "     from orders a, artworktype  c "+
+                 "     from orders a WITH (NOLOCK) , artworktype  c WITH (NOLOCK) " +
 	             "     where c.id = '{0}'", dr["artworktypeid"]);
 	             if (!string.IsNullOrWhiteSpace(orderID)) { strSQLCmd += string.Format(" and ((a.category='B' and c.isArtwork=0)  or (a.category !='B')) and a.ID = '{0}'", orderID); }
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and a.poid = '{0}'", poid); }
                 strSQLCmd +=" EXCEPT"+
 	             "     select b1.orderid,a1.ArtworkTypeID, b1.ArtworkId,b1.PatternCode "+
-	             "     from artworkpo a1,ArtworkPO_Detail b1";
+                 "     from artworkpo a1 WITH (NOLOCK) ,ArtworkPO_Detail b1 WITH (NOLOCK) ";
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += " ,orders c1"; }
                  strSQLCmd += "     where a1.id = b1.id ";
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += " and b1.orderid=c1.id"; }
@@ -206,14 +206,14 @@ namespace Sci.Production.Subcon
         {
             if (string.IsNullOrWhiteSpace(((Sci.Win.UI.TextBox)sender).Text)) return;
 
-            if (!MyUtility.Check.Seek(string.Format("select id from orders where id='{0}'", ((Sci.Win.UI.TextBox)sender).Text), null))
+            if (!MyUtility.Check.Seek(string.Format("select id from orders WITH (NOLOCK) where id='{0}'", ((Sci.Win.UI.TextBox)sender).Text), null))
             {
                 MyUtility.Msg.WarningBox(string.Format("SP# ({0}) is not found!",((Sci.Win.UI.TextBox)sender).Text));
                 return;
             }
 
-            string cat = MyUtility.GetValue.Lookup(string.Format("select category from orders where  id= '{0}'", ((Sci.Win.UI.TextBox)sender).Text), null);
-            string isArtwork = MyUtility.GetValue.Lookup(string.Format("select isArtwork from artworktype where id='{0}'", dr["artworktypeid"]), null);
+            string cat = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where  id= '{0}'", ((Sci.Win.UI.TextBox)sender).Text), null);
+            string isArtwork = MyUtility.GetValue.Lookup(string.Format("select isArtwork from artworktype WITH (NOLOCK) where id='{0}'", dr["artworktypeid"]), null);
 
             if (cat=="B" && isArtwork.ToUpper()=="TRUE")
             {

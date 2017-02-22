@@ -82,11 +82,11 @@ namespace Sci.Production.Subcon
             paras.Add(sp1);
 
             string sqlcmd;
-            sqlcmd = "select fd.ID from ArtworkPO_Detail ad, FarmOut_Detail fd where ad.Ukey = fd.ArtworkPo_DetailUkey and ad.id = @id" +
+            sqlcmd = "select fd.ID from ArtworkPO_Detail ad WITH (NOLOCK) , FarmOut_Detail fd WITH (NOLOCK) where ad.Ukey = fd.ArtworkPo_DetailUkey and ad.id = @id" +
                      "   union all " +
-                     "   select fo.ID from ArtworkPO_Detail ad, FarmOut_Detail fo where ad.Ukey = fo.ArtworkPo_DetailUkey and ad.id = @id " +
+                     "   select fo.ID from ArtworkPO_Detail ad WITH (NOLOCK) , FarmOut_Detail fo WITH (NOLOCK) where ad.Ukey = fo.ArtworkPo_DetailUkey and ad.id = @id " +
                      "      union all" +
-                     "   select fi.ID from ArtworkPO_Detail ad, FarmIn_Detail fi where ad.Ukey = fi.ArtworkPo_DetailUkey and ad.id = @id";
+                     "   select fi.ID from ArtworkPO_Detail ad WITH (NOLOCK) , FarmIn_Detail fi WITH (NOLOCK) where ad.Ukey = fi.ArtworkPo_DetailUkey and ad.id = @id";
 
             DataTable dt;
             DBProxy.Current.Select(null, sqlcmd, paras, out dt);
@@ -176,7 +176,7 @@ namespace Sci.Production.Subcon
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory where ID ='{0}'", CurrentMaintain["factoryid"]));
+                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", CurrentMaintain["factoryid"]));
                 if (MyUtility.Check.Empty(factorykeyword))
                 {
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
@@ -186,7 +186,7 @@ namespace Sci.Production.Subcon
             }
 
             #region 加總明細金額至表頭
-            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency where id = '{0}'", CurrentMaintain["currencyId"]), null);
+            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
             if (str == null || string.IsNullOrWhiteSpace(str))
             {
                 MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't save!", CurrentMaintain["currencyID"]), "Warning");
@@ -213,7 +213,7 @@ namespace Sci.Production.Subcon
                 foreach (DataRow dr in e.Details.Rows)
                 {
                     DataTable order_dt;
-                    DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders where id='{0}'", dr["orderid"].ToString()), out order_dt);
+                    DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders WITH (NOLOCK) where id='{0}'", dr["orderid"].ToString()), out order_dt);
                     if (order_dt.Rows.Count == 0)
                         break;
                     dr["style"] = order_dt.Rows[0]["styleid"].ToString();
@@ -230,7 +230,7 @@ namespace Sci.Production.Subcon
         {
             base.OnDetailEntered();
             #region --動態unit header --
-            string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
+            string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
             if (artworkunit == "") artworkunit = "PCS";
             this.detailgrid.Columns[6].HeaderText = "Cost(" + artworkunit + ")";
             this.detailgrid.Columns[7].HeaderText = artworkunit;
@@ -555,14 +555,14 @@ namespace Sci.Production.Subcon
             string sqlcmd = @"select 
             F.nameEn,F.AddressEN,F.Tel,ART.LocalSuppID+'-'+L.name AS TITLETO,L.Tel,L.Address,L.fax,
             A.Orderid,O.styleID,A.poQty,A.artworkid,A.Stitch,A.Unitprice,A.Qtygarment,format(A.Amount,'#,###,###,##0.00') Amount
-            from DBO.artworkpo ART
-			LEFT JOIN dbo.factory F
+            from DBO.artworkpo ART WITH (NOLOCK) 
+			LEFT JOIN dbo.factory F WITH (NOLOCK) 
 			ON  F.ID = ART.factoryid
-			LEFT JOIN dbo.LocalSupp L
+			LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) 
 			ON  L.ID = ART.LocalSuppID
-			LEFT JOIN dbo.Artworkpo_Detail A
+			LEFT JOIN dbo.Artworkpo_Detail A WITH (NOLOCK) 
 			ON  A.ID = ART.ID
-			LEFT JOIN dbo.Orders O
+			LEFT JOIN dbo.Orders O WITH (NOLOCK) 
 			ON  O.id = A.OrderID where ART.id= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }

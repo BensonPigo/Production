@@ -182,24 +182,24 @@ select a.ID, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ 
 		( select stuff(s.SPList ,1,1,'')
 		  from (
 			   select (select  ','+Orderid 
-			   from dbo.LocalDebit_Detail 
+			   from dbo.LocalDebit_Detail WITH (NOLOCK) 
 			   for xml path('')
 			   ) as SPList
 		  ) as s) [SPList],
 		  ( select stuff(R.ReasonList ,1,1,'')
 		  from (
 			   select (select  ','+Name 
-			   from dbo.Reason 
+			   from dbo.Reason WITH (NOLOCK) 
 			   for xml path('')
 			   ) as ReasonList
 		  ) as R) [ReasonList]
 		,a.Description ,a.exchange,a.currencyid,a.amount,a.tax,a.taxrate,a.amtrevisedate,a.amtrevisename,a.receivedate
 		,a.receivename,a.cfmdate,a.cfmname,V.VoucherID,a.printdate,a.status,a.statuseditdate,
 		vs3.Name_Extno as addname,a.adddate,vs4.Name_Extno as edit,a.editdate
-		from DBO.LocalDebit a 
-			inner join dbo.LocalSupp s on a.localsuppid = s.ID
-			left join dbo.Reason R on a.AddName = R.AddName
-		    outer apply (select * from dbo.Debit_Schedule vs where a.id =  vs.ID ) V
+		from DBO.LocalDebit a WITH (NOLOCK) 
+			inner join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
+			left join dbo.Reason R WITH (NOLOCK) on a.AddName = R.AddName
+		    outer apply (select * from dbo.Debit_Schedule vs WITH (NOLOCK) where a.id =  vs.ID ) V
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.addname ) vs3
@@ -212,20 +212,20 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 	   a.AmtReviseDate,vs4.Name_Extno as AccRH,a.ReceiveDate,vs5.Name_Extno as AccAH,a.cfmdate,
 	   cur_schedule.VoucherID[VoucherNo],cur_schedule.VoucherDate,cur_schedule.VoucherDate[Settled Date],
 	   b1.ttlCA,b1.ttlAddition,ttl.ttlSA,ttl.ttlRA
-		from DBO.LocalDebit a 
-			inner join dbo.LocalSupp s on a.localsuppid = s.ID
-			inner join LocalDebit_Detail b on a.id = b.id
-			left join dbo.Reason R on a.AddName = R.AddName
+		from DBO.LocalDebit a WITH (NOLOCK) 
+			inner join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
+			inner join LocalDebit_Detail b WITH (NOLOCK) on a.id = b.id
+			left join dbo.Reason R WITH (NOLOCK) on a.AddName = R.AddName
 		   	outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.AmtReviseName ) vs3
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.ReceiveName ) vs4
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.cfmName ) vs5
 			outer apply (Select [ttlCA] = Sum(b.amount) ,[ttlAddition] = sum(b.Addition)
-				from localdebit_detail b where b.ID = a.id  ) b1
+				from localdebit_detail b WITH (NOLOCK) where b.ID = a.id  ) b1
 			outer apply (Select [ttlRA] = Sum(iif(isnull(dsch.VoucherID,'')!='',dsch.amount,0)) ,
 						[ttlSA] = sum(dsch.amount)
-				from debit_schedule dsch where dsch.ID = a.id  ) ttl
+				from debit_schedule dsch WITH (NOLOCK) where dsch.ID = a.id  ) ttl
 	OUTER APPLY( 
 		select top 1 * 
 		from(
@@ -233,7 +233,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 				ds.VoucherID,v.VoucherDate,
 				 Amount=sum(ds.Amount) 
 					over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
-			FROM debit_schedule ds 
+			FROM debit_schedule ds WITH (NOLOCK) 
 			left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
 			WHERE  @NeedSettleData=1 and ds.ID = a.ID and isnull(ds.VoucherID,'')!=''		
 		) as tmpSum
@@ -248,11 +248,11 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 	   a.AmtReviseDate,vs4.Name_Extno as AccRH,a.ReceiveDate,vs5.Name_Extno as AccAH,a.cfmdate,
 	   cur_schedule.VoucherID[VoucherNo],cur_schedule.VoucherDate,cur_schedule.VoucherDate[Settled Date],
 	   b.Orderid,b.qty,b.UnitID,b.Amount,b.Addition,b.taipeiReason,R.name,b.Description
-		from DBO.LocalDebit a 
-			inner join dbo.LocalSupp s on a.localsuppid = s.ID
-			inner join LocalDebit_Detail b on a.id = b.id
-			left join dbo.Reason R on b.Reasonid = R.id and R.ReasonTypeID = 'DebitNote_Factory'
-		    outer apply (select * from dbo.Debit_Schedule vs where a.id =  vs.ID ) V
+		from DBO.LocalDebit a WITH (NOLOCK) 
+			inner join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
+			inner join LocalDebit_Detail b WITH (NOLOCK) on a.id = b.id
+			left join dbo.Reason R WITH (NOLOCK) on b.Reasonid = R.id and R.ReasonTypeID = 'DebitNote_Factory'
+		    outer apply (select * from dbo.Debit_Schedule vs WITH (NOLOCK) where a.id =  vs.ID ) V
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.AmtReviseName ) vs3
@@ -265,7 +265,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 				ds.VoucherID,v.VoucherDate,
 				 Amount=sum(ds.Amount) 
 					over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
-			FROM debit_schedule ds 
+			FROM debit_schedule ds WITH (NOLOCK) 
 			left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
 			WHERE  @NeedSettleData=1 and ds.ID = a.ID and isnull(ds.VoucherID,'')!=''			
 		) as tmpSum
@@ -280,9 +280,9 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 	   cur_schedule.VoucherID[VoucherNo],cur_schedule.VoucherDate,cur_schedule.VoucherDate[Settled Date],
 	   c.issuedate,c.amount,c.VoucherId,V.VoucherDate,c.addDate,vs6.Name_Extno as SCN,c.editdate,vs7.Name_Extno as SEN
 	  
-		from DBO.LocalDebit a 
-			inner join dbo.debit_schedule c on a.id = c.id
-            outer apply(select * from LocalSupp s where a.localsuppid = s.ID)s
+		from DBO.LocalDebit a WITH (NOLOCK) 
+			inner join dbo.debit_schedule c WITH (NOLOCK) on a.id = c.id
+            outer apply(select * from LocalSupp s WITH (NOLOCK) where a.localsuppid = s.ID)s
 		    outer apply (select VoucherDate from FinanceEn.dbo.Voucher Fv where Fv.id = c.VoucherID ) V
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
@@ -298,7 +298,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 				ds.VoucherID,v.VoucherDate,
 				 Amount=sum(ds.Amount) 
 					over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
-			FROM debit_schedule ds 
+			FROM debit_schedule ds WITH (NOLOCK) 
 			left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
 			WHERE  @NeedSettleData=1 and ds.ID = a.ID and isnull(ds.VoucherID,'')!=''			
 		) as tmpSum

@@ -21,7 +21,7 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             DualResult result;
             dr = Data;
-            if (!(result = DBProxy.Current.Select(null, string.Format(@"select * from localdebit where id = '{0}'", dr["id"]), out dtData)))
+            if (!(result = DBProxy.Current.Select(null, string.Format(@"select * from localdebit WITH (NOLOCK) where id = '{0}'", dr["id"]), out dtData)))
             {
                 ShowErr(result);
                 return;

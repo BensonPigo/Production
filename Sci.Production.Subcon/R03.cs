@@ -22,7 +22,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
             MyUtility.Tool.SetupCombox(cbbOrderBy, 1, 1, "Issue date,Supplier");
@@ -64,7 +64,7 @@ a.mdivisionid
 ,a.IssueDate
 ,a.ArtworkTypeId
 ,b.ArtworkPoid
-,d.LocalSuppID+'-'+(select s.Abb from LocalSupp s where s.id = d.LocalSuppID) localsupp
+,d.LocalSuppID+'-'+(select s.Abb from LocalSupp s WITH (NOLOCK) where s.id = d.LocalSuppID) localsupp
 ,b.Orderid
 ,c.StyleID
 ,b.BundleNo
@@ -72,10 +72,10 @@ a.mdivisionid
 ,RTrim(b.PatternCode)+'-'+b.PatternDesc pattern
 ,b.Qty
 ,d.delivery
-from farmin a
-inner join farmin_detail b on b.ID = a.Id
-inner join Orders c on c.ID = b.Orderid
-inner join ArtworkPO d on d.ID = b.ArtworkPoid
+from farmin a WITH (NOLOCK) 
+inner join farmin_detail b WITH (NOLOCK) on b.ID = a.Id
+inner join Orders c WITH (NOLOCK) on c.ID = b.Orderid
+inner join ArtworkPO d WITH (NOLOCK) on d.ID = b.ArtworkPoid
 where a.issuedate between '{0}' and '{1}'
 ", Convert.ToDateTime(issuedate1).ToString("d"), Convert.ToDateTime(issuedate2).ToString("d")));
             #endregion

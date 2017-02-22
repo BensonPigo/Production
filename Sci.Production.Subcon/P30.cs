@@ -88,7 +88,7 @@ namespace Sci.Production.Subcon
             paras.Add(sp1);
 
             string sqlcmd;
-            sqlcmd = "select fd.ID from LocalPO_Detail ad, LocalAP_Detail fd where ad.Ukey = fd.LocalPo_DetailUkey and ad.id = @id";
+            sqlcmd = "select fd.ID from LocalPO_Detail ad WITH (NOLOCK) , LocalAP_Detail fd WITH (NOLOCK) where ad.Ukey = fd.LocalPo_DetailUkey and ad.id = @id";
 
             DataTable dt;
             DBProxy.Current.Select(null, sqlcmd, paras, out dt);
@@ -188,7 +188,7 @@ namespace Sci.Production.Subcon
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'LocalPO1'), 'LocalPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory where ID ='{0}'", CurrentMaintain["factoryid"]));
+                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", CurrentMaintain["factoryid"]));
                 if (MyUtility.Check.Empty(factorykeyword))
                 {
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
@@ -198,7 +198,7 @@ namespace Sci.Production.Subcon
             }
 
             #region 加總明細金額至表頭
-            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency where id = '{0}'", CurrentMaintain["currencyId"]), null);
+            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
             if (str == null || string.IsNullOrWhiteSpace(str))
             {
                 MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't save!", CurrentMaintain["currencyID"]), "Warning");
@@ -301,7 +301,7 @@ namespace Sci.Production.Subcon
             {
                 if (!this.EditMode && (CurrentMaintain["status"].ToString().ToUpper() == "Approved"))
                 {
-                    if (MyUtility.Check.Seek(string.Format("select price from order_tmscost where id = '{0}' and artworktypeid = '{1}'", e.FormattedValue, CurrentMaintain["categor"]), out dr, null))
+                    if (MyUtility.Check.Seek(string.Format("select price from order_tmscost WITH (NOLOCK) where id = '{0}' and artworktypeid = '{1}'", e.FormattedValue, CurrentMaintain["categor"]), out dr, null))
                     {
                         if ((decimal)dr["price"] == 0m)
                         {
@@ -317,7 +317,7 @@ namespace Sci.Production.Subcon
                         return;
                     }
                 }
-                if (MyUtility.Check.Seek(string.Format("select factoryid, sewinline from orders where id = '{0}'", e.FormattedValue), out dr, null))
+                if (MyUtility.Check.Seek(string.Format("select factoryid, sewinline from orders WITH (NOLOCK) where id = '{0}'", e.FormattedValue), out dr, null))
                 {
                     //CurrentDetailData["factoryid"] = dr["factoryid"];
                     //CurrentDetailData["sewinline"] = dr["sewinline"];
@@ -334,7 +334,7 @@ namespace Sci.Production.Subcon
                 {
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
                         (string.Format(@"Select refno,description, localsuppid,unitid,price 
-                                                    from localItem where category ='{0}' and  localsuppid = '{1}' order by refno",CurrentMaintain["category"],CurrentMaintain["localsuppid"])
+                                                    from localItem WITH (NOLOCK) where category ='{0}' and  localsuppid = '{1}' order by refno", CurrentMaintain["category"], CurrentMaintain["localsuppid"])
                                                                                                                                  , "20,30,10,10,10",null);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -347,7 +347,7 @@ namespace Sci.Production.Subcon
             ts.CellValidating += (s, e) =>
                 {
                     if (MyUtility.Check.Empty(e.FormattedValue) || !this.EditMode) return;
-                    if (!MyUtility.Check.Seek(string.Format(@"select refno,unitid,price from localitem 
+                    if (!MyUtility.Check.Seek(string.Format(@"select refno,unitid,price from localitem WITH (NOLOCK) 
                                                                       where refno = '{0}' and category ='{1}'and localsuppid = '{2}'"
                                                                     ,e.FormattedValue.ToString(),CurrentMaintain["category"],CurrentMaintain["localsuppid"])
                                                                     ,out dr,null))
@@ -376,7 +376,7 @@ namespace Sci.Production.Subcon
                         || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
                         return;
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                        (@"Select ID,description  from threadcolor where JUNK=0 order by ID" , "20,60", null);
+                        (@"Select ID,description  from threadcolor WITH (NOLOCK) where JUNK=0 order by ID", "20,60", null);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     CurrentDetailData["Threadcolorid"] = item.GetSelectedString();
@@ -389,7 +389,7 @@ namespace Sci.Production.Subcon
                     //e.Cancel = true;
                     return;
                 }
-                if (!MyUtility.Check.Seek(string.Format(@"select junk from threadcolor 
+                if (!MyUtility.Check.Seek(string.Format(@"select junk from threadcolor WITH (NOLOCK) 
                                                                       where id = '{0}' and junk=0 "
                                                                 , e.FormattedValue.ToString())
                                                                 , out dr, null))
@@ -489,7 +489,7 @@ namespace Sci.Production.Subcon
             DataTable datacheck;
 
             #region 檢查明細requestid是否已有回寫poid
-            sqlcmd = string.Format(@"select requestid,LocalPOID from LocalPO_Detail, packinglist 
+            sqlcmd = string.Format(@"select requestid,LocalPOID from LocalPO_Detail WITH (NOLOCK) , packinglist  WITH (NOLOCK) 
                                                     where localpo_detail.requestid = packinglist.id 
                                                             and LocalPOID!='' 
                                                             and localpo_detail.id ='{0}' group by requestid,LocalPOID ", CurrentMaintain["id"]);
@@ -514,7 +514,7 @@ namespace Sci.Production.Subcon
                                                     as
                                                     (
                                                         select requestid 
-                                                        from localpo_detail
+                                                        from localpo_detail WITH (NOLOCK) 
                                                         where localpo_detail.id = '{0}' group by requestid
                                                     )
                                                     update dbo.PackingList
@@ -584,7 +584,7 @@ namespace Sci.Production.Subcon
                                                     as
                                                     (
                                                         select requestid 
-                                                        from localpo_detail
+                                                        from localpo_detail WITH (NOLOCK) 
                                                         where localpo_detail.id = '{0}' group by requestid
                                                     )
                                                     update dbo.PackingList
@@ -645,9 +645,9 @@ namespace Sci.Production.Subcon
 //                                                            inner join localitem on localitem.refno = localpo_detail.refno 
 //                                                        Where localpo_detail.id = '{0}' order by orderid,localpo_detail.refno,threadcolorid ", masterID);
             this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
-                                                        from localpo_detail 
-                                                            left join orders on localpo_detail.orderid = orders.id
-                                                            left join localitem on localitem.refno = localpo_detail.refno 
+                                                        from localpo_detail WITH (NOLOCK) 
+                                                            left join orders WITH (NOLOCK) on localpo_detail.orderid = orders.id
+                                                            left join localitem WITH (NOLOCK) on localitem.refno = localpo_detail.refno 
                                                         Where localpo_detail.id = '{0}' order by orderid,localpo_detail.refno,threadcolorid ", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -662,9 +662,9 @@ namespace Sci.Production.Subcon
 //                                                            inner join localitem on localitem.refno = localpo_detail.refno 
 //                                                        where 1=2 order by orderid,localpo_detail.refno,threadcolorid ");
             this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
-                                                        from localpo_detail 
-                                                            left join orders on localpo_detail.orderid = orders.id
-                                                            left join localitem on localitem.refno = localpo_detail.refno 
+                                                        from localpo_detail WITH (NOLOCK) 
+                                                            left join orders WITH (NOLOCK) on localpo_detail.orderid = orders.id
+                                                            left join localitem WITH (NOLOCK) on localitem.refno = localpo_detail.refno 
                                                         where 1=2 order by orderid,localpo_detail.refno,threadcolorid ");
             return base.ClickNewBefore();
         }
@@ -685,9 +685,9 @@ namespace Sci.Production.Subcon
 	                ,a.LocalSuppID+'-'+c.Name [Supplier]
 	                ,c.Tel [Tel]
 	                ,c.Address [Address]
-            from dbo.localpo a 
-            inner join dbo.factory  b on b.id = a.factoryid   
-	        left join dbo.LocalSupp c on c.id=a.LocalSuppID
+            from dbo.localpo a WITH (NOLOCK) 
+            inner join dbo.factory  b WITH (NOLOCK) on b.id = a.factoryid   
+	        left join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
             where b.id = a.factoryid
             and a.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
@@ -722,8 +722,8 @@ namespace Sci.Production.Subcon
 			        ,[Total2]=sum(a.Qty) OVER (PARTITION BY a.Refno)
                     ,[Total3]=format(Cast(sum(a.Price*a.Qty) OVER (PARTITION BY a.Delivery )as decimal(30,2)),'#,###,###,##0.00')
 			        ,[Total4]=format(Cast(sum(a.Price*a.Qty) OVER (PARTITION BY a.Refno )as decimal(30,2)),'#,###,###,##0.00')
-            from dbo.LocalPO_Detail a
-            left join dbo.LocalPO b on  a.id=b.id
+            from dbo.LocalPO_Detail a WITH (NOLOCK) 
+            left join dbo.LocalPO b WITH (NOLOCK) on  a.id=b.id
             where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 

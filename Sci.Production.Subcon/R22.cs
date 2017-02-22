@@ -22,7 +22,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
             txtMdivision1.Text = Sci.Env.User.Keyword;
@@ -71,9 +71,9 @@ namespace Sci.Production.Subcon
 	                                                ,a.Category
 	                                                ,a.CurrencyID
 	                                                ,sum(a.Amount + a.Vat) Amt
-	                                                ,a.PaytermID+'-' +(select Name from PayTerm where id = a.paytermid) payterm
-                                             from LocalAP a
-                                             left join LocalSupp d on a.LocalSuppID=d.ID
+	                                                ,a.PaytermID+'-' +(select Name from PayTerm WITH (NOLOCK) where id = a.paytermid) payterm
+                                             from LocalAP a WITH (NOLOCK) 
+                                             left join LocalSupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
                                              where  a.issuedate between '{0}' and '{1}'
                                                     and a.apvdate between '{2}' and '{3}'"
                                                      , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
@@ -108,11 +108,11 @@ namespace Sci.Production.Subcon
 	                                                 ,vs2.Name_Extno POHandle
 	                                                 ,e.IssueDate
 	                                                 ,a.InvNo
-                                            from LocalAP a
-                                            inner join LocalAP_Detail b on b.id=a.id
-                                            left join Orders c on b.OrderId=c.ID
-                                            left join localsupp d on a.LocalSuppID=d.ID
-                                            left join localpo e on b.LocalPoId=e.Id 
+                                            from LocalAP a WITH (NOLOCK) 
+                                            inner join LocalAP_Detail b WITH (NOLOCK) on b.id=a.id
+                                            left join Orders c WITH (NOLOCK) on b.OrderId=c.ID
+                                            left join localsupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
+                                            left join localpo e WITH (NOLOCK) on b.LocalPoId=e.Id 
                                             outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 											outer apply (select * from dbo.View_ShowName vs where vs.id = e.AddName) vs2
                                             where  a.issuedate between '{0}' and '{1}'

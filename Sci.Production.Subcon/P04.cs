@@ -151,7 +151,7 @@ namespace Sci.Production.Subcon
             //取單號： 
             if (this.IsDetailInserting)
             {
-                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory where ID ='{0}'", CurrentMaintain["factoryid"]));
+                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", CurrentMaintain["factoryid"]));
                 if (MyUtility.Check.Empty(factorykeyword))
                 {
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
@@ -173,10 +173,10 @@ namespace Sci.Production.Subcon
                 (artworkpoqty - onhand - qty) BalQty ,
                 Ukey , 
                 ArtworkPo_DetailUkey
-                from FarmIn_Detail 
+                from FarmIn_Detail WITH (NOLOCK) 
                 outer apply(
 	                select styleID
-	                from orders
+	                from orders WITH (NOLOCK) 
 	                where orders.id = FarmIn_Detail.Orderid	
                 ) styleID where id='{0}'", id);
 
@@ -213,7 +213,7 @@ namespace Sci.Production.Subcon
                 if (!(MyUtility.Check.Empty(e.FormattedValue)) || (MyUtility.Check.Empty()))
                 {
                     CurrentDetailData["OrderID"] = e.FormattedValue;
-                    CurrentDetailData["StyleID"] = MyUtility.GetValue.Lookup(string.Format("select styleid from orders where id ='{0}'", e.FormattedValue));
+                    CurrentDetailData["StyleID"] = MyUtility.GetValue.Lookup(string.Format("select styleid from orders WITH (NOLOCK) where id ='{0}'", e.FormattedValue));
                     CurrentDetailData["ArtworkPoID"] = "";
                     CurrentDetailData["ArtworkId"] = "";
                     CurrentDetailData["PatternCode"] = "";
@@ -260,7 +260,7 @@ namespace Sci.Production.Subcon
 ,b.farmout
 ,b.farmin
 ,b.ukey
-FROM ArtworkPO A, ArtworkPO_Detail B
+FROM ArtworkPO A WITH (NOLOCK) , ArtworkPO_Detail B WITH (NOLOCK) 
 WHERE A.ID = B.ID
 AND A.ApvName IS NOT NULL
 AND A.status = 'Approved'
@@ -325,7 +325,7 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             String sqlcmd, sqlcmd2 = "", sqlcmd3 = "";
             DualResult result, result2;
             DataTable datacheck;
-            sqlcmd = string.Format(@"select a.id from artworkpo a, farmin_detail b 
+            sqlcmd = string.Format(@"select a.id from artworkpo a WITH (NOLOCK) , farmin_detail b WITH (NOLOCK) 
                             where a.id = b.artworkpoid and a.status = 'Closed' and b.id = '{0}'", CurrentMaintain["id"]);
 
             string ids = "";
@@ -345,7 +345,7 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             ids = "";
             foreach (var dr in DetailDatas)
             {
-                sqlcmd = string.Format("select * from artworkpo_detail where ukey = '{0}'", dr["artworkpo_detailukey"]);
+                sqlcmd = string.Format("select * from artworkpo_detail WITH (NOLOCK) where ukey = '{0}'", dr["artworkpo_detailukey"]);
                 if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
                 {
                     ShowErr(sqlcmd, result);
@@ -375,7 +375,7 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             // update artworkpo_detail farmin
             DataTable detailgroup;
             sqlcmd = string.Format(@"select b.artworkpo_detailukey, sum(b.qty) qty
-                                    from farmIn_detail b
+                                    from farmIn_detail b WITH (NOLOCK) 
                                     where b.id ='{0}'
                                     group by b.artworkpo_detailukey ", CurrentMaintain["id"]);
 
@@ -390,7 +390,7 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
                 foreach (DataRow dr in detailgroup.Rows)
                 {
                     sqlcmd = string.Format(@"select b.artworkpo_detailukey, sum(b.qty) qty
-                                    from farmin a, farmIn_detail b
+                                    from farmin a WITH (NOLOCK) , farmIn_detail b WITH (NOLOCK) 
                                     where a.id = b.id  and a.Status ='Confirmed' and b.artworkpo_detailukey ='{0}'
                                     group by b.artworkpo_detailukey ", dr["artworkpo_detailukey"]);
 
@@ -462,7 +462,7 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             String sqlcmd, sqlcmd2 = "", sqlcmd3 = "";
             DualResult result, result2;
             DataTable datacheck;
-            sqlcmd = string.Format(@"select a.id from artworkpo a, farmin_detail b 
+            sqlcmd = string.Format(@"select a.id from artworkpo a WITH (NOLOCK) , farmin_detail b WITH (NOLOCK) 
                             where a.id = b.artworkpoid and a.Status = 'Closed' and b.id = '{0}'", CurrentMaintain["id"]);
 
 
@@ -479,8 +479,8 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             }
 
             // 提示是否不低於ap qty
-            string sqlcmdaped = string.Format(@"select Ukey , Farmin , Farmin as Farmin_Cal , ApQty from ArtworkPO_Detail 
-                where Ukey in (select distinct ArtworkPo_DetailUkey from farmin_detail where ID='{0}')", CurrentMaintain["id"]);
+            string sqlcmdaped = string.Format(@"select Ukey , Farmin , Farmin as Farmin_Cal , ApQty from ArtworkPO_Detail  WITH (NOLOCK) 
+                where Ukey in (select distinct ArtworkPo_DetailUkey from farmin_detail WITH (NOLOCK) where ID='{0}')", CurrentMaintain["id"]);
             if (!(result = DBProxy.Current.Select(null, sqlcmdaped, out datacheck)))
             {
                 ShowErr(sqlcmdaped, result);
@@ -516,7 +516,7 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             // update artworkpo_detail farmin
             DataTable detailgroup;
             sqlcmd = string.Format(@"select b.artworkpo_detailukey, sum(b.qty) qty
-                                    from farmIn_detail b
+                                    from farmIn_detail b WITH (NOLOCK) 
                                     where b.id ='{0}'
                                     group by b.artworkpo_detailukey ", CurrentMaintain["id"]);
 
@@ -531,7 +531,7 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
                 foreach (DataRow dr in detailgroup.Rows)
                 {
                     sqlcmd = string.Format(@"select b.artworkpo_detailukey, sum(b.qty) qty
-from farmin a, farmIn_detail b
+from farmin a WITH (NOLOCK) , farmIn_detail b WITH (NOLOCK) 
 where a.id = b.id  and a.status ='Confirmed' and b.artworkpo_detailukey ='{0}'
 group by b.artworkpo_detailukey ", dr["artworkpo_detailukey"]);
 

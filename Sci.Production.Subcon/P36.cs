@@ -53,7 +53,7 @@ namespace Sci.Production.Subcon
 (select t.VoucherID,(select a.voucherdate from FinanceEN.dbo.voucher a where a.id = t.VoucherID) voucherdate , sum(amount ) 
 over (order by issuedate
       rows between unbounded preceding and current row) as running_total 
-												 from dbo.Debit_Schedule T where id='{0}' and voucherid !='' and voucherid is not null 
+												 from dbo.Debit_Schedule T WITH (NOLOCK) where id='{0}' and voucherid !='' and voucherid is not null 
 )
 SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], numTotalAmt.Value.ToString()), out dr);
             displayBoxVoucherID.Text = null == dr ? "" : dr["voucherid"].ToString();
@@ -73,7 +73,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                     DoForm.Set(this.EditMode, this.DetailDatas, this.CurrentDetailData);
                     DoForm.ShowDialog(this);
                     #region 加總明細金額至表頭
-                    string strExact = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency where id = '{0}'", CurrentMaintain["currencyId"]), null);
+                    string strExact = MyUtility.GetValue.Lookup(string.Format("Select exact from WITH (NOLOCK) Currency where id = '{0}'", CurrentMaintain["currencyId"]), null);
                     if (strExact == null || string.IsNullOrWhiteSpace(strExact))
                     {
                         MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , summary amout failed!", CurrentMaintain["currencyID"]), "Warning");
@@ -190,7 +190,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
             //取單號： 
             if (this.IsDetailInserting)
             {
-                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory where ID ='{0}'", CurrentMaintain["factoryid"]));
+                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", CurrentMaintain["factoryid"]));
                 if (MyUtility.Check.Empty(factorykeyword))
                 {
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
@@ -249,10 +249,10 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
             this.DetailSelectCommand = string.Format(@"select ID,Ukey,TaipeiUkey,orderid,reasonid
-,reasonid+isnull((select name from dbo.reason where ReasonTypeID='DebitNote_Factory' and id = reasonid),'') reason_desc
+,reasonid+isnull((select name from dbo.reason WITH (NOLOCK) where ReasonTypeID='DebitNote_Factory' and id = reasonid),'') reason_desc
 ,0.00 as total 
 ,QTY,UNITID,AMOUNT,ADDITION,TAIPEIREASON,DESCRIPTION 
-from localdebit_detail 
+from localdebit_detail WITH (NOLOCK) 
                                                         Where localdebit_detail.id = '{0}' order by orderid ", masterID);
             
             return base.OnDetailSelectCommandPrepare(e);
@@ -430,7 +430,7 @@ where id = '{4}'"
 
         private void txtsubcon1_Validated(object sender, EventArgs e)
         {
-            CurrentMaintain["CURRENCYID"] = MyUtility.GetValue.Lookup(string.Format(@"SELECT CurrencyID FROM DBO.LocalSupp WHERE ID='{0}'", CurrentMaintain["LOCALSUPPID"]));
+            CurrentMaintain["CURRENCYID"] = MyUtility.GetValue.Lookup(string.Format(@"SELECT CurrencyID FROM DBO.LocalSupp WITH (NOLOCK) WHERE ID='{0}'", CurrentMaintain["LOCALSUPPID"]));
         }
 
         private void btnDebitSchedule_Click(object sender, EventArgs e)
@@ -450,7 +450,7 @@ where id = '{4}'"
             if (Sci.Env.User.UserID!=CurrentMaintain["handle"].ToString()){return false;}
 
             //如果已經列印過的，則提醒是否再次列印。
-            string printdate = Sci.MyUtility.GetValue.Lookup(string.Format("select convert(varchar, printdate, 120) from localdebit where ID ='{0}'", CurrentMaintain["id"]));
+            string printdate = Sci.MyUtility.GetValue.Lookup(string.Format("select convert(varchar, printdate, 120) from localdebit WITH (NOLOCK) where ID ='{0}'", CurrentMaintain["id"]));
             if (!MyUtility.Check.Empty(printdate))
             {
                 DialogResult dResult = MyUtility.Msg.QuestionBox("In" + ' ' + printdate + ' ' + " has been printed ,Do you want to print again?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
@@ -477,9 +477,9 @@ where id = '{4}'"
             DataTable dtDetail;
             string sqlcmd = @"select 
 				 Ldeb.ID,dbo.getPass1(Ldeb.handle)[FROM],F.nameEn,Ldeb.LocalSuppID+L.name AS Supplier,
-				 (Select Ldetail.orderid+',' from localdebit_detail where id = Ldeb.id for xml path('')) [poid],
-				 (Select t.name +',' from (SELECT name FROM DBO.Reason 
-					inner join dbo.localdebit_detail on dbo.localdebit_detail.reasonid = DBO.Reason.id
+				 (Select Ldetail.orderid+',' from localdebit_detail WITH (NOLOCK) where id = Ldeb.id for xml path('')) [poid],
+				 (Select t.name +',' from (SELECT name FROM DBO.Reason WITH (NOLOCK) 
+					inner join dbo.localdebit_detail WITH (NOLOCK) on dbo.localdebit_detail.reasonid = DBO.Reason.id
 					WHERE reason.ReasonTypeID = 'DebitNote_Factory' 
 					and localdebit_detail.id =Ldeb.id) t for xml path(''))[Subject],
 					Ldeb.Description,Ldeb.Currencyid,format(Ldeb.Amount,'#,###,###,##0.00') Amount,
@@ -487,12 +487,12 @@ where id = '{4}'"
 					CONCAT( Ldeb.taxrate , ' %TAX')as titletaxrate,FORMAT(Ldeb.tax,'#,##0.00')as taxrate
 					,FORMAT(Ldeb.Amount+Ldeb.Tax,'#,##0.00')as total,dbo.getpass1(Ldeb.Handle)+ '/' +  dbo.getpass1 (Ldeb.SMR) as Purchaser
 					
-                   from DBO.LocalDebit Ldeb
-	               LEFT JOIN dbo.factory F
+                   from DBO.LocalDebit Ldeb WITH (NOLOCK) 
+	               LEFT JOIN dbo.factory F WITH (NOLOCK) 
 	               ON  F.ID = Ldeb.factoryid
-	               LEFT JOIN dbo.LocalSupp L
+	               LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) 
 	               ON  L.ID = Ldeb.LocalSuppID
-	               LEFT JOIN dbo.localdebit_detail Ldetail
+	               LEFT JOIN dbo.localdebit_detail Ldetail WITH (NOLOCK) 
 	               ON  Ldetail.ID = Ldeb.ID where Ldeb.ID= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }

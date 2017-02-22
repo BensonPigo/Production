@@ -22,7 +22,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
             MyUtility.Tool.SetupCombox(cbbOrderBy, 1, 1, "Supplier,Handle");
@@ -62,7 +62,7 @@ namespace Sci.Production.Subcon
             sqlCmd.Append(string.Format(@"Select a.MDivisionID
 ,a.FactoryID
 ,a.LocalSuppID
-,(select abb from LocalSupp where id = a.LocalSuppID) supplier
+,(select abb from LocalSupp WITH (NOLOCK) where id = a.LocalSuppID) supplier
 ,a.Id
 ,a.IssueDate
 ,dbo.getpass1(a.Handle) handle
@@ -71,14 +71,14 @@ namespace Sci.Production.Subcon
 ,a.ArtworkTypeID
 ,b.ArtworkPoID
 ,b.OrderID
-,(select orders.StyleID from orders where id = b.OrderID) style
+,(select orders.StyleID from orders WITH (NOLOCK) where id = b.OrderID) style
 ,dbo.getPass1(c.Handle) pohandle
 --,CONVERT(VARCHAR(20),CAST(c.Amount+c.Vat AS Money),1) as poAmount
 ,CONVERT(VARCHAR(20),CAST(b.Amount AS Money),1) as poAmount
 ,c.IssueDate poDate
 ,a.InvNo
-from artworkap a inner join artworkap_detail b on a.id = b.id 
-left join ArtworkPO c on c.ID = b.ArtworkPoID
+from artworkap a WITH (NOLOCK) inner join artworkap_detail b WITH (NOLOCK) on a.id = b.id 
+left join ArtworkPO c WITH (NOLOCK) on c.ID = b.ArtworkPoID
 where  a.ApvDate is null and a.issuedate between '{0}' and '{1}'
 ", Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
             #endregion

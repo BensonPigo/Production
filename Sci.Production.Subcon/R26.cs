@@ -25,7 +25,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
             comboBox2.Text = Sci.Env.User.Factory;
             this.comboBox1.SelectedIndex = 0;
@@ -172,10 +172,10 @@ namespace Sci.Production.Subcon
 	                                                 ,b.InQty
 	                                                 ,b.APQty
 	                                                 ,b.Remark
-                                            from localpo a
-                                            inner join LocalPO_Detail b on a.id=b.id
-                                            inner join orders c on c.poid=b.OrderId
-                                            left join localsupp d  on  d.id =a.LocalSuppID " + sqlWhere);
+                                            from localpo a WITH (NOLOCK) 
+                                            inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
+                                            inner join orders c WITH (NOLOCK) on c.poid=b.OrderId
+                                            left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID " + sqlWhere);
                 result = DBProxy.Current.Select("", sqlcd, lis, out dtt);
                 if (!result)
                 { return result; }
@@ -200,10 +200,10 @@ namespace Sci.Production.Subcon
                                                     ,sum(b.qty * b.price) [Amount]
                                                     ,sum(b.InQty) [In-Coming]
                                                     ,sum(b.APQty) [AP_Qty]
-                                       from localpo a
-                                       inner join LocalPO_Detail b on a.id=b.id
-                                       inner join orders c on c.poid=b.OrderId
-                                       left join localsupp d  on  d.id =a.LocalSuppID
+                                       from localpo a WITH (NOLOCK) 
+                                       inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
+                                       inner join orders c WITH (NOLOCK) on c.poid=b.OrderId
+                                       left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID
                                        " + sqlWhere + @"
 		                               group by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID, a.IssueDate, a.Category, b.Refno, b.UnitId
 		                               order by a.id, a.FactoryId");
@@ -247,11 +247,11 @@ namespace Sci.Production.Subcon
 													   ,a.LocalSuppID [lospid] 
 													   ,a.Category[Category]   
                                                         into #temp  
-	                                         from dbo.localpo a 
-											 inner join LocalPO_Detail b on b.id=a.Id
-                                             inner join orders c on c.poid=b.OrderId
-											 left join LocalSupp d on a.LocalSuppID=d.ID
-                                             left join Factory  e on e.id = a.factoryid" + sqlWhere+" "+all, lis, out dt);
+	                                         from dbo.localpo a WITH (NOLOCK) 
+											 inner join LocalPO_Detail b WITH (NOLOCK) on b.id=a.Id
+                                             inner join orders c WITH (NOLOCK) on c.poid=b.OrderId
+											 left join LocalSupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
+                                             left join Factory  e WITH (NOLOCK) on e.id = a.factoryid" + sqlWhere + " " + all, lis, out dt);
 
 
                 if (!result )
@@ -307,11 +307,11 @@ namespace Sci.Production.Subcon
                                                     ,c.MarkBack [B]
                                                     ,c.markleft [C]
                                                     ,c.Markright [D]
-                                             from orders c
-                                             inner join (select distinct OrderId from localpo a
-                                             inner join localpo_detail b on a.id = b.id
-                                             inner join Orders c on c.poid = b.orderid  " + sqlWhere + @") m  on m.OrderId = c.poid 
-                                             inner join country co on co.id = c.dest"
+                                             from orders c WITH (NOLOCK) 
+                                             inner join (select distinct OrderId from localpo a WITH (NOLOCK) 
+                                             inner join localpo_detail b WITH (NOLOCK) on a.id = b.id
+                                             inner join Orders c WITH (NOLOCK) on c.poid = b.orderid  " + sqlWhere + @") m  on m.OrderId = c.poid 
+                                             inner join country co WITH (NOLOCK) on co.id = c.dest"
                                              );
                 result = DBProxy.Current.Select("", scmd, lis, out shm);
 

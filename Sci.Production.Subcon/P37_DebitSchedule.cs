@@ -46,7 +46,7 @@ namespace Sci.Production.Subcon
             datas.Columns.Add("VOUCHERDATE");
             foreach (DataRow dr in datas.Rows)
             {
-                dr["VOUCHERDATE"] = MyUtility.GetValue.Lookup(string.Format("SELECT VoucherDate from Voucher where id = '{0}'", dr["voucherid"]), "Finance");
+                dr["VOUCHERDATE"] = MyUtility.GetValue.Lookup(string.Format("SELECT VoucherDate from Voucher WITH (NOLOCK) where id = '{0}'", dr["voucherid"]), "Finance");
             }
             this.grid.AutoResizeColumns();
         }

@@ -65,7 +65,7 @@ namespace Sci.Production.Subcon
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
 
-            string sqlcmd = "select refno from localitem_quot where refno = @refno and (Status ='New')";
+            string sqlcmd = "select refno from localitem_quot WITH (NOLOCK) where refno = @refno and (Status ='New')";
             DBProxy.Current.Exists("", sqlcmd, cmds, out flag);
             if (flag)
             {

@@ -22,7 +22,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
             txtMdivision1.Text = Sci.Env.User.Keyword;
@@ -72,12 +72,12 @@ namespace Sci.Production.Subcon
 		                                            ,a.ArtworkTypeID
                                                     ,a.CurrencyID
                                                     ,sum(a.Amount + a.Vat) Amt
-                                                    ,a.PayTermID+'-' +(select Name from PayTerm where id = a.paytermid) payterm
-                                            from ArtworkAP a
-                                            left join LocalSupp b on a.LocalSuppID=b.ID
+                                                    ,a.PayTermID+'-' +(select Name from PayTerm WITH (NOLOCK) where id = a.paytermid) payterm
+                                            from ArtworkAP a WITH (NOLOCK) 
+                                            left join LocalSupp b WITH (NOLOCK) on a.LocalSuppID=b.ID
                                             where  a.issuedate between '{0}' and '{1}'
                                                     and a.apvdate between '{2}' and '{3}'"
-                                                  ,Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
+                                                  , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
                                                   ,Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")));
                 #endregion
             }
@@ -101,12 +101,12 @@ namespace Sci.Production.Subcon
                                                     ,f.Amount poAmount
                                                     ,e.IssueDate
                                                     ,a.InvNo
-                                             from ArtworkAP a 
-                                             left join LocalSupp b on a.LocalSuppID=b.ID
-                                             inner join ArtworkAP_Detail c on a.Id=c.ID
-                                             left join Orders d on c.OrderID=d.id
-                                             left join ArtworkPO e on e.id=c.ArtworkPoID
-                                             inner join ArtworkPO_Detail f on c.ArtworkPoID=f.id and c.ArtworkPo_DetailUkey=f.Ukey
+                                             from ArtworkAP a WITH (NOLOCK) 
+                                             left join LocalSupp b WITH (NOLOCK) on a.LocalSuppID=b.ID
+                                             inner join ArtworkAP_Detail c WITH (NOLOCK) on a.Id=c.ID
+                                             left join Orders d WITH (NOLOCK) on c.OrderID=d.id
+                                             left join ArtworkPO e WITH (NOLOCK) on e.id=c.ArtworkPoID
+                                             inner join ArtworkPO_Detail f WITH (NOLOCK) on c.ArtworkPoID=f.id and c.ArtworkPo_DetailUkey=f.Ukey
                                             where  a.issuedate between '{0}' and '{1}'
                                             and a.apvdate between '{2}' and '{3}'"
                                                   , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")

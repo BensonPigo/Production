@@ -55,7 +55,7 @@ namespace Sci.Production.Subcon
             if ((o.Text != o.OldValue) && this.EditMode)
             {
                 ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
-                string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype where id='{0}'", o.Text));
+                string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", o.Text));
                 if (artworkunit == "") { artworkunit = "PCS"; }
                 this.detailgrid.Columns[3].HeaderText = artworkunit; 
             }
@@ -193,7 +193,7 @@ namespace Sci.Production.Subcon
             //取單號： 
             if (this.IsDetailInserting)
             {
-                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory where ID ='{0}'", CurrentMaintain["factoryid"]));
+                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", CurrentMaintain["factoryid"]));
                 if (MyUtility.Check.Empty(factorykeyword))
                 {
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
@@ -208,7 +208,7 @@ namespace Sci.Production.Subcon
             }
 
             #region 加總明細金額至表頭
-            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency where id = '{0}'", CurrentMaintain["currencyId"]),null);
+            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
             if (str == null || string.IsNullOrWhiteSpace(str))
             {
                 MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't save!", CurrentMaintain["currencyID"]), "Warning");
@@ -234,7 +234,7 @@ namespace Sci.Production.Subcon
                 foreach (DataRow dr in e.Details.Rows)
                 {
                     poqty = 0m;
-                    decimal.TryParse(MyUtility.GetValue.Lookup(string.Format("select poqty from artworkpo_detail where ukey = {0}", (long)dr["artworkpo_detailukey"])),out poqty);
+                    decimal.TryParse(MyUtility.GetValue.Lookup(string.Format("select poqty from artworkpo_detail WITH (NOLOCK) where ukey = {0}", (long)dr["artworkpo_detailukey"])), out poqty);
                     dr["poqty"] = poqty;
                     dr["balance"] = (decimal)dr["farmin"] - (decimal)dr["accumulatedqty"];                    
                 }
@@ -255,7 +255,7 @@ namespace Sci.Production.Subcon
                 foreach (DataRow dr in Details.Rows)
                 {
                     poqty = 0m;
-                    decimal.TryParse(MyUtility.GetValue.Lookup(string.Format("select poqty from artworkpo_detail where ukey = {0}", (long)dr["artworkpo_detailukey"])), out poqty);
+                    decimal.TryParse(MyUtility.GetValue.Lookup(string.Format("select poqty from artworkpo_detail WITH (NOLOCK) where ukey = {0}", (long)dr["artworkpo_detailukey"])), out poqty);
                     dr["poqty"] = poqty;
                     dr["balance"] = (decimal)dr["farmin"] - (decimal)dr["accumulatedqty"];
                 }
@@ -265,7 +265,7 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
+            string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
             if (artworkunit == "") { artworkunit = "PCS"; }
             this.detailgrid.Columns[3].HeaderText = artworkunit; 
             if (!(CurrentMaintain == null))
@@ -348,7 +348,7 @@ namespace Sci.Production.Subcon
             DualResult result, result2;
             DataTable datacheck;
             #region 檢查po是否close了。
-            sqlcmd = string.Format(@"select a.id from artworkpo a, artworkap_detail b 
+            sqlcmd = string.Format(@"select a.id from artworkpo a WITH (NOLOCK) , artworkap_detail b WITH (NOLOCK) 
                             where a.id = b.artworkpoid and a.closed = 1 and b.id = '{0}'", CurrentMaintain["id"]);
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
             if (datacheck.Rows.Count > 0)
@@ -365,7 +365,7 @@ namespace Sci.Production.Subcon
             ids = "";
             foreach (var dr1 in DetailDatas)
             {
-                sqlcmd = string.Format("select * from artworkpo_detail where ukey = '{0}'", dr1["artworkpo_detailukey"]);
+                sqlcmd = string.Format("select * from artworkpo_detail WITH (NOLOCK) where ukey = '{0}'", dr1["artworkpo_detailukey"]);
                 if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
                 {
                     ShowErr(sqlcmd, result);
@@ -394,7 +394,7 @@ namespace Sci.Production.Subcon
             foreach (DataRow drchk in DetailDatas)
             {
                 sqlcmd = string.Format(@"select b.artworkpo_detailukey, sum(b.apqty) qty
-                                from artworkap a, artworkap_detail b
+                                from artworkap a WITH (NOLOCK) , artworkap_detail b WITH (NOLOCK) 
                                 where a.id = b.id  and a.status = 'Approved' and b.artworkpo_detailukey ='{0}'
                                 group by b.artworkpo_detailukey ", drchk["artworkpo_detailukey"]);
 
@@ -464,7 +464,7 @@ namespace Sci.Production.Subcon
             DualResult result, result2;
             DataTable datacheck;
             #region 檢查po是否close了。
-            sqlcmd = string.Format(@"select a.id from artworkpo a, artworkap_detail b 
+            sqlcmd = string.Format(@"select a.id from artworkpo a WITH (NOLOCK) , artworkap_detail b WITH (NOLOCK) 
                             where a.id = b.artworkpoid and a.closed = 1 and b.id = '{0}'", CurrentMaintain["id"]);
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
             if (datacheck.Rows.Count > 0)
@@ -488,7 +488,7 @@ namespace Sci.Production.Subcon
                 foreach (DataRow drchk in DetailDatas)
                 {
                     sqlcmd = string.Format(@"select b.artworkpo_detailukey, sum(b.apqty) qty
-                                from artworkap a, artworkap_detail b
+                                from artworkap a WITH (NOLOCK) , artworkap_detail b WITH (NOLOCK) 
                                 where a.id = b.id  and a.status ='Approved' and b.artworkpo_detailukey ='{0}'
                                 group by b.artworkpo_detailukey ", drchk["artworkpo_detailukey"]);
 
@@ -612,18 +612,18 @@ namespace Sci.Production.Subcon
 	               A.ArtworkPoID,A.OrderID,A.ArtworkId,A.PatternDesc,A.Price,A.ApQty,format(A.Amount,'#,###,###,##0.00')Amount,ap.PayTermID+'-'+P.name as Terms,
 	               LOB.AccountNo,LOB.AccountName,LOB.BankName,LOB.CountryID+'/'+LOB.City as Country,LOB.SWIFTCode,
 	               ap.Handle+CHAR(13)+CHAR(10)+pas.name as PreparedBy,format(ap.Amount,'#,###,###,##0.00') as Total,format(ap.Vat,'#,###,###,##0.00') as Vat,format(ap.Amount+ap.Vat,'#,###,###,##0.00') as GrandTotal,ap.currencyid as Currency
-                   from DBO.artworkap ap
-	               LEFT JOIN dbo.factory F
+                   from DBO.artworkap ap WITH (NOLOCK) 
+	               LEFT JOIN dbo.factory F WITH (NOLOCK) 
 	               ON  F.ID = ap.factoryid
-	               LEFT JOIN dbo.LocalSupp L
+	               LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) 
 	               ON  L.ID = ap.LocalSuppID
-	               LEFT JOIN dbo.Artworkap_Detail A
+	               LEFT JOIN dbo.Artworkap_Detail A WITH (NOLOCK) 
 	               ON  A.ID = ap.ID
-	               LEFT JOIN dbo.LocalSupp_Bank LOB
+	               LEFT JOIN dbo.LocalSupp_Bank LOB WITH (NOLOCK) 
 	               ON  IsDefault = 1 and LOB.ID = ap.LocalSuppID
-	               LEFT JOIN DBO.PayTerm P
+	               LEFT JOIN DBO.PayTerm P WITH (NOLOCK) 
 	               ON P.ID = ap.PayTermID
-	               LEFT JOIN DBO.Pass1 pas
+	               LEFT JOIN DBO.Pass1 pas WITH (NOLOCK) 
 	               ON pas.ID = ap.Handle where ap.ID= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }

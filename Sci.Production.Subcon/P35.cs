@@ -163,7 +163,7 @@ namespace Sci.Production.Subcon
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'LocalPO1'), 'LocalPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
-                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory where ID ='{0}'", CurrentMaintain["factoryid"]));
+                string factorykeyword = Sci.MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where ID ='{0}'", CurrentMaintain["factoryid"]));
                 if (MyUtility.Check.Empty(factorykeyword))
                 {
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
@@ -178,7 +178,7 @@ namespace Sci.Production.Subcon
             }
 
             #region 加總明細金額至表頭
-            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency where id = '{0}'", CurrentMaintain["currencyId"]), null);
+            string str = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
             if (str == null || string.IsNullOrWhiteSpace(str))
             {
                 MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , can't save!", CurrentMaintain["currencyID"]), "Warning");
@@ -208,7 +208,7 @@ namespace Sci.Production.Subcon
                 foreach (DataRow dr in e.Details.Rows)
                 {
                     DataRow tmp;
-                    if (MyUtility.Check.Seek(string.Format("select inqty,apqty from localpo_detail where ukey = '{0}'", dr["localpo_detailukey"]), out tmp))
+                    if (MyUtility.Check.Seek(string.Format("select inqty,apqty from localpo_detail WITH (NOLOCK) where ukey = '{0}'", dr["localpo_detailukey"]), out tmp))
                     {
                         dr["inqty"] = tmp["inqty"];
                         dr["apqty"] = tmp["apqty"];
@@ -332,7 +332,7 @@ namespace Sci.Production.Subcon
             DualResult result, result2;
             DataTable datacheck;
             #region 檢查po是否close了。
-            sqlcmd = string.Format(@"select a.id from Localpo a, Localap_detail b 
+            sqlcmd = string.Format(@"select a.id from Localpo a WITH (NOLOCK) , Localap_detail b WITH (NOLOCK) 
                             where a.id = b.Localpoid and a.status = 'Closed' and b.id = '{0}'", CurrentMaintain["id"]);
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
             if (datacheck.Rows.Count > 0)
@@ -349,7 +349,7 @@ namespace Sci.Production.Subcon
             ids = "";
             foreach (var dr1 in DetailDatas)
             {
-                sqlcmd = string.Format("select * from Localpo_detail where ukey = '{0}'", dr1["Localpo_detailukey"]);
+                sqlcmd = string.Format("select * from Localpo_detail WITH (NOLOCK) where ukey = '{0}'", dr1["Localpo_detailukey"]);
                 if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
                 {
                     ShowErr(sqlcmd, result);
@@ -383,7 +383,7 @@ namespace Sci.Production.Subcon
             foreach (DataRow drchk in DetailDatas)
             {
                 sqlcmd = string.Format(@"select b.Localpo_detailukey, sum(b.qty) qty
-                                from Localap a, Localap_detail b
+                                from Localap a WITH (NOLOCK) , Localap_detail b WITH (NOLOCK) 
                                 where a.id = b.id  and a.status = 'Approved' and b.Localpo_detailukey ='{0}'
                                 group by b.Localpo_detailukey ", drchk["Localpo_detailukey"]);
 
@@ -460,7 +460,7 @@ namespace Sci.Production.Subcon
             DualResult result, result2;
             DataTable datacheck;
             #region 檢查po是否close了。
-            sqlcmd = string.Format(@"select a.id from Localpo a, Localap_detail b 
+            sqlcmd = string.Format(@"select a.id from Localpo a WITH (NOLOCK) , Localap_detail b WITH (NOLOCK) 
                             where a.id = b.Localpoid and a.status = 'Closed' and b.id = '{0}'", CurrentMaintain["id"]);
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
             if (datacheck.Rows.Count > 0)
@@ -483,7 +483,7 @@ namespace Sci.Production.Subcon
             foreach (DataRow drchk in DetailDatas)
             {
                 sqlcmd = string.Format(@"select b.Localpo_detailukey,sum(b.qty) qty
-                                from Localap a, Localap_detail b
+                                from Localap a WITH (NOLOCK) , Localap_detail b WITH (NOLOCK) 
                                 where a.id = b.id  and a.status ='Approved' and b.Localpo_detailukey ='{0}'
                                 group by b.Localpo_detailukey ", drchk["Localpo_detailukey"]);
 
@@ -589,8 +589,8 @@ namespace Sci.Production.Subcon
             this.DetailSelectCommand = string.Format(
 @"select *,localap_detail.price*localap_detail.Qty as amount,0.0 as balance,0 as inqty,0 as apqty,
     dbo.getItemDesc(localap.Category,localap_detail.Refno) as description 
-from localap_detail 
-left join localap on localap.ID = localap_detail.ID
+from localap_detail WITH (NOLOCK) 
+left join localap WITH (NOLOCK) on localap.ID = localap_detail.ID
 where localap_detail.id = '{0}'", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -600,7 +600,7 @@ where localap_detail.id = '{0}'", masterID);
         protected override bool ClickNewBefore()
         {
             this.DetailSelectCommand = string.Format(@"select *,0.0 as amount,0.0 as balance,0 as inqty,0 as apqty,'' as description 
-                                                                            from localap_detail where 1=2");
+                                                                            from localap_detail WITH (NOLOCK)  where 1=2");
             return base.ClickNewBefore();
         }
 
@@ -637,13 +637,13 @@ where localap_detail.id = '{0}'", masterID);
                     ,a.Handle+f.Name [Prepared_by]
                     ,a.CurrencyID[CurrencyID]
 					,a.VatRate[VatRate]
-            from dbo.LocalAP a 
-            left join dbo.factory  b on b.id = a.factoryid
-			inner join dbo.LocalSupp c on c.id=a.LocalSuppID
-			left join dbo.PayTerm d on d.id=a.PaytermID
-			left join dbo.LocalSupp_Bank e on e.IsDefault=1 and e.id=a.LocalSuppID
-			left join dbo.Pass1 f on f.id=a.Handle
-            left join dbo.Currency cr on cr.ID = a.CurrencyID
+            from dbo.LocalAP a WITH (NOLOCK) 
+            left join dbo.factory  b WITH (NOLOCK) on b.id = a.factoryid
+			inner join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
+			left join dbo.PayTerm d WITH (NOLOCK) on d.id=a.PaytermID
+			left join dbo.LocalSupp_Bank e WITH (NOLOCK) on e.IsDefault=1 and e.id=a.LocalSuppID
+			left join dbo.Pass1 f WITH (NOLOCK) on f.id=a.Handle
+            left join dbo.Currency cr WITH (NOLOCK) on cr.ID = a.CurrencyID
             where a.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
             string RptTitle = dt.Rows[0]["nameEn"].ToString();
@@ -707,8 +707,8 @@ where localap_detail.id = '{0}'", masterID);
                     ,a.qty [Qty]
                     ,a.unitid [Unit]
                     ,format(CONVERT(decimal(10,2),a.price*a.Qty),'#,###,###,##0.00') [Amount]
-            from dbo.LocalAP_Detail a
-            left join dbo.LocalAP b on a.id=b.Id
+            from dbo.LocalAP_Detail a WITH (NOLOCK) 
+            left join dbo.LocalAP b WITH (NOLOCK) on a.id=b.Id
             where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 

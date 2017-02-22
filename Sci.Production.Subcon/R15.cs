@@ -23,7 +23,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
             cbbFactory.Text = Sci.Env.User.Factory;
             MyUtility.Tool.SetupCombox(cbbOrderBy, 1, 1, "Issue date,Supplier");
@@ -67,7 +67,7 @@ namespace Sci.Production.Subcon
 ,a.Factoryid
 , a.ID
 ,convert(varchar(10),a.issuedate,111) issuedate
-,a.localsuppid+'-'+(select abb from localsupp where id = a.localsuppid) supplier
+,a.localsuppid+'-'+(select abb from localsupp WITH (NOLOCK) where id = a.localsuppid) supplier
 ,convert(varchar(10),a.Delivery,111) Delivery
 , b.ORDERID
 , c.styleid
@@ -81,9 +81,9 @@ namespace Sci.Production.Subcon
 , convert(decimal(20,2),b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD',A.ISSUEDATE)) UnitPriceUSD
 , convert(decimal(20,3),b.Cost) Cost
 , b.cost - convert(decimal(20,4),b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD',A.ISSUEDATE)) variance
-from dbo.system s,dbo.Artworkpo a
-inner join artworkpo_detail b on b.id = a.id
-inner join orders c on c.id = b.orderid
+from dbo.system s WITH (NOLOCK) ,dbo.Artworkpo a WITH (NOLOCK) 
+inner join artworkpo_detail b WITH (NOLOCK) on b.id = a.id
+inner join orders c WITH (NOLOCK) on c.id = b.orderid
 where a.issuedate between '{0}' and '{1}'
 ", Convert.ToDateTime(issuedate1).ToString("d"), Convert.ToDateTime(issuedate2).ToString("d")));
 

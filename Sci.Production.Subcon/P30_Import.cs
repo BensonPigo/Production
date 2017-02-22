@@ -89,10 +89,10 @@ select 1 as Selected,c.POID ,b.OrderID ,c.StyleID,c.SeasonID ,b.RefNo
 ,sum(b.CTNQty) qty, d.UnitID,d.Price, sum(b.CTNQty) * d.Price as amount 
 ,'' as remark ,a.EstCTNArrive etd ,a.ID as requestid, '' as id
 ,c.FactoryID ,c.SewInLine
-from dbo.PackingList a 
-        , dbo.PackingList_Detail b 
-        , dbo.Orders c 
-        , LocalItem d
+from dbo.PackingList a WITH (NOLOCK) 
+        , dbo.PackingList_Detail b WITH (NOLOCK) 
+        , dbo.Orders c WITH (NOLOCK) 
+        , LocalItem d WITH (NOLOCK) 
 where a.ID = b.ID 
     and b.OrderID = c.ID
     and b.RefNo = d.RefNo
@@ -146,10 +146,10 @@ select 1 as Selected,c.POID ,a.OrderID ,a.StyleID,a.SeasonID ,b.RefNo
 ,a.OrderID as requestid
 , '' as id
 ,c.FactoryID ,c.SewInLine
-from dbo.ThreadRequisition a 
-        , dbo.ThreadRequisition_Detail b 
-        , dbo.Orders c 
-        , LocalItem d
+from dbo.ThreadRequisition a WITH (NOLOCK) 
+        , dbo.ThreadRequisition_Detail b WITH (NOLOCK) 
+        , dbo.Orders c WITH (NOLOCK) 
+        , LocalItem d WITH (NOLOCK) 
 where a.OrderID = b.OrderID 
     and b.OrderID = c.ID
     and b.RefNo = d.RefNo
@@ -206,13 +206,13 @@ and b.PurchaseQty > 0
                 decimal price;
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
                 {
-                    category = MyUtility.GetValue.Lookup(string.Format(@"select category from orders where id = '{0}'", dr["orderid"]), null);
+                    category = MyUtility.GetValue.Lookup(string.Format(@"select category from orders WITH (NOLOCK) where id = '{0}'", dr["orderid"]), null);
                     if (category == "B")
                     {
                         //554: SUBCON_P30_Import_Import Thread or Carton item
                         //price = decimal.Parse(MyUtility.GetValue.Lookup(string.Format(@"select price from order_tmscost where id='{0}' and artworktypeid='{1}'"                            
                         //                                                                    , dr["orderid"], dr_localPO["category"].ToString().TrimEnd().ToUpper()), null));
-                        sql = string.Format(@"select price from order_tmscost where id='{0}' and artworktypeid='{1}'"
+                        sql = string.Format(@"select price from order_tmscost WITH (NOLOCK) where id='{0}' and artworktypeid='{1}'"
                                             , dr["orderid"], dr_localPO["category"].ToString().TrimEnd().ToUpper());
                         tmp = MyUtility.GetValue.Lookup(sql);
                         if (MyUtility.Check.Empty(tmp))

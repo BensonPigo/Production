@@ -25,7 +25,7 @@ namespace Sci.Production.Subcon
         {            
             DataTable dtSubprocessID;
             DualResult Result;
-            if (Result = DBProxy.Current.Select(null, "select ID from Subprocess where Junk = '0'", out dtSubprocessID))
+            if (Result = DBProxy.Current.Select(null, "select ID from Subprocess WITH (NOLOCK) where Junk = '0'", out dtSubprocessID))
             {
                 this.comboSubprocess.DataSource = dtSubprocessID;
                 this.comboSubprocess.DisplayMember = "ID";

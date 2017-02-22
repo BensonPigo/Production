@@ -64,7 +64,7 @@ namespace Sci.Production.Subcon
                                                                                 ,b.ukey artworkpo_detailukey
                                                                                 ,'' id
                                                                                 ,0.0 amount
-                                                                        from artworkpo a, artworkpo_detail b 
+                                                                        from artworkpo a WITH (NOLOCK) , artworkpo_detail b WITH (NOLOCK) 
                                                                         where a.id = b.id and a.status='Approved' and b.apqty < farmin
                                                                         and a.artworktypeid = '{0}' 
                                                                         and a.localsuppid = '{1}' and a.mdivisionid='{2}'", dr_artworkAp["artworktypeid"],

@@ -27,7 +27,7 @@ namespace Sci.Production.Subcon
          {
             InitializeComponent();
             DataTable factory = null;
-            string sqlcmd = (@"select DISTINCT BrandID FROM DBO.Debit");
+            string sqlcmd = (@"select DISTINCT BrandID FROM DBO.Debit WITH (NOLOCK) ");
             DBProxy.Current.Select("", sqlcmd, out factory);
             factory.Rows.Add(new string[] { "" });
             factory.DefaultView.Sort = "BrandID";
@@ -106,25 +106,25 @@ namespace Sci.Production.Subcon
 	               ,finalVoucher.[Voucher No.]
 	               ,finalVoucher.[Voucher Date]
 	               ,finalVoucher.[Settled Date]
-               FROM  Debit a
+               FROM  Debit a WITH (NOLOCK) 
 	               outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 	               outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2  
 	               outer apply ( 
 		            select top 1 tmpSum.*
-		            from dbo.LocalDebit LocDeb 
-		            left join Debit a
+		            from dbo.LocalDebit LocDeb WITH (NOLOCK) 
+		            left join Debit a WITH (NOLOCK) 
 		            outer apply (
 					            SELECT  
 						            ds.VoucherID,v.VoucherDate,
 						             Amount=sum(ds.Amount) over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
-					            FROM debit_schedule ds 
+					            FROM debit_schedule ds WITH (NOLOCK) 
 					            left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
 					            WHERE  isnull(ds.VoucherID,'')!=''			
 				            )tmpSum
 				            on a.ID = LocDeb.id 
 				            where a.ID = LocDeb.id and tmpSum.Amount >= LocDeb.Amount+LocDeb.Tax
 					            ) Cur_Debit5
-		             outer apply(select deb.VoucherFactory,VoucherDate,SettleDate from dbo.Debit deb where deb.VoucherFactory = VoucherID ) n
+		             outer apply(select deb.VoucherFactory,VoucherDate,SettleDate from dbo.Debit deb WITH (NOLOCK) where deb.VoucherFactory = VoucherID ) n
 					 outer apply(select [Voucher No.] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherID, n.VoucherFactory)
 	               ,[Voucher Date] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherDate, n.VoucherDate)
 	               ,[Settled Date] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherDate, n.SettleDate) ) as finalVoucher
@@ -138,26 +138,26 @@ namespace Sci.Production.Subcon
 	                   ,finalVoucher.[Voucher Date]
 	                   ,finalVoucher.[Settled Date]
 	                   ,dd.OrderID,dd.Qty,dd.Amount,dd.reasonid+'-'+dd.ReasonNM [reasonid]
-                    FROM  Debit a
+                    FROM  Debit a WITH (NOLOCK) 
 	                   left join Debit_Detail dd on a.ID = dd.ID
 	                   outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 	                   outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2  
 	                   outer apply ( 
 		                select top 1 tmpSum.*
-		                from dbo.LocalDebit LocDeb 
-		                left join Debit a
+		                from dbo.LocalDebit LocDeb WITH (NOLOCK) 
+		                left join Debit a WITH (NOLOCK) 
 		                outer apply (
 					                SELECT  
 						                ds.VoucherID,v.VoucherDate,
 						                 Amount=sum(ds.Amount) over (order by ds.IssueDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
-					                FROM debit_schedule ds 
+					                FROM debit_schedule ds WITH (NOLOCK) 
 					                left join FinanceEn.dbo.Voucher as v on v.id = ds.VoucherID
 					                WHERE  isnull(ds.VoucherID,'')!=''			
 				                )tmpSum
 				                on a.ID = LocDeb.id 
 				                where a.ID = LocDeb.id and tmpSum.Amount >= LocDeb.Amount+LocDeb.Tax
 					                ) Cur_Debit5
-		                 outer apply(select deb.VoucherFactory,VoucherDate,SettleDate from dbo.Debit deb where deb.VoucherFactory = VoucherID ) n
+		                 outer apply(select deb.VoucherFactory,VoucherDate,SettleDate from dbo.Debit deb WITH (NOLOCK) where deb.VoucherFactory = VoucherID ) n
                          outer apply(select [Voucher No.] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherID, n.VoucherFactory)
 	                               ,[Voucher Date] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherDate, n.VoucherDate)
 	                               ,[Settled Date] = IIF(a.IsSubcon=1,Cur_Debit5.VoucherDate, n.SettleDate) ) as finalVoucher

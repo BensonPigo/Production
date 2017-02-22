@@ -27,7 +27,7 @@ namespace Sci.Production.Subcon
         {
             DataTable dtSubprocessID;
             DualResult Result;
-            if (Result = DBProxy.Current.Select(null, "select 'ALL' as id,1 union select id,2 from Subprocess where Junk = 0 ",
+            if (Result = DBProxy.Current.Select(null, "select 'ALL' as id,1 union select id,2 from Subprocess WITH (NOLOCK) where Junk = 0 ",
                 out dtSubprocessID))
             {
                 this.comboSubProcess.DataSource = dtSubprocessID;
@@ -36,7 +36,7 @@ namespace Sci.Production.Subcon
             else { ShowErr(Result); }
 
             DataTable dtM;
-            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory", out dtM))
+            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out dtM))
             {
                 this.comboM.DataSource = dtM;
                 this.comboM.DisplayMember = "ID";
@@ -91,16 +91,16 @@ namespace Sci.Production.Subcon
             [InComing] = bio.InComing,
             [Out (Time)] = bio.OutGoing
 
-            from Bundle b
-            inner join Bundle_Detail bd on bd.Id = b.Id
-            inner join Bundle_Detail_Art bda on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-            inner join orders o on o.Id = b.OrderId
-            inner join SubProcess s on s.Id = bda.SubprocessId 
-            left join BundleInOut bio on bio.Bundleno=bd.Bundleno and bio.SubProcessId = bda.SubprocessId
+            from Bundle b WITH (NOLOCK) 
+            inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
+            inner join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
+            inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+            inner join SubProcess s WITH (NOLOCK) on s.Id = bda.SubprocessId 
+            left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = bda.SubprocessId
             outer apply(
 	             select sub= (
 		             Select distinct concat('+', bda.SubprocessId)
-		             from Bundle_Detail_Art bda 
+		             from Bundle_Detail_Art bda WITH (NOLOCK) 
 		             where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
 		             for xml path('')
 	             )

@@ -20,8 +20,8 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             DataTable factory = null;
-            
-            DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory", out factory);
+
+            DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(comboBox1, 1, factory);
             comboBox1.SelectedValue = Sci.Env.User.Factory;
             this.print.Enabled = false;
@@ -123,9 +123,9 @@ namespace Sci.Production.Subcon
                                                   ,c.Qty-lrd.Qty [On_Road]
                                                   ,lrd.Location [Location]
                                                   ,lr.Remark [Remark]
-                                         from dbo.LocalReceiving lr
-                                         left join dbo.LocalReceiving_Detail lrd on  lr.id=lrd.Id
-                                         left join dbo.LocalPO_Detail c on lrd.LocalPo_detailukey=c.Ukey  " + sqlWhere +" "+order);
+                                         from dbo.LocalReceiving lr WITH (NOLOCK) 
+                                         left join dbo.LocalReceiving_Detail lrd WITH (NOLOCK) on  lr.id=lrd.Id
+                                         left join dbo.LocalPO_Detail c WITH (NOLOCK) on lrd.LocalPo_detailukey=c.Ukey  " + sqlWhere + " " + order);
             result = DBProxy.Current.Select("", sqlcmd,lis, out dtt);
         
             return result; //base.OnAsyncDataLoad(e);

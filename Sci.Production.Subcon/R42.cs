@@ -29,7 +29,7 @@ namespace Sci.Production.Subcon
         {
             DataTable dtSubprocessID;
             DualResult Result;
-            if (Result = DBProxy.Current.Select(null, "select 'ALL' as id,1 union select id,2 from Subprocess where Junk = 0 ",
+            if (Result = DBProxy.Current.Select(null, "select 'ALL' as id,1 union select id,2 from Subprocess WITH (NOLOCK) where Junk = 0 ",
                 out dtSubprocessID))
             {
                 this.comboSubProcess.DataSource = dtSubprocessID;
@@ -38,7 +38,7 @@ namespace Sci.Production.Subcon
             else { ShowErr(Result); }
 
             DataTable dtfactory;
-            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory", out dtfactory))
+            if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out dtfactory))
             {
                 this.comboM.DataSource = dtfactory;
                 this.comboM.DisplayMember = "ID";
@@ -101,14 +101,14 @@ namespace Sci.Production.Subcon
             [TransferDate] = bt.TransferDate
             --CAST ( bt.TransferDate AS DATE) AS TransferDate
 
-            from Bundle b
-            inner join Bundle_Detail bd on bd.Id = b.Id
-            inner join orders o on o.Id = b.OrderId
-            left join BundleTransfer bt on bt.BundleNo = bd.BundleNo
+            from Bundle b WITH (NOLOCK) 
+            inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
+            inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+            left join BundleTransfer bt WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
             outer apply(
 	             select sub= (
 		             Select distinct concat('+', bda.SubprocessId)
-		             from Bundle_Detail_Art bda 
+		             from Bundle_Detail_Art bda WITH (NOLOCK) 
 		             where bda.Bundleno = bd.Bundleno
 		             for xml path('')
 	             )

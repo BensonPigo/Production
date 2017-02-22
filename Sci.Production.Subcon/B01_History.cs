@@ -26,7 +26,7 @@ namespace Sci.Production.Subcon
         {
             base.OnFormLoaded();
             string selectCommand1 = string.Format("select issuedate,localap.id,qty,unitid,localap.currencyid, price, qty*price amount" +
-                ",localsuppid,localsupp.abb from localap, localap_detail,localsupp "+
+                ",localsuppid,localsupp.abb from localap WITH (NOLOCK) , localap_detail WITH (NOLOCK) ,localsupp WITH (NOLOCK) " +
                 "where refno = '{0}' and localap.id = localap_detail.id and localsuppid = localsupp.id", this.motherData["refno"].ToString());
             DataTable selectDataTable1;
 

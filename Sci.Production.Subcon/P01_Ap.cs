@@ -25,7 +25,7 @@ namespace Sci.Production.Subcon
         {
             base.OnFormLoaded();
             string selectCommand1 = string.Format(@"SELECT B.ID,A.issuedate,B.ApQty,B.PRICE,A.Handle,A.apvdate 
-                                                    FROM ArtworkAP A, ArtworkAP_Detail B 
+                                                    FROM ArtworkAP A WITH (NOLOCK) , ArtworkAP_Detail B WITH (NOLOCK) 
 	                                                WHERE A.ID = B.ID  AND B.artworkPOID = '{0}' and b.artworkpo_detailukey = {1}"
                                                 , dr["id"].ToString(), dr["ukey"].ToString());
             DataTable selectDataTable1;

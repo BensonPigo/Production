@@ -29,7 +29,7 @@ namespace Sci.Production.Subcon
             sp_id.Value = textBox1.Text;
             cmds.Add(sp_id);
             #endregion
-            if (!MyUtility.Check.Seek(string.Format(@"select id from dbo.orders
+            if (!MyUtility.Check.Seek(string.Format(@"select id from dbo.orders WITH (NOLOCK) 
                     where factoryid='{0}' and id = @id", Sci.Env.User.Factory), cmds))
             {
                 MyUtility.Msg.WarningBox("SP# is not found, Please check value is right and belong to login factory!!");

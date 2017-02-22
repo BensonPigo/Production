@@ -101,8 +101,8 @@ namespace Sci.Production.Subcon
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
             this.DetailSelectCommand = string.Format(@"select *
-,(reasonid +' '+ isnull((select name from dbo.reason where reasontypeid='DebitNote_Reason' and id=reasonid),'')) reason_desc
-from debit_detail Where debit_detail.id = '{0}' order by orderid ", masterID);
+,(reasonid +' '+ isnull((select name from dbo.reason WITH (NOLOCK) where reasontypeid='DebitNote_Reason' and id=reasonid),'')) reason_desc
+from debit_detail WITH (NOLOCK) Where debit_detail.id = '{0}' order by orderid ", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
 

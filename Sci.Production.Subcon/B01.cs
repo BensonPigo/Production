@@ -225,8 +225,8 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            
-            string sqlcmd = "select refno from localitem_quot where refno = '" + CurrentMaintain["refno"].ToString() + "';";
+
+            string sqlcmd = "select refno from localitem_quot WITH (NOLOCK) where refno = '" + CurrentMaintain["refno"].ToString() + "';";
             if (MyUtility.Check.Seek(sqlcmd, "Production"))
             {
                 this.button1.ForeColor = Color.Blue;
@@ -236,7 +236,7 @@ namespace Sci.Production.Subcon
                 this.button1.ForeColor = Color.Black;
             }
 
-             sqlcmd = "select refno from localap_detail where refno = '" + CurrentMaintain["refno"].ToString() + "';";
+            sqlcmd = "select refno from localap_detail WITH (NOLOCK) where refno = '" + CurrentMaintain["refno"].ToString() + "';";
              if (MyUtility.Check.Seek(sqlcmd, "Production"))
             {
                 this.button2.ForeColor = Color.Blue;
@@ -307,7 +307,7 @@ namespace Sci.Production.Subcon
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || textBox8.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from ThreadType WHERE Junk=0", "20", this.textBox8.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from ThreadType WITH (NOLOCK) WHERE Junk=0", "20", this.textBox8.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox8.Text = item.GetSelectedString();
@@ -319,7 +319,7 @@ namespace Sci.Production.Subcon
             string textValue = this.textBox8.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox8.OldValue)
             {
-                if (!MyUtility.Check.Seek(string.Format(@"select ID from ThreadType WHERE Junk=0 and id = '{0}'", textValue)))
+                if (!MyUtility.Check.Seek(string.Format(@"select ID from ThreadType WITH (NOLOCK) WHERE Junk=0 and id = '{0}'", textValue)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Thread Type: {0} > not found !!", textValue));
                     this.textBox8.Text = "";
