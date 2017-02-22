@@ -27,6 +27,7 @@ namespace Sci.Production.PublicPrg
         /// * 3.Case2,8才需要傳List<>過來,重組Location
         /// 
         /// * Type	: 
+        /// *   0.  更新Location
         /// *	2.	更新InQty
         /// *	4.	更新OutQty
         /// *	8.	更新LInvQty
@@ -229,6 +230,32 @@ OUTER APPLY(
             String sqlcmd = "";
             switch (type)
             {
+                case 0:
+                    #region  -- case 0 Location --
+                    sqlcmd = @"
+alter table #TmpSource alter column mdivisionid varchar(10)
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+
+merge dbo.mdivisionpodetail as target
+using  #TmpSource as src
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
+when matched and src.stocktype = 'I' then
+	update 
+	set target.blocation = src.location;
+
+merge dbo.mdivisionpodetail as target
+using  #TmpSource as src
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
+when matched and src.stocktype = 'B' then
+	update 
+	set target.alocation = src.location;
+
+drop Table #TmpSource";  
+                    break;
+                    #endregion
                 case 2:
                     #region -- Case 2 InQty --
                     if (encoded)
