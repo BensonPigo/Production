@@ -426,19 +426,44 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
                              roll = m.Field<string>("fromroll"),
                              dyelot = m.Field<string>("fromdyelot"),
                          }).ToList();
-            var data_Fty_2T = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                           select new
-                           {
-                               mdivisionid = m.Field<string>("toMdivisionid"),
-                               poid = m.Field<string>("topoid"),
-                               seq1 = m.Field<string>("toseq1"),
-                               seq2 = m.Field<string>("toseq2"),
-                               stocktype = m.Field<string>("tostocktype"),
-                               qty = m.Field<decimal>("qty"),
-                               location = m.Field<string>("tolocation"),
-                               roll = m.Field<string>("toroll"),
-                               dyelot = m.Field<string>("todyelot"),
-                           }).ToList();
+
+            DataTable newDt = ((DataTable)detailgridbs.DataSource).Clone();
+            foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+                string[] dtrLocation = dtr["ToLocation"].ToString().Split(',');
+                dtrLocation = dtrLocation.Distinct().ToArray();
+
+                if (dtrLocation.Length == 1)
+                {
+                    DataRow newDr = newDt.NewRow();
+                    newDr.ItemArray = dtr.ItemArray;
+                    newDt.Rows.Add(newDr);
+                }
+                else
+                {
+                    foreach (string location in dtrLocation)
+                    {
+                        DataRow newDr = newDt.NewRow();
+                        newDr.ItemArray = dtr.ItemArray;
+                        newDr["ToLocation"] = location;
+                        newDt.Rows.Add(newDr);
+                    }
+                }
+            }
+
+            var data_Fty_2T = (from b in newDt.AsEnumerable()
+                               select new
+                               {
+                                   mdivisionid = b.Field<string>("toMdivisionid"),
+                                   poid = b.Field<string>("topoid"),
+                                   seq1 = b.Field<string>("toseq1"),
+                                   seq2 = b.Field<string>("toseq2"),
+                                   stocktype = b.Field<string>("tostocktype"),
+                                   qty = b.Field<decimal>("qty"),
+                                   location = b.Field<string>("ToLocation"),
+                                   roll = b.Field<string>("toroll"),
+                                   dyelot = b.Field<string>("todyelot"),
+                               }).ToList();
             upd_Fty_4T = Prgs.UpdateFtyInventory_IO(4, null, true);
             upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量 ftyinventory
