@@ -167,7 +167,13 @@ and pd.OrderShipmodeSeq = oq.Seq", allID.ToString().Substring(0, allID.Length - 
             }
 
             StringBuilder allID = new StringBuilder();
-            DataRow[] dra = gbData.Select("Selected = 1");
+            if (MyUtility.Check.Empty(gbData))
+            {
+                return;
+            }           
+
+            DataRow[] dra = gbData.Select("Selected = 1");    
+            
             if (dra.Length > 0)
             {
                 foreach (DataRow dr in dra)
