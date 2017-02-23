@@ -6,16 +6,16 @@
 CREATE PROCEDURE [dbo].[Cutting_P01_print_CuttingWorkOrder]
 	@OrderID VARCHAR(13)
 AS
-BEGIN
-	--抓取ID為POID
-	select @OrderID=POID FROM dbo.Orders where ID = @OrderID
-	
+BEGIN	
 	DECLARE @Id VARCHAR(13) = ''
 	SELECT TOP 1 @Id = ID FROM WorkOrder WHERE ID = @OrderID
 	IF @Id = ''
 	BEGIN
 		RETURN;
 	END
+
+	--抓取ID為POID
+	select @OrderID=POID FROM dbo.Orders where ID = @OrderID
 	select 
 	PoList = isnull([dbo].getPOComboList(o.ID,o.POID),''),
 	o.StyleID,

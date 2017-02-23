@@ -7,6 +7,13 @@ CREATE PROCEDURE [dbo].[Cutting_P01_QtyBreakdown_PoCombbySPList]
 	@OrderID VARCHAR(13)
 AS
 BEGIN
+	DECLARE @Id VARCHAR(13) = ''
+	SELECT TOP 1 @Id = ID FROM WorkOrder WHERE ID = @OrderID
+	IF @Id = ''
+	BEGIN
+		RETURN;
+	END
+
 	select distinct sizecode
 	into #tmp
 	from WorkOrder_Distribute
@@ -47,7 +54,7 @@ BEGIN
 	FROM orders o
 	inner join Order_Article oa on o.ID = oa.id
 	inner join a on a.OrderID = o.ID
-	inner join Order_ColorCombo oc on oa.Article = oc.Article and oc.PatternPanel = ''FA''
+	left join Order_ColorCombo oc on oa.Article = oc.Article and oc.PatternPanel = ''FA'' and oc.id = o.poid
 	where o.POID = '''+@OrderID+N'''
 	order by o.ID
 	select * from #tmp2
