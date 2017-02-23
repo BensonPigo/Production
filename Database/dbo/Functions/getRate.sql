@@ -4,7 +4,7 @@
 -- Create date: 2016/03/02
 -- Description:	依匯率別抓取工廠財務系統的匯率
 -- =============================================
-Alter FUNCTION [dbo].[getRate]
+CREATE FUNCTION [dbo].[getRate]
 (
 	@rateid varchar(2), -- ex. System.ExchangeId
 	@from_currencyid varchar(3),

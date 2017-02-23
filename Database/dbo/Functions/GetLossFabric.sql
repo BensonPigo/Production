@@ -1,5 +1,5 @@
 ﻿
-Alter Function [dbo].[GetLossFabric]
+CREATE Function [dbo].[GetLossFabric]
 (
 	  @PoID			VarChar(13)		--採購母單
 	 ,@FabricCode	VarChar(3)		--Fabric Code(空值表示為全部計算)

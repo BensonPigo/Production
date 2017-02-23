@@ -1,5 +1,5 @@
 ﻿
-Alter Function [dbo].[GetPriceFromMtl]
+CREATE Function [dbo].[GetPriceFromMtl]
 (
 	  @SCIRefNo			VarChar(26)				--SCI Ref#
 	 ,@SuppID			VarChar(6)				--Supplier ID
