@@ -30,7 +30,8 @@ namespace Sci.Production.Warehouse
 
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(this.dateRange1.TextBox1.Value) && MyUtility.Check.Empty(textBox1.Text) && MyUtility.Check.Empty(textBox3.Text))
+            if (MyUtility.Check.Empty(this.dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) && 
+                MyUtility.Check.Empty(textBox1.Text) && MyUtility.Check.Empty(textBox3.Text))
             {
                 MyUtility.Msg.WarningBox("SP#, SCI Delivery, Location can't be empty!!");
                 return false;
@@ -84,7 +85,7 @@ namespace Sci.Production.Warehouse
             DualResult result = Result.True;
             StringBuilder sqlcmd = new StringBuilder();
             #region sql command
-            if (MyUtility.Check.Empty(dateRange1.Value1))    // SCI Delivery empty
+            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))    // SCI Delivery empty
             {
                 if (MyUtility.Check.Empty(location1)) // Location empty
                 {
@@ -208,8 +209,13 @@ Balance		= isnull(a.inqty, 0) - isnull(a.outqty, 0) + isnull(a.adjustqty, 0)
 from dbo.FtyInventory a WITH (NOLOCK) left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 inner join dbo.orders WITH (NOLOCK) on orders.id = p.id
-where 1=1
-And orders.scidelivery between '{0}' and '{1}'", dateRange1.Text1, dateRange1.Text2));
+where 1=1"));
+
+                    if (!MyUtility.Check.Empty(dateRange1.Value1))
+                        sqlcmd.Append(string.Format(" and '{0}' <= orders.scidelivery", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                    if (!MyUtility.Check.Empty(dateRange1.Value2))
+                        sqlcmd.Append(string.Format(" and orders.scidelivery <= '{0}'", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+
                     if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
                     if (!txtSeq1.checkEmpty(showErrMsg: false)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
                     if (chkbalance) sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
@@ -257,8 +263,13 @@ left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 inner join dbo.orders WITH (NOLOCK) on orders.ID = p.ID
 where 1=1
-And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'
-And orders.scidelivery between '{2}' and '{3}'", location1, location2, dateRange1.Text1, dateRange1.Text2));
+And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'", location1, location2));
+
+                    if (!MyUtility.Check.Empty(dateRange1.Value1))
+                        sqlcmd.Append(string.Format(" and '{0}' <= orders.scidelivery", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                    if (!MyUtility.Check.Empty(dateRange1.Value2))
+                        sqlcmd.Append(string.Format(" and orders.scidelivery <= '{0}'", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+
                     if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
                     if (!txtSeq1.checkEmpty(showErrMsg: false)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
                     if (chkbalance) sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
