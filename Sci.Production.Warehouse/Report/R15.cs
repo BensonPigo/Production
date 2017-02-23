@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) ) 
+            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2)) 
             {
                 MyUtility.Msg.WarningBox("< Issue Date > can't be empty!!");
                 return false;
@@ -70,11 +70,13 @@ namespace Sci.Production.Warehouse
 from issue as a WITH (NOLOCK) 
 left join issue_detail b WITH (NOLOCK) on a.id = b.id
 left join po_supp_detail c WITH (NOLOCK) on c.id = b.poid and c.seq1 = b.seq1 and c.seq2 =b.seq2
-where a.type = 'D' AND a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}'
-", Convert.ToDateTime(issueDate1).ToString("d")
- , Convert.ToDateTime(issueDate2).ToString("d")
- , stocktype));
+where a.type = 'D' AND a.Status = 'Confirmed' 
+", stocktype));
 
+            if (!MyUtility.Check.Empty(issueDate1))
+                sqlCmd.Append(string.Format(" and '{0}' <= a.issuedate", Convert.ToDateTime(issueDate1).ToString("d")));
+            if (!MyUtility.Check.Empty(issueDate2))
+                sqlCmd.Append(string.Format(" and a.issuedate <= '{0}'", Convert.ToDateTime(issueDate2).ToString("d")));
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(mdivision))
             {
