@@ -59,11 +59,15 @@ namespace Sci.Production.Thread
         {
             string masterID = (e.Master == null) ? "" : e.Master["OrderID"].ToString();
             this.DetailSelectCommand = string.Format(
-            @"SELECT a.*, b.description, b.MetertoCone ,c.description as colordesc,isnull(d.newCone,0) as newCone,isnull(d.usedcone,0) as usedcone
+            @"SELECT a.*, b.description, b.MetertoCone ,c.description as colordesc,X.newCone,X.usedcone
             FROM ThreadRequisition_Detail a WITH (NOLOCK) 
             Left Join Localitem b WITH (NOLOCK) on a.refno = b.refno
             Left join ThreadColor c WITH (NOLOCK) on c.id = a.ThreadColorid
-            Left join ThreadStock d WITH (NOLOCK) on d.refno = a.refno and d.Threadcolorid = a.threadcolorid and d.mDivisionid = '{1}'
+            OUTER APPLY
+			(
+				select isnull(sum(d.newCone),0) as newCone,isnull(sum(usedcone),0) as usedcone from ThreadStock d WITH (NOLOCK) 
+				where d.refno = a.refno and d.Threadcolorid = a.threadcolorid and d.mDivisionid = '{1}'		
+			) X
             WHERE a.OrderID = '{0}'", masterID,keyWord);
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -117,7 +121,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                     CurrentDetailData["Refno"] = "";
                     CurrentDetailData["MeterToCone"] = 0;  
                 }
-                string sql = string.Format("Select newCone,usedCone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and mDivisionid ='{2}' ", newvalue, CurrentDetailData["ThreadColorid"].ToString(), keyWord);
+                string sql = string.Format("Select isnull(sum(newCone),0) as newCone,isnull(sum(usedCone),0) as usedCone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and mDivisionid ='{2}' ", newvalue, CurrentDetailData["ThreadColorid"].ToString(), keyWord);
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
                     CurrentDetailData["NewCone"] = refdr["NewCone"];
@@ -153,7 +157,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                     MyUtility.Msg.WarningBox(string.Format("< Thread Color : {0} > not found!!!", e.FormattedValue.ToString()));
                     return;                   
                 }
-                string sql = string.Format("Select newCone,usedCone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and mDivisionid ='{2}' ", CurrentDetailData["Refno"].ToString(), newvalue, keyWord);
+                string sql = string.Format("Select isnull(sum(newCone),0) as newCone,isnull(sum(usedCone),0) as usedCone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and mDivisionid ='{2}' ", CurrentDetailData["Refno"].ToString(), newvalue, keyWord);
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
                     CurrentDetailData["NewCone"] = refdr["NewCone"];
