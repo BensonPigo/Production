@@ -30,9 +30,9 @@ namespace Sci.Production.Warehouse
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) &&
-                MyUtility.Check.Empty(dateRange2.Value1) &&
-                MyUtility.Check.Empty(dateRange3.Value1) &&
+            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) &&
+                MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2) &&
+                MyUtility.Check.Empty(dateRange3.Value1) && MyUtility.Check.Empty(dateRange3.Value2) &&
                 (MyUtility.Check.Empty(txtSpno1.Text) || MyUtility.Check.Empty(txtSpno2.Text)))
             {
                 MyUtility.Msg.WarningBox("< Dead Line > & < Buyer Delivery > & < SP# > & < ETA > can't be empty!!");
@@ -78,12 +78,18 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            if (!MyUtility.Check.Empty(buyerDelivery1))
+            if (!MyUtility.Check.Empty(buyerDelivery1) || !MyUtility.Check.Empty(buyerDelivery2))
             {
+                string sqlBuyerDelivery = "";
+                if (!MyUtility.Check.Empty(buyerDelivery1))
+                    sqlBuyerDelivery += string.Format(" '{0}' <= o.BuyerDelivery ", Convert.ToDateTime(buyerDelivery1).ToString("d"));
+                if (!MyUtility.Check.Empty(buyerDelivery2))
+                    sqlBuyerDelivery += (MyUtility.Check.Empty(sqlBuyerDelivery) ? "" : " and ") + string.Format(" o.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDelivery2).ToString("d"));
+
                 sqlCmd.Append(string.Format(@";with cte as 
 (
 	select poid from dbo.orders o WITH (NOLOCK) 
-	where o.BuyerDelivery between '{0}' and '{1}' group by POID
+	where {0} group by POID
 )
 select rtrim(c.BLocation),a.POID,a.seq1,a.seq2, x.Refno ,x.ColorID ,c.LInvQty ,a.ETA
 ,DATEDIFF(day,a.eta,convert(date,getdate())) aging,'' remark
@@ -93,7 +99,7 @@ inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.s
 inner join Factory d WITH (NOLOCK) on d.id = a.FactoryID
 cross apply (select m.Refno,m.ColorID from dbo.PO_Supp_Detail m WITH (NOLOCK) 
             where m.id = a.POID and m.seq1 = a.seq1 and m.seq2 = a.seq2 ) x
-where LInvQty > 0 ", Convert.ToDateTime(buyerDelivery1).ToString("d"), Convert.ToDateTime(buyerDelivery2).ToString("d")));
+where LInvQty > 0 ", sqlBuyerDelivery));
             }
             else
             {
@@ -108,10 +114,12 @@ where LInvQty > 0 "));
             }
 
             #region --- 條件組合  ---
-            if (!MyUtility.Check.Empty(deadline1))
+            if (!MyUtility.Check.Empty(deadline1) || !MyUtility.Check.Empty(deadline2))
             {
-                sqlCmd.Append(string.Format(@" and a.deadline between '{0}' and '{1}'",
-                    Convert.ToDateTime(deadline1).ToString("d"), Convert.ToDateTime(deadline2).ToString("d")));
+                if (!MyUtility.Check.Empty(deadline1))
+                    sqlCmd.Append(string.Format(@" and '{0}' <= a.deadline", Convert.ToDateTime(deadline1).ToString("d")));
+                if (!MyUtility.Check.Empty(deadline2))
+                    sqlCmd.Append(string.Format(@" and a.deadline <= '{0}'", Convert.ToDateTime(deadline2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(spno1))
             {
@@ -121,10 +129,12 @@ where LInvQty > 0 "));
                 cmds.Add(sp_spno1);
                 cmds.Add(sp_spno2);
             }
-            if (!MyUtility.Check.Empty(eta1))
+            if (!MyUtility.Check.Empty(eta1) || !MyUtility.Check.Empty(eta2))
             {
-                sqlCmd.Append(string.Format(@" and a.eta between '{0}' and '{1}'"
-                , Convert.ToDateTime(eta1).ToString("d"), Convert.ToDateTime(eta2).ToString("d")));
+                if (!MyUtility.Check.Empty(eta1))
+                    sqlCmd.Append(string.Format(@" and '{0}' <= a.eta", Convert.ToDateTime(eta1).ToString("d")));
+                if (!MyUtility.Check.Empty(eta2))
+                    sqlCmd.Append(string.Format(@" and a.eta <= '{0}'", Convert.ToDateTime(eta2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(mdivision))
