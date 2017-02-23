@@ -91,7 +91,6 @@ namespace Sci.Production.Warehouse
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
-
             #region 必輸檢查
 
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))

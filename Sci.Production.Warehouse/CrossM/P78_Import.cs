@@ -370,7 +370,8 @@ select
 	g2.ReciveQty,	
     description     = dbo.getmtldesc(g1.BorrowingSP, g1.BorrowingSeq1, g1.BorrowingSeq2, 2, 0),
 	g1.BorrowingSeq1,
-	g1.BorrowingSeq2
+	g1.BorrowingSeq2,
+    BorrowingM      = '{1}'
 from grid1 g1 
 inner join grid2 g2 on g1.ReturnSP = g2.ReturnSP and g1.ReturnSeq = g2.ReturnSeq
 order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelot, StockType
@@ -411,6 +412,7 @@ order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelo
             }
             #endregion
 
+            grid2.GetTable().Columns["BorrowingM"].ColumnName = "MDivisionID";
             grid2.GetTable().Columns["BorrowingSP"].ColumnName = "POID";
             grid2.GetTable().Columns["BorrowingSeq"].ColumnName = "Seq";
             grid2.GetTable().Columns["BorrowingSeq1"].ColumnName = "Seq1";
@@ -418,7 +420,11 @@ order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelo
             grid2.GetTable().Columns["ReciveQty"].ColumnName = "qty";
             DataRow[] findRow = grid2.GetTable().Select("qty > 0");
 
-            dt_detail.Clear();
+            foreach (DataRow dr in dt_detail.Rows)
+            {
+                dr.Delete();
+            }
+
             foreach (DataRow tmp in findRow)
             {
 //                DataRow[] findrow = dt_detail.Select(string.Format(@"mdivisionid = '{0}' and poid = '{1}' and seq1 = '{2}' and seq2 = '{3}' 
