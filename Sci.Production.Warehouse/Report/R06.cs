@@ -36,7 +36,8 @@ namespace Sci.Production.Warehouse
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange2.Value1))
+            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) && 
+                MyUtility.Check.Empty(dateRange2.Value2) &&MyUtility.Check.Empty(dateRange2.Value1))
             {
                 MyUtility.Msg.WarningBox("< Issue date > , < Approve date > can't be empty!!");
                 return false;
@@ -117,17 +118,19 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
 
             #region --- 條件組合  ---
 
-            if (!MyUtility.Check.Empty(issuedate1))
+            if (!MyUtility.Check.Empty(issuedate1) || !MyUtility.Check.Empty(issuedate2))
             {
-                sqlCmd.Append(string.Format(@" and a.issuedate between '{0}' and '{1}'"
-                , Convert.ToDateTime(issuedate1).ToString("d")
-                 , Convert.ToDateTime(issuedate2).ToString("d")));
+                if(!MyUtility.Check.Empty(issuedate1))
+                    sqlCmd.Append(string.Format(@" and '{0}' <= a.issuedate", Convert.ToDateTime(issuedate1).ToString("d")));
+                if (!MyUtility.Check.Empty(issuedate2))
+                    sqlCmd.Append(string.Format(@" and a.issuedate <= '{0}'", Convert.ToDateTime(issuedate2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(approveDate1))
+            if (!MyUtility.Check.Empty(approveDate1) || !MyUtility.Check.Empty(approveDate2))
             {
-                sqlCmd.Append(string.Format(@" and a.apvdate between '{0}' and '{1}'"
-                , Convert.ToDateTime(approveDate1).ToString("d")
-                 , Convert.ToDateTime(approveDate2).ToString("d")));
+                if(!MyUtility.Check.Empty(approveDate1))
+                    sqlCmd.Append(string.Format(@" and '{0}' <= a.apvdate", Convert.ToDateTime(approveDate1).ToString("d")));
+                if (!MyUtility.Check.Empty(approveDate2))
+                    sqlCmd.Append(string.Format(@" and a.apvdate <= '{0}'", Convert.ToDateTime(approveDate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(mdivisionid))
