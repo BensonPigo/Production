@@ -33,11 +33,11 @@ namespace Sci.Production.Subcon
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
-            {
-                MyUtility.Msg.WarningBox("Issue Date can't empty!!");
-                return false;
-            }
+            //if (MyUtility.Check.Empty(dateRange1.Value1))
+            //{
+            //    MyUtility.Msg.WarningBox("Issue Date can't empty!!");
+            //    return false;
+            //}
             issuedate1 = dateRange1.Value1;
             issuedate2 = dateRange1.Value2;
 
@@ -58,32 +58,34 @@ namespace Sci.Production.Subcon
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(string.Format(@"Select a.mdivisionid
-,a.FactoryId
-,a.ID
-,a.IssueDate
-,a.LocalSuppID+'-'+(select abb from localsupp WITH (NOLOCK) where id = a.localsuppid) as localsupp
-,a.ArtworkTypeID
-,a.Delivery
-,b.OrderID
-,c.SewInLine
-,c.SciDelivery
-,c.StyleID
-,b.ArtworkId
-,RTrim(b.PatternCode) + '-' + b.PatternDesc
-,b.PoQty
-,b.UnitPrice
-,b.PoQty*b.UnitPrice as poamt
-,b.Farmout
-,b.Farmin
-,b.Farmout - b.Farmin as variance
-,b.ApQty
-,b.Farmin - b.ApQty as ap_balance
-,(b.Farmin - b.ApQty) * b.UnitPrice as ap_amt
-from artworkpo a WITH (NOLOCK) 
-inner join  artworkpo_detail b WITH (NOLOCK) on a.id = b.ID
-inner join  orders c WITH (NOLOCK) on b.OrderID = c.ID
-where a.issuedate between '{0}' and '{1}'
-", Convert.ToDateTime(issuedate1).ToString("d"), Convert.ToDateTime(issuedate2).ToString("d")));
+                                        ,a.FactoryId
+                                        ,a.ID
+                                        ,a.IssueDate
+                                        ,a.LocalSuppID+'-'+(select abb from localsupp WITH (NOLOCK) where id = a.localsuppid) as localsupp
+                                        ,a.ArtworkTypeID
+                                        ,a.Delivery
+                                        ,b.OrderID
+                                        ,c.SewInLine
+                                        ,c.SciDelivery
+                                        ,c.StyleID
+                                        ,b.ArtworkId
+                                        ,RTrim(b.PatternCode) + '-' + b.PatternDesc
+                                        ,b.PoQty
+                                        ,b.UnitPrice
+                                        ,b.PoQty*b.UnitPrice as poamt
+                                        ,b.Farmout
+                                        ,b.Farmin
+                                        ,b.Farmout - b.Farmin as variance
+                                        ,b.ApQty
+                                        ,b.Farmin - b.ApQty as ap_balance
+                                        ,(b.Farmin - b.ApQty) * b.UnitPrice as ap_amt
+                                        from artworkpo a WITH (NOLOCK) 
+                                        inner join  artworkpo_detail b WITH (NOLOCK) on a.id = b.ID
+                                        inner join  orders c WITH (NOLOCK) on b.OrderID = c.ID
+                                        where 1=1 "));
+
+            if (!MyUtility.Check.Empty(issuedate1)) sqlCmd.Append(string.Format(" and a.issuedate >= '{0}' ", Convert.ToDateTime(issuedate1).ToString("d")));
+            if (!MyUtility.Check.Empty(issuedate2)) sqlCmd.Append(string.Format(" and a.issuedate <= '{0}' ", Convert.ToDateTime(issuedate2).ToString("d")));
 
             System.Data.SqlClient.SqlParameter sp_artworktype = new System.Data.SqlClient.SqlParameter();
             sp_artworktype.ParameterName = "@artworktype";
