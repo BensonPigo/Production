@@ -40,7 +40,7 @@
             this.label1 = new Sci.Win.UI.Label();
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.txtMdivision1 = new Sci.Production.Class.txtFromMdivision();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -259,12 +259,11 @@
             // txtMdivision1
             // 
             this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MDivisionID", true));
             this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(663, 13);
+            this.txtMdivision1.Location = new System.Drawing.Point(662, 13);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 0;
+            this.txtMdivision1.TabIndex = 66;
             // 
             // P74
             // 
@@ -321,6 +320,6 @@
         private Win.UI.EditBox editBox1;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
-        private Class.txtMdivision txtMdivision1;
+        private Class.txtFromMdivision txtMdivision1;
     }
 }

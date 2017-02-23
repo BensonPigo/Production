@@ -361,6 +361,8 @@ Where a.id = '{0}'", masterID);
         //Import
         private void button5_Click(object sender, EventArgs e)
         {
+            //if (MyUtility.Check.Empty(CurrentMaintain["mdivisionid"]))
+            CurrentMaintain["mdivisionid"] = txtMdivision1.Text.ToString();
             if (MyUtility.Check.Empty(CurrentMaintain["mdivisionid"]))
             {
                 MyUtility.Msg.WarningBox("< From M > can't be empty!!");
