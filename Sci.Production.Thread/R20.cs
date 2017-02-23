@@ -73,17 +73,31 @@ namespace Sci.Production.Thread
                 lis.Add(new SqlParameter("@spNo1", sp1));
                 lis.Add(new SqlParameter("@spNo2", sp2));
             }
-            if (!this.dateRange_book.Value1.Empty() && !this.dateRange_book.Value2.Empty())
+            if (!MyUtility.Check.Empty(EstBook1) || !MyUtility.Check.Empty(EstBook2))
             {
-                sqlWheres.Add("t.EstBookDate between @EstBook1 and @EstBook2");
-                lis.Add(new SqlParameter("@EstBook1", EstBook1));
-                lis.Add(new SqlParameter("@EstBook2", EstBook2));
+                if (!MyUtility.Check.Empty(EstBook1))
+                {
+                    sqlWheres.Add("@EstBook1 <= t.EstBookDate");
+                    lis.Add(new SqlParameter("@EstBook1", EstBook1));
+                }
+                if (!MyUtility.Check.Empty(EstBook2))
+                {
+                    sqlWheres.Add("t.EstBookDate <= @EstBook2");
+                    lis.Add(new SqlParameter("@EstBook2", EstBook2));
+                }
             } 
-            if (!this.dateRange_Arr.Value1.Empty() && !this.dateRange_Arr.Value2.Empty())
+            if (!MyUtility.Check.Empty(EstArr1) && !MyUtility.Check.Empty(EstArr2))
             {
-                sqlWheres.Add("t.EstArriveDate between @EstArr1 and @EstArr2");
-                lis.Add(new SqlParameter("@EstArr1", EstArr1));
-                lis.Add(new SqlParameter("@EstArr2", EstArr2));
+                if (!MyUtility.Check.Empty(EstArr1))
+                {
+                    sqlWheres.Add("@EstArr1 <= t.EstArriveDate");
+                    lis.Add(new SqlParameter("@EstArr1", EstArr1));
+                }
+                if (!MyUtility.Check.Empty(EstArr2))
+                {
+                    sqlWheres.Add("t.EstArriveDate <= @EstArr2");
+                    lis.Add(new SqlParameter("@EstArr2", EstArr2));
+                }
             } 
             if (!this.comboBox1.Text.Empty())
             {

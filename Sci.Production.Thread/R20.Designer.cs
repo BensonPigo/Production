@@ -99,6 +99,7 @@
             // 
             // dateRange_Arr
             // 
+            this.dateRange_Arr.IsRequired = false;
             this.dateRange_Arr.Location = new System.Drawing.Point(119, 104);
             this.dateRange_Arr.Name = "dateRange_Arr";
             this.dateRange_Arr.Size = new System.Drawing.Size(336, 23);
@@ -106,6 +107,7 @@
             // 
             // dateRange_book
             // 
+            this.dateRange_book.IsRequired = false;
             this.dateRange_book.Location = new System.Drawing.Point(119, 62);
             this.dateRange_book.Name = "dateRange_book";
             this.dateRange_book.Size = new System.Drawing.Size(336, 23);
