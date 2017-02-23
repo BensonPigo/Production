@@ -101,6 +101,7 @@
             // 
             // dateRange_ReturnDate
             // 
+            this.dateRange_ReturnDate.IsRequired = false;
             this.dateRange_ReturnDate.Location = new System.Drawing.Point(127, 12);
             this.dateRange_ReturnDate.Name = "dateRange_ReturnDate";
             this.dateRange_ReturnDate.Size = new System.Drawing.Size(280, 23);

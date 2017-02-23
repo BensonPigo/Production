@@ -49,8 +49,8 @@ namespace Sci.Production.Warehouse
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             //return base.OnAsyncDataLoad(e);
-            String returnDate1 = dateRange_ReturnDate.Text1;
-            String returnDate2 = dateRange_ReturnDate.Text2;
+            DateTime? returnDate1 = dateRange_ReturnDate.Value1;
+            DateTime? returnDate2 = dateRange_ReturnDate.Value2;
             String spno = tbxSP.Text.TrimEnd();
             string seq1 = txtSeq1.seq1;
             string seq2 = txtSeq1.seq2;
@@ -64,9 +64,12 @@ as
 from borrowback a WITH (NOLOCK) inner join borrowback_detail b WITH (NOLOCK) on b.id = a.id 
 Where a.type='A'
 and a.Status = 'Confirmed'");
-            if (!MyUtility.Check.Empty(dateRange_ReturnDate.Value1))
+            if (!MyUtility.Check.Empty(returnDate1) || !MyUtility.Check.Empty(returnDate2))
             {
-                sqlcmd.Append(string.Format(" and a.estbackdate between '{0}' and '{1}'", returnDate1, returnDate2));
+                if (!MyUtility.Check.Empty(returnDate1))
+                    sqlcmd.Append(string.Format(" and '{0}' <= a.estbackdate", Convert.ToDateTime(returnDate1).ToString("d")));
+                if (!MyUtility.Check.Empty(returnDate2))
+                    sqlcmd.Append(string.Format(" and a.estbackdate <= '{0}'", Convert.ToDateTime(returnDate2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(spno))
             {
