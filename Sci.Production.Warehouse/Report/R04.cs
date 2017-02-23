@@ -32,7 +32,7 @@ namespace Sci.Production.Warehouse
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
+            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))
             {
                 MyUtility.Msg.WarningBox("< CFM date > can't be empty!!");
                 return false;
@@ -118,11 +118,16 @@ inner join Factory c WITH (NOLOCK) on c.id = a.FactoryID
 inner join PO_Supp_Detail d WITH (NOLOCK) on d.ID = a.InventoryPOID and d.SEQ1 = a.InventorySeq1 and d.seq2 =  a.InventorySeq2
 inner join dbo.View_Unitrate v on v.FROM_U = d.POUnit and v.TO_U = d.StockUnit
 left join MDivisionPoDetail e WITH (NOLOCK) on e.MDivisionID = c.MDivisionID and e.POID = A.InventoryPOID AND E.SEQ1 = A.InventorySeq1 AND E.Seq2 = A.InventorySeq2
-where a.ConfirmDate between '{0} 00:00:00.000' and '{1} 23:59:59.999'"
-, Convert.ToDateTime(cfmdate1).ToString("d")
- , Convert.ToDateTime(cfmdate2).ToString("d")
+where "
  ));
+            string whereStr = "";
 
+            if(!MyUtility.Check.Empty(cfmdate1))
+                whereStr += string.Format(" '{0} 00:00:00.000' <= a.ConfirmDate ", Convert.ToDateTime(cfmdate1).ToString("d"));
+            if(!MyUtility.Check.Empty(cfmdate2))
+                whereStr += ((MyUtility.Check.Empty(whereStr)) ? "" : " and ") + string.Format(" a.ConfirmDate <= '{0} 23:59:59.999' ", Convert.ToDateTime(cfmdate2).ToString("d"));
+
+            sqlCmd.Append(whereStr);
             #region --- 條件組合  ---
 
             if (!MyUtility.Check.Empty(mdivisionid))
