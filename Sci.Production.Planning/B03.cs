@@ -207,7 +207,7 @@ LEFT JOIN ArtworkType B WITH (NOLOCK) ON t.ArtworkTypeID=B.ID where styleukey={0
             listControlBindingSource1.DataSource = null;
             listControlBindingSource1.DataSource = style_artwork;
             this.grid1.AutoResizeColumns();
-            this.detailgrid.AutoResizeColumns();
+            //this.detailgrid.AutoResizeColumns();
         }
 
         private void grid1_SelectionChanged(object sender, EventArgs e)
