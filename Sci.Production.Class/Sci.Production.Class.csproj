@@ -358,6 +358,12 @@
       <DependentUpon>userData.cs</DependentUpon>
     </Compile>
     <Compile Include="VFPColors.cs" />
+    <Compile Include="txtFromMdivision.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtFromMdivision.Designer.cs">
+      <DependentUpon>txtFromMdivision.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ict, Version=1.0.1502.1000, Culture=neutral, processorArchitecture=MSIL">
