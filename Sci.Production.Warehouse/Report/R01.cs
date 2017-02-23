@@ -210,7 +210,7 @@ where 1=1 and c.ThirdCountry = 1"));
 
             if (!MyUtility.Check.Empty(eta1) || !MyUtility.Check.Empty(eta2))
             {
-                if (!MyUtility.Check.Empty(suppDelivery1))
+                if (!MyUtility.Check.Empty(eta1))
                     sqlCmd.Append(string.Format(@" and '{0}' <= b.ETA", Convert.ToDateTime(eta1).ToString("d")));
                 if (!MyUtility.Check.Empty(eta2))
                     sqlCmd.Append(string.Format(@" and b.ETA <= '{0}'", Convert.ToDateTime(eta2).ToString("d")));
