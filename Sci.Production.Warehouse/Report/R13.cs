@@ -32,7 +32,7 @@ namespace Sci.Production.Warehouse
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) ) 
+            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))
             {
                 MyUtility.Msg.WarningBox("< Adjust Date > can't be empty!!");
                 return false;
@@ -69,10 +69,12 @@ namespace Sci.Production.Warehouse
 FROM adjust a WITH (NOLOCK) 
 inner join adjust_detail b WITH (NOLOCK) on a.id = b.id
 inner join po_supp_detail c WITH (NOLOCK) on c.ID = b.poid and c.seq1 = b.Seq1 and c.SEQ2 = b.Seq2
-Where a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}' and a.type = '{2}'
-", Convert.ToDateTime(issueDate1).ToString("d")
- , Convert.ToDateTime(issueDate2).ToString("d")
- , stocktype));
+Where a.Status = 'Confirmed' and a.type = '{0}'
+", stocktype));
+            if (!MyUtility.Check.Empty(issueDate1))
+                sqlCmd.Append(string.Format(" and '{0}' <= a.issuedate", Convert.ToDateTime(issueDate1).ToString("d")));
+            if(!MyUtility.Check.Empty(issueDate2))
+                sqlCmd.Append(string.Format(" and a.issuedate <= '{0}'", Convert.ToDateTime(issueDate2).ToString("d")));
 
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(mdivision))
