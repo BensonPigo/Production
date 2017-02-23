@@ -30,16 +30,337 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings BLNo = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings WKNO = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
 
-            this.grid1.IsEditingReadOnly = true;
+            #region BLNo
+            BLNo.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
+                string cmd_type = string.Format(@"select * from ShippingAP where id='{0}'", apData["ID"]);
+                DataRow dr ;
+                DataRow drGrid = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+
+                DataTable dts = (DataTable)listControlBindingSource1.DataSource;
+                if (drGrid["BLNO"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper()) return;
+                if (MyUtility.Check.Seek(cmd_type,out dr))
+                {
+                    DataRow dr1;
+                    //刪除異動資料
+                    if (drGrid["BLNO"].ToString().ToUpper() != e.FormattedValue.ToString().ToUpper() && !MyUtility.Check.Empty(drGrid["BLNO"].ToString()))
+                    {
+                        string blno = drGrid["BLNO"].ToString().ToUpper();
+                        int t = dts.Rows.Count;
+                        for (int i = t-1; i >= 0; i--)
+                        {
+                            if (dts.Rows[i].RowState!=DataRowState.Deleted)
+                            {
+                                if (dts.Rows[i]["BLNO"].ToString().ToUpper() == blno)
+                                {   //刪除
+                                    dts.Rows[i].Delete();
+                                }
+                            }                            
+                        }                                               
+                        e.Cancel=true;// 不進入RowIndex判斷                            
+                    }                    
+                    // 檢查規則
+                    if (dr["type"].ToString().ToUpper()=="IMPORT")
+                    {
+                        string chkImp = string.Format(@"with ExportData 
+as 
+(select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
+ from Export WHERE BLNO='{0}'), 
+FtyExportData 
+as 
+(select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
+ from FtyExport
+WHERE BLNO='{0}' AND TYPE IN (1,2,4)) 
+select * from ExportData 
+union all 
+select * from FtyExportData ", e.FormattedValue.ToString());
+                        if (!MyUtility.Check.Seek(chkImp,out dr1))
+                        {
+                            MyUtility.Msg.InfoBox("<BLNo:>" +e.FormattedValue.ToString()+" Not Found!!");                      
+                            drGrid.Delete();
+                            e.Cancel = true;
+                            return;
+                        }
+                        else
+                        {
+                            //判斷修改的資料是否正確
+                            //正確就將所有B/L No所有WK#都帶出來
+                            DataTable dtAll;
+                            string cmd_allWKNo = string.Format(@"with ExportData 
+as 
+(select a.WKNo,a.Blno,a.ShipModeID,a.GW, a.Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK from ShareExpense a
+inner join Export b on a.BLNo=b.Blno and a.WKNo=b.ID and a.GW=b.WeightKg
+and a.cbm=b.Cbm and a.ShipModeID=b.ShipModeID and a.FtyWK=0 
+WHERE B.Blno='{0}'), 
+FtyExportData 
+as 
+(select a.WKNo,a.Blno,a.ShipModeID,a.GW, a.Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK from ShareExpense a
+inner join FtyExport b on a.BLNo=b.Blno and a.WKNo=b.ID and a.GW=b.WeightKg
+and a.cbm=b.Cbm and a.ShipModeID=b.ShipModeID and a.FtyWK=1
+WHERE B.Blno='{0}') 
+select distinct * from ExportData 
+union all 
+select distinct * from FtyExportData ", e.FormattedValue.ToString());
+                            DBProxy.Current.Select(null, cmd_allWKNo, out dtAll);
+                            if (MyUtility.Check.Empty(dtAll)) return;
+                            for (int i = 0; i < dtAll.Rows.Count; i++)
+                            {
+                                DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
+
+                                NewRow["Blno"] = dtAll.Rows[i]["Blno"];
+                                NewRow["Wkno"] = dtAll.Rows[i]["Wkno"];
+                                NewRow["ShipModeID"] = dtAll.Rows[i]["ShipModeID"];
+                                NewRow["GW"] = dtAll.Rows[i]["GW"];
+                                NewRow["CBM"] = dtAll.Rows[i]["CBM"];
+                                NewRow["Amount"] = dtAll.Rows[i]["Amount"];
+                                ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
+
+                            }
+                        }
+                    }
+                    else
+                    {
+                        string chkExp = string.Format(@"
+select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
+ from FtyExport
+WHERE BLNO='{0}' AND TYPE IN (3) 
+ ", e.FormattedValue.ToString());
+                        if (!MyUtility.Check.Seek(chkExp, out dr1))
+                        {
+                            MyUtility.Msg.InfoBox("<BLNo:>" + e.FormattedValue.ToString() + " Not Found!!");
+                            drGrid.Delete();
+                            e.Cancel = true;
+                            return;
+                        }
+                        else
+                        {
+                            //判斷修改的資料是否正確
+                            //正確就將所有B/L No所有WK#都帶出來
+                            DataTable dtAll;
+                            string cmd_allWKNo = string.Format(@"select DISTINCT A.INVNO as WKNo,A.Blno,A.ShipModeID,A.GW, B.Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK 
+from ShareExpense a
+inner join FtyExport b on a.BLNo=b.Blno and a.WKNo=b.ID and a.GW=b.WeightKg
+and a.cbm=b.Cbm and a.ShipModeID=b.ShipModeID and a.FtyWK=1
+WHERE B.Blno='{0}'", e.FormattedValue.ToString());
+                            DBProxy.Current.Select(null, cmd_allWKNo, out dtAll);
+                            if (MyUtility.Check.Empty(dtAll)) return;
+
+                            for (int i = 0; i < dtAll.Rows.Count; i++)
+                            {
+                                DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
+
+                                NewRow["Blno"] = dtAll.Rows[i]["Blno"];
+                                NewRow["Wkno"] = dtAll.Rows[i]["Wkno"];
+                                NewRow["ShipModeID"] = dtAll.Rows[i]["ShipModeID"];
+                                NewRow["GW"] = dtAll.Rows[i]["GW"];
+                                NewRow["CBM"] = dtAll.Rows[i]["CBM"];
+                                NewRow["Amount"] = dtAll.Rows[i]["Amount"];
+                                ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
+                            }
+                        }
+                    }
+                    //delete empty rows
+                    int t1 = dts.Rows.Count;
+                    for (int i = t1 - 1; i >= 0; i--)
+                    {
+                        if (dts.Rows[i].RowState != DataRowState.Deleted)
+                        {
+                            if (MyUtility.Check.Empty(dts.Rows[i]["Blno"].ToString()))
+                            {
+                                //刪除
+                                dts.Rows[i].Delete();
+                            }
+                        }
+                    }
+                    e.Cancel = true;// 不進入RowIndex判斷    
+                }
+            };
+#endregion
+            #region WKNO
+            WKNO.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
+                string cmd_type = string.Format(@"select * from ShippingAP where id='{0}'", apData["ID"]);
+                DataRow dr;
+                DataRow drGrid = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+
+                DataTable dts = (DataTable)listControlBindingSource1.DataSource;
+                if (drGrid["WKNO"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper()) return;
+                if (MyUtility.Check.Seek(cmd_type, out dr))
+                {
+                    DataRow dr1;
+                    // 檢查規則
+                    if (dr["type"].ToString().ToUpper() == "IMPORT")
+                    {
+                        string chkImp = string.Format(@"with ExportData 
+as 
+(select id
+ from Export WHERE id='{0}'), 
+FtyExportData 
+as 
+(select id
+ from FtyExport
+WHERE id='{0}' AND TYPE IN (1,2,4)) 
+select * from ExportData 
+union all 
+select * from FtyExportData ", e.FormattedValue.ToString());
+                        if (!MyUtility.Check.Seek(chkImp, out dr1))
+                        {
+                            MyUtility.Msg.InfoBox("<WKNo:>" + e.FormattedValue.ToString() + " Not Found!!");
+                            drGrid.Delete();
+                            e.Cancel = true;
+                            return;
+                        }
+                        else
+                        {
+                            //判斷修改的資料是否正確
+                            //正確就將所有B/L No所有WK#都帶出來
+                            DataTable dtAll;
+                            #region 文件 
+                            string cmd_allWKNo = string.Format(@"with ExportData 
+as 
+(select a.WKNo,a.Blno,a.ShipModeID,a.GW, a.Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
+from ShareExpense a
+inner join Export b on a.BLNo=b.Blno and a.WKNo=b.ID and a.GW=b.WeightKg
+and a.cbm=b.Cbm and a.ShipModeID=b.ShipModeID and a.FtyWK=0 
+WHERE B.Blno='{0}'), 
+FtyExportData 
+as 
+(select a.WKNo,a.Blno,a.ShipModeID,a.GW, a.Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
+from ShareExpense a
+inner join FtyExport b on a.BLNo=b.Blno and a.WKNo=b.ID and a.GW=b.WeightKg
+and a.cbm=b.Cbm and a.ShipModeID=b.ShipModeID and a.FtyWK=1
+WHERE B.Blno='{0}') 
+select distinct * from ExportData 
+union all 
+select distinct * from FtyExportData ", e.FormattedValue.ToString());
+#endregion
+                           
+                           
+                            DBProxy.Current.Select(null, cmd_allWKNo, out dtAll);
+                            if (MyUtility.Check.Empty(dtAll)) return;
+                            for (int i = 0; i < dtAll.Rows.Count; i++)
+                            {
+                                DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
+
+                                NewRow["Blno"] = dtAll.Rows[i]["Blno"];
+                                NewRow["Wkno"] = dtAll.Rows[i]["Wkno"];
+                                NewRow["ShipModeID"] = dtAll.Rows[i]["ShipModeID"];
+                                NewRow["GW"] = dtAll.Rows[i]["GW"];
+                                NewRow["CBM"] = dtAll.Rows[i]["CBM"];
+                                NewRow["Amount"] = dtAll.Rows[i]["Amount"];
+                                ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
+
+                            }
+                        }
+                    }
+                    else
+                    {
+                        string chkExp = string.Format(@"
+with GMTBookingData
+as 
+(select id from GMTBooking
+where id='{0}'), 
+ PackingListData
+as 
+(select id from PackingList
+where type in ('F','L')
+and id='{0}'), 
+FtyExportData 
+as 
+(select id
+ from FtyExport
+WHERE id='{0}' AND TYPE =3) 
+select * from GMTBookingData 
+union all
+select * from PackingListData
+union all 
+select * from FtyExportData
+ ", e.FormattedValue.ToString());
+                        if (!MyUtility.Check.Seek(chkExp, out dr1))
+                        {
+                            MyUtility.Msg.InfoBox("<WKNo:>" + e.FormattedValue.ToString() + " Not Found!!");
+                            drGrid.Delete();
+                            e.Cancel = true;
+                            return;
+                        }
+                        else
+                        {
+                            //判斷修改的資料是否正確
+                            //正確就將所有B/L No所有WK#都帶出來
+                            DataTable dtAll;
+                            string cmd_allWKNo = string.Format(@"with GMTBookingData
+as 
+(select a.BLNo,a.InvNo,a.ShipModeID,a.GW,a.CBM,'' as Type,'' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK 
+from ShareExpense a
+inner join GMTBooking b on a.InvNo=b.id and a.GW=b.TotalGW and a.CBM=b.TotalCBM
+and a.ShipModeID=b.ShipModeID and a.FtyWK=0
+WHERE a.InvNo='{0}'), 
+ PackingListData
+as 
+(select a.BLNo,a.InvNo,a.ShipModeID,a.GW,a.CBM,'' as Type,'' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK 
+from ShareExpense a
+inner join PackingList b on a.InvNo=b.id and a.GW=b.GW and a.CBM=b.CBM
+and a.ShipModeID=b.ShipModeID and a.FtyWK=0
+WHERE a.InvNo='{0}'), 
+FtyExportData 
+as 
+(select a.BLNo,a.InvNo,a.ShipModeID,a.GW,a.CBM,'' as Type,'' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK 
+from ShareExpense a
+inner join FtyExport b on a.BLNo=b.Blno and a.WKNo=b.ID and a.GW=b.WeightKg
+and a.cbm=b.Cbm and a.ShipModeID=b.ShipModeID and a.FtyWK=1
+WHERE a.InvNo='{0}') 
+select distinct * from GMTBookingData 
+union all
+select distinct * from PackingListData
+union all 
+select distinct * from FtyExportData
+", e.FormattedValue.ToString());
+                            DBProxy.Current.Select(null, cmd_allWKNo, out dtAll);
+                            if (MyUtility.Check.Empty(dtAll)) return;
+
+                            for (int i = 0; i < dtAll.Rows.Count; i++)
+                            {
+
+                                drGrid["Blno"] = dtAll.Rows[i]["Blno"];
+                                drGrid["InvNo"] = dtAll.Rows[i]["InvNo"];
+                                drGrid["ShipModeID"] = dtAll.Rows[i]["ShipModeID"];
+                                drGrid["GW"] = dtAll.Rows[i]["GW"];
+                                drGrid["CBM"] = dtAll.Rows[i]["CBM"];
+                                drGrid["Amount"] = dtAll.Rows[i]["Amount"];
+
+                            }
+                        }
+                    }
+                }
+            };
+            #endregion
+
+            this.grid1.IsEditingReadOnly = false;
             grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                .Text("BLNo", header: "B/L No.", width: Widths.AnsiChars(13))
-                .Text(MyUtility.Convert.GetString(apData["Type"]) == "IMPORT" ? "WKNo" : "InvNo", header: MyUtility.Convert.GetString(apData["Type"]) == "IMPORT" ? "WK#/Fty WK#" : "GB#/Fty WK#/Packing#", width: Widths.AnsiChars(18))
-                .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(5))
-                .Numeric("GW", header: "G.W.", decimal_places: 2)
-                .Numeric("CBM", header: "CBM", decimal_places: 2)
-                .Numeric("Amount", header: "Total Amount", decimal_places: 2);
+                .Text("BLNo", header: "B/L No.", width: Widths.AnsiChars(13), settings: BLNo)
+                .Text(MyUtility.Convert.GetString(apData["Type"]) == "IMPORT" ? "WKNo" : "InvNo", header: MyUtility.Convert.GetString(apData["Type"]) == "IMPORT" ? "WK#/Fty WK#" : "GB#/Fty WK#/Packing#", width: Widths.AnsiChars(18),settings: WKNO)
+                .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("GW", header: "G.W.", decimal_places: 2, iseditingreadonly: true)
+                .Numeric("CBM", header: "CBM", decimal_places: 2, iseditingreadonly: true)
+                .Numeric("Amount", header: "Total Amount", decimal_places: 2,iseditingreadonly:true);
             grid1.SelectionChanged += (s, e) =>
             {
                 DataRow dr = this.grid1.GetDataRow<DataRow>(grid1.GetSelectedRowIndex());
@@ -114,7 +435,45 @@ where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetStrin
             {
                 button5.Text = "Edit";
                 button6.Text = "Close";
+                return;
             }
+            DataRow dr;
+            if (MyUtility.Check.Seek(string.Format(@"select * from ShippingAP where id='{0}'", apData["ID"]),out dr))
+            {
+                if (!MyUtility.Check.Empty(dr))
+                {
+                    if (dr["SubType"].ToString().ToUpper()=="OTHER")
+                    {
+                        this.button1.Enabled = false;
+                    }
+                    else
+                    {
+                        this.button1.Enabled = true;
+                    }
+                }
+                else
+                {
+                    return;
+                }
+            }
+            if (MyUtility.Check.Empty(SEGroupData))
+            {
+                this.button2.Enabled = false;
+                this.button3.Enabled = false;
+                return;
+            }
+            else
+            {
+                if (SEGroupData.Rows.Count==0)
+                {
+                    this.button2.Enabled = false;
+                    this.button3.Enabled = false;
+                    return;
+                }
+                this.button2.Enabled = true;
+                this.button3.Enabled = true;
+            }
+            
         }
 
         //Import
@@ -170,7 +529,16 @@ where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetStrin
             if (null == deletedata) return;
             foreach (DataGridViewRow row in this.grid1.SelectedRows)
             {
-                this.grid1.Rows.Remove(row);
+                try
+                {
+                    this.grid1.Rows.Remove(row);
+                }
+                catch (Exception)
+                {
+                    
+                    throw;
+                }
+               
             }
         }
 
@@ -503,6 +871,42 @@ CLOSE cursor_PackingList", MyUtility.Convert.GetString(apData["ID"]));
             }
 
             QueryData();
+        }
+
+        //Append
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
+            //DataRow newRow = SEGroupData.NewRow();
+            NewRow["Blno"]="";
+            NewRow["Wkno"] = "";
+            NewRow["ShipModeID"] = "";
+            NewRow["GW"] = 0;
+            NewRow["CBM"] = 0;
+            NewRow["Amount"] = 0;
+            ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
+            
+
+        }
+        //Delete All
+        private void button3_Click(object sender, EventArgs e)
+        {
+            DialogResult buttonResult = MyUtility.Msg.WarningBox("Do you want to delete all this data?", "Warning", MessageBoxButtons.YesNo);
+            if (buttonResult == System.Windows.Forms.DialogResult.No)
+            {
+                return;
+            }
+
+            DataTable grid1DT = (DataTable)this.listControlBindingSource1.DataSource;
+            int t = grid1DT.Rows.Count;
+            var deletedata = SEGroupData;           
+            if (null == deletedata) return;
+            for (int i = t - 1; i >= 0; i--)
+            {
+                grid1DT.Rows[i].Delete();
+            }
+           
+
         }
     }
 }

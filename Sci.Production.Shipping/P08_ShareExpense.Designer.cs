@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -44,12 +45,12 @@
             this.panel4 = new Sci.Win.UI.Panel();
             this.panel7 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel6 = new Sci.Win.UI.Panel();
             this.panel9 = new Sci.Win.UI.Panel();
             this.panel11 = new Sci.Win.UI.Panel();
             this.grid2 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel10 = new Sci.Win.UI.Panel();
             this.panel8 = new Sci.Win.UI.Panel();
             this.label6 = new Sci.Win.UI.Label();
@@ -59,6 +60,8 @@
             this.button5 = new Sci.Win.UI.Button();
             this.button4 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
+            this.button1 = new Sci.Win.UI.Button();
+            this.button3 = new Sci.Win.UI.Button();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -114,9 +117,19 @@
             this.numericBox4.IsSupportEditMode = false;
             this.numericBox4.Location = new System.Drawing.Point(780, 6);
             this.numericBox4.Name = "numericBox4";
+            this.numericBox4.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox4.ReadOnly = true;
             this.numericBox4.Size = new System.Drawing.Size(30, 23);
             this.numericBox4.TabIndex = 9;
+            this.numericBox4.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label5
             // 
@@ -135,9 +148,19 @@
             this.numericBox3.IsSupportEditMode = false;
             this.numericBox3.Location = new System.Drawing.Point(493, 6);
             this.numericBox3.Name = "numericBox3";
+            this.numericBox3.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox3.ReadOnly = true;
             this.numericBox3.Size = new System.Drawing.Size(75, 23);
             this.numericBox3.TabIndex = 7;
+            this.numericBox3.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label4
             // 
@@ -156,9 +179,19 @@
             this.numericBox2.IsSupportEditMode = false;
             this.numericBox2.Location = new System.Drawing.Point(337, 6);
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(75, 23);
             this.numericBox2.TabIndex = 5;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label3
             // 
@@ -176,9 +209,19 @@
             this.numericBox1.IsSupportEditMode = false;
             this.numericBox1.Location = new System.Drawing.Point(179, 6);
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(79, 23);
             this.numericBox1.TabIndex = 3;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label2
             // 
@@ -232,16 +275,14 @@
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
             this.grid1.AllowUserToResizeRows = false;
-            this.grid1.AutoGenerateColumns = false;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid1.DataSource = this.listControlBindingSource1;
             this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
@@ -288,16 +329,14 @@
             this.grid2.AllowUserToAddRows = false;
             this.grid2.AllowUserToDeleteRows = false;
             this.grid2.AllowUserToResizeRows = false;
-            this.grid2.AutoGenerateColumns = false;
             this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid2.DataSource = this.listControlBindingSource2;
             this.grid2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid2.Location = new System.Drawing.Point(0, 0);
             this.grid2.Name = "grid2";
@@ -338,6 +377,8 @@
             // 
             // panel5
             // 
+            this.panel5.Controls.Add(this.button3);
+            this.panel5.Controls.Add(this.button1);
             this.panel5.Controls.Add(this.button7);
             this.panel5.Controls.Add(this.button6);
             this.panel5.Controls.Add(this.button5);
@@ -352,7 +393,7 @@
             // button7
             // 
             this.button7.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button7.Location = new System.Drawing.Point(10, 235);
+            this.button7.Location = new System.Drawing.Point(14, 261);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(106, 30);
             this.button7.TabIndex = 6;
@@ -362,7 +403,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(10, 158);
+            this.button6.Location = new System.Drawing.Point(14, 216);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(106, 30);
             this.button6.TabIndex = 5;
@@ -372,7 +413,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(10, 121);
+            this.button5.Location = new System.Drawing.Point(14, 179);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(106, 30);
             this.button5.TabIndex = 4;
@@ -383,7 +424,7 @@
             // button4
             // 
             this.button4.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button4.Location = new System.Drawing.Point(10, 15);
+            this.button4.Location = new System.Drawing.Point(13, 119);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(106, 30);
             this.button4.TabIndex = 3;
@@ -394,13 +435,35 @@
             // button2
             // 
             this.button2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button2.Location = new System.Drawing.Point(10, 51);
+            this.button2.Location = new System.Drawing.Point(13, 47);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(106, 30);
             this.button2.TabIndex = 1;
             this.button2.Text = "Delete";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button1
+            // 
+            this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.button1.Location = new System.Drawing.Point(13, 11);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(106, 30);
+            this.button1.TabIndex = 7;
+            this.button1.Text = "Append";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button3
+            // 
+            this.button3.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.button3.Location = new System.Drawing.Point(13, 83);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(106, 30);
+            this.button3.TabIndex = 8;
+            this.button3.Text = "Delete All";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // P08_ShareExpense
             // 
@@ -463,5 +526,7 @@
         private Win.UI.Button button2;
         private Win.UI.Panel panel11;
         private Win.UI.Panel panel10;
+        private Win.UI.Button button3;
+        private Win.UI.Button button1;
     }
 }
