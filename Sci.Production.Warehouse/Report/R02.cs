@@ -79,15 +79,21 @@ namespace Sci.Production.Warehouse
 
             try
             {
+                string sqlDateRange = "";
+                if (!MyUtility.Check.Empty(dateRange1.Value1))
+                    sqlDateRange += string.Format(" and '{0}' <= a.issuedate ", Convert.ToDateTime(dateRange1.Value1).ToString("d"));
+                if (!MyUtility.Check.Empty(dateRange1.Value2))
+                    sqlDateRange += string.Format(" and a.issuedate <= '{0}'", Convert.ToDateTime(dateRange1.Value2).ToString("d"));
+
                 string sqlcmd = string.Format(@"select a.issuedate, b.frompoid poid, b.fromseq1 seq1,b.fromseq2 seq2, sum(b.qty) qty, 
 isnull((select stockunit from po_supp_detail WITH (NOLOCK) where id= b.FromPOID and seq1 = b.FromSeq1 and seq2 = b.FromSeq2),'') as unit
 ,dbo.getmtldesc(b.FromPOID,b.FromSeq1,b.FromSeq2,2,0) as description
 from dbo.SubTransfer a WITH (NOLOCK) inner join dbo.SubTransfer_Detail b WITH (NOLOCK) on a.id = b.id
 where a.Status = 'Confirmed' and a.type='D' 
-and a.issuedate between '{0}' and '{1}'
+{0}
 group by a.issuedate , b.FromPOID, b.FromSeq1,b.FromSeq2
 order by a.issuedate, b.FromPOID, b.FromSeq1,b.FromSeq2
-", dateRange1.Text1, dateRange1.Text2);
+", sqlDateRange);
                 result = DBProxy.Current.Select(null, sqlcmd, out dt);
                 if (!result) return result;
             }
