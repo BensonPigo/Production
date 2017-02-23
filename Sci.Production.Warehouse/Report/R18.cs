@@ -104,7 +104,7 @@ isnull(x.FactoryID,y.FactoryID) factoryid,
 pd.id,
 pd.seq1,
 pd.seq2,
-(select supp.id+'-'+supp.AbbEN from dbo.supp inner join dbo.po_supp on po_supp.suppid = supp.id where po_supp.id = pd.id and seq1 = pd.seq1) as supplier,
+(select supp.id+'-'+supp.AbbEN from dbo.supp WITH (NOLOCK) inner join dbo.po_supp WITH (NOLOCK) on po_supp.suppid = supp.id where po_supp.id = pd.id and seq1 = pd.seq1) as supplier,
 isnull(x.StyleID,y.StyleID) styleid,
 ISNULL(x.SeasonID,y.SeasonID) SeasonID,
 ISNULL(x.BrandID,y.BrandID) brandid,
@@ -132,26 +132,26 @@ mpd.ALocation,
 mpd.LInvQty,
 mpd.BLocation,
 mpd.LObQty
-,( select t.id+',' from (select distinct Export.id from dbo.Export inner join dbo.Export_Detail on Export_Detail.id = Export.id  where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2)t for xml path('')) as wkno
-,( select t.Blno+',' from (select distinct Blno from dbo.Export inner join dbo.Export_Detail on Export_Detail.id = Export.id  where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2 and Blno !='')t for xml path('')) as blno
-from dbo.PO_Supp_Detail pd
-inner join dbo.MDivisionPoDetail mpd on mpd.POID = pd.id and mpd.seq1 = pd.seq1 
+,( select t.id+',' from (select distinct Export.id from dbo.Export WITH (NOLOCK) inner join dbo.Export_Detail WITH (NOLOCK) on Export_Detail.id = Export.id  where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2)t for xml path('')) as wkno
+,( select t.Blno+',' from (select distinct Blno from dbo.Export WITH (NOLOCK) inner join dbo.Export_Detail WITH (NOLOCK) on Export_Detail.id = Export.id  where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2 and Blno !='')t for xml path('')) as blno
+from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
+inner join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.id and mpd.seq1 = pd.seq1 
 and mpd.seq2= pd.SEQ2 and mpd.MDivisionID ='{0}'
 outer apply
 (
-	select o.FactoryID,o.StyleID,o.SeasonID,o.BrandID,o.Category,o.SciDelivery from dbo.orders o where o.id = pd.id
+	select o.FactoryID,o.StyleID,o.SeasonID,o.BrandID,o.Category,o.SciDelivery from dbo.orders o WITH (NOLOCK) where o.id = pd.id
 ) x
 outer apply
 (
-	select i.FactoryID,i.StyleID,i.SeasonID,i.BrandID,max(i.Deadline) deadline from dbo.Inventory i 
+	select i.FactoryID,i.StyleID,i.SeasonID,i.BrandID,max(i.Deadline) deadline from dbo.Inventory i WITH (NOLOCK) 
     where i.POID = pd.id and i.Seq1= pd.seq1 and i.seq2 = pd.SEQ2
 	group by i.FactoryID,i.StyleID,i.SeasonID,i.BrandID
 ) y", Env.User.Keyword));
             if (!MyUtility.Check.Empty(location))
             {
                 sqlcmd.Append(@"
-inner join (select distinct fi.MDivisionid,fi.poid,fi.seq1,fi.seq2 from dbo.FtyInventory fi 
-			inner join dbo.FtyInventory_Detail fid on fid.Ukey = fi.Ukey 
+inner join (select distinct fi.MDivisionid,fi.poid,fi.seq1,fi.seq2 from dbo.FtyInventory fi WITH (NOLOCK) 
+			inner join dbo.FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
 			where fid.MtlLocationid='') q
 on q.MDivisionID = mpd.MDivisionID and q.POID = pd.ID and q.seq1 = pd.seq1 and q.seq2 = pd.SEQ2");
             }

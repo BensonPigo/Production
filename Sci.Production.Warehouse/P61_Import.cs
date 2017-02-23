@@ -53,7 +53,7 @@ namespace Sci.Production.Warehouse
 ,dbo.getItemDesc('',c.Refno) as [Description]
 ,0.00 as Qty
 ,c.inqty-c.outqty + c.adjustqty as balance
-from dbo.LocalInventory c 
+from dbo.LocalInventory c WITH (NOLOCK) 
 Where c.OrderID = '{0}' and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid='{1}'", sp, Sci.Env.User.Keyword)); // 
 
                 this.ShowWaitMessage("Data Loading....");
@@ -179,7 +179,7 @@ Where c.OrderID = '{0}' and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid
 
             if (MyUtility.Check.Empty(sp)) return;
 
-            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from dbo.localinventory where orderid ='{0}' and mdivisionid = '{1}')"
+            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from dbo.localinventory WITH (NOLOCK) where orderid ='{0}' and mdivisionid = '{1}')"
                 , sp,Sci.Env.User.Keyword), null))
             {
                 MyUtility.Msg.WarningBox("SP# is not found!!");

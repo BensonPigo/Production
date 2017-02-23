@@ -67,13 +67,13 @@ namespace Sci.Production.Warehouse
 ,c.roll as toRoll
 ,c.dyelot as toDyelot
 ,concat(Ltrim(Rtrim(bd.FromSeq1)), ' ', bd.FromSeq2) as toseq
-,stuff((select ',' + mtllocationid from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, '') as location
+,stuff((select ',' + mtllocationid from (select mtllocationid from ftyinventory_detail WITH (NOLOCK) where ukey = c.ukey)t for xml path('')), 1, 1, '') as location
 ,dbo.getMtlDesc(bd.topoid,bd.toseq1,bd.toseq2,2,0) as [description]
 ,p.StockUnit
 ,p.FabricType
-from dbo.BorrowBack_Detail as bd inner join ftyinventory c 
+from dbo.BorrowBack_Detail as bd WITH (NOLOCK) inner join ftyinventory c WITH (NOLOCK) 
     on bd.topoid = c.poid and bd.toseq1 = c.seq1 and bd.toseq2 = c.seq2 and bd.tomdivisionid = c.mdivisionid
-left join PO_Supp_Detail p on p.ID= bd.ToPoid and p.SEQ1 = bd.ToSeq1 and p.SEQ2 = bd.ToSeq2
+left join PO_Supp_Detail p WITH (NOLOCK) on p.ID= bd.ToPoid and p.SEQ1 = bd.ToSeq1 and p.SEQ2 = bd.ToSeq2
 where bd.id='{0}' and bd.FromPoId = '{1}' and bd.FromSeq1 = '{2}' and bd.FromSeq2 = '{3}' 
 and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and c.stocktype !='O'"
                     , dr_master["BorrowID"], sp, txtSeq1.seq1, txtSeq1.seq2)); // 
@@ -144,14 +144,14 @@ and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and c.stocktype !='O'"
             sqlcmd = string.Format(@";with cte1
 as
 (
-	select bd.FromPoId,bd.FromSeq1,bd.FromSeq2,bd.FromStocktype,sum(qty)qty from borrowback_detail bd where id='{0}'
+	select bd.FromPoId,bd.FromSeq1,bd.FromSeq2,bd.FromStocktype,sum(qty)qty from borrowback_detail bd WITH (NOLOCK) where id='{0}'
 	group by bd.FromPoId,bd.FromSeq1,bd.FromSeq2,bd.FromStocktype
 ),
 cte2
 as
 (
 	select bd.ToPoid,bd.ToSeq1,bd.ToSeq2,bd.ToStocktype,sum(qty)qty 
-	from borrowback b inner join borrowback_detail bd on b.Id= bd.ID 
+	from borrowback b WITH (NOLOCK) inner join borrowback_detail bd WITH (NOLOCK) on b.Id= bd.ID 
 	where b.BorrowId='{0}' and b.Status = 'Confirmed'
 	group by bd.ToPoid,bd.ToSeq1,bd.ToSeq2,bd.ToStocktype
 )
@@ -314,7 +314,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
 
             if (txtSeq1.checkEmpty(showErrMsg: false))
             {
-                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.mdivisionpodetail where poid ='{0}' and mdivisionid='{1}')"
+                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.mdivisionpodetail WITH (NOLOCK) where poid ='{0}' and mdivisionid='{1}')"
                     , sp, Sci.Env.User.Keyword), null))
                 {
                     MyUtility.Msg.WarningBox("SP# is not found!!");
@@ -338,7 +338,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
 
             DataRow tmp;
             if (!MyUtility.Check.Seek(string.Format(@"select sizespec,refno,colorid,dbo.getmtldesc(id,seq1,seq2,2,0) as [description]
-                        from po_supp_detail where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2), out tmp, null))
+                        from po_supp_detail WITH (NOLOCK) where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2), out tmp, null))
             {
                 MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                 return true;
@@ -371,7 +371,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sql = string.Format("select distinct frompoid as [SP#] from borrowback_detail where id='{0}'", dr_master["BorrowID"]);
+            string sql = string.Format("select distinct frompoid as [SP#] from borrowback_detail WITH (NOLOCK) where id='{0}'", dr_master["BorrowID"]);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "20", textBox1.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }

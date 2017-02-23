@@ -242,15 +242,15 @@ namespace Sci.Production.Warehouse
 select 
 	RD.RD_Count+ST.ST_Count+BB.BB_Count as total
 from(
-select COUNT(*) RD_Count from dbo.Receiving_Detail RD inner join dbo.Receiving R on RD.Id=R.Id  where RD.PoId='{0}' and RD.Seq1='{1}' and RD.Seq2='{2}' and RD.Roll='{3}' and RD.MDivisionID='{4}' and RD.id!='{5}' and R.Status='Confirmed'
+select COUNT(*) RD_Count from dbo.Receiving_Detail RD WITH (NOLOCK) inner join dbo.Receiving R WITH (NOLOCK) on RD.Id=R.Id  where RD.PoId='{0}' and RD.Seq1='{1}' and RD.Seq2='{2}' and RD.Roll='{3}' and RD.MDivisionID='{4}' and RD.id!='{5}' and R.Status='Confirmed'
 ) RD
 OUTER APPLY
 (
-select COUNT(*) ST_Count from dbo.SubTransfer_Detail SD inner join dbo.SubTransfer S on SD.ID=S.Id where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and ToMDivisionID='{4}' and S.Status='Confirmed'
+select COUNT(*) ST_Count from dbo.SubTransfer_Detail SD WITH (NOLOCK) inner join dbo.SubTransfer S WITH (NOLOCK) on SD.ID=S.Id where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and ToMDivisionID='{4}' and S.Status='Confirmed'
 ) ST
 OUTER APPLY
 (
-select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD inner join dbo.BorrowBack B on BD.ID=B.Id  where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and ToMDivisionID='{4}' and B.Status='Confirmed'
+select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD WITH (NOLOCK) inner join dbo.BorrowBack B WITH (NOLOCK) on BD.ID=B.Id  where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and ToMDivisionID='{4}' and B.Status='Confirmed'
 ) BB"
                         , row["poid"], row["seq1"], row["seq2"], row["roll"], Sci.Env.User.Keyword, CurrentMaintain["id"]), out dr, null))
                     {
@@ -267,7 +267,7 @@ select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD inner join dbo.Borro
             {
                 MyUtility.Tool.ProcessWithDatatable(DetailDatas.CopyToDataTable(), "poid,seq1"
                 , @"select #tmp.*
-            from #tmp,dbo.po_supp,dbo.supp
+            from #tmp,dbo.po_supp WITH (NOLOCK) ,dbo.supp WITH (NOLOCK) 
             where #tmp.poid = dbo.po_supp.id
             and #tmp.seq1 = dbo.po_supp.seq1
             and dbo.po_supp.suppid = dbo.supp.id
@@ -319,7 +319,7 @@ select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD inner join dbo.Borro
             {
                 dateBox2.Value = null;
                 dateBox5.Value = null;
-                if (MyUtility.Check.Seek(string.Format(@"select portarrival,docarrival from dbo.export where id='{0}'"
+                if (MyUtility.Check.Seek(string.Format(@"select portarrival,docarrival from dbo.export WITH (NOLOCK) where id='{0}'"
                     , CurrentMaintain["exportid"]), out dr, null))
                 {                                      
                     if (!MyUtility.Check.Empty(dr["portarrival"])) dateBox2.Value = DateTime.Parse(dr["portarrival"].ToString());
@@ -364,9 +364,9 @@ select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD inner join dbo.Borro
                 }
                 if (this.EditMode && e.FormattedValue.ToString()!="")
                 {
-                    if (MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po where id = '{0}')", e.FormattedValue), null))
+                    if (MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po WITH (NOLOCK) where id = '{0}')", e.FormattedValue), null))
                     {
-                        string category = MyUtility.GetValue.Lookup(string.Format("select category from orders where id='{0}'", e.FormattedValue));
+                        string category = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where id='{0}'", e.FormattedValue));
                         if (category == "M")
                         {
                             CurrentDetailData["stocktype"] = "I";
@@ -421,7 +421,7 @@ select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD inner join dbo.Borro
 
 select e.poid,concat(Ltrim(Rtrim(e.seq1)), ' ', e.Seq2) as seq, e.Refno, dbo.getmtldesc(e.poid,e.seq1,e.seq2,2,0) as [Description]
 ,p.ColorID
-,(SELECT eta from dbo.export where id = e.id) as eta
+,(SELECT eta from dbo.export WITH (NOLOCK) where id = e.id) as eta
 ,M.InQty
 ,p.pounit,p.StockUnit
 ,M.OutQty
@@ -431,9 +431,9 @@ select e.poid,concat(Ltrim(Rtrim(e.seq1)), ' ', e.Seq2) as seq, e.Refno, dbo.get
 ,p.fabrictype
 ,e.seq1
 ,e.seq2
-from dbo.Export_Detail e 
-left join dbo.PO_Supp_Detail p on e.PoID = p.ID and e.Seq1 = p.SEQ1 and e.Seq2 = p.seq2
-INNER JOIN MDivisionPoDetail M ON E.PoID = M.POID and e.Seq1 = M.SEQ1 and e.Seq2 = M.seq2 
+from dbo.Export_Detail e WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail p WITH (NOLOCK) on e.PoID = p.ID and e.Seq1 = p.SEQ1 and e.Seq2 = p.seq2
+INNER JOIN MDivisionPoDetail M WITH (NOLOCK) ON E.PoID = M.POID and e.Seq1 = M.SEQ1 and e.Seq2 = M.seq2 
 where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintain["exportid"]);
 
                         DBProxy.Current.Select(null, sqlcmd, out poitems);
@@ -503,10 +503,10 @@ iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '',
             ff.UsageUnit , 
             uu.ExtensionUnit), 
         ff.UsageUnit)) as StockUnit
-from dbo.PO_Supp_Detail b   
-inner join [dbo].[Fabric] ff on b.SCIRefno= ff.SCIRefno
-inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
-inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
+from dbo.PO_Supp_Detail b WITH (NOLOCK) 
+inner join [dbo].[Fabric] ff WITH (NOLOCK) on b.SCIRefno= ff.SCIRefno
+inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
+inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
 inner join View_unitrate v on v.FROM_U = b.POUnit 
 	and v.TO_U = (
 	iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
@@ -553,7 +553,7 @@ where b.id = '{0}' and b.seq1 ='{1}'and b.seq2 = '{2}'", CurrentDetailData["poid
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["location"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
@@ -711,7 +711,7 @@ where b.id = '{0}' and b.seq1 ='{1}'and b.seq2 = '{2}'", CurrentDetailData["poid
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Receiving_Detail d left join FtyInventory f
+from dbo.Receiving_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.mdivisionid = f.mdivisionid
 and d.PoId = f.PoId
 and d.Seq1 = f.Seq1
@@ -968,7 +968,7 @@ when matched then
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Receiving_Detail d left join FtyInventory f
+from dbo.Receiving_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.mdivisionid = f.mdivisionid
 and d.PoId = f.PoId
 and d.Seq1 = f.Seq1
@@ -1146,7 +1146,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
 
             this.DetailSelectCommand = string.Format(@"select a.id,a.MDivisionID,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Poid + concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as PoidSeq
-,(select p1.FabricType from PO_Supp_Detail p1 where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
+,(select p1.FabricType from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
 ,a.shipqty
 ,a.Weight
 ,a.ActualWeight
@@ -1160,7 +1160,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
 ,a.Location
 ,a.remark
 ,a.ukey
-from dbo.Receiving_Detail a
+from dbo.Receiving_Detail a WITH (NOLOCK) 
 Where a.id = '{0}' ", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -1180,7 +1180,7 @@ Where a.id = '{0}' ", masterID);
                 CurrentMaintain["WhseArrival"] = DBNull.Value;
                 dateBox5.Value = null;
                 dateBox2.Value = null;
-                if (MyUtility.Check.Seek(string.Format("select packingarrival,whsearrival,eta,PortArrival,DocArrival from dbo.export where id='{0}'"
+                if (MyUtility.Check.Seek(string.Format("select packingarrival,whsearrival,eta,PortArrival,DocArrival from dbo.export WITH (NOLOCK) where id='{0}'"
                     , textBox3.Text), out dr, null))
                 {
                     if (!MyUtility.Check.Empty(dr["portarrival"])) dateBox2.Value = DateTime.Parse(dr["portarrival"].ToString());
@@ -1212,11 +1212,11 @@ Where a.id = '{0}' ", masterID);
 , '' as location
 , '{1}' as mdivisionid
 --,ff.UsageUnit,mm.IsExtensionUnit,uu.ExtensionUnit
-from dbo.Export_Detail a inner join dbo.PO_Supp_Detail b on a.PoID= b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
-inner join orders c on c.id = a.poid
-inner join [dbo].[Fabric] ff on b.SCIRefno= ff.SCIRefno
-inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
-inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
+from dbo.Export_Detail a WITH (NOLOCK) inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
+inner join orders c WITH (NOLOCK) on c.id = a.poid
+inner join [dbo].[Fabric] ff WITH (NOLOCK) on b.SCIRefno= ff.SCIRefno
+inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
+inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
 inner join View_unitrate v on v.FROM_U = b.POUnit
 	and v.TO_U = (
 	iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 

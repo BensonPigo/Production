@@ -32,7 +32,7 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
 
             string selectCommand1 = string.Format(@"SELECT a.*,b.alias as countryalias 
-                                    FROM dbo.supp a left join country b on a.countryid = b.id 
+                                    FROM dbo.supp a WITH (NOLOCK) left join country b WITH (NOLOCK) on a.countryid = b.id 
                                     WHERE a.ID = '{0}' ", dr["suppid"].ToString());
 
             selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);

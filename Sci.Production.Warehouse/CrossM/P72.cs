@@ -209,7 +209,7 @@ namespace Sci.Production.Warehouse
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d inner join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on --d.ftyinventoryukey = f.ukey
 d.MDivisionID = f.MDivisionID
 and d.POID = f.POID
@@ -242,7 +242,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d left join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on --d.ftyinventoryukey = f.ukey
 d.MDivisionID = f.MDivisionID
 and d.POID = f.POID
@@ -425,7 +425,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             StringBuilder upd_Fty_4F = new StringBuilder();
 
             #region 603: WAREHOUSE_P72 。若P73已經收料了，則不能unconfirm。
-            string P73_status = MyUtility.GetValue.Lookup(string.Format(@"select Status from RequestCrossM where ID='{0}'", CurrentMaintain["CutplanID"]));
+            string P73_status = MyUtility.GetValue.Lookup(string.Format(@"select Status from RequestCrossM WITH (NOLOCK) where ID='{0}'", CurrentMaintain["CutplanID"]));
             if (P73_status.ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("This request id already confirmed in P73 , can't unconfirm.", "Warning");
@@ -436,7 +436,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d inner join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on --d.ftyinventoryukey = f.ukey
 d.MDivisionID = f.MDivisionID
 and d.POID = f.POID
@@ -469,7 +469,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d left join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on --d.ftyinventoryukey = f.ukey
 d.MDivisionID = f.MDivisionID
 and d.POID = f.POID
@@ -646,10 +646,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 ,a.Dyelot
 ,a.Qty
 ,a.StockType
-,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FtyInventoryUkey) t 
+,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = a.FtyInventoryUkey) t 
 	for xml path('')), 1, 1, '') as location
 ,a.ukey
-from dbo.issue_detail as a left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+from dbo.issue_detail as a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -712,8 +712,8 @@ Where a.id = '{0}'", masterID);
 	   issd.Qty,
 	   dbo.Getlocation(issd.FtyInventoryUkey) [location],
 	   [Total]=sum(issd.Qty) OVER (PARTITION BY issd.POID ,issd.seq1,issd.seq2 )     
-       from Issue_Detail issd
-       left join dbo.PO_Supp_Detail p on p.id= issd.poid and p.SEQ1 = issd.Seq1 and p.seq2 = issd.Seq2
+       from Issue_Detail issd WITH (NOLOCK) 
+       left join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id= issd.poid and p.SEQ1 = issd.Seq1 and p.seq2 = issd.Seq2
        where issd.id = @ID";
             DualResult res;
             res = DBProxy.Current.Select("", sqlcmd, pars, out dt);

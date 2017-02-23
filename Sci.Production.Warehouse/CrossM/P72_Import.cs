@@ -78,7 +78,7 @@ namespace Sci.Production.Warehouse
             string selectCommand1 = string.Format(@";with cte as
 (
 	select rd.*
-	from dbo.RequestCrossM r inner join dbo.RequestCrossM_Detail rd on rd.id = r.Id
+	from dbo.RequestCrossM r WITH (NOLOCK) inner join dbo.RequestCrossM_Detail rd WITH (NOLOCK) on rd.id = r.Id
 	where r.Status = 'Sent' and r.id='{0}' and r.MDivisionID = '{1}'
 )
 select rtrim(FromPOID) frompoid,rtrim(FromSeq1) FromSeq1,rtrim(FromSeq2) FromSeq2,Qty from cte;", dr_master["cutplanid"], Sci.Env.User.Keyword);
@@ -86,16 +86,16 @@ select rtrim(FromPOID) frompoid,rtrim(FromSeq1) FromSeq1,rtrim(FromSeq2) FromSeq
             string selectCommand2 = string.Format(@";with cte as
 (
 	select rd.*
-	from dbo.RequestCrossM r inner join dbo.RequestCrossM_Detail rd on rd.id = r.Id
+	from dbo.RequestCrossM r WITH (NOLOCK) inner join dbo.RequestCrossM_Detail rd WITH (NOLOCK) on rd.id = r.Id
 	where r.Status = 'Sent' and r.id='{0}' and r.MDivisionID = '{1}'
 )
 select 0 as selected,'' as id,fi.Ukey FtyInventoryUkey,0.00 as qty,fi.MDivisionID,fi.POID,rtrim(fi.seq1) seq1,fi.seq2
     ,dbo.getmtldesc(fi.poid,fi.seq1,fi.seq2,2,0) as [description]
-    ,(select stockunit from Po_Supp_Detail p where p.id = fi.POID and p.seq1 = fi.seq1 and p.seq2 = fi.seq2) stockunit
+    ,(select stockunit from Po_Supp_Detail p WITH (NOLOCK) where p.id = fi.POID and p.seq1 = fi.seq1 and p.seq2 = fi.seq2) stockunit
     ,concat(rtrim(fi.seq1), ' ', fi.seq2) seq
 	,fi.Roll,fi.Dyelot,fi.StockType,fi.InQty - fi.OutQty+fi.AdjustQty balanceqty 
-    ,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail where ukey = fi.ukey) t for xml path('')), 1, 1, '') [location]
-from cte inner join FtyInventory fi on fi.MDivisionID  =  cte.FromMDivisionID 
+    ,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail WITH (NOLOCK) where ukey = fi.ukey) t for xml path('')), 1, 1, '') [location]
+from cte inner join FtyInventory fi WITH (NOLOCK) on fi.MDivisionID  =  cte.FromMDivisionID 
 and fi.POID = cte.FromPOID and fi.Seq1 = cte.FromSeq1 and fi.Seq2 = cte.FromSeq2 
 where fi.StockType = 'I' and lock = 0 and fi.InQty - fi.OutQty+fi.AdjustQty > 0;", dr_master["cutplanid"], Sci.Env.User.Keyword);
 

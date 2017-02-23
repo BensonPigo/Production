@@ -96,7 +96,7 @@ from (
             ,Case type when 'A' then 'P35. Adjust Bulk Qty' 
                             when 'B' then 'P34. Adjust Stock Qty' end as Name
             ,0 as InQty,0 as OutQty, sum(QtyAfter - QtyBefore) Adjust, Remark ,'' Location
-            from Adjust a, Adjust_Detail b 
+            from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id
 and roll='{3}' and dyelot='{4}'
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type
@@ -105,7 +105,7 @@ group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type
             ,case type when 'A' then 'P31. Material Borrow From' 
                             when 'B' then 'P32. Material Give Back From' end as name
             ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location
-            from BorrowBack a, BorrowBack_Detail b 
+            from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id 
 and fromroll='{3}' and fromdyelot='{4}'
 group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,a.type
@@ -114,7 +114,7 @@ group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,a.type
             ,case type when 'A' then 'P31. Material Borrow To' 
                             when 'B' then 'P32. Material Give Back To' end as name
 , sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location
-            from BorrowBack a, BorrowBack_Detail b 
+            from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id 
 and toroll='{3}' and todyelot='{4}'
 group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,a.type
@@ -125,7 +125,7 @@ group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,a.type
                                 when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
                                 when 'D' then 'P13. Issue Material by Item' end name
             	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
-            from Issue a, Issue_Detail b 
+            from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type                                                                          
             union all
@@ -133,7 +133,7 @@ group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type
             ,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
                                       when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
             , 0 as inqty,sum(b.Qty) outqty ,0 as adjust, remark ,'' location
-            from IssueLack a, IssueLack_Detail b 
+            from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id
 and roll='{3}' and dyelot='{4}'
             group by a.id, poid, seq1,Seq2, remark  ,a.IssueDate,a.FabricType                                                               
@@ -141,7 +141,7 @@ and roll='{3}' and dyelot='{4}'
             select issuedate, a.id
             ,'P17. R/Mtl Return' name
             , 0 as inqty, sum(b.Qty) released,0 as adjust, remark,'' location
-            from IssueReturn a, IssueReturn_Detail b 
+            from IssueReturn a WITH (NOLOCK) , IssueReturn_Detail b WITH (NOLOCK) 
             where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
 and roll='{3}' and dyelot='{4}'
 group by a.Id, poid, seq1,Seq2, remark,a.IssueDate                                                                                 
@@ -149,7 +149,7 @@ group by a.Id, poid, seq1,Seq2, remark,a.IssueDate
             select a.eta, a.id
             ,'P07. Material Receiving' as name
             , sum(b.StockQty) arrived,0 as ouqty,0 as adjust,'' remark ,'' location
-            from Receiving a, Receiving_Detail b 
+            from Receiving a WITH (NOLOCK) , Receiving_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and type='A' and a.id!='{5}'
 and roll='{3}' and dyelot='{4}'
 group by a.Id, poid, seq1,Seq2,a.eta,a.Type
@@ -157,7 +157,7 @@ group by a.Id, poid, seq1,Seq2,a.eta,a.Type
             select a.WhseArrival, a.id
                     ,'P08. Warehouse Shopfloor Receiving' as name
             	    , sum(b.StockQty) arrived,0 as ouqty,0 as adjust,'' remark ,'' location
-            from Receiving a, Receiving_Detail b 
+            from Receiving a WITH (NOLOCK) , Receiving_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and type='B'
 and roll='{3}' and dyelot='{4}'
 group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type                                                                              
@@ -165,7 +165,7 @@ group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type
             select issuedate, a.id
             ,'P37. Return Receiving Material' name
             , 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
-            from ReturnReceipt a, ReturnReceipt_Detail b 
+            from ReturnReceipt a WITH (NOLOCK) , ReturnReceipt_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
 and roll='{3}' and dyelot='{4}'
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate                                                                               
@@ -178,7 +178,7 @@ group by a.id, poid, seq1,Seq2, remark,a.IssueDate
                                 when 'E' then 'P24. Transfer Inventory to Scrap' 
              end as name
             , 0 as inqty, sum(Qty) released,0 as adjust , '' remark ,'' location
-            from SubTransfer a, SubTransfer_Detail b 
+            from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id
 and fromroll='{3}' and fromdyelot='{4}'
             group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type                                                                               
@@ -188,14 +188,14 @@ and fromroll='{3}' and fromdyelot='{4}'
                 , sum(Qty) arrived,0 as ouqty,0 as adjust, remark
             	,(Select cast(tmp.Location as nvarchar)+',' 
                                     from (select b1.Location 
-                                                from TransferIn a1 
-                                                inner join TransferIn_Detail b1 on a1.id = b1.id 
+                                                from TransferIn a1 WITH (NOLOCK) 
+                                                inner join TransferIn_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
                                                 where a1.status = 'Confirmed' and (b1.Location is not null or b1.Location !='')
                                                     and b1.Poid = b.Poid
                                                     and b1.Seq1 = b.Seq1
                                                     and b1.Seq2 = b.Seq2 group by b1.Location) tmp 
                                     for XML PATH('')) as Location
-            from TransferIn a, TransferIn_Detail b 
+            from TransferIn a WITH (NOLOCK) , TransferIn_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}' and seq2 = '{2}'  and a.id = b.id
 and roll='{3}' and dyelot='{4}'
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate                                                                                 
@@ -203,7 +203,7 @@ group by a.id, poid, seq1,Seq2, remark,a.IssueDate
             select issuedate, a.id
                 ,'P19. Transfer Out' name
                 , 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
-            from TransferOut a, TransferOut_Detail b 
+            from TransferOut a WITH (NOLOCK) , TransferOut_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
 and roll='{3}' and dyelot='{4}'
 group by a.id, poid, Seq1,Seq2, remark,a.IssueDate) tmp
@@ -253,7 +253,7 @@ group by a.id, poid, Seq1,Seq2, remark,a.IssueDate) tmp
             }
             int temprowindex = grid1.GetSelectedRowIndex();
             DataRow dr = grid1.GetDataRow(grid1.GetSelectedRowIndex());
-            sqlcmd = string.Format(@"select 1 from dbo.Receiving_Detail 
+            sqlcmd = string.Format(@"select 1 from dbo.Receiving_Detail WITH (NOLOCK) 
                 where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and dyelot='{5}'"
                 , docno, dr["poid"], dr["seq1"], dr["seq2"], newRoll, newDyelot);
             if (MyUtility.Check.Seek(sqlcmd,null))
@@ -304,7 +304,7 @@ where poid ='{0}' and seq1='{1}' and seq2='{2}' and roll='{3}' and dyelot='{4}' 
             DataTable dt;
             DualResult result;
             string selectCommand1 = string.Format(@"select a.id,a.MDivisionID,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,(select p1.FabricType from PO_Supp_Detail p1 where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
+,(select p1.FabricType from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
 ,a.shipqty
 ,a.Weight
 ,a.ActualWeight
@@ -318,7 +318,7 @@ where poid ='{0}' and seq1='{1}' and seq2='{2}' and roll='{3}' and dyelot='{4}' 
 ,a.Location
 ,a.remark
 ,a.ukey
-from dbo.Receiving_Detail a
+from dbo.Receiving_Detail a WITH (NOLOCK) 
 Where a.id = '{0}' ", docno);
 
             if (!(result = DBProxy.Current.Select(null, selectCommand1, out dt)))

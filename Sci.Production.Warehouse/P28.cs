@@ -126,7 +126,7 @@ iseditingreadonly: true)
                 {
                     DataRow dr = grid2.GetDataRow(e.RowIndex);
                     dr["tolocation"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", dr["tostocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", dr["tostocktype"].ToString(), Sci.Env.User.Keyword);
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = dr["tolocation"].ToString().Split(',').Distinct().ToArray();
@@ -259,39 +259,39 @@ select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,o.MDiv
 ,ROUND(xz.taipei_qty*v.RateValue,2,1) N'inputqty',pd.POUnit,pd.StockUnit
 ,mpd.InQty
 ,isnull(x.accu_qty,0.00) accu_qty
-from dbo.orders o 
-inner join dbo.PO_Supp_Detail pd on pd.id = o.ID
+from dbo.orders o WITH (NOLOCK) 
+inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
 inner join View_Unitrate v on v.FROM_U = pd.POUnit and v.TO_U = pd.StockUnit
-left join dbo.MDivisionPoDetail mpd on mpd.MDivisionID = o.MDivisionID 
+left join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.MDivisionID = o.MDivisionID 
     and mpd.POID = pd.ID and mpd.Seq1 = pd.SEQ1 and mpd.Seq2 = pd.SEQ2"));
             if (!(string.IsNullOrWhiteSpace(InputDate_b)))
             {
                 sqlcmd.Append(string.Format(@" cross apply
 (
-	select distinct 1 abc from dbo.Invtrans where type=1 and (convert(varchar, ConfirmDate, 111) between convert(varchar, '{0}', 111) and convert(varchar, '{1}', 111)) and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2
+	select distinct 1 abc from dbo.Invtrans WITH (NOLOCK) where type=1 and (convert(varchar, ConfirmDate, 111) between convert(varchar, '{0}', 111) and convert(varchar, '{1}', 111)) and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2
 ) z ", InputDate_b, InputDate_e));
             }
  sqlcmd.Append(string.Format(@" outer apply
-(select count(1) cnt from FtyInventory fi left join FtyInventory_Detail fid on fid.Ukey = fi.Ukey 
+(select count(1) cnt from FtyInventory fi WITH (NOLOCK) left join FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
 	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B' and fi.MDivisionID = o.MDivisionID
 	and fid.MtlLocationID is null and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0
 ) y--Detail有MD為null數量,沒有則為0,沒資料也為0
 outer apply
 (
-	select count(1) cnt from FtyInventory fi left join FtyInventory_Detail fid on fid.Ukey = fi.Ukey 
+	select count(1) cnt from FtyInventory fi WITH (NOLOCK) left join FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
 	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B' and fi.MDivisionID = o.MDivisionID
     and fid.MtlLocationID is not null 
 ) yz--Detail資料數量
 outer apply
 (
-select sum(sd.Qty) accu_qty from dbo.SubTransfer s inner join dbo.SubTransfer_Detail sd on sd.ID = s.Id where
+select sum(sd.Qty) accu_qty from dbo.SubTransfer s WITH (NOLOCK) inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on sd.ID = s.Id where
  s.type='A' and s.Status= 'Confirmed' and sd.FromMDivisionID ='{0}' and sd.FromPOID = pd.ID 
 and sd.FromSeq1 = pd.SEQ1
  and sd.FromSeq2 = pd.SEQ2 and FromStockType = 'B' and toStockType='I'
 ) x
 cross apply
 	(select sum(i.Qty) taipei_qty
-		from dbo.Invtrans i inner join dbo.Factory f on f.ID = i.FactoryID and f.MDivisionID = '{0}'
+		from dbo.Invtrans i WITH (NOLOCK) inner join dbo.Factory f WITH (NOLOCK) on f.ID = i.FactoryID and f.MDivisionID = '{0}'
 		where (i.type=1 OR I.TYPE=4) and i.InventoryPOID = pd.ID and i.InventorySeq1 = pd.seq1 and i.InventorySeq2 = pd.SEQ2
 	) xz
 where pd.inputqty > 0 and o.MDivisionID = '{0}'", Env.User.Keyword));
@@ -348,9 +348,9 @@ fi.StockType FromStockType,
 fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty,
 0.00 as Qty,
 fi.MDivisionID toMdivisionID,rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'I' tostocktype 
-,stuff((select ',' + mtllocationid from (select MtlLocationid from dbo.FtyInventory_Detail where ukey = fi.Ukey)t for xml path('')), 1, 1, '') fromlocation
+,stuff((select ',' + mtllocationid from (select MtlLocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = fi.Ukey)t for xml path('')), 1, 1, '') fromlocation
 ,'' tolocation
-from #tmp t inner join FtyInventory fi on fi.MDivisionID = t.MDivisionID and fi.POID = t.POID 
+from #tmp t inner join FtyInventory fi WITH (NOLOCK) on fi.MDivisionID = t.MDivisionID and fi.POID = t.POID 
 and fi.seq1 = t.Seq1 and fi.Seq2 = t.Seq2
 where inputqty > accu_qty and fi.StockType ='B' and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
 drop table #tmp");

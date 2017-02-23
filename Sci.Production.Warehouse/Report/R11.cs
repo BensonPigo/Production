@@ -24,7 +24,7 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             txtMdivision1.Text = Sci.Env.User.Keyword;
             MyUtility.Tool.SetupCombox(cbbFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
             cbbFabricType.SelectedIndex = 0;
@@ -99,7 +99,7 @@ sd.FromDyelot dyelot,
 p.Refno,
 dbo.getMtlDesc(sd.FromPOID,sd.FromSeq1,sd.fromseq2,2,0) [description],
 iif(p.FabricType = 'F','Fabric','Accessory') fabrictype,
-iif(p.FabricType = 'F',(select fabric.weavetypeid from dbo.fabric where fabric.scirefno = p.scirefno),(select fabric.mtltypeid from dbo.fabric where fabric.scirefno = p.scirefno)) weaventype,
+iif(p.FabricType = 'F',(select fabric.weavetypeid from dbo.fabric WITH (NOLOCK) where fabric.scirefno = p.scirefno),(select fabric.mtltypeid from dbo.fabric WITH (NOLOCK) where fabric.scirefno = p.scirefno)) weaventype,
 s.MDivisionID,
 o.FactoryID,
 o.BrandID,
@@ -107,20 +107,20 @@ o.SeasonID,
 p.POUnit,
 p.StockUnit,
 p.Price,
-round(p.Price / (select unit.PriceRate from dbo.Unit where id = p.POUnit) 
-* dbo.getRate('FX',(select supp.CurrencyId from dbo.Supp inner join dbo.po_supp on po_supp.suppid = supp.id where po_supp.id = sd.FromPOID and po_supp.seq1 = sd.FromSeq1),'USD',GETDATE()),5) unitprice,
-dbo.getRate('FX',(select supp.CurrencyId from dbo.Supp inner join dbo.po_supp on po_supp.suppid = supp.id where po_supp.id = sd.FromPOID and po_supp.seq1 = sd.FromSeq1),'USD',GETDATE()) rate ,
-(select supp.CurrencyId from dbo.Supp inner join dbo.po_supp on po_supp.suppid = supp.id where po_supp.id = sd.FromPOID and po_supp.seq1 = sd.FromSeq1) currencyid,
+round(p.Price / (select unit.PriceRate from dbo.Unit WITH (NOLOCK) where id = p.POUnit) 
+* dbo.getRate('FX',(select supp.CurrencyId from dbo.Supp WITH (NOLOCK) inner join dbo.po_supp on po_supp.suppid = supp.id where po_supp.id = sd.FromPOID and po_supp.seq1 = sd.FromSeq1),'USD',GETDATE()),5) unitprice,
+dbo.getRate('FX',(select supp.CurrencyId from dbo.Supp WITH (NOLOCK) inner join dbo.po_supp on po_supp.suppid = supp.id where po_supp.id = sd.FromPOID and po_supp.seq1 = sd.FromSeq1),'USD',GETDATE()) rate ,
+(select supp.CurrencyId from dbo.Supp WITH (NOLOCK) inner join dbo.po_supp on po_supp.suppid = supp.id where po_supp.id = sd.FromPOID and po_supp.seq1 = sd.FromSeq1) currencyid,
 p.Qty,
 p.NETQty,
 p.LossQty,
 sum(sd.Qty) * (select vu.RateValue from dbo.View_Unitrate vu where vu.FROM_U = p.StockUnit and vu.TO_U = p.POUnit) scrapqty,
-stuff((select ',' + mtllocationid from (select distinct mtllocationid from dbo.FtyInventory_Detail where ukey = sd.FromFtyInventoryUkey) mtl for xml path('')), 1, 1, '') location,
+stuff((select ',' + mtllocationid from (select distinct mtllocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = sd.FromFtyInventoryUkey) mtl for xml path('')), 1, 1, '') location,
 s.IssueDate
-from dbo.orders o 
-inner join dbo.SubTransfer_Detail sd on o.id = sd.FromPOID
-inner join dbo.SubTransfer s on s.id = sd.id
-inner join dbo.PO_Supp_Detail p on p.id = sd.FromPOID and p.seq1 = sd.FromSeq1 and p.seq2 = sd.FromSeq2
+from dbo.orders o WITH (NOLOCK) 
+inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on o.id = sd.FromPOID
+inner join dbo.SubTransfer s WITH (NOLOCK) on s.id = sd.id
+inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = sd.FromPOID and p.seq1 = sd.FromSeq1 and p.seq2 = sd.FromSeq2
 where s.Status = 'Confirmed' and s.type = '{0}'
 
 ", stocktype,fabrictype                ));

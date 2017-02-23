@@ -93,9 +93,9 @@ namespace Sci.Production.Warehouse
                     string sqlcmd = string.Format(@"select a.*,
 CASE b.FabricType WHEN 'A' THEN 'Accessory' WHEN 'F' THEN 'Fabric'  WHEN 'O' THEN 'Other' END AS FabricType
 ,b.SCIRefno,f.MtlTypeID,m.IssueType,concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) seq
-from dbo.ftyinventory a inner join dbo.po_supp_detail b on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
-inner join Fabric f on f.SCIRefno = b.SCIRefno
-inner join MtlType m on m.ID = f.MtlTypeID
+from dbo.ftyinventory a WITH (NOLOCK) inner join dbo.po_supp_detail b WITH (NOLOCK) on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
+inner join Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
+inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
 where lock=0 and inqty-outqty+adjustqty > 0 
 and mdivisionid='{0}' and poid='{1}' --and stocktype='B'
 and b.FabricType='A'
@@ -153,9 +153,9 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, Current
                         }
 
                         if (!MyUtility.Check.Seek(string.Format(@"select a.*,b.FabricType,b.SCIRefno,f.MtlTypeID,m.IssueType,left(a.seq1+'   ',3)+a.seq2 seq
-from dbo.ftyinventory a inner join dbo.po_supp_detail b on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
-inner join Fabric f on f.SCIRefno = b.SCIRefno
-inner join MtlType m on m.ID = f.MtlTypeID
+from dbo.ftyinventory a WITH (NOLOCK) inner join dbo.po_supp_detail b WITH (NOLOCK) on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
+inner join Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
+inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
 where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivisionid='{3}'  and inqty-outqty+adjustqty > 0  --and stocktype='B' "
                             , CurrentDetailData["poid"], seq[0], seq[1], Sci.Env.User.Keyword), out dr, null))
                         {
@@ -233,13 +233,13 @@ a.Id
 ,p.SizeSpec
 ,p.UsedQty
 ,p.SizeUnit
-,isnull(stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.FtyInventory_Detail where ukey=a.FtyInventoryUkey)t for xml path('')), 1, 1, ''),'') [location]
+,isnull(stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey=a.FtyInventoryUkey)t for xml path('')), 1, 1, ''),'') [location]
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
-,isnull((select sum(Issue_Detail.qty) from dbo.issue inner join dbo.Issue_Detail on Issue_Detail.id = Issue.Id where Issue.type = 'B' and Issue.Status='Confirmed' and issue.id!=a.Id and Issue_Detail.FtyInventoryUkey = a.FtyInventoryUkey),0.00) [accu_issue]
-,isnull((select v.sizeqty+', ' from (select (rtrim(Issue_Size.SizeCode) +'*'+convert(varchar,Issue_Size.Qty)) as sizeqty from dbo.Issue_Size where Issue_Size.Issue_DetailUkey = a.ukey and Issue_Size.Qty != '0.00') v for xml path('')),'') [output]
+,isnull((select sum(Issue_Detail.qty) from dbo.issue WITH (NOLOCK) inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id where Issue.type = 'B' and Issue.Status='Confirmed' and issue.id!=a.Id and Issue_Detail.FtyInventoryUkey = a.FtyInventoryUkey),0.00) [accu_issue]
+,isnull((select v.sizeqty+', ' from (select (rtrim(Issue_Size.SizeCode) +'*'+convert(varchar,Issue_Size.Qty)) as sizeqty from dbo.Issue_Size WITH (NOLOCK) where Issue_Size.Issue_DetailUkey = a.ukey and Issue_Size.Qty != '0.00') v for xml path('')),'') [output]
 ,a.Ukey
-,isnull((select inqty-outqty+adjustqty from dbo.ftyinventory where ukey = a.ftyinventoryukey),0.00) as balanceqty
-from dbo.Issue_Detail a left join dbo.po_supp_detail p on p.id  = a.poid and p.seq1= a.seq1 and p.seq2 =a.seq2
+,isnull((select inqty-outqty+adjustqty from dbo.ftyinventory WITH (NOLOCK) where ukey = a.ftyinventoryukey),0.00) as balanceqty
+from dbo.Issue_Detail a WITH (NOLOCK) left join dbo.po_supp_detail p WITH (NOLOCK) on p.id  = a.poid and p.seq1= a.seq1 and p.seq2 =a.seq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -485,7 +485,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
             textBox1.Text = "";
             CurrentMaintain["orderid"] = "";
             this.disPOID.Text = "";
-            this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.cutplan where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
+            this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
 
             if (MyUtility.Check.Empty(txtRequest.Text))
             {
@@ -529,12 +529,12 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
             DataTable dt;
             if (!(CurrentMaintain == null))
             {
-                disCutCell.Text = MyUtility.GetValue.Lookup(string.Format("select CutCellID from dbo.cutplan  where id='{0}'", CurrentMaintain["cutplanid"]));
+                disCutCell.Text = MyUtility.GetValue.Lookup(string.Format("select CutCellID from dbo.cutplan WITH (NOLOCK) where id='{0}'", CurrentMaintain["cutplanid"]));
                 disLine.Text = MyUtility.GetValue.Lookup(string.Format(@"select t.SewLine+','  from (select distinct o.SewLine 
-from dbo.Issue_detail a inner join dbo.orders o on a.Poid = o.POID where a.id='{0}' and o.sewline !='') t for xml path('')", CurrentMaintain["id"]));
+from dbo.Issue_detail a WITH (NOLOCK) inner join dbo.orders o WITH (NOLOCK) on a.Poid = o.POID where a.id='{0}' and o.sewline !='') t for xml path('')", CurrentMaintain["id"]));
 
                 DBProxy.Current.Select(null, string.Format(@";with cte as
-(Select WorkOrder.FabricCombo,Cutplan_Detail.CutNo from Cutplan_Detail inner join dbo.workorder on WorkOrder.Ukey = Cutplan_Detail.WorkorderUkey 
+(Select WorkOrder.FabricCombo,Cutplan_Detail.CutNo from Cutplan_Detail WITH (NOLOCK) inner join dbo.workorder WITH (NOLOCK) on WorkOrder.Ukey = Cutplan_Detail.WorkorderUkey 
 where Cutplan_Detail.ID='{0}' )
 select distinct FabricCombo ,(select convert(varchar,CutNo)+',' 
 from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by CutNo for xml path('')) cutnos from cte a
@@ -576,8 +576,8 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
 
             string OrderID = textBox1.Text;
 
-            sqlcmd = string.Format(@"select sizecode from dbo.order_sizecode 
-where id = (select poid from dbo.orders where id='{0}') order by seq", OrderID);
+            sqlcmd = string.Format(@"select sizecode from dbo.order_sizecode WITH (NOLOCK) 
+where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by seq", OrderID);
 
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out dtSizeCode)))
             {
@@ -604,14 +604,14 @@ where id = (select poid from dbo.orders where id='{0}') order by seq", OrderID);
             }
             sbIssueBreakDown = new StringBuilder();
             sbIssueBreakDown.Append(string.Format(@";with Bdown as 
-            (select a.ID [orderid],a.Article,a.SizeCode,a.Qty from dbo.order_qty a
-            inner join dbo.orders b on b.id = a.id
-            where b.POID=(select poid from dbo.orders where id = '{0}')
+            (select a.ID [orderid],a.Article,a.SizeCode,a.Qty from dbo.order_qty a WITH (NOLOCK) 
+            inner join dbo.orders b WITH (NOLOCK) on b.id = a.id
+            where b.POID=(select poid from dbo.orders WITH (NOLOCK) where id = '{0}')
             )
             ,Issue_Bdown as
             (
             	select isnull(Bdown.orderid,ib.OrderID) [OrderID],isnull(Bdown.Article,ib.Article) Article,isnull(Bdown.SizeCode,ib.sizecode) sizecode,isnull(ib.Qty,0) qty
-            	from Bdown full outer join (select * from dbo.Issue_Breakdown where id='{1}') ib
+            	from Bdown full outer join (select * from dbo.Issue_Breakdown WITH (NOLOCK) where id='{1}') ib
             	on Bdown.orderid = ib.OrderID and Bdown.Article = ib.Article and Bdown.SizeCode = ib.SizeCode
             )
             select * from Issue_Bdown
@@ -641,10 +641,10 @@ where id = (select poid from dbo.orders where id='{0}') order by seq", OrderID);
         private void getpoid()
         {
             CurrentMaintain["cutplanid"] = txtRequest.Text;
-            this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.cutplan where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
+            this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
             if (MyUtility.Check.Empty(this.poid))
             {
-                this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.orders where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
+                this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.orders WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
             }
 
         }
@@ -659,7 +659,7 @@ where id = (select poid from dbo.orders where id='{0}') order by seq", OrderID);
             if (GetSubDetailDatas(CurrentDetailData, out subDetails))
             {
                 DBProxy.Current.Select(null, string.Format(@"select a.SizeCode,b.Id,b.Issue_DetailUkey,isnull(b.Qty,0) QTY
-from dbo.Order_SizeCode a left join dbo.Issue_Size b on b.SizeCode = a.SizeCode and b.id = '{1}' --and b.Issue_DetailUkey = {2}
+from dbo.Order_SizeCode a WITH (NOLOCK) left join dbo.Issue_Size b WITH (NOLOCK) on b.SizeCode = a.SizeCode and b.id = '{1}' --and b.Issue_DetailUkey = {2}
 where a.id='{0}' order by Seq", this.poid, CurrentMaintain["id"], CurrentDetailData["ukey"]), out sizeRange);
                 foreach (DataRow dr in sizeRange.Rows)
                 {
@@ -677,7 +677,7 @@ where a.id='{0}' order by Seq", this.poid, CurrentMaintain["id"], CurrentDetailD
             string ukey = (e.Detail == null || MyUtility.Check.Empty(e.Detail["ukey"])) ? "0" : e.Detail["ukey"].ToString();
             this.getpoid();
             this.SubDetailSelectCommand = string.Format(@"select a.SizeCode,b.Id,b.Issue_DetailUkey,isnull(b.Qty,0) QTY
-from dbo.Order_SizeCode a left join dbo.Issue_Size b on b.SizeCode = a.SizeCode and b.id = '{1}' and b.Issue_DetailUkey = {2}
+from dbo.Order_SizeCode a WITH (NOLOCK) left join dbo.Issue_Size b WITH (NOLOCK) on b.SizeCode = a.SizeCode and b.id = '{1}' and b.Issue_DetailUkey = {2}
 where a.id='{0}' order by Seq", this.poid, masterID, ukey);
             return base.OnSubDetailSelectCommandPrepare(e);
         }
@@ -703,7 +703,7 @@ where a.id='{0}' order by Seq", this.poid, masterID, ukey);
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d inner join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -731,7 +731,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d left join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -764,7 +764,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #endregion 更新表頭狀態資料
 
             #region 更新庫存數量  ftyinventory
-            sqlcmd = string.Format(@"select * from issue_detail where id='{0}'", CurrentMaintain["id"]);
+            sqlcmd = string.Format(@"select * from issue_detail WITH (NOLOCK) where id='{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 ShowErr(sqlcmd, result2);
@@ -854,7 +854,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d inner join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -882,7 +882,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d left join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -915,7 +915,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             #endregion 更新表頭狀態資料
 
             #region 更新庫存數量  ftyinventory
-            sqlcmd = string.Format(@"select * from issue_detail where id='{0}'", CurrentMaintain["id"]);
+            sqlcmd = string.Format(@"select * from issue_detail WITH (NOLOCK) where id='{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 ShowErr(sqlcmd, result2);
@@ -1046,8 +1046,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             DBProxy.Current.Select("",
                 @"select    
              b.name 
-            from dbo.Issue as a 
-            inner join dbo.mdivision as b on b.id = a.mdivisionid
+            from dbo.Issue as a WITH (NOLOCK) 
+            inner join dbo.mdivision as b WITH (NOLOCK) on b.id = a.mdivisionid
             where b.id = a.mdivisionid
             and a.id = @ID
             ", pars, out dt);
@@ -1059,7 +1059,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             string poID;
             DBProxy.Current.Select("",
                 @"select (select poid+',' from 
-             (select distinct cd.POID from Cutplan_Detail cd where id =(select CutplanID from dbo.Issue where id='@id')  ) t
+             (select distinct cd.POID from Cutplan_Detail cd WITH (NOLOCK) where id =(select CutplanID from dbo.Issue WITH (NOLOCK) where id='@id')  ) t
 			  for xml path('')) as [poid]", pars, out dtsp);
             if (dtsp.Rows.Count == 0)
                 poID = "";
@@ -1070,7 +1070,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             DualResult result;
             DataTable dtSizecode;
             string sqlcmd1 = string.Format(@"select distinct sizecode
-	                    from dbo.Issue_Size
+	                    from dbo.Issue_Size WITH (NOLOCK) 
 	                    where id = @ID order by sizecode");
             string sizecodes = "";
             result = DBProxy.Current.Select("", sqlcmd1, pars, out dtSizecode);
@@ -1095,7 +1095,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     select * 
                     from (
 	                    select sizecode,Issue_DetailUkey, qty
-	                    from dbo.Issue_Size
+	                    from dbo.Issue_Size WITH (NOLOCK) 
 	                    where id = @ID
 	                    ) as s
 	                    PIVOT
@@ -1103,8 +1103,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 	                     Sum(qty)
 	                     FOR sizecode  IN ({0})
                     ) AS PivotTable) as s
-                   left join dbo.Issue_Detail on ukey = s.Issue_DetailUkey
-                    left join dbo.po_supp_detail on po_supp_detail.id = Issue_detail.POID and po_supp_detail.seq1 = Issue_detail.seq1 and po_supp_detail.seq2=Issue_detail.seq2
+                   left join dbo.Issue_Detail WITH (NOLOCK) on ukey = s.Issue_DetailUkey
+                    left join dbo.po_supp_detail WITH (NOLOCK) on po_supp_detail.id = Issue_detail.POID and po_supp_detail.seq1 = Issue_detail.seq1 and po_supp_detail.seq2=Issue_detail.seq2
 ", sizecodes);
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtseq);
 
@@ -1123,8 +1123,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             DataTable dtlineno;
             string cLineNo;
             result = DBProxy.Current.Select("",
-                @"select o.sewline from dbo.Orders o 
-                    where id in (select distinct poid from issue_detail where id=@ID ) ", pars, out dtlineno);
+                @"select o.sewline from dbo.Orders o WITH (NOLOCK) 
+                    where id in (select distinct poid from issue_detail WITH (NOLOCK) where id=@ID ) ", pars, out dtlineno);
             if (!result)
             {
                 ShowErr(result);
@@ -1142,8 +1142,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             result = DBProxy.Current.Select("",
                 @"select    
              b.CutCellID 
-            from dbo.Issue as a 
-             inner join dbo.cutplan as b on b.id = a.cutplanid
+            from dbo.Issue as a WITH (NOLOCK) 
+             inner join dbo.cutplan as b WITH (NOLOCK) on b.id = a.cutplanid
             where b.id = a.CutplanID
             ", pars, out dtcutcell);
             if (!result)
@@ -1279,7 +1279,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             if (textBox1.Text == textBox1.OldValue) return;
             CurrentMaintain["orderid"] = textBox1.Text;
             this.disPOID.Text = "";
-            this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.orders where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
+            this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.orders WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(textBox1.Text))
             {
                 if (MyUtility.Check.Empty(this.poid))
@@ -1337,13 +1337,13 @@ a.POID
 ,b.SizeSpec
 ,b.UsedQty
 ,b.SizeUnit
-,isnull(stuff((select ',' + t.MtlLocationID from (select mtllocationid from [Production].[dbo].FtyInventory_Detail where ukey=a.Ukey)t for xml path('')), 1, 1, ''), '') [location]
+,isnull(stuff((select ',' + t.MtlLocationID from (select mtllocationid from [Production].[dbo].FtyInventory_Detail WITH (NOLOCK) where ukey=a.Ukey)t for xml path('')), 1, 1, ''), '') [location]
 ,[Production].[dbo].getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
 ,isnull((select a.InQty-a.OutQty+a.AdjustQty ),0.00) as balanceqty
-from [Production].[dbo].ftyinventory a 
-inner join [Production].[dbo].po_supp_detail b on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
-inner join [Production].[dbo].Fabric f on f.SCIRefno = b.SCIRefno
-inner join [Production].[dbo].MtlType m on m.ID = f.MtlTypeID
+from [Production].[dbo].ftyinventory a WITH (NOLOCK) 
+inner join [Production].[dbo].po_supp_detail b WITH (NOLOCK) on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
+inner join [Production].[dbo].Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
+inner join [Production].[dbo].MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
 where a.Lock=0 and a.InQty-a.OutQty+a.AdjustQty > 0 
 and a.MDivisionID='{0}' and a.POID='{1}' --and stocktype='B'
 and b.FabricType='A'
@@ -1376,7 +1376,7 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, this.po
                 if (GetSubDetailDatas(CurrentDetailData, out subDetails))
                 {
                     DBProxy.Current.Select(null, string.Format(@"select a.SizeCode,b.Id,b.Issue_DetailUkey,isnull(b.Qty,0) QTY
-from dbo.Order_SizeCode a left join dbo.Issue_Size b on b.SizeCode = a.SizeCode and b.id = '{1}' --and b.Issue_DetailUkey = {2}
+from dbo.Order_SizeCode a WITH (NOLOCK) left join dbo.Issue_Size b WITH (NOLOCK) on b.SizeCode = a.SizeCode and b.id = '{1}' --and b.Issue_DetailUkey = {2}
 where a.id='{0}' order by Seq ", this.poid, CurrentMaintain["id"], CurrentDetailData["ukey"]), out sizeRange);
                     foreach (DataRow drr in sizeRange.Rows)
                     {

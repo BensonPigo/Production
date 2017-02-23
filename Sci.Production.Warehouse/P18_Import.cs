@@ -51,9 +51,9 @@ namespace Sci.Production.Warehouse
 ,dbo.getmtldesc(b.poid,b.seq1,b.seq2,2,0) [description]
 ,'' location
 ,psd.StockUnit
-from TransferOut a
-inner join TransferOut_Detail b on b.id = a.id
-inner join PO_Supp_Detail psd on b.POID = psd.id and b.Seq1 = psd.Seq1 and b.Seq2 = psd.Seq2
+from TransferOut a WITH (NOLOCK) 
+inner join TransferOut_Detail b WITH (NOLOCK) on b.id = a.id
+inner join PO_Supp_Detail psd WITH (NOLOCK) on b.POID = psd.id and b.Seq1 = psd.Seq1 and b.Seq2 = psd.Seq2
 where a.status='Confirmed' and a.id='{0}'", transid, Sci.Env.User.Keyword)); // 
 
 
@@ -98,7 +98,7 @@ where a.status='Confirmed' and a.id='{0}'", transid, Sci.Env.User.Keyword)); //
                 {
                     DataRow dr = grid1.GetDataRow(e.RowIndex);
                     dr["location"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", dr["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", dr["stocktype"].ToString(), Sci.Env.User.Keyword);
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = dr["location"].ToString().Split(',').Distinct().ToArray();
@@ -138,7 +138,7 @@ where a.status='Confirmed' and a.id='{0}'", transid, Sci.Env.User.Keyword)); //
                 {
                     DataRow CurrentDetailData = grid1.GetDataRow(e.RowIndex);
                     CurrentDetailData["stocktype"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
@@ -244,7 +244,7 @@ where a.status='Confirmed' and a.id='{0}'", transid, Sci.Env.User.Keyword)); //
         {
             if (MyUtility.Check.Empty(txtTransferOutID.Text))
                 return;
-            if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.transferout where status='Confirmed' and id ='{0}')"
+            if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.transferout WITH (NOLOCK) where status='Confirmed' and id ='{0}')"
                     , this.txtTransferOutID.Text), null))
             {
                 MyUtility.Msg.WarningBox("< Transfer out ID > is not found!!");

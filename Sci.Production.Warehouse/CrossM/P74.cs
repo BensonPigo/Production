@@ -257,7 +257,7 @@ namespace Sci.Production.Warehouse
             DataTable dt = (DataTable)detailgridbs.DataSource;
 
             #region 602: WAREHOUSE_P74_Material Borrow cross M (Request)，若P75已經Confirm了，還不能recall。
-            string P75_Status = MyUtility.GetValue.Lookup(string.Format(@"select Status from Issue where CutplanID='{0}'", CurrentMaintain["id"]));
+            string P75_Status = MyUtility.GetValue.Lookup(string.Format(@"select Status from Issue WITH (NOLOCK) where CutplanID='{0}'", CurrentMaintain["id"]));
             if (P75_Status.ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is confirmed in [P75. Material Borrow cross M (Confirm)], can't recall !!", "Warning");
@@ -331,11 +331,11 @@ namespace Sci.Production.Warehouse
 ,a.ToMDivisionID
 ,a.ToPoid,a.ToSeq1,a.ToSeq2,concat(Ltrim(Rtrim(a.ToSeq1)), ' ', a.ToSeq2) as toseq
 ,a.ukey
-from dbo.RequestCrossM_detail a 
-left join PO_Supp_Detail p1 on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
-inner join [dbo].[Fabric] ff on p1.SCIRefno= ff.SCIRefno
-inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
-inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
+from dbo.RequestCrossM_detail a WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+inner join [dbo].[Fabric] ff WITH (NOLOCK) on p1.SCIRefno= ff.SCIRefno
+inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
+inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
 inner join View_unitrate v on v.FROM_U = p1.POUnit
 	and v.TO_U = (
 	iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
@@ -400,8 +400,8 @@ Where a.id = '{0}'", masterID);
 	               rcd.FromSeq1+'-'+rcd.FromSeq2 as fromseq,
 	               psd.StockUnit,
 	               rcd.qty
-            from RequestCrossM_Detail RCD
-            left join PO_Supp_Detail psd on psd.ID = rcd.FromPoId and psd.seq1 = rcd.FromSeq1 and psd.SEQ2 = rcd.FromSeq2
+            from RequestCrossM_Detail RCD WITH (NOLOCK) 
+            left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rcd.FromPoId and psd.seq1 = rcd.FromSeq1 and psd.SEQ2 = rcd.FromSeq2
             WHERE RCD.ID =@ID";
             DualResult res;
             res = DBProxy.Current.Select("", sqlcmd, pars, out dt);

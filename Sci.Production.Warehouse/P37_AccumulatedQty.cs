@@ -30,7 +30,7 @@ namespace Sci.Production.Warehouse
 as
 (select b.PoId,b.Seq1,b.Seq2
 ,sum(b.Qty) as Qty
-from dbo.ReturnReceipt a inner join dbo.ReturnReceipt_Detail b on a.ID = b.ID
+from dbo.ReturnReceipt a WITH (NOLOCK) inner join dbo.ReturnReceipt_Detail b WITH (NOLOCK) on a.ID = b.ID
 where a.Id = '{0}'
 GROUP BY b.PoId,b.Seq1,b.Seq2
 )
@@ -38,13 +38,13 @@ GROUP BY b.PoId,b.Seq1,b.Seq2
 cte as
 (
 	select d.POID,d.Seq1,d.Seq2,sum(d.qty) accu_qty
-	from dbo.ReturnReceipt c inner join dbo.ReturnReceipt_Detail d on c.Id= d.Id
-	inner join group_by f on f.POID = d.POID and f.Seq1= d.Seq1 and f.seq2 = d.Seq2
+	from dbo.ReturnReceipt c WITH (NOLOCK) inner join dbo.ReturnReceipt_Detail d WITH (NOLOCK) on c.Id= d.Id
+	inner join group_by f WITH (NOLOCK) on f.POID = d.POID and f.Seq1= d.Seq1 and f.seq2 = d.Seq2
 	where c.id != '{0}' and c.Status = 'Confirmed' and d.MDivisionID = '{1}'
 	group by d.POID,d.Seq1,d.Seq2
 )
 select group_by.POID,group_by.seq1,group_by.seq2
-,(select InQty from MDivisionPoDetail m where m.POID = group_by.POID and m.seq1 =group_by.seq1 and m.seq2= group_by.Seq2 and MDivisionID = '{1}') inqty
+,(select InQty from MDivisionPoDetail m WITH (NOLOCK) where m.POID = group_by.POID and m.seq1 =group_by.seq1 and m.seq2= group_by.Seq2 and MDivisionID = '{1}') inqty
 ,isnull(cte.accu_qty,0.00) accu_qty
 ,group_by.Qty
 ,dbo.getMtlDesc(group_by.poid,group_by.seq1,group_by.seq2,2,0) [description]

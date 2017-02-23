@@ -332,7 +332,7 @@ namespace Sci.Production.Warehouse
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["location"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
@@ -413,7 +413,7 @@ namespace Sci.Production.Warehouse
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Receiving_Detail d inner join FtyInventory f
+from dbo.Receiving_Detail d  WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -440,7 +440,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Receiving_Detail d left join FtyInventory f
+from dbo.Receiving_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -631,7 +631,7 @@ drop table #tmp2
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Receiving_Detail d inner join FtyInventory f
+from dbo.Receiving_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 --on d.Ukey = f.ukey
 on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -659,7 +659,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Receiving_Detail d left join FtyInventory f
+from dbo.Receiving_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 --on d.Ukey = f.ukey
 on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -793,11 +793,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,(select p1.FabricType from PO_Supp_Detail p1 where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
+,(select p1.FabricType from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as Description
 ,a.Roll
 ,a.Dyelot
-,(select sum(b.Qty * isnull(c.RateValue,1)) as useqty from po_supp_detail b inner join View_Unitrate c on c.FROM_U = b.POUnit and c.TO_U = b.StockUnit
+,(select sum(b.Qty * isnull(c.RateValue,1)) as useqty from po_supp_detail b WITH (NOLOCK) inner join View_Unitrate c on c.FROM_U = b.POUnit and c.TO_U = b.StockUnit
 where b.id= a.poid and b.seq1 = a.seq1 and b.seq2 = a.seq2) useqty
 ,a.StockQty
 ,a.StockUnit
@@ -805,7 +805,7 @@ where b.id= a.poid and b.seq1 = a.seq1 and b.seq2 = a.seq2) useqty
 ,a.Location
 ,a.mdivisionid
 ,a.ukey
-from dbo.Receiving_Detail a
+from dbo.Receiving_Detail a WITH (NOLOCK) 
 Where a.id = '{0}' ", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);

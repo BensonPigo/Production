@@ -31,18 +31,18 @@ namespace Sci.Production.Warehouse
 	select A.PoId,A.Seq1,A.Seq2
 	,requestqty =isnull(x.q,0 )
 	,sum(a.Qty) as Qty 
-	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
-	from dbo.TransferOut_Detail A 
+	,(select StockUnit from dbo.PO_Supp_Detail t WITH (NOLOCK) where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
+	from dbo.TransferOut_Detail A WITH (NOLOCK) 
 	outer apply(
 		select q = (
 			Select sum(qty) 
-			from Invtrans B 
+			from Invtrans B WITH (NOLOCK) 
 			where (B.type='2' or B.type='3')
 			 and B.InventoryPoid=a.POID 
 			 and B.InventorySeq1=a.Seq1
 			 and B.InventorySeq2=a.Seq2
-			 and B.FactoryId in (Select Id from Factory where MDivisionId='{1}') 
-			 and B.TransferFactory not in (Select Id from Factory where MDivisionId='{1}')
+			 and B.FactoryId in (Select Id from Factory WITH (NOLOCK) where MDivisionId='{1}') 
+			 and B.TransferFactory not in (Select Id from Factory WITH (NOLOCK) where MDivisionId='{1}')
 		 )
 	)x
 	where  a.Id = '{0}'
@@ -52,17 +52,17 @@ namespace Sci.Production.Warehouse
 	select A.PoId,A.Seq1,A.Seq2
 	,requestqty = -isnull(x.q,0)
 	,sum(a.Qty) as Qty 
-	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
-	from dbo.TransferOut_Detail a 
+	,(select StockUnit from dbo.PO_Supp_Detail t WITH (NOLOCK) where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
+	from dbo.TransferOut_Detail a WITH (NOLOCK) 
 	outer apply(
 		select q = (
 			Select sum(qty) 
-			from Invtrans B
+			from Invtrans B WITH (NOLOCK) 
 			where B.type='6' 
 			and B.InventoryPoid = a.POID 
 			and B.InventorySeq1 = a.Seq1
 			and B.InventorySeq2 = a.Seq2
-			and B.FactoryId in (Select Id from Factory where MDivisionId='{1}')
+			and B.FactoryId in (Select Id from Factory WITH (NOLOCK) where MDivisionId='{1}')
 		 )
 	)x
 	where  a.Id = '{0}'
@@ -72,7 +72,7 @@ select PoId,Seq1,Seq2,requestqty=sum(requestqty)
 * isnull((select v.Ratevalue from dbo.View_Unitrate v where v.FROM_U = 
 		(
 			select distinct unitID
-			from Invtrans B
+			from Invtrans B WITH (NOLOCK) 
 			where B.InventoryPoId = z.PoId 
 			and B.InventorySeq1 = z.Seq1 
 			and B.InventorySeq2 = z.Seq2 

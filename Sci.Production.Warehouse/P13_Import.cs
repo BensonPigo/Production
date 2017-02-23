@@ -58,10 +58,10 @@ namespace Sci.Production.Warehouse
 ,0.00 as Qty
 ,'B' StockType
 ,c.ukey as ftyinventoryukey
-,stuff((select ',' + cast(mtllocationid as varchar) from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, '') as location
+,stuff((select ',' + cast(mtllocationid as varchar) from (select mtllocationid from ftyinventory_detail WITH (NOLOCK) where ukey = c.ukey)t for xml path('')), 1, 1, '') as location
 ,c.inqty-c.outqty + c.adjustqty as balance
-from dbo.PO_Supp_Detail a 
-inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
+from dbo.PO_Supp_Detail a WITH (NOLOCK) 
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid='{1}'", sp, Sci.Env.User.Keyword)); // 
                 if (!MyUtility.Check.Empty(seq))
                 {
@@ -194,7 +194,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and c.m
 
             if (MyUtility.Check.Empty(seq))
             {
-                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail where id ='{0}')"
+                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}')"
                     , sp), null))
                 {
                     MyUtility.Msg.WarningBox("SP# is not found!!");
@@ -204,7 +204,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and c.m
             }
             else
             {
-                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail where id ='{0}' 
+                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}' 
                         and seq1 = '{1}' and seq2 = '{2}')", sp, seq1, seq2), null))
                 {
                     MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
@@ -223,7 +223,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and c.m
             string seq1 = txtSeq1.seq1;
             string seq2 = txtSeq1.seq2;
 
-            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail where id ='{0}' 
+            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}' 
                         and seq1 = '{1}' and seq2 = '{2}')", sp, seq1, seq2), null))
             {
                 MyUtility.Msg.WarningBox("SP#-Seq is not found!!");

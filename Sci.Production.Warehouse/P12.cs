@@ -200,7 +200,7 @@ namespace Sci.Production.Warehouse
             {
                 if (this.EditMode && string.Compare(CurrentDetailData["poid"].ToString(),e.FormattedValue.ToString()) != 0)
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po where id = '{0}')", e.FormattedValue), null))
+                    if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po WITH (NOLOCK) where id = '{0}')", e.FormattedValue), null))
                     {
                         MyUtility.Msg.WarningBox("SP# is not exist!!", "Data not found");
                         e.Cancel = true;
@@ -228,7 +228,7 @@ namespace Sci.Production.Warehouse
                     DialogResult result = selepoitem.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     x = selepoitem.GetSelecteds();
-                    string productiontype = MyUtility.GetValue.Lookup(string.Format(@"select productiontype from fabric inner join mtltype on fabric.mtltypeid = mtltype.id where SCIRefno = '{0}'", x[0]["scirefno"]), null);
+                    string productiontype = MyUtility.GetValue.Lookup(string.Format(@"select productiontype from fabric WITH (NOLOCK) inner join mtltype WITH (NOLOCK) on fabric.mtltypeid = mtltype.id where SCIRefno = '{0}'", x[0]["scirefno"]), null);
                     if (productiontype.ToUpper().TrimEnd() != "PACKING")
                     {
                         MyUtility.Msg.WarningBox(string.Format("Seq ({1}) : Production type is  {0}  not packing!!", productiontype, x[0]["seq"]), "Seq");
@@ -279,7 +279,7 @@ namespace Sci.Production.Warehouse
                             }
                             else
                             {
-                                string productiontype = MyUtility.GetValue.Lookup(string.Format(@"select productiontype from fabric inner join mtltype on fabric.mtltypeid = mtltype.id where SCIRefno = '{0}'", dr["scirefno"]), null);
+                                string productiontype = MyUtility.GetValue.Lookup(string.Format(@"select productiontype from fabric WITH (NOLOCK) inner join mtltype WITH (NOLOCK) on fabric.mtltypeid = mtltype.id where SCIRefno = '{0}'", dr["scirefno"]), null);
                                 if (productiontype.ToUpper().TrimEnd() != "PACKING")
                                 {
                                     MyUtility.Msg.WarningBox(string.Format("Seq ({1}) : Production type is  {0}  not packing!!", productiontype,e.FormattedValue), "Seq");
@@ -346,7 +346,7 @@ namespace Sci.Production.Warehouse
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d inner join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -374,7 +374,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d left join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -504,7 +504,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d inner join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -532,7 +532,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d left join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -655,10 +655,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 ,a.Dyelot
 ,a.Qty
 ,a.StockType
-,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail fd where ukey= ftyinventoryukey) t 
+,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where ukey= ftyinventoryukey) t 
     for xml path('')), 1, 1, '') location
 ,a.ukey
-from dbo.issue_detail a left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+from dbo.issue_detail a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -704,8 +704,8 @@ Where a.id = '{0}'", masterID);
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
             @"select  b.name 
-            from dbo.Issue  a 
-            inner join dbo.mdivision  b 
+            from dbo.Issue  a WITH (NOLOCK) 
+            inner join dbo.mdivision  b WITH (NOLOCK) 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dt);
@@ -732,8 +732,8 @@ Where a.id = '{0}'", masterID);
 	                ,a.Qty
                     ,[BULKLocation]=dbo.Getlocation(a.FtyInventoryUkey)
 	                ,unit = b.StockUnit
-            from dbo.Issue_Detail a
-            left join dbo.PO_Supp_Detail b
+            from dbo.Issue_Detail a WITH (NOLOCK) 
+            left join dbo.PO_Supp_Detail b WITH (NOLOCK) 
                 on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2            
             where a.id= @ID", pars, out dtt);
             if (!result) { this.ShowErr(result); }

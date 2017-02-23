@@ -42,8 +42,8 @@ namespace Sci.Production.Warehouse
 
                 #region -- sqlcmd query --
                 strSQLCmd.Append(string.Format(@"select ISD.* , FTY.InQty,FTY.OutQty,FTY.AdjustQty,FTY.InQty-FTY.OutQty+FTY.AdjustQty as balanceqty,[location]=dbo.Getlocation(FTY.Ukey)   
-	from [dbo].[Issue_Detail] ISD 
-	left join [dbo].FtyInventory FTY on ISD.FtyInventoryUkey=FTY.Ukey
+	from [dbo].[Issue_Detail] ISD WITH (NOLOCK) 
+	left join [dbo].FtyInventory FTY WITH (NOLOCK) on ISD.FtyInventoryUkey=FTY.Ukey
 	where ISD.Id='{0}' and ISD.Issue_SummaryUkey='{1}'"
                     , CurrentDetailData["id"].ToString(), CurrentDetailData["Ukey"].ToString()));
                 #endregion

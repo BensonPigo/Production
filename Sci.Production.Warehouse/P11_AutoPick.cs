@@ -123,15 +123,15 @@ delete from #tmp2 where qty = 0;
 			 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
 			 , IsNull(#tmp2.Qty, 0) Qty
 		  From dbo.Orders
-		  Left Join dbo.Order_SizeCode
+		  Left Join dbo.Order_SizeCode 
 			On Order_SizeCode.ID = Orders.POID
-		  Left Join dbo.Order_Article
+		  Left Join dbo.Order_Article 
 			On Order_Article.ID = Orders.ID
 		  Left Join #tmp2
 			On	   #tmp2.OrderID = Orders.ID
 			   And #tmp2.SizeCode = Order_SizeCode.SizeCode
 			   And #tmp2.Article = Order_Article.Article
-		  Left Join dbo.CustCD
+		  Left Join dbo.CustCD 
 			On	   CustCD.BrandID = Orders.BrandID
 			   And CustCD.ID = Orders.CustCDID
 		  Left Join dbo.Factory
@@ -150,19 +150,19 @@ delete from #tmp2 where qty = 0;
 			 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
 			 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
 			 , IsNull(Order_Qty.Qty, 0) Qty
-		  From dbo.Orders
-		  Left Join dbo.Order_SizeCode
+		  From dbo.Orders 
+		  Left Join dbo.Order_SizeCode 
 			On Order_SizeCode.ID = Orders.POID
-		  Left Join dbo.Order_Article
+		  Left Join dbo.Order_Article 
 			On Order_Article.ID = Orders.ID
-		  Left Join dbo.Order_Qty
+		  Left Join dbo.Order_Qty 
 			On	   Order_Qty.ID = Orders.ID
 			   And Order_Qty.SizeCode = Order_SizeCode.SizeCode
 			   And Order_Qty.Article = Order_Article.Article
-		  Left Join dbo.CustCD
+		  Left Join dbo.CustCD  
 			On	   CustCD.BrandID = Orders.BrandID
 			   And CustCD.ID = Orders.CustCDID
-		  Left Join dbo.Factory
+		  Left Join dbo.Factory  
 			On Factory.ID = Orders.FactoryID
 		 Where Orders.POID = '{3}'
 		   And Orders.Junk = 0
@@ -177,19 +177,19 @@ delete from #tmp2 where qty = 0;
 				 , Orders.CustPONo, Orders.BuyMonth, Factory.CountryID, Orders.StyleID
 				 , Order_Article.Article, Order_SizeCode.Seq, Order_SizeCode.SizeCode
 				 , IsNull(Order_Qty.Qty, 0) Qty
-			  From dbo.Orders
-			  Left Join dbo.Order_SizeCode
+			  From dbo.Orders 
+			  Left Join dbo.Order_SizeCode  
 				On Order_SizeCode.ID = Orders.POID
-			  Left Join dbo.Order_Article
+			  Left Join dbo.Order_Article  
 				On Order_Article.ID = Orders.ID
-			  Left Join dbo.Order_Qty
+			  Left Join dbo.Order_Qty 
 				On	   Order_Qty.ID = Orders.ID
 				   And Order_Qty.SizeCode = Order_SizeCode.SizeCode
 				   And Order_Qty.Article = Order_Article.Article
 			  Left Join dbo.CustCD
 				On	   CustCD.BrandID = Orders.BrandID
 				   And CustCD.ID = Orders.CustCDID
-			  Left Join dbo.Factory
+			  Left Join dbo.Factory 
 				On Factory.ID = Orders.FactoryID
 			 Where Orders.POID = '{3}'
 			   And Orders.Junk = 0
@@ -215,16 +215,16 @@ delete from #tmp2 where qty = 0;
 
 	select p.id as [poid], p.seq1, p.seq2, p.SCIRefno,dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
 	,p.ColorID, p.SizeSpec, p.Spec, p.Special, p.Remark into #tmpPO_supp_detail
-		from dbo.PO_Supp_Detail as p 
-	inner join dbo.Fabric f on f.SCIRefno = p.SCIRefno
-	inner join dbo.MtlType m on m.id = f.MtlTypeID
+		from dbo.PO_Supp_Detail as p WITH (NOLOCK) 
+	inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
+	inner join dbo.MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID
 	where p.id='{3}' and p.FabricType = 'A' and m.IssueType='{7}'
 
 	;with cte2 
 	as
 	(
 		select m.*,m.InQty-m.OutQty+m.AdjustQty as [balanceqty]
-		from #tmpPO_supp_detail inner join dbo.FtyInventory m on m.POID = #tmpPO_supp_detail.poid and m.seq1 = #tmpPO_supp_detail.seq1 and m.seq2 = #tmpPO_supp_detail.SEQ2
+		from #tmpPO_supp_detail inner join dbo.FtyInventory m WITH (NOLOCK) on m.POID = #tmpPO_supp_detail.poid and m.seq1 = #tmpPO_supp_detail.seq1 and m.seq2 = #tmpPO_supp_detail.SEQ2
 		and m.MDivisionID = '{8}' and m.StockType = 'B' and Roll=''
 		where lock = 0
 	)
@@ -246,7 +246,7 @@ delete from #tmp2 where qty = 0;
 	 
 	 select z.*,isnull(cte.qty,0) as qty,isnull(cte.qty,0) as ori_qty from
 	 (select x.poid,x.seq1,x.seq2,order_sizecode.SizeCode,Order_SizeCode.Seq 
-		from dbo.order_sizecode 
+		from dbo.order_sizecode WITH (NOLOCK) 
 			,(select distinct poid,seq1,seq2 from cte) as x
 		where Order_SizeCode.id = '{3}') z 
 	left join cte on cte.SizeCode = z.SizeCode and cte.poid = z.poid and cte.seq1 = z.seq1 and cte.seq2 = z.seq2

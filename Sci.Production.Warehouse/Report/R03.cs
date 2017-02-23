@@ -103,7 +103,7 @@ namespace Sci.Production.Warehouse
             {
                 sqlCmd.Append(string.Format(@";with cte as
 (
-select distinct o.mdivisionid, o.FactoryID, o.POID,o.StyleID,o.SeasonID from dbo.orders o
+select distinct o.mdivisionid, o.FactoryID, o.POID,o.StyleID,o.SeasonID from dbo.orders o WITH (NOLOCK) 
 where 1=1"));
 
                 if (!MyUtility.Check.Empty(sciDelivery1))
@@ -145,7 +145,7 @@ c.CountryID
 ,iif(b.Complete=1,'Y','N')
 --,b.ETA
 ,b.FinalETA
-,(select t.orderid+',' from (select OrderID from DBO.PO_Supp_Detail_OrderList where id=b.id and seq1=b.seq1 and seq2 = b.SEQ2) t for xml path('')) orderlist
+,(select t.orderid+',' from (select OrderID from DBO.PO_Supp_Detail_OrderList WITH (NOLOCK) where id=b.id and seq1=b.seq1 and seq2 = b.SEQ2) t for xml path('')) orderlist
 ,d.InQty
 ,b.StockUnit
 ,d.OutQty
@@ -155,21 +155,21 @@ c.CountryID
 ,d.BLocation
 ,case b.FabricType 
 	when 'F' then (select x.result+'/' from (select iif(t2.result='P','Pass',iif(t2.result='F','Fail',t2.Result)) result
-	from dbo.FIR t2 where t2.POID = b.ID and t2.seq1 = b.seq1 and t2.seq2 = b.seq2) x for xml path(''))
+	from dbo.FIR t2 WITH (NOLOCK) where t2.POID = b.ID and t2.seq1 = b.seq1 and t2.seq2 = b.seq2) x for xml path(''))
 	when 'A' then (select x.result+'/' from (select iif(t3.result='P','Pass',iif(t3.result='F','Fail',t3.Result)) result
-	from dbo.AIR t3 where t3.POID = b.ID and t3.seq1 = b.seq1 and t3.seq2 = b.seq2) x for xml path(''))
+	from dbo.AIR t3 WITH (NOLOCK) where t3.POID = b.ID and t3.seq1 = b.seq1 and t3.seq2 = b.seq2) x for xml path(''))
 end
  from cte 
-inner join dbo.PO_Supp a on a.id = cte.poid
-inner join dbo.PO_Supp_Detail b on b.id = a.id and b.SEQ1 = a.SEQ1
-inner join dbo.Supp c on c.id = a.SuppID
-left join dbo.MDivisionPoDetail d on d.POID = b.ID and d.seq1 = b.seq1 and d.seq2 = b.SEQ2
+inner join dbo.PO_Supp a WITH (NOLOCK) on a.id = cte.poid
+inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.id and b.SEQ1 = a.SEQ1
+inner join dbo.Supp c WITH (NOLOCK) on c.id = a.SuppID
+left join dbo.MDivisionPoDetail d WITH (NOLOCK) on d.POID = b.ID and d.seq1 = b.seq1 and d.seq2 = b.SEQ2
 where 1= 1 "));
             }
             else
             {
-                sqlCmd.Append(string.Format(@"select isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders where id = a.id)), cte.FactoryID,a.id,
-(select StyleID from dbo.orders where id = a.id) style,
+                sqlCmd.Append(string.Format(@"select isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders WITH (NOLOCK) where id = a.id)), cte.FactoryID,a.id,
+(select StyleID from dbo.orders WITH (NOLOCK) where id = a.id) style,
 b.FinalETD,
 a.suppid+'-'+c.AbbEN supp,
 c.CountryID
@@ -189,7 +189,7 @@ c.CountryID
 ,iif(b.Complete=1,'Y','N')
 --,b.ETA
 ,b.FinalETA
-,(select t.orderid+',' from (select OrderID from DBO.PO_Supp_Detail_OrderList where id=b.id and seq1=b.seq1 and seq2 = b.SEQ2) t for xml path('')) orderlist
+,(select t.orderid+',' from (select OrderID from DBO.PO_Supp_Detail_OrderList WITH (NOLOCK) where id=b.id and seq1=b.seq1 and seq2 = b.SEQ2) t for xml path('')) orderlist
 ,d.InQty
 ,b.StockUnit
 ,d.OutQty
@@ -199,14 +199,14 @@ c.CountryID
 ,d.BLocation
 ,case b.FabricType 
 	when 'F' then (select x.result+'/' from (select iif(t2.result='P','Pass',iif(t2.result='F','Fail',t2.Result)) result
-	from dbo.FIR t2 where t2.POID = b.ID and t2.seq1 = b.seq1 and t2.seq2 = b.seq2) x for xml path(''))
+	from dbo.FIR t2 WITH (NOLOCK) where t2.POID = b.ID and t2.seq1 = b.seq1 and t2.seq2 = b.seq2) x for xml path(''))
 	when 'A' then (select x.result+'/' from (select iif(t3.result='P','Pass',iif(t3.result='F','Fail',t3.Result)) result
-	from dbo.AIR t3 where t3.POID = b.ID and t3.seq1 = b.seq1 and t3.seq2 = b.seq2) x for xml path(''))
+	from dbo.AIR t3 WITH (NOLOCK) where t3.POID = b.ID and t3.seq1 = b.seq1 and t3.seq2 = b.seq2) x for xml path(''))
 end
- from dbo.PO_Supp a
-inner join dbo.PO_Supp_Detail b on b.id = a.id and b.SEQ1 = a.SEQ1
-inner join dbo.Supp c on c.id = a.SuppID
-left join dbo.MDivisionPoDetail d on d.POID = b.ID and d.seq1 = b.seq1 and d.seq2 = b.SEQ2
+ from dbo.PO_Supp a WITH (NOLOCK) 
+inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.id and b.SEQ1 = a.SEQ1
+inner join dbo.Supp c WITH (NOLOCK) on c.id = a.SuppID
+left join dbo.MDivisionPoDetail d WITH (NOLOCK) on d.POID = b.ID and d.seq1 = b.seq1 and d.seq2 = b.SEQ2
 where 1=1 "));
             }
 

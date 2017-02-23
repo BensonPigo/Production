@@ -31,13 +31,13 @@ namespace Sci.Production.Warehouse
 from (
 select a.PoId,a.Seq1,a.Seq2,0 as shipqty,0 as accu_rcv,sum(a.StockQty) as rcv
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]  
-from dbo.Receiving_Detail a where id='{0}' group by a.PoId,a.Seq1,a.Seq2
+from dbo.Receiving_Detail a WITH (NOLOCK) where id='{0}' group by a.PoId,a.Seq1,a.Seq2
 union all" + Environment.NewLine,dr["id"].ToString(),dr["exportid"].ToString()));
             if (MyUtility.Check.Empty(dr["exportid"].ToString()))
             {
                 selectCommand1.Append(string.Format(@"select a.id poid,a.Seq1,a.seq2,(a.Qty+a.Foc) as shipqty,0 as accu_rcv,0 as rcv
 ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [description]
-from dbo.PO_Supp_Detail a,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail where id='{0}') c 
+from dbo.PO_Supp_Detail a WITH (NOLOCK) ,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail WITH (NOLOCK) where id='{0}') c 
  where a.id = c.poid and a.seq1 = c.seq1 and a.seq2 = c.seq2) tmp
 group by poid,seq1,seq2,description", dr["id"].ToString()));
             }
@@ -46,9 +46,9 @@ group by poid,seq1,seq2,description", dr["id"].ToString()));
                 selectCommand1.Append(string.Format(@"
 select a.PoId,a.Seq1,a.Seq2,0 as shipqty,sum(a.StockQty) as accu_rcv ,0 as rcv
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
-from dbo.Receiving_Detail a
-,dbo.Receiving b
-,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail where id='{0}') c 
+from dbo.Receiving_Detail a WITH (NOLOCK) 
+,dbo.Receiving b WITH (NOLOCK) 
+,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail WITH (NOLOCK) where id='{0}') c 
 where b.id!='{0}' and b.Status='Confirmed' and a.id=b.id and b.ExportId = '{1}'
 and a.PoId=c.poid and a.seq1 = c.seq1 and a.seq2 = c.seq2 
 group by a.PoId,a.Seq1,a.Seq2
@@ -62,13 +62,13 @@ union all" + Environment.NewLine, dr["id"].ToString(), dr["exportid"].ToString()
 	    isnull((select not3RD.shipqty from 
 				    (
 					    select e.PoID poid,e.Seq1,e.seq2,(e.Qty+e.Foc) as shipqty
-					    from (select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail where id='{0}') c, (select distinct Poid, seq1, seq2, Qty, Foc from dbo.Export_Detail d where d.id = '{1}') e
+					    from (select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail WITH (NOLOCK) where id='{0}') c, (select distinct Poid, seq1, seq2, Qty, Foc from dbo.Export_Detail d WITH (NOLOCK) where d.id = '{1}') e
 					    where  (c.PoId = e.poid and c.seq1 = e.seq1 and c.seq2 = e.seq2)
 			    )not3RD where not3RD.poid = final.poid and not3RD.SEQ1 = final.SEQ1 and not3RD.SEQ2 = final.SEQ2)
 			    , 
 			    (select is3RD.shipqty from (
 					    select a.id poid,a.Seq1,a.seq2,(a.Qty+a.Foc) as shipqty
-					    from dbo.PO_Supp_Detail a,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail where id='{0}') c
+					    from dbo.PO_Supp_Detail a WITH (NOLOCK) ,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail WITH (NOLOCK) where id='{0}') c
 					    where (a.id = c.poid and a.seq1 = c.seq1 and a.seq2 = c.seq2)
 			    )is3RD where is3RD.poid = final.poid and is3RD.SEQ1 = final.SEQ1 and is3RD.SEQ2 = final.SEQ2)) as shipqty, 
 	    0 as accu_rcv,
@@ -77,10 +77,10 @@ union all" + Environment.NewLine, dr["id"].ToString(), dr["exportid"].ToString()
     from( 	
 	    select distinct zz.poid , zz.seq1, zz.seq2 
 	    from (
-		    select e.PoID poid, e.seq1, e.seq2 from (select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail where id='{0}') c, (select distinct Poid, seq1, seq2 from dbo.Export_Detail d where d.id = '{1}') e
+		    select e.PoID poid, e.seq1, e.seq2 from (select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail WITH (NOLOCK) where id='{0}') c, (select distinct Poid, seq1, seq2 from dbo.Export_Detail d WITH (NOLOCK) where d.id = '{1}') e
 			    where  (c.PoId = e.poid and c.seq1 = e.seq1 and c.seq2 = e.seq2)
 		    union all
-		    select a.id poid, a.seq1, a.seq2 from dbo.PO_Supp_Detail a,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail where id='{0}') c
+		    select a.id poid, a.seq1, a.seq2 from dbo.PO_Supp_Detail a WITH (NOLOCK) ,(select distinct PoId,Seq1,Seq2 from dbo.Receiving_Detail WITH (NOLOCK) where id='{0}') c
 			    where (a.id = c.poid and a.seq1 = c.seq1 and a.seq2 = c.seq2)
 	    ) zz
     )final

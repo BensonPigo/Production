@@ -50,14 +50,14 @@ select o.MDivisionID,rtrim(pd.ID) poid ,rtrim(pd.seq1) seq1,pd.seq2,pd.POUnit,pd
 	,dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
 	,x.InventoryPOID,x.InventorySeq1,x.InventorySeq2
 	,x.earliest,x.lastest,x.taipei_qty*isnull(u.RateValue,1) taipei_qty
-from dbo.PO_Supp_Detail pd 
-inner join dbo.orders o on o.id = pd.id and o.MDivisionID ='{0}'
-left join Unit_Rate u on u.UnitFrom = POUnit and u.UnitTo = StockUnit
+from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
+inner join dbo.orders o WITH (NOLOCK) on o.id = pd.id and o.MDivisionID ='{0}'
+left join Unit_Rate u WITH (NOLOCK) on u.UnitFrom = POUnit and u.UnitTo = StockUnit
 cross apply
 (
  select i.InventoryPOID,i.InventorySeq1,i.InventorySeq2,
  min(i.ConfirmDate) earliest,max(i.confirmdate) lastest,sum(iif(i.type=2,i.qty,0-i.qty)) taipei_qty 
- from dbo.Invtrans i inner join dbo.Factory f on f.id = i.FactoryID
+ from dbo.Invtrans i WITH (NOLOCK) inner join dbo.Factory f WITH (NOLOCK) on f.id = i.FactoryID
  where i.InventoryPOID = pd.StockPOID and i.InventorySeq1 = pd.StockSeq1 
 and i.PoID = pd.ID and i.InventorySeq2 = pd.StockSeq2 --and f.MDivisionID = o.MDivisionID
 and (i.type=2 or i.type=6)
@@ -66,10 +66,10 @@ group by i.InventoryPOID,i.InventorySeq1,i.InventorySeq2
 where pd.ID = @poid
 )
 select m.*,isnull(xx.accu_qty,0)accu_qty into #tmp
-from cte m left join Unit_Rate u on u.UnitFrom = POUnit and u.UnitTo = StockUnit
+from cte m left join Unit_Rate u WITH (NOLOCK) on u.UnitFrom = POUnit and u.UnitTo = StockUnit
 cross apply
 (
-		select sum(s2.Qty) as accu_qty from dbo.SubTransfer s1 inner join dbo.SubTransfer_Detail s2 on s2.Id= s1.Id 
+		select sum(s2.Qty) as accu_qty from dbo.SubTransfer s1 WITH (NOLOCK) inner join dbo.SubTransfer_Detail s2 WITH (NOLOCK) on s2.Id= s1.Id 
 			where s1.type ='B' and s1.Status ='Confirmed' and s2.ToMDivisionID = '{0}' and s2.ToStockType = 'B' 
 				and s2.ToPOID = m.poid and s2.ToSeq1 = m.seq1 and s2.ToSeq2 = m.seq2 and s1.Id !='{1}'
 
@@ -88,10 +88,10 @@ select 0 AS selected,'' as id
 ,fi.InQty - fi.OutQty + fi.AdjustQty as balanceQty
 ,0.00 as qty
 ,StockUnit
-,isnull((select inqty from dbo.FtyInventory t 
+,isnull((select inqty from dbo.FtyInventory t WITH (NOLOCK) 
 	where t.MDivisionID = #tmp.MDivisionID and t.POID = #tmp.POID and t.seq1 = #tmp.seq1 and t.seq2 = #tmp.seq2 and t.StockType = 'B' 
 	and t.Roll = fi.Roll and t.Dyelot = fi.Dyelot),0) as [accu_qty]
-,stuff((select ',' + t1.MtlLocationID from (select MtlLocationid from dbo.FtyInventory_Detail where FtyInventory_Detail.Ukey = fi.Ukey)t1 
+,stuff((select ',' + t1.MtlLocationID from (select MtlLocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where FtyInventory_Detail.Ukey = fi.Ukey)t1 
 	for xml path('')), 1, 1, '') as [Location]
 ,fi.MDivisionID ToMDivisionID
 ,rtrim(#tmp.poid) ToPOID
@@ -102,7 +102,7 @@ select 0 AS selected,'' as id
 ,'B' as [ToStockType]
 ,'' as [ToLocation]
 from #tmp  
-inner join dbo.FtyInventory fi on fi.MDivisionID = #tmp.MDivisionID and fi.POID = InventoryPOID and fi.seq1 = Inventoryseq1 and fi.seq2 = InventorySEQ2 and fi.StockType = 'I'
+inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.MDivisionID = #tmp.MDivisionID and fi.POID = InventoryPOID and fi.seq1 = Inventoryseq1 and fi.seq2 = InventorySEQ2 and fi.StockType = 'I'
 where fi.Lock = 0 
 Order by frompoid,fromseq1,fromseq2,fromdyelot,fromroll,balanceQty desc
 drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
@@ -199,7 +199,7 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 {
                     DataRow dr = grid_ftyDetail.GetDataRow(e.RowIndex);
                     dr["ToLocation"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", dr["ToStocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", dr["ToStocktype"].ToString(), Sci.Env.User.Keyword);
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = dr["ToLocation"].ToString().Split(',').Distinct().ToArray();
@@ -283,7 +283,7 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
 
             if (MyUtility.Check.Empty(sp)) return;
 
-            if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail where id ='{0}')"
+            if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}')"
                 , sp), null))
             {
                 MyUtility.Msg.WarningBox("SP# is not found!!");

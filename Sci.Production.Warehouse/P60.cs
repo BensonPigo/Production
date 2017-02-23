@@ -212,7 +212,7 @@ namespace Sci.Production.Warehouse
 
             sqlcmd = string.Format(@"Select d.OrderId,d.Refno,d.ThreadColorID,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.LocalReceiving_Detail d left join dbo.LocalInventory f
+from dbo.LocalReceiving_Detail d WITH (NOLOCK) left join dbo.LocalInventory f WITH (NOLOCK) 
 on d.mdivisionid = f.MDivisionID and d.OrderId = f.OrderID and d.Refno = f.Refno and d.ThreadColorID = f.ThreadColorID
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -342,7 +342,7 @@ insert (mdivisionid,orderid,refno,threadcolorid,inqty,unitid) values (s.mdivisio
 
             sqlcmd = string.Format(@"Select d.OrderId,d.Refno,d.ThreadColorID,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.LocalReceiving_Detail d left join dbo.LocalInventory f
+from dbo.LocalReceiving_Detail d WITH (NOLOCK) left join dbo.LocalInventory f WITH (NOLOCK) 
 on d.mdivisionid = f.MDivisionID and d.OrderId = f.OrderID and d.Refno = f.Refno and d.ThreadColorID = f.ThreadColorID
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -485,7 +485,7 @@ on LocalPO_Detail.id = s.LocalPoId and LocalPO_Detail.ukey = s.LocalPo_detailuke
 ,b.qty - b.inqty [onRoad]
 ,b.Qty poqty,b.Price
 ,dbo.getItemDesc(a.category,a.Refno) [description],b.UnitId
-from dbo.LocalReceiving_Detail a left join dbo.LocalPO_Detail b
+from dbo.LocalReceiving_Detail a WITH (NOLOCK) left join dbo.LocalPO_Detail b WITH (NOLOCK) 
 on b.id = a.LocalPoId and b.Ukey = a.LocalPo_detailukey
 Where a.id = '{0}' ", masterID);
 
@@ -539,8 +539,8 @@ Where a.id = '{0}' ", masterID);
             pars.Add(new SqlParameter("@ID", id));
             DualResult result = DBProxy.Current.Select("",
             @"select l.localsuppid + s.Abb as Supplier
-            from Localreceiving l
-            left join localsupp s on l.LocalSuppID=s.id
+            from Localreceiving l WITH (NOLOCK) 
+            left join localsupp s WITH (NOLOCK) on l.LocalSuppID=s.id
             where l.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
             string Supplier = dt.Rows[0]["Supplier"].ToString();
@@ -571,8 +571,8 @@ Where a.id = '{0}' ", masterID);
 	               ld.OnRoad,
 	               ld.qty,
 	               ld.Remark
-            from LocalReceiving_Detail ld
-            left join LocalPO_Detail lpd on ld.LocalPoId=lpd.Id and ld.LocalPo_detailukey=lpd.Ukey
+            from LocalReceiving_Detail ld WITH (NOLOCK) 
+            left join LocalPO_Detail lpd WITH (NOLOCK) on ld.LocalPoId=lpd.Id and ld.LocalPo_detailukey=lpd.Ukey
             where ld.ID= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }

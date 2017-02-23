@@ -57,11 +57,11 @@ namespace Sci.Production.Warehouse
 ,0.00 as Qty
 ,'B' StockType
 ,c.ukey as ftyinventoryukey
-,stuff((select ',' + cast(mtllocationid as varchar) from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, '') as location
+,stuff((select ',' + cast(mtllocationid as varchar) from (select mtllocationid from ftyinventory_detail WITH (NOLOCK) where ukey = c.ukey)t for xml path('')), 1, 1, '') as location
 ,c.inqty-c.outqty + c.adjustqty as balanceqty
 ,c.inqty,c.outqty, c.adjustqty 
-from dbo.PO_Supp_Detail a 
-inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
+from dbo.PO_Supp_Detail a WITH (NOLOCK) 
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid='{1}'
 and a.scirefno='{2}' and a.colorid='{3}' and a.sizespec = '{4}'
 and ltrim(a.seq1) between '01' and '99'

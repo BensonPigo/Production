@@ -66,10 +66,10 @@ namespace Sci.Production.Warehouse
 ,b.seq2,b.roll,b.dyelot,c.Refno,c.ColorID,c.SizeSpec
 ,iif(c.FabricType='F','Fabric',iif(c.FabricType='A','Accessory',c.fabrictype)) fabrictype
 ,b.Qty,c.StockUnit,dbo.getPass1(a.EditName) editname,a.Remark
-,a.WhseReasonID+'-'+ISNULL((select d.Description from whsereason d WHERE d.id = a. whsereasonid),'')
-from issue as a
-left join issue_detail b on a.id = b.id
-left join po_supp_detail c on c.id = b.poid and c.seq1 = b.seq1 and c.seq2 =b.seq2
+,a.WhseReasonID+'-'+ISNULL((select d.Description from whsereason d WITH (NOLOCK) WHERE d.id = a. whsereasonid),'')
+from issue as a WITH (NOLOCK) 
+left join issue_detail b WITH (NOLOCK) on a.id = b.id
+left join po_supp_detail c WITH (NOLOCK) on c.id = b.poid and c.seq1 = b.seq1 and c.seq2 =b.seq2
 where a.type = 'D' AND a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}'
 ", Convert.ToDateTime(issueDate1).ToString("d")
  , Convert.ToDateTime(issueDate2).ToString("d")

@@ -25,7 +25,7 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             dr = data;
-            string selectCommand1 = string.Format(@"select * from receiving_detail where id='{0}'", dr["id"].ToString());
+            string selectCommand1 = string.Format(@"select * from receiving_detail  WITH (NOLOCK) where id='{0}'", dr["id"].ToString());
 
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, out selectDataTable1);
             if (selectResult1 == false)

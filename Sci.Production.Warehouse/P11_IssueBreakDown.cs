@@ -66,9 +66,9 @@ namespace Sci.Production.Warehouse
 
             sbQtyBreakDown = new StringBuilder();
             sbQtyBreakDown.Append(string.Format(@";with Bdown as 
-(select a.ID [OrderID],a.Article,a.SizeCode,a.Qty from dbo.order_qty a
-inner join dbo.orders b on b.id = a.id
-where b.POID=(select poid from dbo.orders where id = '{0}')
+(select a.ID [OrderID],a.Article,a.SizeCode,a.Qty from dbo.order_qty a WITH (NOLOCK) 
+inner join dbo.orders b WITH (NOLOCK) on b.id = a.id
+where b.POID=(select poid from dbo.orders WITH (NOLOCK) where id = '{0}')
 )
 select * from Bdown
 pivot

@@ -55,12 +55,12 @@ namespace Sci.Production.Warehouse
 ,f.StockType 
 ,f.InQty - f.OutQty + f.AdjustQty balance
 ,0.00 as qty
-,stuff((select ',' + t.MtlLocationID from (select MtlLocationID from FtyInventory_Detail where Ukey = f.Ukey) t for xml path('')),1,1,'') as location
+,stuff((select ',' + t.MtlLocationID from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where Ukey = f.Ukey) t for xml path('')),1,1,'') as location
 ,dbo.getMtlDesc(f.PoId,f.seq1,f.seq2,2,0) [description]
 ,f.ukey ftyinventoryukey
 ,f.mdivisionid
-from dbo.FtyInventory f 
-left join PO_Supp_Detail p1 on p1.ID = f.PoId and p1.seq1 = f.SEQ1 and p1.SEQ2 = f.seq2
+from dbo.FtyInventory f WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = f.PoId and p1.seq1 = f.SEQ1 and p1.SEQ2 = f.seq2
 where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and stocktype !='O' and f.mdivisionid='{0}'", Sci.Env.User.Keyword));
                 }
                 else
@@ -71,13 +71,13 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and stocktype !='O' and 
 ,b.StockType 
 ,f.InQty - f.OutQty + f.AdjustQty balance
 ,0.00 as qty
-,stuff((select ',' + t.MtlLocationID from (select MtlLocationID from FtyInventory_Detail where Ukey = f.Ukey) t for xml path('')),1,1,'') as location
+,stuff((select ',' + t.MtlLocationID from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where Ukey = f.Ukey) t for xml path('')),1,1,'') as location
 ,dbo.getMtlDesc(b.PoId,b.seq1,b.seq2,2,0) [description]
 ,f.ukey ftyinventoryukey
 ,f.mdivisionid
-from dbo.Receiving a inner join dbo.Receiving_Detail b on a.id = b.id
-inner join dbo.FtyInventory f on f.POID = b.PoId and f.seq1 = b.seq1 and f.seq2 = b.Seq2 and f.stocktype = b.stocktype and f.MDivisionID = b.mdivisionid
-left join PO_Supp_Detail p1 on p1.ID = b.PoId and p1.seq1 = b.SEQ1 and p1.SEQ2 = b.seq2
+from dbo.Receiving a WITH (NOLOCK) inner join dbo.Receiving_Detail b WITH (NOLOCK) on a.id = b.id
+inner join dbo.FtyInventory f WITH (NOLOCK) on f.POID = b.PoId and f.seq1 = b.seq1 and f.seq2 = b.Seq2 and f.stocktype = b.stocktype and f.MDivisionID = b.mdivisionid
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = b.PoId and p1.seq1 = b.SEQ1 and p1.SEQ2 = b.seq2
 where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirmed' and a.mdivisionid='{0}' and b.StockType!='O'
 
 ", Sci.Env.User.Keyword));
@@ -293,7 +293,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
 
             if (txtSeq1.checkEmpty(showErrMsg: false))
             {
-                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from ftyinventory where poid ='{0}' and mdivisionid='{1}')"
+                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from ftyinventory WITH (NOLOCK) where poid ='{0}' and mdivisionid='{1}')"
                     , sp, Sci.Env.User.Keyword), null))
                 {
                     MyUtility.Msg.WarningBox("SP# is not found!!");
@@ -303,7 +303,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
             }
             else
             {
-                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from mdivisionpodetail where poid ='{0}' 
+                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from mdivisionpodetail WITH (NOLOCK) where poid ='{0}' 
                         and seq1 = '{1}' and seq2 = '{2}' and mdivisionid='{3}')", sp, txtSeq1.seq1, txtSeq1.seq2, Sci.Env.User.Keyword), null))
                 {
                     MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
@@ -320,7 +320,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
             string sp = textBox1.Text.TrimEnd();
             if (MyUtility.Check.Empty(sp) || txtSeq1.checkEmpty(showErrMsg: false)) return;
 
-            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail where id ='{0}' 
+            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}' 
                         and seq1 = '{1}' and seq2 = '{2}')", sp, txtSeq1.seq1, txtSeq1.seq2), null))
             {
                 MyUtility.Msg.WarningBox("SP#-Seq is not found!!");

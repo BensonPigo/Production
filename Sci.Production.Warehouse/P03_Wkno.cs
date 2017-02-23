@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             string selectCommand1 = string.Format(@"Select a.id, a.ETA, a.WhseArrival, b.qty, b.foc, a.vessel, a.ShipModeID
-                                                                                From export a, export_detail b
+                                                                                From export a WITH (NOLOCK) , export_detail b WITH (NOLOCK) 
                                                                                 Where a.id = b.id
                                                                                 And b.poid = '{0}'
                                                                                 And b.seq1 = '{1}'

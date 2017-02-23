@@ -255,7 +255,7 @@ namespace Sci.Production.Warehouse
 ,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
-,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FtyInventoryUkey) t 
+,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = a.FtyInventoryUkey) t 
 	for xml path('')), 1, 1, '') location
 ,a.QtyBefore
 ,a.QtyAfter
@@ -268,7 +268,7 @@ namespace Sci.Production.Warehouse
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 ,a.ukey
 ,a.ftyinventoryukey
-from dbo.StockTaking_detail as a left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+from dbo.StockTaking_detail as a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

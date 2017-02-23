@@ -63,12 +63,12 @@ namespace Sci.Production.Warehouse
 , c.Refno, dbo.getMtlDesc(b.poid,b.seq1,b.seq2,2,0)[description]
 ,iif(b.StockType='B','Bulk',iif(b.stocktype ='I','Inventory',b.stocktype)) stock
 ,b.QtyBefore,b.QtyAfter
-,b.ReasonId+'-'+(select Reason.Name from Reason where Reason.ReasonTypeID='Stock_Adjust' and Reason.id= b.ReasonId) reasonNm
+,b.ReasonId+'-'+(select Reason.Name from Reason WITH (NOLOCK) where Reason.ReasonTypeID='Stock_Adjust' and Reason.id= b.ReasonId) reasonNm
 ,dbo.getPass1(a.EditName) editor
 ,a.editdate
-FROM adjust a
-inner join adjust_detail b on a.id = b.id
-inner join po_supp_detail c on c.ID = b.poid and c.seq1 = b.Seq1 and c.SEQ2 = b.Seq2
+FROM adjust a WITH (NOLOCK) 
+inner join adjust_detail b WITH (NOLOCK) on a.id = b.id
+inner join po_supp_detail c WITH (NOLOCK) on c.ID = b.poid and c.seq1 = b.Seq1 and c.SEQ2 = b.Seq2
 Where a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}' and a.type = '{2}'
 ", Convert.ToDateTime(issueDate1).ToString("d")
  , Convert.ToDateTime(issueDate2).ToString("d")

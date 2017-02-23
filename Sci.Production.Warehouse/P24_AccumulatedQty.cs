@@ -30,15 +30,15 @@ namespace Sci.Production.Warehouse
 group_detail
 as
 (
-select d.FromPOID,d.fromseq1,fromseq2,sum(qty) scrap_qty from dbo.SubTransfer_Detail d where d.ID='{0}'
+select d.FromPOID,d.fromseq1,fromseq2,sum(qty) scrap_qty from dbo.SubTransfer_Detail d WITH (NOLOCK) where d.ID='{0}'
 group by d.FromPOID,d.fromseq1,fromseq2
 ),
 cte
 as
 (
 select SubTransfer_Detail.FromPOID,SubTransfer_Detail.FromSeq1,SubTransfer_Detail.FromSeq2,sum(qty) as accu_qty 
-from SubTransfer inner join SubTransfer_Detail on SubTransfer.id = SubTransfer_Detail.id
-inner join group_detail d1 
+from SubTransfer WITH (NOLOCK) inner join SubTransfer_Detail WITH (NOLOCK) on SubTransfer.id = SubTransfer_Detail.id
+inner join group_detail d1 WITH (NOLOCK) 
 on d1.FromPOID = SubTransfer_Detail.FromPOID and d1.FromSeq1 = SubTransfer_Detail.FromSeq1 and d1.FromSeq2 = SubTransfer_Detail.FromSeq2
 where SubTransfer.type='E' and SubTransfer.Status='Confirmed' and SubTransfer.id !='{0}'
 and SubTransfer_Detail.FromMDivisionID = '{1}'
@@ -51,10 +51,10 @@ select FromPOID,fromseq1,fromseq2
 ,dbo.getMtlDesc(d.FromPOID,d.FromSeq1,d.FromSeq2,2,0) description
 ,p.StockUnit
 ,(round(isnull(sum(i.Qty),0.00)*v.rate,2) - isnull((select accu_qty from cte where cte.FromPOID = d.FromPOID and cte.FromSeq1 = d.FromSeq1 and cte.FromSeq2 = d.FromSeq2),0.00) - d.scrap_qty) as balance_qty
-from group_detail d
-LEFT join dbo.po_supp_detail p on p.id = d.frompoid and p.seq1 = d.fromseq1 and p.seq2 = d.fromseq2
+from group_detail d WITH (NOLOCK) 
+LEFT join dbo.po_supp_detail p WITH (NOLOCK) on p.id = d.frompoid and p.seq1 = d.fromseq1 and p.seq2 = d.fromseq2
 LEFT join View_unitrate v on v.FROM_U = p.POUnit and v.TO_U = p.StockUnit
-INNER join (Invtrans I inner join dbo.Factory on i.FactoryID = factory.ID
+INNER join (Invtrans I WITH (NOLOCK) inner join dbo.Factory WITH (NOLOCK) on i.FactoryID = factory.ID
 )on I.InventoryPOID = d.FromPOID and i.InventorySeq1 = d.FromSeq1 and i.InventorySeq2 = d.FromSeq2 and  i.Type='5'
 where factory.MDivisionID='{1}'
 group by d.FromPOID,d.fromseq1,d.fromseq2,v.rate,p.StockUnit,d.scrap_qty", dr["id"], Sci.Env.User.Keyword));

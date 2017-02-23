@@ -61,7 +61,7 @@ namespace Sci.Production.Warehouse
             sqlcmd.Append(@"with cte 
 as
 (Select a.id, frompoid, fromseq1,FromSeq2 ,FromStockType,sum(qty) qty, issuedate, estbackdate, backdate
-from borrowback a inner join borrowback_detail b on b.id = a.id 
+from borrowback a WITH (NOLOCK) inner join borrowback_detail b WITH (NOLOCK) on b.id = a.id 
 Where a.type='A'
 and a.Status = 'Confirmed'");
             if (!MyUtility.Check.Empty(dateRange_ReturnDate.Value1))
@@ -97,10 +97,10 @@ Group by a.id, frompoid, FromSeq1,FromSeq2
 select cte.id,cte.FromPOID,cte.FromSeq1,cte.FromSeq2
 ,case cte.FromStockType when 'B' then 'Bulk' when 'I' then 'Inventory' else  cte.FromStockType end as stocktype
 , cte.qty 
-,isnull((select sum(qty) from BorrowBack x inner join BorrowBack_Detail y on y.id = x.id 
+,isnull((select sum(qty) from BorrowBack x WITH (NOLOCK) inner join BorrowBack_Detail y WITH (NOLOCK) on y.id = x.id 
 where x.mdivisionid = '{0}' and x.Status = 'Confirmed' and x.type='B' and y.ToPOID = cte.FromPOID and y.ToSeq1 = cte.FromSeq1
 and y.ToSeq2 = cte.FromSeq2 and y.ToStockType = cte.FromStockType),0.00) as backQty
-, cte.qty - isnull((select sum(qty) from BorrowBack x inner join BorrowBack_Detail y on y.id = x.id 
+, cte.qty - isnull((select sum(qty) from BorrowBack x WITH (NOLOCK) inner join BorrowBack_Detail y WITH (NOLOCK) on y.id = x.id 
 where x.mdivisionid = '{0}' and x.Status = 'Confirmed' and x.type='B' and y.ToPOID = cte.FromPOID and y.ToSeq1 = cte.FromSeq1
 and y.ToSeq2 = cte.FromSeq2 and y.ToStockType = cte.FromStockType),0.00) as balance
 ,cte.IssueDate

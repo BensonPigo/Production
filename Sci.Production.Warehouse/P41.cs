@@ -102,11 +102,11 @@ namespace Sci.Production.Warehouse
             string sqlcmd
                 = string.Format(@"select c.mdivisionid,c.POID,concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) as seq,a.EachConsApv
 ,(SELECT MAX(FinalETA) FROM 
-	(SELECT PO_SUPP_DETAIL.FinalETA FROM PO_Supp_Detail 
+	(SELECT PO_SUPP_DETAIL.FinalETA FROM PO_Supp_Detail WITH (NOLOCK) 
 		WHERE PO_Supp_Detail.ID = B.ID 
 		AND PO_Supp_Detail.SCIRefno = B.SCIRefno AND PO_Supp_Detail.ColorID = b.ColorID 
 	UNION ALL
-	SELECT B1.FinalETA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
+	SELECT B1.FinalETA FROM PO_Supp_Detail a1 WITH (NOLOCK) , PO_Supp_Detail b1 WITH (NOLOCK) 
 		WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
 		AND a1.StockPOID = b1.ID and a1.StockSeq1 = b1.SEQ1 and a1.StockSeq2 = b1.SEQ2
 	) tmp) as ETA
@@ -114,19 +114,19 @@ namespace Sci.Production.Warehouse
     ,b.Special
     ,b.SizeSpec
 	,round(cast(b.Qty as float)
-        * (iif(b.POUnit=b.StockUnit,1,(select unit_rate.rate from unit_rate where Unit_Rate.UnitFrom = b.POUnit and Unit_Rate.UnitTo = b.StockUnit)))
-		,(select unit.Round from unit where id = b.StockUnit)) as qty
+        * (iif(b.POUnit=b.StockUnit,1,(select unit_rate.rate from unit_rate WITH (NOLOCK) where Unit_Rate.UnitFrom = b.POUnit and Unit_Rate.UnitTo = b.StockUnit)))
+		,(select unit.Round from unit WITH (NOLOCK) where id = b.StockUnit)) as qty
     ,min(a.SciDelivery) SCIdlv
     ,min(a.BuyerDelivery) BuyerDlv
     ,B.Refno
     ,a.BrandID
-    ,(select color.Name from color where color.id = b.ColorID and color.BrandId = a.brandid ) as color
+    ,(select color.Name from color WITH (NOLOCK) where color.id = b.ColorID and color.BrandId = a.brandid ) as color
 	,b.stockunit	
     ,B.SEQ1
     ,B.SEQ2
     ,c.TapeInline,c.TapeOffline			
-from dbo.orders a inner join dbo.po_supp_detail b on a.poid = b.id
-inner join dbo.cuttingtape_detail c on c.mdivisionid = '{0}' and c.poid = b.id and c.seq1 = b.seq1 and c.seq2 = b.seq2
+from dbo.orders a WITH (NOLOCK) inner join dbo.po_supp_detail b WITH (NOLOCK) on a.poid = b.id
+inner join dbo.cuttingtape_detail c WITH (NOLOCK) on c.mdivisionid = '{0}' and c.poid = b.id and c.seq1 = b.seq1 and c.seq2 = b.seq2
 WHERE A.IsForecast = 0 AND A.Junk = 0 AND A.LocalOrder = 0
 AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", Sci.Env.User.Keyword);
             if (!(MyUtility.Check.Empty(sciDelivery_b)))

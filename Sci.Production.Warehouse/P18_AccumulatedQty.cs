@@ -77,18 +77,18 @@ namespace Sci.Production.Warehouse
 	select A.PoId,A.Seq1,A.Seq2
 	,requestqty = isnull(X.Q,0)
 	,sum(a.Qty) as Qty 
-	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit	
-	from dbo.TransferIn_Detail a 
+	,(select StockUnit from dbo.PO_Supp_Detail t WITH (NOLOCK) where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit	
+	from dbo.TransferIn_Detail a WITH (NOLOCK) 
 	outer apply(
 		select Q = (
 			Select Sum(Qty) qty
-			from Invtrans B 
+			from Invtrans B WITH (NOLOCK) 
 			where (B.Type='2' or B.Type='3')
 			and B.InventoryPoId = a.Poid
 			and B.InventorySeq1 = a.seq1
 			and B.InventorySeq2 = a.Seq2
 			and B.FactoryId = '{2}'
-			and B.TransferFactory in (select Id from Factory where MDivisionId = '{1}')
+			and B.TransferFactory in (select Id from Factory WITH (NOLOCK) where MDivisionId = '{1}')
 		)
 	)X
 	WHERE a.Id = '{0}'
@@ -98,18 +98,18 @@ namespace Sci.Production.Warehouse
 	select A.PoId,A.Seq1,A.Seq2
 	,requestqty = isnull(X.Q,0)
 	,sum(a.Qty) as Qty 
-	,stockunit = (select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) 
-	from dbo.TransferIn_Detail A 
+	,stockunit = (select StockUnit from dbo.PO_Supp_Detail t WITH (NOLOCK) where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) 
+	from dbo.TransferIn_Detail A WITH (NOLOCK) 
 	outer apply(	
 		select Q = (
 			select sum(qty) 
-			from DBO.Invtrans A1 
+			from DBO.Invtrans A1 WITH (NOLOCK) 
 			where a1.Seq70poid = a.PoId 
 			and a1.seq70seq1 = a.seq1 
 			and a1.seq70seq2 = a.seq2 
 			and a1.type = 2 
 			AND A1.FactoryID ='{2}' 
-			and A1.TransferFactory in (select Id from Factory where MDivisionId='{1}')
+			and A1.TransferFactory in (select Id from Factory WITH (NOLOCK) where MDivisionId='{1}')
 		)
 	) X
 	where a.Id = '{0}'
@@ -119,12 +119,12 @@ namespace Sci.Production.Warehouse
 	select A.PoId,A.Seq1,A.Seq2
 	,requestqty = -isnull(X.Q,0)
 	,sum(a.Qty) as Qty 
-	,(select StockUnit from dbo.PO_Supp_Detail t where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
-	from dbo.TransferIn_Detail a
+	,(select StockUnit from dbo.PO_Supp_Detail t WITH (NOLOCK) where t.id = a.Poid and t.seq1=a.seq1 and t.seq2 = a.Seq2) stockunit
+	from dbo.TransferIn_Detail a WITH (NOLOCK) 
 	outer apply(	
 		select Q = (
 			Select Sum(Qty)
-			from Invtrans B
+			from Invtrans B WITH (NOLOCK) 
 			where B.Type = '6' 
 			and B.InventoryPoId = a.PoId 
 			and B.InventorySeq1 = a.Seq1 
@@ -141,7 +141,7 @@ select z.POID,z.Seq1,z.Seq2
 * isnull((select v.Ratevalue from dbo.View_Unitrate v where v.FROM_U = 
 		(
 			select distinct unitID
-			from Invtrans B
+			from Invtrans B WITH (NOLOCK) 
 			where B.InventoryPoId = z.PoId 
 			and B.InventorySeq1 = z.Seq1 
 			and B.InventorySeq2 = z.Seq2 

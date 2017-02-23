@@ -130,10 +130,10 @@ namespace Sci.Production.Warehouse
 ,i.FactoryID,i.ETA
 ,i.MtlTypeID,i.ProjectID,i.Deadline,i.Refno,i.Ukey,I.SCIRefno,I.UnitID POUNIT,DBO.getStockUnit(b.SCIRefno,s.suppid) AS STOCKUNIT
 ,ISNULL((SELECT cast(V.RateValue as numeric) FROM dbo.View_Unitrate V WHERE V.FROM_U=I.UnitID AND V.TO_U = DBO.getStockUnit(I.SCIRefno,I.suppid)),1.0) RATE
- from inventory i 
-inner join factory f on i.FactoryID = f.ID 
-left join dbo.PO_Supp_Detail b on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
-left join dbo.PO_Supp as s on s.ID = b.ID and s.Seq1 = b.SEQ1
+ from inventory i WITH (NOLOCK) 
+inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
+left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
+left join dbo.PO_Supp as s WITH (NOLOCK) on s.ID = b.ID and s.Seq1 = b.SEQ1
 where f.Junk = 0 ");
             if (!MyUtility.Check.Empty(spno))
                 sqlcmd.Append(" and i.poid = @spno");
@@ -147,7 +147,7 @@ where f.Junk = 0 ");
                              order by InventoryUkey,ConfirmDate,ID
 			rows between unbounded preceding and current row) as running_total
 ,FactoryID,TransferFactory
-,ConfirmHandle+' : '+(select a.Name+'#'+a.ExtNo from dbo.TPEPASS1 a where a.id=ConfirmHandle) as ConfirmHandle
+,ConfirmHandle+' : '+(select a.Name+'#'+a.ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.id=ConfirmHandle) as ConfirmHandle
 ,Reasonid,Reason,InventoryUkey
 from 
 (
@@ -158,11 +158,11 @@ select i.poid,i.seq1,i.Seq2,t.id
 ,t.seq70poid+t.InventorySeq2+t.seq70seq2 as seq70
 ,t.FactoryID,TransferFactory
 ,T.ConfirmHandle
-,t.ReasonID, (select InvtransReason.ReasonEN from InvtransReason where id=t.ReasonID) Reason
+,t.ReasonID, (select InvtransReason.ReasonEN from InvtransReason WITH (NOLOCK) where id=t.ReasonID) Reason
 ,T.InventoryUkey
 ,t.TransferUkey
- from inventory i inner join factory f on i.FactoryID = f.ID 
- inner join invtrans t on t.InventoryUkey = i.Ukey
+ from inventory i WITH (NOLOCK) inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
+ inner join invtrans t WITH (NOLOCK) on t.InventoryUkey = i.Ukey
  where f.Junk = 0 ");
             if (!MyUtility.Check.Empty(spno))
                 sqlcmd.Append(" and i.poid = @spno");
@@ -179,11 +179,11 @@ select i.poid,i.seq1,i.Seq2,t.id
 ,t.seq70poid+t.InventorySeq2+t.seq70seq2 as seq70
 ,t.FactoryID,TransferFactory
 ,T.ConfirmHandle
-,t.ReasonID, (select InvtransReason.ReasonEN from InvtransReason where id=t.ReasonID) name
+,t.ReasonID, (select InvtransReason.ReasonEN from InvtransReason WITH (NOLOCK) where id=t.ReasonID) name
 ,t.TransferUkey
 ,T.InventoryUkey
- from inventory i inner join factory f on i.FactoryID = f.ID 
- inner join invtrans t on T.TransferUkey = I.Ukey and t.type=3
+ from inventory i WITH (NOLOCK) inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
+ inner join invtrans t WITH (NOLOCK) on T.TransferUkey = I.Ukey and t.type=3
  where f.Junk = 0 ");
             if (!MyUtility.Check.Empty(spno))
                 sqlcmd.Append(" and i.poid = @spno");
@@ -196,8 +196,8 @@ select i.poid,i.seq1,i.Seq2,t.id
  order by InventoryUkey,ConfirmDate,ID");
             sqlcmd.Append(Environment.NewLine);
             sqlcmd.Append(@";select f.poid as id,f.Poid,f.Seq1,f.seq2,f.Roll,f.Dyelot,f.InQty,f.OutQty,f.AdjustQty
- ,isnull(stuff((select ',' + t.MtlLocationID as MtlLocationID from (select fd.MtlLocationID from FtyInventory_Detail fd where fd.Ukey = f.Ukey)t for xml path('')), 1, 1, ''),'')  Location
- from FtyInventory f
+ ,isnull(stuff((select ',' + t.MtlLocationID as MtlLocationID from (select fd.MtlLocationID from FtyInventory_Detail fd WITH (NOLOCK) where fd.Ukey = f.Ukey)t for xml path('')), 1, 1, ''),'')  Location
+ from FtyInventory f WITH (NOLOCK) 
  where stocktype='I'");
             if (!MyUtility.Check.Empty(spno))
                 sqlcmd.Append(" and f.poid = @spno");

@@ -30,8 +30,8 @@ namespace Sci.Production.Warehouse
 ,sum(b.Qty * isnull(c.Rate,1)) as useqty 
 ,sum(a.StockQty) as stockqty
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
-from dbo.Receiving_Detail a 
-inner join po_supp_detail b on a.PoId = b.id and a.seq1 = b.seq1 and a.seq2 = b.SEQ2
+from dbo.Receiving_Detail a WITH (NOLOCK) 
+inner join po_supp_detail b WITH (NOLOCK) on a.PoId = b.id and a.seq1 = b.seq1 and a.seq2 = b.SEQ2
 left join View_Unitrate c on c.FROM_U = b.POUnit and c.TO_U = b.StockUnit
 where a.Id = '{0}'
 group by a.PoId,a.seq1,a.seq2", dr["id"].ToString()));

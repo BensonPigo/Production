@@ -280,8 +280,8 @@ namespace Sci.Production.Warehouse
                 #region -- Sql Command --
                 strSQLCmd.Append(string.Format(@"
 with returnSP as(
-	select distinct ID, POID, Seq1, Seq2 from RequestCrossM_Receive RCM
-	where RCM.Id = (select CutplanID from Issue where ID = '{0}')
+	select distinct ID, POID, Seq1, Seq2 from RequestCrossM_Receive RCM WITH (NOLOCK) 
+	where RCM.Id = (select CutplanID from Issue WITH (NOLOCK) where ID = '{0}')
 )
 select 
 ReciveCheck     = 0,
@@ -298,11 +298,11 @@ Qty				= 0.00
 --FromSeq2		= ID.Seq2,
 --ToSeq1			= RCM.Seq1,
 --ToSeq2			= RCM.Seq2
-from Issue I
-inner join Issue_Detail ID on I.Id = ID.id
-inner join returnSP RSP on I.CutplanID = RSP.id
+from Issue I WITH (NOLOCK) 
+inner join Issue_Detail ID WITH (NOLOCK) on I.Id = ID.id
+inner join returnSP RSP WITH (NOLOCK) on I.CutplanID = RSP.id
 
-where I.CutplanID = (select CutplanID from Issue where ID = '{0}')
+where I.CutplanID = (select CutplanID from Issue WITH (NOLOCK) where ID = '{0}')
 and i.MDivisionID= '{1}'
 and I.Status = 'Confirmed'
 group by ID.POID, concat(Ltrim(Rtrim(ID.Seq1)), ' ', ID.Seq2), ID.StockType, RSP.POID, concat(Ltrim(Rtrim(RSP.Seq1)), ' ', RSP.Seq2)
@@ -310,8 +310,8 @@ group by ID.POID, concat(Ltrim(Rtrim(ID.Seq1)), ' ', ID.Seq2), ID.StockType, RSP
 
                 strSQLCmd2.Append(string.Format(@"
 with returnSP as(
-	select distinct ID, POID, Seq1, Seq2 from RequestCrossM_Receive RCM
-	where RCM.Id = (select CutplanID from Issue where ID = '{0}')
+	select distinct ID, POID, Seq1, Seq2 from RequestCrossM_Receive RCM WITH (NOLOCK) 
+	where RCM.Id = (select CutplanID from Issue WITH (NOLOCK) where ID = '{0}')
 ),grid1 as (
     select 
     BorrowingSP		= ID.POID,
@@ -330,11 +330,11 @@ with returnSP as(
     --FromSeq2		= ID.Seq2,
     --ToSeq1			= RCM.Seq1,
     --ToSeq2			= RCM.Seq2
-    from Issue I
-    inner join Issue_Detail ID on I.Id = ID.id
-    inner join returnSP RSP on I.CutplanID = RSP.id
+    from Issue I WITH (NOLOCK) 
+    inner join Issue_Detail ID WITH (NOLOCK) on I.Id = ID.id
+    inner join returnSP RSP WITH (NOLOCK) on I.CutplanID = RSP.id
 
-    where I.CutplanID = (select CutplanID from Issue where ID = '{0}')
+    where I.CutplanID = (select CutplanID from Issue WITH (NOLOCK) where ID = '{0}')
     and i.MDivisionID= '{1}'
     and I.Status = 'Confirmed'
     group by ID.POID, concat(Ltrim(Rtrim(ID.Seq1)), ' ', ID.Seq2), ID.StockType, RSP.POID, concat(Ltrim(Rtrim(RSP.Seq1)), ' ', RSP.Seq2), ID.Seq1, ID.Seq2, RSP.Seq1, RSP.Seq2
@@ -350,8 +350,8 @@ grid2 as(
 	AccuDiffReciveQty	= ID.Qty,
 	ReturnSeq1		    = ID.Seq1,
 	ReturnSeq2		    = ID.Seq2
-	from Issue I 
-	inner join Issue_Detail ID on I.Id = ID.Id
+	from Issue I  WITH (NOLOCK) 
+	inner join Issue_Detail ID WITH (NOLOCK) on I.Id = ID.Id
 	where I.Id = '{0}' and I.Status = 'Confirmed'
 )
 select 
@@ -360,7 +360,7 @@ select
 	g1.BorrowingSP,
 	g1.BorrowingSeq,	
 	g1.StockType,
-	stockunit       = (select stockunit from dbo.po_supp_detail where id = g2.ReturnSP and seq1 = g2.ReturnSeq1 and seq2 = g2.ReturnSeq2),
+	stockunit       = (select stockunit from dbo.po_supp_detail WITH (NOLOCK) where id = g2.ReturnSP and seq1 = g2.ReturnSeq1 and seq2 = g2.ReturnSeq2),
 	g2.ReturnSp,
 	g2.ReturnSeq,
 	g2.Roll,

@@ -87,13 +87,13 @@ namespace Sci.Production.Warehouse
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"SELECT --a.MDivisionID,
 a.factoryid,a.OrderID
-,(select styleid from dbo.orders where id = a.orderid) style
-,a.id, (select SewingCell from dbo.SewingLine where id= a.SewingLineID and FactoryID = a.FactoryID) cell
+,(select styleid from dbo.orders WITH (NOLOCK) where id = a.orderid) style
+,a.id, (select SewingCell from dbo.SewingLine WITH (NOLOCK) where id= a.SewingLineID and FactoryID = a.FactoryID) cell
 ,a.SewingLineID
 --,b.seq1,b.seq2
 ,concat(b.seq1, ' ', b.seq2) as seq
 ,c.Refno
-,(select t.MtlTypeID from dbo.fabric t where t.SCIRefno = c.SCIRefno) content
+,(select t.MtlTypeID from dbo.fabric t WITH (NOLOCK) where t.SCIRefno = c.SCIRefno) content
 ,dbo.getMtlDesc(c.id,c.seq1,c.seq2,2,0) [description]
 ,c.SizeSpec
 ,c.ColorID
@@ -110,9 +110,9 @@ a.factoryid,a.OrderID
 ,a.ApvDate
 ,iif(a.Status ='Received',a.EditDate,null) servedDate
 ,dbo.getPass1(a.ApplyName) handle
-FROM Lack a
-inner join Lack_detail b on a.id = b.id
-inner join po_supp_detail c on c.ID = a.poid and c.seq1 = B.Seq1 AND C.SEQ2 = B.Seq2
+FROM Lack a WITH (NOLOCK) 
+inner join Lack_detail b WITH (NOLOCK) on a.id = b.id
+inner join po_supp_detail c WITH (NOLOCK) on c.ID = a.poid and c.seq1 = B.Seq1 AND C.SEQ2 = B.Seq2
 where (a.Status ='Received' or a.Status = 'Confirmed') "));
 
             #region --- 條件組合  ---

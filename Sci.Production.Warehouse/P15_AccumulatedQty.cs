@@ -30,9 +30,9 @@ namespace Sci.Production.Warehouse
 ,b.RequestQty
 ,sum(c.Qty) as Qty
 ,dbo.getMtlDesc(a.poid,b.seq1,b.seq2,2,0) as [Description]
-from dbo.lack a inner join 
-dbo.Lack_Detail b on a.ID = b.ID
-left join dbo.IssueLack_Detail c on a.POID = c.Poid and b.Seq1 = c.seq1 and b.seq2 = c.Seq2
+from dbo.lack a WITH (NOLOCK) inner join 
+dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
+left join dbo.IssueLack_Detail c WITH (NOLOCK) on a.POID = c.Poid and b.Seq1 = c.seq1 and b.seq2 = c.Seq2
 where a.Id = '{0}' and c.id = '{1}'
 GROUP BY A.PoId,b.Seq1,b.Seq2,b.RequestQty", dr["requestid"], dr["id"]));
 

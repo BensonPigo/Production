@@ -47,7 +47,7 @@ declare @Fabric varchar(30) = case when '{1}' = 'A' then 'Accessory' when '{1}' 
 SELECT TOP 30 (case when L.Type = 'L' then @Fabric + '-Lacking' 
 					when L.Type = 'R' then @Fabric + '-Replacement' end) as ctype
 , L.issuedate, L.ID 
-FROM LACK  L 
+FROM LACK  L WITH (NOLOCK) 
 WHERE L.Status = 'Confirmed' and (L.apvname != '' OR L.ApvName is NOT null) AND (L.IssueLackId = '' OR L.IssueLackId is null) AND factoryid = '{0}' and L.FabricType = '{1}'
 ORDER BY issuedate desc,id asc;", Sci.Env.User.Keyword, FabricType);
             DataTable selectDataTable1;

@@ -50,8 +50,8 @@ namespace Sci.Production.Warehouse
                 //建立表頭
                 string headSql = string.Format(@"select 
 SizeSpec, Refno, ColorID,dbo.getmtldesc(id,seq1,seq2,2,0) as [Description]
-from PO_Supp_Detail 
-where id = (SELECT distinct poid FROM Orders where poid='{0}' and MDivisionID='{3}') 
+from PO_Supp_Detail WITH (NOLOCK) 
+where id = (SELECT distinct poid FROM Orders WITH (NOLOCK) where poid='{0}' and MDivisionID='{3}') 
 and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
 
                 // 建立可以符合回傳的Cursor
@@ -80,12 +80,12 @@ and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
                     ,b.seq1 toseq1
                     ,b.seq2 toseq2
                     ,a.ColorID,a.Refno,a.SizeSpec,a.Remark
-                    from dbo.PO_Supp_Detail a 
-                    left join dbo.po_supp_detail b on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec 
+                    from dbo.PO_Supp_Detail a WITH (NOLOCK) 
+                    left join dbo.po_supp_detail b WITH (NOLOCK) on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec 
                         and b.ColorID = a.ColorID and b.BrandId = a.BrandId
-                    inner join [dbo].[Fabric] ff on a.SCIRefno= ff.SCIRefno
-                    inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
-                    inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
+                    inner join [dbo].[Fabric] ff WITH (NOLOCK) on a.SCIRefno= ff.SCIRefno
+                    inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
+                    inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
                     inner join View_unitrate v on v.FROM_U = a.POUnit
 	                    and v.TO_U = (
 	                    iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
@@ -95,8 +95,8 @@ and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
 				                    ff.UsageUnit , 
 				                    uu.ExtensionUnit), 
 			                    ff.UsageUnit)))--b.StockUnit
-                    Where a.id = (SELECT distinct poid FROM Orders where poid='{0}' and MDivisionID='{5}')
-                    and b.id = (SELECT distinct poid FROM Orders where poid='{1}' 
+                    Where a.id = (SELECT distinct poid FROM Orders WITH (NOLOCK) where poid='{0}' and MDivisionID='{5}')
+                    and b.id = (SELECT distinct poid FROM Orders WITH (NOLOCK) where poid='{1}' 
                     and MDivisionID='{4}') and b.seq1 = '{2}' and b.seq2='{3}'"
                 , fromSP, sp, seq1, seq2, Sci.Env.User.Keyword, dr_master["mdivisionid"])); // 
 

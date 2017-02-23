@@ -206,7 +206,7 @@ namespace Sci.Production.Warehouse
                     string sqlcmd = "";
                     IList<DataRow> x;
 
-                    sqlcmd = @"select id, Name from Reason where ReasonTypeID='Stock_Adjust' AND junk = 0";
+                    sqlcmd = @"select id, Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND junk = 0";
                     DualResult result2 =DBProxy.Current.Select(null, sqlcmd, out poitems);
                     if (!result2)
                     {
@@ -241,7 +241,7 @@ namespace Sci.Production.Warehouse
                     }
                     else
                     {
-                        if (!MyUtility.Check.Seek(string.Format(@"select id, Name from Reason where id = '{0}' 
+                        if (!MyUtility.Check.Seek(string.Format(@"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
 and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
                         {
                             MyUtility.Msg.WarningBox("Data not found!", "Reason ID");
@@ -297,7 +297,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,isnull(d.QtyAfter,0.00) - isnull(d.QtyBefore,0.00) qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Adjust_Detail d inner join FtyInventory f
+from dbo.Adjust_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -325,7 +325,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,isnull(d.QtyAfter,0.00) - isnull(d.QtyBefore,0.00) qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Adjust_Detail d left join FtyInventory f
+from dbo.Adjust_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.QtyAfter,0) - isnull(d.QtyBefore,0)) < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -453,7 +453,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,isnull(d.QtyAfter,0.00) - isnull(d.QtyBefore,0.00) qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Adjust_Detail d inner join FtyInventory f
+from dbo.Adjust_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -481,7 +481,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,isnull(d.QtyAfter,0.00) - isnull(d.QtyBefore,0.00) qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Adjust_Detail d left join FtyInventory f
+from dbo.Adjust_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.QtyAfter,0.00) - isnull(d.QtyBefore,0.00)) < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -599,14 +599,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
 ,a.QtyBefore
 ,isnull(a.QtyAfter,0.00) - isnull(a.QtyBefore,0.00) adjustqty
 ,a.ReasonId
-,(select Name from Reason where ReasonTypeID='Stock_Adjust' AND ID= A.ReasonId) reason_nm
+,(select Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND ID= A.ReasonId) reason_nm
 ,a.StockType
 ,a.ukey
 ,a.ftyinventoryukey
 ,stuff((select ',' + mtllocationid from 
-	(select mtllocationid from dbo.ftyinventory_detail fd where ukey= a.ftyinventoryukey)t for xml path('')), 1, 1, '') location
-from dbo.Adjust_Detail a 
-left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+	(select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where ukey= a.ftyinventoryukey)t for xml path('')), 1, 1, '') location
+from dbo.Adjust_Detail a WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

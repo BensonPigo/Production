@@ -116,8 +116,8 @@ namespace Sci.Production.Warehouse
             DualResult result1 = DBProxy.Current.Select("",
             @"select    
             b.name 
-            from dbo.Borrowback  a 
-            inner join dbo.mdivision  b 
+            from dbo.Borrowback  a WITH (NOLOCK) 
+            inner join dbo.mdivision  b WITH (NOLOCK) 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dt1);
@@ -154,8 +154,8 @@ namespace Sci.Production.Warehouse
 			        ,dbo.Getlocation(t.FromFtyInventoryUkey) [Location]
 			        ,p.StockUnit,t.fromroll,t.fromdyelot
                     ,t.Qty,[Total]=sum(t.Qty) OVER (PARTITION BY t.frompoid ,t.FromSeq1,t.FromSeq2 )           
-             from dbo.Borrowback_detail t 
-             left join dbo.PO_Supp_Detail p 
+             from dbo.Borrowback_detail t WITH (NOLOCK) 
+             left join dbo.PO_Supp_Detail p WITH (NOLOCK) 
              on 
              p.id= t.FromPOID and p.SEQ1 = t.FromSeq1 and p.seq2 = t.FromSeq2 
              where t.id= @ID";
@@ -302,7 +302,7 @@ namespace Sci.Production.Warehouse
             label25.Text = CurrentMaintain["status"].ToString();
 
             #endregion Status Label
-            string tmp = MyUtility.GetValue.Lookup(string.Format("select estbackdate from borrowback where id='{0}'", CurrentMaintain["borrowid"]));
+            string tmp = MyUtility.GetValue.Lookup(string.Format("select estbackdate from borrowback WITH (NOLOCK) where id='{0}'", CurrentMaintain["borrowid"]));
             dateBox2.Value = null;
             if (!MyUtility.Check.Empty(tmp)) dateBox2.Value =DateTime.Parse(tmp);
         }
@@ -367,7 +367,7 @@ namespace Sci.Production.Warehouse
             DualResult result, result2;
             DataTable datacheck;
 
-            string backdate = MyUtility.GetValue.Lookup(string.Format(@"select [backdate] from dbo.borrowback where id='{0}' and type='A' and mdivisionid='{1}'"
+            string backdate = MyUtility.GetValue.Lookup(string.Format(@"select [backdate] from dbo.borrowback WITH (NOLOCK) where id='{0}' and type='A' and mdivisionid='{1}'"
                 , CurrentMaintain["borrowid"], Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(backdate))
             {
@@ -378,7 +378,7 @@ namespace Sci.Production.Warehouse
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.BorrowBack_Detail d inner join FtyInventory f
+from dbo.BorrowBack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.FromMDivisionID = f.MDivisionID and d.FromPOID = f.POID  AND D.FromStockType = F.StockType
 and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -406,7 +406,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.BorrowBack_Detail d left join FtyInventory f
+from dbo.BorrowBack_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.FromMDivisionID = f.MDivisionID and d.FromPOID = f.POID  AND D.FromStockType = F.StockType
 and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -435,7 +435,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             sqlcmd = string.Format(@"Select d.ToPoid,d.ToSeq1,d.toseq2,d.ToRoll,d.ToDyelot,d.Qty
 ,f.InQty
-from dbo.BorrowBack_Detail d inner join FtyInventory f
+from dbo.BorrowBack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.ToMdivisionid = f.mdivisionid
 and d.ToPoid = f.PoId
 and d.ToSeq1 = f.Seq1
@@ -573,7 +573,7 @@ with acc
 as
 (
 select bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2,sum(bd1.qty) qty
-from dbo.BorrowBack b1 inner join dbo.BorrowBack_Detail bd1 on b1.id = bd1.id 
+from dbo.BorrowBack b1 WITH (NOLOCK) inner join dbo.BorrowBack_Detail bd1 WITH (NOLOCK) on b1.id = bd1.id 
 where b1.BorrowId='{1}' and b1.Status = 'Confirmed'
 group by bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2
 )
@@ -581,8 +581,8 @@ group by bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2
 as
 (
 select bd.FromPoId,bd.FromSeq1,bd.FromSeq2,sum(bd.Qty) borrowedqty
-from dbo.BorrowBack_Detail bd 
-left join PO_Supp_Detail p on p.id = bd.FromPoId and p.SEQ1 = bd.FromSeq1 and p.SEQ2 = bd.FromSeq2
+from dbo.BorrowBack_Detail bd WITH (NOLOCK) 
+left join PO_Supp_Detail p WITH (NOLOCK) on p.id = bd.FromPoId and p.SEQ1 = bd.FromSeq1 and p.SEQ2 = bd.FromSeq2
 where bd.id='{1}'
 group by bd.FromPoId,bd.FromSeq1,bd.FromSeq2
 )
@@ -694,7 +694,7 @@ end", CurrentMaintain["id"].ToString(), CurrentMaintain["borrowid"], DateTime.Pa
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.BorrowBack_Detail d inner join FtyInventory f
+from dbo.BorrowBack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.toMdivisionid = f.Mdivisionid
 and d.toPoId = f.PoId
 and d.toSeq1 = f.Seq1
@@ -726,7 +726,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.BorrowBack_Detail d left join FtyInventory f
+from dbo.BorrowBack_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.toMdivisionid = f.Mdivisionid
 and d.toPoId = f.PoId
 and d.toSeq1 = f.Seq1
@@ -864,7 +864,7 @@ with acc
 as
 (
 select bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2,sum(bd1.qty) qty
-from dbo.BorrowBack b1 inner join dbo.BorrowBack_Detail bd1 on b1.id = bd1.id 
+from dbo.BorrowBack b1 WITH (NOLOCK) inner join dbo.BorrowBack_Detail bd1 WITH (NOLOCK) on b1.id = bd1.id 
 where b1.BorrowId='{1}' and b1.Status = 'Confirmed'
 group by bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2
 )
@@ -872,8 +872,8 @@ group by bd1.ToPoid,bd1.ToSeq1,bd1.ToSeq2
 as
 (
 select bd.FromPoId,bd.FromSeq1,bd.FromSeq2,sum(bd.Qty) borrowedqty
-from dbo.BorrowBack_Detail bd 
-left join PO_Supp_Detail p on p.id = bd.FromPoId and p.SEQ1 = bd.FromSeq1 and p.SEQ2 = bd.FromSeq2
+from dbo.BorrowBack_Detail bd WITH (NOLOCK) 
+left join PO_Supp_Detail p WITH (NOLOCK) on p.id = bd.FromPoId and p.SEQ1 = bd.FromSeq1 and p.SEQ2 = bd.FromSeq2
 where bd.id='{1}'
 group by bd.FromPoId,bd.FromSeq1,bd.FromSeq2
 )
@@ -982,8 +982,8 @@ end", CurrentMaintain["id"].ToString(),CurrentMaintain["borrowid"],DateTime.Pars
 ,a.ToDyelot
 ,a.ToStocktype
 ,a.ukey
-,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail fd where ukey= a.fromftyinventoryukey)t for xml path('')), 1, 1, '') location
-from dbo.BorrowBack_detail a left join PO_Supp_Detail p1 on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where ukey= a.fromftyinventoryukey)t for xml path('')), 1, 1, '') location
+from dbo.BorrowBack_detail a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

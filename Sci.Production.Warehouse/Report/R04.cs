@@ -87,37 +87,37 @@ when '5' then 'Obsolete'
 when '6' then 'Return' end as operation
 ,a.ConfirmDate
 ,iif((a.type='2' or a.type='6') , a.seq70poid+'-'+a.seq70seq1+'-'+a.seq70seq2 ,a.InventoryPOID+'-'+a.InventorySeq1+'-'+a.InventorySeq2) bulkSP
-,(select ProjectID from dbo.orders where id = iif((a.type='2' or a.type='6') , a.seq70poid 	,a.InventoryPOID)) bulkProjectID
-,(select Category from dbo.orders where id = iif((a.type='2' or a.type='6') , a.seq70poid 	,a.InventoryPOID)) bulkCategory
-,(select eta from Inventory where ukey = a.InventoryUkey) ETA
-,(select min(cutting.CutInLine) from Cutting where id = a.InventoryPOID) cuttingInline
-,(select FactoryID from dbo.orders where id = iif((a.type='2' or a.type='6') , a.seq70poid 	,a.InventoryPOID)) bulkFactory
+,(select ProjectID from dbo.orders WITH (NOLOCK) where id = iif((a.type='2' or a.type='6') , a.seq70poid 	,a.InventoryPOID)) bulkProjectID
+,(select Category from dbo.orders WITH (NOLOCK) where id = iif((a.type='2' or a.type='6') , a.seq70poid 	,a.InventoryPOID)) bulkCategory
+,(select eta from Inventory WITH (NOLOCK) where ukey = a.InventoryUkey) ETA
+,(select min(cutting.CutInLine) from Cutting WITH (NOLOCK) where id = a.InventoryPOID) cuttingInline
+,(select FactoryID from dbo.orders WITH (NOLOCK) where id = iif((a.type='2' or a.type='6') , a.seq70poid 	,a.InventoryPOID)) bulkFactory
 ,iif((a.type='1' or a.type='4') ,e.InQty,0.00) Factory_ArrivedQty
 ,(isnull(d.NETQty,0.000) + isnull(d.LossQty,0.000))* v.RateValue productionQty
 ,case a.type
-when '1' then e.InQty - e.OutQty + e.AdjustQty - e.LInvQty + (select sum(iif(stocktype='B',outqty,0-outqty)) from dbo.FtyInventory where FtyInventory.MDivisionID = c.MDivisionID and FtyInventory.POID = a.InventoryPOID and FtyInventory.Seq1 = a.InventorySeq1 and FtyInventory.seq2 = a.InventorySeq2 )
-when '4' then e.InQty - e.OutQty + e.AdjustQty - e.LInvQty + (select sum(iif(stocktype='B',outqty,0-outqty)) from dbo.FtyInventory where FtyInventory.MDivisionID = c.MDivisionID and FtyInventory.POID = a.InventoryPOID and FtyInventory.Seq1 = a.InventorySeq1 and FtyInventory.seq2 = a.InventorySeq2 )
+when '1' then e.InQty - e.OutQty + e.AdjustQty - e.LInvQty + (select sum(iif(stocktype='B',outqty,0-outqty)) from dbo.FtyInventory WITH (NOLOCK) where FtyInventory.MDivisionID = c.MDivisionID and FtyInventory.POID = a.InventoryPOID and FtyInventory.Seq1 = a.InventorySeq1 and FtyInventory.seq2 = a.InventorySeq2 )
+when '4' then e.InQty - e.OutQty + e.AdjustQty - e.LInvQty + (select sum(iif(stocktype='B',outqty,0-outqty)) from dbo.FtyInventory WITH (NOLOCK) where FtyInventory.MDivisionID = c.MDivisionID and FtyInventory.POID = a.InventoryPOID and FtyInventory.Seq1 = a.InventorySeq1 and FtyInventory.seq2 = a.InventorySeq2 )
 when '6' then e.InQty - e.OutQty + e.AdjustQty - e.LInvQty
 else 0.00
 end bulkBalance
 ,a.InventoryPOID+'-'+a.InventorySeq1+'-'+a.InventorySeq2 InventorySpSeq
-,(select ProjectID from dbo.orders where id = a.InventoryPOID) InventoryProjectID
-,(select FactoryID from dbo.orders where id = a.InventoryPOID) InventoryFactoryID
+,(select ProjectID from dbo.orders WITH (NOLOCK) where id = a.InventoryPOID) InventoryProjectID
+,(select FactoryID from dbo.orders WITH (NOLOCK) where id = a.InventoryPOID) InventoryFactoryID
 ,d.InputQty * v.RateValue MR_Input
-,(select sum(inqty) from ftyinventory where ftyinventory.MDivisionID = c.MDivisionID and poid = a.InventoryPOID and seq1 = a.InventorySeq1 and seq2 = a.InventorySeq2 and StockType ='I' ) InventoryInQty
+,(select sum(inqty) from ftyinventory WITH (NOLOCK) where ftyinventory.MDivisionID = c.MDivisionID and poid = a.InventoryPOID and seq1 = a.InventorySeq1 and seq2 = a.InventorySeq2 and StockType ='I' ) InventoryInQty
 ,a.Refno
 ,b.ColorID
 ,b.SizeSpec
 ,a.Qty* v.RateValue Qty
 ,a.UnitID
-,a.ReasonID +'-'+(select ReasonEN from InvtransReason where id = a.ReasonID) reason
-,dbo.getTPEPass1((select PoHandle from Inventory where Ukey = a.InventoryUkey)) handle
-from dbo.invtrans a
-inner join InventoryRefno b on b.id = a.InventoryRefnoId
-inner join Factory c on c.id = a.FactoryID
-inner join PO_Supp_Detail d on d.ID = a.InventoryPOID and d.SEQ1 = a.InventorySeq1 and d.seq2 =  a.InventorySeq2
+,a.ReasonID +'-'+(select ReasonEN from InvtransReason WITH (NOLOCK) where id = a.ReasonID) reason
+,dbo.getTPEPass1((select PoHandle from Inventory WITH (NOLOCK) where Ukey = a.InventoryUkey)) handle
+from dbo.invtrans a WITH (NOLOCK) 
+inner join InventoryRefno b WITH (NOLOCK) on b.id = a.InventoryRefnoId
+inner join Factory c WITH (NOLOCK) on c.id = a.FactoryID
+inner join PO_Supp_Detail d WITH (NOLOCK) on d.ID = a.InventoryPOID and d.SEQ1 = a.InventorySeq1 and d.seq2 =  a.InventorySeq2
 inner join dbo.View_Unitrate v on v.FROM_U = d.POUnit and v.TO_U = d.StockUnit
-left join MDivisionPoDetail e on e.MDivisionID = c.MDivisionID and e.POID = A.InventoryPOID AND E.SEQ1 = A.InventorySeq1 AND E.Seq2 = A.InventorySeq2
+left join MDivisionPoDetail e WITH (NOLOCK) on e.MDivisionID = c.MDivisionID and e.POID = A.InventoryPOID AND E.SEQ1 = A.InventorySeq1 AND E.Seq2 = A.InventorySeq2
 where a.ConfirmDate between '{0} 00:00:00.000' and '{1} 23:59:59.999'"
 , Convert.ToDateTime(cfmdate1).ToString("d")
  , Convert.ToDateTime(cfmdate2).ToString("d")

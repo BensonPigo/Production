@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             string selectCommand1 = string.Format(@"Select roll, dyelot, (inqty - OutQty + adjustqty) as qty
-From ftyinventory
+From ftyinventory WITH (NOLOCK) 
 Where poid = '{0}'
 And Seq1 = '{1}'
 And Seq2 = '{2}'

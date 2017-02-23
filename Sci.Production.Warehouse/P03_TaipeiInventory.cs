@@ -44,8 +44,8 @@ SELECT invtrans.ID,Type,case Type
                                                                         , case type when '3' then TransferFactory else FactoryID end as factoryid, invtransreason.ReasonEN
                                                                         ,case type when '3' then 2 else 1 end AS SEQ
                                                                         ,invtrans.remark
-                                                                        FROM InvTrans left join invtransReason on invtrans.reasonid = invtransreason.id
-																		INNER JOIN TPEPASS1 ON Invtrans.ConfirmHandle = TPEPASS1.ID
+                                                                        FROM InvTrans WITH (NOLOCK) left join invtransReason WITH (NOLOCK) on invtrans.reasonid = invtransreason.id
+																		INNER JOIN TPEPASS1 WITH (NOLOCK) ON Invtrans.ConfirmHandle = TPEPASS1.ID
                                                                         WHERE Invtrans.InventoryPOID ='{0}'
                                                                         and InventorySeq1 = '{1}'
                                                                         and InventorySeq2 = '{2}' 
@@ -63,8 +63,8 @@ SELECT invtrans.ID,Type,case Type
                                                                         , case type when '3' then TransferFactory else FactoryID end as factoryid, invtransreason.ReasonEN
                                                                         ,case type when '3' then 2 else 1 end AS SEQ
                                                                         ,invtrans.remark
-                                                                        FROM InvTrans left join invtransReason on invtrans.reasonid = invtransreason.id
-																		INNER JOIN TPEPASS1 ON Invtrans.ConfirmHandle = TPEPASS1.ID
+                                                                        FROM InvTrans WITH (NOLOCK) left join invtransReason WITH (NOLOCK) on invtrans.reasonid = invtransreason.id
+																		INNER JOIN TPEPASS1 WITH (NOLOCK) ON Invtrans.ConfirmHandle = TPEPASS1.ID
                                                                         WHERE Invtrans.InventoryPOID ='{0}'
                                                                         and InventorySeq1 = '{1}'
                                                                         and InventorySeq2 = '{2}' 
@@ -82,8 +82,8 @@ SELECT invtrans.ID,Type,case Type
 --                                                                        , invtransreason.ReasonEN
 --                                                                        ,case type when '3' then 1 else 2 end AS SEQ
 --                                                                        ,invtrans.remark
---                                                                        FROM InvTrans left join invtransReason on invtrans.reasonid = invtransreason.id
---																		INNER JOIN TPEPASS1 ON Invtrans.ConfirmHandle = TPEPASS1.ID
+--                                                                        FROM InvTrans WITH (NOLOCK) left join invtransReason WITH (NOLOCK) on invtrans.reasonid = invtransreason.id
+--																		INNER JOIN TPEPASS1 WITH (NOLOCK) ON Invtrans.ConfirmHandle = TPEPASS1.ID
 --                                                                        WHERE Invtrans.InventoryPOID ='{0}'
 --                                                                        and InventorySeq1 = '{1}'
 --                                                                        and InventorySeq2 = '{2}'

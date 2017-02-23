@@ -36,11 +36,11 @@ namespace Sci.Production.Warehouse
 			,S.QtyAfter AS Actualqty ,S.QtyBefore - S.QtyAfter AS Variance
 			,[Total1]=sum(S.QtyBefore) OVER (PARTITION BY S.POID ,S.SEQ1,S.SEQ2 )   
 			,[Total2]=sum(S.QtyAfter) OVER (PARTITION BY S.POID ,S.SEQ1,S.SEQ2 )   			
-            from dbo.Stocktaking_detail S
-            LEFT join dbo.PO_Supp_Detail P 
+            from dbo.Stocktaking_detail S WITH (NOLOCK) 
+            LEFT join dbo.PO_Supp_Detail P WITH (NOLOCK) 
             on 
             P.ID = S.POID and  P.SEQ1 = S.Seq1 and P.seq2 = S.Seq2 
-		    LEFT JOIN DBO.Stocktaking T  ON T.ID = S.Id  WHERE S.Id = @ID", pars, out dt); ;
+		    LEFT JOIN DBO.Stocktaking T  WITH (NOLOCK) ON T.ID = S.Id  WHERE S.Id = @ID", pars, out dt); ;
               
             string StockType;
              StockType = dt.Rows.Count ==0  ? "" :  dt.Rows[0]["stocktype"].ToString();

@@ -89,12 +89,12 @@ namespace Sci.Production.Warehouse
                 if (MyUtility.Check.Empty(location1)) // Location empty
                 {
                     sqlcmd.Append(@"select distinct 
-Factory		= (select orders.Factoryid from orders where orders.id = a.poid) ,
+Factory		= (select orders.Factoryid from orders WITH (NOLOCK) where orders.id = a.poid) ,
 sp			= a.Poid,
 seq1		= a.seq1,
 seq2		= a.seq2,
 Refno		= p.Refno,
-location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, ''),
+location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
 width		= p.Width,
 color		= p.ColorID,
 size		= p.SizeSpec,
@@ -106,14 +106,14 @@ sotckType	= case a.StockType
                 when 'i' then 'Inventory'
                 when 'o' then 'obsolete'
               end,
-deadline	= (select max(Deadline) from dbo.Inventory i 
-				where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select orders.Factoryid from orders where orders.id = a.poid)),
+deadline	= (select max(Deadline) from dbo.Inventory i WITH (NOLOCK) 
+				where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select orders.Factoryid from orders WITH (NOLOCK) where orders.id = a.poid)),
 InQty		= a.InQty,
 OutQty		= a.OutQty,
 AdjustQty	= a.AdjustQty,
 Balance		= isnull(a.inqty, 0) - isnull(a.outqty, 0) + isnull(a.adjustqty, 0)
-from dbo.FtyInventory a left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
-inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
+from dbo.FtyInventory a WITH (NOLOCK) left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
+inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 where 1=1");
                     if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@"And a.Poid like '{0}%'", spno));
                     if (!txtSeq1.checkEmpty(showErrMsg: false)) sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
@@ -134,12 +134,12 @@ where 1=1");
                 else
                 {
                     sqlcmd.Append(string.Format(@"select distinct 
-Factory		= (select orders.Factoryid from orders where orders.id = a.poid) ,
+Factory		= (select orders.Factoryid from orders WITH (NOLOCK) where orders.id = a.poid) ,
 sp			= a.Poid,
 seq1		= a.seq1,
 seq2		= a.seq2,
 Refno		= p.Refno,
-location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, ''),
+location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
 width		= p.Width,
 color		= p.ColorID,
 size		= p.SizeSpec,
@@ -151,13 +151,13 @@ sotckType	= case a.StockType
                 when 'i' then 'Inventory'
                 when 'o' then 'obsolete'
               end,
-deadline	= (select max(Deadline) from dbo.Inventory i 
-				where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select FactoryID from orders where id = a.Poid)),
+deadline	= (select max(Deadline) from dbo.Inventory i WITH (NOLOCK) 
+				where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select FactoryID from orders WITH (NOLOCK) where id = a.Poid)),
 InQty		= a.InQty,
 OutQty		= a.OutQty,
 AdjustQty	= a.AdjustQty,
 Balance		= isnull(a.inqty, 0) - isnull(a.outqty, 0) + isnull(a.adjustqty, 0)
-from dbo.FtyInventory a left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
+from dbo.FtyInventory a WITH (NOLOCK) left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 where 1=1 And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'", location1, location2));
                     if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
@@ -187,7 +187,7 @@ sp			= a.Poid,
 seq1		= a.seq1,
 seq2		= a.seq2,
 Refno		= p.Refno,
-location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, ''),
+location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
 width		= p.Width,
 color		= p.ColorID,
 size		= p.SizeSpec,
@@ -199,15 +199,15 @@ sotckType	= case a.StockType
                 when 'i' then 'Inventory'
                 when 'o' then 'obsolete'
               end,
-deadline	= (select max(Deadline) from dbo.Inventory i 
+deadline	= (select max(Deadline) from dbo.Inventory i WITH (NOLOCK) 
 				where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.Factoryid),
 InQty		= a.InQty,
 OutQty		= a.OutQty,
 AdjustQty	= a.AdjustQty,
 Balance		= isnull(a.inqty, 0) - isnull(a.outqty, 0) + isnull(a.adjustqty, 0)
-from dbo.FtyInventory a left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
-inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
-inner join dbo.orders on orders.id = p.id
+from dbo.FtyInventory a WITH (NOLOCK) left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
+inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
+inner join dbo.orders WITH (NOLOCK) on orders.id = p.id
 where 1=1
 And orders.scidelivery between '{0}' and '{1}'", dateRange1.Text1, dateRange1.Text2));
                     if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
@@ -234,7 +234,7 @@ sp			= a.Poid,
 seq1		= a.seq1,
 seq2		= a.seq2,
 Refno		= p.Refno,
-location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail where ukey = a.ukey) t for xml path('')), 1, 1, ''),
+location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
 width		= p.Width,
 color		= p.ColorID,
 size		= p.SizeSpec,
@@ -246,16 +246,16 @@ sotckType	= case a.StockType
                 when 'i' then 'Inventory'
                 when 'o' then 'obsolete'
               end,
-deadline	= (select max(Deadline) from dbo.Inventory i 
+deadline	= (select max(Deadline) from dbo.Inventory i WITH (NOLOCK) 
 				where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.Factoryid),
 InQty		= a.InQty,
 OutQty		= a.OutQty,
 AdjustQty	= a.AdjustQty,
 Balance		= isnull(a.inqty, 0) - isnull(a.outqty, 0) + isnull(a.adjustqty, 0)
-from dbo.FtyInventory a 
-left join dbo.FtyInventory_Detail b on a.Ukey = b.Ukey
-inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
-inner join dbo.orders on orders.ID = p.ID
+from dbo.FtyInventory a WITH (NOLOCK) 
+left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
+inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
+inner join dbo.orders WITH (NOLOCK) on orders.ID = p.ID
 where 1=1
 And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'
 And orders.scidelivery between '{2}' and '{3}'", location1, location2, dateRange1.Text1, dateRange1.Text2));

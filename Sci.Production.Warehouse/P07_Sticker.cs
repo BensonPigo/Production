@@ -44,15 +44,15 @@ namespace Sci.Production.Warehouse
 	    ,RTRIM(dbo.Getmtldesc(r.poid, r.seq1, r.seq2,2,0)) [Description],s.colorId 
         ,dbo.getTPEPass1( p.posmr )[MRName] 
 		, p.posmr, o.Seasonid,o.BrandId,o.styleid ,rec.WhseArrival
-         from dbo.Receiving_Detail r
-         left join dbo.PO_Supp_Detail s
+         from dbo.Receiving_Detail r WITH (NOLOCK) 
+         left join dbo.PO_Supp_Detail s WITH (NOLOCK) 
          on 
          s.id=r.POID and s.SEQ1=r.Seq1 and s.SEQ2=r.seq2
-		 left join dbo.po p
+		 left join dbo.po p WITH (NOLOCK) 
 		 on  p.id = r.poid
-         left join dbo.Orders  o 
+         left join dbo.Orders  o WITH (NOLOCK) 
             on o.id = r.PoId
-         left join dbo.Receiving rec
+         left join dbo.Receiving rec WITH (NOLOCK) 
             on rec.id = @ID
                 where r.id= @ID", pars, out dtDetail);
             if (!result) { this.ShowErr(result); }

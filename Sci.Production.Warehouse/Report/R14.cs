@@ -103,12 +103,12 @@ c.StockUnit,
 iif ((b.qty + b.foc)  * v.RateValue > isnull(x.qty,0),'V','') over1,
 isnull(x.qty,0) received_qty,
 iif ((b.qty + b.foc)  * v.RateValue < isnull(x.qty,0),'V','') over2
-from dbo.export A INNER JOIN dbo.export_detail B ON B.ID = A.ID
-inner join dbo.PO_Supp_Detail c on c.ID = b.PoID and c.seq1 = b.seq1 and c.seq2 =  b.seq2 
+from dbo.export A WITH (NOLOCK) INNER JOIN dbo.export_detail B WITH (NOLOCK) ON B.ID = A.ID
+inner join dbo.PO_Supp_Detail c WITH (NOLOCK) on c.ID = b.PoID and c.seq1 = b.seq1 and c.seq2 =  b.seq2 
 inner join dbo.View_Unitrate v on v.FROM_U = c.POUnit and v.TO_U = c.StockUnit
-outer apply ( select sum(b1.StockQty) qty from dbo.Receiving a1 inner join dbo.Receiving_Detail b1 on b1.id = a1.Id
+outer apply ( select sum(b1.StockQty) qty from dbo.Receiving a1 WITH (NOLOCK) inner join dbo.Receiving_Detail b1 WITH (NOLOCK) on b1.id = a1.Id
 where a1.ExportId = a.id and b1.PoId = b.PoID and b1.seq1 = b.seq1 and b1.seq2 = b.seq2 and a1.Status = 'Confirmed') x
-inner join dbo.orders d on d.id = b.poid
+inner join dbo.orders d WITH (NOLOCK) on d.id = b.poid
 WHERE  A.Eta BETWEEN '{0}' and '{1}' and  D.Category in {2}
 ", Convert.ToDateTime(eta1).ToString("d")
  , Convert.ToDateTime(eta2).ToString("d")

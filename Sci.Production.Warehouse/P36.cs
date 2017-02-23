@@ -190,7 +190,7 @@ namespace Sci.Production.Warehouse
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["tolocation"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["tostocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["tostocktype"].ToString(), Sci.Env.User.Keyword);
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = CurrentDetailData["tolocation"].ToString().Split(',').Distinct().ToArray();
@@ -259,7 +259,7 @@ namespace Sci.Production.Warehouse
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.SubTransfer_Detail d inner join FtyInventory f
+from dbo.SubTransfer_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 --on d.fromftyinventoryukey = f.ukey
 on d.frompoid = f.POID and d.fromSeq1 = f.Seq1 and d.fromseq2 = f.seq2 and d.fromStockType = f.StockType and d.fromMDivisionID = f.MDivisionID and d.fromRoll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -287,7 +287,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.SubTransfer_Detail d left join FtyInventory f
+from dbo.SubTransfer_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 --on d.fromftyinventoryukey = f.ukey
 on d.frompoid = f.POID and d.fromSeq1 = f.Seq1 and d.fromseq2 = f.seq2 and d.fromStockType = f.StockType and d.fromMDivisionID = f.MDivisionID and d.fromRoll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -520,7 +520,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.SubTransfer_Detail d inner join FtyInventory f
+from dbo.SubTransfer_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.tomdivisionid = f.mdivisionid
 and d.toPoId = f.PoId
 and d.toSeq1 = f.Seq1
@@ -552,7 +552,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.SubTransfer_Detail d left join FtyInventory f
+from dbo.SubTransfer_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.tomdivisionid = f.mdivisionid
 and d.toPoId = f.PoId
 and d.toSeq1 = f.Seq1
@@ -767,8 +767,8 @@ a.id
 ,a.ToStockType
 ,a.ToLocation
 ,a.ukey
-from dbo.SubTransfer_Detail a 
-left join PO_Supp_Detail p1 on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 
+from dbo.SubTransfer_Detail a WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 
 and p1.SEQ2 = a.FromSeq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
@@ -830,8 +830,8 @@ Where a.id = '{0}'", masterID);
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
             @"select b.name 
-            from dbo.Subtransfer a 
-            inner join dbo.mdivision  b 
+            from dbo.Subtransfer a WITH (NOLOCK) 
+            inner join dbo.mdivision  b WITH (NOLOCK) 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dt);
@@ -862,8 +862,8 @@ Where a.id = '{0}'", masterID);
 		             ,a.Qty [QTY]
 			         ,a.ToLocation
                      ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.Fromseq2 )    
-             from dbo.Subtransfer_detail a 
-             left join dbo.PO_Supp_Detail b
+             from dbo.Subtransfer_detail a WITH (NOLOCK) 
+             left join dbo.PO_Supp_Detail b WITH (NOLOCK) 
                 on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2 and b.id=a.id
              where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }

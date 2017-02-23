@@ -263,12 +263,12 @@ namespace Sci.Production.Warehouse
                                 DataRow dr2;
                                 string sql = string.Format(@"
 select pd.fabrictype,pd.POUnit,pd.StockUnit,isnull(vu.RateValue,0)*{3} as stockqty 
-,(select o.Category from Orders o where o.id= pd.id) as category
-from dbo.PO_Supp_Detail pd 
+,(select o.Category from Orders o WITH (NOLOCK) where o.id= pd.id) as category
+from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
 inner join dbo.View_Unitrate vu on vu.FROM_U = pd.POUnit and vu.TO_U = pd.StockUnit
-inner join [dbo].[Fabric] ff on pd.SCIRefno= ff.SCIRefno
-inner join [dbo].[MtlType] mm on mm.ID = ff.MtlTypeID
-inner join [dbo].[Unit] uu on ff.UsageUnit = uu.ID
+inner join [dbo].[Fabric] ff WITH (NOLOCK) on pd.SCIRefno= ff.SCIRefno
+inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
+inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
 where pd.id='{0}' and pd.seq1 ='{1}' and pd.seq2 = '{2}'", newRow["poid"], newRow["seq1"], newRow["seq2"], newRow["shipqty"]);
 
                                 if (MyUtility.Check.Seek(sql, out dr2))
@@ -316,7 +316,7 @@ where pd.id='{0}' and pd.seq1 ='{1}' and pd.seq2 = '{2}'", newRow["poid"], newRo
                                         string[] strA = Regex.Split(newRow["location"].ToString(), ",");
                                         foreach (string i in strA.Distinct())
                                         {
-                                            if (!MyUtility.Check.Seek(string.Format(@"select * from dbo.mtllocation where stocktype='{0}' and id='{1}'", newRow["stocktype"], i)))
+                                            if (!MyUtility.Check.Seek(string.Format(@"select * from dbo.mtllocation WITH (NOLOCK) where stocktype='{0}' and id='{1}'", newRow["stocktype"], i)))
                                             {
                                                 MyUtility.Msg.WarningBox(string.Format("Location ({3}) of SP#:{0}-Seq1:{1}-Seq2:{2} in stock ({4}) is not found!!"
                                                     , newRow["poid"], newRow["seq1"], newRow["seq2"], i, newRow["stocktype"]));

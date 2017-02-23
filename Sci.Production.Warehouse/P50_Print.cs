@@ -42,7 +42,7 @@ namespace Sci.Production.Warehouse
             DataTable dt;
             DualResult result= DBProxy.Current.Select("",
             @"select Iif(Stocktaking.stocktype='B','Bulk','Inventory') as ST
-		    from dbo.Stocktaking		
+		    from dbo.Stocktaking WITH (NOLOCK) 		
             where id = @ID", pars, out dt); 
             if (!result) { return result; }
             string ST = dt.Rows[0]["ST"].ToString();
@@ -62,8 +62,8 @@ namespace Sci.Production.Warehouse
 			         ,Color =b.colorid 
 			         ,Unit=b.stockunit 		     
 		             ,[Book_Location]=dbo.Getlocation(a.FtyInventoryUkey)
-             from dbo.Stocktaking_detail a 
-             left join dbo.PO_Supp_Detail b
+             from dbo.Stocktaking_detail a WITH (NOLOCK) 
+             left join dbo.PO_Supp_Detail b WITH (NOLOCK) 
                 on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
              where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
@@ -86,8 +86,8 @@ namespace Sci.Production.Warehouse
 			         ,Variance=a.Qtyafter-a.qtybefore
 			         ,[Total1]=sum(a.qtybefore) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )
 			         ,[Total2]=sum(a.Qtyafter) OVER (PARTITION BY a.POID ,a.seq1,a.Seq2 )
-             from dbo.Stocktaking_detail a 
-             left join dbo.PO_Supp_Detail b
+             from dbo.Stocktaking_detail a WITH (NOLOCK) 
+             left join dbo.PO_Supp_Detail b WITH (NOLOCK) 
                 on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
              where a.id= @ID", pars, out da);
             if (!result) { this.ShowErr(result); }

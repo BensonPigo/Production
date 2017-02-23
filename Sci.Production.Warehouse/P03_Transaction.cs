@@ -50,7 +50,7 @@ namespace Sci.Production.Warehouse
 	            select a.IssueDate, a.id
                 ,Case type when 'A' then 'P35. Adjust Bulk Qty' when 'B' then 'P34. Adjust Stock Qty' end as name
                 ,0 as inqty,0 as outqty, sum(QtyAfter - QtyBefore) adjust, remark ,'' location,AddDate
-                from Adjust a, Adjust_Detail b 
+                from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
                 where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
@@ -68,7 +68,7 @@ namespace Sci.Production.Warehouse
             select a.IssueDate, a.id
             ,'P31. Material Borrow out' name
             ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location,AddDate
-            from BorrowBack a, BorrowBack_Detail b 
+            from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
             where type='A' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  
             and a.id = b.id and b.frommdivisionid='{3}'"
                 , dr["id"].ToString()
@@ -86,7 +86,7 @@ namespace Sci.Production.Warehouse
             union all
 	        select issuedate, a.id
             ,'P31. Material Borrow In' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location,AddDate
-            from BorrowBack a, BorrowBack_Detail b 
+            from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
             where type='A' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
             and a.id = b.id and b.tomdivisionid='{3}'"
                 , dr["id"].ToString()
@@ -104,7 +104,7 @@ namespace Sci.Production.Warehouse
 	            select a.IssueDate, a.id
             ,'P32. Return Borrowing out' name
             ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location,AddDate
-            from BorrowBack a, BorrowBack_Detail b 
+            from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b  WITH (NOLOCK) 
             where type='B' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  
             and a.id = b.id and b.frommdivisionid='{3}'"
                 , dr["id"].ToString()
@@ -122,7 +122,7 @@ namespace Sci.Production.Warehouse
             union all
 	            select issuedate, a.id
             ,'P32. Return Borrowing In' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location,AddDate
-            from BorrowBack a, BorrowBack_Detail b 
+            from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
             where type='B' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
             and a.id = b.id and b.tomdivisionid='{3}'"
                 , dr["id"].ToString()
@@ -146,7 +146,7 @@ namespace Sci.Production.Warehouse
 			            when 'F' then 'P75. Material Borrow cross M (Confirm)'
 			            when 'G' then 'P77. Material Return Back cross M (Request)'  end name
 	            ,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location,AddDate
-            from Issue a, Issue_Detail b 
+            from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
@@ -164,7 +164,7 @@ namespace Sci.Production.Warehouse
             ,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
             when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
             , 0 as inqty,sum(b.Qty) outqty ,0 as adjust, remark ,'' location,AddDate
-            from IssueLack a, IssueLack_Detail b 
+            from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  
             and a.id = b.id and b.mdivisionid='{3}' and Type='R'"
                 , dr["id"].ToString()
@@ -182,7 +182,7 @@ namespace Sci.Production.Warehouse
             select issuedate, a.id
             ,'P17. R/Mtl Return' name
             , 0 as inqty, sum(0-b.Qty) released,0 as adjust, remark,'' location,AddDate
-            from IssueReturn a, IssueReturn_Detail b 
+            from IssueReturn a WITH (NOLOCK) , IssueReturn_Detail b WITH (NOLOCK) 
             where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
@@ -200,11 +200,11 @@ namespace Sci.Production.Warehouse
             ,case type when 'A' then 'P07. Material Receiving' 
                         when 'B' then 'P08. Warehouse Shopfloor Receiving' end name
             , sum(b.StockQty) arrived,0 as ouqty,0 as adjust,'' remark ,X.Location,AddDate
-            from Receiving a, Receiving_Detail b 
+            from Receiving a WITH (NOLOCK) , Receiving_Detail b WITH (NOLOCK) 
 			outer apply(
 				select Location = (
 					select distinct concat(c.Location,'')
-					from Receiving_Detail c
+					from Receiving_Detail c WITH (NOLOCK) 
 					where c.Id = b.Id and c.Seq1 = b.Seq1 and c.Seq2 = b.Seq2
 					for xml path('')
 				)
@@ -226,7 +226,7 @@ namespace Sci.Production.Warehouse
             , a.id
             ,'P37. Return Receiving Material' name            
             , 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location,AddDate
-            from ReturnReceipt a, ReturnReceipt_Detail b 
+            from ReturnReceipt a WITH (NOLOCK) , ReturnReceipt_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
@@ -242,11 +242,11 @@ namespace Sci.Production.Warehouse
 	        select issuedate, a.id
 	        ,'P23. Transfer Inventory to Bulk' as name
 	        , 0 as inqty, sum(Qty) released,0 as adjust , '' remark ,X.Location,AddDate
-            from SubTransfer a, SubTransfer_Detail b 
+            from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
 			outer apply(
 				select Location = (
 					select distinct concat(c.toLocation,'')
-					from SubTransfer_Detail c
+					from SubTransfer_Detail c WITH (NOLOCK) 
 					where c.Id = b.Id and c.toSeq1 = b.toSeq1 and c.toSeq2 = b.toSeq2
 					for xml path('')
 				)
@@ -269,14 +269,14 @@ namespace Sci.Production.Warehouse
             , sum(Qty) arrived,0 as ouqty,0 as adjust, remark
 	        ,(Select cast(tmp.ToLocation as nvarchar)+',' 
                                     from (select b1.ToLocation 
-                                                from SubTransfer a1 
-                                                inner join SubTransfer_Detail b1 on a1.id = b1.id 
+                                                from SubTransfer a1 WITH (NOLOCK) 
+                                                inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
                                                 where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
                                                     and b1.ToPoid = b.ToPoid
                                                     and b1.ToSeq1 = b.ToSeq1
                                                     and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
                                     for XML PATH('')) as ToLocation,AddDate
-            from SubTransfer a, SubTransfer_Detail b 
+            from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and type = 'B' 
             and b.tomdivisionid='{3}'"
                 , dr["id"].ToString()
@@ -296,14 +296,14 @@ namespace Sci.Production.Warehouse
             , sum(Qty) arrived,0 as ouqty,0 as adjust, remark
 	            ,(Select cast(tmp.Location as nvarchar)+',' 
                                     from (select b1.Location 
-                                                from TransferIn a1 
-                                                inner join TransferIn_Detail b1 on a1.id = b1.id 
+                                                from TransferIn a1 WITH (NOLOCK) 
+                                                inner join TransferIn_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
                                                 where a1.status = 'Confirmed' and (b1.Location is not null or b1.Location !='')
                                                     and b1.Poid = b.Poid
                                                     and b1.Seq1 = b.Seq1
                                                     and b1.Seq2 = b.Seq2 group by b1.Location) tmp 
                                     for XML PATH('')) as Location,AddDate
-            from TransferIn a, TransferIn_Detail b 
+            from TransferIn a WITH (NOLOCK) , TransferIn_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
@@ -319,7 +319,7 @@ namespace Sci.Production.Warehouse
             union all
 	        select issuedate, a.id
             ,'P19. TransferOut' name, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location,AddDate
-            from TransferOut a, TransferOut_Detail b 
+            from TransferOut a WITH (NOLOCK) , TransferOut_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
@@ -338,15 +338,15 @@ namespace Sci.Production.Warehouse
 	            , sum(qty) as inqty, 0 as released,0 as adjust ,isnull(a.remark,'') remark 
 				,(Select cast(tmp.ToLocation as nvarchar)+',' 
                                     from (select b1.ToLocation 
-                                                from SubTransfer a1 
-                                                inner join SubTransfer_Detail b1 on a1.id = b1.id 
+                                                from SubTransfer a1 WITH (NOLOCK) 
+                                                inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
                                                 where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
                                                     and b1.ToPoid = b.ToPoid
                                                     and b1.ToSeq1 = b.ToSeq1
                                                     and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
                                     for XML PATH('')) as ToLocation
 									,AddDate
-            from SubTransfer a, SubTransfer_Detail b 
+            from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
             where type='C' and Status='Confirmed' and topoid='{0}' and toseq1 = '{1}' and toSeq2 = '{2}'  
             and a.id = b.id and b.tomdivisionid='{3}'"
                 , dr["id"].ToString()
@@ -368,11 +368,11 @@ namespace Sci.Production.Warehouse
 			            when 'D' then 'P76. Material Borrow cross M (Receive)' 
 			            when 'G' then 'P78. Material Return Back cross M (Receive)'  end name
 	            ,sum(Qty) as inqty, 0 released,0 as adjust, remark,X.location,AddDate
-            from RequestCrossM a, RequestCrossM_Receive b 
+            from RequestCrossM a WITH (NOLOCK) , RequestCrossM_Receive b WITH (NOLOCK) 
 			outer apply(
 				select Location = (
 					select distinct concat(c.Location,',')
-					from RequestCrossM_Receive c
+					from RequestCrossM_Receive c WITH (NOLOCK) 
 					where c.Id = b.Id and c.Seq1 = b.Seq1 and c.Seq2 = b.Seq2
 					for xml path('')
 				)
@@ -397,15 +397,15 @@ namespace Sci.Production.Warehouse
             , 0 as inqty, sum(Qty) released,0 as adjust ,isnull(a.remark,'') remark 
 			,(Select cast(tmp.ToLocation as nvarchar)+',' 
                                     from (select b1.ToLocation 
-                                                from SubTransfer a1 
-                                                inner join SubTransfer_Detail b1 on a1.id = b1.id 
+                                                from SubTransfer a1 WITH (NOLOCK) 
+                                                inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
                                                 where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
                                                     and b1.ToPoid = b.ToPoid
                                                     and b1.ToSeq1 = b.ToSeq1
                                                     and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
                                     for XML PATH('')) as ToLocation
 									,AddDate
-            from SubTransfer a, SubTransfer_Detail b 
+            from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
             where (type='D' or type='E') and Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}' 
             and FromSeq2 = '{2}'  and a.id = b.id and b.frommdivisionid='{3}'"
                 , dr["id"].ToString()

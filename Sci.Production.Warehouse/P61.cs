@@ -111,7 +111,7 @@ namespace Sci.Production.Warehouse
                                                 ,dbo.getItemDesc('PM1',a.scirefno) as [description]
                                                 ,a.sizespec
                                                 ,a.Qty
-                                            from dbo.Issue_Summary as a 
+                                            from dbo.Issue_Summary as a WITH (NOLOCK) 
                                             Where a.id = '{0}'", id, Sci.Env.User.Keyword);
 
             result = DBProxy.Current.Select("", sqlcmd, out dtDetail);
@@ -270,7 +270,7 @@ namespace Sci.Production.Warehouse
 
             sqlcmd = string.Format(@"Select d.poid,d.scirefno,d.sizespec,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Summary d left join localinventory f
+from dbo.Issue_Summary d WITH (NOLOCK) left join localinventory f WITH (NOLOCK) 
 on f.MDivisionID = '{1}' and f.OrderID = d.Poid and f.Refno = d.SCIRefno and f.ThreadColorID = d.sizespec
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'"
                 , CurrentMaintain["id"],CurrentMaintain["mdivisionid"]);
@@ -306,12 +306,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             sqlupd2.Append(string.Format(@"update LocalInventory 
 set OutQty = OutQty + S.Qty
-from LocalInventory l
+from LocalInventory l 
 inner join Issue_Summary s on s.Poid = l.OrderID 
 and s.SCIRefno = l.Refno 
 and s.SizeSpec = l.ThreadColorID 
 and l.MDivisionID = '{0}'
-and s.Id = '{1}';",CurrentMaintain["mdivisionid"],CurrentMaintain["id"]));
+and s.Id = '{1}';", CurrentMaintain["mdivisionid"],CurrentMaintain["id"]));
 
 
             #endregion 更新庫存數量  LocalInventory
@@ -369,7 +369,7 @@ and s.Id = '{1}';",CurrentMaintain["mdivisionid"],CurrentMaintain["id"]));
 
             sqlcmd = string.Format(@"Select d.poid,d.scirefno,d.sizespec,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Summary d left join localinventory f
+from dbo.Issue_Summary d WITH (NOLOCK) left join localinventory f WITH (NOLOCK) 
 on f.MDivisionID = '{1}' and f.OrderID = d.Poid and f.Refno = d.SCIRefno and f.ThreadColorID = d.SizeSpec
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'"
                 , CurrentMaintain["id"], CurrentMaintain["mdivisionid"]);
@@ -405,8 +405,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             sqlupd2.Append(string.Format(@"update LocalInventory 
 set OutQty = OutQty - S.Qty
-from LocalInventory l
-inner join Issue_Summary s on s.Poid = l.OrderID 
+from LocalInventory l 
+inner join Issue_Summary s  on s.Poid = l.OrderID 
 and s.SCIRefno = l.Refno 
 and s.SizeSpec = l.ThreadColorID 
 and l.MDivisionID = '{0}'
@@ -460,7 +460,7 @@ and s.Id = '{1}';", CurrentMaintain["mdivisionid"], CurrentMaintain["id"]));
 ,a.sizespec
 ,a.Qty
 ,a.ukey
-from dbo.Issue_Summary as a 
+from dbo.Issue_Summary as a WITH (NOLOCK) 
 Where a.id = '{0}'", masterID,Sci.Env.User.Keyword);
             return base.OnDetailSelectCommandPrepare(e);
         }

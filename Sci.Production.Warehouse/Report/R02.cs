@@ -80,9 +80,9 @@ namespace Sci.Production.Warehouse
             try
             {
                 string sqlcmd = string.Format(@"select a.issuedate, b.frompoid poid, b.fromseq1 seq1,b.fromseq2 seq2, sum(b.qty) qty, 
-isnull((select stockunit from po_supp_detail where id= b.FromPOID and seq1 = b.FromSeq1 and seq2 = b.FromSeq2),'') as unit
+isnull((select stockunit from po_supp_detail WITH (NOLOCK) where id= b.FromPOID and seq1 = b.FromSeq1 and seq2 = b.FromSeq2),'') as unit
 ,dbo.getmtldesc(b.FromPOID,b.FromSeq1,b.FromSeq2,2,0) as description
-from dbo.SubTransfer a inner join dbo.SubTransfer_Detail b on a.id = b.id
+from dbo.SubTransfer a WITH (NOLOCK) inner join dbo.SubTransfer_Detail b WITH (NOLOCK) on a.id = b.id
 where a.Status = 'Confirmed' and a.type='D' 
 and a.issuedate between '{0}' and '{1}'
 group by a.issuedate , b.FromPOID, b.FromSeq1,b.FromSeq2

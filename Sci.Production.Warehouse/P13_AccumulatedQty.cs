@@ -29,7 +29,7 @@ namespace Sci.Production.Warehouse
             selectCommand1.Append(string.Format(@"select A.PoId,A.Seq1,A.Seq2
 ,sum(a.Qty) as Qty
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
-from dbo.Issue_Detail a 
+from dbo.Issue_Detail a WITH (NOLOCK) 
 where a.Id = '{0}'
 GROUP BY A.PoId,A.Seq1,A.Seq2", dr["id"].ToString()));
 

@@ -30,8 +30,8 @@ namespace Sci.Production.Warehouse
 ,sum(a.Qty) as qty
 ,dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) as [Description]
 ,B.stockunit
-from dbo.SubTransfer_Detail a 
-inner join PO_Supp_Detail b on a.FromPoId = b.id and a.FromSeq1 = b.seq1 and a.FromSeq2 = b.SEQ2
+from dbo.SubTransfer_Detail a WITH (NOLOCK) 
+inner join PO_Supp_Detail b WITH (NOLOCK) on a.FromPoId = b.id and a.FromSeq1 = b.seq1 and a.FromSeq2 = b.SEQ2
 where a.Id = '{0}'
 group by a.FromPoId,a.FromSeq1,a.FromSeq2,b.stockunit", dr["id"].ToString()));
 

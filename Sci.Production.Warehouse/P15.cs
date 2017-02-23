@@ -209,9 +209,9 @@ namespace Sci.Production.Warehouse
 
             #endregion Status Label
             //Lack.ApvDate
-            if (!MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack where id = '{0}'", CurrentMaintain["requestid"]))))
+            if (!MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack WITH (NOLOCK) where id = '{0}'", CurrentMaintain["requestid"]))))
             {
-                DateTime dt = Convert.ToDateTime(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack where id = '{0}'", CurrentMaintain["requestid"])));
+                DateTime dt = Convert.ToDateTime(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack WITH (NOLOCK) where id = '{0}'", CurrentMaintain["requestid"])));
                 this.displayBox3.Text = dt.ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             }
             else
@@ -258,7 +258,7 @@ namespace Sci.Production.Warehouse
             DataTable datacheck;
             string sqlupd2_FIO = "";
             string sqlupd2_B = "";
-            string issuelackid = MyUtility.GetValue.Lookup(string.Format(@"Select issuelackid from dbo.lack where id = '{0}'", CurrentMaintain["requestid"]));
+            string issuelackid = MyUtility.GetValue.Lookup(string.Format(@"Select issuelackid from dbo.lack WITH (NOLOCK) where id = '{0}'", CurrentMaintain["requestid"]));
             if (!MyUtility.Check.Empty(issuelackid))
             {
                 MyUtility.Msg.WarningBox(string.Format("This request# ({0}) already issued by {1}.", CurrentMaintain["requestid"], issuelackid), "Can't Confirmed");
@@ -270,7 +270,7 @@ namespace Sci.Production.Warehouse
                 #region -- 檢查庫存項lock --
                 sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.IssueLack_Detail d inner join FtyInventory f
+from dbo.IssueLack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 --on d.ftyinventoryukey = f.ukey
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -297,7 +297,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
                 sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.IssueLack_Detail d left join FtyInventory f
+from dbo.IssueLack_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 --on d.ftyinventoryukey = f.ukey
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -339,7 +339,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             sqlupd4.Append(Environment.NewLine);
 
             sqlupd4.Append(string.Format(@"update dbo.Lack_Detail  set IssueQty = t.qty
-from (select seq1,seq2,sum(qty) qty from dbo.IssueLack_Detail where id='{0}' group by seq1,seq2) t
+from (select seq1,seq2,sum(qty) qty from dbo.IssueLack_Detail WITH (NOLOCK) where id='{0}' group by seq1,seq2) t
 where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_Detail.seq2 = t.Seq2", CurrentMaintain["id"], CurrentMaintain["requestid"]));
 
             #endregion
@@ -435,7 +435,7 @@ where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_
                 #region -- 檢查庫存項lock --
                 sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.IssueLack_Detail d inner join FtyInventory f
+from dbo.IssueLack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 --on d.ftyinventoryukey = f.ukey
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -462,7 +462,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
                 sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.IssueLack_Detail d left join FtyInventory f
+from dbo.IssueLack_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 --on d.ftyinventoryukey = f.ukey
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -599,11 +599,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
 ,a.Qty
 ,a.StockType
-,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FtyInventoryUkey) t 
+,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = a.FtyInventoryUkey) t 
 	for xml path('')), 1, 1, '') location
 ,a.ukey
 ,a.FtyInventoryUkey
-from dbo.IssueLack_Detail a left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+from dbo.IssueLack_Detail a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -660,7 +660,7 @@ Where a.id = '{0}'", masterID);
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
             DataRow dr;
-            if (!MyUtility.Check.Seek(string.Format(@"select [type],[apvdate],[issuelackid] from dbo.lack 
+            if (!MyUtility.Check.Seek(string.Format(@"select [type],[apvdate],[issuelackid] from dbo.lack WITH (NOLOCK) 
 where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
                 , textBox2.Text, Sci.Env.User.Keyword), out dr, null))
             {
@@ -706,8 +706,8 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
             @"select b.name 
-            from dbo.IssueLack  a 
-            inner join dbo.mdivision  b 
+            from dbo.IssueLack  a WITH (NOLOCK) 
+            inner join dbo.mdivision  b WITH (NOLOCK) 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dt);
@@ -737,12 +737,12 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
 	                ,a.Qty
                     ,[Location]=dbo.Getlocation(a.FtyInventoryUkey)
                     ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )	        
-             from dbo.IssueLack_Detail a 
-		     left join dbo.IssueLack d 
+             from dbo.IssueLack_Detail a WITH (NOLOCK) 
+		     left join dbo.IssueLack d WITH (NOLOCK) 
                  on d.id=a.ID
-             left join dbo.PO_Supp_Detail b 
+             left join dbo.PO_Supp_Detail b WITH (NOLOCK) 
                  on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
-		     left join dbo.Lack_Detail c
+		     left join dbo.Lack_Detail c WITH (NOLOCK) 
 		         on c.id=d.RequestID and c.Seq1=a.Seq1 and c.Seq2=a.Seq2
              where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }

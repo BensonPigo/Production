@@ -103,7 +103,7 @@ namespace Sci.Production.Warehouse
             {
                 sqlCmd.Append(string.Format(@";with cte as
 (
-select distinct o.mdivisionid,o.POID,o.StyleID,o.SeasonID from dbo.orders o
+select distinct o.mdivisionid,o.POID,o.StyleID,o.SeasonID from dbo.orders o WITH (NOLOCK) 
 where 1=1"));
 
                 if (!MyUtility.Check.Empty(sciDelivery1))
@@ -156,15 +156,15 @@ sp = a.id
 ,Balance = d.InQty - d.OutQty + d.AdjustQty
 ,StockUnit = b.StockUnit
  from cte 
-inner join dbo.PO_Supp a on a.id = cte.poid
-inner join dbo.PO_Supp_Detail b on b.id = a.id and b.SEQ1 = a.SEQ1
-inner join dbo.Supp c on c.id = a.SuppID
-left join dbo.MDivisionPoDetail d on d.POID = b.ID and d.seq1 = b.seq1 and d.seq2 = b.SEQ2
+inner join dbo.PO_Supp a WITH (NOLOCK) on a.id = cte.poid
+inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.id and b.SEQ1 = a.SEQ1
+inner join dbo.Supp c WITH (NOLOCK) on c.id = a.SuppID
+left join dbo.MDivisionPoDetail d WITH (NOLOCK) on d.POID = b.ID and d.seq1 = b.seq1 and d.seq2 = b.SEQ2
 where 1= 1 and c.ThirdCountry = 1"));
             }
             else
             {
-                sqlCmd.Append(string.Format(@"select --isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders where id = a.id))
+                sqlCmd.Append(string.Format(@"select --isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders WITH (NOLOCK) where id = a.id))
 sp = a.id
 ,seq = concat(b.SEQ1, b.Seq2)
 --,b.SEQ2
@@ -184,10 +184,10 @@ sp = a.id
 ,AdjustQty = d.AdjustQty
 ,Balance = d.InQty - d.OutQty + d.AdjustQty
 ,StockUnit = b.StockUnit
- from dbo.PO_Supp a
-inner join dbo.PO_Supp_Detail b on b.id = a.id and b.SEQ1 = a.SEQ1
-inner join dbo.Supp c on c.id = a.SuppID
-left join dbo.MDivisionPoDetail d on d.POID = b.ID and d.seq1 = b.seq1 and d.seq2 = b.SEQ2
+ from dbo.PO_Supp a WITH (NOLOCK) 
+inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.id and b.SEQ1 = a.SEQ1
+inner join dbo.Supp c WITH (NOLOCK) on c.id = a.SuppID
+left join dbo.MDivisionPoDetail d WITH (NOLOCK) on d.POID = b.ID and d.seq1 = b.seq1 and d.seq2 = b.SEQ2
 where 1=1 and c.ThirdCountry = 1"));
             }
 

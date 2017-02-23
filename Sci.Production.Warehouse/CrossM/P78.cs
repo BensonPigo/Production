@@ -190,7 +190,7 @@ namespace Sci.Production.Warehouse
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["location"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
@@ -229,7 +229,7 @@ namespace Sci.Production.Warehouse
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["stocktype"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
@@ -303,7 +303,7 @@ namespace Sci.Production.Warehouse
 
             #region 603: WAREHOUSE_P78 。若P77還沒 confirm，則P78 不能confirm。
             string P78_status = MyUtility.GetValue.Lookup(string.Format(@"
-select status from Issue 
+select status from Issue WITH (NOLOCK) 
 where ID='{0}'", CurrentMaintain["ReferenceID"]));
             if (P78_status.ToUpper() != "CONFIRMED")
             {
@@ -316,7 +316,7 @@ where ID='{0}'", CurrentMaintain["ReferenceID"]));
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.RequestCrossM_Receive d left join FtyInventory f
+from dbo.RequestCrossM_Receive d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.mdivisionid = f.mdivisionid
 and d.PoId = f.PoId
 and d.Seq1 = f.Seq1
@@ -529,7 +529,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.RequestCrossM_Receive d left join FtyInventory f
+from dbo.RequestCrossM_Receive d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.mdivisionid = f.mdivisionid
 and d.PoId = f.PoId
 and d.Seq1 = f.Seq1
@@ -705,8 +705,8 @@ select a.*
 ,p1.FabricType
 ,p1.stockunit
 ,dbo.getmtldesc(a.PoId,a.Seq1,a.Seq2,2,0) as [description]
-from dbo.RequestCrossM_Receive a 
-left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.Seq1 and p1.SEQ2 = a.seq2
+from dbo.RequestCrossM_Receive a  WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.Seq1 and p1.SEQ2 = a.seq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -765,8 +765,8 @@ Where a.id = '{0}'", masterID);
 	               rcr.StockType,
 	               rcr.location,
 	               [Total]=sum(rcr.Qty) OVER (PARTITION BY rcr.POID ,rcr.seq1,rcr.seq2 ) 
-            from RequestCrossM_Receive rcr
-            left join PO_Supp_Detail psd on psd.ID = rcr.PoId and psd.seq1 = rcr.Seq1 and psd.SEQ2 = rcr.seq2
+            from RequestCrossM_Receive rcr WITH (NOLOCK) 
+            left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rcr.PoId and psd.seq1 = rcr.Seq1 and psd.SEQ2 = rcr.seq2
             WHERE rcr.ID= @ID";
             DualResult res;
             res = DBProxy.Current.Select("", sqlcmd, pars, out dt);

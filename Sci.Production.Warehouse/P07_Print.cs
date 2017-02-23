@@ -53,8 +53,8 @@ namespace Sci.Production.Warehouse
             DataTable dtTitle;
             DualResult titleResult = DBProxy.Current.Select("",
            @"select m.name
-             from  dbo.Receiving r
-             left join dbo.MDivision m
+             from  dbo.Receiving r WITH (NOLOCK) 
+             left join dbo.MDivision m WITH (NOLOCK) 
              on m.id = r.MDivisionID 
              where m.id = r.MDivisionID
              and r.id = @ID", pars, out dtTitle);
@@ -81,8 +81,8 @@ namespace Sci.Production.Warehouse
 			,[SubAW]=sum(R.ActualWeight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
 			,[SubStockQty]=sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
             ,[SubVaniance]=sum(R.ActualWeight - R.Weight)OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )  			
-            from dbo.Receiving_Detail R
-            LEFT join dbo.PO_Supp_Detail p on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
+            from dbo.Receiving_Detail R WITH (NOLOCK) 
+            LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
             where R.id = @ID ";
 
             if (!MyUtility.Check.Empty(textBox1.Text))

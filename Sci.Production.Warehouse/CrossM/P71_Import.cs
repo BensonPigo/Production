@@ -50,10 +50,10 @@ select '' as id,o.MDivisionID ToMdivisionid,pd.ID topoid ,pd.seq1 toseq1,pd.seq2
 	,dbo.getMtlDesc(pd.ID,seq1,seq2,2,0) as [description]
 	,o1.MDivisionID fromMdivisionid,pd.StockPOID frompoid,pd.StockSeq1 fromseq1,pd.StockSeq2 fromseq2,concat(Ltrim(Rtrim(pd.stockseq1)), ' ', pd.stockseq2) fromseq
 	,pd.Qty*u.Rate as qty
-from dbo.PO_Supp_Detail pd 
-inner join dbo.orders o on o.id = pd.id and o.MDivisionID ='{0}'
+from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
+inner join dbo.orders o WITH (NOLOCK) on o.id = pd.id and o.MDivisionID ='{0}'
 inner join dbo.View_Unitrate u on u.FROM_U = POUnit and u.TO_U = StockUnit
-inner join dbo.Orders o1 on o1.id = pd.StockPOID and o1.MDivisionID ='{1}'
+inner join dbo.Orders o1 WITH (NOLOCK) on o1.id = pd.StockPOID and o1.MDivisionID ='{1}'
 where pd.id = @poid
 )
 select 0 as selected ,* from cte 
@@ -114,7 +114,7 @@ select 0 as selected ,* from cte
 
             if (MyUtility.Check.Empty(sp)) return;
 
-            if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail where id ='{0}')"
+            if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}')"
                 , sp), null))
             {
                 MyUtility.Msg.WarningBox("SP# is not found!!");

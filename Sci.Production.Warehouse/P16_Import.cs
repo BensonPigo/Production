@@ -52,7 +52,7 @@ namespace Sci.Production.Warehouse
             strSQLCmd.Append(string.Format(@"select rtrim(a.POID) poid,b.seq1,b.seq2,concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) as seq
 ,dbo.getMtlDesc(a.poid,b.seq1,b.seq2,2,0) as [description]
 ,b.RequestQty
-from dbo.lack a inner join dbo.Lack_Detail b on a.ID = b.ID
+from dbo.lack a WITH (NOLOCK) inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
 where a.id = '{0}';", dr_master["requestid"]));
             strSQLCmd.Append(Environment.NewLine); // 換行
             //grid2
@@ -63,14 +63,14 @@ where a.id = '{0}';", dr_master["requestid"]));
 ,0.00 as Qty
 ,'B' StockType
 ,c.ukey as ftyinventoryukey
-,isnull(stuff((select ',' + cast(MtlLocationid as varchar) from (select MtlLocationid from FtyInventory_Detail where ukey=c.Ukey) t for xml path('')), 1, 1, ''),'') as location
+,isnull(stuff((select ',' + cast(MtlLocationid as varchar) from (select MtlLocationid from FtyInventory_Detail WITH (NOLOCK) where ukey=c.Ukey) t for xml path('')), 1, 1, ''),'') as location
 ,c.inqty-c.outqty + c.adjustqty as balance
-,(select stockunit from po_supp_detail where id = c.poid and seq1 =c.seq1 and seq2 = c.seq2 ) as stockunit
+,(select stockunit from po_supp_detail WITH (NOLOCK) where id = c.poid and seq1 =c.seq1 and seq2 = c.seq2 ) as stockunit
 ,dbo.getMtlDesc(c.poid,c.seq1,c.seq2,2,0) as [description]
 ,'{1}' as mdivisionid
-from dbo.Lack_Detail a
-inner join dbo.Lack b on b.ID= a.ID
-inner join dbo.ftyinventory c on c.poid = b.POID and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
+from dbo.Lack_Detail a WITH (NOLOCK) 
+inner join dbo.Lack b WITH (NOLOCK) on b.ID= a.ID
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = b.POID and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 Where a.id = '{0}' and c.lock = 0  and c.mdivisionid='{1}' ", dr_master["requestid"],Sci.Env.User.Keyword)); // 
            //判斷LACKING
             //

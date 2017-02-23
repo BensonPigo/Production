@@ -23,7 +23,7 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             txtMdivision1.Text = Sci.Env.User.Keyword;
             MyUtility.Tool.SetupCombox(cbbFilter, 1, 1, "Actual Inventory Qty < Taipei system,Inventory In  < Taipei InputQty,");
             cbbFilter.SelectedIndex = 0;
@@ -85,7 +85,7 @@ namespace Sci.Production.Warehouse
             {
                 sqlCmd.Append(string.Format(@";with cte as 
 (
-	select poid from dbo.orders o 
+	select poid from dbo.orders o WITH (NOLOCK) 
 	where o.BuyerDelivery between '{0}' and '{1}' group by POID
 )
 select 
@@ -118,13 +118,13 @@ OutQty				= isnull(x.OutQty, 0),
 AdjustQty			= isnull(x.AdjustQty, 0),
 BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)
 from cte
-inner join Inventory a on a.POID = cte.POID 
-inner join dbo.PO_Supp_Detail b on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
-inner join MDivisionPoDetail c on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2
-inner join Factory d on d.id = a.FactoryID and d.mdivisionid = c.mdivisionid
+inner join Inventory a WITH (NOLOCK) on a.POID = cte.POID 
+inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
+inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2
+inner join Factory d WITH (NOLOCK) on d.id = a.FactoryID and d.mdivisionid = c.mdivisionid
 inner join dbo.View_Unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit 
 outer apply (select isnull(sum(m.InQty),0.00) InQty,isnull(sum(m.OutQty),0.00) OutQty,isnull(sum(m.AdjustQty),0.00) AdjustQty 
-from dbo.FtyInventory m 
+from dbo.FtyInventory m WITH (NOLOCK) 
             where m.POID = a.POID and m.seq1 = a.seq1 and m.seq2 = a.seq2 and StockType = 'I' and m.mdivisionid=c.mdivisionid) x
 where b.InputQty > 0 ", Convert.ToDateTime(buyerDelivery1).ToString("d"), Convert.ToDateTime(buyerDelivery2).ToString("d")));
             }
@@ -158,13 +158,13 @@ InQty				= isnull(x.InQty, 0),
 OutQty				= isnull(x.OutQty, 0), 
 AdjustQty			= isnull(x.AdjustQty, 0),
 BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)
-from Inventory a
-inner join dbo.PO_Supp_Detail b on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
-inner join MDivisionPoDetail c on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2 
-inner join Factory d on d.id = a.FactoryID and d.mdivisionid = c.mdivisionid
+from Inventory a WITH (NOLOCK) 
+inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
+inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2 
+inner join Factory d WITH (NOLOCK) on d.id = a.FactoryID and d.mdivisionid = c.mdivisionid
 left join dbo.View_Unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit 
 outer apply (select isnull(sum(m.InQty),0.00) InQty,isnull(sum(m.OutQty),0.00) OutQty,isnull(sum(m.AdjustQty),0.00) AdjustQty 
-from dbo.FtyInventory m 
+from dbo.FtyInventory m WITH (NOLOCK) 
             where m.POID = a.POID and m.seq1 = a.seq1 and m.seq2 = a.seq2 and StockType = 'I' and m.mdivisionid=c.mdivisionid) x
 where b.InputQty> 0"));
 

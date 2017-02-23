@@ -22,7 +22,7 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             txtMdivision1.Text = Sci.Env.User.Keyword;
 
         }
@@ -82,16 +82,16 @@ namespace Sci.Production.Warehouse
             {
                 sqlCmd.Append(string.Format(@";with cte as 
 (
-	select poid from dbo.orders o 
+	select poid from dbo.orders o WITH (NOLOCK) 
 	where o.BuyerDelivery between '{0}' and '{1}' group by POID
 )
 select rtrim(c.BLocation),a.POID,a.seq1,a.seq2, x.Refno ,x.ColorID ,c.LInvQty ,a.ETA
 ,DATEDIFF(day,a.eta,convert(date,getdate())) aging,'' remark
 from cte
-inner join Inventory a on a.POID = cte.POID 
-inner join MDivisionPoDetail c on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2
-inner join Factory d on d.id = a.FactoryID
-cross apply (select m.Refno,m.ColorID from dbo.PO_Supp_Detail m 
+inner join Inventory a WITH (NOLOCK) on a.POID = cte.POID 
+inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2
+inner join Factory d WITH (NOLOCK) on d.id = a.FactoryID
+cross apply (select m.Refno,m.ColorID from dbo.PO_Supp_Detail m WITH (NOLOCK) 
             where m.id = a.POID and m.seq1 = a.seq1 and m.seq2 = a.seq2 ) x
 where LInvQty > 0 ", Convert.ToDateTime(buyerDelivery1).ToString("d"), Convert.ToDateTime(buyerDelivery2).ToString("d")));
             }
@@ -99,10 +99,10 @@ where LInvQty > 0 ", Convert.ToDateTime(buyerDelivery1).ToString("d"), Convert.T
             {
                 sqlCmd.Append(string.Format(@"select rtrim(c.BLocation),a.POID,a.seq1,a.seq2, x.Refno ,x.ColorID ,c.LInvQty ,a.ETA
 ,DATEDIFF(day,a.eta,convert(date,getdate())) aging,'' remark
-from Inventory a
-inner join MDivisionPoDetail c on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2
-inner join Factory d on d.id = a.FactoryID
-cross apply (select d.Refno,d.ColorID from dbo.PO_Supp_Detail d where d.id = a.POID and d.seq1 = a.seq1 and d.seq2 = a.seq2 ) x
+from Inventory a WITH (NOLOCK) 
+inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2
+inner join Factory d WITH (NOLOCK) on d.id = a.FactoryID
+cross apply (select d.Refno,d.ColorID from dbo.PO_Supp_Detail d WITH (NOLOCK) where d.id = a.POID and d.seq1 = a.seq1 and d.seq2 = a.seq2 ) x
 where LInvQty > 0 "));
 
             }

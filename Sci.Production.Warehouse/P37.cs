@@ -116,8 +116,8 @@ namespace Sci.Production.Warehouse
             DualResult result1 = DBProxy.Current.Select("",
             @"select    
             b.name 
-            from dbo.ReturnReceipt  a 
-            inner join dbo.mdivision  b 
+            from dbo.ReturnReceipt  a WITH (NOLOCK) 
+            inner join dbo.mdivision  b WITH (NOLOCK) 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dt1);
@@ -133,8 +133,8 @@ namespace Sci.Production.Warehouse
             string RefundResult;
             DBProxy.Current.Select("",
           @"Select R.whsereasonid,W.Description
-            from dbo.returnReceipt R
-		    LEFT join dbo.WhseReason W 
+            from dbo.returnReceipt R WITH (NOLOCK) 
+		    LEFT join dbo.WhseReason W WITH (NOLOCK) 
 		    ON W.type='RR'AND W.ID = R.WhseReasonId
 		    WHERE R.id = @ID", pars, out dtRefund);
             if (dtRefund.Rows.Count == 0)
@@ -147,8 +147,8 @@ namespace Sci.Production.Warehouse
             string ActionResult ;
             DBProxy.Current.Select("",
           @"Select  R.whsereasonid,[desc] = W.Description   
-                from dbo.returnReceipt R
-		        LEFT join dbo.WhseReason W 	ON W.type='RA'AND W.ID = R.ActionID
+                from dbo.returnReceipt R WITH (NOLOCK) 
+		        LEFT join dbo.WhseReason W WITH (NOLOCK) 	ON W.type='RA'AND W.ID = R.ActionID
 		        WHERE R.id = @ID", pars, out dtAction);
              if (dtAction.Rows.Count == 0)
                    ActionResult = "";
@@ -177,8 +177,8 @@ namespace Sci.Production.Warehouse
 			end StockType
 			,dbo.Getlocation(R.FtyInventoryUkey) [Location]
 			,[Total]=sum(R.Qty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
-            from dbo.ReturnReceipt_Detail R
-            LEFT join dbo.PO_Supp_Detail p 
+            from dbo.ReturnReceipt_Detail R WITH (NOLOCK) 
+            LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) 
             on 
            p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
             where R.id= @ID";
@@ -384,7 +384,7 @@ namespace Sci.Production.Warehouse
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.returnreceipt_Detail d inner join FtyInventory f
+from dbo.returnreceipt_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 --on d.ftyinventoryukey = f.ukey
 on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -411,7 +411,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.ReturnReceipt_Detail d left join FtyInventory f
+from dbo.ReturnReceipt_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 --on d.ftyinventoryukey = f.ukey
 on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -623,7 +623,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.ReturnReceipt_Detail d inner join FtyInventory f
+from dbo.ReturnReceipt_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 --on d.ftyinventoryukey = f.ukey
 on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -650,7 +650,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.ReturnReceipt_Detail d left join FtyInventory f
+from dbo.ReturnReceipt_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 --on d.ftyinventoryukey = f.ukey
 on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -822,11 +822,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
 ,a.Qty
 ,a.StockType
-,stuff((select t.MtlLocationID+',' from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FtyInventoryUkey) t 
+,stuff((select t.MtlLocationID+',' from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = a.FtyInventoryUkey) t 
 	for xml path('')), 1, 1, '') location
 ,a.ukey
 ,a.FtyInventoryUkey
-from dbo.ReturnReceipt_Detail a left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+from dbo.ReturnReceipt_Detail a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

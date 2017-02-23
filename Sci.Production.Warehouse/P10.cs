@@ -204,16 +204,16 @@ namespace Sci.Production.Warehouse
 	                    ,a.Colorid
 	                    ,a.SizeSpec
 	                    --,[arqty] = isnull((select sum(cons) from dbo.cutplan_detail_cons c where c.id='{1}' and c.poid = a.poid),0.00)
-	                    ,[description] = (select DescDetail from fabric where scirefno = a.scirefno)
+	                    ,[description] = (select DescDetail from fabric WITH (NOLOCK) where scirefno = a.scirefno)
 	                    ,[requestqty] = isnull((select sum(cons) 
-		                    from dbo.Cutplan_Detail_Cons c 
-		                    inner join dbo.PO_Supp_Detail p on p.ID=c.Poid and p.SEQ1 = c.Seq1 and p.SEQ2 = c.Seq2
+		                    from dbo.Cutplan_Detail_Cons c WITH (NOLOCK) 
+		                    inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID=c.Poid and p.SEQ1 = c.Seq1 and p.SEQ2 = c.Seq2
 		                    where  c.id='{1}' and p.seq1 = a.seq1 and p.seq2 = a.seq2 and c.poid = a.poid), 0.00)
 	                    ,[accu_issue] =isnull((
                                             select 
                                 	            sum(qty) 
-                                            from Issue c 
-                                	        inner join Issue_Summary b on c.Id=b.Id 
+                                            from Issue c WITH (NOLOCK) 
+                                	        inner join Issue_Summary b WITH (NOLOCK) on c.Id=b.Id 
                                             where  
                                 				a.poid = b.poid and
                                 				c.CutplanID = '{1}' and
@@ -226,8 +226,8 @@ namespace Sci.Production.Warehouse
                         ,a.seq1
                         ,a.seq2
                         ,t.POUnit as unit
-	                    from dbo.Issue_Summary a
-                        Left join dbo.PO_Supp_Detail t on t.id=a.Poid and t.seq1=a.seq1 and t.seq2=a.Seq2
+	                    from dbo.Issue_Summary a WITH (NOLOCK) 
+                        Left join dbo.PO_Supp_Detail t WITH (NOLOCK) on t.id=a.Poid and t.seq1=a.seq1 and t.seq2=a.Seq2
 	                    Where a.id = '{0}'
                     ),
                     NetQty as
@@ -235,11 +235,11 @@ namespace Sci.Production.Warehouse
 	                    select a.NETQty,a.ID,a.SEQ1,a.SEQ2,a.SCIRefno,a.ColorID
 	                    ,[Unit] = [dbo].[getStockUnit](a.SCIRefno,c.SuppID)
                         --,[aiqqty] = ISNULL(SUM(a.OutputQty)	,0.00)
-	                    from PO_Supp_Detail a
-	                    left join Issue_Summary b on  a.ID=b.Poid and a.seq1 = b.seq1 and a.seq2 = b.seq2
-	                    left join PO_Supp c on c.id = a.ID and c.SEQ1 = a.SEQ1
+	                    from PO_Supp_Detail a WITH (NOLOCK) 
+	                    left join Issue_Summary b WITH (NOLOCK) on  a.ID=b.Poid and a.seq1 = b.seq1 and a.seq2 = b.seq2
+	                    left join PO_Supp c WITH (NOLOCK) on c.id = a.ID and c.SEQ1 = a.SEQ1
 	                    where 1=1
-	                    and a.seq1 =(select min(seq1) from dbo.PO_Supp_Detail where id=b.Poid and seq1 = b.seq1 and seq2 = b.seq2)
+	                    and a.seq1 =(select min(seq1) from dbo.PO_Supp_Detail WITH (NOLOCK) where id=b.Poid and seq1 = b.seq1 and seq2 = b.seq2)
 	                    and b.Id='{0}'
                         and a.STOCKPOID =''
                         group by a.NETQty,a.ID,a.SEQ1,a.SEQ2,a.SCIRefno,a.ColorID,[dbo].[getStockUnit](a.SCIRefno,c.SuppID)
@@ -250,24 +250,24 @@ namespace Sci.Production.Warehouse
                     ,tmpQty.arqty 
                     ,tmpQty.aiqqty
                     ,tmpQty.arqty -tmpQty.aiqqty as [avqty] 
-                    from main a                    
+                    from main a              
                     left join NetQty b on a.Poid = b.ID and a.seq1 = b.seq1 and a.seq2 = b.seq2
                     outer apply(
                         select arqty = a.requestqty 
-                                     + isnull((select sum(c.Cons) from  dbo.Cutplan_Detail_Cons c  
+                                     + isnull((select sum(c.Cons) from  dbo.Cutplan_Detail_Cons c  WITH (NOLOCK) 
                                             inner join (Select distinct s.Poid
                                                                        ,s.seq1
                                                                        ,s.seq2
                                                                        ,i.CutplanID 
-                                                               from Issue_Summary s 
-                                                               inner join Issue i on s.Id=i.Id and i.CutplanID!='{1}' and i.status='Confirmed' 
+                                                               from Issue_Summary s WITH (NOLOCK) 
+                                                               inner join Issue i WITH (NOLOCK) on s.Id=i.Id and i.CutplanID!='{1}' and i.status='Confirmed' 
                                                                where a.Poid=s.Poid and a.SCIRefno =s.SCIRefno and a.ColorID=s.ColorID
                                                        ) s on c.Poid=s.poid and c.SEQ1=s.SEQ1 and c.SEQ2=s.SEQ2 and c.ID=s.CutplanID)
                                               ,0.00)
 
-                              ,aiqqty = isnull((select a.qty from dbo.Issue c where c.id=a.id and c.status!='Confirmed' ),0.00)
-                                       +isnull((select sum(s.Qty) from Issue_Summary s 
-                                                                  inner join Issue i on s.Id=i.Id where s.Poid=a.poid and s.SCIRefno=a.SCIRefno and s.Colorid=a.ColorID and i.status='Confirmed')
+                              ,aiqqty = isnull((select a.qty from dbo.Issue c WITH (NOLOCK) where c.id=a.id and c.status!='Confirmed' ),0.00)
+                                       +isnull((select sum(s.Qty) from Issue_Summary s WITH (NOLOCK) 
+                                                                  inner join Issue i WITH (NOLOCK) on s.Id=i.Id where s.Poid=a.poid and s.SCIRefno=a.SCIRefno and s.Colorid=a.ColorID and i.status='Confirmed')
                                                , 0.00)
                               ) as tmpQty
                               "
@@ -467,7 +467,7 @@ namespace Sci.Production.Warehouse
                     dt.Rows[i].Delete();
                 }
                 CurrentMaintain["cutplanid"] = txtRequest.Text;
-                if (!MyUtility.Check.Seek(string.Format("select id from dbo.cutplan where id='{0}' and mdivisionid = '{1}'", txtRequest.Text, Sci.Env.User.Keyword), null))
+                if (!MyUtility.Check.Seek(string.Format("select id from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", txtRequest.Text, Sci.Env.User.Keyword), null))
                 {
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Request not existe");
@@ -485,12 +485,12 @@ main as(
         t.SizeSpec,
         t.POUnit as unit,
         sum(cons)requestqty,0.00 as qty,
-        --isnull((select sum(qty) from Issue_Summary a inner join Issue b on a.Id=b.Id inner join Cutplan d on b.CutplanID=d.ID where d.ID='{0}' and b.status='Confirmed'), 0.00) as accu_issue,
+        --isnull((select sum(qty) from Issue_Summary a WITH (NOLOCK) inner join Issue b WITH (NOLOCK) on a.Id=b.Id inner join Cutplan d on b.CutplanID=d.ID where d.ID='{0}' and b.status='Confirmed'), 0.00) as accu_issue,
         isnull((
             select 
 	            sum(qty) 
-            from Issue a 
-	            inner join Issue_Summary b on a.Id=b.Id 
+            from Issue a WITH (NOLOCK) 
+	            inner join Issue_Summary b WITH (NOLOCK) on a.Id=b.Id 
             where  
 				c.poid = b.poid and
 				a.CutplanID = '{0}' and
@@ -502,11 +502,11 @@ main as(
 
         '{1}' as id,
         --'' [Description], 
-        (select DescDetail from fabric where scirefno= t.scirefno)as [description], 
+        (select DescDetail from fabric WITH (NOLOCK) where scirefno= t.scirefno)as [description], 
         t.SEQ1,
         t.SEQ2
-    from dbo.Cutplan_Detail_Cons c 
-        inner join dbo.PO_Supp_Detail t on t.id=c.Poid and t.seq1=c.seq1 and t.seq2=c.Seq2
+    from dbo.Cutplan_Detail_Cons c WITH (NOLOCK) 
+        inner join dbo.PO_Supp_Detail t WITH (NOLOCK) on t.id=c.Poid and t.seq1=c.seq1 and t.seq2=c.Seq2
     where 
         c.ID='{0}'
     group by poid,t.SCIRefno,t.ColorID,t.SizeSpec,t.SEQ1,t.SEQ2,t.POUnit
@@ -519,11 +519,11 @@ NetQty as(
         a.SEQ2,
         a.SCIRefno,
         a.ColorID 
-    from PO_Supp_Detail a
-        left join Issue_Summary b on  a.seq1 = b.seq1 and a.seq2 = b.seq2 and a.ID=b.Poid 
+    from PO_Supp_Detail a WITH (NOLOCK) 
+        left join Issue_Summary b WITH (NOLOCK) on  a.seq1 = b.seq1 and a.seq2 = b.seq2 and a.ID=b.Poid 
     where 
         a.STOCKPOID =''
-        and a.SEQ1 = (select min(seq1) from dbo.PO_Supp_Detail where id=a.id and seq1 = a.SEQ1 and seq2 = a.seq2)
+        and a.SEQ1 = (select min(seq1) from dbo.PO_Supp_Detail WITH (NOLOCK) where id=a.id and seq1 = a.SEQ1 and seq2 = a.seq2)
 )
 select a.*,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq, isnull(b.NETQty,0) as NETQty 
 ,tmpQty.arqty 
@@ -533,20 +533,20 @@ from main a
 left join NetQty b on a.Poid = b.ID and a.seq1 = b.seq1 and a.seq2 = b.seq2
                     outer apply(
                         select arqty = a.requestqty 
-                                     + isnull((select sum(c.Cons) from  dbo.Cutplan_Detail_Cons c  
+                                     + isnull((select sum(c.Cons) from  dbo.Cutplan_Detail_Cons c WITH (NOLOCK)  
                                                                   inner join (Select distinct s.Poid
                                                                                              ,s.seq1
                                                                                              ,s.seq2
                                                                                              ,i.CutplanID 
-                                                                                     from Issue_Summary s 
-                                                                                     inner join Issue i on s.Id=i.Id and i.CutplanID!='{0}' and i.status='Confirmed' 
+                                                                                     from Issue_Summary s WITH (NOLOCK) 
+                                                                                     inner join Issue i WITH (NOLOCK) on s.Id=i.Id and i.CutplanID!='{0}' and i.status='Confirmed' 
                                                                                      where a.Poid=s.Poid and a.SCIRefno =s.SCIRefno and a.ColorID=s.ColorID
                                                                              ) s on c.Poid=s.poid and c.SEQ1=s.SEQ1 and c.SEQ2=s.SEQ2 and c.ID=s.CutplanID)
                                               ,0.00)
-                              ,aiqqty = isnull((select a.qty from dbo.Issue c where c.id=a.id and c.status!='Confirmed' ),0.00)
+                              ,aiqqty = isnull((select a.qty from dbo.Issue c WITH (NOLOCK) where c.id=a.id and c.status!='Confirmed' ),0.00)
                                        +isnull((select sum(s.Qty) 
-                                                from Issue_Summary s 
-                                                inner join Issue i on s.Id=i.Id where s.Poid=a.poid and s.SCIRefno=a.SCIRefno and s.Colorid=a.ColorID and i.status='Confirmed')
+                                                from Issue_Summary s WITH (NOLOCK) 
+                                                inner join Issue i WITH (NOLOCK) on s.Id=i.Id where s.Poid=a.poid and s.SCIRefno=a.SCIRefno and s.Colorid=a.ColorID and i.status='Confirmed')
                                               , 0.00)
                     ) as tmpQty
 ", txtRequest.Text, CurrentMaintain["id"]);
@@ -576,12 +576,12 @@ left join NetQty b on a.Poid = b.ID and a.seq1 = b.seq1 and a.seq2 = b.seq2
             DataTable dt;
             if (!(CurrentMaintain == null))
             {
-                disCutCell.Text = MyUtility.GetValue.Lookup(string.Format("select CutCellID from dbo.cutplan  where id='{0}'", CurrentMaintain["cutplanid"]));
+                disCutCell.Text = MyUtility.GetValue.Lookup(string.Format("select CutCellID from dbo.cutplan  WITH (NOLOCK) where id='{0}'", CurrentMaintain["cutplanid"]));
                 disLine.Text = MyUtility.GetValue.Lookup(string.Format(@"select t.SewLine+','  from (select distinct o.SewLine 
-from dbo.Issue_Summary a inner join dbo.orders o on a.Poid = o.POID where a.id='{0}' and o.sewline !='') t for xml path('')", CurrentMaintain["id"]));
+from dbo.Issue_Summary a WITH (NOLOCK) inner join dbo.orders o WITH (NOLOCK) on a.Poid = o.POID where a.id='{0}' and o.sewline !='') t for xml path('')", CurrentMaintain["id"]));
 
                 DBProxy.Current.Select(null, string.Format(@";with cte as
-(Select WorkOrder.FabricCombo,Cutplan_Detail.CutNo from Cutplan_Detail inner join dbo.workorder on WorkOrder.Ukey = Cutplan_Detail.WorkorderUkey 
+(Select WorkOrder.FabricCombo,Cutplan_Detail.CutNo from Cutplan_Detail WITH (NOLOCK) inner join dbo.workorder WITH (NOLOCK) on WorkOrder.Ukey = Cutplan_Detail.WorkorderUkey 
 where Cutplan_Detail.ID='{0}' )
 select distinct FabricCombo ,(select convert(varchar,CutNo)+',' 
 from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by CutNo for xml path('')) cutnos from cte a
@@ -614,7 +614,7 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d inner join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -642,7 +642,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d left join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -675,7 +675,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #endregion 更新表頭狀態資料
             
             #region 更新庫存數量  ftyinventory
-            sqlcmd = string.Format(@"select * from issue_detail where id='{0}'", CurrentMaintain["id"]);
+            sqlcmd = string.Format(@"select * from issue_detail WITH (NOLOCK) where id='{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 ShowErr(sqlcmd, result2);
@@ -765,7 +765,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d inner join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -793,7 +793,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.Issue_Detail d left join FtyInventory f
+from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -826,7 +826,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             #endregion 更新表頭狀態資料
 
             #region 更新庫存數量  ftyinventory
-            sqlcmd = string.Format(@"select * from issue_detail where id='{0}'", CurrentMaintain["id"]);
+            sqlcmd = string.Format(@"select * from issue_detail WITH (NOLOCK) where id='{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 ShowErr(sqlcmd, result2);
@@ -941,8 +941,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
             @"select  b.name 
-            from dbo.Issue a 
-            inner join dbo.mdivision  b 
+            from dbo.Issue a WITH (NOLOCK) 
+            inner join dbo.mdivision  b WITH (NOLOCK) 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dt);
@@ -961,8 +961,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             string cCellNo;
             result = DBProxy.Current.Select("",
             @"select  b.CutCellID 
-            from dbo.Issue as a 
-	        inner join dbo.cutplan as b
+            from dbo.Issue as a WITH (NOLOCK) 
+	        inner join dbo.cutplan as b WITH (NOLOCK) 
             on b.id = a.cutplanid
             where b.id = a.cutplanid
             and a.id = @ID", pars, out aa);
@@ -979,8 +979,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             string cLineNo;
             result = DBProxy.Current.Select("",
             @"select o.sewline 
-            from dbo.Orders o 
-            where id in (select distinct poid from issue_detail where id = @ID)", pars, out cc);
+            from dbo.Orders o WITH (NOLOCK) 
+            where id in (select distinct poid from issue_detail WITH (NOLOCK) where id = @ID)", pars, out cc);
             if (!result) { this.ShowErr(result); }
             if (cc.Rows.Count == 0)
                 cLineNo = "";
@@ -1020,9 +1020,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                                                         , Description
                                                         , char(10)
                                                         , char(10)
-                                                        , (Select concat(ID, '-', Name) from Color where id = iss.ColorId and BrandId = fbr.BrandID)
+                                                        , (Select concat(ID, '-', Name) from Color WITH (NOLOCK) where id = iss.ColorId and BrandId = fbr.BrandID)
                                                     )
-                                            FROM fabric fbr WHERE SCIRefno = p.SCIRefno)
+                                            FROM fabric fbr WITH (NOLOCK) WHERE SCIRefno = p.SCIRefno)
                                      ) [desc]
                                     ,t.Roll
                                     ,t.Dyelot
@@ -1030,11 +1030,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                                     ,p.StockUnit
                                     ,[location]=dbo.Getlocation(b.ukey)      
                                     ,[Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.Seq1,t.Seq2 )       
-                            from dbo.Issue_Detail t 
-                            inner join Issue_Summary iss on t.Issue_SummaryUkey = iss.Ukey
-                            left join dbo.PO_Supp_Detail p   
+                            from dbo.Issue_Detail t WITH (NOLOCK) 
+                            inner join Issue_Summary iss WITH (NOLOCK) on t.Issue_SummaryUkey = iss.Ukey
+                            left join dbo.PO_Supp_Detail p  WITH (NOLOCK)  
                                 on p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
-                            left join FtyInventory b
+                            left join FtyInventory b WITH (NOLOCK) 
                                 on b.poid = t.poid and b.seq1 =t.seq1 and b.seq2=t.seq2 and b.Roll =t.Roll and b.Dyelot =t.Dyelot and b.StockType = t.StockType
                             where t.id= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out bb);

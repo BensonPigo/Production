@@ -33,11 +33,11 @@ namespace Sci.Production.Warehouse
 ,b.CutRef
 ,c.FabricCombo
 ,b.CutNo
-,(select x.article+',' from  (select distinct t.Article from dbo.WorkOrder_Distribute t where t.WorkOrderUkey = c.Ukey) x for xml path('')) article
+,(select x.article+',' from  (select distinct t.Article from dbo.WorkOrder_Distribute t WITH (NOLOCK) where t.WorkOrderUkey = c.Ukey) x for xml path('')) article
 ,C.Markername
-from dbo.Cutplan a
-inner join dbo.Cutplan_Detail b on b.id= a.ID
-inner join dbo.WorkOrder c on c.Ukey = b.WorkorderUkey
+from dbo.Cutplan a WITH (NOLOCK) 
+inner join dbo.Cutplan_Detail b WITH (NOLOCK) on b.id= a.ID
+inner join dbo.WorkOrder c WITH (NOLOCK) on c.Ukey = b.WorkorderUkey
 where a.ID = '{0}'
 order by b.POID,c.seq1,c.seq2,c.Cutno
 

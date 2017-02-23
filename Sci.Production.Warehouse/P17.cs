@@ -111,8 +111,8 @@ namespace Sci.Production.Warehouse
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
             @"select b.name 
-            from dbo.IssueReturn a 
-            inner join dbo.mdivision b 
+            from dbo.IssueReturn a WITH (NOLOCK) 
+            inner join dbo.mdivision b WITH (NOLOCK) 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dt);
@@ -142,8 +142,8 @@ namespace Sci.Production.Warehouse
                     ,a.Qty [RETURN_QTY]
                     ,dbo.Getlocation(a.ftyinventoryukey) [LOCATION]
                     ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.seq2)
-            from dbo.IssueReturn_Detail a
-            inner join PO_Supp_Detail b
+            from dbo.IssueReturn_Detail a WITH (NOLOCK) 
+            inner join PO_Supp_Detail b WITH (NOLOCK) 
                 on a.poid=b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
             where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
@@ -311,7 +311,7 @@ namespace Sci.Production.Warehouse
                     CurrentDetailData["stockunit"] = x[0]["stockunit"];
                     CurrentDetailData["Description"] = x[0]["Description"];
                     string tmp = MyUtility.GetValue.Lookup(
-                            string.Format(@"select isnull(ukey,0) ukey from dbo.ftyinventory 
+                            string.Format(@"select isnull(ukey,0) ukey from dbo.ftyinventory WITH (NOLOCK) 
                                                     where mdivisionid='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and stocktype='{4}' and roll='{5}' "
                             , Sci.Env.User.Keyword, CurrentDetailData["poid"], x[0]["seq1"], x[0]["seq2"], CurrentDetailData["stocktype"], ""));
                     if (!MyUtility.Check.Empty(tmp)) CurrentDetailData["ftyinventoryukey"] = tmp;
@@ -364,7 +364,7 @@ namespace Sci.Production.Warehouse
                         CurrentDetailData["Description"] = dr["description"];
                         
                         string tmp = MyUtility.GetValue.Lookup(
-                            string.Format(@"select isnull(ukey,0) ukey from dbo.ftyinventory 
+                            string.Format(@"select isnull(ukey,0) ukey from dbo.ftyinventory WITH (NOLOCK) 
                                                     where mdivisionid='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and stocktype='{4}' and roll='{5}' "
                             , Sci.Env.User.Keyword, CurrentDetailData["poid"], e.FormattedValue.ToString().Substring(0, 3), e.FormattedValue.ToString().Substring(3, 2), CurrentDetailData["stocktype"], ""));
                         if (!MyUtility.Check.Empty(tmp)) CurrentDetailData["ftyinventoryukey"] = tmp;
@@ -395,7 +395,7 @@ namespace Sci.Production.Warehouse
 ,a.dyelot
 ,inqty - outqty + adjustqty balance
 ,ukey
-                                                        FROM dbo.ftyinventory a
+                                                        FROM dbo.ftyinventory a WITH (NOLOCK) 
                                                         WHERE stocktype = 'B'
                                                         AND poID ='{0}'
                                                         AND seq1= '{1}' 
@@ -426,7 +426,7 @@ order by poid,seq1,seq2,Roll", dr["poid"].ToString(), dr["seq1"].ToString(), dr[
                     if (String.Compare(e.FormattedValue.ToString(), CurrentDetailData["roll"].ToString()) != 0)
                     {
 
-                        if (!MyUtility.Check.Seek(string.Format(@"select ukey from ftyinventory
+                        if (!MyUtility.Check.Seek(string.Format(@"select ukey from ftyinventory WITH (NOLOCK) 
 where poid = '{0}' and seq1 ='{1}' and seq2 = '{2}' and mdivisionid = '{3}' and stocktype = '{4}' and roll = '{5}'"
                             , CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
                                              , e.FormattedValue.ToString().PadRight(5).Substring(3, 2), Sci.Env.User.Keyword, CurrentDetailData["stocktype"], CurrentDetailData["roll"]), out dr, null))
@@ -470,7 +470,7 @@ where poid = '{0}' and seq1 ='{1}' and seq2 = '{2}' and mdivisionid = '{3}' and 
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.IssueReturn_Detail d inner join FtyInventory f
+from dbo.IssueReturn_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 --on d.ftyinventoryukey = f.ukey
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -498,7 +498,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.IssueReturn_Detail d left join FtyInventory f
+from dbo.IssueReturn_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 --on d.ftyinventoryukey = f.ukey
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -628,7 +628,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.IssueReturn_Detail d inner join FtyInventory f
+from dbo.IssueReturn_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 --on d.ftyinventoryukey = f.ukey
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -656,7 +656,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.IssueReturn_Detail d left join FtyInventory f
+from dbo.IssueReturn_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 --on d.ftyinventoryukey = f.ukey
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -779,10 +779,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 ,a.Qty
 ,a.StockType
 ,a.ftyinventoryukey
-,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FtyInventoryUkey) t 
+,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = a.FtyInventoryUkey) t 
 	for xml path('')), 1, 1, '') location
 ,a.ukey
-from dbo.IssueReturn_Detail a left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+from dbo.IssueReturn_Detail a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -848,7 +848,7 @@ Where a.id = '{0}'", masterID);
 
                 DataRow dr;
                 DataTable dt;
-                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.issue where id='{0}' and status !='New')"
+                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.issue WITH (NOLOCK) where id='{0}' and status !='New')"
                     , textBox2.Text), out dr, null))
                 {
                     e.Cancel = true;
@@ -865,7 +865,7 @@ Where a.id = '{0}'", masterID);
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 ,a.ftyinventoryukey
 ,'{1}' AS mdivisionid
-from dbo.Issue_Detail a inner join dbo.PO_Supp_Detail b on a.PoID= b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
+from dbo.Issue_Detail a WITH (NOLOCK) inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
 where a.id='{0}'", textBox2.Text,Sci.Env.User.Keyword), out dt);
                     foreach (var item in dt.ToList())
                     {

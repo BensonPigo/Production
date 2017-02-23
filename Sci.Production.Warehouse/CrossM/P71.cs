@@ -250,7 +250,7 @@ namespace Sci.Production.Warehouse
             DataTable dt = (DataTable)detailgridbs.DataSource;
 
             #region 602: WAREHOUSE_P71，若P72已經Confirm了，還不能recall。
-            string P72_Status = MyUtility.GetValue.Lookup(string.Format(@"select Status from Issue where CutplanID='{0}'", CurrentMaintain["id"]));
+            string P72_Status = MyUtility.GetValue.Lookup(string.Format(@"select Status from Issue WITH (NOLOCK) where CutplanID='{0}'", CurrentMaintain["id"]));
             if (P72_Status.ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is confirmed in [P72. Transfer Inventory to Bulk cross M (Confirmed)], can't recall !!", "Warning");
@@ -317,8 +317,8 @@ namespace Sci.Production.Warehouse
 ,a.ToMDivisionID
 ,a.ToPoid,a.ToSeq1,a.ToSeq2,concat(Ltrim(Rtrim(a.ToSeq1)), ' ', a.ToSeq2) as toseq
 ,a.ukey
-from dbo.RequestCrossM_detail a 
-left join PO_Supp_Detail p1 on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+from dbo.RequestCrossM_detail a WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -374,8 +374,8 @@ Where a.id = '{0}'", masterID);
 	               RCD.FromSeq1+'-'+RCD.FromSeq2 AS InventorySEQ,
 	               PSD.StockUnit,
 	               RCD.Qty	   
-            from dbo.RequestCrossM_detail RCD 
-            left join PO_Supp_Detail PSD on PSD.ID = RCD.FromPoId and PSD.seq1 = RCD.FromSeq1 and PSD.SEQ2 = RCD.FromSeq2
+            from dbo.RequestCrossM_detail RCD WITH (NOLOCK) 
+            left join PO_Supp_Detail PSD WITH (NOLOCK) on PSD.ID = RCD.FromPoId and PSD.seq1 = RCD.FromSeq1 and PSD.SEQ2 = RCD.FromSeq2
             WHERE RCD.ID = @ID";
             DualResult res;
             res = DBProxy.Current.Select("", sqlcmd, pars, out dt);

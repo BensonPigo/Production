@@ -56,7 +56,7 @@ namespace Sci.Production.Warehouse
                 {
                     DataRow currentRow = grid1.GetDataRow(grid1.GetSelectedRowIndex());
                     currentRow["location"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id FROM DBO.MtlLocation WHERE StockType='{0}' and mdivisionid='{1}'", currentRow["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", currentRow["stocktype"].ToString(), Sci.Env.User.Keyword);
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = currentRow["location"].ToString().Split(',').Distinct().ToArray();
@@ -111,11 +111,11 @@ namespace Sci.Production.Warehouse
 select 0 as selected,'' id,d.ToMDivisionID MDivisionID,d.ToPOID poid,d.ToSeq1 seq1,d.ToSeq2 seq2, concat(Ltrim(Rtrim(d.toseq1)), ' ', d.toseq2) as seq
     , d2.Roll roll,d2.Dyelot dyelot,d2.Qty,'B' stocktype 
     , dbo.getMtlDesc(d.ToPOID,d.ToSeq1,d.ToSeq2,2,0) [description]
-    , (select stockunit from dbo.po_supp_detail where id = d.topoid and seq1 = d.toseq1 and seq2 = d.toseq2) stockunit
+    , (select stockunit from dbo.po_supp_detail WITH (NOLOCK) where id = d.topoid and seq1 = d.toseq1 and seq2 = d.toseq2) stockunit
     ,'' location
-from dbo.RequestCrossM_Detail d 
-inner join dbo.Issue_Detail d2 on d2.POID = d.FromPOID and d2.seq1 = d.FromSeq1 and d2.seq2 = d.FromSeq2
-inner join dbo.Issue i on i.Id = d2.Id 
+from dbo.RequestCrossM_Detail d WITH (NOLOCK) 
+inner join dbo.Issue_Detail d2 WITH (NOLOCK) on d2.POID = d.FromPOID and d2.seq1 = d.FromSeq1 and d2.seq2 = d.FromSeq2
+inner join dbo.Issue i WITH (NOLOCK) on i.Id = d2.Id 
 where d.id='{0}' and i.CutplanID = '{0}' and i.Status = 'Confirmed'
 ", dr_master["id"]));
                 #endregion

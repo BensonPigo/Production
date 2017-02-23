@@ -227,7 +227,7 @@ namespace Sci.Production.Warehouse
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.TransferOut_Detail d inner join FtyInventory f
+from dbo.TransferOut_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.mdivisionid = f.mdivisionid
 and d.PoId = f.PoId
 and d.Seq1 = f.Seq1
@@ -259,7 +259,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.TransferOut_Detail d left join FtyInventory f
+from dbo.TransferOut_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.mdivisionid = f.mdivisionid
 and d.PoId = f.PoId
 and d.Seq1 = f.Seq1
@@ -417,7 +417,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.TransferOut_Detail d inner join FtyInventory f
+from dbo.TransferOut_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 --on d.ftyinventoryukey = f.ukey
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -445,7 +445,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.TransferOut_Detail d left join FtyInventory f
+from dbo.TransferOut_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 --on d.ftyinventoryukey = f.ukey
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
@@ -604,9 +604,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 ,a.Qty
 ,a.StockType
 ,a.ukey
-,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail fd where ukey = a.ftyinventoryukey) t for xml path('')), 1, 1, '') location
+,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where ukey = a.ftyinventoryukey) t for xml path('')), 1, 1, '') location
 ,a.ftyinventoryukey
-from dbo.TransferOut_Detail a left join PO_Supp_Detail p1 on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+from dbo.TransferOut_Detail a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -667,8 +667,8 @@ Where a.id = '{0}'", masterID);
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
             @"select  b.name 
-            from dbo.TransferOut a 
-            inner join dbo.mdivision  b 
+            from dbo.TransferOut a WITH (NOLOCK) 
+            inner join dbo.mdivision  b WITH (NOLOCK) 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dt);
@@ -703,8 +703,8 @@ Where a.id = '{0}'", masterID);
 		            ,a.Qty
 		            ,[Location]=dbo.Getlocation(a.FtyInventoryUkey)
                     ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 ) 	        
-              from dbo.TransferOut_Detail a 
-              LEFT join dbo.PO_Supp_Detail b
+              from dbo.TransferOut_Detail a WITH (NOLOCK) 
+              LEFT join dbo.PO_Supp_Detail b WITH (NOLOCK) 
                   on  b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
               where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }

@@ -55,15 +55,15 @@ namespace Sci.Production.Warehouse
 ,c.Dyelot
 ,c.inqty-c.outqty + c.adjustqty as QtyBefore
 ,0.00 as QtyAfter
-,isnull(stuff((select ',' + cast(mtllocationid as varchar) from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, ''),'') as location
+,isnull(stuff((select ',' + cast(mtllocationid as varchar) from (select mtllocationid from ftyinventory_detail WITH (NOLOCK) where ukey = c.ukey)t for xml path('')), 1, 1, ''),'') as location
 ,'' reasonid
 ,'' reason_nm
 ,a.FabricType
 ,a.stockunit
 ,c.stockType
 ,c.ukey as ftyinventoryukey
-from dbo.PO_Supp_Detail a 
-inner join dbo.ftyinventory c on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
+from dbo.PO_Supp_Detail a WITH (NOLOCK) 
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 Where c.lock = 0 and c.mdivisionid='{0}'", Sci.Env.User.Keyword));
 
                 if (!MyUtility.Check.Empty(sp))
@@ -78,7 +78,7 @@ Where c.lock = 0 and c.mdivisionid='{0}'", Sci.Env.User.Keyword));
 
                 if (!MyUtility.Check.Empty(location))
                 {
-                    strSQLCmd.Append(string.Format(@" and c.ukey in (select ukey from dbo.ftyinventory_detail where mtllocationid = '{0}') ", location));
+                    strSQLCmd.Append(string.Format(@" and c.ukey in (select ukey from dbo.ftyinventory_detail WITH (NOLOCK) where mtllocationid = '{0}') ", location));
                 }
 
                 if (!txtSeq1.checkEmpty(showErrMsg: false))
@@ -122,7 +122,7 @@ Where c.lock = 0 and c.mdivisionid='{0}'", Sci.Env.User.Keyword));
         {
             base.OnFormLoaded();
             #region -- Reason Combox --
-            string selectCommand = @"select Name idname,id from Reason where ReasonTypeID='Stock_Adjust' AND junk = 0";
+            string selectCommand = @"select Name idname,id from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND junk = 0";
             Ict.DualResult returnResult;
             DataTable dropDownListTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
@@ -153,7 +153,7 @@ Where c.lock = 0 and c.mdivisionid='{0}'", Sci.Env.User.Keyword));
                     string sqlcmd = "";
                     IList<DataRow> x;
 
-                    sqlcmd = @"select id, Name from Reason where ReasonTypeID='Stock_Adjust' AND junk = 0";
+                    sqlcmd = @"select id, Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND junk = 0";
                     DualResult result2 = DBProxy.Current.Select(null, sqlcmd, out poitems);
                     if (!result2)
                     {
@@ -188,7 +188,7 @@ Where c.lock = 0 and c.mdivisionid='{0}'", Sci.Env.User.Keyword));
                     }
                     else
                     {
-                        if (!MyUtility.Check.Seek(string.Format(@"select id, Name from Reason where id = '{0}' 
+                        if (!MyUtility.Check.Seek(string.Format(@"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
 and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
                         {
                             MyUtility.Msg.WarningBox("Data not found!", "Reason ID");
@@ -291,7 +291,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
 
             if (txtSeq1.checkEmpty(showErrMsg: false))
             {
-                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from MdivisionPodetail where poid ='{0}' and mdivisionid='{1}')"
+                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from MdivisionPodetail WITH (NOLOCK) where poid ='{0}' and mdivisionid='{1}')"
                     , sp, Sci.Env.User.Keyword), null))
                 {
                     MyUtility.Msg.WarningBox("SP# is not found!!");
@@ -301,7 +301,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             }
             else
             {
-                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from MdivisionPodetail where poid ='{0}' ' 
+                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from MdivisionPodetail WITH (NOLOCK) where poid ='{0}' ' 
                         and seq1 = '{1}' and seq2 = '{2}' and mdivisionid='{3}')", sp, txtSeq1.seq1, txtSeq1.seq2, Sci.Env.User.Keyword), null))
                 {
                     MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
@@ -318,7 +318,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             string sp = textBox1.Text.TrimEnd();
             if (MyUtility.Check.Empty(sp) || txtSeq1.checkEmpty(showErrMsg: false)) return;
 
-            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from MdivisionPodetail where poid ='{0}' 
+            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from MdivisionPodetail WITH (NOLOCK) where poid ='{0}' 
                         and seq1 = '{1}' and seq2 = '{2}' and mdivisionid = '{3}')", sp, txtSeq1.seq1, txtSeq1.seq2, Sci.Env.User.Keyword), null))
             {
                 MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
@@ -335,7 +335,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             if (this.EditMode && e.Button == MouseButtons.Right)
             {
 
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"select id,[Description] from dbo.MtlLocation where StockType='B' and mdivisionid='{0}'", Sci.Env.User.Keyword), "10,40", textBox4.Text, "ID,Desc");
+                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"select id,[Description] from dbo.MtlLocation WITH (NOLOCK) where StockType='B' and mdivisionid='{0}'", Sci.Env.User.Keyword), "10,40", textBox4.Text, "ID,Desc");
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
                 textBox4.Text = item.GetSelectedString();
@@ -364,7 +364,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         private void textBox4_Validating(object sender, CancelEventArgs e)
         {
             if (textBox4.Text.ToString() == "") return;
-            if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.MtlLocation where StockType='B' and id = '{0}' and mdivisionid='{1}')", textBox4.Text, Sci.Env.User.Keyword), null))
+            if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.MtlLocation WITH (NOLOCK) where StockType='B' and id = '{0}' and mdivisionid='{1}')", textBox4.Text, Sci.Env.User.Keyword), null))
             {
                 MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
                 e.Cancel = true;
