@@ -33,10 +33,10 @@ namespace Sci.Production.Warehouse
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) &&
-                MyUtility.Check.Empty(dateRange2.Value1) &&
-                MyUtility.Check.Empty(dateRange4.Value1) &&
-                MyUtility.Check.Empty(dateRange3.Value1) &&
+            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) &&
+                MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2) &&
+                MyUtility.Check.Empty(dateRange4.Value1) && MyUtility.Check.Empty(dateRange3.Value2) &&
+                MyUtility.Check.Empty(dateRange3.Value1) && MyUtility.Check.Empty(dateRange4.Value2) &&
                 (MyUtility.Check.Empty(txtSpno1.Text) || MyUtility.Check.Empty(txtSpno2.Text)) &&
                 (MyUtility.Check.Empty(txtRefno1.Text) || MyUtility.Check.Empty(txtRefno2.Text)))
             {
@@ -99,7 +99,7 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            if (!MyUtility.Check.Empty(sciDelivery1))
+            if (!MyUtility.Check.Empty(sciDelivery1) || !MyUtility.Check.Empty(sciDelivery2))
             {
                 sqlCmd.Append(string.Format(@";with cte as
 (
@@ -108,8 +108,11 @@ where 1=1"));
 
                 if (!MyUtility.Check.Empty(sciDelivery1))
                 {
-                    sqlCmd.Append(string.Format(@" and o.SciDelivery between '{0}' and '{1}'",
-                    Convert.ToDateTime(sciDelivery1).ToString("d"), Convert.ToDateTime(sciDelivery2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= o.SciDelivery ",Convert.ToDateTime(sciDelivery1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(sciDelivery2))
+                {
+                    sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
                 }
                 //if (!MyUtility.Check.Empty(spno1))
                 //{
@@ -197,22 +200,28 @@ where 1=1 and c.ThirdCountry = 1"));
                 cmds.Add(sp_spno1);
                 cmds.Add(sp_spno2);
             }
-            if (!MyUtility.Check.Empty(suppDelivery1))
+            if (!MyUtility.Check.Empty(suppDelivery1) || !MyUtility.Check.Empty(suppDelivery2))
             {
-                sqlCmd.Append(string.Format(@" and b.finaletd between '{0}' and '{1}'"
-                , Convert.ToDateTime(suppDelivery1).ToString("d"), Convert.ToDateTime(suppDelivery2).ToString("d")));
+                if(!MyUtility.Check.Empty(suppDelivery1))
+                    sqlCmd.Append(string.Format(@" and '{0}' <= b.finaletd", Convert.ToDateTime(suppDelivery1).ToString("d")));
+                if(!MyUtility.Check.Empty(suppDelivery2))
+                    sqlCmd.Append(string.Format(@" and b.finaletd <= '{0}'",Convert.ToDateTime(suppDelivery2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(eta1))
+            if (!MyUtility.Check.Empty(eta1) || !MyUtility.Check.Empty(eta2))
             {
-                sqlCmd.Append(string.Format(@" and b.ETA between '{0}' and '{1}'"
-                , Convert.ToDateTime(eta1).ToString("d"), Convert.ToDateTime(eta2).ToString("d")));
+                if (!MyUtility.Check.Empty(suppDelivery1))
+                    sqlCmd.Append(string.Format(@" and '{0}' <= b.ETA", Convert.ToDateTime(eta1).ToString("d")));
+                if (!MyUtility.Check.Empty(eta2))
+                    sqlCmd.Append(string.Format(@" and b.ETA <= '{0}'", Convert.ToDateTime(eta2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(ata1))
+            if (!MyUtility.Check.Empty(ata1) || !MyUtility.Check.Empty(ata2))
             {
-                sqlCmd.Append(string.Format(@" and b.FinalETA between '{0}' and '{1}'"
-                , Convert.ToDateTime(ata1).ToString("d"), Convert.ToDateTime(ata2).ToString("d")));
+                if(!MyUtility.Check.Empty(ata1))
+                    sqlCmd.Append(string.Format(@" and '{0}' <= b.FinalETA", Convert.ToDateTime(ata1).ToString("d")));
+                if (!MyUtility.Check.Empty(ata2))
+                    sqlCmd.Append(string.Format(@" and b.FinalETA <= '{0}'", Convert.ToDateTime(ata2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(country))
