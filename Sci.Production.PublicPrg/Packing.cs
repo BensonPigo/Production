@@ -1183,6 +1183,24 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
             int startIndex = 0;
             int endIndex = 0;
             int dataRow = 0;
+
+            string tmp = MyUtility.Convert.GetString(SpecialInstruction);
+
+            string[] tmpab = tmp.Split('\r');
+            int ctmpc = 0;
+            int l = 150;
+            foreach (string tmpc in tmpab)
+            {
+                if (tmpc.Length > l)
+                {
+                    int h = tmpc.Length / l;
+                    for (int i = 0; i < h; i++)
+                    {
+                        ctmpc += 1;
+                    }
+                }
+            }
+
             for (int i = 1; ; i++)
             {
                 if (i > 1)
@@ -1195,7 +1213,7 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                 }
                 else
                 {
-                    dataRow = i + 1;
+                    dataRow = i + 1 + ctmpc;
                     break;
                 }
             }
@@ -1212,6 +1230,7 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
 
             //Carton Dimension:
             excelRow = excelRow + (dataRow > 2 ? dataRow - 1 : 2);
+            
             StringBuilder ctnDimension = new StringBuilder();
             foreach (DataRow dr in CtnDim.Rows)
             {
@@ -1225,7 +1244,29 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                     ctnDimension.Append(string.Format("{0} -> {1} / {2}, ", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"])));
                 }
             }
-
+            string cds = ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2);
+            string[] cdsab = cds.Split('\r');
+            int cdsi = 0;
+            int cdsl = 150;
+            foreach (string cdsc in cdsab)
+            {
+                if (cdsc.Length > cdsl)
+                {
+                    int h = cdsc.Length / cdsl;
+                    for (int i = 0; i < h; i++)
+                    {
+                        cdsi += 1;
+                    }
+                }
+            }
+            if (cdsi > 0)
+            {
+                for (int i = 0; i < cdsi; i++)
+                {
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow + 1)), Type.Missing).EntireRow;
+                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                }
+            }
             worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
 
             //貼圖
