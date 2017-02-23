@@ -1014,9 +1014,10 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         //ShipMode        
         private void txtshipmode1_Validated(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(txtshipmode1.OldValue)) return;
             if (EditMode && txtshipmode1.OldValue != txtshipmode1.SelectedValue)
             {
-                if (MyUtility.Check.Empty(DetailDatas.Count)) return;
+                //if (MyUtility.Check.Empty(DetailDatas.Count)) return;
                 string tempOldValue = txtshipmode1.OldValue.ToString();
 
                 DialogResult diresult = MyUtility.Msg.QuestionBox("The detail grid will be cleared, are you sure change type?");
