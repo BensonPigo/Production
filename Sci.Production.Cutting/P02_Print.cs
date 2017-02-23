@@ -241,7 +241,7 @@ namespace Sci.Production.Cutting
                     }
                     worksheet.Cells[8, 2] = spList;
                     worksheet.Cells[10, 13] = line;
-                    int l = 55;
+                    int l = 54;
                     int la = spList.Length / l;
                     for (int i = 1; i <= la; i++)
                     {
@@ -289,7 +289,7 @@ namespace Sci.Production.Cutting
                         worksheet.Cells[nRow, 10] = size;
                         worksheet.Cells[nRow, 12] = Ratio;
 
-                        int l = 12;
+                        int l = 11;
                         int la = size.Length / l;
                         int la2 = Ratio.Length / l;
                         for (int i = 1; i <= la; i++)
@@ -521,7 +521,7 @@ Cutplanid, str_PIVOT);
                     }
                     
                     worksheet.Cells[8, 2] = spList;
-                    int l = 55;
+                    int l = 54;
                     int la = spList.Length / l;
                     for (int i = 1; i <= la; i++)
                     {
@@ -557,7 +557,7 @@ Cutplanid, str_PIVOT);
                     worksheet.Cells[12, 6] = WorkorderArry[0]["MarkerLength"].ToString() + "\n" + WorkorderArry[0]["yds"].ToString();
                     worksheet.Cells[12, 10] = size;
                     worksheet.Cells[12, 12] = Ratio;
-                    int l = 12;
+                    int l = 11;
                     int la = size.Length / l;
                     int la2 = Ratio.Length / l;
                     for (int i = 1; i <= la; i++)
