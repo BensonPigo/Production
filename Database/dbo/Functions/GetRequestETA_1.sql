@@ -1,7 +1,7 @@
 ﻿
 
 
-Create Function [dbo].[GetRequestETA]
+CREATE Function [dbo].[GetRequestETA]
 (		
 	@ID		VarChar(13)
 )
@@ -30,10 +30,10 @@ Begin
 		 , @CfmDate = Orders.CfmDate
 		 , @FtyCountry = Factory.CountryID
 		 , @MrTeam = Brand.MrTeam
-	  From dbo.Orders
-	  Left Join dbo.Factory
+	  From dbo.Orders WITH (NOLOCK)
+	  Left Join dbo.Factory WITH (NOLOCK)
 		On Factory.ID = Orders.FactoryID
-	  Left Join dbo.Brand
+	  Left Join dbo.Brand WITH (NOLOCK)
 		On Brand.ID = Orders.BrandID
 	 Where Orders.ID = @ID;
 	

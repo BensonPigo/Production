@@ -1,4 +1,4 @@
-﻿Create Function [dbo].[GetColorName]
+﻿CREATE Function [dbo].[GetColorName]
 	(
 	  @BrandID		VarChar(8)
 	 ,@ColorID		VarChar(6)
@@ -31,8 +31,8 @@ Begin
 	Insert Into @Color_multiple
 		(ColorID)
 		Select Color_Multiple.ColorID
-		  From dbo.Color
-		 Inner Join dbo.Color_Multiple
+		  From dbo.Color WITH (NOLOCK)
+		 Inner Join dbo.Color_Multiple WITH (NOLOCK)
 			On Color_Multiple.ColorUkey = Color.Ukey
 		 Where Color.BrandID = @BrandID
 		   And Color.ID = @ColorID
@@ -58,7 +58,7 @@ Begin
 		If IsNull(@MultipleColorID, '') != ''
 		Begin
 			Select @MultipleColorName = RTrim(Color.Name)
-			  From dbo.Color
+			  From dbo.Color WITH (NOLOCK)
 			 Where Color.BrandID = @BrandID
 			   And Color.ID = @MultipleColorID;
 			

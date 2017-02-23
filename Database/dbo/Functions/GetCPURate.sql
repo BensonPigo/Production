@@ -1,5 +1,5 @@
 ﻿
-Create Function GetCPURate
+CREATE Function [dbo].[GetCPURate]
 	(
 	  @OrderTypeID	VarChar(20)
 	 ,@ProgramID   	VarChar(12)
@@ -28,7 +28,7 @@ Begin
 		If IsNull(@OrderTypeID, '') != ''
 		Begin
  			Select Top 1 @CpuRate = OrderType.CpuRate
-			  From dbo.OrderType
+			  From dbo.OrderType WITH (NOLOCK)
 			 Where ID = @OrderTypeID
 			   And BrandID = @BrandID ;
 		End;
@@ -36,7 +36,7 @@ Begin
 		If @CpuRate=0
 		Begin
  			Select Top 1 @CpuRate = Program.RateCost
-			  From dbo.Program
+			  From dbo.Program WITH (NOLOCK)
 			 Where ID = @ProgramID
 			   And BrandID = @BrandID;
 		End;

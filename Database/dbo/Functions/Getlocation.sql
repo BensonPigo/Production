@@ -17,7 +17,7 @@ BEGIN
 
 	-- Add the T-SQL statements to compute the return value here
 	select  @locationStr = (select MtlLocationID+',' 
-	from (select d.MtlLocationID from dbo.FtyInventory_Detail d where ukey = @ukey) t
+	from (select d.MtlLocationID from dbo.FtyInventory_Detail d WITH (NOLOCK) where ukey = @ukey) t
 	for xml path(''))
 
 	-- Return the result of the function

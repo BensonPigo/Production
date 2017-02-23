@@ -16,7 +16,7 @@ BEGIN
 	DECLARE @rtn as varchar(45);
 
 	-- Add the T-SQL statements to compute the return value here
-	SELECT @rtn = a.id+':'+a.Name from dbo.Pass1 a where a.ID=@id;
+	SELECT @rtn = a.id+':'+a.Name from dbo.Pass1 a WITH (NOLOCK) where a.ID=@id;
 
 	-- Return the result of the function
 	RETURN @rtn;

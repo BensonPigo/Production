@@ -15,7 +15,7 @@ AS
 BEGIN
 	DECLARE @RTN AS BIT;
 	-- 有設定工時基本檔且有時數，表示非假日(休假)
-	IF EXISTS(SELECT * FROM WorkHour w where w.FactoryID = @factoryid and w.Date = @checkdate 
+	IF EXISTS(SELECT * FROM WorkHour w WITH (NOLOCK) where w.FactoryID = @factoryid and w.Date = @checkdate 
 	and w.SewingLineID = @sewinglineid and w.Hours > 0)
 	SET @RTN = 0;
 	ELSE

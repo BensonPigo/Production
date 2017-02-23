@@ -2,7 +2,7 @@
 
 --mCustId,mStyle,mSeason,mFty,mStyleUkey
 
-Create Function [dbo].[GetStyleGMTLT]
+CREATE Function [dbo].[GetStyleGMTLT]
 (
 	  @BrandID	    VarChar(8)				--
 	 ,@StyleID 	    VarChar(20)				--
@@ -19,12 +19,12 @@ Begin
 
    Set @GMTLT = 0;
 
-	set @isFty = iif(exists(Select GMTLT=@GMTLT from Style_GmtLtFty Where StyleUkey = (Select Ukey From Style Where id=@Styleid and BrandId = @BrandID and SeasonID=@SeasonID) ),1,0)
+	set @isFty = iif(exists(Select GMTLT=@GMTLT from Style_GmtLtFty WITH (NOLOCK) Where StyleUkey = (Select Ukey From Style WITH (NOLOCK) Where id=@Styleid and BrandId = @BrandID and SeasonID=@SeasonID) ),1,0)
    
     if (@isFty=0)
      begin 
 		
-		 Select @GMTLT=GMTLT From Style Where id=@Styleid and BrandId = @BrandID and SeasonID=@SeasonID
+		 Select @GMTLT=GMTLT From Style WITH (NOLOCK) Where id=@Styleid and BrandId = @BrandID and SeasonID=@SeasonID
 	End;
 
     return @GMTLT

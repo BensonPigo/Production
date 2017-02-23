@@ -1,5 +1,5 @@
 ﻿
-Create Function [dbo].[GetUnitQty]
+CREATE Function [dbo].[GetUnitQty]
 (
 	  @UnitFrom		VarChar(8)		--來源單位
 	 ,@UnitTo		VarChar(8)		--目的單位
@@ -12,7 +12,7 @@ Begin
 		select iif( @UnitFrom = @UnitTo 
 				, @Qty
 				, @Qty * (select RateValue 
-								  From dbo.Unit_Rate
+								  From dbo.Unit_Rate WITH (NOLOCK)
 								  Where UnitFrom = @UnitFrom
 								     And UnitTo = @UnitTo)
 							   ))

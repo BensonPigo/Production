@@ -18,24 +18,19 @@ BEGIN
 	SELECT @scirefno=p.SCIRefno
 		, @refno = p.Refno
 		, @suppcolor = ISNULL(p.SuppColor,'')
-		, @StockSP = isnull(concat(p.StockPOID,' ',p.StockSeq1,' ',p.StockSeq2),'')		
-		, @po_desc=@po_desc + ISNULL(p.ColorID,'')+'-'+ ISNULL(c.Name,'')+ CHAR(13)--+CHAR(10)
-		, @po_desc=@po_desc + ISNULL(p.ColorDetail,'')+ CHAR(13)--+CHAR(10)	
+		, @StockSP = isnull(concat(p.StockPOID,' ',p.StockSeq1,' ',p.StockSeq2),'')
+		, @po_desc=@po_desc + ISNULL(p.ColorDetail,'')+ CHAR(13)--+CHAR(10)
 		, @po_desc=@po_desc + ISNULL(p.sizespec,'')+ CHAR(13)--+CHAR(10)
 		, @po_desc=@po_desc + ISNULL(p.SizeUnit,'')+ CHAR(13)--+CHAR(10)
 		, @po_desc=@po_desc + ISNULL(p.Special,'')+ CHAR(13)--+CHAR(10)
-		, @po_desc=@po_desc + ISNULL(p.Spec,'')+ CHAR(13)--+CHAR(10)
 		, @po_desc=@po_desc + ISNULL(p.Remark,'')
-		from dbo.po_supp_detail p 
-		left join dbo.Fabric F on p.SCIRefno =f.SCIRefno
-		left join dbo.Color c on c.BrandId=f.BrandID and c.id=p.ColorID
-		WHERE p.ID=@poid and p.seq1 = @seq1 and p.seq2=@seq2;
+		from dbo.po_supp_detail p WITH (NOLOCK) WHERE ID=@poid and seq1 = @seq1 and seq2=@seq2;
 
 	IF  @type = 1
 	BEGIN
 		if @repeat = 0
 		BEGIN
-			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric where SCIRefno = @scirefno;
+			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric WITH (NOLOCK) where SCIRefno = @scirefno;
 			set @string = rtrim(iif(@fabric_detaildesc='','',@fabric_detaildesc + CHAR(13)));
 		END
 		ELSE
@@ -46,7 +41,7 @@ BEGIN
 	BEGIN
 		if @repeat = 0
 		BEGIN	
-			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric where SCIRefno = @scirefno;
+			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric WITH (NOLOCK) where SCIRefno = @scirefno;
 			set @string = rtrim(iif(@fabric_detaildesc='','',@fabric_detaildesc + CHAR(13)))+ rtrim(iif(@suppcolor = '','',@suppcolor + CHAR(13)))+rtrim(iif(@po_desc = '','',@po_desc+CHAR(13)));
 		END
 		ELSE
@@ -58,7 +53,7 @@ BEGIN
 		
 		if @repeat = 0
 		BEGIN
-			select @fabric_detaildesc= ISNULL([Description],'') from fabric where SCIRefno = @scirefno;
+			select @fabric_detaildesc= ISNULL([Description],'') from fabric WITH (NOLOCK) where SCIRefno = @scirefno;
 			set @string = 'Ref#'+ @refno + ', ' + rtrim(iif(@fabric_detaildesc='','',@fabric_detaildesc + CHAR(13))) + rtrim(iif(@suppcolor = '','',@suppcolor + CHAR(13)))+rtrim(iif(@po_desc = '','',@po_desc+CHAR(13)));
 		End
 		ELSE

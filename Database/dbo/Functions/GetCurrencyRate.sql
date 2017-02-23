@@ -10,9 +10,9 @@ AS
 RETURN 
 (
     SELECT isnull( ex.rate, iif(cto.StdRate = 0, 0, cfrom.StdRate/cto.StdRate)) as rate,cTo.Exact
-    FROM dbo.Currency as cFrom
-     left join dbo.Currency as cTo on cTo.ID = @toCurrency
-     left join dbo.exchange as ex on ex.ExchangeTypeID=@ExchangeTypeID and ex.CurrencyFrom= cFrom.ID and ex.CurrencyTo= cTo.ID
+    FROM dbo.Currency as cFrom WITH (NOLOCK)
+     left join dbo.Currency as cTo WITH (NOLOCK) on cTo.ID = @toCurrency
+     left join dbo.exchange as ex WITH (NOLOCK) on ex.ExchangeTypeID=@ExchangeTypeID and ex.CurrencyFrom= cFrom.ID and ex.CurrencyTo= cTo.ID
               and @Date between ex.DateStart and ex.DateEnd
      where cFrom.ID = @fromCurrency
 );

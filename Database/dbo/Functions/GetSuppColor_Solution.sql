@@ -1,5 +1,5 @@
 ﻿
-Create Function [dbo].[GetSuppColor_Solution]
+CREATE Function [dbo].[GetSuppColor_Solution]
 (
 	  @ColorUkey	BigInt
 	 ,@SeasonID		VarChar(10)
@@ -17,7 +17,7 @@ Begin
 
 	--1. 依照Season + Style + Program + RefNo
 	Select Top 1 @SuppColor = SuppColor
-	  From dbo.Color_SuppColor
+	  From dbo.Color_SuppColor WITH (NOLOCK)
 	 Where ColorUkey = @ColorUkey
 	   And SuppID = @SuppID
 	   And SeasonID = @SeasonID
@@ -29,7 +29,7 @@ Begin
 	If IsNull(@SuppColor, '') = ''
 	Begin
 		Select Top 1 @SuppColor = SuppColor
-		  From dbo.Color_SuppColor
+		  From dbo.Color_SuppColor WITH (NOLOCK)
 		 Where ColorUkey = @ColorUkey
 		   And SuppID = @SuppID
 		   And SeasonID = @SeasonID
@@ -42,7 +42,7 @@ Begin
 	If IsNull(@SuppColor, '') = ''
 	Begin
 		Select Top 1 @SuppColor = SuppColor
-		  From dbo.Color_SuppColor
+		  From dbo.Color_SuppColor WITH (NOLOCK)
 		 Where ColorUkey = @ColorUkey
 		   And SuppID = @SuppID
 		   And SeasonID = @SeasonID
@@ -55,7 +55,7 @@ Begin
 	If IsNull(@SuppColor, '') = ''
 	Begin
 		Select Top 1 @SuppColor = SuppColor
-		  From dbo.Color_SuppColor
+		  From dbo.Color_SuppColor WITH (NOLOCK)
 		 Where ColorUkey = @ColorUkey
 		   And SuppID = @SuppID
 		   And SeasonID = @SeasonID
@@ -68,7 +68,7 @@ Begin
 	If IsNull(@SuppColor, '') = ''
 	Begin
 		Select Top 1 @SuppColor = SuppColor
-		  From dbo.Color_SuppColor
+		  From dbo.Color_SuppColor WITH (NOLOCK)
 		 Where ColorUkey = @ColorUkey
 		   And SuppID = @SuppID
 		   And SeasonID = @SeasonID
@@ -81,7 +81,7 @@ Begin
 	If IsNull(@SuppColor, '') = ''
 	Begin
 		Select Top 1 @SuppColor = SuppColor
-		  From dbo.Color_SuppColor
+		  From dbo.Color_SuppColor WITH (NOLOCK)
 		 Where ColorUkey = @ColorUkey
 		   And SuppID = @SuppID
 		   And SeasonID = @SeasonID
@@ -94,7 +94,7 @@ Begin
 	If IsNull(@SuppColor, '') = ''
 	Begin
 		Select Top 1 @SuppColor = SuppColor
-		  From dbo.Color_SuppColor
+		  From dbo.Color_SuppColor WITH (NOLOCK)
 		 Where ColorUkey = @ColorUkey
 		   And SuppID = @SuppID
 		   And SeasonID = @SeasonID
@@ -107,7 +107,7 @@ Begin
 	If IsNull(@SuppColor, '') = ''
 	Begin
 		Select Top 1 @SuppColor = SuppColor
-		  From dbo.Color_SuppColor
+		  From dbo.Color_SuppColor WITH (NOLOCK)
 		 Where ColorUkey = @ColorUkey
 		   And SuppID = @SuppID
 		   And SeasonID = @SeasonID

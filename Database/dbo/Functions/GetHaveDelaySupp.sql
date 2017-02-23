@@ -9,12 +9,12 @@ AS
 BEGIN
 	Declare @mtldelay date,
 			@returnvalue bit;
-	select @mtldelay = MTLDelay from PO where ID = @poid
+	select @mtldelay = MTLDelay from PO WITH (NOLOCK) where ID = @poid
 	IF @mtldelay is null
 		BEGIN
 			select @mtldelay = a.Delay 
-			from (select ps.SuppID,s.Delay from PO_Supp ps
-	  			  left join Supp s on ps.SuppID = s.ID and s.Delay is not null
+			from (select ps.SuppID,s.Delay from PO_Supp ps WITH (NOLOCK)
+	  			  left join Supp s WITH (NOLOCK) on ps.SuppID = s.ID and s.Delay is not null
 				  where ps.ID = @poid) a
 			--where 
 

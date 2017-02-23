@@ -17,13 +17,13 @@ BEGIN
 			DECLARE @styleunit VARCHAR(6),
 					@factory VARCHAR(8),
 					@styleukey BIGINT
-			select @styleunit = StyleUnit,@factory = FtyGroup,@styleukey = StyleUkey from Orders where ID = @orderid
+			select @styleunit = StyleUnit,@factory = FtyGroup,@styleukey = StyleUkey from Orders WITH (NOLOCK) where ID = @orderid
 			IF @styleunit = 'PCS'
 				BEGIN
 					select @output = sum(b.StdOutPut)
 					from (select a.SewingLineID,MAX(a.AVGHour*a.StandardOutput) as StdOutPut
 						  from (select s.ID,s.SewingLineID,isnull(AVG(w.Hours),0) as AVGHour,s.StandardOutput
-								from SewingSchedule s, WorkHour w 
+								from SewingSchedule s WITH (NOLOCK), WorkHour w WITH (NOLOCK)
 								where s.OrderID = @orderid
 								and s.SewingLineID = w.SewingLineID
 								and s.FactoryID = w.FactoryID
@@ -36,11 +36,11 @@ BEGIN
 				BEGIN
 					select @output = MIN(a.StdOutPut)
 					from (select sl.Location,o.StdOutPut
-						  from (select Location from Style_Location where StyleUkey = @styleukey) sl 
+						  from (select Location from Style_Location WITH (NOLOCK) where StyleUkey = @styleukey) sl 
 						  left join (select a.ComboType,SUM(a.StdOutPut) as StdOutPut
 									 from (select a.SewingLineID,a.ComboType,MAX(a.AVGHour*a.StandardOutput) as StdOutPut
 										   from (select s.ID,s.SewingLineID,s.ComboType,isnull(AVG(w.Hours),0) as AVGHour,s.StandardOutput
-												 from SewingSchedule s, WorkHour w 
+												 from SewingSchedule s WITH (NOLOCK), WorkHour w WITH (NOLOCK)
 												 where s.OrderID = @orderid 
 												 and s.SewingLineID = w.SewingLineID
 												 and s.FactoryID = w.FactoryID
@@ -57,7 +57,7 @@ BEGIN
 			DECLARE @avghour DECIMAL,
 					@standardoutput INT
 			select @avghour = isnull(AVG(w.Hours),0)
-			from SewingSchedule s, WorkHour w
+			from SewingSchedule s WITH (NOLOCK), WorkHour w WITH (NOLOCK)
 			where s.ID = @sewingscheduleid
 			and s.FactoryID = w.FactoryID
 			and w.Date between CONVERT(date,s.Inline) and CONVERT(date,s.Offline)

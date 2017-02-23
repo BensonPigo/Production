@@ -1,5 +1,5 @@
 ﻿
-Create Function [dbo].[GetSuppColor]
+CREATE Function [dbo].[GetSuppColor]
 (
 	  @SCIRefNo		VarChar(20)				--
 	 ,@SuppID		VarChar(6)				--
@@ -37,24 +37,24 @@ Begin
 	
 	--是否要顯示SuppColor
 	Select @ShowSuppColor = Fabric_Supp.ShowSuppColor
-	  From dbo.Fabric_Supp
+	  From dbo.Fabric_Supp WITH (NOLOCK)
 	 Where SCIRefNo = @SCIRefNo
 	   And SuppID = @SuppID;
 	
 	--Brand RefNo
 	Select @RefNo = Fabric.RefNo
-	  From dbo.Fabric
+	  From dbo.Fabric WITH (NOLOCK)
 	 Where SCIRefNo = @SCIRefNo;
 
 	--Brand Group
 	Select @BrandGroup = Brand.BrandGroup
-	  From dbo.Brand
+	  From dbo.Brand WITH (NOLOCK)
 	 Where ID = @BrandID;
 	
 	--多色組資料(若為單一色，仍會寫入一筆資料於Color_Multiple)
 	Insert Into @Color_MultipleCursor
 		(SeqNo, ColorID)
-		Select SeqNo, ColorID From Color_Multiple Where BrandID = @BrandID And ID = @ColorID Order by SeqNo;
+		Select SeqNo, ColorID From Color_Multiple WITH (NOLOCK) Where BrandID = @BrandID And ID = @ColorID Order by SeqNo;
 	
 	Set @ColorRowID = 1;
 	Select @ColorRowID = Min(RowID), @ColorRowCount = Max(RowID) From @Color_MultipleCursor;
@@ -67,7 +67,7 @@ Begin
 
 		Select @ColorUkey = Color.Ukey
 			 , @ColorDesc = Color.Name
-		  From dbo.Color
+		  From dbo.Color WITH (NOLOCK)
 		 Where ID = @ColorID_Detail
 		   And BrandID = @BrandGroup;
 		
@@ -79,11 +79,11 @@ Begin
 			If IsNull(@SuppColor, '') = ''
 			Begin
 				Select Top 1 @SeasonID = Color_SuppColor.SeasonID
-				  From dbo.Color_SuppColor
-				  Left Join dbo.Season
+				  From dbo.Color_SuppColor WITH (NOLOCK)
+				  Left Join dbo.Season WITH (NOLOCK)
 					On	   Season.BrandID = Color_SuppColor.BrandID
 					   And Season.ID = Color_SuppColor.ID
-				  Left Join dbo.Season as Season_Para
+				  Left Join dbo.Season as Season_Para WITH (NOLOCK)
 					On	   Season_Para.BrandID = Color_SuppColor.BrandID
 					   And Season_Para.ID = @SeasonID
 				 Where Color_SuppColor.ColorUkey = @ColorUkey

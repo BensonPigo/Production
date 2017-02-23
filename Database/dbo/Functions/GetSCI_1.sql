@@ -21,8 +21,8 @@ RETURN
 	from (
 		Select Min(Orders.SciDelivery) as MinSciDelivery
 			 , Min(Orders.BuyerDelivery) as MinBuyerDelivery
-		  From dbo.Orders as MainPO 
-		  left join dbo.Orders  on Orders.POID =@PoID
+		  From dbo.Orders as MainPO WITH (NOLOCK)
+		  left join dbo.Orders WITH (NOLOCK) on Orders.POID =@PoID
 		 Where MainPO.ID = @PoID
 		   And (   (@Category != '' And Orders.Category != 'S')
 				Or (@Category = '' And Not (MainPO.Category = 'B' And Orders.Category = 'S'))
@@ -34,7 +34,7 @@ RETURN
 	   Select  Min(Orders.SewInLIne) AS MinSewinLine
 		 ,  Min(IIF(Orders.PFETA Is Null, IIF(Orders.Category != 'S', Orders.LETA, Orders.PFETA), Orders.PFETA)) as MinLETA
 		 ,  Min(Orders.PFETA) as MinPFETA
-		  From dbo.Orders
+		  From dbo.Orders WITH (NOLOCK)
 		  Where Orders.PoID = @PoID
 		   And Orders.Qty > 0
 	 ) as s2 

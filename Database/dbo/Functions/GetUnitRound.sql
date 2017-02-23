@@ -1,5 +1,5 @@
 ﻿
-Create Function [dbo].[GetUnitRound]
+CREATE Function [dbo].[GetUnitRound]
 	(
 	  @BrandID		VarChar(8)		--
 	 ,@ProgramID	VarChar(12)		--
@@ -23,7 +23,7 @@ Begin
 
 	Set @IsMiAdidas = 0;
 	Select @IsMiAdidas = IsNull(Program.MiAdidas, 0)
-	  From dbo.Program
+	  From dbo.Program WITH (NOLOCK)
 	 Where Program.BrandID = @BrandID
 	   And Program.ID = @ProgramID
 	   And @Category = 'B';
@@ -31,7 +31,7 @@ Begin
 	Select @UnitRound = IIF(@IsMiAdidas = 1, MiAdidasRound, [Round])
 		 , @UsageRound = IIF(@IsMiAdidas = 1, MiAdidasRound, 1)
 		 , @RoundStep = IIF(@IsMiAdidas = 1, 0, RoundStep)
-	  From dbo.Unit
+	  From dbo.Unit WITH (NOLOCK)
 	 Where ID = @UnitID;
 	
 	Insert Into @tmpRound (UnitRound, UsageRound, RoundStep) Values (@UnitRound, @UsageRound, @RoundStep);

@@ -7,19 +7,20 @@ CREATE FUNCTION [dbo].[GetSizeCodeColumnByID]
 RETURNS @tbl table(SizeGroup varchar(1),Seq varchar(2),SizeCode varchar(8))
 AS
 BEGIN
-	declare @poid varchar(13) = (select POID from Orders where ID = @OrderID)
-
+	
 	declare @main table(id varchar(13),SizeGroup varchar(1),Seq varchar(2),SizeCode varchar(8))
 	--main1 取得全部SizeCode
-	insert into @main select id,SizeGroup,Seq,SizeCode from Order_SizeCode WHERE ID = @poid
+	insert into @main select id,SizeGroup,Seq,SizeCode from Order_SizeCode WITH (NOLOCK) WHERE ID IN (SELECT POID FROM Orders WITH (NOLOCK) where Id = @OrderID)	
 	
+	declare @poid varchar(13) = (select POID from Orders WITH (NOLOCK) where ID = @OrderID)
+
 	declare @id table (id varchar(13))
 	if(@ByType = 0)
 		insert into @id select id from dbo.Orders where ID = @OrderID
 	else if(@ByType = 1)
-		insert into @id select id from dbo.Orders where ID in (select id from Production.dbo.Orders where POID = @poid AND CustCDID = (select CustCDID from Orders where ID = @OrderID) )
+		insert into @id select id from dbo.Orders where ID in (select id from Production.dbo.Orders WITH (NOLOCK) where POID = @poid AND CustCDID = (select CustCDID from Orders WITH (NOLOCK) where ID = @OrderID) )
 	else if(@ByType = 2)
-		insert into @id select id from dbo.Orders where ID in (select id from Production.dbo.Orders where POID = @poid )
+		insert into @id select id from dbo.Orders where ID in (select id from Production.dbo.Orders WITH (NOLOCK) where POID = @poid )
 		
 			
 	--main2 取得哪些有QTY

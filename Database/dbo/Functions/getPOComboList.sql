@@ -2,8 +2,6 @@
 CREATE FUNCTION [dbo].[getPOComboList](@orderid varchar(13), @poid varchar(13))
 RETURNS varchar(max)
 BEGIN
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
 	DECLARE @string nvarchar(max) --要回傳的字串
 	IF @orderid <> @poid
 		BEGIN
@@ -13,7 +11,7 @@ SET QUOTED_IDENTIFIER ON
 
 		BEGIN
 			DECLARE cursor_Orders CURSOR FOR
-			SELECT ID FROM Orders WHERE POID = @poid and ID <> @poid
+			SELECT ID FROM Orders WITH (NOLOCK) WHERE POID = @poid and ID <> @poid
 
 			DECLARE @id varchar(13), --暫存Orders Id
 					@left10id varchar(10),  --暫存Orders.Id的前10碼

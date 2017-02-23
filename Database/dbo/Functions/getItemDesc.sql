@@ -9,7 +9,7 @@ BEGIN
 	
     SET @desc = ''
 
-	select @desc=description from localitem p WHERE  RefNo = @refno;
+	select @desc=description from localitem p WITH (NOLOCK) WHERE  RefNo = @refno;
 
     RETURN rtrim(@desc)
 END

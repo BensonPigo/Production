@@ -6,8 +6,8 @@ BEGIN
 			@desc nvarchar(max) --暫存Fabric Description
 	DECLARE cursor_FabDesc CURSOR FOR
 	select distinct '#'+f.Refno+' '+f.Description as Description
-	from Style_BOF sb
-	inner join Fabric f on sb.SCIRefno = f.SCIRefno
+	from Style_BOF sb WITH (NOLOCK)
+	inner join Fabric f WITH (NOLOCK) on sb.SCIRefno = f.SCIRefno
 	where sb.Kind = '1' and sb.StyleUkey = @styleukey
 
 	SET @string = '';

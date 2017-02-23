@@ -1,5 +1,5 @@
 ﻿
-Create Function [dbo].[GetPriceFromMtl]
+Alter Function [dbo].[GetPriceFromMtl]
 (
 	  @SCIRefNo			VarChar(26)				--SCI Ref#
 	 ,@SuppID			VarChar(6)				--Supplier ID
@@ -21,7 +21,7 @@ Begin
 
 	Select Top 1 @Ukey = Fabric_Quot.Ukey
 		 , @PoPrice = Fabric_Quot.POPrice
-	  From dbo.Fabric_Quot
+	  From dbo.Fabric_Quot WITH (NOLOCK)
 	 Where Fabric_Quot.SCIRefNo = @SCIRefNo
 	   And Fabric_Quot.SuppID = @SuppID
 	   And Fabric_Quot.SeasonID = @SeasonID
@@ -40,7 +40,7 @@ Begin
 	Begin
 		Select Top 1 @Ukey = Fabric_Quot.Ukey
 			 , @PoPrice = Fabric_Quot.POPrice
-		  From dbo.Fabric_Quot
+		  From dbo.Fabric_Quot WITH (NOLOCK)
 		 Where Fabric_Quot.SCIRefNo = @SCIRefNo
 		   And Fabric_Quot.SuppID = @SuppID
 		   And Fabric_Quot.SeasonID = @SeasonID
@@ -51,7 +51,7 @@ Begin
 	End;
 
 	Select Top 1 @PoPrice_Detail = Fabric_Quot_Detail.POPrice
-	  From dbo.Fabric_Quot_Detail
+	  From dbo.Fabric_Quot_Detail WITH (NOLOCK)
 	 Where Fabric_Quot_Detail.Fabric_QuotUkey = @Ukey
 	   And @PoQty Between Fabric_Quot_Detail.FromQty And Fabric_Quot_Detail.ToQty;
 	

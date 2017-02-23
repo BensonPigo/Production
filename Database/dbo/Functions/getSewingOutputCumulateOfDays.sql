@@ -6,10 +6,10 @@ BEGIN
 
 	DECLARE cursor_SewingData CURSOR FOR
 	select distinct s.OutputDate
-	from SewingOutput s
-	inner join SewingOutput_Detail sd on s.ID = sd.ID
-	left join Orders o on o.ID =  sd.OrderId
-	left join MockupOrder mo on mo.ID = sd.OrderId
+	from SewingOutput s WITH (NOLOCK)
+	inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
+	left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
+	left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 	where (o.StyleID = @style or mo.ID = @style)
 	and s.SewingLineID = @sewingline
 	and s.OutputDate < @outputdate
@@ -42,7 +42,7 @@ BEGIN
 				WHILE(@i <= @max)
 				BEGIN
 					select @hour = Hours 
-					from WorkHour
+					from WorkHour WITH (NOLOCK)
 					where FactoryID = @factory
 					and SewingLineID = @sewingline
 					and Date = DATEADD(day,-@i,@currentcountdate) 

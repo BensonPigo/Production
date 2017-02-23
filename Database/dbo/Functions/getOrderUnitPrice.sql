@@ -8,18 +8,18 @@ BEGIN
 			@price2 numeric(7, 2)
 	if @type = 1 --By StyleUkey,Size
 		begin
-			select @queryorderID = o.ID from Orders o,Order_Qty oq
+			select @queryorderID = o.ID from Orders o WITH (NOLOCK),Order_Qty oq WITH (NOLOCK)
 			where o.ID = oq.ID and oq.SizeCode = @sizecode and o.StyleUkey = @styleUkey order by o.BuyerDelivery;
 
-			select @price1 = POPrice from Order_UnitPrice where Id = @queryorderID and Article = '----' and SizeCode = '----'
-			select @price2 = POPrice from Order_UnitPrice where Id = @queryorderID and SizeCode = @sizecode
+			select @price1 = POPrice from Order_UnitPrice WITH (NOLOCK) where Id = @queryorderID and Article = '----' and SizeCode = '----'
+			select @price2 = POPrice from Order_UnitPrice WITH (NOLOCK) where Id = @queryorderID and SizeCode = @sizecode
 			SET @price = IIF(@price1 is null,@price2,@price1);
 			SET @price = IIF(@price is null,0.0,@price);
 		end
 	else if @type = 2 --By OrderID,Article,SizeCode
 		begin
-			select @price1 = POPrice from Order_UnitPrice where Id = @orderID and Article = '----' and SizeCode = '----'
-			select @price2 = POPrice from Order_UnitPrice where Id = @orderID and Article = @article and SizeCode = @sizecode
+			select @price1 = POPrice from Order_UnitPrice WITH (NOLOCK) where Id = @orderID and Article = '----' and SizeCode = '----'
+			select @price2 = POPrice from Order_UnitPrice WITH (NOLOCK) where Id = @orderID and Article = @article and SizeCode = @sizecode
 			SET @price = IIF(@price2 is null,@price1,@price2);
 			SET @price = IIF(@price is null,0.0,@price);
 		end

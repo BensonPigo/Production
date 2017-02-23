@@ -4,7 +4,7 @@ RETURNS decimal
 BEGIN
 	DECLARE @rate decimal
 	SET @rate = 1
-	select @rate = isnull(RateValue,'1') from View_Unitrate where FROM_U = @fromUnit and TO_U = @toUnit
+	select @rate = isnull(RateValue,'1') from View_Unitrate WITH (NOLOCK) where FROM_U = @fromUnit and TO_U = @toUnit
 	
 	RETURN @rate
 END

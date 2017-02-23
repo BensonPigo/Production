@@ -1,5 +1,5 @@
 ﻿
-Create Function [dbo].[GetLossFabric]
+Alter Function [dbo].[GetLossFabric]
 (
 	  @PoID			VarChar(13)		--採購母單
 	 ,@FabricCode	VarChar(3)		--Fabric Code(空值表示為全部計算)
@@ -68,17 +68,17 @@ Begin
 		 , @BrandID = BrandID
 		 , @StyleID = StyleID
 		 , @SeasonID = SeasonID
-	  From dbo.Orders
+	  From dbo.Orders WITH (NOLOCK)
 	 Where ID = @PoID;
 	
 	Select @FabricType = FabricType
-	  From Production.dbo.Style
+	  From Production.dbo.Style WITH (NOLOCK)
 	 Where BrandID = @BrandID
 	   And ID = @StyleID
 	   And SeasonID = @SeasonID;
 	
 	Select @LossSampleFabric = LossSampleFabric
-	  From Production.dbo.Brand
+	  From Production.dbo.Brand WITH (NOLOCK)
 	 Where ID = @BrandID;
 	
 	Set @LimitUP_Rate = 0;
@@ -87,7 +87,7 @@ Begin
 	Select @LimitUP_Rate = TWLimitUp
 		 , @LimitUP_Allowance = Allowance
 		 , @LimitUP_LossQty = MaxLossQty
-	  From Production.dbo.LossRateFabric
+	  From Production.dbo.LossRateFabric WITH (NOLOCK)
 	 Where WeaveTypeID = @FabricType;
 	---------------------------------------------------------------------------
 	--取得各Article/Size的Qty數、By Article加總的Qty數、Qty總數
@@ -100,10 +100,10 @@ Begin
 		(Article, Seq, SizeCode, Qty)
 		Select Article, Seq, SizeCode, Qty
 		  From (Select Order_Qty.Article, Order_SizeCode.Seq, Order_Qty.SizeCode, Sum(Order_Qty.Qty) as Qty
-				 From dbo.Orders
-				 Left Join dbo.Order_SizeCode
+				 From dbo.Orders WITH (NOLOCK)
+				 Left Join dbo.Order_SizeCode WITH (NOLOCK)
 				   On Order_SizeCode.ID = Orders.PoID
-				 Left Join dbo.Order_Qty
+				 Left Join dbo.Order_Qty WITH (NOLOCK)
 				   On	  Order_Qty.ID = Orders.ID
 					  And Order_Qty.SizeCode = Order_SizeCode.SizeCode
 				Where Orders.PoID = @PoID
@@ -268,7 +268,7 @@ Begin
 	Insert Into @tmpBOF
 		(BofUkey, FabricCode, SCIRefNo, LossType, LossPercent)
 		Select Ukey, FabricCode, SCIRefNo, LossType, LossPercent
-		  From dbo.Order_BOF
+		  From dbo.Order_BOF WITH (NOLOCK)
 		 Where ID = @PoID
 		   And (   @FabricCode = ''
 				Or FabricCode = @FabricCode
@@ -291,7 +291,7 @@ Begin
 		Insert Into @tmpBOF_Expend
 			(ColorID, UsageQty, QTLectraCode)
 			Select ColorID, UsageQty, QTLectraCode
-			  From dbo.Order_BOF_Expend
+			  From dbo.Order_BOF_Expend WITH (NOLOCK)
 			 Where Order_BOFUkey = @BofUkey
 			 Order by ColorID;
 		--------------------Loop Start @tmpBOF_Expend--------------------
@@ -309,7 +309,7 @@ Begin
 			Begin
 				Set @WeaveTypeID = '';
 				Select @WeaveTypeID = Fabric.WeaveTypeID
-				  From Production.dbo.Fabric
+				  From Production.dbo.Fabric WITH (NOLOCK)
 				 Where SciRefNo = @SciRefNo;
 				
 				--Loss by Dafault And Category = 'Sample'
@@ -339,11 +339,11 @@ Begin
 					 , ConsPC, MarkerLength, SizeCode, Qty
 					)
 					Select FabricCombo, FabricCode, LectraCode, CuttingPiece, MarkerName, Ukey
-						 , IsNull((Select Top 1 1 From dbo.Order_MarkerList_Article Where Order_MarkerList_Article.Order_MarkerlistUkey = Order_MarkerList.Ukey), 0) as For_Article
+						 , IsNull((Select Top 1 1 From dbo.Order_MarkerList_Article WITH (NOLOCK) Where Order_MarkerList_Article.Order_MarkerlistUkey = Order_MarkerList.Ukey), 0) as For_Article
 						 , ConsPC, dbo.MarkerLengthToYDS(MarkerLength) MarkerLength
 						 , SizeCode, Qty
-					  From dbo.Order_MarkerList
-					  Left Join dbo.Order_MarkerList_SizeQty
+					  From dbo.Order_MarkerList WITH (NOLOCK)
+					  Left Join dbo.Order_MarkerList_SizeQty WITH (NOLOCK)
 						On Order_MarkerList_SizeQty.Order_MarkerListUkey = Order_MarkerList.Ukey
 					 Where Order_MarkerList.ID = @PoID
 					   And Order_MarkerList.FabricCode = @FabricCode
@@ -372,14 +372,14 @@ Begin
 					Insert Into @ColorCombo
 						(Article, ColorID)
 						Select Article, ColorID
-						  From dbo.Order_ColorCombo
+						  From dbo.Order_ColorCombo WITH (NOLOCK)
 						 Where ID = @PoID
 						   And LectraCode = @LectraCode
 						   And ColorID = @ColorID
 						   And (   @For_Article = 0
 								Or (	@For_Article = 1
 									--And Order_ColorCombo.Article In (Select Article From dbo.Order_MarkerList_Article Where Order_MarkerlistUkey = @MarkerUkey)
-									And Exists (Select 1 From dbo.Order_MarkerList_Article Where Order_MarkerlistUkey = @MarkerUkey And Article = Order_ColorCombo.Article)
+									And Exists (Select 1 From dbo.Order_MarkerList_Article WITH (NOLOCK) Where Order_MarkerlistUkey = @MarkerUkey And Article = Order_ColorCombo.Article)
 								   )
 							   );
 					--------------------Loop Start @ColorCombo--------------------
@@ -459,8 +459,8 @@ Begin
 		
 		Set @WeaveTypeID = '';
 		Select @WeaveTypeID = Fabric.WeaveTypeID
-		  From Production.dbo.Fabric
-		  Join Production.dbo.LossRateFabric
+		  From Production.dbo.Fabric WITH (NOLOCK)
+		  Join Production.dbo.LossRateFabric WITH (NOLOCK)
 			On LossRateFabric.WeaveTypeID = Fabric.WeaveTypeID
 		 Where SciRefNo = @SciRefNo;
 

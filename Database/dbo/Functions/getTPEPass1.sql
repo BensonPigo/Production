@@ -3,7 +3,7 @@
 -- Create date: <Create Date, ,>
 -- Description:	<Description, ,>
 -- =============================================
-CREATE FUNCTION dbo.getTPEPass1
+CREATE FUNCTION [dbo].[getTPEPass1]
 (
 	-- Add the parameters for the function here
 	@id as varchar(10)
@@ -15,7 +15,7 @@ BEGIN
 	DECLARE @rtn as varchar(45);
 
 	-- Add the T-SQL statements to compute the return value here
-	SELECT @rtn = a.id+':'+a.Name from dbo.TPEPASS1 a where a.ID=@id;
+	SELECT @rtn = a.id+':'+a.Name from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID=@id;
 
 	-- Return the result of the function
 	RETURN @rtn;

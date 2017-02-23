@@ -27,7 +27,7 @@ BEGIN
 	,CustCD varchar(16) ,SizeDesc varchar(15) ,Seq varchar(2) ,Qty decimal(8,0), SizeItem varchar(3))
 
 	--抓取ID為POID
-	select @OrderID=POID FROM dbo.Orders where ID = @OrderID
+	select @OrderID=POID FROM dbo.Orders WITH (NOLOCK) where ID = @OrderID
 
 	--主料
 	insert into @tmp
@@ -43,17 +43,17 @@ BEGIN
 	,Order_SizeCode.Seq
 	,Order_Qty.Qty
 	,'' as SizeItem
-	from Orders 
-	inner join Order_Qty on Order_Qty.ID = Orders.ID
-	inner join Order_ColorCombo on Order_ColorCombo.Id = @OrderID and Order_ColorCombo.Article = Order_Qty.Article and Order_ColorCombo.FabricCode != ''
+	from Orders WITH (NOLOCK)
+	inner join Order_Qty WITH (NOLOCK) on Order_Qty.ID = Orders.ID
+	inner join Order_ColorCombo WITH (NOLOCK) on Order_ColorCombo.Id = @OrderID and Order_ColorCombo.Article = Order_Qty.Article and Order_ColorCombo.FabricCode != ''
 	--ColorDesc
-	inner join Color on color.ID = Order_ColorCombo.ColorID and Color.BrandId = Orders.BrandID
+	inner join Color WITH (NOLOCK) on color.ID = Order_ColorCombo.ColorID and Color.BrandId = Orders.BrandID
 	--S00 SizeCode
-	left join Order_SizeSpec on Order_SizeSpec.Id = Orders.ID and Order_SizeSpec.SizeCode = Order_Qty.SizeCode and SizeItem = 'S00'
+	left join Order_SizeSpec WITH (NOLOCK) on Order_SizeSpec.Id = Orders.ID and Order_SizeSpec.SizeCode = Order_Qty.SizeCode and SizeItem = 'S00'
 	--Zipper_RL
-	inner join CustCD on CustCD.ID = Orders.CustCDID and CustCD.BrandID = Orders.BrandID
+	inner join CustCD WITH (NOLOCK) on CustCD.ID = Orders.CustCDID and CustCD.BrandID = Orders.BrandID
 	--SizeCode Seq
-	left join Order_SizeCode on Order_SizeCode.Id = @OrderID and Order_SizeCode.SizeCode = Order_Qty.SizeCode
+	left join Order_SizeCode WITH (NOLOCK) on Order_SizeCode.Id = @OrderID and Order_SizeCode.SizeCode = Order_Qty.SizeCode
 	where Orders.poId = @OrderID
 
 
@@ -71,22 +71,22 @@ BEGIN
 	,Order_SizeCode.Seq
 	,Order_Qty.Qty
 	,isnull(s.SizeItem,'') as SizeItem
-	from Orders 
-	inner join Order_Qty on Order_Qty.ID = Orders.ID
-	inner join Order_ColorCombo on Order_ColorCombo.Id = @OrderID and Order_ColorCombo.Article = Order_Qty.Article and Order_ColorCombo.FabricCode = ''
+	from Orders WITH (NOLOCK)
+	inner join Order_Qty WITH (NOLOCK) on Order_Qty.ID = Orders.ID
+	inner join Order_ColorCombo WITH (NOLOCK) on Order_ColorCombo.Id = @OrderID and Order_ColorCombo.Article = Order_Qty.Article and Order_ColorCombo.FabricCode = ''
 	--ColorDesc
-	inner join Color on color.ID = Order_ColorCombo.ColorID and Color.BrandId = Orders.BrandID
+	inner join Color WITH (NOLOCK) on color.ID = Order_ColorCombo.ColorID and Color.BrandId = Orders.BrandID
 	--S00 SizeCode
-	left join Order_SizeSpec on Order_SizeSpec.Id = Orders.ID and Order_SizeSpec.SizeCode = Order_Qty.SizeCode and Order_SizeSpec.SizeItem = 'S00'
+	left join Order_SizeSpec WITH (NOLOCK) on Order_SizeSpec.Id = Orders.ID and Order_SizeSpec.SizeCode = Order_Qty.SizeCode and Order_SizeSpec.SizeItem = 'S00'
 	--取得SizeDesc
-	outer apply(select SizeItem=case when SizeItem_Elastic <> '' then SizeItem_Elastic else SizeItem end from Order_BOA
+	outer apply(select SizeItem=case when SizeItem_Elastic <> '' then SizeItem_Elastic else SizeItem end from Order_BOA WITH (NOLOCK)
 				where id = @OrderID and Order_BOA.PatternPanel <> '' and Order_BOA.PatternPanel = Order_ColorCombo.PatternPanel 
 				and (SizeItem_Elastic <> '' or SizeItem <> '' )) s
-	outer apply(select SizeSpec from Order_SizeSpec aa where aa.Id = @OrderID and aa.SizeItem = s.SizeItem and aa.SizeCode = Order_Qty.SizeCode) m
+	outer apply(select SizeSpec from Order_SizeSpec aa WITH (NOLOCK) where aa.Id = @OrderID and aa.SizeItem = s.SizeItem and aa.SizeCode = Order_Qty.SizeCode) m
 	--Zipper_RL
-	inner join CustCD on CustCD.ID = Orders.CustCDID and CustCD.BrandID = Orders.BrandID
+	inner join CustCD WITH (NOLOCK) on CustCD.ID = Orders.CustCDID and CustCD.BrandID = Orders.BrandID
 	--SizeCode Seq
-	left join Order_SizeCode on Order_SizeCode.Id = @OrderID and Order_SizeCode.SizeCode = Order_Qty.SizeCode
+	left join Order_SizeCode WITH (NOLOCK) on Order_SizeCode.Id = @OrderID and Order_SizeCode.SizeCode = Order_Qty.SizeCode
 	where Orders.poId = @OrderID
 
 	insert into @tbl

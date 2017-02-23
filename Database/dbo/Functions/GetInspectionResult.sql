@@ -23,7 +23,7 @@ BEGIN
         when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
         else a.result
         END as [Result] 
-        from dbo.FIR a 
+        from dbo.FIR a WITH (NOLOCK)
         where a.POID = @poid 
 		and a.SEQ1 = @seq1 
 		and a.SEQ2 = @seq2
@@ -32,7 +32,7 @@ BEGIN
 			)
         UNION ALL
         Select a.result
-        from dbo.AIR a 
+        from dbo.AIR a WITH (NOLOCK)
         where a.POID = @poid 
 		and a.SEQ1 = @seq1 
 		and a.SEQ2 = @seq2

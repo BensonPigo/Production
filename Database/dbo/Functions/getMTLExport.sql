@@ -15,5 +15,5 @@ BEGIN
 
 	RETURN iif(@mtlexport<>''
 							,@mtlexport
-							,convert(varchar(3),(select Count(Distinct ID) from Export_Detail where POID = @poid)))
+							,convert(varchar(3),(select Count(Distinct ID) from Export_Detail WITH (NOLOCK) where POID = @poid)))
 END

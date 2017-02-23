@@ -11,7 +11,7 @@ BEGIN
 
 		BEGIN
 			DECLARE cursor_Orders CURSOR FOR
-			SELECT ID FROM Orders WHERE CuttingSP = @cuttingsp and ID <> @cuttingsp
+			SELECT ID FROM Orders WITH (NOLOCK) WHERE CuttingSP = @cuttingsp and ID <> @cuttingsp
 
 			DECLARE @id varchar(13), --暫存Orders Id
 					@left10id varchar(10),  --暫存Orders.Id的前10碼

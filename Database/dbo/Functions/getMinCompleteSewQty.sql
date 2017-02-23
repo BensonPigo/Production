@@ -8,9 +8,9 @@ BEGIN
 		BEGIN
 			select @minSeqQty = MIN(a.QAQty)
 			from (select sl.Location, sum(isnull(sdd.QAQty,0)) as QAQty
-				  from Style_Location sl
-				  left join SewingOutput_Detail_Detail sdd on sdd.OrderId = @orderid and sdd.ComboType = sl.Location
-				  where StyleUkey = (select StyleUkey from Orders where ID = @orderid)
+				  from Style_Location sl WITH (NOLOCK)
+				  left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = @orderid and sdd.ComboType = sl.Location
+				  where StyleUkey = (select StyleUkey from Orders WITH (NOLOCK) where ID = @orderid)
 				  group by sl.Location) a
 		END
 	ELSE
@@ -18,18 +18,18 @@ BEGIN
 			BEGIN
 				select @minSeqQty = MIN(a.QAQty)
 				from (select sl.Location, sum(isnull(sdd.QAQty,0)) as QAQty
-				  from Style_Location sl
-				  left join SewingOutput_Detail_Detail sdd on sdd.OrderId = @orderid and sdd.ComboType = sl.Location and sdd.Article = @article
-				  where StyleUkey = (select StyleUkey from Orders where ID = @orderid)
+				  from Style_Location sl WITH (NOLOCK)
+				  left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = @orderid and sdd.ComboType = sl.Location and sdd.Article = @article
+				  where StyleUkey = (select StyleUkey from Orders WITH (NOLOCK) where ID = @orderid)
 				  group by sl.Location) a
 			END
 		ELSE
 			BEGIN
 				select @minSeqQty = MIN(a.QAQty)
 				from (select sl.Location, sum(isnull(sdd.QAQty,0)) as QAQty
-				  from Style_Location sl
-				  left join SewingOutput_Detail_Detail sdd on sdd.OrderId = @orderid and sdd.ComboType = sl.Location and sdd.Article = @article and sdd.SizeCode = @sizecode
-				  where StyleUkey = (select StyleUkey from Orders where ID = @orderid)
+				  from Style_Location sl WITH (NOLOCK)
+				  left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = @orderid and sdd.ComboType = sl.Location and sdd.Article = @article and sdd.SizeCode = @sizecode
+				  where StyleUkey = (select StyleUkey from Orders WITH (NOLOCK) where ID = @orderid)
 				  group by sl.Location) a
 			END
 	RETURN @minSeqQty

@@ -3,7 +3,7 @@
 -- Create date: <Create Date, ,>
 -- Description:	Get Stock Unit
 -- =============================================
-CREATE FUNCTION dbo.getStockUnit
+CREATE FUNCTION [dbo].[getStockUnit]
 (
 	-- Add the parameters for the function here
 	@scirefno varchar(26),@suppid varchar(6)
@@ -22,13 +22,13 @@ BEGIN
 	-- Add the T-SQL statements to compute the return value here
 	SELECT @tmpunit=CASE B.OutputUnit WHEN 1 THEN A.UsageUnit WHEN 2 THEN C.POUnit END
 	, @isExt = b.IsExtensionUnit
-	FROM DBO.Fabric A INNER JOIN DBO.MtlType B ON A.MtlTypeID = B.ID 
-	INNER JOIN DBO.Fabric_Supp C ON A.SCIRefno = C.SCIRefno 
+	FROM DBO.Fabric A WITH (NOLOCK) INNER JOIN DBO.MtlType B WITH (NOLOCK) ON A.MtlTypeID = B.ID 
+	INNER JOIN DBO.Fabric_Supp C WITH (NOLOCK) ON A.SCIRefno = C.SCIRefno 
 	WHERE A.SCIRefno=@scirefno AND C.SuppID = @suppid;
 
 	if @isExt = '1'
 	begin
-		select @extunit=unit.ExtensionUnit from dbo.Unit where id = @tmpunit;
+		select @extunit=unit.ExtensionUnit from dbo.Unit WITH (NOLOCK) where id = @tmpunit;
 
 		if @extunit is null or @extunit=''
 		begin

@@ -54,11 +54,11 @@ Begin
 		 , @BrandID = BrandID
 		 , @StyleID = StyleID
 		 , @SeasonID = SeasonID
-	  From dbo.Orders
+	  From dbo.Orders WITH (NOLOCK)
 	 Where ID = @PoID;
 	
 	Select @LossSampleAccessory = LossSampleAccessory
-	  From Production.dbo.Brand
+	  From Production.dbo.Brand WITH (NOLOCK)
 	 Where ID = @BrandID;
 	---------------------------------------------------------------------------
 	Declare @BoaUkey BigInt;
@@ -102,7 +102,7 @@ Begin
 	Insert Into @tmpBOA
 		(BoaUkey, SCIRefNo, SuppID, LossType, LossPercent, LossQty, LossStep)
 		Select Ukey, SCIRefNo, SuppID, LossType, LossPercent, LossQty, LossStep
-		  From dbo.Order_BOA
+		  From dbo.Order_BOA WITH (NOLOCK)
 		 Where ID = @PoID
 		   And (   (@SCIRefNo = '')
 				Or (	@SCIRefNo != ''
@@ -127,14 +127,14 @@ Begin
 		
 		Set @Supp_Country = '';
 		Select @Supp_Country = CountryID
-		  From Production.dbo.Supp
+		  From Production.dbo.Supp WITH (NOLOCK)
 		 Where ID = @SuppID;
 		
 		Set @MtltypeID = '';
 		Set @UsageUnit = '';
 		Select @MtltypeID = MtltypeID
 			 , @UsageUnit = UsageUnit
-		  From Production.dbo.Fabric
+		  From Production.dbo.Fabric WITH (NOLOCK)
 		 Where SciRefNo = @SciRefNo;
 		
 		Delete @tmpBOA_Expend;
@@ -150,7 +150,7 @@ Begin
 		Insert Into @tmpBOA_Expend
 			(  ColorID, SizeSpec, BomZipperInsert, BomCustPONo, KeyWord, UsageQty)
 			Select ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Keyword, Sum(UsageQty) as UsageQty
-			  From dbo.Order_BOA_Expend
+			  From dbo.Order_BOA_Expend WITH (NOLOCK)
 			 Where Order_BOAUkey = @BoaUkey
 			 Group by ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Keyword
 			 Order by ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Keyword, UsageQty;
@@ -210,7 +210,7 @@ Begin
 							 , @PerQty = IIF(@Supp_Country = 'TW', PerQtyTW, PerQtyNonTW)
 							 , @PlusQty = IIF(@Supp_Country = 'TW', PlsQtyTW, PlsQtyNonTW)
 							 , @FOC = IIF(@Supp_Country = 'TW', FOCTW, FOCNonTW)
-						  From Production.dbo.LossRateAccessory
+						  From Production.dbo.LossRateAccessory WITH (NOLOCK)
 						 Where MtlTypeID = @MtltypeID
 						
 						If @@RowCount > 0
@@ -218,7 +218,7 @@ Begin
 							--損耗的上限依照TYPE ID和使用單位check是否有做設定
 							Set @LimitUp = 0;
 							Select @LimitUp = LimitUp
-							  From Production.dbo.LossRateAccessory_Limit
+							  From Production.dbo.LossRateAccessory_Limit WITH (NOLOCK)
 							 Where MtltypeID = @MtltypeID
 							   And UsageUnit = @UsageUnit;
 
