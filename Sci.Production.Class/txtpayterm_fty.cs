@@ -67,7 +67,7 @@ namespace Sci.Production.Class
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
-            string selItem = "select ID,Name from PayTerm where Junk = 0 order by ID";
+            string selItem = "select ID,Name from PayTerm WITH (NOLOCK) where Junk = 0 order by ID";
             DataTable itemDt;
             DBProxy.Current.Select("Production", selItem, out itemDt);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(itemDt, "ID,Name", "6,40", this.textBox1.Text);

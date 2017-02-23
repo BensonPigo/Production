@@ -62,7 +62,7 @@ namespace Sci.Production.Class
                     return;
                 }
                 DataRow temp;
-                if (MyUtility.Check.Seek(string.Format("Select Description from WhseReason where ID='{0}' and Type='{1}'", str,Type), out temp))
+                if (MyUtility.Check.Seek(string.Format("Select Description from WhseReason WITH (NOLOCK) where ID='{0}' and Type='{1}'", str, Type), out temp))
                     this.DisplayBox1.Text = temp[0].ToString();
 
                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
@@ -90,7 +90,7 @@ namespace Sci.Production.Class
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                (string.Format("Select Id, Description from WhseReason where type='{0}' order by id",Type), "10,30", this.textBox1.Text);
+                (string.Format("Select Id, Description from WhseReason WITH (NOLOCK) where type='{0}' order by id", Type), "10,30", this.textBox1.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();

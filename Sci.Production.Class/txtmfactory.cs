@@ -20,7 +20,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,NameEN from Factory where Junk = 0 and MDivisionID = '{0}' order by ID",Sci.Env.User.Keyword), "8,40", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,NameEN from Factory WITH (NOLOCK) where Junk = 0 and MDivisionID = '{0}' order by ID", Sci.Env.User.Keyword), "8,40", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
@@ -45,7 +45,7 @@ namespace Sci.Production.Class
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 cmds.Add(sp1);
                 cmds.Add(sp2);
-                string sqlCmd = "select ID from Factory where ID = @id and MDivisionID = @mdivisionid";
+                string sqlCmd = "select ID from Factory WITH (NOLOCK) where ID = @id and MDivisionID = @mdivisionid";
                 DataTable FactoryData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out FactoryData);
                 if (!result)

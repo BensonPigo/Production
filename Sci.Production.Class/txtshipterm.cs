@@ -18,7 +18,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ShipTerm order by ID", "6,80", this.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from ShipTerm WITH (NOLOCK) order by ID", "6,80", this.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();

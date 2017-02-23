@@ -79,7 +79,7 @@ namespace Sci.Production.Class
                         DataTable selectTable;
                         if (isUserName)
                         {
-                            selectCommand = string.Format("select ID, Name, ExtNo, REPLACE(Factory,' ','') Factory from Pass1 where Name = '{0}' order by ID", textValue.Trim());
+                            selectCommand = string.Format("select ID, Name, ExtNo, REPLACE(Factory,' ','') Factory from Pass1 WITH (NOLOCK) where Name = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "10,22,5,40", this.textBox1.Text);
                             item.Size = new System.Drawing.Size(828, 509);
@@ -94,7 +94,7 @@ namespace Sci.Production.Class
                         }
                         else
                         {
-                            selectCommand = string.Format("select ID, Name, ExtNo, REPLACE(Factory,' ','') Factory from Pass1 where ExtNo = '{0}' order by ID", textValue.Trim());
+                            selectCommand = string.Format("select ID, Name, ExtNo, REPLACE(Factory,' ','') Factory from Pass1 WITH (NOLOCK) where ExtNo = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "10,22,5,40", this.textBox1.Text);
                             item.Size = new System.Drawing.Size(828, 509);
@@ -122,7 +122,7 @@ namespace Sci.Production.Class
             // 強制把binding的Text寫到DataRow
             this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
 
-            string selectSql = string.Format("Select Name,ExtNo from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
+            string selectSql = string.Format("Select Name,ExtNo from Pass1 WITH (NOLOCK) where id = '{0}'", this.textBox1.Text.ToString());
             DataTable data;
             var result = DBProxy.Current.Select(null, selectSql, out data);
             string name = "";
@@ -153,7 +153,7 @@ namespace Sci.Production.Class
             
                if (this.textBox1.ReadOnly || this.DataBindings.Count == 0)
                {
-                   string selectSql = string.Format("Select Name,ExtNo from Pass1 where id = '{0}'", this.textBox1.Text.ToString());
+                   string selectSql = string.Format("Select Name,ExtNo from Pass1 WITH (NOLOCK) where id = '{0}'", this.textBox1.Text.ToString());
                    DataTable data;
                    var result = DBProxy.Current.Select(null, selectSql, out data);
                    string name = "";
@@ -181,7 +181,7 @@ namespace Sci.Production.Class
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID, Name, ExtNo, replace(Factory,' ','')factory from Pass1 where Resign is null order by ID", "10,22,5,40", this.textBox1.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID, Name, ExtNo, replace(Factory,' ','')factory from Pass1 WITH (NOLOCK) where Resign is null order by ID", "10,22,5,40", this.textBox1.Text);
             item.Size = new System.Drawing.Size(828, 509);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
@@ -198,7 +198,7 @@ namespace Sci.Production.Class
 		                    Name, 
 		                    Ext= ExtNo, 
 		                    Mail = email
-                    from Pass1 
+                    from Pass1 WITH (NOLOCK) 
                     where id = @id";
             sqlpar.Add(new SqlParameter("@id", textBox1.Text.ToString()));
 

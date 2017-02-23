@@ -18,7 +18,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID from dbo.MDivision where ID <> '{0}'", Sci.Env.User.Keyword), "8,40", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID from dbo.MDivision WITH (NOLOCK) where ID <> '{0}'", Sci.Env.User.Keyword), "8,40", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();

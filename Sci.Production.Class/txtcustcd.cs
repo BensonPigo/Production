@@ -35,10 +35,10 @@ namespace Sci.Production.Class
 
             Sci.Win.Tools.SelectItem item;
             //20161124 如果沒選Brandid,則條件帶空值,取消帶全部資料
-            string selectCommand = "select ID, CountryID, City from CustCD order by ID";
+            string selectCommand = "select ID, CountryID, City from CustCD WITH (NOLOCK) order by ID";
             if (this.brandObject != null )//&& !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
             {
-                selectCommand = string.Format("select ID, CountryID, City from CustCD where BrandID = '{0}' order by ID", this.brandObject.Text);
+                selectCommand = string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' order by ID", this.brandObject.Text);
             }
             item = new Sci.Win.Tools.SelectItem(selectCommand, "17,3,17", this.Text);
             DialogResult returnResult = item.ShowDialog();
@@ -66,7 +66,7 @@ namespace Sci.Production.Class
                     {
                         if (!string.IsNullOrWhiteSpace((string)this.brandObject.Text))
                         {
-                            string selectCommand = string.Format("select ID from CustCD where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text,this.Text.ToString());
+                            string selectCommand = string.Format("select ID from CustCD WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text, this.Text.ToString());
                             if (!MyUtility.Check.Seek(selectCommand, null))
                             {
                                 MyUtility.Msg.WarningBox(string.Format("< CustCD: {0} > not found!!!", textValue));

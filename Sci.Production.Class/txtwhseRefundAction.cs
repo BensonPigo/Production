@@ -58,7 +58,7 @@ namespace Sci.Production.Class
             if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
             {
                 String actionCode = MyUtility.GetValue.Lookup("actioncode", "RR" + whseReason.TextBox1.Text, "WhseReason", "Type+ID");
-                string sqlcmd = string.Format(@"select Id, Description from WhseReason where type ='RA'and id in ({0}) and id in ('{1}')", actionCode,str);
+                string sqlcmd = string.Format(@"select Id, Description from WhseReason WITH (NOLOCK) where type ='RA'and id in ({0}) and id in ('{1}')", actionCode, str);
                 //if (!MyUtility.Check.Seek(str, "WhseReason", "ID"))
                 if (!MyUtility.Check.Seek(sqlcmd) )
                 {
@@ -70,7 +70,7 @@ namespace Sci.Production.Class
                     return;
                 }
                 DataRow temp;
-                if (MyUtility.Check.Seek(string.Format("Select Description from WhseReason where ID='{0}' and Type='RA'", str), out temp))
+                if (MyUtility.Check.Seek(string.Format("Select Description from WhseReason WITH (NOLOCK) where ID='{0}' and Type='RA'", str), out temp))
                     this.DisplayBox1.Text = temp[0].ToString();
 
                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
@@ -94,8 +94,8 @@ namespace Sci.Production.Class
                 MyUtility.Msg.WarningBox("can't fount data!", "Warning");
                 return;
             }
-            Sci.Win.Tools.SelectItem item = 
-                new Sci.Win.Tools.SelectItem("select Id, Description from WhseReason where type ='RA' "+
+            Sci.Win.Tools.SelectItem item =
+                new Sci.Win.Tools.SelectItem("select Id, Description from WhseReason WITH (NOLOCK) where type ='RA' " +
                 string.Format(" and id in ({0})", actionCode), "10,30", this.textBox1.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }

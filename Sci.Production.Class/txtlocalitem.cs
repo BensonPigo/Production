@@ -79,7 +79,7 @@ namespace Sci.Production.Class
                 }
 
             }
-            string sql = "Select Refno, LocalSuppid, category, description From LocalItem " + where;
+            string sql = "Select Refno, LocalSuppid, category, description From LocalItem WITH (NOLOCK) " + where;
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "20,8,20,50", this.Text, false, ",");
             //select id from LocalItem where !Junk and LocalSuppid = localSupp and Category = category
             DialogResult result = item.ShowDialog();
@@ -118,7 +118,7 @@ namespace Sci.Production.Class
                     }
                 }
 
-                string sqlcom = "Select Refno,junk from localItem " + where;
+                string sqlcom = "Select Refno,junk from localItem WITH (NOLOCK) " + where;
                 System.Data.SqlClient.SqlParameter categoryIlist = new System.Data.SqlClient.SqlParameter();
                 categoryIlist.ParameterName = "@Category";
                 categoryIlist.Value = category.PadRight(20);
@@ -209,7 +209,7 @@ namespace Sci.Production.Class
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                     SelectItem sele;
 
-                    sele = new SelectItem("Select LI.Refno,LI.LocalSuppid, LI.LocalSuppid+'-'+LS.Name as supp, LI.category, LI.description ,LI.ThreadTex ,LI.ThreadTypeID,LI.MeterToCone,LI.Weight,LI.AxleWeight From LocalItem LI  left join LocalSupp LS on LI.LocalSuppid=LS.ID " + where, "23", row["refno"].ToString(), false, ",");                    
+                    sele = new SelectItem("Select LI.Refno,LI.LocalSuppid, LI.LocalSuppid+'-'+LS.Name as supp, LI.category, LI.description ,LI.ThreadTex ,LI.ThreadTypeID,LI.MeterToCone,LI.Weight,LI.AxleWeight From LocalItem LI WITH (NOLOCK) left join LocalSupp LS WITH (NOLOCK) on LI.LocalSuppid=LS.ID " + where, "23", row["refno"].ToString(), false, ",");                    
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     var sellist = sele.GetSelecteds();
@@ -249,7 +249,7 @@ namespace Sci.Production.Class
                 String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
                 string sql;
 
-                sql = string.Format("Select Refno, LocalSuppid, category, description From LocalItem LI "+where+" and refno ='{0}'", newValue);
+                sql = string.Format("Select Refno, LocalSuppid, category, description From LocalItem LI WITH (NOLOCK) " + where + " and refno ='{0}'", newValue);
                 if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
                 {
                     if (!MyUtility.Check.Seek(sql))

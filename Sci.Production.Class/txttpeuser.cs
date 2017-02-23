@@ -46,7 +46,7 @@ namespace Sci.Production.Class
 
         private void displayBox1_TextChanged(object sender, EventArgs e)
         {
-            string selectSql = string.Format("Select Name,ExtNo from TPEPass1 Where id='{0}'", this.displayBox1.Text.ToString());
+            string selectSql = string.Format("Select Name,ExtNo from TPEPass1 WITH (NOLOCK) Where id='{0}'", this.displayBox1.Text.ToString());
             DataRow dr;
             if (MyUtility.Check.Seek(selectSql, out dr, connectionName: "Production"))
             {
@@ -71,7 +71,7 @@ namespace Sci.Production.Class
 		                    Name, 
 		                    Ext= ExtNo, 
 		                    Mail = email
-                    from Production.dbo.TPEPass1 
+                    from Production.dbo.TPEPass1 WITH (NOLOCK) 
                     where id = @id";
             sqlpar.Add(new SqlParameter("@id", displayBox1.Text.ToString()));
 

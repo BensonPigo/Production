@@ -62,7 +62,7 @@ namespace Sci.Production.Class
             string textValue = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                string Sql = string.Format("Select Junk from LocalSupp where ID = '{0}'", textValue);
+                string Sql = string.Format("Select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'", textValue);
                 if (!MyUtility.Check.Seek(Sql, "Production"))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Subcon Code: {0} > not found!!!", textValue));
@@ -105,10 +105,10 @@ namespace Sci.Production.Class
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base) this.FindForm();
             if (myForm.EditMode == false || textBox1.ReadOnly==true) return;
             string selectCommand;
-            selectCommand = "select ID,Abb,Name from LocalSupp order by ID";
+            selectCommand = "select ID,Abb,Name from LocalSupp WITH (NOLOCK) order by ID";
             if (!IsIncludeJunk)
             {
-                selectCommand = "select ID,Abb,Name from LocalSupp where  Junk =  0 order by ID";
+                selectCommand = "select ID,Abb,Name from LocalSupp WITH (NOLOCK) where  Junk =  0 order by ID";
             }
             DataTable tbSelect;
             DBProxy.Current.Select("Production", selectCommand, out tbSelect);
@@ -141,7 +141,7 @@ namespace Sci.Production.Class
                     DataRow row1 = grid.GetDataRow(e.RowIndex);
 
                     DataTable subTb;
-                    string sql = "select ID,Abb,Name from LocalSupp where  Junk =  0 order by ID";
+                    string sql = "select ID,Abb,Name from LocalSupp WITH (NOLOCK) where  Junk =  0 order by ID";
                     DualResult duR =  DBProxy.Current.Select("Production", sql, out subTb);
                     if (duR)
                     {
@@ -166,7 +166,7 @@ namespace Sci.Production.Class
                 DataRow row = grid.GetDataRow<DataRow>(e.RowIndex), sqlRow;
                 String oldValue = row[suppid].ToString();
                 String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
-                string sql = string.Format("select ID,Abb,Name from LocalSupp where  Junk =  0 and ID = '{0}'", newValue);
+                string sql = string.Format("select ID,Abb,Name from LocalSupp WITH (NOLOCK) where  Junk =  0 and ID = '{0}'", newValue);
                 if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
                 {
                     if (!MyUtility.Check.Seek(sql, out sqlRow,"Production"))

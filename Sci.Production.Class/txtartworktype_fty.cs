@@ -52,7 +52,7 @@ namespace Sci.Production.Class
                else
                { sqlWhere = sqlWhere + " And IsSubprocess =0 "; };
            };
-           sqlCmd = "select ID, Abbreviation from ArtworkType " + sqlWhere + " order by Seq";
+           sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere + " order by Seq";
            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,4", this.Text, false, ",");
            item.Size = new System.Drawing.Size(435, 510);
            DialogResult result = item.ShowDialog();
@@ -84,7 +84,7 @@ namespace Sci.Production.Class
                    else
                    { sqlWhere = sqlWhere + " And IsSubprocess =0 "; };
                };
-               sqlCmd = "select ID, Abbreviation from ArtworkType " + sqlWhere;
+               sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere;
 
                if (MyUtility.Check.Seek(sqlCmd) == false)
                {

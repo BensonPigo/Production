@@ -68,7 +68,7 @@ namespace Sci.Production.Class
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from PayTermAR order by ID", "10,100", this.textBox1.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Description from PayTermAR WITH (NOLOCK) order by ID", "10,100", this.textBox1.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();

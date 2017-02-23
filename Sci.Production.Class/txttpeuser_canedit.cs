@@ -62,7 +62,7 @@ namespace Sci.Production.Class
                         DataTable selectTable;
                         if (isUserName)
                         {
-                            selectCommand = string.Format("select ID, Name, ExtNo from TPEPass1 where Name = '{0}' order by ID", textValue.Trim());
+                            selectCommand = string.Format("select ID, Name, ExtNo from TPEPass1 WITH (NOLOCK) where Name = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable,"ID,Name,ExtNo", "15,30,10", this.textBox1.Text);
                             DialogResult returnResult = item.ShowDialog();
@@ -75,7 +75,7 @@ namespace Sci.Production.Class
                         }
                         else
                         {
-                            selectCommand = string.Format("select ID, Name, ExtNo from TPEPass1 where Ext_No = '{0}' order by ID", textValue.Trim());
+                            selectCommand = string.Format("select ID, Name, ExtNo from TPEPass1 WITH (NOLOCK) where Ext_No = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo", "15,30,10", this.textBox1.Text);
                             DialogResult returnResult = item.ShowDialog();
@@ -103,9 +103,9 @@ namespace Sci.Production.Class
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == true)
             {
-                string selectSql = string.Format("Select Name from TPEPass1 where id = '{0}'", this.textBox1.Text.ToString());
+                string selectSql = string.Format("Select Name from TPEPass1 WITH (NOLOCK) where id = '{0}'", this.textBox1.Text.ToString());
                 string name = MyUtility.GetValue.Lookup(selectSql);
-                selectSql = string.Format("Select ExtNo from TPEPass1 where id = '{0}'", this.textBox1.Text.ToString());
+                selectSql = string.Format("Select ExtNo from TPEPass1 WITH (NOLOCK) where id = '{0}'", this.textBox1.Text.ToString());
                 string extNo = MyUtility.GetValue.Lookup(selectSql);
                 if (!string.IsNullOrWhiteSpace(name)) { this.displayBox1.Text = name; }
                 else this.displayBox1.Text = "";
@@ -118,7 +118,7 @@ namespace Sci.Production.Class
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 order by ID", "15,30,10", this.textBox1.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) order by ID", "15,30,10", this.textBox1.Text);
             item.Width = 640;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
@@ -134,7 +134,7 @@ namespace Sci.Production.Class
 		                    Name, 
 		                    Ext= ExtNo, 
 		                    Mail = email
-                    from Production.dbo.TPEPass1 
+                    from Production.dbo.TPEPass1 WITH (NOLOCK) 
                     where id = @id";
             sqlpar.Add(new SqlParameter("@id", textBox1.Text.ToString()));
 

@@ -50,7 +50,7 @@ namespace Sci.Production.Class
                     {
                         if (!string.IsNullOrWhiteSpace((string)this.brandObject.Text))
                         {
-                            string selectCommand = string.Format("select ID from Season where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text, this.Text.ToString());
+                            string selectCommand = string.Format("select ID from Season WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text, this.Text.ToString());
                             if (!MyUtility.Check.Seek(selectCommand, null))
                             {
                                 MyUtility.Msg.WarningBox(string.Format("< Season: {0} > not found!!!", textValue));
@@ -69,10 +69,10 @@ namespace Sci.Production.Class
             base.OnPopUp(e);
 
             Sci.Win.Tools.SelectItem item;
-            string selectCommand = "select distinct ID from Season order by id desc";
+            string selectCommand = "select distinct ID from Season WITH (NOLOCK) order by id desc";
             if (this.brandObject != null && !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
             {
-                selectCommand = string.Format("select distinct ID from Season where BrandID = '{0}' order by id desc", this.brandObject.Text);
+                selectCommand = string.Format("select distinct ID from Season WITH (NOLOCK) where BrandID = '{0}' order by id desc", this.brandObject.Text);
             }
             item = new Sci.Win.Tools.SelectItem(selectCommand, "11", this.Text);
             item.Width = 300;

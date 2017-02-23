@@ -17,7 +17,7 @@ namespace Sci.Production.Class
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
-            string sql = "select ID,NameCH,NameEN from Currency where Junk = 0 order by ID";
+            string sql = "select ID,NameCH,NameEN from Currency WITH (NOLOCK) where Junk = 0 order by ID";
             DataTable tbCurrency;
             DBProxy.Current.Select("Production", sql, out tbCurrency);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbCurrency, "ID,NameCH,NameEn", "5,14,30", this.Text, "ID,NameCH,NameEn");

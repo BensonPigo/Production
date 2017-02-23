@@ -29,7 +29,7 @@ namespace Sci.Production.Class
             base.OnMouseDown(e);
             if (e.Button == MouseButtons.Right)
             {
-                string sqlcmd = string.Format(@"select id,abb from dbo.LocalSupp ");
+                string sqlcmd = string.Format(@"select id,abb from dbo.LocalSupp WITH (NOLOCK) ");
 
                 Sci.Win.Tools.SelectItem2 selectSubcons = new Win.Tools.SelectItem2(sqlcmd,
                                 "Supp ID,Supp Abb", "13,60", this.Text);

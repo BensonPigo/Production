@@ -18,7 +18,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from dbo.ToMdivision", "8,40", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from dbo.ToMdivision WITH (NOLOCK) ", "8,40", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();

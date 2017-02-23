@@ -22,7 +22,7 @@ namespace Sci.Production.Class
                 this.type = value;
                 if (!Env.DesignTime)
                 {
-                    string selectCommand = string.Format("select ID, rtrim(ID)+'- '+rtrim(Name) as IDName from DropDownList where Type = '{0}' order by Seq", this.Type);
+                    string selectCommand = string.Format("select ID, rtrim(ID)+'- '+rtrim(Name) as IDName from DropDownList WITH (NOLOCK) where Type = '{0}' order by Seq", this.Type);
                     Ict.DualResult returnResult;
                     DataTable dropDownListTable = new DataTable();
                     if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))

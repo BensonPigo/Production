@@ -38,7 +38,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
             brand = brandObject.Text;
-            string sql = string.Format("Select id,BrandID from Program where Brandid = '{0}'", brand);
+            string sql = string.Format("Select id,BrandID from Program WITH (NOLOCK) where Brandid = '{0}'", brand);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "12,8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) 

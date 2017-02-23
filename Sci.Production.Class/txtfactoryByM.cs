@@ -20,7 +20,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,NameEN from Factory where Junk = 0 and MDivisionID = '{0}' order by ID", mDivisionID), "8,40", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,NameEN from Factory WITH (NOLOCK) where Junk = 0 and MDivisionID = '{0}' order by ID", mDivisionID), "8,40", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
@@ -35,7 +35,7 @@ namespace Sci.Production.Class
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
                 DataTable dt;
-                DualResult result = DBProxy.Current.Select(null, string.Format("select ID,NameEN from Factory where Junk = 0 and MDivisionID = '{0}' and ID = '{1}'", mDivisionID, str), out dt);
+                DualResult result = DBProxy.Current.Select(null, string.Format("select ID,NameEN from Factory WITH (NOLOCK) where Junk = 0 and MDivisionID = '{0}' and ID = '{1}'", mDivisionID, str), out dt);
                 if (result.Result)
                 {
                     if (dt != null && dt.Rows.Count == 0)

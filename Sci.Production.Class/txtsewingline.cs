@@ -52,7 +52,7 @@ namespace Sci.Production.Class
             {
                 ftyWhere = string.Format("Where FactoryId = '{0}'", fty);
             }
-            string sql = string.Format("Select ID,FactoryID,Description From SewingLine {0} ", ftyWhere);
+            string sql = string.Format("Select ID,FactoryID,Description From SewingLine WITH (NOLOCK) {0} ", ftyWhere);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,6,16", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -79,7 +79,7 @@ namespace Sci.Production.Class
                 {
                     if (!string.IsNullOrWhiteSpace((string)this.factoryObject.Text))
                     {
-                        string selectCommand = string.Format("select ID from SewingLine where FactoryID = '{0}' and ID = '{1}'", (string)this.factoryObject.Text, this.Text.ToString());
+                        string selectCommand = string.Format("select ID from SewingLine WITH (NOLOCK) where FactoryID = '{0}' and ID = '{1}'", (string)this.factoryObject.Text, this.Text.ToString());
                         if (!MyUtility.Check.Seek(selectCommand, null))
                         {
                             e.Cancel = true;

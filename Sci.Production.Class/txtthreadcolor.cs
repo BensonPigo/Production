@@ -25,7 +25,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select id,description from threadcolor where junk=0", "23,40", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select id,description from threadcolor WITH (NOLOCK) where junk=0", "23,40", this.Text, false, ",");
             //
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }

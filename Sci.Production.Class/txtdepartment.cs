@@ -18,7 +18,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from Department where Junk = 0 order by ID", "10,50", this.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from Department WITH (NOLOCK) where Junk = 0 order by ID", "10,50", this.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();

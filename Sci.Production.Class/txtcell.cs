@@ -36,7 +36,7 @@ namespace Sci.Production.Class
                 //where = where + string.Format(" and mdivisionid = '{0}'", fty);
                 where = string.Format(" Where junk = 0 and mdivisionid = '{0}'", fty);
             }
-            sql = "select id from CutCell" + where ;
+            sql = "select id from CutCell WITH (NOLOCK) " + where;
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2", this.Text, false, ",");
             
             DialogResult result = item.ShowDialog();

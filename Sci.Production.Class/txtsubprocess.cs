@@ -16,7 +16,7 @@ namespace Sci.Production.Class
     {
         public txtsubprocess()
         {
-            string sqlCmd = "Select ID, ArtworkTypeId From Subprocess  where junk=0 and IsProcess=1 Order By ID";
+            string sqlCmd = "Select ID, ArtworkTypeId From Subprocess WITH (NOLOCK) where junk=0 and IsProcess=1 Order By ID";
             Ict.DualResult cbResult;
             DataTable SubprocessTable = new DataTable();
             if (cbResult = DBProxy.Current.Select(null, sqlCmd, out SubprocessTable))

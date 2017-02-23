@@ -25,7 +25,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select id from threadcomb where junk=0", "23", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select id from threadcomb WITH (NOLOCK) where junk=0", "23", this.Text, false, ",");
             //
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -77,7 +77,7 @@ namespace Sci.Production.Class
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                     SelectItem sele;
 
-                    sele = new SelectItem("Select id From threadcomb where Junk=0", "23", row["threadcombid"].ToString(), false, ",");
+                    sele = new SelectItem("Select id From threadcomb WITH (NOLOCK) where Junk=0", "23", row["threadcombid"].ToString(), false, ",");
 
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -99,7 +99,7 @@ namespace Sci.Production.Class
                 String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
                 string sql;
 
-                sql = string.Format("Select * from threadcomb where Junk = 0 and ID = '{0}' ", newValue);
+                sql = string.Format("Select * from threadcomb WITH (NOLOCK) where Junk = 0 and ID = '{0}' ", newValue);
                 if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
                 {
                     if (!MyUtility.Check.Seek(sql))

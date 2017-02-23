@@ -37,10 +37,10 @@ namespace Sci.Production.Class
             Sci.Win.Tems.Base myform = (Sci.Win.Tems.Base)this.FindForm();
             if (myform.EditMode)
             {
-                string sql = "select ID,Description,MDivisionID from ClogLocation order by ID";
+                string sql = "select ID,Description,MDivisionID from ClogLocation WITH (NOLOCK) order by ID";
                 if (this.mDivisionObject != null && !string.IsNullOrWhiteSpace((string)this.mDivisionObject.Text))
                 {
-                    sql = string.Format("select ID,Description,MDivisionID from ClogLocation where MDivisionID = '{0}' order by ID", this.mDivisionObject.Text);
+                    sql = string.Format("select ID,Description,MDivisionID from ClogLocation WITH (NOLOCK) where MDivisionID = '{0}' order by ID", this.mDivisionObject.Text);
                 }
                 DataTable tbClogLocation;
                 DBProxy.Current.Select("Production", sql, out tbClogLocation);
@@ -76,7 +76,7 @@ namespace Sci.Production.Class
                     {
                         if (!string.IsNullOrWhiteSpace((string)this.mDivisionObject.Text))
                         {
-                            string selectCommand = string.Format("select ID from ClogLocation where MDivisionID = '{0}' and ID = '{1}'", (string)this.mDivisionObject.Text, str);
+                            string selectCommand = string.Format("select ID from ClogLocation WITH (NOLOCK) where MDivisionID = '{0}' and ID = '{1}'", (string)this.mDivisionObject.Text, str);
                             if (!MyUtility.Check.Seek(selectCommand, null))
                             {
                                 MyUtility.Msg.WarningBox(string.Format("< ClogLocation : {0} > not found!!!", str));

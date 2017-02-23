@@ -25,8 +25,8 @@ namespace Sci.Production.Class.Commons
             String sqlCmd =
 @"Select Pass1.ID , Pass1.Name, Pass1.Factory, Pass1.ExtNo as Ext_No
 , Pass1.Email
-From Production.dbo.Pass1
-Left Join Production.dbo.Factory
+From Production.dbo.Pass1 WITH (NOLOCK) 
+Left Join Production.dbo.Factory WITH (NOLOCK) 
     On Factory.ID =  Pass1.Factory ";
             if(!SQL.Select(SQL.queryConn, sqlCmd, out users)){
                 return;

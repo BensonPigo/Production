@@ -49,7 +49,7 @@ namespace Sci.Production.Class
                     {
                         if (!string.IsNullOrWhiteSpace((string)this.brandObject.Text))
                         {
-                            string selectCommand = string.Format("select ID from Style where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text, this.Text.ToString());
+                            string selectCommand = string.Format("select ID from Style WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text, this.Text.ToString());
                             if (!MyUtility.Check.Seek(selectCommand, null))
                             {
                                 MyUtility.Msg.WarningBox(string.Format("< Brand + Style: {0} + {1} > not found!!!", (string)this.brandObject.Text, textValue));
@@ -69,10 +69,10 @@ namespace Sci.Production.Class
             
             Sci.Win.Tools.SelectItem item;
             string selectCommand;
-            selectCommand = "select ID,SeasonID,Description,BrandID from Style where Junk = 0 order by ID";
+            selectCommand = "select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 order by ID";
             if (this.brandObject != null && !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
             {
-                selectCommand = string.Format("select ID,SeasonID,Description,BrandID from Style where Junk = 0 and BrandID = '{0}' order by ID", this.brandObject.Text);
+                selectCommand = string.Format("select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 and BrandID = '{0}' order by ID", this.brandObject.Text);
             }
             item = new Sci.Win.Tools.SelectItem(selectCommand, "12,5,38,10", this.Text);
            item.Size=new System.Drawing.Size(757, 530);
