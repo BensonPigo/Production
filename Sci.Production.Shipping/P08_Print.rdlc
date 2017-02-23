@@ -1148,7 +1148,7 @@
               <Width>2.62938cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>4.93668cm</Width>
+              <Width>4.52668cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.49161cm</Width>
@@ -1160,10 +1160,13 @@
               <Width>1.71014cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.21623cm</Width>
+              <Width>1.33824cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>3.14332cm</Width>
+              <Width>1.97002cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>2.42894cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -1365,6 +1368,51 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox96</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                        <TopBorder>
+                          <Style>Double</Style>
+                        </TopBorder>
+                        <BottomBorder>
+                          <Style>Solid</Style>
+                        </BottomBorder>
+                        <LeftBorder>
+                          <Style>None</Style>
+                        </LeftBorder>
+                        <RightBorder>
+                          <Style>None</Style>
+                        </RightBorder>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox1">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Unit</Value>
+                              <Style>
+                                <FontFamily>Times New Roman</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Right</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1652,6 +1700,40 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
+                    <Textbox Name="UnitID">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!UnitID.Value</Value>
+                              <Style>
+                                <FontFamily>Times New Roman</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Right</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>UnitID</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>None</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
                     <Textbox Name="Rate">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
@@ -1733,6 +1815,7 @@
             <TablixMember />
             <TablixMember />
             <TablixMember />
+            <TablixMember />
           </TablixMembers>
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
@@ -1749,7 +1832,7 @@
         <Top>7.12611cm</Top>
         <Left>0.36218cm</Left>
         <Height>1.2cm</Height>
-        <Width>18.17767cm</Width>
+        <Width>18.14532cm</Width>
         <ZIndex>40</ZIndex>
         <Style>
           <Border>
@@ -2352,7 +2435,7 @@
     <Height>6.65354in</Height>
     <Style />
   </Body>
-  <Width>18.95cm</Width>
+  <Width>21.03985cm</Width>
   <Page>
     <PageFooter>
       <Height>0.62745cm</Height>
@@ -2511,6 +2594,13 @@
       </ConnectionProperties>
       <rd:DataSourceID>742a4042-31c4-4de8-a7c4-55b2c2f39474</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="SciProductionshipping">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>07128b09-5e49-45c1-bd7b-72d6a20fee14</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="Report_ShippingAPDetail">
@@ -2519,42 +2609,43 @@
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
-        <Field Name="ShipExpenseID">
-          <DataField>ShipExpenseID</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Description">
-          <DataField>Description</DataField>
+        <Field Name="Amount">
+          <DataField>Amount</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="CurrencyID">
           <DataField>CurrencyID</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="Description">
+          <DataField>Description</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="Price">
           <DataField>Price</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Qty">
           <DataField>Qty</DataField>
-          <rd:TypeName>System.Int64</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Rate">
           <DataField>Rate</DataField>
-          <rd:TypeName>System.Int64</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Amount">
-          <DataField>Amount</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
+        <Field Name="ShipExpenseID">
+          <DataField>ShipExpenseID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="UnitID">
+          <DataField>UnitID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>
-        <rd:DataSetName>Shipping</rd:DataSetName>
-        <rd:SchemaPath>D:\System2014\Production\trunk\Sci.Production.Shipping\Shipping.xsd</rd:SchemaPath>
+        <rd:DataSetName>Sci.Production.shipping</rd:DataSetName>
         <rd:TableName>Report_ShippingAPDetail</rd:TableName>
-        <rd:TableAdapterFillMethod />
-        <rd:TableAdapterGetDataMethod />
-        <rd:TableAdapterName />
+        <rd:ObjectDataSourceType>Sci.Production.shipping.Report_ShippingAPDetail, Sci.Production.Shipping, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>

@@ -97,7 +97,7 @@ namespace Sci.Production.Shipping
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountID,'') + '-' + isnull(a.Name,'')) as Account
+            this.DetailSelectCommand = string.Format(@"select sd.*,isnull(se.Description,'') as Description, (isnull(se.AccountID,'') + '-' + isnull(a.Name,'')) as Account,se.UnitID
 from ShippingAP_Detail sd WITH (NOLOCK) 
 left join ShipExpense se WITH (NOLOCK) on se.ID = sd.ShipExpenseID
 left join [FinanceEN].dbo.AccountNO a on a.ID = se.AccountID
@@ -145,7 +145,7 @@ where sd.ID = '{0}'", masterID);
                             {
                                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                                 string localSuppID = MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"]);
-                                string sqlCmd = string.Format("select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense WITH (NOLOCK) where Junk = 0 and LocalSuppID = '{0}' and AccountID != ''", localSuppID);
+                                string sqlCmd = string.Format("select ID,Description,LocalSuppID,CurrencyID,Price,BrandID,UnitID from ShipExpense WITH (NOLOCK) where Junk = 0 and LocalSuppID = '{0}' and AccountID != ''", localSuppID);
                                 Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,50,6,3,11,8", MyUtility.Convert.GetString(dr["ShipExpenseID"]));
                                 DialogResult returnResult = item.ShowDialog();
                                 if (returnResult == DialogResult.Cancel) { return; }
@@ -172,7 +172,7 @@ where sd.ID = '{0}'", masterID);
                         cmds.Add(sp2);
 
                         DataTable ExpenseData;
-                        string sqlCmd = "select ID,Description,LocalSuppID,CurrencyID,Price,BrandID from ShipExpense WITH (NOLOCK) where Junk = 0 and LocalSuppID = @localsuppid and ID = @shipexpenseid  and AccountID != ''";
+                        string sqlCmd = "select ID,Description,LocalSuppID,CurrencyID,Price,BrandID,UnitID from ShipExpense WITH (NOLOCK) where Junk = 0 and LocalSuppID = @localsuppid and ID = @shipexpenseid  and AccountID != ''";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ExpenseData);
                         if (!result || ExpenseData.Rows.Count <= 0)
                         {
@@ -191,6 +191,7 @@ where sd.ID = '{0}'", masterID);
                             dr["CurrencyID"] = "";
                             dr["Rate"] = 0;
                             dr["Amount"] = 0;
+                            dr["UnitID"] = "";
                             dr.EndEdit();
                             e.Cancel = true;
                             return;
@@ -204,6 +205,7 @@ where sd.ID = '{0}'", masterID);
                             dr["CurrencyID"] = ExpenseData.Rows[0]["CurrencyID"];
                             dr["Rate"] = 1;
                             dr["Amount"] = MyUtility.Convert.GetDecimal(ExpenseData.Rows[0]["Price"]);
+                            dr["UnitID"] = ExpenseData.Rows[0]["UnitID"];
                             dr.EndEdit();
                         }
                     }
@@ -240,6 +242,7 @@ where sd.ID = '{0}'", masterID);
                 .Text("ShipExpenseID", header: "Code", width: Widths.AnsiChars(10), settings: code).Get(out col_code)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(6), decimal_places: 4, settings: qty).Get(out col_qty)
+                .Text("UnitID", header: "Unit", width: Widths.AnsiChars(10), settings: code)
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(9), decimal_places: 4, iseditingreadonly: true)
                 .Numeric("Rate", header: "Rate", width: Widths.AnsiChars(9), decimal_places: 6, settings: rate).Get(out col_rate)
@@ -516,7 +519,7 @@ where ls.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["LocalSuppID"]
                     return false;
                 }
 
-                sqlCmd = string.Format(@"select sd.ShipExpenseID,isnull(se.Description,'') as Description,sd.CurrencyID,sd.Price,sd.Qty,sd.Rate,sd.Amount 
+                sqlCmd = string.Format(@"select sd.ShipExpenseID,isnull(se.Description,'') as Description,sd.CurrencyID,sd.Price,sd.Qty,sd.Rate,sd.Amount,se.UnitID 
 from ShippingAP_Detail sd WITH (NOLOCK) 
 left join ShipExpense se WITH (NOLOCK) on sd.ShipExpenseID = se.ID
 where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));

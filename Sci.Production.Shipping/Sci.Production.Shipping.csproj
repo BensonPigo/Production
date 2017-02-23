@@ -438,6 +438,7 @@
     <Compile Include="P08.Designer.cs">
       <DependentUpon>P08.cs</DependentUpon>
     </Compile>
+    <Compile Include="P08_PrintData.cs" />
     <Compile Include="P08_ShareExpense.cs">
       <SubType>Form</SubType>
     </Compile>
