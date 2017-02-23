@@ -35,8 +35,8 @@ namespace Sci.Production.Warehouse
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && 
-                MyUtility.Check.Empty(dateRange2.Value1) && 
+            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) &&
+                MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2) &&
                 (MyUtility.Check.Empty(txtSpno1.Text) || MyUtility.Check.Empty(txtSpno2.Text))) 
             {
                 MyUtility.Msg.WarningBox("< Scrap Date > & < Buyer Delivery > & < SP# > can't be empty!!");
@@ -126,10 +126,12 @@ where s.Status = 'Confirmed' and s.type = '{0}'
 ", stocktype,fabrictype                ));
 
             #region --- 條件組合  ---
-            if (!MyUtility.Check.Empty(buyerDelivery1))
+            if (!MyUtility.Check.Empty(buyerDelivery1) || !MyUtility.Check.Empty(buyerDelivery2))
             {
-                sqlCmd.Append(string.Format(@" and o.BuyerDelivery between '{0}' and '{1}'"
-                , Convert.ToDateTime(buyerDelivery1).ToString("d"), Convert.ToDateTime(buyerDelivery2).ToString("d")));
+                if (!MyUtility.Check.Empty(buyerDelivery1))
+                    sqlCmd.Append(string.Format(@" and '{0}' <= o.BuyerDelivery", Convert.ToDateTime(buyerDelivery1).ToString("d")));
+                if (!MyUtility.Check.Empty(buyerDelivery2))
+                    sqlCmd.Append(string.Format(@" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDelivery2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(spno1))
             {
@@ -139,10 +141,12 @@ where s.Status = 'Confirmed' and s.type = '{0}'
                 cmds.Add(sp_spno1);
                 cmds.Add(sp_spno2);
             }
-            if (!MyUtility.Check.Empty(issueDate1))
+            if (!MyUtility.Check.Empty(issueDate1) || !MyUtility.Check.Empty(issueDate2))
             {
-                sqlCmd.Append(string.Format(@" and s.issuedate between '{0}' and '{1}'", 
-                    Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")));
+                if(!MyUtility.Check.Empty(issueDate1))
+                    sqlCmd.Append(string.Format(@" and '{0}' <= s.issuedate", Convert.ToDateTime(issueDate1).ToString("d")));
+                if (!MyUtility.Check.Empty(issueDate2))
+                    sqlCmd.Append(string.Format(@" and s.issuedate <= '{0}'", Convert.ToDateTime(issueDate2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(season))
             {
