@@ -617,7 +617,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             row = row + (dataRow > 2 ? dataRow - 1 : 2);
 
 
-            string cds = ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2);
+            string cds = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
             string[] cdsab = cds.Split('\r');
             int cdsi = 0;
             int cdsl = 113;
