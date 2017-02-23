@@ -95,7 +95,8 @@ namespace Sci.Production.Quality
                 InsDate_text.Value = MyUtility.Convert.GetDate(dr["inspdate"]);                  
                 Instor_text.Text = dr["inspector"].ToString();
                 Remark_text.Text = dr["remark"].ToString();
-                this.comboBox1.DisplayMember = dr["Result"].ToString();
+                comboBox1.SelectedValue = dr["Result"].ToString();
+                //this.comboBox1.DisplayMember = dr["Result"].ToString();
                 this.editBox1.Text = dr["Defect"].ToString();
                 this.Arrive_qty_text.Text = dr["ArriveQty"].ToString();
             }
