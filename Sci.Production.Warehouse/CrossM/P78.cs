@@ -396,7 +396,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             DataTable newDt = ((DataTable)detailgridbs.DataSource).Clone();
             foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
             {
-                string[] dtrLocation = dtr["ToLocation"].ToString().Split(',');
+                string[] dtrLocation = dtr["Location"].ToString().Split(',');
                 dtrLocation = dtrLocation.Distinct().ToArray();
 
                 if (dtrLocation.Length == 1)
@@ -411,7 +411,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     {
                         DataRow newDr = newDt.NewRow();
                         newDr.ItemArray = dtr.ItemArray;
-                        newDr["ToLocation"] = location;
+                        newDr["Location"] = location;
                         newDt.Rows.Add(newDr);
                     }
                 }
@@ -424,9 +424,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                                    poid = b.Field<string>("poid"),
                                    seq1 = b.Field<string>("seq1"),
                                    seq2 = b.Field<string>("seq2"),
-                                   stocktype = CurrentMaintain["stocktype"].ToString(),
+                                   stocktype = b.Field<string>("stocktype"),
                                    qty = b.Field<decimal>("qty"),
-                                   toLocation = b.Field<string>("ToLocation"),
+                                   location = b.Field<string>("location"),
                                    roll = b.Field<string>("roll"),
                                    dyelot = b.Field<string>("dyelot"),
                                }).ToList();
