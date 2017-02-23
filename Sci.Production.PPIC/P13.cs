@@ -334,7 +334,6 @@ select *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLin
                 }
             }
             listControlBindingSource1.DataSource = gridData;
-            this.grid1.AutoResizeColumns();
         }
 
         //Close

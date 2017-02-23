@@ -27,9 +27,59 @@ namespace Sci.Production.Cutting
             InitializeComponent();
             EditMode = true;
         }
-
+        
         private bool ToExcel()
         {
+            if (rdCheck_CuttingWorkOrder.Checked)
+            {
+                #region rdCheck_CuttingWorkOrder
+                System.Data.DataTable[] dts;
+                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01_print_CuttingWorkOrder", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
+
+                if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
+                if (dts.Length < 2) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
+
+                DataRow dr = dts[0].Rows[0];
+                DataRow dr2 = dts[1].Rows[0];
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_CuttingWorkOrder.xltx");
+                sxrc sxr = new sxrc(xltPath);
+
+                sxr.dicDatas.Add(sxr._v + "PoList", dr["PoList"]);
+                sxr.dicDatas.Add(sxr._v + "StyleID", dr["StyleID"]);
+                sxr.dicDatas.Add(sxr._v + "CutLine", dr["CutLine"]);
+                sxr.dicDatas.Add(sxr._v + "OrderQty", MyUtility.Convert.GetString(dr2["OrderQty"]));
+
+                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[2]);
+
+                dt.Borders.AllCellsBorders = true;
+
+
+                //合併儲存格
+                dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 5, dt.Columns.Count - 11) } });
+
+                //自動欄位寬度
+                dt.boAutoFitColumn = true;
+
+                for (int i = 5; i <= dt.Columns.Count - 11; i++)
+                {
+                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(i) { ColumnWidth = (decimal)5.38 });
+                }
+
+                //凍結窗格
+                dt.boFreezePanes = true;
+
+                dt.boAddFilter = true;
+                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
+
+                Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
+                string sc = MyExcelPrg.GetExcelColumnName(dt.Columns.Count);
+                wks.get_Range(string.Format("A1:{0}1", sc)).Merge();
+                wks.get_Range(string.Format("A2:{0}2", sc)).Merge();
+                wks.get_Range(string.Format("B3:{0}3", sc)).Merge();
+                sxr.boOpenFile = true;
+                sxr.Save();
+                #endregion
+            }
             if (rdCheck1.Checked)
             {
                 #region Each Consumption (Cutting Combo)
@@ -91,7 +141,6 @@ namespace Sci.Production.Cutting
 
                     sxr.dicDatas.Add(sxr._v + "tbl1" + idxStr, dt);
                     sxr.dicDatas.Add(sxr._v + "SizeGroup" + idxStr, SizeGroup);
-                    //sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
                     sxr.dicDatas.Add(sxr._v + "MarkerDownloadID" + idxStr, MarkerDownloadID);
 
                     sxrc.ReplaceAction a = exMethod;
@@ -102,7 +151,6 @@ namespace Sci.Production.Cutting
 
                 sxr.boOpenFile = true;
                 sxr.Save();
-                //SaveExcel(sxr, xltPath);
                 #endregion
             }
             if (rdCheck2.Checked)
@@ -203,6 +251,39 @@ namespace Sci.Production.Cutting
                 sxr.boOpenFile = true;
                 sxr.Save();
                 //SaveExcel(sxr, xltPath);
+                #endregion
+            }
+            if (rdcheck_QtyBreakdown_PoCombbySPList.Checked)
+            {
+                #region rdcheck_QtyBreakdown_PoCombbySPList
+                System.Data.DataTable[] dts;
+                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01_QtyBreakdown_PoCombbySPList", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
+
+                if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
+                if (dts.Length < 1) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
+
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_QtyBreakdown_PoCombbySPList.xltx");
+                sxrc sxr = new sxrc(xltPath);
+
+                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[0]);
+
+                dt.Borders.AllCellsBorders = true;
+
+                //合併儲存格
+                dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE", string.Format("{0},{1}", 9, dt.Columns.Count) } });
+
+                //凍結窗格
+                dt.boFreezePanes = true;
+                dt.boAutoFitColumn = true;
+                dt.boAddFilter = true;
+                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
+
+                Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
+                string sc = MyExcelPrg.GetExcelColumnName(dt.Columns.Count);
+                wks.get_Range(string.Format("A1:{0}1", sc)).Merge();
+                wks.get_Range(string.Format("A2:{0}2", sc)).Merge();
+                sxr.boOpenFile = true;
+                sxr.Save();
                 #endregion
             }
             if (rdCheck4.Checked)
@@ -369,89 +450,8 @@ namespace Sci.Production.Cutting
                 //SaveExcel(sxr, xltPath);
                 #endregion
             }
-            if (rdCheck_CuttingWorkOrder.Checked)
-            {
-                #region rdCheck_CuttingWorkOrder
-                System.Data.DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01_print_CuttingWorkOrder", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
-
-                if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
-                if (dts.Length < 2) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
-
-                DataRow dr = dts[0].Rows[0];
-                DataRow dr2 = dts[1].Rows[0];
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_CuttingWorkOrder.xltx");
-                sxrc sxr = new sxrc(xltPath);
-
-                sxr.dicDatas.Add(sxr._v + "PoList", dr["PoList"]);
-                sxr.dicDatas.Add(sxr._v + "StyleID", dr["StyleID"]);
-                sxr.dicDatas.Add(sxr._v + "CutLine", dr["CutLine"]);
-                sxr.dicDatas.Add(sxr._v + "OrderQty", MyUtility.Convert.GetString(dr2["OrderQty"]));
-                
-                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[2]);
-                
-                dt.Borders.AllCellsBorders = true;
-                
-
-                //合併儲存格
-                dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 5, dt.Columns.Count - 11) } });
-
-                //自動欄位寬度
-                dt.boAutoFitColumn = true;
-
-                for (int i = 5; i <= dt.Columns.Count - 11; i++)
-                {
-                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(i) { ColumnWidth = (decimal)5.38 });                    
-                }
-
-                //凍結窗格
-                dt.boFreezePanes = true;
-
-                dt.boAddFilter = true;
-                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
-
-                Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
-                string sc = MyExcelPrg.GetExcelColumnName(dt.Columns.Count);
-                wks.get_Range(string.Format("A1:{0}1",sc)).Merge();
-                wks.get_Range(string.Format("A2:{0}2", sc)).Merge();
-                wks.get_Range(string.Format("B3:{0}3", sc)).Merge();
-                sxr.boOpenFile = true;
-                sxr.Save();
-                #endregion
-            }
-            if (rdcheck_QtyBreakdown_PoCombbySPList.Checked)
-            {
-                #region rdcheck_QtyBreakdown_PoCombbySPList
-                System.Data.DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01_QtyBreakdown_PoCombbySPList", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
-
-                if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
-                if (dts.Length < 1) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
-
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_QtyBreakdown_PoCombbySPList.xltx");
-                sxrc sxr = new sxrc(xltPath);
-                
-                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[0]);
-
-                dt.Borders.AllCellsBorders = true;
-
-                //合併儲存格
-                dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE", string.Format("{0},{1}", 9, dt.Columns.Count) } });
-
-                //凍結窗格
-                dt.boFreezePanes = true;
-                dt.boAutoFitColumn = true;
-                dt.boAddFilter = true;
-                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
-
-                Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
-                string sc = MyExcelPrg.GetExcelColumnName(dt.Columns.Count);
-                wks.get_Range(string.Format("A1:{0}1", sc)).Merge();
-                wks.get_Range(string.Format("A2:{0}2", sc)).Merge();
-                sxr.boOpenFile = true;
-                sxr.Save();
-                #endregion
-            }
+            
+            
 
             return true;
         }

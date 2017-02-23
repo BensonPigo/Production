@@ -305,10 +305,10 @@ namespace Sci.Production.Cutting
                 .Numeric("Qty", header: "Ratio", width: Widths.AnsiChars(5), integer_places: 6).Get(out col_sizeRatio_qty);
 
             Helper.Controls.Grid.Generator(this.distribute_grid)
-                .Text("orderid", header: "SP#", width: Widths.AnsiChars(13)).Get(out col_dist_sp)
+                .Text("orderid", header: "SP#", width: Widths.AnsiChars(15)).Get(out col_dist_sp)
                 .Text("article", header: "article", width: Widths.AnsiChars(8)).Get(out col_dist_article)
-                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8)).Get(out col_dist_size)
-                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), integer_places: 6).Get(out col_dist_qty);
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(4)).Get(out col_dist_size)
+                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(3), integer_places: 6).Get(out col_dist_qty);
 
             Helper.Controls.Grid.Generator(this.qtybreak_grid)
                 .Text("id", header: "SP#", width: Widths.AnsiChars(13))
@@ -1309,8 +1309,7 @@ namespace Sci.Production.Cutting
             }
             #endregion
 
-            this.sizeratio_grid.AutoResizeColumns();
-            this.distribute_grid.AutoResizeColumns();
+            this.sizeratio_grid.AutoResizeColumns();            
             this.qtybreak_grid.AutoResizeColumns();
         }
         //程式產生的BindingSource 必須自行Dispose, 以節省資源

@@ -83,8 +83,6 @@ order by rd.Seq1,rd.Seq2", masterID);
                 txttpeuser4.DisplayBox1Binding = "";
                 txttpeuser5.DisplayBox1Binding = "";
             }
-            this.detailgrid.AutoResizeColumns();
-            this.detailgrid.AutoResizeColumn(2, DataGridViewAutoSizeColumnMode.ColumnHeader);
         }
 
         protected override void OnDetailGridSetup()

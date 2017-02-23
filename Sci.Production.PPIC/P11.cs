@@ -678,10 +678,6 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
             }
             else
             this.displayBox5.Text = "";
-            
-
-
-            this.detailgrid.AutoResizeColumns();
         }
 
 

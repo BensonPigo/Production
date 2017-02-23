@@ -661,7 +661,6 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                 this.displayBox5.Text = Convert.ToDateTime(CurrentMaintain["IssueLackDT"]).ToString("yyyy/MM/dd HH:mm:ss");
             else
                 this.displayBox5.Text = "";
-            this.detailgrid.AutoResizeColumns();
         }
 
 

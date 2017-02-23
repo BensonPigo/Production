@@ -56,9 +56,9 @@ namespace Sci.Production.Cutting
         {
             base.OnDetailGridSetup();
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("Styleid", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("Seasonid", header: "Season", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Styleid", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("Seasonid", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("SizeRatio", header: "Size Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Markerno", header: "Flow No", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "MarkerName", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -148,7 +148,6 @@ namespace Sci.Production.Cutting
             this.displayBox_Requestby.Text = PublicPrg.Prgs.GetAddOrEditBy(CurrentMaintain["AddName"]);
             this.label7.Text = CurrentMaintain["Status"].ToString();
             if (!MyUtility.Check.Empty(CurrentMaintain["sendDate"])) displayBox_LastSendDate.Text = Convert.ToDateTime(CurrentMaintain["sendDate"]).ToString("yyyy/MM/dd HH:mm:ss");
-            this.detailgrid.AutoResizeColumns();
         }
         protected override void ClickUnconfirm()
         {

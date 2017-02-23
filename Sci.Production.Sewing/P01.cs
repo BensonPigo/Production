@@ -44,7 +44,6 @@ namespace Sci.Production.Sewing
         {
             base.OnDetailEntered();
             button1.Enabled = !EditMode && MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= systemLockDate;
-            this.detailgrid.AutoResizeColumns();
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -448,7 +447,6 @@ namespace Sci.Production.Sewing
                 CalculateDefectQty(e.Detail);
                 this.numericBox5.Value = QAQty;
             }
-            this.detailgrid.AutoResizeColumns();
             return base.ConvertSubDetailDatasFromDoSubForm(e);
         }
 
