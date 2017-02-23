@@ -1244,7 +1244,7 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                     ctnDimension.Append(string.Format("{0} -> {1} / {2}, ", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"])));
                 }
             }
-            string cds = ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2);
+            string cds = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
             string[] cdsab = cds.Split('\r');
             int cdsi = 0;
             int cdsl = 150;
