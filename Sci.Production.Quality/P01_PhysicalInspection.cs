@@ -339,14 +339,17 @@ namespace Sci.Production.Quality
             List<string> append_cmd = new List<string>();
             DataTable idenDt;
             string iden;
+            DataTable gridTb = (DataTable)gridbs.DataSource;
 
-            foreach (DataRow dr in Datas)
+
+            foreach (DataRow dr in gridTb.Rows)
             {
                 if (dr.RowState == DataRowState.Deleted)
                 {
                     update_cmd = update_cmd + string.Format(
-                    @"Delete From Fir_physical Where DetailUkey = {0} ;",
+                    @"Delete From Fir_physical Where DetailUkey = {0} ;Delete From FIR_Physical_Defect Where FIR_PhysicalDetailUKey = {0} ;",
                     dr["DetailUKey", DataRowVersion.Original]);
+                    continue;
                 }
                 int bolMoisture = 0;
                 string inspdate;
