@@ -983,7 +983,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         //Brand
         private void txtbrand1_Validated(object sender, EventArgs e)
         {
-            
+            if (MyUtility.Check.Empty(txtbrand1.OldValue)) return;
             if (EditMode && txtbrand1.OldValue != txtbrand1.Text)
             {
                 DeleteDetailData(txtbrand1, txtbrand1.OldValue);
@@ -993,6 +993,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         //CustCD
         private void txtcustcd1_Validated(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(txtcustcd1.OldValue)) return;
             if (EditMode && txtcustcd1.OldValue != txtcustcd1.Text)
             {
                 DeleteDetailData(txtcustcd1, txtcustcd1.OldValue);
@@ -1002,6 +1003,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         //Destination
         private void txtcountry1_Validated(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(txtcountry1.TextBox1.OldValue)) return;
             if (EditMode && txtcountry1.TextBox1.OldValue != txtcountry1.TextBox1.Text)
             {
                 DeleteDetailData(txtcountry1.TextBox1, txtcountry1.TextBox1.OldValue);
