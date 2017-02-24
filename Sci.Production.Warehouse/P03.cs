@@ -341,7 +341,7 @@ from Orders WITH (NOLOCK) inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = or
 	left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
     left join supp s WITH (NOLOCK) on s.id = b.suppid
     left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
-where orders.poid like @sp1 and orders.mdivisionid= '{0}' 
+where orders.poid like @sp1 and orders.mdivisionid= '{0}' and a.junk <> 'true'
 
 --很重要要看到,修正欄位要上下一起改
 union
@@ -395,7 +395,7 @@ left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
 left join supp s WITH (NOLOCK) on s.id = b.suppid
 left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
 where 1=1
-    AND a.id IS NOT NULL --0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
+    AND a.id IS NOT NULL and a.junk <> 'true'--0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
 ) as xxx
 ) as xxx2
 ) as xxx3
