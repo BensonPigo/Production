@@ -98,14 +98,14 @@ namespace Sci.Production.Warehouse
         //print
         protected override bool ClickPrint()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            //DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
             }
 
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string Estbackdate = ((DateTime)MyUtility.Convert.GetDate(row["Estbackdate"])).ToShortDateString();
             string Remark = row["Remark"].ToString();
@@ -124,6 +124,13 @@ namespace Sci.Production.Warehouse
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dtt);
             if (!result1) { this.ShowErr(result1); }
+
+            if (dtt == null || dtt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!", "DataTable dtt");
+                return false;
+            }
+
             string RptTitle = dtt.Rows[0]["name"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
@@ -165,18 +172,24 @@ namespace Sci.Production.Warehouse
              where a.id= @ID", pars, out dd);
             if (!result1) { this.ShowErr(result1); }
 
+            if (dd == null || dd.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!", "DataTable dd");
+                return false;
+            }
+
             // 傳 list 資料            
             List<P31_PrintData> data = dd.AsEnumerable()
                 .Select(row1 => new P31_PrintData()
                 {
-                    FromSP = row1["FromSP"].ToString(),
-                    TOSP= row1["TOSP"].ToString(),
-                    DESC = row1["DESC"].ToString(),
-                    StockType = row1["StockType"].ToString(),
-                    Location = row1["Location"].ToString(),
-                    unit = row1["unit"].ToString(),
-                    FromRoll = row1["FromRoll"].ToString(),
-                    FromDyelot = row1["FromDyelot"].ToString(),
+                    FromSP = row1["FromSP"].ToString().Trim(),
+                    TOSP = row1["TOSP"].ToString().Trim(),
+                    DESC = row1["DESC"].ToString().Trim(),
+                    StockType = row1["StockType"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim(),
+                    unit = row1["unit"].ToString().Trim(),
+                    FromRoll = row1["FromRoll"].ToString().Trim(),
+                    FromDyelot = row1["FromDyelot"].ToString().Trim(),
                     QTY = MyUtility.Convert.GetDecimal(row1["QTY"]),
                     Total = MyUtility.Convert.GetDecimal(row1["Total"])
                 }).ToList();

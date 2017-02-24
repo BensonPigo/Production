@@ -111,7 +111,7 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string fromFactory = row["FromFtyID"].ToString();
             string Remark = row["Remark"].ToString();
@@ -129,6 +129,12 @@ namespace Sci.Production.Warehouse
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!!", "DataTable dt");
+                return false;
+            }
             string RptTitle = dt.Rows[0]["name"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
@@ -164,19 +170,25 @@ namespace Sci.Production.Warehouse
 			And f.StockType = a.stocktype
              where a.id= @ID", pars, out dtDetail);
             if (!result) { this.ShowErr(result); }
-       
+
+            if (dtDetail == null || dtDetail.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!!", "DataTable dtDetail");
+                return false;
+            }
+
             // 傳 list 資料            
             List<P18_PrintData> data = dtDetail.AsEnumerable()
                 .Select(row1 => new P18_PrintData()
                 {
-                    POID = row1["POID"].ToString(),
-                    SEQ = row1["SEQ"].ToString(),
-                    Roll = row1["Roll"].ToString(),
-                    DYELOT = row1["DYELOT"].ToString(),
-                    DESC = row1["Description"].ToString(),
-                    Unit = row1["StockUnit"].ToString(),
-                    QTY = row1["QTY"].ToString(),
-                    Location = row1["Location"].ToString()
+                    POID = row1["POID"].ToString().Trim(),
+                    SEQ = row1["SEQ"].ToString().Trim(),
+                    Roll = row1["Roll"].ToString().Trim(),
+                    DYELOT = row1["DYELOT"].ToString().Trim(),
+                    DESC = row1["Description"].ToString().Trim(),
+                    Unit = row1["StockUnit"].ToString().Trim(),
+                    QTY = row1["QTY"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim()
                 }).ToList();
 
             report.ReportDataSource = data;

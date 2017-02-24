@@ -98,13 +98,13 @@ namespace Sci.Production.Warehouse
         //print
         protected override bool ClickPrint()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            //DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
             }
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string M = CurrentMaintain["MdivisionID"].ToString();
@@ -122,6 +122,13 @@ namespace Sci.Production.Warehouse
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dt1);
             if (!result1) { this.ShowErr(result1); }
+
+            if (dt1 == null || dt1.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!", "DataTable dt1");
+                return false;
+            }
+
             string RptTitle = dt1.Rows[0]["name"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
@@ -162,24 +169,28 @@ namespace Sci.Production.Warehouse
             result1 = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result1) { this.ShowErr(sqlcmd, result1); }
 
-
+            if (dtDetail == null || dtDetail.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!", "DataTable dtDetail");
+                return false;
+            }
 
             // 傳 list 資料            
             List<P32_PrintData> data = dtDetail.AsEnumerable()
                 .Select(row1 => new P32_PrintData()
                 {
 
-                    StockSEQ = row1["StockSEQ"].ToString(),
-                    ToSP = row1["ToSP"].ToString(),
-                    DESC = row1["desc"].ToString(),
-                    FromStock = row1["FromStock"].ToString(),
-                    ToStock = row1["ToStock"].ToString(),
-                    Location = row1["Location"].ToString(),
-                    Unit = row1["StockUnit"].ToString(),
-                    Roll = row1["fromroll"].ToString(),
-                    DYELOT = row1["fromdyelot"].ToString(),
-                    QTY = row1["Qty"].ToString(),
-                    TotalQTY = row1["Total"].ToString()
+                    StockSEQ = row1["StockSEQ"].ToString().Trim(),
+                    ToSP = row1["ToSP"].ToString().Trim(),
+                    DESC = row1["desc"].ToString().Trim(),
+                    FromStock = row1["FromStock"].ToString().Trim(),
+                    ToStock = row1["ToStock"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim(),
+                    Unit = row1["StockUnit"].ToString().Trim(),
+                    Roll = row1["fromroll"].ToString().Trim(),
+                    DYELOT = row1["fromdyelot"].ToString().Trim(),
+                    QTY = row1["Qty"].ToString().Trim(),
+                    TotalQTY = row1["Total"].ToString().Trim()
                 }).ToList();
 
             report.ReportDataSource = data;

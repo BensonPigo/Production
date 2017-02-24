@@ -866,13 +866,13 @@ Where a.id = '{0}'", masterID);
 
         protected override bool ClickPrint()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            //DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
             }
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string Remark = CurrentMaintain["Remark"].ToString();
             string M = CurrentMaintain["MdivisionID"].ToString();
@@ -890,6 +890,13 @@ Where a.id = '{0}'", masterID);
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!!", "DataTable dt");
+                return false;
+            }
+
             string RptTitle = dt.Rows[0]["name"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
@@ -916,25 +923,29 @@ Where a.id = '{0}'", masterID);
                              p.id= t.FromPOID and p.SEQ1 = t.FromSeq1 and p.seq2 = t.FromSeq2 where t.id= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
-            
 
+            if (dtDetail == null || dtDetail.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!", "DataTable dtDetail");
+                return false;
+            }
 
             // 傳 list 資料            
             List<P23_PrintData> data = dtDetail.AsEnumerable()
                 .Select(row1 => new P23_PrintData()
                 {
-                    StockSP = row1["frompoid"].ToString(),
-                    StockSEQ = row1["SEQ"].ToString(),
-                    IssueSP = row1["topoid"].ToString(),
-                    SEQ = row1["TOSEQ"].ToString(),
-                    DESC = row1["desc"].ToString(),
-                    Roll = row1["fromroll"].ToString(),
-                    DYELOT = row1["fromdyelot"].ToString(),
-                    Unit = row1["StockUnit"].ToString(),
-                    BULKLOCATION = row1["BULKLOCATION"].ToString(),
-                    INVENTORYLOCATION = row1["Tolocation"].ToString(),
-                    QTY = row1["Qty"].ToString(),
-                    TotalQTY = row1["Total"].ToString()
+                    StockSP = row1["frompoid"].ToString().Trim(),
+                    StockSEQ = row1["SEQ"].ToString().Trim(),
+                    IssueSP = row1["topoid"].ToString().Trim(),
+                    SEQ = row1["TOSEQ"].ToString().Trim(),
+                    DESC = row1["desc"].ToString().Trim(),
+                    Roll = row1["fromroll"].ToString().Trim(),
+                    DYELOT = row1["fromdyelot"].ToString().Trim(),
+                    Unit = row1["StockUnit"].ToString().Trim(),
+                    BULKLOCATION = row1["BULKLOCATION"].ToString().Trim(),
+                    INVENTORYLOCATION = row1["Tolocation"].ToString().Trim(),
+                    QTY = row1["Qty"].ToString().Trim(),
+                    TotalQTY = row1["Total"].ToString().Trim()
                 }).ToList();
 
             report.ReportDataSource = data;

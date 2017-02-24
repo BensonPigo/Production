@@ -649,14 +649,14 @@ Where a.id = '{0}'", masterID);
 
         protected override bool ClickPrint()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            //DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
             }
 
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
@@ -673,6 +673,13 @@ Where a.id = '{0}'", masterID);
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!!", "DataTable dt");
+                return false;
+            }
+
             string RptTitle = dt.Rows[0]["name"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
@@ -709,20 +716,26 @@ Where a.id = '{0}'", masterID);
               where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
+            if (dd == null || dd.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!!", "DataTable dd");
+                return false;
+            }
+
             // 傳 list 資料            
             List<P19_PrintData> data = dd.AsEnumerable()
                 .Select(row1 => new P19_PrintData()
                 {
-                    POID = row1["POID"].ToString(),
-                    SEQ = row1["SEQ"].ToString(),
-                    Roll = row1["Roll"].ToString(),
-                    Dyelot = row1["Dyelot"].ToString(),
-                    DESC = row1["DESC"].ToString(),
-                    stocktype = row1["stocktype"].ToString(),
-                    unit = row1["unit"].ToString(),
-                    QTY = row1["QTY"].ToString(),
-                    Location = row1["Location"].ToString(),
-                    Total = row1["Total"].ToString()
+                    POID = row1["POID"].ToString().Trim(),
+                    SEQ = row1["SEQ"].ToString().Trim(),
+                    Roll = row1["Roll"].ToString().Trim(),
+                    Dyelot = row1["Dyelot"].ToString().Trim(),
+                    DESC = row1["DESC"].ToString().Trim(),
+                    stocktype = row1["stocktype"].ToString().Trim(),
+                    unit = row1["unit"].ToString().Trim(),
+                    QTY = row1["QTY"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim(),
+                    Total = row1["Total"].ToString().Trim()
                 }).ToList();
 
             report.ReportDataSource = data;

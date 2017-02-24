@@ -775,7 +775,7 @@ Where a.id = '{0}'", masterID);
 
          protected override bool ClickPrint()
         {
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
@@ -792,6 +792,13 @@ Where a.id = '{0}'", masterID);
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!", "DataTable dt");
+                return false;
+            }
+ 
             string RptTitle = dt.Rows[0]["name"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
@@ -830,20 +837,26 @@ Where a.id = '{0}'", masterID);
             where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
+            if (dd == null || dd.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!", "DataTable dd");
+                return false;
+            }
+
             // 傳 list 資料            
             List<P24_PrintData> data = dd.AsEnumerable()
                 .Select(row1 => new P24_PrintData()
                 {
-                    FromPOID = row1["FromPOID"].ToString(),
-                    SEQ = row1["SEQ"].ToString(),
-                    DESC = row1["DESC"].ToString(),
-                    MTLTYPE = row1["MTLTYPE"].ToString(),
-                    unit = row1["unit"].ToString(),
-                    FromRoll = row1["FromRoll"].ToString(),
-                    FromDyelot = row1["FromDyelot"].ToString(),
-                    FromLocation = row1["FromLocation"].ToString(),
+                    FromPOID = row1["FromPOID"].ToString().Trim(),
+                    SEQ = row1["SEQ"].ToString().Trim(),
+                    DESC = row1["DESC"].ToString().Trim(),
+                    MTLTYPE = row1["MTLTYPE"].ToString().Trim(),
+                    unit = row1["unit"].ToString().Trim(),
+                    FromRoll = row1["FromRoll"].ToString().Trim(),
+                    FromDyelot = row1["FromDyelot"].ToString().Trim(),
+                    FromLocation = row1["FromLocation"].ToString().Trim(),
                     QTY = MyUtility.Convert.GetDecimal(row1["QTY"]),
-                    Total = row1["Total"].ToString()
+                    Total = row1["Total"].ToString().Trim()
                 }).ToList();
 
             report.ReportDataSource = data;
