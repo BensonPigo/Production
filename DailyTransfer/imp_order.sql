@@ -3,7 +3,7 @@
 -- Create date: <2016/08/25>
 -- Description:	<import order>
 -- =============================================
-Alter PROCEDURE [dbo].[imp_Order]
+Create PROCEDURE [dbo].[imp_Order]
 AS
 BEGIN
 

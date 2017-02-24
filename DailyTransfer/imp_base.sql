@@ -3,7 +3,7 @@
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-Alter PROCEDURE [dbo].[imp_Base]
+Create PROCEDURE [dbo].[imp_Base]
 	
 AS
 BEGIN

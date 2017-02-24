@@ -4,7 +4,7 @@
 -- Create date: 20160903
 -- Description:	<Description,,>
 -- =============================================
-Alter PROCEDURE [dbo].[imp_Invadj]
+Create PROCEDURE [dbo].[imp_Invadj]
 	-- Add the parameters for the stored procedure here
 
 AS

@@ -5,7 +5,7 @@
 -- Create date: <2016/08/24>
 -- Description:	<import MockupOrder>
 -- =============================================
-Alter PROCEDURE [dbo].[imp_MockupOrder]
+Create PROCEDURE [dbo].[imp_MockupOrder]
 AS
 BEGIN
 	SET NOCOUNT ON;

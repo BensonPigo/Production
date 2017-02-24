@@ -3,7 +3,7 @@
 -- Create date:20160903
 -- Description:	<Description,,>
 -- =============================================
-Alter PROCEDURE [dbo].[imp_Ietms1]
+Create PROCEDURE [dbo].[imp_Ietms1]
 	
 AS
 BEGIN

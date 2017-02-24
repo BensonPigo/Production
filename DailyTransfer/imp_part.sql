@@ -3,7 +3,7 @@
 -- Create date: <2016/08/22>
 -- Description:	<import part>
 -- =============================================
-Alter PROCEDURE [dbo].[imp_part]
+Create PROCEDURE [dbo].[imp_part]
 AS
 BEGIN
 

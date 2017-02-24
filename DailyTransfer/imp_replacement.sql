@@ -4,7 +4,7 @@
 -- Create date: <2016/08/19>
 -- Description:	<import Replacement>
 -- =============================================
-Alter PROCEDURE [dbo].[imp_Replacement]
+Create PROCEDURE [dbo].[imp_Replacement]
 	
 AS
 BEGIN

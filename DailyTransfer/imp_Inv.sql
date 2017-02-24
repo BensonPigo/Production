@@ -3,7 +3,7 @@
 -- Create date: 20160903
 -- Description:	<Description,,>
 -- =============================================
-Alter PROCEDURE imp_Inv
+Create PROCEDURE imp_Inv
 	-- Add the parameters for the stored procedure here
 	
 AS
