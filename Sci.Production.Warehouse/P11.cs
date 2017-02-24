@@ -1074,6 +1074,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 	                    where id = @ID order by sizecode");
             string sizecodes = "";
             result = DBProxy.Current.Select("", sqlcmd1, pars, out dtSizecode);
+
+            if (dtSizecode == null ||dtSizecode.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found !!!", "DataTable dtSizecode");
+                return false;
+            }
+
             foreach (DataRow dr in dtSizecode.Rows)
             {
                 sizecodes += "[" + dr["sizecode"].ToString() + "]" + ",";
@@ -1113,6 +1120,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 ShowErr(result);
                 return true;
             }
+
+            if (dtseq == null || dtseq.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found !!!", "DataTable dtseq");
+                return false;
+            }
+
             dtseq.Columns.Remove(dtseq.Columns["Issue_DetailUkey"]);
             string SEQ = dtseq.Rows[0]["SEQ"].ToString();
             //string tQty = dtseq.Rows[0]["tQTY"].ToString();
@@ -1130,7 +1144,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 ShowErr(result);
                 return true;
             }
-            if (dtlineno.Rows.Count == 0)
+
+            if (dtlineno == null || dtlineno.Rows.Count == 0)
                 cLineNo = "";
             else
                 cLineNo = dtlineno.Rows[0]["sewline"].ToString();
@@ -1152,7 +1167,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 return true;
             }
 
-            if (dtlineno.Rows.Count == 0)
+            if (dtcutcell == null || dtcutcell.Rows.Count == 0)
                 cCellNo = "";
             else
                 cCellNo = dtcutcell.Rows[0]["CutCellID"].ToString();
