@@ -712,6 +712,13 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             where b.id = a.mdivisionid
             and a.id = @ID", pars, out dt);
             if (!result) { this.ShowErr(result); }
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found !!!", "DataTable dt");
+                return false;
+            }
+
             string RptTitle = dt.Rows[0]["name"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
@@ -746,6 +753,12 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
 		         on c.id=d.RequestID and c.Seq1=a.Seq1 and c.Seq2=a.Seq2
              where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
+
+            if (dd == null || dd.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found !!!", "DataTable dd");
+                return false;
+            }
 
             // 傳 list 資料            
             List<P15_PrintData> data = dd.AsEnumerable()
