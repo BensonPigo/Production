@@ -40,6 +40,12 @@ namespace Sci.Production.Shipping
         {
             CurrentMaintain["NLCodeEditName"] = Sci.Env.User.UserID;
             CurrentMaintain["NLCodeEditDate"] = DateTime.Now;
+            if (MyUtility.Check.Empty(this.txtNLCode.Text))
+            {
+                MyUtility.Msg.InfoBox("<NL Code> can't be empty!!");
+                this.txtNLCode.Focus();
+                return false;
+            }
             
             return base.ClickSaveBefore();
         }
