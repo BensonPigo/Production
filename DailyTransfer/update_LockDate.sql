@@ -3,7 +3,7 @@
 -- Create date: <2016/11/08>
 -- Description:	<Description,,>
 -- =============================================
-Alter PROCEDURE  Update_LockDate	
+Create PROCEDURE  Update_LockDate	
 AS
 BEGIN
 
