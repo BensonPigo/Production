@@ -67,7 +67,7 @@ namespace Sci.Production.Cutting
 
                 //凍結窗格
                 dt.boFreezePanes = true;
-
+                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(2) { ColumnWidth = (decimal)7.38 });
                 dt.boAddFilter = true;
                 sxr.dicDatas.Add(sxr._v + "tbl1", dt);
 
