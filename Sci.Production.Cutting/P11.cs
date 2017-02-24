@@ -62,7 +62,10 @@ namespace Sci.Production.Cutting
                 if (e.Button == MouseButtons.Right)
                 {
                     SelectItem sele;
-                    sele = new SelectItem("Select id from Sewingline WITH (NOLOCK) ", "10", dr["SewingLine"].ToString());
+                    string sql = string.Format(@"Select DISTINCT ID  From SewingLine WITH (NOLOCK) 
+                        where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}')", Sci.Env.User.Keyword);
+                    sele = new SelectItem(sql, "10", dr["SewingLine"].ToString());
+                    sele.Width = 300;
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
@@ -86,7 +89,8 @@ namespace Sci.Production.Cutting
                 if (e.Button == MouseButtons.Right)
                 {
                     SelectItem sele;
-                    sele = new SelectItem("Select SewingCell from Sewingline WITH (NOLOCK) group by SewingCell", "10", dr["SewingCell"].ToString());
+                    sele = new SelectItem("Select SewingCell from Sewingline WITH (NOLOCK) where SewingCell!='' group by SewingCell", "10", dr["SewingCell"].ToString());
+                    sele.Width = 300;
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
@@ -500,7 +504,7 @@ namespace Sci.Production.Cutting
             #region articleSizeTb 繞PO 找出QtyTb,PatternTb,AllPartTb
             
             int iden = 1;
-            MyUtility.Tool.ProcessWithDatatable(ArticleSizeTb, "Cutref,Article,SizeCode", "Select b.Cutref,a.SizeCode,a.Qty From Workorder_SizeRatio a WITH (NOLOCK) ,#tmp b,workorder cWITH (NOLOCK)  where b.cutref = c.cutref and c.ukey = a.workorderukey and b.sizecode = a.sizecode", out SizeRatioTb);
+            MyUtility.Tool.ProcessWithDatatable(ArticleSizeTb, "Cutref,Article,SizeCode", "Select b.Cutref,a.SizeCode,a.Qty From Workorder_SizeRatio a WITH (NOLOCK) ,#tmp b,workorder c WITH (NOLOCK)  where b.cutref = c.cutref and c.ukey = a.workorderukey and b.sizecode = a.sizecode", out SizeRatioTb);
             foreach (DataRow dr in ArticleSizeTb.Rows)
             {
                 dr["iden"] = iden;
