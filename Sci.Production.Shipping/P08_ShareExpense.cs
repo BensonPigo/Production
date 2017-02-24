@@ -72,17 +72,19 @@ namespace Sci.Production.Shipping
 as 
 (select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
- from Export WHERE BLNO='{0}'), 
-FtyExportData 
+ from Export WITH (NOLOCK) 
+ where 1 = 1 and Blno='{0}' ), FtyExportData 
 as 
 (select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
- from FtyExport
-WHERE BLNO='{0}' AND TYPE IN (1,2,4)) 
-select * from ExportData 
+ from FtyExport WITH (NOLOCK) 
+ where 1=0  and blno='{0}') select * from ExportData 
 union all 
-select * from FtyExportData ", e.FormattedValue.ToString());
-                        if (!MyUtility.Check.Seek(chkImp,out dr1))
+select * from FtyExportData", e.FormattedValue.ToString());
+                        DataTable dtImp ;
+                        DBProxy.Current.Select(null, chkImp, out dtImp);
+                        if (MyUtility.Check.Empty(dtImp)) return;
+                        if (dtImp.Rows.Count==0)
                         {
                             MyUtility.Msg.InfoBox("<BLNo:>" +e.FormattedValue.ToString()+" Not Found!!");                      
                             drGrid.Delete();
@@ -91,52 +93,47 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                         }
                         else
                         {
-                            //判斷修改的資料是否正確
-                            //正確就將所有B/L No所有WK#都帶出來
-                            DataTable dtAll;
-                            string cmd_allWKNo = string.Format(@"with ExportData 
-as 
-(select a.WKNo,a.Blno,a.ShipModeID,a.GW, a.Cbm, '' as InvNo, '' as ShippingAPID, 
- '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK from ShareExpense a
-inner join Export b on a.BLNo=b.Blno and a.WKNo=b.ID and a.GW=b.WeightKg
-and a.cbm=b.Cbm and a.ShipModeID=b.ShipModeID and a.FtyWK=0 
-WHERE B.Blno='{0}'), 
-FtyExportData 
-as 
-(select a.WKNo,a.Blno,a.ShipModeID,a.GW, a.Cbm, '' as InvNo, '' as ShippingAPID, 
- '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK from ShareExpense a
-inner join FtyExport b on a.BLNo=b.Blno and a.WKNo=b.ID and a.GW=b.WeightKg
-and a.cbm=b.Cbm and a.ShipModeID=b.ShipModeID and a.FtyWK=1
-WHERE B.Blno='{0}') 
-select distinct * from ExportData 
-union all 
-select distinct * from FtyExportData ", e.FormattedValue.ToString());
-                            DBProxy.Current.Select(null, cmd_allWKNo, out dtAll);
-                            if (MyUtility.Check.Empty(dtAll)) return;
-                            for (int i = 0; i < dtAll.Rows.Count; i++)
+                            for (int i = 0; i < dtImp.Rows.Count; i++)
                             {
                                 DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
 
-                                NewRow["Blno"] = dtAll.Rows[i]["Blno"];
-                                NewRow["Wkno"] = dtAll.Rows[i]["Wkno"];
-                                NewRow["ShipModeID"] = dtAll.Rows[i]["ShipModeID"];
-                                NewRow["GW"] = dtAll.Rows[i]["GW"];
-                                NewRow["CBM"] = dtAll.Rows[i]["CBM"];
-                                NewRow["Amount"] = dtAll.Rows[i]["Amount"];
+                                NewRow["Blno"] = dtImp.Rows[i]["Blno"];
+                                NewRow["Wkno"] = dtImp.Rows[i]["Wkno"];
+                                NewRow["ShipModeID"] = dtImp.Rows[i]["ShipModeID"];
+                                NewRow["GW"] = dtImp.Rows[i]["GW"];
+                                NewRow["CBM"] = dtImp.Rows[i]["CBM"];
+                                NewRow["Amount"] = dtImp.Rows[i]["Amount"];
                                 ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
-
                             }
                         }
                     }
+                    //Export
                     else
                     {
+                        //判斷資料是否存在
                         string chkExp = string.Format(@"
-select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
- '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
- from FtyExport
-WHERE BLNO='{0}' AND TYPE IN (3) 
+with GB 
+as 
+(select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
+ '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
+ '' as ShareBase, 0 as FtyWK 
+ from GMTBooking g  WITH (NOLOCK) 
+ left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
+ left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
+ where 1=1  and g.id='{0}' ), PL 
+as 
+(select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, 
+'' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
+'' as ShareBase, 0 as FtyWK 
+ from PackingList WITH (NOLOCK) 
+ where  (Type = 'F' or Type = 'L')  and id='{0}' ) select * from GB 
+union all 
+select * from PL
  ", e.FormattedValue.ToString());
-                        if (!MyUtility.Check.Seek(chkExp, out dr1))
+                        DataTable dtExp;
+                        DBProxy.Current.Select(null, chkExp, out dtExp);
+                        if (MyUtility.Check.Empty(dtExp)) return;
+                        if (dtExp.Rows.Count==0)
                         {
                             MyUtility.Msg.InfoBox("<BLNo:>" + e.FormattedValue.ToString() + " Not Found!!");
                             drGrid.Delete();
@@ -145,28 +142,15 @@ WHERE BLNO='{0}' AND TYPE IN (3)
                         }
                         else
                         {
-                            //判斷修改的資料是否正確
-                            //正確就將所有B/L No所有WK#都帶出來
-                            DataTable dtAll;
-                            string cmd_allWKNo = string.Format(@"select DISTINCT A.INVNO as WKNo,A.Blno,A.ShipModeID,A.GW, B.Cbm, '' as InvNo, '' as ShippingAPID, 
- '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK 
-from ShareExpense a
-inner join FtyExport b on a.BLNo=b.Blno and a.WKNo=b.ID and a.GW=b.WeightKg
-and a.cbm=b.Cbm and a.ShipModeID=b.ShipModeID and a.FtyWK=1
-WHERE B.Blno='{0}'", e.FormattedValue.ToString());
-                            DBProxy.Current.Select(null, cmd_allWKNo, out dtAll);
-                            if (MyUtility.Check.Empty(dtAll)) return;
-
-                            for (int i = 0; i < dtAll.Rows.Count; i++)
+                            for (int i = 0; i < dtExp.Rows.Count; i++)
                             {
                                 DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
-
-                                NewRow["Blno"] = dtAll.Rows[i]["Blno"];
-                                NewRow["Wkno"] = dtAll.Rows[i]["Wkno"];
-                                NewRow["ShipModeID"] = dtAll.Rows[i]["ShipModeID"];
-                                NewRow["GW"] = dtAll.Rows[i]["GW"];
-                                NewRow["CBM"] = dtAll.Rows[i]["CBM"];
-                                NewRow["Amount"] = dtAll.Rows[i]["Amount"];
+                                NewRow["Blno"] = dtExp.Rows[i]["Blno"];
+                                NewRow["Wkno"] = dtExp.Rows[i]["Wkno"];
+                                NewRow["ShipModeID"] = dtExp.Rows[i]["ShipModeID"];
+                                NewRow["GW"] = dtExp.Rows[i]["GW"];
+                                NewRow["CBM"] = dtExp.Rows[i]["CBM"];
+                                NewRow["Amount"] = dtExp.Rows[i]["Amount"];
                                 ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
                             }
                         }
@@ -208,17 +192,21 @@ WHERE B.Blno='{0}'", e.FormattedValue.ToString());
                     {
                         string chkImp = string.Format(@"with ExportData 
 as 
-(select id
- from Export WHERE id='{0}'), 
-FtyExportData 
+(select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
+ from Export WITH (NOLOCK) 
+ where 1 = 1 and id='{0}' ), FtyExportData 
 as 
-(select id
- from FtyExport
-WHERE id='{0}' AND TYPE IN (1,2,4)) 
-select * from ExportData 
+(select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
+ from FtyExport WITH (NOLOCK) 
+ where 1=0  and id='{0}') select * from ExportData 
 union all 
 select * from FtyExportData ", e.FormattedValue.ToString());
-                        if (!MyUtility.Check.Seek(chkImp, out dr1))
+                        DataTable dtImp;
+                        DBProxy.Current.Select(null, chkImp, out dtImp);
+                        if (MyUtility.Check.Empty(dtImp)) return;
+                        if (dtImp.Rows.Count==0)
                         {
                             MyUtility.Msg.InfoBox("<WKNo:>" + e.FormattedValue.ToString() + " Not Found!!");
                             drGrid.Delete();
@@ -227,73 +215,45 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                         }
                         else
                         {
-                            //判斷修改的資料是否正確
-                            //正確就將所有B/L No所有WK#都帶出來
-                            DataTable dtAll;
-                            #region 文件 
-                            string cmd_allWKNo = string.Format(@"with ExportData 
-as 
-(select a.WKNo,a.Blno,a.ShipModeID,a.GW, a.Cbm, '' as InvNo, '' as ShippingAPID, 
- '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
-from ShareExpense a
-inner join Export b on a.BLNo=b.Blno and a.WKNo=b.ID and a.GW=b.WeightKg
-and a.cbm=b.Cbm and a.ShipModeID=b.ShipModeID and a.FtyWK=0 
-WHERE B.Blno='{0}'), 
-FtyExportData 
-as 
-(select a.WKNo,a.Blno,a.ShipModeID,a.GW, a.Cbm, '' as InvNo, '' as ShippingAPID, 
- '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
-from ShareExpense a
-inner join FtyExport b on a.BLNo=b.Blno and a.WKNo=b.ID and a.GW=b.WeightKg
-and a.cbm=b.Cbm and a.ShipModeID=b.ShipModeID and a.FtyWK=1
-WHERE B.Blno='{0}') 
-select distinct * from ExportData 
-union all 
-select distinct * from FtyExportData ", e.FormattedValue.ToString());
-#endregion
-                           
-                           
-                            DBProxy.Current.Select(null, cmd_allWKNo, out dtAll);
-                            if (MyUtility.Check.Empty(dtAll)) return;
-                            for (int i = 0; i < dtAll.Rows.Count; i++)
+                            for (int i = 0; i < dtImp.Rows.Count; i++)
                             {
-                                DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
+                               // DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
 
-                                NewRow["Blno"] = dtAll.Rows[i]["Blno"];
-                                NewRow["Wkno"] = dtAll.Rows[i]["Wkno"];
-                                NewRow["ShipModeID"] = dtAll.Rows[i]["ShipModeID"];
-                                NewRow["GW"] = dtAll.Rows[i]["GW"];
-                                NewRow["CBM"] = dtAll.Rows[i]["CBM"];
-                                NewRow["Amount"] = dtAll.Rows[i]["Amount"];
-                                ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
-
+                                drGrid["Blno"] = dtImp.Rows[i]["Blno"];
+                                drGrid["Wkno"] = dtImp.Rows[i]["Wkno"];
+                                drGrid["ShipModeID"] = dtImp.Rows[i]["ShipModeID"];
+                                drGrid["GW"] = dtImp.Rows[i]["GW"];
+                                drGrid["CBM"] = dtImp.Rows[i]["CBM"];
+                                drGrid["Amount"] = dtImp.Rows[i]["Amount"];
+                                //((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
                             }
                         }
                     }
                     else
                     {
                         string chkExp = string.Format(@"
-with GMTBookingData
+with GB 
 as 
-(select id from GMTBooking
-where id='{0}'), 
- PackingListData
+(select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
+ '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
+ '' as ShareBase, 0 as FtyWK 
+ from GMTBooking g  WITH (NOLOCK) 
+ left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
+ left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
+ where 1=1  and g.id='{0}' ), PL 
 as 
-(select id from PackingList
-where type in ('F','L')
-and id='{0}'), 
-FtyExportData 
-as 
-(select id
- from FtyExport
-WHERE id='{0}' AND TYPE =3) 
-select * from GMTBookingData 
-union all
-select * from PackingListData
+(select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, 
+'' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
+'' as ShareBase, 0 as FtyWK 
+ from PackingList WITH (NOLOCK) 
+ where  (Type = 'F' or Type = 'L')  and id='{0}' ) select * from GB 
 union all 
-select * from FtyExportData
+select * from PL
  ", e.FormattedValue.ToString());
-                        if (!MyUtility.Check.Seek(chkExp, out dr1))
+                        DataTable dtExp;
+                        DBProxy.Current.Select(null, chkExp, out dtExp);
+                        if (MyUtility.Check.Empty(dtExp)) ;
+                        if (dtExp.Rows.Count==0)
                         {
                             MyUtility.Msg.InfoBox("<WKNo:>" + e.FormattedValue.ToString() + " Not Found!!");
                             drGrid.Delete();
@@ -302,49 +262,14 @@ select * from FtyExportData
                         }
                         else
                         {
-                            //判斷修改的資料是否正確
-                            //正確就將所有B/L No所有WK#都帶出來
-                            DataTable dtAll;
-                            string cmd_allWKNo = string.Format(@"with GMTBookingData
-as 
-(select a.BLNo,a.InvNo,a.ShipModeID,a.GW,a.CBM,'' as Type,'' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK 
-from ShareExpense a
-inner join GMTBooking b on a.InvNo=b.id and a.GW=b.TotalGW and a.CBM=b.TotalCBM
-and a.ShipModeID=b.ShipModeID and a.FtyWK=0
-WHERE a.InvNo='{0}'), 
- PackingListData
-as 
-(select a.BLNo,a.InvNo,a.ShipModeID,a.GW,a.CBM,'' as Type,'' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK 
-from ShareExpense a
-inner join PackingList b on a.InvNo=b.id and a.GW=b.GW and a.CBM=b.CBM
-and a.ShipModeID=b.ShipModeID and a.FtyWK=0
-WHERE a.InvNo='{0}'), 
-FtyExportData 
-as 
-(select a.BLNo,a.InvNo,a.ShipModeID,a.GW,a.CBM,'' as Type,'' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK 
-from ShareExpense a
-inner join FtyExport b on a.BLNo=b.Blno and a.WKNo=b.ID and a.GW=b.WeightKg
-and a.cbm=b.Cbm and a.ShipModeID=b.ShipModeID and a.FtyWK=1
-WHERE a.InvNo='{0}') 
-select distinct * from GMTBookingData 
-union all
-select distinct * from PackingListData
-union all 
-select distinct * from FtyExportData
-", e.FormattedValue.ToString());
-                            DBProxy.Current.Select(null, cmd_allWKNo, out dtAll);
-                            if (MyUtility.Check.Empty(dtAll)) return;
-
-                            for (int i = 0; i < dtAll.Rows.Count; i++)
+                            for (int i = 0; i < dtExp.Rows.Count; i++)
                             {
-
-                                drGrid["Blno"] = dtAll.Rows[i]["Blno"];
-                                drGrid["InvNo"] = dtAll.Rows[i]["InvNo"];
-                                drGrid["ShipModeID"] = dtAll.Rows[i]["ShipModeID"];
-                                drGrid["GW"] = dtAll.Rows[i]["GW"];
-                                drGrid["CBM"] = dtAll.Rows[i]["CBM"];
-                                drGrid["Amount"] = dtAll.Rows[i]["Amount"];
-
+                                drGrid["Blno"] = dtExp.Rows[i]["Blno"];
+                                drGrid["InvNo"] = dtExp.Rows[i]["InvNo"];
+                                drGrid["ShipModeID"] = dtExp.Rows[i]["ShipModeID"];
+                                drGrid["GW"] = dtExp.Rows[i]["GW"];
+                                drGrid["CBM"] = dtExp.Rows[i]["CBM"];
+                                drGrid["Amount"] = dtExp.Rows[i]["Amount"];
                             }
                         }
                     }
