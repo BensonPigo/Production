@@ -99,8 +99,8 @@ namespace Sci.Production.Warehouse
         //print
         protected override bool ClickPrint()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            // dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
@@ -185,6 +185,11 @@ namespace Sci.Production.Warehouse
             result1 = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result1) { this.ShowErr(sqlcmd, result1); }
 
+            if (dtDetail == null || dtDetail.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found !!!", caption: "");
+                return false ;
+            }
             // 傳 list 資料            
             List<P37_PrintData> data = dtDetail.AsEnumerable()
                 .Select(row1 => new P37_PrintData()
