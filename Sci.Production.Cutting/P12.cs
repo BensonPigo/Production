@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci;
 using Sci.Data;
 using Sci.Win;
 using System;
@@ -78,7 +79,7 @@ namespace Sci.Production.Cutting
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            this.ShowWaitMessage("Data processing, please wait...");
             if (this.textBox1.Text.Empty() && this.textBox2.Text.Empty() && this.textBox4.Text.Empty() && this.textBox3.Text.Empty() && this.textBox7.Text.Empty() && this.textBox6.Text.Empty()
                 && this.textBox5.Text.Empty() && this.dateBox1.Value.Empty())
             {
@@ -335,7 +336,8 @@ namespace Sci.Production.Cutting
             }
             if (dtt.Rows.Count == 0)  MyUtility.Msg.WarningBox("Data not found!!"); 
             listControlBindingSource1.DataSource = dtt;
-
+            
+            this.HideWaitMessage();
         }
 
 
