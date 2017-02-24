@@ -318,7 +318,8 @@ m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 ,iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
 ,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
 ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
-,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.id,a.seq1,a.seq2),1,0)) AS description
+--,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.id,a.seq1,a.seq2),1,0)) AS description
+,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
 ,s.currencyid
 ,stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
 ,(Select cast(tmp.Remark as nvarchar)+',' 
@@ -372,7 +373,8 @@ select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 ,iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
 ,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
 ,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
-,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.id,a.seq1,a.seq2),1,0)) AS description
+--,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.id,a.seq1,a.seq2),1,0)) AS description
+,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
 ,s.currencyid
 ,stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
 ,(Select cast(tmp.Remark as nvarchar)+',' 
