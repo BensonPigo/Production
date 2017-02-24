@@ -993,11 +993,15 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         //CustCD
         private void txtcustcd1_Validated(object sender, EventArgs e)
         {
+            if (this.EditMode && !MyUtility.Check.Empty(txtcustcd1.Text) && txtcustcd1.OldValue != txtcustcd1.Text)
+            {
+                CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), txtcustcd1.Text));
+            }
             if (MyUtility.Check.Empty(txtcustcd1.OldValue)) return;
             if (EditMode && txtcustcd1.OldValue != txtcustcd1.Text)
             {
                 DeleteDetailData(txtcustcd1, txtcustcd1.OldValue);
-            }
+            }            
         }
 
         //Destination

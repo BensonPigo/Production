@@ -636,12 +636,11 @@
             this.txtcountry1.Size = new System.Drawing.Size(232, 22);
             this.txtcountry1.TabIndex = 2;
             this.txtcountry1.TextBox1Binding = "";
-            this.txtcountry1.TextBox1.Validated += new System.EventHandler(this.txtcountry1_Validated);
             // 
             // txtcustcd1
             // 
             this.txtcustcd1.BackColor = System.Drawing.Color.White;
-            this.txtcustcd1.BrandObjectName = null;
+            this.txtcustcd1.BrandObjectName = this.txtbrand1;
             this.txtcustcd1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CustCDID", true));
             this.txtcustcd1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtcustcd1.Location = new System.Drawing.Point(83, 58);
