@@ -20,7 +20,7 @@ namespace Sci.Production.Cutting
     public partial class P10_Generate : Sci.Win.Subs.Base
     {
         DataRow maindatarow;
-        DataTable allpartTb, artTb, qtyTb, sizeTb, patternTb, detailTb, garmentTb,alltmpTb,bundle_detail_artTb;
+        DataTable allpartTb = null, artTb = null, qtyTb = null, sizeTb = null, patternTb = null, detailTb = null, garmentTb = null, alltmpTb = null, bundle_detail_artTb = null;
         string f_code;
         int NoOfBunble;
 
@@ -412,6 +412,7 @@ namespace Sci.Production.Cutting
 
         private void button2_Click(object sender, EventArgs e)
         {
+            this.Dispose();
             this.Close();
         }
 
@@ -542,7 +543,6 @@ namespace Sci.Production.Cutting
         }
         private void button_Qty_Click(object sender, EventArgs e)
         {
-            qtyTbclear();
             DataRow selectSizeDr = ((DataRowView)grid_Size.GetSelecteds(SelectedSort.Index)[0]).Row;
             DataRow selectQtyeDr = ((DataRowView)grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectQtyeDr["SizeCode"] = selectSizeDr["SizeCode"];
