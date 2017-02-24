@@ -727,6 +727,11 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                 #endregion
                 count = count + 1;
             }
+            if (DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Detail cannot be empty");
+                return false;
+            }
             //CTNQty, ShipQty, NW, GW, NNW, CBM
             CurrentMaintain["CTNQty"] = ctnQty;
             CurrentMaintain["ShipQty"] = shipQty;
