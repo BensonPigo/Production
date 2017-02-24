@@ -707,6 +707,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                     textBox4.Text = item.GetSelectedString();
                 }
             }
+            this.textBox4.ValidateControl();
         }
 
         //檢查輸入的CustCD是否正確
