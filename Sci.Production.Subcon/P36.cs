@@ -44,6 +44,12 @@ namespace Sci.Production.Subcon
         {
             base.OnDetailEntered();
             lblStatus.Text = CurrentMaintain["status"].ToString();
+            if (!MyUtility.Check.Empty(CurrentMaintain["amtrevisedate"]))
+            {
+                DateTime Date = ((DateTime)MyUtility.Convert.GetDate(CurrentMaintain["amtrevisedate"]));
+                string DateString = Date.ToString("yyyy/MM/dd HH:mm:ss");
+                displayBox5.Text = DateString;
+            }
             lblTaipeiDebitNote.Visible = (!MyUtility.Check.Empty(CurrentMaintain["TaipeiDBC"]));
             numTotalAmt.Value = decimal.Parse(CurrentMaintain["amount"].ToString()) + decimal.Parse(CurrentMaintain["tax"].ToString());
             btnDebitSchedule.Enabled = !this.EditMode && CurrentMaintain["status"].ToString().ToUpper() == "CONFIRMED";
