@@ -22,10 +22,12 @@ namespace Sci.Production.Shipping
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
+
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("Address", header: "Address", width: Widths.AnsiChars(30))
-                .Text("WhseNo", header: "Warehouse#", width: Widths.AnsiChars(50));
-                
+                .Text("WhseNo", header: "Warehouse#", width: Widths.AnsiChars(50))
+                .EditText("Address", header: "Address", width: Widths.AnsiChars(30));
+
+
         }
 
         protected override bool ClickSaveBefore()
@@ -70,5 +72,6 @@ namespace Sci.Production.Shipping
 
             return base.ClickSaveBefore();
         }
+
     }
 }
