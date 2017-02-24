@@ -693,7 +693,7 @@ Where a.id = '{0}'", masterID);
 
         protected override bool ClickPrint()
         {
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
@@ -737,7 +737,13 @@ Where a.id = '{0}'", masterID);
                 on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2            
             where a.id= @ID", pars, out dtt);
             if (!result) { this.ShowErr(result); }
-           
+
+            if (dtt == null || dtt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found !!!", "");
+                return false;
+            }
+
             // 傳 list 資料            
             List<P12_PrintData> data = dtt.AsEnumerable()
                 .Select(row1 => new P12_PrintData()
