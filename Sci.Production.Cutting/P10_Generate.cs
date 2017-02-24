@@ -429,7 +429,7 @@ namespace Sci.Production.Cutting
         {
             #region Qty 的筆數分配
             //輸入的數量必須超過[No of Bundle]
-            if (Qtycount <= NoOfBunble)
+            if (Qtycount < NoOfBunble)
             {
                 MyUtility.Msg.WarningBox(string.Format("[No of Bundle] must exceed {0} !!", NoOfBunble));
                 return;

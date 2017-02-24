@@ -432,9 +432,46 @@ namespace Sci.Production.Cutting
             }
             return base.ClickSavePost();
         }
+
+        private void clear()
+        {
+            displayBox_Season.Text = "";
+            displayBox_Style.Text = "";
+            displayBox_PrintDate.Text = "";
+            CurrentMaintain["Cutno"] = 0;
+            CurrentMaintain["sewinglineid"] = "";
+            CurrentMaintain["OrderID"] = "";
+            CurrentMaintain["POID"] = "";
+            CurrentMaintain["PatternPanel"] = "";
+            CurrentMaintain["Sizecode"] = "";
+            CurrentMaintain["Ratio"] = "";
+            CurrentMaintain["Article"] = "";
+            CurrentMaintain["Colorid"] = "";
+            CurrentMaintain["Qty"] = 0;
+            CurrentMaintain["SewingCell"] = "";
+            CurrentMaintain["startno"] = 1;
+            CurrentMaintain["cutref"] = "";
+            CurrentMaintain["ITEM"] = "";
+            textBox_LectraCode.Text = "";
+
+            DetailDatas.Clear();
+            bundle_Detail_allpart_Tb.Clear();
+            bundle_Detail_Art_Tb.Clear();
+            bundle_Detail_Qty_Tb.Clear();
+            WorkOrder_Ukey = "";
+            CurrentMaintain.EndEdit();
+           
+        }
+
+
         private void textBox_Cutref_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
+            if (textBox_Cutref.Text == "")
+            {
+                clear();
+                return;
+            }
             string newvalue = textBox_Cutref.Text;
             if (textBox_Cutref.OldValue.ToString() == newvalue) return;
             string cmd = string.Format(
@@ -474,31 +511,7 @@ namespace Sci.Production.Cutting
             if (!MyUtility.Check.Seek(cmd, out cutdr, null))
             {
                 MyUtility.Msg.WarningBox("<Cut Ref#> data not found!");
-                displayBox_Season.Text = "";
-                displayBox_Style.Text = "";
-                displayBox_PrintDate.Text = "";
-                CurrentMaintain["Cutno"] = 0;
-                CurrentMaintain["sewinglineid"] = "";
-                CurrentMaintain["OrderID"] = "";
-                CurrentMaintain["POID"] = "";
-                CurrentMaintain["PatternPanel"] = "";
-                CurrentMaintain["Sizecode"] = "";
-                CurrentMaintain["Ratio"] = "";
-                CurrentMaintain["Article"] = "";
-                CurrentMaintain["Colorid"] = "";
-                CurrentMaintain["Qty"] = 0;
-                CurrentMaintain["SewingCell"] = "";
-                CurrentMaintain["startno"] = 1;
-                CurrentMaintain["cutref"] = "";
-                CurrentMaintain["ITEM"] = "";
-                textBox_LectraCode.Text = "";
-
-                DetailDatas.Clear();
-                bundle_Detail_allpart_Tb.Clear();
-                bundle_Detail_Art_Tb.Clear();
-                bundle_Detail_Qty_Tb.Clear();
-                WorkOrder_Ukey = "";
-                CurrentMaintain.EndEdit();
+                clear();
                 e.Cancel = true;
                 return;
             }
@@ -518,7 +531,7 @@ namespace Sci.Production.Cutting
                 CurrentMaintain["LectraCode"] = cutdr["LectraCode"].ToString();
                 displayBox_Season.Text = cutdr["Seasonid"].ToString();
                 displayBox_Style.Text = cutdr["Styleid"].ToString();
-                displayBox_EstCutdate.Text = ((DateTime)cutdr["Estcutdate"]).ToString("yyyy/MM/dd");
+                displayBox_EstCutdate.Text = MyUtility.Check.Empty(cutdr["Estcutdate"])?"":((DateTime)cutdr["Estcutdate"]).ToString("yyyy/MM/dd");
                 
                 string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString()+cutdr["factoryid"].ToString(), "SewingLine", "ID+factoryid");
                 CurrentMaintain["SewingCell"] = cellid;
