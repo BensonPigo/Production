@@ -38,7 +38,7 @@ namespace Sci.Production.Planning
         private string M;
         private string Fty;
         string title = "";
-        string cmd, cmd2, cmd3, dStart, dEnd, LastDay, dLoad, STARTday, endDay, o, s;
+        string cmd, cmd2, cmd3, dStart, dEnd, LastDay, dLoad, STARTday, endDay, o, s,b;
         DataTable dt;
         Dictionary<string, string> dic = new Dictionary<string, string>();
         DualResult dtresult;
@@ -181,24 +181,6 @@ namespace Sci.Production.Planning
                 work = "where " + work;
             }
             #endregion
-            //            List<SqlParameter> pars = new List<SqlParameter>();
-            //            pars.Add(new SqlParameter("@ID", M));
-            //            DualResult result;
-            //            DataTable dtFactoryID;
-            //            string sqlcmd1 = string.Format(@"select distinct FactoryID
-            //	                    from dbo.WorkHour
-            //	                    where FactoryID = @ID order by FactoryID");
-            //            string Factory = "";
-            //            result = DBProxy.Current.Select("", sqlcmd1, pars, out dtFactoryID);
-            //            foreach (DataRow dr in dtFactoryID.Rows)
-            //            {
-            //                Factory += "[" + dr["FactoryID"].ToString() + "]" + ",";
-            //            }
-            //            if (Factory.Length != 0)
-            //            {
-            //                Factory = Factory.Substring(0, Factory.Length - 1);
-            //            }
-
 
             #region --Prouction Status Excel第一個頁籤SQL
             cmd = string.Format(@"
@@ -262,9 +244,9 @@ namespace Sci.Production.Planning
 
             SELECT MDivisionID,
                    FactoryID,
-	               sum(Capacity)Capacity,
+	               isnull(sum(Capacity),0)Capacity,
 	               sum(LoadCPU)LoadCPU,
-	               loadingRate= sum(Capacity)/ sum(LoadCPU),
+	               loadingRate= isnull(sum(Capacity)/ sum(LoadCPU),0),
 	               MaxOutputDate,
 	               DateName,
 	               sum(DailyCPU)DailyCPU,
@@ -312,6 +294,7 @@ namespace Sci.Production.Planning
             dt2Factory = dt3fty;
             dic.Clear();
             if (s != null) { s = ""; }
+            if (b != null) { b = ""; }
             // dic.Add(" ", "1,1");
             for (int i = 0; i < dt2Factory.Rows.Count; i++)
             {
@@ -319,6 +302,13 @@ namespace Sci.Production.Planning
                 dic.Add(dt2Factory.Rows[i]["FactoryID"].ToString(), string.Format("{0},{1}", ((i * 2) + 2), ((i * 2) + 3)));
                 string sss = dt2Factory.Rows[i]["FactoryID"].ToString();
                 o = string.Format(" outer apply (select  AVGHours,RunningTotal from  #tmpWorkingHour k where date between '{0}' and '{1}' and FactoryID='{2}' and w.Date=k.Date )as {2}", STARTday, endDay, sss);
+                string a = string.Format("isnull({0}.AVGHours,0)AVGHours,isnull({0}.RunningTotal,0)RunningTotal", sss);
+                b += a + ",";
+                if (i == dt2Factory.Rows.Count-1) 
+                {
+                  b = b.Substring(0,b.Length -1);
+                }
+               
                 s += o + Environment.NewLine;
             }
 
@@ -340,11 +330,11 @@ namespace Sci.Production.Planning
             select DISTINCT Date into #t from #tmpWorkingHour  where date between '{0}'  and  '{1}'
             select DISTINCT FactoryID from #tmpWorkingHour 
             select DISTINCT Date from #tmpWorkingHour  where date between '{0}'  and  '{1}'
-            select distinct * from #t  w  {2}
+            select distinct date,{3} from #t  w  {2}
             DROP TABLE #tmpWorkHours
             DROP TABLE #tmpWorkingHour
             DROP TABLE #t
-            ", STARTday, endDay, s);
+            ", STARTday, endDay, s,b);
 
 
             dtresult = DBProxy.Current.Select("", cmd, out dt);
@@ -1189,10 +1179,13 @@ namespace Sci.Production.Planning
 
                 Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Planning_R10_ProuctionStatus.xltx");
                 xl.boOpenFile = true;
-
+              
+                Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt1 = new SaveXltReportCls.xltRptTable(dt);
+                Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
                 xl.dicDatas.Add("##title", title);
-                xl.dicDatas.Add("##dt", dt);
-
+                dt1.ShowHeader = false;
+                xl.dicDatas.Add("##dt", dt1);
+               
                 Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt2 = new SaveXltReportCls.xltRptTable(dt2All);
                 dt2.ShowHeader = false;
                 xl.dicDatas.Add("##dt2", dt2);
@@ -1200,10 +1193,20 @@ namespace Sci.Production.Planning
                 Sci.Utility.Excel.SaveXltReportCls.ReplaceAction a = setRow1;
                 xl.dicDatas.Add("##setRow1", a);
 
-                //xl.Save(outpath, false);
                 xl.Save();
 
-
+                int startRow = 3 + 1; //title有三列
+                int lastRow = dt1.Rows.Count + 3 + 1;
+                wks.Cells[lastRow, 1] = "Total:";
+                wks.Cells[lastRow, 3] = string.Format("=SUM(C{0}:C{1})", startRow, lastRow - 1);
+                wks.Cells[lastRow, 4] = string.Format("=SUM(D{0}:D{1})", startRow, lastRow - 1);
+                wks.Cells[lastRow, 5] = string.Format("=(D{0}/C{0})", lastRow);
+                wks.Cells[lastRow, 8] = string.Format("=SUM(H{0}:H{1})", startRow, lastRow - 1);
+                wks.Cells[lastRow, 9] = string.Format("=SUM(I{0}:I{1})", startRow, lastRow - 1);
+                wks.Cells[lastRow, 10] = string.Format("=SUM(J{0}:J{1})", startRow, lastRow - 1);
+                wks.Cells[lastRow, 11] = string.Format("=(J{0}-I{0})", lastRow);
+                wks.Cells[lastRow, 12] = string.Format("=(J{0}/I{0})", lastRow);
+                wks.Cells[lastRow, 13] = string.Format("=((J{0}-I{0})/H{0})", lastRow);
             }
 
 
