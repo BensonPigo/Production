@@ -61,11 +61,14 @@ namespace Sci.Production.PPIC
 
                 DataRow drvar = GetTitleDataByCustCD(poid, _id);
 
-                if (drvar == null) return true;
-
+                if (drvar == null)
+                {
+                    MyUtility.Msg.WarningBox("data not found!!");
+                    return true;
+                }
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice.xltx");
                 sxrc sxr = new sxrc(xltPath, true);
-                sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
+              
                 sxr.dicDatas.Add(sxr._v + "PO_MAKER", drvar["MAKER"].ToString());
                 sxr.dicDatas.Add(sxr._v + "PO_STYLENO", drvar["sty"].ToString());
                 sxr.dicDatas.Add(sxr._v + "PO_QTY", drvar["QTY"].ToString());
@@ -103,7 +106,7 @@ namespace Sci.Production.PPIC
                     string idxStr = (i == 0) ? "" : i.ToString();
 
                     res = DBProxy.Current.SelectSP("", "PPIC_Report02", new List<SqlParameter> { new SqlParameter("@ID", ID), new SqlParameter("@WithZ", chkAdditional.Checked) }, out dts);
-
+                    sxr.dicDatas.Add(sxr._v + "Now" + idxStr, DateTime.Now);
                     sxr.dicDatas.Add(sxr._v + "SP" + idxStr, ID);
                     sxr.dicDatas.Add(sxr._v + "MAKER" + idxStr, dt.Rows[i]["MAKER"].ToString());
                     sxr.dicDatas.Add(sxr._v + "STYLENO" + idxStr, dt.Rows[i]["sty"].ToString());
@@ -145,7 +148,7 @@ namespace Sci.Production.PPIC
 
                 System.Data.DataTable dtCustCD = GetDtByCustCD(poid);
 
-                if (dtCustCD == null) return true;
+                if (dtCustCD == null) { MyUtility.Msg.WarningBox("data not found!!"); return true; }
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice_Combo.xltx");
                 sxrc sxr = new sxrc(xltPath, true);
                 sxr.CopySheets.Add("1,2,3", dtCustCD.Rows.Count - 1);
