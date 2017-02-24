@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -60,7 +61,7 @@
             this.button1 = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -353,7 +354,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(127, 29);
             this.label2.TabIndex = 1;
-            this.label2.Text = "Sacn Barcode";
+            this.label2.Text = "Scan Barcode";
             // 
             // label1
             // 
@@ -410,9 +411,7 @@
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
             this.grid1.AllowUserToResizeRows = false;
-            this.grid1.AutoGenerateColumns = false;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid1.DataSource = this.listControlBindingSource1;
