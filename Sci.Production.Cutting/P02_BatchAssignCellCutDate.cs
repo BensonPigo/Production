@@ -187,6 +187,7 @@ namespace Sci.Production.Cutting
 
         private void btn_Confirm_Click(object sender, EventArgs e)
         {
+            this.grid1.ValidateControl();
             string cell = txtCell2.Text;string cdate = ""; 
             if (!MyUtility.Check.Empty(estcutdate_textbox2.Value))
             {
