@@ -72,7 +72,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                     DoForm.Set(this.EditMode, this.DetailDatas, this.CurrentDetailData);
                     DoForm.ShowDialog(this);
                     #region 加總明細金額至表頭
-                    string strExact = MyUtility.GetValue.Lookup(string.Format("Select exact from WITH (NOLOCK) Currency where id = '{0}'", CurrentMaintain["currencyId"]), null);
+                    string strExact = MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null);
                     if (strExact == null || string.IsNullOrWhiteSpace(strExact))
                     {
                         MyUtility.Msg.WarningBox(string.Format("<{0}> is not found in Currency Basic Data , summary amout failed!", CurrentMaintain["currencyID"]), "Warning");
