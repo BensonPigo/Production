@@ -212,7 +212,7 @@ namespace Sci.Production.Cutting
                                         
                                         union all
 
-                                        select Convert(bit,0) as selected
+                                        select DISTINCT Convert(bit,0) as selected
                                                 ,a.BundleNo [Bundle]
                                                 ,b.CutRef [CutRef]
                                                 ,b.POID [POID]
@@ -291,7 +291,7 @@ namespace Sci.Production.Cutting
                                         
                                         union all
 
-                                        select Convert(bit,0) as selected
+                                        select DISTINCT Convert(bit,0) as selected
                                                 ,a.BundleNo [Bundle]
                                                 ,b.CutRef [CutRef]
                                                 ,b.POID [POID]
