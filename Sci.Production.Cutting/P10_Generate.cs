@@ -20,14 +20,14 @@ namespace Sci.Production.Cutting
     public partial class P10_Generate : Sci.Win.Subs.Base
     {
         DataRow maindatarow;
-        DataTable allpartTb = null, artTb = null, qtyTb = null, sizeTb = null, patternTb = null, detailTb = null, garmentTb = null, alltmpTb = null, bundle_detail_artTb = null;
+        DataTable allpartTb = null, artTb = null, qtyTb = null, sizeTb = null, patternTb = null, detailTb = null, garmentTb = null, alltmpTb = null, bundle_detail_artTb = null, table_bundleqty_c;
         string f_code;
         int NoOfBunble;
 
 
         public P10_Generate(DataRow maindr,DataTable table_bundle_Detail,DataTable table_bundleallpart, DataTable table_bundleart, DataTable table_bundleqty)
         {
-
+            table_bundleqty_c = table_bundleqty;
             string cmd_st = "Select 0 as Sel, PatternCode,PatternDesc, '' as annotation,parts from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_st, out allpartTb);
 
@@ -47,7 +47,13 @@ namespace Sci.Production.Cutting
             
             detailTb = table_bundle_Detail;
             numericBox_noBundle.Value = (decimal)maindr["Qty"];
-            NoOfBunble = Convert.ToInt16(maindr["Qty"]);
+            
+            DataTable bdwtb2 = null;
+            if (table_bundleqty.Rows.Count != 0)
+            {
+                MyUtility.Tool.ProcessWithDatatable(table_bundleqty, "", "Select SizeCode,Ukey,id from #tmp group by SizeCode,Ukey,id", out bdwtb2);
+            }
+            NoOfBunble = bdwtb2 == null ? Convert.ToInt16(maindr["Qty"]) : bdwtb2.Rows.Count;
             displayBox_pattern.Text = maindr["PatternPanel"].ToString();
             //calsumQty();
             garmentlist(); //排出所有GarmentList
@@ -443,14 +449,14 @@ namespace Sci.Production.Cutting
             }
             else if (Modify < 0)  //刪除(從後面)
             {
-                for (int i = qtyTb.Rows.Count-1; i > 0; i--)
+                for (int i = qtyTb.Rows.Count - 1; i > 0; i--)
                 {
                     if (Modify >= 0) break;
                     if (qtyTb.Rows[i]["SizeCode"].ToString() == SizeCode)
                     {
                         qtyTb.Rows[i].Delete();
                         Modify++;
-                    } 
+                    }
                 }
             }
 
@@ -461,9 +467,7 @@ namespace Sci.Production.Cutting
                 dr["No"] = serial;
                 serial++;
             }
-
             calQty();
-
             #endregion
         }
 

@@ -730,7 +730,7 @@ namespace Sci.Production.Cutting
             DataTable dt = (DataTable)detailgridbs.DataSource;
             detailgrid.ValidateControl();
             DataTable bdwtb;
-            MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource,"","Select [No] = BundleNo, SizeCode,Qty,Ukey = Ukey1 , id from #tmp", out bdwtb);
+            MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource, "", "Select [No] = BundleNo, SizeCode,Qty,Ukey = Ukey1 , id from #tmp group by BundleGroup,BundleNo,SizeCode,Qty,Ukey1,id", out bdwtb);
             var frm = new Sci.Production.Cutting.P10_Generate(CurrentMaintain, dt, bundle_Detail_allpart_Tb, bundle_Detail_Art_Tb, bdwtb.Rows.Count == 0 ? bundle_Detail_Qty_Tb : bdwtb);
             frm.ShowDialog(this);
             queryTable();
