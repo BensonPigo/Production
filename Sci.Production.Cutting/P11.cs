@@ -307,7 +307,7 @@ namespace Sci.Production.Cutting
            .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
            .Text("POID", header: "POID", width: Widths.AnsiChars(11), iseditingreadonly: true)
            .Date("estCutdate", header: "Est.CutDate", width: Widths.AnsiChars(10), iseditingreadonly: true)
-           .Text("PatternPanel", header: "PatternPanel", width: Widths.AnsiChars(2), iseditingreadonly: true)
+           .Text("PatternPanel", header: "Pattern" + Environment.NewLine + "Panel", width: Widths.AnsiChars(2), iseditingreadonly: true)
            .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
            .Text("Item", header: "Item", width: Widths.AnsiChars(10), iseditingreadonly: true);
             CutRef_grid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
@@ -322,8 +322,8 @@ namespace Sci.Production.Cutting
            .Text("Article", header: "Article", width: Widths.AnsiChars(6), iseditingreadonly: true)
            .Text("Colorid", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), iseditingreadonly: true)
-           .Text("SewingLine", header: "Sewing Line", width: Widths.AnsiChars(2),settings: Linecell)
-           .Text("SewingCell", header: "Sewing Cell", width: Widths.AnsiChars(2),settings: Cellcell)
+           .Text("SewingLine", header: "Line#", width: Widths.AnsiChars(2), settings: Linecell)
+           .Text("SewingCell", header: "Sew Cell", width: Widths.AnsiChars(2), settings: Cellcell)
            .Numeric("Qty", header: "No of Bundle", width: Widths.AnsiChars(3), integer_places: 3,settings: Qtycell)
            .Numeric("Cutoutput", header: "CutOutPut", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
            .Numeric("TotalParts", header: "Total Parts", width: Widths.AnsiChars(4), integer_places: 3, iseditingreadonly: true);
@@ -408,7 +408,7 @@ namespace Sci.Production.Cutting
                 Style.ukey = ord.styleukey and Style.ApparelType = Reason.id ) 
                 as item
             from workorder a WITH (NOLOCK) ,orders ord WITH (NOLOCK) , workorder_PatternPanel b WITH (NOLOCK)  
-            Where a.ukey = b.workorderukey and a.orderid = ord.id and ord.mDivisionid = '{0}' and a.id = ord.cuttingsp", keyWord);
+            Where a.ukey = b.workorderukey and a.orderid = ord.id and ord.mDivisionid = '{0}' and a.id = ord.cuttingsp and a.CutRef is not null ", keyWord);
             string distru_cmd = string.Format(
             @"Select distinct 0 as sel,0 as iden,a.cutref,b.orderid,b.article,a.colorid,b.sizecode,c.PatternPanel, '' as Ratio,a.cutno,
             substring(ord.Sewline,1,charindex(',',ord.Sewline,1)) as Sewingline,
@@ -423,12 +423,12 @@ namespace Sci.Production.Cutting
                 as item,
            1 as Qty,isnull(sum(b.Qty),0) as cutoutput,0 as TotalParts,ord.poid, 0 as startno
             from workorder a WITH (NOLOCK) ,orders ord WITH (NOLOCK) , workorder_Distribute b WITH (NOLOCK) ,workorder_PatternPanel c WITH (NOLOCK) 
-            Where a.ukey = b.workorderukey and ord.mDivisionid = '{0}' and a.ukey = c.workorderukey and b.orderid = ord.id and c.id = a.id and a.id = b.id and a.id = ord.cuttingsp", keyWord);
+            Where a.ukey = b.workorderukey and ord.mDivisionid = '{0}' and a.ukey = c.workorderukey and b.orderid = ord.id and c.id = a.id and a.id = b.id and a.id = ord.cuttingsp and a.CutRef is not null ", keyWord);
 
             string Excess_cmd = string.Format(
             @"Select distinct a.cutref,a.orderid
             from workorder a WITH (NOLOCK) , workorder_Distribute b WITH (NOLOCK) ,orders ord WITH (NOLOCK) 
-            Where a.ukey = b.workorderukey and ord.mDivisionid = '{0}'   and a.id = b.id and b.orderid = 'EXCESS' and a.id = ord.cuttingsp", keyWord);
+            Where a.ukey = b.workorderukey and ord.mDivisionid = '{0}'   and a.id = b.id and b.orderid = 'EXCESS' and a.id = ord.cuttingsp and a.CutRef is not null ", keyWord);
 
             if (!MyUtility.Check.Empty(cutref))
             {
@@ -457,7 +457,7 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            distru_cmd = distru_cmd + " and b.orderid !='EXCESS' group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,c.PatternPanel,a.cutno,ord.styleukey";
+            distru_cmd = distru_cmd + " and b.orderid !='EXCESS' and a.CutRef is not null  group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,c.PatternPanel,a.cutno,ord.styleukey";
             query_dResult = DBProxy.Current.Select(null, distru_cmd, out ArticleSizeTb);
             if (!query_dResult)
             {
@@ -528,6 +528,12 @@ namespace Sci.Production.Cutting
             Qty_grid.DataSource = qtyTb;
             AllPart_grid.DataSource = allpartTb;
             Cutpart_grid.DataSource = patternTb;
+
+            this.CutRef_grid.AutoResizeColumns();
+            this.ArticleSize_grid.AutoResizeColumns();
+            this.Cutpart_grid.AutoResizeColumns();
+            this.AllPart_grid.AutoResizeColumns();
+            
             this.HideWaitMessage();
             
         }
