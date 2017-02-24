@@ -44,6 +44,7 @@ namespace Sci.Production.Class
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
+            this.ValidateControl();
         }
 
         protected override void OnValidating(CancelEventArgs e)
