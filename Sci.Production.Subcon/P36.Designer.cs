@@ -169,7 +169,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(4267, 184);
+            this.gridicon.Location = new System.Drawing.Point(4392, 184);
             // 
             // refresh
             // 
@@ -664,7 +664,6 @@
             // displayBox5
             // 
             this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "amtrevisedate", true));
             this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox5.Location = new System.Drawing.Point(690, 180);
             this.displayBox5.Name = "displayBox5";
