@@ -381,14 +381,17 @@ namespace Sci.Production.Cutting
                     //凍結窗格
                     dt.boFreezePanes = true;
                     dt.intFreezeColumn = 3;
-
+                    dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(2) { ColumnWidth = (decimal)5.88 });
                     sxr.dicDatas.Add(sxr._v + "tbl1" + idxStr, dt);
                     //sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
                     sxr.dicDatas.Add(sxr._v + "SizeGroup" + idxStr, SizeGroup);
 
+                    Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
+                    wks.Range["B3","B3"].WrapText = 1;
+
                     sxrc.ReplaceAction a = exMethod;
                     sxr.dicDatas.Add(sxr._v + "exAction" + idxStr, a);
-
+                    
                 }
                 sxr.VarToSheetName = sxr._v + "SizeGroup";
 
