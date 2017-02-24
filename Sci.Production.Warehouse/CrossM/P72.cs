@@ -679,13 +679,13 @@ Where a.id = '{0}'", masterID);
         }
         protected override bool ClickPrint()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            //DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
             }
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
@@ -722,20 +722,26 @@ Where a.id = '{0}'", masterID);
                 this.ShowErr(res);
                 return res;
             }
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!", "DataTable dt");
+                return false;
+            }
       
             // 傳 list 資料            
             List<P72_PrintData> data = dt.AsEnumerable()
                 .Select(row1 => new P72_PrintData()
                 {
-                    POID = row1["POID"].ToString(),
-                    SEQ = row1["SEQ"].ToString(),
-                    DESC = row1["desc"].ToString(),
-                    BulkLocation = row1["Location"].ToString(),
-                    Unit = row1["StockUnit"].ToString(),
-                    Roll = row1["Roll"].ToString(),
-                    Dyelot = row1["Dyelot"].ToString(),
-                    IssueQTY = row1["Qty"].ToString(),
-                    TotalQTY = row1["Total"].ToString()
+                    POID = row1["POID"].ToString().Trim(),
+                    SEQ = row1["SEQ"].ToString().Trim(),
+                    DESC = row1["desc"].ToString().Trim(),
+                    BulkLocation = row1["Location"].ToString().Trim(),
+                    Unit = row1["StockUnit"].ToString().Trim(),
+                    Roll = row1["Roll"].ToString().Trim(),
+                    Dyelot = row1["Dyelot"].ToString().Trim(),
+                    IssueQTY = row1["Qty"].ToString().Trim(),
+                    TotalQTY = row1["Total"].ToString().Trim()
                 }).ToList();
 
             report.ReportDataSource = data;

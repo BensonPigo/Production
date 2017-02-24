@@ -374,7 +374,7 @@ Where a.id = '{0}'", masterID);
         }
         protected override bool ClickPrint()
         {
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["IssueDate"])).ToShortDateString();
@@ -411,17 +411,23 @@ Where a.id = '{0}'", masterID);
                 return res;
             }
 
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!", "DataTable dt");
+                return false;
+            }
+
             // 傳 list 資料            
             List<P74_PrintData> data = dt.AsEnumerable()
                 .Select(row1 => new P74_PrintData()
                 {
-                    POID = row1["ToPOID"].ToString(),
-                    SEQ = row1["seq"].ToString(),
-                    DESC = row1["description"].ToString().Replace(Environment.NewLine, ""),
-                    FROMSP = row1["FromPOID"].ToString(),
-                    FROMSEQ = row1["fromseq"].ToString(),
-                    StockUnit = row1["StockUnit"].ToString(),
-                    QTY = row1["qty"].ToString()
+                    POID = row1["ToPOID"].ToString().Trim(),
+                    SEQ = row1["seq"].ToString().Trim(),
+                    DESC = row1["description"].ToString().Replace(Environment.NewLine, "").Trim(),
+                    FROMSP = row1["FromPOID"].ToString().Trim(),
+                    FROMSEQ = row1["fromseq"].ToString().Trim(),
+                    StockUnit = row1["StockUnit"].ToString().Trim(),
+                    QTY = row1["qty"].ToString().Trim()
 
                 }).ToList();
 
