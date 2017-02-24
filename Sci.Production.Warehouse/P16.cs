@@ -683,8 +683,8 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
         //Print
         protected override bool ClickPrint()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            //DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
@@ -725,6 +725,13 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
             where b.id = a.requestid
             and a.id = @ID", pars, out dtApv);
             if (!ApvResult) { this.ShowErr(ApvResult); }
+
+            if (dtApv == null || dtApv.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found !!!", "DataTable dtApv");
+                return false;
+            }
+
             string ApvDate = dtApv.Rows[0]["ApvDate"].ToString();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ApvDate", ApvDate));
 
@@ -751,6 +758,12 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
              b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
                 where a.id= @ID", pars, out dtDetail);
             if (!result) { this.ShowErr(result); }
+
+            if (dtDetail == null || dtDetail.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found !!!", "DataTable dtDetail");
+                return false;
+            }
 
             // 傳 list 資料            
             List<P16_PrintData> data = dtDetail.AsEnumerable()
