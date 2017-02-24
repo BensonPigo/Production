@@ -77,11 +77,11 @@ SET
       ,a.Task	      =b.Task
       ,a.TaskApvDate	      =b.TaskApvDate
       ,a.Status	      =b.Status
-      ,a.FtySendDate	      =b.FtySendDate
+      --,a.FtySendDate	      =b.FtySendDate
       --,a.AddName	      =b.AddName
       --,a.AddDate	      =b.AddDate
-      ,a.TPEEditName	      =IIF ( b.EditDate <= a.TPEEditDate,  b.EditName, NULL )          
-      ,a.TPEEditDate	      =IIF ( b.EditDate <= a.TPEEditDate,  b.EditDate, NULL )        
+      ,a.TPEEditName	      = b.EditName
+      ,a.TPEEditDate	      = b.EditDate
 from Production.dbo.AirPP as a inner join Trade_To_Pms.dbo.AirPP as b ON a.id=b.id
 -------------------------- 
 
