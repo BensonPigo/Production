@@ -42,9 +42,9 @@ namespace Sci.Production.Cutting
 
             maindatarow = maindr;
             alltmpTb = table_bundleallpart;
-            bundle_detail_artTb = table_bundleart;
-            
+            bundle_detail_artTb = table_bundleart;            
             qtyTb = table_bundleqty;
+            
             detailTb = table_bundle_Detail;
             numericBox_noBundle.Value = (decimal)maindr["Qty"];
             NoOfBunble = Convert.ToInt16(maindr["Qty"]);
@@ -77,20 +77,10 @@ namespace Sci.Production.Cutting
             displayBox_Cutoutput.Value = totalCutQty;
             #endregion
 
-            #region 將qtyTb資料清空，並將sizeTb的資料複製到qtyTb
-            qtyTb.Rows.Clear();
-            int i = 1;
-            foreach (DataRow dr in sizeTb.Rows)
+            if (qtyTb.Rows.Count == 0)
             {
-                DataRow row = qtyTb.NewRow();
-                row["No"] = i;
-                row["SizeCode"] = dr["SizeCode"];
-                row["Qty"] = dr["Qty"];
-                qtyTb.Rows.Add(row);
-                i++;
+                qtyTbclear();
             }
-            #endregion
-
             calsumQty();
 
             if (detailTb.Rows.Count != 0) exist_Table_Query();
@@ -471,36 +461,6 @@ namespace Sci.Production.Cutting
                 serial++;
             }
 
-
-
-            //int i = 1;
-            //foreach (DataRow dr in sizeTb.Rows) //依照Size產生
-            //{
-            //    int rowcount = qtyTb.Select(string.Format("SizeCode='{0}'", dr["SizeCode"]), "").Length;
-
-            //    if (rowcount <= Qtycount) //缺少需先新增
-            //    {
-            //        for (int j = 0; j < Qtycount - rowcount; j++)
-            //        {
-            //            DataRow ndr = qtyTb.NewRow();
-            //            ndr["SizeCode"] = dr["SizeCode"];
-            //            qtyTb.Rows.Add(ndr);
-            //        }
-            //    }
-            //    i = 1;
-            //    DataRow[] qtyArr = qtyTb.Select(string.Format("SizeCode='{0}'", dr["SizeCode"]), ""); //重新撈取
-            //    foreach (DataRow dr2 in qtyArr)
-            //    {
-            //        if (dr2.RowState != DataRowState.Deleted)
-            //        {
-            //            dr2["No"] = i;
-            //        }
-            //        if (i > Qtycount) dr2.Delete(); //多餘的筆數要刪掉
-
-            //        i++;
-            //    }
-            //}
-            
             calQty();
 
             #endregion
@@ -564,9 +524,25 @@ namespace Sci.Production.Cutting
             if(qtyTb.Rows.Count>0) qty = Convert.ToInt16(qtyTb.Compute("sum(Qty)", ""));
             displayBox1.Value = qty;
         }
-
+        private void qtyTbclear()
+        {
+            #region 將qtyTb資料清空，並將sizeTb的資料複製到qtyTb
+            qtyTb.Rows.Clear();
+            int j = 1;
+            foreach (DataRow dr in sizeTb.Rows)
+            {
+                DataRow row = qtyTb.NewRow();
+                row["No"] = j;
+                row["SizeCode"] = dr["SizeCode"];
+                row["Qty"] = dr["Qty"];
+                qtyTb.Rows.Add(row);
+                j++;
+            }
+            #endregion        
+        }
         private void button_Qty_Click(object sender, EventArgs e)
         {
+            qtyTbclear();
             DataRow selectSizeDr = ((DataRowView)grid_Size.GetSelecteds(SelectedSort.Index)[0]).Row;
             DataRow selectQtyeDr = ((DataRowView)grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectQtyeDr["SizeCode"] = selectSizeDr["SizeCode"];
