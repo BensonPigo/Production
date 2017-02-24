@@ -921,8 +921,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
         protected override bool ClickPrint()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            //DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
@@ -1039,6 +1039,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                             where t.id= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out bb);
             if (!result) { this.ShowErr(sqlcmd, result); }
+
+            if (bb == null || bb.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found !!!", "");
+                return false;
+            }
 
             // 傳 list 資料            
             List<P10_PrintData> data = bb.AsEnumerable()
