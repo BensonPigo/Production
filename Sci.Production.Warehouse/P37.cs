@@ -105,7 +105,7 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
             }
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string CDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();

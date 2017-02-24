@@ -100,7 +100,7 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
             }
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
@@ -165,15 +165,15 @@ namespace Sci.Production.Warehouse
             List<P17_PrintData> data = dd.AsEnumerable()
                 .Select(row1 => new P17_PrintData()
                 {
-                    SP = row1["SP"].ToString(),
-                    SEQ = row1["SEQ"].ToString(),
-                    ROLL = row1["ROLL"].ToString(),
-                    DYELOT = row1["DYELOT"].ToString(),
-                    DESCRIPTION = row1["DESCRIPTION"].ToString(),
-                    UNIT = row1["UNIT"].ToString(),
-                    RETURN_QTY = row1["RETURN_QTY"].ToString(),
-                    LOCATION = row1["LOCATION"].ToString(),
-                    Total = row1["Total"].ToString()
+                    SP = row1["SP"].ToString().Trim(),
+                    SEQ = row1["SEQ"].ToString().Trim(),
+                    ROLL = row1["ROLL"].ToString().Trim(),
+                    DYELOT = row1["DYELOT"].ToString().Trim(),
+                    DESCRIPTION = row1["DESCRIPTION"].ToString().Trim(),
+                    UNIT = row1["UNIT"].ToString().Trim(),
+                    RETURN_QTY = row1["RETURN_QTY"].ToString().Trim(),
+                    LOCATION = row1["LOCATION"].ToString().Trim(),
+                    Total = row1["Total"].ToString().Trim()
                 }).ToList();
 
             report.ReportDataSource = data;

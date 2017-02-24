@@ -928,7 +928,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 return false;
             }
 
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string cutplanID = row["cutplanID"].ToString();

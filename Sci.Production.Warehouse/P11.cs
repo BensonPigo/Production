@@ -1031,7 +1031,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
             }
-            DataRow issue = this.CurrentDataRow;
+            DataRow issue = this.CurrentMaintain;
             string id = issue["ID"].ToString();
             string request = issue["cutplanid"].ToString();
             string issuedate = issue["issuedate"].ToString();

@@ -694,7 +694,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
         {
             if (CurrentMaintain["Status"].ToString() != "Confirmed")
             { ShowErr("Data is not confirmed, can't print"); return false; }
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
             string Requestid = row["Requestid"].ToString();
@@ -764,14 +764,14 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             List<P15_PrintData> data = dd.AsEnumerable()
                 .Select(row1 => new P15_PrintData()
                 {
-                    POID = row1["POID"].ToString(),
-                    SEQ = row1["SEQ"].ToString(),
-                    DESC = row1["DESC"].ToString(),
-                    unit = row1["unit"].ToString(),
-                    ReqQty = row1["ReqQty"].ToString(),
-                    QTY = row1["QTY"].ToString(),
-                    Location = row1["Location"].ToString(),
-                    Total = row1["Total"].ToString()
+                    POID = row1["POID"].ToString().Trim(),
+                    SEQ = row1["SEQ"].ToString().Trim(),
+                    DESC = row1["DESC"].ToString().Trim(),
+                    unit = row1["unit"].ToString().Trim(),
+                    ReqQty = row1["ReqQty"].ToString().Trim(),
+                    QTY = row1["QTY"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim(),
+                    Total = row1["Total"].ToString().Trim()
                 }).ToList();
 
             report.ReportDataSource = data;

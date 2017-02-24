@@ -689,7 +689,7 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
             }
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string Requestno = row["requestid"].ToString();
             string Remark = row["Remark"].ToString();
@@ -769,15 +769,15 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
             List<P16_PrintData> data = dtDetail.AsEnumerable()
                 .Select(row1 => new P16_PrintData()
                 {
-                    POID = row1["POID"].ToString(),
-                    SEQ = row1["SEQ"].ToString(),
-                    Roll = row1["Roll"].ToString(),
-                    DYELOT = row1["DYELOT"].ToString(),
-                    DESC = row1["Description"].ToString(),
-                    StockUnit = row1["StockUnit"].ToString(),
-                    QTY = row1["QTY"].ToString(),
-                    Location = row1["Location"].ToString(),
-                    TotalQTY = row1["Total"].ToString()
+                    POID = row1["POID"].ToString().Trim(),
+                    SEQ = row1["SEQ"].ToString().Trim(),
+                    Roll = row1["Roll"].ToString().Trim(),
+                    DYELOT = row1["DYELOT"].ToString().Trim(),
+                    DESC = row1["Description"].ToString().Trim(),
+                    StockUnit = row1["StockUnit"].ToString().Trim(),
+                    QTY = row1["QTY"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim(),
+                    TotalQTY = row1["Total"].ToString().Trim()
                 }).ToList();
             #endregion
             report.ReportDataSource = data;
