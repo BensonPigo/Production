@@ -78,14 +78,14 @@ namespace Sci.Production.Warehouse
         //print
         protected override bool ClickPrint()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
+            //DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
+            if (CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
                 return false;
             }
 
-            DataRow row = this.CurrentDataRow;
+            DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string CDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             string MDivisionID = CurrentMaintain["MDivisionID"].ToString();
@@ -116,16 +116,22 @@ namespace Sci.Production.Warehouse
 
             result = DBProxy.Current.Select("", sqlcmd, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
+
+            if (dtDetail == null || dtDetail.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!!", "DataTable dtDetail");
+                return false;
+            }
             
             // 傳 list 資料            
             List<P61_PrintData> data = dtDetail.AsEnumerable()
                 .Select(row1 => new P61_PrintData()
                 {
-                    POID = row1["PoId"].ToString(),
-                    SCIREFNO = row1["scirefno"].ToString(),
-                    DESCRIPTION = row1["description"].ToString(),
-                    SIZESPEC = row1["sizespec"].ToString(),
-                    QTY = row1["Qty"].ToString()
+                    POID = row1["PoId"].ToString().Trim(),
+                    SCIREFNO = row1["scirefno"].ToString().Trim(),
+                    DESCRIPTION = row1["description"].ToString().Trim(),
+                    SIZESPEC = row1["sizespec"].ToString().Trim(),
+                    QTY = row1["Qty"].ToString().Trim()
                 }).ToList();
 
             report.ReportDataSource = data;
