@@ -291,6 +291,9 @@ namespace Sci.Production.Planning
                 ShowErr(dtresult);
                 return dtresult;
             }
+            if (dt3fty.Rows.Count == 0)
+            { return true; }
+
             dt2Factory = dt3fty;
             dic.Clear();
             if (s != null) { s = ""; }
@@ -1200,7 +1203,7 @@ namespace Sci.Production.Planning
                 wks.Cells[lastRow, 1] = "Total:";
                 wks.Cells[lastRow, 3] = string.Format("=SUM(C{0}:C{1})", startRow, lastRow - 1);
                 wks.Cells[lastRow, 4] = string.Format("=SUM(D{0}:D{1})", startRow, lastRow - 1);
-                wks.Cells[lastRow, 5] = string.Format("=(D{0}/C{0})", lastRow);
+                wks.Cells[lastRow, 5] = string.Format("=IF(C{0}=0,0,(D{0}/C{0}))", lastRow);
                 wks.Cells[lastRow, 8] = string.Format("=SUM(H{0}:H{1})", startRow, lastRow - 1);
                 wks.Cells[lastRow, 9] = string.Format("=SUM(I{0}:I{1})", startRow, lastRow - 1);
                 wks.Cells[lastRow, 10] = string.Format("=SUM(J{0}:J{1})", startRow, lastRow - 1);
