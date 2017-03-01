@@ -60,15 +60,17 @@ namespace Sci.Production.PPIC
                 string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
 
                 DataRow drvar = GetTitleDataByCustCD(poid, _id);
-
+              
                 if (drvar == null)
                 {
+                    this.HideWaitMessage();
                     MyUtility.Msg.WarningBox("data not found!!");
                     return true;
                 }
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice.xltx");
                 sxrc sxr = new sxrc(xltPath, true);
-              
+                 this.ShowWaitMessage("Data processing, please wait ...");
+
                 sxr.dicDatas.Add(sxr._v + "PO_MAKER", drvar["MAKER"].ToString());
                 sxr.dicDatas.Add(sxr._v + "PO_STYLENO", drvar["sty"].ToString());
                 sxr.dicDatas.Add(sxr._v + "PO_QTY", drvar["QTY"].ToString());
@@ -151,6 +153,8 @@ namespace Sci.Production.PPIC
                 if (dtCustCD == null) { MyUtility.Msg.WarningBox("data not found!!"); return true; }
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice_Combo.xltx");
                 sxrc sxr = new sxrc(xltPath, true);
+                this.ShowWaitMessage("Data processing, please wait ...");
+
                 sxr.CopySheets.Add("1,2,3", dtCustCD.Rows.Count - 1);
                 sxr.VarToSheetName = sxr._v + "sname";
 
@@ -168,7 +172,12 @@ namespace Sci.Production.PPIC
                     System.Data.DataTable[] dts;
                     DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report04", new List<SqlParameter> { new SqlParameter("@ID", ID), new SqlParameter("@WithZ", chkAdditional.Checked) }, out dts);
 
-                    if (drvar == null | !res) return true;
+                    if (drvar == null | !res) 
+                    {
+                        this.HideWaitMessage();
+                        MyUtility.Msg.WarningBox("data not found!!");    
+                        return true; 
+                    }
 
                     sxr.dicDatas.Add(sxr._v + "Now" + idxStr, DateTime.Now);
                     sxr.dicDatas.Add(sxr._v + "MAKER" + idxStr, drvar["MAKER"].ToString());
