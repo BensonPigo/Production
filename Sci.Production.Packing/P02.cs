@@ -121,7 +121,7 @@ namespace Sci.Production.Packing
                 .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("QtyPerCTN", header: "Qty/Ctn").Get(out col_qtyperctn)
-                .Numeric("ShipQty", header: "ShipQty", iseditingreadonly: true)
+                .Numeric("ShipQty", header: "ShipQty")
                 .Numeric("NW", header: "N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
                 .Numeric("GW", header: "G.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
                 .Numeric("NNW", header: "N.N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0);
