@@ -183,9 +183,6 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtsubcon3);
-            this.detailcont.Controls.Add(this.txtsubcon2);
-            this.detailcont.Controls.Add(this.txtsubcon1);
             this.detailcont.Controls.Add(this.textBox8);
             this.detailcont.Controls.Add(this.button6);
             this.detailcont.Controls.Add(this.dateBox9);
@@ -196,11 +193,7 @@
             this.detailcont.Controls.Add(this.label54);
             this.detailcont.Controls.Add(this.dateBox7);
             this.detailcont.Controls.Add(this.dateBox6);
-            this.detailcont.Controls.Add(this.txttpeuser2);
-            this.detailcont.Controls.Add(this.txttpeuser4);
-            this.detailcont.Controls.Add(this.txttpeuser1);
-            this.detailcont.Controls.Add(this.txttpeuser5);
-            this.detailcont.Controls.Add(this.txttpeuser3);
+            this.detailcont.Controls.Add(this.txtsubcon3);
             this.detailcont.Controls.Add(this.label50);
             this.detailcont.Controls.Add(this.label49);
             this.detailcont.Controls.Add(this.label48);
@@ -220,9 +213,8 @@
             this.detailcont.Controls.Add(this.displayBox12);
             this.detailcont.Controls.Add(this.displayBox11);
             this.detailcont.Controls.Add(this.label43);
-            this.detailcont.Controls.Add(this.txtuser2);
-            this.detailcont.Controls.Add(this.txtuser1);
-            this.detailcont.Controls.Add(this.txtuser3);
+            this.detailcont.Controls.Add(this.txtsubcon2);
+            this.detailcont.Controls.Add(this.txtsubcon1);
             this.detailcont.Controls.Add(this.numericBox13);
             this.detailcont.Controls.Add(this.textBox6);
             this.detailcont.Controls.Add(this.label42);
@@ -243,7 +235,15 @@
             this.detailcont.Controls.Add(this.checkBox2);
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.label35);
+            this.detailcont.Controls.Add(this.txttpeuser4);
+            this.detailcont.Controls.Add(this.txttpeuser5);
+            this.detailcont.Controls.Add(this.txttpeuser1);
             this.detailcont.Controls.Add(this.editBox1);
+            this.detailcont.Controls.Add(this.txttpeuser3);
+            this.detailcont.Controls.Add(this.txttpeuser2);
+            this.detailcont.Controls.Add(this.txtuser3);
+            this.detailcont.Controls.Add(this.txtuser2);
+            this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.label34);
             this.detailcont.Controls.Add(this.displayBox9);
             this.detailcont.Controls.Add(this.label33);
@@ -1172,7 +1172,7 @@
             this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox4.Location = new System.Drawing.Point(77, 257);
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(318, 21);
+            this.textBox4.Size = new System.Drawing.Size(414, 21);
             this.textBox4.TabIndex = 16;
             // 
             // label33
@@ -1191,13 +1191,13 @@
             this.displayBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox9.Location = new System.Drawing.Point(77, 279);
             this.displayBox9.Name = "displayBox9";
-            this.displayBox9.Size = new System.Drawing.Size(318, 21);
+            this.displayBox9.Size = new System.Drawing.Size(414, 21);
             this.displayBox9.TabIndex = 70;
             // 
             // label34
             // 
             this.label34.Lines = 0;
-            this.label34.Location = new System.Drawing.Point(440, 258);
+            this.label34.Location = new System.Drawing.Point(504, 259);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(69, 37);
             this.label34.TabIndex = 71;
@@ -1209,11 +1209,11 @@
             this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MRComment", true));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editBox1.IsSupportEditMode = false;
-            this.editBox1.Location = new System.Drawing.Point(513, 257);
+            this.editBox1.Location = new System.Drawing.Point(576, 258);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.ReadOnly = true;
-            this.editBox1.Size = new System.Drawing.Size(308, 41);
+            this.editBox1.Size = new System.Drawing.Size(407, 41);
             this.editBox1.TabIndex = 72;
             // 
             // label35
