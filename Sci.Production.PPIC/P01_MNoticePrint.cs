@@ -54,6 +54,7 @@ namespace Sci.Production.PPIC
 
         protected override bool ToExcel()
         {
+            this.ShowWaitMessage("Data processing, please wait ...");
             if (radioButton_MNotice.Checked == true)
             {
 
@@ -69,7 +70,6 @@ namespace Sci.Production.PPIC
                 }
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice.xltx");
                 sxrc sxr = new sxrc(xltPath, true);
-                 this.ShowWaitMessage("Data processing, please wait ...");
 
                 sxr.dicDatas.Add(sxr._v + "PO_MAKER", drvar["MAKER"].ToString());
                 sxr.dicDatas.Add(sxr._v + "PO_STYLENO", drvar["sty"].ToString());
@@ -97,6 +97,7 @@ namespace Sci.Production.PPIC
                 if (!getIds && dt.Rows.Count <= 0)
                 {
                     MyUtility.Msg.ErrorBox(getIds.ToString(), "error");
+                    this.HideWaitMessage();
                     return true;
                 }
 
@@ -150,10 +151,9 @@ namespace Sci.Production.PPIC
 
                 System.Data.DataTable dtCustCD = GetDtByCustCD(poid);
 
-                if (dtCustCD == null) { MyUtility.Msg.WarningBox("data not found!!"); return true; }
+                if (dtCustCD == null) { MyUtility.Msg.WarningBox("data not found!!"); this.HideWaitMessage();  return true; }
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice_Combo.xltx");
                 sxrc sxr = new sxrc(xltPath, true);
-                this.ShowWaitMessage("Data processing, please wait ...");
 
                 sxr.CopySheets.Add("1,2,3", dtCustCD.Rows.Count - 1);
                 sxr.VarToSheetName = sxr._v + "sname";
@@ -262,6 +262,7 @@ namespace Sci.Production.PPIC
                 sxr.boOpenFile = true;
                 sxr.Save();
             }
+            this.HideWaitMessage();
             return true;
         }
 

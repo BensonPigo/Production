@@ -4,7 +4,7 @@
 AS
 BEGIN
 
-declare @POID varchar(13) = (select POID from Orders WITH (NOLOCK) where ID = @ID)
+declare @POID varchar(13) = (select POID from MNOrder WITH (NOLOCK) where ID = @ID)
 
 --Page1--------------------------------------------------------------------------------------------------------------
 --##MAKER ##STYLENO ##QTY ##SP
@@ -24,9 +24,9 @@ exec PPIC_Report_Color_MaterialCode @ID
 
 
 --##S2PACKING
-SELECT Orders.Packing FROM DBO.Orders WITH (NOLOCK) WHERE ID = @ID
+SELECT Packing FROM MNOrder WITH (NOLOCK) WHERE ID = @ID
 --##S2LH
-SELECT Orders.Label FROM DBO.Orders WITH (NOLOCK) WHERE ID = @ID
+SELECT Label FROM MNOrder WITH (NOLOCK) WHERE ID = @ID
 
 --Page3--------------------------------------------------------------------------------------------------------------
 --##S3_SP ##S3_Style ##S3_QTY ##S3_CUSTCD ##S3_PoNo ##S3_Oeder ##S3_DELIVERY
@@ -36,7 +36,7 @@ Mark=iif(MarkFront<>'','(A) '+@newLine+MarkFront,'')
 +@newLine+iif(MarkBack<>'','(B) '+@newLine+MarkBack,'')
 +@newLine+iif(MarkLeft<>'','(C) '+@newLine+MarkLeft,'')
 +@newLine+iif(MarkRight<>'','(D) '+@newLine+MarkRight,'')
-FROM MNOrder a WITH (NOLOCK) where POID = @poid AND CustCDID = (select CustCDID from Orders WITH (NOLOCK) where ID = @ID) 
+FROM MNOrder a WITH (NOLOCK) where POID = @poid AND CustCDID = (select CustCDID from MNOrder WITH (NOLOCK) where ID = @ID) 
 
 
 END
