@@ -242,7 +242,7 @@ where sd.ID = '{0}'", masterID);
                 .Text("ShipExpenseID", header: "Code", width: Widths.AnsiChars(10), settings: code).Get(out col_code)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(6), decimal_places: 4, settings: qty).Get(out col_qty)
-                .Text("UnitID", header: "Unit", width: Widths.AnsiChars(10), settings: code)
+                .Text("UnitID", header: "Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(9), decimal_places: 4, iseditingreadonly: true)
                 .Numeric("Rate", header: "Rate", width: Widths.AnsiChars(9), decimal_places: 6, settings: rate).Get(out col_rate)
