@@ -423,6 +423,14 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
 
             foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
             {
+                #region 刪除表身Qty為空白的資料
+                if (MyUtility.Check.Empty(dr["ShipQty"]))
+                {
+                    dr.Delete();
+                    continue;
+                }
+                #endregion
+
                 #region 表身的CTN#, Ref No., Color Way與Size不可以為空值
                 if (MyUtility.Check.Empty(dr["CTNStartNo"]))
                 {
@@ -489,6 +497,11 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
                 }
                 #endregion
                 count = count + 1;
+            }
+            if (DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Detail cannot be empty");
+                return false;
             }
             //CTNQty, ShipQty
             CurrentMaintain["CTNQty"] = ctnQty;
