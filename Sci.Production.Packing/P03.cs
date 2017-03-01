@@ -117,6 +117,18 @@ namespace Sci.Production.Packing
             {
                 displayBox6.Value = orderData["CTNStartNo"].ToString();
             }
+            if (!MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
+            {              
+                gridicon.Append.Enabled = false;
+                gridicon.Insert.Enabled = false;
+                gridicon.Remove.Enabled = false;                
+            }
+            else
+            {
+                gridicon.Append.Enabled = true;
+                gridicon.Insert.Enabled = true;
+                gridicon.Remove.Enabled = true;
+            }
         }
 
         protected override void OnDetailGridSetup()
