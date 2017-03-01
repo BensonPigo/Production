@@ -15,6 +15,7 @@ BEGIN
 	------
 
 	----------------------20161101ADD_Style_Location
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_Location
 from Production.dbo.Style_Location as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
@@ -22,6 +23,7 @@ left join Trade_To_Pms.dbo.Style_Location as b
 on a.StyleUkey= b.StyleUkey AND a.Location	= b.Location
 where b.StyleUkey is null
 ---------------------------UPDATE �DTABLE��ӷ�TABLE ���@��(�DTABLE�h���� �O�_�� ~�ӷ�TABLE�h���ܤ��z�|)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
       a.Rate	      =b.Rate
@@ -32,6 +34,7 @@ SET
 from Production.dbo.Style_Location as a 
 inner join Trade_To_Pms.dbo.Style_Location as b ON a.StyleUkey=b.StyleUkey AND a.Location	= b.Location
 -------------------------- INSERT INTO ��
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_Location(
 StyleUkey
       ,Location
@@ -61,6 +64,7 @@ where not exists(select 1 from Production.dbo.Style_Location as a WITH (NOLOCK) 
 --,[SampleApv]
 --,[Type]
 ---------------------------UPDATE STYLE BY UKEY
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 --a.ID	= b.ID
@@ -121,70 +125,7 @@ a.Ukey	= b.Ukey
 from Production.dbo.Style as a inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
 
 
------------------------------------------------------------------------------------------------------------
------------------------------UPDATE STYLE BY PK
---UPDATE a
---SET  
---a.ID	= b.ID
---,a.Ukey	= b.Ukey
---,a.BrandID	= b.BrandID
---,a.ProgramID	= b.ProgramID
---,a.SeasonID	= b.SeasonID
---,a.Model	= b.Model
---,a.Description	= b.Description
---,a.StyleName	= b.StyleName
---,a.CdCodeID	= b.CdCodeID
---,a.ApparelType	= b.ApparelType
---,a.FabricType	= b.FabricType
---,a.Contents	= b.Contents
---,a.GMTLT	= b.GMTLT
---,a.CPU	= b.CPU
---,a.Factories	= b.Factories
---,a.FTYRemark	= b.FTYRemark
---,a.Phase	= b.Phase
---,a.SampleSMR	= b.SampleSMR
---,a.SampleMRHandle	= b.SampleMRHandle
---,a.BulkSMR	= b.BulkSMR
---,a.BulkMRHandle	= b.BulkMRHandle
---,a.Junk	= b.Junk
---,a.RainwearTestPassed	= b.RainwearTestPassed
---,a.SizePage	= b.SizePage
---,a.SizeRange	= b.SizeRange
---,a.Gender	= b.Gender
---,a.CTNQty	= b.CTNQty
---,a.StdCost	= b.StdCost
---,a.Processes	= b.Processes
---,a.ArtworkCost	= b.ArtworkCost
---,a.Picture1	= b.Picture1
---,a.Picture2	= b.Picture2
---,a.Label	= b.Label
---,a.Packing	= b.Packing
---,a.IETMSID	= b.IETMSID
---,a.IETMSVersion	= b.IETMSVersion
---,a.IEImportName	= b.IEImportName
---,a.IEImportDate	= b.IEImportDate
---,a.ApvDate	= b.ApvDate
---,a.ApvName	= b.ApvName
---,a.CareCode	= b.CareCode
---,a.SpecialMark	= b.SpecialMark
---,a.Lining	= b.Lining
---,a.StyleUnit	= b.StyleUnit
---,a.ExpectionForm	= b.ExpectionForm
---,a.ExpectionFormRemark	= b.ExpectionFormRemark
---,a.ComboType	= b.ComboType
---,a.AddName	= b.AddName
---,a.AddDate	= b.AddDate
---,a.EditName	= IIF(a.EditDate >= b.EditDate,a.EditName,b.EditName)
---,a.EditDate	= IIF(a.EditDate >= b.EditDate,a.EditDate,b.EditDate)
---,a.SizeUnit	= b.SizeUnit
---,a.ModularParent	= b.ModularParent
---,a.CPUAdjusted	= b.CPUAdjusted
---,a.LocalStyle = 0
---from Production.dbo.Style as a 
---inner join Trade_To_Pms.dbo.Style as b ON a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID
---where a.LocalStyle=1
----------------------------------------------------------------
----------------------------UPDATE Style_Artwork_Quot(StyleD)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 a.Ukey=b.Ukey
@@ -195,6 +136,7 @@ where c.LocalStyle=1
 and a.Ukey=c.Ukey
 ---------------------------------------------------------------------------------------------
 -------------------------- INSERT STYLE BY以上兩種比對條件都找不到的時候 INSERT
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style(
 ID
 ,Ukey
@@ -316,6 +258,7 @@ AND not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.Uk
 --Style4
 --Style_TmsCost
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_TmsCost
 from Production.dbo.Style_TmsCost as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
@@ -323,6 +266,7 @@ left join Trade_To_Pms.dbo.Style_TmsCost as b
 on a.StyleUkey= b.StyleUkey AND a.ArtworkTypeID	= b.ArtworkTypeID
 where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 --a.StyleUkey	= b.StyleUkey
@@ -339,6 +283,7 @@ a.Seq	= b.Seq
 from Production.dbo.Style_TmsCost as a 
 inner join Trade_To_Pms.dbo.Style_TmsCost as b ON a.StyleUkey=b.StyleUkey AND a.ArtworkTypeID	= b.ArtworkTypeID
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_TmsCost(
 StyleUkey
 ,ArtworkTypeID
@@ -374,6 +319,7 @@ where not exists(select 1 from Production.dbo.Style_TmsCost as a where a.StyleUk
 --STYLEB
 --Style_Artwork
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_Artwork
 from Production.dbo.Style_Artwork as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.TradeUkey=t.Ukey
@@ -381,6 +327,7 @@ left join Trade_To_Pms.dbo.Style_Artwork as b
 on a.TradeUkey = b.Ukey
 where b.Ukey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
  a.StyleUkey	= b.StyleUkey
@@ -404,6 +351,7 @@ SET
 from Production.dbo.Style_Artwork as a 
 inner join Trade_To_Pms.dbo.Style_Artwork as b ON a.TradeUkey=b.Ukey
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_Artwork(
 StyleUkey
 ,ArtworkTypeID
@@ -452,6 +400,7 @@ where not exists(select 1 from Production.dbo.Style_Artwork as a WITH (NOLOCK) w
 --STYLE1
 --Style_QtyCTN
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
  a.StyleUkey	= b.StyleUkey
@@ -468,6 +417,7 @@ SET
 from Production.dbo.Style_QtyCTN as a 
 inner join Trade_To_Pms.dbo.Style_QtyCTN as b ON a.UKey=b.UKey
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_QtyCTN(
 StyleUkey
 ,CustCDID
@@ -499,6 +449,7 @@ where not exists(select 1 from Production.dbo.Style_QtyCTN as a WITH (NOLOCK) wh
 --STYLE5
 --Style_SizeCode(需再確認ukey欄位)
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_SizeCode
 from Production.dbo.Style_SizeCode as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
@@ -506,6 +457,7 @@ left join Trade_To_Pms.dbo.Style_SizeCode as b
 on a.Ukey = b.Ukey
 where b.Ukey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -516,6 +468,7 @@ a.StyleUkey	= b.StyleUkey
 from Production.dbo.Style_SizeCode as a 
 inner join Trade_To_Pms.dbo.Style_SizeCode as b ON a.Ukey=b.Ukey
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_SizeCode(
 StyleUkey
 ,Seq
@@ -537,6 +490,7 @@ and b.SizeCode is not null
 --STYLE52
 --STYLE_SICESPEC(需再確認ukey欄位)
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_SizeSpec
 from Production.dbo.Style_SizeSpec as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey =t.Ukey
@@ -544,6 +498,7 @@ left join Trade_To_Pms.dbo.Style_SizeSpec as b
 on a.Ukey = b.Ukey
 where b.Ukey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -554,6 +509,7 @@ a.StyleUkey	= b.StyleUkey
 from Production.dbo.Style_SizeSpec as a 
 inner join Trade_To_Pms.dbo.Style_SizeSpec as b ON a.Ukey=b.Ukey
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_SizeSpec(
 StyleUkey
 ,SizeItem
@@ -574,6 +530,7 @@ where not exists(select 1 from Production.dbo.Style_SizeSpec as a WITH (NOLOCK) 
 --STYLEG
 --STYLE_ARTICLE
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_Article
 from Production.dbo.Style_Article as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
@@ -581,6 +538,7 @@ left join Trade_To_Pms.dbo.Style_Article as b
 on a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article
 where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 --a.StyleUkey	= b.StyleUkey
@@ -592,6 +550,7 @@ a.Seq	= b.Seq
 from Production.dbo.Style_Article as a 
 inner join Trade_To_Pms.dbo.Style_Article as b ON a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_Article(
 StyleUkey
 ,Seq
@@ -612,6 +571,7 @@ where not exists(select 1 from Production.dbo.Style_Article as a WITH (NOLOCK) w
 --STYLEA
 --Style_MarkerList
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_MarkerList
 from Production.dbo.Style_MarkerList as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
@@ -619,6 +579,7 @@ left join Trade_To_Pms.dbo.Style_MarkerList as b
 on a.Ukey = b.Ukey
 where b.Ukey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 a. StyleUkey	= b. StyleUkey
@@ -656,6 +617,7 @@ a. StyleUkey	= b. StyleUkey
 from Production.dbo.Style_MarkerList as a 
 inner join Trade_To_Pms.dbo.Style_MarkerList as b ON a.Ukey=b.Ukey
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_MarkerList(
  StyleUkey
 ,Ukey
@@ -727,7 +689,7 @@ from Trade_To_Pms.dbo.Style_MarkerList as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_MarkerList as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 
 -----------------Style_MarkerList_Article-------------------
-
+RAISERROR('imp_Style - Starts',0,0)
 	Merge Production.dbo.Style_MarkerList_Article as t
 	Using Trade_To_Pms.dbo.Style_MarkerList_Article as s
 	on t.style_MarkerListUkey=s.style_MarkerListUkey and t.article=s.article
@@ -760,7 +722,7 @@ where not exists(select 1 from Production.dbo.Style_MarkerList as a WITH (NOLOCK
 
 
 ----------------Style_MarkerList_PatternPanel------------------
-	
+	RAISERROR('imp_Style - Starts',0,0)
 	Merge Production.dbo.Style_MarkerList_PatternPanel as t
 	Using trade_to_pms.dbo.Style_MarkerList_PatternPanel as s
 	On t.Style_MarkerListUkey=s.Style_MarkerListUkey and t.Lectracode=s.Lectracode
@@ -795,7 +757,7 @@ where not exists(select 1 from Production.dbo.Style_MarkerList as a WITH (NOLOCK
 		delete;
 
 --------Style_MarkerList_SizeQty---------------------
-	
+	RAISERROR('imp_Style - Starts',0,0)
 	Merge Production.dbo.Style_MarkerList_SizeQty as t
 	Using trade_to_pms.dbo.Style_MarkerList_SizeQty as s
 	on t.Style_MarkerListUkey=s.Style_MarkerListUkey and t.SizeCode=s.SizeCode
@@ -829,6 +791,7 @@ where not exists(select 1 from Production.dbo.Style_MarkerList as a WITH (NOLOCK
 --STYLE61
 --Style_FabricCode
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_FabricCode
 from Production.dbo.Style_FabricCode as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
@@ -836,6 +799,7 @@ left join Trade_To_Pms.dbo.Style_FabricCode as b
 on a.StyleUkey = b.StyleUkey AND a.LectraCode	= b.LectraCode
 where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 --a.StyleUkey	= b.StyleUkey
@@ -851,6 +815,7 @@ a.FabricCode	= b.FabricCode
 from Production.dbo.Style_FabricCode as a 
 inner join Trade_To_Pms.dbo.Style_FabricCode as b ON a.StyleUkey = b.StyleUkey AND a.LectraCode	= b.LectraCode
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_FabricCode(
 StyleUkey
 ,LectraCode
@@ -879,6 +844,7 @@ where not exists(select 1 from Production.dbo.Style_FabricCode as a WITH (NOLOCK
 --STYLE8
 --Style_BOF
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_BOF
 from Production.dbo.Style_BOF as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
@@ -886,6 +852,7 @@ left join Trade_To_Pms.dbo.Style_BOF as b
 on a.Ukey = b.Ukey
 where b.Ukey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -906,6 +873,7 @@ a.StyleUkey	= b.StyleUkey
 from Production.dbo.Style_BOF as a 
 inner join Trade_To_Pms.dbo.Style_BOF as b ON a.Ukey=b.Ukey
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_BOF(
 StyleUkey
 ,FabricCode
@@ -949,6 +917,7 @@ where not exists(select 1 from Production.dbo.Style_BOF as a WITH (NOLOCK) where
 --      ,[BomTypeBuyMonth]
 --      ,[BomTypeCountry]
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_BOA
 from Production.dbo.Style_BOA as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
@@ -956,6 +925,7 @@ left join Trade_To_Pms.dbo.Style_BOA as b
 on a.Ukey = b.Ukey
 where b.Ukey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -984,6 +954,7 @@ a.StyleUkey	= b.StyleUkey
 from Production.dbo.Style_BOA as a 
 inner join Trade_To_Pms.dbo.Style_BOA as b ON a.Ukey=b.Ukey
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_BOA(
 StyleUkey
 ,Ukey
@@ -1037,7 +1008,7 @@ from Trade_To_Pms.dbo.Style_BOA as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 
 -----------------------[Style_BOA_CustCD]-----------------------
-
+	RAISERROR('imp_Style - Starts',0,0)
 	Merge Production.dbo.Style_BOA_CustCD as t
 	Using Trade_To_Pms.dbo.Style_BOA_CustCD as s
 	on t.Style_BOAUkey=s.Style_BOAUkey and t.CustCDID=s.CustCDID
@@ -1076,7 +1047,7 @@ where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where
 
 
 ------------------Style_BOA_KeyWord-------------------
-
+	RAISERROR('imp_Style - Starts',0,0)
 	Merge Production.dbo.Style_BOA_KeyWord as t
 	Using Trade_to_Pms.dbo.Style_BOA_KeyWord as s
 	on t.Style_BOAUkey=s.Style_BOAUkey 
@@ -1104,6 +1075,7 @@ where not exists(select 1 from Production.dbo.Style_BOA as a WITH (NOLOCK) where
 --STYLE6
 --Style_ColorCombo
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_ColorCombo
 from Production.dbo.Style_ColorCombo as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
@@ -1111,6 +1083,7 @@ left join Trade_To_Pms.dbo.Style_ColorCombo as b
 on a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.LectraCode	= b.LectraCode
 where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 --a. StyleUkey	= b. StyleUkey
@@ -1127,6 +1100,7 @@ a.ColorID	= b.ColorID
 from Production.dbo.Style_ColorCombo as a 
 inner join Trade_To_Pms.dbo.Style_ColorCombo as b ON a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.LectraCode	= b.LectraCode
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_ColorCombo(
  StyleUkey
 ,Article
@@ -1155,6 +1129,7 @@ where not exists(select 1 from Production.dbo.Style_ColorCombo as a WITH (NOLOCK
 --STYLEJ
 --Style_HSCode
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_HSCode
 from Production.dbo.Style_HSCode as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
@@ -1162,6 +1137,7 @@ left join Trade_To_Pms.dbo.Style_HSCode as b
 on a.UKEY = b.UKEY
 where b.UKEY is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -1181,6 +1157,7 @@ a.StyleUkey	= b.StyleUkey
 from Production.dbo.Style_HSCode as a 
 inner join Trade_To_Pms.dbo.Style_HSCode as b ON a.UKEY=b.UKEY
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_HSCode(
 StyleUkey
 ,UKEY
@@ -1217,6 +1194,7 @@ where not exists(select 1 from Production.dbo.Style_HSCode as a WITH (NOLOCK) wh
 --STYLEMI
 --Style_MiAdidasColorCombo
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_MiAdidasColorCombo
 from Production.dbo.Style_MiAdidasColorCombo as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
@@ -1224,6 +1202,7 @@ left join Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b
 on a.StyleUkey	= b.StyleUkey AND a.LectraCode	= b.LectraCode AND a.Ukey_old	= b.Ukey_old
 where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 --a.StyleUkey	= b.StyleUkey
@@ -1238,6 +1217,7 @@ a.SetupID	= b.SetupID
 from Production.dbo.Style_MiAdidasColorCombo as a 
 inner join Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b ON a.StyleUkey	= b.StyleUkey AND a.LectraCode	= b.LectraCode AND a.Ukey_old	= b.Ukey_old
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_MiAdidasColorCombo(
 StyleUkey
 ,LectraCode
@@ -1263,6 +1243,7 @@ where not exists(select 1 from Production.dbo.Style_MiAdidasColorCombo as a WITH
 --STYLELT
 --Style_GMTLTFty
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_GMTLTFty
 from Production.dbo.Style_GMTLTFty as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
@@ -1270,6 +1251,7 @@ left join Trade_To_Pms.dbo.Style_GMTLTFty as b
 on a.StyleUkey	= b.StyleUkey AND a.FactoryID	= b.FactoryID
 where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 --a.StyleUkey	= b.StyleUkey
@@ -1282,6 +1264,7 @@ a.GMTLT	= b.GMTLT
 from Production.dbo.Style_GMTLTFty as a 
 inner join Trade_To_Pms.dbo.Style_GMTLTFty as b ON a.StyleUkey	= b.StyleUkey AND a.FactoryID	= b.FactoryID
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_GMTLTFty(
 StyleUkey
 ,FactoryID
@@ -1304,6 +1287,7 @@ where not exists(select 1 from Production.dbo.Style_GMTLTFty as a WITH (NOLOCK) 
 --STYLEK
 --Style_SimilarStyle
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_SimilarStyle
 from Production.dbo.Style_SimilarStyle as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.MasterStyleUkey=t.Ukey
@@ -1311,6 +1295,7 @@ left join Trade_To_Pms.dbo.Style_SimilarStyle as b
 on a.MasterStyleUkey	= b.MasterStyleUkey AND a.ChildrenStyleUkey	= b.ChildrenStyleUkey
 where b.MasterStyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 a.MasterBrandID	= b.MasterBrandID
@@ -1329,6 +1314,7 @@ a.MasterBrandID	= b.MasterBrandID
 from Production.dbo.Style_SimilarStyle as a 
 inner join Trade_To_Pms.dbo.Style_SimilarStyle as b ON a.MasterStyleUkey	= b.MasterStyleUkey AND a.ChildrenStyleUkey	= b.ChildrenStyleUkey
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_SimilarStyle(
 MasterBrandID
 ,MasterStyleID
@@ -1365,6 +1351,7 @@ where not exists(select 1 from Production.dbo.Style_SimilarStyle as a WITH (NOLO
 
 -----Style_ProductionKits-----2016/11/11-----
 ----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
 Delete Production.dbo.Style_ProductionKits
 from Production.dbo.Style_ProductionKits as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
@@ -1372,6 +1359,7 @@ left join Trade_To_Pms.dbo.Style_ProductionKits as b
 on a.ukey= b.ukey AND a.FactoryID=B.FactoryID
 where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 a.StyleUkey	= b.StyleUkey
@@ -1410,6 +1398,7 @@ from Production.dbo.Style_ProductionKits as a
 inner join Trade_To_Pms.dbo.Style_ProductionKits as b ON a.ukey=b.ukey AND a.FactoryID=b.FactoryID
 left join Trade_To_Pms.dbo.Factory as c ON c.ID=b.FactoryID
 -------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_ProductionKits(
 Ukey
 ,StyleUkey
