@@ -35,10 +35,10 @@ namespace Sci.Production.Class
 
             Sci.Win.Tools.SelectItem item;
             //20161124 如果沒選Brandid,則條件帶空值,取消帶全部資料
-            string selectCommand = "select ID, CountryID, City from CustCD WITH (NOLOCK) order by ID";
+            string selectCommand = "select ID, CountryID, City from CustCD WITH (NOLOCK) and Junk = '0' order by ID";
             if (this.brandObject != null )//&& !string.IsNullOrWhiteSpace((string)this.brandObject.Text))
             {
-                selectCommand = string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' order by ID", this.brandObject.Text);
+                selectCommand = string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' and Junk = '0' order by ID", this.brandObject.Text);
             }
             item = new Sci.Win.Tools.SelectItem(selectCommand, "17,3,17", this.Text);
             DialogResult returnResult = item.ShowDialog();
