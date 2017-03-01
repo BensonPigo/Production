@@ -34,6 +34,9 @@ BEGIN
 		if @repeat = 0
 		BEGIN
 			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric WITH (NOLOCK) where SCIRefno = @scirefno;
+			set @fabric_detaildesc = replace(@fabric_detaildesc, char(10), char(13));
+			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13) + char(13), char(13));
+			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13), char(13) + char(10));
 			set @string = rtrim(iif(isnull(@fabric_detaildesc, '') = '','',@fabric_detaildesc + CHAR(13)+ CHAR(10)));
 		END
 		ELSE
@@ -45,6 +48,9 @@ BEGIN
 		if @repeat = 0
 		BEGIN	
 			select @fabric_detaildesc= ISNULL(DescDetail,'') from fabric WITH (NOLOCK) where SCIRefno = @scirefno;
+			set @fabric_detaildesc = replace(@fabric_detaildesc, char(10), char(13));
+			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13) + char(13), char(13));
+			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13), char(13) + char(10));
 			set @string = concat(rtrim(iif(isnull(@fabric_detaildesc, '') = '','',@fabric_detaildesc + CHAR(13) + CHAR(10)))
 								, rtrim(iif(isnull(@suppcolor, '') = '','',@suppcolor + CHAR(13) + CHAR(10)))
 								, rtrim(iif(isnull(@po_desc, '') = '','',@po_desc + CHAR(13) + CHAR(10))));
@@ -59,6 +65,9 @@ BEGIN
 		if @repeat = 0
 		BEGIN
 			select @fabric_detaildesc= ISNULL([Description],'') from fabric WITH (NOLOCK) where SCIRefno = @scirefno;
+			set @fabric_detaildesc = replace(@fabric_detaildesc, char(10), char(13));
+			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13) + char(13), char(13));
+			set @fabric_detaildesc = replace(@fabric_detaildesc, char(13), char(13) + char(10));
 			set @string = 'Ref#'+ @refno + ', ' + rtrim(iif(isnull(@fabric_detaildesc, '') = '','',@fabric_detaildesc + CHAR(13)+ CHAR(10))) + rtrim(iif(isnull(@suppcolor, '') = '','',@suppcolor + CHAR(13)+ CHAR(10)))+rtrim(iif(isnull(@po_desc, '') = '','',@po_desc+CHAR(13)+ CHAR(10)));
 		End
 		ELSE
