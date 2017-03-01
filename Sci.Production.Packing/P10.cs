@@ -119,7 +119,7 @@ namespace Sci.Production.Packing
                     while ((line = reader.ReadLine()) != null)
                     {
                         System.Diagnostics.Debug.WriteLine(line);
-                        IList<string> sl = line.Split(" \t\r\n".ToCharArray());
+                        IList<string> sl = line.Split(" \t\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                         if (sl[0] != "1")
                         {
                             MyUtility.Msg.WarningBox("Format is not correct!");
