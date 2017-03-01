@@ -185,7 +185,7 @@ namespace Sci.Production.PublicForm
             string colorsql = string.Format(
                             @"select distinct * from 
                             (
-                                Select d.id as mid, d.id,d.name
+                                Select d.id,d.name
                                 from Color d WITH (NOLOCK) , 
                                         (
                                         select distinct a.colorid
@@ -200,7 +200,7 @@ namespace Sci.Production.PublicForm
                                         where brandid = '{1}'
                                     )
 	                            union all
-                                select mid,g.id,g.name
+                                select g.id,g.name
                                 from Color g WITH (NOLOCK) ,
                                 (
 	                                Select mid,f.colorid,f.brandid 
