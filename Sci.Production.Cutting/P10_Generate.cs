@@ -20,7 +20,7 @@ namespace Sci.Production.Cutting
     public partial class P10_Generate : Sci.Win.Subs.Base
     {
         DataRow maindatarow;
-        DataTable allpartTb = null, artTb = null, qtyTb = null, sizeTb = null, patternTb = null, detailTb = null, garmentTb = null, alltmpTb = null, bundle_detail_artTb = null, table_bundleqty_c;
+        DataTable allpartTb = null, artTb = null, qtyTb = null, sizeTb = null, patternTb = null, detailTb = null, detailTb2 = null, garmentTb = null, alltmpTb = null, bundle_detail_artTb = null, table_bundleqty_c;
         string f_code;
         int NoOfBunble;
 
@@ -44,8 +44,10 @@ namespace Sci.Production.Cutting
             alltmpTb = table_bundleallpart;
             bundle_detail_artTb = table_bundleart;            
             qtyTb = table_bundleqty;
-            
+            detailTb2 = table_bundle_Detail.Copy();
+            table_bundle_Detail.Clear();
             detailTb = table_bundle_Detail;
+
             numericBox_noBundle.Value = (decimal)maindr["Qty"];
             
             DataTable bdwtb2 = null;
@@ -418,6 +420,7 @@ namespace Sci.Production.Cutting
 
         private void button2_Click(object sender, EventArgs e)
         {
+            detailTb.Merge(detailTb2);
             this.Dispose();
             this.Close();
         }
@@ -911,6 +914,7 @@ namespace Sci.Production.Cutting
                     }
                 }
             }
+            
             this.listControlBindingSource1.DataSource = null;
             this.Close();
         }

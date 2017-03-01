@@ -727,7 +727,7 @@ namespace Sci.Production.Cutting
 
         private void Generate_Button_Click(object sender, EventArgs e)
         {
-            DataTable dt = (DataTable)detailgridbs.DataSource;
+            DataTable dt = ((DataTable)detailgridbs.DataSource);           
             detailgrid.ValidateControl();
             DataTable bdwtb;
             MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource, "", "Select [No] = BundleNo, SizeCode,Qty,Ukey = Ukey1 , id from #tmp group by BundleGroup,BundleNo,SizeCode,Qty,Ukey1,id", out bdwtb);
