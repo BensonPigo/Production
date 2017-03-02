@@ -75,10 +75,17 @@ order by ld.Seq1,ld.Seq2", masterID);
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
                     {
+                        string theSeq = "";
+                        if (theSeq != null) { theSeq = ""; }
                         if (e.RowIndex != -1)
                         {
+                            foreach (DataRow seqdr in detailgrid.GetTable().Rows)
+                            {
+                                theSeq += seqdr["seq"].ToString() + ","; 
+                            }
+                            theSeq = theSeq.Substring(0, theSeq.Length - 1);
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = Prgs.SelePoItem(MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq"]), "FabricType = 'F'");
+                            Sci.Win.Tools.SelectItem2 item = SelePoItem1(MyUtility.Convert.GetString(CurrentMaintain["POID"]), theSeq, "FabricType = 'F'");
                             DialogResult result = item.ShowDialog();
                             if (result == DialogResult.Cancel) { return; }
                             IList<DataRow> selectData = item.GetSelecteds();
@@ -662,7 +669,66 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
             else
                 this.displayBox5.Text = "";
         }
+        #region -- SelePoItem --
+        public static string selePoItemSqlCmd = @"select  p.id,
+                                                    concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq,
+                                                    p.Refno, 
+                                                    dbo.getmtldesc(p.id,p.seq1,p.seq2,2,0) as Description 
+                                                    ,p.ColorID,p.SizeSpec,p.FinalETA
+                                                    ,isnull(m.InQty, 0) as InQty
+                                                    ,iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+                                                        ff.UsageUnit , 
+                                                        iif(mm.IsExtensionUnit > 0 , 
+                                                            iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+                                                                ff.UsageUnit , 
+                                                                uu.ExtensionUnit), 
+                                                            ff.UsageUnit)) as StockUnit
+                                                    ,isnull(m.OutQty, 0) as outQty
+                                                    ,isnull(m.AdjustQty, 0) as AdjustQty
+                                                    ,isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) as balance
+                                                    ,isnull(m.LInvQty, 0) as LInvQty
+                                                    from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+                                                    left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2 and m.mdivisionid = '{1}'
+                                                    inner join [dbo].[Fabric] ff WITH (NOLOCK) on p.SCIRefno= ff.SCIRefno
+                                                    inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
+                                                    inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
+                                                    inner join View_unitrate v on v.FROM_U = p.POUnit 
+	                                                    and v.TO_U = (
+	                                                    iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+		                                                    ff.UsageUnit , 
+		                                                    iif(mm.IsExtensionUnit > 0 , 
+			                                                    iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+				                                                    ff.UsageUnit , 
+				                                                    uu.ExtensionUnit), 
+			                                                    ff.UsageUnit)))--p.StockUnit
+                                                    where p.id ='{0}'";
+        /// <summary>
+        /// 右鍵開窗選取採購項
+        /// </summary>
+        /// <param name="poid"></param>
+        /// <param name="defaultseq"></param>
+        /// <param name="filters"></param>
+        /// <returns>Sci.Win.Tools.SelectItem</returns>//
+        public static Sci.Win.Tools.SelectItem2 SelePoItem1(string poid, string defaultseq, string filters = null)
+        {
+           DataTable dt;
+            string sqlcmd = string.Format(selePoItemSqlCmd, poid, Sci.Env.User.Keyword);
 
+            if (!(MyUtility.Check.Empty(filters)))
+            {
+                sqlcmd += string.Format(" And {0}", filters);
+            }
+
+            DBProxy.Current.Select(null, sqlcmd, out dt);
+         
+            Sci.Win.Tools.SelectItem2 selepoitem = new Win.Tools.SelectItem2(dt, "Seq,refno,description,colorid,SizeSpec,FinalETA,inqty,stockunit,outqty,adjustqty,balance,linvqty"
+                            , "Seq,Ref#,Description,Color,Size,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty"
+                            , "6,8,35,8,10,6,6,6,6,6,6", defaultseq);
+            selepoitem.Width = 1024;
+
+            return selepoitem;
+        }
+        #endregion
 
     }
 }
