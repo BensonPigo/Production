@@ -20,7 +20,8 @@ namespace Sci.Production.Thread
         string sql;
         DataTable printData;
         List<SqlParameter> sqlPar;
-        
+        Dictionary<string, string> excelHead = new Dictionary<string, string>();
+
         public R07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -29,6 +30,7 @@ namespace Sci.Production.Thread
 
         protected override bool ValidateInput()
         {
+            excelHead = new Dictionary<string, string>();
             sqlPar = new List<SqlParameter>();
             printData = null;
             sql = @"SELECT 
@@ -61,9 +63,21 @@ namespace Sci.Production.Thread
             }
             else
             {
-                sqlWhere.Add("(ti.AddDate between @date1 and @date2)");
-                sqlPar.Add(new SqlParameter("@date1", dateRange1.Text1.ToString()));
-                sqlPar.Add(new SqlParameter("@date2", dateRange1.Text2.ToString()));
+                string date1 = "", date2 = "";
+                if (!MyUtility.Check.Empty(dateRange1.Value1.ToString()))
+                {
+                    sqlWhere.Add("@date1 <= ti.AddDate");
+                    sqlPar.Add(new SqlParameter("@date1", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                    date1 = Convert.ToDateTime(dateRange1.Value1).ToString("d");
+                }
+                if (!MyUtility.Check.Empty(dateRange1.Value2.ToString()))
+                {
+                    sqlWhere.Add("ti.AddDate <= @date2");
+                    sqlPar.Add(new SqlParameter("@date2", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                    date2 = Convert.ToDateTime(dateRange1.Value2).ToString("d");
+                }               
+                
+                excelHead.Add("Date", date1 + " ~ " + date2);
             }
 
             if (!MyUtility.Check.Empty(textBox1.Text.ToString()) && !MyUtility.Check.Empty(textBox2.Text.ToString()))
@@ -71,18 +85,28 @@ namespace Sci.Production.Thread
                 sqlWhere.Add("(tid.Refno between @refno1 and @refno2)");
                 sqlPar.Add(new SqlParameter("@refno1", textBox1.Text.ToString()));
                 sqlPar.Add(new SqlParameter("@refno2", textBox2.Text.ToString()));
+                excelHead.Add("Refno", textBox1.Text.ToString() + " ~ " + textBox2.Text.ToString());
             }
 
             if (!MyUtility.Check.Empty(textSHA.Text.ToString()))
             {
                 sqlWhere.Add("li.ThreadTypeID = @shade");
                 sqlPar.Add(new SqlParameter("@shade", textSHA.Text.ToString()));
+                excelHead.Add("Shade", textSHA.Text.ToString());
             }
 
             if (!MyUtility.Check.Empty(textTYPE.Text.ToString()))
             {
                 sqlWhere.Add("li.Category = @type");
                 sqlPar.Add(new SqlParameter("@type", textTYPE.Text.ToString()));
+                excelHead.Add("Type", textTYPE.Text.ToString());
+            }
+
+            if (!MyUtility.Check.Empty(textITEM.Text.ToString()))
+            {
+                sqlWhere.Add("li.ThreadTypeID = @Item");
+                sqlPar.Add(new SqlParameter("@Item", textITEM.Text.ToString()));
+                excelHead.Add("Item", textITEM.Text.ToString());
             }
 
             if (!MyUtility.Check.Empty(textLOC1.Text.ToString()) && !MyUtility.Check.Empty(textLOC2.Text.ToString()))
@@ -90,6 +114,7 @@ namespace Sci.Production.Thread
                 sqlWhere.Add("(tid.ThreadLocationid between @loc1 and @loc2)");
                 sqlPar.Add(new SqlParameter("@loc1", textLOC1.Text.ToString()));
                 sqlPar.Add(new SqlParameter("@loc2", textLOC2.Text.ToString()));
+                excelHead.Add("Location", textLOC1.Text.ToString() + " ~ " + textLOC2.Text.ToString());
             }
 
             if (sqlWhere.Count > 0)
@@ -120,6 +145,19 @@ namespace Sci.Production.Thread
 
             this.ShowWaitMessage("Excel Processing...");
             Excel.Worksheet worksheet = objApp.Sheets[1];
+
+            if (excelHead.ContainsKey("Date"))
+                worksheet.Cells[2, 2] = excelHead["Date"];
+            if (excelHead.ContainsKey("Refno"))
+                worksheet.Cells[2, 4] = excelHead["Refno"]; ;
+            if (excelHead.ContainsKey("Shade"))
+                worksheet.Cells[2, 6] = excelHead["Shade"]; ;
+            if (excelHead.ContainsKey("Type"))
+                worksheet.Cells[2, 8] = excelHead["Type"]; ;
+            if (excelHead.ContainsKey("Item"))
+                worksheet.Cells[2, 10] = excelHead["Item"]; ;
+            if (excelHead.ContainsKey("Location"))
+                worksheet.Cells[2, 12] = excelHead["Location"]; ;
             //for (int i = 1; i <= printData.Rows.Count; i++)
             //{
             //    string str = worksheet.Cells[i + 1, 4].Value;
