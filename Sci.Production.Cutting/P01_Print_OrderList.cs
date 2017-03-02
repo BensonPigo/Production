@@ -391,7 +391,8 @@ namespace Sci.Production.Cutting
 
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                     wks.Range["B3","B3"].WrapText = 1;
-
+                    wks.get_Range("A3").RowHeight = 16.5;
+                    wks.get_Range("A4").RowHeight = 16.5;
                     sxrc.ReplaceAction a = exMethod;
                     sxr.dicDatas.Add(sxr._v + "exAction" + idxStr, a);
                     
