@@ -258,6 +258,11 @@ namespace Sci.Production.Warehouse
         // Query
         private void button1_Click(object sender, EventArgs e)
         {
+            Query();
+        }
+
+        private void Query()
+        {
             DataTable dtData;
             if (MyUtility.Check.Empty(tb_Spno.Text))
             {
@@ -491,7 +496,19 @@ where ROW_NUMBER_D =1
             this.grid1_sorting();
         }
 
-       
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (tb_Spno.Focus())
+            {
+                switch (keyData)
+                {
+                    case Keys.Enter:
+                        Query();
+                        break;
+                }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
     }
 }
 
