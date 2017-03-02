@@ -31,11 +31,25 @@ namespace Sci.Production.Shipping
 
             return true;
         }
+        protected override bool OnSaveBefore()
+        {
+            DataTable dt = (DataTable)gridbs.DataSource;
+            int counts = dt.Rows.Count;
+            for (int i = counts-1; i >= 0; i--)
+            {
+                if (MyUtility.Check.Empty(dt.Rows[i]["TYPE"].ToString()) && MyUtility.Check.Empty(dt.Rows[i]["CTNRNo"].ToString()) && MyUtility.Check.Empty(dt.Rows[i]["SealNo"].ToString()) && MyUtility.Check.Empty(dt.Rows[i]["TruckNo"].ToString()))
+                {
+                    dt.Rows[i].Delete();
+                }
+            }
+            
+            return base.OnSaveBefore();
+        }
 
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
-
+          
             datas.Columns.Add("AddBy");
             datas.Columns.Add("EditBy");
             foreach (DataRow gridData in datas.Rows)
