@@ -163,83 +163,120 @@ namespace Sci.Production.Warehouse
                         excel.Workbooks.Open(MyUtility.Convert.GetString(dr["FullFileName"]));
                         excel.Visible = false;
                         Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+                        int intColumnsCount = worksheet.UsedRange.Columns.Count;
 
-                        //檢查Excel格式
-                        Microsoft.Office.Interop.Excel.Range range = worksheet.Range[String.Format("A{0}:L{0}", 1)];
-                        object[,] objCellArray = range.Value;
-                        string wkno = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
-                        string sp = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
-                        string seq1 = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C");
-                        string seq2 = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C");
-                        string ctnno = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C");
-                        string lotno = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C");
-                        //string unit = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C");
-                        string qty = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C");
-                        string foc = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 8], "C");
-                        string net = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 9], "C");
-                        string weight = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 10], "C");
-                        string location = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 11], "C");
-
-
-                        if (wkno.ToUpper() != "WK#" ||
-                            sp.ToUpper() != "SP#" ||
-                            seq1.ToUpper() != "SEQ1" ||
-                            seq2.ToUpper() != "SEQ2" ||
-                            ctnno.ToUpper() != "C/NO" ||
-                            lotno.ToUpper() != "LOT NO." ||
-                            (qty.ToUpper() != "QTY" && qty.ToUpper() != "Q'TY") ||
-                            foc.ToUpper() != "F.O.C" ||
-                            weight.ToUpper() != "WEIKG" ||
-                            net.ToUpper() != "NETKG" ||
-                            location.ToUpper() != "LOCATION"
-                            )
+                        if (intColumnsCount >= 30)
                         {
-                            #region 將不存在欄位顯示於status
-                            StringBuilder columnName = new StringBuilder();
-                            if (wkno.ToUpper() != "WK#") { columnName.Append("< WK# >, "); }
-                            if (sp.ToUpper() != "SP#") { columnName.Append("< SP# >, "); }
-                            if (seq1.ToUpper() != "SEQ1") { columnName.Append("< SEQ1 >, "); }
-                            if (seq2.ToUpper() != "SEQ2") { columnName.Append("< SEQ2 >, "); }
-                            if (ctnno.ToUpper() != "C/NO") { columnName.Append("< C/NO >, "); }
-                            if (lotno.ToUpper() != "LOT NO.") { columnName.Append("< LOT NO. >, "); }
-                            if (qty.ToUpper() != "QTY" && qty.ToUpper() != "Q'TY") { columnName.Append("< Qty >, "); }
-                            if (foc.ToUpper() != "F.O.C") { columnName.Append("< F.O.C >, "); }
-                            if (net.ToUpper() != "NETKG") { columnName.Append("< NetKg >, "); }
-                            if (weight.ToUpper() != "WEIKG") { columnName.Append("< WeiKg >, "); }
-                            if (location.ToUpper() != "LOCATION") { columnName.Append("< Location >, "); }
+                            MyUtility.Msg.WarningBox("Column count can not more than 30!!");
+                            excel.Workbooks.Close();
+                            excel.Quit();
+                            excel = null;
+                            return;
+                        }
+                        //檢查Excel格式
+                        Microsoft.Office.Interop.Excel.Range range = worksheet.Range[String.Format("A{0}:AE{0}", 1)];
+                        object[,] objCellArray = range.Value;                        
+                        int[] ItemPosition = new int[12];
+                        string[] ItemCheck = { "", "WK#", "SP#", "SEQ1", "SEQ2", "C/NO", "LOT NO.", "QTY", "F.O.C", "NETKG", "WEIKG", "LOCATION" };
+                        string[] ExcelItem = new string[intColumnsCount+1];
 
+
+                        for (int y = 1; y <= intColumnsCount; y++) 
+                            ExcelItem[y] = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, y], "C").ToString().ToUpper();
+
+                        
+                        StringBuilder columnName = new StringBuilder();
+                        //確認Excel各Item是否存在，並儲存所在位置
+                        for (int x = 1; x <= 11; x++)
+                        {
+                            for (int y = 1; y <= intColumnsCount; y++)
+                            {
+                                if (ExcelItem[y] == ItemCheck[x])
+                                {
+                                    ItemPosition[x] = y;
+                                    break;
+                                }
+                            }
+                            if (ItemPosition[x] == 0) columnName.Append("< " + ItemCheck[x].ToString()+ " >, ");
+                        }
+
+                        //舊寫法
+                        //string wkno = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]], "C");
+                        //string sp = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]], "C");
+                        //string seq1 = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]], "C");
+                        //string seq2 = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]], "C");
+                        //string ctnno = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]], "C");
+                        //string lotno = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]], "C");
+                        ////string unit = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C");
+                        //string qty = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[7]], "C");
+                        //string foc = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[8]], "C");
+                        //string net = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[9]], "C");
+                        //string weight = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[10]], "C");
+                        //string location = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[11]], "C");
+
+
+                        //if (wkno.ToUpper() != "WK#" ||
+                        //    sp.ToUpper() != "SP#" ||
+                        //    seq1.ToUpper() != "SEQ1" ||
+                        //    seq2.ToUpper() != "SEQ2" ||
+                        //    ctnno.ToUpper() != "C/NO" ||
+                        //    lotno.ToUpper() != "LOT NO." ||
+                        //    (qty.ToUpper() != "QTY" && qty.ToUpper() != "Q'TY") ||
+                        //    foc.ToUpper() != "F.O.C" ||
+                        //    weight.ToUpper() != "WEIKG" ||
+                        //    net.ToUpper() != "NETKG" ||
+                        //    location.ToUpper() != "LOCATION"
+                        //    )
+                        //{
+                        //    #region 將不存在欄位顯示於status
+                        //    StringBuilder columnName = new StringBuilder();
+                        //    if (wkno.ToUpper() != "WK#") { columnName.Append("< WK# >, "); }
+                        //    if (sp.ToUpper() != "SP#") { columnName.Append("< SP# >, "); }
+                        //    if (seq1.ToUpper() != "SEQ1") { columnName.Append("< SEQ1 >, "); }
+                        //    if (seq2.ToUpper() != "SEQ2") { columnName.Append("< SEQ2 >, "); }
+                        //    if (ctnno.ToUpper() != "C/NO") { columnName.Append("< C/NO >, "); }
+                        //    if (lotno.ToUpper() != "LOT NO.") { columnName.Append("< LOT NO. >, "); }
+                        //    if (qty.ToUpper() != "QTY" && qty.ToUpper() != "Q'TY") { columnName.Append("< Qty >, "); }
+                        //    if (foc.ToUpper() != "F.O.C") { columnName.Append("< F.O.C >, "); }
+                        //    if (net.ToUpper() != "NETKG") { columnName.Append("< NetKg >, "); }
+                        //    if (weight.ToUpper() != "WEIKG") { columnName.Append("< WeiKg >, "); }
+                        //    if (location.ToUpper() != "LOCATION") { columnName.Append("< Location >, "); }
+
+                        //    dr["Status"] = columnName.ToString().Substring(0, columnName.ToString().Length - 2) + "column not found in the excel.";
+                        //    #endregion
+                        //}
+                        if (!MyUtility.Check.Empty(columnName.Length))
+                        {
                             dr["Status"] = columnName.ToString().Substring(0, columnName.ToString().Length - 2) + "column not found in the excel.";
-                            #endregion
                         }
                         else
                         {
                             int intRowsCount = worksheet.UsedRange.Rows.Count;
-                            int intColumnsCount = worksheet.UsedRange.Columns.Count;
                             int intRowsStart = 2;
                             int intRowsRead = intRowsStart - 1;
 
                             while (intRowsRead < intRowsCount)
                             {
                                 intRowsRead++;
-                                range = worksheet.Range[String.Format("A{0}:L{0}", intRowsRead)];
+                                range = worksheet.Range[String.Format("A{0}:AE{0}", intRowsRead)];
                                 objCellArray = range.Value;
 
                                 DataRow newRow = grid2Data.NewRow();
                                 newRow["MDivisionid"] = Env.User.Keyword;
-                                newRow["wkno"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
-                                newRow["poid"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
-                                newRow["seq1"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C");
-                                newRow["seq2"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C");
-                                newRow["seq"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C").ToString().PadRight(3) + MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C").ToString();
-                                newRow["roll"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C");
-                                newRow["dyelot"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C");
-                                newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "N");
-                                newRow["foc"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 8], "N");
+                                newRow["wkno"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]], "C");
+                                newRow["poid"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]], "C");
+                                newRow["seq1"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]], "C");
+                                newRow["seq2"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]], "C");
+                                newRow["seq"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]], "C").ToString().PadRight(3) + MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]], "C").ToString();
+                                newRow["roll"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]], "C");
+                                newRow["dyelot"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]], "C");
+                                newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[7]], "N");
+                                newRow["foc"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[8]], "N");
                                 newRow["shipqty"] = decimal.Parse(newRow["qty"].ToString()) + decimal.Parse(newRow["foc"].ToString());
                                 newRow["actualqty"] = decimal.Parse(newRow["qty"].ToString()) + decimal.Parse(newRow["foc"].ToString());
-                                newRow["actualWeight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 9], "N");
-                                newRow["Weight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 10], "N");
-                                newRow["location"] = (objCellArray[1, 11] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, 11], "C");
+                                newRow["actualWeight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[9]], "N");
+                                newRow["Weight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[10]], "N");
+                                newRow["location"] = (objCellArray[1, ItemPosition[11]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[11]], "C");
 
                                 if (!MyUtility.Check.Empty(newRow["wkno"]) && newRow["wkno"].ToString() != master["exportid"].ToString())
                                 {
