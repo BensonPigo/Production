@@ -637,6 +637,29 @@ where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(Cur
 
                     if (result)
                     {
+                        if (orderQtyData.Rows.Count == 0)
+                        {
+                            displayBox2.Text = "";
+                            dateBox1.Value = null;
+                            displayBox3.Text = "";
+                            displayBox4.Text = "";
+                            displayBox5.Text = "";
+                            txtcountry1.TextBox1.Text = "";
+                            txtcountry1.DisplayBox1.Text = "";
+
+                            txttpeuser1.DisplayBox1.Text = "";
+                            txttpeuser1.DisplayBox2.Text = "";
+                            txttpeuser2.DisplayBox1.Text = "";
+                            txttpeuser2.DisplayBox2.Text = "";
+                            txttpeuser3.DisplayBox1.Text = "";
+                            txttpeuser3.DisplayBox2.Text = "";
+                            txttpeuser4.DisplayBox1.Text = "";
+                            txttpeuser4.DisplayBox2.Text = "";
+                            txttpeuser5.DisplayBox1.Text = "";
+                            txttpeuser5.DisplayBox2.Text = "";
+                            MyUtility.Msg.InfoBox(string.Format("SP#:{0} ShipModeList:<A/C>, it can't be created!",orderID));
+                            return;
+                        }
                         if (orderQtyData.Rows.Count == 1)
                         {
                             CurrentMaintain["OrderShipmodeSeq"] = orderQtyData.Rows[0]["Seq"];
