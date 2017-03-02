@@ -52,7 +52,6 @@ namespace Sci.Production.Warehouse
 
             base.OnFormLoaded();
             comboBox1.SelectedIndex = 1;
-            ChangeDetailColor();
             MyUtility.Tool.SetGridFrozen(this.grid1);
 
             #region Supp 開窗
@@ -219,12 +218,12 @@ namespace Sci.Production.Warehouse
 
         private void ChangeDetailColor()
         {
-            grid1.RowPostPaint += (s, e) =>
+            for (int index = 0; index < grid1.Rows.Count; index++)
             {
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
-                if (grid1.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
+                DataRow dr = grid1.GetDataRow(index);
+                if (grid1.Rows.Count <= index || index < 0) return;
 
-                int i = e.RowIndex;
+                int i = index;
                 if (dr["junk"].ToString() == "True")
                 {
                     grid1.Rows[i].DefaultCellStyle.BackColor = Color.Gray;
@@ -252,7 +251,7 @@ namespace Sci.Production.Warehouse
                         grid1.Rows[i].Cells[2].Style.BackColor = Color.Yellow;
                     }
                 }
-            };
+            }
         }
 
         // Query
@@ -301,10 +300,11 @@ m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
 ,a.ColorID,a.SizeSpec
 ,ROUND(a.UsedQty,4) unitqty
-,A.Qty
+,Qty = isnull(A.Qty, 0)
 ,A.NETQty
 ,[useqty] = isnull(A.NETQty,0)+isnull(A.lossQty,0)
-,a.ShipQty,a.ShipFOC
+,shipQty = isnull(a.ShipQty, 0)
+,a.ShipFOC
 --,a.ApQty
 --,a.InputQty
 ,InputQty = isnull((select sum(invtQty) from (
@@ -347,7 +347,8 @@ from Orders WITH (NOLOCK) inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = or
 	left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
     left join supp s WITH (NOLOCK) on s.id = b.suppid
     left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
-where orders.poid like @sp1 and orders.mdivisionid= '{0}' and a.junk <> 'true'
+--where orders.poid like @sp1 and orders.mdivisionid= '{0}' and a.junk <> 'true'
+where orders.id like @sp1 and orders.mdivisionid= '{0}' and a.junk <> 'true'
 
 --很重要要看到,修正欄位要上下一起改
 union
@@ -359,7 +360,11 @@ select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 ,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
 ,a.ColorID,a.SizeSpec
-,ROUND(a.UsedQty,4) unitqty,A.Qty,A.NETQty,isnull(A.NETQty,0)+isnull(A.lossQty,0) useqty ,a.ShipQty,a.ShipFOC
+,ROUND(a.UsedQty,4) unitqty
+,Qty = isnull(A.Qty, 0)
+,A.NETQty,isnull(A.NETQty,0)+isnull(A.lossQty,0) useqty 
+,ShipQty = isnull(a.ShipQty, 0)
+,a.ShipFOC
 --,a.ApQty
 --,a.InputQty
 ,InputQty = isnull((select sum(invtQty) from (
@@ -396,13 +401,15 @@ select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 ) as  Remark
 ,[OrderIdList]=e.OrderID
 from dbo.MDivisionPoDetail m WITH (NOLOCK) 
-left join  PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 AND m.MDivisionID='{0}' and m.poid like @sp1  
+inner join Orders o on o.poid = m.poid
+left join  PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 AND m.MDivisionID='{0}' --and m.poid like @sp1  
 left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
 left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
 left join supp s WITH (NOLOCK) on s.id = b.suppid
 left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
-where 1=1
+where 1=1 
     AND a.id IS NOT NULL and a.junk <> 'true'--0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
+    and o.id like @sp1
 ) as xxx
 ) as xxx2
 ) as xxx3
@@ -429,6 +436,7 @@ where ROW_NUMBER_D =1
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
                 listControlBindingSource1.DataSource = dtData;
                 grid1_sorting();
+                ChangeDetailColor();
             }
             else
             {
