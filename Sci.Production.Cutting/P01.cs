@@ -32,12 +32,7 @@ namespace Sci.Production.Cutting
                 this.IsSupportEdit = false;
             }
         }
-
-        protected override void OnFormClosed(FormClosedEventArgs e)
-        {
-            base.OnFormClosed(e);
-        }
-
+                
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
