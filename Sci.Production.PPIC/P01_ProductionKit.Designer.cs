@@ -183,10 +183,11 @@
             // 
             // button1
             // 
+            this.button1.Dock = System.Windows.Forms.DockStyle.Left;
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Location = new System.Drawing.Point(276, 8);
+            this.button1.Location = new System.Drawing.Point(250, 5);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(105, 30);
+            this.button1.Size = new System.Drawing.Size(105, 34);
             this.button1.TabIndex = 3;
             this.button1.Text = "View Detail";
             this.button1.UseVisualStyleBackColor = true;
