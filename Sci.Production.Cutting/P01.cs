@@ -79,7 +79,7 @@ namespace Sci.Production.Cutting
             }
             #endregion
             #region Cutinline,Cutoffline 是減System.Cutday計算
-            int cutday = Convert.ToInt16(MyUtility.GetValue.Lookup(String.Format("Select cutday from System WITH (NOLOCK) ")));
+            int cutday = Convert.ToInt16(MyUtility.GetValue.Lookup(String.Format("Select cutday from System WITH (NOLOCK)")));
             if (CurrentMaintain["sewinline"] == DBNull.Value) dateBox1.Value = null;
             else dateBox1.Value = Convert.ToDateTime(CurrentMaintain["sewinline"]).AddDays(-cutday);
             if (CurrentMaintain["sewoffline"] == DBNull.Value) dateBox2.Value = null;
@@ -89,9 +89,11 @@ namespace Sci.Production.Cutting
             DataTable OrdersData;
             string sqlCmd;
             sqlCmd = string.Format(@"
-select isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList,
-isnull([dbo].getCuttingComboList(o.ID,o.CuttingSP),'') as CuttingList
-from Orders o WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
+select 
+    PoList = isnull([dbo].getPOComboList(o.ID,o.POID),''),
+    CuttingList = isnull([dbo].getCuttingComboList(o.ID,o.CuttingSP),'')
+from Orders o WITH (NOLOCK) where ID = '{0}'"
+                , MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out OrdersData);
             if (result)
             {
@@ -108,13 +110,18 @@ from Orders o WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(Curre
             }
             else
             {
-                MyUtility.Msg.ErrorBox("Query OrdersData fail!!" + result.ToString());
+                MyUtility.Msg.ErrorBox("Query OrdersData fail!! " + result.ToString());
                 editBox1.Text = "";
                 editBox2.Text = "";
             }
             #endregion
             #region sum FOC & OrderQty
-            sqlCmd = string.Format("Select isnull(sum(Qty),0) as Qty , isnull(sum(FOCQty),0) as FOC from Orders WITH (NOLOCK) where CuttingSp = '{0}'"
+            sqlCmd = string.Format(@"
+Select
+    Qty = isnull(sum(Qty),0),
+    FOC = isnull(sum(FOCQty),0)
+from Orders WITH (NOLOCK) 
+where CuttingSp = '{0}'"
                 , CurrentMaintain["ID"]);
             if (MyUtility.Check.Seek(sqlCmd, out orderdr))
             {
@@ -140,28 +147,19 @@ from Orders o WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(Curre
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_ColorCombo", "ID")) button12.ForeColor = Color.Blue;
             else button12.ForeColor = Color.Black;
 
-            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Bundle", "POID"))
-            {
-                button3.ForeColor = Color.Blue;
-            }
-            else
-            {
-                button3.ForeColor = Color.Black;
-            }
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Bundle", "POID")) button3.ForeColor = Color.Blue;
+            else button3.ForeColor = Color.Black;
 
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["ID"].ToString(), "Orders", "ID");
-            string patidsql = String.Format(@"SELECT ukey FROM [Production].[dbo].[Pattern] WITH (NOLOCK) 
-WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
-AND EDITdATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey = '{0}' and Status = 'Completed')", ukey);
+            string patidsql = String.Format(@"
+SELECT ukey 
+FROM [Production].[dbo].[Pattern] WITH (NOLOCK) 
+WHERE STYLEUKEY = '{0}' and Status = 'Completed' 
+AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey = '{0}' and Status = 'Completed')"
+                , ukey);
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
-            if (patternukey != "")
-            {
-                button9.ForeColor = Color.Blue;
-            }
-            else
-            {
-                button9.ForeColor = Color.Black;            
-            }
+            if (patternukey != "") button9.ForeColor = Color.Blue;
+            else button9.ForeColor = Color.Black;  
 
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "WorkOrder", "ID"))
             {
@@ -174,24 +172,20 @@ AND EDITdATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
                 button8.ForeColor = Color.Black;
             }
 
-            if (MyUtility.Check.Empty(StyleUkey))
-                button11.ForeColor = Color.Black;
+            if (MyUtility.Check.Empty(StyleUkey)) button11.ForeColor = Color.Black;
             else
                 button11.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0}", StyleUkey)) ? Color.Blue : Color.Black;
-
             #endregion
         }
 
-        #region Marker List
+        //Marker List
         private void button1_Click(object sender, EventArgs e)
         {
-            Sci.Production.Cutting.P01_MarkerList callNextForm =
-                new Sci.Production.Cutting.P01_MarkerList(false, CurrentMaintain["ID"].ToString(), null, null, "Order_Markerlist", this.CurrentMaintain);
-            callNextForm.ShowDialog(this);
-            OnDetailEntered();
+            if (null == this.CurrentMaintain) return;
+            var frm = new Sci.Production.Cutting.P01_MarkerList(false, CurrentMaintain["ID"].ToString(), null, null, "Order_Markerlist", this.CurrentMaintain);
+            frm.ShowDialog(this);
         }
-        #endregion
-        #region Each Cons.
+        //Each Cons.
         private void button2_Click(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
@@ -199,77 +193,65 @@ AND EDITdATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
             frm.ShowDialog(this);
             this.OnDetailEntered();
         }
-        #endregion
-        #region Button Bundle Card
+        //Button Bundle Card
         private void button3_Click(object sender, EventArgs e)
         {
-            Sci.Production.Cutting.P01_BundleCard callNextForm = 
-                new Sci.Production.Cutting.P01_BundleCard(CurrentMaintain["ID"].ToString());
-            callNextForm.ShowDialog(this);
-            OnDetailEntered();
+            if (null == this.CurrentMaintain) return;
+            var frm = new Sci.Production.Cutting.P01_BundleCard(CurrentMaintain["ID"].ToString());
+            frm.ShowDialog(this);
         }
-        #endregion
-        #region Cutpart Check
+        //Cutpart Check
         private void button8_Click(object sender, EventArgs e)
         {
-            Sci.Production.Cutting.P01_Cutpartcheck callNextForm =
-    new Sci.Production.Cutting.P01_Cutpartcheck(CurrentMaintain["ID"].ToString(), CurrentMaintain["WorkType"].ToString());
-            callNextForm.ShowDialog(this);
-            OnDetailEntered();
+            if (null == this.CurrentMaintain) return;
+            var frm = new Sci.Production.Cutting.P01_Cutpartcheck(CurrentMaintain["ID"].ToString(), CurrentMaintain["WorkType"].ToString());
+            frm.ShowDialog(this);
         }
-        #endregion
-        #region Cutpart Check Summary
+        //Cutpart Check Summary
         private void button7_Click(object sender, EventArgs e)
         {
-            Sci.Production.Cutting.P01_Cutpartchecksummary callNextForm = 
-                new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToString());
-            callNextForm.ShowDialog(this);
-            OnDetailEntered();
+            if (null == this.CurrentMaintain) return;
+            var frm = new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToString());
+            frm.ShowDialog(this);
         }
-        #endregion
-        #region Quantity breakdown
+        //Quantity breakdown
         private void button5_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]), editBox1.Text);
-            callNextForm.ShowDialog(this);
+            if (null == this.CurrentMaintain) return;
+            var frm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]), editBox1.Text);
+            frm.ShowDialog(this);
         }
-        #endregion
-        #region ColorComb
+        //ColorComb
         private void button12_Click(object sender, EventArgs e)
         {
+            if (null == this.CurrentMaintain) return;
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["ID"].ToString(), "Orders", "ID");
-            Sci.Production.PublicForm.ColorCombination callNextForm =
-                new Sci.Production.PublicForm.ColorCombination(CurrentMaintain["ID"].ToString(), ukey);
-            callNextForm.ShowDialog(this);
-            OnDetailEntered();
+            var frm = new Sci.Production.PublicForm.ColorCombination(CurrentMaintain["ID"].ToString(), ukey);
+            frm.ShowDialog(this);
         }
-        #endregion
-        #region ProductionKit
+        //ProductionKit
         private void button11_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_ProductionKit callNextForm =
-                new Sci.Production.PPIC.P01_ProductionKit(true, StyleUkey, null, null, null);
-            callNextForm.ShowDialog(this);
+            if (null == this.CurrentMaintain) return;
+            var frm = new Sci.Production.PPIC.P01_ProductionKit(true, StyleUkey, null, null, null);
+            frm.ShowDialog(this);
             OnDetailEntered();
         }
-        #endregion
-        #region Garment List
+        //Garment List
         private void button9_Click(object sender, EventArgs e)
         {
+            if (null == this.CurrentMaintain) return;
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["ID"].ToString(), "Orders", "ID");
-            Sci.Production.PublicForm.GarmentList callNextForm =
-    new Sci.Production.PublicForm.GarmentList(ukey);
-            callNextForm.ShowDialog(this);
-            OnDetailEntered();
+            var frm = new Sci.Production.PublicForm.GarmentList(ukey);
+            frm.ShowDialog(this);
         }
-        #endregion
         
         protected override bool ClickPrint()
         {
             string ID = this.CurrentMaintain["ID"].ToString();
             if (tabs.SelectedIndex == 1)
             {
-                P01_Print_OrderList frm = new P01_Print_OrderList(ID);
+                var frm = new P01_Print_OrderList(ID);
                 frm.ShowDialog();
             }
             return base.ClickPrint();
