@@ -52,8 +52,7 @@ namespace Sci.Production.Cutting
                 sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[2]);
 
                 dt.Borders.AllCellsBorders = true;
-
-
+                
                 //合併儲存格
                 dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 5, dt.Columns.Count - 11) } });
 
@@ -65,9 +64,11 @@ namespace Sci.Production.Cutting
                     dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(i) { ColumnWidth = (decimal)5.38 });
                 }
 
+                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(2) { ColumnWidth = (decimal)7.38 });
+                                
                 //凍結窗格
                 dt.boFreezePanes = true;
-                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(2) { ColumnWidth = (decimal)7.38 });
+
                 dt.boAddFilter = true;
                 sxr.dicDatas.Add(sxr._v + "tbl1", dt);
 
@@ -76,6 +77,8 @@ namespace Sci.Production.Cutting
                 wks.get_Range(string.Format("A1:{0}1", sc)).Merge();
                 wks.get_Range(string.Format("A2:{0}2", sc)).Merge();
                 wks.get_Range(string.Format("B3:{0}3", sc)).Merge();
+                wks.get_Range("A5").RowHeight = 16.5;
+                wks.get_Range("A6").RowHeight = 16.5;
                 sxr.boOpenFile = true;
                 sxr.Save();
                 #endregion
