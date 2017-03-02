@@ -70,26 +70,56 @@ namespace Sci.Production.PublicPrg
         {
             DataTable dt;
             string sqlcmd = "";
-            sqlcmd = string.Format(@"WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,stdq,ComboType) AS (  
+            sqlcmd = string.Format(@"
+WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,ComboType,Hours,WDAY) AS (  
       SELECT DATEDIFF(DAY,A.Inline,A.Offline)+1 AS DD
                     , 1 as num
                     , convert(date,A.Inline) inline 
                     ,A.OrderID
-                    ,sewinglineid
+                    ,A.sewinglineid
                     ,a.FactoryID
-                    ,iif(a.WorkDay=0,(a.WorkHour / 1 * a.StandardOutput),(a.WorkHour / a.WorkDay * a.StandardOutput)) stdq
-                    ,a.ComboType
-	  FROM SewingSchedule A WITH (NOLOCK) WHERE ORDERID='{0}'
+					,a.WorkDay,
+					a.StandardOutput
+                    ,a.ComboType,W.Hours
+					,IIF(W.Hours > 0,1,0) AS WDAY
+	  FROM SewingSchedule A WITH (NOLOCK)
+	  LEFT JOIN WorkHour W ON A.FactoryID=W.FactoryID AND A.SewingLineID=W.SewingLineID
+	  WHERE ORDERID='{0}' and w.Date between convert(date,A.Inline) and convert(date,A.Offline)
       UNION ALL  
-      SELECT DD,num + 1, DATEADD(DAY,1,INLINE) ,ORDERID,sewinglineid,FactoryID,stdq,ComboType
-	  FROM cte a where num < DD  AND ORDERID='{0}'
+      SELECT DD,num + 1, DATEADD(DAY,1,INLINE) ,ORDERID,sewinglineid,FactoryID,WorkDay,StandardOutput,ComboType,Hours,WDAY
+      FROM cte a where num < DD  AND ORDERID='{0}'
     )  
-	select min(stdq) stdq
-	from (
-	 SELECT a.orderid,a.sewinglineid,a.ComboType,a.INLINE,sum(a.stdq) stdq, isnull(b.hours,0) workhours
-	 FROM cte a left join WorkHour b WITH (NOLOCK) on convert(date,a.inline) = b.date and a.sewinglineid = b.SewingLineID and a.FactoryID=b.FactoryID 
-	 group by a.orderid,a.sewinglineid,a.ComboType,a.INLINE,b.Hours
-	 having isnull(b.hours,0) > 0) tmp", orderid);
+	select SUM(Hours)h,sum(WDAY)wday,WorkDay,StandardOutput
+	into #std
+	from cte
+	group by WorkDay,StandardOutput
+	select iif(WorkDay=0,0,avgh.avghours * StandardOutput) stdq
+	from #std
+	outer apply(select avghours=iif(wday=0,0,h/wday) from #std)avgh
+	drop table #std
+", orderid);
+//原SQL
+//WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,stdq,ComboType) AS (  
+//      SELECT DATEDIFF(DAY,A.Inline,A.Offline)+1 AS DD
+//                    , 1 as num
+//                    , convert(date,A.Inline) inline 
+//                    ,A.OrderID
+//                    ,sewinglineid
+//                    ,a.FactoryID
+//                    ,iif(a.WorkDay=0,(a.WorkHour / 1 * a.StandardOutput),(a.WorkHour / a.WorkDay * a.StandardOutput)) stdq
+//                    ,a.ComboType
+//	  FROM SewingSchedule A WITH (NOLOCK) WHERE ORDERID='{0}'
+//      UNION ALL  
+//      SELECT DD,num + 1, DATEADD(DAY,1,INLINE) ,ORDERID,sewinglineid,FactoryID,stdq,ComboType
+//	  FROM cte a where num < DD  AND ORDERID='{0}'
+//    )  
+//	select min(stdq) stdq
+//	from (
+//	 SELECT a.orderid,a.sewinglineid,a.ComboType,a.INLINE,sum(a.stdq) stdq, isnull(b.hours,0) workhours
+//	 FROM cte a left join WorkHour b WITH (NOLOCK) on convert(date,a.inline) = b.date and a.sewinglineid = b.SewingLineID and a.FactoryID=b.FactoryID 
+//	 group by a.orderid,a.sewinglineid,a.ComboType,a.INLINE,b.Hours
+//	 having isnull(b.hours,0) > 0) tmp
+
             DBProxy.Current.Select(null,sqlcmd,out dt);
             //return int.Parse(dt.Rows[0][0].ToString());
             if (dt.Rows[0][0].Empty())
