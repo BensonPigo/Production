@@ -20,6 +20,7 @@ namespace Sci.Production.Packing
         Ict.Win.DataGridViewGeneratorTextColumnSettings seq = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings size = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        Ict.Win.DataGridViewGeneratorNumericColumnSettings balance = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
         private DualResult result;
         private DataRow dr;
         private string sqlCmd = "", filter = "";
@@ -144,7 +145,7 @@ namespace Sci.Production.Packing
                             }
                             else
                             {
-                                e.EditingControl.Text = item.GetSelectedString();
+                                dr["OrderShipmodeSeq"] = item.GetSelectedString();
                             }
                             dr["Article"] = "";
                             dr["Color"] = "";
@@ -286,6 +287,15 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                     }
                 }
             };
+
+            balance.CellValidating += (s, e) =>{
+                if(this.EditMode){
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    dr["shipQty"] = e.FormattedValue;
+                    dr["BalanceQty"] = Convert.ToDecimal(dr["qty"].ToString()) - Convert.ToDecimal(dr["ShipQty"].ToString());
+                    dr.EndEdit();
+                }
+            };
             #endregion
 
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -296,7 +306,8 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 .Text("Article", header: "ColorWay", width: Widths.AnsiChars(8), settings: article)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), settings: size)
-                .Numeric("ShipQty", header: "Qty")
+                .Numeric("Qty", header: "Order Qty", iseditingreadonly: true)
+                .Numeric("ShipQty", header: "Qty", settings: balance)
                 .Numeric("BalanceQty", header: "Bal. Qty", iseditingreadonly: true);
 
             for (int i = 0; i < this.detailgrid.ColumnCount; i++)
@@ -316,6 +327,94 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 labConfirmed.Text = dr["Status"].ToString();
             }
             base.OnDetailEntered();
+
+            DataTable dt = ((DataTable)detailgridbs.DataSource);
+            dt.ColumnsIntAdd("Qty");
+
+            #region ComputeOrderQty
+            ComputeOrderQty();
+            #endregion
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            DataTable dt = ((DataTable)detailgridbs.DataSource);
+            dt.ColumnsIntAdd("Qty");
+            ComputeOrderQty();
+        }
+
+        private void ComputeOrderQty()
+        {
+            int  needPackQty = 0, ttlShipQty = 0;
+            DataTable needPackData, tmpPackData;
+            DualResult selectResult;
+            DataRow[] detailData;
+            //準備needPackData的Schema
+            sqlCmd = "select OrderID, OrderShipmodeSeq, Article, SizeCode, ShipQty as Qty from PackingList_Detail WITH (NOLOCK) where ID = ''";
+            if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out needPackData)))
+            {
+                MyUtility.Msg.WarningBox("Query  schema fail!");
+            }
+          
+            foreach (DataRow dr in DetailDatas)
+            {
+                #region 重算表身Grid的Bal. Qty
+                //目前還有多少衣服尚未裝箱
+                filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+                detailData = needPackData.Select(filter);
+
+                if (detailData.Length <= 0)
+                {
+                    //撈取此SP+Seq尚未裝箱的數量
+                    sqlCmd = string.Format(@"select oqd.Id as OrderID, oqd.Seq as OrderShipmodeSeq, oqd.Article, oqd.SizeCode, (oqd.Qty - isnull(sum(pld.ShipQty),0) - isnull(sum(iaq.DiffQty), 0)) as Qty
+    from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+    left join PackingList_Detail pld WITH (NOLOCK) on pld.OrderID = oqd.Id and pld.OrderShipmodeSeq = oqd.Seq and pld.ID != '{0}'
+    left join InvAdjust ia WITH (NOLOCK) on ia.OrderID = oqd.ID and ia.OrderShipmodeSeq = oqd.Seq
+    left join InvAdjust_Qty iaq WITH (NOLOCK) on iaq.ID = ia.ID and iaq.Article = oqd.Article and iaq.SizeCode = oqd.SizeCode
+    where oqd.Id = '{1}'
+    and oqd.Seq = '{2}'
+    group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"].ToString(), dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString());
+                    if (!(selectResult = DBProxy.Current.Select(null, sqlCmd, out tmpPackData)))
+                    {
+                        MyUtility.Msg.WarningBox("Query pack qty fail!");
+                    }
+                    else
+                    {
+                        foreach (DataRow tpd in tmpPackData.Rows)
+                        {
+                            tpd.AcceptChanges();
+                            tpd.SetAdded();
+                            needPackData.ImportRow(tpd);
+                        }
+                    }
+                }
+
+                needPackQty = 0;
+                filter = string.Format("OrderID = '{0}' and OrderShipmodeSeq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
+                detailData = needPackData.Select(filter);
+                if (detailData.Length > 0)
+                {
+                    needPackQty = MyUtility.Convert.GetInt(detailData[0]["Qty"]);
+                }
+
+                //加總表身特定Article/SizeCode的Ship Qty數量
+                detailData = ((DataTable)detailgridbs.DataSource).Select(filter);
+                ttlShipQty = 0;
+                if (detailData.Length != 0)
+                {
+                    foreach (DataRow dDr in detailData)
+                    {
+                        ttlShipQty = ttlShipQty + MyUtility.Convert.GetInt(dDr["ShipQty"]);
+                    }
+                }
+
+                dr["BalanceQty"] = needPackQty - ttlShipQty;
+                dr["Qty"] = needPackQty;
+                dr["shipQty"] = ttlShipQty;
+                dr.EndEdit();
+                #endregion
+            }
         }
 
         //清空Order相關欄位值
@@ -600,6 +699,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             }
             Sci.Production.Packing.P05_BatchImport callNextForm = new Sci.Production.Packing.P05_BatchImport(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
+            ComputeOrderQty();
         }
 
         //Confirm
