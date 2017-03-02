@@ -247,7 +247,15 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
             textBox1.ReadOnly = true;
             txtbrand1.ReadOnly = true;
             txtcountry1.TextBox1.ReadOnly = true;
-            txtshipmode1.ReadOnly = true;
+            if (CurrentMaintain["Status"].ToString().ToUpper()=="NEW")
+            {
+                txtshipmode1.ReadOnly = false;    
+            }
+            else
+            {
+                txtshipmode1.ReadOnly = true;    
+            }
+            
 
             if (!MyUtility.Check.Empty(CurrentMaintain["SOCFMDate"]))
             {
