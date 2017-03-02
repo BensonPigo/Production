@@ -45,6 +45,8 @@ namespace Sci.Production.Quality
         //表身額外的資料來源
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
+            find_dr = null;
+            find = "";
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmd = string.Format(
                 @"Select a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.exportid,
@@ -464,6 +466,16 @@ namespace Sci.Production.Quality
             }
             else
             {
+                if (find_dr==null)
+                {
+                    MyUtility.Msg.WarningBox("Not Found");
+                    return;
+                }
+                if (find_dr.Length == 0)
+                {
+                    MyUtility.Msg.WarningBox("Not Found");
+                    return;
+                }
                 index++;
                 if (index >= find_dr.Length) index = 0;
             }
