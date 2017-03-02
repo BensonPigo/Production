@@ -54,7 +54,12 @@ namespace Sci.Production.Packing
                 if (this.EditMode)
                 {
                     dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OrderID"].ToString())
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        ClearGridRowData(dr);
+                        return;
+                    }
+                    if (e.FormattedValue.ToString() != dr["OrderID"].ToString())
                     {
                         //sql參數
                         System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@orderid", e.FormattedValue.ToString());
@@ -94,6 +99,9 @@ namespace Sci.Production.Packing
                                 dr["Article"] = "";
                                 dr["Color"] = "";
                                 dr["SizeCode"] = "";
+                                dr["qty"] = 0;
+                                dr["ShipQty"] = 0;
+                                dr["BalanceQty"] = 0;
                                 #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
                                 DataRow orderQtyData;
                                 sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", dr["OrderID"].ToString());
@@ -150,6 +158,9 @@ namespace Sci.Production.Packing
                             dr["Article"] = "";
                             dr["Color"] = "";
                             dr["SizeCode"] = "";
+                            dr["qty"] = 0;
+                            dr["ShipQty"] = 0;
+                            dr["BalanceQty"] = 0;
                             dr.EndEdit();
                         }
                     }
@@ -188,7 +199,18 @@ where a.Price = 0", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString())
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["Article"].ToString())
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["Article"] = "";
+                        dr["Color"] = "";
+                        dr["SizeCode"] = "";
+                        dr["qty"] = 0;
+                        dr["ShipQty"] = 0;
+                        dr["BalanceQty"] = 0;
+                        dr.EndEdit();
+                        return;
+                    }
+                    if (e.FormattedValue.ToString() != dr["Article"].ToString())
                     {
                         sqlCmd = string.Format(@"select a.Article
 from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
@@ -226,6 +248,10 @@ where a.Price = 0 and a.Article = '{2}'", dr["OrderID"].ToString(), dr["OrderShi
                                 dr["Color"] = "";
                             }
                         }
+                        dr["SizeCode"] = "";
+                        dr["qty"] = 0;
+                        dr["ShipQty"] = 0;
+                        dr["BalanceQty"] = 0;
                         dr.EndEdit();
                     }
                 }
@@ -267,7 +293,16 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["SizeCode"].ToString())
+                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["SizeCode"] = "";
+                        dr["qty"] = 0;
+                        dr["ShipQty"] = 0;
+                        dr["BalanceQty"] = 0;
+                        dr.EndEdit();
+                        return;
+                    }
+                    if (e.FormattedValue.ToString() != dr["SizeCode"].ToString())
                     {
                         sqlCmd = string.Format(@"select a.SizeCode
 from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
@@ -281,9 +316,15 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                         {
                             MyUtility.Msg.WarningBox(string.Format("< SizeCode: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["SizeCode"] = "";
+                            dr["qty"] = 0;
+                            dr["ShipQty"] = 0;
+                            dr["BalanceQty"] = 0;
                             e.Cancel = true;
                             return;
                         }
+                        dr["SizeCode"] = e.FormattedValue.ToString();
+                        dr.EndEdit();
+                        ComputeOrderQty();
                     }
                 }
             };
@@ -329,7 +370,8 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
             base.OnDetailEntered();
 
             DataTable dt = ((DataTable)detailgridbs.DataSource);
-            dt.ColumnsIntAdd("Qty");
+            if (!dt.Columns.Contains("Qty"))
+                dt.ColumnsIntAdd("Qty");
 
             #region ComputeOrderQty
             ComputeOrderQty();
@@ -340,7 +382,8 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
         {
             base.ClickSaveAfter();
             DataTable dt = ((DataTable)detailgridbs.DataSource);
-            dt.ColumnsIntAdd("Qty");
+            if(!dt.Columns.Contains("Qty"))
+                dt.ColumnsIntAdd("Qty");
             ComputeOrderQty();
         }
 
@@ -427,6 +470,9 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
             dr["SizeCode"] = "";
             dr["StyleID"] = "";
             dr["CustPONo"] = "";
+            dr["qty"] = 0;
+            dr["ShipQty"] = 0;
+            dr["BalanceQty"] = 0;
             dr.EndEdit();
         }
 
