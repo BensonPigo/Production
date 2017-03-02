@@ -111,7 +111,7 @@ where a.ID = b.ID
                     if (!MyUtility.Check.Empty(booking_b)) { strSQLCmd += string.Format(" and a.EstCTNBooking between '{0}' and '{1}'", booking_b, booking_e); }
                     if (!MyUtility.Check.Empty(arrived_b)) { strSQLCmd += string.Format(" and a.EstCTNArrive between '{0}' and '{1}'", arrived_b, arrived_e); }
                     if (!MyUtility.Check.Empty(approved_b)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate between '{0}' and '{1}'", approved_b, approved_e); }
-                    strSQLCmd += " group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID ";
+                    strSQLCmd += " group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine ";
 
                     #region 準備sql參數資料
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
