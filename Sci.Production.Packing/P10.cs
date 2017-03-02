@@ -129,9 +129,10 @@ namespace Sci.Production.Packing
                         {
                             DataRow dr = selectDataTable.NewRow();
                             dr["ID"] = "";
-                            dr["selected"] = 1;
+                            dr["selected"] = 1;                          
                             dr["PackingListID"] = sl[1].Substring(0, 13);
-                            dr["CTNStartNo"] = sl[1].Substring(13);
+                            dr["CTNStartNo"] = sl[1].Substring(13,sl[1].Length-13);                           
+                           
                             string sqlCmd = string.Format(@"select OrderID,OrderShipmodeSeq  
                                                                                   from PackingList_Detail WITH (NOLOCK) 
                                                                                   where ID = '{0}' and CTNStartNo = '{1}' and CTNQty > 0 and TransferDate is null
