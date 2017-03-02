@@ -121,7 +121,7 @@ isnull((sp.POSMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where I
 iif(sp.IsPF = 1,'Y','N') as CPF
 from Style_ProductionKits sp WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
-where sp.ReceiveDate is null
+where sp.ReceiveDate is null and sp.SendDate is null
 and sp.MDivisionID = '{0}' ", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(textBox1.Text))
             {
