@@ -22,7 +22,7 @@ namespace Sci.Production.Class
 
         public Sci.Win.UI.DisplayBox DisplayBox1
         {
-            get { return this.displayBox2; }
+            get { return this.displayBox1; }
         }
 
         public Sci.Win.UI.DisplayBox DisplayBox2
