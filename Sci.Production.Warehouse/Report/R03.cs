@@ -103,7 +103,7 @@ namespace Sci.Production.Warehouse
             {
                 sqlCmd.Append(string.Format(@";with cte as
 (
-select distinct o.mdivisionid, o.FactoryID, o.POID,o.StyleID,o.SeasonID from dbo.orders o WITH (NOLOCK) 
+select distinct o.mdivisionid, o.POID,o.StyleID,o.SeasonID from dbo.orders o WITH (NOLOCK) 
 where 1=1"));
 
                 if (!MyUtility.Check.Empty(sciDelivery1))
@@ -127,7 +127,7 @@ where 1=1"));
                     cmds.Add(sp_season);
                 }
                 sqlCmd.Append(")");
-                sqlCmd.Append(string.Format(@"select isnull(d.mdivisionid,cte.mdivisionid), cte.FactoryID, a.id,
+                sqlCmd.Append(string.Format(@"select isnull(d.mdivisionid,cte.mdivisionid), b.FactoryID, a.id,
 cte.StyleID,
 b.FinalETD,
 a.suppid+'-'+c.AbbEN supp,
@@ -171,7 +171,7 @@ where 1= 1 "));
             }
             else
             {
-                sqlCmd.Append(string.Format(@"select isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders WITH (NOLOCK) where id = a.id)), cte.FactoryID,a.id,
+                sqlCmd.Append(string.Format(@"select isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders WITH (NOLOCK) where id = a.id)), b.FactoryID,a.id,
 (select StyleID from dbo.orders WITH (NOLOCK) where id = a.id) style,
 b.FinalETD,
 a.suppid+'-'+c.AbbEN supp,
@@ -232,7 +232,7 @@ where 1=1 "));
 
             if (!MyUtility.Check.Empty(eta1) || !MyUtility.Check.Empty(eta2))
             {
-                if (!MyUtility.Check.Empty(suppDelivery1))
+                if (!MyUtility.Check.Empty(eta1))
                     sqlCmd.Append(string.Format(@" and '{0}' <= b.ETA", Convert.ToDateTime(eta1).ToString("d")));
                 if (!MyUtility.Check.Empty(eta2))
                     sqlCmd.Append(string.Format(@" and b.ETA <= '{0}'", Convert.ToDateTime(eta2).ToString("d")));
