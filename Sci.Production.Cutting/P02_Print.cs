@@ -403,6 +403,13 @@ Cutplanid, str_PIVOT);
                 #endregion
                 nSheet++;
             }
+            //重製Mode以取消Copy區塊
+            worksheet.Application.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
+
+            ////選回第一格
+            //worksheet.Activate();
+            //worksheet.UsedRange.Cells[1, 1].Select();
+
             excel.Visible = true;
             return true;
         }
@@ -670,6 +677,8 @@ cutref, str_PIVOT);
                 nSheet++;
             }
             #endregion //End By CutRef
+            //重製Mode以取消Copy區塊
+            worksheet.Application.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
             excel.Visible = true;
             return true;
         }
