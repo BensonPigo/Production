@@ -440,6 +440,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
             DataTable dt = (DataTable)detailgridbs.DataSource;
 
             StringBuilder sqlupd2_B = new StringBuilder();
+            StringBuilder sqlupd2_Ad = new StringBuilder();
             StringBuilder sqlupd2_FIO = new StringBuilder();
 
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unconfirme it?");
@@ -532,7 +533,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
                        }).ToList();
 
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(8, bs1, false));
-            sqlupd2_B.Append(Prgs.UpdateMPoDetail(32, null, false));
+            sqlupd2_Ad.Append(Prgs.UpdateMPoDetail(32, null, false));
             #endregion
             #region -- 更新庫存數量  ftyinventory --
 
@@ -552,6 +553,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
                 {
                     DataTable resulttb;
                     if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb
+                        , "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_Ad.ToString(), out resulttb
                         , "#TmpSource")))
                     {
                         _transactionscope.Dispose();
