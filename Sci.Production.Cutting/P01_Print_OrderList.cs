@@ -458,8 +458,6 @@ namespace Sci.Production.Cutting
                 #endregion
             }
             
-            
-
             return true;
         }
 
