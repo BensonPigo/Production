@@ -64,7 +64,8 @@ namespace Sci.Production.Cutting
                     dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(i) { ColumnWidth = (decimal)5.38 });
                 }
 
-                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(2) { ColumnWidth = (decimal)7.38 });
+                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(2) { ColumnWidth = (decimal)7.38 });  //Marker Name調窄
+                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(3) { ColumnWidth = (decimal)7.38 });  //Fabric Combo調窄
                                 
                 //凍結窗格
                 dt.boFreezePanes = true;
