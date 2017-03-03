@@ -66,13 +66,13 @@ namespace Sci.Production.Thread
                 string date1 = "", date2 = "";
                 if (!MyUtility.Check.Empty(dateRange1.Value1.ToString()))
                 {
-                    sqlWhere.Add("@date1 <= ti.AddDate");
+                    sqlWhere.Add("@date1 <= Convert(datetime, convert(varchar(10), ti.AddDate, 126))");
                     sqlPar.Add(new SqlParameter("@date1", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
                     date1 = Convert.ToDateTime(dateRange1.Value1).ToString("d");
                 }
                 if (!MyUtility.Check.Empty(dateRange1.Value2.ToString()))
                 {
-                    sqlWhere.Add("ti.AddDate <= @date2");
+                    sqlWhere.Add("Convert(datetime, convert(varchar(10), ti.AddDate, 126)) <= @date2");
                     sqlPar.Add(new SqlParameter("@date2", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
                     date2 = Convert.ToDateTime(dateRange1.Value2).ToString("d");
                 }               
@@ -121,25 +121,29 @@ namespace Sci.Production.Thread
             {
                 if (sqlWhere.Count > 0)
                     sql += " where " + sqlWhere.JoinToString(" and ");
+                sql += " Order by ti.AddDate, ti.ID, tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description, tid.ThreadLocationid";
             }
             else if (radioButton2.Checked == true)
             {
                 sql = @"SELECT 
-                      RefNo = tid.Refno,
-                      Description = li.Description,
-                      Type = li.Category,
-                      item = li.ThreadTypeID,
-                      shade = tid.ThreadColorid,
-                      ColorDesc = tc.Description,
-                      NewCone = sum(isnull(tid.NewCone, 0)),
-                      UsedCone = sum(isnull(tid.UsedCone, 0))
-                    FROM Threadincoming ti WITH (NOLOCK) 
-                    inner join ThreadIncoming_Detail tid WITH (NOLOCK) on ti.ID = tid.ID
-                    left join LocalItem li WITH (NOLOCK) on tid.Refno = li.RefNo
-                    left join ThreadColor tc WITH (NOLOCK) on tid.ThreadColorid = tc.id";
-                sql += " where " + sqlWhere.JoinToString(" and ");
-                sql += " Group by tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description";
+                          RefNo = tid.Refno,
+                          Description = li.Description,
+                          Type = li.Category,
+                          item = li.ThreadTypeID,
+                          shade = tid.ThreadColorid,
+                          ColorDesc = tc.Description,
+                          NewCone = sum(isnull(tid.NewCone, 0)),
+                          UsedCone = sum(isnull(tid.UsedCone, 0))
+                        FROM Threadincoming ti WITH (NOLOCK) 
+                        inner join ThreadIncoming_Detail tid WITH (NOLOCK) on ti.ID = tid.ID
+                        left join LocalItem li WITH (NOLOCK) on tid.Refno = li.RefNo
+                        left join ThreadColor tc WITH (NOLOCK) on tid.ThreadColorid = tc.id
+                        where " + sqlWhere.JoinToString(" and ");
+                sql += @" Group by tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description
+                          Order by tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description";
             }
+            
+
             return base.ValidateInput();
         }
 
