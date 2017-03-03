@@ -358,9 +358,10 @@ namespace Sci.Production.Tools
                 // 新增Menu有但不存在於Pass2的資料 / 維護BarPrompt及權限設定與Menu同步
                 foreach (DataRow drPass0 in dtPass0.Rows)
                 {
+                    DataRow[] dt = dtPass2.Select(string.Format("FKPass0 = {0}", (Int64)drPass0["PKey"]));
                     foreach (DataRow drDetailMenu in dtDetailMenu.Rows)
                     {
-                        drs = dtPass2.Select(string.Format("FKPass0 = {0} AND FKMenu = {1}", (Int64)drPass0["PKey"], (Int64)drDetailMenu["PKey"]));
+                        drs = dt.CopyToDataTable().Select(string.Format("FKMenu = {0}", (Int64)drDetailMenu["PKey"]));
                         if (drs.Length > 0)
                         {
                             foreach (DataRow dr in drs)
