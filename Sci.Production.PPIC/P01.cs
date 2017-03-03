@@ -750,6 +750,7 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         //CMPQ Sheet
         private void button13_Click(object sender, EventArgs e)
         {
+            this.ShowWaitMessage("Data processing, please wait...");
            // string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
             string poid = CurrentMaintain["POID"].ToString();
             System.Data.DataTable rpt3;
@@ -794,7 +795,7 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
             int idx = 0;
             sxr.CopySheet.Add(1, rpt3.Rows.Count - 1);
             sxr.VarToSheetName = sxr._v + "SP";
-
+            Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
             foreach (DataRow row in rpt3.Rows)
             {
                 string sIdx = (idx == 0) ? "" : idx.ToString();
@@ -818,6 +819,16 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
                 sxr.dicDatas.Add(sxr._v + "descripition" + sIdx, row["descripition"].ToString());
                 sxr.dicDatas.Add(sxr._v + "price" + sIdx, row["price"].ToString());
                 sxr.dicDatas.Add(sxr._v + "amount" + sIdx, row["amount"].ToString());
+
+                int l = 79;
+                int la = row["AddressEN"].ToString().Length / l;
+                for (int i = 1; i <= la; i++)
+                {
+                    if (row["AddressEN"].ToString().Length> l * i)
+                    {                        
+                        wks.get_Range("A6").RowHeight = 16.5 * (i + 1);
+                    }
+                }
 
                 System.Data.DataTable[] dts;
                 res = DBProxy.Current.SelectSP("", "PPIC_Report03", new List<SqlParameter> { new SqlParameter("@OrderID", oid), new SqlParameter("@ByType", 0) }, out dts);
