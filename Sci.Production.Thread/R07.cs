@@ -90,7 +90,7 @@ namespace Sci.Production.Thread
 
             if (!MyUtility.Check.Empty(textSHA.Text.ToString()))
             {
-                sqlWhere.Add("li.ThreadTypeID = @shade");
+                sqlWhere.Add("tid.ThreadColorid = @shade");
                 sqlPar.Add(new SqlParameter("@shade", textSHA.Text.ToString()));
                 excelHead.Add("Shade", textSHA.Text.ToString());
             }
@@ -117,9 +117,29 @@ namespace Sci.Production.Thread
                 excelHead.Add("Location", textLOC1.Text.ToString() + " ~ " + textLOC2.Text.ToString());
             }
 
-            if (sqlWhere.Count > 0)
+            if (radioButton1.Checked == true)
+            {
+                if (sqlWhere.Count > 0)
+                    sql += " where " + sqlWhere.JoinToString(" and ");
+            }
+            else if (radioButton2.Checked == true)
+            {
+                sql = @"SELECT 
+                      RefNo = tid.Refno,
+                      Description = li.Description,
+                      Type = li.Category,
+                      item = li.ThreadTypeID,
+                      shade = tid.ThreadColorid,
+                      ColorDesc = tc.Description,
+                      NewCone = sum(isnull(tid.NewCone, 0)),
+                      UsedCone = sum(isnull(tid.UsedCone, 0))
+                    FROM Threadincoming ti WITH (NOLOCK) 
+                    inner join ThreadIncoming_Detail tid WITH (NOLOCK) on ti.ID = tid.ID
+                    left join LocalItem li WITH (NOLOCK) on tid.Refno = li.RefNo
+                    left join ThreadColor tc WITH (NOLOCK) on tid.ThreadColorid = tc.id";
                 sql += " where " + sqlWhere.JoinToString(" and ");
-
+                sql += " Group by tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description";
+            }
             return base.ValidateInput();
         }
 
@@ -140,31 +160,53 @@ namespace Sci.Production.Thread
                 return false;
             }
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R07.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Thread_R07.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
+            Excel.Application objApp;
+            if (radioButton1.Checked == true)
+            {
+                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R07.xltx"); //預先開啟excel app
+                MyUtility.Excel.CopyToXls(printData, "", "Thread_R07.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
+            }
+            else
+            {
+                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R07_Summary.xltx");
+                MyUtility.Excel.CopyToXls(printData, "", "Thread_R07_Summary.xltx", 4, showExcel: false, showSaveMsg: false, excelApp: objApp);
+            }
+
+            
 
             this.ShowWaitMessage("Excel Processing...");
             Excel.Worksheet worksheet = objApp.Sheets[1];
 
-            if (excelHead.ContainsKey("Date"))
-                worksheet.Cells[2, 2] = excelHead["Date"];
-            if (excelHead.ContainsKey("Refno"))
-                worksheet.Cells[2, 4] = excelHead["Refno"]; ;
-            if (excelHead.ContainsKey("Shade"))
-                worksheet.Cells[2, 6] = excelHead["Shade"]; ;
-            if (excelHead.ContainsKey("Type"))
-                worksheet.Cells[2, 8] = excelHead["Type"]; ;
-            if (excelHead.ContainsKey("Item"))
-                worksheet.Cells[2, 10] = excelHead["Item"]; ;
-            if (excelHead.ContainsKey("Location"))
-                worksheet.Cells[2, 12] = excelHead["Location"]; ;
-            //for (int i = 1; i <= printData.Rows.Count; i++)
-            //{
-            //    string str = worksheet.Cells[i + 1, 4].Value;
-            //    if (!MyUtility.Check.Empty(str))
-            //        worksheet.Cells[i + 1, 4] = str.Trim();
-
-            //}
+            if (radioButton1.Checked == true)
+            {
+                if (excelHead.ContainsKey("Date"))
+                    worksheet.Cells[2, 2] = excelHead["Date"];
+                if (excelHead.ContainsKey("Refno"))
+                    worksheet.Cells[2, 4] = excelHead["Refno"]; ;
+                if (excelHead.ContainsKey("Shade"))
+                    worksheet.Cells[2, 6] = excelHead["Shade"]; ;
+                if (excelHead.ContainsKey("Type"))
+                    worksheet.Cells[2, 8] = excelHead["Type"]; ;
+                if (excelHead.ContainsKey("Item"))
+                    worksheet.Cells[2, 10] = excelHead["Item"]; ;
+                if (excelHead.ContainsKey("Location"))
+                    worksheet.Cells[2, 12] = excelHead["Location"];
+            }
+            else
+            {
+                if (excelHead.ContainsKey("Date"))
+                    worksheet.Cells[2, 2] = excelHead["Date"];
+                if (excelHead.ContainsKey("Refno"))
+                    worksheet.Cells[2, 4] = excelHead["Refno"]; ;
+                if (excelHead.ContainsKey("Shade"))
+                    worksheet.Cells[2, 6] = excelHead["Shade"]; ;
+                if (excelHead.ContainsKey("Type"))
+                    worksheet.Cells[3, 2] = excelHead["Type"]; ;
+                if (excelHead.ContainsKey("Item"))
+                    worksheet.Cells[3, 4] = excelHead["Item"]; ;
+                if (excelHead.ContainsKey("Location"))
+                    worksheet.Cells[3, 6] = excelHead["Location"];
+            }
 
             worksheet.Columns.AutoFit();
             worksheet.Rows.AutoFit();
