@@ -290,9 +290,6 @@
             this.IsSupportToPrint = false;
             this.Name = "R02";
             this.Text = "R02. Monthly Production output Report";
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
@@ -312,6 +309,9 @@
             this.Controls.SetChildIndex(this.comboBox4, 0);
             this.Controls.SetChildIndex(this.comboBox5, 0);
             this.Controls.SetChildIndex(this.label10, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 

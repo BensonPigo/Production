@@ -69,7 +69,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out fact
 
         private string SelectSewingLine(string line)
         {
-            string sql = string.Format("Select Distinct ID From SewingLine{0} WITH (NOLOCK) ", MyUtility.Check.Empty(comboBox4.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboBox4.Text));
+            string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}", MyUtility.Check.Empty(comboBox4.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboBox4.Text));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "3", line, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
