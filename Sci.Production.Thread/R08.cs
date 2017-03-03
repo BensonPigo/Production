@@ -222,5 +222,85 @@ namespace Sci.Production.Thread
             this.HideWaitMessage();
             return true;
         }
+
+        private void textSHA_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sql = @"select   distinct
+                                        threadcolorid, 
+                                        (select tc.Description from dbo.ThreadColor tc WITH (NOLOCK) where tc.id = ThreadStock.ThreadColorID) [Color_desc] 
+                               from ThreadStock WITH (NOLOCK) 
+                               order by threadcolorid ";
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "13, 13", null, "Shade, Color desc");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                textSHA.Text = item.GetSelectedString();
+            }
+        }
+
+        private void textTYPE_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sql = @"select distinct 
+                                    l.Category 
+                               from dbo.ThreadStock ts WITH (NOLOCK) 
+                               inner join dbo.LocalItem l WITH (NOLOCK) on l.refno = ts.Refno
+                               order by l.category";
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20", null, "Type");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                textTYPE.Text = item.GetSelectedString();
+            }
+        }
+
+        private void textITEM_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sql = @"select distinct 
+                                    l.ThreadTypeID
+                               from dbo.LocalItem l WITH (NOLOCK) 
+                               inner join  dbo.ThreadStock ts WITH (NOLOCK) on l.refno = ts.refno
+                               order by l.ThreadTypeID ";
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "35", null, "Thread Item");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                textITEM.Text = item.GetSelectedString();
+            }
+        }
+
+        private void textBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sql = @"select distinct 
+                                    Refno,
+                                    (select LocalItem.Description from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [Description]
+                               from dbo.ThreadStock WITH (NOLOCK) 
+                               order by Refno";
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                textBox1.Text = item.GetSelectedString();
+            }
+        }
+
+        private void textLOC1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sql = @"select distinct 
+                                    ThreadlocationID,
+                                    (select distinct Description from dbo.ThreadLocation WITH (NOLOCK) where ThreadLocation.ID = ThreadIssue_Detail.ThreadLocationID) [Description]
+                               from dbo.ThreadIssue_Detail WITH (NOLOCK) 
+                               order by ThreadlocationID";
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                textLOC1.Text = item.GetSelectedString();
+            }
+        }
     }
 }
