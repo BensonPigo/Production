@@ -415,11 +415,8 @@ namespace Sci.Production.Cutting
             Where a.ukey = b.workorderukey and a.orderid = ord.id and ord.mDivisionid = '{0}' and a.id = ord.cuttingsp and a.CutRef is not null ", keyWord);
             string distru_cmd = string.Format(
             @"Select distinct 0 as sel,0 as iden,a.cutref,b.orderid,b.article,a.colorid,b.sizecode,c.PatternPanel, '' as Ratio,a.cutno,
-            substring(ord.Sewline,1,charindex(',',ord.Sewline,1)) as Sewingline,
-                isnull((Select SewingCell 
-                from SewingLine WITH (NOLOCK) 
-                where id=substring(ord.Sewline,1,charindex(',',ord.Sewline,1)) and factoryid=ord.factoryid and junk=0) ,'')
-                as  SewingCell,
+                Sewingline=ord.SewLine,
+                SewingCell=a.CutCellid,
                 (Select Reason.Name 
                 from Reason WITH (NOLOCK) , Style WITH (NOLOCK) 
                 where Reason.Reasontypeid ='Style_Apparel_Type' and 
@@ -461,7 +458,7 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            distru_cmd = distru_cmd + " and b.orderid !='EXCESS' and a.CutRef is not null  group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,c.PatternPanel,a.cutno,ord.styleukey";
+            distru_cmd = distru_cmd + " and b.orderid !='EXCESS' and a.CutRef is not null  group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,c.PatternPanel,a.cutno,ord.styleukey,a.CutCellid  order by b.sizecode,b.orderid";
             query_dResult = DBProxy.Current.Select(null, distru_cmd, out ArticleSizeTb);
             if (!query_dResult)
             {
