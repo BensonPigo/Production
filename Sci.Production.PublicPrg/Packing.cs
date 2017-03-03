@@ -833,7 +833,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             worksheet.Cells[4, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
             worksheet.Cells[4, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
             worksheet.Cells[4, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
-            worksheet.Cells[4, 10] = MyUtility.Convert.GetInt(PrintData.Rows[0]["CustPONo"]);
+            worksheet.Cells[4, 10] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
             worksheet.Cells[4, 13] = MyUtility.Convert.GetString(PLdr["INVNo"]);
             worksheet.Cells[6, 1] = MyUtility.Convert.GetString(PLdr["CustCDID"]);
             worksheet.Cells[6, 3] = MyUtility.Convert.GetString(PLdr["ShipModeID"]);
