@@ -180,6 +180,12 @@
     <Compile Include="R07.Designer.cs">
       <DependentUpon>R07.cs</DependentUpon>
     </Compile>
+    <Compile Include="R08.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R08.Designer.cs">
+      <DependentUpon>R08.cs</DependentUpon>
+    </Compile>
     <Compile Include="R20.cs">
       <SubType>Form</SubType>
     </Compile>
