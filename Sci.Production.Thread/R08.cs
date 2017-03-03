@@ -1,17 +1,27 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Thread
 {
     public partial class R08 : Sci.Win.Tems.PrintForm
     {
+        string sql;
+        DataTable printData;
+        List<SqlParameter> sqlPar;
+        Dictionary<string, string> excelHead = new Dictionary<string, string>();
+
         public R08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -20,17 +30,196 @@ namespace Sci.Production.Thread
 
         protected override bool ValidateInput()
         {
+            excelHead = new Dictionary<string, string>();
+            sqlPar = new List<SqlParameter>();
+            printData = null;
+            sql = @"SELECT 
+                      Date = ti.AddDate,
+                      IssuNo = ti.ID,
+                      RefNo = tid.Refno,
+                      Description = li.Description,
+                      Type = li.Category,
+                      item = li.ThreadTypeID,
+                      shade = tid.ThreadColorid,
+                      ColorDesc = tc.Description,
+                      NofPcs = 0,
+                      TtlUsed = 0,
+                      WofOneCone = li.Weight,
+                      AxleWeight = li.AxleWeight,
+                      NewCone = tid.NewCone,
+                      UsedCone = tid.UsedCone,
+                      Location = tid.ThreadLocationid,
+					  Remark = ti.Remark
+                    FROM ThreadIssue ti WITH (NOLOCK) 
+                    inner join ThreadIssue_Detail tid WITH (NOLOCK) on ti.ID = tid.ID
+                    left join LocalItem li WITH (NOLOCK) on tid.Refno = li.RefNo
+                    left join ThreadColor tc WITH (NOLOCK) on tid.ThreadColorid = tc.id";
+
+            List<string> sqlWhere = new List<string>();
+
+            if (MyUtility.Check.Empty(dateRange1.Value1.ToString()) && MyUtility.Check.Empty(dateRange1.Value2.ToString()))
+            {
+                MyUtility.Msg.ErrorBox("Date can not be empty!!");
+                return false;
+            }
+            else
+            {
+                string date1 = "", date2 = "";
+                if (!MyUtility.Check.Empty(dateRange1.Value1.ToString()))
+                {
+                    sqlWhere.Add("@date1 <= Convert(datetime, convert(varchar(10), ti.AddDate, 126))");
+                    sqlPar.Add(new SqlParameter("@date1", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                    date1 = Convert.ToDateTime(dateRange1.Value1).ToString("d");
+                }
+                if (!MyUtility.Check.Empty(dateRange1.Value2.ToString()))
+                {
+                    sqlWhere.Add("Convert(datetime, convert(varchar(10), ti.AddDate, 126)) <= @date2");
+                    sqlPar.Add(new SqlParameter("@date2", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                    date2 = Convert.ToDateTime(dateRange1.Value2).ToString("d");
+                }
+
+                excelHead.Add("Date", date1 + " ~ " + date2);
+            }
+
+            if (!MyUtility.Check.Empty(textBox1.Text.ToString()) && !MyUtility.Check.Empty(textBox2.Text.ToString()))
+            {
+                sqlWhere.Add("(tid.Refno between @refno1 and @refno2)");
+                sqlPar.Add(new SqlParameter("@refno1", textBox1.Text.ToString()));
+                sqlPar.Add(new SqlParameter("@refno2", textBox2.Text.ToString()));
+                excelHead.Add("Refno", textBox1.Text.ToString() + " ~ " + textBox2.Text.ToString());
+            }
+
+            if (!MyUtility.Check.Empty(textSHA.Text.ToString()))
+            {
+                sqlWhere.Add("tid.ThreadColorid = @shade");
+                sqlPar.Add(new SqlParameter("@shade", textSHA.Text.ToString()));
+                excelHead.Add("Shade", textSHA.Text.ToString());
+            }
+
+            if (!MyUtility.Check.Empty(textTYPE.Text.ToString()))
+            {
+                sqlWhere.Add("li.Category = @type");
+                sqlPar.Add(new SqlParameter("@type", textTYPE.Text.ToString()));
+                excelHead.Add("Type", textTYPE.Text.ToString());
+            }
+
+            if (!MyUtility.Check.Empty(textITEM.Text.ToString()))
+            {
+                sqlWhere.Add("li.ThreadTypeID = @Item");
+                sqlPar.Add(new SqlParameter("@Item", textITEM.Text.ToString()));
+                excelHead.Add("Item", textITEM.Text.ToString());
+            }
+
+            if (!MyUtility.Check.Empty(textLOC1.Text.ToString()) && !MyUtility.Check.Empty(textLOC2.Text.ToString()))
+            {
+                sqlWhere.Add("(tid.ThreadLocationid between @loc1 and @loc2)");
+                sqlPar.Add(new SqlParameter("@loc1", textLOC1.Text.ToString()));
+                sqlPar.Add(new SqlParameter("@loc2", textLOC2.Text.ToString()));
+                excelHead.Add("Location", textLOC1.Text.ToString() + " ~ " + textLOC2.Text.ToString());
+            }
+
+            if (radioButton1.Checked == true)
+            {
+                if (sqlWhere.Count > 0)
+                    sql += " where " + sqlWhere.JoinToString(" and ");
+                sql += " Order by ti.AddDate, ti.ID, tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description, tid.ThreadLocationid, ti.Remark";
+            }
+            else if (radioButton2.Checked == true)
+            {
+                sql = @"SELECT 
+                          RefNo = tid.Refno,
+                          Description = li.Description,
+                          Type = li.Category,
+                          item = li.ThreadTypeID,
+                          shade = tid.ThreadColorid,
+                          ColorDesc = tc.Description,
+                          NewCone = sum(isnull(tid.NewCone, 0)),
+                          UsedCone = sum(isnull(tid.UsedCone, 0))
+                        FROM ThreadIssue ti WITH (NOLOCK) 
+                        inner join ThreadIssue_Detail tid WITH (NOLOCK) on ti.ID = tid.ID
+                        left join LocalItem li WITH (NOLOCK) on tid.Refno = li.RefNo
+                        left join ThreadColor tc WITH (NOLOCK) on tid.ThreadColorid = tc.id
+                        where " + sqlWhere.JoinToString(" and ");
+                sql += @" Group by tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description
+                          order by tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description";
+            }        
+           
             return base.ValidateInput();
         }
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            return base.OnAsyncDataLoad(e);
+            DualResult result = DBProxy.Current.Select(null, sql, sqlPar, out printData);
+            return result;
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            // 顯示筆數於PrintForm上Count欄位
+            SetCount(printData.Rows.Count);
 
+            if (printData.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return false;
+            }
+
+            Excel.Application objApp;
+            if (radioButton1.Checked == true)
+            {
+                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R08.xltx"); //預先開啟excel app
+                MyUtility.Excel.CopyToXls(printData, "", "Thread_R08.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
+            }
+            else
+            {
+                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R08_Summary.xltx");
+                MyUtility.Excel.CopyToXls(printData, "", "Thread_R08_Summary.xltx", 4, showExcel: false, showSaveMsg: false, excelApp: objApp);
+            }
+
+
+
+            this.ShowWaitMessage("Excel Processing...");
+            Excel.Worksheet worksheet = objApp.Sheets[1];
+
+            if (radioButton1.Checked == true)
+            {
+                if (excelHead.ContainsKey("Date"))
+                    worksheet.Cells[2, 2] = excelHead["Date"];
+                if (excelHead.ContainsKey("Refno"))
+                    worksheet.Cells[2, 4] = excelHead["Refno"]; ;
+                if (excelHead.ContainsKey("Shade"))
+                    worksheet.Cells[2, 6] = excelHead["Shade"]; ;
+                if (excelHead.ContainsKey("Type"))
+                    worksheet.Cells[2, 8] = excelHead["Type"]; ;
+                if (excelHead.ContainsKey("Item"))
+                    worksheet.Cells[2, 10] = excelHead["Item"]; ;
+                if (excelHead.ContainsKey("Location"))
+                    worksheet.Cells[2, 12] = excelHead["Location"];
+            }
+            else
+            {
+                if (excelHead.ContainsKey("Date"))
+                    worksheet.Cells[2, 2] = excelHead["Date"];
+                if (excelHead.ContainsKey("Refno"))
+                    worksheet.Cells[2, 4] = excelHead["Refno"]; ;
+                if (excelHead.ContainsKey("Shade"))
+                    worksheet.Cells[2, 6] = excelHead["Shade"]; ;
+                if (excelHead.ContainsKey("Type"))
+                    worksheet.Cells[3, 2] = excelHead["Type"]; ;
+                if (excelHead.ContainsKey("Item"))
+                    worksheet.Cells[3, 4] = excelHead["Item"]; ;
+                if (excelHead.ContainsKey("Location"))
+                    worksheet.Cells[3, 6] = excelHead["Location"];
+            }
+
+            worksheet.Columns.AutoFit();
+            worksheet.Rows.AutoFit();
+            objApp.Visible = true;
+
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+
+            this.HideWaitMessage();
             return true;
         }
     }
