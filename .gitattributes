@@ -3678,6 +3678,7 @@ Sci.Production/XLT/Subcon_R42_Bundle[!!-~]Transaction[!!-~]detail[!!-~](RFID).xl
 Sci.Production/XLT/Subcon_R43_Sub-process[!!-~]BCS[!!-~]report[!!-~](RFID).xltx -text
 Sci.Production/XLT/Thread_P02.xltx -text
 Sci.Production/XLT/Thread_R07.xltx -text
+Sci.Production/XLT/Thread_R07_Summary.xltx -text
 Sci.Production/XLT/Thread_R20.xltx -text
 Sci.Production/XLT/Thread_R21.xltx -text
 Sci.Production/XLT/Warehouse-P01.TrimCardPrint_A.dotx -text
