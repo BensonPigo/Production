@@ -121,7 +121,7 @@
             this.textLOC2.Name = "textLOC2";
             this.textLOC2.Size = new System.Drawing.Size(113, 23);
             this.textLOC2.TabIndex = 22;
-            this.textLOC2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC2_MouseDown);
+            this.textLOC2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC1_MouseDown);
             // 
             // textLOC1
             // 
@@ -204,7 +204,7 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(100, 23);
             this.textBox2.TabIndex = 9;
-            this.textBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox2_MouseDown);
+            this.textBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
             // 
             // textBox1
             // 

@@ -287,22 +287,6 @@ namespace Sci.Production.Thread
             }
         }
 
-        private void textBox2_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                string sql = @"select distinct 
-                                    Refno,
-                                    (select LocalItem.Description from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [Description]
-                               from dbo.ThreadStock WITH (NOLOCK) 
-                               order by Refno";
-                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
-                DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
-                textBox2.Text = item.GetSelectedString();
-            }
-        }
-
         private void textLOC1_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -316,22 +300,6 @@ namespace Sci.Production.Thread
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
                 textLOC1.Text = item.GetSelectedString();
-            }
-        }
-
-        private void textLOC2_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                string sql = @"select distinct 
-                                    ThreadlocationID,
-                                    (select distinct Description from dbo.ThreadLocation WITH (NOLOCK) where ThreadLocation.ID = Threadincoming_Detail.ThreadLocationID) [Description]
-                               from dbo.Threadincoming_Detail WITH (NOLOCK) 
-                               order by ThreadlocationID";
-                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
-                DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
-                textLOC2.Text = item.GetSelectedString();
             }
         }
     }
