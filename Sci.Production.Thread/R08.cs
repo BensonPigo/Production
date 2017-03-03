@@ -42,8 +42,6 @@ namespace Sci.Production.Thread
                       item = li.ThreadTypeID,
                       shade = tid.ThreadColorid,
                       ColorDesc = tc.Description,
-                      NofPcs = 0,
-                      TtlUsed = 0,
                       WofOneCone = li.Weight,
                       AxleWeight = li.AxleWeight,
                       NewCone = tid.NewCone,
