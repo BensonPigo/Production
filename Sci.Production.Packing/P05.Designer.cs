@@ -88,7 +88,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(850, 142);
+            this.masterpanel.Size = new System.Drawing.Size(892, 142);
             this.masterpanel.Title = "3";
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -117,7 +117,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 142);
-            this.detailpanel.Size = new System.Drawing.Size(850, 303);
+            this.detailpanel.Size = new System.Drawing.Size(892, 207);
             // 
             // gridicon
             // 
@@ -130,7 +130,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(850, 303);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 207);
             // 
             // detail2
             // 
@@ -146,16 +146,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(850, 483);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(850, 445);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 445);
-            this.detailbtm.Size = new System.Drawing.Size(850, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -456,7 +456,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P05";
-            this.Text = "P05. FOC Packing";
+            this.Text = "P05. Packing FOC";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
             this.WorkAlias = "PackingList";
