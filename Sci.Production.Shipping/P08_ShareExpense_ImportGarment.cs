@@ -213,6 +213,7 @@ select * from PL");
             this.grid1.ValidateControl();
             listControlBindingSource1.EndEdit();
             gridData = (DataTable)listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(gridData)) return;
             if (gridData.Rows.Count > 0)
             {
                 DataRow[] dr = gridData.Select("Selected = 1");
