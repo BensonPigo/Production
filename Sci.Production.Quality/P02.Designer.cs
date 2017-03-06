@@ -189,7 +189,7 @@
             this.seq1_box.Location = new System.Drawing.Point(342, 162);
             this.seq1_box.Name = "seq1_box";
             this.seq1_box.Size = new System.Drawing.Size(49, 21);
-            this.seq1_box.TabIndex = 30;
+            this.seq1_box.TabIndex = 1;
             // 
             // label14
             // 
@@ -207,7 +207,7 @@
             this.button1.Location = new System.Drawing.Point(529, 158);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(70, 27);
-            this.button1.TabIndex = 34;
+            this.button1.TabIndex = 3;
             this.button1.Text = "Find";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
@@ -242,7 +242,7 @@
             this.remark_box.Multiline = true;
             this.remark_box.Name = "remark_box";
             this.remark_box.Size = new System.Drawing.Size(178, 106);
-            this.remark_box.TabIndex = 1;
+            this.remark_box.TabIndex = 4;
             // 
             // seq2_box
             // 
@@ -253,7 +253,7 @@
             this.seq2_box.Location = new System.Drawing.Point(478, 162);
             this.seq2_box.Name = "seq2_box";
             this.seq2_box.Size = new System.Drawing.Size(33, 21);
-            this.seq2_box.TabIndex = 33;
+            this.seq2_box.TabIndex = 2;
             // 
             // brand_box
             // 
