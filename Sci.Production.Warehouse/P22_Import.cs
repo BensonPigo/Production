@@ -228,6 +228,10 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                     {
                         dr["qty"] = dr["balanceqty"];
                     }
+                    else if (Convert.ToBoolean(dr["selected"]) == false)
+                    {
+                        dr["qty"] = 0;
+                    }
                     dr.EndEdit();
                 }
             };
