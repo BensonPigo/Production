@@ -247,6 +247,20 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                         break;
                 }
             };
+
+            this.grid_ftyDetail.CellValueChanged += (s, e) =>
+            {
+                if (grid_ftyDetail.Columns[e.ColumnIndex].Name == col_chk.Name)
+                {
+                    DataRow dr = grid_ftyDetail.GetDataRow(e.RowIndex);
+                    if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
+                    {
+                        dr["qty"] = dr["balanceqty"];
+                    }
+                    dr.EndEdit();
+                }
+            };
+
             Helper.Controls.Grid.Generator(this.grid_ftyDetail)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("Frompoid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //0
