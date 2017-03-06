@@ -93,6 +93,9 @@ namespace Sci.Production.Cutting
             grid_setup();
             calAllPart();
             caltotalpart();
+
+            int newvalue = (int)numericBox_noBundle.Value;
+            distributeQty(newvalue);
         }
 
         public void noexist_Table_Query() //第一次產生時需全部重新撈值
