@@ -24,7 +24,6 @@ namespace Sci.Production.Cutting
         string f_code;
         int NoOfBunble;
 
-
         public P10_Generate(DataRow maindr,DataTable table_bundle_Detail,DataTable table_bundleallpart, DataTable table_bundleart, DataTable table_bundleqty)
         {
             table_bundleqty_c = table_bundleqty;
@@ -33,8 +32,7 @@ namespace Sci.Production.Cutting
 
             string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts from Bundle_Detail WITH (NOLOCK) Where 1=0"; //左下的Table
             DBProxy.Current.Select(null, pattern_cmd, out patternTb);
-
-
+            
             string cmd_art = "Select PatternCode,subprocessid from Bundle_detail_art WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_art, out artTb);
 
@@ -45,7 +43,7 @@ namespace Sci.Production.Cutting
             bundle_detail_artTb = table_bundleart;            
             qtyTb = table_bundleqty;
             detailTb2 = table_bundle_Detail.Copy();
-            table_bundle_Detail.Clear();
+            //table_bundle_Detail.Clear();
             detailTb = table_bundle_Detail;
 
             numericBox_noBundle.Value = (decimal)maindr["Qty"];
@@ -68,7 +66,6 @@ namespace Sci.Production.Cutting
                 displayBox_Cutoutput.Visible = false;
                 string size_cmd = string.Format("Select distinct sizecode,0  as Qty from order_Qty WITH (NOLOCK) where id='{0}'", maindr["Orderid"]);
                 DualResult dResult = DBProxy.Current.Select(null, size_cmd, out sizeTb);
-
             }
             else
             {
@@ -79,7 +76,6 @@ namespace Sci.Production.Cutting
                 {
                     size_cmd = string.Format("Select distinct sizecode,0  as Qty from order_Qty WITH (NOLOCK) where id='{0}'", maindr["Orderid"]);
                    dResult = DBProxy.Current.Select(null, size_cmd, out sizeTb);
-
                 }
             }
             displayBox_Cutoutput.Value = totalCutQty;
@@ -197,7 +193,7 @@ namespace Sci.Production.Cutting
         {
             //將Bundle_Detial_Art distinct PatternCode,
             DataTable tmp;
-            MyUtility.Tool.ProcessWithDatatable(detailTb,"PatternCode,PatternDesc,parts","Select distinct PatternCode,PatternDesc,Parts from #tmp",out tmp);
+            MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,PatternDesc,parts,subProcessid", "Select distinct PatternCode,PatternDesc,Parts,subProcessid from #tmp", out tmp);
             MyUtility.Tool.ProcessWithDatatable(bundle_detail_artTb, "PatternCode,SubProcessid", "Select distinct PatternCode,SubProcessid from #tmp", out artTb);
             foreach (DataRow dr in tmp.Rows)
             {
@@ -205,6 +201,7 @@ namespace Sci.Production.Cutting
                 ndr["PatternCode"] = dr["PatternCode"];
                 ndr["PatternDesc"] = dr["PatternDesc"];
                 ndr["Parts"] = dr["Parts"];
+                ndr["art"] = MyUtility.Check.Empty(dr["SubProcessid"]) ? "" : dr["SubProcessid"].ToString().Substring(0, dr["SubProcessid"].ToString().Length - 1);
                 string art ="";
                 DataRow[] dray = artTb.Select(string.Format("PatternCode = '{0}'", dr["PatternCode"]));
                 if (dray.Length!=0)
@@ -226,6 +223,26 @@ namespace Sci.Production.Cutting
                 if(adr.Length>0)
                 {
                     dr["annotation"] = adr[0]["annotation"];
+                }
+            }
+            if (allpartTb.Rows.Count == 0)
+            {
+                DataRow[] garmentar = garmentTb.Select(string.Format("{0} = '{1}'", f_code, maindatarow["PatternPanel"]));
+                foreach (DataRow dr in garmentar)
+                {
+                    bool f = false;
+                    foreach (DataRow drp in patternTb.Rows)
+                    {
+                        if (dr["patternCode"].ToString() == drp["patternCode"].ToString()) f = true;
+                    }
+                    if (!f)
+                    {
+                        DataRow ndr = allpartTb.NewRow();
+                        ndr["PatternCode"] = dr["PatternCode"];
+                        ndr["PatternDesc"] = dr["PatternDesc"];
+                        ndr["parts"] = Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
+                        allpartTb.Rows.Add(ndr);
+                    }
                 }
             }
         }
@@ -420,6 +437,7 @@ namespace Sci.Production.Cutting
 
         private void button2_Click(object sender, EventArgs e)
         {
+            detailTb.Clear();
             detailTb.Merge(detailTb2);
             this.Dispose();
             this.Close();

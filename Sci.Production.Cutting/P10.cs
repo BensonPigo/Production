@@ -472,6 +472,7 @@ namespace Sci.Production.Cutting
                 clear();
                 return;
             }
+            
             string newvalue = textBox_Cutref.Text;
             if (textBox_Cutref.OldValue.ToString() == newvalue) return;
             string cmd = string.Format(
@@ -548,6 +549,7 @@ namespace Sci.Production.Cutting
                 WorkOrder_Ukey = cutdr["Ukey"].ToString(); ;
                 CurrentMaintain.EndEdit();
             }
+            ((DataTable)this.detailgridbs.DataSource).Clear();
             
         }
 
