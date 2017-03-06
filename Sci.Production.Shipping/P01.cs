@@ -657,7 +657,8 @@ where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(Cur
                             txttpeuser4.DisplayBox2.Text = "";
                             txttpeuser5.DisplayBox1.Text = "";
                             txttpeuser5.DisplayBox2.Text = "";
-                            MyUtility.Msg.InfoBox(string.Format("SP#:{0} ShipModeList:<A/C>, it can't be created!",orderID));
+                            MyUtility.Msg.InfoBox(string.Format("SP#:{0} ShipModeList:<A/C>, it can't be created!", orderID));
+                            txtSpNo.Text = "";
                             return;
                         }
                         if (orderQtyData.Rows.Count == 1)
