@@ -66,49 +66,8 @@ namespace Sci.Production.Shipping
                         e.Cancel=true;// 不進入RowIndex判斷                            
                     }                    
                     // 檢查規則
-                    if (dr["type"].ToString().ToUpper()=="IMPORT")
-                    {
-                        string chkImp = string.Format(@"with ExportData 
-as 
-(select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
- '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
- from Export WITH (NOLOCK) 
- where 1 = 1 and Blno='{0}' ), FtyExportData 
-as 
-(select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
- '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
- from FtyExport WITH (NOLOCK) 
- where 1=0  and blno='{0}') select * from ExportData 
-union all 
-select * from FtyExportData", e.FormattedValue.ToString());
-                        DataTable dtImp ;
-                        DBProxy.Current.Select(null, chkImp, out dtImp);
-                        if (MyUtility.Check.Empty(dtImp)) return;
-                        if (dtImp.Rows.Count==0)
-                        {
-                            MyUtility.Msg.InfoBox("<BLNo:>" +e.FormattedValue.ToString()+" Not Found!!");                      
-                            drGrid.Delete();
-                            e.Cancel = true;
-                            return;
-                        }
-                        else
-                        {
-                            for (int i = 0; i < dtImp.Rows.Count; i++)
-                            {
-                                DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
-
-                                NewRow["Blno"] = dtImp.Rows[i]["Blno"];
-                                NewRow["Wkno"] = dtImp.Rows[i]["Wkno"];
-                                NewRow["ShipModeID"] = dtImp.Rows[i]["ShipModeID"];
-                                NewRow["GW"] = dtImp.Rows[i]["GW"];
-                                NewRow["CBM"] = dtImp.Rows[i]["CBM"];
-                                NewRow["Amount"] = dtImp.Rows[i]["Amount"];
-                                ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
-                            }
-                        }
-                    }
-                    //Export
-                    else
+                    // 檢查規則 SubTypeRule 是在APPEND新增的, 但是如果是批量輸入SubTypeRule就是空值所以也要判斷進去
+                    if (dr["SubType"].ToString().ToUpper() == "GARMENT" || (dr["SubType"].ToString().ToUpper() == "OTHER" && (drGrid["SubTypeRule"].ToString() == "Garment") || MyUtility.Check.Empty(drGrid["SubTypeRule"])))
                     {
                         //判斷資料是否存在
                         string chkExp = string.Format(@"
@@ -133,7 +92,7 @@ select * from PL
                         DataTable dtExp;
                         DBProxy.Current.Select(null, chkExp, out dtExp);
                         if (MyUtility.Check.Empty(dtExp)) return;
-                        if (dtExp.Rows.Count==0)
+                        if (dtExp.Rows.Count == 0)
                         {
                             MyUtility.Msg.InfoBox("<BLNo:>" + e.FormattedValue.ToString() + " Not Found!!");
                             drGrid.Delete();
@@ -151,6 +110,50 @@ select * from PL
                                 NewRow["GW"] = dtExp.Rows[i]["GW"];
                                 NewRow["CBM"] = dtExp.Rows[i]["CBM"];
                                 NewRow["Amount"] = dtExp.Rows[i]["Amount"];
+                                ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
+                            }
+                        }
+                        /////////////////////////
+                        
+                    }
+                    //Garment
+                    else
+                    {
+                        string chkImp = string.Format(@"with ExportData 
+as 
+(select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
+ from Export WITH (NOLOCK) 
+ where 1 = 1 and Blno='{0}' ), FtyExportData 
+as 
+(select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
+ from FtyExport WITH (NOLOCK) 
+ where 1=0  and blno='{0}') select * from ExportData 
+union all 
+select * from FtyExportData", e.FormattedValue.ToString());
+                        DataTable dtImp;
+                        DBProxy.Current.Select(null, chkImp, out dtImp);
+                        if (MyUtility.Check.Empty(dtImp)) return;
+                        if (dtImp.Rows.Count == 0)
+                        {
+                            MyUtility.Msg.InfoBox("<BLNo:>" + e.FormattedValue.ToString() + " Not Found!!");
+                            drGrid.Delete();
+                            e.Cancel = true;
+                            return;
+                        }
+                        else
+                        {
+                            for (int i = 0; i < dtImp.Rows.Count; i++)
+                            {
+                                DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
+
+                                NewRow["Blno"] = dtImp.Rows[i]["Blno"];
+                                NewRow["Wkno"] = dtImp.Rows[i]["Wkno"];
+                                NewRow["ShipModeID"] = dtImp.Rows[i]["ShipModeID"];
+                                NewRow["GW"] = dtImp.Rows[i]["GW"];
+                                NewRow["CBM"] = dtImp.Rows[i]["CBM"];
+                                NewRow["Amount"] = dtImp.Rows[i]["Amount"];
                                 ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
                             }
                         }
@@ -187,49 +190,8 @@ select * from PL
                 if (MyUtility.Check.Seek(cmd_type, out dr))
                 {
                     DataRow dr1;
-                    // 檢查規則
-                    if (dr["type"].ToString().ToUpper() == "IMPORT")
-                    {
-                        string chkImp = string.Format(@"with ExportData 
-as 
-(select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
- '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
- from Export WITH (NOLOCK) 
- where 1 = 1 and id='{0}' ), FtyExportData 
-as 
-(select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
- '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
- from FtyExport WITH (NOLOCK) 
- where 1=0  and id='{0}') select * from ExportData 
-union all 
-select * from FtyExportData ", e.FormattedValue.ToString());
-                        DataTable dtImp;
-                        DBProxy.Current.Select(null, chkImp, out dtImp);
-                        if (MyUtility.Check.Empty(dtImp)) return;
-                        if (dtImp.Rows.Count==0)
-                        {
-                            MyUtility.Msg.InfoBox("<WKNo:>" + e.FormattedValue.ToString() + " Not Found!!");
-                            drGrid.Delete();
-                            e.Cancel = true;
-                            return;
-                        }
-                        else
-                        {
-                            for (int i = 0; i < dtImp.Rows.Count; i++)
-                            {
-                               // DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
-
-                                drGrid["Blno"] = dtImp.Rows[i]["Blno"];
-                                drGrid["Wkno"] = dtImp.Rows[i]["Wkno"];
-                                drGrid["ShipModeID"] = dtImp.Rows[i]["ShipModeID"];
-                                drGrid["GW"] = dtImp.Rows[i]["GW"];
-                                drGrid["CBM"] = dtImp.Rows[i]["CBM"];
-                                drGrid["Amount"] = dtImp.Rows[i]["Amount"];
-                                //((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
-                            }
-                        }
-                    }
-                    else
+                    // 檢查規則 SubTypeRule 是在APPEND新增的, 但是如果是批量輸入SubTypeRule就是空值所以也要判斷進去
+                    if (dr["SubType"].ToString().ToUpper() == "GARMENT" || (dr["SubType"].ToString().ToUpper() == "OTHER" && (drGrid["SubTypeRule"].ToString() == "Garment" || MyUtility.Check.Empty(drGrid["SubTypeRule"]))))
                     {
                         string chkExp = string.Format(@"
 with GB 
@@ -253,7 +215,7 @@ select * from PL
                         DataTable dtExp;
                         DBProxy.Current.Select(null, chkExp, out dtExp);
                         if (MyUtility.Check.Empty(dtExp)) ;
-                        if (dtExp.Rows.Count==0)
+                        if (dtExp.Rows.Count == 0)
                         {
                             MyUtility.Msg.InfoBox("<WKNo:>" + e.FormattedValue.ToString() + " Not Found!!");
                             drGrid.Delete();
@@ -270,6 +232,48 @@ select * from PL
                                 drGrid["GW"] = dtExp.Rows[i]["GW"];
                                 drGrid["CBM"] = dtExp.Rows[i]["CBM"];
                                 drGrid["Amount"] = dtExp.Rows[i]["Amount"];
+                            }
+                        }
+                       
+                    }
+                    else
+                    {
+                        string chkImp = string.Format(@"with ExportData 
+as 
+(select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
+ from Export WITH (NOLOCK) 
+ where 1 = 1 and id='{0}' ), FtyExportData 
+as 
+(select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
+ '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
+ from FtyExport WITH (NOLOCK) 
+ where Type <> 3  and id='{0}') select * from ExportData 
+union all 
+select * from FtyExportData ", e.FormattedValue.ToString());
+                        DataTable dtImp;
+                        DBProxy.Current.Select(null, chkImp, out dtImp);
+                        if (MyUtility.Check.Empty(dtImp)) return;
+                        if (dtImp.Rows.Count == 0)
+                        {
+                            MyUtility.Msg.InfoBox("<WKNo:>" + e.FormattedValue.ToString() + " Not Found!!");
+                            drGrid.Delete();
+                            e.Cancel = true;
+                            return;
+                        }
+                        else
+                        {
+                            for (int i = 0; i < dtImp.Rows.Count; i++)
+                            {
+                                // DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
+
+                                drGrid["Blno"] = dtImp.Rows[i]["Blno"];
+                                drGrid["Wkno"] = dtImp.Rows[i]["Wkno"];
+                                drGrid["ShipModeID"] = dtImp.Rows[i]["ShipModeID"];
+                                drGrid["GW"] = dtImp.Rows[i]["GW"];
+                                drGrid["CBM"] = dtImp.Rows[i]["CBM"];
+                                drGrid["Amount"] = dtImp.Rows[i]["Amount"];
+                                //((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
                             }
                         }
                     }
@@ -339,7 +343,8 @@ where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetStrin
             }
             listControlBindingSource2.DataSource = SEData;
 
-            sqlCmd = string.Format("select ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK,isnull(sum(Amount),0) as Amount from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK", MyUtility.Convert.GetString(apData["ID"]));
+            sqlCmd = string.Format(@"select ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK,isnull(sum(Amount),0) as Amount ,'' as SubTypeRule
+from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK", MyUtility.Convert.GetString(apData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out SEGroupData);
             if (!result)
             {
@@ -362,25 +367,26 @@ where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetStrin
                 button6.Text = "Close";
                 return;
             }
-            DataRow dr;
-            if (MyUtility.Check.Seek(string.Format(@"select * from ShippingAP where id='{0}'", apData["ID"]),out dr))
-            {
-                if (!MyUtility.Check.Empty(dr))
-                {
-                    if (dr["SubType"].ToString().ToUpper()=="OTHER")
-                    {
-                        this.button1.Enabled = false;
-                    }
-                    else
-                    {
-                        this.button1.Enabled = true;
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
+            //DataRow dr;
+            //移除subType=Other, 無法append!
+            //if (MyUtility.Check.Seek(string.Format(@"select * from ShippingAP where id='{0}'", apData["ID"]),out dr))
+            //{
+            //    if (!MyUtility.Check.Empty(dr))
+            //    {
+            //        if (dr["SubType"].ToString().ToUpper()=="OTHER")
+            //        {
+            //            this.button1.Enabled = false;
+            //        }
+            //        else
+            //        {
+            //            this.button1.Enabled = true;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        return;
+            //    }
+            //}
             if (MyUtility.Check.Empty(SEGroupData))
             {
                 this.button2.Enabled = false;
@@ -404,7 +410,7 @@ where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetStrin
         //Import
         private void button4_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Convert.GetString(apData["SubType"]) == "OTHER")
+            if (MyUtility.Convert.GetString(apData["SubType"]) == "OTHER" && MyUtility.Convert.GetString(apData["Type"])=="EXPORT")
             {
 
                 DialogResult buttonResult = MyUtility.Msg.InfoBox("If you want to import \"Garment Data\" please click 'Yes'.\r\nIf you want to import \"Material Data\" please click 'No'.\r\nIf you don't want to import data please click 'Cancel'.", "Warning", MessageBoxButtons.YesNoCancel);
@@ -421,7 +427,7 @@ where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetStrin
                     }
                     else
                     {
-                        Sci.Production.Shipping.P08_ShareExpense_ImportMaterial callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportMaterial(SEGroupData,apData);
+                        Sci.Production.Shipping.P08_ShareExpense_ImportMaterial callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportMaterial(SEGroupData, apData);
                         callNextForm.ShowDialog(this);
                     }
                 }
@@ -801,16 +807,70 @@ CLOSE cursor_PackingList", MyUtility.Convert.GetString(apData["ID"]));
         //Append
         private void button1_Click(object sender, EventArgs e)
         {
-            DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
-            //DataRow newRow = SEGroupData.NewRow();
-            NewRow["Blno"]="";
-            NewRow["Wkno"] = "";
-            NewRow["ShipModeID"] = "";
-            NewRow["GW"] = 0;
-            NewRow["CBM"] = 0;
-            NewRow["Amount"] = 0;
-            ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
-            
+            DataRow dr;
+
+            if (MyUtility.Check.Seek(string.Format(@"select * from ShippingAP where id='{0}'", apData["ID"]), out dr))
+            {
+                if (dr["SubType"].ToString().ToUpper() == "OTHER" && MyUtility.Convert.GetString(apData["Type"]) == "EXPORT")
+                {
+                    DialogResult buttonResult = MyUtility.Msg.InfoBox("If you want to import \"Garment Data\" please click 'Yes'.\r\nIf you want to import \"Material Data\" please click 'No'.\r\nIf you don't want to import data please click 'Cancel'.", "Warning", MessageBoxButtons.YesNoCancel);
+                    if (buttonResult == System.Windows.Forms.DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        if (buttonResult == System.Windows.Forms.DialogResult.Yes)
+                        {                            
+                            DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
+                            NewRow["Blno"] = "";
+                            NewRow["Wkno"] = "";
+                            NewRow["ShipModeID"] = "";
+                            NewRow["GW"] = 0;
+                            NewRow["CBM"] = 0;
+                            NewRow["Amount"] = 0;
+                            NewRow["SubTypeRule"] = "Garment";
+                            ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
+                        }
+                        else
+                        {                            
+                            DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
+                            NewRow["Blno"] = "";
+                            NewRow["Wkno"] = "";
+                            NewRow["ShipModeID"] = "";
+                            NewRow["GW"] = 0;
+                            NewRow["CBM"] = 0;
+                            NewRow["Amount"] = 0;
+                            NewRow["SubTypeRule"] = "Material";
+                            ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
+                        }
+                    }                  
+                }                    
+                else if (dr["SubType"].ToString().ToUpper() == "OTHER" && MyUtility.Convert.GetString(apData["Type"]) == "IMPORT")
+                {
+                    DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
+                            NewRow["Blno"] = "";
+                            NewRow["Wkno"] = "";
+                            NewRow["ShipModeID"] = "";
+                            NewRow["GW"] = 0;
+                            NewRow["CBM"] = 0;
+                            NewRow["Amount"] = 0;
+                            NewRow["SubTypeRule"] = "Material";
+                            ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
+                }
+                else
+                {
+                    DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
+                    NewRow["Blno"] = "";
+                    NewRow["Wkno"] = "";
+                    NewRow["ShipModeID"] = "";
+                    NewRow["GW"] = 0;
+                    NewRow["CBM"] = 0;
+                    NewRow["Amount"] = 0;
+                    ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
+                }
+            }
+
 
         }
         //Delete All
