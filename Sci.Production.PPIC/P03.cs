@@ -30,13 +30,13 @@ namespace Sci.Production.PPIC
             where sp.ReceiveDate is null
             and sp.MDivisionID ='{0}' ", Sci.Env.User.Keyword);
             DBProxy.Current.Select("", factoryCmd.ToString(), out facData);
+            facData.Rows.Add(new string[] { "" });
             facData.DefaultView.Sort = "factoryid";
             this.comboBox_Factory.DataSource = facData;
             this.comboBox_Factory.ValueMember = "factoryid";
             this.EditMode = true;
-            //this.comboBox_Factory.DisplayMember = "factoryid";
             this.comboBox_Factory.SelectedIndex = 0;
-            //this.comboBox_Factory.Text = Sci.Env.User.Factory;
+           
          
         }
 
@@ -162,7 +162,8 @@ and sp.MDivisionID = '{0}' ", Sci.Env.User.Keyword));
          
             if (query == 1)
             {
-                if (!this.comboBox_Factory.Text.ToString().Empty())
+                if (f == "") { }
+                if (!this.comboBox_Factory.Text.ToString().Empty()&& f !="")
                 {
                     sqlCmd.Append(string.Format(" and sp.FactoryID = '{0}'", f));
                 }
