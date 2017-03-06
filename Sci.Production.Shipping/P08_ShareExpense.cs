@@ -331,7 +331,7 @@ select * from FtyExportData ", e.FormattedValue.ToString());
             numericBox4.Value = MyUtility.Convert.GetInt(queryData["RecCount"]);
 
             sqlCmd = string.Format(@"select sh.*,an.Name as AccountName,
-case when sh.ShareBase = 'G' then 'G.W.' when sh.ShareBase = 'C' then 'CBM' else ' Number od Deliver Sheets' end as ShareRule 
+case when sh.ShareBase = 'G' then 'G.W.' when sh.ShareBase = 'C' then 'CBM' else ' Number of Deliver Sheets' end as ShareRule 
 from ShareExpense sh WITH (NOLOCK) 
 left join [FinanceEN].dbo.AccountNo an on an.ID = sh.AccountID
 where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetString(apData["ID"]));
