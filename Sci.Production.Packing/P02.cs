@@ -397,7 +397,9 @@ namespace Sci.Production.Packing
             {
                 minCtnQty = MyUtility.GetValue.Lookup(string.Format("select isnull(min(ShipQty/QtyPerCTN),0) from PackingGuide_Detail WITH (NOLOCK) where Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
             }
-            string sqlCmd = string.Format(@"select pd.Article,pd.Color,pd.SizeCode,pd.QtyPerCTN,pd.ShipQty,isnull((pd.ShipQty/pd.QtyPerCTN),0) as CtnQty,o.CustCDID,o.StyleID,o.CustPONo,o.Customize1,c.Alias,oq.BuyerDelivery
+            string sqlCmd = string.Format(@"select pd.Article,pd.Color,pd.SizeCode,pd.QtyPerCTN,pd.ShipQty,
+IIF(pd.ShipQty=0 or pd.QtyPerCTN=0,0,pd.ShipQty/pd.QtyPerCTN)as CtnQty,
+o.CustCDID,o.StyleID,o.CustPONo,o.Customize1,c.Alias,oq.BuyerDelivery
 from PackingGuide p WITH (NOLOCK) 
 left join PackingGuide_Detail pd WITH (NOLOCK) on p.Id = pd.Id
 left join Orders o WITH (NOLOCK) on o.ID = p.OrderID
@@ -598,7 +600,21 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 }
             }
-            worksheet.Cells[row, 2] = MyUtility.Convert.GetString(CurrentMaintain["SpecialInstruction"]);
+            // 判斷第一碼為"=" 就塞space ,避免excel 誤認=是計算函數
+            if (MyUtility.Check.Empty( CurrentMaintain["SpecialInstruction"]))
+            {
+                worksheet.Cells[row, 2] = MyUtility.Convert.GetString(CurrentMaintain["SpecialInstruction"]);
+            }
+            else if (CurrentMaintain["SpecialInstruction"].ToString().Substring(0, 1) == "=")
+            {
+                worksheet.Cells[row, 2] = " " + MyUtility.Convert.GetString(CurrentMaintain["SpecialInstruction"]);
+            }
+            else
+            {
+                worksheet.Cells[row, 2] = MyUtility.Convert.GetString(CurrentMaintain["SpecialInstruction"]);
+            }
+            
+
 
             //Carton Dimension:
             StringBuilder ctnDimension = new StringBuilder();
@@ -812,7 +828,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
-                                CurrentMaintain["OrderShipmodeSeq"] = "";
+                                CurrentMaintain["OrderShipmodeSeq"] =   "";
                                 CurrentMaintain["ShipModeID"] = "";
                                 numericBox4.Value = 0;
                             }
