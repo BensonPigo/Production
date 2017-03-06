@@ -90,7 +90,7 @@ where Type = 3 ");
             else
             {
                 #region Export, FtyExport(Type != 3)
-                if (MyUtility.Convert.GetString(apData["SubType"]) == "MATERIAL" || MyUtility.Convert.GetString(apData["SubType"]) == "Other")
+                if (MyUtility.Convert.GetString(apData["SubType"]) == "MATERIAL" || MyUtility.Convert.GetString(apData["SubType"]).ToUpper() == "OTHER")
                 {
                     sqlCmd.Append(@"with ExportData 
 as 
@@ -133,7 +133,7 @@ as
  from Export WITH (NOLOCK) where 1 = 0), ");
                 }
 
-                if (MyUtility.Convert.GetString(apData["SubType"]) == "SISTER FACTORY TRANSFER" || MyUtility.Convert.GetString(apData["SubType"]) == "Other")
+                if (MyUtility.Convert.GetString(apData["SubType"]) == "SISTER FACTORY TRANSFER" || MyUtility.Convert.GetString(apData["SubType"]).ToUpper() == "OTHER")
                 {
                     sqlCmd.Append(@"FtyExportData 
 as 

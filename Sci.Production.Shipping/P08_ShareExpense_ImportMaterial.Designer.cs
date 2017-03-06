@@ -28,9 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.label4 = new Sci.Win.UI.Label();
+            this.textBox3 = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.textBox2 = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.button1 = new Sci.Win.UI.Button();
             this.textBox1 = new Sci.Win.UI.TextBox();
@@ -41,11 +46,7 @@
             this.button2 = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
-            this.label3 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.textBox3 = new Sci.Win.UI.TextBox();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -85,6 +86,42 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(755, 73);
             this.panel3.TabIndex = 2;
+            // 
+            // label4
+            // 
+            this.label4.Lines = 0;
+            this.label4.Location = new System.Drawing.Point(293, 43);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(52, 23);
+            this.label4.TabIndex = 21;
+            this.label4.Text = "WK No.";
+            // 
+            // textBox3
+            // 
+            this.textBox3.BackColor = System.Drawing.Color.White;
+            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox3.Location = new System.Drawing.Point(348, 43);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(120, 23);
+            this.textBox3.TabIndex = 20;
+            // 
+            // label3
+            // 
+            this.label3.Lines = 0;
+            this.label3.Location = new System.Drawing.Point(4, 43);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(52, 23);
+            this.label3.TabIndex = 19;
+            this.label3.Text = "B/L No.";
+            // 
+            // textBox2
+            // 
+            this.textBox2.BackColor = System.Drawing.Color.White;
+            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox2.Location = new System.Drawing.Point(59, 43);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(185, 23);
+            this.textBox2.TabIndex = 18;
             // 
             // label2
             // 
@@ -175,16 +212,14 @@
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
             this.grid1.AllowUserToResizeRows = false;
-            this.grid1.AutoGenerateColumns = false;
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid1.DataSource = this.listControlBindingSource1;
             this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
@@ -196,42 +231,6 @@
             this.grid1.Size = new System.Drawing.Size(755, 403);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            // 
-            // label3
-            // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(4, 43);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(52, 23);
-            this.label3.TabIndex = 19;
-            this.label3.Text = "B/L No.";
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(59, 43);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(185, 23);
-            this.textBox2.TabIndex = 18;
-            // 
-            // label4
-            // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(293, 43);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(52, 23);
-            this.label4.TabIndex = 21;
-            this.label4.Text = "WK No.";
-            // 
-            // textBox3
-            // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(348, 43);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(120, 23);
-            this.textBox3.TabIndex = 20;
             // 
             // P08_ShareExpense_ImportMaterial
             // 
@@ -245,7 +244,7 @@
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P08_ShareExpense_ImportMaterial";
-            this.Text = "Import - Garment";
+            this.Text = "Import - Material";
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
