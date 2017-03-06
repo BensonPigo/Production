@@ -71,7 +71,7 @@ namespace Sci.Production.Quality
             Brand = txtBrand.Text;
             Ref = txtRefno.Text.ToString();
             Category = comboCategory.Text;
-            Supp = txtsupplier.Text;
+            Supp = txtsupplier.TextBox1.Text;
             Over = comboOverallResSta.SelectedItem.ToString();
 
             lis = new List<SqlParameter>();
@@ -86,39 +86,47 @@ namespace Sci.Production.Quality
                 RWheres.Add("R.WhseArrival between @ArrDate1 and @ArrDate2");
                 lis.Add(new SqlParameter("@ArrDate1", DateArrStart));
                 lis.Add(new SqlParameter("@ArrDate2", DateArrEnd));
-            } if (!this.DateSCIDelivery.Value1.Empty() && !this.DateSCIDelivery.Value2.Empty())
+            } 
+            if (!this.DateSCIDelivery.Value1.Empty() && !this.DateSCIDelivery.Value2.Empty())
             {
                 OWheres.Add("O.SciDelivery between @SCIDate1 and @SCIDate2");
                 lis.Add(new SqlParameter("@SCIDate1", DateSCIStart));
                 lis.Add(new SqlParameter("@SCIDate2", DateSCIEnd));
-            } if (!this.DateSewInLine.Value1.Empty() && !this.DateSewInLine.Value2.Empty())
+            } 
+            if (!this.DateSewInLine.Value1.Empty() && !this.DateSewInLine.Value2.Empty())
             {
                 OWheres.Add("O.SewInLine between @SewDate1 and @SewDate2");
                 lis.Add(new SqlParameter("@SewDate1", DateSewStart));
                 lis.Add(new SqlParameter("@SewDate2", DateSewEnd));
-            } if (!this.DateEstCutting.Value1.Empty() && !this.DateEstCutting.Value2.Empty())
+            } 
+            if (!this.DateEstCutting.Value1.Empty() && !this.DateEstCutting.Value2.Empty())
             {
                 OWheres.Add("O.CutInLine between @Est1 and @Est2");
                 lis.Add(new SqlParameter("@Est1", DateEstStart));
                 lis.Add(new SqlParameter("@Est2", DateEstEnd));
-            } if (!this.txtSPStart.Text.Empty())
+            } 
+            if (!this.txtSPStart.Text.Empty())
             {
                 OWheres.Add("O.Id between @sp1 and @sp2");
                 lis.Add(new SqlParameter("@sp1", spStrat));
                 lis.Add(new SqlParameter("@sp2", spEnd));
-            } if (!this.txtSeason.Text.Empty())
+            } 
+            if (!this.txtSeason.Text.Empty())
             {
                 OWheres.Add("O.SeasonID = @Sea");
                 lis.Add(new SqlParameter("@Sea", Sea));
-            } if (!this.txtBrand.Text.Empty())
+            } 
+            if (!this.txtBrand.Text.Empty())
             {
                 OWheres.Add("O.BrandID = @Brand");
                 lis.Add(new SqlParameter("@Brand", Brand));
-            } if (!this.txtRefno.Text.Empty())
+            } 
+            if (!this.txtRefno.Text.Empty())
             {
                 sqlWheres.Add("PS.Refno = @Ref");
                 lis.Add(new SqlParameter("@Ref", Ref));
-            } if (!this.comboCategory.SelectedItem.ToString().Empty())
+            } 
+            if (!this.comboCategory.SelectedItem.ToString().Empty())
             {
                 OWheres.Add("O.Category = @Cate");
                 if (Category == "Bulk")
@@ -133,24 +141,29 @@ namespace Sci.Production.Quality
                 {
                     lis.Add(new SqlParameter("@Cate", "M"));
                 }  
-            } if (!this.txtsupplier.Text.Empty())
+            }
+            if (!this.txtsupplier.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("P.SuppId = @Supp");
                 lis.Add(new SqlParameter("@Supp", Supp));
 
-            } if (this.comboOverallResSta.Text == "Pass")
+            } 
+            if (this.comboOverallResSta.Text == "Pass")
             {
                 sqlWheres.Add("dbo.GetFirResult(A.id) = 'Pass'");
 
-            } if (this.comboOverallResSta.Text == "Fail")
+            } 
+            if (this.comboOverallResSta.Text == "Fail")
             {
                 sqlWheres.Add("dbo.GetFirResult(A.id) = 'Faill'");
 
-            } if (this.comboOverallResSta.Text == "Empty Result")
+            } 
+            if (this.comboOverallResSta.Text == "Empty Result")
             {
                 sqlWheres.Add("dbo.GetFirResult(A.id) = ' '");
 
-            } if (this.comboOverallResSta.Text == "N/A inspection & test")
+            } 
+            if (this.comboOverallResSta.Text == "N/A inspection & test")
             {
                 sqlWheres.Add("dbo.GetFirResult(A.id) = 'None'");
 
@@ -164,11 +177,11 @@ namespace Sci.Production.Quality
             {
                 sqlWhere = " where " + sqlWhere;
             }
-            if (!RWheres.Empty())
+            if (RWheres.Count!=0)
             {
                 RWhere = " where " + RWhere;
             }
-            if (!OWheres.Empty())
+            if (OWheres.Count!=0)
             {
                 OWhere = " where " + OWhere;
             }
@@ -223,12 +236,12 @@ namespace Sci.Production.Quality
                 return false;
             }
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }
+            //saveDialog.ShowDialog();
+            //string outpath = saveDialog.FileName;
+            //if (outpath.Empty())
+            //{
+            //    return false;
+            //}
 
             Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R02.xltx");
 
@@ -252,9 +265,9 @@ namespace Sci.Production.Quality
             xl.dicDatas.Add("##supp", Supp);
             xl.dicDatas.Add("##Over", Over);
             xl.dicDatas.Add("##body", dt);
-            xl.Save(outpath, false);
+            xl.Save("", false);
             return true;
-            
+
         }
     }
 }
