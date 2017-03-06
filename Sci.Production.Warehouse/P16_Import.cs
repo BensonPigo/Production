@@ -168,6 +168,8 @@ Where a.id = '{0}' and c.lock = 0  and c.mdivisionid='{1}' ", dr_master["request
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         dr["qty"] = dr["balance"];
+                    }else if (Convert.ToBoolean(dr["selected"]) == false){
+                        dr["qty"] = 0;
                     }
                     dr.EndEdit();
                     this.sum_checkedqty();
