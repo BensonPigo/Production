@@ -419,12 +419,11 @@ namespace Sci.Production.Cutting
             foreach (var item in res2)
             {
                 ups.Append(string.Format(@"
-update b
- set b.PrintDate = GETDATE()
-from Bundle b
-inner join Bundle_Detail bd on b.id=bd.ID
-where bd.BundleNo = '{0}'
-and b.Orderid = '{1}'"
+                            update b
+                            set b.PrintDate = GETDATE()
+                            from Bundle b
+                            inner join Bundle_Detail bd on b.id=bd.ID
+                            where bd.BundleNo = '{1}'"
                           , item.SP, item.Barcode));
             }
 
