@@ -308,11 +308,12 @@ namespace Sci.Production.Cutting
                 nRow = nRow + 3; //Size
                 string str_PIVOT = "";
                 nSizeColumn = 4;
+                DataRow[] FabricComboTbsia = FabricComboTb.Select(string.Format("Cutplanid = '{0}'", Cutplanid));
                 foreach (DataRow dr in SizeCodeArry)
                 {
                     str_PIVOT = str_PIVOT + string.Format("[{0}],", dr["SizeCode"].ToString());
                     //寫入Size
-                    for (int i = 0; i < FabricComboTb.Rows.Count; i++)
+                    for (int i = 0; i < FabricComboTbsia.Length; i++)
                     {
                         worksheet.Cells[nRow+(RowRange*i), nSizeColumn] = dr["SizeCode"].ToString();
                     }
@@ -338,7 +339,8 @@ Cutplanid, str_PIVOT);
                 nRow = nRow + 1;
                 bool lfirstComb = true;
                 string fabColor = "";
-                foreach (DataRow FabricComboDr in FabricComboTb.Rows)
+                DataRow[] FabricComboTbsi = FabricComboTb.Select(string.Format("Cutplanid = '{0}'", Cutplanid));
+                foreach (DataRow FabricComboDr in FabricComboTbsi)
                 {
                     DataRow[] CutQtyArray = CutQtyTb.Select(string.Format("FabricCombo = '{0}'", FabricComboDr["FabricCombo"]));
                     if (CutQtyArray.Length > 0)
