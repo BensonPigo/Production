@@ -6,8 +6,10 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Thread
 {
@@ -145,18 +147,37 @@ namespace Sci.Production.Thread
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }
 
-            Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Thread_R20.xltx");
-            xl.dicDatas.Add("##FAC", dt);
-            xl.Save(outpath, false);
+
+            // 顯示筆數於PrintForm上Count欄位
+            SetCount(dt.Rows.Count);
+
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Thread_R20.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(dt, "", "Thread_R20.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
+
+            this.ShowWaitMessage("Excel Processing...");
+            Excel.Worksheet worksheet = objApp.Sheets[1];
+            worksheet.Columns.AutoFit();
+            worksheet.Rows.AutoFit();
+            objApp.Visible = true;
+
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+
+            this.HideWaitMessage();
             return true;
+            //var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
+            //saveDialog.ShowDialog();
+            //string outpath = saveDialog.FileName;
+            //if (outpath.Empty())
+            //{
+            //    return false;
+            //}
+
+            //Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Thread_R20.xltx");
+            //xl.dicDatas.Add("##FAC", dt);
+            //xl.Save(outpath, false);
+            //return true;
         }
     }
     
