@@ -182,6 +182,12 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             {
                 if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
+                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
+                    {
+                        dr["qty"] = dr["balance"];
+                    }
+                    dr.EndEdit();
                     this.sum_checkedqty();
                 }
             };
