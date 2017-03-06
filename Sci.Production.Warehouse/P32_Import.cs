@@ -187,6 +187,10 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
                     {
                         dr["qty"] = dr["balance"];
                     }
+                    else if (Convert.ToBoolean(dr["selected"]) == false)
+                    {
+                        dr["qty"] = 0;
+                    }
                     dr.EndEdit();
                     this.sum_checkedqty();
                 }
