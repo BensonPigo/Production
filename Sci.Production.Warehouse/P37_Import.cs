@@ -196,6 +196,10 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                     {
                         dr["qty"] = dr["balance"];
                     }
+                    else if (Convert.ToBoolean(dr["selected"]) == false)
+                    {
+                        dr["qty"] = 0;
+                    }
                     dr.EndEdit();
                 }
             };
