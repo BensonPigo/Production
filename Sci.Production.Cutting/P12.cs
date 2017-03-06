@@ -44,9 +44,7 @@ namespace Sci.Production.Cutting
         string Extend;
         DualResult result;
         DataTable dtt;
-
-
-
+        
         void GridSetup()
         {
             this.grid1.IsEditingReadOnly = false;
@@ -74,9 +72,7 @@ namespace Sci.Production.Cutting
                 ;
 
         }
-
-
-
+        
         private void button1_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Data processing, please wait...");
@@ -339,9 +335,7 @@ namespace Sci.Production.Cutting
             
             this.HideWaitMessage();
         }
-
-
-
+        
         private void button2_Click(object sender, EventArgs e)
         {
             #region report
@@ -412,6 +406,32 @@ namespace Sci.Production.Cutting
 
             //開啟 report view
             var frm = new Sci.Win.Subs.ReportView(report);
+            //有按才更新列印日期printdate。
+
+            var res2 = dtt.AsEnumerable()
+                .Where(row => (bool)row["selected"])
+            .Select(row1 => new P12_PrintData()
+            {
+                SP = row1["SP"].ToString(),
+                Barcode = row1["Bundle"].ToString()
+            }).ToList();
+            StringBuilder ups = new StringBuilder();
+            foreach (var item in res2)
+            {
+                ups.Append(string.Format(@"
+update b
+ set b.PrintDate = GETDATE()
+from Bundle b
+inner join Bundle_Detail bd on b.id=bd.ID
+where bd.BundleNo = '{0}'
+and b.Orderid = '{1}'"
+                          , item.SP, item.Barcode));
+            }
+
+            frm.viewer.Print += (s, eArgs) =>
+            {
+                var result3 = DBProxy.Current.Execute(null, ups.ToString());
+            };
             if(MdiParent!=null)  frm.MdiParent = MdiParent;
             frm.Show();
 
@@ -456,8 +476,6 @@ namespace Sci.Production.Cutting
         private void button4_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-
+        }        
     }
 }
