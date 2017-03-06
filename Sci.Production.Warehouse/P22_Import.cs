@@ -218,6 +218,20 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 }
             };
             #endregion Location 右鍵開窗
+
+            this.grid_ftyDetail.CellValueChanged += (s, e) =>
+            {
+                if (grid_ftyDetail.Columns[e.ColumnIndex].Name == col_chk.Name)
+                {
+                    DataRow dr = grid_ftyDetail.GetDataRow(e.RowIndex);
+                    if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
+                    {
+                        dr["qty"] = dr["balanceqty"];
+                    }
+                    dr.EndEdit();
+                }
+            };
+
             Helper.Controls.Grid.Generator(this.grid_ftyDetail)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("Fromroll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
