@@ -291,8 +291,7 @@ namespace Sci.Production.Planning
                 ShowErr(dtresult);
                 return dtresult;
             }
-            if (dt3fty.Rows.Count == 0)
-            { return true; }
+            if (dt3fty == null || dt3fty.Rows.Count == 0) { return true; }
 
             dt2Factory = dt3fty;
             dic.Clear();
@@ -348,10 +347,10 @@ namespace Sci.Production.Planning
             }
             dtresult = DBProxy.Current.Select("", cmd2, out dt2);
 
-            if (!dtresult)
+            if (dt2 == null )
             {
-                ShowErr(dtresult);
-                return dtresult;
+                //ShowErr(dtresult);
+                return true;
             }
 
 
@@ -1165,11 +1164,13 @@ namespace Sci.Production.Planning
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
-            //if (dt2 == null || dt2.Rows.Count == 0)
+            //if (dt2 == null)
             //{
             //    MyUtility.Msg.ErrorBox("Data not found");
             //    return false;
             //}
+            if (dt3fty == null || dt3fty.Rows.Count == 0)
+            { MyUtility.Msg.ErrorBox("Data not found"); return false; }
             if (raProductionStatus.Checked == true)
             {
                 //var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
