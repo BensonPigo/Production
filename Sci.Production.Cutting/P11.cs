@@ -1068,6 +1068,14 @@ namespace Sci.Production.Cutting
                 MyUtility.Msg.InfoBox("Please select data first !!");
                 return;
             }
+            #region 判斷Pattern(Cutpart_grid)的Artwork  不可為空
+            DataRow[] findr = patternTb.Select("PatternCode<>'ALLPARTS' and (art='' or art is null)", "");
+            if (findr.Length > 0)
+            {
+                MyUtility.Msg.WarningBox("<Art> can not be empty!");
+                return;
+            }
+            #endregion 
             DataTable Insert_Bundle = new DataTable();
             //Insert_Bundle,Insert_Bundle_Detail,Insert_Bundle_Detail_Art,Insert_Bundle_Detail_AllPart,Insert_Bundle_Detail_Qty
             #region Insert Table 
