@@ -153,14 +153,13 @@ namespace Sci.Production.Thread
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
-
-            if (printData.Rows.Count <= 0)
+            if (printData == null || printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+            // 顯示筆數於PrintForm上Count欄位
+            SetCount(printData.Rows.Count);
 
             Excel.Application objApp;
             if (radioButton1.Checked == true)
