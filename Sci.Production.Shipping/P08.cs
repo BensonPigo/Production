@@ -574,7 +574,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                     ChangeCombo2DataSource();
                 }
                 CurrentMaintain["SubType"] = "";
-                comboBox2.SelectedIndex = -1;
+                comboBox2.SelectedIndex = 0;
             }
         }
 
