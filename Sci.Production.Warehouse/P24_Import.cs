@@ -136,6 +136,20 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I' and 
 
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
+
+            this.grid1.CellValueChanged += (s, e) =>
+            {
+                if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                {
+                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
+                    {
+                        dr["qty"] = dr["balance"];
+                    }
+                    dr.EndEdit();
+                }
+            };
+
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("frompoid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14)) //1
