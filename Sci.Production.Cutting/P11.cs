@@ -859,6 +859,7 @@ namespace Sci.Production.Cutting
                     ndr2["iden"] = chdr["iden"];
                     ndr2["Parts"] = chdr["Parts"]; 
                     ndr2["art"] = art;
+                    ndr2["art"] = "EMB";
                     ndr2["poid"] = chdr["poid"];
                     ndr2["Cutref"] = chdr["cutref"];
                     patternTb.Rows.Add(ndr2);

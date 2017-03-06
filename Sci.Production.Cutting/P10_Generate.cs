@@ -702,7 +702,8 @@ namespace Sci.Production.Cutting
                     ndr2["PatternCode"] = chdr["PatternCode"];
                     ndr2["PatternDesc"] = chdr["PatternDesc"];
                     ndr2["Parts"] = chdr["Parts"]; ;
-                    ndr2["art"] = art;
+                    //ndr2["art"] = art;
+                    ndr2["art"] = "EMB";
                     patternTb.Rows.Add(ndr2);
                     chdr.Delete(); //刪除
                 }
