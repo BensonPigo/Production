@@ -164,6 +164,12 @@ Where a.id = '{0}' and c.lock = 0  and c.mdivisionid='{1}' ", dr_master["request
             {
                 if (grid2.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
+                    DataRow dr = grid2.GetDataRow(e.RowIndex);
+                    if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
+                    {
+                        dr["qty"] = dr["balance"];
+                    }
+                    dr.EndEdit();
                     this.sum_checkedqty();
                 }
             };
