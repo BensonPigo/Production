@@ -100,6 +100,10 @@ and mdivisionid = '{1}' ", sp_b, Sci.Env.User.Keyword);
                     {
                         dr["qty"] = dr["balance"];
                     }
+                    else if (Convert.ToBoolean(dr["selected"]) == false)
+                    {
+                        dr["qty"] = 0;
+                    }
                     dr.EndEdit();
                 }
             };
