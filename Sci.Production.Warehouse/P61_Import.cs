@@ -102,6 +102,10 @@ Where c.OrderID = '{0}' and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid
                     {
                         dr["qty"] = dr["balance"];
                     }
+                    else if (Convert.ToBoolean(dr["selected"]) == false)
+                    {
+                        dr["qty"] = 0;
+                    }
                     dr.EndEdit();
                     this.sum_checkedqty();
                 }
