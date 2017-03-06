@@ -123,6 +123,10 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, txtSeq1.seq
                     {
                         dr["qty"] = dr["balance"];
                     }
+                    else if (Convert.ToBoolean(dr["selected"]) == false)
+                    {
+                        dr["qty"] = 0;
+                    }
                     dr.EndEdit();
                     this.sum_checkedqty();
                 }
