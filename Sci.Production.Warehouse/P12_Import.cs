@@ -91,6 +91,19 @@ and mdivisionid = '{1}' ", sp_b, Sci.Env.User.Keyword);
                 }
             };
 
+            this.grid1.CellValueChanged += (s, e) =>
+            {
+                if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                {
+                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    if (Convert.ToBoolean(dr["Selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
+                    {
+                        dr["qty"] = dr["balance"];
+                    }
+                    dr.EndEdit();
+                }
+            };
+
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
