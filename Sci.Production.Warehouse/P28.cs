@@ -160,7 +160,28 @@ iseditingreadonly: true)
             #region -- Grid2 設定 --
             this.grid2.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid2.DataSource = listControlBindingSource2;
-            
+
+            this.grid2.CellValueChanged += (s, e) =>
+            {
+                if(grid2.Columns[e.ColumnIndex].Name == col_chk2.Name){
+                    DataRow dr = grid2.GetDataRow(e.RowIndex);
+                    if(Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0){
+                        dr["qty"] = dr["balanceQty"];
+                    }
+                    else if (Convert.ToBoolean(dr["selected"]) == false)
+                    {
+                        dr["qty"] = 0;
+                    }
+                    dr.EndEdit();
+
+                    DataRow thisRow = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
+                    DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
+                    DataRow currentrow = grid2.GetDataRow(grid2.GetSelectedRowIndex());
+                    currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
+                    currentrow.EndEdit();
+                }
+            };
+
             Helper.Controls.Grid.Generator(this.grid2)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk2)
                  .Text("fromroll", header: "Roll#", width: Widths.AnsiChars(3), iseditingreadonly: true)
