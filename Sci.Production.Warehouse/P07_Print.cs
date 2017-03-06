@@ -40,8 +40,8 @@ namespace Sci.Production.Warehouse
         {
             DataRow row = this.CurrentDataRow;
             string id = row["ID"].ToString();
-            string Date1 = ((DateTime)MyUtility.Convert.GetDate(row["PackingReceive"])).ToShortDateString();
-            string Date2 = ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToShortDateString();
+            string Date1 = (MyUtility.Check.Empty(row["PackingReceive"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(row["PackingReceive"])).ToShortDateString();
+            string Date2 = (MyUtility.Check.Empty(row["WhseArrival"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToShortDateString();
             string ETA = ((DateTime)MyUtility.Convert.GetDate(row["ETA"])).ToShortDateString();
             string Invoice = row["invno"].ToString();
             string Wk = row["exportid"].ToString();
