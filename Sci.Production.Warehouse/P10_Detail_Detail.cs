@@ -101,6 +101,10 @@ and ltrim(a.seq1) between '01' and '99'
                     {
                         dr["qty"] = dr["balanceqty"];
                     }
+                    else if (Convert.ToBoolean(dr["selected"]) == false)
+                    {
+                        dr["qty"] = 0;
+                    }
                     dr.EndEdit();
                     this.sum_checkedqty();
                 }
