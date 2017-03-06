@@ -17,17 +17,35 @@ namespace Sci.Production.PPIC
         Ict.Win.DataGridViewGeneratorTextColumnSettings ftyRemark = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private bool needSave = false, alreadySave = false;
         private DataTable gridData;
+        string f; int query;
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
+            DataTable facData = null;
+            string factoryCmd = string.Format(@"
+            select distinct sp.FactoryID
+            from Style_ProductionKits sp WITH (NOLOCK) 
+            left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
+            where sp.ReceiveDate is null
+            and sp.MDivisionID ='{0}' ", Sci.Env.User.Keyword);
+            DBProxy.Current.Select("", factoryCmd.ToString(), out facData);
+            facData.DefaultView.Sort = "factoryid";
+            this.comboBox_Factory.DataSource = facData;
+            this.comboBox_Factory.ValueMember = "factoryid";
+            this.EditMode = true;
+            //this.comboBox_Factory.DisplayMember = "factoryid";
+            this.comboBox_Factory.SelectedIndex = 0;
+            //this.comboBox_Factory.Text = Sci.Env.User.Factory;
+         
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+           
             QueryData();
-
+           
             ftyRemark.CharacterCasing = CharacterCasing.Normal;
             rcvDate.CellValidating += (s, e) =>
             {
@@ -70,6 +88,7 @@ namespace Sci.Production.PPIC
         {
             this.grid1.ValidateControl();
             listControlBindingSource1.EndEdit();
+            f = comboBox_Factory.SelectedValue.ToString();
             foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
             {
                 if (dr.RowState == DataRowState.Modified)
@@ -91,6 +110,7 @@ namespace Sci.Production.PPIC
                 }
                 needSave = false;
             }
+             query = 1;
             QueryData();
             this.grid1.AutoResizeColumn(0);
             this.grid1.AutoResizeColumn(1);
@@ -111,6 +131,7 @@ namespace Sci.Production.PPIC
 
         private void QueryData()
         {
+            
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"select sp.*,s.ID as StyleID,s.SeasonID,
 (select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'ProductionKits' and ID = sp.DOC) as ReasonName,
@@ -123,37 +144,47 @@ from Style_ProductionKits sp WITH (NOLOCK)
 left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
 where sp.ReceiveDate is null and sp.SendDate is null
 and sp.MDivisionID = '{0}' ", Sci.Env.User.Keyword));
+            
             if (!MyUtility.Check.Empty(textBox1.Text))
             {
-                sqlCmd.Append(string.Format(" and s.ID = '{0}'",textBox1.Text));
+               sqlCmd.Append(string.Format(" and s.ID = '{0}'",textBox1.Text));   
             }
 
             if (!MyUtility.Check.Empty(textBox2.Text))
             {
-                sqlCmd.Append(string.Format(" and s.SeasonID = '{0}'",textBox2.Text));
+               sqlCmd.Append(string.Format(" and s.SeasonID = '{0}'", textBox2.Text));
             }
 
             if (!MyUtility.Check.Empty(dateBox1.Value))
             {
-                sqlCmd.Append(string.Format(" and sp.SendDate = '{0}'",Convert.ToDateTime(dateBox1.Value).ToString("d")));
+               sqlCmd.Append(string.Format(" and sp.SendDate = '{0}'",Convert.ToDateTime(dateBox1.Value).ToString("d")));               
             }
-            sqlCmd.Append(@" order by FactoryID, StyleID");
+         
+            if (query == 1)
+            {
+                if (!this.comboBox_Factory.Text.ToString().Empty())
+                {
+                    sqlCmd.Append(string.Format(" and sp.FactoryID = '{0}'", f));
+                }
+            }
+             sqlCmd.Append(@" order by FactoryID, StyleID");
 
-            
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData);
-            if (!result)
+            
+            if (!result )
             {
                 MyUtility.Msg.ErrorBox("Query fail!\r\n" + result.ToString());
             }
             else
             {
-                if (gridData.Rows.Count == 0)
+                if (gridData.Rows.Count == 0 )
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                 }
             }
             listControlBindingSource1.DataSource = gridData;
             alreadySave = false;
+            query = 0;
         }
 
         //Batch update

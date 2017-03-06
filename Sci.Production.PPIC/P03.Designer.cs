@@ -32,6 +32,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.comboBox_Factory = new Sci.Win.UI.ComboBox();
+            this.label5 = new Sci.Win.UI.Label();
             this.button5 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
             this.dateBox2 = new Sci.Win.UI.DateBox();
@@ -76,6 +78,8 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.comboBox_Factory);
+            this.panel3.Controls.Add(this.label5);
             this.panel3.Controls.Add(this.button5);
             this.panel3.Controls.Add(this.button2);
             this.panel3.Controls.Add(this.dateBox2);
@@ -93,6 +97,26 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(924, 88);
             this.panel3.TabIndex = 3;
+            // 
+            // comboBox_Factory
+            // 
+            this.comboBox_Factory.BackColor = System.Drawing.Color.White;
+            this.comboBox_Factory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox_Factory.FormattingEnabled = true;
+            this.comboBox_Factory.IsSupportUnselect = true;
+            this.comboBox_Factory.Location = new System.Drawing.Point(71, 12);
+            this.comboBox_Factory.Name = "comboBox_Factory";
+            this.comboBox_Factory.Size = new System.Drawing.Size(73, 24);
+            this.comboBox_Factory.TabIndex = 10;
+            // 
+            // label5
+            // 
+            this.label5.Lines = 0;
+            this.label5.Location = new System.Drawing.Point(8, 13);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(60, 23);
+            this.label5.TabIndex = 9;
+            this.label5.Text = "Factory";
             // 
             // button5
             // 
@@ -144,7 +168,7 @@
             // dateBox1
             // 
             this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(509, 13);
+            this.dateBox1.Location = new System.Drawing.Point(675, 13);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(110, 23);
             this.dateBox1.TabIndex = 4;
@@ -152,7 +176,7 @@
             // label3
             // 
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(438, 13);
+            this.label3.Location = new System.Drawing.Point(604, 13);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(67, 23);
             this.label3.TabIndex = 4;
@@ -163,7 +187,7 @@
             this.textBox2.BackColor = System.Drawing.Color.White;
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox2.IsSupportEditMode = false;
-            this.textBox2.Location = new System.Drawing.Point(305, 13);
+            this.textBox2.Location = new System.Drawing.Point(471, 13);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(92, 23);
             this.textBox2.TabIndex = 3;
@@ -171,7 +195,7 @@
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(250, 13);
+            this.label2.Location = new System.Drawing.Point(416, 13);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(51, 23);
             this.label2.TabIndex = 2;
@@ -182,7 +206,7 @@
             this.textBox1.BackColor = System.Drawing.Color.White;
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox1.IsSupportEditMode = false;
-            this.textBox1.Location = new System.Drawing.Point(73, 13);
+            this.textBox1.Location = new System.Drawing.Point(239, 13);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(140, 23);
             this.textBox1.TabIndex = 2;
@@ -190,7 +214,7 @@
             // label1
             // 
             this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(8, 13);
+            this.label1.Location = new System.Drawing.Point(174, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(61, 23);
             this.label1.TabIndex = 8;
@@ -332,5 +356,7 @@
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Button button5;
+        private Win.UI.Label label5;
+        private Win.UI.ComboBox comboBox_Factory;
     }
 }
