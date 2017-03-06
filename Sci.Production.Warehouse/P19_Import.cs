@@ -146,6 +146,10 @@ and a.id = @sp and c.mdivisionid='{0}' and c.stocktype = '{1}'", Sci.Env.User.Ke
                     {
                         dr["qty"] = dr["stockQty"];
                     }
+                    else if (Convert.ToBoolean(dr["selected"]) == false)
+                    {
+                        dr["qty"] = 0;
+                    }
                     dr.EndEdit();
                 }
             };
