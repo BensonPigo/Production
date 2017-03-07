@@ -33,7 +33,6 @@ namespace Sci.Production.Planning
             InitializeComponent();
             EditMode = true;
             print.Visible = false;
-            txtMdivision1.Text = Sci.Env.User.Keyword;
             txtFactory1.Text = Sci.Env.User.Factory;
             dateRange1.Select();
         }
@@ -71,10 +70,12 @@ namespace Sci.Production.Planning
                     strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
                 if (dateRange1.Value2 != null)
                     strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateRange1.Value2.Value.ToString("yyyy-MM-dd"));
-                if (txtFactory1.Text != "")
-                    strSQL += string.Format(" AND A1.FACTORYID = '{0}' ", txtFactory1.Text);
-                if (txtCountry1.TextBox1.Text != "")
-                    strSQL += string.Format(" AND A2.COUNTRYID = '{0}' ", txtCountry1.TextBox1.Text);
+
+                if (MyUtility.Check.Empty(txtFactory1.Text)) //factory沒值
+                    strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
+                else  //factory有值
+                    strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory1.Text);
+
                 strSQL += " GROUP BY A1.FACTORYID, A3.ALIAS, A1.QTY  ORDER BY  A1.FACTORYID, A3.ALIAS ";
                 result = DBProxy.Current.Select(null, strSQL, null, out gdtDatas);
                 if (!result) return result;
@@ -113,104 +114,21 @@ namespace Sci.Production.Planning
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
                     if (dateRange1.Value2 != null)
                         strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateRange1.Value2.Value.ToString("yyyy-MM-dd"));
-                    if (txtMdivision1.Text != "")
-                        strSQL += string.Format(" AND A1.MDivisionID = '{0}' ", txtMdivision1.Text); 
-                    if (txtFactory1.Text != "")
-                        strSQL += string.Format(" AND A1.FACTORYID = '{0}' ", txtFactory1.Text);
-                    if (txtCountry1.TextBox1.Text != "")
-                        strSQL += string.Format(" AND A2.COUNTRYID = '{0}' ", txtCountry1.TextBox1.Text);
+
+                    if (MyUtility.Check.Empty(txtFactory1.Text)) //factory沒值
+                        strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
+                    else  //factory有值
+                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory1.Text);
+
                     strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
                                                         , A1.BuyerDelivery, A1.FtyKPI, A1.QTY 
                                                         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
                                                         , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR ";
                     result = DBProxy.Current.Select(null, strSQL, null, out gdtOrderDetail);
                     if (!result) return result;
-//                    if (gdtOrderDetail != null)
-//                    {
-//                        System.Data.DataTable dtTemp;
-//                        for (int intIndex = 0; intIndex < gdtOrderDetail.Rows.Count; intIndex++)
-//                        {
-//                            dtTemp = null;
-//                            #region Set H Column Data
-//                            strSQL = string.Format(@"SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip where id = '{0}' ", gdtOrderDetail.Rows[intIndex]["D"].ToString());
-//                            result = DBProxy.Current.Select(null, strSQL, null, out dtTemp);
-//                            if (!result) return result;
-//                            if (dtTemp != null)
-//                            {
-//                                string strTemp = "";
-//                                for (int intIndex_1 = 0; intIndex_1 < dtTemp.Rows.Count; intIndex_1++)
-//                                {
-//                                    strTemp += (strTemp == "" ? dtTemp.Rows[intIndex_1]["strData"].ToString() : ", " + dtTemp.Rows[intIndex_1]["strData"].ToString());
-//                                }
-//                                gdtOrderDetail.Rows[intIndex]["H"] = strTemp;
-//                            }
-//                            #endregion Set H Column Data
-
-//                            #region Set L Column Data
-//                            strSQL = string.Format(@"Select PulloutDate as strData from Pullout_Detail where OrderID = '{0}' Order by PullOutDate ", gdtOrderDetail.Rows[intIndex]["D"].ToString());
-//                            result = DBProxy.Current.Select(null, strSQL, null, out dtTemp);
-//                            if (!result) return result;
-//                            if (dtTemp != null)
-//                            {
-//                                string strTemp = "";
-//                                for (int intIndex_1 = 0; intIndex_1 < dtTemp.Rows.Count; intIndex_1++)
-//                                {
-//                                    strTemp += (strTemp == "" ? dtTemp.Rows[intIndex_1]["strData"].ToString() : ", " + dtTemp.Rows[intIndex_1]["strData"].ToString());
-//                                }
-//                                gdtOrderDetail.Rows[intIndex]["L"] = strTemp;
-//                            }
-//                            #endregion Set L Column Data
-
-//                            #region Set M Column Data
-//                            strSQL = string.Format(@"Select ShipmodeID  as strData from Order_QtyShip  where id = '{0}'  Group by ShipModeID ", gdtOrderDetail.Rows[intIndex]["D"].ToString());
-//                            result = DBProxy.Current.Select(null, strSQL, null, out dtTemp);
-//                            if (!result) return result;
-//                            if (dtTemp != null)
-//                            {
-//                                string strTemp = "";
-//                                for (int intIndex_1 = 0; intIndex_1 < dtTemp.Rows.Count; intIndex_1++)
-//                                {
-//                                    strTemp += (strTemp == "" ? dtTemp.Rows[intIndex_1]["strData"].ToString() : ", " + dtTemp.Rows[intIndex_1]["strData"].ToString());
-//                                }
-//                                gdtOrderDetail.Rows[intIndex]["M"] = strTemp;
-//                            }
-//                            #endregion Set M Column Data
-
-//                            #region Set N Column Data
-//                            strSQL = string.Format(@"Select Count(id) as CountPullOut from Pullout_Detail where OrderID = '{0}'  ", gdtOrderDetail.Rows[intIndex]["D"].ToString());
-//                            result = DBProxy.Current.Select(null, strSQL, null, out dtTemp);
-//                            if (!result) return result;
-//                            if (dtTemp != null)
-//                            {
-//                                gdtOrderDetail.Rows[intIndex]["N"] = (dtTemp.Rows[0]["CountPullOut"].ToString().CompareTo("1") <= 0 ? "0" : dtTemp.Rows[0]["CountPullOut"].ToString());
-//                            }
-//                            #endregion Set N Column Data
-
-//                            #region Set P、Q Column Data
-//                            strSQL = string.Format(@"Select A1.ReasonID , A2.Name  from Order_History A1
-//                                                                          LEFT JOIN Reason A2  ON A2.ID = A1.ReasonID 
-//                                                                          Where A1.OldValue =  '{0}'  And A1.HisType = 'Delivery' order by A1.AddDate desc ", gdtOrderDetail.Rows[intIndex]["D"].ToString());
-//                            result = DBProxy.Current.Select(null, strSQL, null, out dtTemp);
-//                            if (!result) return result;
-//                            if ((dtTemp != null) && (dtTemp.Rows.Count > 0))
-//                            {
-//                                gdtOrderDetail.Rows[intIndex]["P"] = dtTemp.Rows[0]["ReasonID"].ToString();
-//                                gdtOrderDetail.Rows[intIndex]["Q"] = dtTemp.Rows[0]["Name"].ToString();
-//                            }
-//                            #endregion Set P、Q Column Data
-//                            string Handle_NAME = "";
-//                            //if (UserPrg.GetName(gdtOrderDetail.Rows[intIndex]["R"].ToString().Trim(), out Handle_NAME, UserPrg.NameType.nameAndExt))
-//                                //gdtOrderDetail.Rows[intIndex]["R"] = Handle_NAME;
-//                            //if (UserPrg.GetName(gdtOrderDetail.Rows[intIndex]["S"].ToString().Trim(), out Handle_NAME, UserPrg.NameType.nameAndExt))
-//                                gdtOrderDetail.Rows[intIndex]["S"] = Handle_NAME;
-//                            //if (UserPrg.GetName(gdtOrderDetail.Rows[intIndex]["T"].ToString().Trim(), out Handle_NAME, UserPrg.NameType.nameAndExt))
-//                                gdtOrderDetail.Rows[intIndex]["T"] = Handle_NAME;
-//                            //if (UserPrg.GetName(gdtOrderDetail.Rows[intIndex]["U"].ToString().Trim(), out Handle_NAME, UserPrg.NameType.nameAndExt))
-//                                //gdtOrderDetail.Rows[intIndex]["U"] = Handle_NAME;
-//                        }
-//                    }
 
                     #endregion Order Detail
+
                     #region On time Order List by PullOut
                     strSQL = @" SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D
                                                         , Convert(varchar,cast(A1.FtyKPI as date)) AS E
@@ -230,53 +148,17 @@ namespace Sci.Production.Planning
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
                     if (dateRange1.Value2 != null)
                         strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateRange1.Value2.Value.ToString("yyyy-MM-dd"));
-                    if (txtMdivision1.Text != "")
-                        strSQL += string.Format(" AND A1.MDivisionID = '{0}' ", txtMdivision1.Text);
-                    if (txtFactory1.Text != "")
-                        strSQL += string.Format(" AND A1.FACTORYID = '{0}' ", txtFactory1.Text);
-                    if (txtCountry1.TextBox1.Text != "")
-                        strSQL += string.Format(" AND A2.COUNTRYID = '{0}' ", txtCountry1.TextBox1.Text);
+
+                    if (MyUtility.Check.Empty(txtFactory1.Text)) //factory沒值
+                        strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
+                    else  //factory有值
+                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory1.Text);
+
                     result = DBProxy.Current.Select(null, strSQL, null, out gdtPullOut);
                     if (!result) return result;
-                    //if (gdtPullOut != null)
-                    //{
-                    //    System.Data.DataTable dtTemp;
-                    //    for (int intIndex = 0; intIndex < gdtPullOut.Rows.Count; intIndex++)
-                    //    {
-                    //        dtTemp = null;
-                    //        #region Set F Column Data
-                    //        strSQL = string.Format(@"SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip where id = '{0}' ", gdtPullOut.Rows[intIndex]["D"].ToString());
-                    //        result = DBProxy.Current.Select(null, strSQL, null, out dtTemp);
-                    //        if (!result) return result;
-                    //        if (dtTemp != null)
-                    //        {
-                    //            string strTemp = "";
-                    //            for (int intIndex_1 = 0; intIndex_1 < dtTemp.Rows.Count; intIndex_1++)
-                    //            {
-                    //                strTemp += (strTemp == "" ? dtTemp.Rows[intIndex_1]["strData"].ToString() : ", " + dtTemp.Rows[intIndex_1]["strData"].ToString());
-                    //            }
-                    //            gdtPullOut.Rows[intIndex]["F"] = strTemp;
-                    //        }
-                    //        #endregion Set F Column Data
-
-                    //        #region Set J Column Data
-                    //        strSQL = string.Format(@"Select ShipmodeID  as strData from Order_QtyShip  where id = '{0}'  Group by ShipModeID ", gdtPullOut.Rows[intIndex]["D"].ToString());
-                    //        result = DBProxy.Current.Select(null, strSQL, null, out dtTemp);
-                    //        if (!result) return result;
-                    //        if (dtTemp != null)
-                    //        {
-                    //            string strTemp = "";
-                    //            for (int intIndex_1 = 0; intIndex_1 < dtTemp.Rows.Count; intIndex_1++)
-                    //            {
-                    //                strTemp += (strTemp == "" ? dtTemp.Rows[intIndex_1]["strData"].ToString() : ", " + dtTemp.Rows[intIndex_1]["strData"].ToString());
-                    //            }
-                    //            gdtPullOut.Rows[intIndex]["J"] = strTemp;
-                    //        }
-                    //        #endregion Set J Column Data
-                    //    }
-                    //}
 
                     #endregion On time Order List by PullOut
+
                     #region Fail Detail
                     strSQL = @" SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D
                                                         , Convert(varchar,cast(A1.FtyKPI as date))  AS E
@@ -296,52 +178,17 @@ namespace Sci.Production.Planning
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
                     if (dateRange1.Value2 != null)
                         strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateRange1.Value2.Value.ToString("yyyy-MM-dd"));
-                    if (txtMdivision1.Text != "")
-                        strSQL += string.Format(" AND A1.MDivisionID = '{0}' ", txtMdivision1.Text);
-                    if (txtFactory1.Text != "")
-                        strSQL += string.Format(" AND A1.FACTORYID = '{0}' ", txtFactory1.Text);
-                    if (txtCountry1.TextBox1.Text != "")
-                        strSQL += string.Format(" AND A2.COUNTRYID = '{0}' ", txtCountry1.TextBox1.Text);
+
+                    if (MyUtility.Check.Empty(txtFactory1.Text)) //factory沒值
+                        strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
+                    else  //factory有值
+                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory1.Text);
+
                     result = DBProxy.Current.Select(null, strSQL, null, out gdtFailDetail);
                     if (!result) return result;
-                    //if (gdtFailDetail != null)
-                    //{
-                    //    System.Data.DataTable dtTemp;
-                    //    for (int intIndex = 0; intIndex < gdtFailDetail.Rows.Count; intIndex++)
-                    //    {
-                    //        dtTemp = null;
-                    //        #region Set F Column Data
-                    //        strSQL = string.Format(@"SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip where id = '{0}' ", gdtFailDetail.Rows[intIndex]["D"].ToString());
-                    //        result = DBProxy.Current.Select(null, strSQL, null, out dtTemp);
-                    //        if (!result) return result;
-                    //        if (dtTemp != null)
-                    //        {
-                    //            string strTemp = "";
-                    //            for (int intIndex_1 = 0; intIndex_1 < dtTemp.Rows.Count; intIndex_1++)
-                    //            {
-                    //                strTemp += (strTemp == "" ? dtTemp.Rows[intIndex_1]["strData"].ToString() : ", " + dtTemp.Rows[intIndex_1]["strData"].ToString());
-                    //            }
-                    //            gdtFailDetail.Rows[intIndex]["F"] = strTemp;
-                    //        }
-                    //        #endregion Set F Column Data
-
-                    //        #region Set J Column Data
-                    //        strSQL = string.Format(@"Select ShipmodeID  as strData from Order_QtyShip  where id = '{0}'  Group by ShipModeID ", gdtFailDetail.Rows[intIndex]["D"].ToString());
-                    //        result = DBProxy.Current.Select(null, strSQL, null, out dtTemp);
-                    //        if (!result) return result;
-                    //        if (dtTemp != null)
-                    //        {
-                    //            string strTemp = "";
-                    //            for (int intIndex_1 = 0; intIndex_1 < dtTemp.Rows.Count; intIndex_1++)
-                    //            {
-                    //                strTemp += (strTemp == "" ? dtTemp.Rows[intIndex_1]["strData"].ToString() : ", " + dtTemp.Rows[intIndex_1]["strData"].ToString());
-                    //            }
-                    //            gdtFailDetail.Rows[intIndex]["J"] = strTemp;
-                    //        }
-                    //        #endregion Set J Column Data
-                    //    }
-                    //}
+                    
                     #endregion Fail Detail
+
                     #region Fail Order List by SP
                     strSQL = @" SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D, A1.BRANDID AS E
                                                         , Convert(varchar,A1.BuyerDelivery)  AS F
@@ -373,12 +220,12 @@ namespace Sci.Production.Planning
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
                     if (dateRange1.Value2 != null)
                         strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateRange1.Value2.Value.ToString("yyyy-MM-dd"));
-                    if (txtMdivision1.Text != "")
-                        strSQL += string.Format(" AND A1.MDivisionID = '{0}' ", txtMdivision1.Text);
-                    if (txtFactory1.Text != "")
-                        strSQL += string.Format(" AND A1.FACTORYID = '{0}' ", txtFactory1.Text);
-                    if (txtCountry1.TextBox1.Text != "")
-                        strSQL += string.Format(" AND A2.COUNTRYID = '{0}' ", txtCountry1.TextBox1.Text);
+
+                    if (MyUtility.Check.Empty(txtFactory1.Text)) //factory沒值
+                        strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
+                    else  //factory有值
+                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory1.Text);
+
                     strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
                                                         , A1.BuyerDelivery, A1.FtyKPI, A1.QTY 
                                                         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
@@ -386,97 +233,15 @@ namespace Sci.Production.Planning
                                                         HAVING Sum(A5.ShipQty) > 0 ";
                     result = DBProxy.Current.Select(null, strSQL, null, out gdtSP);
                     if (!result) return result;
-//                    if (gdtSP != null)
-//                    {
-//                        System.Data.DataTable dtTemp;
-//                        for (int intIndex = 0; intIndex < gdtSP.Rows.Count; intIndex++)
-//                        {
-//                            dtTemp = null;
-//                            #region Set H Column Data
-//                            strSQL = string.Format(@"SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + Convert(varchar, Order_QtyShip.BuyerDelivery) + ')' as strData FROM Order_QtyShip where id = '{0}' ", gdtSP.Rows[intIndex]["D"].ToString());
-//                            result = DBProxy.Current.Select(null, strSQL, null, out dtTemp);
-//                            if (!result) return result;
-//                            if (dtTemp != null)
-//                            {
-//                                string strTemp = "";
-//                                for (int intIndex_1 = 0; intIndex_1 < dtTemp.Rows.Count; intIndex_1++)
-//                                {
-//                                    strTemp += (strTemp == "" ? dtTemp.Rows[intIndex_1]["strData"].ToString() : ", " + dtTemp.Rows[intIndex_1]["strData"].ToString());
-//                                }
-//                                gdtSP.Rows[intIndex]["H"] = strTemp;
-//                            }
-//                            #endregion Set H Column Data
-
-//                            #region Set L Column Data
-//                            strSQL = string.Format(@"Select PulloutDate as strData from Pullout_Detail where OrderID = '{0}' Order by PullOutDate ", gdtSP.Rows[intIndex]["D"].ToString());
-//                            result = DBProxy.Current.Select(null, strSQL, null, out dtTemp);
-//                            if (!result) return result;
-//                            if (dtTemp != null)
-//                            {
-//                                string strTemp = "";
-//                                for (int intIndex_1 = 0; intIndex_1 < dtTemp.Rows.Count; intIndex_1++)
-//                                {
-//                                    strTemp += (strTemp == "" ? dtTemp.Rows[intIndex_1]["strData"].ToString() : ", " + dtTemp.Rows[intIndex_1]["strData"].ToString());
-//                                }
-//                                gdtSP.Rows[intIndex]["L"] = strTemp;
-//                            }
-//                            #endregion Set L Column Data
-
-//                            #region Set M Column Data
-//                            strSQL = string.Format(@"Select ShipmodeID  as strData from Order_QtyShip  where id = '{0}'  Group by ShipModeID ", gdtSP.Rows[intIndex]["D"].ToString());
-//                            result = DBProxy.Current.Select(null, strSQL, null, out dtTemp);
-//                            if (!result) return result;
-//                            if (dtTemp != null)
-//                            {
-//                                string strTemp = "";
-//                                for (int intIndex_1 = 0; intIndex_1 < dtTemp.Rows.Count; intIndex_1++)
-//                                {
-//                                    strTemp += (strTemp == "" ? dtTemp.Rows[intIndex_1]["strData"].ToString() : ", " + dtTemp.Rows[intIndex_1]["strData"].ToString());
-//                                }
-//                                gdtSP.Rows[intIndex]["M"] = strTemp;
-//                            }
-//                            #endregion Set M Column Data
-
-//                            #region Set N Column Data
-//                            strSQL = string.Format(@"Select Count(id) as CountPullOut from Pullout_Detail where OrderID = '{0}'  ", gdtSP.Rows[intIndex]["D"].ToString());
-//                            result = DBProxy.Current.Select(null, strSQL, null, out dtTemp);
-//                            if (!result) return result;
-//                            if (dtTemp != null)
-//                            {
-//                                gdtSP.Rows[intIndex]["N"] = (dtTemp.Rows[0]["CountPullOut"].ToString().CompareTo("1") <= 0 ? "0" : dtTemp.Rows[0]["CountPullOut"].ToString());
-//                            }
-//                            #endregion Set N Column Data
-
-//                            #region Set P、Q Column Data
-//                            strSQL = string.Format(@"Select A1.ReasonID , A2.Name  from TradeHis_Order A1
-//                                                                          LEFT JOIN Reason A2  ON A2.ReasonTypeID = A1.ReasonTypeID AND A2.ID = A1.ReasonID 
-//                                                                          Where A1.SourceID =  '{0}'  And A1.HisType = 'Delivery' order by A1.AddDate desc ", gdtSP.Rows[intIndex]["D"].ToString());
-//                            result = DBProxy.Current.Select(null, strSQL, null, out dtTemp);
-//                            if (!result) return result;
-//                            if ((dtTemp != null) && (dtTemp.Rows.Count > 0))
-//                            {
-//                                gdtSP.Rows[intIndex]["P"] = dtTemp.Rows[0]["ReasonID"].ToString();
-//                                gdtSP.Rows[intIndex]["Q"] = dtTemp.Rows[0]["Name"].ToString();
-//                            }
-//                            #endregion Set P、Q Column Data
-//                            string Handle_NAME = "";
-//                            //if (UserPrg.GetName(gdtSP.Rows[intIndex]["R"].ToString().Trim(), out Handle_NAME, UserPrg.NameType.nameAndExt))
-//                            //    gdtSP.Rows[intIndex]["R"] = Handle_NAME;
-//                            //if (UserPrg.GetName(gdtSP.Rows[intIndex]["S"].ToString().Trim(), out Handle_NAME, UserPrg.NameType.nameAndExt))
-//                            //    gdtSP.Rows[intIndex]["S"] = Handle_NAME;
-//                            //if (UserPrg.GetName(gdtSP.Rows[intIndex]["T"].ToString().Trim(), out Handle_NAME, UserPrg.NameType.nameAndExt))
-//                            //    gdtSP.Rows[intIndex]["T"] = Handle_NAME;
-//                            //if (UserPrg.GetName(gdtSP.Rows[intIndex]["U"].ToString().Trim(), out Handle_NAME, UserPrg.NameType.nameAndExt))
-//                            //    gdtSP.Rows[intIndex]["U"] = Handle_NAME;
-//                        }
-//                    }
 
                     #endregion Fail Order List by SP
                 }
-                #region
+
+                #region 產生EXCEL
                 if (!(result = transferToExcel()))
                     return result;
                 #endregion 
+
             }
             catch (Exception ex)
             {

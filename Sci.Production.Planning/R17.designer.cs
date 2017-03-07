@@ -34,24 +34,27 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.txtCountry1 = new Sci.Production.Class.txtcountry();
-            this.txtFactory1 = new Sci.Production.Class.txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
             this.label5 = new Sci.Win.UI.Label();
+            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.txtFactory1 = new Sci.Production.Class.txtfactory();
+            this.txtCountry1 = new Sci.Production.Class.txtcountry();
             this.SuspendLayout();
             // 
             // print
             // 
+            this.print.Location = new System.Drawing.Point(445, 12);
             this.print.TabIndex = 7;
             // 
             // toexcel
             // 
+            this.toexcel.Location = new System.Drawing.Point(445, 48);
             this.toexcel.TabIndex = 8;
             // 
             // close
             // 
+            this.close.Location = new System.Drawing.Point(445, 84);
             this.close.TabIndex = 9;
             // 
             // radioButton1
@@ -89,7 +92,7 @@
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(18, 126);
+            this.label2.Location = new System.Drawing.Point(18, 91);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 23);
             this.label2.TabIndex = 98;
@@ -98,40 +101,23 @@
             // label3
             // 
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(18, 162);
+            this.label3.Location = new System.Drawing.Point(18, 133);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
             this.label3.TabIndex = 99;
             this.label3.Text = "Country ";
+            this.label3.Visible = false;
             // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(346, 162);
+            this.checkBox1.Location = new System.Drawing.Point(278, 90);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(141, 21);
             this.checkBox1.TabIndex = 6;
             this.checkBox1.Text = "Export Detail Data";
             this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // txtCountry1
-            // 
-            this.txtCountry1.DisplayBox1Binding = "";
-            this.txtCountry1.Location = new System.Drawing.Point(96, 162);
-            this.txtCountry1.Name = "txtCountry1";
-            this.txtCountry1.Size = new System.Drawing.Size(232, 38);
-            this.txtCountry1.TabIndex = 5;
-            this.txtCountry1.TextBox1Binding = "";
-            // 
-            // txtFactory1
-            // 
-            this.txtFactory1.BackColor = System.Drawing.Color.White;
-            this.txtFactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFactory1.Location = new System.Drawing.Point(96, 126);
-            this.txtFactory1.Name = "txtFactory1";
-            this.txtFactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtFactory1.TabIndex = 4;
             // 
             // label1
             // 
@@ -151,20 +137,12 @@
             // label4
             // 
             this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(18, 91);
+            this.label4.Location = new System.Drawing.Point(344, 133);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
             this.label4.TabIndex = 104;
             this.label4.Text = "M";
-            // 
-            // txtMdivision1
-            // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(96, 91);
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 3;
+            this.label4.Visible = false;
             // 
             // label5
             // 
@@ -175,9 +153,38 @@
             this.label5.TabIndex = 105;
             this.label5.Text = "Type";
             // 
+            // txtMdivision1
+            // 
+            this.txtMdivision1.BackColor = System.Drawing.Color.White;
+            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision1.Location = new System.Drawing.Point(422, 133);
+            this.txtMdivision1.Name = "txtMdivision1";
+            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision1.TabIndex = 3;
+            this.txtMdivision1.Visible = false;
+            // 
+            // txtFactory1
+            // 
+            this.txtFactory1.BackColor = System.Drawing.Color.White;
+            this.txtFactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory1.Location = new System.Drawing.Point(96, 91);
+            this.txtFactory1.Name = "txtFactory1";
+            this.txtFactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtFactory1.TabIndex = 4;
+            // 
+            // txtCountry1
+            // 
+            this.txtCountry1.DisplayBox1Binding = "";
+            this.txtCountry1.Location = new System.Drawing.Point(96, 133);
+            this.txtCountry1.Name = "txtCountry1";
+            this.txtCountry1.Size = new System.Drawing.Size(232, 38);
+            this.txtCountry1.TabIndex = 5;
+            this.txtCountry1.TextBox1Binding = "";
+            this.txtCountry1.Visible = false;
+            // 
             // R17
             // 
-            this.ClientSize = new System.Drawing.Size(627, 314);
+            this.ClientSize = new System.Drawing.Size(537, 199);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.txtMdivision1);
             this.Controls.Add(this.label4);
