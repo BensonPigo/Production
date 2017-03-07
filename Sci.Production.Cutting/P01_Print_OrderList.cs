@@ -20,10 +20,11 @@ namespace Sci.Production.Cutting
     public partial class P01_Print_OrderList : Sci.Win.Tems.QueryForm
     {
         string _id;
-
-        public P01_Print_OrderList(string args)
+        int _finished;
+        public P01_Print_OrderList(string args,int f = 0)
         {
             this._id = args;
+            this._finished = f;
             InitializeComponent();
             EditMode = true;
         }
@@ -80,6 +81,47 @@ namespace Sci.Production.Cutting
                 wks.get_Range(string.Format("B3:{0}3", sc)).Merge();
                 wks.get_Range("A5").RowHeight = 16.5;
                 wks.get_Range("A6").RowHeight = 16.5;
+                sxr.boOpenFile = true;
+                sxr.Save();
+                #endregion
+            }
+            if (rdCheck_Cuttingschedule.Checked)
+            {
+                #region rdCheck_CuttingSchedule
+                System.Data.DataTable[] dts;
+                List<SqlParameter> lsp = new List<SqlParameter>();
+                lsp.Add(new SqlParameter("@M", Sci.Env.User.Keyword));
+                lsp.Add(new SqlParameter("@Finished", _finished));
+                DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01_print_cuttingschedule", lsp, out dts);
+
+                if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
+                if (dts.Length < 1) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
+
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_CuttingSchedule.xltx");
+                sxrc sxr = new sxrc(xltPath);
+
+                sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[0]);
+
+                Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
+                string sc = MyExcelPrg.GetExcelColumnName(dt.Columns.Count);
+                wks.get_Range(string.Format("A1:{0}1", sc)).Merge();
+                wks.get_Range(string.Format("A2:{0}2", sc)).Merge();
+                
+                dt.Borders.AllCellsBorders = true;
+                
+                //自動欄位寬度
+                dt.boAutoFitColumn = true;
+
+                dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(10) { ColumnWidth = (decimal)10 });
+                
+                //凍結窗格
+                dt.boFreezePanes = true;
+
+                //篩選
+                dt.boAddFilter = true;
+
+                sxr.dicDatas.Add(sxr._v + "tbl1", dt);
+
                 sxr.boOpenFile = true;
                 sxr.Save();
                 #endregion
