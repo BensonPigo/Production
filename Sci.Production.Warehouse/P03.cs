@@ -339,14 +339,19 @@ m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 	   ) tmp 
   for XML PATH('')
  ) as  Remark
-,[OrderIdList]=e.OrderID
+,[OrderIdList] = stuff((select concat(',', tmp.OrderID) 
+		                from (
+			                select orderID from po_supp_Detail_orderList e
+			                where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
+		                ) tmp for xml path(''))
+                ,1,1,'')
 
 from Orders WITH (NOLOCK) inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
 	left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 AND m.MDivisionID='{0}'
     left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
 	left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
     left join supp s WITH (NOLOCK) on s.id = b.suppid
-    left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
+    --left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
 --where orders.poid like @sp1 and orders.mdivisionid= '{0}' and a.junk <> 'true'
 where orders.id like @sp1 and orders.mdivisionid= '{0}' and a.junk <> 'true'
 
@@ -399,14 +404,19 @@ select m.ukey,m.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 		) tmp 
   for XML PATH('')
 ) as  Remark
-,[OrderIdList]=e.OrderID
+,[OrderIdList] = stuff((select concat(',', tmp.OrderID) 
+		                from (
+			                select orderID from po_supp_Detail_orderList e
+			                where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
+		                ) tmp for xml path(''))
+                ,1,1,'')
 from dbo.MDivisionPoDetail m WITH (NOLOCK) 
 inner join Orders o on o.poid = m.poid
 left join  PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 AND m.MDivisionID='{0}' --and m.poid like @sp1  
 left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
 left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
 left join supp s WITH (NOLOCK) on s.id = b.suppid
-left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
+--left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
 where 1=1 
     AND a.id IS NOT NULL and a.junk <> 'true'--0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
     and o.id like @sp1
