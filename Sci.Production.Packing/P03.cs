@@ -1423,7 +1423,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             }
             #endregion 
 
-            Sci.Production.Packing.P03_ExcelImport nextForm = new Sci.Production.Packing.P03_ExcelImport((DataTable)detailgridbs.DataSource);
+            Sci.Production.Packing.P03_ExcelImport nextForm = new Sci.Production.Packing.P03_ExcelImport(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             nextForm.ShowDialog(this);
         }
 
