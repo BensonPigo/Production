@@ -45,7 +45,7 @@ namespace Sci.Production.Cutting
                 .Text("sizecode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("bundlegroup", header: "Bundle Group", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                .Text("PrintDate", header: "PrintDate", width: Widths.AnsiChars(8), iseditingreadonly: true);
+                .DateTime("PrintDate", header: "PrintDate", width: Widths.AnsiChars(8), iseditingreadonly: true);
 
         }
         private void button1_Click(object sender, EventArgs e)
