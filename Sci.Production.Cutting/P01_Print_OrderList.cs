@@ -111,7 +111,7 @@ namespace Sci.Production.Cutting
                 
                 //自動欄位寬度
                 dt.boAutoFitColumn = true;
-
+                dt.HeaderColor = Color.LawnGreen;
                 dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(10) { ColumnWidth = (decimal)10 });
                 
                 //凍結窗格
@@ -119,6 +119,8 @@ namespace Sci.Production.Cutting
 
                 //篩選
                 dt.boAddFilter = true;
+
+                
 
                 sxr.dicDatas.Add(sxr._v + "tbl1", dt);
 
@@ -407,6 +409,16 @@ namespace Sci.Production.Cutting
                     sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, MyUtility.Convert.GetString(dr["QTY"]));
                     sxr.dicDatas.Add(sxr._v + "FACTORY" + idxStr, dr["FACTORY"]);
                     sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[sgIdx]);
+
+                    #region 補上空白的SizeCode
+                    int SizeCodeCnt = dt.Columns.Count - 2 - 3;
+                    int addEmptySizecode = 8 - SizeCodeCnt;
+                    for (int i = 0; i < addEmptySizecode; i++)
+                    {
+                        dt.Columns.Add(new string(' ', i + 1));
+                        dt.Columns[dt.Columns.Count - 1].SetOrdinal(dt.Columns.Count - 3);
+                    }
+                    #endregion
 
                     //欄位水平對齊
                     for (int i = 4; i <= dt.Columns.Count - 2; i++)
