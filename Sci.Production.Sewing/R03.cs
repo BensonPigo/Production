@@ -83,7 +83,7 @@ and so.Shift <> 'O'
 
             if (!MyUtility.Check.Empty(output2))
             {
-                sqlCmd.Append(string.Format(" and so.OutputDate <= '{0}'", Convert.ToDateTime(output2).AddDays(1).ToString("d")));
+                sqlCmd.Append(string.Format(" and so.OutputDate <= '{0}'", Convert.ToDateTime(output2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(buyerDel1))
@@ -93,7 +93,7 @@ and so.Shift <> 'O'
 
             if (!MyUtility.Check.Empty(buyerDel2))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDel2).AddDays(1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDel2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(sciDel1))
@@ -103,7 +103,7 @@ and so.Shift <> 'O'
 
             if (!MyUtility.Check.Empty(sciDel2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDel2).AddDays(1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDel2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(season))
