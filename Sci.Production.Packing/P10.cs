@@ -163,26 +163,11 @@ namespace Sci.Production.Packing
                                 }
                                 else
                                 {
-                                    dr["StyleID"] = "";
-                                    dr["SeasonID"] ="";
-                                    dr["BrandID"] = "";
-                                    dr["Customize1"] = "";
-                                    dr["CustPONo"] = "";
-                                    dr["Alias"] = "";
-                                    dr["BuyerDelivery"] = DBNull.Value;
                                     MissData.Rows.Add(dr.ItemArray);
                                 }
                             }
                             else
                             {
-                                dr["OrderID"] = "";
-                                dr["StyleID"] = "";
-                                dr["SeasonID"] = "";
-                                dr["BrandID"] = "";
-                                dr["Customize1"] = "";
-                                dr["CustPONo"] = "";
-                                dr["Alias"] = "";
-                                dr["BuyerDelivery"] = DBNull.Value;
                                 MissData.Rows.Add(dr.ItemArray);
                             }
                         }
