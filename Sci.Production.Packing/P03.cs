@@ -1396,12 +1396,35 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             { detailgridbs.Position = index; }
         }
 
-        private void btnDownloadSample_MouseClick(object sender, MouseEventArgs e)
+        private void btnDownloadSample_Click(object sender, EventArgs e)
         {
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_ImportExcelFormat.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return;
             excel.Visible = true;
+        }
+
+        private void btnImportExcel_Click(object sender, EventArgs e)
+        {
+            #region chech Brand, CustCD, Destination, ShipMode not empty
+            List<string> errMsg = new List<string>();
+            if (MyUtility.Check.Empty(txtbrand1.Text.ToString()))
+                errMsg.Add("< Brand >");
+            if (MyUtility.Check.Empty(txtcustcd1.Text.ToString()))
+                errMsg.Add("< CustCD >");
+            if (MyUtility.Check.Empty(txtcountry1.TextBox1.Text.ToString()))
+                errMsg.Add("< Destination >");
+            if (MyUtility.Check.Empty(txtshipmode1.Text.ToString()))
+                errMsg.Add("< Ship Mode >");
+            if (errMsg.Count > 0)
+            {
+                MyUtility.Msg.InfoBox(errMsg.JoinToString("\n") + " Can not be Empty!!");
+                return;
+            }
+            #endregion 
+
+            Sci.Production.Packing.P03_ExcelImport nextForm = new Sci.Production.Packing.P03_ExcelImport((DataTable)detailgridbs.DataSource);
+            nextForm.ShowDialog(this);
         }
 
     }

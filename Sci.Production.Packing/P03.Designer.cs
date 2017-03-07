@@ -224,7 +224,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(992, 556);
+            this.browse.Size = new System.Drawing.Size(1055, 556);
             // 
             // tabs
             // 
@@ -635,24 +635,24 @@
             // 
             // btnDownloadSample
             // 
-            this.btnDownloadSample.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnDownloadSample.Location = new System.Drawing.Point(876, 154);
             this.btnDownloadSample.Name = "btnDownloadSample";
             this.btnDownloadSample.Size = new System.Drawing.Size(179, 30);
             this.btnDownloadSample.TabIndex = 59;
             this.btnDownloadSample.Text = "Download Sample File";
             this.btnDownloadSample.UseVisualStyleBackColor = true;
-            this.btnDownloadSample.MouseClick += new System.Windows.Forms.MouseEventHandler(this.btnDownloadSample_MouseClick);
+            this.btnDownloadSample.Click += new System.EventHandler(this.btnDownloadSample_Click);
             // 
             // btnImportExcel
             // 
-            this.btnImportExcel.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnImportExcel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportExcel.Location = new System.Drawing.Point(876, 190);
             this.btnImportExcel.Name = "btnImportExcel";
             this.btnImportExcel.Size = new System.Drawing.Size(179, 30);
             this.btnImportExcel.TabIndex = 60;
             this.btnImportExcel.Text = "Import From Excel";
             this.btnImportExcel.UseVisualStyleBackColor = true;
+            this.btnImportExcel.Click += new System.EventHandler(this.btnImportExcel_Click);
             // 
             // txtcountry1
             // 
