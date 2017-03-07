@@ -66,12 +66,12 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.labCofirmed = new Sci.Win.UI.Label();
+            this.btnDownloadSample = new Sci.Win.UI.Button();
+            this.btnImportExcel = new Sci.Win.UI.Button();
             this.txtcountry1 = new Sci.Production.Class.txtcountry();
             this.txtcustcd1 = new Sci.Production.Class.txtcustcd();
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
-            this.button5 = new Sci.Win.UI.Button();
-            this.button6 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -88,8 +88,8 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button6);
-            this.masterpanel.Controls.Add(this.button5);
+            this.masterpanel.Controls.Add(this.btnImportExcel);
+            this.masterpanel.Controls.Add(this.btnDownloadSample);
             this.masterpanel.Controls.Add(this.labCofirmed);
             this.masterpanel.Controls.Add(this.txtcountry1);
             this.masterpanel.Controls.Add(this.txtcustcd1);
@@ -176,8 +176,8 @@
             this.masterpanel.Controls.SetChildIndex(this.txtcustcd1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtcountry1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labCofirmed, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnDownloadSample, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImportExcel, 0);
             // 
             // detailpanel
             // 
@@ -633,6 +633,27 @@
             this.labCofirmed.TextStyle.Color = System.Drawing.Color.Red;
             this.labCofirmed.Visible = false;
             // 
+            // btnDownloadSample
+            // 
+            this.btnDownloadSample.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnDownloadSample.Location = new System.Drawing.Point(876, 154);
+            this.btnDownloadSample.Name = "btnDownloadSample";
+            this.btnDownloadSample.Size = new System.Drawing.Size(179, 30);
+            this.btnDownloadSample.TabIndex = 59;
+            this.btnDownloadSample.Text = "Download Sample File";
+            this.btnDownloadSample.UseVisualStyleBackColor = true;
+            this.btnDownloadSample.MouseClick += new System.Windows.Forms.MouseEventHandler(this.btnDownloadSample_MouseClick);
+            // 
+            // btnImportExcel
+            // 
+            this.btnImportExcel.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnImportExcel.Location = new System.Drawing.Point(876, 190);
+            this.btnImportExcel.Name = "btnImportExcel";
+            this.btnImportExcel.Size = new System.Drawing.Size(179, 30);
+            this.btnImportExcel.TabIndex = 60;
+            this.btnImportExcel.Text = "Import From Excel";
+            this.btnImportExcel.UseVisualStyleBackColor = true;
+            // 
             // txtcountry1
             // 
             this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Dest", true));
@@ -679,26 +700,6 @@
             this.txtshipmode1.TabIndex = 3;
             this.txtshipmode1.UseFunction = "ORDER";
             this.txtshipmode1.Validated += new System.EventHandler(this.txtshipmode1_Validated);
-            // 
-            // button5
-            // 
-            this.button5.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button5.Location = new System.Drawing.Point(876, 154);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(179, 30);
-            this.button5.TabIndex = 59;
-            this.button5.Text = "Download Sample File";
-            this.button5.UseVisualStyleBackColor = true;
-            // 
-            // button6
-            // 
-            this.button6.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button6.Location = new System.Drawing.Point(876, 190);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(179, 30);
-            this.button6.TabIndex = 60;
-            this.button6.Text = "Import From Excel";
-            this.button6.UseVisualStyleBackColor = true;
             // 
             // P03
             // 
@@ -784,7 +785,7 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label labCofirmed;
-        private Win.UI.Button button6;
-        private Win.UI.Button button5;
+        private Win.UI.Button btnImportExcel;
+        private Win.UI.Button btnDownloadSample;
     }
 }

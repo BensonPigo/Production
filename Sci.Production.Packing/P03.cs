@@ -11,6 +11,7 @@ using Sci.Data;
 using Sci.Production.PublicPrg;
 using System.Transactions;
 using System.Linq;
+using System.IO;
 
 
 namespace Sci.Production.Packing
@@ -1393,6 +1394,14 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
             { detailgridbs.Position = index; }
+        }
+
+        private void btnDownloadSample_MouseClick(object sender, MouseEventArgs e)
+        {
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_ImportExcelFormat.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return;
+            excel.Visible = true;
         }
 
     }
