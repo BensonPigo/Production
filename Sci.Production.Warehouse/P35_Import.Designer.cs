@@ -39,6 +39,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.comboBox2 = new Sci.Win.UI.ComboBox();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
             this.textBox4 = new Sci.Win.UI.TextBox();
             this.label4 = new Sci.Win.UI.Label();
@@ -48,7 +49,6 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -180,6 +180,17 @@
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
+            // txtSeq1
+            // 
+            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq1.Location = new System.Drawing.Point(210, 19);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 1;
+            this.txtSeq1.Leave += new System.EventHandler(this.txtSeq1_Leave);
+            // 
             // txtdropdownlist1
             // 
             this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
@@ -200,7 +211,7 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(106, 23);
             this.textBox4.TabIndex = 3;
-            this.textBox4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox4_MouseDown);
+            this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
             this.textBox4.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
             // 
             // label4
@@ -271,17 +282,6 @@
             this.grid1.Size = new System.Drawing.Size(1008, 419);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            // 
-            // txtSeq1
-            // 
-            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq1.Location = new System.Drawing.Point(210, 19);
-            this.txtSeq1.Name = "txtSeq1";
-            this.txtSeq1.seq1 = "";
-            this.txtSeq1.seq2 = "";
-            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq1.TabIndex = 1;
-            this.txtSeq1.Leave += new System.EventHandler(this.txtSeq1_Leave);
             // 
             // P35_Import
             // 

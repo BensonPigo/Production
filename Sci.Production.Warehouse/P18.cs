@@ -1157,21 +1157,14 @@ Where a.id = '{0}'", masterID);
         }
    
 
-        private void textBox2_MouseClick(object sender, MouseEventArgs e)
+        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-
-        }
-
-        private void textBox2_MouseDown(object sender, MouseEventArgs e)
-        {
-         if (e.Button==System.Windows.Forms.MouseButtons.Right)
-            {
+            if (!this.EditMode) return;
                 string cmd = "select ID from scifty WITH (NOLOCK) where mdivisionid<>'' and Junk<>1 order by MDivisionID,ID ";
                 Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(cmd, "6", this.textBox2.ToString());
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
                 this.textBox2.Text = item.GetSelectedString();
-            }
         }
 
     }

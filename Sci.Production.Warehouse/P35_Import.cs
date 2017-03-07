@@ -326,25 +326,6 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             }
         }
 
-        //Location  右鍵
-        private void textBox4_MouseDown(object sender, MouseEventArgs e)
-        {
-            #region Location 右鍵開窗
-
-
-            if (this.EditMode && e.Button == MouseButtons.Right)
-            {
-
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"select id,[Description] from dbo.MtlLocation WITH (NOLOCK) where StockType='B' and mdivisionid='{0}'", Sci.Env.User.Keyword), "10,40", textBox4.Text, "ID,Desc");
-                DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
-                textBox4.Text = item.GetSelectedString();
-            }
-
-
-            #endregion Location 右鍵開窗
-        }
-
         //Update All
         private void button4_Click(object sender, EventArgs e)
         {
@@ -369,6 +350,15 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
                 MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
                 e.Cancel = true;
             }
+        }
+        //Location  右鍵
+        private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            if (!this.EditMode) return;
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"select id,[Description] from dbo.MtlLocation WITH (NOLOCK) where StockType='B' and mdivisionid='{0}'", Sci.Env.User.Keyword), "10,40", textBox4.Text, "ID,Desc");
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            textBox4.Text = item.GetSelectedString();
         }
     }
 }
