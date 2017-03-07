@@ -245,13 +245,15 @@ AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
             var frm = new Sci.Production.PublicForm.GarmentList(ukey);
             frm.ShowDialog(this);
         }
-        
+
         protected override bool ClickPrint()
         {
             string ID = this.CurrentMaintain["ID"].ToString();
             if (tabs.SelectedIndex == 1)
             {
-                var frm = new P01_Print_OrderList(ID);
+
+
+                var frm = new P01_Print_OrderList(ID, this.histype == "1" ? 0 : 1);
                 frm.ShowDialog();
             }
             return base.ClickPrint();
