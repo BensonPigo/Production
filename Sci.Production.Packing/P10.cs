@@ -110,10 +110,12 @@ namespace Sci.Production.Packing
                 }
                 listControlBindingSource1.DataSource = selectDataTable;
 
+               
                 //讀檔案
                 using (StreamReader reader = new StreamReader(openFileDialog1.FileName, System.Text.Encoding.UTF8))
                 {
                     DataRow seekData;
+                    DataTable MissData = selectDataTable.Clone();
                     int insertCount = 0;
                     string line;
                     while ((line = reader.ReadLine()) != null)
@@ -159,13 +161,46 @@ namespace Sci.Production.Packing
                                     selectDataTable.Rows.Add(dr);
                                     insertCount++;
                                 }
+                                else
+                                {
+                                    dr["StyleID"] = "";
+                                    dr["SeasonID"] ="";
+                                    dr["BrandID"] = "";
+                                    dr["Customize1"] = "";
+                                    dr["CustPONo"] = "";
+                                    dr["Alias"] = "";
+                                    dr["BuyerDelivery"] = DBNull.Value;
+                                    MissData.Rows.Add(dr.ItemArray);
+                                }
+                            }
+                            else
+                            {
+                                dr["OrderID"] = "";
+                                dr["StyleID"] = "";
+                                dr["SeasonID"] = "";
+                                dr["BrandID"] = "";
+                                dr["Customize1"] = "";
+                                dr["CustPONo"] = "";
+                                dr["Alias"] = "";
+                                dr["BuyerDelivery"] = DBNull.Value;
+                                MissData.Rows.Add(dr.ItemArray);
                             }
                         }
                     }
                     if (insertCount == 0)
                     {
-                        MyUtility.Msg.WarningBox("This data were all be transferred or order's M is not equal to login M.");
+                        MyUtility.Msg.WarningBox("All data were transferred or order's M is not equal to login M.");
                         return;
+                    }
+                    if (MissData.Rows.Count > 0)
+                    {
+                        StringBuilder warningmsg = new StringBuilder();
+                        warningmsg.Append("Some data were transferred or order's M is not equal to login M." + Environment.NewLine);
+                        foreach (DataRow missData in MissData.Rows)
+                        {
+                            warningmsg.Append(string.Format(@"PackingListID: {0} CTN#: {1} " + Environment.NewLine, missData["PackingListID"], missData["CTNStartNo"]));
+                        }
+                        MyUtility.Msg.WarningBox(warningmsg.ToString());
                     }
                     ControlButton4Text("Cancel");
                 }
