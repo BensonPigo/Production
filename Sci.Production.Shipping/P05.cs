@@ -275,6 +275,8 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                 detailgrid.Columns[4].DefaultCellStyle.ForeColor = Color.Black;
                 button6.Enabled = false;
                 gridicon.Remove.Enabled = false;
+                textBox6.ReadOnly = true;
+                textBox7.ReadOnly = true;
             }
             else
             {
@@ -283,6 +285,8 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                 col_crd.IsEditingReadOnly = false;
                 detailgrid.Columns[0].DefaultCellStyle.ForeColor = Color.Red;
                 detailgrid.Columns[4].DefaultCellStyle.ForeColor = Color.Red;
+                textBox6.ReadOnly = false;
+                textBox7.ReadOnly = false;
                 //textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             }
         }

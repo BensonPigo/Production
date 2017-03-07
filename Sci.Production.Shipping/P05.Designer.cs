@@ -86,6 +86,8 @@
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
             this.textBox4 = new Sci.Win.UI.TextBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.textBox7 = new Sci.Win.UI.TextBox();
+            this.textBox6 = new Sci.Win.UI.TextBox();
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txtshipterm1 = new Sci.Production.Class.txtshipterm();
@@ -94,8 +96,6 @@
             this.txtcountry1 = new Sci.Production.Class.txtcountry();
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
-            this.textBox7 = new Sci.Win.UI.TextBox();
-            this.textBox6 = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -969,6 +969,30 @@
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
             this.comboBox1.TabIndex = 12;
             // 
+            // textBox7
+            // 
+            this.textBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.textBox7.Location = new System.Drawing.Point(658, 112);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
+            this.textBox7.ReadOnly = true;
+            this.textBox7.Size = new System.Drawing.Size(164, 23);
+            this.textBox7.TabIndex = 14;
+            this.textBox7.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox7_PopUp);
+            this.textBox7.Validating += new System.ComponentModel.CancelEventHandler(this.textBox7_Validating);
+            // 
+            // textBox6
+            // 
+            this.textBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.textBox6.Location = new System.Drawing.Point(658, 139);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.ReadOnly = true;
+            this.textBox6.Size = new System.Drawing.Size(153, 23);
+            this.textBox6.TabIndex = 15;
+            this.textBox6.Validating += new System.ComponentModel.CancelEventHandler(this.textBox6_Validating);
+            // 
             // txtsubcon1
             // 
             this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
@@ -1053,28 +1077,6 @@
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
             this.txtfactory1.TabIndex = 0;
-            // 
-            // textBox7
-            // 
-            this.textBox7.BackColor = System.Drawing.Color.White;
-            this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox7.Location = new System.Drawing.Point(658, 112);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
-            this.textBox7.Size = new System.Drawing.Size(164, 23);
-            this.textBox7.TabIndex = 14;
-            this.textBox7.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox7_PopUp);
-            this.textBox7.Validating += new System.ComponentModel.CancelEventHandler(this.textBox7_Validating);
-            // 
-            // textBox6
-            // 
-            this.textBox6.BackColor = System.Drawing.Color.White;
-            this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox6.Location = new System.Drawing.Point(658, 139);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(153, 23);
-            this.textBox6.TabIndex = 15;
-            this.textBox6.Validating += new System.ComponentModel.CancelEventHandler(this.textBox6_Validating);
             // 
             // P05
             // 
