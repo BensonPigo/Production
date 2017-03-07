@@ -45,6 +45,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Packing List Weight & Summary', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList';
 
@@ -196,4 +198,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturi
 GO
 CREATE NONCLUSTERED INDEX [Index_OrderIDOrderShipmodeSeq]
     ON [dbo].[PackingList]([OrderID] ASC, [OrderShipmodeSeq] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [INVNo]
+    ON [dbo].[PackingList]([INVNo] ASC);
 
