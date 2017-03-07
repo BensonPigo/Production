@@ -33,7 +33,7 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? "1=0" : string.Format("p.ShipPlanID ='{0}'", MyUtility.Convert.GetString(e.Master["ID"]));
             string sqlCmd = string.Format(@"select p.ID,
-(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')) as OrderID,
+STUFF((select CONCAT(',',cast(a.OrderID as nvarchar)) from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),1,1,'') as OrderID,
 (select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
 p.Status,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogCTNQty,
 p.InspDate,p.InspStatus,p.PulloutDate,p.InvNo,p.MDivisionID
