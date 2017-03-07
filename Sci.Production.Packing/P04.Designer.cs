@@ -295,6 +295,7 @@
             this.txtcustcd1.Name = "txtcustcd1";
             this.txtcustcd1.Size = new System.Drawing.Size(125, 23);
             this.txtcustcd1.TabIndex = 3;
+            this.txtcustcd1.Validated += new System.EventHandler(this.txtcustcd1_Validated);
             // 
             // txtcountry1
             // 

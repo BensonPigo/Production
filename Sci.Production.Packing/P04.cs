@@ -858,5 +858,13 @@ where ID = @INVNo";
             Sci.Production.Packing.P04_ExcelImport callNextForm = new Sci.Production.Packing.P04_ExcelImport((DataTable)detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
         }
+
+        private void txtcustcd1_Validated(object sender, EventArgs e)
+        {
+            if (this.EditMode && !MyUtility.Check.Empty(txtcustcd1.Text) && txtcustcd1.OldValue != txtcustcd1.Text)
+            {
+                CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), txtcustcd1.Text));
+            }      
+        }
     }
 }
