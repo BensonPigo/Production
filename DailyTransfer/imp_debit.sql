@@ -45,9 +45,8 @@ declare @tLocalDebit table (id varchar(13),isinsert bit)
 	when not matched by target then
 		insert(TaipeiDBC,id, FactoryID, TaipeiAMT, TaipeiCurrencyID, AddDate, AddName,[status],MDivisionID,issuedate)
 		values( '1', Id, BrandID, Amount, CurrencyID, AddDate,'SCIMIS','New',
-		isnull((SELECT  MDivisionID FROM SCIFTY WITH (NOLOCK) WHERE ID=S.BRANDID),''),s.adddate )
+		isnull((SELECT  MDivisionID FROM Production.dbo.Factory WITH (NOLOCK) WHERE ID=S.BRANDID),''),s.adddate )
 		output inserted.id,iif(deleted.id='',1,0) into @tLocalDebit;
-
 
 	Merge Production.dbo.LocalDebit_Detail as t
 	using( select a.*,b.adddate as add1 from Trade_To_Pms.dbo.debit_detail a WITH (NOLOCK)
