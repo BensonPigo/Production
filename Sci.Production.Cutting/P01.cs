@@ -36,7 +36,7 @@ namespace Sci.Production.Cutting
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            #region Base
+            #region from Orders Base
             DataRow orderdr;
             if (MyUtility.Check.Seek(String.Format("Select * from Orders WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"]), out orderdr))
             {
@@ -78,14 +78,7 @@ namespace Sci.Production.Cutting
                     break;
             }
             #endregion
-            #region Cutinline,Cutoffline 是減System.Cutday計算
-            int cutday = Convert.ToInt16(MyUtility.GetValue.Lookup(String.Format("Select cutday from System WITH (NOLOCK)")));
-            if (CurrentMaintain["sewinline"] == DBNull.Value) dateBox1.Value = null;
-            else dateBox1.Value = Convert.ToDateTime(CurrentMaintain["sewinline"]).AddDays(-cutday);
-            if (CurrentMaintain["sewoffline"] == DBNull.Value) dateBox2.Value = null;
-            else dateBox2.Value = Convert.ToDateTime(CurrentMaintain["sewoffline"]).AddDays(-cutday);
-            #endregion
-            #region 填PO Combo, Cutting Combo, MTLExport, PulloutComplete, Garment L/T欄位值
+            #region from Orders 填PO Combo, Cutting Combo, MTLExport, PulloutComplete, Garment L/T欄位值
             DataTable OrdersData;
             string sqlCmd;
             sqlCmd = string.Format(@"
@@ -115,7 +108,7 @@ from Orders o WITH (NOLOCK) where ID = '{0}'"
                 editBox2.Text = "";
             }
             #endregion
-            #region sum FOC & OrderQty
+            #region from Orders sum FOC & OrderQty
             sqlCmd = string.Format(@"
 Select
     Qty = isnull(sum(Qty),0),
@@ -134,7 +127,14 @@ where CuttingSp = '{0}'"
                 numericBox2.Value = 0;
             }
             #endregion
-            #region color change
+            #region from System Cutinline,Cutoffline 是減System.Cutday計算
+            int cutday = Convert.ToInt16(MyUtility.GetValue.Lookup(String.Format("Select cutday from System WITH (NOLOCK)")));
+            if (CurrentMaintain["sewinline"] == DBNull.Value) dateBox1.Value = null;
+            else dateBox1.Value = Convert.ToDateTime(CurrentMaintain["sewinline"]).AddDays(-cutday);
+            if (CurrentMaintain["sewoffline"] == DBNull.Value) dateBox2.Value = null;
+            else dateBox2.Value = Convert.ToDateTime(CurrentMaintain["sewoffline"]).AddDays(-cutday);
+            #endregion
+            #region button1 color change
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_MarkerList", "ID")) button1.ForeColor = Color.Blue;
             else button1.ForeColor = Color.Black;
 
@@ -251,8 +251,6 @@ AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
             string ID = this.CurrentMaintain["ID"].ToString();
             if (tabs.SelectedIndex == 1)
             {
-
-
                 var frm = new P01_Print_OrderList(ID, this.histype == "1" ? 0 : 1);
                 frm.ShowDialog();
             }
