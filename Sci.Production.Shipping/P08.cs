@@ -720,9 +720,9 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             if (base.CurrentMaintain == null)
                 return;
 
-            if (EditMode == true && !MyUtility.Check.Empty(CurrentMaintain["Type"].ToString()) && !MyUtility.Check.Empty(comboBox1.OldValue))
+            if (EditMode == true && !MyUtility.Check.Empty(comboBox1.OldValue))
             {
-                if (!comboBox1.OldValue.EqualString(CurrentMaintain["Type"].ToString()))
+                if (!comboBox1.OldValue.EqualString(comboBox1.SelectedValue))
                 {
                     switch (CurrentMaintain["Type"].ToString())
                     {
