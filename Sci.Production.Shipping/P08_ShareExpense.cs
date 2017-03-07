@@ -66,28 +66,15 @@ namespace Sci.Production.Shipping
                         e.Cancel=true;// 不進入RowIndex判斷                            
                     }                    
                     // 檢查規則
-                    // 檢查規則 SubTypeRule 是在APPEND新增的, 但是如果是批量輸入SubTypeRule就是空值所以也要判斷進去
-                    if (dr["SubType"].ToString().ToUpper() == "GARMENT" || (dr["SubType"].ToString().ToUpper() == "OTHER" && (drGrid["SubTypeRule"].ToString() == "Garment") || MyUtility.Check.Empty(drGrid["SubTypeRule"])))
+                    // Type=Export FrtyExport(type=3)
+                    if (dr["type"].ToString().ToUpper()=="EXPORT")
                     {
                         //判斷資料是否存在
                         string chkExp = string.Format(@"
-with GB 
-as 
-(select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
- '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
- '' as ShareBase, 0 as FtyWK 
- from GMTBooking g  WITH (NOLOCK) 
- left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
- left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
- where 1=1  and g.id='{0}' ), PL 
-as 
-(select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, 
-'' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
-'' as ShareBase, 0 as FtyWK 
- from PackingList WITH (NOLOCK) 
- where  (Type = 'F' or Type = 'L')  and id='{0}' ) select * from GB 
-union all 
-select * from PL
+select 0 as Selected,ID as WKNo,ShipModeID,WeightKg as GW, Cbm, '' as ShippingAPID, Blno,
+'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
+from FtyExport WITH (NOLOCK) 
+ where Type = 3  and blno='{0}'
  ", e.FormattedValue.ToString());
                         DataTable dtExp;
                         DBProxy.Current.Select(null, chkExp, out dtExp);
@@ -105,33 +92,34 @@ select * from PL
                             {
                                 DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
                                 NewRow["Blno"] = dtExp.Rows[i]["Blno"];
-                                NewRow["Wkno"] = dtExp.Rows[i]["Wkno"];
+                                NewRow["InvNo"] = dtExp.Rows[i]["Wkno"];
                                 NewRow["ShipModeID"] = dtExp.Rows[i]["ShipModeID"];
                                 NewRow["GW"] = dtExp.Rows[i]["GW"];
                                 NewRow["CBM"] = dtExp.Rows[i]["CBM"];
                                 NewRow["Amount"] = dtExp.Rows[i]["Amount"];
                                 ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
                             }
-                        }
-                        /////////////////////////
-                        
+                        }                        
                     }
-                    //Garment
+                    //Import FtyExport(type<>3)
                     else
                     {
-                        string chkImp = string.Format(@"with ExportData 
-as 
-(select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
- '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
- from Export WITH (NOLOCK) 
- where 1 = 1 and Blno='{0}' ), FtyExportData 
-as 
-(select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
- '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
- from FtyExport WITH (NOLOCK) 
- where 1=0  and blno='{0}') select * from ExportData 
+                        string chkImp = string.Format(@"
+with FTY as
+(
+select 0 as Selected,ID as WKNo,ShipModeID,WeightKg as GW, Cbm, '' as ShippingAPID, Blno,
+'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
+from FtyExport WITH (NOLOCK) 
+ where Type <> 3  and blno='{0}'
+ ),
+Expt as
+(select 0 as Selected,ID as WKNo,ShipModeID,WeightKg as GW, Cbm, '' as ShippingAPID, Blno,
+'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
+from Export WITH (NOLOCK) 
+ where blno='{0}')
+select * from FTY
 union all 
-select * from FtyExportData", e.FormattedValue.ToString());
+select * from Expt", e.FormattedValue.ToString());
                         DataTable dtImp;
                         DBProxy.Current.Select(null, chkImp, out dtImp);
                         if (MyUtility.Check.Empty(dtImp)) return;
@@ -164,7 +152,12 @@ select * from FtyExportData", e.FormattedValue.ToString());
                     {
                         if (dts.Rows[i].RowState != DataRowState.Deleted)
                         {
-                            if (MyUtility.Check.Empty(dts.Rows[i]["Blno"].ToString()))
+                            //if (MyUtility.Check.Empty(dts.Rows[i]["Blno"].ToString())&& dr["type"].ToString().ToUpper()=="IMPORT")
+                            //{
+                            //    //刪除
+                            //    dts.Rows[i].Delete();
+                            //}
+                            if (MyUtility.Check.Empty(dts.Rows[i]["Blno"].ToString()) && MyUtility.Check.Empty(dts.Rows[i]["WKNO"].ToString()) && MyUtility.Check.Empty(dts.Rows[i]["InvNO"].ToString()))
                             {
                                 //刪除
                                 dts.Rows[i].Delete();
@@ -189,28 +182,34 @@ select * from FtyExportData", e.FormattedValue.ToString());
                 if (drGrid["WKNO"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper()) return;
                 if (MyUtility.Check.Seek(cmd_type, out dr))
                 {
-                    DataRow dr1;
-                    // 檢查規則 SubTypeRule 是在APPEND新增的, 但是如果是批量輸入SubTypeRule就是空值所以也要判斷進去
-                    if (dr["SubType"].ToString().ToUpper() == "GARMENT" || (dr["SubType"].ToString().ToUpper() == "OTHER" && (drGrid["SubTypeRule"].ToString() == "Garment" || MyUtility.Check.Empty(drGrid["SubTypeRule"]))))
+                    DataRow dr1;                    
+                    //TYPE= Export : GB,Packing(type=F,L),FTYExport(type=3)
+                    if (dr["Type"].ToString().ToUpper()=="EXPORT")
                     {
                         string chkExp = string.Format(@"
-with GB 
-as 
+with GB as 
 (select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
  '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
  '' as ShareBase, 0 as FtyWK 
  from GMTBooking g  WITH (NOLOCK) 
  left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
  left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
- where 1=1  and g.id='{0}' ), PL 
-as 
-(select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, 
-'' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
-'' as ShareBase, 0 as FtyWK 
+ where 1=1  and g.id='{0}' ), 
+PL as 
+(select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, '' as ShippingAPID, '' as BLNo,
+'' as WKNo,'' as Type,'' as CurrencyID,0 as Amount, '' as ShareBase,0 as FtyWK 
  from PackingList WITH (NOLOCK) 
- where  (Type = 'F' or Type = 'L')  and id='{0}' ) select * from GB 
+ where  (Type = 'F' or Type = 'L')  and id='{0}' ) ,
+FTY AS
+(select 0 as Selected,ID as WKNo,ShipModeID,WeightKg as GW, Cbm, '' as ShippingAPID, Blno,
+'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
+from FtyExport WITH (NOLOCK) 
+ where Type = 3  and id='{0}')
+select * from GB 
 union all 
 select * from PL
+union all
+SELECT * FROM FTY
  ", e.FormattedValue.ToString());
                         DataTable dtExp;
                         DBProxy.Current.Select(null, chkExp, out dtExp);
@@ -234,9 +233,8 @@ select * from PL
                                 drGrid["Amount"] = dtExp.Rows[i]["Amount"];
                             }
                         }
-                       
                     }
-                    else
+                    else//Type=Import
                     {
                         string chkImp = string.Format(@"with ExportData 
 as 
@@ -264,16 +262,13 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                         else
                         {
                             for (int i = 0; i < dtImp.Rows.Count; i++)
-                            {
-                                // DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
-
+                            {                             
                                 drGrid["Blno"] = dtImp.Rows[i]["Blno"];
                                 drGrid["Wkno"] = dtImp.Rows[i]["Wkno"];
                                 drGrid["ShipModeID"] = dtImp.Rows[i]["ShipModeID"];
                                 drGrid["GW"] = dtImp.Rows[i]["GW"];
                                 drGrid["CBM"] = dtImp.Rows[i]["CBM"];
-                                drGrid["Amount"] = dtImp.Rows[i]["Amount"];
-                                //((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
+                                drGrid["Amount"] = dtImp.Rows[i]["Amount"];                                
                             }
                         }
                     }
@@ -486,8 +481,7 @@ from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID
                 bool haveSea = false, noExistNotSea = true;
                 DataTable duplicData;
                 DBProxy.Current.Select(null, "select BLNo,WKNo,InvNo from ShareExpense WITH (NOLOCK) where 1=0", out duplicData);
-                StringBuilder msg = new StringBuilder();
-
+                StringBuilder msg = new StringBuilder();            
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).ToList<DataRow>())
                 {
                     if (dr.RowState != DataRowState.Deleted)
@@ -499,10 +493,30 @@ from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID
                         }
 
                         //檢查重複值
-                        DataRow[] findrow = duplicData.Select(string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", MyUtility.Convert.GetString(dr["BLNo"]), MyUtility.Convert.GetString(dr["WKNo"]), MyUtility.Convert.GetString(dr["InvNo"])));
+                        DataRow[] findrow = null;
+
+                        findrow = duplicData.Select(string.Format(@"BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", MyUtility.Check.Empty(dr["BLNo"].ToString())? "Empty":dr["BLNo"].ToString(),
+MyUtility.Check.Empty(dr["WKNo"].ToString()) ? "Empty" : dr["WKNo"].ToString(),
+MyUtility.Check.Empty(dr["InvNo"].ToString()) ? "Empty" : dr["InvNo"].ToString()));
+                        //findrow = duplicData.Select(string.Format(@"BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", MyUtility.Convert.GetString(dr["BLNo"]), MyUtility.Convert.GetString(dr["WKNo"]), MyUtility.Convert.GetString(dr["InvNo"])));
                         if (findrow.Length == 0)
                         {
                             duplicData.ImportRow(dr);
+                            for (int i = 0; i < duplicData.Rows.Count; i++)
+                            {                                
+                                if (MyUtility.Check.Empty(duplicData.Rows[i]["BLNo"].ToString()))
+                                {
+                                    duplicData.Rows[i]["BLNo"] = "Empty";
+                                }
+                                if (MyUtility.Check.Empty(duplicData.Rows[i]["WKNo"].ToString()))
+                                {
+                                    duplicData.Rows[i]["WKNo"] = "Empty";
+                                }
+                                if (MyUtility.Check.Empty(duplicData.Rows[i]["InvNo"].ToString()))
+                                {
+                                    duplicData.Rows[i]["InvNo"] = "Empty";
+                                }
+                            }
                         }
                         else
                         {
@@ -806,71 +820,15 @@ CLOSE cursor_PackingList", MyUtility.Convert.GetString(apData["ID"]));
 
         //Append
         private void button1_Click(object sender, EventArgs e)
-        {
-            DataRow dr;
-
-            if (MyUtility.Check.Seek(string.Format(@"select * from ShippingAP where id='{0}'", apData["ID"]), out dr))
-            {
-                if (dr["SubType"].ToString().ToUpper() == "OTHER" && MyUtility.Convert.GetString(apData["Type"]) == "EXPORT")
-                {
-                    DialogResult buttonResult = MyUtility.Msg.InfoBox("If you want to import \"Garment Data\" please click 'Yes'.\r\nIf you want to import \"Material Data\" please click 'No'.\r\nIf you don't want to import data please click 'Cancel'.", "Warning", MessageBoxButtons.YesNoCancel);
-                    if (buttonResult == System.Windows.Forms.DialogResult.Cancel)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        if (buttonResult == System.Windows.Forms.DialogResult.Yes)
-                        {                            
-                            DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
-                            NewRow["Blno"] = "";
-                            NewRow["Wkno"] = "";
-                            NewRow["ShipModeID"] = "";
-                            NewRow["GW"] = 0;
-                            NewRow["CBM"] = 0;
-                            NewRow["Amount"] = 0;
-                            NewRow["SubTypeRule"] = "Garment";
-                            ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
-                        }
-                        else
-                        {                            
-                            DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
-                            NewRow["Blno"] = "";
-                            NewRow["Wkno"] = "";
-                            NewRow["ShipModeID"] = "";
-                            NewRow["GW"] = 0;
-                            NewRow["CBM"] = 0;
-                            NewRow["Amount"] = 0;
-                            NewRow["SubTypeRule"] = "Material";
-                            ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
-                        }
-                    }                  
-                }                    
-                else if (dr["SubType"].ToString().ToUpper() == "OTHER" && MyUtility.Convert.GetString(apData["Type"]) == "IMPORT")
-                {
-                    DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
-                            NewRow["Blno"] = "";
-                            NewRow["Wkno"] = "";
-                            NewRow["ShipModeID"] = "";
-                            NewRow["GW"] = 0;
-                            NewRow["CBM"] = 0;
-                            NewRow["Amount"] = 0;
-                            NewRow["SubTypeRule"] = "Material";
-                            ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
-                }
-                else
-                {
-                    DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
-                    NewRow["Blno"] = "";
-                    NewRow["Wkno"] = "";
-                    NewRow["ShipModeID"] = "";
-                    NewRow["GW"] = 0;
-                    NewRow["CBM"] = 0;
-                    NewRow["Amount"] = 0;
-                    ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
-                }
-            }
-
+        {            
+            DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
+            NewRow["Blno"] = "";
+            NewRow["Wkno"] = "";
+            NewRow["ShipModeID"] = "";
+            NewRow["GW"] = 0;
+            NewRow["CBM"] = 0;
+            NewRow["Amount"] = 0;
+            ((DataTable)listControlBindingSource1.DataSource).Rows.Add(NewRow);
 
         }
         //Delete All
