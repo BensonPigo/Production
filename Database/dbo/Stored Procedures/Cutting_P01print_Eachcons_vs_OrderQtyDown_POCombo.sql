@@ -11,7 +11,7 @@ BEGIN
 	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Production.dbo.Orders WITH (NOLOCK) WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno
 	) d WHERE POID = @OrderID GROUP BY POID,d.spno,StyleID
 
-	select '#'=a.LectraCode,'COLOR'=c.Article,'Size'=c.SizeCode,CutQty=max(c.CutQty),OrderQty=max(c.Orderqty),Balance=max(c.Variance)
+	select '#'=a.LectraCode,[Article]=c.Article,'Size'=c.SizeCode,CutQty=max(c.CutQty),OrderQty=max(c.Orderqty),Balance=max(c.Variance)
 	from dbo.Order_EachCons a WITH (NOLOCK)
 	inner join dbo.Order_EachCons_Color b WITH (NOLOCK) on a.Ukey = b.Order_EachConsUkey and a.Id = b.Id
 	inner join dbo.Order_EachCons_Color_Article c WITH (NOLOCK) on b.Ukey = c.Order_EachCons_ColorUkey and a.id = c.Id
