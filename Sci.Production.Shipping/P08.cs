@@ -94,7 +94,7 @@ namespace Sci.Production.Shipping
 
             //comboxbs2_1 = new BindingSource(comboBox2_RowSource1, null);
             //comboxbs2_2 = new BindingSource(comboBox2_RowSource2, null);
-            comboBox2.DataSource = subType_1;
+
             comboBox2.ValueMember = "Key";
             comboBox2.DisplayMember = "Value";
 
@@ -142,6 +142,22 @@ where sd.ID = '{0}'", masterID);
         {
             base.OnDetailEntered();
             //ChangeCombo2DataSource();
+            #region set comboBox2 DataSource
+            switch (CurrentMaintain["Type"].ToString())
+            {
+                case "IMPORT":
+                    //comboxbs2_1.Position = 0;
+                    comboBox2.DataSource = subType_1;
+                    //CurrentMaintain["SubType"] = temp;
+                    break;
+                case "EXPORT":
+                    //comboxbs2_2.Position = 0;
+                    comboBox2.DataSource = subType_2;
+                    //CurrentMaintain["SubType"] = temp;
+                    break;
+            }
+            #endregion
+
             bool status = MyUtility.Check.Empty(CurrentMaintain["Accountant"]);
             button2.Enabled = status ? !EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P08. Account Payment - Shipping", "CanConfirm") : MyUtility.Check.Empty(CurrentMaintain["VoucherID"]) && Prgs.GetAuthority(CurrentMaintain["Accountant"].ToString(), "P08. Account Payment - Shipping", "CanUnConfirm");
             button2.Text = status ? "Acct. Approve" : "Acct. Unapprove";
