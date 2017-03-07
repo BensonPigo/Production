@@ -24,11 +24,11 @@ namespace Sci.Production.Cutting
         }
         private void requery()
         {
-            string sqlcmd = String.Format(
-           @"Select a.id,b.bundleno,a.orderid,a.cdate,a.cutref,a.PatternPanel,a.cutno,b.sizecode,b.bundlegroup,b.Qty
-            ,PrintDate
-            from Bundle a WITH (NOLOCK) , Bundle_Detail b WITH (NOLOCK) 
-            Where a.id = b.id and a.POID = '{0}' order by BundleNo", cutid);
+            string sqlcmd = String.Format(@"
+Select a.id,b.bundleno,a.orderid,a.cdate,a.cutref,a.PatternPanel,a.cutno,b.sizecode,b.bundlegroup,b.Qty,PrintDate
+from Bundle a WITH (NOLOCK) , Bundle_Detail b WITH (NOLOCK)
+Where a.id = b.id and a.POID = '{0}' order by BundleNo"
+                , cutid);
             DataTable gridtb;
             DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
             grid1.DataSource = gridtb;
