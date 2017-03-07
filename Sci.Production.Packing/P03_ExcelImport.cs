@@ -10,11 +10,18 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
-    public partial class P03_ExcelImport : Form
+    public partial class P03_ExcelImport : Sci.Win.Subs.Base
     {
+        DataTable detailData;
         public P03_ExcelImport(DataTable DetailData)
         {
             InitializeComponent();
+            detailData = DetailData;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
         }
     }
 }
