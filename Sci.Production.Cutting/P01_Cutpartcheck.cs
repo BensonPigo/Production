@@ -13,27 +13,27 @@ namespace Sci.Production.Cutting
 {
     public partial class P01_Cutpartcheck : Sci.Win.Subs.Base
     {
-        private string cutid;
-        private string WorkType;
+        private string _cutid;
+        private string _WorkType;
 
-        public P01_Cutpartcheck(string cID, string _WorkType)
+        public P01_Cutpartcheck(string cID, string WorkType)
         {
             InitializeComponent();
 
             this.Text = string.Format("Cut Parts Check<SP:{0}>)", cID);
-            cutid = cID;
-            WorkType = _WorkType;
+            _cutid = cID;
+            _WorkType = WorkType;
             requery();
             gridSetup();
             this.grid1.AutoResizeColumns();
         }
         private void requery()
         {
-            #region  1203: CUTTING_P01_CutPartsCheck  [Prd Qty]數量計算
+            #region CUTTING_P01_CutPartsCheck  [Prd Qty]數量計算
             string sql = "", sql2 = "";
-            if (WorkType == "1")
+            if (_WorkType == "1")
             {
-                sql = string.Format(@"with a as (
+                sql = string.Format(@";with a as (
 	                    select a.CuttingSP,b.ID,b.Article,b.SizeCode
                            ,( select sum(OQ.qty)
 		                    from order_Qty OQ WITH (NOLOCK) 
@@ -45,16 +45,16 @@ namespace Sci.Production.Cutting
                             and c.FabricCode is not null and c.FabricCode != ''
                             and c.LectraCode in (select distinct LectraCode from Order_EachCons WITH (NOLOCK) WHERE ID='{0}' and CuttingPiece = 0)  --排除外裁
 	                    where a.cuttingsp = '{0}'
-                    ) ", cutid);
+                    ) ", _cutid);
                 sql2 = string.Format(@"Select x.poid,y.ID,y.Article,y.SizeCode
                                            ,( select sum(OQ.qty)
 		                                    from order_Qty OQ WITH (NOLOCK) 
 		                                    where OQ.ID=y.ID and OQ.Article=y.Article and OQ.SizeCode=y.SizeCode ) QTY
                                             ,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
 	                                    from (Select id,POID from Orders z WITH (NOLOCK) where z.cuttingsp = '{0}') as x,order_Qty y 
-	                                    where y.id = x.id", cutid);
+	                                    where y.id = x.id", _cutid);
             }
-            else if (WorkType == "2") //WorkType == "2"
+            else if (_WorkType == "2") //WorkType == "2"
             {
                 sql = string.Format(@"with a as (
 	                    select a.CuttingSP,b.ID,b.Article,b.SizeCode
@@ -68,14 +68,14 @@ namespace Sci.Production.Cutting
                             and c.FabricCode is not null and c.FabricCode != ''
                             and c.LectraCode in (select distinct LectraCode from Order_EachCons WITH (NOLOCK) WHERE ID='{0}' and CuttingPiece = 0)  --排除外裁
 	                    where a.cuttingsp = '{0}'
-                    )  ", cutid);
+                    )  ", _cutid);
                 sql2 = string.Format(@"Select x.poid,y.ID,y.Article,y.SizeCode
                                             ,( select sum(OQ.qty)
 		                                    from order_Qty OQ WITH (NOLOCK) 
 		                                    where OQ.ID=y.ID and OQ.Article=y.Article and OQ.SizeCode=y.SizeCode ) QTY
                                             ,'' as Colorid,'=' as Patternpanel,null as cutqty,null as Variance 
 	                                    from (Select id,POID from Orders z WITH (NOLOCK) where z.cuttingsp = '{0}') as x,order_Qty y 
-	                                    where y.id = x.id", cutid);
+	                                    where y.id = x.id", _cutid);
             }
             #endregion
             if (sql != "" && sql2 != "")
@@ -105,7 +105,7 @@ namespace Sci.Production.Cutting
         select c.*,z.seq
         from c
         inner join Order_SizeCode z WITH (NOLOCK) on z.id = c.CuttingSP and z.SizeCode = c.SizeCode
-        order by c.id,article,z.seq,PatternPanel", cutid, sql2);
+        order by c.id,article,z.seq,PatternPanel", _cutid, sql2);
                 DataTable gridtb;
                 DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
 
