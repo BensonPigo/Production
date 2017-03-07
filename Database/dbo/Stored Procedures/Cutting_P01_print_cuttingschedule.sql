@@ -11,7 +11,7 @@ BEGIN
 
 	SELECT SP#=C.ID
 		,Style=O.StyleID
-		,[Order Qty]=tmp2.cut_qty
+		,[Order Qty]=format(tmp2.cut_qty,'#,0.')
 		,ETA=O.LETA
 		,[Earliest Sewing Inline]=O.SewInLine
 		,[Earliest Sewing offline]=O.SewOffLine
