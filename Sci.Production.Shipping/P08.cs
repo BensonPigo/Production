@@ -17,9 +17,12 @@ namespace Sci.Production.Shipping
 {
     public partial class P08 : Sci.Win.Tems.Input6
     {
-        Dictionary<String, String> comboBox2_RowSource1 = new Dictionary<string, string>();
-        Dictionary<String, String> comboBox2_RowSource2 = new Dictionary<string, string>();
-        BindingSource comboxbs1, comboxbs2_1, comboxbs2_2;
+        //Dictionary<String, String> comboBox2_RowSource1 = new Dictionary<string, string>();
+        //Dictionary<String, String> comboBox2_RowSource2 = new Dictionary<string, string>();
+        DataTable subType_1 = new DataTable();
+        DataTable subType_2 = new DataTable();
+        BindingSource comboxbs1;
+        //, comboxbs2_1, comboxbs2_2;
         Ict.Win.DataGridViewGeneratorTextColumnSettings code = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
         Ict.Win.DataGridViewGeneratorNumericColumnSettings rate = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
@@ -71,17 +74,27 @@ namespace Sci.Production.Shipping
             #endregion  
 
             //設定ComboBox的內容值
-            comboBox2_RowSource1.Add("MATERIAL", "MATERIAL");
-            comboBox2_RowSource1.Add("SISTER FACTORY TRANSFER", "SISTER FACTORY TRANSFER");
-            comboBox2_RowSource1.Add("OTHER", "OTHER");
+            subType_1.ColumnsStringAdd("Key");
+            subType_1.ColumnsStringAdd("Value");
+            subType_1.Rows.Add("MATERIAL", "MATERIAL");
+            subType_1.Rows.Add("SISTER FACTORY TRANSFER", "SISTER FACTORY TRANSFER");
+            subType_1.Rows.Add("OTHER", "OTHER");
+            //comboBox2_RowSource1.Add("MATERIAL", "MATERIAL");
+            //comboBox2_RowSource1.Add("SISTER FACTORY TRANSFER", "SISTER FACTORY TRANSFER");
+            //comboBox2_RowSource1.Add("OTHER", "OTHER");
 
-            comboBox2_RowSource2.Add("GARMENT", "GARMENT");
-            comboBox2_RowSource2.Add("SISTER FACTORY TRANSFER", "SISTER FACTORY TRANSFER");
-            comboBox2_RowSource2.Add("OTHER", "OTHER");
+            subType_2.ColumnsStringAdd("Key");
+            subType_2.ColumnsStringAdd("Value");
+            subType_2.Rows.Add("GARMENT", "GARMENT");
+            subType_2.Rows.Add("SISTER FACTORY TRANSFER", "SISTER FACTORY TRANSFER");
+            subType_2.Rows.Add("OTHER", "OTHER");
+            //comboBox2_RowSource2.Add("GARMENT", "GARMENT");
+            //comboBox2_RowSource2.Add("SISTER FACTORY TRANSFER", "SISTER FACTORY TRANSFER");
+            //comboBox2_RowSource2.Add("OTHER", "OTHER");
 
-            comboxbs2_1 = new BindingSource(comboBox2_RowSource1, null);
-            comboxbs2_2 = new BindingSource(comboBox2_RowSource2, null);
-            comboBox2.DataSource = comboxbs2_1;
+            //comboxbs2_1 = new BindingSource(comboBox2_RowSource1, null);
+            //comboxbs2_2 = new BindingSource(comboBox2_RowSource2, null);
+            comboBox2.DataSource = subType_1;
             comboBox2.ValueMember = "Key";
             comboBox2.DisplayMember = "Value";
 
@@ -92,6 +105,12 @@ namespace Sci.Production.Shipping
             comboBox1.DataSource = comboxbs1;
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
+
+            //((Binding)this.comboBox1.DataBindings[0]).BindingComplete += (a, b) =>
+            //{
+            //if (this.CurrentMaintain != null)
+            //    this.comboBox2.SelectedValue = base.CurrentMaintain["SubType"];
+            //};
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -122,11 +141,12 @@ where sd.ID = '{0}'", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            ChangeCombo2DataSource();
+            //ChangeCombo2DataSource();
             bool status = MyUtility.Check.Empty(CurrentMaintain["Accountant"]);
             button2.Enabled = status ? !EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P08. Account Payment - Shipping", "CanConfirm") : MyUtility.Check.Empty(CurrentMaintain["VoucherID"]) && Prgs.GetAuthority(CurrentMaintain["Accountant"].ToString(), "P08. Account Payment - Shipping", "CanUnConfirm");
             button2.Text = status ? "Acct. Approve" : "Acct. Unapprove";
             button2.ForeColor = status ? Color.Blue : Color.Black;
+            this.comboBox2.SelectedValue = this.CurrentMaintain["SubType"].ToString();
         }
 
         protected override void OnDetailGridSetup()
@@ -297,14 +317,15 @@ where sd.ID = '{0}'", masterID);
             txtsubcon1.TextBox1.ReadOnly = true;
         }
 
-        protected override void ClickUndo()
-        {
-            ChangeCombo2DataSource();
-            base.ClickUndo();
-        }
+        //protected override void ClickUndo()
+        //{
+        //    ChangeCombo2DataSource();
+        //    base.ClickUndo();
+        //}
 
         protected override bool ClickSaveBefore()
         {
+            base.CurrentMaintain["SubType"] = this.comboBox2.SelectedValue;
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
             {
@@ -320,7 +341,7 @@ where sd.ID = '{0}'", masterID);
             }
             if (MyUtility.Check.Empty(CurrentMaintain["SubType"]))
             {
-                MyUtility.Msg.WarningBox("Type can't empty!!");
+                MyUtility.Msg.WarningBox("SubType can't empty!!");
                 comboBox2.Focus();
                 return false;
             }
@@ -562,42 +583,25 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         }
 
         //Type
-        private void comboBox1_Validating(object sender, CancelEventArgs e)
-        {
+        //private void comboBox1_Validating(object sender, CancelEventArgs e)
+        //{
                         
-            //if (EditMode == true && MyUtility.Convert.GetString(CurrentMaintain["type"]) != MyUtility.Convert.GetString(comboBox1.SelectedValue))
-                if (EditMode == true && MyUtility.Convert.GetString(comboBox1.OldValue) != MyUtility.Convert.GetString(comboBox1.SelectedValue))
-            {
-                //CurrentMaintain["Type"] = comboBox1.SelectedValue;
-                if (comboBox1.SelectedIndex != -1)
-                {
-                    ChangeCombo2DataSource();
-                }
-                CurrentMaintain["SubType"] = "";
-                comboBox2.SelectedIndex = 0;
-            }
-        }
+        //    //if (EditMode == true && MyUtility.Convert.GetString(CurrentMaintain["type"]) != MyUtility.Convert.GetString(comboBox1.SelectedValue))
+        //    //string oldValue = MyUtility.Convert.GetString(comboBox1.OldValue), selectValue = MyUtility.Convert.GetString(comboBox1.SelectedValue);
+        //    //if (EditMode == true & !MyUtility.Check.Empty(oldValue)
+        //    //    & !oldValue.EqualString(selectValue))
+        //    //{                
+        //    //    if (comboBox1.SelectedIndex != -1)
+        //    //    {
+        //    //        //CurrentMaintain["Type"] = selectValue;
+        //    //        //CurrentMaintain["SubType"] = "";
+        //    //        //CurrentMaintain.EndEdit();
 
-        //設定Combo2的DataSource
-        private void ChangeCombo2DataSource()
-        {
-            string temp = CurrentMaintain["SubType"].ToString();
-            switch (MyUtility.Convert.GetString(CurrentMaintain["Type"]))
-            {
-                case "IMPORT":
-                    comboBox2.DataSource = comboxbs2_1;
-                    CurrentMaintain["SubType"] = temp;
-                    break;
-                case "EXPORT":
-                    comboBox2.DataSource = comboxbs2_2;
-                    CurrentMaintain["SubType"] = temp;
-                    break;
-                default:
-                    comboBox2.DataSource = comboxbs2_1;
-                    CurrentMaintain["SubType"] = temp;
-                    break;
-            }
-        }
+        //    //        this.ChangeCombo2DataSource();
+        //    //        //comboBox2.SelectedIndex = 0;
+        //    //    }
+        //    //}
+        //}
 
         //計算表身Grid欄位的Amount值
         private void CalculateGridAmount(DataRow dr)
@@ -688,6 +692,33 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 RenewData();
                 OnDetailEntered();
             }
+        }
+
+        private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (base.CurrentMaintain == null)
+                return;
+
+            switch (CurrentMaintain["Type"].ToString())
+            {
+                case "IMPORT":
+                    //comboxbs2_1.Position = 0;
+                    comboBox2.DataSource = subType_1;
+                    //CurrentMaintain["SubType"] = temp;
+                    break;
+                case "EXPORT":
+                    //comboxbs2_2.Position = 0;
+                    comboBox2.DataSource = subType_2;
+                    //CurrentMaintain["SubType"] = temp;
+                    break;
+                default:
+                    //comboxbs2_1.Position = 0;
+                    comboBox2.DataSource = subType_1;
+                    //CurrentMaintain["SubType"] = temp;
+                    break;
+            }
+            if (EditMode == true && !comboBox1.OldValue.EqualString(comboBox1.SelectedValue2))
+                comboBox2.SelectedIndex = 0;
         }
     }
 }

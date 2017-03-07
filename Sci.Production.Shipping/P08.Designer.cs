@@ -61,12 +61,12 @@
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.button1 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
+            this.displayBox2 = new Sci.Win.UI.DisplayBox();
+            this.label8 = new Sci.Win.UI.Label();
             this.txtuser2 = new Sci.Production.Class.txtuser();
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txtpayterm_fty1 = new Sci.Production.Class.txtpayterm_fty();
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.label8 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -299,7 +299,7 @@
             // comboBox1
             // 
             this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Type", true));
+            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue2", this.mtbs, "Type", true));
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
@@ -307,12 +307,11 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(100, 24);
             this.comboBox1.TabIndex = 0;
-            this.comboBox1.Validating += new System.ComponentModel.CancelEventHandler(this.comboBox1_Validating);
+            this.comboBox1.SelectedValueChanged += new System.EventHandler(this.comboBox1_SelectedValueChanged);
             // 
             // comboBox2
             // 
             this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "SubType", true));
             this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.IsSupportUnselect = true;
@@ -590,6 +589,25 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // displayBox2
+            // 
+            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
+            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox2.Location = new System.Drawing.Point(273, 64);
+            this.displayBox2.Name = "displayBox2";
+            this.displayBox2.Size = new System.Drawing.Size(72, 23);
+            this.displayBox2.TabIndex = 17;
+            // 
+            // label8
+            // 
+            this.label8.Lines = 0;
+            this.label8.Location = new System.Drawing.Point(249, 64);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(21, 23);
+            this.label8.TabIndex = 19;
+            this.label8.Text = "M";
+            // 
             // txtuser2
             // 
             this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Accountant", true));
@@ -630,25 +648,6 @@
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
             this.txtsubcon1.TabIndex = 2;
             this.txtsubcon1.TextBox1Binding = "";
-            // 
-            // displayBox2
-            // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(273, 64);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(72, 23);
-            this.displayBox2.TabIndex = 17;
-            // 
-            // label8
-            // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(249, 64);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(21, 23);
-            this.label8.TabIndex = 19;
-            this.label8.Text = "M";
             // 
             // P08
             // 
