@@ -607,7 +607,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             }
             else if (CurrentMaintain["SpecialInstruction"].ToString().Substring(0, 1) == "=")
             {
-                worksheet.Cells[row, 2] = " " + MyUtility.Convert.GetString(CurrentMaintain["SpecialInstruction"]);
+                worksheet.Cells[row, 2] = "'" + MyUtility.Convert.GetString(CurrentMaintain["SpecialInstruction"]);
             }
             else
             {
