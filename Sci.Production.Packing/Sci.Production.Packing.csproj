@@ -167,6 +167,12 @@
     <Compile Include="P01_OverrunGMTRecord.Designer.cs">
       <DependentUpon>P01_OverrunGMTRecord.cs</DependentUpon>
     </Compile>
+    <Compile Include="P03_ExcelImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03_ExcelImport.Designer.cs">
+      <DependentUpon>P03_ExcelImport.cs</DependentUpon>
+    </Compile>
     <Compile Include="P14_Print_OrderList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -348,6 +354,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_OverrunGMTRecord.resx">
       <DependentUpon>P01_OverrunGMTRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03_ExcelImport.resx">
+      <DependentUpon>P03_ExcelImport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P14_Print_OrderList.resx">
       <DependentUpon>P14_Print_OrderList.cs</DependentUpon>
