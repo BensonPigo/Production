@@ -2198,6 +2198,7 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Stored Procedures\insert_Air_Fir.sql" />
+    <Build Include="dbo\Stored Procedures\Cutting_P01_print_cuttingschedule.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
