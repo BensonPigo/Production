@@ -260,6 +260,9 @@
     <None Include="XLT\Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Cutting_P01_CuttingSchedule.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Cutting_P01_CuttingWorkOrder.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
