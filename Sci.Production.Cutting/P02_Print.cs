@@ -16,6 +16,7 @@ namespace Sci.Production.Cutting
     public partial class P02_Print : Sci.Win.Tems.PrintForm
     {
         string S1, S2,Poid="";
+        string cp,cr;
         private string keyword = Sci.Env.User.Keyword;
         int SheetCount = 1;
         DataTable WorkorderTb, WorkorderSizeTb, WorkorderDisTb, WorkorderPatternTb, CutrefTb, CutDisOrderIDTb, CutSizeTb, SizeTb, CutQtyTb, MarkerTB, FabricComboTb,IssueTb;
@@ -29,6 +30,8 @@ namespace Sci.Production.Cutting
             Cutref_ra.Checked = true;
             textBox1.Text = detDr["CutRef"].ToString();
             textBox2.Text = detDr["CutRef"].ToString();
+            cr = detDr["CutRef"].ToString();
+            cp = detDr["CutplanID"].ToString();
             textBox1.Select();
         }
 
@@ -47,8 +50,8 @@ namespace Sci.Production.Cutting
 
         private void Requ_ra_CheckedChanged(object sender, EventArgs e)
         {
-            textBox1.Text = "";
-            textBox2.Text = "";
+            textBox1.Text = Requ_ra.Checked ? cp : cr;
+            textBox2.Text = Requ_ra.Checked ? cp : cr;
             label1.Text = Requ_ra.Checked ? "Cutplan ID" : "Cut RefNo";
         }
 
