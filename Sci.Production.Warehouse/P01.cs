@@ -24,7 +24,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = string.Format("IsForecast = 0 and Whseclose is null and mdivisionid='{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("IsForecast = 0 and Whseclose is null");
         }
 
         public P01(ToolStripMenuItem menuitem, string history)
@@ -32,8 +32,8 @@ namespace Sci.Production.Warehouse
         {
             this.Text = history != "Y" ? this.Text : this.Text + " (History)";
             btnCloseMTL.Text = history != "Y" ? btnCloseMTL.Text : "Transfer Bulk to Scrap";
-            this.DefaultFilter = history != "Y" ? string.Format("IsForecast = 0 and Whseclose is null and mdivisionid='{0}'", Sci.Env.User.Keyword)
-                : string.Format("IsForecast = 0 and Whseclose is not null and mdivisionid='{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = history != "Y" ? string.Format("IsForecast = 0 and Whseclose is null")
+                : string.Format("IsForecast = 0 and Whseclose is not null");
             dataType = history;
             btnCloseMTL.Enabled = history != "Y";
 
@@ -429,6 +429,12 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
         {
             var dr = this.CurrentMaintain;
             if (null == dr) return;
+
+            if (!MyUtility.Check.Seek(string.Format("select MDivisionID from dbo.Factory where ID='{0}' and MDivisionID='{1}'", MyUtility.Convert.GetString(CurrentMaintain["FtyGroup"]), Sci.Env.User.Keyword)))
+            {
+                MyUtility.Msg.WarningBox("Insufficient permissions!!");
+                return;
+            }
 
             if (dataType != "Y")
             {

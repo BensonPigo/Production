@@ -114,10 +114,10 @@ BEGIN
 			WHERE sd.poid = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 and lock=0;
 
 		-- 更新庫存 MDivisionPoDetail & FtyInventory
-		Select sd.MDivisionID,sd.POID,sd.seq1,sd.Seq2,sum(ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0)) ScrapQty into #tmpScrap
+		Select sd.POID,sd.seq1,sd.Seq2,sum(ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0)) ScrapQty into #tmpScrap
 		FROM DBO.FtyInventory sd WITH (NOLOCK)
-		WHERE sd.mdivisionid=@mdivisionid and sd.POID = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 and lock=0
-		group by sd.MDivisionID,sd.POID,sd.seq1,sd.Seq2
+		WHERE sd.POID = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 and lock=0
+		group by sd.POID,sd.seq1,sd.Seq2
 			
 		-- 更新 MdivisionPodetail
 		--merge dbo.MDivisionPoDetail as target 
@@ -132,7 +132,6 @@ BEGIN
 		   ,a.LObQty = isnull(a.LObQty,0) + isnull(b.ScrapQty, 0)
 		from dbo.MDivisionPoDetail a 
 		inner join #tmpScrap b on
-			a.MDivisionID = b.MDivisionID and 
 			a.poid = b.poid and
 			a.seq1 = b.seq1 and
 			a.seq2 = b.seq2;
@@ -141,12 +140,11 @@ BEGIN
 		
 		-- Insert Update FtyInventory (Scrap) 要先做Scrap倉再更新Bulk！！
 		MERGE INTO dbo.FtyInventory AS t
-		USING (SELECT mdivisionid,poid,seq1,seq2,roll,dyelot,ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0),'O' 
+		USING (SELECT poid,seq1,seq2,roll,dyelot,ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0),'O' 
 		FROM dbo.FtyInventory sd WITH (NOLOCK)
-		WHERE sd.mdivisionid=@mdivisionid and sd.POID = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 and lock=0 ) 
-		AS s (mdivisionid,poid,seq1,seq2,roll,dyelot,qty,stocktype)
-		ON (t.MDivisionID = s.mdivisionid 
-		and t.poid = s.poid 
+		WHERE sd.POID = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 and lock=0 ) 
+		AS s (poid,seq1,seq2,roll,dyelot,qty,stocktype)
+		ON ( t.poid = s.poid 
 		and t.seq1 = s.seq1 
 		and t.seq2 = s.seq2 
 		and t.roll = s.roll
@@ -157,8 +155,8 @@ BEGIN
 		SET inqty = isnull(inqty,0) + s.qty
 		WHEN NOT MATCHED THEN
 		INSERT
-		(mdivisionid, poid,seq1,seq2,roll,stocktype,dyelot,inqty,outqty,adjustqty,lock )
-		VALUES (s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.stocktype,s.dyelot,s.qty,0,0,0);
+		(poid,seq1,seq2,roll,stocktype,dyelot,inqty,outqty,adjustqty,lock )
+		VALUES (s.poid,s.seq1,s.seq2,s.roll,s.stocktype,s.dyelot,s.qty,0,0,0);
 
 		-- 更新 FtyInventory (Bulk)
 		update dbo.FtyInventory 
