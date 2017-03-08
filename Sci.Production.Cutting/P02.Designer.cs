@@ -718,7 +718,7 @@
             this.sizeratio_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.sizeratio_grid.RowTemplate.Height = 24;
             this.sizeratio_grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.sizeratio_grid.Size = new System.Drawing.Size(166, 120);
+            this.sizeratio_grid.Size = new System.Drawing.Size(137, 120);
             this.sizeratio_grid.TabIndex = 44;
             this.sizeratio_grid.TabStop = false;
             // 
@@ -747,7 +747,7 @@
             // label20
             // 
             this.label20.Lines = 0;
-            this.label20.Location = new System.Drawing.Point(172, 281);
+            this.label20.Location = new System.Drawing.Point(142, 281);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(86, 23);
             this.label20.TabIndex = 45;
@@ -756,7 +756,7 @@
             // label21
             // 
             this.label21.Lines = 0;
-            this.label21.Location = new System.Drawing.Point(172, 308);
+            this.label21.Location = new System.Drawing.Point(142, 308);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(86, 23);
             this.label21.TabIndex = 46;
@@ -766,9 +766,9 @@
             // 
             this.displayBox_Cutplanid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox_Cutplanid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox_Cutplanid.Location = new System.Drawing.Point(262, 281);
+            this.displayBox_Cutplanid.Location = new System.Drawing.Point(232, 281);
             this.displayBox_Cutplanid.Name = "displayBox_Cutplanid";
-            this.displayBox_Cutplanid.Size = new System.Drawing.Size(102, 23);
+            this.displayBox_Cutplanid.Size = new System.Drawing.Size(132, 23);
             this.displayBox_Cutplanid.TabIndex = 32;
             // 
             // distribute_grid
@@ -869,7 +869,7 @@
             // label23
             // 
             this.label23.Lines = 0;
-            this.label23.Location = new System.Drawing.Point(171, 366);
+            this.label23.Location = new System.Drawing.Point(141, 366);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(133, 23);
             this.label23.TabIndex = 51;
@@ -880,7 +880,7 @@
             this.totaldisqtybox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.totaldisqtybox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.totaldisqtybox.IsSupportEditMode = false;
-            this.totaldisqtybox.Location = new System.Drawing.Point(305, 366);
+            this.totaldisqtybox.Location = new System.Drawing.Point(275, 366);
             this.totaldisqtybox.Name = "totaldisqtybox";
             this.totaldisqtybox.NullValue = new decimal(new int[] {
             0,
@@ -888,7 +888,7 @@
             0,
             0});
             this.totaldisqtybox.ReadOnly = true;
-            this.totaldisqtybox.Size = new System.Drawing.Size(62, 23);
+            this.totaldisqtybox.Size = new System.Drawing.Size(89, 23);
             this.totaldisqtybox.TabIndex = 34;
             this.totaldisqtybox.Value = new decimal(new int[] {
             0,
@@ -993,9 +993,9 @@
             // 
             this.displayBox_TotalCutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox_TotalCutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox_TotalCutQty.Location = new System.Drawing.Point(172, 335);
+            this.displayBox_TotalCutQty.Location = new System.Drawing.Point(142, 335);
             this.displayBox_TotalCutQty.Name = "displayBox_TotalCutQty";
-            this.displayBox_TotalCutQty.Size = new System.Drawing.Size(165, 23);
+            this.displayBox_TotalCutQty.Size = new System.Drawing.Size(222, 23);
             this.displayBox_TotalCutQty.TabIndex = 33;
             // 
             // button1
