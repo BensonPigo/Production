@@ -109,7 +109,6 @@ namespace Sci.Production.Cutting
             //return true;
         }
         
-
         public bool ByRequestExcel()
         {
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Cutting_P02_SpreadingReportbyRequest.xltx";
@@ -218,7 +217,20 @@ namespace Sci.Production.Cutting
                         int FabricRow = (12 + RowRange * copyRow);
                         worksheet.Cells[FabricRow, 2] = FabricComboDr["FabricCombo"].ToString();
                         worksheet.Cells[FabricRow, 5] = pattern;
-                        worksheet.Cells[FabricRow, 9] = FabricComboDr["Description"].ToString();
+
+                        string fd = FabricComboDr["Description"].ToString();
+                        worksheet.Cells[FabricRow, 9] = fd;
+                        int fl = 48;
+                        int fla = fd.Length / fl;
+                        for (int i = 1; i <= fla; i++)
+                        {
+                            if (fd.Length > fl * i)
+                            {
+                                Microsoft.Office.Interop.Excel.Range rangeRow13 = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[13, System.Type.Missing];
+                                rangeRow13.RowHeight = 16.875 * (i + 1);
+                            }
+                        }
+
                         worksheet.Cells[FabricRow, 19] = FabricComboDr["width"].ToString();
 
                         copyRow++;
@@ -506,7 +518,18 @@ Cutplanid, str_PIVOT);
 
                     worksheet.Cells[13, 2] = WorkorderArry[0]["FabricCombo"].ToString();
                     worksheet.Cells[13, 5] = pattern;
-                    worksheet.Cells[13, 9] = "#" + WorkorderArry[0]["SCIRefno"].ToString().Trim() + " " + WorkorderArry[0]["Description"].ToString();
+                    string fd = "#" + WorkorderArry[0]["SCIRefno"].ToString().Trim() + " " + WorkorderArry[0]["Description"].ToString();
+                    worksheet.Cells[13, 9] = fd;
+                    int fl = 48;
+                    int fla = fd.Length / fl;
+                    for (int i = 1; i <= fla; i++)
+                    {
+                        if (fd.Length > fl * i)
+                        {
+                            Microsoft.Office.Interop.Excel.Range rangeRow13 = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[13, System.Type.Missing];
+                            rangeRow13.RowHeight = 16.875 * (i + 1);
+                        }
+                    }        
                     worksheet.Cells[13, 20] = WorkorderArry[0]["width"].ToString();
                     #region 從後面開始寫 先寫Refno,Color
 

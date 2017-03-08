@@ -412,7 +412,7 @@ namespace Sci.Production.Cutting
 
                     #region 補上空白的SizeCode
                     int SizeCodeCnt = dt.Columns.Count - 2 - 3;
-                    int addEmptySizecode = 11 - SizeCodeCnt;
+                    int addEmptySizecode = 12 - SizeCodeCnt;
                     for (int i = 0; i < addEmptySizecode; i++)
                     {
                         dt.Columns.Add(new string(' ', i + 1));
