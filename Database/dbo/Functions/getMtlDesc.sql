@@ -17,12 +17,14 @@ BEGIN
 
 	SELECT @scirefno=p.SCIRefno
 		, @refno = p.Refno
-		, @suppcolor = iif(ISNULL(p.ColorID,'') = '', '', p.ColorID + ' - ') + ISNULL(c.Name, '')
+		, @suppcolor = Concat(iif(ISNULL(p.SuppColor,'') = '', '', p.SuppColor + CHAR(13)+CHAR(10)) 
+							  , iif(ISNULL(p.ColorID,'') = '', '', p.ColorID + ' - ') + ISNULL(c.Name, ''))
 		, @StockSP = isnull(concat(p.StockPOID,' ',p.StockSeq1,' ',p.StockSeq2),'')
-		, @po_desc=@po_desc + iif(ISNULL(p.ColorDetail,'') = '', '', p.ColorDetail + CHAR(13)+CHAR(10))
-		, @po_desc=@po_desc + iif(ISNULL(p.sizespec,'') = '', '', p.sizespec + CHAR(13)+CHAR(10))
-		, @po_desc=@po_desc + iif(ISNULL(p.SizeUnit,'') = '', '', p.SizeUnit + CHAR(13)+CHAR(10))
+		, @po_desc=@po_desc + iif(ISNULL(p.ColorDetail,'') = '', '', 'ColorDetail : ' + p.ColorDetail + CHAR(13)+CHAR(10))
+		, @po_desc=@po_desc + iif(ISNULL(p.sizespec,'') = '', '', p.sizespec + ' ')
+		, @po_desc=@po_desc + iif(ISNULL(p.SizeUnit,'') = '', '', p.SizeUnit) + iif(p.sizespec = '', '', CHAR(13)+CHAR(10))
 		, @po_desc=@po_desc + iif(ISNULL(p.Special,'') = '', '', p.Special + CHAR(13)+CHAR(10))
+		, @po_desc=@po_desc + iif(ISNULL(p.Spec,'') = '', '', p.Spec + CHAR(13)+CHAR(10))
 		, @po_desc=@po_desc + ISNULL(p.Remark,'')
 		from dbo.po_supp_detail p WITH (NOLOCK)
 		left join fabric f WITH (NOLOCK) on p.SCIRefno = f.SCIRefno
