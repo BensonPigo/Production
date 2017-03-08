@@ -32,6 +32,7 @@ namespace Sci.Production.Packing
             DataTable excelFile = new DataTable();
             excelFile.Columns.Add("Filename", typeof(String));
             excelFile.Columns.Add("Status", typeof(String));
+            excelFile.Columns.Add("ErrLog", typeof(String));
             excelFile.Columns.Add("FullFileName", typeof(String));
 
             listControlBindingSource1.DataSource = excelFile;
@@ -39,7 +40,8 @@ namespace Sci.Production.Packing
             grid1.IsEditingReadOnly = true;
             Helper.Controls.Grid.Generator(this.grid1)
                 .Text("Filename", header: "File Name", width: Widths.AnsiChars(15))
-                .Text("Status", header: "Status", width: Widths.AnsiChars(100));
+                .EditText("Status", header: "Status", iseditingreadonly: true, width: Widths.AnsiChars(15))
+                .EditText("Errlog", header: "ErrLog", iseditingreadonly: true, width: Widths.AnsiChars(30));
             #endregion 
 
             #region Grid2 Setting
@@ -99,6 +101,7 @@ namespace Sci.Production.Packing
                 DataRow dr = ((DataTable)listControlBindingSource1.DataSource).NewRow();
                 dr["Filename"] = openFileDialog1.SafeFileName;
                 dr["Status"] = "";
+                dr["Errlog"] = "";
                 dr["FullFileName"] = openFileDialog1.FileName;
                 ((DataTable)listControlBindingSource1.DataSource).Rows.Add(dr);
                 listControlBindingSource1.MoveLast();
@@ -140,11 +143,12 @@ namespace Sci.Production.Packing
             #region 檢查
             foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
             {
+                dr["Status"] = "Failed";
                 if (!MyUtility.Check.Empty(dr["Filename"]))
                 {
                     if (!System.IO.File.Exists(MyUtility.Convert.GetString(dr["FullFileName"])))
                     {
-                        dr["Status"] = string.Format("Excel file not found < {0} >.", MyUtility.Convert.GetString(dr["Filename"]));
+                        dr["Errlog"] = string.Format("Excel file not found < {0} >.", MyUtility.Convert.GetString(dr["Filename"]));
                     }
                     else
                     {
@@ -155,7 +159,7 @@ namespace Sci.Production.Packing
                         }
                         catch (Exception ex)
                         {
-                            dr["Status"] = string.Format("Not able to open excel file < {0} >.", MyUtility.Convert.GetString(dr["Filename"]));
+                            dr["Errlog"] = string.Format("Not able to open excel file < {0} >.", MyUtility.Convert.GetString(dr["Filename"]));
                             continue;
                         }
 
@@ -233,8 +237,8 @@ namespace Sci.Production.Packing
                             {
                                 columnName.Append("< N.W./Pcs >, ");
                             }
-                            
-                            dr["Status"] = columnName.ToString().Substring(0, columnName.ToString().Length - 2) + "column not found in the excel.";
+
+                            dr["Errlog"] = columnName.ToString().Substring(0, columnName.ToString().Length - 2) + "column not found in the excel.";
                             #endregion
                         }
                         else
@@ -243,7 +247,9 @@ namespace Sci.Production.Packing
                             int intColumnsCount = worksheet.UsedRange.Columns.Count;
                             int intRowsStart = 2;
                             int intRowsRead = intRowsStart - 1;
-                            bool allPass = true;
+                            bool allPass = true, SpSeq_Empty = false;
+                            List<string> errStr = new List<string>();
+
                             #region Grid2 setData
                             while (intRowsRead < intRowsCount)
                             {
@@ -256,6 +262,8 @@ namespace Sci.Production.Packing
                                 if (MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C")) || MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"))
                                     || MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 9], "N")) || MyUtility.Excel.GetExcelCellValue(objCellArray[1, 9], "N").EqualString("0"))
                                 {
+                                    if (!SpSeq_Empty)
+                                        SpSeq_Empty = true;
                                     allPass = false;
                                     continue;
                                 }
@@ -263,6 +271,14 @@ namespace Sci.Production.Packing
                                 DataRow newRow = grid2Data.NewRow();
                                 newRow["OrderID"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
                                 newRow["OrderShipmodeSeq"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
+
+                                #region check SP+Seq
+                                if (!checkSP(newRow))
+                                {
+                                    errStr.Add(string.Format("< Row: {2} >, < SP No. >:{0}, < Seq >:{1} - Data not found.", newRow["OrderID"], newRow["OrderShipmodeSeq"], intRowsRead));
+                                    allPass = false;
+                                    continue;
+                                }                                
                                 newRow["StyleID"] = MyUtility.GetValue.Lookup(string.Format("select StyleID from Orders where ID = '{0}' and Category = 'B' and BrandID = '{1}' and Dest = '{2}' and CustCDID = '{3}'"
                                                                                                 , newRow["OrderID"].ToString()
                                                                                                 , P03_CurrentMaintain["BrandID"].ToString()
@@ -273,16 +289,48 @@ namespace Sci.Production.Packing
                                                                                                 , P03_CurrentMaintain["BrandID"].ToString()
                                                                                                 , P03_CurrentMaintain["Dest"].ToString()
                                                                                                 , P03_CurrentMaintain["CustCDID"].ToString()));
+                                #endregion 
+
                                 newRow["CTNStartNo"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C");
                                 newRow["CTNQty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "N");
                                 newRow["RefNo"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C");
+
+                                #region check RefNo
+                                if (!checkRefNo(newRow))
+                                {
+                                    errStr.Add(string.Format("< Row: {3} >, < SP No. >:{0}, < Seq >:{1}. < Ref No. >:{2} - Data not found.", newRow["OrderID"], newRow["OrderShipmodeSeq"], newRow["RefNo"], intRowsRead));
+                                    allPass = false;
+                                    continue;
+                                }
                                 newRow["Description"] = MyUtility.GetValue.Lookup(string.Format("select Description,CtnWeight from LocalItem WITH (NOLOCK) where RefNo = '{0}'"
                                                                                                 , newRow["RefNo"].ToString()));
+                                #endregion 
+
                                 newRow["Article"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C");
+
+                                #region check Article
+                                if (!checkArticle(newRow))
+                                {
+                                    errStr.Add(string.Format("< Row: {3} >, < SP No. >:{0}, < Seq >:{1}. < ColorWay >:{2} - Data not found.", newRow["OrderID"], newRow["OrderShipmodeSeq"], newRow["Article"], intRowsRead));
+                                    allPass = false;
+                                    continue;
+                                }
                                 newRow["Color"] = MyUtility.GetValue.Lookup(string.Format(@"select ColorID from View_OrderFAColor where ID = '{0}' and Article = '{1}'"
                                                                                                 , newRow["OrderID"].ToString()
                                                                                                 , newRow["Article"]));
+                                #endregion 
+
                                 newRow["SizeCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C");
+
+                                #region check SizeCode
+                                if (!checkSize(newRow))
+                                {
+                                    errStr.Add(string.Format("< Row: {3} >, < SP No. >:{0}, < Seq >:{1}. < Size >:{2} - Data not found.", newRow["OrderID"], newRow["OrderShipmodeSeq"], newRow["SizeCode"], intRowsRead));
+                                    allPass = false;
+                                    continue;
+                                }
+                                #endregion 
+
                                 newRow["QtyPerCTN"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 8], "N");
                                 newRow["ShipQty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 9], "N");
                                 newRow["NW"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 10], "N");
@@ -294,13 +342,17 @@ namespace Sci.Production.Packing
                             }
                             #endregion 
                             
+                            dr["Errlog"] = "";
                             if (allPass)
                             {
                                 dr["Status"] = "Check & Import Completed.";
                             }
                             else
                             {
-                                dr["Status"] = "SP# and Seq can not be Empty, Qty can not be Empty or 0.";
+                                if(SpSeq_Empty)
+                                    dr["Errlog"] = "SP# and Seq can not be Empty, Qty can not be Empty or 0.\r\n";
+                                dr["Errlog"] += errStr.JoinToString("\r\n");
+                                MyUtility.Msg.InfoBox("Some data import failed !!");
                             }
                         }
                         #endregion
@@ -312,11 +364,60 @@ namespace Sci.Production.Packing
                 }
             }
             #endregion 
-        }            
+        }
 
+        private bool checkSP(DataRow dr)
+        {
+            bool pass = true;
+            if (!MyUtility.Check.Seek(string.Format("Select ID,StyleID,CustPONo from Orders WITH (NOLOCK) where ID = '{0}' and Category = 'B' and BrandID = '{1}' and Dest = '{2}' and CustCDID = '{3}'", dr["OrderID"], P03_CurrentMaintain["BrandID"].ToString(), P03_CurrentMaintain["Dest"].ToString(), P03_CurrentMaintain["CustCDID"].ToString())))
+            {
+                pass = false;
+            }
+            else if (!MyUtility.Check.Seek(string.Format("select Seq from Order_QtyShip where id = '{0}' and seq = '{1}'", dr["OrderID"], dr["OrderShipmodeSeq"])))
+            {
+                pass = false;
+            }
+
+            return pass;
+        }
+
+        private bool checkRefNo(DataRow dr)
+        {
+            bool pass = true;
+            if (!MyUtility.Check.Seek(string.Format("select RefNo from LocalItem WITH (NOLOCK) where RefNo = '{0}'", dr["RefNo"])))
+            {
+                pass = false;
+            }
+            return pass;
+        }
+
+        private bool checkArticle(DataRow dr)
+        {
+            bool pass = true;
+            if (!MyUtility.Check.Seek(string.Format("Select Distinct Article from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}' and Article = '{2}'", dr["OrderID"], dr["OrderShipmodeSeq"], dr["Article"])))
+            {
+                pass = false;
+            }
+            return pass;
+        }
+
+        private bool checkSize(DataRow dr)
+        {
+            bool pass = true;
+            if (!MyUtility.Check.Seek(string.Format("Select SizeCode from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"], dr["OrderShipmodeSeq"], dr["Article"], dr["SizeCode"])))
+            {
+                pass = false;
+            }
+            return pass;
+        }
+        
         private void btnWrite_Click(object sender, EventArgs e)
         {
-            bool allPass = true;
+            for(int i = 0; i < detailData.Rows.Count; i++)
+            {
+                detailData.Rows[i].Delete();
+            }
+
             foreach (DataRow dr in ((DataTable)listControlBindingSource2.DataSource).Rows)
             {
                 DataRow insertRow = detailData.NewRow();
@@ -339,16 +440,8 @@ namespace Sci.Production.Packing
                 insertRow["NWPerPcs"] = dr["NWPerPcs"];
                 detailData.Rows.Add(insertRow);
             }
-
-            if (allPass)
-            {
-                MyUtility.Msg.InfoBox("Import complete.	");
-                DialogResult = System.Windows.Forms.DialogResult.OK;
-            }
-            else
-            {
-                MyUtility.Msg.InfoBox("Some data import failed !!");
-            }
+            MyUtility.Msg.InfoBox("Import complete.	");
+            DialogResult = System.Windows.Forms.DialogResult.OK;
         }
     }
 }
