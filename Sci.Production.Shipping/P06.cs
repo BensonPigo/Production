@@ -240,9 +240,10 @@ values('{0}','{1}','{2}','New','{3}',GETDATE());", newID, Convert.ToDateTime(cal
 
                     CurrentDataRow.Table.Rows.Add(newrow);
                     newrow.AcceptChanges();
-                    //因為新增資料一定會在最後一筆，所以直接把指標移至最後一筆
+                    //點了排序不一定會在最後一筆
                     int position = gridbs.Find("ID", newrow["ID"].ToString());
                     gridbs.Position = position;
+                    //因為新增資料一定會在最後一筆，所以直接把指標移至最後一筆
                     //gridbs.MoveLast();
                     //模擬按Edit行為，強制讓畫面進入Detai頁籤，所以要將EditName與EditDate值給清空
                     toolbar.cmdEdit.PerformClick();
