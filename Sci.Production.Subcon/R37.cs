@@ -193,54 +193,50 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
-
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }
-
+          
             if ("List".EqualString(this.comboReport.Text))
             {
-                Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R37_List.xltx");
+               
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R37_List.xltx");
                 string d1 = (MyUtility.Check.Empty(DebDate1)) ? "" : Convert.ToDateTime(DebDate1).ToString("yyyy/MM/dd");
                 string d2 = (MyUtility.Check.Empty(DebDate2)) ? "" : Convert.ToDateTime(DebDate2).ToString("yyyy/MM/dd");
                 string d3 = (MyUtility.Check.Empty(ConDate1)) ? "" : Convert.ToDateTime(ConDate1).ToString("yyyy/MM/dd");
                 string d4 = (MyUtility.Check.Empty(ConDate2)) ? "" : Convert.ToDateTime(ConDate2).ToString("yyyy/MM/dd");
                 string d5 = (MyUtility.Check.Empty(SettDate1)) ? "" : Convert.ToDateTime(SettDate1).ToString("yyyy/MM/dd");
                 string d6 = (MyUtility.Check.Empty(SettDate2)) ? "" : Convert.ToDateTime(SettDate2).ToString("yyyy/MM/dd");
-                xl.dicDatas.Add("##Debitdate", d1 + "~" + d2);
-                xl.dicDatas.Add("##ConfirmDate", d3 + "~" + d4);
-                xl.dicDatas.Add("##SettledDate", d5 + "~" + d6);
-                xl.dicDatas.Add("##DebitN", DebitNo1 + "~" + DebitNo2);
-                xl.dicDatas.Add("##Handle", handle);
-                xl.dicDatas.Add("##SMR", smr);
-                xl.dicDatas.Add("##Fac", fac);
-                xl.dicDatas.Add("##Pay", Pay);
-                xl.dicDatas.Add("##Deb", dtList);
-                xl.Save(outpath, false);
+                MyUtility.Excel.CopyToXls(dtList, "", "Subcon_R37_List.xltx", 3, true, null, objApp);    
+                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
+                objSheets.Cells[2, 2] = d1 + " ~ " + d2;
+                objSheets.Cells[2, 4] = d3 + " ~ " + d4;
+                objSheets.Cells[2, 7] = d5 + " ~ " + d6;
+                objSheets.Cells[2, 9] = DebitNo1 + " ~ " + DebitNo2;
+                objSheets.Cells[2, 11] = handle;
+                objSheets.Cells[2, 13] = smr;
+                objSheets.Cells[2, 17] = fac;
+                objSheets.Cells[2, 19] = Pay;
+                return true;
             }
             else if ("Detail List".EqualString(this.comboReport.Text))
             {
-                Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R37_DetailList.xltx");
+                
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R37_DetailList.xltx");
                 string d1 = (MyUtility.Check.Empty(DebDate1)) ? "" : Convert.ToDateTime(DebDate1).ToString("yyyy/MM/dd");
                 string d2 = (MyUtility.Check.Empty(DebDate2)) ? "" : Convert.ToDateTime(DebDate2).ToString("yyyy/MM/dd");
                 string d3 = (MyUtility.Check.Empty(ConDate1)) ? "" : Convert.ToDateTime(ConDate1).ToString("yyyy/MM/dd");
                 string d4 = (MyUtility.Check.Empty(ConDate2)) ? "" : Convert.ToDateTime(ConDate2).ToString("yyyy/MM/dd");
                 string d5 = (MyUtility.Check.Empty(SettDate1)) ? "" : Convert.ToDateTime(SettDate1).ToString("yyyy/MM/dd");
                 string d6 = (MyUtility.Check.Empty(SettDate2)) ? "" : Convert.ToDateTime(SettDate2).ToString("yyyy/MM/dd");
-                xl.dicDatas.Add("##Debitdate", d1 + "~" + d2);
-                xl.dicDatas.Add("##ConfirmDate", d3 + "~" + d4);
-                xl.dicDatas.Add("##SettledDate", d5 + "~" + d6);
-                xl.dicDatas.Add("##DebitN", DebitNo1 + "~" + DebitNo2);
-                xl.dicDatas.Add("##Handle", handle);
-                xl.dicDatas.Add("##SMR", smr);
-                xl.dicDatas.Add("##Fac", fac);
-                xl.dicDatas.Add("##Pay", Pay);
-                xl.dicDatas.Add("##Deb", dt);
-                xl.Save(outpath, false);
+                MyUtility.Excel.CopyToXls(dt, "", "Subcon_R37_DetailList.xltx", 3, true, null, objApp);
+                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
+                objSheets.Cells[2, 2] = d1 + " ~ " + d2;
+                objSheets.Cells[2, 4] = d3 + " ~ " + d4;
+                objSheets.Cells[2, 7] = d5 + " ~ " + d6;
+                objSheets.Cells[2, 9] = DebitNo1 + " ~ " + DebitNo2;
+                objSheets.Cells[2, 11] = handle;
+                objSheets.Cells[2, 13] = smr;
+                objSheets.Cells[2, 17] = fac;
+                objSheets.Cells[2, 19] = Pay;
+                return true;
             }
             
             return true;
