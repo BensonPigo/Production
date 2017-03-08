@@ -35,18 +35,18 @@ namespace Sci.Production.Cutting
             string cmdsql = string.Format(
             @"
             Select a.*,
-            (
-                Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c WITH (NOLOCK) 
-                Where c.WorkOrderUkey =a.WorkOrderUkey 
-                For XML path('')
-            ) as PatternPanel,
+            al.LectraCode,
             (
                 Select cuttingwidth from Order_EachCons b WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
                 where e.Order_EachconsUkey = b.Ukey and a.WorkOrderUkey = e.Ukey  
             ) as cuttingwidth,
             o.styleid,o.seasonid
             From MarkerReq_Detail a WITH (NOLOCK) left join Orders o WITH (NOLOCK) on a.orderid=o.id
+            outer apply(
+	            Select e.LectraCode 
+	            from  WorkOrder e WITH (NOLOCK) 
+                where  a.OrderID = e.id  and a.MarkerName = e.Markername and a.MarkerNo = e.MarkerNo
+            )al
             where a.id = '{0}'
             ", masterID);
             this.DetailSelectCommand = cmdsql;
@@ -63,13 +63,13 @@ namespace Sci.Production.Cutting
             .Text("Markerno", header: "Flow No", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "MarkerName", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
-            .Text("PatternPanel", header: "PatternPanel", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("LectraCode", header: "PatternPanel", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("fabriccombo", header: "FabricCombo", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Text("CuttingWidth", header: "Cutting Width", width: Widths.AnsiChars(8), iseditingreadonly: true)
              .Numeric("ReqQty", header: "# of Copies", width: Widths.AnsiChars(5), integer_places: 8)
              .Numeric("ReleaseQty", header: "# of Release", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
              .Date("ReleaseDate", header: "Release Date", width: Widths.AnsiChars(10), iseditingreadonly: true);
-            this.detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
         }
         protected override bool ClickDeleteBefore()
         {
@@ -292,17 +292,21 @@ namespace Sci.Production.Cutting
                     From WorkOrder_SizeRatio c WITH (NOLOCK) 
                     Where a.WorkOrderUkey =c.WorkOrderUkey            
                     For XML path('')
-                ) as SizeRatio
+                ) as SizeRatio,
+				o.styleid,o.seasonid
                 From Cutplan_Detail a WITH (NOLOCK) , WorkOrder b WITH (NOLOCK) 
+                left join Orders o WITH (NOLOCK) on b.orderid=o.id
                 Where a.workorderukey = b.ukey and a.id = '{0}'
 			    Group by b.Orderid,b.MarkerName,b.MarkerNo,
-                    b.fabricCombo,a.WorkOrderUkey", textBox1.Text);
+                    b.fabricCombo,a.WorkOrderUkey,o.styleid,o.seasonid", textBox1.Text);
                 DataTable markerTb;
                 DataTable gridTb = ((DataTable)this.detailgridbs.DataSource);
                 DualResult dResult = DBProxy.Current.Select(null, marker2sql, out markerTb);
                 foreach (DataRow dr in markerTb.Rows)
                 {
                     DataRow ndr = gridTb.NewRow();
+                    ndr["styleid"] = dr["styleid"];
+                    ndr["seasonid"] = dr["seasonid"];
                     ndr["OrderID"] = dr["OrderID"];
                     ndr["SizeRatio"] = dr["SizeRatio"];
                     ndr["MarkerName"] = dr["MarkerName"];
@@ -392,11 +396,6 @@ namespace Sci.Production.Cutting
             }
             return true;
         }
-        //protected void createfolder()
-        //{
-        //    if (!Directory.Exists(Sci.Env.Cfg.ReportTempDir))
-        //        Directory.CreateDirectory(Sci.Env.Cfg.ReportTempDir);
-        //}
 
         private void button2_Click(object sender, EventArgs e)
         {
