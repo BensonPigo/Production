@@ -128,19 +128,22 @@ namespace Sci.Production.Quality
             } 
             if (!this.comboCategory.SelectedItem.ToString().Empty())
             {
-                OWheres.Add("O.Category = @Cate");
-                if (Category == "Bulk")
+                if (Category != "")
                 {
-                    lis.Add(new SqlParameter("@Cate", "B"));
+                    OWheres.Add("O.Category = @Cate");
+                    if (Category == "Bulk")
+                    {
+                        lis.Add(new SqlParameter("@Cate", "B"));
+                    }
+                    if (Category == "Sample")
+                    {
+                        lis.Add(new SqlParameter("@Cate", "S"));
+                    }
+                    if (Category == "Material")
+                    {
+                        lis.Add(new SqlParameter("@Cate", "M"));
+                    }
                 }
-                if (Category == "Sample")
-                {
-                    lis.Add(new SqlParameter("@Cate", "S"));
-                }
-                if (Category == "Material")
-                {
-                    lis.Add(new SqlParameter("@Cate", "M"));
-                }  
             }
             if (!this.txtsupplier.TextBox1.Text.Empty())
             {

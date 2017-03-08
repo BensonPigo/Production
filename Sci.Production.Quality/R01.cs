@@ -128,22 +128,25 @@ namespace Sci.Production.Quality
                 lis.Add(new SqlParameter("@Ref", Ref));
             } if (!this.comboCategory.SelectedItem.ToString().Empty())
             {
-                sqlWheres.Add("O.Category = @Cate");
-                if (Category == "Bulk")
+                if (Category != "")
                 {
-                    lis.Add(new SqlParameter("@Cate", "B"));
-                }
-                else if (Category == "Sample")
-                {
-                    lis.Add(new SqlParameter("@Cate", "S"));
-                }
-                else if (Category == "Material")
-                {
-                    lis.Add(new SqlParameter("@Cate", "M"));
-                }
-                else
-                {
-                    lis.Add(new SqlParameter("@Cate", "''"));
+                    sqlWheres.Add("O.Category = @Cate");
+                    if (Category == "Bulk")
+                    {
+                        lis.Add(new SqlParameter("@Cate", "B"));
+                    }
+                    else if (Category == "Sample")
+                    {
+                        lis.Add(new SqlParameter("@Cate", "S"));
+                    }
+                    else if (Category == "Material")
+                    {
+                        lis.Add(new SqlParameter("@Cate", "M"));
+                    }
+                    else
+                    {
+                        lis.Add(new SqlParameter("@Cate", "''"));
+                    }
                 }
             } if (!this.txtsupplier.Text.Empty())
             {

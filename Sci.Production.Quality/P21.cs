@@ -325,7 +325,7 @@ where a.ID='{0}'",
                 if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 DataRow drDesc;
-                string sqlcmd = string.Format(@"select id,Description from CfaArea WITH (NOLOCK)  vwhere id='{0}'", e.FormattedValue);
+                string sqlcmd = string.Format(@"select id,Description from CfaArea WITH (NOLOCK) where id='{0}'", e.FormattedValue);
                 if (MyUtility.Check.Seek(sqlcmd, out drDesc))
                 {
                     dr["AreaDesc"] = drDesc["Description"];

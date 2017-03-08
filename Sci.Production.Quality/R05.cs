@@ -397,10 +397,10 @@ namespace Sci.Production.Quality
             }
             else if ("Accessory".EqualString(this.comboMaterialType.Text))
             {
-                // 顯示筆數於PrintForm上Count欄位
-                SetCount(dtAccessoryDetail.Rows.Count);
                 if (radioDetail.Checked) //("Detail".EqualString(this.radioDetail.Text))
-                {
+                { 
+                    // 顯示筆數於PrintForm上Count欄位
+                    SetCount(dtAccessoryDetail.Rows.Count);
                     if (dtAccessoryDetail == null || dtAccessoryDetail.Rows.Count == 0)
                     {
                         MyUtility.Msg.ErrorBox("Data not found");
