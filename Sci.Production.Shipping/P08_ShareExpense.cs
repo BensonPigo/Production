@@ -676,7 +676,11 @@ MyUtility.Check.Empty(dr["InvNo"].ToString()) ? "Empty" : dr["InvNo"].ToString()
         {
             if (MyUtility.Convert.GetString(apData["Type"]) == "IMPORT")
             {
-                string deleteCmd = string.Format("delete ShareExpense where ShippingAPID = '{0}' and WKNo != '' and WKNo not in (select ID from Export where ID = WKNo and ID is not null)",MyUtility.Convert.GetString(apData["ID"]));
+                string deleteCmd = string.Format(@"
+delete ShareExpense
+where ShippingAPID = '{0}' and WKNo != '' 
+and WKNo not in (select ID from Export where ID = ShareExpense.WKNo and ID is not null)
+and WKNo not in (select ID from FtyExport where ID =ShareExpense.WKNo and ID is not null)", MyUtility.Convert.GetString(apData["ID"]));
                 DualResult result = DBProxy.Current.Execute(null, deleteCmd);
                 if (!result)
                 {
@@ -722,7 +726,15 @@ CLOSE cursor_allExport", MyUtility.Convert.GetString(apData["ID"]));
             }
             else
             {
-                string deleteCmd = string.Format("delete ShareExpense where ShippingAPID = '{0}' and InvNo != '' and (InvNo not in (select ID from GMTBooking where ID = InvNo and ID is not null) and InvNo not in (select INVNo from PackingList where INVNo = ShareExpense.InvNo and INVNo is not null) and InvNo not in (select ID from FtyExport  where ID = InvNo and ID is not null))", MyUtility.Convert.GetString(apData["ID"]));
+                string deleteCmd = string.Format(@"
+delete ShareExpense 
+where ShippingAPID = '{0}' and InvNo != '' 
+and (
+	InvNo not in (select ID from GMTBooking where ID = ShareExpense.InvNo and ID is not null) 
+	and InvNo not in (select INVNo from PackingList where INVNo = ShareExpense.InvNo and INVNo is not null) 
+	and InvNo not in (select ID from FtyExport  where ID = ShareExpense.InvNo and ID is not null)
+	and invno not in (select id from Export where id=ShareExpense.InvNo and id is not null)
+)", MyUtility.Convert.GetString(apData["ID"]));
                 DualResult result = DBProxy.Current.Execute(null, deleteCmd);
                 if (!result)
                 {
