@@ -43,115 +43,7 @@ namespace Sci.Production.PublicPrg
         /// <param name="string stocktype"></param>
         /// <param name="string m"></param>
         /// <returns>String Sqlcmd</returns>
-        /// 
-
-        #region 原本 UpdateMPoDetail_A
-        //新(整批)A倉
-//        public static string UpdateMPoDetail_A(int type, List<Prgs_POSuppDetailData> datas, bool encoded, bool attachLocation = true)
-//        {
-//            #region 以原本的datas的5keys 去ftyinventory撈location和原本loction重組以逗號分開,塞回原本資料
-//            DataTable TBattachlocation;
-//            if (attachLocation)
-//            {
-//                string sqlcmdforlocation = @"
-//alter table #Tmp alter column mdivisionid varchar(10)
-//alter table #Tmp alter column poid varchar(20)
-//alter table #Tmp alter column seq1 varchar(3)
-//alter table #Tmp alter column seq2 varchar(3)
-//
-//select mdivisionid,poid,seq1,seq2,qty,stocktype
-//,[location] = stuff(L.locationid,1,1,'' )
-//from #tmp t
-//OUTER APPLY(
-//	SELECT locationid=(
-//		select distinct concat(',',u.location)
-//		from 
-//		(
-//			select mdivisionid,poid,seq1,seq2,stocktype,location
-//			from #tmp f
-//			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
-//			and f.seq2 = t.Seq2 and f.stocktype = t.StockType and f.location !=''
-//			union
-//			select mdivisionid,poid,seq1,seq2,stocktype,[location] = fd.mtllocationid
-//			from ftyinventory f 
-//			inner join ftyinventory_detail fd on f.ukey = fd.ukey 
-//			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
-//			and f.seq2 = t.Seq2 and f.stocktype = t.StockType
-//		)u
-//		for xml path('')
-//	)
-//)L";
-//                MyUtility.Tool.ProcessWithObject(datas, "", sqlcmdforlocation, out TBattachlocation, "#Tmp");
-//                var newDatas = TBattachlocation.AsEnumerable().Select(w =>
-//                        new Prgs_POSuppDetailData
-//                        {
-//                            mdivisionid = w.Field<string>("mdivisionid"),
-//                            poid = w.Field<string>("poid"),
-//                            seq1 = w.Field<string>("seq1"),
-//                            seq2 = w.Field<string>("seq2"),
-//                            stocktype = w.Field<string>("stocktype"),
-//                            qty = w.Field<decimal>("qty"),
-//                            location = w.Field<string>("location"),
-//                        }).ToList();
-//                datas.Clear();
-//                datas.AddRange(newDatas);
-//            }
-//            #endregion
-//            String sqlcmd = "";
-//            switch (type)
-//            {
-//                case 2:
-//                    #region -- Case 2 InQty --
-//                    if (encoded)
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//alter table #TmpSource alter column stocktype varchar(1)
-//
-//merge dbo.mdivisionpodetail as target
-//using  #TmpSource as src
-//on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
-//when matched and src.stocktype = 'I' then
-//	update 
-//	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.blocation = src.location
-//when not matched by target and src.stocktype = 'I' then
-//    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[blocation])
-//    values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);
-//
-//merge dbo.mdivisionpodetail as target
-//using  #TmpSource as src
-//on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
-//when matched and src.stocktype = 'B' then
-//	update 
-//	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.alocation = src.location
-//when not matched by target and src.stocktype = 'B' then
-//    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[alocation])
-//    values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);";
-//                    }
-//                    else
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//
-//update t
-//set t.inqty = isnull(t.inqty,0.00) + s.qty
-//from mdivisionpodetail t
-//inner join #TmpSource s
-//on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
-//                    }
-//                    #endregion
-//                    break;
-//            }
-//            return sqlcmd;
-        //        }
-        #endregion
-        //新(整批) A & B倉
+        //(整批) A & B倉
         public static string UpdateMPoDetail(int type, List<Prgs_POSuppDetailData> datas, bool encoded, bool attachLocation = true, SqlConnection sqlConn = null)
         {
             #region 以原本的datas的5keys 去ftyinventory撈location和原本loction重組以逗號分開,塞回原本資料
@@ -168,13 +60,12 @@ namespace Sci.Production.PublicPrg
                         **  Step 1. 必須確實修改，否則會累加到 FtyInventory 舊的 Location
                     */
                     string sqlcmdforlocation = @"
-alter table #Tmp alter column mdivisionid varchar(10)
 alter table #Tmp alter column poid varchar(20)
 alter table #Tmp alter column seq1 varchar(3)
 alter table #Tmp alter column seq2 varchar(3)
 alter table #Tmp alter column stocktype varchar(1)
 
-select mdivisionid,poid,seq1,seq2,qty,stocktype
+select poid,seq1,seq2,qty,stocktype
 ,[location] = stuff(L.locationid,1,1,'' )
 from #tmp t
 OUTER APPLY(
@@ -182,15 +73,10 @@ OUTER APPLY(
 		select distinct concat(',',u.location)
 		from 
 		(
---			select mdivisionid,poid,seq1,seq2,stocktype,location
---			from #tmp f
---			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
---			and f.seq2 = t.Seq2 and f.stocktype = t.StockType and f.location !=''
---			union
-			select mdivisionid,poid,seq1,seq2,stocktype,[location] = fd.mtllocationid
+			select poid,seq1,seq2,stocktype,[location] = fd.mtllocationid
 			from ftyinventory f WITH (NOLOCK) 
 			inner join ftyinventory_detail fd WITH (NOLOCK) on f.ukey = fd.ukey 
-			where f.mdivisionid = t.MDivisionID and f.poid = t.POID and f.seq1 = t.Seq1 
+			where f.poid = t.POID and f.seq1 = t.Seq1 
 			and f.seq2 = t.Seq2 and f.stocktype = t.StockType
 		)u
 		for xml path('')
@@ -201,7 +87,7 @@ OUTER APPLY(
                     var newDatas = TBattachlocation.AsEnumerable().Select(w =>
                             new Prgs_POSuppDetailData
                             {
-                                mdivisionid = w.Field<string>("mdivisionid"),
+                                mdivisionid = "",
                                 poid = w.Field<string>("poid"),
                                 seq1 = w.Field<string>("seq1"),
                                 seq2 = w.Field<string>("seq2"),
@@ -211,19 +97,6 @@ OUTER APPLY(
                             }).ToList();
                     datas.Clear();
                     datas.AddRange(newDatas);
-                    #region 一筆一筆更新法location
-                    //string tmplocation = "";//用此法要搬上去
-                    //foreach (var item in datas)
-                    //                {
-                    //                    tmplocation = MyUtility.GetValue.Lookup(string.Format(@"
-                    //select t.mtllocationid+','
-                    //from (select distinct mtllocationid from ftyinventory f inner join ftyinventory_detail fd on f.ukey = fd.ukey 
-                    //where f.mdivisionid ='{0}' and f.poid = '{1}' and f.seq1='{2}' and f.seq2='{3}' and stocktype='{4}') t 
-                    //for xml path('')"
-                    //                        , item.mdivisionid, item.poid, item.seq1, item.seq2, item.stocktype));
-                    //                    item.location = DistinctString(tmplocation + item.location);
-                    //                }
-                    #endregion
                 }
             }
             #endregion
@@ -233,7 +106,6 @@ OUTER APPLY(
                 case 0:
                     #region  -- case 0 Location --
                     sqlcmd = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
@@ -241,14 +113,14 @@ alter table #TmpSource alter column stocktype varchar(1)
 
 merge dbo.mdivisionpodetail as target
 using  #TmpSource as src
-on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
 when matched and src.stocktype = 'I' then
 	update 
 	set target.blocation = src.location;
 
 merge dbo.mdivisionpodetail as target
 using  #TmpSource as src
-on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
 when matched and src.stocktype = 'B' then
 	update 
 	set target.alocation = src.location;
@@ -261,7 +133,6 @@ drop Table #TmpSource";
                     if (encoded)
                     {
                         sqlcmd = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
@@ -269,28 +140,27 @@ alter table #TmpSource alter column stocktype varchar(1)
 
 merge dbo.mdivisionpodetail as target
 using  #TmpSource as src
-on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
 when matched and src.stocktype = 'I' then
 	update 
 	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.blocation = src.location
 when not matched by target and src.stocktype = 'I' then
-    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[blocation])
-    values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);
+    insert ([Poid],[Seq1],[Seq2],[inqty],[blocation])
+    values (src.poid,src.seq1,src.seq2,src.qty,src.location);
 
 merge dbo.mdivisionpodetail as target
 using  #TmpSource as src
-on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
 when matched and src.stocktype = 'B' then
 	update 
 	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.alocation = src.location
 when not matched by target and src.stocktype = 'B' then
-    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[alocation])
-    values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);";
+    insert ([Poid],[Seq1],[Seq2],[inqty],[alocation])
+    values (src.poid,src.seq1,src.seq2,src.qty,src.location);";
                     }
                     else
                     {
                         sqlcmd = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
@@ -299,45 +169,14 @@ update t
 set t.inqty = isnull(t.inqty,0.00) + s.qty
 from mdivisionpodetail t
 inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2;";
                     }
                     sqlcmd += @";drop Table #TmpSource";
                     #endregion
                     break;
                 case 4:
-                    #region -- Case 4 OutQty -- 合併
-                        #region before
-                    //                    if (encoded)
-                    //                    {
-                    //                        sqlcmd = @"
-                    //alter table #TmpSource alter column mdivisionid varchar(10)
-                    //alter table #TmpSource alter column poid varchar(20)
-                    //alter table #TmpSource alter column seq1 varchar(3)
-                    //alter table #TmpSource alter column seq2 varchar(3)
-                    //
-                    //update t
-                    //set t.OutQty = isnull(t.OutQty,0.00) + s.qty
-                    //from mdivisionpodetail t
-                    //inner join #TmpSource s
-                    //on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
-                    //                    }
-                    //                    else
-                    //                    {
-                    //                        sqlcmd = @"
-                    //alter table #TmpSource alter column mdivisionid varchar(10)
-                    //alter table #TmpSource alter column poid varchar(20)
-                    //alter table #TmpSource alter column seq1 varchar(3)
-                    //alter table #TmpSource alter column seq2 varchar(3)
-                    //
-                    //update t
-                    //set t.OutQty = isnull(t.OutQty,0.00) - s.qty
-                    //from mdivisionpodetail t
-                    //inner join #TmpSource s
-                    //on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
-                    //                    }
-                    #endregion
+                    #region -- Case 4 OutQty -- 合併                        
                     sqlcmd = @"
-                    alter table #TmpSource alter column mdivisionid varchar(10)
                     alter table #TmpSource alter column poid varchar(20)
                     alter table #TmpSource alter column seq1 varchar(3)
                     alter table #TmpSource alter column seq2 varchar(3)
@@ -346,56 +185,21 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.m
                     set t.OutQty = isnull(t.OutQty,0.00) + s.qty
                     from mdivisionpodetail t
                     inner join #TmpSource s
-                    on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;
+                    on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
 
                     drop Table #TmpSource;";
                     #endregion
                     break;
                 case 8:
-                    #region -- Case 8 LInvQty --
-                        #region before
-//                    if (encoded)
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//
-//merge dbo.mdivisionpodetail as target
-//using #TmpSource as src
-//on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
-//when matched then
-//update 
-//set target.LInvQty = isnull(target.LInvQty,0.00) + src.qty , target.blocation = src.location
-//when not matched then
-//    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[LInvQty],[blocation])
-//    values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);";
-//                    }
-//                    else
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//
-//update t 
-//set t.LInvQty = isnull(t.LInvQty,0.00) - s.qty
-//from mdivisionpodetail t
-//inner join #TmpSource s
-//on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid;";
-//                    }
-#endregion
+                    #region -- Case 8 LInvQty --                        
                     sqlcmd = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
 
 merge dbo.mdivisionpodetail as target
 using #TmpSource as src
-on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.mdivisionid
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
 when matched then
 update
 ";
@@ -404,8 +208,8 @@ update
                         sqlcmd += @"
 set target.LInvQty = isnull(target.LInvQty,0.00) + src.qty , target.blocation = src.location
 when not matched then
-    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[LInvQty],[blocation])
-    values (src.poid,src.seq1,src.seq2,src.mdivisionid,src.qty,src.location);
+    insert ([Poid],[Seq1],[Seq2],[LInvQty],[blocation])
+    values (src.poid,src.seq1,src.seq2,src.qty,src.location);
 ";
                     }
                     else
@@ -416,39 +220,8 @@ when not matched then
                     #endregion                    
                     break;
                 case 16:
-                    #region -- LObQty --
-                    #region before
-//                    if (encoded)
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//
-//update t 
-//set t.LObQty = isnull(t.LObQty,0.00) + s.qty
-//from mdivisionpodetail t
-//inner join #TmpSource s
-//on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
-//                    }
-//                    else
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//
-//update t 
-//set t.LObQty = isnull(t.LObQty,0.00) - s.qty
-//from mdivisionpodetail t
-//inner join #TmpSource s
-//on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
-//                    }
-#endregion
+                    #region -- LObQty --                    
                     sqlcmd = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
@@ -457,45 +230,14 @@ update t
 set t.LObQty = isnull(t.LObQty,0.00) + s.qty
 from mdivisionpodetail t
 inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
 
 ;drop Table #TmpSource";
                     #endregion
                     break;
                 case 32:
-                    #region -- AdjustQty --
-                    #region before
-//                    if (encoded)
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//
-//update t 
-//set t.AdjustQty = isnull(t.AdjustQty,0.00) + s.qty
-//from mdivisionpodetail t
-//inner join #TmpSource s
-//on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
-//                    }
-//                    else
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//
-//update t 
-//set t.AdjustQty = isnull(t.AdjustQty,0.00) - s.qty
-//from mdivisionpodetail t
-//inner join #TmpSource s
-//on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid";
-//                    }
-#endregion
+                    #region -- AdjustQty --                    
                     sqlcmd = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
@@ -504,7 +246,7 @@ update t
 set t.AdjustQty = isnull(t.AdjustQty,0.00) + s.qty
 from mdivisionpodetail t
 inner join #TmpSource s
-on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.mdivisionid
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
 
 ;drop Table #TmpSource";
                     #endregion
@@ -512,165 +254,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.m
             }
             return sqlcmd;
         }
-        //一筆筆做
-//        public static string UpdateMPoDetail(int type, string Poid, string seq1, string seq2, decimal qty, bool encoded, string stocktype, string m, string location = "", bool attachLocation = true)
-//        {
-//            string sqlcmd = null, tmplocation = "";
-//            if (attachLocation) tmplocation = MyUtility.GetValue.Lookup(string.Format(@"select t.mtllocationid+','
-//from (select distinct mtllocationid from ftyinventory f inner join ftyinventory_detail fd on f.ukey = fd.ukey 
-//where f.mdivisionid ='{0}' and f.poid = '{1}' and f.seq1='{2}' and f.seq2='{3}' and stocktype='{4}') t for xml path('')", m, Poid, seq1, seq2, stocktype));
-//            switch (type)
-//            {
-//                case 2:
-//                    #region -- Case 2 InQty --
-//                    if (encoded)
-//                    {
-//                        switch (stocktype)
-//                        {
-//                            case "I":
-//                                sqlcmd = string.Format(@"
-//merge dbo.mdivisionpodetail as target
-//using (values('{0}','{1}','{2}','{3}','{4}','{5}')) as src (poid,seq1,seq2,qty,m,blocation) 
-//on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.m
-//when matched then
-//update 
-//set  inqty = isnull(inqty,0.00) + src.qty , blocation = src.blocation
-//when not matched then
-//    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[blocation])
-//    values (src.poid,src.seq1,src.seq2,src.m,src.qty,src.blocation);", Poid, seq1, seq2, qty, m, DistinctString(tmplocation + location));
-//                                break;
-
-//                            case "B":
-//                                sqlcmd = string.Format(@"
-//merge dbo.mdivisionpodetail as target
-//using (values('{0}','{1}','{2}','{3}','{4}','{5}')) as src (poid,seq1,seq2,qty,m,alocation) 
-//on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.m
-//when matched then
-//update 
-//set  inqty = isnull(inqty,0.00) + src.qty , alocation = src.alocation
-//when not matched then
-//    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[inqty],[alocation])
-//    values (src.poid,src.seq1,src.seq2,src.m,src.qty,src.alocation);", Poid, seq1, seq2, qty, m, DistinctString(tmplocation + location));
-//                                break;
-//                        }
-
-
-//                    }
-//                    else
-//                    {
-//                        sqlcmd = string.Format(@"update mdivisionpodetail set  inqty = isnull(inqty,0.00) - {3} 
-//where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
-//                            , Poid, seq1, seq2, qty, m);
-//                    }
-//                    #endregion
-//                    break;
-//                case 4:
-//                    #region -- Case 4 OutQty --
-//                    if (encoded)
-//                    {
-//                        sqlcmd = string.Format(@"update mdivisionpodetail set  OutQty = isnull(OutQty,0.00) + {3} 
-//                            where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
-//                            , Poid, seq1, seq2, qty, m);
-//                    }
-//                    else
-//                    {
-//                        sqlcmd = string.Format(@"update mdivisionpodetail set  OutQty = isnull(OutQty,0.00) - {3} 
-//                            where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
-//                            , Poid, seq1, seq2, qty, m);
-//                    }
-//                    #endregion
-//                    break;
-//                case 8:
-//                    #region -- Case 8 LInvQty --
-//                    if (encoded)
-//                    {
-//                        sqlcmd = string.Format(@"
-//merge dbo.mdivisionpodetail as target
-//using (values('{0}','{1}','{2}','{3}','{4}','{5}')) as src (poid,seq1,seq2,qty,m,blocation) 
-//on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2 and target.mdivisionid = src.m
-//when matched then
-//update 
-//set  LInvQty = isnull(LInvQty,0.00) - src.qty , blocation = src.blocation
-//when not matched then
-//    insert ([Poid],[Seq1],[Seq2],[MDivisionID],[LInvQty],[blocation])
-//    values (src.poid,src.seq1,src.seq2,src.m,src.qty,src.blocation);", Poid, seq1, seq2, qty, m, DistinctString(tmplocation + location));
-//                    }
-//                    else
-//                    {
-//                        sqlcmd = string.Format(@"update mdivisionpodetail set  LInvQty = isnull(LInvQty,0.00) + {3} 
-//where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
-//                            , Poid, seq1, seq2, qty, m);
-//                    }
-//                    #endregion
-//                    break;
-//                case 16:
-//                    #region -- LObQty --
-//                    if (encoded)
-//                    {
-//                        sqlcmd = string.Format(@"update mdivisionpodetail set  LObQty = isnull(LObQty,0.00) + {3} 
-//where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
-//                            , Poid, seq1, seq2, qty, m);
-//                    }
-//                    else
-//                    {
-//                        sqlcmd = string.Format(@"update mdivisionpodetail set  LObQty = isnull(LObQty,0.00) - {3} 
-//where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
-//                            , Poid, seq1, seq2, qty, m);
-//                    }
-//                    #endregion
-//                    break;
-//                case 32:
-//                    #region -- AdjustQty --
-//                    if (encoded)
-//                    {
-//                        sqlcmd = string.Format(@"update mdivisionpodetail set  AdjustQty = isnull(AdjustQty,0.00) + {3} 
-//where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
-//                            , Poid, seq1, seq2, qty, m);
-//                    }
-//                    else
-//                    {
-//                        sqlcmd = string.Format(@"update mdivisionpodetail set AdjustQty = isnull(AdjustQty,0.00) - {3} 
-//where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{4}';"
-//                            , Poid, seq1, seq2, qty, m);
-//                    }
-//                    #endregion
-//                    break;
-//            }
-//            #region 前人遺留下來
-//            //            if (encoded && (type == 2 || type == 8 || type == 16) && !MyUtility.Check.Empty(stocktype))
-//            //            {
-//            //                switch (stocktype)
-//            //                {
-//            //                    case "B":
-//            //                        sqlcmd += string.Format(@"update mdivisionpodetail set ALocation 
-//            //= (Select cast(tmp.MtlLocationID as nvarchar)+',' 
-//            //from (select d.mtllocationid from ftyinventory_detail d inner join ftyinventory f
-//            //on d.ukey = f.ukey
-//            //where f.poid = '{0}' and f.seq1 ='{1}' and f.seq2 ='{2}' and stocktype = 'B' 
-//            //group by d.MtlLocationID) tmp 
-//            //for XML PATH(''))
-//            //where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{3}';", Poid, seq1, seq2,m);
-//            //                        break;
-//            //                    case "I":
-//            //                        sqlcmd += string.Format(@"update mdivisionpodetail set BLocation 
-//            //= (Select cast(tmp.MtlLocationID as nvarchar)+',' 
-//            //from (select d.mtllocationid from ftyinventory_detail d inner join ftyinventory f
-//            //on d.ukey = f.ukey
-//            //where f.poid = '{0}' and f.seq1 ='{1}' and f.seq2 ='{2}' and stocktype = 'I' 
-//            //group by d.MtlLocationID) tmp 
-//            //for XML PATH(''))
-//            //where poid = '{0}' and seq1 = '{1}' and seq2='{2}' and mdivisionid = '{3}';", Poid, seq1, seq2,m);
-//            //                        break;
-//            //                    default:
-//            //                        break;
-//            //                }
-
-//            //            }
-//            #endregion
-//            return sqlcmd;
-//        }
         #endregion
-
         #region -- UpdateFtyInventory --
         /// <summary>
         /// UpdateFtyInventory()
@@ -697,115 +281,37 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2 and t.mdivisionid = s.m
         /// <param name="bool encoded"></param>
         /// <param name="location"></param>
         /// <returns>String Sqlcmd</returns>
-        //新(整批)
+        //(整批)
         public static string UpdateFtyInventory_IO(int type,IList<DataRow> datas, bool encoded)
         {
             string sqlcmd = "";
             switch (type)
             {
                 case 2:
-                    #region 更新 inqty
-                    #region before
-//                    if (encoded)
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//alter table #TmpSource alter column stocktype varchar(1)
-//alter table #TmpSource alter column roll varchar(15)
-//
-//select distinct mdivisionid,poid,seq1,seq2,stocktype,roll,qty,dyelot
-//into #tmpS1
-//from #TmpSource
-//
-//merge dbo.FtyInventory as target
-//using #tmpS1 as s
-//    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-//	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
-//when matched then
-//    update
-//    set inqty = isnull(inqty,0.00) + s.qty
-//when not matched then
-//    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
-//    values ((select ukey from dbo.MDivisionPoDetail 
-//			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-//			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
-//
-//select location,[ukey] = f.ukey
-//into #tmp_L_K 
-//from #TmpSource s
-//left join ftyinventory f on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
-//						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll
-//merge dbo.ftyinventory_detail as t
-//using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.location,'')
-//when not matched then
-//    insert ([ukey],[mtllocationid]) 
-//	values (s.ukey,isnull(s.location,''));
-//
-//delete t from FtyInventory_Detail t
-//where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
-//
-//drop table #tmp_L_K 
-//drop table #tmpS1 
-//";
-//                        //↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
-//                    }
-//                    else
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//alter table #TmpSource alter column stocktype varchar(1)
-//alter table #TmpSource alter column roll varchar(15)
-//
-//select distinct mdivisionid,poid,seq1,seq2,stocktype,roll,qty,dyelot
-//into #tmpS1
-//from #TmpSource
-//
-//merge dbo.FtyInventory as target
-//using #tmpS1 as s
-//    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-//	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
-//when matched then
-//    update
-//    set inqty = isnull(inqty,0.00) - s.qty
-//when not matched then
-//    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
-//    values ((select ukey FROM dbo.MDivisionPoDetail 
-//			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-//			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
-//
-//drop table #tmpS1 ";
-                    //                    }
-                    #endregion
+                    #region 更新 inqty                    
                     sqlcmd = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct mdivisionid, poid, seq1, seq2, stocktype, roll = isnull(roll, ''), qty, dyelot = isnull(dyelot, '')
+select distinct poid, seq1, seq2, stocktype, roll = isnull(roll, ''), qty, dyelot = isnull(dyelot, '')
 into #tmpS1
 from #TmpSource
 
 merge dbo.FtyInventory as target
 using #tmpS1 as s
-    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
+    on target.poid = s.poid and target.seq1 = s.seq1 
 	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
 when matched then
     update
     set inqty = isnull(inqty,0.00) + s.qty
 when not matched then
-    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
     values ((select ukey from dbo.MDivisionPoDetail 
-			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+			 where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
+			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
 ";
                     if (encoded)
                     {
@@ -813,7 +319,7 @@ when not matched then
 select location,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
-left join ftyinventory f WITH (NOLOCK) on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
+left join ftyinventory f WITH (NOLOCK) on f.poid = s.poid 
 						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype
 merge dbo.ftyinventory_detail as t 
 using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.location,'')
@@ -831,206 +337,67 @@ drop table #tmp_L_K
                     #endregion
                     break;
                 case 4:
-                    #region 更新OutQty
-                    #region before
-//                    if (encoded)
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//alter table #TmpSource alter column stocktype varchar(1)
-//alter table #TmpSource alter column roll varchar(15)
-//
-//select distinct mdivisionid,poid,seq1,seq2,stocktype,roll,qty,dyelot
-//into #tmpS1
-//from #TmpSource
-//
-//merge dbo.FtyInventory as target
-//using #tmpS1 as s
-//    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-//	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
-//when matched then
-//    update
-//    set outqty = isnull(outqty,0.00) + s.qty
-//when not matched then
-//    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
-//    values ((select ukey from dbo.MDivisionPoDetail 
-//			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-//			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
-//
-//drop table #tmpS1 ";
-//                    }
-//                    else
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//alter table #TmpSource alter column stocktype varchar(1)
-//alter table #TmpSource alter column roll varchar(15)
-//
-//select distinct mdivisionid,poid,seq1,seq2,stocktype,roll,qty,dyelot
-//into #tmpS1
-//from #TmpSource
-//
-//merge dbo.FtyInventory as target
-//using #tmpS1 as s
-//    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-//	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
-//when matched then
-//    update
-//    set outqty = isnull(outqty,0.00) - s.qty
-//when not matched then
-//    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
-//    values ((select ukey from dbo.MDivisionPoDetail 
-//			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-//			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
-//
-//drop table #tmpS1 ";
-//                    }
-#endregion
+                    #region 更新OutQty                    
                     sqlcmd = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct mdivisionid, poid, seq1, seq2, stocktype, roll = isnull(roll, ''), qty, dyelot = isnull(dyelot, '')
+select distinct poid, seq1, seq2, stocktype, roll = isnull(roll, ''), qty, dyelot = isnull(dyelot, '')
 into #tmpS1
 from #TmpSource
 
 merge dbo.FtyInventory as target
 using #tmpS1 as s
-    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
+    on target.poid = s.poid and target.seq1 = s.seq1 
 	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
 when matched then
     update
     set outqty = isnull(outqty,0.00) + s.qty
 when not matched then
-    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
+    insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
     values ((select ukey from dbo.MDivisionPoDetail 
-			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+			 where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
+			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
 
 drop table #tmpS1;
 drop table #TmpSource;";
                     #endregion
                     break;
                 case 6:
-                    #region 更新OutQty with Location
-                    #region before
-//                    if (encoded)
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//alter table #TmpSource alter column stocktype varchar(1)
-//alter table #TmpSource alter column roll varchar(15)
-//
-//select distinct mdivisionid,poid,seq1,seq2,stocktype,roll,qty,dyelot
-//into #tmpS1
-//from #TmpSource
-//
-//merge dbo.FtyInventory as target
-//using #tmpS1 as s
-//    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-//	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
-//when matched then
-//    update
-//    set outqty = isnull(outqty,0.00) + s.qty
-//when not matched then
-//    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[inqty])
-//    values ((select ukey from dbo.MDivisionPoDetail 
-//			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-//			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
-//
-//select location,[ukey] = f.ukey
-//into #tmp_L_K 
-//from #TmpSource s
-//left join ftyinventory f on mdivisionid = s.mdivisionid and poid = s.poid 
-//						 and seq1 = s.seq1 and seq2 = s.seq2 and roll = s.roll
-//merge dbo.ftyinventory_detail as t
-//using #tmp_L_K as s on t.ukey = s.ukey and t.mtllocationid = s.location
-//when not matched then
-//    insert ([ukey],[mtllocationid]) 
-//	values (s.ukey,isnull(s.location,''));
-//
-//delete t from FtyInventory_Detail t
-//where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
-//
-//drop table #tmp_L_K 
-//drop table #tmpS1 
-//";
-//                        //↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
-//                    }
-//                    else
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//alter table #TmpSource alter column stocktype varchar(1)
-//alter table #TmpSource alter column roll varchar(15)
-//
-//select distinct mdivisionid,poid,seq1,seq2,stocktype,roll,qty,dyelot
-//into #tmpS1
-//from #TmpSource
-//
-//merge dbo.FtyInventory as target
-//using #tmpS1 as s
-//    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-//	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
-//when matched then
-//    update
-//    set outqty = isnull(outqty,0.00) - s.qty
-//when not matched then
-//    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
-//    values ((select ukey FROM dbo.MDivisionPoDetail 
-//			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-//			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
-//
-//drop table #tmpS1 ";
-//                    }
-#endregion
+                    #region 更新OutQty with Location                    
                     sqlcmd = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct mdivisionid, poid, seq1, seq2, stocktype, roll = isnull(roll, ''), qty, dyelot = isnull(dyelot, '')
+select distinct  poid, seq1, seq2, stocktype, roll = isnull(roll, ''), qty, dyelot = isnull(dyelot, '')
 into #tmpS1
 from #TmpSource
 
 merge dbo.FtyInventory as target
 using #tmpS1 as s
-    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
+    on target.poid = s.poid and target.seq1 = s.seq1 
     and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
 when matched then
     update
     set outqty = isnull(outqty,0.00) + s.qty
 when not matched then
-    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
+    insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[outqty])
     values ((select ukey from dbo.MDivisionPoDetail 
-             where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-             ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
+             where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
+             ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);";
                     if (encoded)
                     {
                         sqlcmd += @"
 select location,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
-left join ftyinventory f WITH (NOLOCK) on mdivisionid = s.mdivisionid and poid = s.poid 
+left join ftyinventory f WITH (NOLOCK) on poid = s.poid 
                          and seq1 = s.seq1 and seq2 = s.seq2 and roll = s.roll and f.stocktype = s.stocktype
 merge dbo.ftyinventory_detail as t
 using #tmp_L_K as s on t.ukey = s.ukey and t.mtllocationid = s.location
@@ -1048,91 +415,30 @@ drop table #tmp_L_K
                     #endregion
                     break;
                 case 8:
-                    #region 更新AdjustQty
-                    #region before
-//                    if (encoded)
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//alter table #TmpSource alter column stocktype varchar(1)
-//alter table #TmpSource alter column roll varchar(15)
-//
-//select distinct mdivisionid,poid,seq1,seq2,stocktype,roll,qty,dyelot,adjustqty
-//into #tmpS1
-//from #TmpSource
-//
-//merge dbo.FtyInventory as target
-//using #tmpS1 as s
-//    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-//	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
-//when matched then
-//    update
-//    set adjustqty = isnull(s.adjustqty,0.00) + s.qty
-//when not matched then
-//    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
-//    values ((select ukey from dbo.MDivisionPoDetail 
-//			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-//			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
-//
-//drop table #tmpS1 ";
-//                    }
-//                    else
-//                    {
-//                        sqlcmd = @"
-//alter table #TmpSource alter column mdivisionid varchar(10)
-//alter table #TmpSource alter column poid varchar(20)
-//alter table #TmpSource alter column seq1 varchar(3)
-//alter table #TmpSource alter column seq2 varchar(3)
-//alter table #TmpSource alter column stocktype varchar(1)
-//alter table #TmpSource alter column roll varchar(15)
-//
-//select distinct mdivisionid,poid,seq1,seq2,stocktype,roll,qty,dyelot,adjustqty
-//into #tmpS1
-//from #TmpSource
-//
-//merge dbo.FtyInventory as target
-//using #tmpS1 as s
-//    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
-//	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
-//when matched then
-//    update
-//    set adjustqty = isnull(s.adjustqty,0.00) - s.qty
-//when not matched then
-//    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
-//    values ((select ukey from dbo.MDivisionPoDetail 
-//			 where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-//			 ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
-//
-//drop table #tmpS1 ";
-//                    }
-#endregion
+                    #region 更新AdjustQty                    
                     sqlcmd = @"
-alter table #TmpSource alter column mdivisionid varchar(10)
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 
-select distinct mdivisionid, poid, seq1, seq2, stocktype, roll = isnull(roll, ''), qty, dyelot = isnull(dyelot, '')
+select distinct poid, seq1, seq2, stocktype, roll = isnull(roll, ''), qty, dyelot = isnull(dyelot, '')
 into #tmpS1
 from #TmpSource
 
 merge dbo.FtyInventory as target
 using #tmpS1 as s
-    on target.mdivisionid = s.mdivisionid and target.poid = s.poid and target.seq1 = s.seq1 
+    on target.poid = s.poid and target.seq1 = s.seq1 
     and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
 when matched then
     update
     set adjustqty = isnull(adjustqty,0.00) + s.qty
 when not matched then
-    insert ( [MDivisionPoDetailUkey],[mdivisionid],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
+    insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[adjustqty])
     values ((select ukey from dbo.MDivisionPoDetail 
-             where mdivisionid = s.mdivisionid and poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-             ,s.mdivisionid,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+             where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
+             ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
 
 drop table #tmpS1 
 drop table #TmpSource;";
@@ -1141,7 +447,6 @@ drop table #TmpSource;";
                 case 26:
                     #region 更新Location
                     sqlcmd += @"
-alter table #TmpSource alter column mdivisionid varchar(10)
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
@@ -1150,7 +455,7 @@ alter table #TmpSource alter column roll varchar(15)
 select tolocation,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
-left join ftyinventory f WITH (NOLOCK) on f.mdivisionid = s.mdivisionid and f.poid = s.poid 
+left join ftyinventory f WITH (NOLOCK) on f.poid = s.poid 
                                            and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype
 
 delete t from FtyInventory_Detail t
@@ -1171,13 +476,11 @@ drop table #TmpSource
             return sqlcmd;
         }       
         #endregion
-
         #region -- SelePoItem --
         public static string selePoItemSqlCmd = @"select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq, p.Refno, dbo.getmtldesc(p.id,p.seq1,p.seq2,2,0) as Description 
                                                     ,p.ColorID,p.FinalETA
                                                     ,isnull(m.InQty, 0) as InQty
                                                     ,p.pounit
-                                                    --,p.StockUnit
                                                     ,iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
                                                         ff.UsageUnit , 
                                                         iif(mm.IsExtensionUnit > 0 , 
@@ -1195,7 +498,9 @@ drop table #TmpSource
                                                     ,p.scirefno
                                                     ,p.qty
                                                     from dbo.PO_Supp_Detail p WITH (NOLOCK) 
-                                                    left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2 and m.mdivisionid = '{1}'
+                                                    inner join Orders o on p.id = o.id
+                                                    inner join Factory f on o.FtyGroup = f.id
+                                                    left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
                                                     inner join [dbo].[Fabric] ff WITH (NOLOCK) on p.SCIRefno= ff.SCIRefno
                                                     inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
                                                     inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
@@ -1207,8 +512,8 @@ drop table #TmpSource
 			                                                    iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
 				                                                    ff.UsageUnit , 
 				                                                    uu.ExtensionUnit), 
-			                                                    ff.UsageUnit)))--p.StockUnit
-                                                    where p.id ='{0}'";
+			                                                    ff.UsageUnit)))
+                                                    where p.id ='{0}' and f.MDivisionID = '{1}'";
         /// <summary>
         /// 右鍵開窗選取採購項
         /// </summary>
@@ -1254,7 +559,7 @@ drop table #TmpSource
                                                                 when 'o' then 
                                                                     'Obsolete' 
                                                             End
-                                            FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", stocktype, Sci.Env.User.Keyword);
+                                            FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}'", stocktype);
 
             Sci.Win.Tools.SelectItem2 selectlocation = new Win.Tools.SelectItem2(sqlcmd,
                             "Location ID,Description,Stock Type", "13,60,10", defaultseq);
