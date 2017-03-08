@@ -145,8 +145,18 @@ namespace Sci.Production.Warehouse
 			            when 'E' then 'P72. Transfer Inventory to Bulk (Confirm)'
 			            when 'F' then 'P75. Material Borrow cross M (Confirm)'
 			            when 'G' then 'P77. Material Return Back cross M (Request)'  end name
-	            ,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location,AddDate
+	            ,0 as inqty
+                , sum(Qty) released
+                ,0 as adjust, remark
+                ,location = MtlLocation.location
+                ,AddDate
             from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
+            outer apply(
+				select location = stuff((select ',' + t.MtlLocationID from (SELECT MtlLocationID from FtyInventory fty 
+																		    join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+																		    Where b.poid = fty.poid and b.seq1 = fty.seq1 and b.seq2 = fty.seq2 and b.Roll = fty.Roll and b.Dyelot = fty.Dyelot)t 
+									     for xml path('')),1,1,'') 
+			) MtlLocation
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
@@ -157,7 +167,7 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type ,AddDate 
+            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1, Seq2, remark, a.IssueDate, a.type, AddDate, MtlLocation.location
 
             union all
             select issuedate, a.id
@@ -435,9 +445,11 @@ namespace Sci.Production.Warehouse
                 object inqty = selectDataTable1.Compute("sum(inqty)", null);
                 object outqty = selectDataTable1.Compute("sum(outqty)", null);
                 object adjust = selectDataTable1.Compute("sum(adjust)", null);
+                object balance = Convert.ToDecimal(inqty) - Convert.ToDecimal(outqty) + Convert.ToDecimal(adjust);
                 this.numericBox1.Value = !MyUtility.Check.Empty(inqty) ? decimal.Parse(inqty.ToString()) : 0m;
                 this.numericBox2.Value = !MyUtility.Check.Empty(outqty) ? decimal.Parse(outqty.ToString()) : 0m;
                 this.numericBox3.Value = !MyUtility.Check.Empty(adjust) ? decimal.Parse(adjust.ToString()) : 0m;
+                this.numericBox4.Value = !MyUtility.Check.Empty(balance) ? decimal.Parse(balance.ToString()) : 0m;
             }
 
             bindingSource1.DataSource = selectDataTable1;

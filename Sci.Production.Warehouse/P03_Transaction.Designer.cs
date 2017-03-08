@@ -40,6 +40,7 @@
             this.button2 = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
+            this.numericBox4 = new Sci.Win.UI.NumericBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.panel2.SuspendLayout();
@@ -82,6 +83,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.numericBox4);
             this.panel2.Controls.Add(this.button3);
             this.panel2.Controls.Add(this.label1);
             this.panel2.Controls.Add(this.numericBox3);
@@ -200,6 +202,27 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // numericBox4
+            // 
+            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBox4.IsSupportEditMode = false;
+            this.numericBox4.Location = new System.Drawing.Point(708, 15);
+            this.numericBox4.Name = "numericBox4";
+            this.numericBox4.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox4.ReadOnly = true;
+            this.numericBox4.Size = new System.Drawing.Size(100, 23);
+            this.numericBox4.TabIndex = 5;
+            this.numericBox4.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P03_Transaction
             // 
             this.ClientSize = new System.Drawing.Size(1008, 561);
@@ -229,5 +252,6 @@
         private Win.UI.NumericBox numericBox2;
         private Win.UI.NumericBox numericBox1;
         private Win.UI.Button button3;
+        private Win.UI.NumericBox numericBox4;
     }
 }
