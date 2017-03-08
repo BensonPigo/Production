@@ -87,7 +87,6 @@ OUTER APPLY(
                     var newDatas = TBattachlocation.AsEnumerable().Select(w =>
                             new Prgs_POSuppDetailData
                             {
-                                mdivisionid = "",
                                 poid = w.Field<string>("poid"),
                                 seq1 = w.Field<string>("seq1"),
                                 seq2 = w.Field<string>("seq2"),
@@ -767,7 +766,6 @@ order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["S
 
     public class Prgs_POSuppDetailData
     {
-        public string mdivisionid {get;set;}
         public string poid {get;set;}
         public string seq1 {get;set;}
         public string seq2 {get;set;}
