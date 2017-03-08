@@ -134,7 +134,8 @@
             this.textLOC2.Name = "textLOC2";
             this.textLOC2.Size = new System.Drawing.Size(113, 23);
             this.textLOC2.TabIndex = 7;
-            this.textLOC2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC2_MouseDown);
+            this.textLOC2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textLOC2_PopUp);
+            this.textLOC2.Validating += new System.ComponentModel.CancelEventHandler(this.textLOC2_Validating);
             // 
             // textLOC1
             // 
@@ -144,7 +145,8 @@
             this.textLOC1.Name = "textLOC1";
             this.textLOC1.Size = new System.Drawing.Size(113, 23);
             this.textLOC1.TabIndex = 5;
-            this.textLOC1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC1_MouseDown);
+            this.textLOC1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textLOC1_PopUp);
+            this.textLOC1.Validating += new System.ComponentModel.CancelEventHandler(this.textLOC1_Validating);
             // 
             // textITEM
             // 
@@ -154,7 +156,8 @@
             this.textITEM.Name = "textITEM";
             this.textITEM.Size = new System.Drawing.Size(127, 23);
             this.textITEM.TabIndex = 4;
-            this.textITEM.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textITEM_MouseDown);
+            this.textITEM.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textITEM_PopUp);
+            this.textITEM.Validating += new System.ComponentModel.CancelEventHandler(this.textITEM_Validating);
             // 
             // textTYPE
             // 
@@ -164,7 +167,8 @@
             this.textTYPE.Name = "textTYPE";
             this.textTYPE.Size = new System.Drawing.Size(135, 23);
             this.textTYPE.TabIndex = 3;
-            this.textTYPE.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textTYPE_MouseDown);
+            this.textTYPE.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textTYPE_PopUp);
+            this.textTYPE.Validating += new System.ComponentModel.CancelEventHandler(this.textTYPE_Validating);
             // 
             // textSHA
             // 
@@ -174,7 +178,8 @@
             this.textSHA.Name = "textSHA";
             this.textSHA.Size = new System.Drawing.Size(122, 23);
             this.textSHA.TabIndex = 2;
-            this.textSHA.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textSHA_MouseDown);
+            this.textSHA.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textSHA_PopUp);
+            this.textSHA.Validating += new System.ComponentModel.CancelEventHandler(this.textSHA_Validating);
             // 
             // textBox2
             // 
@@ -184,7 +189,8 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(148, 23);
             this.textBox2.TabIndex = 1;
-            this.textBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox2_MouseDown);
+            this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
             // textBox1
             // 
@@ -194,7 +200,8 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(148, 23);
             this.textBox1.TabIndex = 0;
-            this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
+            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // label5
             // 
