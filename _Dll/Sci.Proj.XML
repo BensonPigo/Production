@@ -538,7 +538,7 @@
             <summary>
             Get File list from FTp server.
             </summary>
-            <param name="ftppath">Server path name.</param>
+            <param name="ftpPath">Server path name.</param>
             <param name="directories">list of directory information.</param>
             <returns>Result of process.</returns>
         </member>
@@ -555,6 +555,26 @@
             <param name="uploadfile">file name.</param>
             <param name="ftppath">server path name.</param>
             <returns>Result of process.</returns>
+        </member>
+        <member name="T:Sci.MyUtility.FTP.FtpFile">
+            <summary>
+            FTP 檔案相關資訊
+            </summary>
+        </member>
+        <member name="F:Sci.MyUtility.FTP.FtpFile.FileName">
+            <summary>
+            檔名
+            </summary>
+        </member>
+        <member name="F:Sci.MyUtility.FTP.FtpFile.FileSize">
+            <summary>
+            檔案大小(位元組)
+            </summary>
+        </member>
+        <member name="F:Sci.MyUtility.FTP.FtpFile.LastModiifyTime">
+            <summary>
+            最後修改時間
+            </summary>
         </member>
         <member name="M:Sci.MyUtility.GetValue.DeleCrLf(System.String)">
             <summary>
@@ -810,7 +830,7 @@
             <param name="option"></param>
             <returns></returns>
         </member>
-        <member name="M:Sci.MyUtility.Tool.ProcessWithObject(System.Collections.Generic.IEnumerable{System.Object},System.String,System.String,System.Data.DataTable@,System.String,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter})">
+        <member name="M:Sci.MyUtility.Tool.ProcessWithObject(System.Collections.Generic.IEnumerable{System.Object},System.String,System.String,System.Data.DataTable@,System.String,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String)">
             <summary>
             將任意Type的 source (by properties of Type) 轉換成DataTable後 , 呼叫 ProcessWithDataTable
             </summary>
@@ -823,7 +843,7 @@
             <param name="paramters"></param>
             <returns></returns>
         </member>
-        <member name="M:Sci.MyUtility.Tool.ProcessWithObject(System.Collections.Generic.IEnumerable{System.Object},System.String,System.String,System.Data.DataTable[]@,System.String,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter})">
+        <member name="M:Sci.MyUtility.Tool.ProcessWithObject(System.Collections.Generic.IEnumerable{System.Object},System.String,System.String,System.Data.DataTable[]@,System.String,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String)">
             <summary>
             將任意Type的 source (by properties of Type) 轉換成DataTable後 , 呼叫 ProcessWithDataTable
             </summary>
@@ -836,7 +856,7 @@
             <param name="paramters"></param>
             <returns></returns>
         </member>
-        <member name="M:Sci.MyUtility.Tool.ProcessWithDatatable(System.Data.DataTable,System.String,System.String,System.Data.DataTable@,System.String,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter})">
+        <member name="M:Sci.MyUtility.Tool.ProcessWithDatatable(System.Data.DataTable,System.String,System.String,System.Data.DataTable@,System.String,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String)">
             <summary>
             ProcessWithDatatable
             </summary>
@@ -846,7 +866,7 @@
             <param name="out DataTable result"></param>
             <param name="string temptablename"></param>
         </member>
-        <member name="M:Sci.MyUtility.Tool.ProcessWithDatatable(System.Data.DataTable,System.String,System.String,System.Data.DataTable[]@,System.String,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter})">
+        <member name="M:Sci.MyUtility.Tool.ProcessWithDatatable(System.Data.DataTable,System.String,System.String,System.Data.DataTable[]@,System.String,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String)">
             <summary>
             ProcessWithDatatable
             </summary>
@@ -1491,6 +1511,11 @@
             </summary>
             <param name="Path"></param>
         </member>
+        <member name="P:Sci.Utility.WaitPanel.MaxWidth">
+            <summary>
+            WaitingPanel的最大寬度限制，預設為200
+            </summary>
+        </member>
         <member name="T:Sci.WaitPanelExtension">
             <summary>
             
@@ -1518,6 +1543,14 @@
             </summary>
             <param name="frm"></param>
             <param name="align"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.WaitPanelExtension.SetWaitMessageMaxWidth(System.Windows.Forms.Form,System.Nullable{System.Int32})">
+            <summary>
+            最大顯示寬度，原始值為200，不指定maxWidth或是給null，會還原為預設值200
+            </summary>
+            <param name="frm"></param>
+            <param name="maxWidth"></param>
             <returns></returns>
         </member>
         <member name="M:Sci.Utility.Word.SaveDotReportCls.OpenFile(System.String)">
