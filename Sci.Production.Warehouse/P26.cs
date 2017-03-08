@@ -284,7 +284,6 @@ namespace Sci.Production.Warehouse
             var data_Fty_26F = (from b in newDt.AsEnumerable()
                          select new
                          {
-                             mdivisionid = b.Field<string>("mdivisionid"),
                              poid = b.Field<string>("poid"),
                              seq1 = b.Field<string>("seq1"),
                              seq2 = b.Field<string>("seq2"),
@@ -302,14 +301,12 @@ namespace Sci.Production.Warehouse
             var data_MD_2T = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("mdivisionid"),
                            poid = b.Field<string>("poid"),
                            seq1 = b.Field<string>("seq1"),
                            seq2 = b.Field<string>("seq2")
                        } into m
                        select new Prgs_POSuppDetailData
                        {
-                           mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),

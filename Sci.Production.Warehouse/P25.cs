@@ -262,7 +262,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var data_MD_4T = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                    group b by new
                    {
-                       mdivisionid = b.Field<string>("frommdivisionid"),
                        poid = b.Field<string>("frompoid"),
                        seq1 = b.Field<string>("fromseq1"),
                        seq2 = b.Field<string>("fromseq2"),
@@ -270,7 +269,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                    } into m
                        select new Prgs_POSuppDetailData
                    {
-                       mdivisionid = m.First().Field<string>("frommdivisionid"),
                        poid = m.First().Field<string>("frompoid"),
                        seq1 = m.First().Field<string>("fromseq1"),
                        seq2 = m.First().Field<string>("fromseq2"),
@@ -283,7 +281,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var data_MD_16T = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("toMdivisionid"),
                            poid = b.Field<string>("topoid"),
                            seq1 = b.Field<string>("toseq1"),
                            seq2 = b.Field<string>("toseq2"),
@@ -291,7 +288,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        } into m
                        select new
                        {
-                           mdivisionid = m.First().Field<string>("toMdivisionid"),
                            poid = m.First().Field<string>("topoid"),
                            seq1 = m.First().Field<string>("toseq1"),
                            seq2 = m.First().Field<string>("toseq2"),
@@ -304,7 +300,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var data_Fty_4T = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                          select new
                          {
-                             mdivisionid = m.Field<string>("fromMdivisionid"),
                              poid = m.Field<string>("frompoid"),
                              seq1 = m.Field<string>("fromseq1"),
                              seq2 = m.Field<string>("fromseq2"),
@@ -342,7 +337,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var data_Fty_2T = (from b in newDt.AsEnumerable()
                                select new
                                {
-                                   mdivisionid = b.Field<string>("toMdivisionid"),
                                    poid = b.Field<string>("topoid"),
                                    seq1 = b.Field<string>("toseq1"),
                                    seq2 = b.Field<string>("toseq2"),
@@ -524,7 +518,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var data_MD_4F = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("frommdivisionid"),
                            poid = b.Field<string>("frompoid"),
                            seq1 = b.Field<string>("fromseq1"),
                            seq2 = b.Field<string>("fromseq2"),
@@ -532,7 +525,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        } into m
                        select new Prgs_POSuppDetailData
                        {
-                           mdivisionid = m.First().Field<string>("frommdivisionid"),
                            poid = m.First().Field<string>("frompoid"),
                            seq1 = m.First().Field<string>("fromseq1"),
                            seq2 = m.First().Field<string>("fromseq2"),
@@ -545,7 +537,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var data_MD_16F = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                    group b by new
                    {
-                       mdivisionid = b.Field<string>("tomdivisionid"),
                        poid = b.Field<string>("topoid"),
                        seq1 = b.Field<string>("toseq1"),
                        seq2 = b.Field<string>("toseq2"),
@@ -553,7 +544,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                    } into m
                    select new
                    {
-                       mdivisionid = m.First().Field<string>("tomdivisionid"),
                        poid = m.First().Field<string>("topoid"),
                        seq1 = m.First().Field<string>("toseq1"),
                        seq2 = m.First().Field<string>("toseq2"),
@@ -566,7 +556,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var data_Fty_4F = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                          select new
                          {
-                             mdivisionid = m.Field<string>("fromMdivisionid"),
                              poid = m.Field<string>("frompoid"),
                              seq1 = m.Field<string>("fromseq1"),
                              seq2 = m.Field<string>("fromseq2"),
@@ -579,7 +568,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var data_Fty_2F = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                            select new
                            {
-                               mdivisionid = m.Field<string>("toMdivisionid"),
                                poid = m.Field<string>("topoid"),
                                seq1 = m.Field<string>("toseq1"),
                                seq2 = m.Field<string>("toseq2"),

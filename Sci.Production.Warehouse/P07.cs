@@ -750,7 +750,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
             var data_MD_2T = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("mdivisionid").Trim(),
                            poid = b.Field<string>("poid").Trim(),
                            seq1 = b.Field<string>("seq1").Trim(),
                            seq2 = b.Field<string>("seq2").Trim(),
@@ -758,7 +757,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
                        } into m
                        select new Prgs_POSuppDetailData
                        {
-                           mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
@@ -769,7 +767,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
             var data_MD_8T = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("mdivisionid").Trim(),
                            poid = b.Field<string>("poid").Trim(),
                            seq1 = b.Field<string>("seq1").Trim(),
                            seq2 = b.Field<string>("seq2").Trim(),
@@ -777,7 +774,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
                        } into m
                         select new Prgs_POSuppDetailData
                        {
-                           mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
@@ -814,7 +810,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.StockQty <
             var data_Fty_2T = (from m in newDt.AsEnumerable()
                          select new
                          {
-                             mdivisionid = m.Field<string>("mdivisionid"),
                              poid = m.Field<string>("poid"),
                              seq1 = m.Field<string>("seq1"),
                              seq2 = m.Field<string>("seq2"),
@@ -1008,7 +1003,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
             var data_MD_2F = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("mdivisionid"),
                            poid = b.Field<string>("poid"),
                            seq1 = b.Field<string>("seq1"),
                            seq2 = b.Field<string>("seq2"),
@@ -1016,7 +1010,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                        } into m
                        select new Prgs_POSuppDetailData
                        {
-                           mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
@@ -1027,7 +1020,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
             var data_MD_8F = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("mdivisionid"),
                            poid = b.Field<string>("poid"),
                            seq1 = b.Field<string>("seq1"),
                            seq2 = b.Field<string>("seq2"),
@@ -1035,7 +1027,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
                        } into m
                         select new Prgs_POSuppDetailData
                        {
-                           mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
@@ -1046,7 +1037,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
             var data_Fty_2F = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                          select new
                          {
-                             mdivisionid = m.Field<string>("mdivisionid"),
                              poid = m.Field<string>("poid"),
                              seq1 = m.Field<string>("seq1"),
                              seq2 = m.Field<string>("seq2"),

@@ -360,7 +360,6 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
             var data_MD_4T =  (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("fromMdivisionid"),
                            poid = b.Field<string>("frompoid"),
                            seq1 = b.Field<string>("fromseq1"),
                            seq2 = b.Field<string>("fromseq2"),
@@ -368,7 +367,6 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
                        } into m
                        select new Prgs_POSuppDetailData
                        {
-                           mdivisionid = m.First().Field<string>("fromMdivisionid"),
                            poid = m.First().Field<string>("frompoid"),
                            seq1 = m.First().Field<string>("fromseq1"),
                            seq2 = m.First().Field<string>("fromseq2"),
@@ -379,7 +377,6 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
 
             var data_MD_8T = data_MD_4T.Select(data => new Prgs_POSuppDetailData
             {
-                mdivisionid = data.mdivisionid,
                 poid = data.poid,
                 seq1 = data.seq1,
                 seq2 = data.seq2,
@@ -393,7 +390,6 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
             var data_MD_2T = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("ToMdivisionid"),
                            poid = b.Field<string>("Topoid"),
                            seq1 = b.Field<string>("Toseq1"),
                            seq2 = b.Field<string>("Toseq2"),
@@ -401,7 +397,6 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
                        } into m
                        select new Prgs_POSuppDetailData 
                        {
-                           mdivisionid = m.First().Field<string>("ToMdivisionid"),
                            poid = m.First().Field<string>("Topoid"),
                            seq1 = m.First().Field<string>("Toseq1"),
                            seq2 = m.First().Field<string>("Toseq2"),
@@ -416,7 +411,6 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
             var data_Fty_4T = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                          select new
                          {
-                             mdivisionid = m.Field<string>("fromMdivisionid"),
                              poid = m.Field<string>("frompoid"),
                              seq1 = m.Field<string>("fromseq1"),
                              seq2 = m.Field<string>("fromseq2"),
@@ -641,7 +635,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var data_MD_4F = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("frommdivisionid"),
                            poid = b.Field<string>("frompoid"),
                            seq1 = b.Field<string>("fromseq1"),
                            seq2 = b.Field<string>("fromseq2"),
@@ -649,7 +642,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        } into m
                        select new Prgs_POSuppDetailData
                        {
-                           mdivisionid = m.First().Field<string>("frommdivisionid"),
                            poid = m.First().Field<string>("frompoid"),
                            seq1 = m.First().Field<string>("fromseq1"),
                            seq2 = m.First().Field<string>("fromseq2"),
@@ -658,7 +650,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        }).ToList();
 
             var data_MD_8F = data_MD_4F.Select(data => new Prgs_POSuppDetailData {
-                mdivisionid = data.mdivisionid,
                 poid = data.poid,
                 seq1 = data.seq1,
                 seq2 = data.seq2,
@@ -671,7 +662,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var data_MD_2F = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("ToMdivisionid"),
                            poid = b.Field<string>("Topoid"),
                            seq1 = b.Field<string>("Toseq1"),
                            seq2 = b.Field<string>("Toseq2"),
@@ -679,7 +669,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        } into m
                        select new Prgs_POSuppDetailData
                        {
-                           mdivisionid = m.First().Field<string>("ToMdivisionid"),
                            poid = m.First().Field<string>("Topoid"),
                            seq1 = m.First().Field<string>("Toseq1"),
                            seq2 = m.First().Field<string>("Toseq2"),
@@ -694,7 +683,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var data_Fty_4F = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                          select new
                          {
-                             mdivisionid = m.Field<string>("fromMdivisionid"),
                              poid = m.Field<string>("frompoid"),
                              seq1 = m.Field<string>("fromseq1"),
                              seq2 = m.Field<string>("fromseq2"),
@@ -707,7 +695,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var data_Fty_2F = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                            select new
                            {
-                               mdivisionid = m.Field<string>("toMdivisionid"),
                                poid = m.Field<string>("topoid"),
                                seq1 = m.Field<string>("toseq1"),
                                seq2 = m.Field<string>("toseq2"),
