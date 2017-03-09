@@ -47,7 +47,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(676, 299);
+            this.detail.Size = new System.Drawing.Size(830, 299);
             // 
             // detailcont
             // 
@@ -60,12 +60,12 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(676, 261);
+            this.detailcont.Size = new System.Drawing.Size(830, 261);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 261);
-            this.detailbtm.Size = new System.Drawing.Size(676, 38);
+            this.detailbtm.Size = new System.Drawing.Size(830, 38);
             // 
             // browse
             // 
@@ -73,7 +73,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(684, 328);
+            this.tabs.Size = new System.Drawing.Size(838, 328);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label1
             // 
@@ -167,7 +180,7 @@
             // 
             // B50
             // 
-            this.ClientSize = new System.Drawing.Size(684, 361);
+            this.ClientSize = new System.Drawing.Size(838, 361);
             this.DefaultOrder = "NLCode";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

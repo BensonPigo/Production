@@ -46,7 +46,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(678, 327);
+            this.detail.Size = new System.Drawing.Size(829, 327);
             // 
             // detailcont
             // 
@@ -58,12 +58,12 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(678, 289);
+            this.detailcont.Size = new System.Drawing.Size(829, 289);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 289);
-            this.detailbtm.Size = new System.Drawing.Size(678, 38);
+            this.detailbtm.Size = new System.Drawing.Size(829, 38);
             // 
             // browse
             // 
@@ -71,7 +71,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(686, 356);
+            this.tabs.Size = new System.Drawing.Size(837, 356);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label1
             // 
@@ -156,7 +169,7 @@
             // 
             // B44
             // 
-            this.ClientSize = new System.Drawing.Size(686, 389);
+            this.ClientSize = new System.Drawing.Size(837, 389);
             this.DefaultControl = "textBox1";
             this.DefaultControlForEdit = "textBox1";
             this.DefaultOrder = "NLCode";

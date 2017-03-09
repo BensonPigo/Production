@@ -227,7 +227,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 290);
-            this.detailpanel.Size = new System.Drawing.Size(998, 266);
+            this.detailpanel.Size = new System.Drawing.Size(998, 254);
             // 
             // gridicon
             // 
@@ -236,11 +236,11 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.refresh.Location = new System.Drawing.Point(2658, 8);
+            this.refresh.Location = new System.Drawing.Point(2711, 8);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(998, 266);
+            this.detailgridcont.Size = new System.Drawing.Size(998, 254);
             // 
             // detail2
             // 
@@ -256,11 +256,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(998, 650);
+            this.detail.Size = new System.Drawing.Size(998, 670);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(998, 556);
+            this.detailcont.Size = new System.Drawing.Size(998, 544);
             // 
             // detailbtm
             // 
@@ -273,8 +273,8 @@
             this.detailbtm.Controls.Add(this.editBox2);
             this.detailbtm.Controls.Add(this.label25);
             this.detailbtm.Controls.Add(this.dateBox4);
-            this.detailbtm.Location = new System.Drawing.Point(0, 556);
-            this.detailbtm.Size = new System.Drawing.Size(998, 94);
+            this.detailbtm.Location = new System.Drawing.Point(0, 544);
+            this.detailbtm.Size = new System.Drawing.Size(998, 126);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -296,25 +296,26 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1006, 679);
+            this.tabs.Size = new System.Drawing.Size(1006, 699);
             // 
             // createby
             // 
-            this.createby.Location = new System.Drawing.Point(70, 68);
-            this.createby.Size = new System.Drawing.Size(260, 23);
+            this.createby.Location = new System.Drawing.Point(71, 69);
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(394, 68);
-            this.editby.Size = new System.Drawing.Size(260, 23);
+            this.editby.Location = new System.Drawing.Point(71, 95);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             // 
             // lblcreateby
             // 
-            this.lblcreateby.Location = new System.Drawing.Point(5, 72);
+            this.lblcreateby.Location = new System.Drawing.Point(6, 73);
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(346, 72);
+            this.lbleditby.Location = new System.Drawing.Point(7, 98);
+            this.lbleditby.Size = new System.Drawing.Size(62, 17);
             // 
             // label1
             // 
@@ -1054,7 +1055,7 @@
             // P02
             // 
             this.ApvChkValue = "Sent";
-            this.ClientSize = new System.Drawing.Size(1006, 712);
+            this.ClientSize = new System.Drawing.Size(1006, 732);
             this.DefaultControl = "comboBox1";
             this.DefaultControlForEdit = "comboBox1";
             this.DefaultDetailOrder = "CTNNo,Seq1";

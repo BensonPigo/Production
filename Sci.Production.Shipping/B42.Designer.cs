@@ -104,7 +104,7 @@
             this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.textBox1);
             this.masterpanel.Controls.Add(this.label12);
-            this.masterpanel.Size = new System.Drawing.Size(806, 212);
+            this.masterpanel.Size = new System.Drawing.Size(927, 212);
             this.masterpanel.Controls.SetChildIndex(this.label12, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
@@ -140,7 +140,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 212);
-            this.detailpanel.Size = new System.Drawing.Size(806, 218);
+            this.detailpanel.Size = new System.Drawing.Size(927, 218);
             // 
             // gridicon
             // 
@@ -149,11 +149,11 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(720, 1);
+            this.refresh.Location = new System.Drawing.Point(837, 0);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(806, 218);
+            this.detailgridcont.Size = new System.Drawing.Size(927, 218);
             // 
             // detail2
             // 
@@ -169,16 +169,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(806, 468);
+            this.detail.Size = new System.Drawing.Size(927, 468);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(806, 430);
+            this.detailcont.Size = new System.Drawing.Size(927, 430);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 430);
-            this.detailbtm.Size = new System.Drawing.Size(806, 38);
+            this.detailbtm.Size = new System.Drawing.Size(927, 38);
             // 
             // browse
             // 
@@ -186,15 +186,17 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(814, 497);
+            this.tabs.Size = new System.Drawing.Size(935, 497);
             // 
             // createby
             // 
             this.createby.Location = new System.Drawing.Point(73, 7);
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(403, 7);
+            this.editby.Location = new System.Drawing.Point(481, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             // 
             // lblcreateby
             // 
@@ -202,7 +204,7 @@
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(355, 13);
+            this.lbleditby.Location = new System.Drawing.Point(433, 13);
             // 
             // button2
             // 
@@ -546,7 +548,7 @@
             // B42
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(814, 530);
+            this.ClientSize = new System.Drawing.Size(935, 530);
             this.DefaultControl = "textBox1";
             this.DefaultControlForEdit = "textBox1";
             this.DefaultOrder = "VNContractID,CustomSP";

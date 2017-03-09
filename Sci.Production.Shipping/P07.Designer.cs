@@ -125,7 +125,7 @@
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Controls.Add(this.shapeContainer1);
             this.masterpanel.Controls.Add(this.label18);
-            this.masterpanel.Size = new System.Drawing.Size(676, 248);
+            this.masterpanel.Size = new System.Drawing.Size(911, 248);
             this.masterpanel.Controls.SetChildIndex(this.label18, 0);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
@@ -171,16 +171,20 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 248);
-            this.detailpanel.Size = new System.Drawing.Size(676, 202);
+            this.detailpanel.Size = new System.Drawing.Size(911, 202);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(571, 186);
             this.gridicon.Visible = false;
             // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(827, 1);
+            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(676, 202);
+            this.detailgridcont.Size = new System.Drawing.Size(911, 202);
             // 
             // detail2
             // 
@@ -196,16 +200,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(676, 488);
+            this.detail.Size = new System.Drawing.Size(911, 488);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(676, 450);
+            this.detailcont.Size = new System.Drawing.Size(911, 450);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 450);
-            this.detailbtm.Size = new System.Drawing.Size(676, 38);
+            this.detailbtm.Size = new System.Drawing.Size(911, 38);
             // 
             // browse
             // 
@@ -213,7 +217,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(684, 517);
+            this.tabs.Size = new System.Drawing.Size(919, 517);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label1
             // 
@@ -762,7 +779,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(676, 248);
+            this.shapeContainer1.Size = new System.Drawing.Size(911, 248);
             this.shapeContainer1.TabIndex = 40;
             this.shapeContainer1.TabStop = false;
             // 
@@ -778,7 +795,7 @@
             // 
             // P07
             // 
-            this.ClientSize = new System.Drawing.Size(684, 550);
+            this.ClientSize = new System.Drawing.Size(919, 550);
             this.DefaultOrder = "ID";
             this.GridAlias = "InvAdjust_Qty";
             this.GridEdit = false;

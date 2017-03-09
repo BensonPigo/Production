@@ -62,7 +62,7 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(771, 103);
+            this.masterpanel.Size = new System.Drawing.Size(913, 103);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -77,7 +77,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 103);
-            this.detailpanel.Size = new System.Drawing.Size(771, 246);
+            this.detailpanel.Size = new System.Drawing.Size(913, 246);
             // 
             // gridicon
             // 
@@ -86,11 +86,11 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(671, 1);
+            this.refresh.Location = new System.Drawing.Point(826, 0);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(771, 246);
+            this.detailgridcont.Size = new System.Drawing.Size(913, 246);
             // 
             // detail2
             // 
@@ -106,16 +106,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(771, 387);
+            this.detail.Size = new System.Drawing.Size(913, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(771, 349);
+            this.detailcont.Size = new System.Drawing.Size(913, 349);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(771, 38);
+            this.detailbtm.Size = new System.Drawing.Size(913, 38);
             // 
             // browse
             // 
@@ -123,15 +123,17 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(779, 416);
+            this.tabs.Size = new System.Drawing.Size(921, 416);
             // 
             // createby
             // 
             this.createby.Location = new System.Drawing.Point(69, 7);
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(399, 7);
+            this.editby.Location = new System.Drawing.Point(470, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             // 
             // lblcreateby
             // 
@@ -139,7 +141,7 @@
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(351, 13);
+            this.lbleditby.Location = new System.Drawing.Point(422, 13);
             // 
             // label1
             // 
@@ -229,7 +231,7 @@
             // P42
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(779, 449);
+            this.ClientSize = new System.Drawing.Size(921, 449);
             this.DefaultControl = "dateBox1";
             this.DefaultControlForEdit = "dateBox1";
             this.DefaultOrder = "ID";

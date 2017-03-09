@@ -43,7 +43,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(679, 355);
+            this.detail.Size = new System.Drawing.Size(827, 355);
             // 
             // detailcont
             // 
@@ -52,16 +52,33 @@
             this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(679, 317);
+            this.detailcont.Size = new System.Drawing.Size(827, 317);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 317);
-            this.detailbtm.Size = new System.Drawing.Size(679, 38);
+            this.detailbtm.Size = new System.Drawing.Size(827, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(679, 355);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(687, 384);
+            this.tabs.Size = new System.Drawing.Size(835, 384);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label1
             // 
@@ -115,7 +132,7 @@
             // 
             // B46
             // 
-            this.ClientSize = new System.Drawing.Size(687, 417);
+            this.ClientSize = new System.Drawing.Size(835, 417);
             this.DefaultOrder = "ID";
             this.IsSupportDelete = false;
             this.Name = "B46";

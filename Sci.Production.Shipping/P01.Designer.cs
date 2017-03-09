@@ -179,7 +179,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(996, 660);
+            this.detail.Size = new System.Drawing.Size(996, 684);
             // 
             // detailcont
             // 
@@ -324,7 +324,7 @@
             this.detailbtm.Controls.Add(this.label55);
             this.detailbtm.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.detailbtm.Location = new System.Drawing.Point(0, 623);
-            this.detailbtm.Size = new System.Drawing.Size(996, 37);
+            this.detailbtm.Size = new System.Drawing.Size(996, 61);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
@@ -340,31 +340,31 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1004, 689);
+            this.tabs.Size = new System.Drawing.Size(1004, 713);
             // 
             // createby
             // 
             this.createby.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.createby.Location = new System.Drawing.Point(59, 11);
-            this.createby.Size = new System.Drawing.Size(210, 21);
+            this.createby.Location = new System.Drawing.Point(61, 10);
+            this.createby.Size = new System.Drawing.Size(350, 21);
             // 
             // editby
             // 
             this.editby.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.editby.Location = new System.Drawing.Point(320, 11);
-            this.editby.Size = new System.Drawing.Size(210, 21);
+            this.editby.Location = new System.Drawing.Point(61, 35);
+            this.editby.Size = new System.Drawing.Size(350, 21);
             // 
             // lblcreateby
             // 
             this.lblcreateby.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.lblcreateby.Location = new System.Drawing.Point(3, 12);
+            this.lblcreateby.Location = new System.Drawing.Point(5, 11);
             this.lblcreateby.Size = new System.Drawing.Size(55, 17);
             // 
             // lbleditby
             // 
             this.lbleditby.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.lbleditby.Location = new System.Drawing.Point(279, 12);
-            this.lbleditby.Size = new System.Drawing.Size(40, 17);
+            this.lbleditby.Location = new System.Drawing.Point(6, 35);
+            this.lbleditby.Size = new System.Drawing.Size(52, 17);
             // 
             // label1
             // 
@@ -2057,7 +2057,7 @@
             // 
             this.ApvChkValue = "Checked";
             this.CheckChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1004, 722);
+            this.ClientSize = new System.Drawing.Size(1004, 746);
             this.DefaultControl = "txtSpNo";
             this.DefaultControlForEdit = "txtSpNo";
             this.DefaultOrder = "CDate";

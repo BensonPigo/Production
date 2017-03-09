@@ -59,7 +59,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(771, 338);
+            this.detail.Size = new System.Drawing.Size(829, 338);
             // 
             // detailcont
             // 
@@ -84,20 +84,33 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(771, 300);
+            this.detailcont.Size = new System.Drawing.Size(829, 300);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 300);
-            this.detailbtm.Size = new System.Drawing.Size(771, 38);
+            this.detailbtm.Size = new System.Drawing.Size(829, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(779, 338);
+            this.browse.Size = new System.Drawing.Size(771, 338);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(779, 367);
+            this.tabs.Size = new System.Drawing.Size(837, 367);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // displayBox6
             // 
@@ -319,7 +332,7 @@
             // 
             // B52
             // 
-            this.ClientSize = new System.Drawing.Size(779, 400);
+            this.ClientSize = new System.Drawing.Size(837, 400);
             this.DefaultOrder = "RefNo";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

@@ -62,7 +62,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(762, 96);
+            this.masterpanel.Size = new System.Drawing.Size(907, 96);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -77,15 +77,19 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 96);
-            this.detailpanel.Size = new System.Drawing.Size(762, 253);
+            this.detailpanel.Size = new System.Drawing.Size(907, 253);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(651, 61);
             // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(819, 1);
+            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(762, 253);
+            this.detailgridcont.Size = new System.Drawing.Size(907, 253);
             // 
             // detail2
             // 
@@ -101,24 +105,37 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(762, 387);
+            this.detail.Size = new System.Drawing.Size(907, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(762, 349);
+            this.detailcont.Size = new System.Drawing.Size(907, 349);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(762, 38);
+            this.detailbtm.Size = new System.Drawing.Size(907, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(892, 387);
+            this.browse.Size = new System.Drawing.Size(762, 387);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(770, 416);
+            this.tabs.Size = new System.Drawing.Size(915, 416);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label1
             // 
@@ -206,7 +223,7 @@
             // B51
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(770, 449);
+            this.ClientSize = new System.Drawing.Size(915, 449);
             this.GridAlias = "KHContract_Detail";
             this.GridEdit = false;
             this.GridNew = 0;

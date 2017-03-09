@@ -58,7 +58,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(744, 395);
+            this.detail.Size = new System.Drawing.Size(828, 395);
             // 
             // detailcont
             // 
@@ -82,11 +82,11 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(744, 357);
+            this.detailcont.Size = new System.Drawing.Size(828, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(744, 38);
+            this.detailbtm.Size = new System.Drawing.Size(828, 38);
             // 
             // browse
             // 
@@ -94,7 +94,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(752, 424);
+            this.tabs.Size = new System.Drawing.Size(836, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -314,7 +327,7 @@
             // 
             // B03
             // 
-            this.ClientSize = new System.Drawing.Size(752, 457);
+            this.ClientSize = new System.Drawing.Size(836, 457);
             this.DefaultControl = "txtCode";
             this.DefaultControlForEdit = "editBox1";
             this.DefaultOrder = "ID";

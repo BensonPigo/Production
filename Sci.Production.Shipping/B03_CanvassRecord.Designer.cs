@@ -63,7 +63,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(676, 395);
+            this.detail.Size = new System.Drawing.Size(826, 395);
             // 
             // detailcont
             // 
@@ -87,11 +87,11 @@
             this.detailcont.Controls.Add(this.txtsubcon3);
             this.detailcont.Controls.Add(this.txtsubcon2);
             this.detailcont.Controls.Add(this.txtsubcon1);
-            this.detailcont.Size = new System.Drawing.Size(676, 357);
+            this.detailcont.Size = new System.Drawing.Size(826, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(676, 38);
+            this.detailbtm.Size = new System.Drawing.Size(826, 38);
             // 
             // browse
             // 
@@ -99,7 +99,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(684, 424);
+            this.tabs.Size = new System.Drawing.Size(834, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label8
             // 
@@ -129,8 +142,18 @@
             0,
             65536});
             this.numericBox4.Name = "numericBox4";
+            this.numericBox4.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox4.Size = new System.Drawing.Size(100, 23);
             this.numericBox4.TabIndex = 40;
+            this.numericBox4.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox3
             // 
@@ -151,8 +174,18 @@
             0,
             65536});
             this.numericBox3.Name = "numericBox3";
+            this.numericBox3.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox3.Size = new System.Drawing.Size(100, 23);
             this.numericBox3.TabIndex = 39;
+            this.numericBox3.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox2
             // 
@@ -173,8 +206,18 @@
             0,
             65536});
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.Size = new System.Drawing.Size(100, 23);
             this.numericBox2.TabIndex = 38;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numericBox1
             // 
@@ -195,8 +238,18 @@
             0,
             65536});
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.Size = new System.Drawing.Size(100, 23);
             this.numericBox1.TabIndex = 37;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // label7
             // 
@@ -412,7 +465,7 @@
             // B03_CanvassRecord
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(684, 457);
+            this.ClientSize = new System.Drawing.Size(834, 457);
             this.DefaultOrder = "ID,AddDate";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
