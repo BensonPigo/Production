@@ -50,7 +50,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(675, 395);
+            this.detail.Size = new System.Drawing.Size(828, 395);
             // 
             // detailcont
             // 
@@ -66,12 +66,12 @@
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(675, 357);
+            this.detailcont.Size = new System.Drawing.Size(828, 357);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(675, 38);
+            this.detailbtm.Size = new System.Drawing.Size(828, 38);
             // 
             // browse
             // 
@@ -79,11 +79,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(684, 424);
+            this.tabs.Size = new System.Drawing.Size(836, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label1
             // 
@@ -216,7 +226,7 @@
             // 
             // B01
             // 
-            this.ClientSize = new System.Drawing.Size(684, 457);
+            this.ClientSize = new System.Drawing.Size(836, 457);
             this.DefaultControl = "txtID";
             this.DefaultControlForEdit = "txtartworktype_fty1";
             this.DefaultOrder = "id";
