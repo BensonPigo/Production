@@ -54,7 +54,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(696, 395);
+            this.detail.Size = new System.Drawing.Size(832, 395);
             // 
             // detailcont
             // 
@@ -71,12 +71,12 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(696, 357);
+            this.detailcont.Size = new System.Drawing.Size(832, 357);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(696, 38);
+            this.detailbtm.Size = new System.Drawing.Size(832, 38);
             // 
             // browse
             // 
@@ -84,11 +84,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(704, 424);
+            this.tabs.Size = new System.Drawing.Size(840, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -249,7 +259,7 @@
             // 
             // B01
             // 
-            this.ClientSize = new System.Drawing.Size(704, 457);
+            this.ClientSize = new System.Drawing.Size(840, 457);
             this.DefaultControl = "textBox1";
             this.DefaultControlForEdit = "textBox2";
             this.DefaultOrder = "BrandID,Code";

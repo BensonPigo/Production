@@ -43,7 +43,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(681, 395);
+            this.detail.Size = new System.Drawing.Size(829, 395);
             // 
             // detailcont
             // 
@@ -52,11 +52,11 @@
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(681, 357);
+            this.detailcont.Size = new System.Drawing.Size(829, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(681, 38);
+            this.detailbtm.Size = new System.Drawing.Size(829, 38);
             // 
             // browse
             // 
@@ -64,11 +64,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(689, 424);
+            this.tabs.Size = new System.Drawing.Size(837, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // checkBox1
             // 
@@ -127,7 +137,7 @@
             // 
             // B04
             // 
-            this.ClientSize = new System.Drawing.Size(689, 457);
+            this.ClientSize = new System.Drawing.Size(837, 457);
             this.DefaultControl = "displayBox1";
             this.DefaultControlForEdit = "editBox1";
             this.DefaultFilter = "Type = \'CP\'";

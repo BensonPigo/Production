@@ -43,7 +43,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(678, 395);
+            this.detail.Size = new System.Drawing.Size(825, 395);
             // 
             // detailcont
             // 
@@ -52,11 +52,11 @@
             this.detailcont.Controls.Add(this.displayBox1);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(678, 357);
+            this.detailcont.Size = new System.Drawing.Size(825, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(678, 38);
+            this.detailbtm.Size = new System.Drawing.Size(825, 38);
             // 
             // browse
             // 
@@ -64,11 +64,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(686, 424);
+            this.tabs.Size = new System.Drawing.Size(833, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -122,7 +132,7 @@
             // 
             // B06
             // 
-            this.ClientSize = new System.Drawing.Size(686, 457);
+            this.ClientSize = new System.Drawing.Size(833, 457);
             this.ConnectionName = "Machine";
             this.DefaultControl = "displayBox1";
             this.DefaultControlForEdit = "displayBox2";

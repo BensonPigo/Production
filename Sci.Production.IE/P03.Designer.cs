@@ -268,16 +268,15 @@
             // 
             // detail2
             // 
-            this.detail2.Location = new System.Drawing.Point(4, 24);
-            this.detail2.Size = new System.Drawing.Size(996, 661);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(990, 615);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(990, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -304,11 +303,16 @@
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(269, 21);
+            this.createby.Size = new System.Drawing.Size(350, 21);
             // 
             // editby
             // 
-            this.editby.Size = new System.Drawing.Size(269, 21);
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 21);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label1
             // 

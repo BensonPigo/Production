@@ -109,7 +109,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(795, 490);
+            this.detail.Size = new System.Drawing.Size(827, 490);
             // 
             // detailcont
             // 
@@ -178,12 +178,12 @@
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.shapeContainer1);
-            this.detailcont.Size = new System.Drawing.Size(795, 452);
+            this.detailcont.Size = new System.Drawing.Size(827, 452);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 452);
-            this.detailbtm.Size = new System.Drawing.Size(795, 38);
+            this.detailbtm.Size = new System.Drawing.Size(827, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -192,12 +192,22 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(803, 519);
+            this.tabs.Size = new System.Drawing.Size(835, 519);
             this.tabs.TabIndex = 0;
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label1
             // 
@@ -859,7 +869,7 @@
             this.lineShape5,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(795, 452);
+            this.shapeContainer1.Size = new System.Drawing.Size(827, 452);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -1023,7 +1033,7 @@
             // P02
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(803, 552);
+            this.ClientSize = new System.Drawing.Size(835, 552);
             this.DefaultControlForEdit = "numericBox3";
             this.DefaultOrder = "FactoryID,SewingLineID,Inline";
             this.IsSupportConfirm = true;

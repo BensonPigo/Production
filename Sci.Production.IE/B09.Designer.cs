@@ -187,6 +187,19 @@
             this.tabs.Controls.SetChildIndex(this.detail, 0);
             this.tabs.Controls.SetChildIndex(this.browse, 0);
             // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
+            // 
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.button3);
