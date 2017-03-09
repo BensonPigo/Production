@@ -74,7 +74,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(699, 521);
+            this.detail.Size = new System.Drawing.Size(827, 521);
             // 
             // detailcont
             // 
@@ -114,12 +114,12 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(699, 483);
+            this.detailcont.Size = new System.Drawing.Size(827, 483);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 483);
-            this.detailbtm.Size = new System.Drawing.Size(699, 38);
+            this.detailbtm.Size = new System.Drawing.Size(827, 38);
             // 
             // browse
             // 
@@ -127,7 +127,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(707, 550);
+            this.tabs.Size = new System.Drawing.Size(835, 550);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -477,7 +490,7 @@
             // 
             // B10
             // 
-            this.ClientSize = new System.Drawing.Size(707, 583);
+            this.ClientSize = new System.Drawing.Size(835, 583);
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;

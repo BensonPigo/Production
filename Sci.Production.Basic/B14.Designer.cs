@@ -67,7 +67,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(694, 455);
+            this.detail.Size = new System.Drawing.Size(832, 455);
             // 
             // detailcont
             // 
@@ -100,13 +100,13 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(694, 403);
+            this.detailcont.Size = new System.Drawing.Size(832, 403);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 403);
-            this.detailbtm.Size = new System.Drawing.Size(694, 52);
+            this.detailbtm.Size = new System.Drawing.Size(832, 52);
             // 
             // browse
             // 
@@ -114,15 +114,17 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(702, 484);
+            this.tabs.Size = new System.Drawing.Size(840, 484);
             // 
             // createby
             // 
             this.createby.Location = new System.Drawing.Point(70, 21);
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(400, 21);
+            this.editby.Location = new System.Drawing.Point(471, 21);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
             // 
             // lblcreateby
@@ -131,7 +133,7 @@
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(352, 27);
+            this.lbleditby.Location = new System.Drawing.Point(423, 27);
             // 
             // label3
             // 
@@ -459,7 +461,7 @@
             // 
             // B14
             // 
-            this.ClientSize = new System.Drawing.Size(702, 517);
+            this.ClientSize = new System.Drawing.Size(840, 517);
             this.DefaultControlForEdit = "comboBox1";
             this.DefaultOrder = "Seq";
             this.EnableGridJunkColor = true;

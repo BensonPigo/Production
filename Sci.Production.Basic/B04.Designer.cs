@@ -63,7 +63,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(767, 395);
+            this.detail.Size = new System.Drawing.Size(824, 395);
             // 
             // detailcont
             // 
@@ -92,12 +92,12 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(767, 357);
+            this.detailcont.Size = new System.Drawing.Size(824, 357);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(767, 38);
+            this.detailbtm.Size = new System.Drawing.Size(824, 38);
             // 
             // browse
             // 
@@ -105,11 +105,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(775, 424);
+            this.tabs.Size = new System.Drawing.Size(832, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -376,7 +386,7 @@
             // 
             // B04
             // 
-            this.ClientSize = new System.Drawing.Size(775, 457);
+            this.ClientSize = new System.Drawing.Size(832, 457);
             this.DefaultControl = "textCode";
             this.DefaultControlForEdit = "textBox4";
             this.DefaultOrder = "ID";

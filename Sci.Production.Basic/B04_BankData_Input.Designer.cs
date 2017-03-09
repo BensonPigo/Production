@@ -266,7 +266,7 @@
             this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox1.Location = new System.Drawing.Point(136, 293);
             this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(232, 23);
+            this.displayBox1.Size = new System.Drawing.Size(350, 23);
             this.displayBox1.TabIndex = 10;
             // 
             // displayBox2
@@ -276,7 +276,7 @@
             this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox2.Location = new System.Drawing.Point(136, 320);
             this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(232, 23);
+            this.displayBox2.Size = new System.Drawing.Size(350, 23);
             this.displayBox2.TabIndex = 11;
             // 
             // txtcountry1

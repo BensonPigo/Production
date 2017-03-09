@@ -66,7 +66,7 @@
             this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Size = new System.Drawing.Size(754, 134);
+            this.masterpanel.Size = new System.Drawing.Size(916, 134);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
@@ -83,7 +83,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 134);
-            this.detailpanel.Size = new System.Drawing.Size(754, 215);
+            this.detailpanel.Size = new System.Drawing.Size(916, 215);
             // 
             // gridicon
             // 
@@ -91,36 +91,36 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(674, 0);
+            this.refresh.Location = new System.Drawing.Point(828, 0);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(754, 215);
+            this.detailgridcont.Size = new System.Drawing.Size(916, 215);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(754, 387);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(748, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(748, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(754, 387);
+            this.detail.Size = new System.Drawing.Size(916, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(754, 349);
+            this.detailcont.Size = new System.Drawing.Size(916, 349);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(754, 38);
+            this.detailbtm.Size = new System.Drawing.Size(916, 38);
             // 
             // browse
             // 
@@ -128,7 +128,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(762, 416);
+            this.tabs.Size = new System.Drawing.Size(924, 416);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(473, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(425, 13);
             // 
             // label3
             // 
@@ -263,7 +276,7 @@
             // 
             // B12
             // 
-            this.ClientSize = new System.Drawing.Size(762, 449);
+            this.ClientSize = new System.Drawing.Size(924, 449);
             this.DefaultDetailOrder = "UnitTo";
             this.DefaultOrder = "ID";
             this.GridAlias = "Unit_Rate";

@@ -51,7 +51,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(688, 395);
+            this.detail.Size = new System.Drawing.Size(828, 395);
             // 
             // detailcont
             // 
@@ -68,12 +68,12 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(688, 357);
+            this.detailcont.Size = new System.Drawing.Size(828, 357);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(688, 38);
+            this.detailbtm.Size = new System.Drawing.Size(828, 38);
             // 
             // browse
             // 
@@ -81,11 +81,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(696, 424);
+            this.tabs.Size = new System.Drawing.Size(836, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(473, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(425, 13);
             // 
             // label3
             // 
@@ -232,7 +242,7 @@
             // 
             // B13
             // 
-            this.ClientSize = new System.Drawing.Size(696, 457);
+            this.ClientSize = new System.Drawing.Size(836, 457);
             this.DefaultControlForEdit = "txtdropdownlist2";
             this.DefaultOrder = "ID";
             this.EnableGridJunkColor = true;

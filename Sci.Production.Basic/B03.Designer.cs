@@ -42,7 +42,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(676, 395);
+            this.detail.Size = new System.Drawing.Size(835, 395);
             // 
             // detailcont
             // 
@@ -50,11 +50,11 @@
             this.detailcont.Controls.Add(this.textM);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(676, 357);
+            this.detailcont.Size = new System.Drawing.Size(835, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(676, 38);
+            this.detailbtm.Size = new System.Drawing.Size(835, 38);
             // 
             // browse
             // 
@@ -62,7 +62,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(684, 424);
+            this.tabs.Size = new System.Drawing.Size(843, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label1
             // 
@@ -104,7 +117,7 @@
             // 
             // B03
             // 
-            this.ClientSize = new System.Drawing.Size(684, 457);
+            this.ClientSize = new System.Drawing.Size(843, 457);
             this.DefaultControl = "textM";
             this.DefaultControlForEdit = "txtuser1";
             this.IsSupportCopy = false;

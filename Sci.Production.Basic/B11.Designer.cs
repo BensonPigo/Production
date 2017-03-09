@@ -69,7 +69,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(776, 576);
+            this.detail.Size = new System.Drawing.Size(830, 576);
             // 
             // detailcont
             // 
@@ -104,13 +104,13 @@
             this.detailcont.Controls.Add(this.txtpaytermar2);
             this.detailcont.Controls.Add(this.txtpaytermar1);
             this.detailcont.Controls.Add(this.txtcountry1);
-            this.detailcont.Size = new System.Drawing.Size(776, 538);
+            this.detailcont.Size = new System.Drawing.Size(830, 538);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 538);
-            this.detailbtm.Size = new System.Drawing.Size(776, 38);
+            this.detailbtm.Size = new System.Drawing.Size(830, 38);
             // 
             // browse
             // 
@@ -118,11 +118,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(784, 605);
+            this.tabs.Size = new System.Drawing.Size(838, 605);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -435,10 +445,10 @@
             // 
             // B11
             // 
-            this.ClientSize = new System.Drawing.Size(784, 638);
+            this.ClientSize = new System.Drawing.Size(838, 638);
             this.DefaultControlForEdit = "textBox1";
-            this.EnableGridJunkColor = true;
             this.DefaultOrder = "BrandID,ID";
+            this.EnableGridJunkColor = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;

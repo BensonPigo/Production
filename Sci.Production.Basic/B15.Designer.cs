@@ -40,12 +40,21 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(836, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayBox2);
             this.detailcont.Controls.Add(this.displayBox1);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Size = new System.Drawing.Size(836, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(836, 38);
             // 
             // browse
             // 
@@ -53,7 +62,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(691, 424);
+            this.tabs.Size = new System.Drawing.Size(844, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -95,7 +117,7 @@
             // 
             // B15
             // 
-            this.ClientSize = new System.Drawing.Size(691, 457);
+            this.ClientSize = new System.Drawing.Size(844, 457);
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

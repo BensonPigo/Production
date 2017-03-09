@@ -67,7 +67,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(680, 395);
+            this.detail.Size = new System.Drawing.Size(830, 395);
             // 
             // detailcont
             // 
@@ -100,11 +100,11 @@
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.txtuser1);
-            this.detailcont.Size = new System.Drawing.Size(680, 357);
+            this.detailcont.Size = new System.Drawing.Size(830, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(680, 38);
+            this.detailbtm.Size = new System.Drawing.Size(830, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -113,11 +113,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(688, 424);
+            this.tabs.Size = new System.Drawing.Size(838, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -409,7 +419,7 @@
             // 
             // B01
             // 
-            this.ClientSize = new System.Drawing.Size(688, 457);
+            this.ClientSize = new System.Drawing.Size(838, 457);
             this.DefaultControl = "textBox1";
             this.DefaultControlForEdit = "textBox10";
             this.IsSupportDelete = false;

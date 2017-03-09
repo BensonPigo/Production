@@ -41,6 +41,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(826, 340);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkBox1);
@@ -48,6 +52,12 @@
             this.detailcont.Controls.Add(this.displayBox1);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Size = new System.Drawing.Size(826, 302);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 302);
+            this.detailbtm.Size = new System.Drawing.Size(826, 38);
             // 
             // browse
             // 
@@ -55,7 +65,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(691, 369);
+            this.tabs.Size = new System.Drawing.Size(834, 369);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -110,13 +133,13 @@
             // 
             // B16
             // 
-            this.ClientSize = new System.Drawing.Size(691, 402);
+            this.ClientSize = new System.Drawing.Size(834, 402);
+            this.EnableGridJunkColor = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
-            this.EnableGridJunkColor = true;
             this.Name = "B16";
             this.Text = "B16. Shipping Mode";
             this.UniqueExpress = "Id";
