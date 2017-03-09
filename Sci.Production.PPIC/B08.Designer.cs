@@ -52,7 +52,7 @@
             this.masterpanel.Controls.Add(this.displayBox1);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Size = new System.Drawing.Size(757, 100);
+            this.masterpanel.Size = new System.Drawing.Size(912, 100);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
@@ -61,7 +61,7 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Size = new System.Drawing.Size(757, 249);
+            this.detailpanel.Size = new System.Drawing.Size(912, 249);
             // 
             // gridicon
             // 
@@ -69,11 +69,11 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(677, 0);
+            this.refresh.Location = new System.Drawing.Point(827, 1);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(757, 249);
+            this.detailgridcont.Size = new System.Drawing.Size(912, 249);
             // 
             // detail2
             // 
@@ -89,16 +89,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(757, 387);
+            this.detail.Size = new System.Drawing.Size(912, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(757, 349);
+            this.detailcont.Size = new System.Drawing.Size(912, 349);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(757, 38);
+            this.detailbtm.Size = new System.Drawing.Size(912, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -107,11 +107,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(765, 416);
+            this.tabs.Size = new System.Drawing.Size(920, 416);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -154,7 +164,7 @@
             // 
             // B08
             // 
-            this.ClientSize = new System.Drawing.Size(765, 449);
+            this.ClientSize = new System.Drawing.Size(920, 449);
             this.DefaultDetailOrder = "Day";
             this.DefaultOrder = "Name";
             this.GridAlias = "LearnCurve_Detail";

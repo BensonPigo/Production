@@ -42,13 +42,27 @@
             // 
             this.gridcont.Size = new System.Drawing.Size(520, 268);
             // 
+            // append
+            // 
+            this.append.Size = new System.Drawing.Size(80, 34);
+            // 
+            // revise
+            // 
+            this.revise.Size = new System.Drawing.Size(80, 34);
+            // 
+            // delete
+            // 
+            this.delete.Size = new System.Drawing.Size(80, 34);
+            // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(460, 8);
+            this.undo.Location = new System.Drawing.Point(454, 5);
+            this.undo.Size = new System.Drawing.Size(80, 34);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(374, 8);
+            this.save.Location = new System.Drawing.Point(374, 5);
+            this.save.Size = new System.Drawing.Size(80, 34);
             // 
             // P04_ComboType
             // 

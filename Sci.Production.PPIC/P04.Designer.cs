@@ -219,9 +219,19 @@
             this.tabs.Controls.SetChildIndex(this.detail, 0);
             this.tabs.Controls.SetChildIndex(this.browse, 0);
             // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(508, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(460, 13);
             // 
             // tabPage1
             // 
@@ -238,7 +248,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 507);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Sketch";
             // 

@@ -52,7 +52,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(685, 395);
+            this.detail.Size = new System.Drawing.Size(827, 395);
             // 
             // detailcont
             // 
@@ -70,12 +70,12 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(685, 357);
+            this.detailcont.Size = new System.Drawing.Size(827, 357);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(685, 38);
+            this.detailbtm.Size = new System.Drawing.Size(827, 38);
             this.detailbtm.TabIndex = 1;
             // 
             // browse
@@ -84,11 +84,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(693, 424);
+            this.tabs.Size = new System.Drawing.Size(835, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -245,7 +255,7 @@
             // 
             // B07
             // 
-            this.ClientSize = new System.Drawing.Size(693, 457);
+            this.ClientSize = new System.Drawing.Size(835, 457);
             this.DefaultOrder = "Date,SewingLineID";
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
