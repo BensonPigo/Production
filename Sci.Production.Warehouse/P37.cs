@@ -32,7 +32,6 @@ namespace Sci.Production.Warehouse
             viewer.Dock = DockStyle.Fill;
             Controls.Add(viewer);
 
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
@@ -296,7 +295,7 @@ namespace Sci.Production.Warehouse
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "RT", "ReturnReceipt", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "RT", "ReturnReceipt", (DateTime)CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -390,8 +389,7 @@ namespace Sci.Production.Warehouse
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.returnreceipt_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
---on d.ftyinventoryukey = f.ukey
-on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
+on d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -417,8 +415,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.ReturnReceipt_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
---on d.ftyinventoryukey = f.ukey
-on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
+on d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -624,8 +621,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.ReturnReceipt_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
---on d.ftyinventoryukey = f.ukey
-on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
+on d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -651,8 +647,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.ReturnReceipt_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
---on d.ftyinventoryukey = f.ukey
-on d.MDivisionID = f.MDivisionID and d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
+on d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType 
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
