@@ -78,8 +78,8 @@ namespace Sci.Production.Thread
             string masterID = (e.Detail == null) ? "" : e.Detail["Ukey"].ToString();
 
             this.SubDetailSelectCommand = string.Format(
-@"Select a.*, b.description as Threadcombdesc,c.name as ThreadLocation, isnull(seamlength * UseRatioNumeric,0) as uselength,
-OrderQty,isnull(seamlength * UseRatioNumeric * OrderQty,0) as TotalLength
+@"Select a.*, b.description as Threadcombdesc,c.name as ThreadLocation, isnull(seamlength * UseRatioNumeric + isnull(a.Allowance,0),0) as uselength,
+OrderQty,isnull((seamlength * UseRatioNumeric+ isnull(a.Allowance,0)) * OrderQty,0) as TotalLength
 from ThreadRequisition_Detail_Cons a WITH (NOLOCK) 
 Left join ThreadComb b WITH (NOLOCK) on b.id = a.threadcombid
 Left join Reason c WITH (NOLOCK) on c.reasontypeid = 'ThreadLocation' and c.id = a.threadlocationid
