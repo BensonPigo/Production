@@ -902,6 +902,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             //Carton Dimension:
             excelRow++;
             StringBuilder ctnDimension = new StringBuilder();
+
             foreach (DataRow dr in CtnDim.Rows)
             {
                 ctnDimension.Append(string.Format("{0} - {1} - {2} {3}, (CTN#:{4}){5}  \r\n",
@@ -909,6 +910,28 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                     MyUtility.Check.Empty(dr["Ctn"]) ? "" : MyUtility.Convert.GetString(dr["Ctn"]).Substring(0, MyUtility.Convert.GetString(dr["Ctn"]).Length - 1),
                     ReportType == "1" ? ", ttlCBM:" + MyUtility.Convert.GetString(dr["TtlCBM"]) : ""));
             }
+            string cds = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
+            string[] cdsab = cds.Split('\r');
+            int cdsi = 0;
+            int cdsl = 150;
+            foreach (string cdsc in cdsab)
+            {
+                if (cdsc.Length > cdsl)
+                {
+                    int h = cdsc.Length / cdsl;
+                    for (int i = 0; i < h; i++)
+                    {
+                        cdsi += 1;
+                    }
+                }
+            }
+            cdsi += cdsab.Length - 2;
+            for (int i = 1; i <= cdsi; i++)
+            {
+                Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[excelRow, System.Type.Missing];
+                rangeRowCD.RowHeight = 19.5 * (i + 1);
+                
+            }            
             worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString() : "";
 
             //Remarks
@@ -1218,6 +1241,7 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                 }
             }
             excelRow++;
+
             if (dataRow > 2)
             {
                 for (int i = 3; i < dataRow; i++)
@@ -1259,14 +1283,12 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                     }
                 }
             }
-            if (cdsi > 0)
+            cdsi += cdsab.Length - 2;
+            for (int i = 1; i <= cdsi; i++)
             {
-                for (int i = 0; i < cdsi; i++)
-                {
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow + 1)), Type.Missing).EntireRow;
-                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                }
-            }
+                Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[excelRow, System.Type.Missing];
+                rangeRowCD.RowHeight = 19.5 * (i + 1);
+            }    
             worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
 
             //貼圖
