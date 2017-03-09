@@ -654,6 +654,7 @@
             this.btnDownloadSample.TabIndex = 59;
             this.btnDownloadSample.Text = "Download Sample File";
             this.btnDownloadSample.UseVisualStyleBackColor = true;
+            this.btnDownloadSample.Visible = false;
             this.btnDownloadSample.Click += new System.EventHandler(this.btnDownloadSample_Click);
             // 
             // btnImportExcel
@@ -665,6 +666,7 @@
             this.btnImportExcel.TabIndex = 60;
             this.btnImportExcel.Text = "Import From Excel";
             this.btnImportExcel.UseVisualStyleBackColor = true;
+            this.btnImportExcel.Visible = false;
             this.btnImportExcel.Click += new System.EventHandler(this.btnImportExcel_Click);
             // 
             // txtcountry1
