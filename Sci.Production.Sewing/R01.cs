@@ -13,10 +13,10 @@ namespace Sci.Production.Sewing
 {
     public partial class R01 : Sci.Win.Tems.PrintForm
     {
-        DateTime? date;
-        string factory, team, factoryName;
-        int excludeSubconIn;
-        DataTable printData,ttlData, subprocessData;
+        DateTime? _date;
+        string _factory, _team, _factoryName;
+        int _excludeSubconIn;
+        DataTable _printData, _ttlData, _subprocessData;
 
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -48,10 +48,10 @@ namespace Sci.Production.Sewing
                 return false;
             }
 
-            date = dateBox1.Value;
-            factory = comboBox1.Text;
-            team = comboBox2.Text;
-            excludeSubconIn = comboBox3.SelectedIndex;
+            _date = dateBox1.Value;
+            _factory = comboBox1.Text;
+            _team = comboBox2.Text;
+            _excludeSubconIn = comboBox3.SelectedIndex;
             return base.ValidateInput();
         }
 
@@ -60,8 +60,8 @@ namespace Sci.Production.Sewing
         {
             StringBuilder sqlCmd = new StringBuilder();
             #region 組撈Data SQL
-            sqlCmd.Append(string.Format(@"with tmpSewingDetail
-as (
+            sqlCmd.Append(string.Format(@"
+;with tmpSewingDetail as (
 select s.OutputDate,s.Category,s.Shift,s.SewingLineID,IIF(sd.QAQty=0,s.Manpower,s.Manpower*sd.QAQty) as ActManPower,
 s.Team,sd.OrderId,sd.ComboType,sd.WorkHour,sd.QAQty,sd.InlineQty,isnull(o.Category,'') as OrderCategory,
 o.LocalOrder,isnull(o.CdCodeID,'') as OrderCdCodeID,
@@ -77,11 +77,11 @@ left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType
 left join Rft r WITH (NOLOCK) on r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
 where s.OutputDate = '{0}'
-and s.FactoryID = '{1}'", Convert.ToDateTime(date).ToString("d"), factory));
+and s.FactoryID = '{1}'", Convert.ToDateTime(_date).ToString("d"), _factory));
 
-            if (!MyUtility.Check.Empty(team))
+            if (!MyUtility.Check.Empty(_team))
             {
-                sqlCmd.Append(string.Format(" and s.Team = '{0}'", team));
+                sqlCmd.Append(string.Format(" and s.Team = '{0}'", _team));
             }
 
             sqlCmd.Append(@"),
@@ -119,14 +119,14 @@ IIF(InspectQty>0,ROUND((InspectQty-RejectQty)/InspectQty*100,2),0) as RFT,Cumula
 InlineQty,QAQty-InlineQty as Diff,LastShift,ComboType
 from tmp1stFilter
 where 1 =1");
-            if (excludeSubconIn == 1)
+            if (_excludeSubconIn == 1)
             {
                 sqlCmd.Append(" and LastShift <> 'I'");
             }
 
             sqlCmd.Append(@" order by LastShift,Team,SewingLineID,OrderId");
             #endregion
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out _printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -134,11 +134,11 @@ where 1 =1");
             }
 
             #region 整理Total資料
-            if (printData.Rows.Count > 0)
+            if (_printData.Rows.Count > 0)
             {
                 try
                 {
-                    MyUtility.Tool.ProcessWithDatatable(printData, "Shift,Team,SewingLineID,ActManPower,TMS,QAQty,RFT,LastShift",
+                    MyUtility.Tool.ProcessWithDatatable(_printData, "Shift,Team,SewingLineID,ActManPower,TMS,QAQty,RFT,LastShift",
                         @"
 ;with SubMaxActManpower
 as (
@@ -227,7 +227,7 @@ union all
 select 'Grand' as Type,'3' as Sort,'' as Shift,'' as Team,TMS,RFT,ActManPower from GenTotal2
 union all
 select 'Grand' as Type,'4' as Sort,'' as Shift,'' as Team,TMS,RFT,ActManPower from GenTotal3",
-                        out ttlData);
+                        out _ttlData);
                 }
                 catch (Exception ex)
                 {
@@ -238,11 +238,11 @@ select 'Grand' as Type,'4' as Sort,'' as Shift,'' as Team,TMS,RFT,ActManPower fr
             #endregion
 
             #region 整理Subprocess資料
-            if (printData.Rows.Count > 0)
+            if (_printData.Rows.Count > 0)
             {
                 try
                 {
-                    MyUtility.Tool.ProcessWithDatatable(printData, "OrderId,ComboType,QAQty,LastShift",
+                    MyUtility.Tool.ProcessWithDatatable(_printData, "OrderId,ComboType,QAQty,LastShift",
                         @"
 ;with tmpArtwork
 as (
@@ -265,7 +265,7 @@ from tmpAllSubprocess
 group by ArtworkTypeID
 order by ArtworkTypeID
 ",
-                        out subprocessData);
+                        out _subprocessData);
                 }
                 catch (Exception ex)
                 {
@@ -275,7 +275,7 @@ order by ArtworkTypeID
             }
             #endregion
 
-            factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", factory));
+            _factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", _factory));
             return Result.True;
         }
 
@@ -283,9 +283,9 @@ order by ArtworkTypeID
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            SetCount(_printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (_printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -297,20 +297,20 @@ order by ArtworkTypeID
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            worksheet.Cells[1, 1] = factoryName;
-            worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", factory, Convert.ToDateTime(date).ToString("MM/dd"), excludeSubconIn == 1 ? "" : "(Included Subcon-IN)");
+            worksheet.Cells[1, 1] = _factoryName;
+            worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", _factory, Convert.ToDateTime(_date).ToString("MM/dd"), _excludeSubconIn == 1 ? "" : "(Included Subcon-IN)");
 
             object[,] objArray = new object[1, 19];
             string[] subTtlRowInOut = new string[8];
             string[] subTtlRowExOut = new string[8];
             string[] subTtlRowExInOut = new string[8];
 
-            string shift = MyUtility.Convert.GetString(printData.Rows[0]["Shift"]);
-            string team = MyUtility.Convert.GetString(printData.Rows[0]["Team"]);
-            int insertRow = 5, startRow = 5, ttlShift = 1, subRows= 0;
+            string shift = MyUtility.Convert.GetString(_printData.Rows[0]["Shift"]);
+            string team = MyUtility.Convert.GetString(_printData.Rows[0]["Team"]);
+            int insertRow = 5, startRow = 5, ttlShift = 1, subRows = 0;
             worksheet.Cells[3, 1] = string.Format("{0} SHIFT: {1} Team", shift, team);
             DataRow[] selectRow;
-            foreach (DataRow dr in printData.Rows)
+            foreach (DataRow dr in _printData.Rows)
             {
                 if (shift != MyUtility.Convert.GetString(dr["Shift"]) || team != MyUtility.Convert.GetString(dr["Team"]))
                 {
@@ -322,9 +322,9 @@ order by ArtworkTypeID
                         rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
                     }
                     //填入Sub Total資料
-                    if (ttlData != null)
+                    if (_ttlData != null)
                     {
-                        selectRow = ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
+                        selectRow = _ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
                         if (selectRow.Length > 0)
                         {
                             worksheet.Cells[insertRow, 5] = MyUtility.Convert.GetDecimal(selectRow[0]["ActManPower"]);
@@ -332,13 +332,13 @@ order by ArtworkTypeID
                             worksheet.Cells[insertRow, 16] = MyUtility.Convert.GetDecimal(selectRow[0]["RFT"]);
                         }
                     }
-                    
+
                     worksheet.Cells[insertRow, 7] = string.Format("=SUM(G{0}:G{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
                     worksheet.Cells[insertRow, 8] = string.Format("=SUM(H{0}:H{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
                     worksheet.Cells[insertRow, 11] = string.Format("=SUM(K{0}:K{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
                     worksheet.Cells[insertRow, 12] = string.Format("=SUM(L{0}:L{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
                     worksheet.Cells[insertRow, 13] = string.Format("=SUM(M{0}:M{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
-                    worksheet.Cells[insertRow, 14] = string.Format("=M{0}/G{0}",MyUtility.Convert.GetString(insertRow));
+                    worksheet.Cells[insertRow, 14] = string.Format("=M{0}/G{0}", MyUtility.Convert.GetString(insertRow));
                     worksheet.Cells[insertRow, 15] = string.Format("=ROUND((M{0}/(G{0}*3600/1400))*100,1)", MyUtility.Convert.GetString(insertRow));
                     worksheet.Cells[insertRow, 18] = string.Format("=SUM(R{0}:R{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
                     worksheet.Cells[insertRow, 19] = string.Format("=SUM(S{0}:S{1})", MyUtility.Convert.GetString(startRow), MyUtility.Convert.GetString(insertRow - 1));
@@ -356,7 +356,7 @@ order by ArtworkTypeID
                     //重置參數資料
                     shift = MyUtility.Convert.GetString(dr["Shift"]);
                     team = MyUtility.Convert.GetString(dr["Team"]);
-                    worksheet.Cells[insertRow+2, 1] = string.Format("{0} SHIFT: {1} Team", shift, team);
+                    worksheet.Cells[insertRow + 2, 1] = string.Format("{0} SHIFT: {1} Team", shift, team);
                     insertRow = insertRow + 4;
                     startRow = insertRow;
                     ttlShift++;
@@ -399,9 +399,9 @@ order by ArtworkTypeID
                 rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
             }
             //填入Sub Total資料
-            if (ttlData != null)
+            if (_ttlData != null)
             {
-                selectRow = ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
+                selectRow = _ttlData.Select(string.Format("Type = 'Sub' and Shift = '{0}' and  Team = '{1}'", shift, team));
                 if (selectRow.Length > 0)
                 {
                     worksheet.Cells[insertRow, 5] = MyUtility.Convert.GetDecimal(selectRow[0]["ActManPower"]);
@@ -431,7 +431,7 @@ order by ArtworkTypeID
             //刪除多出來的Shift Record
             for (int i = 1; i <= (8 - ttlShift) * 6; i++)
             {
-                Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[insertRow+1, Type.Missing];
+                Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[insertRow + 1, Type.Missing];
                 rng.Select();
                 rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
             }
@@ -439,9 +439,9 @@ order by ArtworkTypeID
             insertRow = insertRow + 2;
             //填Grand Total資料
             string ttlManhour, targetCPU, targetQty, qaQty, ttlCPU, prodOutput, diff;
-            if (ttlData != null)
+            if (_ttlData != null)
             {
-                selectRow = ttlData.Select("Type = 'Grand'");
+                selectRow = _ttlData.Select("Type = 'Grand'");
                 if (selectRow.Length > 0)
                 {
                     for (int i = 0; i < selectRow.Length; i++)
@@ -522,9 +522,9 @@ order by ArtworkTypeID
             }
 
             insertRow = insertRow + 2;
-            foreach (DataRow dr in subprocessData.Rows)
+            foreach (DataRow dr in _subprocessData.Rows)
             {
-                worksheet.Cells[insertRow, 3] = string.Format("{0}CMP US$", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20,' '));
+                worksheet.Cells[insertRow, 3] = string.Format("{0}CMP US$", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '));
                 worksheet.Cells[insertRow, 6] = MyUtility.Convert.GetString(dr["Price"]);
                 insertRow++;
                 //插入一筆Record

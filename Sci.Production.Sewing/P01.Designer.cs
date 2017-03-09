@@ -100,7 +100,7 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 115);
+            this.masterpanel.Size = new System.Drawing.Size(922, 115);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -134,28 +134,33 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 115);
-            this.detailpanel.Size = new System.Drawing.Size(892, 310);
+            this.detailpanel.Size = new System.Drawing.Size(922, 310);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(784, 80);
             this.gridicon.TabIndex = 8;
             // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(832, 3);
+            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 310);
+            this.detailgridcont.Size = new System.Drawing.Size(922, 310);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 463);
+            this.detail.Size = new System.Drawing.Size(922, 463);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 425);
+            this.detailcont.Size = new System.Drawing.Size(922, 425);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 425);
+            this.detailbtm.Size = new System.Drawing.Size(922, 38);
             this.detailbtm.TabIndex = 1;
             // 
             // browse
@@ -164,11 +169,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(900, 492);
+            this.tabs.Size = new System.Drawing.Size(930, 492);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(476, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(428, 13);
             // 
             // label1
             // 
@@ -559,7 +574,7 @@
             // 
             // P01
             // 
-            this.ClientSize = new System.Drawing.Size(900, 525);
+            this.ClientSize = new System.Drawing.Size(930, 525);
             this.DefaultControl = "dateBox1";
             this.DefaultControlForEdit = "txtdropdownlist1";
             this.DefaultDetailOrder = "OrderID,ComboType,Article";
