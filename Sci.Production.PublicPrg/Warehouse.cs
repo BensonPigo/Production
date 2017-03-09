@@ -512,7 +512,7 @@ drop table #TmpSource
 				                                                    ff.UsageUnit , 
 				                                                    uu.ExtensionUnit), 
 			                                                    ff.UsageUnit)))
-                                                    where p.id ='{0}' and f.MDivisionID = '{1}'";
+                                                    where p.id ='{0}'";
         /// <summary>
         /// 右鍵開窗選取採購項
         /// </summary>
