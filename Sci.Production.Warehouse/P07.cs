@@ -26,7 +26,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = string.Format("Type='A' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.DefaultFilter = string.Format("Type='A'");
             ChangeDetailColor();
             di_fabrictype.Add("F", "Fabric");
             di_fabrictype.Add("A", "Accessory");
@@ -242,17 +242,17 @@ namespace Sci.Production.Warehouse
 select 
 	RD.RD_Count+ST.ST_Count+BB.BB_Count as total
 from(
-select COUNT(*) RD_Count from dbo.Receiving_Detail RD WITH (NOLOCK) inner join dbo.Receiving R WITH (NOLOCK) on RD.Id=R.Id  where RD.PoId='{0}' and RD.Seq1='{1}' and RD.Seq2='{2}' and RD.Roll='{3}' and RD.MDivisionID='{4}' and RD.id!='{5}' and R.Status='Confirmed'
+select COUNT(*) RD_Count from dbo.Receiving_Detail RD WITH (NOLOCK) inner join dbo.Receiving R WITH (NOLOCK) on RD.Id=R.Id  where RD.PoId='{0}' and RD.Seq1='{1}' and RD.Seq2='{2}' and RD.Roll='{3}' and RD.id!='{4}' and R.Status='Confirmed'
 ) RD
 OUTER APPLY
 (
-select COUNT(*) ST_Count from dbo.SubTransfer_Detail SD WITH (NOLOCK) inner join dbo.SubTransfer S WITH (NOLOCK) on SD.ID=S.Id where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and ToMDivisionID='{4}' and S.Status='Confirmed'
+select COUNT(*) ST_Count from dbo.SubTransfer_Detail SD WITH (NOLOCK) inner join dbo.SubTransfer S WITH (NOLOCK) on SD.ID=S.Id where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and S.Status='Confirmed'
 ) ST
 OUTER APPLY
 (
-select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD WITH (NOLOCK) inner join dbo.BorrowBack B WITH (NOLOCK) on BD.ID=B.Id  where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and ToMDivisionID='{4}' and B.Status='Confirmed'
+select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD WITH (NOLOCK) inner join dbo.BorrowBack B WITH (NOLOCK) on BD.ID=B.Id  where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and B.Status='Confirmed'
 ) BB"
-                        , row["poid"], row["seq1"], row["seq2"], row["roll"], Sci.Env.User.Keyword, CurrentMaintain["id"]), out dr, null))
+                        , row["poid"], row["seq1"], row["seq2"], row["roll"], CurrentMaintain["id"]), out dr, null))
                     {
                         if (Convert.ToInt32(dr[0]) > 0)
                         {
@@ -292,7 +292,7 @@ select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD WITH (NOLOCK) inner 
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PR", "Receiving", (DateTime)CurrentMaintain["ETA"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "PR", "Receiving", (DateTime)CurrentMaintain["ETA"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -553,7 +553,7 @@ where b.id = '{0}' and b.seq1 ='{1}'and b.seq2 = '{2}'", CurrentDetailData["poid
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["location"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}'", CurrentDetailData["stocktype"].ToString());
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
