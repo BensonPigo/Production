@@ -648,6 +648,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                     }
                 }
             }
+            cdsi += cdsab.Length-2;
             if (cdsi > 0)
             {
                 for (int i = 0; i < cdsi; i++)
