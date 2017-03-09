@@ -168,7 +168,7 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                 this.gridFirAir.IsEditingReadOnly = true;
                 this.gridFirAir.DataSource = bsAIR_FIR;
                 Helper.Controls.Grid.Generator(this.gridFirAir)
-                     .Text("MDivisionID", header: "M", width: Widths.AnsiChars(5))
+                     //.Text("MDivisionID", header: "M", width: Widths.AnsiChars(5))
                      .Text("InvNo", header: "Invoice#", width: Widths.AnsiChars(20))
                      .Text("ExportId", header: "Wk#", width: Widths.AnsiChars(15))
                      .Date("ETA", header: "ETA", width: Widths.AnsiChars(11))
@@ -260,7 +260,7 @@ where a.POID='{0}' and a.seq1='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr[
                 this.gridFir_Laboratory.IsEditingReadOnly = true;
                 this.gridFir_Laboratory.DataSource = bsAIR_FIR;
                 Helper.Controls.Grid.Generator(this.gridFir_Laboratory)
-                    .Text("MDivisionID", header: "M", width: Widths.AnsiChars(5))
+                    //.Text("MDivisionID", header: "M", width: Widths.AnsiChars(5))
                      .Text("InvNo", header: "Invoice#", width: Widths.AnsiChars(20))
                      .Text("ExportId", header: "Wk#", width: Widths.AnsiChars(15))
                      .Date("ETA", header: "ETA", width: Widths.AnsiChars(11))
@@ -310,7 +310,7 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                 this.gridFirAir.IsEditingReadOnly = true;
                 this.gridFirAir.DataSource = bsAIR_FIR;
                 Helper.Controls.Grid.Generator(this.gridFirAir)
-                     .Text("MDivisionID", header: "M", width: Widths.AnsiChars(5))
+                     //.Text("MDivisionID", header: "M", width: Widths.AnsiChars(5))
                      .Text("InvNo", header: "Invoice#", width: Widths.AnsiChars(20))
                      .Text("ExportId", header: "Wk#", width: Widths.AnsiChars(15))
                      .Date("ETA", header: "ETA", width: Widths.AnsiChars(11))

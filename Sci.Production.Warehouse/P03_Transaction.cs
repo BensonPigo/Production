@@ -51,11 +51,10 @@ namespace Sci.Production.Warehouse
                 ,Case type when 'A' then 'P35. Adjust Bulk Qty' when 'B' then 'P34. Adjust Stock Qty' end as name
                 ,0 as inqty,0 as outqty, sum(QtyAfter - QtyBefore) adjust, remark ,'' location,AddDate
                 from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
-                where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+                where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                ,Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
 
             if (_byroll)
             {
@@ -70,11 +69,10 @@ namespace Sci.Production.Warehouse
             ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location,AddDate
             from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
             where type='A' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  
-            and a.id = b.id and b.frommdivisionid='{3}'"
+            and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
 
             if (_byroll)
             {
@@ -88,11 +86,10 @@ namespace Sci.Production.Warehouse
             ,'P31. Material Borrow In' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location,AddDate
             from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
             where type='A' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
-            and a.id = b.id and b.tomdivisionid='{3}'"
+            and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -106,11 +103,10 @@ namespace Sci.Production.Warehouse
             ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location,AddDate
             from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b  WITH (NOLOCK) 
             where type='B' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  
-            and a.id = b.id and b.frommdivisionid='{3}'"
+            and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
 
             if (_byroll)
             {
@@ -124,11 +120,10 @@ namespace Sci.Production.Warehouse
             ,'P32. Return Borrowing In' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location,AddDate
             from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
             where type='B' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
-            and a.id = b.id and b.tomdivisionid='{3}'"
+            and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -157,11 +152,10 @@ namespace Sci.Production.Warehouse
 																		    Where b.poid = fty.poid and b.seq1 = fty.seq1 and b.seq2 = fty.seq2 and b.Roll = fty.Roll and b.Dyelot = fty.Dyelot)t 
 									     for xml path('')),1,1,'') 
 			) MtlLocation
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -176,11 +170,10 @@ namespace Sci.Production.Warehouse
             , 0 as inqty,sum(b.Qty) outqty ,0 as adjust, remark ,'' location,AddDate
             from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  
-            and a.id = b.id and b.mdivisionid='{3}' and Type='R'"
+            and a.id = b.id and Type='R'  "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -193,11 +186,10 @@ namespace Sci.Production.Warehouse
             ,'P17. R/Mtl Return' name
             , 0 as inqty, sum(0-b.Qty) released,0 as adjust, remark,'' location,AddDate
             from IssueReturn a WITH (NOLOCK) , IssueReturn_Detail b WITH (NOLOCK) 
-            where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+            where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -219,11 +211,10 @@ namespace Sci.Production.Warehouse
 					for xml path('')
 				)
 			)X
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -237,11 +228,10 @@ namespace Sci.Production.Warehouse
             ,'P37. Return Receiving Material' name            
             , 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location,AddDate
             from ReturnReceipt a WITH (NOLOCK) , ReturnReceipt_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -262,11 +252,10 @@ namespace Sci.Production.Warehouse
 				)
 			)X
             where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  
-            and a.id = b.id and type = 'B' and b.frommdivisionid='{3}'"
+            and a.id = b.id and type = 'B' "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -288,11 +277,10 @@ namespace Sci.Production.Warehouse
                                     for XML PATH('')) as ToLocation,AddDate
             from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and type = 'B' 
-            and b.tomdivisionid='{3}'"
+            "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -314,11 +302,10 @@ namespace Sci.Production.Warehouse
                                                     and b1.Seq2 = b.Seq2 group by b1.Location) tmp 
                                     for XML PATH('')) as Location,AddDate
             from TransferIn a WITH (NOLOCK) , TransferIn_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -330,11 +317,10 @@ namespace Sci.Production.Warehouse
 	        select issuedate, a.id
             ,'P19. TransferOut' name, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location,AddDate
             from TransferOut a WITH (NOLOCK) , TransferOut_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -358,11 +344,10 @@ namespace Sci.Production.Warehouse
 									,AddDate
             from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
             where type='C' and Status='Confirmed' and topoid='{0}' and toseq1 = '{1}' and toSeq2 = '{2}'  
-            and a.id = b.id and b.tomdivisionid='{3}'"
+            and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
             if (_byroll)
             {
                 //0000584: WAREHOUSE_P20_Detail_Transaction detail
@@ -387,11 +372,10 @@ namespace Sci.Production.Warehouse
 					for xml path('')
 				)
 			)X
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and b.mdivisionid='{3}'"
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
             if (_byroll)
             {
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
@@ -417,11 +401,10 @@ namespace Sci.Production.Warehouse
 									,AddDate
             from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
             where (type='D' or type='E') and Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}' 
-            and FromSeq2 = '{2}'  and a.id = b.id and b.frommdivisionid='{3}'"
+            and FromSeq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
-                , dr["seq2"].ToString()
-                , Sci.Env.User.Keyword));
+                , dr["seq2"].ToString()));
             if (_byroll)
             {
                 //0000584: WAREHOUSE_P20_Detail_Transaction detail
@@ -620,10 +603,10 @@ namespace Sci.Production.Warehouse
             sp_StocktakingID.Value = dr["ukey"].ToString();
             cmds.Add(sp_StocktakingID);
 
-            System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
-            sp_mdivision.ParameterName = "@MDivisionid";
-            sp_mdivision.Value = Sci.Env.User.Keyword;
-            cmds.Add(sp_mdivision);
+            //System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
+            //sp_mdivision.ParameterName = "@MDivisionid";
+            //sp_mdivision.Value = Sci.Env.User.Keyword;
+            //cmds.Add(sp_mdivision);
 
             System.Data.SqlClient.SqlParameter sp_poid = new System.Data.SqlClient.SqlParameter();
             sp_poid.ParameterName = "@poid";

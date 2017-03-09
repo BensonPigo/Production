@@ -39,7 +39,7 @@ namespace Sci.Production.Warehouse
 FROM LocationTrans a WITH (NOLOCK) inner join  LocationTrans_detail as b WITH (NOLOCK) on a.ID = b.ID 
 WHERE a.status = 'Confirmed' and a.stocktype='{3}'
 AND B.Poid='{0}' and b.Seq1='{1}' and b.Seq2='{2}'
-and a.mdivisionid='{4}'
+--and a.mdivisionid='{4}'
 group by 
 a.ID, a.issuedate, a.Remark, b.FromLocation, b.ToLocation, a.EditName, a.EditDate
 )

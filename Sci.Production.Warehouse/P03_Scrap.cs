@@ -34,7 +34,7 @@ And Seq1 = '{1}'
 And Seq2 = '{2}'
 And stocktype = 'O'
 and (inqty - OutQty + adjustqty) > 0
-and mdivisionid='{3}'"
+--and mdivisionid='{3}'"
 , dr["id"].ToString()
 , dr["seq1"].ToString()
 , dr["seq2"].ToString(), Sci.Env.User.Keyword);

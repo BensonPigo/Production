@@ -37,8 +37,6 @@
             this.label4 = new Sci.Win.UI.Label();
             this.comboColor = new Sci.Win.UI.ComboBox();
             this.label3 = new Sci.Win.UI.Label();
-            this.comboM = new Sci.Win.UI.ComboBox();
-            this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.button2 = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
@@ -102,11 +100,9 @@
             this.panel3.Controls.Add(this.label4);
             this.panel3.Controls.Add(this.comboColor);
             this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.comboM);
-            this.panel3.Controls.Add(this.label2);
             this.panel3.Location = new System.Drawing.Point(114, 7);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(507, 34);
+            this.panel3.Size = new System.Drawing.Size(364, 34);
             this.panel3.TabIndex = 4;
             // 
             // comboSize
@@ -115,7 +111,7 @@
             this.comboSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboSize.FormattingEnabled = true;
             this.comboSize.IsSupportUnselect = true;
-            this.comboSize.Location = new System.Drawing.Point(369, 5);
+            this.comboSize.Location = new System.Drawing.Point(232, 6);
             this.comboSize.Name = "comboSize";
             this.comboSize.Size = new System.Drawing.Size(121, 24);
             this.comboSize.TabIndex = 8;
@@ -124,7 +120,7 @@
             // label4
             // 
             this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(328, 6);
+            this.label4.Location = new System.Drawing.Point(191, 6);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(38, 23);
             this.label4.TabIndex = 7;
@@ -136,7 +132,7 @@
             this.comboColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboColor.FormattingEnabled = true;
             this.comboColor.IsSupportUnselect = true;
-            this.comboColor.Location = new System.Drawing.Point(204, 5);
+            this.comboColor.Location = new System.Drawing.Point(56, 5);
             this.comboColor.Name = "comboColor";
             this.comboColor.Size = new System.Drawing.Size(121, 24);
             this.comboColor.TabIndex = 6;
@@ -145,32 +141,11 @@
             // label3
             // 
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(157, 5);
+            this.label3.Location = new System.Drawing.Point(9, 5);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(44, 23);
             this.label3.TabIndex = 5;
             this.label3.Text = "Color";
-            // 
-            // comboM
-            // 
-            this.comboM.BackColor = System.Drawing.Color.White;
-            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboM.FormattingEnabled = true;
-            this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(33, 4);
-            this.comboM.Name = "comboM";
-            this.comboM.Size = new System.Drawing.Size(121, 24);
-            this.comboM.TabIndex = 4;
-            this.comboM.SelectedIndexChanged += new System.EventHandler(this.comboM_SelectedIndexChanged);
-            // 
-            // label2
-            // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(7, 5);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(23, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "M";
             // 
             // label1
             // 
@@ -236,8 +211,6 @@
         private Win.UI.Label label4;
         private Win.UI.ComboBox comboColor;
         private Win.UI.Label label3;
-        private Win.UI.ComboBox comboM;
-        private Win.UI.Label label2;
         private Win.UI.Label label1;
     }
 }

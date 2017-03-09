@@ -17,7 +17,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P03_Refno : Sci.Win.Subs.Base
     {
-        string comboMvalue = "All", comboColorvalue = "All", comboSizevalue = "All";
+        string comboColorvalue = "All", comboSizevalue = "All";
         DataRow dr;
         DataTable selectDataTable1;
         protected Sci.Win.UI.ContextMenuStrip myCMS = new Win.UI.ContextMenuStrip();
@@ -34,7 +34,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             string selectCommand1
-                = string.Format(@"Select md.mdivisionid ,  b.id
+                = string.Format(@"Select b.id
 , concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) as seq --left(b.seq1+' ',3)+b.Seq2 as seq
 , b.colorid,  b.sizespec
 , c.suppid, a.sewinline
@@ -60,7 +60,7 @@ order by ColorID, SizeSpec ,SewinLine
             }
 
             //分別加入comboboxitem
-            comboM.Items.Clear();
+            //comboM.Items.Clear();
             comboColor.Items.Clear();
             comboSize.Items.Clear();
 //            string s1
@@ -102,10 +102,10 @@ order by ColorID, SizeSpec ,SewinLine
 //and a.WhseClose is null
 //and md.mdivisionid='{1}'
 //", dr["scirefno"].ToString(), Sci.Env.User.Keyword);
-            List<string> dts1 = selectDataTable1.AsEnumerable().Select(row => row["mdivisionid"].ToString()).Distinct().ToList();
+            //List<string> dts1 = selectDataTable1.AsEnumerable().Select(row => row["mdivisionid"].ToString()).Distinct().ToList();
             List<string> dts2 = selectDataTable1.AsEnumerable().Select(row => row["colorid"].ToString()).Distinct().ToList();
             List<string> dts3 = selectDataTable1.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
-            dts1.Insert(0, "All");
+            //dts1.Insert(0, "All");
             dts2.Insert(0, "All");
             dts3.Insert(0, "All");
             //DataTable dt1;
@@ -114,11 +114,11 @@ order by ColorID, SizeSpec ,SewinLine
             //DBProxy.Current.Select(null, s1, out dt1);
             //DBProxy.Current.Select(null, s2, out dt2);
             //DBProxy.Current.Select(null, s3, out dt3);
-            if (!dts1.Empty())
-            {
-                //MyUtility.Tool.SetupCombox(comboM, 1, dt1);
-                comboM.DataSource = dts1;
-            }
+            //if (!dts1.Empty())
+            //{
+            //    //MyUtility.Tool.SetupCombox(comboM, 1, dt1);
+            //    comboM.DataSource = dts1;
+            //}
             if (!dts2.Empty())
             {
                 comboColor.DataSource = dts2;
@@ -135,7 +135,7 @@ order by ColorID, SizeSpec ,SewinLine
             this.grid1.IsEditingReadOnly = true;
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                 .Text("mdivisionid", header: "M", width: Widths.AnsiChars(8))
+                 //.Text("mdivisionid", header: "M", width: Widths.AnsiChars(8))
                  .Text("id", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("seq", header: "Seq", width: Widths.AnsiChars(5))
                  .Text("colorid", header: "Color", width: Widths.AnsiChars(6))
@@ -189,13 +189,13 @@ order by ColorID, SizeSpec ,SewinLine
             //}
         }
 
-        private void comboM_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (comboM.SelectedValue == null) return;
-            if (comboM.SelectedValue.ToString() == comboMvalue) return;
-            comboMvalue = comboM.SelectedValue.ToString();
-            Filter();       
-        }
+        //private void comboM_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (comboM.SelectedValue == null) return;
+        //    if (comboM.SelectedValue.ToString() == comboMvalue) return;
+        //    comboMvalue = comboM.SelectedValue.ToString();
+        //    Filter();       
+        //}
 
         private void comboColor_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -218,12 +218,12 @@ order by ColorID, SizeSpec ,SewinLine
             DataTable ntb=null;
             //string s1 = comboM.Text, s2 = comboColor.Text, s3 = comboSize.Text;
             //第一趟進來combobox都還未加入item都是""字串
-            if (comboMvalue != "" || comboColorvalue != "" || comboSizevalue != "")
+            if (comboColorvalue != "" || comboSizevalue != "")
             {
                 IEnumerable<DataRow> query =
                     from o in selectDataTable1.AsEnumerable()
                     where
-                    (comboMvalue != "All" ? o.Field<String>("mdivisionid") == comboMvalue : 1 == 1) &&
+                    //(comboMvalue != "All" ? o.Field<String>("mdivisionid") == comboMvalue : 1 == 1) &&
                     (comboColorvalue != "All" ? o.Field<String>("colorid") == comboColorvalue : 1 == 1) &&
                     (comboSizevalue != "All" ? o.Field<String>("sizespec") == comboSizevalue : 1 == 1)
                     select o;
@@ -239,25 +239,25 @@ order by ColorID, SizeSpec ,SewinLine
             }
 
             DataTable temp = (DataTable)listControlBindingSource1.DataSource;
-            comboM.DataSource = null;
-            comboM.Items.Clear();
+            //comboM.DataSource = null;
+            //comboM.Items.Clear();
             comboColor.DataSource = null;
             comboColor.Items.Clear();
             comboSize.DataSource = null;
             comboSize.Items.Clear();
-            List<string> dts1 = temp.AsEnumerable().Select(row => row["mdivisionid"].ToString()).Distinct().ToList();
+            //List<string> dts1 = temp.AsEnumerable().Select(row => row["mdivisionid"].ToString()).Distinct().ToList();
             List<string> dts2 = temp.AsEnumerable().Select(row => row["colorid"].ToString()).Distinct().ToList();
             List<string> dts3 = temp.AsEnumerable().Select(row => row["sizespec"].ToString()).Distinct().ToList();
-            if (!dts1.Empty())
-            {
-                dts1.Insert(0, "All");
-                if (comboMvalue != "All")
-                {
-                    dts1.Remove(comboMvalue);
-                    dts1.Insert(0, comboMvalue);
-                }
-                comboM.DataSource = dts1;
-            }
+            //if (!dts1.Empty())
+            //{
+            //    dts1.Insert(0, "All");
+            //    if (comboMvalue != "All")
+            //    {
+            //        dts1.Remove(comboMvalue);
+            //        dts1.Insert(0, comboMvalue);
+            //    }
+            //    comboM.DataSource = dts1;
+            //}
             if (!dts2.Empty())
             {
                 dts2.Insert(0, "All");
