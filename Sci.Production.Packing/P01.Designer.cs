@@ -89,7 +89,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(796, 484);
+            this.detail.Size = new System.Drawing.Size(824, 484);
             // 
             // detailcont
             // 
@@ -144,16 +144,33 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(796, 446);
+            this.detailcont.Size = new System.Drawing.Size(824, 446);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 446);
-            this.detailbtm.Size = new System.Drawing.Size(796, 38);
+            this.detailbtm.Size = new System.Drawing.Size(824, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(796, 484);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(804, 513);
+            this.tabs.Size = new System.Drawing.Size(832, 513);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label1
             // 
@@ -349,9 +366,19 @@
             this.numericBox1.IsSupportEditMode = false;
             this.numericBox1.Location = new System.Drawing.Point(88, 202);
             this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox1.ReadOnly = true;
             this.numericBox1.Size = new System.Drawing.Size(50, 23);
             this.numericBox1.TabIndex = 20;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // txttpeuser1
             // 
@@ -539,9 +566,19 @@
             this.numericBox2.IsSupportEditMode = false;
             this.numericBox2.Location = new System.Drawing.Point(649, 67);
             this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.numericBox2.ReadOnly = true;
             this.numericBox2.Size = new System.Drawing.Size(70, 23);
             this.numericBox2.TabIndex = 39;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // displayBox9
             // 
@@ -668,7 +705,7 @@
             // 
             // P01
             // 
-            this.ClientSize = new System.Drawing.Size(804, 546);
+            this.ClientSize = new System.Drawing.Size(832, 546);
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
