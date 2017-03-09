@@ -140,7 +140,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(891, 126);
+            this.gridicon.Location = new System.Drawing.Point(998, 126);
             // 
             // refresh
             // 
@@ -183,10 +183,12 @@
             // createby
             // 
             this.createby.Location = new System.Drawing.Point(70, 143);
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(400, 143);
+            this.editby.Location = new System.Drawing.Point(469, 143);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             // 
             // lblcreateby
             // 
@@ -194,7 +196,7 @@
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(352, 149);
+            this.lbleditby.Location = new System.Drawing.Point(421, 149);
             // 
             // label1
             // 

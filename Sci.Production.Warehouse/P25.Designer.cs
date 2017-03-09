@@ -103,6 +103,7 @@
             // 
             // refresh
             // 
+            this.refresh.Location = new System.Drawing.Point(816, 1);
             this.refresh.TabIndex = 0;
             // 
             // detailgridcont
@@ -141,6 +142,19 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(1033, 544);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(467, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(419, 13);
             // 
             // label3
             // 

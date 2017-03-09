@@ -143,6 +143,19 @@
             // 
             this.tabs.Size = new System.Drawing.Size(1066, 544);
             // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(485, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(437, 13);
+            // 
             // label3
             // 
             this.label3.Lines = 0;

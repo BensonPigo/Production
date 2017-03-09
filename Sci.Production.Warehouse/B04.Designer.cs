@@ -43,6 +43,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(833, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkBox1);
@@ -52,6 +56,11 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label5);
+            this.detailcont.Size = new System.Drawing.Size(833, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(833, 38);
             // 
             // browse
             // 
@@ -59,7 +68,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(734, 424);
+            this.tabs.Size = new System.Drawing.Size(841, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -134,7 +156,7 @@
             // 
             // B04
             // 
-            this.ClientSize = new System.Drawing.Size(734, 457);
+            this.ClientSize = new System.Drawing.Size(841, 457);
             this.DefaultFilter = "type=\'RA\'";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

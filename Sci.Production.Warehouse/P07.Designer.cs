@@ -166,7 +166,6 @@
             // 
             // refresh
             // 
-            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.refresh.Location = new System.Drawing.Point(996, 0);
             this.refresh.TabIndex = 0;
             // 
@@ -206,6 +205,19 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(1084, 544);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(484, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(436, 13);
             // 
             // label3
             // 

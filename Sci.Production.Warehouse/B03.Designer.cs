@@ -45,6 +45,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(900, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.textBox4);
@@ -56,6 +60,11 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label5);
+            this.detailcont.Size = new System.Drawing.Size(900, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(900, 38);
             // 
             // browse
             // 
@@ -64,6 +73,19 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(908, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(494, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(446, 13);
             // 
             // checkBox1
             // 
