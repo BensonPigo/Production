@@ -53,7 +53,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(776, 395);
+            this.detail.Size = new System.Drawing.Size(831, 395);
             // 
             // detailcont
             // 
@@ -69,34 +69,34 @@
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Size = new System.Drawing.Size(776, 357);
+            this.detailcont.Size = new System.Drawing.Size(831, 357);
             this.detailcont.TabIndex = 1;
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(776, 38);
+            this.detailbtm.Size = new System.Drawing.Size(831, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(900, 395);
+            this.browse.Size = new System.Drawing.Size(776, 395);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(784, 424);
+            this.tabs.Size = new System.Drawing.Size(839, 424);
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(320, 23);
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(444, 7);
-            this.editby.Size = new System.Drawing.Size(320, 23);
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(396, 13);
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -288,7 +288,7 @@
             // 
             // B01
             // 
-            this.ClientSize = new System.Drawing.Size(784, 457);
+            this.ClientSize = new System.Drawing.Size(839, 457);
             this.DefaultControl = "dateBox1";
             this.DefaultControlForEdit = "datebox1";
             this.DefaultOrder = "ISSUEDATE,ARTWORKTYPEID,FTYSUPP";

@@ -44,7 +44,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(676, 395);
+            this.detail.Size = new System.Drawing.Size(834, 395);
             // 
             // detailcont
             // 
@@ -54,11 +54,11 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(676, 357);
+            this.detailcont.Size = new System.Drawing.Size(834, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(676, 38);
+            this.detailbtm.Size = new System.Drawing.Size(834, 38);
             // 
             // browse
             // 
@@ -66,11 +66,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(684, 424);
+            this.tabs.Size = new System.Drawing.Size(842, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -197,7 +207,7 @@
             // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(684, 457);
+            this.ClientSize = new System.Drawing.Size(842, 457);
             this.DefaultControl = "numericBox1";
             this.DefaultControlForEdit = "numericBox1";
             this.IsSupportClip = false;

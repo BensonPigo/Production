@@ -66,7 +66,7 @@
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.displayBox1);
             this.masterpanel.Controls.Add(this.grid1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 349);
+            this.masterpanel.Size = new System.Drawing.Size(923, 349);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.grid1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
@@ -81,15 +81,19 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 349);
-            this.detailpanel.Size = new System.Drawing.Size(892, 145);
+            this.detailpanel.Size = new System.Drawing.Size(923, 145);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(784, 311);
             // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(834, 1);
+            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 145);
+            this.detailgridcont.Size = new System.Drawing.Size(923, 145);
             // 
             // detail2
             // 
@@ -105,16 +109,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 532);
+            this.detail.Size = new System.Drawing.Size(923, 532);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 494);
+            this.detailcont.Size = new System.Drawing.Size(923, 494);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 494);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Size = new System.Drawing.Size(923, 38);
             // 
             // browse
             // 
@@ -122,11 +126,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(900, 561);
+            this.tabs.Size = new System.Drawing.Size(931, 561);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(478, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(430, 13);
             // 
             // grid1
             // 
@@ -149,7 +163,7 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(887, 233);
+            this.grid1.Size = new System.Drawing.Size(918, 233);
             this.grid1.TabIndex = 1;
             this.grid1.TabStop = false;
             this.grid1.SelectionChanged += new System.EventHandler(this.grid1_SelectionChanged);
@@ -232,7 +246,7 @@
             // 
             // B03
             // 
-            this.ClientSize = new System.Drawing.Size(900, 594);
+            this.ClientSize = new System.Drawing.Size(931, 594);
             this.DefaultOrder = "id,seasonid";
             this.GridAlias = "style_artwork_quot";
             this.GridUniqueKey = "styleukey,ukey,localsuppid";
