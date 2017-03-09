@@ -188,7 +188,7 @@
             // label5
             // 
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(455, 15);
+            this.label5.Location = new System.Drawing.Point(428, 15);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(95, 23);
             this.label5.TabIndex = 5;
@@ -217,9 +217,9 @@
             // 
             this.displayBox_Requestby.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox_Requestby.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox_Requestby.Location = new System.Drawing.Point(553, 15);
+            this.displayBox_Requestby.Location = new System.Drawing.Point(526, 15);
             this.displayBox_Requestby.Name = "displayBox_Requestby";
-            this.displayBox_Requestby.Size = new System.Drawing.Size(212, 23);
+            this.displayBox_Requestby.Size = new System.Drawing.Size(239, 23);
             this.displayBox_Requestby.TabIndex = 2;
             // 
             // dateBox1
@@ -277,7 +277,7 @@
             // label6
             // 
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(455, 45);
+            this.label6.Location = new System.Drawing.Point(428, 45);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(95, 23);
             this.label6.TabIndex = 22;
@@ -288,9 +288,9 @@
             this.displayBox_LastSendDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox_LastSendDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "senddate", true));
             this.displayBox_LastSendDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox_LastSendDate.Location = new System.Drawing.Point(553, 45);
+            this.displayBox_LastSendDate.Location = new System.Drawing.Point(526, 45);
             this.displayBox_LastSendDate.Name = "displayBox_LastSendDate";
-            this.displayBox_LastSendDate.Size = new System.Drawing.Size(212, 23);
+            this.displayBox_LastSendDate.Size = new System.Drawing.Size(239, 23);
             this.displayBox_LastSendDate.TabIndex = 5;
             // 
             // label7

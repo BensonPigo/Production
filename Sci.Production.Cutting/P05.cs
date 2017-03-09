@@ -35,18 +35,18 @@ namespace Sci.Production.Cutting
             string cmdsql = string.Format(
             @"
             Select a.*,
-            al.LectraCode,
+            (
+                Select PatternPanel+'+ ' 
+                From WorkOrder_PatternPanel c WITH (NOLOCK) 
+                Where c.WorkOrderUkey =a.WorkOrderUkey 
+                For XML path('')
+            ) as PatternPanel,
             (
                 Select cuttingwidth from Order_EachCons b WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
                 where e.Order_EachconsUkey = b.Ukey and a.WorkOrderUkey = e.Ukey  
             ) as cuttingwidth,
             o.styleid,o.seasonid
             From MarkerReq_Detail a WITH (NOLOCK) left join Orders o WITH (NOLOCK) on a.orderid=o.id
-            outer apply(
-	            Select e.LectraCode 
-	            from  WorkOrder e WITH (NOLOCK) 
-                where  a.OrderID = e.id  and a.MarkerName = e.Markername and a.MarkerNo = e.MarkerNo
-            )al
             where a.id = '{0}'
             ", masterID);
             this.DetailSelectCommand = cmdsql;
@@ -63,9 +63,9 @@ namespace Sci.Production.Cutting
             .Text("Markerno", header: "Flow No", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "MarkerName", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
-            .Text("LectraCode", header: "PatternPanel", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("PatternPanel", header: "PatternPanel", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("fabriccombo", header: "FabricCombo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("CuttingWidth", header: "Cutting Width", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("cuttingwidth", header: "Cutting Width", width: Widths.AnsiChars(8), iseditingreadonly: true)
              .Numeric("ReqQty", header: "# of Copies", width: Widths.AnsiChars(5), integer_places: 8)
              .Numeric("ReleaseQty", header: "# of Release", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
              .Date("ReleaseDate", header: "Release Date", width: Widths.AnsiChars(10), iseditingreadonly: true);
