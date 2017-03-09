@@ -80,7 +80,7 @@
             this.masterpanel.Controls.Add(this.displayBox1);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Size = new System.Drawing.Size(820, 135);
+            this.masterpanel.Size = new System.Drawing.Size(918, 135);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
@@ -104,28 +104,32 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 135);
-            this.detailpanel.Size = new System.Drawing.Size(820, 241);
+            this.detailpanel.Size = new System.Drawing.Size(918, 241);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(5, 100);
             // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(827, 1);
+            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(820, 241);
+            this.detailgridcont.Size = new System.Drawing.Size(918, 241);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(820, 414);
+            this.detail.Size = new System.Drawing.Size(918, 414);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(820, 376);
+            this.detailcont.Size = new System.Drawing.Size(918, 376);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 376);
-            this.detailbtm.Size = new System.Drawing.Size(820, 38);
+            this.detailbtm.Size = new System.Drawing.Size(918, 38);
             // 
             // browse
             // 
@@ -133,11 +137,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(828, 443);
+            this.tabs.Size = new System.Drawing.Size(926, 443);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // dateBox1
             // 
@@ -358,7 +372,7 @@
             // P20
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(828, 476);
+            this.ClientSize = new System.Drawing.Size(926, 476);
             this.DefaultControl = "numericBox1";
             this.DefaultControlForEdit = "numericBox1";
             this.DefaultDetailOrder = "Cutref,OrderID";

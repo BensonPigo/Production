@@ -45,7 +45,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(676, 228);
+            this.detail.Size = new System.Drawing.Size(828, 228);
             // 
             // detailcont
             // 
@@ -56,20 +56,33 @@
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.txt_ID);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(676, 190);
+            this.detailcont.Size = new System.Drawing.Size(828, 190);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 190);
-            this.detailbtm.Size = new System.Drawing.Size(676, 38);
+            this.detailbtm.Size = new System.Drawing.Size(828, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(676, 380);
+            this.browse.Size = new System.Drawing.Size(676, 228);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(684, 257);
+            this.tabs.Size = new System.Drawing.Size(836, 257);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // checkBoxJunk
             // 
@@ -143,7 +156,7 @@
             // 
             // B04
             // 
-            this.ClientSize = new System.Drawing.Size(684, 290);
+            this.ClientSize = new System.Drawing.Size(836, 290);
             this.DefaultFilter = "Type=\'RC\'";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;

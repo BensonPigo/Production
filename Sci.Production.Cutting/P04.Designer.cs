@@ -109,7 +109,7 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(789, 1);
+            this.refresh.Location = new System.Drawing.Point(827, 1);
             // 
             // detailgridcont
             // 

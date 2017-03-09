@@ -139,7 +139,7 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateBox_Date);
-            this.masterpanel.Size = new System.Drawing.Size(884, 224);
+            this.masterpanel.Size = new System.Drawing.Size(1027, 224);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox_Date, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -192,7 +192,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 224);
-            this.detailpanel.Size = new System.Drawing.Size(884, 240);
+            this.detailpanel.Size = new System.Drawing.Size(1027, 240);
             // 
             // gridicon
             // 
@@ -200,12 +200,12 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(787, 1);
+            this.refresh.Location = new System.Drawing.Point(944, -1);
             this.refresh.TabIndex = 3;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(884, 240);
+            this.detailgridcont.Size = new System.Drawing.Size(1027, 240);
             // 
             // detail2
             // 
@@ -221,17 +221,17 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(884, 502);
+            this.detail.Size = new System.Drawing.Size(1027, 502);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(884, 464);
+            this.detailcont.Size = new System.Drawing.Size(1027, 464);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.button1);
             this.detailbtm.Location = new System.Drawing.Point(0, 464);
-            this.detailbtm.Size = new System.Drawing.Size(884, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1027, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -245,11 +245,21 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(892, 531);
+            this.tabs.Size = new System.Drawing.Size(1035, 531);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label1
             // 
@@ -732,7 +742,7 @@
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Location = new System.Drawing.Point(670, 5);
+            this.button1.Location = new System.Drawing.Point(827, 3);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(111, 30);
             this.button1.TabIndex = 2;
@@ -773,7 +783,7 @@
             // 
             // P10
             // 
-            this.ClientSize = new System.Drawing.Size(892, 564);
+            this.ClientSize = new System.Drawing.Size(1035, 564);
             this.DefaultControl = "textBox_Cutref";
             this.DefaultControlForEdit = "textBox_Cutref";
             this.DefaultDetailOrder = "BundleGroup";

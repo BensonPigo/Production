@@ -56,7 +56,6 @@
             // 
             // append
             // 
-            this.append.Location = new System.Drawing.Point(170, 5);
             this.append.TabIndex = 1;
             this.append.Visible = false;
             // 
@@ -67,7 +66,6 @@
             // 
             // delete
             // 
-            this.delete.Location = new System.Drawing.Point(10, 5);
             this.delete.TabIndex = 3;
             this.delete.Visible = false;
             // 
