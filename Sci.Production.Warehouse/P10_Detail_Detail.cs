@@ -48,7 +48,7 @@ namespace Sci.Production.Warehouse
 
             StringBuilder strSQLCmd = new StringBuilder();
             #region -- sqlcmd query -- 
-            strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id, c.mdivisionid,a.id as PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+            strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id,a.id as PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.FabricType
 ,a.stockunit
 ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
@@ -62,7 +62,7 @@ namespace Sci.Production.Warehouse
 ,c.inqty,c.outqty, c.adjustqty 
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
-Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid='{1}'
+Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
 and a.scirefno='{2}' and a.colorid='{3}' and a.sizespec = '{4}'
 and ltrim(a.seq1) between '01' and '99'
 "
@@ -189,8 +189,8 @@ and ltrim(a.seq1) between '01' and '99'
             foreach (DataRow tmp in dr2)
             {
                 //DataRow[] findrow = dt_detail.Select(string.Format("ftyinventoryukey = {0}" , tmp["ftyinventoryukey"]));
-                DataRow[] findrow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll = '{3}' and dyelot = '{4}' and mdivisionid = '{5}'",
-                    tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString(), tmp["mdivisionid"].ToString()));
+                DataRow[] findrow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll = '{3}' and dyelot = '{4}'",
+                    tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString()));
 
                 if (findrow.Length > 0)
                 {

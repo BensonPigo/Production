@@ -617,11 +617,11 @@ for xml path('') ", ukey), out dt);
 
             decimal request = decimal.Parse(materials["requestqty"].ToString());
             decimal accu_issue = 0m;
-            if (isIssue)
+            if (isIssue)//P10 Auto Pick
             {
                 sqlcmd = string.Format(@"
 select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')) location
-,a.Ukey as FtyInventoryUkey,MDivisionID,POID,a.seq1,a.Seq2,roll,stocktype,Dyelot,inqty-OutQty+AdjustQty qty
+,a.Ukey as FtyInventoryUkey,POID,a.seq1,a.Seq2,roll,stocktype,Dyelot,inqty-OutQty+AdjustQty qty
 ,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
 ,sum(inqty-OutQty+AdjustQty) 
 over (order by a.Dyelot,(select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path(''))
@@ -629,7 +629,7 @@ over (order by a.Dyelot,(select t.mtllocationid+',' from (select MtlLocationID f
 rows between unbounded preceding and current row) as running_total
 from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
 where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
-and MDivisionID = '{0}' and p.SCIRefno = '{2}' and p.ColorID = '{3}' and a.Seq1 BETWEEN '00' AND '99'
+and p.SCIRefno = '{2}' and p.ColorID = '{3}' and a.Seq1 BETWEEN '00' AND '99'
 order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["poid"], materials["scirefno"], materials["colorid"], stocktype);
             }
             else if (isIssue==false && stocktype == "B")//P28 Auto Pick

@@ -38,23 +38,18 @@ namespace Sci.Production.Warehouse
             if (!temp.Columns.Contains("balanceqty"))
             {
                 DataTable dtFtyinventory;
-                StringBuilder strSQLCmd = new StringBuilder();
-
-                #region -- sqlcmd query --
-                strSQLCmd.Append(string.Format(@"select ISD.* , FTY.InQty,FTY.OutQty,FTY.AdjustQty,FTY.InQty-FTY.OutQty+FTY.AdjustQty as balanceqty,[location]=dbo.Getlocation(FTY.Ukey)   
-	from [dbo].[Issue_Detail] ISD WITH (NOLOCK) 
-	left join [dbo].FtyInventory FTY WITH (NOLOCK) on ISD.FtyInventoryUkey=FTY.Ukey
-	where ISD.Id='{0}' and ISD.Issue_SummaryUkey='{1}'"
-                    , CurrentDetailData["id"].ToString(), CurrentDetailData["Ukey"].ToString()));
-                #endregion
-
                 Ict.DualResult result;
-                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtFtyinventory))
+                if (!(result = MyUtility.Tool.ProcessWithDatatable
+                        (temp, "", @"select t.*,FTY.InQty,FTY.OutQty,FTY.AdjustQty,FTY.InQty-FTY.OutQty+FTY.AdjustQty as balanceqty,[location]=dbo.Getlocation(FTY.Ukey)   
+            from #tmp t
+            Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
+            --drop #tmp", out dtFtyinventory, "#tmp")))
                 {
-                    gridbs.DataSource = dtFtyinventory;
-                    dtFtyinventory.DefaultView.Sort = "seq1,seq2,location,dyelot,balanceqty desc";
+                    MyUtility.Msg.WarningBox(result.ToString());
+                    return;
                 }
-                else { ShowErr(strSQLCmd.ToString(), result); }
+                gridbs.DataSource = dtFtyinventory;
+                dtFtyinventory.DefaultView.Sort = "seq1,seq2,location,dyelot,balanceqty desc";
             }
 
             this.dis_ID.Text = CurrentDetailData["id"].ToString();
@@ -135,7 +130,9 @@ namespace Sci.Production.Warehouse
 
             DataTable subDT = (DataTable)gridbs.DataSource;
 
-            subDT.Clear();
+            foreach (DataRow temp in subDT.ToList()) subDT.Rows.Remove(temp);
+                
+            //subDT.Clear();
             foreach (DataRow dr2 in issued)
             {
                 dr2.AcceptChanges();
