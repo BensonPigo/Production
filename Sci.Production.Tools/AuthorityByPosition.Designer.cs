@@ -60,7 +60,7 @@
             this.masterpanel.Controls.Add(this.checkBox1);
             this.masterpanel.Controls.Add(this.textBox1);
             this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Size = new System.Drawing.Size(892, 90);
+            this.masterpanel.Size = new System.Drawing.Size(918, 90);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
@@ -74,16 +74,20 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 90);
-            this.detailpanel.Size = new System.Drawing.Size(892, 385);
+            this.detailpanel.Size = new System.Drawing.Size(918, 385);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(784, 52);
+            this.gridicon.Location = new System.Drawing.Point(810, 52);
+            // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(827, 1);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 385);
+            this.detailgridcont.Size = new System.Drawing.Size(918, 385);
             // 
             // detail2
             // 
@@ -99,16 +103,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 513);
+            this.detail.Size = new System.Drawing.Size(918, 513);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 475);
+            this.detailcont.Size = new System.Drawing.Size(918, 475);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 475);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Size = new System.Drawing.Size(918, 38);
             // 
             // browse
             // 
@@ -116,13 +120,26 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(900, 542);
+            this.tabs.Size = new System.Drawing.Size(926, 542);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Location = new System.Drawing.Point(757, 12);
+            this.button1.Location = new System.Drawing.Point(783, 12);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(127, 30);
             this.button1.TabIndex = 16;
@@ -206,7 +223,7 @@
             // 
             // AuthorityByPosition
             // 
-            this.ClientSize = new System.Drawing.Size(900, 575);
+            this.ClientSize = new System.Drawing.Size(926, 575);
             this.GridAlias = "Pass2";
             this.GridNew = 0;
             this.IsGridIconVisible = false;
