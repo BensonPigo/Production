@@ -380,7 +380,9 @@
     <None Include="XLT\Packing_P02.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Packing_P03_ImportExcelFormat.xltx" />
+    <None Include="XLT\Packing_P03_ImportExcelFormat.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Packing_P03_PackingGuideReport.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
