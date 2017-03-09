@@ -43,7 +43,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(682, 395);
+            this.detail.Size = new System.Drawing.Size(833, 395);
             // 
             // detailcont
             // 
@@ -52,11 +52,11 @@
             this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Size = new System.Drawing.Size(682, 357);
+            this.detailcont.Size = new System.Drawing.Size(833, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(682, 38);
+            this.detailbtm.Size = new System.Drawing.Size(833, 38);
             // 
             // browse
             // 
@@ -64,7 +64,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(690, 424);
+            this.tabs.Size = new System.Drawing.Size(841, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(475, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(427, 13);
             // 
             // editBox1
             // 
@@ -119,7 +132,7 @@
             // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(690, 457);
+            this.ClientSize = new System.Drawing.Size(841, 457);
             this.DefaultControl = "textBox1";
             this.DefaultControlForEdit = "editBox1";
             this.IsSupportClip = false;

@@ -43,7 +43,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(677, 395);
+            this.detail.Size = new System.Drawing.Size(829, 395);
             // 
             // detailcont
             // 
@@ -52,11 +52,11 @@
             this.detailcont.Controls.Add(this.txtID);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(677, 357);
+            this.detailcont.Size = new System.Drawing.Size(829, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(677, 38);
+            this.detailbtm.Size = new System.Drawing.Size(829, 38);
             // 
             // browse
             // 
@@ -64,7 +64,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(685, 424);
+            this.tabs.Size = new System.Drawing.Size(837, 424);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label1
             // 
@@ -122,7 +135,7 @@
             // 
             // B06
             // 
-            this.ClientSize = new System.Drawing.Size(685, 457);
+            this.ClientSize = new System.Drawing.Size(837, 457);
             this.DefaultControl = "txtID";
             this.DefaultControlForEdit = "txtID";
             this.IsDeleteOnBrowse = false;

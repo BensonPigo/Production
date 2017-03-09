@@ -106,7 +106,7 @@
             this.masterpanel.Controls.Add(this.txtSP);
             this.masterpanel.Controls.Add(this.lbDate);
             this.masterpanel.Controls.Add(this.CDate);
-            this.masterpanel.Size = new System.Drawing.Size(876, 170);
+            this.masterpanel.Size = new System.Drawing.Size(912, 170);
             this.masterpanel.Controls.SetChildIndex(this.CDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSP, 0);
@@ -143,15 +143,19 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 170);
-            this.detailpanel.Size = new System.Drawing.Size(876, 192);
+            this.detailpanel.Size = new System.Drawing.Size(912, 192);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(769, 135);
             // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(827, 1);
+            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(876, 192);
+            this.detailgridcont.Size = new System.Drawing.Size(912, 192);
             // 
             // detail2
             // 
@@ -167,16 +171,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(876, 400);
+            this.detail.Size = new System.Drawing.Size(912, 400);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(876, 362);
+            this.detailcont.Size = new System.Drawing.Size(912, 362);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 362);
-            this.detailbtm.Size = new System.Drawing.Size(876, 38);
+            this.detailbtm.Size = new System.Drawing.Size(912, 38);
             // 
             // browse
             // 
@@ -184,7 +188,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(884, 429);
+            this.tabs.Size = new System.Drawing.Size(920, 429);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // txtSP
             // 
@@ -528,7 +545,7 @@
             // P20
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(884, 462);
+            this.ClientSize = new System.Drawing.Size(920, 462);
             this.DefaultControl = "CDate";
             this.DefaultDetailOrder = "GarmentDefectTypeid,GarmentDefectCodeID";
             this.DefaultOrder = "ID";

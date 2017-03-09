@@ -116,6 +116,10 @@
             // 
             this.gridicon.Location = new System.Drawing.Point(5, 112);
             // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(831, 1);
+            // 
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(914, 334);
@@ -152,6 +156,19 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(922, 548);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // Article_text
             // 
