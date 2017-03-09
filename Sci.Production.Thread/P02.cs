@@ -475,9 +475,9 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                         #tmp.MeterToCone,
                         CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100) as ConsumptionQty,
                         CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) as TotalQty,
-                        CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone) * 0.2) as AllowanceQty,
-                        CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone)+
-                        CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / #tmp.MeterToCone) * 0.2) as PurchaseQty,
+                        CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2) as AllowanceQty,
+                        CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)+
+                        CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2) as PurchaseQty,
                         'true' as AutoCreate , 0 as UseStockQty, '' as POID, '' as Remark
                         from #tmp
                         group by Threadcombdesc,colordesc,#tmp.Refno,#tmp.MeterToCone,ThreadColorId", id);
