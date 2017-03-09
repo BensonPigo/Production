@@ -338,6 +338,11 @@ and b.PurchaseQty > 0
                     else
                     {
                         tmp["id"] = dr_localPO["id"];
+                        if (tmp["orderid"].ToString() != tmp["POID"].ToString())
+                        {
+                            tmp["remark"] = "SP#:" + tmp["orderid"];                            
+                        }
+                        tmp["orderid"] = tmp["POID"];
                         tmp.AcceptChanges();
                         tmp.SetAdded();
                         dt_localPODetail.ImportRow(tmp);
