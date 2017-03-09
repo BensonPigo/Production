@@ -180,9 +180,19 @@
             this.tabs.Size = new System.Drawing.Size(1066, 544);
             this.tabs.TabIndex = 0;
             // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(492, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(444, 13);
             // 
             // label3
             // 

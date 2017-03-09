@@ -77,13 +77,13 @@
             this.numericBox3 = new Sci.Win.UI.NumericBox();
             this.displayBox19 = new Sci.Win.UI.DisplayBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.dateBox4 = new Sci.Win.UI.DateBox();
             this.label25 = new Sci.Win.UI.Label();
             this.displayBox20 = new Sci.Win.UI.DisplayBox();
             this.displayBox5 = new Sci.Win.UI.DisplayBox();
             this.txttpeuser3 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
-            this.dateBox4 = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -184,7 +184,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(2392, 397);
+            this.gridicon.Location = new System.Drawing.Point(2517, 397);
             // 
             // refresh
             // 
@@ -233,10 +233,12 @@
             // createby
             // 
             this.createby.Location = new System.Drawing.Point(70, 18);
+            this.createby.Size = new System.Drawing.Size(350, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(400, 18);
+            this.editby.Location = new System.Drawing.Point(468, 18);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
             // 
             // lblcreateby
@@ -245,7 +247,7 @@
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(352, 24);
+            this.lbleditby.Location = new System.Drawing.Point(420, 24);
             // 
             // label1
             // 
@@ -781,6 +783,16 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Voucher Info.";
             // 
+            // dateBox4
+            // 
+            this.dateBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SettleDate", true));
+            this.dateBox4.IsSupportEditMode = false;
+            this.dateBox4.Location = new System.Drawing.Point(458, 57);
+            this.dateBox4.Name = "dateBox4";
+            this.dateBox4.ReadOnly = true;
+            this.dateBox4.Size = new System.Drawing.Size(130, 23);
+            this.dateBox4.TabIndex = 98;
+            // 
             // label25
             // 
             this.label25.Lines = 0;
@@ -839,16 +851,6 @@
             this.txttpeuser1.Name = "txttpeuser1";
             this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser1.TabIndex = 3;
-            // 
-            // dateBox4
-            // 
-            this.dateBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SettleDate", true));
-            this.dateBox4.IsSupportEditMode = false;
-            this.dateBox4.Location = new System.Drawing.Point(458, 57);
-            this.dateBox4.Name = "dateBox4";
-            this.dateBox4.ReadOnly = true;
-            this.dateBox4.Size = new System.Drawing.Size(130, 23);
-            this.dateBox4.TabIndex = 98;
             // 
             // P37
             // 

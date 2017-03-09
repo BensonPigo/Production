@@ -142,9 +142,19 @@
             // 
             this.tabs.Size = new System.Drawing.Size(1008, 696);
             // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(472, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(424, 13);
             // 
             // button2
             // 

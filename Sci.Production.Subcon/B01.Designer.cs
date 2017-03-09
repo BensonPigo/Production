@@ -132,9 +132,19 @@
             // 
             this.tabs.Size = new System.Drawing.Size(908, 494);
             // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
             // editby
             // 
+            this.editby.Location = new System.Drawing.Point(491, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(443, 13);
             // 
             // txtartworktype_fty1
             // 
