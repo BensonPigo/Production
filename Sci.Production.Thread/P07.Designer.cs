@@ -86,6 +86,10 @@
             this.gridicon.Location = new System.Drawing.Point(852, 55);
             this.gridicon.TabIndex = 2;
             // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(877, 1);
+            // 
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(960, 307);
@@ -122,6 +126,19 @@
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(968, 474);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(485, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(437, 13);
             // 
             // label1
             // 

@@ -80,7 +80,7 @@
             this.masterpanel.Controls.Add(this.dateBox3);
             this.masterpanel.Controls.Add(this.dateBox2);
             this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 157);
+            this.masterpanel.Size = new System.Drawing.Size(912, 157);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
@@ -104,16 +104,49 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 157);
-            this.detailpanel.Size = new System.Drawing.Size(892, 192);
+            this.detailpanel.Size = new System.Drawing.Size(912, 192);
             // 
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(789, 119);
             this.gridicon.TabIndex = 3;
             // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(827, 3);
+            // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 192);
+            this.detailgridcont.Size = new System.Drawing.Size(912, 192);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(912, 387);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(912, 349);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(912, 38);
+            // 
+            // tabs
+            // 
+            this.tabs.Size = new System.Drawing.Size(920, 416);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // displayBox4
             // 
@@ -284,7 +317,7 @@
             // P02
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(900, 449);
+            this.ClientSize = new System.Drawing.Size(920, 449);
             this.DefaultControl = "textBox1";
             this.DefaultControlForEdit = "textBox1";
             this.DefaultDetailOrder = "Refno,ThreadColorid";

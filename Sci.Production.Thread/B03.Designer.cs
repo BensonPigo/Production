@@ -41,19 +41,19 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(675, 290);
+            this.detail.Size = new System.Drawing.Size(829, 290);
             // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Size = new System.Drawing.Size(675, 252);
+            this.detailcont.Size = new System.Drawing.Size(829, 252);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 252);
-            this.detailbtm.Size = new System.Drawing.Size(675, 38);
+            this.detailbtm.Size = new System.Drawing.Size(829, 38);
             // 
             // browse
             // 
@@ -61,7 +61,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(683, 319);
+            this.tabs.Size = new System.Drawing.Size(837, 319);
+            // 
+            // createby
+            // 
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
             // label3
             // 
@@ -96,7 +109,7 @@
             // 
             // B03
             // 
-            this.ClientSize = new System.Drawing.Size(683, 352);
+            this.ClientSize = new System.Drawing.Size(837, 352);
             this.DefaultControl = "textBox1";
             this.DefaultControlForEdit = "checkBox1";
             this.IsSupportDelete = false;
