@@ -127,6 +127,7 @@ group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,a.type
             	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
             from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+and roll='{3}' and dyelot='{4}'
 group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type                                                                          
             union all
             select issuedate, a.id
