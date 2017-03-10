@@ -220,8 +220,8 @@ order by os.Seq", masterID);
                 if (CurrentDataRow != null)
                 {
                     string newID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PO", "Pullout", callNextForm.pulloutDate, 2, "Id", null);
-                    string insertCmd = string.Format(@"insert into Pullout(ID,PulloutDate,MDivisionID,Status,AddName,AddDate)
-values('{0}','{1}','{2}','New','{3}',GETDATE());", newID, Convert.ToDateTime(callNextForm.pulloutDate).ToString("d"), Sci.Env.User.Keyword, Sci.Env.User.UserID);
+                    string insertCmd = string.Format(@"insert into Pullout(ID,PulloutDate,MDivisionID,FactoryID,Status,AddName,AddDate)
+values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());", newID, Convert.ToDateTime(callNextForm.pulloutDate).ToString("d"), Sci.Env.User.Keyword,Sci.Env.User.Factory, Sci.Env.User.UserID);
                     DualResult result = DBProxy.Current.Execute(null, insertCmd);
                     if (!result)
                     {
