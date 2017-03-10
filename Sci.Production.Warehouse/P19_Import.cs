@@ -70,7 +70,7 @@ namespace Sci.Production.Warehouse
 
             // 建立可以符合回傳的Cursor
 
-            sbSQLCmd.Append(string.Format(@"select 0 as selected ,'' id, c.mdivisionid,a.id as PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+            sbSQLCmd.Append(string.Format(@"select 0 as selected ,'' id,a.id as PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.FabricType
 ,a.stockunit
 ,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) Description
@@ -84,7 +84,7 @@ namespace Sci.Production.Warehouse
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 Where c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
-and a.id = @sp and c.mdivisionid='{0}' and c.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
+and a.id = @sp and c.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
 
             if (!txtSeq1.checkEmpty(showErrMsg: false))
             //{
