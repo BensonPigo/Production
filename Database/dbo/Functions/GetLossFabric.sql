@@ -237,14 +237,14 @@ Begin
 	Declare @tmpBOFRowCount Int;	--總資料筆數
 	
 	Declare @UsageQty Numeric(9,2);
-	Declare @QTLectraCode NVarChar(100);
+	Declare @QTFabricPanelCode NVarChar(100);
 	Declare @tmpBOF_Expend Table
-		(RowID BigInt Identity(1,1) Not Null, ColorID VarChar(6), UsageQty Numeric(9,2), QTLectraCode NVarChar(100));
+		(RowID BigInt Identity(1,1) Not Null, ColorID VarChar(6), UsageQty Numeric(9,2), QTFabricPanelCode NVarChar(100));
 	Declare @tmpBOF_ExpendRowID Int;		--Row ID
 	Declare @tmpBOF_ExpendRowCount Int;		--總資料筆數
 	
 	Declare @FabricCombo VarChar(2);
-	Declare @LectraCode VarChar(2);
+	Declare @FabricPanelCode VarChar(2);
 	Declare @CuttingPiece Bit;
 	Declare @MarkerUkey BigInt;
 	Declare @For_Article Numeric(1);
@@ -253,7 +253,7 @@ Begin
 	Declare @MarkerQty Numeric(4,0);
 	Declare @MarkerYDS Numeric(10,4);
 	Declare @MarkerList Table
-		(  RowID BigInt Identity(1,1) Not Null, FabricCombo VarChar(2), FabricCode VarChar(3), LectraCode VarChar(2), CuttingPiece Bit
+		(  RowID BigInt Identity(1,1) Not Null, FabricCombo VarChar(2), FabricCode VarChar(3), FabricPanelCode VarChar(2), CuttingPiece Bit
 		 , MarkerName VarChar(20), Ukey BigInt, For_Article Numeric(1)
 		 , ConsPC Numeric(7,4), MarkerLength Numeric(7,4), SizeCode VarChar(8), Qty Numeric(4,0)
 		);
@@ -289,8 +289,8 @@ Begin
 		
 		Delete @tmpBOF_Expend;
 		Insert Into @tmpBOF_Expend
-			(ColorID, UsageQty, QTLectraCode)
-			Select ColorID, UsageQty, QTLectraCode
+			(ColorID, UsageQty, QTFabricPanelCode)
+			Select ColorID, UsageQty, QTFabricPanelCode
 			  From dbo.Order_BOF_Expend WITH (NOLOCK)
 			 Where Order_BOFUkey = @BofUkey
 			 Order by ColorID;
@@ -301,7 +301,7 @@ Begin
 		Begin
 			Select @ColorID = ColorID
 				 , @UsageQty = UsageQty
-				 , @QTLectraCode = QTLectraCode
+				 , @QTFabricPanelCode = QTFabricPanelCode
 			  From @tmpBOF_Expend
 			 Where RowID = @tmpBOF_ExpendRowID;
 			
@@ -335,10 +335,10 @@ Begin
 			Begin
 				Delete From @MarkerList;
 				Insert Into @MarkerList
-					(  FabricCombo, FabricCode, LectraCode, CuttingPiece, MarkerName, Ukey, For_Article
+					(  FabricCombo, FabricCode, FabricPanelCode, CuttingPiece, MarkerName, Ukey, For_Article
 					 , ConsPC, MarkerLength, SizeCode, Qty
 					)
-					Select FabricCombo, FabricCode, LectraCode, CuttingPiece, MarkerName, Ukey
+					Select FabricCombo, FabricCode, FabricPanelCode, CuttingPiece, MarkerName, Ukey
 						 , IsNull((Select Top 1 1 From dbo.Order_MarkerList_Article WITH (NOLOCK) Where Order_MarkerList_Article.Order_MarkerlistUkey = Order_MarkerList.Ukey), 0) as For_Article
 						 , ConsPC, dbo.MarkerLengthToYDS(MarkerLength) MarkerLength
 						 , SizeCode, Qty
@@ -348,14 +348,14 @@ Begin
 					 Where Order_MarkerList.ID = @PoID
 					   And Order_MarkerList.FabricCode = @FabricCode
 					   And Order_MarkerList.MixedSizeMarker = 1
-					 Order by FabricCombo, FabricCode, LectraCode, CuttingPiece, MarkerName, SizeCode;
+					 Order by FabricCombo, FabricCode, FabricPanelCode, CuttingPiece, MarkerName, SizeCode;
 				--------------------Loop Start @MarkerList--------------------
 				Set @MarkerListRowID = 1;
 				Select @MarkerListRowID = Min(RowID), @MarkerListRowCount = Max(RowID) From @MarkerList;
 				While @MarkerListRowID <= @MarkerListRowCount
 				Begin
 					Select @FabricCombo = FabricCombo
-						 , @LectraCode = LectraCode
+						 , @FabricPanelCode = FabricPanelCode
 						 , @CuttingPiece = CuttingPiece
 						 , @MarkerUkey = Ukey
 						 , @For_Article = For_Article
@@ -374,7 +374,7 @@ Begin
 						Select Article, ColorID
 						  From dbo.Order_ColorCombo WITH (NOLOCK)
 						 Where ID = @PoID
-						   And LectraCode = @LectraCode
+						   And FabricPanelCode = @FabricPanelCode
 						   And ColorID = @ColorID
 						   And (   @For_Article = 0
 								Or (	@For_Article = 1

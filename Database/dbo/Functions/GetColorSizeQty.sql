@@ -9,7 +9,7 @@ RETURNS @tbl table(
 	,ColorID varchar(6)
 	,ColorDesc nvarchar(90)
 	,FabricCode varchar(3)
-	,LectraCode varchar(2)
+	,FabricPanelCode varchar(2)
 	,PatternPanel varchar(2) 
 	,Zipper_RL varchar(5)
 	,CustCD varchar(16)
@@ -23,7 +23,7 @@ AS
 BEGIN
 	
 	declare @tmp table(ID varchar(13) ,Article varchar(8) ,SizeCode varchar(8) ,ColorID varchar(6) ,ColorDesc nvarchar(90) 
-	,FabricCode varchar(3) ,LectraCode varchar(2) ,PatternPanel varchar(2) ,Zipper_RL varchar(5)
+	,FabricCode varchar(3) ,FabricPanelCode varchar(2) ,PatternPanel varchar(2) ,Zipper_RL varchar(5)
 	,CustCD varchar(16) ,SizeDesc varchar(15) ,Seq varchar(2) ,Qty decimal(8,0), SizeItem varchar(3))
 
 	--抓取ID為POID
@@ -35,7 +35,7 @@ BEGIN
 	,SizeCode=case when Order_SizeSpec.SizeSpec is null then Order_Qty.SizeCode else Order_SizeSpec.SizeSpec end
 	,Order_ColorCombo.ColorID,ColorDesc=Color.Name
 	,Order_ColorCombo.FabricCode
-	,Order_ColorCombo.LectraCode
+	,Order_ColorCombo.FabricPanelCode
 	,Order_ColorCombo.PatternPanel
 	,Zipper_RL=ZipperInsert
 	,CustCD=Orders.CustCDID
@@ -63,7 +63,7 @@ BEGIN
 	,SizeCode=case when Order_SizeSpec.SizeSpec is null then Order_Qty.SizeCode else Order_SizeSpec.SizeSpec end
 	,Order_ColorCombo.ColorID,ColorDesc=Color.Name
 	,Order_ColorCombo.FabricCode
-	,Order_ColorCombo.LectraCode
+	,Order_ColorCombo.FabricPanelCode
 	,Order_ColorCombo.PatternPanel
 	,Zipper_RL=ZipperInsert
 	,CustCD=Orders.CustCDID
@@ -90,20 +90,20 @@ BEGIN
 	where Orders.poId = @OrderID
 
 	insert into @tbl
-	select Article,SizeCode,ColorID,ColorDesc,FabricCode,LectraCode,PatternPanel,Zipper_RL,CustCD,SizeDesc,Seq,Qty=sum(Qty),SizeItem,d.OrderList+'/'
+	select Article,SizeCode,ColorID,ColorDesc,FabricCode,FabricPanelCode,PatternPanel,Zipper_RL,CustCD,SizeDesc,Seq,Qty=sum(Qty),SizeItem,d.OrderList+'/'
 	from @tmp aa
 	--Order List
 	outer apply (SELECT STUFF((SELECT '/'+tmp.ID FROM @tmp tmp where 
 	tmp.Article = aa.Article and tmp.SizeCode = aa.SizeCode and tmp.ColorID = aa.ColorID and tmp.ColorDesc = aa.ColorDesc
-	and tmp.FabricCode = aa.FabricCode and tmp.LectraCode = aa.LectraCode and tmp.PatternPanel = aa.PatternPanel
+	and tmp.FabricCode = aa.FabricCode and tmp.FabricPanelCode = aa.FabricPanelCode and tmp.PatternPanel = aa.PatternPanel
 	and tmp.Zipper_RL = aa.Zipper_RL and tmp.CustCD = aa.CustCD and tmp.SizeDesc = aa.SizeDesc
 	and tmp.Seq = aa.Seq order by tmp.ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as OrderList) d
-	group by Article,SizeCode,ColorID,ColorDesc,FabricCode,LectraCode,PatternPanel,Zipper_RL,CustCD,SizeDesc,Seq,d.OrderList,SizeItem
+	group by Article,SizeCode,ColorID,ColorDesc,FabricCode,FabricPanelCode,PatternPanel,Zipper_RL,CustCD,SizeDesc,Seq,d.OrderList,SizeItem
 	
 
 	/*
 	--主料
-	Select * from Order_ColorCombo where Id = '15122845GM' and fabriccode != '' order by LectraCode, Fabriccode
+	Select * from Order_ColorCombo where Id = '15122845GM' and fabriccode != '' order by FabricPanelCode, Fabriccode
 	select Id,FabricCode,* from Order_BOF where Id = '15122845GM'
 
 
