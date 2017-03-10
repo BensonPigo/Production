@@ -30,7 +30,7 @@ namespace Sci.Production.Warehouse
             viewer = new ReportViewer();
             viewer.Dock = DockStyle.Fill;
             Controls.Add(viewer);
-
+            //MDivisionID 是 P17 寫入 => Sci.Env.User.Keyword
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
             //
             detailgrid.StatusNotification += (s, e) =>
@@ -265,7 +265,7 @@ namespace Sci.Production.Warehouse
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "RR", "IssueReturn", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "RR", "IssueReturn", (DateTime)CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -325,13 +325,14 @@ namespace Sci.Production.Warehouse
                     CurrentDetailData["Description"] = x[0]["Description"];
                     string tmp = MyUtility.GetValue.Lookup(
                             string.Format(@"select isnull(ukey,0) ukey from dbo.ftyinventory WITH (NOLOCK) 
-                                                    where mdivisionid='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and stocktype='{4}' and roll='{5}' "
+                                                    where poid='{1}' and seq1='{2}' and seq2='{3}' and stocktype='{4}' and roll='{5}' "
                             , Sci.Env.User.Keyword, CurrentDetailData["poid"], x[0]["seq1"], x[0]["seq2"], CurrentDetailData["stocktype"], ""));
                     if (!MyUtility.Check.Empty(tmp)) CurrentDetailData["ftyinventoryukey"] = tmp;
                     CurrentDetailData.EndEdit();
                 }
             };
-#endregion
+            #endregion
+
             #region -- Seq valied --
             ts.CellValidating += (s, e) =>
             {
@@ -378,7 +379,7 @@ namespace Sci.Production.Warehouse
                         
                         string tmp = MyUtility.GetValue.Lookup(
                             string.Format(@"select isnull(ukey,0) ukey from dbo.ftyinventory WITH (NOLOCK) 
-                                                    where mdivisionid='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and stocktype='{4}' and roll='{5}' "
+                                                    where poid='{1}' and seq1='{2}' and seq2='{3}' and stocktype='{4}' and roll='{5}' "
                             , Sci.Env.User.Keyword, CurrentDetailData["poid"], e.FormattedValue.ToString().Substring(0, 3), e.FormattedValue.ToString().Substring(3, 2), CurrentDetailData["stocktype"], ""));
                         if (!MyUtility.Check.Empty(tmp)) CurrentDetailData["ftyinventoryukey"] = tmp;
                     }
@@ -401,19 +402,19 @@ namespace Sci.Production.Warehouse
                     if (e.Button == System.Windows.Forms.MouseButtons.Right && e.RowIndex != -1)
                     {
 
-                        string sqlcmd = string.Format(@"SELECT a.poid
-,a.seq1
-,a.seq2
-,a.roll
-,a.dyelot
-,inqty - outqty + adjustqty balance
-,ukey
+                        string sqlcmd = string.Format(@"SELECT  a.poid
+                                                                ,a.seq1
+                                                                ,a.seq2
+                                                                ,a.roll
+                                                                ,a.dyelot
+                                                                ,inqty - outqty + adjustqty balance
+                                                                ,ukey
                                                         FROM dbo.ftyinventory a WITH (NOLOCK) 
-                                                        WHERE stocktype = 'B'
-                                                        AND poID ='{0}'
-                                                        AND seq1= '{1}' 
-                                                        AND seq2= '{2}' 
-order by poid,seq1,seq2,Roll", dr["poid"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
+                                                        WHERE   stocktype = 'B'
+                                                            AND poID ='{0}'
+                                                            AND seq1= '{1}' 
+                                                            AND seq2= '{2}' 
+                                                        order by poid,seq1,seq2,Roll", dr["poid"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
                         Sci.Win.Tools.SelectItem item
                             = new Sci.Win.Tools.SelectItem(sqlcmd, "13,4,3,10,5,10,10", dr["roll"].ToString(), "SP#,Seq1,Seq2,Roll,Dyelot,Balance,ukey");
 
@@ -440,7 +441,7 @@ order by poid,seq1,seq2,Roll", dr["poid"].ToString(), dr["seq1"].ToString(), dr[
                     {
 
                         if (!MyUtility.Check.Seek(string.Format(@"select ukey from ftyinventory WITH (NOLOCK) 
-where poid = '{0}' and seq1 ='{1}' and seq2 = '{2}' and mdivisionid = '{3}' and stocktype = '{4}' and roll = '{5}'"
+where poid = '{0}' and seq1 ='{1}' and seq2 = '{2}' and stocktype = '{4}' and roll = '{5}'"
                             , CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
                                              , e.FormattedValue.ToString().PadRight(5).Substring(3, 2), Sci.Env.User.Keyword, CurrentDetailData["stocktype"], CurrentDetailData["roll"]), out dr, null))
                         {
@@ -484,8 +485,7 @@ where poid = '{0}' and seq1 ='{1}' and seq2 = '{2}' and mdivisionid = '{3}' and 
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.IssueReturn_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
---on d.ftyinventoryukey = f.ukey
-on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
+on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -512,8 +512,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.IssueReturn_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
---on d.ftyinventoryukey = f.ukey
-on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
+on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -547,7 +546,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("mdivisionid"),
                            poid = b.Field<string>("poid"),
                            seq1 = b.Field<string>("seq1"),
                            seq2 = b.Field<string>("seq2"),
@@ -555,7 +553,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                        } into m
                        select new
                        {
-                           mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
@@ -567,7 +564,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                          select new
                          {
-                             mdivisionid = m.Field<string>("mdivisionid"),
                              poid = m.Field<string>("poid"),
                              seq1 = m.Field<string>("seq1"),
                              seq2 = m.Field<string>("seq2"),
@@ -642,8 +638,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.IssueReturn_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
---on d.ftyinventoryukey = f.ukey
-on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
+on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -670,8 +665,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.IssueReturn_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
---on d.ftyinventoryukey = f.ukey
-on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.MDivisionID = f.MDivisionID and d.Roll = f.Roll
+on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -705,7 +699,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("mdivisionid"),
                            poid = b.Field<string>("poid"),
                            seq1 = b.Field<string>("seq1"),
                            seq2 = b.Field<string>("seq2"),
@@ -713,7 +706,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                        } into m
                        select new
                        {
-                           mdivisionid = m.First().Field<string>("mdivisionid"),
                            poid = m.First().Field<string>("poid"),
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
@@ -725,7 +717,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             var bsfio = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                          select new
                          {
-                             mdivisionid = m.Field<string>("mdivisionid"),
                              poid = m.Field<string>("poid"),
                              seq1 = m.Field<string>("seq1"),
                              seq2 = m.Field<string>("seq2"),
@@ -784,7 +775,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.mdivisionid,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
@@ -877,9 +868,8 @@ Where a.id = '{0}'", masterID);
 , a.Dyelot as dyelot
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 ,a.ftyinventoryukey
-,'{1}' AS mdivisionid
 from dbo.Issue_Detail a WITH (NOLOCK) inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
-where a.id='{0}'", textBox2.Text,Sci.Env.User.Keyword), out dt);
+where a.id='{0}'", textBox2.Text), out dt);
                     foreach (var item in dt.ToList())
                     {
                         //DetailDatas.(item);
