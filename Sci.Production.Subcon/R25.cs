@@ -37,15 +37,10 @@ namespace Sci.Production.Subcon
 
         protected override bool ValidateInput()
         {
-            if (!this.dateRange1.HasValue)
+            if (!this.dateRange1.HasValue && this.textBox1.Text.Empty())
             {
-                MyUtility.Msg.ErrorBox("[Receive Date] one of the inputs must be selected");
+                MyUtility.Msg.ErrorBox("[Receive Date] or [SP#] must input one !!");
                 dateRange1.Focus();
-                return false;
-            }
-            if (this.textBox1.Text.Empty())
-            {
-                MyUtility.Msg.ErrorBox("[sp] one of the inputs must be selected");
                 textBox1.Focus();
                 return false;
             }
