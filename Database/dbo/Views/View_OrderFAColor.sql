@@ -6,6 +6,6 @@ from (select distinct o.ID,o.POID,oq.Article
 left join Order_ColorCombo oc on oc.Id = a.POID 
 							  and oc.Article = a.Article 
 							  and oc.PatternPanel = 'FA' 
-							  and oc.LectraCode = (select min(LectraCode) 
+							  and oc.FabricPanelCode = (select min(FabricPanelCode) 
 												   from Order_ColorCombo 
 												   where id = oc.Id and  Article = a.Article and PatternPanel = 'FA')
