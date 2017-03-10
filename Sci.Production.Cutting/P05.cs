@@ -35,16 +35,6 @@ namespace Sci.Production.Cutting
             string cmdsql = string.Format(
             @"
             Select a.*,
-            (
-                Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c WITH (NOLOCK) 
-                Where c.WorkOrderUkey =a.WorkOrderUkey 
-                For XML path('')
-            ) as PatternPanel,
-            (
-                Select cuttingwidth from Order_EachCons b WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
-                where e.Order_EachconsUkey = b.Ukey and a.WorkOrderUkey = e.Ukey  
-            ) as cuttingwidth,
             o.styleid,o.seasonid
             From MarkerReq_Detail a WITH (NOLOCK) left join Orders o WITH (NOLOCK) on a.orderid=o.id
             where a.id = '{0}'
@@ -293,6 +283,16 @@ namespace Sci.Production.Cutting
                     Where a.WorkOrderUkey =c.WorkOrderUkey            
                     For XML path('')
                 ) as SizeRatio,
+                {
+                    Select PatternPanel+'+ ' 
+                    From WorkOrder_PatternPanel c WITH (NOLOCK) 
+                    Where c.WorkOrderUkey =a.WorkOrderUkey 
+                    For XML path('')
+                } as PatternPanel,
+                (
+                    Select cuttingwidth from Order_EachCons b WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
+                    where e.Order_EachconsUkey = b.Ukey and a.WorkOrderUkey = e.Ukey  
+                ) as cuttingwidth,
 				o.styleid,o.seasonid
                 From Cutplan_Detail a WITH (NOLOCK) , WorkOrder b WITH (NOLOCK) 
                 left join Orders o WITH (NOLOCK) on b.orderid=o.id
@@ -313,7 +313,8 @@ namespace Sci.Production.Cutting
                     ndr["Layer"] = dr["Layer"];
                     ndr["FabricCombo"] = dr["FabricCombo"];
                     ndr["MarkerNo"] = dr["MarkerNo"];
-                    ndr["WorkOrderUkey"] = dr["WorkOrderUkey"];
+                    ndr["PatternPanel"] = dr["PatternPanel"];
+                    ndr["cuttingwidth"] = dr["cuttingwidth"];
                     gridTb.Rows.Add(ndr);
                 }
             }
