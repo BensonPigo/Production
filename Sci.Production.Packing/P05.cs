@@ -540,6 +540,12 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 txtbrand1.Focus();
                 return false;
             }
+            if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
+            {
+                MyUtility.Msg.WarningBox("Ttl CBM or Ttl GW can't be empty!!");
+                numericBox2.Focus();
+                return false;
+            }
 
             //刪除表身SP No.或Qty為空白的資料，檢查表身的Color Way與Size不可以為空值，計算ShipQty，重算表身Grid的Bal. Qty
             int shipQty = 0, needPackQty = 0, ttlShipQty = 0, count = 0;
