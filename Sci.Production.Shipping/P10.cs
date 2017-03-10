@@ -174,6 +174,7 @@ where {0} order by g.ID", masterID);
             base.ClickNewAfter();
             CurrentMaintain["CDate"] = DateTime.Today;
             CurrentMaintain["Status"] = "New";
+            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             listControlBindingSource1.DataSource = plData;
         }
 
