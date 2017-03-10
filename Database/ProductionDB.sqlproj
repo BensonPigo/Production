@@ -2199,6 +2199,8 @@
     </Build>
     <Build Include="dbo\Stored Procedures\insert_Air_Fir.sql" />
     <Build Include="dbo\Stored Procedures\Cutting_P01_print_cuttingschedule.sql" />
+    <Build Include="dbo\Tables\MNOrder_FabricCode_QT.sql" />
+    <Build Include="dbo\Tables\MNOrder_FabricCode_Article.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

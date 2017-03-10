@@ -333,6 +333,8 @@ Database/dbo/Tables/MNOrder_BOF.sql -text
 Database/dbo/Tables/MNOrder_Color.sql -text
 Database/dbo/Tables/MNOrder_ColorCombo.sql -text
 Database/dbo/Tables/MNOrder_FabricCode.sql -text
+Database/dbo/Tables/MNOrder_FabricCode_Article.sql -text
+Database/dbo/Tables/MNOrder_FabricCode_QT.sql -text
 Database/dbo/Tables/MNOrder_Qty.sql -text
 Database/dbo/Tables/MNOrder_SizeCode.sql -text
 Database/dbo/Tables/MNOrder_SizeItem.sql -text
