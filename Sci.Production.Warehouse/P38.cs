@@ -119,12 +119,13 @@ select 0 as [selected], fi.POID,fi.seq1,fi.seq2,fi.Roll,fi.Dyelot,iif(fi.Lock=0,
 from dbo.FtyInventory fi WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = fi.POID and pd.seq1 = fi.seq1 and pd.seq2  = fi.Seq2
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID
+left join dbo.factory f WITH (NOLOCK) on o.FtyGroup=f.id
 cross apply
 (
 	select min(o1.BuyerDelivery) earliest_BuyerDelivery ,min(o1.SciDelivery) earliest_SciDelivery 
 	from dbo.orders o1 WITH (NOLOCK) where o1.POID = fi.POID and o1.Junk = 0
 ) x
-where fi.MDivisionID = '{0}' and fi.POID like @poid1 
+where f.MDivisionID = '{0}' and fi.POID like @poid1 
 ", Sci.Env.User.Keyword));
 
             System.Data.SqlClient.SqlParameter sp1_1 = new System.Data.SqlClient.SqlParameter();
