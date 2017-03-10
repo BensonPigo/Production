@@ -588,7 +588,7 @@ a. StyleUkey	= b. StyleUkey
 ,a.MarkerName	= b.MarkerName
 ,a.FabricCode	= b.FabricCode
 ,a.FabricCombo	= b.FabricCombo
-,a.LectraCode	= b.LectraCode
+,a.FabricPanelCode	= b.FabricPanelCode
 ,a.MarkerLength	= b.MarkerLength
 ,a.ConsPC	= b.ConsPC
 ,a.CuttingPiece	= b.CuttingPiece
@@ -625,7 +625,7 @@ INSERT INTO Production.dbo.Style_MarkerList(
 ,MarkerName
 ,FabricCode
 ,FabricCombo
-,LectraCode
+,FabricPanelCode
 ,MarkerLength
 ,ConsPC
 ,CuttingPiece
@@ -659,7 +659,7 @@ select
 ,MarkerName
 ,FabricCode
 ,FabricCombo
-,LectraCode
+,FabricPanelCode
 ,MarkerLength
 ,ConsPC
 ,CuttingPiece
@@ -725,13 +725,13 @@ RAISERROR('imp_Style - Starts',0,0)
 	RAISERROR('imp_Style - Starts',0,0)
 	Merge Production.dbo.Style_MarkerList_PatternPanel as t
 	Using trade_to_pms.dbo.Style_MarkerList_PatternPanel as s
-	On t.Style_MarkerListUkey=s.Style_MarkerListUkey and t.Lectracode=s.Lectracode
+	On t.Style_MarkerListUkey=s.Style_MarkerListUkey and t.FabricPanelCode=s.FabricPanelCode
 	when matched then 
 		update set
 		t.StyleUkey= s.StyleUkey,
 		--t.Style_MarkerListUkey= s.Style_MarkerListUkey,
 		t.PatternPanel= s.PatternPanel,
-		--t.Lectracode= s.Lectracode,
+		--t.FabricPanelCode= s.FabricPanelCode,
 		t.AddName= s.AddName,
 		t.AddDate= s.AddDate,
 		t.EditName= s.EditName,
@@ -740,7 +740,7 @@ RAISERROR('imp_Style - Starts',0,0)
 		insert(StyleUkey
 			,Style_MarkerListUkey
 			,PatternPanel
-			,Lectracode
+			,FabricPanelCode
 			,AddName
 			,AddDate
 			,EditName
@@ -748,7 +748,7 @@ RAISERROR('imp_Style - Starts',0,0)
 		values(s.StyleUkey,
 			s.Style_MarkerListUkey,
 			s.PatternPanel,
-			s.Lectracode,
+			s.FabricPanelCode,
 			s.AddName,
 			s.AddDate,
 			s.EditName,
@@ -796,14 +796,14 @@ Delete Production.dbo.Style_FabricCode
 from Production.dbo.Style_FabricCode as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_FabricCode as b
-on a.StyleUkey = b.StyleUkey AND a.LectraCode	= b.LectraCode
+on a.StyleUkey = b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode
 where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 --a.StyleUkey	= b.StyleUkey
---,a.LectraCode	= b.LectraCode
+--,a.FabricPanelCode	= b.FabricPanelCode
 a.FabricCode	= b.FabricCode
 ,a.PatternPanel	= b.PatternPanel
 ,a.AddName	= b.AddName
@@ -813,12 +813,12 @@ a.FabricCode	= b.FabricCode
 ,a.Style_BOFUkey	= b.Style_BOFUkey
 ,a.QTWidth	= b.QTWidth
 from Production.dbo.Style_FabricCode as a 
-inner join Trade_To_Pms.dbo.Style_FabricCode as b ON a.StyleUkey = b.StyleUkey AND a.LectraCode	= b.LectraCode
+inner join Trade_To_Pms.dbo.Style_FabricCode as b ON a.StyleUkey = b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode
 -------------------------- INSERT INTO 抓
 RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_FabricCode(
 StyleUkey
-,LectraCode
+,FabricPanelCode
 ,FabricCode
 ,PatternPanel
 ,AddName
@@ -830,7 +830,7 @@ StyleUkey
 )
 select 
 StyleUkey
-,LectraCode
+,FabricPanelCode
 ,FabricCode
 ,PatternPanel
 ,AddName
@@ -840,7 +840,7 @@ StyleUkey
 ,Style_BOFUkey
 ,QTWidth
 from Trade_To_Pms.dbo.Style_FabricCode as b WITH (NOLOCK)
-where not exists(select 1 from Production.dbo.Style_FabricCode as a WITH (NOLOCK) where a.StyleUkey = b.StyleUkey AND a.LectraCode	= b.LectraCode)
+where not exists(select 1 from Production.dbo.Style_FabricCode as a WITH (NOLOCK) where a.StyleUkey = b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode)
 --STYLE8
 --Style_BOF
 ----------------------刪除主TABLE多的資料
@@ -1080,7 +1080,7 @@ Delete Production.dbo.Style_ColorCombo
 from Production.dbo.Style_ColorCombo as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_ColorCombo as b
-on a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.LectraCode	= b.LectraCode
+on a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.FabricPanelCode	= b.FabricPanelCode
 where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 RAISERROR('imp_Style - Starts',0,0)
@@ -1090,7 +1090,7 @@ SET
 --,a.Article	= b.Article
 a.ColorID	= b.ColorID
 ,a.FabricCode	= b.FabricCode
---,a.LectraCode	= b.LectraCode
+--,a.FabricPanelCode	= b.FabricPanelCode
 ,a.PatternPanel	= b.PatternPanel
 ,a.AddName	= b.AddName
 ,a.AddDate	= b.AddDate
@@ -1098,7 +1098,7 @@ a.ColorID	= b.ColorID
 ,a.EditDate	= b.EditDate
 
 from Production.dbo.Style_ColorCombo as a 
-inner join Trade_To_Pms.dbo.Style_ColorCombo as b ON a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.LectraCode	= b.LectraCode
+inner join Trade_To_Pms.dbo.Style_ColorCombo as b ON a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.FabricPanelCode	= b.FabricPanelCode
 -------------------------- INSERT INTO 抓
 RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_ColorCombo(
@@ -1106,7 +1106,7 @@ INSERT INTO Production.dbo.Style_ColorCombo(
 ,Article
 ,ColorID
 ,FabricCode
-,LectraCode
+,FabricPanelCode
 ,PatternPanel
 ,AddName
 ,AddDate
@@ -1118,14 +1118,14 @@ select
 ,Article
 ,ColorID
 ,FabricCode
-,LectraCode
+,FabricPanelCode
 ,PatternPanel
 ,AddName
 ,AddDate
 ,EditName
 ,EditDate
 from Trade_To_Pms.dbo.Style_ColorCombo as b
-where not exists(select 1 from Production.dbo.Style_ColorCombo as a WITH (NOLOCK) where a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.LectraCode	= b.LectraCode)
+where not exists(select 1 from Production.dbo.Style_ColorCombo as a WITH (NOLOCK) where a. StyleUkey	= b. StyleUkey AND a.Article	= b.Article AND a.FabricPanelCode	= b.FabricPanelCode)
 --STYLEJ
 --Style_HSCode
 ----------------------刪除主TABLE多的資料
@@ -1199,14 +1199,14 @@ Delete Production.dbo.Style_MiAdidasColorCombo
 from Production.dbo.Style_MiAdidasColorCombo as a 
 INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
 left join Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b
-on a.StyleUkey	= b.StyleUkey AND a.LectraCode	= b.LectraCode AND a.Ukey_old	= b.Ukey_old
+on a.StyleUkey	= b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode AND a.Ukey_old	= b.Ukey_old
 where b.StyleUkey is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
 --a.StyleUkey	= b.StyleUkey
---,a.LectraCode	= b.LectraCode
+--,a.FabricPanelCode	= b.FabricPanelCode
 a.SetupID	= b.SetupID
 ,a.AddName	= b.AddName
 ,a.AddDate	= b.AddDate
@@ -1215,12 +1215,12 @@ a.SetupID	= b.SetupID
 --,a.Ukey_old	= b.Ukey_old
 
 from Production.dbo.Style_MiAdidasColorCombo as a 
-inner join Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b ON a.StyleUkey	= b.StyleUkey AND a.LectraCode	= b.LectraCode AND a.Ukey_old	= b.Ukey_old
+inner join Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b ON a.StyleUkey	= b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode AND a.Ukey_old	= b.Ukey_old
 -------------------------- INSERT INTO 抓
 RAISERROR('imp_Style - Starts',0,0)
 INSERT INTO Production.dbo.Style_MiAdidasColorCombo(
 StyleUkey
-,LectraCode
+,FabricPanelCode
 ,SetupID
 ,AddName
 ,AddDate
@@ -1230,7 +1230,7 @@ StyleUkey
 )
 select 
 StyleUkey
-,LectraCode
+,FabricPanelCode
 ,SetupID
 ,AddName
 ,AddDate
@@ -1239,7 +1239,7 @@ StyleUkey
 ,Ukey_old
 
 from Trade_To_Pms.dbo.Style_MiAdidasColorCombo as b WITH (NOLOCK)
-where not exists(select 1 from Production.dbo.Style_MiAdidasColorCombo as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.LectraCode	= b.LectraCode AND a.Ukey_old	= b.Ukey_old)
+where not exists(select 1 from Production.dbo.Style_MiAdidasColorCombo as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.FabricPanelCode	= b.FabricPanelCode AND a.Ukey_old	= b.Ukey_old)
 --STYLELT
 --Style_GMTLTFty
 ----------------------刪除主TABLE多的資料

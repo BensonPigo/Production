@@ -545,7 +545,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 ------------Order_ColorCombo---------------(主料配色表)
 		Merge Production.dbo.Order_ColorCombo as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_ColorCombo a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.article=s.article and t.lectracode=s.lectracode
+		on t.id=s.id and t.article=s.article and t.FabricPanelCode=s.FabricPanelCode
 		when matched then 
 			update set
 			t.ColorID= s.ColorID,
@@ -556,8 +556,8 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			t.EditName= s.EditName,
 			t.EditDate= s.EditDate
 		when not matched by target then 
-			insert(Id,Article,ColorID,FabricCode,LectraCode,PatternPanel,AddName,AddDate,EditName,EditDate)
-			values(s.Id,s.Article,s.ColorID,s.FabricCode,s.LectraCode,s.PatternPanel,s.AddName,s.AddDate,s.EditName,s.EditDate)
+			insert(Id,Article,ColorID,FabricCode,FabricPanelCode,PatternPanel,AddName,AddDate,EditName,EditDate)
+			values(s.Id,s.Article,s.ColorID,s.FabricCode,s.FabricPanelCode,s.PatternPanel,s.AddName,s.AddDate,s.EditName,s.EditDate)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 			
@@ -565,32 +565,32 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 		-------------Order_FabricCode------------------部位vs布別vsQT
 		Merge Production.dbo.Order_FabricCode as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_FabricCode a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.Lectracode=s.Lectracode
+		on t.id=s.id and t.FabricPanelCode=s.FabricPanelCode
 		when matched then 
 			update set
 			t.PatternPanel= s.PatternPanel,
 			t.FabricCode= s.FabricCode,
-			t.Lectracode= s.Lectracode,
+			t.FabricPanelCode= s.FabricPanelCode,
 			t.AddName= s.AddName,
 			t.AddDate= s.AddDate,
 			t.EditName= s.EditName,
 			t.EditDate= s.EditDate,
 			t.Order_BOFUkey= s.Order_BOFUkey
 		when not matched by target then 
-			insert(Id,PatternPanel,FabricCode,Lectracode,AddName,AddDate,EditName,EditDate,Order_BOFUkey)
-			values(s.Id,s.PatternPanel,s.FabricCode,s.Lectracode,s.AddName,s.AddDate,s.EditName,s.EditDate,s.Order_BOFUkey)
+			insert(Id,PatternPanel,FabricCode,FabricPanelCode,AddName,AddDate,EditName,EditDate,Order_BOFUkey)
+			values(s.Id,s.PatternPanel,s.FabricCode,s.FabricPanelCode,s.AddName,s.AddDate,s.EditName,s.EditDate,s.Order_BOFUkey)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
 -------------Order_FabricCode_QT-----------------
 		Merge Production.dbo.Order_FabricCode_QT as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_FabricCode_QT a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.Lectracode=s.Lectracode and t.seqno=s.seqno
+		on t.id=s.id and t.FabricPanelCode=s.FabricPanelCode and t.seqno=s.seqno
 		when matched then 
 			update set
 			t.FabricCode= s.FabricCode,
 			t.QTFabricCode= s.QTFabricCode,
-			t.QTLectraCode= s.QTLectraCode,
+			t.QTFabricPanelCode= s.QTFabricPanelCode,
 			t.AddName= s.AddName,
 			t.AddDate= s.AddDate,
 			t.EditName= s.EditName,
@@ -598,8 +598,8 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			t.PatternPanel= s.PatternPanel,
 			t.QTPatternPanel= s.QTPatternPanel
 		when not matched by target then 
-			insert(Id,FabricCode,LectraCode,SeqNO,QTFabricCode,QTLectraCode,AddName,AddDate,EditName,EditDate,PatternPanel,QTPatternPanel)
-			values(s.Id,s.FabricCode,s.LectraCode,s.SeqNO,s.QTFabricCode,s.QTLectraCode,s.AddName,s.AddDate,s.EditName,s.EditDate,s.PatternPanel,s.QTPatternPanel)
+			insert(Id,FabricCode,FabricPanelCode,SeqNO,QTFabricCode,QTFabricPanelCode,AddName,AddDate,EditName,EditDate,PatternPanel,QTPatternPanel)
+			values(s.Id,s.FabricCode,s.FabricPanelCode,s.SeqNO,s.QTFabricCode,s.QTFabricPanelCode,s.AddName,s.AddDate,s.EditName,s.EditDate,s.PatternPanel,s.QTPatternPanel)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 		-------------Order_Bof -----------------------Bill of Fabric
@@ -651,7 +651,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			t.UsageUnit= s.UsageUnit,
 			t.Width= s.Width,
 			t.SysUsageQty= s.SysUsageQty,
-			t.QTLectraCode= s.QTLectraCode,
+			t.QTFabricPanelCode= s.QTFabricPanelCode,
 			t.Remark= s.Remark,
 			t.OrderIdList= s.OrderIdList,
 			t.AddName= s.AddName,
@@ -659,8 +659,8 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			t.EditName= s.EditName,
 			t.EditDate= s.EditDate
 		when not matched by target then 
-			insert(  Id,  Order_BOFUkey,  ColorId,  SuppColor,  OrderQty,  Price,  UsageQty,  UsageUnit,  Width,  SysUsageQty,  QTLectraCode,  Remark,  OrderIdList,  AddName,  AddDate,  EditName,  EditDate,UKEY)
-			values(s.Id,s.Order_BOFUkey,s.ColorId,s.SuppColor,s.OrderQty,s.Price,s.UsageQty,s.UsageUnit,s.Width,s.SysUsageQty,s.QTLectraCode,s.Remark,s.OrderIdList,s.AddName,s.AddDate,s.EditName,s.EditDate,s.UKEY)
+			insert(  Id,  Order_BOFUkey,  ColorId,  SuppColor,  OrderQty,  Price,  UsageQty,  UsageUnit,  Width,  SysUsageQty,  QTFabricPanelCode,  Remark,  OrderIdList,  AddName,  AddDate,  EditName,  EditDate,UKEY)
+			values(s.Id,s.Order_BOFUkey,s.ColorId,s.SuppColor,s.OrderQty,s.Price,s.UsageQty,s.UsageUnit,s.Width,s.SysUsageQty,s.QTFabricPanelCode,s.Remark,s.OrderIdList,s.AddName,s.AddDate,s.EditName,s.EditDate,s.UKEY)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
@@ -752,7 +752,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			t.MarkerName= s.MarkerName,
 			t.FabricCode= s.FabricCode,
 			t.FabricCombo= s.FabricCombo,
-			t.LectraCode= s.LectraCode,
+			t.FabricPanelCode= s.FabricPanelCode,
 			t.isQT= s.isQT,
 			t.MarkerLength= s.MarkerLength,
 			t.ConsPC= s.ConsPC,
@@ -779,8 +779,8 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			t.EditName= s.EditName,
 			t.EditDate= s.EditDate
 		when not matched by target then
-			insert(Id,Ukey,Seq,MarkerName,FabricCode,FabricCombo,LectraCode,isQT,MarkerLength,ConsPC,Cuttingpiece,ActCuttingPerimeter,StraightLength,CurvedLength,Efficiency,Remark,MixedSizeMarker,MarkerNo,MarkerUpdate,MarkerUpdateName,AllSize,PhaseID,SMNoticeID,MarkerVersion,Direction,CuttingWidth,Width,Type,AddName,AddDate,EditName,EditDate)
-			values(s.Id,s.Ukey,s.Seq,s.MarkerName,s.FabricCode,s.FabricCombo,s.LectraCode,s.isQT,s.MarkerLength,s.ConsPC,s.Cuttingpiece,s.ActCuttingPerimeter,s.StraightLength,s.CurvedLength,s.Efficiency,s.Remark,s.MixedSizeMarker,s.MarkerNo,s.MarkerUpdate,s.MarkerUpdateName,s.AllSize,s.PhaseID,s.SMNoticeID,s.MarkerVersion,s.Direction,s.CuttingWidth,s.Width,s.Type,s.AddName,s.AddDate,s.EditName,s.EditDate)
+			insert(Id,Ukey,Seq,MarkerName,FabricCode,FabricCombo,FabricPanelCode,isQT,MarkerLength,ConsPC,Cuttingpiece,ActCuttingPerimeter,StraightLength,CurvedLength,Efficiency,Remark,MixedSizeMarker,MarkerNo,MarkerUpdate,MarkerUpdateName,AllSize,PhaseID,SMNoticeID,MarkerVersion,Direction,CuttingWidth,Width,Type,AddName,AddDate,EditName,EditDate)
+			values(s.Id,s.Ukey,s.Seq,s.MarkerName,s.FabricCode,s.FabricCombo,s.FabricPanelCode,s.isQT,s.MarkerLength,s.ConsPC,s.Cuttingpiece,s.ActCuttingPerimeter,s.StraightLength,s.CurvedLength,s.Efficiency,s.Remark,s.MixedSizeMarker,s.MarkerNo,s.MarkerUpdate,s.MarkerUpdateName,s.AllSize,s.PhaseID,s.SMNoticeID,s.MarkerVersion,s.Direction,s.CuttingWidth,s.Width,s.Type,s.AddName,s.AddDate,s.EditName,s.EditDate)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
@@ -839,7 +839,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			t.MarkerName=			s.MarkerName,
 			t.FabricCombo=			s.FabricCombo,
 			t.MarkerLength=		replace(s.MarkerLength,'Ｙ','Y'),
-			t.LectraCode=			s.LectraCode,
+			t.FabricPanelCode=			s.FabricPanelCode,
 			t.ConsPC= s.ConsPC,
 			t.CuttingPiece= s.CuttingPiece,
 			t.ActCuttingPerimeter=	replace(s.ActCuttingPerimeter,'Yd','Y'),
@@ -869,8 +869,8 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			t.MarkerDownloadID= s.MarkerDownloadID,
 			t.OrderCUkey_Old= s.OrderCUkey_Old
 		when not matched by target then 
-			insert(Id,Ukey,Seq,MarkerName,FabricCombo,MarkerLength,LectraCode,ConsPC,CuttingPiece,ActCuttingPerimeter,StraightLength,FabricCode,CurvedLength,Efficiency,Article,Remark,MixedSizeMarker,MarkerNo,MarkerUpdate,MarkerUpdateName,AllSize,PhaseID,SMNoticeID,MarkerVersion,Direction,CuttingWidth,Width,TYPE,AddName,AddDate,EditName,EditDate,isQT,MarkerDownloadID,OrderCUkey_Old)
-			values(s.Id,s.Ukey,s.Seq,s.MarkerName,s.FabricCombo,s.MarkerLength,s.LectraCode,s.ConsPC,s.CuttingPiece,s.ActCuttingPerimeter,s.StraightLength,s.FabricCode,s.CurvedLength,s.Efficiency,s.Article,s.Remark,s.MixedSizeMarker,s.MarkerNo,s.MarkerUpdate,s.MarkerUpdateName,s.AllSize,s.PhaseID,s.SMNoticeID,s.MarkerVersion,s.Direction,s.CuttingWidth,s.Width,s.TYPE,s.AddName,s.AddDate,s.EditName,s.EditDate,s.isQT,s.MarkerDownloadID,s.OrderCUkey_Old)
+			insert(Id,Ukey,Seq,MarkerName,FabricCombo,MarkerLength,FabricPanelCode,ConsPC,CuttingPiece,ActCuttingPerimeter,StraightLength,FabricCode,CurvedLength,Efficiency,Article,Remark,MixedSizeMarker,MarkerNo,MarkerUpdate,MarkerUpdateName,AllSize,PhaseID,SMNoticeID,MarkerVersion,Direction,CuttingWidth,Width,TYPE,AddName,AddDate,EditName,EditDate,isQT,MarkerDownloadID,OrderCUkey_Old)
+			values(s.Id,s.Ukey,s.Seq,s.MarkerName,s.FabricCombo,s.MarkerLength,s.FabricPanelCode,s.ConsPC,s.CuttingPiece,s.ActCuttingPerimeter,s.StraightLength,s.FabricCode,s.CurvedLength,s.Efficiency,s.Article,s.Remark,s.MixedSizeMarker,s.MarkerNo,s.MarkerUpdate,s.MarkerUpdateName,s.AllSize,s.PhaseID,s.SMNoticeID,s.MarkerVersion,s.Direction,s.CuttingWidth,s.Width,s.TYPE,s.AddName,s.AddDate,s.EditName,s.EditDate,s.isQT,s.MarkerDownloadID,s.OrderCUkey_Old)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
 
@@ -935,20 +935,20 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 		----------Order_EachCons_PatternPanel---------------PatternPanel
 			Merge Production.dbo.Order_EachCons_PatternPanel as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_EachCons_PatternPanel a WITH (NOLOCK) inner join #Torder b on a.id=b.id) as s
-		on t.PatternPanel=s.PatternPanel and t.Order_EachConsUkey=s.Order_EachConsUkey and t.LectraCode=s.LectraCode
+		on t.PatternPanel=s.PatternPanel and t.Order_EachConsUkey=s.Order_EachConsUkey and t.FabricPanelCode=s.FabricPanelCode
 		When matched then 
 			update set 
 			t.Id= s.Id,
 			--t.PatternPanel= s.PatternPanel,
 			--t.Order_EachConsUkey= s.Order_EachConsUkey,
-			--t.LectraCode= s.LectraCode,
+			--t.FabricPanelCode= s.FabricPanelCode,
 			t.AddName= s.AddName,
 			t.AddDate= s.AddDate,
 			t.EditName= s.EditName,
 			t.EditDate= s.EditDate
 		when not matched by target then 
-			insert(Id,PatternPanel,Order_EachConsUkey,LectraCode,AddName,AddDate,EditName,EditDate)
-			values(s.Id,s.PatternPanel,s.Order_EachConsUkey,s.LectraCode,s.AddName,s.AddDate,s.EditName,s.EditDate)
+			insert(Id,PatternPanel,Order_EachConsUkey,FabricPanelCode,AddName,AddDate,EditName,EditDate)
+			values(s.Id,s.PatternPanel,s.Order_EachConsUkey,s.FabricPanelCode,s.AddName,s.AddDate,s.EditName,s.EditDate)
 		when not matched by source and t.id in (select id from #TOrder) then 
 			delete;
 
@@ -1158,29 +1158,29 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 
 		Merge Production.dbo.MNOrder_ColorCombo as t
 		Using (select a.* from Trade_To_Pms.dbo.MNOrder_ColorCombo a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.Article=s.Article and t.LectraCode=s.LectraCode
+		on t.id=s.id and t.Article=s.Article and t.FabricPanelCode=s.FabricPanelCode
 		when matched then 
 			update set 
 			t.ColorID= s.ColorID,
 			t.FabricCode= s.FabricCode,
 			t.PatternPanel= s.PatternPanel
 		when not matched by target then
-			insert(ID,Article,ColorID,FabricCode,PatternPanel,LectraCode)
-			values(s.ID,s.Article,s.ColorID,s.FabricCode,s.PatternPanel,s.LectraCode)
+			insert(ID,Article,ColorID,FabricCode,PatternPanel,FabricPanelCode)
+			values(s.ID,s.Article,s.ColorID,s.FabricCode,s.PatternPanel,s.FabricPanelCode)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
 		--------------MNOrder_FabricCode-----------------M/NOtice-配色表 Color Comb. (主料-部位vs布別vsQT)
 		Merge Production.dbo.MNOrder_FabricCode as t
 		Using (select a.* from Trade_To_Pms.dbo.MNOrder_FabricCode a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.LectraCode=s.LectraCode
+		on t.id=s.id and t.FabricPanelCode=s.FabricPanelCode
 		when matched then 
 			update set 
 			t.PatternPanel= s.PatternPanel,
 			t.FabricCode= s.FabricCode
 		when not matched by target then
-			insert(ID,PatternPanel,FabricCode,LectraCode)
-			values(s.ID,s.PatternPanel,s.FabricCode,s.LectraCode)
+			insert(ID,PatternPanel,FabricCode,FabricPanelCode)
+			values(s.ID,s.PatternPanel,s.FabricCode,s.FabricPanelCode)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
