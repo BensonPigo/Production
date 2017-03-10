@@ -26,43 +26,47 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             StringBuilder selectCommand1 = new StringBuilder();
-            selectCommand1.Append(string.Format(@";with 
-group_detail
-as
-(
-select d.FromPOID,d.fromseq1,fromseq2,sum(qty) scrap_qty from dbo.SubTransfer_Detail d WITH (NOLOCK) where d.ID='{0}'
-group by d.FromPOID,d.fromseq1,fromseq2
-),
-cte
-as
-(
-select SubTransfer_Detail.FromPOID,SubTransfer_Detail.FromSeq1,SubTransfer_Detail.FromSeq2,sum(qty) as accu_qty 
-from SubTransfer WITH (NOLOCK) inner join SubTransfer_Detail WITH (NOLOCK) on SubTransfer.id = SubTransfer_Detail.id
-inner join group_detail d1 WITH (NOLOCK) 
-on d1.FromPOID = SubTransfer_Detail.FromPOID and d1.FromSeq1 = SubTransfer_Detail.FromSeq1 and d1.FromSeq2 = SubTransfer_Detail.FromSeq2
-where SubTransfer.type='E' and SubTransfer.Status='Confirmed' and SubTransfer.id !='{0}'
-and SubTransfer_Detail.FromMDivisionID = '{1}'
-group by SubTransfer_Detail.FromPOID,SubTransfer_Detail.FromSeq1,SubTransfer_Detail.FromSeq2
+            selectCommand1.Append(string.Format(@"
+;with group_detail as(
+    select 	d.FromPOID
+           	,d.fromseq1
+			,fromseq2
+			,scrap_qty = sum(qty) 
+    from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+    where d.ID='{0}'
+    group by d.FromPOID, d.fromseq1, fromseq2
+), cte as (
+    select	SubTransfer_Detail.FromPOID
+    		,SubTransfer_Detail.FromSeq1
+    		,SubTransfer_Detail.FromSeq2
+    		,accu_qty = sum(qty) 
+    from SubTransfer WITH (NOLOCK) 
+    inner join SubTransfer_Detail WITH (NOLOCK) on SubTransfer.id = SubTransfer_Detail.id
+    inner join group_detail d1 WITH (NOLOCK) on d1.FromPOID = SubTransfer_Detail.FromPOID and d1.FromSeq1 = SubTransfer_Detail.FromSeq1 and d1.FromSeq2 = SubTransfer_Detail.FromSeq2
+    where SubTransfer.type='E' and SubTransfer.Status='Confirmed' and SubTransfer.id !='{0}'
+    group by SubTransfer_Detail.FromPOID, SubTransfer_Detail.FromSeq1, SubTransfer_Detail.FromSeq2
 )
-select FromPOID,fromseq1,fromseq2 
-,round(isnull(sum(i.Qty),0.00)*v.rate,2) taipei_scrap
-,isnull((select accu_qty from cte where cte.FromPOID = d.FromPOID and cte.FromSeq1 = d.FromSeq1 and cte.FromSeq2 = d.FromSeq2),0.00) accu_qty
-,d.scrap_qty
-,dbo.getMtlDesc(d.FromPOID,d.FromSeq1,d.FromSeq2,2,0) description
-,p.StockUnit
-,(round(isnull(sum(i.Qty),0.00)*v.rate,2) - isnull((select accu_qty from cte where cte.FromPOID = d.FromPOID and cte.FromSeq1 = d.FromSeq1 and cte.FromSeq2 = d.FromSeq2),0.00) - d.scrap_qty) as balance_qty
-from group_detail d WITH (NOLOCK) 
-LEFT join dbo.po_supp_detail p WITH (NOLOCK) on p.id = d.frompoid and p.seq1 = d.fromseq1 and p.seq2 = d.fromseq2
-LEFT join View_unitrate v on v.FROM_U = p.POUnit and v.TO_U = p.StockUnit
-INNER join (Invtrans I WITH (NOLOCK) inner join dbo.Factory WITH (NOLOCK) on i.FactoryID = factory.ID
-)on I.InventoryPOID = d.FromPOID and i.InventorySeq1 = d.FromSeq1 and i.InventorySeq2 = d.FromSeq2 and  i.Type='5'
-where factory.MDivisionID='{1}'
+select	FromPOID
+		,fromseq1
+		,fromseq2 
+		,taipei_scrap = round(isnull(sum(i.Qty),0.00)*v.rate,2) 
+		,accu_qty = isnull((select accu_qty from cte where cte.FromPOID = d.FromPOID and cte.FromSeq1 = d.FromSeq1 and cte.FromSeq2 = d.FromSeq2),0.00) 
+		,d.scrap_qty
+		,description = dbo.getMtlDesc(d.FromPOID,d.FromSeq1,d.FromSeq2,2,0) 
+		,p.StockUnit
+		,balance_qty = (round(isnull(sum(i.Qty),0.00)*v.rate,2) - isnull((select accu_qty from cte where cte.FromPOID = d.FromPOID and cte.FromSeq1 = d.FromSeq1 and cte.FromSeq2 = d.FromSeq2),0.00) - d.scrap_qty)
+	from group_detail d WITH (NOLOCK) 
+	LEFT join dbo.po_supp_detail p WITH (NOLOCK) on p.id = d.frompoid and p.seq1 = d.fromseq1 and p.seq2 = d.fromseq2
+	LEFT join View_unitrate v on v.FROM_U = p.POUnit and v.TO_U = p.StockUnit
+	INNER join (
+		Invtrans I WITH (NOLOCK) inner join dbo.Factory WITH (NOLOCK) on i.FactoryID = factory.ID
+	) on I.InventoryPOID = d.FromPOID and i.InventorySeq1 = d.FromSeq1 and i.InventorySeq2 = d.FromSeq2 and  i.Type='5'
 group by d.FromPOID,d.fromseq1,d.fromseq2,v.rate,p.StockUnit,d.scrap_qty", dr["id"], Sci.Env.User.Keyword));
 
             DataTable selectDataTable1;
             P24.ShowWaitMessage("Data Loading...");
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
-            
+
             if (selectResult1 == false)
             { ShowErr(selectCommand1.ToString(), selectResult1); }
 
@@ -81,7 +85,7 @@ group by d.FromPOID,d.fromseq1,d.fromseq2,v.rate,p.StockUnit,d.scrap_qty", dr["i
                  .Numeric("accu_qty", header: "Accu. Scrap", width: Widths.AnsiChars(12), integer_places: 10, decimal_places: 2)
                  .Numeric("scrap_qty", header: "Scrap Qty", width: Widths.AnsiChars(12), integer_places: 10, decimal_places: 2)
                  .Numeric("balance_qty", header: "Balance", width: Widths.AnsiChars(12), integer_places: 10, decimal_places: 2)
-                 .Text("stockunit", header: "Stock"+Environment.NewLine+"Unit", width: Widths.AnsiChars(5))
+                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", width: Widths.AnsiChars(5))
                  .EditText("Description", header: "Description", width: Widths.AnsiChars(40))
                  ;
         }

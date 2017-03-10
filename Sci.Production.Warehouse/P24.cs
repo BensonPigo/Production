@@ -25,7 +25,7 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             InsertDetailGridOnDoubleClick = false;
-
+            //MDivisionID 是 P24 寫入 => Sci.Env.User.Keyword
             this.DefaultFilter = string.Format("Type='E' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
@@ -132,7 +132,7 @@ namespace Sci.Production.Warehouse
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword+"SO", "SubTransfer", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory+"SO", "SubTransfer", (DateTime)CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -207,11 +207,17 @@ namespace Sci.Production.Warehouse
             DataTable datacheck;
 
             #region -- 檢查庫存項lock --
-            sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.SubTransfer_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.FromMDivisionID = f.MDivisionID and d.FromPOID = f.POID  AND D.FromStockType = F.StockType
-and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
+            sqlcmd = string.Format(@"
+Select 	d.frompoid
+		,d.fromseq1
+		,d.fromseq2
+		,d.fromRoll
+		,d.Qty
+		,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) 
+from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) 
+    on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
+       and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -235,11 +241,17 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             #region -- 檢查負數庫存 --
 
-            sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.SubTransfer_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.FromMDivisionID = f.MDivisionID and d.FromPOID = f.POID  AND D.FromStockType = F.StockType
-and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
+            sqlcmd = string.Format(@"
+Select 	d.frompoid
+		,d.fromseq1
+		,d.fromseq2
+		,d.fromRoll
+		,d.Qty
+		,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+left join FtyInventory f WITH (NOLOCK) 
+	on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
+	   and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -462,15 +474,20 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             DualResult result, result2;
 
             #region -- 檢查庫存項lock --
-            sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.SubTransfer_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.tomdivisionid = f.mdivisionid
-and d.toPoId = f.PoId
-and d.toSeq1 = f.Seq1
-and d.toSeq2 = f.seq2
-and d.toStocktype = f.StockType
-and d.toRoll = f.Roll
+            sqlcmd = string.Format(@"
+Select 	d.topoid
+		,d.toseq1
+		,d.toseq2
+		,d.toRoll
+		,d.Qty
+		,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) 
+	on d.toPoId = f.PoId
+	and d.toSeq1 = f.Seq1
+	and d.toSeq2 = f.seq2
+	and d.toStocktype = f.StockType
+	and d.toRoll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -494,15 +511,19 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             #region -- 檢查負數庫存 --
 
-            sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.SubTransfer_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.tomdivisionid = f.mdivisionid
-and d.toPoId = f.PoId
-and d.toSeq1 = f.Seq1
-and d.toSeq2 = f.seq2
-and d.toStocktype = f.StockType
-and d.toRoll = f.Roll
+            sqlcmd = string.Format(@"
+Select 	d.topoid
+		,d.toseq1
+		,d.toseq2
+		,d.toRoll,d.Qty
+		,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+left join FtyInventory f WITH (NOLOCK) 
+	on d.toPoId = f.PoId
+	and d.toSeq1 = f.Seq1
+	and d.toSeq2 = f.seq2
+	and d.toStocktype = f.StockType
+	and d.toRoll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -690,34 +711,32 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select 
-a.id
-,a.FromFtyinventoryUkey
-,a.FromMDivisionid
-,a.FromPoId
-,a.FromSeq1
-,a.FromSeq2
-,concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2) as FromSeq
-,FabricType = Case p1.FabricType WHEN 'F' THEN 'Fabric' WHEN 'A' THEN 'Accessory' ELSE 'Other'  END 
-,p1.stockunit
-,dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) as [description]
-,a.FromRoll
-,a.FromDyelot
-,a.FromStockType
-,a.Qty
-,a.ToMDivisionid
-,a.ToPoId
-,a.ToSeq1
-,a.ToSeq2
-,a.ToDyelot
-,a.ToRoll
-,a.ToStockType
-,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FromFtyInventoryUkey) t 
-	for xml path('')), 1, 1, '') location
-,a.ukey
+            this.DetailSelectCommand = string.Format(@"
+select 
+    a.id
+    ,a.FromFtyinventoryUkey
+    ,a.FromPoId
+    ,a.FromSeq1
+    ,a.FromSeq2
+    ,FromSeq = concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2)
+    ,FabricType = Case p1.FabricType WHEN 'F' THEN 'Fabric' WHEN 'A' THEN 'Accessory' ELSE 'Other'  END 
+    ,p1.stockunit
+    ,description = dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0)
+    ,a.FromRoll
+    ,a.FromDyelot
+    ,a.FromStockType
+    ,a.Qty
+    ,a.ToPoId
+    ,a.ToSeq1
+    ,a.ToSeq2
+    ,a.ToDyelot
+    ,a.ToRoll
+    ,a.ToStockType
+    ,location = stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FromFtyInventoryUkey) t 
+	             for xml path('')), 1, 1, '') 
+    ,a.ukey
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 
-and p1.SEQ2 = a.FromSeq2
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -800,7 +819,7 @@ Where a.id = '{0}'", masterID);
             result = DBProxy.Current.Select("",
             @"select a.FromPOID
                     ,a.FromSeq1+'-'+a.FromSeq2 as SEQ
-	               ,IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) 
+	                ,IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) 
 				      AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
 				      AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
 				      ,'',dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,0))[DESC]

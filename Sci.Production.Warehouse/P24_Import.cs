@@ -44,35 +44,34 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
                 #region -- SQL Command --
-                strSQLCmd.Append(string.Format(@"select 0 as selected 
-,'' id
-, c.ukey as FromFtyinventoryUkey
-, c.mdivisionid  as fromMdivisionid
-, a.id as fromPoId
-,a.Seq1 as fromseq1
-,a.Seq2 as fromseq2
-,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as fromseq
-,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
-,c.Roll as fromRoll
-,c.Dyelot as fromDyelot
-,c.StockType as fromStocktype
-,c.inqty-c.outqty + c.adjustqty as balance
-,0.00 as qty
-,a.FabricType
-,a.stockunit
-,a.InputQty
-,a.id as topoid
-,a.SEQ1 as toseq1
-,a.SEQ2 as toseq2
-,c.Roll as toroll
-,c.Dyelot as todyelot
-,'O' as toStocktype
-,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = c.Ukey) t 
-	for xml path('')), 1, 1, '') Fromlocation
-,'{0}' as toMdivisionid
+                strSQLCmd.Append(string.Format(@"
+select 	selected = 0   
+		, id = '' 
+		, FromFtyinventoryUkey = c.ukey
+		, fromPoId = a.id
+		, fromseq1 = a.Seq1
+		, fromseq2 = a.Seq2 
+		, fromseq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
+		, Description = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0)
+		, fromRoll = c.Roll
+		, fromDyelot = c.Dyelot 
+		, fromStocktype = c.StockType 
+		, balance = c.inqty-c.outqty + c.adjustqty 
+		, qty = 0.00 
+		, a.FabricType
+		, a.stockunit
+		, a.InputQty
+		, topoid = a.id 
+		, toseq1 = a.SEQ1 
+		, toseq2 = a.SEQ2 
+		, toroll = c.Roll 
+		, todyelot = c.Dyelot 
+		, toStocktype = 'O' 
+		, Fromlocation = stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = c.Ukey) t 
+							for xml path('')), 1, 1, '') 
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
-Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I' and c.mdivisionid='{0}'", Sci.Env.User.Keyword));
+Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I'"));
                 #endregion
 
                 System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -201,9 +200,9 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I' and 
             dr2 = dtGridBS1.Select("qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(string.Format(@"FromFtyinventoryUkey = {7} and tomdivisionid = '{0}' and topoid = '{1}' and toseq1 = '{2}' and toseq2 = '{3}' 
-                        and toroll ='{4}'and todyelot='{5}' and tostocktype='{6}'"
-                    , tmp["toMdivisionid"], tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"], tmp["tostocktype"], tmp["fromFtyInventoryUkey"]));
+                DataRow[] findrow = dt_detail.Select(string.Format(@"topoid = '{0}' and toseq1 = '{1}' and toseq2 = '{2}' 
+                        and toroll ='{3}'and todyelot='{4}' and tostocktype='{5}' and FromFtyinventoryUkey = '{6}'"
+                    , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"], tmp["tostocktype"], tmp["fromFtyInventoryUkey"]));
 
                 if (findrow.Length > 0)
                 {
@@ -231,8 +230,8 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I' and 
 
             if (txtSeq1.checkEmpty(showErrMsg: false))
             {
-                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from ftyinventory WITH (NOLOCK) where poid ='{0}' and mdivisionid='{1}')"
-                    , sp, Sci.Env.User.Keyword), null))
+                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from ftyinventory WITH (NOLOCK) where poid ='{0}')"
+                    , sp), null))
                 {
                     MyUtility.Msg.WarningBox("SP# is not found!!");
                     e.Cancel = true;
@@ -242,7 +241,7 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I' and 
             else
             {
                 if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from mdivisionpodetail WITH (NOLOCK) where poid ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}' and mdivisionid='{3}')", sp, txtSeq1.seq1, txtSeq1.seq2, Sci.Env.User.Keyword), null))
+                        and seq1 = '{1}' and seq2 = '{2}')", sp, txtSeq1.seq1, txtSeq1.seq2), null))
                 {
                     MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                     e.Cancel = true;
