@@ -26,6 +26,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
+            //MDivisionID 是 P12 寫入 => Sci.Env.User.Keyword
             this.DefaultFilter = string.Format("Type='C' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
             ChangeDetailColor();
             //
@@ -154,7 +155,7 @@ namespace Sci.Production.Warehouse
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IP", "Issue", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "IP", "Issue", (DateTime)CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -347,7 +348,7 @@ namespace Sci.Production.Warehouse
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
+on d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -375,7 +376,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
+on d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -502,7 +503,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
+on d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -530,7 +531,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
+on d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))

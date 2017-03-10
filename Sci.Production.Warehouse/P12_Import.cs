@@ -53,7 +53,6 @@ namespace Sci.Production.Warehouse
 ,0.00 as Qty
 ,'B' StockType
 ,c.ukey as ftyinventoryukey
-,c.mdivisionid
 ,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail WITH (NOLOCK) where ukey = c.ukey) t for xml path('')), 1, 1, '') location
 ,c.inqty-c.outqty + c.adjustqty as balance
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
@@ -61,7 +60,7 @@ inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1
 inner join fabric WITH (NOLOCK) on fabric.scirefno = a.scirefno
 inner join mtltype WITH (NOLOCK) on mtltype.id = fabric.mtltypeid
 Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 and upper(dbo.mtltype.Issuetype) = 'PACKING' 
-and mdivisionid = '{1}' ", sp_b, Sci.Env.User.Keyword);
+", sp_b);
 
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
