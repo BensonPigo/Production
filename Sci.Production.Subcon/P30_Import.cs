@@ -322,13 +322,14 @@ and b.PurchaseQty > 0
             {
                 foreach (DataRow tmp in dr2)
                 {
-                    DataRow[] findrow = 
-                        dt_localPODetail.Select(string.Format(@"orderid = '{0}' 
-                                                                                    and refno = '{1}'
-                                                                                    and threadcolorid = '{2}'"
-                                                                                , tmp["orderid"].ToString()
-                                                                                , tmp["refno"].ToString()
-                                                                                , tmp["threadcolorid"].ToString())
+                    DataRow[] findrow =
+                        dt_localPODetail.Select(string.Format(@"remark = '{0}' 
+                        and refno = '{1}'
+                        and threadcolorid = '{2}'"
+                    , "SP#:" + tmp["orderid"].ToString()
+                    , tmp["refno"].ToString()
+                    , tmp["threadcolorid"].ToString()
+                    )
                                                            );
                     if (findrow.Length > 0)
                     {
@@ -340,7 +341,7 @@ and b.PurchaseQty > 0
                         tmp["id"] = dr_localPO["id"];
                         if (tmp["orderid"].ToString() != tmp["POID"].ToString())
                         {
-                            tmp["remark"] = "SP#:" + tmp["orderid"];                            
+                            tmp["remark"] = "SP#:" + tmp["orderid"].ToString();                            
                         }
                         tmp["orderid"] = tmp["POID"];
                         tmp.AcceptChanges();
