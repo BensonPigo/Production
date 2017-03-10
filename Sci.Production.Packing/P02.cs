@@ -567,10 +567,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                 if (tmpc.Length > l)
                 {
                     int h = tmpc.Length / l;
-                    for (int i = 0; i < h; i++)
-                    {
-                        ctmpc += 1;
-                    }             
+                    ctmpc += h;
                 }
             }
             

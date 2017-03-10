@@ -959,17 +959,66 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             //Shipment mark
             excelRow = excelRow + 3;
             worksheet.Cells[excelRow, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkFront"]);
+                      
             worksheet.Cells[excelRow, 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkBack"]);
+                        
+            string[] marks = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkFront"]).Split('\r');
+            string[] marks2 = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkBack"]).Split('\r');
+            int m = marks.Length + formarks(marks);
+            int m2 = marks2.Length + formarks(marks2);
+            int m1 = m > m2 ? m : m2;
+            int df = 11;
+            int add = (m1 - df) >= 0 ? m1 - df : 0;
+            if (m1 > df)
+            {
+                for (int i = 0; i < add; i++)
+                {
+                    Microsoft.Office.Interop.Excel.Range mark = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString(excelRow + 1)), Type.Missing).EntireRow;
+                    mark.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, mark.Copy(Type.Missing));
+                }
+            }
+            excelRow = excelRow + add + 13;
 
-            worksheet.Cells[excelRow + 13, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkLeft"]);
-            worksheet.Cells[excelRow + 13, 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkRight"]);
+            worksheet.Cells[excelRow , 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkLeft"]);
+            worksheet.Cells[excelRow , 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkRight"]);
+
+            string[] marks3 = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkLeft"]).Split('\r');
+            string[] marks4 = MyUtility.Convert.GetString(PrintData.Rows[0]["MarkRight"]).Split('\r');
+            int m3 = marks3.Length + formarks(marks3);
+            int m4 = marks4.Length + formarks(marks4);
+            int m12 = m3 > m4 ? m3 : m4;
+            int df2 = 11;
+            int add2 = (m12 - df2) >= 0 ? m12 - df2 : 0;
+            if (m12 > df2)
+            {
+                for (int i = 0; i < add2; i++)
+                {
+                    Microsoft.Office.Interop.Excel.Range mark = worksheet.get_Range(string.Format("A{0}", MyUtility.Convert.GetString(excelRow + 1)), Type.Missing).EntireRow;
+                    mark.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, mark.Copy(Type.Missing));
+                }
+            }
 
             //MyUtility.Msg.WaitClear();
             excel.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
             excel.Visible = true;
         }
-        #endregion
 
+        private static int formarks(string[] marks)
+        {
+            int b = 0;
+            int L = 63;
+            foreach (string item in marks)
+            {
+                if (item.Length > L)
+                {
+                    int h = item.Length / L;
+                    b += 1 + h;
+                }
+            }
+            return b;
+        }
+        #endregion
+        
         #region Query Packing List Print out Pacging Guide Report Data
         /// <summary>
         /// QueryPackingGuideReportData(string,DataTable,DataTable,DataTable,DataTable,DataTable,DataTable,string)
