@@ -31,7 +31,7 @@ namespace Sci.Production.Warehouse
             viewer = new ReportViewer();
             viewer.Dock = DockStyle.Fill;
             Controls.Add(viewer);
-
+            //MDivisionID 是 P13 寫入 => Sci.Env.User.Keyword
             this.DefaultFilter = string.Format("Type='D' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
@@ -276,7 +276,7 @@ namespace Sci.Production.Warehouse
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "II", "Issue", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "II", "Issue", (DateTime)CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -638,7 +638,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.MDivisionID,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,p1.FabricType
 ,p1.stockunit
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
