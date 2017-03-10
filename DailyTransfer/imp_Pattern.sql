@@ -157,14 +157,14 @@ select
 from Trade_To_Pms.dbo.Pattern_GL as b WITH (NOLOCK) inner join Trade_To_Pms.dbo.Pattern as c WITH (NOLOCK) on b.ID=c.ID and b.Version=c.Version
 where not exists(select id from Production.dbo.Pattern_GL as a WITH (NOLOCK) where a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ)
 
---表身Pattern_GL_FabricPanelCode
+--表身Pattern_GL_LectraCode
 
 
  ----------------------刪除主TABLE多的資料
-Delete Production.dbo.Pattern_GL_FabricPanelCode
-from Production.dbo.Pattern_GL_FabricPanelCode as a 
+Delete Production.dbo.Pattern_GL_LectraCode
+from Production.dbo.Pattern_GL_LectraCode as a 
 inner join Trade_To_Pms.dbo.Pattern as c on a.ID=c.ID and a.Version=c.Version
-left join Trade_To_Pms.dbo.Pattern_GL_FabricPanelCode as b on a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ and a.ArticleGroup=b.ArticleGroup
+left join Trade_To_Pms.dbo.Pattern_GL_LectraCode as b on a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ and a.ArticleGroup=b.ArticleGroup
 where b.id is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
@@ -179,11 +179,11 @@ SET
       ,a.PatternPanel	      =b.PatternPanel
       ,a.FabricCode	      =b.FabricCode
 
-from Production.dbo.Pattern_GL_FabricPanelCode as a 
+from Production.dbo.Pattern_GL_LectraCode as a 
 inner join Trade_To_Pms.dbo.Pattern as c on a.ID=c.ID and a.Version=c.Version
-inner join Trade_To_Pms.dbo.Pattern_GL_FabricPanelCode as b on a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ and a.ArticleGroup=b.ArticleGroup
+inner join Trade_To_Pms.dbo.Pattern_GL_LectraCode as b on a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ and a.ArticleGroup=b.ArticleGroup
 -------------------------- INSERT INTO 抓
-INSERT INTO Production.dbo.Pattern_GL_FabricPanelCode(
+INSERT INTO Production.dbo.Pattern_GL_LectraCode(
 ID
       ,Version
       ,PatternUKEY
@@ -206,8 +206,8 @@ select
       ,PatternPanel
       ,FabricCode
 
-from Trade_To_Pms.dbo.Pattern_GL_FabricPanelCode as b WITH (NOLOCK) inner join Trade_To_Pms.dbo.Pattern as c WITH (NOLOCK) on b.ID=c.ID and b.Version=c.Version
-where not exists(select id from Production.dbo.Pattern_GL_FabricPanelCode as a WITH (NOLOCK) where  a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ and a.ArticleGroup=b.ArticleGroup)
+from Trade_To_Pms.dbo.Pattern_GL_LectraCode as b WITH (NOLOCK) inner join Trade_To_Pms.dbo.Pattern as c WITH (NOLOCK) on b.ID=c.ID and b.Version=c.Version
+where not exists(select id from Production.dbo.Pattern_GL_LectraCode as a WITH (NOLOCK) where  a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ and a.ArticleGroup=b.ArticleGroup)
 
 
 --表身Pattern_GL_Article
