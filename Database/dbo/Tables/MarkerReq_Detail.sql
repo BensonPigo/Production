@@ -11,6 +11,8 @@
     [ReleaseDate]   DATE         NULL,
     [MarkerNo]      VARCHAR (10) CONSTRAINT [DF_MarkerReq_Detail_MarkerNo] DEFAULT ('') NULL,
     [WorkOrderUkey] BIGINT       CONSTRAINT [DF_MarkerReq_Detail_FabricCode] DEFAULT ((0)) NULL,
+    [CuttingWidth] VARCHAR(8) NULL DEFAULT (''), 
+    [PatternPanel] VARCHAR(120) NULL DEFAULT (''), 
     CONSTRAINT [PK_MarkerReq_Detail] PRIMARY KEY CLUSTERED ([ukey] ASC)
 );
 
