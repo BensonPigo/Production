@@ -1,13 +1,13 @@
 ﻿CREATE TABLE [dbo].[Order_FabricCode_Article] (
     [Id]            VARCHAR (13) CONSTRAINT [DF_Order_FabricCode_Article_Id] DEFAULT ('') NOT NULL,
     [Order_BOFUkey] BIGINT       CONSTRAINT [DF_Order_FabricCode_Article_Order_BOFUkey] DEFAULT ((0)) NOT NULL,
-    [LectraCode]    VARCHAR (2)  CONSTRAINT [DF_Order_FabricCode_Article_LectraCode] DEFAULT ('') NOT NULL,
+    [FabricPanelCode]    VARCHAR (2)  CONSTRAINT [DF_Order_FabricCode_Article_FabricPanelCode] DEFAULT ('') NOT NULL,
     [Article]       VARCHAR (8)  CONSTRAINT [DF_Order_FabricCode_Article_Article] DEFAULT ('') NOT NULL,
     [AddName]       VARCHAR (10) CONSTRAINT [DF_Order_FabricCode_Article_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME     NULL,
     [EditName]      VARCHAR (10) CONSTRAINT [DF_Order_FabricCode_Article_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME     NULL,
-    CONSTRAINT [PK_Order_FabricCode_Article] PRIMARY KEY CLUSTERED ([Order_BOFUkey] ASC, [LectraCode] ASC, [Article] ASC)
+    CONSTRAINT [PK_Order_FabricCode_Article] PRIMARY KEY CLUSTERED ([Order_BOFUkey] ASC, [FabricPanelCode] ASC, [Article] ASC)
 );
 
 
@@ -32,7 +32,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'指定顏�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+部位的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_FabricCode_Article', @level2type = N'COLUMN', @level2name = N'LectraCode';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+部位的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_FabricCode_Article', @level2type = N'COLUMN', @level2name = N'FabricPanelCode';
 
 
 GO

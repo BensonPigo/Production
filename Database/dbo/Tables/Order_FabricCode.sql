@@ -2,13 +2,13 @@
     [Id]            VARCHAR (13)   CONSTRAINT [DF_Order_FabricCode_Id] DEFAULT ('') NOT NULL,
     [PatternPanel]  VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_PatternPanel] DEFAULT ('') NOT NULL,
     [FabricCode]    VARCHAR (3)    CONSTRAINT [DF_Order_FabricCode_FabricCode] DEFAULT ('') NOT NULL,
-    [Lectracode]    VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_Lectracode] DEFAULT ('') NOT NULL,
+    [FabricPanelCode]    VARCHAR (2)    CONSTRAINT [DF_Order_FabricCode_FabricPanelCode] DEFAULT ('') NOT NULL,
     [AddName]       VARCHAR (10)   CONSTRAINT [DF_Order_FabricCode_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME       NULL,
     [EditName]      VARCHAR (10)   CONSTRAINT [DF_Order_FabricCode_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME       NULL,
     [Order_BOFUkey] BIGINT         CONSTRAINT [DF_Order_FabricCode_Order_BOFUkey] DEFAULT ((0)) NULL,
-    CONSTRAINT [PK_Order_FabricCode] PRIMARY KEY CLUSTERED ([Id] ASC, [Lectracode] ASC)
+    CONSTRAINT [PK_Order_FabricCode] PRIMARY KEY CLUSTERED ([Id] ASC, [FabricPanelCode] ASC)
 );
 
 
@@ -33,7 +33,7 @@ GO
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+部位的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_FabricCode', @level2type = N'COLUMN', @level2name = N'Lectracode';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+部位的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_FabricCode', @level2type = N'COLUMN', @level2name = N'FabricPanelCode';
 
 
 GO

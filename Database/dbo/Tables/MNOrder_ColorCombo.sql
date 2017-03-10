@@ -4,8 +4,8 @@
     [ColorID]      VARCHAR (6)  CONSTRAINT [DF_MNOrder_ColorCombo_ColorID] DEFAULT ('') NULL,
     [FabricCode]   VARCHAR (3)  CONSTRAINT [DF_MNOrder_ColorCombo_FabricCode] DEFAULT ('') NULL,
     [PatternPanel] VARCHAR (2)  CONSTRAINT [DF_MNOrder_ColorCombo_PatternPanel] DEFAULT ('') NULL,
-    [LectraCode]   VARCHAR (2)  CONSTRAINT [DF_MNOrder_ColorCombo_LectraCode] DEFAULT ('') NOT NULL,
-    CONSTRAINT [PK_MNOrder_ColorCombo] PRIMARY KEY CLUSTERED ([ID] ASC, [Article] ASC, [LectraCode] ASC)
+    [FabricPanelCode]   VARCHAR (2)  CONSTRAINT [DF_MNOrder_ColorCombo_FabricPanelCode] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_MNOrder_ColorCombo] PRIMARY KEY CLUSTERED ([ID] ASC, [Article] ASC, [FabricPanelCode] ASC)
 );
 
 
@@ -34,5 +34,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'部位別',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+部位的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_ColorCombo', @level2type = N'COLUMN', @level2name = N'LectraCode';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+部位的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_ColorCombo', @level2type = N'COLUMN', @level2name = N'FabricPanelCode';
 

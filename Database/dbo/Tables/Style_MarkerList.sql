@@ -5,7 +5,7 @@
     [MarkerName]          NVARCHAR (20)   CONSTRAINT [DF_Style_MarkerList_MarkerName] DEFAULT ('') NULL,
     [FabricCode]          VARCHAR (3)     CONSTRAINT [DF_Style_MarkerList_FabricCode] DEFAULT ('') NULL,
     [FabricCombo]         VARCHAR (2)     CONSTRAINT [DF_Style_MarkerList_FabricCombo] DEFAULT ('') NULL,
-    [LectraCode]          VARCHAR (2)     CONSTRAINT [DF_Style_MarkerList_LectraCode] DEFAULT ('') NULL,
+    [FabricPanelCode]          VARCHAR (2)     CONSTRAINT [DF_Style_MarkerList_FabricPanelCode] DEFAULT ('') NULL,
     [MarkerLength]        VARCHAR (15)    CONSTRAINT [DF_Style_MarkerList_MarkerLength] DEFAULT ('') NULL,
     [ConsPC]              NUMERIC (12, 4) CONSTRAINT [DF_Style_MarkerList_ConsPC] DEFAULT ((0)) NULL,
     [CuttingPiece]        BIT             CONSTRAINT [DF_Style_MarkerList_CuttingPiece] DEFAULT ((0)) NULL,
@@ -67,7 +67,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'部別組�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+部位的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_MarkerList', @level2type = N'COLUMN', @level2name = N'LectraCode';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+部位的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_MarkerList', @level2type = N'COLUMN', @level2name = N'FabricPanelCode';
 
 
 GO

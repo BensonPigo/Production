@@ -2,9 +2,9 @@
     [ID]           VARCHAR (13)   CONSTRAINT [DF_MNOrder_FabricCode_ID] DEFAULT ('') NOT NULL,
     [PatternPanel] VARCHAR (2)    CONSTRAINT [DF_MNOrder_FabricCode_PatternPanel] DEFAULT ('') NULL,
     [FabricCode]   VARCHAR (3)    CONSTRAINT [DF_MNOrder_FabricCode_FabricCode] DEFAULT ('') NULL,
-    [LectraCode]   VARCHAR (2)    CONSTRAINT [DF_MNOrder_FabricCode_LectraCode] DEFAULT ('') NOT NULL,
+    [FabricPanelCode]   VARCHAR (2)    CONSTRAINT [DF_MNOrder_FabricCode_FabricPanelCode] DEFAULT ('') NOT NULL,
     [ForArticle]   NVARCHAR (MAX) CONSTRAINT [DF_MNOrder_FabricCode_ForArticle] DEFAULT ('') NULL,
-    CONSTRAINT [PK_MNOrder_FabricCode] PRIMARY KEY CLUSTERED ([ID] ASC, [LectraCode] ASC)
+    CONSTRAINT [PK_MNOrder_FabricCode] PRIMARY KEY CLUSTERED ([ID] ASC, [FabricPanelCode] ASC)
 );
 
 
@@ -25,7 +25,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布種', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+部位的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_FabricCode', @level2type = N'COLUMN', @level2name = N'LectraCode';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+部位的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MNOrder_FabricCode', @level2type = N'COLUMN', @level2name = N'FabricPanelCode';
 
 
 GO

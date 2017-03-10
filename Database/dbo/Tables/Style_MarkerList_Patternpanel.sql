@@ -2,12 +2,12 @@
     [StyleUkey]            BIGINT       CONSTRAINT [DF_Style_MarkerList_PatternPanel_StyleUkey] DEFAULT ((0)) NOT NULL,
     [Style_MarkerListUkey] BIGINT       CONSTRAINT [DF_Style_MarkerList_PatternPanel_Style_MarkerListUkey] DEFAULT ((0)) NOT NULL,
     [PatternPanel]          VARCHAR (2)  CONSTRAINT [DF_Style_MarkerList_PatternPanel_PatternPanel] DEFAULT ('') NOT NULL,
-    [Lectracode]           VARCHAR (2)  CONSTRAINT [DF_Style_MarkerList_PatternPanel_Lectracode] DEFAULT ('') NOT NULL,
+    [FabricPanelCode]           VARCHAR (2)  CONSTRAINT [DF_Style_MarkerList_PatternPanel_FabricPanelCode] DEFAULT ('') NOT NULL,
     [AddName]              VARCHAR (10) CONSTRAINT [DF_Style_MarkerList_PatternPanel_AddName] DEFAULT ('') NULL,
     [AddDate]              DATETIME     NULL,
     [EditName]             VARCHAR (10) CONSTRAINT [DF_Style_MarkerList_PatternPanel_EditName] DEFAULT ('') NULL,
     [EditDate]             DATETIME     NULL,
-    CONSTRAINT [PK_Style_MarkerList_PatternPanel] PRIMARY KEY CLUSTERED ([Style_MarkerListUkey] ASC, [Lectracode] ASC)
+    CONSTRAINT [PK_Style_MarkerList_PatternPanel] PRIMARY KEY CLUSTERED ([Style_MarkerListUkey] ASC, [FabricPanelCode] ASC)
 );
 
 
@@ -28,7 +28,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'部位別',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+布種的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_MarkerList_PatternPanel', @level2type = N'COLUMN', @level2name = N'Lectracode';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+布種的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_MarkerList_PatternPanel', @level2type = N'COLUMN', @level2name = N'FabricPanelCode';
 
 
 GO

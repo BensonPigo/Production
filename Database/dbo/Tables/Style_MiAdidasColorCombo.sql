@@ -1,13 +1,13 @@
 ﻿CREATE TABLE [dbo].[Style_MiAdidasColorCombo] (
     [StyleUkey]  BIGINT       CONSTRAINT [DF_Style_MiAdidasColorCombo_StyleUkey] DEFAULT ((0)) NOT NULL,
-    [LectraCode] VARCHAR (2)  CONSTRAINT [DF_Style_MiAdidasColorCombo_LectraCode] DEFAULT ('') NOT NULL,
+    [FabricPanelCode] VARCHAR (2)  CONSTRAINT [DF_Style_MiAdidasColorCombo_FabricPanelCode] DEFAULT ('') NOT NULL,
     [SetupID]    VARCHAR (3)  CONSTRAINT [DF_Style_MiAdidasColorCombo_SetupID] DEFAULT ('') NOT NULL,
     [AddName]    VARCHAR (10) CONSTRAINT [DF_Style_MiAdidasColorCombo_AddName] DEFAULT ('') NULL,
     [AddDate]    DATETIME     NULL,
     [EditName]   VARCHAR (10) CONSTRAINT [DF_Style_MiAdidasColorCombo_EditName] DEFAULT ('') NULL,
     [EditDate]   DATETIME     NULL,
     [Ukey_old] VARCHAR(10) NOT NULL DEFAULT (''), 
-    CONSTRAINT [PK_Style_MiAdidasColorCombo] PRIMARY KEY CLUSTERED ([StyleUkey], [LectraCode], [Ukey_old])
+    CONSTRAINT [PK_Style_MiAdidasColorCombo] PRIMARY KEY CLUSTERED ([StyleUkey], [FabricPanelCode], [Ukey_old])
 );
 
 
@@ -20,7 +20,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'連接STYLE
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'LectraCode', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_MiAdidasColorCombo', @level2type = N'COLUMN', @level2name = N'LectraCode';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'FabricPanelCode', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_MiAdidasColorCombo', @level2type = N'COLUMN', @level2name = N'FabricPanelCode';
 
 
 GO

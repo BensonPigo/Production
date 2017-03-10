@@ -2,12 +2,12 @@
     [Id]                 VARCHAR (13) CONSTRAINT [DF_Order_EachCons_PatternPanel_Id] DEFAULT ('') NOT NULL,
     [PatternPanel]       VARCHAR (2)  CONSTRAINT [DF_Order_EachCons_PatternPanel_PatternPanel] DEFAULT ('') NOT NULL,
     [Order_EachConsUkey] BIGINT       CONSTRAINT [DF_Order_EachCons_PatternPanel_Order_EachConsUkey] DEFAULT ((0)) NOT NULL,
-    [LectraCode]         VARCHAR (2)  CONSTRAINT [DF_Order_EachCons_PatternPanel_LectraCode] DEFAULT ('') NOT NULL,
+    [FabricPanelCode]         VARCHAR (2)  CONSTRAINT [DF_Order_EachCons_PatternPanel_FabricPanelCode] DEFAULT ('') NOT NULL,
     [AddName]            VARCHAR (10) CONSTRAINT [DF_Order_EachCons_PatternPanel_AddName] DEFAULT ('') NULL,
     [AddDate]            DATETIME     NULL,
     [EditName]           VARCHAR (10) CONSTRAINT [DF_Order_EachCons_PatternPanel_EditName] DEFAULT ('') NULL,
     [EditDate]           DATETIME     NULL,
-    CONSTRAINT [PK_Order_EachCons_PatternPanel] PRIMARY KEY CLUSTERED ([PatternPanel] ASC, [Order_EachConsUkey] ASC, [LectraCode] ASC)
+    CONSTRAINT [PK_Order_EachCons_PatternPanel] PRIMARY KEY CLUSTERED ([PatternPanel] ASC, [Order_EachConsUkey] ASC, [FabricPanelCode] ASC)
 );
 
 
@@ -32,7 +32,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Each Cons �
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+部位的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_EachCons_PatternPanel', @level2type = N'COLUMN', @level2name = N'LectraCode';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布別+部位的代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_EachCons_PatternPanel', @level2type = N'COLUMN', @level2name = N'FabricPanelCode';
 
 
 GO

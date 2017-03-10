@@ -29,7 +29,7 @@
     [FabricCombo]        VARCHAR (2)    CONSTRAINT [DF_WorkOrder_FabricCombo] DEFAULT ('') NULL,
     [MarkerDownLoadId]   VARCHAR (25)   CONSTRAINT [DF_WorkOrder_MarkerDownLoadId] DEFAULT ('') NULL,
     [FabricCode]         VARCHAR (3)    CONSTRAINT [DF_WorkOrder_FabricCode] DEFAULT ('') NULL,
-    [LectraCode]         VARCHAR (2)    CONSTRAINT [DF_WorkOrder_LectraCode] DEFAULT ('') NULL,
+    [FabricPanelCode]         VARCHAR (2)    CONSTRAINT [DF_WorkOrder_FabricPanelCode] DEFAULT ('') NULL,
     [Order_EachconsUkey] BIGINT         CONSTRAINT [DF_WorkOrder_Order_EachconsUkey] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_WorkOrder] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );

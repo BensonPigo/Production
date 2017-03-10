@@ -9,7 +9,7 @@
     [UsageUnit]     VARCHAR (8)    CONSTRAINT [DF_Order_BOF_Expend_UsageUnit] DEFAULT ('') NULL,
     [Width]         NUMERIC (4, 1) CONSTRAINT [DF_Order_BOF_Expend_Width] DEFAULT ((0)) NULL,
     [SysUsageQty]   NUMERIC (9, 2) CONSTRAINT [DF_Order_BOF_Expend_SysUsageQty] DEFAULT ((0)) NULL,
-    [QTLectraCode]  NVARCHAR (100) CONSTRAINT [DF_Order_BOF_Expend_QTLectraCode] DEFAULT ('') NULL,
+    [QTFabricPanelCode]  NVARCHAR (100) CONSTRAINT [DF_Order_BOF_Expend_QTFabricPanelCode] DEFAULT ('') NULL,
     [Remark]        NVARCHAR (60)  CONSTRAINT [DF_Order_BOF_Expend_Remark] DEFAULT ('') NULL,
     [OrderIdList]   NVARCHAR (MAX) CONSTRAINT [DF_Order_BOF_Expend_OrderIdList] DEFAULT ('') NULL,
     [AddName]       VARCHAR (10)   CONSTRAINT [DF_Order_BOF_Expend_AddName] DEFAULT ('') NULL,
@@ -66,7 +66,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'使用數�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QT組合', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_BOF_Expend', @level2type = N'COLUMN', @level2name = N'QTLectraCode';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QT組合', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_BOF_Expend', @level2type = N'COLUMN', @level2name = N'QTFabricPanelCode';
 
 
 GO
