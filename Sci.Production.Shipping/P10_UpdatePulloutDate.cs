@@ -89,7 +89,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
         {
             if (!MyUtility.Check.Empty(dateBox1.Value) && dateBox1.OldValue != dateBox1.Value)
             {
-                if (CheckPullout((DateTime)MyUtility.Convert.GetDate(dateBox1.Value), ""))
+                if (CheckPullout((DateTime)MyUtility.Convert.GetDate(dateBox1.Value), MyUtility.Convert.GetString(Sci.Env.User.Keyword)))
                 {
                     PulloutMsg(null, (DateTime)MyUtility.Convert.GetDate(dateBox1.Value));
                     dateBox1.Value = null;
