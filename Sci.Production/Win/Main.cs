@@ -256,7 +256,7 @@ namespace Sci.Production
             {
                 try
                 {
-                    string cmd = string.Format("userid:\"{0}\" factoryID:\"{1}\" formName:\"{2}\" menuName:\"{3}\" args:\"{4}\""
+                    string cmd = string.Format("\"userid:{0}\" \"factoryID:{1}\" \"formName:{2}\" \"menuName:{3}\" \"args:{4}\""
                         , Env.User.UserID
                         , Env.User.Factory
                         , formName
