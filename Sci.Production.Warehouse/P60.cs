@@ -26,7 +26,6 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = string.Format(" MDivisionID = '{0}'", Sci.Env.User.Keyword);
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
@@ -123,7 +122,7 @@ namespace Sci.Production.Warehouse
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "RL", "LocalReceiving", (DateTime)CurrentMaintain["IssueDate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "RL", "LocalReceiving", (DateTime)CurrentMaintain["IssueDate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -179,7 +178,7 @@ namespace Sci.Production.Warehouse
 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("localpoid", header: "Local PO", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("localpoid", header: "Local PO", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("ORDERid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("refno", header: "Refno", width: Widths.AnsiChars(12), iseditingreadonly: true)
             .Text("threadcolorid", header: "Color Shade", width: Widths.AnsiChars(12), iseditingreadonly: true)
@@ -213,7 +212,7 @@ namespace Sci.Production.Warehouse
             sqlcmd = string.Format(@"Select d.OrderId,d.Refno,d.ThreadColorID,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.LocalReceiving_Detail d WITH (NOLOCK) left join dbo.LocalInventory f WITH (NOLOCK) 
-on d.mdivisionid = f.MDivisionID and d.OrderId = f.OrderID and d.Refno = f.Refno and d.ThreadColorID = f.ThreadColorID
+on d.OrderId = f.OrderID and d.Refno = f.Refno and d.ThreadColorID = f.ThreadColorID
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -248,7 +247,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("mdivisionid"),
                            orderid = b.Field<string>("orderid"),
                            refno = b.Field<string>("refno"),
                            threadcolorid = b.Field<string>("threadcolorid"),
@@ -256,7 +254,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                        } into m
                        select new
                        {
-                           mdivisionid = m.First().Field<string>("mdivisionid"),
                            orderid = m.First().Field<string>("orderid"),
                            refno = m.First().Field<string>("refno"),
                            threadcolorid = m.First().Field<string>("threadcolorid"),
@@ -267,13 +264,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             foreach (var item in bs1)
             {
                 sqlupd2.Append(string.Format(@"merge into dbo.localinventory t
-using (select '{1}','{2}','{3}','{4}',{0},'{5}') as s (mdivisionid,orderid,refno,threadcolorid,qty,unitid)
-on t.mdivisionid = s.mdivisionid and t.orderid = s.orderid and t.refno = s.refno and t.threadcolorid = s.threadcolorid 
+using (select '{1}','{2}','{3}',{0},'{4}') as s (orderid,refno,threadcolorid,qty,unitid)
+on t.orderid = s.orderid and t.refno = s.refno and t.threadcolorid = s.threadcolorid 
 when matched then
 update set inqty = inqty + s.qty
 when not matched then
-insert (mdivisionid,orderid,refno,threadcolorid,inqty,unitid) values (s.mdivisionid,s.orderid,s.refno,s.threadcolorid,s.qty,s.unitid);"
-                    , item.qty, item.mdivisionid, item.orderid, item.refno, item.threadcolorid,item.unitid));
+insert (MDivisionID, orderid, refno, threadcolorid, inqty, unitid) values ('', s.orderid,s.refno,s.threadcolorid,s.qty,s.unitid);"
+                    , item.qty, item.orderid, item.refno, item.threadcolorid,item.unitid));
             }
 
             #endregion 更新庫存數量  Local Inventory
@@ -343,7 +340,7 @@ insert (mdivisionid,orderid,refno,threadcolorid,inqty,unitid) values (s.mdivisio
             sqlcmd = string.Format(@"Select d.OrderId,d.Refno,d.ThreadColorID,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.LocalReceiving_Detail d WITH (NOLOCK) left join dbo.LocalInventory f WITH (NOLOCK) 
-on d.mdivisionid = f.MDivisionID and d.OrderId = f.OrderID and d.Refno = f.Refno and d.ThreadColorID = f.ThreadColorID
+on d.OrderId = f.OrderID and d.Refno = f.Refno and d.ThreadColorID = f.ThreadColorID
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -378,7 +375,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
-                           mdivisionid = b.Field<string>("mdivisionid"),
                            orderid = b.Field<string>("orderid"),
                            refno = b.Field<string>("refno"),
                            threadcolorid = b.Field<string>("threadcolorid"),
@@ -386,7 +382,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                        } into m
                        select new
                        {
-                           mdivisionid = m.First().Field<string>("mdivisionid"),
                            orderid = m.First().Field<string>("orderid"),
                            refno = m.First().Field<string>("refno"),
                            threadcolorid = m.First().Field<string>("threadcolorid"),
@@ -397,13 +392,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             foreach (var item in bs1)
             {
                 sqlupd2.Append(string.Format(@"merge into dbo.localinventory t
-using (select '{1}','{2}','{3}','{4}',{0},'{5}') as s (mdivisionid,orderid,refno,threadcolorid,qty,unitid)
-on t.mdivisionid = s.mdivisionid and t.orderid = s.orderid and t.refno = s.refno and t.threadcolorid = s.threadcolorid 
+using (select '{1}','{2}','{3}',{0},'{4}') as s (orderid,refno,threadcolorid,qty,unitid)
+on t.orderid = s.orderid and t.refno = s.refno and t.threadcolorid = s.threadcolorid 
 when matched then
 update set inqty = inqty - s.qty
 when not matched then
-insert (mdivisionid,orderid,refno,threadcolorid,inqty,unitid) values (s.mdivisionid,s.orderid,s.refno,s.threadcolorid,0 - s.qty,s.unitid);"
-                    , item.qty, item.mdivisionid, item.orderid, item.refno, item.threadcolorid,item.unitid));
+insert (MDivisionID, orderid,refno,threadcolorid,inqty,unitid) values ('', s.orderid,s.refno,s.threadcolorid,0 - s.qty,s.unitid);"
+                    , item.qty, item.orderid, item.refno, item.threadcolorid,item.unitid));
             }
 
             #endregion 更新庫存數量  Local Inventory
@@ -476,7 +471,7 @@ on LocalPO_Detail.id = s.LocalPoId and LocalPO_Detail.ukey = s.LocalPo_detailuke
             base.OnDetailGridInsert(index);
             CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
         }
-
+        
         //寫明細撈出的sql command
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {

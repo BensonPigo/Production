@@ -78,10 +78,9 @@ namespace Sci.Production.Warehouse
 ,b.Ukey as localpo_detailUkey
 ,b.UnitId
 ,b.Price
-,[Mdivisionid]
 from dbo.LocalPO a WITH (NOLOCK) inner join dbo.LocalPO_Detail b WITH (NOLOCK) on b.id = a.Id
 Where b.Qty - b.InQty >0
-and mdivisionid = '{0}' and a.status = 'Approved' and a.LocalSuppID = '{1}'", Sci.Env.User.Keyword,dr_master["localsuppid"]);
+and a.status = 'Approved' and a.LocalSuppID = '{0}'", dr_master["localsuppid"]);
 
                 if (!MyUtility.Check.Empty(localpoid))
                 {
