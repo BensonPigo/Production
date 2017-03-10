@@ -26,5 +26,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Pattern Pan
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Lectra Code', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrder_PatternPanel', @level2type = N'COLUMN', @level2name = N'FabricPanelCode';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'FabricPanelCode', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrder_PatternPanel', @level2type = N'COLUMN', @level2name = N'FabricPanelCode';
 

@@ -15,7 +15,7 @@ else if(@ByType = 1)
 else if(@ByType = 2)
 	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where POID = @poid )
 
-SELECT Article,c.ColorID,LectraCode into #tmp FROM dbo.MNOrder_ColorCombo a
+SELECT Article,c.ColorID,FabricPanelCode into #tmp FROM dbo.MNOrder_ColorCombo a
 left join dbo.MNOrder b on a.Id = b.ID
 outer apply (	
 	select ColorID=STUFF((SELECT CHAR(10)+ColorID FROM dbo.Color_multiple d where BrandID = b.BrandID and d.ID = a.ColorID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
@@ -24,10 +24,10 @@ WHERE a.ID = @poid AND FABRICCODE = '' and a.Article in (select Article from @tb
 
 if exists(select 1 from #tmp)
 	begin
-		declare @rptcol nvarchar(max) = STUFF((SELECT ',['+LectraCode+']' FROM #tmp group by LectraCode order by LectraCODE FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
+		declare @rptcol nvarchar(max) = STUFF((SELECT ',['+FabricPanelCode+']' FROM #tmp group by FabricPanelCode order by FabricPanelCode FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
 		declare @sql nvarchar(max) = 'select CODE=Article,'+@rptcol+' from (
 		select * from #tmp
-		) a pivot (max(ColorID) for LectraCode in ('+@rptcol+')) b'
+		) a pivot (max(ColorID) for FabricPanelCode in ('+@rptcol+')) b'
 		exec (@sql)
 	end
 else

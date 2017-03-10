@@ -17,7 +17,7 @@ BEGIN
 	GROUP BY d.MarkerNo,d.SMNoticeID,CuttingSP,POID,d.spno,StyleID,SeasonID,FactoryID
 	
 	Select a.id,a.Ukey
-	,'COMB' = LectraCode
+	,'COMB' = FabricPanelCode
 	,'COMBdes' = e.Refno + ' ' + e.Description + '                Mark Width:' + a.Width + '  Weight(YDS):' + cast(e.Weight as nvarchar(20))
 	,MarkerName,SizeCode,MarkerLength,a.ConsPC
 	,Seq,a.REMARK,Qty

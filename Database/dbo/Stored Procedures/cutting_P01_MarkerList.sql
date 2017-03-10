@@ -17,7 +17,7 @@ BEGIN
 	
 
 	Select a.id,a.Ukey
-	,'COMB' = LectraCode
+	,'COMB' = FabricPanelCode
 	,'COMBdes' = e.Refno + ' ' + e.Description + '                Mark Width:' + a.Width + '  Mark Weight:' + cast(e.Weight as nvarchar(20))
 	,MarkerName,SizeCode,MarkerLength,a.ActCuttingPerimeter
 	,Seq,a.REMARK,Qty

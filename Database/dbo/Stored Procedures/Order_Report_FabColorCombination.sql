@@ -16,11 +16,11 @@ else if(@ByType = 2)
 	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where POID = @poid )
 	
 --FABRIC 主料，有FabricCode
-SELECT Article,c.BrandID,d.ColorID,a.LectraCode,QTLectraCode=isnull(b.QTLectraCode,''),FabricCode 
+SELECT Article,c.BrandID,d.ColorID,a.FabricPanelCode,QTFabricPanelCode=isnull(b.QTFabricPanelCode,''),FabricCode 
 into #tmp FROM dbo.MNOrder_ColorCombo a
 left join (
-	SELECT Id,LectraCode,QTLectraCode FROM DBO.Order_FabricCode_QT where LectraCode <> QTLectraCode
-) b on a.Id = b.Id and a.LectraCode = b.LectraCode
+	SELECT Id,FabricPanelCode,QTFabricPanelCode FROM DBO.Order_FabricCode_QT where FabricPanelCode <> QTFabricPanelCode
+) b on a.Id = b.Id and a.FabricPanelCode = b.FabricPanelCode
 left join MNOrder c on a.Id = c.ID
 outer apply (	
 	select ColorID=STUFF((SELECT CHAR(10)+ColorID FROM dbo.Color_multiple d where BrandID = c.BrandID and d.ID = a.ColorID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
@@ -29,13 +29,13 @@ WHERE a.ID = @poid AND FABRICCODE != '' and a.Article in (select Article from @t
 
 if exists(select 1 from #tmp)
 	begin
-		declare @rptcol nvarchar(max) = STUFF((SELECT ',['+LectraCode+']' FROM #tmp group by LectraCode order by LectraCODE FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
+		declare @rptcol nvarchar(max) = STUFF((SELECT ',['+FabricPanelCode+']' FROM #tmp group by FabricPanelCode order by FabricPanelCode FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
 		declare @sql nvarchar(max) = 'SELECT CODE=Article,'+@rptcol+' FROM(
-			select Article,ColorID,LectraCode from #tmp
-			union select ''MAT.'',FabricCode,LectraCode from #tmp
-			union select ''QT With'',QTLectraCode,LectraCode from #tmp
+			select Article,ColorID,FabricPanelCode from #tmp
+			union select ''MAT.'',FabricCode,FabricPanelCode from #tmp
+			union select ''QT With'',QTFabricPanelCode,FabricPanelCode from #tmp
 		) a pivot (
-			max(ColorID) FOR LectraCode in ('+@rptcol+')
+			max(ColorID) FOR FabricPanelCode in ('+@rptcol+')
 		) b'
 
 		exec (@sql)

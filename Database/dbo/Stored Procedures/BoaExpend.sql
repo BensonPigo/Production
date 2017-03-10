@@ -241,7 +241,7 @@ Begin
 					  Left Join dbo.Order_ColorCombo WITH (NOLOCK)
 						On	   Order_ColorCombo.ID = @ID
 						   And Order_ColorCombo.Article = tmpQtyBreakDown.Article
-						   --And Order_ColorCombo.LectraCode = @BoaPatternPanel
+						   --And Order_ColorCombo.FabricPanelCode = @BoaPatternPanel
 						   And Order_ColorCombo.PatternPanel = @BoaPatternPanel
 					  Left Join (Select ID, SizeItem, SizeCode, SizeSpec
 									  , IIF(@BomTypeCalculate = 1, IIF(@UsageUnit = 'CM' Or @UsageUnit = 'INCH', dbo.GetDigitalValue(SizeSpec), 0), 1) as SizeSpec_Cal
@@ -331,7 +331,7 @@ Begin
 				  Left Join dbo.Order_ColorCombo WITH (NOLOCK)
 					On	   Order_ColorCombo.ID = @ID
 					   And Order_ColorCombo.Article = tmpQtyBreakDown.Article
-					   And Order_ColorCombo.LectraCode = @BoaPatternPanel
+					   And Order_ColorCombo.FabricPanelCode = @BoaPatternPanel
 				  Left Join dbo.Order_SizeSpec WITH (NOLOCK)
 				    On	   Order_SizeSpec.ID = @ID
 					   And Order_SizeSpec.SizeItem = @SizeItem
