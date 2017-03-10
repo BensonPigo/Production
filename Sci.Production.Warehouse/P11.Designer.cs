@@ -139,8 +139,8 @@
             // 
             // gridicon
             // 
-            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(998, 126);
+            this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.gridicon.Location = new System.Drawing.Point(944, 128);
             // 
             // refresh
             // 

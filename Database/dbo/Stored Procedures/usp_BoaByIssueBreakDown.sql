@@ -11,7 +11,6 @@ CREATE PROCEDURE [dbo].[usp_BoaByIssueBreakDown]
 	 ,@TestType			Bit			= 0			--是否為虛擬庫存計算
 	 ,@UserID			VarChar(10) = ''
 	 ,@IssueType		VarChar(20) = 'Sewing'	-- MtlType.IssueType
-	 ,@MDivisionId		Varchar(8)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -131,15 +130,15 @@ BEGIN
 	(
 		select m.*,m.InQty-m.OutQty+m.AdjustQty as [balanceqty]
 		from #tmpPO_supp_detail inner join dbo.FtyInventory m WITH (NOLOCK) on m.POID = #tmpPO_supp_detail.poid and m.seq1 = #tmpPO_supp_detail.seq1 and m.seq2 = #tmpPO_supp_detail.SEQ2
-		and m.MDivisionID = @MDivisionId and m.StockType = 'B' and Roll=''
+		and m.StockType = 'B' and Roll=''
 		where lock = 0
 	)
-	select 0 as [Selected],''as id,b.*,isnull(sum(a.OrderQty),0.00) qty,left(b.seq1+'   ',3)+b.seq2 as seq,cte2.MDivisionID,cte2.balanceqty,cte2.Ukey as ftyinventoryukey,cte2.StockType,cte2.Roll,cte2.Dyelot
+	select 0 as [Selected],''as id,b.*,isnull(sum(a.OrderQty),0.00) qty,left(b.seq1+'   ',3)+b.seq2 as seq,cte2.balanceqty,cte2.Ukey as ftyinventoryukey,cte2.StockType,cte2.Roll,cte2.Dyelot
 	from #tmpPO_supp_detail b
 	left join cte2 WITH (NOLOCK) on cte2.poid = b.poid and cte2.seq1 = b.seq1 and cte2.SEQ2 = b.SEQ2
 	left join #Tmp_BoaExpend a on b.SCIRefno = a.scirefno and b.poid = a.ID
 	 and (b.SizeSpec = a.SizeSpec) and (b.ColorID = a.ColorID)
-	 group by b.poid,b.seq1,b.seq2,b.[description],b.ColorID,b.SizeSpec,b.SCIRefno,b.Spec,b.Special,b.Remark,cte2.MDivisionID,cte2.balanceqty,cte2.Ukey,cte2.StockType,cte2.Roll,cte2.Dyelot
+	 group by b.poid,b.seq1,b.seq2,b.[description],b.ColorID,b.SizeSpec,b.SCIRefno,b.Spec,b.Special,b.Remark,cte2.balanceqty,cte2.Ukey,cte2.StockType,cte2.Roll,cte2.Dyelot
 	 order by b.scirefno,b.ColorID,b.SizeSpec,b.Special,b.poid,b.seq1,b.seq2;
 
 	 with cte

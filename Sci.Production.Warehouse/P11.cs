@@ -25,14 +25,15 @@ namespace Sci.Production.Warehouse
         DataTable dtSizeCode = null, dtIssueBreakDown = null;
         DataRow dr;
         string poid = "";
-        Boolean Ismatrix_Reload; //是否需要重新抓取資料庫資料
+        Boolean Ismatrix_Reload=true; //是否需要重新抓取資料庫資料
 
         P11_Detail subform = new P11_Detail();
         public P11(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            this.gridicon.Location = new System.Drawing.Point(891, 128); //此gridcon位置會跑掉，需強制設定gridcon位置
+            this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);//Issue此為PMS自行建立的資料，MDivisionID皆會有寫入值
 
             WorkAlias = "Issue";                        // PK: ID
             GridAlias = "Issue_detail";           // PK: ID+UKey
@@ -97,7 +98,7 @@ from dbo.ftyinventory a WITH (NOLOCK) inner join dbo.po_supp_detail b WITH (NOLO
 inner join Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
 where lock=0 and inqty-outqty+adjustqty > 0 
-and mdivisionid='{0}' and poid='{1}' --and stocktype='B'
+and poid='{1}' --and stocktype='B'
 and b.FabricType='A'
 and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, CurrentDetailData["poid"]);
                     IList<DataRow> x;
@@ -121,7 +122,7 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, Current
                     CurrentDetailData["seq"] = x[0]["seq"];
                     CurrentDetailData["seq1"] = x[0]["seq1"];
                     CurrentDetailData["seq2"] = x[0]["seq2"];
-                    CurrentDetailData["mdivisionid"] = x[0]["mdivisionid"];
+                    //CurrentDetailData["mdivisionid"] = x[0]["mdivisionid"];
                     CurrentDetailData["stocktype"] = x[0]["stocktype"];
                     CurrentDetailData["ftyinventoryukey"] = x[0]["ukey"];
                 }
@@ -137,7 +138,7 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, Current
                         CurrentDetailData["seq"] = "";
                         CurrentDetailData["seq1"] = "";
                         CurrentDetailData["seq2"] = "";
-                        CurrentDetailData["mdivisionid"] = "";
+                        //CurrentDetailData["mdivisionid"] = "";
                         CurrentDetailData["stocktype"] = "";
                         CurrentDetailData["ftyinventoryukey"] = 0;
                     }
@@ -156,7 +157,7 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, Current
 from dbo.ftyinventory a WITH (NOLOCK) inner join dbo.po_supp_detail b WITH (NOLOCK) on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
 inner join Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
-where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivisionid='{3}'  and inqty-outqty+adjustqty > 0  --and stocktype='B' "
+where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-outqty+adjustqty > 0  --and stocktype='B' "
                             , CurrentDetailData["poid"], seq[0], seq[1], Sci.Env.User.Keyword), out dr, null))
                         {
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
@@ -168,7 +169,7 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivision
                             CurrentDetailData["seq"] = seq[0] + " " + seq[1];
                             CurrentDetailData["seq1"] = seq[0];
                             CurrentDetailData["seq2"] = seq[1];
-                            CurrentDetailData["mdivisionid"] = dr["mdivisionid"];
+                            //CurrentDetailData["mdivisionid"] = dr["mdivisionid"];
                             CurrentDetailData["stocktype"] = dr["stocktype"];
                             CurrentDetailData["ftyinventoryukey"] = dr["ukey"];
                         }
@@ -219,10 +220,10 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and mdivision
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             string cutplanID = (e.Master == null) ? "" : e.Master["cutplanID"].ToString();
+            Ismatrix_Reload = true;
             this.DetailSelectCommand = string.Format(@"  select
 a.Id
 ,isnull(a.FtyInventoryUkey,0) [FtyInventoryUkey]
-,a.MDivisionID
 ,a.Poid
 ,a.seq1
 ,a.seq2
@@ -312,11 +313,11 @@ Where a.id = '{0}'", masterID);
 
             #endregion 必輸檢查
 
-            DataTable detaildata = (DataTable)detailgridbs.DataSource;
+            //DataTable detaildata = (DataTable)detailgridbs.DataSource;
 
             foreach (DataRow Checkduplicate in DetailDatas)
             {
-                DataRow[] findrow = detaildata.AsEnumerable().Where(row => row["poid"].EqualString(Checkduplicate["poid"].ToString()) && row["seq1"].EqualString(Checkduplicate["seq1"])
+                DataRow[] findrow = DetailDatas.AsEnumerable().Where(row => row["poid"].EqualString(Checkduplicate["poid"].ToString()) && row["seq1"].EqualString(Checkduplicate["seq1"])
                                                                           && row["seq2"].EqualString(Checkduplicate["seq2"].ToString())).ToArray();
                 if (findrow.Length > 1)
                 {
@@ -331,7 +332,7 @@ Where a.id = '{0}'", masterID);
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IS", "Issue", (DateTime)CurrentMaintain["IssueDate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "IS", "Issue", (DateTime)CurrentMaintain["IssueDate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -644,7 +645,7 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by s
             this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
             if (MyUtility.Check.Empty(this.poid))
             {
-                this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.orders WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
+                this.poid = MyUtility.GetValue.Lookup(string.Format("select orders.poid from dbo.orders WITH (NOLOCK) left join dbo.Factory on orders.FtyGroup=Factory.ID where orders.id='{0}' and Factory.mdivisionid = '{1}'", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
             }
 
         }
@@ -653,7 +654,7 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by s
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
-            CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
+            //CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
             CurrentDetailData["poid"] = this.poid;
             DataTable sizeRange, subDetails;
             if (GetSubDetailDatas(CurrentDetailData, out subDetails))
@@ -704,7 +705,7 @@ where a.id='{0}' order by Seq", this.poid, masterID, ukey);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
+and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -732,7 +733,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
+on and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -853,7 +854,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
+on and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -881,7 +882,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.MDivisionID = f.MDivisionID and d.POID = f.POID  AND D.StockType = F.StockType
+on and d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -1289,7 +1290,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             if (textBox1.Text == textBox1.OldValue) return;
             CurrentMaintain["orderid"] = textBox1.Text;
             this.disPOID.Text = "";
-            this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.orders WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
+            this.poid = MyUtility.GetValue.Lookup(string.Format("select orders.poid from dbo.orders WITH (NOLOCK) left join dbo.Factory on orders.FtyGroup=Factory.ID where orders.id='{0}' and Factory.mdivisionid = '{1}", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(textBox1.Text))
             {
                 if (MyUtility.Check.Empty(this.poid))
@@ -1355,7 +1356,7 @@ inner join [Production].[dbo].po_supp_detail b WITH (NOLOCK) on b.id=a.POID and 
 inner join [Production].[dbo].Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join [Production].[dbo].MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
 where a.Lock=0 and a.InQty-a.OutQty+a.AdjustQty > 0 
-and a.MDivisionID='{0}' and a.POID='{1}' --and stocktype='B'
+and a.POID='{1}' --and stocktype='B'
 and b.FabricType='A'
 and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, this.poid, 0), out subData);
             //將資料塞入表身
@@ -1376,7 +1377,7 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, this.po
 
                 CurrentDetailData["seq1"] = dr["seq1"];
                 CurrentDetailData["seq2"] = dr["seq2"];
-                CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
+                //CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
                 CurrentDetailData["stocktype"] = dr["stocktype"];
                 CurrentDetailData["ftyinventoryukey"] = dr["ukey"];
 
