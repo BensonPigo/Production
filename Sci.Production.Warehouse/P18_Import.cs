@@ -44,7 +44,7 @@ namespace Sci.Production.Warehouse
                 txtTransferOutID.Focus();
                 return;
             }
-            strSQLCmd.Append(string.Format(@"select 0 as selected,null as ukey,'' as id,'{1}' as MdivisionID
+            strSQLCmd.Append(string.Format(@"select 0 as selected,null as ukey,'' as id
 ,b.POID,b.seq1,b.seq2
 ,concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) as seq
 ,b.Roll,b.Dyelot,b.StockType,b.Qty 
@@ -54,7 +54,7 @@ namespace Sci.Production.Warehouse
 from TransferOut a WITH (NOLOCK) 
 inner join TransferOut_Detail b WITH (NOLOCK) on b.id = a.id
 inner join PO_Supp_Detail psd WITH (NOLOCK) on b.POID = psd.id and b.Seq1 = psd.Seq1 and b.Seq2 = psd.Seq2
-where a.status='Confirmed' and a.id='{0}'", transid, Sci.Env.User.Keyword)); // 
+where a.status='Confirmed' and a.id='{0}'", transid)); // 
 
 
             this.ShowWaitMessage("Data Loading....");
@@ -98,7 +98,7 @@ where a.status='Confirmed' and a.id='{0}'", transid, Sci.Env.User.Keyword)); //
                 {
                     DataRow dr = grid1.GetDataRow(e.RowIndex);
                     dr["location"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", dr["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}'", dr["stocktype"].ToString());
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = dr["location"].ToString().Split(',').Distinct().ToArray();
@@ -138,7 +138,7 @@ where a.status='Confirmed' and a.id='{0}'", transid, Sci.Env.User.Keyword)); //
                 {
                     DataRow CurrentDetailData = grid1.GetDataRow(e.RowIndex);
                     CurrentDetailData["stocktype"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}'", CurrentDetailData["stocktype"].ToString());
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
@@ -218,9 +218,9 @@ where a.status='Confirmed' and a.id='{0}'", transid, Sci.Env.User.Keyword)); //
             foreach (DataRow tmp in dr2)
             {
                 DataRow[] findrow = dt_detail.Select(string.Format(@"poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' 
-                and roll ='{3}' and dyelot='{4}' and mdivisionid='{5}' and stocktype='{6}'"
+                and roll ='{3}' and dyelot='{4}' and stocktype='{5}'"
                     , tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString()
-                    , tmp["roll"].ToString(), tmp["dyelot"].ToString(), tmp["mdivisionid"],tmp["roll"]));
+                    , tmp["roll"].ToString(), tmp["dyelot"].ToString(), tmp["stockType"]));
 
                 if (findrow.Length > 0)
                 {

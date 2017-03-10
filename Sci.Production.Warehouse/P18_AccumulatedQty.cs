@@ -88,7 +88,7 @@ namespace Sci.Production.Warehouse
 			and B.InventorySeq1 = a.seq1
 			and B.InventorySeq2 = a.Seq2
 			and B.FactoryId = '{2}'
-			and B.TransferFactory in (select Id from Factory WITH (NOLOCK) where MDivisionId = '{1}')
+			and B.TransferFactory in (select Id from Factory WITH (NOLOCK))
 		)
 	)X
 	WHERE a.Id = '{0}'
@@ -109,7 +109,7 @@ namespace Sci.Production.Warehouse
 			and a1.seq70seq2 = a.seq2 
 			and a1.type = 2 
 			AND A1.FactoryID ='{2}' 
-			and A1.TransferFactory in (select Id from Factory WITH (NOLOCK) where MDivisionId='{1}')
+			and A1.TransferFactory in (select Id from Factory WITH (NOLOCK))
 		)
 	) X
 	where a.Id = '{0}'

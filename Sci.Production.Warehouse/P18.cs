@@ -35,8 +35,6 @@ namespace Sci.Production.Warehouse
 
             Controls.Add(viewer);
 
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
-
             detailgrid.StatusNotification += (s, e) =>
             {
                 if (this.EditMode && e.Notification == Ict.Win.UI.DataGridViewStatusNotification.NoMoreRowOnEnterPress)
@@ -72,7 +70,6 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["IssueDate"] = DateTime.Now;
         }
@@ -162,7 +159,7 @@ namespace Sci.Production.Warehouse
             on 
             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 			inner join FtyInventory f WITH (NOLOCK) 
-			on f.MDivisionID= a.MDivisionID and f.POID = a.poid
+			on f.POID = a.poid
 			And f.Seq1 = a.seq1
 			And f.Seq2 = a.seq2
 			And f.Roll =  a.roll
@@ -271,7 +268,7 @@ namespace Sci.Production.Warehouse
             #region 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "TI", "TransferIn", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "TI", "TransferIn", (DateTime)CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -432,7 +429,7 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["stocktype"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}'", CurrentDetailData["stocktype"].ToString());
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
@@ -483,7 +480,7 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["location"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}'", CurrentDetailData["stocktype"].ToString());
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();
@@ -577,8 +574,7 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.TransferIn_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.mdivisionid = f.mdivisionid
-and d.PoId = f.PoId
+on d.PoId = f.PoId
 and d.Seq1 = f.Seq1
 and d.Seq2 = f.seq2
 and d.StockType = f.StockType
@@ -609,8 +605,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.TransferIn_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.mdivisionid = f.mdivisionid
-and d.PoId = f.PoId
+on d.PoId = f.PoId
 and d.Seq1 = f.Seq1
 and d.Seq2 = f.seq2
 and d.StockType = f.StockType
@@ -649,57 +644,6 @@ where d.Id = '{0}' and f.id is null", CurrentMaintain["id"]);
                 ShowErr(sqlcmd, result2);
                 return;
             }
-
-        //這段條件 已經改了 不是舊的條件
-            //else
-            //{
-            //    if (datacheck.Rows.Count > 0)
-            //    {
-//                    sqlupd2.Append(string.Format(@"insert into po_supp_detail 
-//(
-//	id,seq1,seq2
-//	,scirefno
-//	,StockUnit
-//	,POUnit
-//	,FinalETA
-//	,ColorID
-//    ,brandid
-//	,sizespec
-//    ,sizeunit
-//	,BomArticle
-//	,BomBuymonth
-//	,BomCountry
-//	,BomCustCD
-//	,BomCustPONo
-//	,BomFactory
-//	,BomStyle
-//	,BomZipperInsert
-//	,width
-//    ,stockpoid
-//    ,stockseq1
-//    ,stockseq2
-//	,fabrictype
-//	,addname
-//    ,adddate
-//) 
-//Select distinct t.*
-//,ISNULL((select Fabric.Type from dbo.Fabric where fabric.SCIRefno = t.SCIRefno),'') as fabrictype
-//,'{1}'
-//,GETDATE()
-//from dbo.TransferIn_Detail d 
-//left join (select i.POID,i.Seq1,i.Seq2,i.scirefno,dbo.getstockunit(b.SCIRefno,s.suppid) as stockunit
-//					,i.UnitID pounit,i.ETA,ir.ColorID,i.brandid,ir.SizeSpec,ir.SizeUnit,ir.BomArticle,ir.BomBuymonth
-//					,ir.BomCountry,ir.BomCustCD,ir.BomCustPONo,ir.BomFactory,ir.BomStyle,ir.BomZipperInsert
-//					,ir.Width,poid stockpoid,seq1 stockseq1,seq2 stockseq2
-//			from dbo.Inventory i inner join dbo.Inventoryrefno ir on i.InventoryRefnoID = ir.id
-//            left join dbo.PO_Supp_Detail b on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
-//            left join dbo.PO_Supp as s on s.ID = b.ID and s.Seq1 = b.SEQ1
-//) t 
-//	on t.POID = d.poid and t.Seq1 = d.seq1 and t.seq2 = d.seq2
-//where d.Id = '{0}' and t.POID is not null;" + Environment.NewLine,CurrentMaintain["id"],Env.User.UserID));
-            //    }
-            //}
-
             #endregion
 
             #region -- 更新表頭狀態資料 --
@@ -880,8 +824,7 @@ where d.Id = '{0}' and f.id is null", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.TransferIn_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.mdivisionid = f.mdivisionid
-and d.PoId = f.PoId
+on d.PoId = f.PoId
 and d.Seq1 = f.Seq1
 and d.Seq2 = f.seq2
 and d.StockType = f.StockType
@@ -912,8 +855,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.TransferIn_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.mdivisionid = f.mdivisionid
-and d.PoId = f.PoId
+on d.PoId = f.PoId
 and d.Seq1 = f.Seq1
 and d.Seq2 = f.seq2
 and d.StockType = f.StockType
@@ -1077,7 +1019,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.mdivisionid,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
