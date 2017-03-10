@@ -75,17 +75,10 @@ order by ld.Seq1,ld.Seq2", masterID);
                 {
                     if (e.Button == System.Windows.Forms.MouseButtons.Right)
                     {
-                        string theSeq = "";
-                        if (theSeq != null) { theSeq = ""; }
                         if (e.RowIndex != -1)
                         {
-                            foreach (DataRow seqdr in detailgrid.GetTable().Rows)
-                            {
-                                theSeq += seqdr["seq"].ToString() + ","; 
-                            }
-                            theSeq = theSeq.Substring(0, theSeq.Length - 1);
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem2 item = SelePoItem1(MyUtility.Convert.GetString(CurrentMaintain["POID"]), theSeq, "FabricType = 'F'");
+                            Sci.Win.Tools.SelectItem item = Prgs.SelePoItem(MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq"]), "FabricType = 'F'");
                             DialogResult result = item.ShowDialog();
                             if (result == DialogResult.Cancel) { return; }
                             IList<DataRow> selectData = item.GetSelecteds();
@@ -150,11 +143,19 @@ order by ld.Seq1,ld.Seq2", masterID);
                         //string sqlCmd = string.Format(@"select left(seq1+' ',3)+seq2 as Seq, Refno,InQty,OutQty,seq1,seq2, dbo.getmtldesc(id,seq1,seq2,2,0) as Description 
                         //                                from dbo.PO_Supp_Detail
                         //                                where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 3), MyUtility.Convert.GetString(e.FormattedValue).Substring(2, 2));
+
+                        if (MyUtility.Convert.GetString(e.FormattedValue).Length < 4 || MyUtility.Convert.GetString(e.FormattedValue).Length > 4)
+                        {
+                            MyUtility.Msg.WarningBox("Please input legal seq#!! example:01 03");
+                            ClearGridData(dr);
+                            e.Cancel = true;
+                            return;
+                        }
                         string sqlCmd = string.Format(@"select left(psd.seq1+' ',3)+psd.seq2 as Seq, psd.Refno,isnull(m.InQty,0) as InQty,isnull(m.OutQty,0) as OutQty,psd.seq1,psd.seq2, dbo.getmtldesc(id,psd.seq1,psd.seq2,2,0) as Description 
-from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
-left join MDivisionPoDetail m WITH (NOLOCK) on m.POID = psd.ID and m.Seq1 = psd.SEQ1 and m.Seq2 = psd.SEQ2 and m.MDivisionID = '{3}'
-where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType = 'F'",
-                                                                                       MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 2), MyUtility.Convert.GetString(e.FormattedValue).Substring(3, 2),Sci.Env.User.Keyword);
+                        from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
+                        left join MDivisionPoDetail m WITH (NOLOCK) on m.POID = psd.ID and m.Seq1 = psd.SEQ1 and m.Seq2 = psd.SEQ2 and m.MDivisionID = '{3}'
+                        where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType = 'F'",
+                        MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 2), MyUtility.Convert.GetString(e.FormattedValue).Substring(2, 2), Sci.Env.User.Keyword);
 
                         if (!MyUtility.Check.Seek(sqlCmd, out poData))
                         {
@@ -184,10 +185,11 @@ where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType
                             }
                             dr.EndEdit();
                         }
-                        
+
                     }
                 }
             };
+
             #endregion
 
             #region RefNo的CoubleClick
