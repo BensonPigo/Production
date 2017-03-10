@@ -67,11 +67,10 @@ where a.id = '{0}';", dr_master["requestid"]));
 ,c.inqty-c.outqty + c.adjustqty as balance
 ,(select stockunit from po_supp_detail WITH (NOLOCK) where id = c.poid and seq1 =c.seq1 and seq2 = c.seq2 ) as stockunit
 ,dbo.getMtlDesc(c.poid,c.seq1,c.seq2,2,0) as [description]
-,'{1}' as mdivisionid
 from dbo.Lack_Detail a WITH (NOLOCK) 
 inner join dbo.Lack b WITH (NOLOCK) on b.ID= a.ID
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = b.POID and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
-Where a.id = '{0}' and c.lock = 0  and c.mdivisionid='{1}' ", dr_master["requestid"],Sci.Env.User.Keyword)); // 
+Where a.id = '{0}' and c.lock = 0 ", dr_master["requestid"])); // 
            //判斷LACKING
             //
             if (Type != "Lacking")
