@@ -35,12 +35,13 @@ inner join (select frompoid,fromseq1,fromseq2,sum(qty) trans_qty from dbo.SubTra
 	group by frompoid,fromseq1,fromseq2) st 
 	on st.FromPOID = pd.ID and st.FromSeq1 = pd.SEQ1 and st.FromSeq2 = pd.SEQ2 
 inner join dbo.orders o WITH (NOLOCK) on o.id = pd.id
+inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
 cross apply
 	(select max(i.ConfirmDate) taipei_issue_date,sum(i.Qty) taipei_qty
-		from dbo.Invtrans i WITH (NOLOCK) inner join dbo.Factory f WITH (NOLOCK) on f.ID = i.FactoryID and f.MDivisionID = '{1}'
+		from dbo.Invtrans i WITH (NOLOCK) 
 		where (i.type=1 OR I.TYPE=4) and i.InventoryPOID = pd.ID and i.InventorySeq1 = pd.seq1 and i.InventorySeq2 = pd.SEQ2
 	) x
-where o.MDivisionID ='{1}' AND X.taipei_qty > 0
+where f.MDivisionID ='{1}' AND X.taipei_qty > 0
 )
 
 select m.poid,m.seq1,m.seq2,m.StockUnit,m.Qty*isnull(u.Rate,1) as poqty,m.InputQty*isnull(u.Rate,1) as inputQty
@@ -51,11 +52,11 @@ cross apply
 (select isnull(sum(qty) ,0) as accu_qty
 	from (
 		select sum(r2.StockQty) as qty from dbo.Receiving r1 WITH (NOLOCK) inner join dbo.Receiving_Detail r2 WITH (NOLOCK) on r2.Id= r1.Id 
-			where r1.Status ='Confirmed' and r2.MDivisionID = '{1}' and r2.StockType = 'I' 
+			where r1.Status ='Confirmed' and r2.StockType = 'I' 
 				and r2.PoId = m.poid and r2.seq1 = m.seq1 and r2.seq2 = m.seq2
 		union 
 		select sum(s2.Qty) as qty from dbo.SubTransfer s1 WITH (NOLOCK) inner join dbo.SubTransfer_Detail s2 WITH (NOLOCK) on s2.Id= s1.Id 
-			where s1.type ='A' and s1.Status ='Confirmed' and s2.ToMDivisionID = '{1}' and s2.ToStockType = 'I' 
+			where s1.type ='A' and s1.Status ='Confirmed' and s2.ToStockType = 'I' 
 				and s2.ToPOID = m.poid and s2.ToSeq1 = m.seq1 and s2.ToSeq2 = m.seq2 and s1.Id !='{0}'
 		) xx
   ) xxx
