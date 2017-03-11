@@ -1290,7 +1290,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             if (textBox1.Text == textBox1.OldValue) return;
             CurrentMaintain["orderid"] = textBox1.Text;
             this.disPOID.Text = "";
-            this.poid = MyUtility.GetValue.Lookup(string.Format("select orders.poid from dbo.orders WITH (NOLOCK) left join dbo.Factory on orders.FtyGroup=Factory.ID where orders.id='{0}' and Factory.mdivisionid = '{1}", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
+            this.poid = MyUtility.GetValue.Lookup(string.Format("select orders.poid from dbo.orders WITH (NOLOCK) left join dbo.Factory on orders.FtyGroup=Factory.ID where orders.id='{0}' and Factory.mdivisionid = '{1}'", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(textBox1.Text))
             {
                 if (MyUtility.Check.Empty(this.poid))
