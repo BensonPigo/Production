@@ -126,7 +126,7 @@ iseditingreadonly: true)
                 {
                     DataRow dr = grid2.GetDataRow(e.RowIndex);
                     dr["tolocation"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", dr["tostocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}'", dr["tostocktype"].ToString());
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = dr["tolocation"].ToString().Split(',').Distinct().ToArray();
@@ -275,7 +275,7 @@ iseditingreadonly: true)
             sqlcmd.Append(string.Format(@";with cte
 as
 (
-select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,o.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup
+select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,rtrim(o.id) poid,o.Category,o.FtyGroup
 ,rtrim(pd.seq1) seq1,pd.seq2,pd.id stockpoid,pd.seq1 stockseq1,pd.seq2 stockseq2
 ,ROUND(xz.taipei_qty*v.RateValue,2,1) N'inputqty',pd.POUnit,pd.StockUnit
 ,mpd.InQty
@@ -283,8 +283,8 @@ select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,o.MDiv
 from dbo.orders o WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
 inner join View_Unitrate v on v.FROM_U = pd.POUnit and v.TO_U = pd.StockUnit
-left join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.MDivisionID = o.MDivisionID 
-    and mpd.POID = pd.ID and mpd.Seq1 = pd.SEQ1 and mpd.Seq2 = pd.SEQ2"));
+inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
+left join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.ID and mpd.Seq1 = pd.SEQ1 and mpd.Seq2 = pd.SEQ2"));
             if (!(string.IsNullOrWhiteSpace(InputDate_b)))
             {
                 sqlcmd.Append(string.Format(@" cross apply
@@ -294,28 +294,25 @@ left join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.MDivisionID = o.MDivisi
             }
  sqlcmd.Append(string.Format(@" outer apply
 (select count(1) cnt from FtyInventory fi WITH (NOLOCK) left join FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
-	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B' and fi.MDivisionID = o.MDivisionID
-	and fid.MtlLocationID is null and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0
+	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B' and fid.MtlLocationID is null and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0
 ) y--Detail有MD為null數量,沒有則為0,沒資料也為0
 outer apply
 (
 	select count(1) cnt from FtyInventory fi WITH (NOLOCK) left join FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
-	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B' and fi.MDivisionID = o.MDivisionID
-    and fid.MtlLocationID is not null 
+	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B' and fid.MtlLocationID is not null 
 ) yz--Detail資料數量
 outer apply
 (
 select sum(sd.Qty) accu_qty from dbo.SubTransfer s WITH (NOLOCK) inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on sd.ID = s.Id where
- s.type='A' and s.Status= 'Confirmed' and sd.FromMDivisionID ='{0}' and sd.FromPOID = pd.ID 
-and sd.FromSeq1 = pd.SEQ1
+ s.type='A' and s.Status= 'Confirmed' and sd.FromPOID = pd.ID and sd.FromSeq1 = pd.SEQ1
  and sd.FromSeq2 = pd.SEQ2 and FromStockType = 'B' and toStockType='I'
 ) x
 cross apply
 	(select sum(i.Qty) taipei_qty
-		from dbo.Invtrans i WITH (NOLOCK) inner join dbo.Factory f WITH (NOLOCK) on f.ID = i.FactoryID and f.MDivisionID = '{0}'
+		from dbo.Invtrans i WITH (NOLOCK) 
 		where (i.type=1 OR I.TYPE=4) and i.InventoryPOID = pd.ID and i.InventorySeq1 = pd.seq1 and i.InventorySeq2 = pd.SEQ2
 	) xz
-where pd.inputqty > 0 and o.MDivisionID = '{0}'", Env.User.Keyword));
+where pd.inputqty > 0 and f.MDivisionID = '{0}'", Env.User.Keyword));
 
             #region -- 條件 --
             switch (selectindex)
@@ -359,7 +356,6 @@ select * from #tmp where inputqty > accu_qty;
 select 
 convert(bit,0) as selected,
 fi.Ukey FromFtyInventoryUkey,
-fi.MDivisionID FromMdivisionID,
 fi.POID FromPoid,
 fi.Seq1 FromSeq1,
 fi.Seq2 Fromseq2,
@@ -368,10 +364,10 @@ fi.Dyelot FromDyelot,
 fi.StockType FromStockType,
 fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty,
 0.00 as Qty,
-fi.MDivisionID toMdivisionID,rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'I' tostocktype 
+rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'I' tostocktype 
 ,stuff((select ',' + mtllocationid from (select MtlLocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = fi.Ukey)t for xml path('')), 1, 1, '') fromlocation
 ,'' tolocation
-from #tmp t inner join FtyInventory fi WITH (NOLOCK) on fi.MDivisionID = t.MDivisionID and fi.POID = t.POID 
+from #tmp t inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.POID 
 and fi.seq1 = t.Seq1 and fi.Seq2 = t.Seq2
 where inputqty > accu_qty and fi.StockType ='B' and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
 drop table #tmp");
@@ -477,7 +473,7 @@ drop table #tmp");
                 return;
             }
 
-            string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "ST", "SubTransfer", System.DateTime.Now);
+            string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "ST", "SubTransfer", System.DateTime.Now);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -511,8 +507,8 @@ drop table #tmp");
            ,[Qty]
            ,[ToLocation])
 values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
-,'{9}','{10}','{11}','{12}','{13}','{14}','{15}',{16},'{17}');", tmpId, item["fromftyinventoryukey"], item["fromMdivisionid"], item["frompoid"], item["fromseq1"], item["fromseq2"], item["fromroll"], item["fromstocktype"], item["fromdyelot"]
-          , item["toMdivisionid"], item["topoid"], item["toseq1"], item["toseq2"], item["toroll"], item["toStocktype"], item["toDyelot"], item["qty"], item["tolocation"]));
+,'{9}','{10}','{11}','{12}','{13}','{14}','{15}',{16},'{17}');", tmpId, item["fromftyinventoryukey"], "", item["frompoid"], item["fromseq1"], item["fromseq2"], item["fromroll"], item["fromstocktype"], item["fromdyelot"]
+          , "", item["topoid"], item["toseq1"], item["toseq2"], item["toroll"], item["toStocktype"], item["toDyelot"], item["qty"], item["tolocation"]));
             }
 
             TransactionScope _transactionscope = new TransactionScope();
