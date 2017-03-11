@@ -29,11 +29,11 @@ namespace Sci.Production.Warehouse
             selectCommand1.Append(string.Format(@"
 ;with cte
 as (
-select st.ToMDivisionID,pd.id as poid, pd.seq1,pd.seq2,st.ToStockType,pd.Qty,pd.ShipQty,pd.StockQty,pd.InputQty,pd.OutputQty
+select pd.id as poid, pd.seq1,pd.seq2,st.ToStockType,pd.Qty,pd.ShipQty,pd.StockQty,pd.InputQty,pd.OutputQty
 	,x.taipei_issue_date,x.taipei_qty,pd.POUnit,pd.StockUnit,st.trans_qty
 from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
-inner join (select tomdivisionid,ToPOID,ToSeq1,ToSeq2,ToStockType,sum(qty) trans_qty from dbo.SubTransfer_Detail WITH (NOLOCK) where ID='{0}' 
-	group by tomdivisionid,ToPOID,ToSeq1,ToSeq2,ToStockType) st 
+inner join (select ToPOID,ToSeq1,ToSeq2,ToStockType,sum(qty) trans_qty from dbo.SubTransfer_Detail WITH (NOLOCK) where ID='{0}' 
+	group by ToPOID,ToSeq1,ToSeq2,ToStockType) st 
 on st.ToPOID = pd.ID and st.ToSeq1 = pd.SEQ1 and st.ToSeq2 = pd.SEQ2 
 --inner join dbo.orders o on o.id = pd.id  --bug fix:352:WAREHOUSE_P23_AccumulatedQty_Accumulate qty
 cross apply
@@ -53,11 +53,11 @@ cross apply
 (
 select sum(qty) accu_qty from (
 	select sum(r2.Qty) as qty from dbo.TransferIn r1 WITH (NOLOCK) inner join dbo.TransferIn_Detail r2 WITH (NOLOCK) on r2.Id= r1.Id 
-				where r1.Status ='Confirmed' and r2.MDivisionID = '{1}' and r2.StockType = 'B' 
+				where r1.Status ='Confirmed' and r2.StockType = 'B' 
 					and r2.PoId = m.poid and r2.seq1 = m.seq1 and r2.seq2 = m.seq2
 			union all
 	select sum(s2.Qty) qty from dbo.SubTransfer s1 WITH (NOLOCK) inner join dbo.SubTransfer_Detail s2 WITH (NOLOCK) on s2.Id= s1.Id 
-				where s1.type ='B' and s1.Status ='Confirmed' and s2.ToMDivisionID = m.ToMDivisionID and s2.ToStockType = m.ToStockType
+				where s1.type ='B' and s1.Status ='Confirmed' and s2.ToStockType = m.ToStockType
 					and s2.ToPOID = m.poid and s2.ToSeq1 = m.seq1 and s2.ToSeq2 = m.seq2 and s1.Id !='{0}'
 	)xx
 ) xxx

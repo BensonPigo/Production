@@ -131,7 +131,7 @@ namespace Sci.Production.Warehouse
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PI", "SubTransfer", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "PI", "SubTransfer", (DateTime)CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -164,8 +164,6 @@ namespace Sci.Production.Warehouse
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
-            CurrentDetailData["frommdivisionid"] = Sci.Env.User.Keyword;
-            CurrentDetailData["tomdivisionid"] = Sci.Env.User.Keyword;
         }
 
         // Detail Grid 設定
@@ -193,7 +191,7 @@ namespace Sci.Production.Warehouse
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["tolocation"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", CurrentDetailData["tostocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}'", CurrentDetailData["tostocktype"].ToString());
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = CurrentDetailData["tolocation"].ToString().Split(',').Distinct().ToArray();
@@ -265,7 +263,7 @@ namespace Sci.Production.Warehouse
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.SubTransfer_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.FromMDivisionID = f.MDivisionID and d.FromPOID = f.POID  AND D.FromStockType = F.StockType
+on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
 and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -293,7 +291,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.SubTransfer_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.FromMDivisionID = f.MDivisionID and d.FromPOID = f.POID 
+on d.FromPOID = f.POID 
 and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 AND D.FromStockType = F.StockType
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) < d.Qty) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -322,8 +320,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) < d.Qty) and d
             sqlcmd = string.Format(@"Select d.ToPoid,d.ToSeq1,d.toseq2,d.ToRoll,d.ToDyelot,d.Qty
 ,f.InQty
 from dbo.SubTransfer_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.tomdivisionid = f.mdivisionid
-and d.ToPoid = f.PoId
+on d.ToPoid = f.PoId
 and d.ToSeq1 = f.Seq1
 and d.toseq2 = f.seq2
 and d.ToStocktype = f.StockType
@@ -448,7 +445,6 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
             var data_Fty_2T = (from b in newDt.AsEnumerable()
                                select new
                                {
-                                   mdivisionid = b.Field<string>("toMdivisionid"),
                                    poid = b.Field<string>("topoid"),
                                    seq1 = b.Field<string>("toseq1"),
                                    seq2 = b.Field<string>("toseq2"),
@@ -564,8 +560,7 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
             sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.SubTransfer_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.tomdivisionid = f.mdivisionid
-and d.toPoId = f.PoId
+on d.toPoId = f.PoId
 and d.toSeq1 = f.Seq1
 and d.toSeq2 = f.seq2
 and d.toStocktype = f.StockType
@@ -596,8 +591,7 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.SubTransfer_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.toMdivisionid = f.Mdivisionid
-and d.toPoId = f.PoId
+on  d.toPoId = f.PoId
 and d.toSeq1 = f.Seq1
 and d.toSeq2 = f.seq2
 and d.toStocktype = f.StockType
@@ -791,7 +785,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.frommdivisionid,a.FromPoId,a.FromSeq1,a.FromSeq2
+            this.DetailSelectCommand = string.Format(@"select a.id,a.FromPoId,a.FromSeq1,a.FromSeq2
 ,concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2) as Fromseq
 ,p1.FabricType
 ,p1.stockunit
@@ -800,7 +794,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 ,a.FromDyelot
 ,a.FromStocktype
 ,a.Qty
-,a.ToMDivisionID
 ,a.ToPoid,a.ToSeq1,a.ToSeq2,concat(Ltrim(Rtrim(a.ToSeq1)), ' ', a.ToSeq2) as toseq
 ,a.ToRoll
 ,a.ToDyelot
