@@ -281,8 +281,9 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             var dr = this.CurrentMaintain;
             if (null == dr) return;
 
-            StringBuilder sqlupd2_B = new StringBuilder();
-            StringBuilder sqlupd2_FIO = new StringBuilder();
+            StringBuilder upd_MD_8T = new StringBuilder();
+            StringBuilder upd_MD_32T = new StringBuilder();
+            StringBuilder upd_Fty_8T = new StringBuilder();
 
             StringBuilder sqlupd2 = new StringBuilder();
             String sqlcmd = "", sqlupd3 = "", ids = "";
@@ -353,7 +354,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
             #endregion 更新表頭狀態資料
 
             #region 更新 MdivisionPoDetail
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            var data_MD_8T32T = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            poid = b.Field<string>("poid").Trim(),
@@ -370,15 +371,15 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
                            qty = m.Sum(w => w.Field<decimal>("QtyAfter") - w.Field<decimal>("QtyBefore"))
                        }).ToList();
 
-            sqlupd2_B.Append(Prgs.UpdateMPoDetail(8, bs1, true));
-            sqlupd2_B.Append(Prgs.UpdateMPoDetail(32, null, true));
+            upd_MD_8T.Append(Prgs.UpdateMPoDetail(8, data_MD_8T32T, true));
+            upd_MD_32T.Append(Prgs.UpdateMPoDetail(32, null, true));
             #endregion
 
             #region 更新庫存數量  ftyinventory
-            DataTable dtio = (DataTable)detailgridbs.DataSource;
-            dtio.ColumnsDecimalAdd("qty",expression: "QtyAfter- QtyBefore");
+            DataTable data_Fty_8T = (DataTable)detailgridbs.DataSource;
+            data_Fty_8T.ColumnsDecimalAdd("qty",expression: "QtyAfter- QtyBefore");
 
-            sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(8, null, true));
+            upd_Fty_8T.Append(Prgs.UpdateFtyInventory_IO(8, null, true));
             #endregion 更新庫存數量  ftyinventory
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -387,7 +388,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
                 try
                 {
                     DataTable resulttb;
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T32T, "", upd_MD_8T.ToString(), out resulttb
+                        , "#TmpSource")))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(result);
+                        return;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T32T, "", upd_MD_32T.ToString(), out resulttb
                         , "#TmpSource")))
                     {
                         _transactionscope.Dispose();
@@ -395,7 +403,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
                         return;
                     }
                     if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        (dtio, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                        (data_Fty_8T, "", upd_Fty_8T.ToString(), out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
@@ -437,9 +445,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
             DataTable datacheck;
             DataTable dt = (DataTable)detailgridbs.DataSource;
 
-            StringBuilder sqlupd2_B = new StringBuilder();
-            StringBuilder sqlupd2_Ad = new StringBuilder();
-            StringBuilder sqlupd2_FIO = new StringBuilder();
+            StringBuilder upd_MD_8F = new StringBuilder();
+            StringBuilder upd_MD_32F = new StringBuilder();
+            StringBuilder upd_Fty_8F = new StringBuilder();
 
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unconfirme it?");
             if (dResult == DialogResult.No) return;
@@ -511,7 +519,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
 
             #endregion 更新表頭狀態資料
             #region -- 更新 MdivisionPoDetail --
-            var bs1 = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
+            var data_MD_8F32F = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            poid = b.Field<string>("poid").Trim(),
@@ -528,17 +536,17 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
                            qty = - (m.Sum(w => w.Field<decimal>("QtyAfter") - w.Field<decimal>("QtyBefore")))
                        }).ToList();
 
-            sqlupd2_B.Append(Prgs.UpdateMPoDetail(8, bs1, false));
-            sqlupd2_Ad.Append(Prgs.UpdateMPoDetail(32, null, false));
+            upd_MD_8F.Append(Prgs.UpdateMPoDetail(8, data_MD_8F32F, false));
+            upd_MD_32F.Append(Prgs.UpdateMPoDetail(32, null, false));
             #endregion
             #region -- 更新庫存數量  ftyinventory --
 
-            DataTable dtio = (DataTable)detailgridbs.DataSource;
+            DataTable data_Fty_8F = (DataTable)detailgridbs.DataSource;
             //dtio.ColumnsDecimalAdd("qty", expression: "QtyAfter- QtyBefore");
-            dtio.Columns.Add("qty", typeof(decimal));
-            foreach (DataRow dx in dtio.Rows) { dx["qty"] = - ((decimal)dx["QtyAfter"] - (decimal)dx["QtyBefore"]); };
+            data_Fty_8F.Columns.Add("qty", typeof(decimal));
+            foreach (DataRow dx in data_Fty_8F.Rows) { dx["qty"] = - ((decimal)dx["QtyAfter"] - (decimal)dx["QtyBefore"]); };
 
-            sqlupd2_FIO.Append(Prgs.UpdateFtyInventory_IO(8, null, false));
+            upd_Fty_8F.Append(Prgs.UpdateFtyInventory_IO(8, null, false));
             
             #endregion 更新庫存數量  ftyinventory
 
@@ -548,14 +556,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
                 try
                 {
                     DataTable resulttb;
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_B.ToString(), out resulttb
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F32F, "", upd_MD_8F.ToString(), out resulttb
                         , "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
                         return;
                     }
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, "", sqlupd2_Ad.ToString(), out resulttb
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F32F, "", upd_MD_32F.ToString(), out resulttb
                         , "#TmpSource")))
                     {
                         _transactionscope.Dispose();
@@ -563,7 +571,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
                         return;
                     }
                     if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        (dtio, "", sqlupd2_FIO.ToString(), out resulttb, "#TmpSource")))
+                        (data_Fty_8F, "", upd_Fty_8F.ToString(), out resulttb, "#TmpSource")))
                     {
                         _transactionscope.Dispose();
                         ShowErr(result);
