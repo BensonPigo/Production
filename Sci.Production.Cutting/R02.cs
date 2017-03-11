@@ -701,8 +701,10 @@ drop table #tmpall");
                             printData[i].Rows.Add(tabrow);
                         }
                     }
+                    printData[i].Columns.RemoveAt(printData[i].Columns.Count-1);
                 }
             }
+            
             #endregion
             
             return Result.True;
@@ -900,15 +902,7 @@ drop table #tmpall");
             boolsend = false;
             return true;
         }
-
-        //protected void createfolder()
-        //{
-        //    if (!Directory.Exists(Sci.Env.Cfg.ReportTempDir))
-        //    {
-        //        Directory.CreateDirectory(Sci.Env.Cfg.ReportTempDir);
-        //    }
-        //}
-
+        
         private void btn_sendmail_Click(object sender, EventArgs e)
         {
             tmpFile = Path.Combine(Sci.Env.Cfg.ReportTempDir, Guid.NewGuid() + ".xlsx");//設定存檔路徑字串

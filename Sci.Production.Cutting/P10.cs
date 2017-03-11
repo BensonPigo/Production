@@ -452,7 +452,7 @@ namespace Sci.Production.Cutting
             CurrentMaintain["startno"] = 1;
             CurrentMaintain["cutref"] = "";
             CurrentMaintain["ITEM"] = "";
-            textBox_LectraCode.Text = "";
+            textBox_FabricPanelCode.Text = "";
 
             DetailDatas.Clear();
             bundle_Detail_allpart_Tb.Clear();
@@ -529,7 +529,7 @@ namespace Sci.Production.Cutting
                 CurrentMaintain["Colorid"] = cutdr["Colorid"].ToString();
                 CurrentMaintain["Qty"] = cutdr["Qty"];
 
-                CurrentMaintain["LectraCode"] = cutdr["LectraCode"].ToString();
+                CurrentMaintain["FabricPanelCode"] = cutdr["FabricPanelCode"].ToString();
                 displayBox_Season.Text = cutdr["Seasonid"].ToString();
                 displayBox_Style.Text = cutdr["Styleid"].ToString();
                 displayBox_EstCutdate.Text = MyUtility.Check.Empty(cutdr["Estcutdate"])?"":((DateTime)cutdr["Estcutdate"]).ToString("yyyy/MM/dd");

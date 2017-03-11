@@ -43,9 +43,9 @@ left join dbo.Fabric b WITH (NOLOCK) on b.SCIRefno = a.SCIRefno
 left join Order_EachCons OE WITH (NOLOCK) 
     on mark.Id=OE.Id and mark.MarkerNo=OE.MarkerNo and mark.MarkerName=OE.MarkerName 
     and mark.FabricCode=OE.FabricCode and mark.FabricCombo=OE.FabricCombo 
-    and mark.LectraCode=OE.LectraCode 
+    and mark.FabricPanelCode=OE.FabricPanelCode 
 left join Order_FabricCode OFC WITH (NOLOCK) 
-    on OFC.Id=mark.Id and OFC.Lectracode=mark.LectraCode and OFC.FabricCode=mark.FabricCode
+    on OFC.Id=mark.Id and OFC.FabricPanelCode=mark.FabricPanelCode and OFC.FabricCode=mark.FabricCode
 Where mark.id ='{0}' order by mark.Seq"
                 , this.KeyValue1);
 

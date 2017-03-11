@@ -58,7 +58,7 @@ namespace Sci.Production.Cutting
             string getqtysql = string.Format(@"
             Select b.article,b.sizecode,b.qty,c.PatternPanel,b.orderid 
             from Workorder a WITH (NOLOCK) , workorder_Distribute b WITH (NOLOCK) , Order_fabriccode c WITH (NOLOCK) 
-            Where a.id = '{0}' and a.ukey = b.workorderukey and a.Id  = c.id and a.LectraCode = c.Lectracode 
+            Where a.id = '{0}' and a.ukey = b.workorderukey and a.Id  = c.id and a.FabricPanelCode = c.FabricPanelCode 
             and b.article !=''", cutid);
             DataTable getqtytb;
 

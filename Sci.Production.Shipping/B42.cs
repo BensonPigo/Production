@@ -508,13 +508,13 @@ set @vncontractid = '{4}';
 
 with tmpMarkerData
 as (
-select sm.MarkerName,sm.StyleUkey,sm.LectraCode,sma.Article,sms.SizeCode,dbo.MarkerLengthToYDS(sm.MarkerLength) as markerYDS,
+select sm.MarkerName,sm.StyleUkey,sm.FabricPanelCode,sma.Article,sms.SizeCode,dbo.MarkerLengthToYDS(sm.MarkerLength) as markerYDS,
 sm.Width,sms.Qty,sc.FabricCode,sfqt.QTFabricCode
 from Style_MarkerList sm WITH (NOLOCK) 
 inner join Style_MarkerList_SizeQty sms WITH (NOLOCK) on sm.Ukey = sms.Style_MarkerListUkey and sms.SizeCode = @sizecode
-inner join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sm.StyleUkey and sc.LectraCode = sm.LectraCode
+inner join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sm.StyleUkey and sc.FabricPanelCode = sm.FabricPanelCode
 left join Style_MarkerList_Article sma WITH (NOLOCK) on sm.Ukey = sma.Style_MarkerListUkey 
-left join Style_FabricCode_QT sfqt WITH (NOLOCK) on sm.LectraCode = sfqt.LectraCode and sm.StyleUkey = sfqt.StyleUkey
+left join Style_FabricCode_QT sfqt WITH (NOLOCK) on sm.FabricPanelCode = sfqt.FabricPanelCode and sm.StyleUkey = sfqt.StyleUkey
 where sm.MixedSizeMarker = 1 and sm.StyleUkey = @styleukey and (sma.Article is null or sma.Article = @article)
 and sc.Article = @article
 ),
@@ -714,13 +714,13 @@ set @vncontractid = '{4}';
 
 with tmpMarkerData
 as (
-select sm.MarkerName,sm.StyleUkey,sm.LectraCode,sma.Article,sms.SizeCode,dbo.MarkerLengthToYDS(sm.MarkerLength) as markerYDS,
+select sm.MarkerName,sm.StyleUkey,sm.FabricPanelCode,sma.Article,sms.SizeCode,dbo.MarkerLengthToYDS(sm.MarkerLength) as markerYDS,
 sm.Width,sms.Qty,sc.FabricCode,sfqt.QTFabricCode
 from Style_MarkerList sm WITH (NOLOCK) 
 inner join Style_MarkerList_SizeQty sms WITH (NOLOCK) on sm.Ukey = sms.Style_MarkerListUkey and sms.SizeCode = @sizecode
-inner join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sm.StyleUkey and sc.LectraCode = sm.LectraCode
+inner join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sm.StyleUkey and sc.FabricPanelCode = sm.FabricPanelCode
 left join Style_MarkerList_Article sma WITH (NOLOCK) on sm.Ukey = sma.Style_MarkerListUkey 
-left join Style_FabricCode_QT sfqtWITH (NOLOCK)  on sm.LectraCode = sfqt.LectraCode and sm.StyleUkey = sfqt.StyleUkey
+left join Style_FabricCode_QT sfqtWITH (NOLOCK)  on sm.FabricPanelCode = sfqt.FabricPanelCode and sm.StyleUkey = sfqt.StyleUkey
 where sm.MixedSizeMarker = 1 and sm.StyleUkey = @styleukey and (sma.Article is null or sma.Article = @article)
 and sc.Article = @article
 ),
@@ -746,7 +746,7 @@ as (
 select sb.StyleUkey,sb.Ukey,sb.Refno,sb.SCIRefno,sb.SuppIDBulk,sb.SizeItem,sb.PatternPanel,sb.BomTypeArticle,sb.BomTypeColor,sb.ConsPC,
 sc.ColorID,f.UsageUnit,f.HSCode,f.NLCode,f.CustomsUnit,f.PcsWidth,f.PcsLength,f.PcsKg,f.BomTypeCalculate,f.Type,f.BrandID
 from Style_BOA sb WITH (NOLOCK) 
-left join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sb.StyleUkey and sc.LectraCode = sb.PatternPanel and sc.Article = @article
+left join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sb.StyleUkey and sc.FabricPanelCode = sb.PatternPanel and sc.Article = @article
 left join Fabric f WITH (NOLOCK) on sb.SCIRefno = f.SCIRefno
 where sb.StyleUkey = @styleukey
 and sb.IsCustCD <> 2

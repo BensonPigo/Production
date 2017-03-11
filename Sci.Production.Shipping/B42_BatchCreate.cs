@@ -163,14 +163,14 @@ group by o.StyleUkey,oqd.SizeCode,oqd.Article,o.Category,o.StyleID,o.SeasonID,o.
 ),
 tmpMarkerData
 as (
-select ts.*,sm.MarkerName,sm.LectraCode,dbo.MarkerLengthToYDS(sm.MarkerLength) as markerYDS,
+select ts.*,sm.MarkerName,sm.FabricPanelCode,dbo.MarkerLengthToYDS(sm.MarkerLength) as markerYDS,
 sm.Width,sms.Qty,sc.FabricCode,sfqt.QTFabricCode
 from tmpAllStyle ts
 inner join Style_MarkerList sm WITH (NOLOCK) on sm.StyleUkey = ts.StyleUkey
 inner join Style_MarkerList_SizeQty sms WITH (NOLOCK) on sm.Ukey = sms.Style_MarkerListUkey and sms.SizeCode = ts.SizeCode
-inner join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sm.StyleUkey and sc.LectraCode = sm.LectraCode
+inner join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sm.StyleUkey and sc.FabricPanelCode = sm.FabricPanelCode
 left join Style_MarkerList_Article sma WITH (NOLOCK) on sm.Ukey = sma.Style_MarkerListUkey 
-left join Style_FabricCode_QT sfqt WITH (NOLOCK) on sm.LectraCode = sfqt.LectraCode and sm.StyleUkey = sfqt.StyleUkey
+left join Style_FabricCode_QT sfqt WITH (NOLOCK) on sm.FabricPanelCode = sfqt.FabricPanelCode and sm.StyleUkey = sfqt.StyleUkey
 where sm.MixedSizeMarker = 1 and (sma.Article is null or sma.Article = ts.Article) and sc.Article = ts.Article
 and CHARINDEX('+',sm.MarkerLength) > 0
 ),

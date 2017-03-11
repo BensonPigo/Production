@@ -67,7 +67,7 @@
             this.displayFabricCombo = new Sci.Win.UI.DisplayBox();
             this.label15 = new Sci.Win.UI.Label();
             this.displayEfficiency = new Sci.Win.UI.DisplayBox();
-            this.displayLectraCode = new Sci.Win.UI.DisplayBox();
+            this.displayFabricPanelCode = new Sci.Win.UI.DisplayBox();
             this.label14 = new Sci.Win.UI.Label();
             this.displayPatternPanel = new Sci.Win.UI.DisplayBox();
             this.label13 = new Sci.Win.UI.Label();
@@ -299,7 +299,7 @@
             this.panelBasic.Controls.Add(this.displayFabricCombo);
             this.panelBasic.Controls.Add(this.label15);
             this.panelBasic.Controls.Add(this.displayEfficiency);
-            this.panelBasic.Controls.Add(this.displayLectraCode);
+            this.panelBasic.Controls.Add(this.displayFabricPanelCode);
             this.panelBasic.Controls.Add(this.label14);
             this.panelBasic.Controls.Add(this.displayPatternPanel);
             this.panelBasic.Controls.Add(this.label13);
@@ -643,15 +643,15 @@
             this.displayEfficiency.Size = new System.Drawing.Size(60, 21);
             this.displayEfficiency.TabIndex = 15;
             // 
-            // displayLectraCode
+            // displayFabricPanelCode
             // 
-            this.displayLectraCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayLectraCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LectraCode", true));
-            this.displayLectraCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayLectraCode.Location = new System.Drawing.Point(110, 126);
-            this.displayLectraCode.Name = "displayLectraCode";
-            this.displayLectraCode.Size = new System.Drawing.Size(30, 21);
-            this.displayLectraCode.TabIndex = 13;
+            this.displayFabricPanelCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFabricPanelCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FabricPanelCode", true));
+            this.displayFabricPanelCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFabricPanelCode.Location = new System.Drawing.Point(110, 126);
+            this.displayFabricPanelCode.Name = "displayFabricPanelCode";
+            this.displayFabricPanelCode.Size = new System.Drawing.Size(30, 21);
+            this.displayFabricPanelCode.TabIndex = 13;
             // 
             // label14
             // 
@@ -946,7 +946,7 @@
         private Win.UI.DisplayBox displayFabricCombo;
         private Win.UI.Label label15;
         private Win.UI.DisplayBox displayEfficiency;
-        private Win.UI.DisplayBox displayLectraCode;
+        private Win.UI.DisplayBox displayFabricPanelCode;
         private Win.UI.Label label14;
         private Win.UI.DisplayBox displayPatternPanel;
         private Win.UI.Label label13;

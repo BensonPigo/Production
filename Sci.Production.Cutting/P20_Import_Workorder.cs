@@ -46,7 +46,7 @@ namespace Sci.Production.Cutting
         {
             DBProxy.Current.Select(null,
             @"Select 0 as Sel, '' as cutref,'' as cuttingid,'' as orderid,'' as Fabriccombo,
-            '' as LectraCode,'' as cutno, '' as MarkerName, '' as MarkerLength, '' as Colorid, 0 as Layer,
+            '' as FabricPanelCode,'' as cutno, '' as MarkerName, '' as MarkerLength, '' as Colorid, 0 as Layer,
             0 as Cons, '' as Ratio from Workorder WITH (NOLOCK) where 1=0", out gridTable);
             base.OnFormLoaded();
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
@@ -57,7 +57,7 @@ namespace Sci.Production.Cutting
             .Text("Cuttingid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("LectraCode", header: "Lectra Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("FabricPanelCode", header: "Lectra Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -132,7 +132,7 @@ namespace Sci.Production.Cutting
                         ndr["Cuttingid"] = dr["Cuttingid"];
                         ndr["OrderID"] = dr["Orderid"];
                         ndr["FabricCombo"] = dr["FabricCombo"];
-                        ndr["LectraCode"] = dr["LectraCode"];
+                        ndr["FabricPanelCode"] = dr["FabricPanelCode"];
                         ndr["Cutno"] = dr["cutno"];
                         ndr["MarkerName"] = dr["MarkerName"];
                         ndr["MarkerLength"] = dr["MarkerLength"];
@@ -150,7 +150,7 @@ namespace Sci.Production.Cutting
                         exist[0]["Cuttingid"] = dr["Cuttingid"];
                         exist[0]["OrderID"] = dr["Orderid"];
                         exist[0]["FabricCombo"] = dr["FabricCombo"];
-                        exist[0]["LectraCode"] = dr["LectraCode"];
+                        exist[0]["FabricPanelCode"] = dr["FabricPanelCode"];
                         exist[0]["Cutno"] = dr["cutno"];
                         exist[0]["MarkerName"] = dr["MarkerName"];
                         exist[0]["MarkerLength"] = dr["MarkerLength"];

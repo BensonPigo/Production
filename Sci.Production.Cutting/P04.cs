@@ -55,7 +55,7 @@ namespace Sci.Production.Cutting
                
                 For XML path('')
             ) as CutQty,
-			e.LectraCode
+			e.FabricPanelCode
             From Cutplan_Detail a WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
             where a.id = '{0}' and a.WorkOrderUkey = e.Ukey
             ", masterID);
@@ -71,7 +71,7 @@ namespace Sci.Production.Cutting
             .Numeric("Cutno", header: "Cut#", width: Widths.Auto(), integer_places: 3, iseditingreadonly: true)
             .Text("Fabriccombo", header: "Fabric Combo", width: Widths.Auto(), iseditingreadonly: true)
             .Text("Fabriccode", header: "Fabric Code", width: Widths.Auto(), iseditingreadonly: true)
-            .Text("LectraCode", header: "Fab_Panel Code", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.Auto(), iseditingreadonly: true)
             .Text("orderid", header: "SP#", width: Widths.Auto(), iseditingreadonly: true)
             .Text("SEQ1", header: "SEQ1", width: Widths.Auto(), iseditingreadonly: true)
             .Text("SEQ2", header: "SEQ2", width: Widths.Auto(), iseditingreadonly: true)

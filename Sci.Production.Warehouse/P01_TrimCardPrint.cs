@@ -53,7 +53,7 @@ namespace Sci.Production.Warehouse
             if (radioFabric.Checked)
             {
                 #region FABRIC
-                sql = string.Format(@"select  A.PatternPanel , A.FabricCode , B.Refno , C.Description , A.Lectracode
+                sql = string.Format(@"select  A.PatternPanel , A.FabricCode , B.Refno , C.Description , A.FabricPanelCode
                                 from Order_FabricCode A WITH (NOLOCK) 
                                 left join Order_BOF B WITH (NOLOCK) on B.Id=A.Id and B.FabricCode=A.FabricCode
                                 left join Fabric C WITH (NOLOCK) on C.SCIRefno=B.SCIRefno
@@ -65,16 +65,16 @@ namespace Sci.Production.Warehouse
                 sql = string.Format(@"select distinct Article 
                                 from Order_ColorCombo WITH (NOLOCK) 
                                 where Id='{0}' 
-                                and LectraCode in (select LectraCode from Order_FabricCode WITH (NOLOCK) where ID='{0}')", orderID);
+                                and FabricPanelCode in (select FabricPanelCode from Order_FabricCode WITH (NOLOCK) where ID='{0}')", orderID);
                 result = DBProxy.Current.Select(null, sql, out dtPrint2);
                 if (!result) return result;
 
-                sql = string.Format(@"select ColorID , B.Name , LectraCode , Article
+                sql = string.Format(@"select ColorID , B.Name , FabricPanelCode , Article
                                 from Order_ColorCombo A WITH (NOLOCK) 
                                 left join Color B WITH (NOLOCK) on B.BrandId='{0}' and B.ID=A.ColorID
                                 where A.Id='{1}'
-                                and LectraCode in (
-	                                select A.Lectracode 
+                                and FabricPanelCode in (
+	                                select A.FabricPanelCode 
 	                                from Order_FabricCode A WITH (NOLOCK) 
 	                                left join Order_BOF B WITH (NOLOCK) on B.Id=A.Id and B.FabricCode=A.FabricCode
 	                                left join Fabric C WITH (NOLOCK) on C.SCIRefno=B.SCIRefno
@@ -353,15 +353,15 @@ and not ob.SuppID = 'fty-c'
                     for (int i = 0; i < dtPrint.Rows.Count; i++)
                     {
                         #region 準備欄位名稱
-                        temp = "Pattern Panel:" + dtPrint.Rows[i]["Lectracode"].ToString() + Environment.NewLine
+                        temp = "Pattern Panel:" + dtPrint.Rows[i]["FabricPanelCode"].ToString() + Environment.NewLine
                              + "Fabric Code:" + dtPrint.Rows[i]["FabricCode"].ToString().Trim() + Environment.NewLine
                              + dtPrint.Rows[i]["Refno"].ToString().Trim() + Environment.NewLine
                              + dtPrint.Rows[i]["Description"].ToString().Trim();
                         //填入欄位名稱,從第一欄開始填入需要的頁數
                         for (int j = 0; j < rC; j++)
                         {
-                            //根據 DataColumn 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 LectraCode 會占用的 Table 數) + 目前是編輯第 j 個 Table
-                            //其中 6 代表, 每個 Table 可以存的 LectraCode 數量
+                            //根據 DataColumn 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 FabricPanelCode 會占用的 Table 數) + 目前是編輯第 j 個 Table
+                            //其中 6 代表, 每個 Table 可以存的 FabricPanelCode 數量
                             tables = table[nextPage + (i / 6 * rC) + j];
 
                             //有資料時才顯示Type
@@ -374,8 +374,8 @@ and not ob.SuppID = 'fty-c'
                         for (int k = 0; k < dtPrint2.Rows.Count; k++)
                         {
                             //準備filter字串
-                            sql = string.Format(@"LectraCode='{0}' and Article='{1}'"
-                                , dtPrint.Rows[i]["Lectracode"].ToString().Trim(), dtPrint2.Rows[k]["Article"].ToString().Trim());
+                            sql = string.Format(@"FabricPanelCode='{0}' and Article='{1}'"
+                                , dtPrint.Rows[i]["FabricPanelCode"].ToString().Trim(), dtPrint2.Rows[k]["Article"].ToString().Trim());
                             if (dtColor.Select(sql).Length > 0)
                             {//找出對應的Datas組起來
                                 rowColor = dtColor.Select(sql)[0];
@@ -385,8 +385,8 @@ and not ob.SuppID = 'fty-c'
                             {
                                 temp = "";
                             }
-                            //根據 DataColumn & DataRow 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 LectraCode 會占用的 Table 數) + k / Table 可存的 Article 數量
-                            //其中 K 代表, 目前編輯到 LectraCode 的第幾個 Article
+                            //根據 DataColumn & DataRow 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 FabricPanelCode 會占用的 Table 數) + k / Table 可存的 Article 數量
+                            //其中 K 代表, 目前編輯到 FabricPanelCode 的第幾個 Article
                             tables = table[nextPage + (i / 6 * rC) + (k / 4)];
 
                             //填入字串
@@ -406,8 +406,8 @@ and not ob.SuppID = 'fty-c'
                         //填入欄位名稱,從第一欄開始填入需要的頁數
                         for (int j = 0; j < rC; j++)
                         {
-                            //根據 DataColumn 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 LectraCode 會占用的 Table 數) + 目前是編輯第 j 個 Table
-                            //其中 6 代表, 每個 Table 可以存的 LectraCode 數量
+                            //根據 DataColumn 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 FabricPanelCode 會占用的 Table 數) + 目前是編輯第 j 個 Table
+                            //其中 6 代表, 每個 Table 可以存的 FabricPanelCode 數量
                             tables = table[nextPage + (i / 6 * rC) + j];
 
                             //有資料時才顯示Type
@@ -431,8 +431,8 @@ and not ob.SuppID = 'fty-c'
                                 temp = "";
                             }
 
-                            //根據 DataColumn & DataRow 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 LectraCode 會占用的 Table 數) + k / Table 可存的 Article 數量
-                            //其中 K 代表, 目前編輯到 LectraCode 的第幾個 Article
+                            //根據 DataColumn & DataRow 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 FabricPanelCode 會占用的 Table 數) + k / Table 可存的 Article 數量
+                            //其中 K 代表, 目前編輯到 FabricPanelCode 的第幾個 Article
                             tables = table[nextPage + (i / 6 * rC) + (k / 4)];
 
                             //填入字串
@@ -451,8 +451,8 @@ and not ob.SuppID = 'fty-c'
                         //填入欄位名稱,從第一欄開始填入需要的頁數
                         for (int j = 0; j < rC; j++)
                         {
-                            //根據 DataColumn 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 LectraCode 會占用的 Table 數) + 目前是編輯第 j 個 Table
-                            //其中 6 代表, 每個 Table 可以存的 LectraCode 數量
+                            //根據 DataColumn 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 FabricPanelCode 會占用的 Table 數) + 目前是編輯第 j 個 Table
+                            //其中 6 代表, 每個 Table 可以存的 FabricPanelCode 數量
                             tables = table[nextPage + (i / 6 * rC) + j];
 
                             //有資料時才顯示Type
@@ -468,8 +468,8 @@ and not ob.SuppID = 'fty-c'
                     {
                         for (int j = 0; j < rC; j++)
                         {
-                            //根據 DataColumn 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 LectraCode 會占用的 Table 數) + 目前是編輯第 j 個 Table
-                            //其中 6 代表, 每個 Table 可以存的 LectraCode 數量
+                            //根據 DataColumn 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 FabricPanelCode 會占用的 Table 數) + 目前是編輯第 j 個 Table
+                            //其中 6 代表, 每個 Table 可以存的 FabricPanelCode 數量
                             tables = table[nextPage + (i / 6 * rC) + j];
 
                             //有資料時才顯示Type
@@ -490,8 +490,8 @@ and not ob.SuppID = 'fty-c'
                                 //填入字串
                                 temp = rowColorA[l]["ThreadColorID"].ToString().Trim();
 
-                                //根據 DataColumn & DataRow 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 LectraCode 會占用的 Table 數) + k / Table 可存的 Article 數量
-                                //其中 K 代表, 目前編輯到 LectraCode 的第幾個 Article
+                                //根據 DataColumn & DataRow 選取 Table => 首頁 + (DataColumnIndex / 6 * 每個 FabricPanelCode 會占用的 Table 數) + k / Table 可存的 Article 數量
+                                //其中 K 代表, 目前編輯到 FabricPanelCode 的第幾個 Article
                                 tables = table[nextPage + (l / 6 * rC) + (k / 4)];
 
 

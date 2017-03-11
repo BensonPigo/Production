@@ -64,7 +64,7 @@
             this.textBox_MarkerLengthE = new Sci.Win.UI.TextBox();
             this.numericBox_UnitCons = new Sci.Win.UI.NumericBox();
             this.numericBox_Cons = new Sci.Win.UI.NumericBox();
-            this.textBox_LectraCode = new Sci.Win.UI.TextBox();
+            this.textBox_FabricPanelCode = new Sci.Win.UI.TextBox();
             this.textBox_FabricCombo = new Sci.Win.UI.TextBox();
             this.label18 = new Sci.Win.UI.Label();
             this.displayBox_FabricRefno = new Sci.Win.UI.DisplayBox();
@@ -623,14 +623,14 @@
             0,
             0});
             // 
-            // textBox_LectraCode
+            // textBox_FabricPanelCode
             // 
-            this.textBox_LectraCode.BackColor = System.Drawing.Color.White;
-            this.textBox_LectraCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox_LectraCode.Location = new System.Drawing.Point(117, 85);
-            this.textBox_LectraCode.Name = "textBox_LectraCode";
-            this.textBox_LectraCode.Size = new System.Drawing.Size(49, 23);
-            this.textBox_LectraCode.TabIndex = 24;
+            this.textBox_FabricPanelCode.BackColor = System.Drawing.Color.White;
+            this.textBox_FabricPanelCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox_FabricPanelCode.Location = new System.Drawing.Point(117, 85);
+            this.textBox_FabricPanelCode.Name = "textBox_FabricPanelCode";
+            this.textBox_FabricPanelCode.Size = new System.Drawing.Size(49, 23);
+            this.textBox_FabricPanelCode.TabIndex = 24;
             // 
             // textBox_FabricCombo
             // 
@@ -1062,7 +1062,7 @@
             this.rightpanel.Controls.Add(this.label21);
             this.rightpanel.Controls.Add(this.numericBox_Cons);
             this.rightpanel.Controls.Add(this.label20);
-            this.rightpanel.Controls.Add(this.textBox_LectraCode);
+            this.rightpanel.Controls.Add(this.textBox_FabricPanelCode);
             this.rightpanel.Controls.Add(this.sizeratio_grid);
             this.rightpanel.Controls.Add(this.textBox_FabricCombo);
             this.rightpanel.Controls.Add(this.label19);
@@ -1188,7 +1188,7 @@
         private Win.UI.DisplayBox displayBox_FabricRefno;
         private Win.UI.Label label18;
         private Win.UI.TextBox textBox_FabricCombo;
-        private Win.UI.TextBox textBox_LectraCode;
+        private Win.UI.TextBox textBox_FabricPanelCode;
         private Win.UI.NumericBox numericBox_Cons;
         private Class.txtCell txtCell1;
         private Win.UI.NumericBox numericBox_UnitCons;

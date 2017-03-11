@@ -75,7 +75,7 @@
             this.button1 = new Sci.Win.UI.Button();
             this.txtLine = new Sci.Win.UI.TextBox();
             this.label7 = new Sci.Win.UI.Label();
-            this.textBox_LectraCode = new Sci.Win.UI.TextBox();
+            this.textBox_FabricPanelCode = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -92,7 +92,7 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.textBox_LectraCode);
+            this.masterpanel.Controls.Add(this.textBox_FabricPanelCode);
             this.masterpanel.Controls.Add(this.label7);
             this.masterpanel.Controls.Add(this.txtLine);
             this.masterpanel.Controls.Add(this.Generate_Button);
@@ -187,7 +187,7 @@
             this.masterpanel.Controls.SetChildIndex(this.Generate_Button, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLine, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox_LectraCode, 0);
+            this.masterpanel.Controls.SetChildIndex(this.textBox_FabricPanelCode, 0);
             // 
             // detailpanel
             // 
@@ -771,15 +771,15 @@
             this.label7.TabIndex = 48;
             this.label7.Text = "Fab_Panel Code";
             // 
-            // textBox_LectraCode
+            // textBox_FabricPanelCode
             // 
-            this.textBox_LectraCode.BackColor = System.Drawing.Color.White;
-            this.textBox_LectraCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LectraCode", true));
-            this.textBox_LectraCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox_LectraCode.Location = new System.Drawing.Point(554, 81);
-            this.textBox_LectraCode.Name = "textBox_LectraCode";
-            this.textBox_LectraCode.Size = new System.Drawing.Size(53, 23);
-            this.textBox_LectraCode.TabIndex = 10;
+            this.textBox_FabricPanelCode.BackColor = System.Drawing.Color.White;
+            this.textBox_FabricPanelCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FabricPanelCode", true));
+            this.textBox_FabricPanelCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox_FabricPanelCode.Location = new System.Drawing.Point(554, 81);
+            this.textBox_FabricPanelCode.Name = "textBox_FabricPanelCode";
+            this.textBox_FabricPanelCode.Size = new System.Drawing.Size(53, 23);
+            this.textBox_FabricPanelCode.TabIndex = 10;
             // 
             // P10
             // 
@@ -863,7 +863,7 @@
         private Win.UI.Button Generate_Button;
         private Win.UI.Button button1;
         private Win.UI.TextBox txtLine;
-        private Win.UI.TextBox textBox_LectraCode;
+        private Win.UI.TextBox textBox_FabricPanelCode;
         private Win.UI.Label label7;
     }
 }

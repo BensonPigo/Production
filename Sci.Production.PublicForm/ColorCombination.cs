@@ -49,7 +49,7 @@ namespace Sci.Production.PublicForm
             string createheader = "Select Article";
             string headername;
             //Order_Fabric
-            string headersql = string.Format("Select distinct FabricCode,PatternPanel,LectraCode from Order_FabricCode WITH (NOLOCK) where id = '{0}' order by PatternPanel,FabricCode", cutid);
+            string headersql = string.Format("Select distinct FabricCode,PatternPanel,FabricPanelCode from Order_FabricCode WITH (NOLOCK) where id = '{0}' order by PatternPanel,FabricCode", cutid);
             DataTable headertb0, headertb;
             DualResult sqlresult = DBProxy.Current.Select(null, headersql, out headertb0);
             if (!sqlresult)
@@ -59,8 +59,8 @@ namespace Sci.Production.PublicForm
             }
             foreach (DataRow dr in headertb0.Rows)
             {
-                headername = dr["LectraCode"].ToString().Trim();
-                createheader = createheader + string.Format(",case when a.Lectracode='{0}' then Colorid end '{0}' ", dr["LectraCode"].ToString().Trim());
+                headername = dr["FabricPanelCode"].ToString().Trim();
+                createheader = createheader + string.Format(",case when a.FabricPanelCode='{0}' then Colorid end '{0}' ", dr["FabricPanelCode"].ToString().Trim());
 
                 Helper.Controls.Grid.Generator(this.gridFab)
                 .Text(headername, header: headername, width: Widths.AnsiChars(8), iseditingreadonly: true);
@@ -117,7 +117,7 @@ namespace Sci.Production.PublicForm
             gridtb.Rows.Add(ndr);
             foreach (DataRow dr in headertb0.Rows)
             {
-                string lc = dr["LectraCode"].ToString();
+                string lc = dr["FabricPanelCode"].ToString();
                 string pp = dr["PatternPanel"].ToString();
                 string fc = dr["FabricCode"].ToString();
                 DataRow[] tbdr = gridtb.Select("Article = 'PatternPanel'");
@@ -127,7 +127,7 @@ namespace Sci.Production.PublicForm
 
                 //產生[QT With]資料
                 DataRow[] tbdr3 = gridtb.Select("Article = 'QT With'");
-                DataRow[] drQTWith = dtQTWith.Select(string.Format("LectraCode = '{0}'", lc));
+                DataRow[] drQTWith = dtQTWith.Select(string.Format("FabricPanelCode = '{0}'", lc));
                 if (drQTWith.Length > 0) tbdr3[0][lc] = drQTWith[0]["IsQT"].ToString();
 
             }
@@ -246,18 +246,18 @@ namespace Sci.Production.PublicForm
 	            colorCombo as (Select StyleUkey as myKey, * From Style_ColorCombo WITH (NOLOCK) where StyleUkey = '{0}'),
 	            qt as (Select StyleUkey as myKey, * From Style_FabricCode_QT WITH (NOLOCK) where StyleUkey = '{0}')
 
-            Select f.myKey, f.StyleUkey, f.LectraCode, f.PatternPanel, f.FabricCode, IsNull(q.IsQt, '') as IsQT
+            Select f.myKey, f.StyleUkey, f.FabricPanelCode, f.PatternPanel, f.FabricCode, IsNull(q.IsQt, '') as IsQT
             from bof b
             Inner join fabericCode f on f.parentKey = b.Ukey
             Outer Apply (
                 Select Top 1 Concat(qt.QTFabricCode, qt.QTPatternPanel) as IsQT
                 From qt
                 Where qt.myKey = f.myKey
-                and qt.LectraCode = f.LectraCode
-	            and qt.SeqNO > (Select distinct SeqNO From qt QR where QR.myKey = qt.myKey and QR.QTLectraCode = f.LectraCode)
+                and qt.FabricPanelCode = f.FabricPanelCode
+	            and qt.SeqNO > (Select distinct SeqNO From qt QR where QR.myKey = qt.myKey and QR.QTFabricPanelCode = f.FabricPanelCode)
 	            Order by qt.SeqNO
             ) as q
-            Order by f.PatternPanel, f.FabricCode, f.LectraCode;", Styleukey);
+            Order by f.PatternPanel, f.FabricCode, f.FabricPanelCode;", Styleukey);
             DualResult sqlresult = DBProxy.Current.Select(null, sql, out dtQTWith);
             if (!sqlresult)
             {

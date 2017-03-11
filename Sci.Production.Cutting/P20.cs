@@ -33,7 +33,7 @@ namespace Sci.Production.Cutting
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmdsql = string.Format(
             @"
-            Select a.* , e.FabricCombo, e.LectraCode, 
+            Select a.* , e.FabricCombo, e.FabricPanelCode, 
             (
                 Select DISTINCT Orderid+'/' 
                 From WorkOrder_Distribute d WITH (NOLOCK) 
@@ -101,7 +101,7 @@ namespace Sci.Production.Cutting
                         dr["MarkerName"] = "";
                         dr["Layer"] =0;
                         dr["Cons"] = 0;
-                        dr["LectraCode"] = "";
+                        dr["FabricPanelCode"] = "";
                         dr["Workorderukey"] = 0;
                         dr["SizeRatio"] = "";
                         dr.EndEdit();
@@ -131,7 +131,7 @@ namespace Sci.Production.Cutting
                 dr["MarkerName"] = seldr["MarkerName"];
                 dr["Layer"] = seldr["Layer"];
                 dr["Cons"] = seldr["Cons"];
-                dr["LectraCode"] = seldr["LectraCode"];
+                dr["FabricPanelCode"] = seldr["FabricPanelCode"];
                 dr["cutno"] = seldr["cutno"];
                 dr["MarkerLength"] = seldr["MarkerLength"];
                 dr["colorID"] = seldr["colorID"];
@@ -198,7 +198,7 @@ namespace Sci.Production.Cutting
             .Text("Cuttingid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("LectraCode", header: "Fab_Panel Code", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)

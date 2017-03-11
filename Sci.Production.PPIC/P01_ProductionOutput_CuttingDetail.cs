@@ -43,7 +43,7 @@ namespace Sci.Production.PPIC
                  .Date("CDate", header: "Date", width: Widths.AnsiChars(12))
                  .Text("CutRef", header: "Ref#", width: Widths.AnsiChars(6))
                  .Text("PatternPanel", header: "Fabric Comb", width: Widths.AnsiChars(2))
-                 .Text("LectraCode", header: "Lectra Code", width: Widths.AnsiChars(2))
+                 .Text("FabricPanelCode", header: "Lectra Code", width: Widths.AnsiChars(2))
                  .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3))
                  .Numeric("CutQty", header: "Q'ty", width: Widths.AnsiChars(6))
                  .Text("Status", header: "Status", width: Widths.AnsiChars(8));
@@ -97,7 +97,7 @@ group by cDate", string.Format("o.ID = '{0}'", id));
             }
             else
             {
-                sqlCmd = string.Format(@"select c.cDate,cd.CutRef,wp.PatternPanel,w.LectraCode,CD.Cutno,sum(wd.Qty) as CutQty,Status
+                sqlCmd = string.Format(@"select c.cDate,cd.CutRef,wp.PatternPanel,w.FabricPanelCode,CD.Cutno,sum(wd.Qty) as CutQty,Status
 from Orders o WITH (NOLOCK) 
 inner join WorkOrder_Distribute wd WITH (NOLOCK) on wd.OrderID = o.ID and wd.Article = '{1}' and wd.SizeCode = '{2}'
 inner join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
@@ -105,7 +105,7 @@ inner join WorkOrder w WITH (NOLOCK) on w.ID=wp.ID and w.Ukey=wp.WorkOrderUkey
 inner join CuttingOutput_Detail cd WITH (NOLOCK) on cd.WorkOrderUkey = wd.WorkOrderUkey
 inner join CuttingOutput c WITH (NOLOCK) on c.ID = cd.ID
 where {0}
-group by c.cDate,cd.CutRef,wp.PatternPanel,w.LectraCode,CD.Cutno,Status"
+group by c.cDate,cd.CutRef,wp.PatternPanel,w.FabricPanelCode,CD.Cutno,Status"
                     , string.Format("o.ID = '{0}'", id)
                     ,article,sizeCode);
             }

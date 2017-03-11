@@ -81,7 +81,7 @@
             this.displayType = new Sci.Win.UI.DisplayBox();
             this.txtForArticle = new Sci.Win.UI.TextBox();
             this.txtPatternPanel = new Sci.Win.UI.TextBox();
-            this.txtLectraCode = new Sci.Win.UI.TextBox();
+            this.txtFabricPanelCode = new Sci.Win.UI.TextBox();
             this.label22 = new Sci.Win.UI.Label();
             this.displayTotal = new Sci.Win.UI.DisplayBox();
             this.label1 = new Sci.Win.UI.Label();
@@ -740,16 +740,16 @@
             this.txtPatternPanel.Size = new System.Drawing.Size(205, 21);
             this.txtPatternPanel.TabIndex = 139;
             // 
-            // txtLectraCode
+            // txtFabricPanelCode
             // 
-            this.txtLectraCode.BackColor = System.Drawing.Color.White;
-            this.txtLectraCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LectraCode", true));
-            this.txtLectraCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtLectraCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLectraCode.Location = new System.Drawing.Point(339, 148);
-            this.txtLectraCode.Name = "txtLectraCode";
-            this.txtLectraCode.Size = new System.Drawing.Size(61, 21);
-            this.txtLectraCode.TabIndex = 171;
+            this.txtFabricPanelCode.BackColor = System.Drawing.Color.White;
+            this.txtFabricPanelCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FabricPanelCode", true));
+            this.txtFabricPanelCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFabricPanelCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFabricPanelCode.Location = new System.Drawing.Point(339, 148);
+            this.txtFabricPanelCode.Name = "txtFabricPanelCode";
+            this.txtFabricPanelCode.Size = new System.Drawing.Size(61, 21);
+            this.txtFabricPanelCode.TabIndex = 171;
             // 
             // label22
             // 
@@ -799,7 +799,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.displayTotal);
             this.Controls.Add(this.label22);
-            this.Controls.Add(this.txtLectraCode);
+            this.Controls.Add(this.txtFabricPanelCode);
             this.Controls.Add(this.txtForArticle);
             this.Controls.Add(this.displayType);
             this.Controls.Add(this.checkBox2);
@@ -919,7 +919,7 @@
             this.Controls.SetChildIndex(this.checkBox2, 0);
             this.Controls.SetChildIndex(this.displayType, 0);
             this.Controls.SetChildIndex(this.txtForArticle, 0);
-            this.Controls.SetChildIndex(this.txtLectraCode, 0);
+            this.Controls.SetChildIndex(this.txtFabricPanelCode, 0);
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
             this.Controls.SetChildIndex(this.detailgridcont, 0);
@@ -992,7 +992,7 @@
         private Win.UI.DisplayBox displayType;
         private Win.UI.TextBox txtForArticle;
         private Win.UI.TextBox txtPatternPanel;
-        private Win.UI.TextBox txtLectraCode;
+        private Win.UI.TextBox txtFabricPanelCode;
         private Win.UI.Label label22;
         private Win.UI.DisplayBox displayTotal;
         private Win.UI.Label label1;

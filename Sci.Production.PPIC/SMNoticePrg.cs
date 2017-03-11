@@ -651,7 +651,7 @@ where o.POID = @ID
             if (enuType == EnuPrintSMType.SMNotice)
             {
                 sqlX = @"
-Select fabricCode.LectraCode, fabricCode.PatternPanel, bof.FabricCode, q.QTWith 
+Select fabricCode.FabricPanelCode, fabricCode.PatternPanel, bof.FabricCode, q.QTWith 
 	From SMNotice sm
 	Left Join Style s on s.Ukey = sm.StyleUkey
 	Left Join Style_BOF bof on bof.StyleUkey = s.Ukey
@@ -660,12 +660,12 @@ Outer Apply (
     Select Top 1 Concat(qt.QTFabricCode, qt.QTPatternPanel) as QTWith
     From Style_FabricCode_QT qt
     Where qt.StyleUkey = sm.StyleUkey
-    and qt.LectraCode = fabricCode.LectraCode
-	and qt.SeqNO > (Select distinct SeqNO From Style_FabricCode_QT QR where QR.StyleUkey = qt.StyleUkey and QR.QTLectraCode = fabricCode.LectraCode)
+    and qt.FabricPanelCode = fabricCode.FabricPanelCode
+	and qt.SeqNO > (Select distinct SeqNO From Style_FabricCode_QT QR where QR.StyleUkey = qt.StyleUkey and QR.QTFabricPanelCode = fabricCode.FabricPanelCode)
 	Order by qt.SeqNO
 ) as q
 Where sm.ID = @ID
-order by case when fabricCode.LectraCode like 'A%' then 1 else 2 end, fabricCode.LectraCode
+order by case when fabricCode.FabricPanelCode like 'A%' then 1 else 2 end, fabricCode.FabricPanelCode
 ";
 
                 sqlY = @"
@@ -677,7 +677,7 @@ Select article.Article
 ";
 
                 sqlZ = @"
-Select color.Article, color.FabricCode, color.LectraCode, color.ColorID
+Select color.Article, color.FabricCode, color.FabricPanelCode, color.ColorID
 	From SMNotice sm
 	Left Join Style s on s.Ukey = sm.StyleUkey
 	Left Join Style_ColorCombo color on color.StyleUkey = s.Ukey and FabricCode <> ''
@@ -687,7 +687,7 @@ Select color.Article, color.FabricCode, color.LectraCode, color.ColorID
             else
             {
                 sqlX = @"
-Select fabricCode.LectraCode, fabricCode.PatternPanel, bof.FabricCode, q.QTWith 
+Select fabricCode.FabricPanelCode, fabricCode.PatternPanel, bof.FabricCode, q.QTWith 
 	From Orders o
 	Left Join Order_BOF bof on bof.ID = o.ID
 	Left Join Order_FabricCode fabricCode on fabricCode.Order_BOFUkey = bof.Ukey
@@ -695,12 +695,12 @@ Outer Apply (
     Select Top 1 Concat(qt.QTFabricCode, qt.QTPatternPanel) as QTWith
     From Order_FabricCode_QT qt
     Where qt.Id = o.ID
-    and qt.LectraCode = fabricCode.LectraCode
-	and qt.SeqNO > (Select distinct SeqNO From Order_FabricCode_QT QR where QR.Id = qt.Id and QR.QTLectraCode = fabricCode.LectraCode)
+    and qt.FabricPanelCode = fabricCode.FabricPanelCode
+	and qt.SeqNO > (Select distinct SeqNO From Order_FabricCode_QT QR where QR.Id = qt.Id and QR.QTFabricPanelCode = fabricCode.FabricPanelCode)
 	Order by qt.SeqNO
 ) as q
 Where o.ID = @ID
-order by case when fabricCode.LectraCode like 'A%' then 1 else 2 end, fabricCode.LectraCode
+order by case when fabricCode.FabricPanelCode like 'A%' then 1 else 2 end, fabricCode.FabricPanelCode
 ";
 
                 sqlY = @"
@@ -711,7 +711,7 @@ Select distinct article.Article
 ";
 
                 sqlZ = @"
-Select distinct color.Article, color.FabricCode, color.LectraCode, color.ColorID
+Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.ColorID
 	From Orders o
 	Left Join Order_ColorCombo color on color.Id = o.ID and FabricCode <> ''
 	where o.POID = @ID
@@ -742,12 +742,12 @@ Select distinct color.Article, color.FabricCode, color.LectraCode, color.ColorID
                     .AsEnumerable()
                     .Select(row => new
                     {
-                        LectraCode = row.Field<string>("LectraCode"),
+                        FabricPanelCode = row.Field<string>("FabricPanelCode"),
                         PatternPanel = row.Field<string>("PatternPanel"),
                         FabricCode = row.Field<string>("FabricCode"),
                         QTWith = row.Field<string>("QTWith"),
                     })
-                    .ToDictionary(item => item.LectraCode, item => item);
+                    .ToDictionary(item => item.FabricPanelCode, item => item);
                 var dataY = drY.ExtendedData
                     .AsEnumerable()
                     .Select(row => row.Field<string>("Article"))
@@ -757,14 +757,14 @@ Select distinct color.Article, color.FabricCode, color.LectraCode, color.ColorID
                     .Select(row => new
                     {
                         Article = row.Field<string>("Article"),
-                        LectraCode = row.Field<string>("LectraCode"),
+                        FabricPanelCode = row.Field<string>("FabricPanelCode"),
                         ColorID = row.Field<string>("ColorID"),
                     })
-                    .ToDictionary(item => new Tuple<string, string>(item.Article, item.LectraCode), item => item.ColorID); ;
+                    .ToDictionary(item => new Tuple<string, string>(item.Article, item.FabricPanelCode), item => item.ColorID); ;
 
                 var linesOfExcel = new List<IEnumerable<object>>();
                 linesOfExcel.Add(
-                    //第一行要印Art# 和有使用到的LectraCode
+                    //第一行要印Art# 和有使用到的FabricPanelCode
                     new[] { (object)"Art#" }.Concat(dataX.Select(pair => pair.Key))
                 );
                 linesOfExcel.Add(
@@ -857,7 +857,7 @@ Select distinct color.Article, color.FabricCode, color.LectraCode, color.ColorID
             if (enuType == EnuPrintSMType.SMNotice)
             {
                 sql = @"
-Select fc.LectraCode
+Select fc.FabricPanelCode
 	, Concat(
 		IsNull(bof.Refno + '; ', ''), 
 		IsNull(f.Description, ''), 
@@ -871,15 +871,15 @@ From SMNotice sm
 inner join Style_BOF bof on bof.StyleUkey = sm.StyleUkey
 Left Join Fabric f on f.SCIRefno = bof.SCIRefno
 Left Join DropdownList ddl on ddl.Type = 'MatchFabric' and ddl.ID = bof.MatchFabric
-Outer Apply(Select Stuff((Select '/' + fc.LectraCode from Style_FabricCode fc where fc.Style_BOFUkey = bof.Ukey for xml path('')), 1, 1, '') as LectraCode) fc
+Outer Apply(Select Stuff((Select '/' + fc.FabricPanelCode from Style_FabricCode fc where fc.Style_BOFUkey = bof.Ukey for xml path('')), 1, 1, '') as FabricPanelCode) fc
 Where sm.ID = @ID
-Order by fc.LectraCode
+Order by fc.FabricPanelCode
 ";
             }
             else
             {
                 sql = @"
-Select fc.LectraCode
+Select fc.FabricPanelCode
 	, Concat(
 		IsNull(bof.Refno + '; ', ''), 
 		IsNull(f.Description, ''), 
@@ -894,9 +894,9 @@ inner join Order_BOF bof on bof.Id = o.ID
 Left Join Fabric f on f.SCIRefno = bof.SCIRefno
 LEFT JOIN Style_BOF sbof on sbof.StyleUkey = o.StyleUkey and sbof.FabricCode = bof.FabricCode
 Left Join DropdownList ddl on ddl.Type = 'MatchFabric' and ddl.ID = sbof.MatchFabric
-Outer Apply(Select Stuff((Select '/' + fc.LectraCode from Order_FabricCode fc where fc.Order_BOFUkey = bof.Ukey for xml path('')), 1, 1, '') as LectraCode) fc
+Outer Apply(Select Stuff((Select '/' + fc.FabricPanelCode from Order_FabricCode fc where fc.Order_BOFUkey = bof.Ukey for xml path('')), 1, 1, '') as FabricPanelCode) fc
 Where o.ID = @ID
-Order by fc.LectraCode
+Order by fc.FabricPanelCode
 ";
             }
             
@@ -914,7 +914,7 @@ Order by fc.LectraCode
                     var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P1B3") as MsExcel.Worksheet;
                     try
                     {
-                        var rangeValue = dr.ExtendedData.AsEnumerable().Select(row => new[] { row.Field<string>("LectraCode"), string.Empty, row.Field<string>("MixInfo") }).DoubleArrayConvert2DArray();
+                        var rangeValue = dr.ExtendedData.AsEnumerable().Select(row => new[] { row.Field<string>("FabricPanelCode"), string.Empty, row.Field<string>("MixInfo") }).DoubleArrayConvert2DArray();
 
                         //一共有多少筆資料要被放入Block3
                         var recordCount = dr.ExtendedData.Rows.Count;
@@ -968,16 +968,16 @@ Order by fc.LectraCode
             {
                 sqlX = @"
 Select * from (
-select distinct boa.PatternPanel as LectraCode
+select distinct boa.PatternPanel as FabricPanelCode
 From SMNotice sm
 Left Join Style_BOA boa on boa.StyleUkey = sm.StyleUkey
 Where sm.ID = @ID and IsNull(boa.PatternPanel, '') <> ''
 union 
-Select distinct color.LectraCode
+Select distinct color.FabricPanelCode
 From SMNotice sm
 	inner Join Style_ColorCombo color on color.StyleUkey = sm.StyleUkey and FabricCode = ''
 Where sm.ID = @ID)x
-order by case when x.LectraCode like 'A%' then 1 else 2 end, x.LectraCode
+order by case when x.FabricPanelCode like 'A%' then 1 else 2 end, x.FabricPanelCode
 ";
                 sqlY = @"
 Select article.Article
@@ -987,7 +987,7 @@ Select article.Article
 	where sm.ID = @ID
 ";                
                 sqlZ = @"
-Select color.Article, color.FabricCode, color.LectraCode, color.ColorID, color.PatternPanel
+Select color.Article, color.FabricCode, color.FabricPanelCode, color.ColorID, color.PatternPanel
 	From SMNotice sm
 	Left Join Style s on s.Ukey = sm.StyleUkey
 	Left Join Style_ColorCombo color on color.StyleUkey = s.Ukey and FabricCode = ''
@@ -998,16 +998,16 @@ Select color.Article, color.FabricCode, color.LectraCode, color.ColorID, color.P
             {
                 sqlX = @"
 Select * from (
-select distinct boa.PatternPanel as LectraCode
+select distinct boa.PatternPanel as FabricPanelCode
 From Orders o
 Left Join Order_BOA boa on boa.Id = o.ID
 Where o.ID = @ID and IsNull(boa.PatternPanel, '') <> ''
 union 
-Select distinct color.LectraCode
+Select distinct color.FabricPanelCode
 From Orders o
 	inner Join Order_ColorCombo color on color.Id = o.ID and FabricCode = ''
 Where o.POID = @ID)x
-order by case when x.LectraCode like 'A%' then 1 else 2 end, x.LectraCode
+order by case when x.FabricPanelCode like 'A%' then 1 else 2 end, x.FabricPanelCode
 ";
                 
                 sqlY = @"
@@ -1017,7 +1017,7 @@ Select distinct article.Article
 	where o.POID = @ID
 ";                
                 sqlZ = @"
-Select distinct color.Article, color.FabricCode, color.LectraCode, color.ColorID, color.PatternPanel
+Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.ColorID, color.PatternPanel
 	From Orders o
 	Left Join Order_ColorCombo color on color.Id = o.ID and FabricCode = ''
 	where o.ID = @ID
@@ -1049,25 +1049,25 @@ Select distinct color.Article, color.FabricCode, color.LectraCode, color.ColorID
                         return false;
                     }
 
-                    //換成用LectraCode 和 Article當X座標與Y座標的字典備用
+                    //換成用FabricPanelCode 和 Article當X座標與Y座標的字典備用
                     var dataZ = drZ.ExtendedData
                         .AsEnumerable()
                         .Select(row => new
                         {
                             Article = row.Field<string>("Article"),
-                            LectraCode = row.Field<string>("LectraCode"),
+                            FabricPanelCode = row.Field<string>("FabricPanelCode"),
                             ColorID = row.Field<string>("ColorID"),
                         })
                         .ToDictionary(
-                            item => new Tuple<string, string>(item.Article, item.LectraCode),
+                            item => new Tuple<string, string>(item.Article, item.FabricPanelCode),
                             item => item.ColorID);
 
                     var dataX = drX.ExtendedData
                         .AsEnumerable()
-                        .Select(row => row.Field<string>("LectraCode"))
+                        .Select(row => row.Field<string>("FabricPanelCode"))
                         .Distinct()
-                        .Where(lectraCode => dataZ.Any(pair => pair.Key.Item2 == lectraCode))
-                        .OrderBy(lectraCode => lectraCode.Length == 1 ? "A" + lectraCode : lectraCode)
+                        .Where(FabricPanelCode => dataZ.Any(pair => pair.Key.Item2 == FabricPanelCode))
+                        .OrderBy(FabricPanelCode => FabricPanelCode.Length == 1 ? "A" + FabricPanelCode : FabricPanelCode)
                         .ToList();
 
                     var dataY = drY.ExtendedData
@@ -1077,16 +1077,16 @@ Select distinct color.Article, color.FabricCode, color.LectraCode, color.ColorID
 
                     var linesOfExcel = new List<IEnumerable<object>>();
                     linesOfExcel.Add(
-                        //第一行要印Art# 和有使用到的LectraCode
+                        //第一行要印Art# 和有使用到的FabricPanelCode
                         new[] { (object)"Art#" }.Concat(dataX.ToArray())
                     );
 
                     //接著把Article，串上屬於他的Color
                     dataY.ToList().ForEach(article =>
                     {
-                        var colorsOfThisArticle = dataX.Select(lectraCode =>
+                        var colorsOfThisArticle = dataX.Select(FabricPanelCode =>
                         {
-                            var key = new Tuple<string, string>(article, lectraCode);
+                            var key = new Tuple<string, string>(article, FabricPanelCode);
                             if (dataZ.ContainsKey(key))
                                 return dataZ[key];
                             else
@@ -1149,7 +1149,7 @@ Select distinct color.Article, color.FabricCode, color.LectraCode, color.ColorID
             {
                 sql = @"
 Select Caption, ColorID, ColorList from (
-Select 1 as tp, Concat(color.Article, '/', color.LectraCode) as Caption, r.u as ColorList, color.ColorID
+Select 1 as tp, Concat(color.Article, '/', color.FabricPanelCode) as Caption, r.u as ColorList, color.ColorID
 	From SMNotice sm
 	inner Join Style s on s.Ukey = sm.StyleUkey
 	inner Join Style_ColorCombo color on color.StyleUkey = s.Ukey and FabricCode <> ''
@@ -1158,7 +1158,7 @@ Select 1 as tp, Concat(color.Article, '/', color.LectraCode) as Caption, r.u as 
 	where sm.ID = @ID
 	and Substring(color.ColorID, 1, 1) = 'X'
 union all
-Select 2 as tp, Concat(color.Article, '/', color.LectraCode) as Caption, r.u, color.ColorID
+Select 2 as tp, Concat(color.Article, '/', color.FabricPanelCode) as Caption, r.u, color.ColorID
 	From SMNotice sm
 	inner Join Style s on s.Ukey = sm.StyleUkey
 	inner Join Style_ColorCombo color on color.StyleUkey = sm.StyleUkey and FabricCode = ''
@@ -1173,7 +1173,7 @@ order by x.tp, x.Caption
             {
                 sql = @"
 Select Caption, ColorID, ColorList from (
-Select 1 as tp, Concat(color.Article, '/', color.LectraCode) as Caption, r.u as ColorList, color.ColorID
+Select 1 as tp, Concat(color.Article, '/', color.FabricPanelCode) as Caption, r.u as ColorList, color.ColorID
 	From Orders o
 	inner Join Order_ColorCombo color on color.Id = o.ID and FabricCode <> ''
 	inner Join Color c on c.BrandID = o.BrandID and c.ID = color.ColorID
@@ -1181,7 +1181,7 @@ Select 1 as tp, Concat(color.Article, '/', color.LectraCode) as Caption, r.u as 
 	where o.ID = @ID
 	and Substring(color.ColorID, 1, 1) = 'X'
 union all
-Select 2 as tp, Concat(color.Article, '/', color.LectraCode) as Caption, r.u, color.ColorID
+Select 2 as tp, Concat(color.Article, '/', color.FabricPanelCode) as Caption, r.u, color.ColorID
 	From Orders o
 	inner Join Order_ColorCombo color on color.Id = o.ID and FabricCode = ''
 	inner Join Color c on c.BrandID = o.BrandID and c.ID = color.ColorID
@@ -1529,7 +1529,7 @@ order by q.Article, q.SizeCode
                         .Select(row => row.Field<string>("Article"))
                         .ToList();
 
-                    //換成用LectraCode 和 Article當X座標與Y座標的字典備用
+                    //換成用FabricPanelCode 和 Article當X座標與Y座標的字典備用
                     var dataZ = drZ.ExtendedData
                        .AsEnumerable()
                        .Select(row => new
@@ -1718,14 +1718,14 @@ Where o.ID = @ID
             if (enuType == EnuPrintSMType.SMNotice)
             {
                 sql = @"
-Select art.Article, fc.LectraCode, color.ColorID, bof.Refno
+Select art.Article, fc.FabricPanelCode, color.ColorID, bof.Refno
 From SMNotice sm
 inner Join Style_BOF bof on bof.StyleUkey = sm.StyleUkey
 inner join Style_FabricCode fc on fc.Style_BOFUkey = bof.Ukey
 inner join Style_Article art on art.StyleUkey = sm.StyleUkey
-inner Join Style_ColorCombo color on color.StyleUkey = sm.StyleUkey and color.LectraCode = fc.LectraCode and color.Article = art.Article and color.FabricCode <> ''
+inner Join Style_ColorCombo color on color.StyleUkey = sm.StyleUkey and color.FabricPanelCode = fc.FabricPanelCode and color.Article = art.Article and color.FabricCode <> ''
 Where sm.ID = @ID
-Order by art.Article, fc.LectraCode
+Order by art.Article, fc.FabricPanelCode
 ";
                 sqlStyleInfo = @"
 Select CONCAT(s.ID, '-', s.SeasonID) as StyleInfo
@@ -1737,14 +1737,14 @@ Where sm.ID = @ID
             else
             {
                 sql = @"
-Select art.Article, fc.LectraCode, color.ColorID, bof.Refno
+Select art.Article, fc.FabricPanelCode, color.ColorID, bof.Refno
 From Orders o
 inner Join Order_BOF bof on bof.Id = o.ID
 inner join Order_FabricCode fc on fc.Order_BOFUkey = bof.Ukey
 inner join Order_Article art on art.id = o.ID
-inner Join Order_ColorCombo color on color.Id = o.ID and color.LectraCode = fc.LectraCode and color.Article = art.Article and color.FabricCode <> ''
+inner Join Order_ColorCombo color on color.Id = o.ID and color.FabricPanelCode = fc.FabricPanelCode and color.Article = art.Article and color.FabricCode <> ''
 Where o.ID = @ID
-Order by art.Article, fc.LectraCode
+Order by art.Article, fc.FabricPanelCode
 ";
                 sqlStyleInfo = @"
 Select CONCAT(o.StyleID, '-', o.SeasonID) as StyleInfo
@@ -1779,16 +1779,16 @@ Where o.ID = @ID
                         var data = dr.ExtendedData.AsEnumerable().Select(row => new
                         {
                             Article = row.Field<string>("Article"),
-                            LectraCode = row.Field<string>("LectraCode"),
+                            FabricPanelCode = row.Field<string>("FabricPanelCode"),
                             ColorID = row.Field<string>("ColorID"),
                             Refno = row.Field<string>("Refno"),
                         })
                             //第一層先用Article做GroupBy
                         .GroupBy(item => item.Article)
-                            //第二層，同一個Article內，怕會有超過7個LectraCode (雖然很少但可能有)
+                            //第二層，同一個Article內，怕會有超過7個FabricPanelCode (雖然很少但可能有)
                             //所以把GroupItem用7切分，逢7換行
-                            //這邊會把本來Article -> LectraCode[]變成 Article -> LineX -> LectraCode
-                            //保證每一個Line都只會最多有7個LectraCode要印
+                            //這邊會把本來Article -> FabricPanelCode[]變成 Article -> LineX -> FabricPanelCode
+                            //保證每一個Line都只會最多有7個FabricPanelCode要印
                         .SelectMany(group =>
                         {
                             var subData = group
@@ -1829,11 +1829,11 @@ Where o.ID = @ID
                             thisPack.Select((lineData, idx) =>
                             {
                                 var lineBasePosition = idx * 9;
-                                var lineLectraCode = lineBasePosition + 0;
+                                var lineFabricPanelCode = lineBasePosition + 0;
                                 var lineColor = lineBasePosition + 1;
                                 var lineRefno = lineBasePosition + 2;
                                 var lineArticle = lineBasePosition + 4;
-                                rangeValue[lineLectraCode, 0] = "Combo";
+                                rangeValue[lineFabricPanelCode, 0] = "Combo";
                                 rangeValue[lineColor, 0] = "Color";
                                 rangeValue[lineRefno, 0] = "Refno";
                                 rangeValue[lineRefno + 1, 0] = "ART#";
@@ -1841,7 +1841,7 @@ Where o.ID = @ID
                                 lineData.LineItems.Select((lineItem, lineItemIndex) =>
                                 {
                                     var columnIndex = 1 + lineItemIndex * 3;
-                                    rangeValue[lineLectraCode, columnIndex] = lineItem.LectraCode;
+                                    rangeValue[lineFabricPanelCode, columnIndex] = lineItem.FabricPanelCode;
                                     rangeValue[lineColor, columnIndex] = lineItem.ColorID;
                                     rangeValue[lineRefno, columnIndex] = lineItem.Refno;
                                     return true;
@@ -1903,7 +1903,7 @@ Where o.ID = @ID
                 var mainSheet = book.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
                 int rowPosition = 1; //各責任區域輪流使用
                 if (PrintSMNoticeDevTrimCardBlock1(mainSheet, smID, ref rowPosition) == false) return; //Block1: SMNotice/Style
-                if (PrintSMNoticeDevTrimCardBlock2(mainSheet, smID, ref rowPosition) == false) return; //Block2: LectraCode - Article (repeatly)
+                if (PrintSMNoticeDevTrimCardBlock2(mainSheet, smID, ref rowPosition) == false) return; //Block2: FabricPanelCode - Article (repeatly)
                 mainSheet.Cells[1, 1].Select();
                 app.DisplayAlerts = true;
 
@@ -1953,22 +1953,22 @@ Where sm.ID = @ID
         {
             var sql = @"
 Select x.PNO, x.[REF#], x.Description, x.Article, x.ColorName from (
-select 1 as tp, color.LectraCode as PNO, f.Refno as [REF#], f.Description, color.Article, c2.Name as ColorName
+select 1 as tp, color.FabricPanelCode as PNO, f.Refno as [REF#], f.Description, color.Article, c2.Name as ColorName
 From SMNotice sm
 Inner Join Style s on s.Ukey = sm.StyleUkey
 Inner Join Style_BOF bof on bof.StyleUkey = s.Ukey
 Inner Join Style_FabricCode fc on fc.Style_BOFUkey = bof.Ukey
-Inner Join Style_ColorCombo color on color.StyleUkey = s.Ukey and color.LectraCode = fc.LectraCode
+Inner Join Style_ColorCombo color on color.StyleUkey = s.Ukey and color.FabricPanelCode = fc.FabricPanelCode
 Inner Join Fabric f on f.SCIRefno = bof.SCIRefno
 Inner Join Color_multiple cm on cm.ID = color.ColorID and cm.BrandID = s.BrandID
 Left Join Color c2 on c2.ID = cm.ColorID and c2.BrandId = s.BrandID
 Where sm.ID = @ID
 union all
-select 2 as tp, color.LectraCode as PNO, f.Refno as [REF#], f.Description, color.Article, c2.Name as ColorName
+select 2 as tp, color.FabricPanelCode as PNO, f.Refno as [REF#], f.Description, color.Article, c2.Name as ColorName
 From SMNotice sm
 Inner Join Style s on s.Ukey = sm.StyleUkey
 Inner Join Style_BOA boa on boa.StyleUkey = s.Ukey
-Inner Join Style_ColorCombo color on color.StyleUkey = s.Ukey and color.LectraCode = boa.PatternPanel
+Inner Join Style_ColorCombo color on color.StyleUkey = s.Ukey and color.FabricPanelCode = boa.PatternPanel
 Inner Join Fabric f on f.SCIRefno = boa.SCIRefno
 Left Join Color_multiple cm on cm.ID = color.ColorID and cm.BrandID = s.BrandID
 Left Join Color c2 on c2.ID = cm.ColorID and c2.BrandId = s.BrandID
@@ -2305,13 +2305,13 @@ Order by SEQ", "PatternUKey", uKey))
 Select 
 ROW_NUMBER() OVER(ORDER BY pg.SEQ) AS Row
 , iif(Substring(pg.PatternCode, 1, len(p.PatternNo)) = p.PatternNo, Substring(pg.PatternCode, len(p.PatternNo) + 1, 999), pg.PatternCode) as PatternCode
-, pg.PatternDesc, pg.Annotation, pg.Alone, pg.PAIR, pg.DV, F_Code.LectraCode, pg.Remarks
-" + articleGroupList.Select(item => string.Format(", [{0}].LectraCode as [{0}]", item)).JoinToString("\r\n") + @"
+, pg.PatternDesc, pg.Annotation, pg.Alone, pg.PAIR, pg.DV, F_Code.FabricPanelCode, pg.Remarks
+" + articleGroupList.Select(item => string.Format(", [{0}].FabricPanelCode as [{0}]", item)).JoinToString("\r\n") + @"
 From Pattern p
 Left Join Pattern_GL pg on pg.PatternUKEY = p.UKey
-Outer Apply (Select LectraCode from Pattern_GL_LectraCode lc where lc.PatternUKEY = p.UKey and lc.PatternCode = pg.PatternCode and lc.ArticleGroup = 'F_CODE') F_Code
+Outer Apply (Select FabricPanelCode from Pattern_GL_FabricPanelCode lc where lc.PatternUKEY = p.UKey and lc.PatternCode = pg.PatternCode and lc.ArticleGroup = 'F_CODE') F_Code
 " + articleGroupList.Select(item => string.Format(
-"Outer Apply (Select LectraCode from Pattern_GL_LectraCode lc where lc.PatternUKEY = p.UKey and lc.PatternCode = pg.PatternCode and lc.ArticleGroup = '{0}') [{0}]", item)).JoinToString("\r\n") + @"
+"Outer Apply (Select FabricPanelCode from Pattern_GL_FabricPanelCode lc where lc.PatternUKEY = p.UKey and lc.PatternCode = pg.PatternCode and lc.ArticleGroup = '{0}') [{0}]", item)).JoinToString("\r\n") + @"
 Where pg.PatternUKey = @PatternUKey
 Order by pg.SEQ
 ";
@@ -2401,8 +2401,8 @@ Select cp.PieceName
 	, 'W:' + Cast(cp.CuttingWidth as varchar)
 	, '') as CuttingWidth
 , iif(cp.Type = 'C'
-	, cp.LectraCode
-	, Concat(cp.LectraCode, '[', cp.SizeItem, ']')) as LectraCode
+	, cp.FabricPanelCode
+	, Concat(cp.FabricPanelCode, '[', cp.SizeItem, ']')) as FabricPanelCode
 , cp.Level
 , cp.Article
 , '#' + SizeCode as SizeCode
@@ -2449,7 +2449,7 @@ Order by (
                             PieceName = row.Field<string>("PieceName"),
                             PieceDesc = row.Field<string>("PieceDesc"),
                             CuttingWidth = row.Field<string>("CuttingWidth"),
-                            LectraCode = row.Field<string>("LectraCode"),
+                            FabricPanelCode = row.Field<string>("FabricPanelCode"),
                             JPGPath = row.Field<string>("JPGPath"),
                             DirectionEN = row.Field<string>("DirectionEN"),
                             Article = row.Field<string>("Article"),
@@ -2485,7 +2485,7 @@ Order by (
                                 rangeValue[0, 0] = groupKey.PieceName;
                                 rangeValue[0, 2] = groupKey.PieceDesc;
                                 rangeValue[0, 4] = groupKey.CuttingWidth;
-                                rangeValue[0, 7] = groupKey.LectraCode;
+                                rangeValue[0, 7] = groupKey.FabricPanelCode;
                                 rangeValue[0, 8] = groupKey.DirectionEN;
                                 //第二行
                                 rangeValue[1, 0] = "Art No";
