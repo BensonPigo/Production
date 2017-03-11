@@ -31,7 +31,7 @@ namespace Sci.Production.Warehouse
             viewer = new ReportViewer();
             viewer.Dock = DockStyle.Fill;
             Controls.Add(viewer);
-
+            //MDivisionID 是 P31 寫入 => Sci.Env.User.Keyword
             this.DefaultFilter = string.Format("Type='A' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
@@ -119,10 +119,9 @@ namespace Sci.Production.Warehouse
             DualResult result1 = DBProxy.Current.Select("",
             @"select b.name 
             from dbo.Borrowback a WITH (NOLOCK) 
-            inner join dbo.mdivision  b WITH (NOLOCK) 
-            on b.id = a.mdivisionid
-            where b.id = a.mdivisionid
-            and a.id = @ID", pars, out dtt);
+            inner join dbo.mdivision  b WITH (NOLOCK) on b.id = a.mdivisionid
+            where   b.id = a.mdivisionid
+                    and a.id = @ID", pars, out dtt);
             if (!result1) { this.ShowErr(result1); }
 
             if (dtt == null || dtt.Rows.Count == 0)
@@ -147,29 +146,28 @@ namespace Sci.Production.Warehouse
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
             result1 = DBProxy.Current.Select("",
-            @"select a.FromPOID+'('+a.FromSeq1+'-'+a.Fromseq2+')' as FromSP
-	                ,a.Topoid + '('+a.ToSeq1+'-'+a.ToSeq2+')' as TOSP
-	                ,IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) 
-				      AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
-				      AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
-				      ,'',dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,0))[DESC]
-	                ,case a.FromStockType
-	                     when 'B' then 'Bulk'
-	                     when 'I' then 'Inventory'
-	                     else a.FromStockType
-	                     end StockType
-	                ,[Location]=dbo.Getlocation(a.FromFtyInventoryUkey)
-	                ,unit = b.StockUnit
-		            ,a.FromRoll
-		            ,a.FromDyelot
-		            ,a.Qty
-		            ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.FromSeq2 )
-		   from dbo.Borrowback_detail a WITH (NOLOCK) 
-           left join dbo.PO_Supp_Detail b WITH (NOLOCK) 
-             on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
-		   left join dbo.SubTransfer_Detail c
-		     on c.id=a.id
-             where a.id= @ID", pars, out dd);
+            @"
+select  FromSP = a.FromPOID + '(' + a.FromSeq1 + '-' + a.Fromseq2 + ')' 
+        ,TOSP = a.Topoid + '(' + a.ToSeq1 + '-' + a.ToSeq2 + ')' 
+        ,[DESC] = IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) 
+                        AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
+                        AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
+                      ,''
+                      ,dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,0))
+        ,StockType = case a.FromStockType
+                        when 'B' then 'Bulk'
+                        when 'I' then 'Inventory'
+                        else a.FromStockType end 
+        ,[Location] = dbo.Getlocation(a.FromFtyInventoryUkey)
+        ,unit = b.StockUnit
+        ,a.FromRoll
+        ,a.FromDyelot
+        ,a.Qty
+        ,[Total] = sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.FromSeq2 )
+from dbo.Borrowback_detail a WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
+left join dbo.SubTransfer_Detail c on c.id=a.id
+where a.id= @ID", pars, out dd);
             if (!result1) { this.ShowErr(result1); }
 
             if (dd == null || dd.Rows.Count == 0)
@@ -321,7 +319,7 @@ namespace Sci.Production.Warehouse
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "MB", "BorrowBack", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "MB", "BorrowBack", (DateTime)CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -348,14 +346,6 @@ namespace Sci.Production.Warehouse
             label25.Text = CurrentMaintain["status"].ToString();
 
             #endregion Status Label
-        }
-
-        // detail 新增時設定預設值
-        protected override void OnDetailGridInsert(int index = -1)
-        {
-            base.OnDetailGridInsert(index);
-            CurrentDetailData["frommdivisionid"] = Sci.Env.User.Keyword;
-            CurrentDetailData["tomdivisionid"] = Sci.Env.User.Keyword;
         }
 
         // Detail Grid 設定
@@ -408,12 +398,16 @@ namespace Sci.Production.Warehouse
             DataTable datacheck;
 
             #region -- 檢查庫存項lock --
-            sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.BorrowBack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.FromMDivisionID = f.MDivisionID and d.FromPOID = f.POID  AND D.FromStockType = F.StockType
-and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
-where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
+            sqlcmd = string.Format(@"
+Select  d.frompoid
+        ,d.fromseq1
+        ,d.fromseq2
+        ,d.fromRoll,d.Qty
+        ,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+from dbo.BorrowBack_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID  
+  AND D.FromStockType = F.StockType and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
+where f.lock = 1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 ShowErr(sqlcmd, result2);
@@ -436,11 +430,16 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             #region -- 檢查負數庫存 --
 
-            sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.BorrowBack_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.FromMDivisionID = f.MDivisionID and d.FromPOID = f.POID  AND D.FromStockType = F.StockType
-and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
+            sqlcmd = string.Format(@"
+Select  d.frompoid
+        ,d.fromseq1
+        ,d.fromseq2
+        ,d.fromRoll
+        ,d.Qty
+        ,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) 
+from dbo.BorrowBack_Detail d WITH (NOLOCK) 
+left join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID AND D.FromStockType = F.StockType 
+    and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -465,16 +464,21 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             #region -- 檢查目的Roll是否已存在資料 --
 
-            sqlcmd = string.Format(@"Select d.ToPoid,d.ToSeq1,d.toseq2,d.ToRoll,d.ToDyelot,d.Qty
-,f.InQty
+            sqlcmd = string.Format(@"
+Select  d.ToPoid
+        ,d.ToSeq1
+        ,d.toseq2
+        ,d.ToRoll
+        ,d.ToDyelot
+        ,d.Qty
+        ,f.InQty
 from dbo.BorrowBack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.tomdivisionid = f.mdivisionid
-and d.ToPoid = f.PoId
-and d.ToSeq1 = f.Seq1
-and d.toseq2 = f.seq2
-and d.ToStocktype = f.StockType
-and d.ToRoll = f.Roll
-and d.ToDyelot != f.dyelot
+  on d.ToPoid = f.PoId
+  and d.ToSeq1 = f.Seq1
+  and d.toseq2 = f.seq2
+  and d.ToStocktype = f.StockType
+  and d.ToRoll = f.Roll
+  and d.ToDyelot != f.dyelot
 where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -727,15 +731,19 @@ where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", Curr
             }
 
             #region -- 檢查庫存項lock --
-            sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
+            sqlcmd = string.Format(@"
+Select  d.topoid
+        ,d.toseq1
+        ,d.toseq2
+        ,d.toRoll
+        ,d.Qty
+        ,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
 from dbo.BorrowBack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.tomdivisionid = f.mdivisionid
-and d.toPoId = f.PoId
-and d.toSeq1 = f.Seq1
-and d.toSeq2 = f.seq2
-and d.toStocktype = f.StockType
-and d.toRoll = f.Roll
+  on d.toPoId = f.PoId
+  and d.toSeq1 = f.Seq1
+  and d.toSeq2 = f.seq2
+  and d.toStocktype = f.StockType
+  and d.toRoll = f.Roll
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -759,15 +767,19 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             #region -- 檢查負數庫存 --
 
-            sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
+            sqlcmd = string.Format(@"
+Select  d.topoid
+        ,d.toseq1
+        ,d.toseq2
+        ,d.toRoll
+        ,d.Qty
+        ,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
 from dbo.BorrowBack_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.toMdivisionid = f.Mdivisionid
-and d.toPoId = f.PoId
-and d.toSeq1 = f.Seq1
-and d.toSeq2 = f.seq2
-and d.toStocktype = f.StockType
-and d.toRoll = f.Roll
+  on d.toPoId = f.PoId
+  and d.toSeq1 = f.Seq1
+  and d.toSeq2 = f.seq2
+  and d.toStocktype = f.StockType
+  and d.toRoll = f.Roll
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -971,25 +983,36 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.frommdivisionid,a.FromPoId,a.FromSeq1,a.FromSeq2
-,concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2) as Fromseq
-,p1.FabricType
-,p1.stockunit
-,dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) as [description]
-,a.FromRoll
-,a.FromDyelot
-,a.FromStocktype
-,a.Qty
-,a.ToMDivisionID
-,a.ToPoid,a.ToSeq1,a.ToSeq2,concat(Ltrim(Rtrim(a.ToSeq1)), ' ', a.ToSeq2) as toseq
-,a.ToRoll
-,a.ToDyelot
-,a.ToStocktype
-,a.fromftyinventoryukey
-,a.ukey
-,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) 
-where ukey= a.fromftyinventoryukey)t for xml path('')), 1, 1, '') location
-from dbo.BorrowBack_detail a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+            this.DetailSelectCommand = string.Format(@"
+select  a.id
+        ,a.FromPoId
+        ,a.FromSeq1
+        ,a.FromSeq2
+        ,Fromseq = concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2) 
+        ,p1.FabricType
+        ,p1.stockunit
+        ,[description] = dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) 
+        ,a.FromRoll
+        ,a.FromDyelot
+        ,a.FromStocktype
+        ,a.Qty
+        ,a.ToPoid
+        ,a.ToSeq1
+        ,a.ToSeq2
+        ,toseq = concat(Ltrim(Rtrim(a.ToSeq1)), ' ', a.ToSeq2)
+        ,a.ToRoll
+        ,a.ToDyelot
+        ,a.ToStocktype
+        ,a.fromftyinventoryukey
+        ,a.ukey
+        ,location = stuff((select ',' + mtllocationid 
+                           from (select mtllocationid 
+                                 from dbo.ftyinventory_detail fd WITH (NOLOCK) 
+                                 where ukey= a.fromftyinventoryukey)t 
+                           for xml path(''))
+                          , 1, 1, '') 
+from dbo.BorrowBack_detail a WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

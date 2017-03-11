@@ -47,35 +47,35 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
 
-                strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id
-,c.Roll FromRoll
-,c.Dyelot FromDyelot
-,c.ukey as fromftyinventoryukey
-,c.mdivisionid as FromMdivisionid
-, a.id as FromPoId
-,a.Seq1 as FromSeq1
-,a.Seq2 as FromSeq2
-,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as fromseq
-,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
-,a.stockunit
-,c.StockType as fromstocktype
-,c.InQty - c.OutQty + c.AdjustQty balance
-,stuff((select ',' + mtllocationid from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, '') as location
-,concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) as toseq
-,c.Roll toroll
-,c.Dyelot todyelot
-,0.00 as Qty
-,'B' ToStocktype
-,'{4}' as tomdivisionid
-,b.id topoid
-,b.seq1 toseq1
-,b.seq2 toseq2
-,a.fabrictype
+                strSQLCmd.Append(string.Format(@"
+select  selected = 0
+        ,id = '' 
+        ,FromRoll = c.Roll 
+        ,FromDyelot = c.Dyelot 
+        ,fromftyinventoryukey = c.ukey  
+        ,FromPoId = a.id 
+        ,FromSeq1 = a.Seq1 
+        ,FromSeq2 = a.Seq2 
+        ,fromseq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) 
+        ,[Description] = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) 
+        ,a.stockunit
+        ,fromstocktype = c.StockType 
+        ,balance = c.InQty - c.OutQty + c.AdjustQty 
+        ,location = stuff((select ',' + mtllocationid from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, '') 
+        ,toseq = concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) 
+        ,toroll = c.Roll 
+        ,todyelot = c.Dyelot 
+        ,Qty = 0.00 
+        ,ToStocktype = 'B' 
+        ,topoid = b.id 
+        ,toseq1 = b.seq1 
+        ,toseq2 = b.seq2 
+        ,a.fabrictype
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 left join dbo.po_supp_detail b WITH (NOLOCK) on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec and b.ColorID = a.ColorID and b.BrandId = a.BrandId
-Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}' and c.mdivisionid='{4}'
-and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, txtSeq1.seq1, txtSeq1.seq2, Sci.Env.User.Keyword)); // 
+Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}'
+and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, txtSeq1.seq1, txtSeq1.seq2)); // 
 
                 this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
@@ -212,10 +212,8 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, txtSeq1.seq
             foreach (DataRow tmp in dr2)
             {
                 DataRow[] findrow = dt_detail.Select(
-                    string.Format(@"fromftyinventoryukey = {0} 
-                    and tomdivisionid = '{1}' and topoid = '{2}' and toseq1 = '{3}' and toseq2 = '{4}' and toroll ='{5}'and todyelot='{6}' and tostocktype='{7}' "
-                    , tmp["fromftyinventoryukey"]
-                    , tmp["tomdivisionid"], tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"], tmp["tostocktype"]));
+                    string.Format(@"fromftyinventoryukey = {0} and topoid = '{1}' and toseq1 = '{2}' and toseq2 = '{3}' and toroll ='{4}'and todyelot='{5}' and tostocktype='{6}' "
+                    , tmp["fromftyinventoryukey"], tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"], tmp["tostocktype"]));
 
                 if (findrow.Length > 0)
                 {

@@ -26,16 +26,22 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             StringBuilder selectCommand1 = new StringBuilder();
-            selectCommand1.Append(string.Format(@"select A.FromPoId,A.FromSeq1,A.FromSeq2
-,sum(a.Qty) as Qty
-,pd.Refno
-,c.Name as color_name
-,case when a.FromStocktype ='B' then 'Bulk' when a.FromStocktype='I' then 'Inventory' else a.fromstocktype end as stocktype
-,dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0) as [Description]
-from dbo.BorrowBack_Detail a WITH (NOLOCK) left join 
-        (PO_Supp_Detail pd WITH (NOLOCK) 
-left join Orders o WITH (NOLOCK) on o.id=pd.ID
-inner join color c WITH (NOLOCK) on c.id = pd.ColorID AND C.BrandId = o.BrandId) on a.FromPoId = pd.ID and a.FromSeq1= pd.seq1 and a.FromSeq2 =  pd.seq2
+            selectCommand1.Append(string.Format(@"
+select  A.FromPoId
+        ,A.FromSeq1
+        ,A.FromSeq2
+        ,Qty = sum(a.Qty)  
+        ,pd.Refno
+        ,color_name = c.Name 
+        ,stocktype = case when a.FromStocktype ='B' then 'Bulk' 
+                          when a.FromStocktype='I' then 'Inventory' 
+                          else a.fromstocktype end  
+        ,[Description] = dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0)  
+from dbo.BorrowBack_Detail a WITH (NOLOCK) 
+left join (PO_Supp_Detail pd WITH (NOLOCK) 
+            left join Orders o WITH (NOLOCK) on o.id=pd.ID
+            inner join color c WITH (NOLOCK) on c.id = pd.ColorID AND C.BrandId = o.BrandId
+          ) on a.FromPoId = pd.ID and a.FromSeq1= pd.seq1 and a.FromSeq2 =  pd.seq2
 where a.Id = '{0}'
 GROUP BY A.FromPoId,A.FromSeq1,A.FromSeq2,a.FromStocktype,pd.Refno,c.Name", dr["id"].ToString()));
 
