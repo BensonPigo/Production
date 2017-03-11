@@ -95,14 +95,14 @@ BEGIN
            ,[Qty])
 		 SELECT [POID]
 			,Ukey
-			,[MDivisionID]
+			,'' [FromMDivisionID] 
 			,[POID]
 			,[Seq1]
 			,[Seq2]
 			,[Roll]
 			,'B' [FromStock]
 			,[Dyelot]
-			,[MDivisionID]
+			,'' [ToMDivisionID]
 			,[POID]
 			,[Seq1]
 			,[Seq2]
