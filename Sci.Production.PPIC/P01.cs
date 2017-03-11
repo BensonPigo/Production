@@ -501,7 +501,7 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             IList<DataRow> StyleData;
-            string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 and LocalStyle = 1";
+            string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 ";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,8,10,28,5,7,7,6", "", "Style,Season,Brand,Description,CdCode,CPU,Unit,Ukey",columndecimals:"0,0,0,0,0,3,0,0");
             item.Size = new System.Drawing.Size(950, 500);
             DialogResult returnResult = item.ShowDialog();
@@ -542,7 +542,7 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
                     cmds.Add(sp1);
 
                     System.Data.DataTable StyleData;
-                    string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 and LocalStyle = 1 and ID = @styleid";
+                    string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 and ID = @styleid";
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out StyleData);
                     if (!result || StyleData.Rows.Count <= 0)
                     {
