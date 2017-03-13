@@ -180,7 +180,8 @@ select distinct
 	[CutCellID] = Cutplan.CutCellID,
 	Cutplan_Detail.WorkOrderUkey,
 	WorkOrder.Ukey,
-	WorkOrder.Layer
+	[ms] = ms.Seq,
+    [total_qty] = sum(qty * Layer) over(partition by WorkOrder_SizeRatio.WorkOrderUkey)
 into #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
@@ -197,9 +198,11 @@ outer apply(
 ) as o
 outer apply(
 	select SizeCode= (
-		Select concat(',',(SizeCode+'/'+Convert(varchar,Qty))) 
-		from WorkOrder_SizeRatio WITH (NOLOCK) 
+		Select concat(',',(ws.SizeCode+'/'+Convert(varchar,Qty))) 
+		from WorkOrder_SizeRatio ws WITH (NOLOCK) 
+		left join Order_SizeCode on ws.ID = Order_SizeCode.ID AND ws.SizeCode = Order_SizeCode.SizeCode
 		where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
+		ORDER BY Order_SizeCode.Seq
 		for xml path('')
 	 )
 ) as sr
@@ -223,7 +226,14 @@ outer apply(
 	from Orders WITH (NOLOCK) 
 	where Orders.ID = Cutplan_Detail.OrderID
 ) as SCI
-
+outer apply(
+	select Seq= (
+		Select min(Seq)
+		from WorkOrder_SizeRatio ws WITH (NOLOCK) 
+		left join Order_SizeCode on ws.ID = Order_SizeCode.ID AND ws.SizeCode = Order_SizeCode.SizeCode
+		where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
+	 )
+) as ms
 where 1 = 1
 ");
                     if (!MyUtility.Check.Empty(dateR_CuttingDate1))
@@ -243,61 +253,53 @@ where 1 = 1
                         sqlCmd.Append(string.Format(" and Cutplan.CutCellID = '{0}' ", Cutcelltb.Rows[i][0].ToString()));
                     }
 
-                    sqlCmd.Append(@"order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#]");
+                    sqlCmd.Append(@"order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]");
 
                     sqlCmd.Append(@"
-select [Request#],[Cutting Date],[Line#],[SP#],[Seq#],[Style#],[Ref#],[Cut#],[Comb.],[Fab_Code],[Size Ratio],[Colorway],[Color],[Cut Qty],[Fab Cons.],[Fab Desc],[Remark],WS1,WS2,[SCI Delivery],[CutCellID]
-,[total_qty] = sum(x.total_qty)
-into #tmpall2");
-                    sqlCmd.Append(string.Format("{0} ", i));
-                    sqlCmd.Append(@"
-from #tmpall");
-                    sqlCmd.Append(string.Format("{0} ", i));
-                    sqlCmd.Append(@" a
-outer apply(
-	Select [total_qty] = c.qty * a.layer From WorkOrder_SizeRatio c WITH (NOLOCK) Where  c.WorkOrderUkey = a.WorkOrderUkey and c.WorkOrderUkey = a.Ukey
-) x 
-group by [Request#],[Cutting Date],[Line#],[SP#],[Seq#],[Style#],[Ref#],[Cut#],[Comb.],[Fab_Code],[Size Ratio],[Colorway],[Color],[Cut Qty],[Fab Cons.],[Fab Desc],[Remark],WS1,WS2,[SCI Delivery],[CutCellID]
-drop table #tmpall");
-                    sqlCmd.Append(string.Format("{0} ", i));
-                    sqlCmd.Append(@"
-
 select 
-[Request#1]= case when (Row_number() over (partition by [Line#],[Request#]
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Request#] end,
-[Cutting Date1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date]
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1  then '' else Convert(varchar,[Cutting Date]) end,
-[Line#1] = case when ((Row_number() over (partition by [Line#]
-	order by [Line#] ,[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1) then '' else [Line#] end,
-[SP#1] = case when  (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#] 
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [SP#] end ,
-[Seq#1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#] 
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Seq#] end,
-[Style#1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#] 
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Style#] end,
+[Request#1]= case when ((Row_number() over (partition by [Line#],[Request#]
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) >1
+	and [SP#] = LAG([SP#],1,[SP#]) over(order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) then '' else [Request#] end,
+[Cutting Date1] = case when (Row_number() over (partition by [Cutting Date]
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) >1  then '' else Convert(varchar,[Cutting Date]) end,
+[Line#1] = case when (((Row_number() over (partition by [Line#],[Request#]
+	order by [Line#] ,[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) >1)
+	and [SP#] = LAG([SP#],1,[SP#]) over(order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) then '' else [Line#] end,
+[SP#1] = case when  ((Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#] 
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
+	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [SP#] end ,
+[Seq#1] = case when ((Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#] 
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
+	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Seq#] end,
+[Style#1] = case when ((Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#] 
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
+	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Style#] end,
 [Ref#] = [Ref#],
 [Cut#] = [Cut#],
 [Comb.] = [Comb.],
 [Fab_Code] = [Fab_Code],
 [Size Ratio] = [Size Ratio],
-[Colorway1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#] ,[Seq#],[Style#],[Fab Desc],[Colorway] 
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Colorway] end,
-[Color1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#],[Fab Desc],[Colorway],[Color]
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Color] end,
+[Colorway1] = case when ((Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#] ,[Seq#],[Style#],[Fab Desc],[Colorway] 
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
+	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Colorway] end,
+[Color1] = case when ((Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#],[Fab Desc],[Colorway],[Color]
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
+	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Color] end,
 [Cut Qty] = [Cut Qty],
 [Fab Cons.] = [Fab Cons.],
-[Fab Desc1] = case when (Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#],[Fab Desc],[Colorway],[Color],[Fab Desc]
-	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Fab Desc] end,
+[Fab Desc1] = case when ((Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#],[Fab Desc],[Colorway],[Color],[Fab Desc]
+	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
+	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Fab Desc] end,
 [Remark] = [Remark],
 [SCI Delivery]=[SCI Delivery],
 [total_qty1] = sum([total_qty])
-from #tmpall2");
+from #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
-group by [Request#],[Cutting Date],[Line#],[SP#],[Seq#],[Style#],[Ref#],[Cut#],[Comb.],[Fab_Code],[Size Ratio],[Colorway],[Color],[Cut Qty],[Fab Cons.],[Fab Desc],[Remark],WS1,WS2,[SCI Delivery],[CutCellID]
-order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[Cut#],[Seq#]
+group by [Request#],[Cutting Date],[Line#],[SP#],[Seq#],[Style#],[Ref#],[Cut#],[Comb.],[Fab_Code],[Size Ratio],[Colorway],[Color],[Cut Qty],[Fab Cons.],[Fab Desc],[Remark],WS1,WS2,[SCI Delivery],[CutCellID],[ms]
+order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]
 
-drop table #tmpall2");
+drop table #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                 }
             }
@@ -316,7 +318,7 @@ IF OBJECT_ID('tempdb.dbo.#tmpall");
   DROP TABLE #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
-select	
+select	distinct
 	[Request#] = Cutplan.ID,
 	[Fab ETA] = fe.ETA,
 	[Line#] = Cutplan_Detail.SewingLineID,
@@ -340,7 +342,8 @@ select
 	[CutCellID] = Cutplan.CutCellID,
 	Cutplan_Detail.WorkOrderUkey,
 	WorkOrder.Ukey,
-	WorkOrder.Layer
+	[ms] = ms.Seq,    
+	[total_qty] = sum(qty * Layer) over(partition by WorkOrder_SizeRatio.WorkOrderUkey)
 into #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
@@ -364,9 +367,11 @@ outer apply(
 ) as o
 outer apply(
 	select SizeCode= (
-		Select concat(',',(SizeCode+'/'+Convert(varchar,Qty))) 
-		from WorkOrder_SizeRatio WITH (NOLOCK) 
+		Select concat(',',(ws.SizeCode+'/'+Convert(varchar,Qty))) 
+		from WorkOrder_SizeRatio ws WITH (NOLOCK) 
+		left join Order_SizeCode on ws.ID = Order_SizeCode.ID AND ws.SizeCode = Order_SizeCode.SizeCode
 		where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
+		ORDER BY Order_SizeCode.Seq
 		for xml path('')
 	 )
 ) as sr
@@ -397,8 +402,15 @@ outer apply(
 	from Orders WITH (NOLOCK) 
 	where Orders.ID = Cutplan_Detail.OrderID
 ) as SCI
-
-where 1 = 1
+outer apply(
+	select Seq= (
+		Select min(Seq)
+		from WorkOrder_SizeRatio ws WITH (NOLOCK) 
+		left join Order_SizeCode on ws.ID = Order_SizeCode.ID AND ws.SizeCode = Order_SizeCode.SizeCode
+		where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
+	 )
+) as ms
+where 1 = 1 --??? AND fe.ETA IS NOT NULL
 ");
                     if (!MyUtility.Check.Empty(dateR_CuttingDate1))
                     {
@@ -413,60 +425,52 @@ where 1 = 1
                         sqlCmd.Append(string.Format(" and Cutplan.CutCellID = '{0}' ", Cutcelltb.Rows[i][0].ToString()));
                     }
 
-                    sqlCmd.Append(@"
-order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[Cut#],[Seq#]
+                    sqlCmd.Append(@"order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]");
 
-select [Request#],[Fab ETA],[Line#],[SP#],[Seq#],[Style#],[Ref#],[Cut#],[Comb.],[Fab_Code],[Size Ratio],[Colorway],[Color],[Cut Qty],[Fab Cons.],[Fab Refno],[Remark],WS1,WS2,[SCI Delivery],[CutCellID]
-,[total_qty] = sum(x.total_qty)
-into #tmpall2");
-                    sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
-from #tmpall");
-                    sqlCmd.Append(string.Format("{0} ", i));
-                    sqlCmd.Append(@"  a
-outer apply(
-	Select [total_qty] = c.qty * a.layer From WorkOrder_SizeRatio c WITH (NOLOCK) Where  c.WorkOrderUkey = a.WorkOrderUkey and c.WorkOrderUkey = a.Ukey
-) x 
-group by [Request#],[Fab ETA],[Line#],[SP#],[Seq#],[Style#],[Ref#],[Cut#],[Comb.],[Fab_Code],[Size Ratio],[Colorway],[Color],[Cut Qty],[Fab Cons.],[Fab Refno],[Remark],WS1,WS2,[SCI Delivery],[CutCellID]
-drop table #tmpall");
-                    sqlCmd.Append(string.Format("{0} ", i));
-                    sqlCmd.Append(@"
-
 select 
-[Request#1]= case when (Row_number() over (partition by [Line#],[Request#]
-	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Request#] end,
-[Fab ETA1] = case when (Row_number() over (partition by [Line#],[Request#],[Fab ETA]
-	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[Cut#],[Seq#])) >1  then '' else Convert(varchar,[Fab ETA]) end,
-[Line#1] = case when ((Row_number() over (partition by [Line#]
-	order by [Line#] ,[Request#],[Fab ETA],[SP#],[Comb.],[Cut#],[Seq#])) >1) then '' else [Line#] end,
-[SP#1] = case when  (Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#] 
-	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [SP#] end ,
-[Seq#1] = case when (Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#] 
-	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Seq#] end,
-[Style#1] = case when (Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#],[Style#] 
-	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Style#] end,
+[Request#1]= case when ((Row_number() over (partition by [Line#],[Request#]
+	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
+    and [SP#] = LAG([SP#],1,[SP#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) then '' else [Request#] end,
+[Fab ETA1] = case when ((Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#] 
+	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1  
+	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else Convert(varchar,[Fab ETA]) end,
+[Line#1] = case when ((Row_number() over (partition by [Line#],[Request#]
+	order by [Line#] ,[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1)
+     and [SP#] = LAG([SP#],1,[SP#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Line#] end,
+[SP#1] = case when  ((Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#] 
+	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
+    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [SP#] end ,
+[Seq#1] = case when ((Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#] 
+	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
+    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Seq#] end,
+[Style#1] = case when ((Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#],[Style#] 
+	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
+    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Style#] end,
 [Ref#] = [Ref#],
 [Cut#] = [Cut#],
 [Comb.] = [Comb.],
 [Fab_Code] = [Fab_Code],
 [Size Ratio] = [Size Ratio],
-[Colorway1] = case when (Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#] ,[Seq#],[Style#],[Colorway] 
-	order by [Line#],[Fab ETA],[Fab ETA],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Colorway] end,
-[Color1] = case when (Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#],[Style#],[Colorway],[Color]
-	order by [Line#],[Fab ETA],[Fab ETA],[SP#],[Comb.],[Cut#],[Seq#])) >1 then '' else [Color] end,
+[Colorway1] = case when ((Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#] ,[Seq#],[Style#],[Colorway] 
+	order by [Line#],[Fab ETA],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
+    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Colorway] end,
+[Color1] = case when ((Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#],[Style#],[Colorway],[Color]
+	order by [Line#],[Fab ETA],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
+    and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Color] end,
 [Cut Qty] = [Cut Qty],
 [Fab Cons.] = [Fab Cons.],
 [Fab Refno] = [Fab Refno],
 [Remark] = [Remark],
 [SCI Delivery]=[SCI Delivery],
 [total_qty1] = sum([total_qty])
-	 from #tmpall2");
+	 from #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
-group by [Request#],[Fab ETA],[Line#],[SP#],[Seq#],[Style#],[Ref#],[Cut#],[Comb.],[Fab_Code],[Size Ratio],[Colorway],[Color],[Cut Qty],[Fab Cons.],[Fab Refno],[Remark],WS1,WS2,[SCI Delivery],[CutCellID]
-order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[Cut#],[Seq#]
+group by [Request#],[Fab ETA],[Line#],[SP#],[Seq#],[Style#],[Ref#],[Cut#],[Comb.],[Fab_Code],[Size Ratio],[Colorway],[Color],[Cut Qty],[Fab Cons.],[Fab Refno],[Remark],WS1,WS2,[SCI Delivery],[CutCellID],[ms]
+order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]
 
-drop table #tmpall2");
+drop table #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                 }
             }
@@ -485,7 +489,7 @@ IF OBJECT_ID('tempdb.dbo.#tmpall");
   DROP TABLE #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
-select
+select distinct
 	[Request#] = Cutplan.ID,
 	[Line#] = Cutplan_Detail.SewingLineID,
 	[SP#] = Cutplan_Detail.OrderID,
@@ -495,7 +499,11 @@ select
 	[Color] = Cutplan_Detail.ColorID,
 	[Comb.] = WorkOrder.FabricCombo,
 	[Fab_Code] = WorkOrder.FabricCode,
-	[Total Fab Cons] =sum(Cutplan_Detail.Cons)
+	[Total Fab Cons] =sum(Cutplan_Detail.Cons) over(partition by Cutplan.ID, Cutplan_Detail.SewingLineID, Cutplan_Detail.OrderID, WorkOrder.Seq1 + '-' + WorkOrder.Seq2,Orders.StyleID,PO_Supp_Detail.RefNo,Cutplan_Detail.ColorID,WorkOrder.FabricCombo,WorkOrder.FabricCode),
+	Cutplan.POID,
+	WorkOrder.seq1,
+	WorkOrder.seq2--,
+	--Cutplan_Detail.Remark
 into #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
@@ -529,7 +537,6 @@ where 1 = 1
                     }
 
                     sqlCmd.Append(@"
-Group by Cutplan.ID, Cutplan_Detail.SewingLineID, Cutplan_Detail.OrderID, WorkOrder.Seq1 + '-' + WorkOrder.Seq2,Orders.StyleID,PO_Supp_Detail.RefNo,Cutplan_Detail.ColorID,WorkOrder.FabricCombo,WorkOrder.FabricCode
 order by [Request#],[Line#],[SP#],[Seq#]
 
 select
@@ -539,7 +546,7 @@ select
 	[Seq#] =Convert(varchar, G.Seq#),
 	[Style#] =G.Style#,
 	[FabRef#] =G.FabRef#,
-	[Fab Desc] =FabDesc.FabDesc,
+	[Fab Desc] =[Production].dbo.getMtlDesc(POID, Seq1, Seq2,2,0),
 	[Color] = G.Color,
 	[Comb.] =G.[Comb.],
 	[Fab_Code] =G.Fab_Code,
@@ -715,7 +722,6 @@ drop table #tmpall");
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            //createfolder();
             SetCount(printData[0].Rows.Count);
             if (!boolsend) tmpFile = null;               
             
