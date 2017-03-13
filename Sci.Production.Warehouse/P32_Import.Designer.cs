@@ -31,15 +31,10 @@
             this.components = new System.ComponentModel.Container();
             this.button3 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.label2 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.grid2 = new Sci.Win.UI.Grid();
+            this.panel2 = new Sci.Win.UI.Panel();
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.label7 = new Sci.Win.UI.Label();
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
@@ -55,6 +50,7 @@
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
+            this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -85,43 +81,8 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button1
-            // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(871, 19);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Find Now";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(585, 26);
-            this.textBox1.MaxLength = 13;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(122, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
-            // 
-            // label1
-            // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(487, 26);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(95, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Return to SP#";
-            // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.displayBox1);
-            this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.button3);
             this.groupBox2.Controls.Add(this.button2);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -131,39 +92,10 @@
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
             // 
-            // displayBox1
-            // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(537, 22);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(100, 23);
-            this.displayBox1.TabIndex = 4;
-            // 
-            // label2
-            // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(439, 22);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(95, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Total Qty";
-            // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.txtSeq1);
             this.groupBox1.Controls.Add(this.grid2);
-            this.groupBox1.Controls.Add(this.displayBox4);
-            this.groupBox1.Controls.Add(this.label7);
-            this.groupBox1.Controls.Add(this.displayBox3);
-            this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.displayBox2);
-            this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.editBox1);
-            this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Controls.Add(this.textBox1);
-            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.panel2);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
@@ -171,22 +103,13 @@
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
-            // txtSeq1
-            // 
-            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq1.Location = new System.Drawing.Point(714, 26);
-            this.txtSeq1.Name = "txtSeq1";
-            this.txtSeq1.seq1 = "";
-            this.txtSeq1.seq2 = "";
-            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq1.TabIndex = 1;
-            this.txtSeq1.Leave += new System.EventHandler(this.txtSeq1_Leave);
-            // 
             // grid2
             // 
             this.grid2.AllowUserToAddRows = false;
             this.grid2.AllowUserToDeleteRows = false;
             this.grid2.AllowUserToResizeRows = false;
+            this.grid2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
@@ -201,84 +124,117 @@
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(466, 209);
+            this.grid2.Size = new System.Drawing.Size(485, 209);
             this.grid2.TabIndex = 13;
             this.grid2.TabStop = false;
+            this.grid2.RowSelecting += new System.EventHandler<Ict.Win.UI.DataGridViewRowSelectingEventArgs>(this.grid2_RowSelecting);
+            // 
+            // panel2
+            // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.displayBox4);
+            this.panel2.Controls.Add(this.label7);
+            this.panel2.Controls.Add(this.displayBox3);
+            this.panel2.Controls.Add(this.label6);
+            this.panel2.Controls.Add(this.displayBox2);
+            this.panel2.Controls.Add(this.label5);
+            this.panel2.Controls.Add(this.label3);
+            this.panel2.Controls.Add(this.editBox1);
+            this.panel2.Location = new System.Drawing.Point(498, 15);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(504, 209);
+            this.panel2.TabIndex = 95;
             // 
             // displayBox4
             // 
+            this.displayBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(861, 110);
+            this.displayBox4.Location = new System.Drawing.Point(381, 37);
             this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(113, 23);
-            this.displayBox4.TabIndex = 12;
+            this.displayBox4.Size = new System.Drawing.Size(103, 23);
+            this.displayBox4.TabIndex = 36;
             // 
             // label7
             // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(756, 110);
+            this.label7.Location = new System.Drawing.Point(276, 37);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(95, 23);
-            this.label7.TabIndex = 11;
+            this.label7.Size = new System.Drawing.Size(85, 23);
+            this.label7.TabIndex = 35;
             this.label7.Text = "Color ID";
             // 
             // displayBox3
             // 
+            this.displayBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(585, 110);
+            this.displayBox3.Location = new System.Drawing.Point(105, 37);
             this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(153, 23);
-            this.displayBox3.TabIndex = 10;
+            this.displayBox3.Size = new System.Drawing.Size(143, 23);
+            this.displayBox3.TabIndex = 34;
             // 
             // label6
             // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(487, 110);
+            this.label6.Location = new System.Drawing.Point(14, 37);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(95, 23);
-            this.label6.TabIndex = 9;
+            this.label6.Size = new System.Drawing.Size(85, 23);
+            this.label6.TabIndex = 33;
             this.label6.Text = "Refno";
             // 
             // displayBox2
             // 
+            this.displayBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(585, 77);
+            this.displayBox2.Location = new System.Drawing.Point(105, 4);
             this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(189, 23);
-            this.displayBox2.TabIndex = 8;
+            this.displayBox2.Size = new System.Drawing.Size(179, 23);
+            this.displayBox2.TabIndex = 32;
             // 
             // label5
             // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(487, 77);
+            this.label5.Location = new System.Drawing.Point(14, 4);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(95, 23);
-            this.label5.TabIndex = 7;
+            this.label5.Size = new System.Drawing.Size(85, 23);
+            this.label5.TabIndex = 31;
             this.label5.Text = "SizeSpec";
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(487, 145);
+            this.label3.Location = new System.Drawing.Point(14, 72);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(95, 23);
-            this.label3.TabIndex = 4;
+            this.label3.Size = new System.Drawing.Size(85, 23);
+            this.label3.TabIndex = 30;
             this.label3.Text = "Desc.";
             // 
             // editBox1
             // 
+            this.editBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.editBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editBox1.IsSupportEditMode = false;
-            this.editBox1.Location = new System.Drawing.Point(585, 145);
+            this.editBox1.Location = new System.Drawing.Point(105, 72);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.ReadOnly = true;
-            this.editBox1.Size = new System.Drawing.Size(415, 85);
-            this.editBox1.TabIndex = 3;
+            this.editBox1.Size = new System.Drawing.Size(393, 134);
+            this.editBox1.TabIndex = 29;
             // 
             // panel1
             // 
@@ -312,6 +268,7 @@
             this.grid1.Size = new System.Drawing.Size(1008, 240);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
+            this.grid1.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid1_RowLeave);
             // 
             // P32_Import
             // 
@@ -322,10 +279,10 @@
             this.Name = "P32_Import";
             this.Text = "P32. Import Detail";
             this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
@@ -338,16 +295,14 @@
 
         private Win.UI.Button button3;
         private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label1;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Panel panel1;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label2;
+        private Win.UI.Grid grid2;
+        private Win.UI.ListControlBindingSource listControlBindingSource2;
+        private Win.UI.Panel panel2;
         private Win.UI.DisplayBox displayBox4;
         private Win.UI.Label label7;
         private Win.UI.DisplayBox displayBox3;
@@ -356,8 +311,5 @@
         private Win.UI.Label label5;
         private Win.UI.Label label3;
         private Win.UI.EditBox editBox1;
-        private Win.UI.Grid grid2;
-        private Win.UI.ListControlBindingSource listControlBindingSource2;
-        private Class.txtSeq txtSeq1;
     }
 }
