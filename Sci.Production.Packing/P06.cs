@@ -391,12 +391,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
                 textBox1.Focus();
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
-            {
-                MyUtility.Msg.WarningBox("Ttl CBM or Ttl GW can't be empty!!");
-                numericBox2.Focus();
-                return false;
-            }
+            
 
             //檢查OrderID+Seq不可以重複建立
             if (MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
@@ -529,6 +524,12 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
                     return false;
                 }
                 CurrentMaintain["ID"] = id;
+            }
+            if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
+            {
+                MyUtility.Msg.WarningBox("Ttl CBM or Ttl GW can't be empty!!");
+                numericBox2.Focus();
+                return false;
             }
             return base.ClickSaveBefore();
         }

@@ -66,6 +66,8 @@
             this.displayBox5 = new Sci.Win.UI.DisplayBox();
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.labConfirmed = new Sci.Win.UI.Label();
+            this.numericBox2 = new Sci.Win.UI.NumericBox();
+            this.label17 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -82,6 +84,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numericBox2);
+            this.masterpanel.Controls.Add(this.label17);
             this.masterpanel.Controls.Add(this.labConfirmed);
             this.masterpanel.Controls.Add(this.txtfactory1);
             this.masterpanel.Controls.Add(this.displayBox5);
@@ -160,6 +164,8 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtfactory1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labConfirmed, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label17, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numericBox2, 0);
             // 
             // detailpanel
             // 
@@ -370,9 +376,9 @@
             // label11
             // 
             this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(305, 112);
+            this.label11.Location = new System.Drawing.Point(536, 139);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(96, 23);
+            this.label11.Size = new System.Drawing.Size(127, 23);
             this.label11.TabIndex = 17;
             this.label11.Text = "Purchase CTN";
             // 
@@ -571,7 +577,7 @@
             // button5
             // 
             this.button5.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button5.Location = new System.Drawing.Point(536, 141);
+            this.button5.Location = new System.Drawing.Point(536, 169);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(148, 30);
             this.button5.TabIndex = 53;
@@ -605,7 +611,7 @@
             // 
             this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(405, 112);
+            this.displayBox5.Location = new System.Drawing.Point(666, 139);
             this.displayBox5.Name = "displayBox5";
             this.displayBox5.Size = new System.Drawing.Size(27, 23);
             this.displayBox5.TabIndex = 54;
@@ -633,6 +639,38 @@
             this.labConfirmed.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
             this.labConfirmed.TextStyle.BorderColor = System.Drawing.Color.Red;
             this.labConfirmed.TextStyle.Color = System.Drawing.Color.Red;
+            // 
+            // numericBox2
+            // 
+            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "gw", true));
+            this.numericBox2.DecimalPlaces = 3;
+            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBox2.IsSupportEditMode = false;
+            this.numericBox2.Location = new System.Drawing.Point(403, 114);
+            this.numericBox2.Name = "numericBox2";
+            this.numericBox2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox2.ReadOnly = true;
+            this.numericBox2.Size = new System.Drawing.Size(75, 23);
+            this.numericBox2.TabIndex = 64;
+            this.numericBox2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label17
+            // 
+            this.label17.Lines = 0;
+            this.label17.Location = new System.Drawing.Point(305, 114);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(95, 22);
+            this.label17.TabIndex = 63;
+            this.label17.Text = "Ttl GW";
             // 
             // P04
             // 
@@ -714,5 +752,7 @@
         private Win.UI.NumericBox numericBox1;
         private Class.txtfactory txtfactory1;
         private Win.UI.Label labConfirmed;
+        private Win.UI.NumericBox numericBox2;
+        private Win.UI.Label label17;
     }
 }
