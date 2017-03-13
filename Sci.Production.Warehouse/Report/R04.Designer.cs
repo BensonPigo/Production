@@ -34,10 +34,10 @@
             this.label6 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtfactoryByM1 = new Sci.Production.Class.txtfactoryByM();
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
             this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -110,16 +110,6 @@
             this.label1.TabIndex = 131;
             this.label1.Text = "M";
             // 
-            // txtfactoryByM1
-            // 
-            this.txtfactoryByM1.BackColor = System.Drawing.Color.White;
-            this.txtfactoryByM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactoryByM1.Location = new System.Drawing.Point(116, 84);
-            this.txtfactoryByM1.mDivisionID = null;
-            this.txtfactoryByM1.Name = "txtfactoryByM1";
-            this.txtfactoryByM1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactoryByM1.TabIndex = 2;
-            // 
             // txtbrand1
             // 
             this.txtbrand1.BackColor = System.Drawing.Color.White;
@@ -151,10 +141,19 @@
             this.txtdropdownlist1.TabIndex = 4;
             this.txtdropdownlist1.Type = "InvtransType";
             // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(116, 84);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 132;
+            // 
             // R04
             // 
             this.ClientSize = new System.Drawing.Size(531, 221);
-            this.Controls.Add(this.txtfactoryByM1);
+            this.Controls.Add(this.txtfactory1);
             this.Controls.Add(this.txtbrand1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtMdivision1);
@@ -166,7 +165,7 @@
             this.Controls.Add(this.dateRange1);
             this.IsSupportToPrint = false;
             this.Name = "R04";
-            this.Text = "R4. FTY Weekly Stock Transaction  List";
+            this.Text = "R04. FTY Weekly Stock Transaction  List";
             this.Controls.SetChildIndex(this.dateRange1, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.print, 0);
@@ -179,7 +178,7 @@
             this.Controls.SetChildIndex(this.txtMdivision1, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.txtbrand1, 0);
-            this.Controls.SetChildIndex(this.txtfactoryByM1, 0);
+            this.Controls.SetChildIndex(this.txtfactory1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -196,6 +195,6 @@
         private Win.UI.Label label1;
         private Class.txtMdivision txtMdivision1;
         private Class.txtbrand txtbrand1;
-        private Class.txtfactoryByM txtfactoryByM1;
+        private Class.txtfactory txtfactory1;
     }
 }
