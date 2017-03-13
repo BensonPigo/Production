@@ -925,11 +925,11 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                     }
                 }
             }
-            cdsi += cdsab.Length - 2;
+            cdsi += cdsab.Length - 1;
             for (int i = 1; i <= cdsi; i++)
             {
                 Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[excelRow, System.Type.Missing];
-                rangeRowCD.RowHeight = 19.5 * (i + 1);
+                rangeRowCD.RowHeight = 16.5 * (i + 1);
                 
             }            
             worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString() : "";
@@ -1332,11 +1332,11 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                     }
                 }
             }
-            cdsi += cdsab.Length - 2;
+            cdsi += cdsab.Length - 1;
             for (int i = 1; i <= cdsi; i++)
             {
                 Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[excelRow, System.Type.Missing];
-                rangeRowCD.RowHeight = 19.5 * (i + 1);
+                rangeRowCD.RowHeight = 16.5 * (i + 1);
             }    
             worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
 
