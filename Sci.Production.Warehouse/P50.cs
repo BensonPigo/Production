@@ -148,7 +148,7 @@ namespace Sci.Production.Warehouse
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "SF", "StockTaking", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "SF", "StockTaking", (DateTime)CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -227,10 +227,14 @@ namespace Sci.Production.Warehouse
             sp_mdivision.ParameterName = "@MDivisionid";
             sp_mdivision.Value = Sci.Env.User.Keyword;
             cmds.Add(sp_mdivision);
+            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
+            sp_factory.ParameterName = "@Factoryid";
+            sp_factory.Value = Sci.Env.User.Factory;
+            cmds.Add(sp_factory);
             System.Data.SqlClient.SqlParameter sp_loginid = new System.Data.SqlClient.SqlParameter();
             sp_loginid.ParameterName = "@loginid";
             sp_loginid.Value = Sci.Env.User.UserID;
-            cmds.Add(sp_loginid);
+            cmds.Add(sp_loginid);           
             #endregion
             if (!(result = DBProxy.Current.ExecuteSP("", "dbo.usp_StocktakingEncode",cmds)))
             {
@@ -250,7 +254,7 @@ namespace Sci.Production.Warehouse
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.MDivisionID
+            this.DetailSelectCommand = string.Format(@"select a.id
 ,a.PoId,a.Seq1,a.Seq2
 ,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll

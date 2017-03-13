@@ -4,6 +4,7 @@ CREATE PROCEDURE [dbo].[usp_StocktakingEncode]
 	-- Add the parameters for the stored procedure here
 	@StocktakingID varchar(13), -- 盤點單號
 	@MDivisionid varchar(8),
+	@Factoryid varchar(8),
 	@loginid varchar(10)
 AS
 BEGIN
@@ -106,14 +107,14 @@ BEGIN
 		-- 取Bulk Adjust ID
 		IF @Stocktype= 'B'
 			EXEC	[dbo].[usp_getID]
-					@keyword = @MDivisionid,
+					@keyword = @Factoryid,
 					@docno = N'AB',
 					@issuedate = NULL,
 					@tablename = N'dbo.adjust',
 					@newid = @newid OUTPUT;
 		ELSE
 			EXEC	[dbo].[usp_getID]
-					@keyword = @MDivisionid,
+					@keyword = @Factoryid,
 					@docno = N'AI',
 					@issuedate = NULL,
 					@tablename = N'dbo.adjust',
@@ -150,7 +151,6 @@ BEGIN
 		INSERT INTO DBO.Adjust_Detail
         ([ID]
         ,[FtyInventoryUkey]
-        ,[MDivisionID]
         ,[POID]
         ,[Seq1]
         ,[Seq2]
@@ -162,7 +162,6 @@ BEGIN
         ,[ReasonId]) 
 		SELECT @newid
         ,[FtyInventoryUkey]
-        ,[MDivisionID]
         ,[POID]
         ,[Seq1]
         ,[Seq2]
@@ -174,10 +173,10 @@ BEGIN
 		WHERE sd.id = @StocktakingID and sd.QtyBefore != sd.QtyAfter;
 
 		-- 更新庫存 MDivisionPoDetail & FtyInventory
-		Select sd.MDivisionID,sd.POID,sd.seq1,sd.Seq2,sum(QtyAfter - QtyBefore) AdjustQty into #tmpAdjust1
+		Select sd.POID,sd.seq1,sd.Seq2,sum(QtyAfter - QtyBefore) AdjustQty into #tmpAdjust1
 		FROM DBO.STOCKTAKING_DETAIL sd WITH (NOLOCK)
 		WHERE sd.id = @StocktakingID and sd.QtyBefore != sd.QtyAfter 
-		group by sd.MDivisionID,sd.POID,sd.seq1,sd.Seq2
+		group by sd.POID,sd.seq1,sd.Seq2
 			
 		IF @Stocktype ='B'
 		BEGIN
@@ -188,15 +187,15 @@ BEGIN
 			update a
 			set a.AdjustQty = isnull(a.AdjustQty, 0) + ISNULL(b.AdjustQty, 0)
 			from dbo.MDivisionPoDetail a
-			inner join #tmpAdjust1 b on a.MDivisionID = b.MDivisionID and a.POID = b.POID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2
+			inner join #tmpAdjust1 b on a.POID = b.POID and a.Seq1 = b.Seq1 and a.Seq2 = b.Seq2
 		END
 		ELSE
 		BEGIN
 			-- 更新 MdivisionPodetail (多update linvQty)
 			update dbo.MDivisionPoDetail  SET MDivisionPoDetail.AdjustQty = MDivisionPoDetail.AdjustQty + t.AdjustQty,
 			LInvQty = LInvQty + t.AdjustQty
-			from dbo.MDivisionPoDetail  inner join #tmpAdjust1 t on t.MDivisionID = MDivisionPoDetail.MDivisionID
-			and t.poid = MDivisionPoDetail.POID and t.seq1 = MDivisionPoDetail.Seq1 and t.Seq2 = MDivisionPoDetail.seq2
+			from dbo.MDivisionPoDetail  inner join #tmpAdjust1 t on t.poid = MDivisionPoDetail.POID 
+			and t.seq1 = MDivisionPoDetail.Seq1 and t.Seq2 = MDivisionPoDetail.seq2
 		END
 
 		drop table #tmpAdjust1;

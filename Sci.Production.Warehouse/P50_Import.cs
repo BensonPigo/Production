@@ -76,7 +76,6 @@ namespace Sci.Production.Warehouse
 ,a.Roll
 ,a.Dyelot
 ,a.StockType
-,a.MDivisionID
 ,a.Ukey ftyinventoryukey
 ,b.Refno
 ,b.ColorID
@@ -87,13 +86,14 @@ namespace Sci.Production.Warehouse
 ,a.inqty-a.OutQty+a.AdjustQty qtybefore
 ,0.00 as QtyAfter
 from dbo.FtyInventory a WITH (NOLOCK) 
-inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.ID = a.POID and b.SEQ1 = a.Seq1 and b.SEQ2 = a.Seq2"));
+inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.ID = a.POID and b.SEQ1 = a.Seq1 and b.SEQ2 = a.Seq2
+inner join dbo.Factory f on f.ID=b.factoryID"));
 
             if (!MyUtility.Check.Empty(category)) strSQLCmd.Append(string.Format(@" inner join dbo.orders c on c.id = a.poid"));
             if (!MyUtility.Check.Empty(location)) strSQLCmd.Append(string.Format(@" inner join dbo.FtyInventory_Detail d on d.Ukey = a.Ukey"));
             if (!MyUtility.Check.Empty(nbPrice1.Value) || !MyUtility.Check.Empty(nbPrice2.Value)) strSQLCmd.Append(string.Format(@" cross apply (select * from dbo.getusdprice(a.poid,a.seq1,a.seq2)) e"));
             strSQLCmd.Append(string.Format(@" where a.lock=0 and a.InQty - a.OutQty + a.AdjustQty > 0 and a.StockType ='{1}' 
-and a.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); // 
+and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); // 
 
             if (!MyUtility.Check.Empty(category))
             {
@@ -229,7 +229,7 @@ and a.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || txtLocation.ReadOnly == true) return;
-            string sql = string.Format("select id,Description from mtllocation WITH (NOLOCK) where junk=0 or Junk is null and stocktype='{0}' and MDivisionID='{1}'", dr_master["stocktype"], dr_master["MDivisionID"]);
+            string sql = string.Format("select id,Description from mtllocation WITH (NOLOCK) where junk=0 or Junk is null and stocktype='{0}'", dr_master["stocktype"]);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "10,20", this.txtLocation.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
@@ -242,7 +242,7 @@ and a.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
             string textValue = this.txtLocation.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtLocation.OldValue)
             {
-                string sql = string.Format("select id,Description from mtllocation WITH (NOLOCK) where junk=0 or Junk is null and stocktype='{0}' and MDivisionID='{1}' and id='{2}'", dr_master["stocktype"], dr_master["MDivisionID"], textValue);
+                string sql = string.Format("select id,Description from mtllocation WITH (NOLOCK) where junk=0 or Junk is null and stocktype='{0}' and id='{1}'", dr_master["stocktype"],textValue);
                 if (!MyUtility.Check.Seek(sql))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Location: {0} > not found!!!", textValue));
