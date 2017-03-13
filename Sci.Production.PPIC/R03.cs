@@ -494,6 +494,8 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            worksheet.Name = "PPIC_Master_List";
+
             //填Subprocess欄位名稱
             int lastCol = 113;
             int subConCol = 9999, ttlTMS = 113; //紀錄SubCon與TTL_TMS的欄位
@@ -525,6 +527,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
             int intRowsStart = 2;
             object[,] objArray = new object[1, lastCol];
            
+            string KPIChangeReasonName;  //CLOUMN[CC]:dr["KPIChangeReason"]+dr["KPIChangeReasonName"]
             foreach (DataRow dr in printData.Rows)
             {
                 #region 填固定欄位資料
@@ -576,7 +579,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 objArray[0, 45] = dr["TtlSewQty"];
                 objArray[0, 46] = dr["CutQty"];
                 objArray[0, 47] = MyUtility.Convert.GetString(dr["WorkType"]) == "1" ? "Y" : "";
-                objArray[0, 48] = MyUtility.Convert.GetInt(dr["CutQty"]) >= MyUtility.Convert.GetInt(dr["Qty"]) ? "Y" : "";
+                objArray[0, 48] = MyUtility.Convert.GetDecimal(dr["CutQty"]) >= MyUtility.Convert.GetDecimal(dr["Qty"]) ? "Y" : "";
                 objArray[0, 49] = dr["PackingQty"];
                 objArray[0, 50] = dr["PackingFOCQty"];
                 objArray[0, 51] = dr["BookingQty"];
@@ -592,7 +595,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 objArray[0, 61] = dr["PackETA"];
                 objArray[0, 62] = MyUtility.Convert.GetString(dr["MTLDelay"]).ToUpper() == "TRUE" ? "Y" : "";
                 objArray[0, 63] = MyUtility.Check.Empty(dr["MTLExport"]) ? dr["MTLExportTimes"] : dr["MTLExport"];
-                objArray[0, 64] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : "";
+                objArray[0, 64] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper();   //MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : "";
                 objArray[0, 65] = dr["ArriveWHDate"];
                 objArray[0, 66] = dr["SewInLine"];
                 objArray[0, 67] = dr["SewOffLine"];
@@ -608,7 +611,8 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 objArray[0, 77] = dr["ActPulloutTime"];
                 objArray[0, 78] = MyUtility.Convert.GetString(dr["PulloutComplete"]).ToUpper() == "TRUE" ? "OK" : "";
                 objArray[0, 79] = dr["FtyKPI"]; //cb
-                objArray[0, 80] = dr["KPIChangeReasonName"]; //cc
+                KPIChangeReasonName = dr["KPIChangeReason"].ToString().Trim() + "-" + dr["KPIChangeReasonName"].ToString().Trim();
+                objArray[0, 80] = !MyUtility.Check.Empty(dr["KPIChangeReason"]) ? KPIChangeReasonName : ""; //cc
                 objArray[0, 81] = dr["PlanDate"];
                 objArray[0, 82] = dr["OrigBuyerDelivery"];
                 objArray[0, 83] = dr["SMR"];
