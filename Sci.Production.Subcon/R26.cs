@@ -351,17 +351,8 @@ namespace Sci.Production.Subcon
             #region PO List
             if ("PO List".EqualString(this.comboBox1.Text))
             {
-                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-                saveDialog.ShowDialog();
-                string outpath = saveDialog.FileName;
-                if (outpath.Empty())
-                {
-                    return false;
-                }
-
-                Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Local_PO_List.xltx");
-                xl.dicDatas.Add("##Factory", dtt);
-                xl.Save(outpath, false);
+               MyUtility.Excel.CopyToXls(dtt, "", "Subcon_R26_Local_PO_List.xltx", 2, true, null, null);      // 將datatable copy to excel
+               return true;
             }
             #endregion
                 
@@ -369,13 +360,6 @@ namespace Sci.Production.Subcon
             else if ("PO Order".EqualString(this.comboBox1.Text))
             {
                 var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-                saveDialog.ShowDialog();
-                string outpath = saveDialog.FileName;
-                if (outpath.Empty())
-                {
-                    return false;
-                }
-
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Local_PO_Order.xltx");
 
                 List<string> lis = new List<string>();
@@ -410,7 +394,8 @@ namespace Sci.Production.Subcon
                     x1.dicDatas.Add("##SP" + idxstr, finalda);
                     idx += 1;
                 }
-                x1.Save(outpath, false);
+                x1.Save();
+                return true;
             }
             #endregion
 
@@ -418,13 +403,6 @@ namespace Sci.Production.Subcon
             if (checkBox1.Checked == true)
             {
                 var saveDialog1 = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-                saveDialog1.ShowDialog();
-                string outpath1 = saveDialog1.FileName;
-                if (outpath1.Empty())
-                {
-                    return false;
-                }
-
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Shipping_Mark.xltx");
 
                 //copy sheet by TheOrderID count.
@@ -454,7 +432,8 @@ namespace Sci.Production.Subcon
                     x1.dicDatas.Add("##D" + idxstr, D);
                     idx += 1;
                 }
-                x1.Save(outpath1, true);
+                x1.Save();
+                return true;
             }
             #endregion
            return true; //return base.OnToExcel(report);
