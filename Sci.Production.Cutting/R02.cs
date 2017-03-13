@@ -437,7 +437,7 @@ select
 	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else Convert(varchar,[Fab ETA]) end,
 [Line#1] = case when ((Row_number() over (partition by [Line#],[Request#]
 	order by [Line#] ,[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1)
-     and [SP#] = LAG([SP#],1,[SP#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Line#] end,
+     and [SP#] = LAG([SP#],1,[SP#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])then '' else [Line#] end,
 [SP#1] = case when  ((Row_number() over (partition by [Line#],[Request#],[Fab ETA],[SP#],[Seq#] 
 	order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
     and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [SP#] end ,
