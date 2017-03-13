@@ -527,7 +527,7 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
             }
             if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
             {
-                MyUtility.Msg.WarningBox("Ttl CBM or Ttl GW can't be empty!!");
+                MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
                 numericBox2.Focus();
                 return false;
             }

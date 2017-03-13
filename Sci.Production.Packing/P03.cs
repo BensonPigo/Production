@@ -774,7 +774,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             //表身重新計算後,再判斷CBM or GW 是不是0
             if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
             {
-                MyUtility.Msg.WarningBox("Ttl CBM or Ttl GW can't be empty!!");
+                MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
                 numericBox3.Focus();
                 return false;
             }

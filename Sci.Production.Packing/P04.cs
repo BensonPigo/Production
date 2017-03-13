@@ -580,7 +580,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             }
             if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
             {
-                MyUtility.Msg.WarningBox("Ttl CBM or Ttl GW can't be empty!!");
+                MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
                 numericBox4.Focus();
                 return false;
             }
