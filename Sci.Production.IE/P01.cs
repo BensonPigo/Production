@@ -46,7 +46,7 @@ namespace Sci.Production.IE
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select 0 as Selected, td.*,o.DescEN as OperationDescEN,o.MtlFactorID as OperationMtlFactorID, m.DescEN
+            this.DetailSelectCommand = string.Format(@"select 0 as Selected, isnull(o.SeamLength,0) SeamLength, td.*,o.DescEN as OperationDescEN,o.MtlFactorID as OperationMtlFactorID, m.DescEN
                                                         from TimeStudy_Detail td WITH (NOLOCK) 
                                                         left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
                                                         left join Mold m WITH (NOLOCK) on m.ID=td.Mold
