@@ -58,21 +58,23 @@
             this.label8 = new Sci.Win.UI.Label();
             this.cbbOrderBy = new Sci.Win.UI.ComboBox();
             this.label15 = new Sci.Win.UI.Label();
+            this.label16 = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(430, 12);
+            this.print.Location = new System.Drawing.Point(436, 12);
             this.print.TabIndex = 15;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(430, 48);
+            this.toexcel.Location = new System.Drawing.Point(436, 48);
             this.toexcel.TabIndex = 16;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(430, 84);
+            this.close.Location = new System.Drawing.Point(436, 84);
             this.close.TabIndex = 17;
             // 
             // label3
@@ -246,7 +248,7 @@
             // label5
             // 
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 409);
+            this.label5.Location = new System.Drawing.Point(13, 440);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(98, 23);
             this.label5.TabIndex = 98;
@@ -283,7 +285,7 @@
             // cbbFabricType
             // 
             this.cbbFabricType.FormattingEnabled = true;
-            this.cbbFabricType.Location = new System.Drawing.Point(114, 409);
+            this.cbbFabricType.Location = new System.Drawing.Point(114, 440);
             this.cbbFabricType.Name = "cbbFabricType";
             this.cbbFabricType.Size = new System.Drawing.Size(121, 24);
             this.cbbFabricType.TabIndex = 13;
@@ -365,7 +367,7 @@
             this.cbbOrderBy.Items.AddRange(new object[] {
             "Issue Date",
             "Supplier"});
-            this.cbbOrderBy.Location = new System.Drawing.Point(114, 449);
+            this.cbbOrderBy.Location = new System.Drawing.Point(114, 474);
             this.cbbOrderBy.Name = "cbbOrderBy";
             this.cbbOrderBy.Size = new System.Drawing.Size(121, 24);
             this.cbbOrderBy.TabIndex = 14;
@@ -373,15 +375,35 @@
             // label15
             // 
             this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(13, 450);
+            this.label15.Location = new System.Drawing.Point(13, 475);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(98, 23);
             this.label15.TabIndex = 137;
             this.label15.Text = "Order By";
             // 
+            // label16
+            // 
+            this.label16.Lines = 0;
+            this.label16.Location = new System.Drawing.Point(13, 406);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(98, 23);
+            this.label16.TabIndex = 138;
+            this.label16.Text = "Factory";
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(115, 406);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 139;
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(522, 522);
+            this.ClientSize = new System.Drawing.Size(528, 529);
+            this.Controls.Add(this.txtfactory1);
+            this.Controls.Add(this.label16);
             this.Controls.Add(this.cbbOrderBy);
             this.Controls.Add(this.label15);
             this.Controls.Add(this.label8);
@@ -448,6 +470,8 @@
             this.Controls.SetChildIndex(this.label8, 0);
             this.Controls.SetChildIndex(this.label15, 0);
             this.Controls.SetChildIndex(this.cbbOrderBy, 0);
+            this.Controls.SetChildIndex(this.label16, 0);
+            this.Controls.SetChildIndex(this.txtfactory1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -485,5 +509,7 @@
         private Win.UI.Label label8;
         private Win.UI.ComboBox cbbOrderBy;
         private Win.UI.Label label15;
+        private Win.UI.Label label16;
+        private Class.txtfactory txtfactory1;
     }
 }

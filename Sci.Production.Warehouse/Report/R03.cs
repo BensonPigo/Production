@@ -15,7 +15,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class R03 : Sci.Win.Tems.PrintForm
     {
-        string season, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
+        string season, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp, factory;
         DateTime? sciDelivery1, sciDelivery2, suppDelivery1, suppDelivery2, eta1, eta2, ata1, ata2;
         DataTable printData;
 
@@ -63,6 +63,7 @@ namespace Sci.Production.Warehouse
             style = txtstyle1.Text;
             season = txtseason1.Text;
             mdivision = txtMdivision1.Text;
+            factory = txtfactory1.Text;
             fabrictype = cbbFabricType.SelectedValue.ToString();
             orderby = cbbOrderBy.Text;
 
@@ -88,6 +89,9 @@ namespace Sci.Production.Warehouse
             System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
             sp_mdivision.ParameterName = "@MDivision";
 
+            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
+            sp_factory.ParameterName = "@FactoryID";
+
             System.Data.SqlClient.SqlParameter sp_refno1 = new System.Data.SqlClient.SqlParameter();
             sp_refno1.ParameterName = "@refno1";
 
@@ -103,7 +107,11 @@ namespace Sci.Production.Warehouse
             {
                 sqlCmd.Append(string.Format(@";with cte as
 (
-select distinct o.mdivisionid, o.POID,o.StyleID,o.SeasonID from dbo.orders o WITH (NOLOCK) 
+select  distinct o.mdivisionid
+                 , o.POID
+                 , o.StyleID
+                 , o.SeasonID 
+from dbo.orders o WITH (NOLOCK) 
 where 1=1"));
 
                 if (!MyUtility.Check.Empty(sciDelivery1))
@@ -127,87 +135,113 @@ where 1=1"));
                     cmds.Add(sp_season);
                 }
                 sqlCmd.Append(")");
-                sqlCmd.Append(string.Format(@"select isnull(d.mdivisionid,cte.mdivisionid), b.FactoryID, a.id,
-cte.StyleID,
-b.FinalETD,
-a.suppid+'-'+c.AbbEN supp,
-c.CountryID
-,b.Refno
-,b.SEQ1
-,b.SEQ2
-,iif(b.fabrictype = 'F','Fabric',iif(b.fabrictype='A','Accessory',b.fabrictype)) fabrictype
-,dbo.getMtlDesc(b.id,b.seq1,b.seq2,2,0)
-,b.Qty
-,b.NETQty
-,b.NETQty+b.LossQty
-,b.ShipQty
-,b.ShipFOC
-,b.ApQty
-,b.InputQty
-,b.POUnit
-,iif(b.Complete=1,'Y','N')
---,b.ETA
-,b.FinalETA
-,(select t.orderid+',' from (select OrderID from DBO.PO_Supp_Detail_OrderList WITH (NOLOCK) where id=b.id and seq1=b.seq1 and seq2 = b.SEQ2) t for xml path('')) orderlist
-,d.InQty
-,b.StockUnit
-,d.OutQty
-,d.AdjustQty
-,d.InQty - d.OutQty + d.AdjustQty balance
-,d.ALocation
-,d.BLocation
-,case b.FabricType 
-	when 'F' then (select x.result+'/' from (select iif(t2.result='P','Pass',iif(t2.result='F','Fail',t2.Result)) result
-	from dbo.FIR t2 WITH (NOLOCK) where t2.POID = b.ID and t2.seq1 = b.seq1 and t2.seq2 = b.seq2) x for xml path(''))
-	when 'A' then (select x.result+'/' from (select iif(t3.result='P','Pass',iif(t3.result='F','Fail',t3.Result)) result
-	from dbo.AIR t3 WITH (NOLOCK) where t3.POID = b.ID and t3.seq1 = b.seq1 and t3.seq2 = b.seq2) x for xml path(''))
-end
- from cte 
+                sqlCmd.Append(string.Format(@"
+select  factory.MDivisionID
+        , orders.FactoryID
+        , a.id
+        ,cte.StyleID
+        ,b.FinalETD
+        ,supp = a.suppid+'-'+c.AbbEN 
+        ,c.CountryID
+        ,b.Refno
+        ,b.SEQ1
+        ,b.SEQ2
+        ,fabrictype = iif(b.fabrictype = 'F','Fabric',iif(b.fabrictype='A','Accessory',b.fabrictype)) 
+        ,dbo.getMtlDesc(b.id,b.seq1,b.seq2,2,0)
+        ,b.Qty
+        ,b.NETQty
+        ,b.NETQty+b.LossQty
+        ,b.ShipQty
+        ,b.ShipFOC
+        ,b.ApQty
+        ,b.InputQty
+        ,b.POUnit
+        ,iif(b.Complete=1,'Y','N')
+        --,b.ETA
+        ,b.FinalETA
+        ,(select t.orderid+',' from (select OrderID from DBO.PO_Supp_Detail_OrderList WITH (NOLOCK) where id=b.id and seq1=b.seq1 and seq2 = b.SEQ2) t for xml path('')) orderlist
+        ,d.InQty
+        ,b.StockUnit
+        ,d.OutQty
+        ,d.AdjustQty
+        ,balance = d.InQty - d.OutQty + d.AdjustQty 
+        ,d.ALocation
+        ,d.BLocation
+        ,case b.FabricType 
+            when 'F' then (select x.result+'/' 
+                           from (select result = iif(t2.result='P','Pass',iif(t2.result='F','Fail',t2.Result)) 
+                                 from dbo.FIR t2 WITH (NOLOCK) 
+                                 where t2.POID = b.ID and t2.seq1 = b.seq1 and t2.seq2 = b.seq2) x 
+                           for xml path(''))
+            when 'A' then (select x.result+'/' 
+                           from (select result = iif(t3.result='P','Pass',iif(t3.result='F','Fail',t3.Result)) 
+                                 from dbo.AIR t3 WITH (NOLOCK) 
+                                 where t3.POID = b.ID and t3.seq1 = b.seq1 and t3.seq2 = b.seq2) x 
+                           for xml path(''))
+         end
+from cte 
 inner join dbo.PO_Supp a WITH (NOLOCK) on a.id = cte.poid
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.id and b.SEQ1 = a.SEQ1
+inner join dbo.Orders orders on b.id = orders.id
+inner join dbo.Factory factory on orders.FactoryId = factory.id
 inner join dbo.Supp c WITH (NOLOCK) on c.id = a.SuppID
 left join dbo.MDivisionPoDetail d WITH (NOLOCK) on d.POID = b.ID and d.seq1 = b.seq1 and d.seq2 = b.SEQ2
 where 1= 1 "));
             }
             else
             {
-                sqlCmd.Append(string.Format(@"select isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders WITH (NOLOCK) where id = a.id)), b.FactoryID,a.id,
-(select StyleID from dbo.orders WITH (NOLOCK) where id = a.id) style,
-b.FinalETD,
-a.suppid+'-'+c.AbbEN supp,
-c.CountryID
-,b.Refno
-,b.SEQ1
-,b.SEQ2
-,iif(b.fabrictype = 'F','Fabric',iif(b.fabrictype='A','Accessory',b.fabrictype)) fabrictype
-,dbo.getMtlDesc(b.id,b.seq1,b.seq2,2,0)
-,b.Qty
-,b.NETQty
-,b.NETQty+b.LossQty
-,b.ShipQty
-,b.ShipFOC
-,b.ApQty
-,b.InputQty
-,b.POUnit
-,iif(b.Complete=1,'Y','N')
---,b.ETA
-,b.FinalETA
-,(select t.orderid+',' from (select OrderID from DBO.PO_Supp_Detail_OrderList WITH (NOLOCK) where id=b.id and seq1=b.seq1 and seq2 = b.SEQ2) t for xml path('')) orderlist
-,d.InQty
-,b.StockUnit
-,d.OutQty
-,d.AdjustQty
-,d.InQty - d.OutQty + d.AdjustQty balance
-,d.ALocation
-,d.BLocation
-,case b.FabricType 
-	when 'F' then (select x.result+'/' from (select iif(t2.result='P','Pass',iif(t2.result='F','Fail',t2.Result)) result
-	from dbo.FIR t2 WITH (NOLOCK) where t2.POID = b.ID and t2.seq1 = b.seq1 and t2.seq2 = b.seq2) x for xml path(''))
-	when 'A' then (select x.result+'/' from (select iif(t3.result='P','Pass',iif(t3.result='F','Fail',t3.Result)) result
-	from dbo.AIR t3 WITH (NOLOCK) where t3.POID = b.ID and t3.seq1 = b.seq1 and t3.seq2 = b.seq2) x for xml path(''))
-end
+                sqlCmd.Append(string.Format(@"
+select  factory.MDivisionID
+        , orders.FactoryID
+        ,a.id
+        ,style = (select StyleID from dbo.orders WITH (NOLOCK) where id = a.id) 
+        ,b.FinalETD
+        ,supp = .suppid+'-'+c.AbbEN 
+        ,c.CountryID
+        ,b.Refno
+        ,b.SEQ1
+        ,b.SEQ2
+        ,fabrictype = iif(b.fabrictype = 'F','Fabric',iif(b.fabrictype='A','Accessory',b.fabrictype)) 
+        ,dbo.getMtlDesc(b.id,b.seq1,b.seq2,2,0)
+        ,b.Qty
+        ,b.NETQty
+        ,b.NETQty+b.LossQty
+        ,b.ShipQty
+        ,b.ShipFOC
+        ,b.ApQty
+        ,b.InputQty
+        ,b.POUnit
+        ,iif(b.Complete=1,'Y','N')
+        --,b.ETA
+        ,b.FinalETA
+        ,orderlist = (select t.orderid+',' 
+                      from (select OrderID 
+                            from DBO.PO_Supp_Detail_OrderList WITH (NOLOCK) 
+                            where id=b.id and seq1=b.seq1 and seq2 = b.SEQ2) t 
+                      for xml path('')) 
+        ,d.InQty
+        ,b.StockUnit
+        ,d.OutQty
+        ,d.AdjustQty
+        ,d.InQty - d.OutQty + d.AdjustQty balance
+        ,d.ALocation
+        ,d.BLocation
+        ,case b.FabricType 
+            when 'F' then (select x.result+'/' 
+                           from (select result = iif(t2.result='P','Pass',iif(t2.result='F','Fail',t2.Result)) 
+                                 from dbo.FIR t2 WITH (NOLOCK) 
+                                 where t2.POID = b.ID and t2.seq1 = b.seq1 and t2.seq2 = b.seq2) x 
+                           for xml path(''))
+            when 'A' then (select x.result+'/' 
+                           from (select result = iif(t3.result='P','Pass',iif(t3.result='F','Fail',t3.Result)) 
+                                 from dbo.AIR t3 WITH (NOLOCK) 
+                                 where t3.POID = b.ID and t3.seq1 = b.seq1 and t3.seq2 = b.seq2) x 
+                           for xml path(''))
+         end
  from dbo.PO_Supp a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.id and b.SEQ1 = a.SEQ1
+inner join dbo.Orders orders on b.id = orders.id
+inner join dbo.Factory factory on orders.FactoryId = factory.id
 inner join dbo.Supp c WITH (NOLOCK) on c.id = a.SuppID
 left join dbo.MDivisionPoDetail d WITH (NOLOCK) on d.POID = b.ID and d.seq1 = b.seq1 and d.seq2 = b.SEQ2
 where 1=1 "));
@@ -258,9 +292,16 @@ where 1=1 "));
 
             if (!MyUtility.Check.Empty(mdivision))
             {
-                sqlCmd.Append(" and d.mdivisionid = @MDivision");
+                sqlCmd.Append(" and factory.mdivisionid = @MDivision");
                 sp_mdivision.Value = mdivision;
                 cmds.Add(sp_mdivision);
+            }
+
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlCmd.Append(" and orders.FactoryID = @FactoryID");
+                sp_factory.Value = factory;
+                cmds.Add(sp_factory);
             }
 
             if (!MyUtility.Check.Empty(fabrictype))
