@@ -143,8 +143,10 @@ order by ld.Seq1,ld.Seq2", masterID);
                         //string sqlCmd = string.Format(@"select left(seq1+' ',3)+seq2 as Seq, Refno,InQty,OutQty,seq1,seq2, dbo.getmtldesc(id,seq1,seq2,2,0) as Description 
                         //                                from dbo.PO_Supp_Detail
                         //                                where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 3), MyUtility.Convert.GetString(e.FormattedValue).Substring(2, 2));
-
-                        if (MyUtility.Convert.GetString(e.FormattedValue).Length < 4 || MyUtility.Convert.GetString(e.FormattedValue).Length > 4)
+                        string seq12 = MyUtility.Convert.GetString(e.FormattedValue);
+                        char[] ch1 = new Char[] { ' ' };
+                        string[] inputString = seq12.Split(ch1, StringSplitOptions.RemoveEmptyEntries);
+                        if (inputString.Length < 2 || inputString.Length > 3)
                         {
                             MyUtility.Msg.WarningBox("Please input legal seq#!! example:01 03");
                             ClearGridData(dr);
@@ -155,7 +157,7 @@ order by ld.Seq1,ld.Seq2", masterID);
                         from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
                         left join MDivisionPoDetail m WITH (NOLOCK) on m.POID = psd.ID and m.Seq1 = psd.SEQ1 and m.Seq2 = psd.SEQ2 and m.MDivisionID = '{3}'
                         where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType = 'F'",
-                        MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 2), MyUtility.Convert.GetString(e.FormattedValue).Substring(2, 2), Sci.Env.User.Keyword);
+                        MyUtility.Convert.GetString(CurrentMaintain["POID"]), inputString[0], inputString[1], Sci.Env.User.Keyword);
 
                         if (!MyUtility.Check.Seek(sqlCmd, out poData))
                         {
