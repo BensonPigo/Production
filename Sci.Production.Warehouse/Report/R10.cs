@@ -13,7 +13,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class R10 : Sci.Win.Tems.PrintForm
     {
-        string    mdivision, orderby, spno1, spno2, refno1, refno2;
+        string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         DateTime? deadline1, deadline2, buyerDelivery1, buyerDelivery2, eta1, eta2;
         DataTable printData;
 
@@ -48,6 +48,7 @@ namespace Sci.Production.Warehouse
             eta1 = dateRange3.Value1;
             eta2 = dateRange3.Value2;
             mdivision = txtMdivision1.Text;
+            factory = txtfactory1.Text;
             refno1 = txtRefno1.Text;
             refno2 = txtRefno2.Text;
 
@@ -66,6 +67,9 @@ namespace Sci.Production.Warehouse
 
             System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
             sp_mdivision.ParameterName = "@MDivision";
+
+            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
+            sp_factory.ParameterName = "@factory";
 
             System.Data.SqlClient.SqlParameter sp_refno1 = new System.Data.SqlClient.SqlParameter();
             sp_refno1.ParameterName = "@refno1";
@@ -86,29 +90,58 @@ namespace Sci.Production.Warehouse
                 if (!MyUtility.Check.Empty(buyerDelivery2))
                     sqlBuyerDelivery += (MyUtility.Check.Empty(sqlBuyerDelivery) ? "" : " and ") + string.Format(" o.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDelivery2).ToString("d"));
 
-                sqlCmd.Append(string.Format(@";with cte as 
+                sqlCmd.Append(string.Format(@"
+;with cte as 
 (
-	select poid from dbo.orders o WITH (NOLOCK) 
-	where {0} group by POID
+    select poid 
+    from dbo.orders o WITH (NOLOCK) 
+    where {0} 
+    group by POID
 )
-select rtrim(c.BLocation),a.POID,a.seq1,a.seq2, x.Refno ,x.ColorID ,c.LInvQty ,a.ETA
-,DATEDIFF(day,a.eta,convert(date,getdate())) aging,'' remark
+select  orders.factoryID
+        ,rtrim(c.BLocation)
+        ,a.POID
+        ,a.seq1
+        ,a.seq2
+        ,x.Refno 
+        ,x.ColorID 
+        ,c.LInvQty 
+        ,a.ETA
+        ,aging = DATEDIFF(day,a.eta,convert(date,getdate())) 
+        ,remark = '' 
 from cte
 inner join Inventory a WITH (NOLOCK) on a.POID = cte.POID 
 inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2
-inner join Factory d WITH (NOLOCK) on d.id = a.FactoryID
-cross apply (select m.Refno,m.ColorID from dbo.PO_Supp_Detail m WITH (NOLOCK) 
-            where m.id = a.POID and m.seq1 = a.seq1 and m.seq2 = a.seq2 ) x
+inner join Orders orders on c.poid = orders.id
+inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
+cross apply (select m.Refno
+                    ,m.ColorID 
+             from dbo.PO_Supp_Detail m WITH (NOLOCK) 
+             where m.id = a.POID and m.seq1 = a.seq1 and m.seq2 = a.seq2 ) x
 where LInvQty > 0 ", sqlBuyerDelivery));
             }
             else
             {
-                sqlCmd.Append(string.Format(@"select rtrim(c.BLocation),a.POID,a.seq1,a.seq2, x.Refno ,x.ColorID ,c.LInvQty ,a.ETA
-,DATEDIFF(day,a.eta,convert(date,getdate())) aging,'' remark
+                sqlCmd.Append(string.Format(@"
+select  orders.factoryID
+        ,rtrim(c.BLocation)
+        ,a.POID
+        ,a.seq1
+        ,a.seq2
+        , x.Refno 
+        ,x.ColorID 
+        ,c.LInvQty 
+        ,a.ETA
+        ,aging = DATEDIFF(day,a.eta,convert(date,getdate())) 
+        ,remark = '' 
 from Inventory a WITH (NOLOCK) 
 inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2
-inner join Factory d WITH (NOLOCK) on d.id = a.FactoryID
-cross apply (select d.Refno,d.ColorID from dbo.PO_Supp_Detail d WITH (NOLOCK) where d.id = a.POID and d.seq1 = a.seq1 and d.seq2 = a.seq2 ) x
+inner join Orders orders on c.poid = orders.id
+inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
+cross apply (select d.Refno
+                    ,d.ColorID 
+             from dbo.PO_Supp_Detail d WITH (NOLOCK) 
+             where d.id = a.POID and d.seq1 = a.seq1 and d.seq2 = a.seq2 ) x
 where LInvQty > 0 "));
 
             }
@@ -142,6 +175,13 @@ where LInvQty > 0 "));
                 sqlCmd.Append(" and d.mdivisionid = @MDivision");
                 sp_mdivision.Value = mdivision;
                 cmds.Add(sp_mdivision);
+            }
+
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlCmd.Append(" and orders.FactoryID = @Factory");
+                sp_factory.Value = mdivision;
+                cmds.Add(sp_factory);
             }
 
             if (!MyUtility.Check.Empty(refno1))

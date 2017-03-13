@@ -44,6 +44,8 @@
             this.label12 = new Sci.Win.UI.Label();
             this.dateRange3 = new Sci.Win.UI.DateRange();
             this.label1 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -168,7 +170,7 @@
             // label11
             // 
             this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(13, 182);
+            this.label11.Location = new System.Drawing.Point(13, 214);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(98, 23);
             this.label11.TabIndex = 120;
@@ -178,7 +180,7 @@
             // 
             this.txtRefno2.BackColor = System.Drawing.Color.White;
             this.txtRefno2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno2.Location = new System.Drawing.Point(303, 182);
+            this.txtRefno2.Location = new System.Drawing.Point(303, 214);
             this.txtRefno2.Name = "txtRefno2";
             this.txtRefno2.Size = new System.Drawing.Size(164, 23);
             this.txtRefno2.TabIndex = 7;
@@ -187,7 +189,7 @@
             // 
             this.txtRefno1.BackColor = System.Drawing.Color.White;
             this.txtRefno1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno1.Location = new System.Drawing.Point(114, 182);
+            this.txtRefno1.Location = new System.Drawing.Point(114, 214);
             this.txtRefno1.Name = "txtRefno1";
             this.txtRefno1.Size = new System.Drawing.Size(164, 23);
             this.txtRefno1.TabIndex = 6;
@@ -195,7 +197,7 @@
             // label12
             // 
             this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(281, 182);
+            this.label12.Location = new System.Drawing.Point(281, 214);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(18, 23);
             this.label12.TabIndex = 123;
@@ -224,9 +226,29 @@
             this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label1.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // label2
+            // 
+            this.label2.Lines = 0;
+            this.label2.Location = new System.Drawing.Point(13, 182);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(98, 23);
+            this.label2.TabIndex = 126;
+            this.label2.Text = "Factory";
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(115, 182);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 127;
+            // 
             // R10
             // 
             this.ClientSize = new System.Drawing.Size(522, 285);
+            this.Controls.Add(this.txtfactory1);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.dateRange3);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtRefno2);
@@ -265,6 +287,8 @@
             this.Controls.SetChildIndex(this.txtRefno2, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.dateRange3, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.txtfactory1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -288,5 +312,7 @@
         private Win.UI.Label label12;
         private Win.UI.DateRange dateRange3;
         private Win.UI.Label label1;
+        private Win.UI.Label label2;
+        private Class.txtfactory txtfactory1;
     }
 }
