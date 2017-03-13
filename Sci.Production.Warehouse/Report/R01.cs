@@ -15,7 +15,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class R01 : Sci.Win.Tems.PrintForm
     {
-        string season, mdivision, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
+        string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
         DateTime? sciDelivery1, sciDelivery2, suppDelivery1, suppDelivery2, eta1, eta2, ata1, ata2;
         DataTable printData;
 
@@ -63,6 +63,7 @@ namespace Sci.Production.Warehouse
             style = txtstyle1.Text;
             season = txtseason1.Text;
             mdivision = txtMdivision1.Text;
+            factory = txtfactory1.Text;
             fabrictype = cbbFabricType.SelectedValue.ToString();
             orderby = cbbOrderBy.Text;
 
@@ -87,6 +88,9 @@ namespace Sci.Production.Warehouse
 
             System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
             sp_mdivision.ParameterName = "@MDivision";
+
+            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
+            sp_factory.ParameterName = "@factory";
 
             System.Data.SqlClient.SqlParameter sp_refno1 = new System.Data.SqlClient.SqlParameter();
             sp_refno1.ParameterName = "@refno1";
@@ -136,7 +140,8 @@ where 1=1"));
                 }
                 sqlCmd.Append(")");
                 sqlCmd.Append(string.Format(@"select --isnull(d.mdivisionid,cte.mdivisionid)
-sp = a.id
+orders.FactoryID
+,sp = a.id
 ,seq = concat(b.SEQ1, b.Seq2)
 --,b.SEQ2
 ,supp = a.suppid+'-'+c.AbbEN
@@ -158,6 +163,8 @@ sp = a.id
  from cte 
 inner join dbo.PO_Supp a WITH (NOLOCK) on a.id = cte.poid
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.id and b.SEQ1 = a.SEQ1
+inner join Orders orders on b.id = orders.id
+inner join Factory factory on orders.FactoryID = factory.id
 inner join dbo.Supp c WITH (NOLOCK) on c.id = a.SuppID
 left join dbo.MDivisionPoDetail d WITH (NOLOCK) on d.POID = b.ID and d.seq1 = b.seq1 and d.seq2 = b.SEQ2
 where 1= 1 and c.ThirdCountry = 1"));
@@ -165,7 +172,8 @@ where 1= 1 and c.ThirdCountry = 1"));
             else
             {
                 sqlCmd.Append(string.Format(@"select --isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders WITH (NOLOCK) where id = a.id))
-sp = a.id
+orders.FactoryID
+,sp = a.id
 ,seq = concat(b.SEQ1, b.Seq2)
 --,b.SEQ2
 ,supp = a.suppid+'-'+c.AbbEN
@@ -186,6 +194,8 @@ sp = a.id
 ,StockUnit = b.StockUnit
  from dbo.PO_Supp a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.id and b.SEQ1 = a.SEQ1
+inner join Orders orders on b.id = orders.id
+inner join Factory factory on orders.FactoryID = factory.id
 inner join dbo.Supp c WITH (NOLOCK) on c.id = a.SuppID
 left join dbo.MDivisionPoDetail d WITH (NOLOCK) on d.POID = b.ID and d.seq1 = b.seq1 and d.seq2 = b.SEQ2
 where 1=1 and c.ThirdCountry = 1"));
@@ -236,9 +246,16 @@ where 1=1 and c.ThirdCountry = 1"));
 
             if (!MyUtility.Check.Empty(mdivision))
             {
-                sqlCmd.Append(" and d.mdivisionid = @MDivision");
+                sqlCmd.Append(" and factory.mdivisionid = @MDivision");
                 sp_mdivision.Value = mdivision;
                 cmds.Add(sp_mdivision);
+            }
+
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlCmd.Append(" and orders.FactoryID = @factory");
+                sp_factory.Value = factory;
+                cmds.Add(sp_factory);
             }
 
             if (!MyUtility.Check.Empty(fabrictype))
