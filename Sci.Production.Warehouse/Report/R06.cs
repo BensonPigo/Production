@@ -26,8 +26,7 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             txtMdivision1.Text = Sci.Env.User.Keyword;
-            txtfactoryByM1.Text = Sci.Env.User.Keyword;
-            txtfactoryByM1.mDivisionID = Sci.Env.User.Keyword;
+            txtfactory1.Text = Sci.Env.User.Keyword;
             MyUtility.Tool.SetupCombox(cbbFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
             cbbFabricType.SelectedIndex = 0;
             txtdropdownlist1.SelectedIndex = 0;
@@ -49,7 +48,7 @@ namespace Sci.Production.Warehouse
             approveDate2 = dateRange2.Value2;
             fabrictype = cbbFabricType.SelectedValue.ToString();
             mdivisionid = txtMdivision1.Text;
-            factory = txtfactoryByM1.Text;
+            factory = txtfactory1.Text;
             shift = txtdropdownlist1.SelectedValue.ToString();
 
             condition.Clear();
@@ -62,7 +61,7 @@ namespace Sci.Production.Warehouse
             condition.Append(string.Format(@"M : {0}" + "   "
                 , txtMdivision1.Text));
             condition.Append(string.Format(@"Factory : {0}" + "   "
-                , txtfactoryByM1.Text));
+                , txtfactory1.Text));
             condition.Append(string.Format(@"Shift : {0}" + "   "
                 , txtdropdownlist1.Text));
             condition.Append(string.Format(@"Fabric Type : {0}"
@@ -86,31 +85,37 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"SELECT --a.MDivisionID,
-a.factoryid,a.OrderID
-,(select styleid from dbo.orders WITH (NOLOCK) where id = a.orderid) style
-,a.id, (select SewingCell from dbo.SewingLine WITH (NOLOCK) where id= a.SewingLineID and FactoryID = a.FactoryID) cell
-,a.SewingLineID
---,b.seq1,b.seq2
-,concat(b.seq1, ' ', b.seq2) as seq
-,c.Refno
-,(select t.MtlTypeID from dbo.fabric t WITH (NOLOCK) where t.SCIRefno = c.SCIRefno) content
-,dbo.getMtlDesc(c.id,c.seq1,c.seq2,2,0) [description]
-,c.SizeSpec
-,c.ColorID
-,b.WhseInQty
---,c.POUnit,c.StockUnit
-,(isnull(c.NETQty,0)+isnull(c.LossQty,0))
-    * (select v.RateValue from dbo.View_Unitrate v where FROM_U = c.POUnit and TO_U = c.StockUnit) productionQty
-,b.FTYInQty
-,b.RequestQty
-,iif(a.type='L','Lacking','Replacement') sisType
-,(select PPICReason.Description from dbo.PPICReason where type= iif(a.FabricType='F','FL','AL') and PPICReason.ID = b.PPICReasonID) reason
-,b.IssueQty
-,a.IssueLackDT
-,a.ApvDate
-,iif(a.Status ='Received',a.EditDate,null) servedDate
-,dbo.getPass1(a.ApplyName) handle
+            sqlCmd.Append(string.Format(@"
+SELECT  --a.MDivisionID,
+        a.factoryid
+        ,a.OrderID
+        ,style = (select styleid from dbo.orders WITH (NOLOCK) where id = a.orderid) 
+        ,a.id
+        ,cell = (select SewingCell from dbo.SewingLine WITH (NOLOCK) where id= a.SewingLineID and FactoryID = a.FactoryID) 
+        ,a.SewingLineID
+        --,b.seq1,b.seq2
+        ,seq = concat(b.seq1, ' ', b.seq2)
+        ,c.Refno
+        ,content = (select t.MtlTypeID from dbo.fabric t WITH (NOLOCK) where t.SCIRefno = c.SCIRefno) 
+        ,[description] = dbo.getMtlDesc(c.id,c.seq1,c.seq2,2,0) 
+        ,c.SizeSpec
+        ,c.ColorID
+        ,b.WhseInQty
+        --,c.POUnit,c.StockUnit
+        ,productionQty = (isnull(c.NETQty,0)+isnull(c.LossQty,0)) * (select v.RateValue 
+                                                                     from dbo.View_Unitrate v 
+                                                                     where FROM_U = c.POUnit and TO_U = c.StockUnit) 
+        ,b.FTYInQty
+        ,b.RequestQty
+        ,sisType = iif(a.type='L','Lacking','Replacement') 
+        ,reason = (select PPICReason.Description 
+                   from dbo.PPICReason 
+                   where type= iif(a.FabricType='F','FL','AL') and PPICReason.ID = b.PPICReasonID) 
+        ,b.IssueQty
+        ,a.IssueLackDT
+        ,a.ApvDate
+        ,servedDate = iif(a.Status ='Received',a.EditDate,null) 
+        ,handle = dbo.getPass1(a.ApplyName) 
 FROM Lack a WITH (NOLOCK) 
 inner join Lack_detail b WITH (NOLOCK) on a.id = b.id
 inner join po_supp_detail c WITH (NOLOCK) on c.ID = a.poid and c.seq1 = B.Seq1 AND C.SEQ2 = B.Seq2
@@ -217,9 +222,8 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
         {
             if (!txtMdivision1.Text.EqualString(txtMdivision1.OldValue))
             {
-                this.txtfactoryByM1.Text = "";
+                this.txtfactory1.Text = "";
             }
-            this.txtfactoryByM1.mDivisionID = txtMdivision1.Text;
         }
     }
 }

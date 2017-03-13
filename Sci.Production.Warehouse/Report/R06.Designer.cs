@@ -39,7 +39,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
-            this.txtfactoryByM1 = new Sci.Production.Class.txtfactoryByM();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -161,20 +161,19 @@
             this.txtMdivision1.TabIndex = 2;
             this.txtMdivision1.Validated += new System.EventHandler(this.txtMdivision1_Validated);
             // 
-            // txtfactoryByM1
+            // txtfactory1
             // 
-            this.txtfactoryByM1.BackColor = System.Drawing.Color.White;
-            this.txtfactoryByM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactoryByM1.Location = new System.Drawing.Point(117, 120);
-            this.txtfactoryByM1.mDivisionID = null;
-            this.txtfactoryByM1.Name = "txtfactoryByM1";
-            this.txtfactoryByM1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactoryByM1.TabIndex = 3;
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(116, 120);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 132;
             // 
             // R06
             // 
             this.ClientSize = new System.Drawing.Size(531, 266);
-            this.Controls.Add(this.txtfactoryByM1);
+            this.Controls.Add(this.txtfactory1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtMdivision1);
             this.Controls.Add(this.label3);
@@ -203,7 +202,7 @@
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.txtMdivision1, 0);
             this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.txtfactoryByM1, 0);
+            this.Controls.SetChildIndex(this.txtfactory1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -222,6 +221,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Class.txtMdivision txtMdivision1;
-        private Class.txtfactoryByM txtfactoryByM1;
+        private Class.txtfactory txtfactory1;
     }
 }
