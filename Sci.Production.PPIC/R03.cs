@@ -722,12 +722,13 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 }
 
                 worksheet.Range[String.Format("A{0}:{1}{0}", intRowsStart, excelColEng)].Value2 = objArray;
+                worksheet.Range[String.Format("A{0}:{1}{0}", 1, excelColEng)].AutoFilter(1); //篩選
+                worksheet.Range[String.Format("A{0}:{1}{0}", 1, excelColEng)].Interior.Color = Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(191)))), ((int)(((byte)(191))))); //底色
+
                 intRowsStart++;
             }
-
-            excel.Cells.EntireColumn.AutoFit();
-           // excel.Cells.EntireRow.AutoFit();
-
+           
+            excel.Cells.EntireColumn.AutoFit(); //所有列最適列高
             excel.Visible = true;
             return true;
         }
