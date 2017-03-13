@@ -98,7 +98,8 @@ namespace Sci
                                                                 , string header, IWidth width = null
                                                                 , DataGridViewGeneratorTextColumnSettings settings = null
                                                                 , bool? iseditable = null, bool? iseditingreadonly = null
-                                                                , DataGridViewContentAlignment? alignment = null)
+                                                                , DataGridViewContentAlignment? alignment = null
+                                                                ,bool CheckMDivisionID=false)
         {
             if (settings == null) settings = new DataGridViewGeneratorTextColumnSettings();
             settings.CharacterCasing = CharacterCasing.Upper;
@@ -112,21 +113,44 @@ namespace Sci
                 {
                     if (!MyUtility.Check.Empty(e.FormattedValue.ToString()))
                     {
-                        if (MyUtility.Check.Seek(e.FormattedValue.ToString(), "Orders", "id") == false)
+                        if (CheckMDivisionID)
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
-                            dr["poid"] = "";
-                            e.Cancel = true;
-                            return;
+                            if (!MyUtility.Check.Seek(string.Format("select * from dbo.orders inner join dbo.factory on orders.FtyGroup=factory.id where orders.ID='{0}' and factory.MDivisionID='{1}'", e.FormattedValue.ToString(),Sci.Env.User.Keyword), null))
+                            {
+                                MyUtility.Msg.WarningBox(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
+                                dr["poid"] = "";
+                                e.Cancel = true;
+                                return;
+                            }
+                            else
+                            {
+                                dr["poid"] = e.FormattedValue;
+                                dr["seq"] = "";
+                                dr["seq1"] = "";
+                                dr["seq2"] = "";
+                                dr["roll"] = "";
+                                dr["dyelot"] = "";
+                            }
+
                         }
                         else
                         {
-                            dr["poid"] = e.FormattedValue;
-                            dr["seq"] = "";
-                            dr["seq1"] = "";
-                            dr["seq2"] = "";
-                            dr["roll"] = "";
-                            dr["dyelot"] = "";
+                            if (MyUtility.Check.Seek(e.FormattedValue.ToString(), "Orders", "id") == false)
+                            {
+                                MyUtility.Msg.WarningBox(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
+                                dr["poid"] = "";
+                                e.Cancel = true;
+                                return;
+                            }
+                            else
+                            {
+                                dr["poid"] = e.FormattedValue;
+                                dr["seq"] = "";
+                                dr["seq1"] = "";
+                                dr["seq2"] = "";
+                                dr["roll"] = "";
+                                dr["dyelot"] = "";
+                            }
                         }
                     }
                     else

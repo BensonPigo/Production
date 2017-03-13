@@ -523,12 +523,12 @@ drop table #TmpSource
         public static Sci.Win.Tools.SelectItem SelePoItem(string poid, string defaultseq, string filters = null)
         {
             DataTable dt;
+            if (!(MyUtility.Check.Empty(selePoItemSqlCmd)))
+            {
+                selePoItemSqlCmd += string.Format(" And {0}", filters);
+            }
             string sqlcmd = string.Format(selePoItemSqlCmd, poid, Sci.Env.User.Keyword);
 
-            if (!(MyUtility.Check.Empty(filters)))
-            {
-                sqlcmd += string.Format(" And {0}", filters);
-            }
 
             DBProxy.Current.Select(null, sqlcmd, out dt);
 

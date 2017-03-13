@@ -151,7 +151,7 @@ namespace Sci.Production.Warehouse
             //取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "SB", "StockTaking", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "SB", "StockTaking", (DateTime)CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -185,7 +185,6 @@ namespace Sci.Production.Warehouse
         {
             base.OnDetailGridInsert(index);
             CurrentDetailData["stocktype"] = CurrentMaintain["stocktype"].ToString();
-            CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
         }
 
         // Detail Grid 設定
@@ -297,16 +296,14 @@ namespace Sci.Production.Warehouse
                     && !MyUtility.Check.Empty(CurrentDetailData["seq"]) )
                 {
                     //bug fix:364: WAREHOUSE_P51_Warehouse Backward Stocktaking
-                    if (MyUtility.Check.Empty(CurrentDetailData["mdivisionid"])) CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
                     if (MyUtility.Check.Empty(CurrentDetailData["stocktype"])) CurrentDetailData["stocktype"] = CurrentMaintain["stocktype"].ToString();
 
                     string sqlcmd = string.Format(@"select a.ukey,a.roll,a.dyelot,inqty-a.outqty+a.adjustqty qty 
                                  ,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = a.Ukey) t for xml path('')), 1, 1, '') as location 
-                                 ,dbo.getmtldesc('{1}','{2}','{3}',2,0) as [description]
+                                 ,dbo.getmtldesc('{0}','{1}','{2}',2,0) as [description]
                                         from dbo.ftyinventory a WITH (NOLOCK) 
-                                        where mdivisionid='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' 
-                                        and stocktype='{4}' and lock =0", CurrentDetailData["mdivisionid"]
-                                                                        ,CurrentDetailData["poid"]
+                                        where poid='{0}' and seq1='{1}' and seq2='{2}' 
+                                        and stocktype='{3}' and lock =0",CurrentDetailData["poid"]
                                                                         ,CurrentDetailData["seq1"]
                                                                         ,CurrentDetailData["seq2"]
                                                                         ,CurrentDetailData["stocktype"]);
@@ -350,15 +347,13 @@ namespace Sci.Production.Warehouse
                     else
                     {
                         //bug fix:364: WAREHOUSE_P51_Warehouse Backward Stocktaking
-                        if (MyUtility.Check.Empty(CurrentDetailData["mdivisionid"])) CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
                         if (MyUtility.Check.Empty(CurrentDetailData["stocktype"])) CurrentDetailData["stocktype"] = CurrentMaintain["stocktype"].ToString();
 
                         if (!MyUtility.Check.Seek(string.Format(@"select a.ukey,a.roll,a.dyelot,a.inqty-a.outqty+a.adjustqty qty
                                  ,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = a.Ukey) t for xml path('')), 1, 1, '') as location 
-                                 ,dbo.getmtldesc('{1}','{2}','{3}',2,0) as [description] 
-                                        from dbo.ftyinventory a WITH (NOLOCK) where mdivisionid='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' 
-                                        and stocktype='{4}' and roll='{5}' and lock =0", CurrentDetailData["mdivisionid"]
-                                                                        ,CurrentDetailData["poid"]
+                                 ,dbo.getmtldesc('{0}','{1}','{2}',2,0) as [description] 
+                                        from dbo.ftyinventory a WITH (NOLOCK) where poid='{0}' and seq1='{1}' and seq2='{2}' 
+                                        and stocktype='{3}' and roll='{4}' and lock =0",CurrentDetailData["poid"]
                                                                         ,CurrentDetailData["seq1"]
                                                                         ,CurrentDetailData["seq2"]
                                                                         ,CurrentDetailData["stocktype"]
@@ -385,7 +380,7 @@ namespace Sci.Production.Warehouse
 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: false)  //0
+            .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: false, alignment: null, CheckMDivisionID:true)  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: false, settings:ts)  //1
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: false, settings: ts2)  //2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
@@ -429,6 +424,10 @@ namespace Sci.Production.Warehouse
             sp_mdivision.ParameterName = "@MDivisionid";
             sp_mdivision.Value = Sci.Env.User.Keyword;
             cmds.Add(sp_mdivision);
+            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
+            sp_factory.ParameterName = "@Factoryid";
+            sp_factory.Value = Sci.Env.User.Factory;
+            cmds.Add(sp_factory);
             System.Data.SqlClient.SqlParameter sp_loginid = new System.Data.SqlClient.SqlParameter();
             sp_loginid.ParameterName = "@loginid";
             sp_loginid.Value = Sci.Env.User.UserID;
@@ -450,7 +449,7 @@ namespace Sci.Production.Warehouse
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.MDivisionID
+            this.DetailSelectCommand = string.Format(@"select a.id
 ,a.PoId,a.Seq1,a.Seq2
 ,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
