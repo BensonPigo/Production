@@ -21,6 +21,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Pullout Report  Detail', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pullout_Detail';
 
@@ -87,4 +89,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'UKey', @lev
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pullout_Detail', @level2type = N'COLUMN', @level2name = N'OldUkey';
+
+
+GO
+CREATE NONCLUSTERED INDEX [Index_OrderID]
+    ON [dbo].[Pullout_Detail]([OrderID] ASC);
 
