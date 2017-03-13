@@ -211,5 +211,43 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
             return true;
 
         }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            textBox1.Text = "";
+            textBox2.Text = "";
+        }
+
+        private void textBox1_Validating(object sender, CancelEventArgs e)
+        {
+            if (textBox1.Text == textBox1.OldValue) return;
+            if (!MyUtility.Check.Empty(textBox1.Text))
+            {
+                string sql = string.Format("Select ID From SewingLine WITH (NOLOCK) where id='{0}' {1} ", textBox1.Text, MyUtility.Check.Empty(comboBox2.Text) ? "" : string.Format(" and FactoryID = '{0}'", comboBox2.Text)); 
+                if (!MyUtility.Check.Seek(sql))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", textBox1.Text));
+                    textBox1.Text = "";
+                    return;
+                }
+            }
+        }
+
+        private void textBox2_Validating(object sender, CancelEventArgs e)
+        {
+            if (textBox2.Text == textBox2.OldValue) return;
+            if (!MyUtility.Check.Empty(textBox2.Text))
+            {
+                string sql = string.Format("Select ID From SewingLine WITH (NOLOCK) where id='{0}' {1} ", textBox2.Text, MyUtility.Check.Empty(comboBox2.Text) ? "" : string.Format(" and FactoryID = '{0}'", comboBox2.Text));
+                if (!MyUtility.Check.Seek(sql))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", textBox2.Text));
+                    textBox2.Text = "";
+                    return;
+                }
+            }
+        }
+
+
     }
 }

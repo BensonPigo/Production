@@ -156,6 +156,7 @@
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(72, 24);
             this.comboBox2.TabIndex = 1;
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // textBox1
             // 
@@ -166,6 +167,7 @@
             this.textBox1.Size = new System.Drawing.Size(41, 23);
             this.textBox1.TabIndex = 2;
             this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // label9
             // 
@@ -190,6 +192,7 @@
             this.textBox2.Size = new System.Drawing.Size(41, 23);
             this.textBox2.TabIndex = 3;
             this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
             // dateBox1
             // 
