@@ -13,7 +13,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class R09 : Sci.Win.Tems.PrintForm
     {
-        string    mdivision, orderby, spno1, spno2, refno1, refno2;
+        string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
         DateTime? deadline1, deadline2, buyerDelivery1, buyerDelivery2, eta1, eta2;
         DataTable printData;
         int filterIndex;
@@ -50,6 +50,7 @@ namespace Sci.Production.Warehouse
             eta1 = dateRange3.Value1;
             eta2 = dateRange3.Value2;
             mdivision = txtMdivision1.Text;
+            factory = txtfactory1.Text;
             refno1 = txtRefno1.Text;
             refno2 = txtRefno2.Text;
             filterIndex = cbbFilter.SelectedIndex;
@@ -69,6 +70,9 @@ namespace Sci.Production.Warehouse
 
             System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
             sp_mdivision.ParameterName = "@MDivision";
+
+            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
+            sp_factory.ParameterName = "@Factory";
 
             System.Data.SqlClient.SqlParameter sp_refno1 = new System.Data.SqlClient.SqlParameter();
             sp_refno1.ParameterName = "@refno1";
@@ -104,6 +108,7 @@ distinct
 --, (B.InputQty - B.OutputQty)*v.RateValue TaipeiBalance
 --,x.InQty, x.OutQty, x.AdjustQty,x.InQty - x.OutQty + x.AdjustQty balance
 ---------------------------------------------------------------------------
+FactoryID           = orders.FactoryID,
 SP					= a.POID, 
 SEQ					= concat(a.seq1, ' ', a.seq2),  
 ETA					= b.ShipETA,
@@ -127,7 +132,8 @@ from cte
 inner join Inventory a WITH (NOLOCK) on a.POID = cte.POID 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
 inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2
-inner join Factory d WITH (NOLOCK) on d.id = a.FactoryID and d.mdivisionid = c.mdivisionid
+inner joni Orders orders on c.poid = orders.id
+inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
 inner join dbo.View_Unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit 
 outer apply (select isnull(sum(m.InQty),0.00) InQty,isnull(sum(m.OutQty),0.00) OutQty,isnull(sum(m.AdjustQty),0.00) AdjustQty 
 from dbo.FtyInventory m WITH (NOLOCK) 
@@ -145,6 +151,7 @@ where b.InputQty > 0 ", sqlBuyerDelivery));
 --,x.InQty, x.OutQty, x.AdjustQty,x.InQty - x.OutQty + x.AdjustQty balance
 ---------------------------------------------------------------------------
 distinct 
+FactoryID           = orders.FactoryID,
 SP					= a.POID, 
 SEQ					= concat(a.seq1, ' ', a.seq2),  
 ETA					= b.ShipETA,
@@ -167,7 +174,8 @@ BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)
 from Inventory a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
 inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2 
-inner join Factory d WITH (NOLOCK) on d.id = a.FactoryID and d.mdivisionid = c.mdivisionid
+inner join Orders orders on c.poid = orders.id
+inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
 left join dbo.View_Unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit 
 outer apply (select isnull(sum(m.InQty),0.00) InQty,isnull(sum(m.OutQty),0.00) OutQty,isnull(sum(m.AdjustQty),0.00) AdjustQty 
 from dbo.FtyInventory m WITH (NOLOCK) 
@@ -205,6 +213,13 @@ where b.InputQty> 0"));
                 sqlCmd.Append(" and d.mdivisionid = @MDivision");
                 sp_mdivision.Value = mdivision;
                 cmds.Add(sp_mdivision);
+            }
+
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlCmd.Append(" and orders.FactoryID = @Factory");
+                sp_factory.Value = factory;
+                cmds.Add(sp_factory);
             }
 
             if (!MyUtility.Check.Empty(refno1))

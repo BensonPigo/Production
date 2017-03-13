@@ -46,6 +46,8 @@
             this.label1 = new Sci.Win.UI.Label();
             this.cbbFilter = new Sci.Win.UI.ComboBox();
             this.label2 = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.label5 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -170,7 +172,7 @@
             // label11
             // 
             this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(13, 187);
+            this.label11.Location = new System.Drawing.Point(13, 217);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(98, 23);
             this.label11.TabIndex = 120;
@@ -180,7 +182,7 @@
             // 
             this.txtRefno2.BackColor = System.Drawing.Color.White;
             this.txtRefno2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno2.Location = new System.Drawing.Point(303, 187);
+            this.txtRefno2.Location = new System.Drawing.Point(303, 217);
             this.txtRefno2.Name = "txtRefno2";
             this.txtRefno2.Size = new System.Drawing.Size(164, 23);
             this.txtRefno2.TabIndex = 7;
@@ -189,7 +191,7 @@
             // 
             this.txtRefno1.BackColor = System.Drawing.Color.White;
             this.txtRefno1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno1.Location = new System.Drawing.Point(114, 187);
+            this.txtRefno1.Location = new System.Drawing.Point(114, 217);
             this.txtRefno1.Name = "txtRefno1";
             this.txtRefno1.Size = new System.Drawing.Size(164, 23);
             this.txtRefno1.TabIndex = 6;
@@ -197,7 +199,7 @@
             // label12
             // 
             this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(281, 187);
+            this.label12.Location = new System.Drawing.Point(281, 217);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(18, 23);
             this.label12.TabIndex = 123;
@@ -232,7 +234,7 @@
             this.cbbFilter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cbbFilter.FormattingEnabled = true;
             this.cbbFilter.IsSupportUnselect = true;
-            this.cbbFilter.Location = new System.Drawing.Point(114, 222);
+            this.cbbFilter.Location = new System.Drawing.Point(114, 252);
             this.cbbFilter.Name = "cbbFilter";
             this.cbbFilter.Size = new System.Drawing.Size(353, 24);
             this.cbbFilter.TabIndex = 8;
@@ -240,15 +242,35 @@
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 222);
+            this.label2.Location = new System.Drawing.Point(13, 252);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(98, 23);
             this.label2.TabIndex = 127;
             this.label2.Text = "Filter Condition";
             // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(115, 184);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 128;
+            // 
+            // label5
+            // 
+            this.label5.Lines = 0;
+            this.label5.Location = new System.Drawing.Point(13, 184);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(98, 23);
+            this.label5.TabIndex = 129;
+            this.label5.Text = "Factory";
+            // 
             // R09
             // 
-            this.ClientSize = new System.Drawing.Size(577, 285);
+            this.ClientSize = new System.Drawing.Size(577, 309);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.txtfactory1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.cbbFilter);
             this.Controls.Add(this.dateRange3);
@@ -291,6 +313,8 @@
             this.Controls.SetChildIndex(this.dateRange3, 0);
             this.Controls.SetChildIndex(this.cbbFilter, 0);
             this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.txtfactory1, 0);
+            this.Controls.SetChildIndex(this.label5, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -316,5 +340,7 @@
         private Win.UI.Label label1;
         private Win.UI.ComboBox cbbFilter;
         private Win.UI.Label label2;
+        private Class.txtfactory txtfactory1;
+        private Win.UI.Label label5;
     }
 }
