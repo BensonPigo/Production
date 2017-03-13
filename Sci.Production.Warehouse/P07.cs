@@ -335,16 +335,6 @@ select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD WITH (NOLOCK) inner 
             #endregion Status Label
         }
 
-        // detail 新增時設定預設值
-        protected override void OnDetailGridInsert(int index = -1)
-        {
-            //textBox3_Validating(null, null);
-            base.OnDetailGridInsert(index);
-            CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
-        }
-
-        // Detail Grid 設定
-
         DataGridViewColumn Col_ActualQty, Col_Location;
         protected override void OnDetailGridSetup()
         {
@@ -712,8 +702,7 @@ where b.id = '{0}' and b.seq1 ='{1}'and b.seq2 = '{2}'", CurrentDetailData["poid
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Receiving_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.mdivisionid = f.mdivisionid
-and d.PoId = f.PoId
+on d.PoId = f.PoId
 and d.Seq1 = f.Seq1
 and d.Seq2 = f.seq2
 and d.StockType = f.StockType
@@ -964,8 +953,7 @@ when matched then
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
 from dbo.Receiving_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.mdivisionid = f.mdivisionid
-and d.PoId = f.PoId
+on d.PoId = f.PoId
 and d.Seq1 = f.Seq1
 and d.Seq2 = f.seq2
 and d.StockType = f.StockType
@@ -1134,7 +1122,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
-            this.DetailSelectCommand = string.Format(@"select a.id,a.MDivisionID,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Poid + concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as PoidSeq
 ,(select p1.FabricType from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
 ,a.shipqty
@@ -1200,7 +1188,6 @@ Where a.id = '{0}' ", masterID);
 , '' as dyelot
 , '' as remark
 , '' as location
-, '{1}' as mdivisionid
 --,ff.UsageUnit,mm.IsExtensionUnit,uu.ExtensionUnit
 from dbo.Export_Detail a WITH (NOLOCK) inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
 inner join orders c WITH (NOLOCK) on c.id = a.poid
@@ -1216,7 +1203,7 @@ inner join View_unitrate v on v.FROM_U = b.POUnit
 				ff.UsageUnit , 
 				uu.ExtensionUnit), 
 			ff.UsageUnit)))--b.StockUnit
-where a.id='{0}'", CurrentMaintain["exportid"], Sci.Env.User.Keyword);
+where a.id='{0}'", CurrentMaintain["exportid"]);
                     DBProxy.Current.Select(null, selCom, out dt);
                     if (MyUtility.Check.Empty(dt) || MyUtility.Check.Empty(dt.Rows.Count))
                     {

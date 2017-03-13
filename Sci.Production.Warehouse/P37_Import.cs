@@ -58,7 +58,6 @@ namespace Sci.Production.Warehouse
 ,stuff((select ',' + t.MtlLocationID from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where Ukey = f.Ukey) t for xml path('')),1,1,'') as location
 ,dbo.getMtlDesc(f.PoId,f.seq1,f.seq2,2,0) [description]
 ,f.ukey ftyinventoryukey
-,f.mdivisionid
 from dbo.FtyInventory f WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = f.PoId and p1.seq1 = f.SEQ1 and p1.SEQ2 = f.seq2
 where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and stocktype !='O'"));
@@ -74,9 +73,8 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and stocktype !='O'"));
 ,stuff((select ',' + t.MtlLocationID from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where Ukey = f.Ukey) t for xml path('')),1,1,'') as location
 ,dbo.getMtlDesc(b.PoId,b.seq1,b.seq2,2,0) [description]
 ,f.ukey ftyinventoryukey
-,f.mdivisionid
 from dbo.Receiving a WITH (NOLOCK) inner join dbo.Receiving_Detail b WITH (NOLOCK) on a.id = b.id
-inner join dbo.FtyInventory f WITH (NOLOCK) on f.POID = b.PoId and f.seq1 = b.seq1 and f.seq2 = b.Seq2 and f.stocktype = b.stocktype and f.MDivisionID = b.mdivisionid
+inner join dbo.FtyInventory f WITH (NOLOCK) on f.POID = b.PoId and f.seq1 = b.seq1 and f.seq2 = b.Seq2 and f.stocktype = b.stocktype
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = b.PoId and p1.seq1 = b.SEQ1 and p1.SEQ2 = b.seq2
 where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirmed' and b.StockType!='O'
 "));

@@ -60,7 +60,6 @@ namespace Sci.Production.Warehouse
             grid2Data.Columns.Add("pounit", typeof(String));
             grid2Data.Columns.Add("stockunit", typeof(String));
             grid2Data.Columns.Add("stocktype", typeof(String));
-            grid2Data.Columns.Add("mdivisionid", typeof(String));
             grid2Data.Columns.Add("id", typeof(String));
             grid2Data.Columns.Add("location", typeof(String));
             grid2Data.Columns.Add("ErrMsg", typeof(String));
@@ -262,7 +261,6 @@ namespace Sci.Production.Warehouse
                                 objCellArray = range.Value;
 
                                 DataRow newRow = grid2Data.NewRow();
-                                newRow["MDivisionid"] = Env.User.Keyword;
                                 newRow["wkno"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]], "C");
                                 newRow["poid"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]], "C");
                                 newRow["seq1"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]], "C");

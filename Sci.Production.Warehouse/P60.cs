@@ -464,13 +464,6 @@ on LocalPO_Detail.id = s.LocalPoId and LocalPO_Detail.ukey = s.LocalPo_detailuke
             return sqlcmd;
 
         }
-
-        // detail 新增時設定預設值
-        protected override void OnDetailGridInsert(int index = -1)
-        {
-            base.OnDetailGridInsert(index);
-            CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
-        }
         
         //寫明細撈出的sql command
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)

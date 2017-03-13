@@ -68,7 +68,6 @@ namespace Sci.Production.Warehouse
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "B";
             CurrentMaintain["Third"] = 1;
@@ -226,7 +225,6 @@ namespace Sci.Production.Warehouse
         {
             base.OnDetailGridInsert(index);
             CurrentDetailData["stocktype"] = "B";
-            CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
         }
 
         // Detail Grid 設定
@@ -794,7 +792,6 @@ where b.id= a.poid and b.seq1 = a.seq1 and b.seq2 = a.seq2) useqty
 ,a.StockUnit
 ,a.StockType
 ,a.Location
-,a.mdivisionid
 ,a.ukey
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 Where a.id = '{0}' ", masterID);
