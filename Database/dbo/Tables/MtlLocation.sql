@@ -1,5 +1,4 @@
 ﻿CREATE TABLE [dbo].[MtlLocation] (
-    [MDivisionID] VARCHAR (8)   NOT NULL,
     [ID]          VARCHAR (10)  CONSTRAINT [DF_MtlLocation_ID] DEFAULT ('') NOT NULL,
     [StockType]   VARCHAR(10)     CONSTRAINT [DF_MtlLocation_StockType] DEFAULT ('') NOT NULL,
     [Junk]        BIT           NULL,
@@ -8,7 +7,7 @@
     [AddDate]     DATETIME      NULL,
     [EditName]    VARCHAR (10)  CONSTRAINT [DF_MtlLocation_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME      NULL,
-    CONSTRAINT [PK_MtlLocation] PRIMARY KEY CLUSTERED ([MDivisionID] ASC, [ID] ASC, [StockType] ASC)
+    CONSTRAINT [PK_MtlLocation] PRIMARY KEY CLUSTERED ([ID] ASC, [StockType] ASC)
 );
 
 

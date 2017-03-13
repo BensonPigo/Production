@@ -70,7 +70,6 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;//MDivisionID為登入的ID
             CurrentMaintain["ID"] = CurrentMaintain["ID"].ToString().Trim();
             return base.ClickSaveBefore();
         }
