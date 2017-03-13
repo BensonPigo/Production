@@ -51,7 +51,7 @@ namespace Sci.Production.Warehouse
                     else
                     {
                         // 建立可以符合回傳的Cursor
-                        strSQLCmd.Append(string.Format(@"select distinct 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+                        strSQLCmd.Append(string.Format(@"select distinct 0 as selected,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey ftyinventoryukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
 ,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, '') fromlocation
@@ -60,10 +60,11 @@ namespace Sci.Production.Warehouse
 ,p1.colorid
 ,p1.sizespec
 from dbo.FtyInventory a WITH (NOLOCK) 
-    left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
-    left join dbo.PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-where A.StockType='{0}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 "
-                            , dr_master["stocktype"].ToString())); // 
+left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
+left join dbo.PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+inner join dbo.Factory f on f.ID=p1.factoryID 
+where A.StockType='{0}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 AND f.MDivisionID='{1}' "
+                            , dr_master["stocktype"].ToString(),Sci.Env.User.Keyword)); // 
                         if (!MyUtility.Check.Empty(sp))
                         {
                             strSQLCmd.Append(string.Format(@" and a.poid='{0}' ", sp));
@@ -94,7 +95,7 @@ where A.StockType='{0}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0
                         textBox4.Focus();
                         return;
                     }
-                    strSQLCmd.Append(string.Format(@"select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+                    strSQLCmd.Append(string.Format(@"select 0 as selected,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
 ,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail WITH (NOLOCK) where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation
@@ -103,11 +104,11 @@ where A.StockType='{0}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0
 ,(select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
 from dbo.Receiving r1 WITH (NOLOCK) 
     inner join dbo.Receiving_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
-    inner join dbo.FtyInventory a WITH (NOLOCK) on a.mdivisionid = r2.mdivisionid and a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
-where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
+    inner join dbo.FtyInventory a WITH (NOLOCK) on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
+where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed' and r1.mdivisionid='{2}'
 and r1.id = '{0}'
 union all
-select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+select 0 as selected,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
 ,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail WITH (NOLOCK) where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation
@@ -117,10 +118,10 @@ select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq
 from dbo.SubTransfer r1 WITH (NOLOCK) 
     inner join dbo.SubTransfer_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
     inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.fromftyinventoryukey
-where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
+where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'and r1.mdivisionid='{2}'
 and r1.id = '{0}'
 union all
-select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+select 0 as selected,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
 ,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail WITH (NOLOCK) where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation, '' id
@@ -129,10 +130,10 @@ select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq
 from dbo.Issue r1 WITH (NOLOCK) 
     inner join dbo.Issue_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
     inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.ftyinventoryukey
-where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
+where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed' and r1.mdivisionid='{2}'
 and r1.id = '{0}'
 union all
-select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+select 0 as selected,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
 ,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail WITH (NOLOCK) where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation, '' id
@@ -141,10 +142,10 @@ select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq
 from dbo.ReturnReceipt r1 WITH (NOLOCK) 
     inner join dbo.ReturnReceipt_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
     inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.ftyinventoryukey
-where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
+where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed' and r1.mdivisionid='{2}'
 and r1.id = '{0}'
 union
-select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
+select 0 as selected,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
 ,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail WITH (NOLOCK) where dbo.ftyinventory_detail.ukey = a.ukey) t for xml path('')), 1, 1, '') as fromlocation
 ,'' tolocation, '' id
@@ -152,9 +153,9 @@ select 0 as selected,a.mdivisionid,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq
 ,(select refno from dbo.PO_Supp_Detail P WITH (NOLOCK) where P.id = a.poid and P.seq1 = a.seq1 and P.seq2 = a.seq2 ) refno
 from dbo.TransferIn r1 WITH (NOLOCK) 
     inner join dbo.TransferIn_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
-    inner join dbo.FtyInventory a WITH (NOLOCK) on a.mdivisionid = r2.mdivisionid and a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
-where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed'
-and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString())); // 
+    inner join dbo.FtyInventory a WITH (NOLOCK) on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
+where A.StockType='{1}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0 and r1.Status = 'Confirmed' and r1.mdivisionid='{2}'
+and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString(),Sci.Env.User.Keyword)); // 
 
                     break;
             }
@@ -202,7 +203,7 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString())); //
                 {
                     DataRow dr = grid1.GetDataRow(e.RowIndex);
                     dr["ToLocation"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", dr_master["Stocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}'", dr_master["Stocktype"].ToString());
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = dr["ToLocation"].ToString().Split(',').Distinct().ToArray();
