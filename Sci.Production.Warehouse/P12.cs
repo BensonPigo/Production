@@ -320,12 +320,12 @@ namespace Sci.Production.Warehouse
 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13))  //0
-            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //2
-            .Text("stockunit", header: "Unit", iseditingreadonly: true)    //3
-            .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //4
-            .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //5
+                .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), CheckMDivisionID: true)  //0
+                .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
+                .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //2
+                .Text("stockunit", header: "Unit", iseditingreadonly: true)    //3
+                .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //4
+                .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //5
             ;     //
             #endregion 欄位設定
         }
