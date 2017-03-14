@@ -712,7 +712,56 @@ select
 from Trade_To_Pms.dbo.Fabric_HsCode as b WITH (NOLOCK)
 where not exists(select SCIRefno from Production.dbo.Fabric_HsCode as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year)
 
+--CuttingTape
+--CuttingTape_Detail
 
+-------------------------- CuttingTape #tmptable
+select b.ID as POID,d.MDivisionID,c.EachConsApv as OldEachcon,b.Seq1,b.Seq2
+into #tmpCuttingTape
+from Trade_To_Pms.dbo.PO_Supp_Detail as b WITH (NOLOCK)
+inner join Trade_To_Pms.dbo.Orders as c WITH (NOLOCK) on b.ID=c.ID
+inner join Production.dbo.Factory as d WITH (NOLOCK) on c.FactoryID=d.ID
+where b.Seq1 like 'A%'
+
+---------------------------UPDATE CuttingTape
+UPDATE a
+SET  	
+      a.OldEachcon        =b.OldEachcon
+from Production.dbo.CuttingTape as a inner join (select DISTINCT #tmpCuttingTape.POID,#tmpCuttingTape.MDivisionID,#tmpCuttingTape.OldEachcon from #tmpCuttingTape ) as b ON a.MDivisionID=b.MDivisionID and a.POID=b.POID 
+
+-------------------------- INSERT INTO CuttingTape
+INSERT INTO Production.dbo.CuttingTape(
+       POID
+      ,MDivisionID
+      ,OldEachcon
+      ,AddName
+      ,AddDate
+)
+select
+       b.POID
+      ,b.MDivisionID
+      ,b.OldEachcon
+      ,'SCIMIS'
+      ,GETDATE()
+from (select DISTINCT #tmpCuttingTape.POID,#tmpCuttingTape.MDivisionID,#tmpCuttingTape.OldEachcon from #tmpCuttingTape ) as b 
+where not exists(select POID from Production.dbo.CuttingTape as a WITH (NOLOCK) where a.MDivisionID = b.MDivisionID and  a.POID=b.POID)
+
+-------------------------- INSERT INTO CuttingTape_Detail
+INSERT INTO Production.dbo.CuttingTape_Detail(      
+      MDivisionID
+	  ,POID
+      ,Seq1
+      ,Seq2
+)
+select      
+      b.MDivisionID
+	  ,b.POID
+      ,b.Seq1
+      ,b.Seq2
+from #tmpCuttingTape as b WITH (NOLOCK) 
+where not exists(select POID from Production.dbo.CuttingTape_Detail as a WITH (NOLOCK) where a.MDivisionID = b.MDivisionID and  a.POID=b.POID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2)
+
+drop table #tmpCuttingTape
 
 
 END
