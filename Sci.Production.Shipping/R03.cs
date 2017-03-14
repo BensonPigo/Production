@@ -54,7 +54,7 @@ namespace Sci.Production.Shipping
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"select p.PulloutDate,oq.BuyerDelivery,pd.OrderID,isnull(o.CustPONo,'') as CustPONo,
+            sqlCmd.Append(string.Format(@"select distinct p.PulloutDate,oq.BuyerDelivery,pd.OrderID,isnull(o.CustPONo,'') as CustPONo,
 isnull(o.StyleID,'') as StyleID,isnull(oq.Qty,0) as Qty,pd.ShipQty,IIF(ct.WorkType = '1','Y','') as byCombo,
 case pd.Status when 'P' then 'Partial' when 'C' then 'Complete' when 'E' then 'Exceed'when 'S' then 'Shortage' else '' end as StatusExp,
 isnull(IIF(o.LocalOrder = 1, o.PoPrice,o.CMPPrice),0) as CMP,
