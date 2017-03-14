@@ -193,7 +193,8 @@ where 1=1
                 Convert.ToDateTime(EarliestSewingInline1).ToString("d"), Convert.ToDateTime(EarliestSewingInline2).ToString("d")));
             }
             #endregion
-                        
+            sqlCmd.Append(@" order by wo.MDivisionID,o.FtyGroup,wo.EstCutDate,MincDate.MincoDate,c.SewInLine,wo.Cutno");
+
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (!result)
             {
@@ -217,7 +218,7 @@ where 1=1
             }
             
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R03_CuttingScheduleListReport.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Cutting_R03_CuttingScheduleListReport.xltx", 1, true, null, objApp);// 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printData, "", "Cutting_R03_CuttingScheduleListReport.xltx", 2, true, null, objApp);// 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp

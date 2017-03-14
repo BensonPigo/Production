@@ -608,7 +608,7 @@ outer apply(
 ) as cutno
 outer apply(
 	select SizeCode= (
-		Select concat(',',(SizeCode+'/'+Convert(varchar,Qty))) 
+		Select distinct concat(',',(SizeCode+'/'+Convert(varchar,Qty))) 
 		from WorkOrder_SizeRatio WITH (NOLOCK) 
 		inner join Cutplan_Detail WITH (NOLOCK) on WorkOrder_SizeRatio.WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
 		 where Cutplan_Detail.ID = Request#
@@ -622,7 +622,7 @@ outer apply(
 ) as sr
 outer apply(
 	select SizeCode= (
-		Select concat(',',SizeCode+'/'+Convert(varchar,Qty*
+		Select distinct concat(',',SizeCode+'/'+Convert(varchar,Qty*
 						(select Layer from WorkOrder WITH (NOLOCK) where UKey = Cutplan_Detail.WorkOrderUKey))) 
 		from WorkOrder_SizeRatio WITH (NOLOCK) 
 		inner join Cutplan_Detail WITH (NOLOCK) on WorkOrder_SizeRatio.WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
@@ -904,11 +904,17 @@ drop table #tmpall");
 
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表
                     MyUtility.Excel.CopyToXls(printData[i], tmpFile, "Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: boolshowexcel, showSaveMsg: false);//將datatable copy to excel
-
                     objSheets.Name = "Cell" + (Cutcelltb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
                     objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
                     objSheets.Cells[3, 9] = MD;
+                    objSheets.Columns[7].ColumnWidth = 45;
+                    objSheets.Columns[11].ColumnWidth = 8;
+                    objSheets.Columns[12].ColumnWidth = 13;
+                    objSheets.Columns[13].ColumnWidth = 15;
+                    objSheets.Columns[14].ColumnWidth = 10;
+                    objSheets.Columns[15].ColumnWidth = 18;
+                    objSheets.Columns[16].ColumnWidth = 50;
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet                    
                 }
                 if (!boolsend)
