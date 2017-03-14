@@ -364,7 +364,7 @@ inner join WorkOrder_SizeRatio WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = W
 left join Order_SizeCode WITH (NOLOCK) on Order_SizeCode.ID = (select DISTINCT POID from Orders WITH (NOLOCK) where Orders.CuttingSP = WorkOrder_SizeRatio.ID) 
 					      and (Order_SizeCode.SizeCode = WorkOrder_SizeRatio.SizeCode)
 outer apply(
-	select PO_Supp_Detail.ETA
+	select ETA = iif(FinalETA='',iif(RevisedETA='',CfmETA,RevisedETA),FinalETA)
 	from PO_Supp_Detail WITH (NOLOCK) 
 	where PO_Supp_Detail.ID = Cutplan_Detail.POID 
 	and PO_Supp_Detail.Seq1 = WorkOrder.Seq1 
