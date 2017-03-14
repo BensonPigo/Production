@@ -71,7 +71,10 @@ select 	selected = 0
 							for xml path('')), 1, 1, '') 
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
-Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I'"));
+inner join Orders on c.Poid = orders.id
+inner join Factory on orders.FactoryID = factory.id
+Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I'
+    and factory.MDivisionID = '{0}'", Sci.Env.User.Keyword));
                 #endregion
 
                 System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -230,8 +233,13 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I'"));
 
             if (txtSeq1.checkEmpty(showErrMsg: false))
             {
-                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from ftyinventory WITH (NOLOCK) where poid ='{0}')"
-                    , sp), null))
+                if (!MyUtility.Check.Seek(string.Format(@"
+select 1 where exists(select * 
+                      from ftyinventory WITH (NOLOCK) 
+                      inner join Orders on  ftyinventory.poid = Orders.id
+                      inner join Factory on Orders.factoryID = factory.id
+                      where ftyinventory.poid ='{0}' and factory.MDivisionID = '{1}')"
+                    , sp, Sci.Env.User.Keyword), null))
                 {
                     MyUtility.Msg.WarningBox("SP# is not found!!");
                     e.Cancel = true;
@@ -240,8 +248,13 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I'"));
             }
             else
             {
-                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from mdivisionpodetail WITH (NOLOCK) where poid ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}')", sp, txtSeq1.seq1, txtSeq1.seq2), null))
+                if (!MyUtility.Check.Seek(string.Format(@"
+select 1 where exists(select * 
+                      from mdivisionpodetail WITH (NOLOCK) 
+                      inner join Orders on mdivisionpodetail.POID = Orders.id
+                      inner join Factory on Orders.Factory = Factory.ID
+                      where ftyinventory.poid ='{0}' and seq1 = '{1}' and seq2 = '{2}'
+                        and Factory.MDivisionID = '{3}')", sp, txtSeq1.seq1, txtSeq1.seq2, Sci.Env.User.Keyword), null))
                 {
                     MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                     e.Cancel = true;
