@@ -51,6 +51,7 @@ namespace Sci.Production.Warehouse
             spno2 = txtSpno2.Text;
             season = txtseason1.Text;
             mdivision = txtMdivision1.Text;
+            factory = txtfactory1.Text;
             brand = txtbrand1.Text;
             fabrictype = cbbFabricType.SelectedValue.ToString();
             stocktype = cbbStockType.SelectedValue.ToString();
@@ -76,6 +77,9 @@ namespace Sci.Production.Warehouse
             System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
             sp_mdivision.ParameterName = "@MDivision";
 
+            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
+            sp_factory.ParameterName = "@Factory";
+
             System.Data.SqlClient.SqlParameter sp_brand = new System.Data.SqlClient.SqlParameter();
             sp_brand.ParameterName = "@brand";
 
@@ -90,40 +94,67 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"with cte as (select 
-sd.FromPOID orderid,
-sd.FromSeq1 seq1,
-sd.fromseq2 seq2,
-sd.FromRoll roll,
-sd.FromDyelot dyelot,
-p.Refno,
-dbo.getMtlDesc(sd.FromPOID,sd.FromSeq1,sd.fromseq2,2,0) [description],
-iif(p.FabricType = 'F','Fabric','Accessory') fabrictype,
-iif(p.FabricType = 'F',(select fabric.weavetypeid from dbo.fabric WITH (NOLOCK) where fabric.scirefno = p.scirefno),(select fabric.mtltypeid from dbo.fabric WITH (NOLOCK) where fabric.scirefno = p.scirefno)) weaventype,
-s.MDivisionID,
-o.FactoryID,
-o.BrandID,
-o.SeasonID,
-p.POUnit,
-p.StockUnit,
-p.Price,
-round(p.Price / (select unit.PriceRate from dbo.Unit WITH (NOLOCK) where id = p.POUnit) 
-* dbo.getRate('FX',(select supp.CurrencyId from dbo.Supp WITH (NOLOCK) inner join dbo.po_supp on po_supp.suppid = supp.id where po_supp.id = sd.FromPOID and po_supp.seq1 = sd.FromSeq1),'USD',GETDATE()),5) unitprice,
-dbo.getRate('FX',(select supp.CurrencyId from dbo.Supp WITH (NOLOCK) inner join dbo.po_supp on po_supp.suppid = supp.id where po_supp.id = sd.FromPOID and po_supp.seq1 = sd.FromSeq1),'USD',GETDATE()) rate ,
-(select supp.CurrencyId from dbo.Supp WITH (NOLOCK) inner join dbo.po_supp on po_supp.suppid = supp.id where po_supp.id = sd.FromPOID and po_supp.seq1 = sd.FromSeq1) currencyid,
-p.Qty,
-p.NETQty,
-p.LossQty,
-sum(sd.Qty) * (select vu.RateValue from dbo.View_Unitrate vu where vu.FROM_U = p.StockUnit and vu.TO_U = p.POUnit) scrapqty,
-stuff((select ',' + mtllocationid from (select distinct mtllocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = sd.FromFtyInventoryUkey) mtl for xml path('')), 1, 1, '') location,
-s.IssueDate
+            sqlCmd.Append(string.Format(@"
+with cte as (
+    select  orderid = sd.FromPOID
+            ,seq1 = sd.FromSeq1
+            ,seq2 = sd.fromseq2
+            ,roll = sd.FromRoll
+            ,dyelot = sd.FromDyelot
+            ,p.Refno
+            ,[description] = dbo.getMtlDesc(sd.FromPOID,sd.FromSeq1,sd.fromseq2,2,0) 
+            ,fabrictype = iif(p.FabricType = 'F','Fabric','Accessory') 
+            ,weaventype = iif(p.FabricType = 'F',(select fabric.weavetypeid 
+                                                  from dbo.fabric WITH (NOLOCK) 
+                                                  where fabric.scirefno = p.scirefno)
+                                                ,(select fabric.mtltypeid 
+                                                  from dbo.fabric WITH (NOLOCK) 
+                                                  where fabric.scirefno = p.scirefno))
+            ,s.MDivisionID
+            ,o.FactoryID
+            ,o.BrandID
+            ,o.SeasonID
+            ,p.POUnit
+            ,p.StockUnit
+            ,p.Price
+            ,unitprice = round(p.Price 
+                               / (select unit.PriceRate from dbo.Unit WITH (NOLOCK) where id = p.POUnit) 
+                               * dbo.getRate('FX'
+                                              ,(select supp.CurrencyId 
+                                                from dbo.Supp WITH (NOLOCK) 
+                                                inner join dbo.po_supp on po_supp.suppid = supp.id 
+                                                where po_supp.id = sd.FromPOID and po_supp.seq1 = sd.FromSeq1)
+                                              ,'USD'
+                                              ,GETDATE())
+                               ,5) 
+            ,rate = dbo.getRate('FX'
+                                ,(select supp.CurrencyId 
+                                  from dbo.Supp WITH (NOLOCK) 
+                                  inner join dbo.po_supp on po_supp.suppid = supp.id 
+                                  where po_supp.id = sd.FromPOID and po_supp.seq1 = sd.FromSeq1)
+                                ,'USD'
+                                ,GETDATE())  
+            ,currencyid = (select supp.CurrencyId 
+                           from dbo.Supp WITH (NOLOCK) 
+                           inner join dbo.po_supp on po_supp.suppid = supp.id 
+                           where po_supp.id = sd.FromPOID and po_supp.seq1 = sd.FromSeq1) 
+            ,p.Qty
+            ,p.NETQty
+            ,p.LossQty
+            ,scrapqty = sum(sd.Qty) * (select vu.RateValue from dbo.View_Unitrate vu where vu.FROM_U = p.StockUnit and vu.TO_U = p.POUnit) 
+            ,location = stuff((select ',' + mtllocationid 
+                               from (select distinct mtllocationid 
+                                     from dbo.FtyInventory_Detail WITH (NOLOCK) 
+                                     where ukey = sd.FromFtyInventoryUkey) mtl 
+                               for xml path(''))
+                             , 1, 1, '') 
+            ,s.IssueDate
 from dbo.orders o WITH (NOLOCK) 
 inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on o.id = sd.FromPOID
 inner join dbo.SubTransfer s WITH (NOLOCK) on s.id = sd.id
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = sd.FromPOID and p.seq1 = sd.FromSeq1 and p.seq2 = sd.FromSeq2
 where s.Status = 'Confirmed' and s.type = '{0}'
-
-", stocktype,fabrictype                ));
+", stocktype,fabrictype));
 
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(buyerDelivery1) || !MyUtility.Check.Empty(buyerDelivery2))
@@ -160,6 +191,12 @@ where s.Status = 'Confirmed' and s.type = '{0}'
                 sp_mdivision.Value = mdivision;
                 cmds.Add(sp_mdivision);
             }
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlCmd.Append(" and o.FactoryID = @Factory");
+                sp_factory.Value = factory;
+                cmds.Add(sp_factory);
+            }
             if (!MyUtility.Check.Empty(fabrictype))
             {
                 sqlCmd.Append(string.Format(@" and p.FabricType = '{0}'",fabrictype));
@@ -190,8 +227,26 @@ where s.Status = 'Confirmed' and s.type = '{0}'
             {
                 #region -- Summary Sql Command --
                 sqlCmd.Append(string.Format(@"
-select t.orderid,t.seq1,t.seq2,t.Refno,t.description,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,
-t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,sum(t.scrapqty),t.unitprice*sum(t.scrapqty),t.IssueDate
+select  t.orderid
+        ,t.seq1
+        ,t.seq2
+        ,t.Refno
+        ,t.description
+        ,t.fabrictype
+        ,t.weaventype
+        ,t.MDivisionID
+        ,t.FactoryID
+        ,t.BrandID
+        ,t.SeasonID
+        ,t.POUnit
+        ,unitprice
+        ,t.Qty
+        ,t.unitprice*t.Qty
+        ,t.NETQty
+        ,t.LossQty
+        ,sum(t.scrapqty)
+        ,t.unitprice*sum(t.scrapqty)
+        ,t.IssueDate
 from cte t
 group by t.orderid,t.seq1,t.seq2,t.description,t.Refno,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,
 t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,t.IssueDate"));
@@ -201,8 +256,24 @@ t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,t.IssueDate"));
             {
                 #region -- List Sql Command --
                 sqlCmd.Append(string.Format(@"
-select t.orderid,t.seq1,t.seq2,t.roll,t.dyelot,t.description,t.Refno,t.fabrictype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,
-t.pounit,unitprice,t.scrapqty,t.unitprice*t.scrapqty,t.location,t.IssueDate
+select  t.orderid
+        ,t.seq1
+        ,t.seq2
+        ,t.roll
+        ,t.dyelot
+        ,t.description
+        ,t.Refno
+        ,t.fabrictype
+        ,t.MDivisionID
+        ,t.FactoryID
+        ,t.BrandID
+        ,t.SeasonID
+        ,t.pounit
+        ,unitprice
+        ,t.scrapqty
+        ,t.unitprice*t.scrapqty
+        ,t.location
+        ,t.IssueDate
 from cte t"));
                 #endregion  
             }
