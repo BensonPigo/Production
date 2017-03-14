@@ -274,6 +274,21 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
                                                         , item["seq1"]
                                                         , item["seq2"]
                                                         , item["mdivisionid"]);
+                //回寫表頭TapeFirstInline,EditName,EditDate欄位
+                sqlcmd += string.Format(@"  update a set EditName='{0}',EditDate=GETDATE(),TapeFirstInline=b.TapeFirstInline
+                                            from dbo.cuttingtape as a
+                                            inner join
+                                            (
+                                                select MIN(CuttingTape_Detail.TapeInline) as TapeFirstInline,cuttingtape.POID,cuttingtape.MDivisionID
+                                                from dbo.cuttingtape 
+                                                inner join dbo.CuttingTape_Detail on cuttingtape.POID=CuttingTape_Detail.POID and cuttingtape.MDivisionID=CuttingTape_Detail.MDivisionID
+                                                where cuttingtape.poid ='{1}' and cuttingtape.mdivisionid='{2}'
+                                                Group by TapeFirstInline,cuttingtape.POID,cuttingtape.MDivisionID
+                                            ) as b on a.MDivisionID=b.MDivisionID and a.POID=b.POID
+                                            where a.poid ='{1}' and a.mdivisionid='{2}'"
+                                            ,Sci.Env.User.UserID
+                                            ,item["POID"]
+                                            ,item["mdivisionid"]);
                 
             }
             if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
