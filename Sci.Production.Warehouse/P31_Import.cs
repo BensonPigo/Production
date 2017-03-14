@@ -48,6 +48,7 @@ namespace Sci.Production.Warehouse
                 // 建立可以符合回傳的Cursor
 
                 strSQLCmd.Append(string.Format(@"
+
 select  selected = 0
         ,id = '' 
         ,FromRoll = c.Roll 
@@ -73,9 +74,11 @@ select  selected = 0
         ,a.fabrictype
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
+inner join Orders on c.poid = Orders.id
+inner join Factory on Orders.FactoryID = Factory.ID
 left join dbo.po_supp_detail b WITH (NOLOCK) on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec and b.ColorID = a.ColorID and b.BrandId = a.BrandId
-Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}'
-and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0", fromSP, sp, txtSeq1.seq1, txtSeq1.seq2)); // 
+Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}' and Factory.MDivisionID = '{4}'
+and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq1.seq1, txtSeq1.seq2, Sci.Env.User.Keyword)); // 
 
                 this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
