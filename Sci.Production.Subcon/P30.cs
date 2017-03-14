@@ -406,6 +406,7 @@ namespace Sci.Production.Subcon
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("factoryid", header: "Order Factory", iseditingreadonly: true)  //0
+            .Text("POID", header: "MasterSP#", width: Widths.AnsiChars(13), settings: ts4)  //1
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), settings: ts4)  //1
             .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true)   //2
             .Text("refno", header: "Ref#", width: Widths.AnsiChars(20),settings:ts)    //3
