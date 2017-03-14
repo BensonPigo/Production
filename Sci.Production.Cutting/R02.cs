@@ -17,6 +17,7 @@ namespace Sci.Production.Cutting
     {
         DataTable[] printData;
         string MD, CutCell1, CutCell2;
+        string[] cuttings;
         DateTime? dateR_CuttingDate1, dateR_CuttingDate2;
         StringBuilder condition_CuttingDate = new StringBuilder();
         string tmpFile;
@@ -166,7 +167,7 @@ select distinct
 	[Ref#] = Cutplan_Detail.CutRef,
 	[Cut#] = Cutplan_Detail.CutNo,
 	[Comb.] = WorkOrder.FabricCombo,
-	[Fab_Code] = WorkOrder.FabricCode,
+	[Fab_Code] = stuff(fab.fab,1,1,''),
 	[Size Ratio] = stuff(sr.SizeCode,1,1,''),
 	[Colorway] = stuff(woda.ac,1,1,''),
 	[Color] = Cutplan_Detail.ColorID,
@@ -196,6 +197,15 @@ outer apply(
 	from Orders WITH (NOLOCK) 
 	where Orders.ID = Cutplan_Detail.OrderID
 ) as o
+outer apply(
+	select fab =
+	(
+		select concat('+',wp.PatternPanel)
+		from WorkOrder_PatternPanel wp
+		where wp.WorkOrderUkey = WorkOrder.Ukey
+		for xml path('')
+	)
+) fab
 outer apply(
 	select SizeCode= (
 		Select concat(',',(ws.SizeCode+'/'+Convert(varchar,Qty))) 
@@ -328,7 +338,7 @@ select	distinct
 	[Ref#] = Cutplan_Detail.CutRef,
 	[Cut#] = Cutplan_Detail.CutNo,
 	[Comb.] = WorkOrder.FabricCombo,
-	[Fab_Code] = WorkOrder.FabricCode,
+	[Fab_Code] = stuff(fab.fab,1,1,''),
 	[Size Ratio] = stuff(sr.SizeCode,1,1,''),
 	[Colorway] = stuff(woda.ac,1,1,''),
 	[Color] = Cutplan_Detail.ColorID,
@@ -365,6 +375,15 @@ outer apply(
 	from Orders WITH (NOLOCK) 
 	where Orders.ID = Cutplan_Detail.OrderID
 ) as o
+outer apply(
+	select fab =
+	(
+		select concat('+',wp.PatternPanel)
+		from WorkOrder_PatternPanel wp
+		where wp.WorkOrderUkey = WorkOrder.Ukey
+		for xml path('')
+	)
+) fab
 outer apply(
 	select SizeCode= (
 		Select concat(',',(ws.SizeCode+'/'+Convert(varchar,Qty))) 
@@ -659,6 +678,11 @@ drop table #tmpall");
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
+            cuttings = new string[CutCellcount];
+            for (int i = 0; i < CutCellcount; i++)
+            {
+                cuttings[i] = printData[i].Rows.Count.ToString() + " cuttings";                
+            }
             #region Bydetail OR Byonedaydetial OR Byonedaydetial依狀況插入列
             if (radiobtn_Bydetail.Checked || radioBtn_Byonedaydetial.Checked)
             {
@@ -781,11 +805,11 @@ drop table #tmpall");
                             objSheets.Cells[6 + j, 14] = "Total Cons.";
                         }
                     }
-                    objSheets.Columns["R"].Clear();
                     objSheets.Name = "Cell" + (Cutcelltb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
                     objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
                     objSheets.Cells[3, 9] = MD;
+                    objSheets.Cells[4, 1] = cuttings[i];
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets); //釋放sheet                    
                 }
                 if (!boolsend) objApp.Visible = true;
@@ -837,11 +861,11 @@ drop table #tmpall");
                             objSheets.Cells[6 + j, 14] = "Total Cons.";
                         }
                     }
-                    objSheets.Columns["R"].Clear();
                     objSheets.Name = "Cell" + (Cutcelltb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
                     objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
                     objSheets.Cells[3, 9] = MD;
+                    objSheets.Cells[4, 1] = cuttings[i];
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets); //釋放sheet                     
                 }
                 if (!boolsend)

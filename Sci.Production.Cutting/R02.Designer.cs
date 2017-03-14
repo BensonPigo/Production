@@ -117,10 +117,10 @@
             this.radiobtn_Bydetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radiobtn_Bydetail.Location = new System.Drawing.Point(123, 143);
             this.radiobtn_Bydetail.Name = "radiobtn_Bydetail";
-            this.radiobtn_Bydetail.Size = new System.Drawing.Size(80, 21);
+            this.radiobtn_Bydetail.Size = new System.Drawing.Size(82, 21);
             this.radiobtn_Bydetail.TabIndex = 4;
             this.radiobtn_Bydetail.TabStop = true;
-            this.radiobtn_Bydetail.Text = "By detail";
+            this.radiobtn_Bydetail.Text = "By Detail";
             this.radiobtn_Bydetail.UseVisualStyleBackColor = true;
             this.radiobtn_Bydetail.CheckedChanged += new System.EventHandler(this.radiobtn_Bydetail_CheckedChanged);
             // 
