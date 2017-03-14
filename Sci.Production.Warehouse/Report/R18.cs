@@ -88,7 +88,7 @@ namespace Sci.Production.Warehouse
             String refno = tbxRefno.Text;
             String location = tbxLocation.Text.TrimEnd();
             String colorid = tbxColor.Text;
-            String factoryid = txtmfactory1.Text;
+            String factoryid = txtfactory1.Text;
             String sizespec = tbxSizeCode.Text;
 
             bool chkbalance = checkBox1.Checked;
@@ -97,73 +97,106 @@ namespace Sci.Production.Warehouse
             DualResult result = Result.True;
             StringBuilder sqlcmd = new StringBuilder();
             #region sql command
-            sqlcmd.Append(string.Format(@"with cte as 
-(
-select 
-isnull(x.FactoryID,y.FactoryID) factoryid,
-pd.id,
-pd.seq1,
-pd.seq2,
-(select supp.id+'-'+supp.AbbEN from dbo.supp WITH (NOLOCK) inner join dbo.po_supp WITH (NOLOCK) on po_supp.suppid = supp.id where po_supp.id = pd.id and seq1 = pd.seq1) as supplier,
-isnull(x.StyleID,y.StyleID) styleid,
-ISNULL(x.SeasonID,y.SeasonID) SeasonID,
-ISNULL(x.BrandID,y.BrandID) brandid,
-x.Category,
-x.SciDelivery,
-pd.ETA,
-pd.FinalETA,
-pd.Complete,
-pd.Refno,
-pd.Width,
-pd.ColorID,
-pd.SizeSpec,
-isnull(ltrim(rtrim(dbo.getMtlDesc(pd.id,pd.seq1,pd.seq2,2,0))), '') [description],
-y.Deadline,
-pd.Qty,
-pd.ShipQty,
-pd.InputQty,
-pd.OutputQty,
-pd.InputQty - pd.OutputQty as taipeiBalance,
-mpd.InQty,
-mpd.OutQty,
-mpd.AdjustQty,
-mpd.InQty-mpd.OutQty-mpd.AdjustQty as balanceqty,
-mpd.ALocation,
-mpd.LInvQty,
-mpd.BLocation,
-mpd.LObQty
-,( select t.id+',' from (select distinct Export.id from dbo.Export WITH (NOLOCK) inner join dbo.Export_Detail WITH (NOLOCK) on Export_Detail.id = Export.id  where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2)t for xml path('')) as wkno
-,( select t.Blno+',' from (select distinct Blno from dbo.Export WITH (NOLOCK) inner join dbo.Export_Detail WITH (NOLOCK) on Export_Detail.id = Export.id  where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2 and Blno !='')t for xml path('')) as blno
-from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
-inner join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.id and mpd.seq1 = pd.seq1 
-and mpd.seq2= pd.SEQ2 and mpd.MDivisionID ='{0}'
-outer apply
-(
-	select o.FactoryID,o.StyleID,o.SeasonID,o.BrandID,o.Category,o.SciDelivery from dbo.orders o WITH (NOLOCK) where o.id = pd.id
-) x
-outer apply
-(
-	select i.FactoryID,i.StyleID,i.SeasonID,i.BrandID,max(i.Deadline) deadline from dbo.Inventory i WITH (NOLOCK) 
-    where i.POID = pd.id and i.Seq1= pd.seq1 and i.seq2 = pd.SEQ2
-	group by i.FactoryID,i.StyleID,i.SeasonID,i.BrandID
-) y", Env.User.Keyword));
+            sqlcmd.Append(string.Format(@"
+with cte as (
+    select  isnull(x.FactoryID,y.FactoryID) factoryid
+            , pd.id
+            , pd.seq1
+            , pd.seq2
+            , supplier = (select supp.id+'-'+supp.AbbEN 
+                         from dbo.supp WITH (NOLOCK) 
+                         inner join dbo.po_supp WITH (NOLOCK) on po_supp.suppid = supp.id 
+                         where po_supp.id = pd.id and seq1 = pd.seq1)
+            , styleid = isnull(x.StyleID,y.StyleID) 
+            , SeasonID = ISNULL(x.SeasonID,y.SeasonID) 
+            , brandid = ISNULL(x.BrandID,y.BrandID) 
+            , x.Category
+            , x.SciDelivery
+            , pd.ETA
+            , pd.FinalETA
+            , pd.Complete
+            , pd.Refno
+            , pd.Width
+            , pd.ColorID
+            , pd.SizeSpec
+            , [description] = isnull(ltrim(rtrim(dbo.getMtlDesc(pd.id,pd.seq1,pd.seq2,2,0))), '') 
+            , y.Deadline
+            , pd.Qty
+            , pd.ShipQty
+            , pd.InputQty
+            , pd.OutputQty
+            , taipeiBalance = pd.InputQty - pd.OutputQty
+            , mpd.InQty
+            , mpd.OutQty
+            , mpd.AdjustQty
+            , balanceqty = mpd.InQty-mpd.OutQty-mpd.AdjustQty
+            , mpd.ALocation
+            , mpd.LInvQty
+            , mpd.BLocation
+            , mpd.LObQty
+            , wkno = ( select t.id+',' 
+                       from (select distinct Export.id 
+                             from dbo.Export WITH (NOLOCK) 
+                             inner join dbo.Export_Detail WITH (NOLOCK) on Export_Detail.id = Export.id  
+                             where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2)t 
+                       for xml path(''))
+            , blno = (select t.Blno+',' 
+                      from (select distinct Blno 
+                            from dbo.Export WITH (NOLOCK) 
+                            inner join dbo.Export_Detail WITH (NOLOCK) on Export_Detail.id = Export.id  
+                            where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2 and Blno !='')t 
+                      for xml path(''))
+    from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
+    inner join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.id and mpd.seq1 = pd.seq1 
+    and mpd.seq2= pd.SEQ2
+    outer apply
+    (
+        select  o.FactoryID
+                ,o.StyleID
+                ,o.SeasonID
+                ,o.BrandID
+                ,o.Category
+                ,o.SciDelivery 
+                ,factory.MDivisionID
+        from dbo.orders o WITH (NOLOCK) 
+        inner join factory on o.FactoryID = factory.id
+        where o.id = pd.id
+    ) x
+    outer apply
+    (
+        select  i.FactoryID
+                ,i.StyleID
+                ,i.SeasonID
+                ,i.BrandID
+                ,deadline = max(i.Deadline)  
+        from dbo.Inventory i WITH (NOLOCK) 
+        where i.POID = pd.id and i.Seq1= pd.seq1 and i.seq2 = pd.SEQ2
+        group by i.FactoryID,i.StyleID,i.SeasonID,i.BrandID
+    ) y", Env.User.Keyword));
             if (!MyUtility.Check.Empty(location))
             {
                 sqlcmd.Append(@"
-inner join (select distinct fi.MDivisionid,fi.poid,fi.seq1,fi.seq2 from dbo.FtyInventory fi WITH (NOLOCK) 
-			inner join dbo.FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
-			where fid.MtlLocationid='') q
-on q.MDivisionID = mpd.MDivisionID and q.POID = pd.ID and q.seq1 = pd.seq1 and q.seq2 = pd.SEQ2");
+    inner join (
+                select  distinct 
+                        ,fi.poid
+                        ,fi.seq1
+                        ,fi.seq2 
+                from dbo.FtyInventory fi WITH (NOLOCK) 
+                inner join dbo.FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
+                where fid.MtlLocationid=''
+            ) q
+        on q.POID = pd.ID and q.seq1 = pd.seq1 and q.seq2 = pd.SEQ2");
             }
 
-            sqlcmd.Append(string.Format(@" where 1=1 and mpd.MDivisionID='{0}'", Env.User.Keyword));
+            sqlcmd.Append(string.Format(@" where 1=1 and x.MDivisionID='{0}'", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@" and pd.id='{0}'", spno));
             if (!MyUtility.Check.Empty(refno)) sqlcmd.Append(string.Format(@" and pd.Refno ='{0}'", refno));
             if (!MyUtility.Check.Empty(colorid)) sqlcmd.Append(string.Format(@" and pd.ColorID ='{0}'", colorid));
             if (!MyUtility.Check.Empty(sizespec)) sqlcmd.Append(string.Format(@" and pd.SizeSpec = '{0}'", sizespec));
             
-            sqlcmd.Append(@") select * from cte where 1= 1 ");
+            sqlcmd.Append(@"
+) select * from cte where 1= 1 ");
             if (chkbalance) sqlcmd.Append(" and balanceqty > 0");
             switch (selectindex)
             {

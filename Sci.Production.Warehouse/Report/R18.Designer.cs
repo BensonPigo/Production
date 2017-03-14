@@ -42,9 +42,9 @@
             this.label8 = new Sci.Win.UI.Label();
             this.tbxSizeCode = new Sci.Win.UI.TextBox();
             this.label9 = new Sci.Win.UI.Label();
-            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             this.tbxColor = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -213,16 +213,6 @@
             this.label9.TabIndex = 110;
             this.label9.Text = "SizeCode";
             // 
-            // txtmfactory1
-            // 
-            this.txtmfactory1.BackColor = System.Drawing.Color.White;
-            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory1.Location = new System.Drawing.Point(102, 152);
-            this.txtmfactory1.MaxLength = 8;
-            this.txtmfactory1.Name = "txtmfactory1";
-            this.txtmfactory1.Size = new System.Drawing.Size(121, 23);
-            this.txtmfactory1.TabIndex = 6;
-            // 
             // tbxColor
             // 
             this.tbxColor.BackColor = System.Drawing.Color.White;
@@ -242,12 +232,21 @@
             this.label1.TabIndex = 114;
             this.label1.Text = "Style";
             // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(102, 152);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 115;
+            // 
             // R18
             // 
             this.ClientSize = new System.Drawing.Size(576, 254);
+            this.Controls.Add(this.txtfactory1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbxColor);
-            this.Controls.Add(this.txtmfactory1);
             this.Controls.Add(this.tbxSizeCode);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
@@ -282,9 +281,9 @@
             this.Controls.SetChildIndex(this.label8, 0);
             this.Controls.SetChildIndex(this.label9, 0);
             this.Controls.SetChildIndex(this.tbxSizeCode, 0);
-            this.Controls.SetChildIndex(this.txtmfactory1, 0);
             this.Controls.SetChildIndex(this.tbxColor, 0);
             this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.txtfactory1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -306,8 +305,8 @@
         private Win.UI.Label label8;
         private Win.UI.TextBox tbxSizeCode;
         private Win.UI.Label label9;
-        private Class.txtmfactory txtmfactory1;
         private Win.UI.TextBox tbxColor;
         private Win.UI.Label label1;
+        private Class.txtfactory txtfactory1;
     }
 }
