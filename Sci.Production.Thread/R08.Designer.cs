@@ -293,7 +293,7 @@
             this.ClientSize = new System.Drawing.Size(522, 320);
             this.Controls.Add(this.panel1);
             this.Name = "R08";
-            this.Text = "R08";
+            this.Text = "R08. Thread Issue List";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
