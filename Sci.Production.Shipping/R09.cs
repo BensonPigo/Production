@@ -140,10 +140,10 @@ where fe.Type <> 3");
                 }
                 #endregion
                 string queryAccount = string.Format("{0}{1}", sqlCmd.ToString(), @") select distinct a.* from (
-select AccountNo as Accno from ExportData where AccountNo not in ('61012001','61012002','61012003','61012004','61012005')
+select AccountID as Accno from ExportData where AccountID not in ('61012001','61012002','61012003','61012004','61012005')
 union
-select AccountNo from FtyExportData where AccountNo not in ('61012001','61012002','61012003','61012004','61012005')
-) a order by Accno");
+select AccountID from FtyExportData where AccountID not in ('61012001','61012002','61012003','61012004','61012005')
+) a where Accno!='' order by Accno");
                 DualResult result = DBProxy.Current.Select(null, queryAccount, out accnoData);
                 if (!result)
                 {
@@ -160,14 +160,14 @@ select AccountNo from FtyExportData where AccountNo not in ('61012001','61012002
 tmpAllData
 as (
 select InvNo,Type,WKNo,FtyWKNo,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
-PortArrival,DocArrival,CurrencyID,AccountNo,Amount from ExportData
+PortArrival,DocArrival,CurrencyID,AccountID,Amount from ExportData
 union all
 select InvNo,Type,WKNo,FtyWKNo,ShipModeID,CYCFS,Packages,Blno,WeightKg,Cbm,Forwarder,
-PortArrival,DocArrival,CurrencyID,AccountNo,Amount from FtyExportData)
+PortArrival,DocArrival,CurrencyID,AccountID,Amount from FtyExportData)
 
 select * from tmpAllData
 PIVOT (SUM(Amount)
-FOR AccountNo IN ({0})) a", allAccno.ToString()));
+FOR AccountID IN ({0})) a", allAccno.ToString()));
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
                 if (!result)
                 {
