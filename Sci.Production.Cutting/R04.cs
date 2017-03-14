@@ -102,17 +102,16 @@ namespace Sci.Production.Cutting
             #region radiobtnByM
             if (radiobtn_ByM.Checked)
             {
-                sqlCmd.Append(@"
-select distinct wo.EstCutDate 
-into #DateRanges 
-from workorder wo WITH (NOLOCK) 
-where 1 = 1
-");
-                if (!MyUtility.Check.Empty(Est_CutDate1))
-                {
-                    sqlCmd.Append(string.Format(" and wo.EstCutDate between '{0}' and '{1}' ", Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d")));
-                }
-
+                sqlCmd.Append(string.Format(@"
+create table #dateranges ([EstCutDate] [date])
+declare @startDate date = '{0}' 
+declare @EndDate date = '{1}'
+while @startDate <= @EndDate
+begin
+	insert into #dateranges values(@startDate)	set @startDate =  DATEADD(DAY, 1,@startDate)
+end"
+                    , Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d")));
+               
                 sqlCmd.Append(@"
 select wo.id,co.Status,wo.EstCutDate, wo.mdivisionid,co.CDate,c.Finished,[ATofCES] = d5.ct
 into #tmpWO
