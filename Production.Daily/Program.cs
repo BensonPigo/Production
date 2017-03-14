@@ -19,9 +19,10 @@ namespace Production.Daily
             Sci.Env.AppInit();
             
             DBProxy.Current.DefaultTimeout = 999999999;
-            //pStartForm = "DailyTransfer";
+            //測試用 -自動
             //switch (pStartForm)
             //{
+            //    case "DailyTransfer": Application.Run(new Main("")); break;
             //    case "": Application.Run(new Main("")); break;
             //}
 

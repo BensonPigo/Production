@@ -628,7 +628,7 @@
             this.IsSupportLocate = false;
             this.IsSupportPrint = false;
             this.Name = "Main";
-            this.Text = "Data Transfer";
+            this.Text = "   ";
             this.WorkAlias = "System";
             this.Controls.SetChildIndex(this.panelFTP, 0);
             this.Controls.SetChildIndex(this.panelMail, 0);

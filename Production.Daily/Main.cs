@@ -520,7 +520,12 @@ Region      Succeeded       Message
             {
                 foreach (DataRow row in transExport.Rows)
                 {
-                    _fromPath = row["DirName"].ToString();
+                    //by TransRegion
+                    //_fromPath = row["DirName"].ToString();
+                    //row["DirName"] = exportRegion.DirName;
+
+                    //by System
+                    _fromPath = CurrentData["ExportDataPath"].ToString();
                     row["DirName"] = exportRegion.DirName;
                 }
 
@@ -533,27 +538,27 @@ Region      Succeeded       Message
                 if (!transferPMS.CheckRar_CreateDate(importRegion, importRegion.RarName, false))
                 {
                     String subject = "PMS transfer data (New) ERROR";
-                    String desc = "Wrong the downloaded file date!!,Pls contact with Taipei.";
+                    String desc = "Wrong the downloaded file date, FileName:(" + importRegion.RarName + ")!!,Pls contact with Taipei.";
                     SendMail(subject, desc);
-                    return Ict.Result.F("Wrong the downloaded file date!!,Pls contact with Taipei.");
+                    return Ict.Result.F("Wrong the downloaded file date, FileName(" + importRegion.RarName + ")!!,Pls contact with Taipei.");
                 }
             }
             else
             {
-                string path = ConfigurationSettings.AppSettings["DataSourcePath"].ToString();
-                string sourceFile = path + "\\" + importRegion.RarName;
+                //手動rar檔路徑改為system.importdatapath
+                string sourceFile = importRegion.DirName.ToString()+importRegion.RarName;                
                 string RaRLastEditDate = File.GetLastWriteTime(sourceFile).ToString("yyyyMMdd");
                 string Today = DateTime.Now.ToString("yyyyMMdd");
                 if (!File.Exists(sourceFile))
                 {
-                    return new DualResult(false, ".rar Document is not found!!");
+                    return new DualResult(false, importRegion.RarName+" Document is not found!!");
                 }
-                if (RaRLastEditDate != Today)
+                if (RaRLastEditDate != Today)                
                 {
                     String subject = "PMS transfer data (New) ERROR";
-                    String desc = "Wrong the downloaded file date!!,Pls Check File is New";
+                    String desc = "Wrong the downloaded file date!!,Pls Check File(" + importRegion.RarName + ") is New";
                     SendMail(subject, desc);
-                    return Ict.Result.F("Wrong the downloaded file date!!,Pls Check File is New");
+                    return Ict.Result.F("Wrong the downloaded file date!!,Pls Check File(" + importRegion.RarName + ") is New");
 
                 }
             }
@@ -588,13 +593,13 @@ Region      Succeeded       Message
 
             #region 刪除FTP的檔案
 
-            if (IsFtpFileExist(exportRegion.RarName))
-            {
-                if (!transferPMS.Delete_Rar_On_Ftp(exportRegion))
-                {
-                    return new DualResult(false, "Delete FTP File failed!");
-                }
-            }
+            //if (IsFtpFileExist(exportRegion.RarName))
+            //{
+            //    if (!transferPMS.Delete_Rar_On_Ftp(exportRegion))
+            //    {
+            //        return new DualResult(false, "Delete FTP File failed!");
+            //    }
+            //}
 
             #endregion
 
@@ -638,28 +643,13 @@ Region      Succeeded       Message
                 if (!transferPMS.Export_Pms_To_Trade(ftpIP, ftpID, ftpPwd, _fromPath, exportRegion.DBName))
                 {
                     return new DualResult(false, "Export failed!");
-                }
-
-                
-            /*
-            #region 卸載DateBase
-            result = transferPMS.Detach_Database(exportRegion);
-            if (!result) { return result; }
-            #endregion
-            #region 壓縮mdf檔案
-            List<String> fileList = new List<string>();
-            fileList.Add(exportRegion.DirName + exportRegion.DBFileName + ".mdf");
-            transferPMS.RAR_Files(exportRegion.DirName, exportRegion.RarName, fileList);
-            #endregion
-            #region 上傳FTP
-            transferPMS.Export_EndTransfer_RarUpload(exportRegion.DirName, exportRegion.RarName, exportRegion);
-            #endregion
-            */
+                }               
+            
             return Ict.Result.True;
         }
         #endregion
 
-        #region Update
+        #region Import
         private DualResult DailyImport(TransRegion region)
         {
             DualResult result;
@@ -691,70 +681,51 @@ Region      Succeeded       Message
                 transferPMS.SetupData(transImport);
             }
             #endregion
-            #region 檢查FTP檔案的日期是否正確 
-            if (isAuto)
-            {
-                if (!transferPMS.CheckRar_CreateDate(region, region.RarName, false))
-                {
-                    String subject = "PMS transfer data (New) ERROR";
-                    String desc = "Wrong the downloaded file date!!,Pls contact with Taipei.";
-                    SendMail(subject, desc);
-                    return Ict.Result.F("Wrong the downloaded file date!!,Pls contact with Taipei.");
-                }
-            }
-            else
-            {
-                string path = ConfigurationSettings.AppSettings["DataSourcePath"].ToString();
-                string sourceFile = path + "\\" + region.RarName;
+            //手動執行,才去判斷執行
+            if (!isAuto)
+            {                
+                string path = region.DirName;
+                string sourceFile = path + region.RarName;
                 string RaRLastEditDate = File.GetLastWriteTime(sourceFile).ToString("yyyyMMdd");
                 string Today = DateTime.Now.ToString("yyyyMMdd");
                 if (!File.Exists(sourceFile))
                 {
-                    return new DualResult(false, ".rar Document is not found!!");
+                    return new DualResult(false, region.RarName + " is not found!!");
                 }
                 if (RaRLastEditDate != Today)
                 {
                     String subject = "PMS transfer data (New) ERROR";
-                    String desc = "Wrong the downloaded file date!!,Pls Check File is New";
+                    String desc = "Wrong the downloaded file date!!,Pls Check File(" + region.RarName + ") is New";
                     SendMail(subject, desc);
-                    return Ict.Result.F("Wrong the downloaded file date!!,Pls Check File is New");
-
-                }
+                    return Ict.Result.F("Wrong the downloaded file date!!,Pls Check File(" + region.RarName + ") is New");
+                }             
             }
+           
+                
             
-            #endregion
             #region 刪除DataBase
             result = transferPMS.DeleteDatabase(region);
             if (!result) { return result; }
             #endregion
             
-            #region 解壓縮檔案到資料夾裡
-            if (isAuto)
-            {
-                //自動的話, 去FTP下載
-                if (!transferPMS.UnRAR_To_ImportDir(region))
-                {
-                    return new DualResult(false, "FTP Download failed!");
-                };
+          
 
-            }
-            else
+            #region 將資料Copy To DB資料夾以掛載
+            String fromPath = this.CurrentData["ImportDataPath"].ToString();
+            String toPath = transImport.Rows[0]["DirName"].ToString();
+
+            //1.清空已存在的檔案 2.從ftp 下載檔案 3.解壓縮
+            //transferPMS.UnRAR_To_ImportDir(region);
+
+            //手動執行時,解壓縮RAR檔
+            if (!isAuto)
             {
                 if (!UnRaR(region))
                 {
                     return new DualResult(false, "rar file Download failed!");
                 };
-            }
-
-            #endregion
-            #region 將資料Copy To DB資料夾以掛載
-            String fromPath = this.CurrentData["ImportDataPath"].ToString();
-            String toPath = transImport.Rows[0]["DirName"].ToString();
-
-            //transferPMS.UnRAR_To_ImportDir(region);
-            //解壓縮到資料夾裡
-            
-
+            }         
+           
 
             #endregion
             #region 掛載資料庫
@@ -939,31 +910,14 @@ Region      Succeeded       Message
             return result;
         }
         public bool UnRaR(TransRegion region)
-        {
-            string path = ConfigurationSettings.AppSettings["DataSourcePath"].ToString();
-            Random random = new Random();
+        {     
 
-
-            string sourceFile = path + "\\" + region.RarName;
-            string destFile = region.DirName + region.RarName;
-            //@"D:\SQL_DB\Trade_To_Pms";//目標資料夾位置
+            string destFile = region.DirName + region.RarName;            
             string destPath = region.DirName.ToString().Substring(0, region.DirName.Length - 1);
 
             string UnRARpath = region.DirName.ToString().Substring(0, region.DirName.Length - 1);
-            string targetRar = Path.Combine(UnRARpath, region.RarName);
-            
-            
-            //刪除Trade_To_Pms資料夾內檔案
-            if (File.Exists(sourceFile))
-            {
-                DeleteDirectory(destPath);    
-            }                     
-            //移動到Trade_To_Pms
-            if (File.Exists(sourceFile))
-            {
-                System.IO.FileInfo fi = new System.IO.FileInfo(sourceFile);
-                fi.CopyTo(destFile);                             
-            }
+            string targetRar = Path.Combine(UnRARpath, region.RarName);          
+                     
             if (File.Exists(destFile))
             {
 
