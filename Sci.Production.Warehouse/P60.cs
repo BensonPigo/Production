@@ -187,12 +187,14 @@ namespace Sci.Production.Warehouse
             .Text("unitId", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))
             .Numeric("onRoad", header: "On Road", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, iseditingreadonly: true)
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6,settings:ns)
-            .Text("Remark", header: "remark", width: Widths.AnsiChars(20))
+            .Text("location", header: "Location", width: Widths.AnsiChars(20))
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(20))
             ;     //
             #endregion 欄位設定
 
             detailgrid.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Confirm
