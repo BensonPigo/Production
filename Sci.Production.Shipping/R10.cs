@@ -89,7 +89,7 @@ namespace Sci.Production.Shipping
 as (
 select distinct 'GARMENT' as Type,g.ID,g.Shipper,g.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 isnull(oq.Qty,0) as OQty,g.CustCDID,g.Dest,g.ShipModeID,p.PulloutDate,p.ShipQty,p.CTNQty,
-p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.CurrencyID,se.AccountID,se.Amount
+p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.CurrencyID,[AccountID]= iif(se.AccountID='','Empty',se.AccountID),se.Amount
 from ShippingAP s WITH (NOLOCK) 
 inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
@@ -139,7 +139,7 @@ where s.Type = 'EXPORT'");
 as (
 select distinct 'GARMENT' as Type,p.ID,'' as Shipper,o.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 isnull(oq.Qty,0) as OQty,o.CustCDID,o.Dest,p.ShipModeID,p.PulloutDate,p.ShipQty,p.CTNQty,
-p.GW,p.CBM,'' as Forwarder,s.BLNo,se.CurrencyID,se.AccountID,se.Amount
+p.GW,p.CBM,'' as Forwarder,s.BLNo,se.CurrencyID,[AccountID]= iif(se.AccountID='','Empty',se.AccountID),se.Amount
 from ShippingAP s WITH (NOLOCK) 
 inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
@@ -190,7 +190,7 @@ where s.Type = 'EXPORT'");
 as (
 select distinct 'GARMENT' as Type,g.ID,g.Shipper,g.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,g.CustCDID,g.Dest,g.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
-p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.CurrencyID,se.AccountID,se.Amount
+p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.CurrencyID,[AccountID]= iif(se.AccountID='','Empty',se.AccountID),se.Amount
 from ShippingAP s WITH (NOLOCK) 
 inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
@@ -240,7 +240,7 @@ where s.Type = 'EXPORT'");
 as (
 select distinct 'GARMENT' as Type,p.ID,'' as Shipper,o.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,o.CustCDID,o.Dest,p.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
-p.GW,p.CBM,'' as Forwarder,s.BLNo,se.CurrencyID,se.AccountID,se.Amount
+p.GW,p.CBM,'' as Forwarder,s.BLNo,se.CurrencyID,[AccountID]= iif(se.AccountID='','Empty',se.AccountID),se.Amount
 from ShippingAP s WITH (NOLOCK) 
 inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
@@ -289,6 +289,18 @@ select distinct a.* from (
 select AccountID as Accno from tmpGB where AccountID not in ('61022001','61022002','61022003','61022004','61022005','59121111')
 union
 select AccountID as Accno from tmpPL where AccountID not in ('61022001','61022002','61022003','61022004','61022005','59121111')
+union 
+select '61022001' as Accno
+union 
+select '61022002' as Accno
+union 
+select '61022003' as Accno
+union 
+select '61022004' as Accno
+union 
+select '61022005' as Accno
+union 
+select '59121111' as Accno
 ) a
 order by Accno");
                     result = DBProxy.Current.Select(null, queryAccount, out accnoData);
@@ -298,7 +310,7 @@ order by Accno");
                         return failResult;
                     }
                     StringBuilder allAccno = new StringBuilder();
-                    allAccno.Append("[61022001],[61022002],[61022003],[61022004],[61022005],[59121111]");
+                    //allAccno.Append("[61022001],[61022002],[61022003],[61022004],[61022005],[59121111]");
                     foreach (DataRow dr in accnoData.Rows)
                     {
                         allAccno.Append(string.Format(",[{0}]", MyUtility.Convert.GetString(dr["Accno"])));
@@ -306,13 +318,54 @@ order by Accno");
                     sqlCmd.Append(string.Format(@"),
 tmpAllData
 as (
-select * from tmpGB
-union all
-select * from tmpPL)
+select type,id,Shipper,BrandID,Category,[OQty]=sum(OQty),CustCDID,
+Dest,ShipModeID,PulloutDate,[ShipQty]=sum(ShipQty),[ctnqty]=sum(ctnqty),[gw]=sum(gw),
+[CBM]=sum(CBM),Forwarder,s.BLNo,CurrencyID ,accountid,amount 
+from tmpGB t
+	outer apply (
+		select [BLNo]= stuff(
+			(select CONCAT(',',blno)
+		from (
+			select distinct blno 
+			from tmpGB d
+			where d.id=t.id 
+			)s
+			for xml path('')
+		),1,1,'')
+	)s
+	group by type,id,Shipper,BrandID,Category,CustCDID,
+	Dest,ShipModeID,PulloutDate,
+	Forwarder,s.BLNo,CurrencyID,accountid,amount
 
-select * from tmpAllData
+union all
+
+select type,id,Shipper,BrandID,Category,[OQty]=sum(OQty),CustCDID,
+Dest,ShipModeID,PulloutDate,[ShipQty]=sum(ShipQty),[ctnqty]=sum(ctnqty),[gw]=sum(gw),
+[CBM]=sum(CBM),Forwarder,s.BLNo,CurrencyID ,accountid,amount 
+from tmpPL t
+	outer apply(
+		select [BLNo] = STUFF(
+			(select concat(',',blno)
+		from (
+			select distinct blno 
+			from tmpPL d
+			where d.id=t.id
+			)s
+			for xml path('')
+			),1,1,''
+		)
+	)s
+	group by type,id,Shipper,BrandID,Category,CustCDID,
+	Dest,ShipModeID,PulloutDate,
+	Forwarder,s.BLNo,CurrencyID,accountid,amount)
+
+select *
+from tmpAllData
 PIVOT (SUM(Amount)
-FOR AccountID IN ({0})) a", allAccno.ToString()));
+FOR AccountID IN ({0})) a
+order by id", allAccno.ToString().Substring(0, 1) == "," ? allAccno.ToString().Substring(1,allAccno.Length-1 ): allAccno.ToString())
+                    
+                    );
                 }
 
                 else
@@ -436,7 +489,7 @@ order by ID,OrderID,PackID");
 as (
 select 'MATERIAL' as Type, f.ID,s.MDivisionID as Shipper,'' as BrandID,'' as Category,
 0 as OQty,'' as CustCDID,f.ImportCountry as Dest,f.ShipModeID,f.PortArrival as PulloutDate,0 as ShipQty,
-0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,se.CurrencyID,se.AccountID,
+0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,se.CurrencyID,[AccountID]= iif(se.AccountID='','Empty',se.AccountID),
 se.Amount
 from ShippingAP s WITH (NOLOCK) 
 inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
@@ -453,7 +506,7 @@ as (
 select 'MATERIAL' as Type, f.ID,s.MDivisionID as Shipper,'' as BrandID,'' as Category,'' as OrderID, null as BuyerDelivery,
 0 as OQty,'' as CustCDID,f.ImportCountry as Dest,f.ShipModeID,'' as PackID,'' as PulloutID,f.PortArrival as PulloutDate,
 0 as ShipQty,0 as CTNQty,f.WeightKg as GW,f.Cbm as CBM,f.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,f.Blno as BLNo,
-se.CurrencyID,se.AccountID,se.Amount
+se.CurrencyID,[AccountID]= iif(se.AccountID='','Empty',se.AccountID),se.Amount
 from ShippingAP s WITH (NOLOCK) 
 inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
@@ -493,7 +546,20 @@ where s.Type = 'EXPORT'");
                     #endregion
                     queryAccount = string.Format("{0}{1}", sqlCmd.ToString(), @") 
 select distinct a.* from (
-select Accountid as Accno from tmpMaterialData where AccountID not in ('61012001','61012002','61012003','61012004','61012005','59121111')) a
+select Accountid as Accno from tmpMaterialData where AccountID not in ('61012001','61012002','61012003','61012004','61012005','59121111')
+union 
+select '61022001' as Accno
+union 
+select '61022002' as Accno
+union 
+select '61022003' as Accno
+union 
+select '61022004' as Accno
+union 
+select '61022005' as Accno
+union 
+select '59121111' as Accno
+) a
 order by Accno");
                     result = DBProxy.Current.Select(null, queryAccount, out accnoData);
                     if (!result)
@@ -502,7 +568,7 @@ order by Accno");
                         return failResult;
                     }
                     StringBuilder allAccno = new StringBuilder();
-                    allAccno.Append("[61012001],[61012002],[61012003],[61012004],[61012005],[59121111]");
+                    //allAccno.Append("[61012001],[61012002],[61012003],[61012004],[61012005],[59121111]");
                     foreach (DataRow dr in accnoData.Rows)
                     {
                         allAccno.Append(string.Format(",[{0}]", MyUtility.Convert.GetString(dr["Accno"])));
@@ -662,7 +728,7 @@ where s.Type = 'EXPORT'");
                     foreach (DataRow ddr in accnoData.Rows)
                     {
                         i++;
-                        objArray[0, allColumn - 1 + i] = MyUtility.Check.Empty(dr[allColumn - 1 + i]) ? 0 : dr[allColumn - 1 + i];
+                        objArray[0, allColumn - (1 + i)] = MyUtility.Check.Empty(dr[allColumn - (1 + i)]) ? 0 : dr[allColumn - (1 + i)];
                     }
                     objArray[0, allColumn + i] = string.Format("=SUM({2}{0}:{1}{0})", intRowsStart, excelSumCol, reportType == 1 ? "R" : "V");
                     worksheet.Range[String.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
