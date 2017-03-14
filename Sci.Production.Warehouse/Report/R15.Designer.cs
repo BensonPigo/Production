@@ -38,21 +38,23 @@
             this.txtSpno1 = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(541, 12);
+            this.print.Location = new System.Drawing.Point(562, 12);
             this.print.TabIndex = 5;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(541, 48);
+            this.toexcel.Location = new System.Drawing.Point(562, 48);
             this.toexcel.TabIndex = 6;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(541, 84);
+            this.close.Location = new System.Drawing.Point(562, 84);
             this.close.TabIndex = 7;
             // 
             // dateRange1
@@ -84,7 +86,7 @@
             // label1
             // 
             this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 124);
+            this.label1.Location = new System.Drawing.Point(14, 152);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(98, 23);
             this.label1.TabIndex = 120;
@@ -108,7 +110,7 @@
             // txtwhseReason1
             // 
             this.txtwhseReason1.DisplayBox1Binding = "";
-            this.txtwhseReason1.Location = new System.Drawing.Point(114, 123);
+            this.txtwhseReason1.Location = new System.Drawing.Point(115, 151);
             this.txtwhseReason1.Name = "txtwhseReason1";
             this.txtwhseReason1.Size = new System.Drawing.Size(386, 27);
             this.txtwhseReason1.TabIndex = 4;
@@ -151,9 +153,29 @@
             this.label3.TabIndex = 129;
             this.label3.Text = "SP#";
             // 
+            // label5
+            // 
+            this.label5.Lines = 0;
+            this.label5.Location = new System.Drawing.Point(14, 119);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(98, 23);
+            this.label5.TabIndex = 130;
+            this.label5.Text = "Factory";
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(115, 119);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 131;
+            // 
             // R15
             // 
-            this.ClientSize = new System.Drawing.Size(633, 182);
+            this.ClientSize = new System.Drawing.Size(654, 207);
+            this.Controls.Add(this.txtfactory1);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtSpno2);
             this.Controls.Add(this.txtSpno1);
@@ -180,6 +202,8 @@
             this.Controls.SetChildIndex(this.txtSpno1, 0);
             this.Controls.SetChildIndex(this.txtSpno2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
+            this.Controls.SetChildIndex(this.label5, 0);
+            this.Controls.SetChildIndex(this.txtfactory1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -197,5 +221,7 @@
         private Win.UI.TextBox txtSpno1;
         private Win.UI.Label label10;
         private Win.UI.Label label3;
+        private Win.UI.Label label5;
+        private Class.txtfactory txtfactory1;
     }
 }

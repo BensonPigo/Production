@@ -14,7 +14,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class R15 : Sci.Win.Tems.PrintForm
     {
-        string reason, mdivision, stocktype, spno1, spno2;
+        string reason, mdivision, factory, stocktype, spno1, spno2;
         DateTime? issueDate1, issueDate2;
         DataTable printData;
 
@@ -37,6 +37,7 @@ namespace Sci.Production.Warehouse
             issueDate1 = dateRange1.Value1;
             issueDate2 = dateRange1.Value2;
             mdivision = txtMdivision1.Text;
+            factory = txtfactory1.Text;
             reason = txtwhseReason1.TextBox1.Text;
             spno1 = txtSpno1.Text;
             spno2 = txtSpno2.Text;
@@ -52,6 +53,9 @@ namespace Sci.Production.Warehouse
             System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
             sp_mdivision.ParameterName = "@MDivision";
 
+            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
+            sp_factory.ParameterName = "@Factory";
+
             System.Data.SqlClient.SqlParameter sp_spno1 = new System.Data.SqlClient.SqlParameter();
             sp_spno1.ParameterName = "@spno1";
 
@@ -62,13 +66,33 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"select a.MDivisionID, a.Id,a.IssueDate,b.POID,b.seq1
-,b.seq2,b.roll,b.dyelot,c.Refno,c.ColorID,c.SizeSpec
-,iif(c.FabricType='F','Fabric',iif(c.FabricType='A','Accessory',c.fabrictype)) fabrictype
-,b.Qty,c.StockUnit,dbo.getPass1(a.EditName) editname,a.Remark
-,a.WhseReasonID+'-'+ISNULL((select d.Description from whsereason d WITH (NOLOCK) WHERE d.id = a. whsereasonid),'')
+            sqlCmd.Append(string.Format(@"
+select  a.MDivisionID 
+        ,orders.FactoryID
+        , a.Id
+        ,a.IssueDate
+        ,b.POID
+        ,b.seq1
+        ,b.seq2
+        ,b.roll
+        ,b.dyelot
+        ,c.Refno
+        ,c.ColorID
+        ,c.SizeSpec
+        ,fabrictype = iif(c.FabricType='F', 'Fabric'
+                                          , iif(c.FabricType='A','Accessory'
+                                                                ,c.fabrictype)) 
+        ,b.Qty
+        ,c.StockUnit
+        ,editname = dbo.getPass1(a.EditName) 
+        ,a.Remark
+        ,a.WhseReasonID+'-'+ISNULL((select d.Description 
+                                    from whsereason d WITH (NOLOCK) 
+                                    WHERE d.id = a.whsereasonid and d.Type = 'IR')
+                                   ,'')
 from issue as a WITH (NOLOCK) 
-left join issue_detail b WITH (NOLOCK) on a.id = b.id
+inner join issue_detail b WITH (NOLOCK) on a.id = b.id
+inner join Orders orders on b.POID = orders.id
 left join po_supp_detail c WITH (NOLOCK) on c.id = b.poid and c.seq1 = b.seq1 and c.seq2 =b.seq2
 where a.type = 'D' AND a.Status = 'Confirmed' 
 ", stocktype));
@@ -83,6 +107,13 @@ where a.type = 'D' AND a.Status = 'Confirmed'
                 sqlCmd.Append(" and a.mdivisionid = @MDivision");
                 sp_mdivision.Value = mdivision;
                 cmds.Add(sp_mdivision);
+            }
+
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlCmd.Append(" and orders.FactoryID = @Factory");
+                sp_factory.Value = factory;
+                cmds.Add(sp_factory);
             }
 
             if (!MyUtility.Check.Empty(reason))
