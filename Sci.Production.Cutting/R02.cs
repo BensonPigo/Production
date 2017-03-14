@@ -805,6 +805,7 @@ drop table #tmpall");
                             objSheets.Cells[6 + j, 14] = "Total Cons.";
                         }
                     }
+                    objSheets.Columns["R"].Clear();
                     objSheets.Name = "Cell" + (Cutcelltb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
                     objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
@@ -861,6 +862,7 @@ drop table #tmpall");
                             objSheets.Cells[6 + j, 14] = "Total Cons.";
                         }
                     }
+                    objSheets.Columns["R"].Clear();
                     objSheets.Name = "Cell" + (Cutcelltb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
                     objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
