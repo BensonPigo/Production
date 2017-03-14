@@ -21,6 +21,17 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             dr = data;
             stocktype = _stocktype;
+
+            switch (stocktype)
+            {
+                case "B":
+                    this.Text = "P03_BulkLocation";
+                    break;
+                case "I":
+                    this.Text = "P03_StockLocation";
+                    break;
+            }
+
             this.Text += string.Format(" ({0}-{1}- {2})", dr["id"].ToString()
 , dr["seq1"].ToString()
 , dr["seq2"].ToString());
