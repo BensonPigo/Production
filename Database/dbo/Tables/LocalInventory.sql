@@ -7,6 +7,8 @@
     [OutQty]        NUMERIC (8, 2) CONSTRAINT [DF_LocalInventory_OutQty] DEFAULT ((0)) NULL,
     [AdjustQty]     NUMERIC (8, 2) CONSTRAINT [DF_LocalInventory_AdjustQty] DEFAULT ((0)) NULL,
     [UnitId]        VARCHAR (8)    CONSTRAINT [DF_LocalInventory_UnitId] DEFAULT ('') NOT NULL,
-    CONSTRAINT [PK_LocalInventory] PRIMARY KEY CLUSTERED ([MDivisionID] ASC, [OrderID] ASC, [Refno] ASC, [ThreadColorID] ASC)
+    CONSTRAINT [PK_LocalInventory_1] PRIMARY KEY CLUSTERED ([OrderID] ASC, [Refno] ASC, [ThreadColorID] ASC)
 );
+
+
 
