@@ -190,6 +190,7 @@ Database/dbo/Tables/ChgOverTarget.sql -text
 Database/dbo/Tables/ChgOver_Check.sql -text
 Database/dbo/Tables/ChgOver_Problem.sql -text
 Database/dbo/Tables/Clip.sql -text
+Database/dbo/Tables/ClipMapping.sql -text
 Database/dbo/Tables/ClipPath.sql -text
 Database/dbo/Tables/ClogLocation.sql -text
 Database/dbo/Tables/ClogReceive.sql -text

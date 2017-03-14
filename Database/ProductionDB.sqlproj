@@ -2203,6 +2203,7 @@
     <Build Include="dbo\Tables\MNOrder_FabricCode_Article.sql" />
     <Build Include="dbo\Tables\Local_Issue_Detail.sql" />
     <Build Include="dbo\Tables\Local_Issue.sql" />
+    <Build Include="dbo\Tables\ClipMapping.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
