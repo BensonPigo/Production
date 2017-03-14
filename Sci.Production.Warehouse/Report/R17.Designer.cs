@@ -40,8 +40,9 @@
             this.label6 = new Sci.Win.UI.Label();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.label7 = new Sci.Win.UI.Label();
             this.txtSeq1 = new Sci.Production.Class.txtSeq();
+            this.label8 = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -156,7 +157,7 @@
             // label6
             // 
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(9, 108);
+            this.label6.Location = new System.Drawing.Point(8, 141);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(89, 23);
             this.label6.TabIndex = 104;
@@ -168,7 +169,7 @@
             this.checkBox1.Checked = true;
             this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(235, 110);
+            this.checkBox1.Location = new System.Drawing.Point(234, 143);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(128, 21);
             this.checkBox1.TabIndex = 6;
@@ -185,21 +186,10 @@
             "ALL",
             "Bulk",
             "Inventory"});
-            this.comboBox1.Location = new System.Drawing.Point(100, 108);
+            this.comboBox1.Location = new System.Drawing.Point(99, 141);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
             this.comboBox1.TabIndex = 5;
-            // 
-            // label7
-            // 
-            this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(29, 173);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(452, 23);
-            this.label7.TabIndex = 105;
-            this.label7.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
-            this.label7.TextStyle.Color = System.Drawing.Color.LightCoral;
             // 
             // txtSeq1
             // 
@@ -211,11 +201,30 @@
             this.txtSeq1.Size = new System.Drawing.Size(61, 23);
             this.txtSeq1.TabIndex = 1;
             // 
+            // label8
+            // 
+            this.label8.Lines = 0;
+            this.label8.Location = new System.Drawing.Point(8, 109);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(89, 23);
+            this.label8.TabIndex = 106;
+            this.label8.Text = "Factory";
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(100, 109);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 107;
+            // 
             // R17
             // 
             this.ClientSize = new System.Drawing.Size(559, 237);
+            this.Controls.Add(this.txtfactory1);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.txtSeq1);
-            this.Controls.Add(this.label7);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label6);
@@ -245,8 +254,9 @@
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.checkBox1, 0);
             this.Controls.SetChildIndex(this.comboBox1, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
             this.Controls.SetChildIndex(this.txtSeq1, 0);
+            this.Controls.SetChildIndex(this.label8, 0);
+            this.Controls.SetChildIndex(this.txtfactory1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -266,7 +276,8 @@
         private Win.UI.Label label6;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.ComboBox comboBox1;
-        private Win.UI.Label label7;
         private Class.txtSeq txtSeq1;
+        private Win.UI.Label label8;
+        private Class.txtfactory txtfactory1;
     }
 }
