@@ -118,14 +118,15 @@ namespace Sci.Production.Thread
             #endregion
 
             cmd = string.Format(@"
-             select 
+             select distinct
                t.FactoryID,t.BrandID,t.StyleID,t.SeasonID,t.EstBookDate,t.EstArriveDate,t.OrderID,o.SciDelivery,o.SewInLine
                ,(select li.ThreadTypeID from dbo.LocalItem li WITH (NOLOCK) where li.RefNo = td.Refno) [ThreadTypeID]
-               ,td.ConsumptionQty,td.Refno,td.ThreadColorID
+               ,ROUND(td.ConsumptionQty/tdc.OrderQty,3),td.Refno,td.ThreadColorID
                ,(select c.Description from dbo.ThreadColor c WITH (NOLOCK) where c.id = td.ThreadColorID) [color_desc]
-               ,td.PurchaseQty,td.TotalQty,td.AllowanceQty,td.UseStockQty
+               ,tdc.OrderQty,td.TotalQty,td.AllowanceQty,td.UseStockQty,td.PurchaseQty
              from dbo.ThreadRequisition t WITH (NOLOCK) 
              inner join dbo.ThreadRequisition_Detail td WITH (NOLOCK) on td.orderid = t.OrderID
+             left join dbo.ThreadRequisition_Detail_Cons tdc WITH (NOLOCK) on td.Ukey=tdc.ThreadRequisition_DetailUkey
              left join dbo.orders o WITH (NOLOCK) on o.id = t.OrderID" + sqlWhere + ' ' + order);
 
             return base.ValidateInput();
