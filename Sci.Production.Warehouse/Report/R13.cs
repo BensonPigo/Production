@@ -15,7 +15,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class R13 : Sci.Win.Tems.PrintForm
     {
-        string reason,  mdivision, stocktype ;
+        string reason,  mdivision, factory, stocktype ;
         DateTime? issueDate1, issueDate2;
         DataTable printData;
 
@@ -41,6 +41,7 @@ namespace Sci.Production.Warehouse
             issueDate1 = dateRange1.Value1;
             issueDate2 = dateRange1.Value2;
             mdivision = txtMdivision1.Text;
+            factory = txtfactory1.Text;
             stocktype = cbbStockType.SelectedValue.ToString();
             reason = txtReason1.SelectedValue.ToString();
 
@@ -55,19 +56,38 @@ namespace Sci.Production.Warehouse
             System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
             sp_mdivision.ParameterName = "@MDivision";
 
+            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
+            sp_factory.ParameterName = "@factory";
+
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             #endregion
 
+            string[] x = new string[3];
+
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"SELECT a.MDivisionID,a.id, a.IssueDate, b.POID, b.seq1,b.seq2,b.Roll,b.Dyelot
-, c.Refno, dbo.getMtlDesc(b.poid,b.seq1,b.seq2,2,0)[description]
-,iif(b.StockType='B','Bulk',iif(b.stocktype ='I','Inventory',b.stocktype)) stock
-,b.QtyBefore,b.QtyAfter
-,b.ReasonId+'-'+(select Reason.Name from Reason WITH (NOLOCK) where Reason.ReasonTypeID='Stock_Adjust' and Reason.id= b.ReasonId) reasonNm
-,dbo.getPass1(a.EditName) editor
-,a.editdate
+            sqlCmd.Append(string.Format(@"
+SELECT  a.MDivisionID
+        , orders.FactoryID
+        , a.id
+        , a.IssueDate
+        , b.POID
+        , b.seq1
+        , b.seq2
+        , b.Roll
+        , b.Dyelot
+        , c.Refno
+        , [description] = dbo.getMtlDesc(b.poid,b.seq1,b.seq2,2,0)
+        , stock = iif(b.StockType='B', 'Bulk'
+                                     , iif(b.stocktype ='I','Inventory'
+                                                           ,b.stocktype)) 
+        , b.QtyBefore
+        , b.QtyAfter
+        , reasonNm = b.ReasonId+'-'+(select Reason.Name from Reason WITH (NOLOCK) where Reason.ReasonTypeID='Stock_Adjust' and Reason.id= b.ReasonId) 
+        , editor = dbo.getPass1(a.EditName) 
+        , a.editdate
 FROM adjust a WITH (NOLOCK) 
 inner join adjust_detail b WITH (NOLOCK) on a.id = b.id
+inner join Orders orders on b.POID = orders.ID
 inner join po_supp_detail c WITH (NOLOCK) on c.ID = b.poid and c.seq1 = b.Seq1 and c.SEQ2 = b.Seq2
 Where a.Status = 'Confirmed' and a.type = '{0}'
 ", stocktype));
@@ -82,6 +102,13 @@ Where a.Status = 'Confirmed' and a.type = '{0}'
                 sqlCmd.Append(" and a.mdivisionid = @MDivision");
                 sp_mdivision.Value = mdivision;
                 cmds.Add(sp_mdivision);
+            }
+
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlCmd.Append(" and orders.FactoryId = @factory");
+                sp_factory.Value = factory;
+                cmds.Add(sp_factory);
             }
 
             if (!MyUtility.Check.Empty(reason))

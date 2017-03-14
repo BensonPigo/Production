@@ -36,21 +36,23 @@
             this.label1 = new Sci.Win.UI.Label();
             this.txtReason1 = new Sci.Production.Class.txtReason();
             this.label2 = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.label3 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(541, 12);
+            this.print.Location = new System.Drawing.Point(547, 12);
             this.print.TabIndex = 4;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(541, 48);
+            this.toexcel.Location = new System.Drawing.Point(547, 48);
             this.toexcel.TabIndex = 5;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(541, 84);
+            this.close.Location = new System.Drawing.Point(547, 84);
             this.close.TabIndex = 6;
             // 
             // dateRange1
@@ -99,7 +101,7 @@
             // label1
             // 
             this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 124);
+            this.label1.Location = new System.Drawing.Point(12, 152);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(98, 23);
             this.label1.TabIndex = 120;
@@ -111,7 +113,7 @@
             this.txtReason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtReason1.FormattingEnabled = true;
             this.txtReason1.IsSupportUnselect = true;
-            this.txtReason1.Location = new System.Drawing.Point(115, 123);
+            this.txtReason1.Location = new System.Drawing.Point(114, 151);
             this.txtReason1.Name = "txtReason1";
             this.txtReason1.ReasonTypeID = "Stock_Adjust";
             this.txtReason1.Size = new System.Drawing.Size(388, 24);
@@ -132,9 +134,29 @@
             this.label2.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label2.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(115, 119);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 123;
+            // 
+            // label3
+            // 
+            this.label3.Lines = 0;
+            this.label3.Location = new System.Drawing.Point(13, 119);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(98, 23);
+            this.label3.TabIndex = 124;
+            this.label3.Text = "Factory";
+            // 
             // R13
             // 
-            this.ClientSize = new System.Drawing.Size(633, 182);
+            this.ClientSize = new System.Drawing.Size(639, 212);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.txtfactory1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtReason1);
             this.Controls.Add(this.label1);
@@ -157,6 +179,8 @@
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.txtReason1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.txtfactory1, 0);
+            this.Controls.SetChildIndex(this.label3, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -172,5 +196,7 @@
         private Win.UI.Label label1;
         private Class.txtReason txtReason1;
         private Win.UI.Label label2;
+        private Class.txtfactory txtfactory1;
+        private Win.UI.Label label3;
     }
 }
