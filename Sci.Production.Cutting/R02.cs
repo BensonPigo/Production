@@ -517,7 +517,7 @@ select distinct
 	[FabRef#] = PO_Supp_Detail.RefNo,
 	[Color] = Cutplan_Detail.ColorID,
 	[Comb.] = WorkOrder.FabricCombo,
-	[Fab_Code] = WorkOrder.FabricCode,
+	[Fab_Code] = stuff(fab.fab,1,1,''),
 	[Total Fab Cons] =sum(Cutplan_Detail.Cons) over(partition by Cutplan.ID, Cutplan_Detail.SewingLineID, Cutplan_Detail.OrderID, WorkOrder.Seq1 + '-' + WorkOrder.Seq2,Orders.StyleID,PO_Supp_Detail.RefNo,Cutplan_Detail.ColorID,WorkOrder.FabricCombo,WorkOrder.FabricCode),
 	Cutplan.POID,
 	WorkOrder.seq1,
@@ -535,7 +535,15 @@ inner join Orders WITH (NOLOCK) on Orders.ID = Cutplan_Detail.OrderID
 inner join PO_Supp_Detail WITH (NOLOCK) on PO_Supp_Detail.ID = Cutplan_Detail.POID 
 	and PO_Supp_Detail.Seq1 = WorkOrder.Seq1 
 	and PO_Supp_Detail.Seq2 = WorkOrder.Seq2
-
+outer apply(
+	select fab =
+	(
+		select concat('+',wp.PatternPanel)
+		from WorkOrder_PatternPanel wp
+		where wp.WorkOrderUkey = WorkOrder.Ukey
+		for xml path('')
+	)
+) fab
 where 1 = 1
 ");
                     if (!MyUtility.Check.Empty(dateR_CuttingDate1))
