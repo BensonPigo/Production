@@ -24,8 +24,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            txtfactoryByM1.Text = Sci.Env.User.Keyword;
-            txtfactoryByM1.mDivisionID = Sci.Env.User.Keyword;
+            txtfactory1.Text = Sci.Env.User.Factory;
             MyUtility.Tool.SetupCombox(cbbFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
             cbbFabricType.SelectedIndex = 0;
             txtdropdownlist1.SelectedIndex = 0;
@@ -44,7 +43,7 @@ namespace Sci.Production.Warehouse
             eta2 = dateRange1.Value2;
             ordertypeindex = txtdropdownlist1.SelectedIndex;
             fabrictype = cbbFabricType.SelectedValue.ToString();
-            factory = txtfactoryByM1.Text;
+            factory = txtfactory1.Text;
             switch (ordertypeindex)
             {
                 case 0:
@@ -73,7 +72,7 @@ namespace Sci.Production.Warehouse
             condition.Append(string.Format(@"Fabric Type : {0}" + Environment.NewLine
                 , cbbFabricType.Text));
             condition.Append(string.Format(@"Factory : {0}" + Environment.NewLine
-                , txtfactoryByM1.Text));
+                , txtfactory1.Text));
             condition.Append(string.Format(@"Order Type : {0}" + Environment.NewLine
                 , txtdropdownlist1.Text));
             return base.ValidateInput();
@@ -91,25 +90,31 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"select 
-b.id as wkno_a, 
-b.poid as order_a, 
-b.seq1 + b.seq2 as seq_a, 
-b.refno ,
-c.ColorID,
-c.SizeSpec,
-c.StockUnit,
-(b.qty + b.foc)  * v.RateValue shipqty,
-iif ((b.qty + b.foc)  * v.RateValue > isnull(x.qty,0),'V','') over1,
-isnull(x.qty,0) received_qty,
-iif ((b.qty + b.foc)  * v.RateValue < isnull(x.qty,0),'V','') over2
-from dbo.export A WITH (NOLOCK) INNER JOIN dbo.export_detail B WITH (NOLOCK) ON B.ID = A.ID
+            sqlCmd.Append(string.Format(@"
+select  d.FactoryID
+        ,wkno_a = b.id 
+        ,order_a = b.poid
+        ,seq_a = b.seq1 + b.seq2 
+        ,b.refno 
+        ,c.ColorID
+        ,c.SizeSpec
+        ,c.StockUnit
+        ,shipqty = (b.qty + b.foc)  * v.RateValue 
+        ,over1 = iif ((b.qty + b.foc)  * v.RateValue > isnull(x.qty,0),'V','') 
+        ,received_qty = isnull(x.qty,0) 
+        ,over2 = iif ((b.qty + b.foc)  * v.RateValue < isnull(x.qty,0),'V','') 
+from dbo.export A WITH (NOLOCK) 
+inner join dbo.export_detail B WITH (NOLOCK) ON B.ID = A.ID
 inner join dbo.PO_Supp_Detail c WITH (NOLOCK) on c.ID = b.PoID and c.seq1 = b.seq1 and c.seq2 =  b.seq2 
 inner join dbo.View_Unitrate v on v.FROM_U = c.POUnit and v.TO_U = c.StockUnit
-outer apply ( select sum(b1.StockQty) qty from dbo.Receiving a1 WITH (NOLOCK) inner join dbo.Receiving_Detail b1 WITH (NOLOCK) on b1.id = a1.Id
-where a1.ExportId = a.id and b1.PoId = b.PoID and b1.seq1 = b.seq1 and b1.seq2 = b.seq2 and a1.Status = 'Confirmed') x
+outer apply ( 
+    select sum(b1.StockQty) qty 
+    from dbo.Receiving a1 WITH (NOLOCK) 
+    inner join dbo.Receiving_Detail b1 WITH (NOLOCK) on b1.id = a1.Id
+    where a1.ExportId = a.id and b1.PoId = b.PoID and b1.seq1 = b.seq1 and b1.seq2 = b.seq2 and a1.Status = 'Confirmed'
+    ) x
 inner join dbo.orders d WITH (NOLOCK) on d.id = b.poid
-WHERE  D.Category in {0}" , ordertype));
+WHERE  D.Category in {0}", ordertype));
 
             if (!MyUtility.Check.Empty(eta1))
                 sqlCmd.Append(string.Format(" and '{0}' <= a.eta", Convert.ToDateTime(eta1).ToString("d")));
