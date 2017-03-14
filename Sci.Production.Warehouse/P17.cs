@@ -324,8 +324,13 @@ namespace Sci.Production.Warehouse
                     CurrentDetailData["stockunit"] = x[0]["stockunit"];
                     CurrentDetailData["Description"] = x[0]["Description"];
                     string tmp = MyUtility.GetValue.Lookup(
-                            string.Format(@"select isnull(ukey,0) ukey from dbo.ftyinventory WITH (NOLOCK) 
-                                                    where poid='{1}' and seq1='{2}' and seq2='{3}' and stocktype='{4}' and roll='{5}' "
+                            string.Format(@"
+select isnull(ukey,0) ukey 
+from dbo.ftyinventory WITH (NOLOCK) 
+inner join Orders on ftyinventory.poid = Orders.id
+inner join Factory on Orders.FactoryID = Factory.id
+where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.seq1='{2}' and ftyinventory.seq2='{3}' 
+    and ftyinventory.stocktype='{4}' and ftyinventory.roll='{5}' "
                             , Sci.Env.User.Keyword, CurrentDetailData["poid"], x[0]["seq1"], x[0]["seq2"], CurrentDetailData["stocktype"], ""));
                     if (!MyUtility.Check.Empty(tmp)) CurrentDetailData["ftyinventoryukey"] = tmp;
                     CurrentDetailData.EndEdit();
@@ -360,9 +365,9 @@ namespace Sci.Production.Warehouse
                             e.Cancel = true;
                             return;
                         }
-
+                        string x = Prgs.selePoItemSqlCmd;
                         if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
-                                    @"and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
+                                    @" and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                         {
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
                             e.Cancel = true;
@@ -378,9 +383,14 @@ namespace Sci.Production.Warehouse
                         CurrentDetailData["Description"] = dr["description"];
                         
                         string tmp = MyUtility.GetValue.Lookup(
-                            string.Format(@"select isnull(ukey,0) ukey from dbo.ftyinventory WITH (NOLOCK) 
-                                                    where poid='{1}' and seq1='{2}' and seq2='{3}' and stocktype='{4}' and roll='{5}' "
-                            , Sci.Env.User.Keyword, CurrentDetailData["poid"], e.FormattedValue.ToString().Substring(0, 3), e.FormattedValue.ToString().Substring(3, 2), CurrentDetailData["stocktype"], ""));
+                            string.Format(@"
+select isnull(ukey,0) ukey 
+from dbo.ftyinventory WITH (NOLOCK) 
+inner join Orders on ftyinventory.poid = Orders.id
+inner join Factory on Orders.FactoryID = Factory.id
+where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.seq1='{2}' and ftyinventory.seq2='{3}' 
+    and ftyinventory.stocktype='{4}' and ftyinventory.roll='{5}'
+", Sci.Env.User.Keyword, CurrentDetailData["poid"], seq[0], seq[1], CurrentDetailData["stocktype"], ""));
                         if (!MyUtility.Check.Empty(tmp)) CurrentDetailData["ftyinventoryukey"] = tmp;
                     }
                 }
@@ -440,10 +450,15 @@ namespace Sci.Production.Warehouse
                     if (String.Compare(e.FormattedValue.ToString(), CurrentDetailData["roll"].ToString()) != 0)
                     {
 
-                        if (!MyUtility.Check.Seek(string.Format(@"select ukey from ftyinventory WITH (NOLOCK) 
-where poid = '{0}' and seq1 ='{1}' and seq2 = '{2}' and stocktype = '{4}' and roll = '{5}'"
-                            , CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
-                                             , e.FormattedValue.ToString().PadRight(5).Substring(3, 2), Sci.Env.User.Keyword, CurrentDetailData["stocktype"], CurrentDetailData["roll"]), out dr, null))
+                        if (!MyUtility.Check.Seek(string.Format(@"
+select ukey 
+from ftyinventory WITH (NOLOCK) 
+inner join Orders on ftyinventory.poid = Orders.id
+inner join Factory on Orders.FactoryID = Factory.id
+where poid = '{0}' and seq1 ='{1}' and seq2 = '{2}' and Factory.MDivisionID = '{3}'
+    and stocktype = '{4}' and roll = '{5}'
+", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
+, e.FormattedValue.ToString().PadRight(5).Substring(3, 2), Sci.Env.User.Keyword, CurrentDetailData["stocktype"], CurrentDetailData["roll"]), out dr, null))
                         {
                             MyUtility.Msg.WarningBox("Data not found!", "Roll#");
                             e.Cancel = true;
@@ -456,7 +471,7 @@ where poid = '{0}' and seq1 ='{1}' and seq2 = '{2}' and stocktype = '{4}' and ro
             #endregion
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13))  //0
+                .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), CheckMDivisionID: true)  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6),settings:ts)  //1
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)  //2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
