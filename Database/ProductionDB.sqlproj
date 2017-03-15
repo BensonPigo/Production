@@ -2204,6 +2204,9 @@
     <Build Include="dbo\Tables\Local_Issue_Detail.sql" />
     <Build Include="dbo\Tables\Local_Issue.sql" />
     <Build Include="dbo\Tables\ClipMapping.sql" />
+    <Build Include="dbo\Functions\GetFinanceRate.sql" />
+    <Build Include="dbo\Functions\GetWKAmount.sql" />
+    <Build Include="dbo\Functions\GetExportOrderAmount.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
