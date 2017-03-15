@@ -49,6 +49,8 @@ Database/dbo/Functions/GetColorName.sql -text
 Database/dbo/Functions/GetColorSizeQty.sql -text
 Database/dbo/Functions/GetCurrencyRate.sql -text
 Database/dbo/Functions/GetDigitalValue.sql -text
+Database/dbo/Functions/GetExportOrderAmount.sql -text
+Database/dbo/Functions/GetFinanceRate.sql -text
 Database/dbo/Functions/GetFirResult.sql -text
 Database/dbo/Functions/GetHaveDelaySupp.sql -text
 Database/dbo/Functions/GetInspectionResult.sql -text
@@ -71,6 +73,7 @@ Database/dbo/Functions/GetSuppColorList.sql -text
 Database/dbo/Functions/GetSuppColor_Solution.sql -text
 Database/dbo/Functions/GetUnitQty.sql -text
 Database/dbo/Functions/GetUnitRound.sql -text
+Database/dbo/Functions/GetWKAmount.sql -text
 Database/dbo/Functions/Getlocation.sql -text
 Database/dbo/Functions/MarkerLengthToYDS.sql -text
 Database/dbo/Functions/SplitString.sql -text
