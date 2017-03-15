@@ -235,6 +235,7 @@ ORDER BY id.Location,o.MachineTypeID", styleUkey);
         //To Excel
         private void button1_Click(object sender, EventArgs e)
         {
+           
             DataTable ExcelTable;
             try
             {
@@ -258,16 +259,20 @@ ORDER BY id.Location,o.MachineTypeID", styleUkey);
 
             dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
 
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            {
-                // Open document
-                bool result = MyUtility.Excel.CopyToXls(ExcelTable, dlg.FileName, xltfile: "PPIC_P01_StdGSDList.xltx",headerRow:1);
+            //if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
+            //{
+             
+            // Open document
+         
+                bool result = MyUtility.Excel.CopyToXls(ExcelTable,"", "PPIC_P01_StdGSDList.xltx",headerRow:1);
                 if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
-            }
-            else
-            {
+           // }
+            //else
+            //{
                 return;
-            }
+            //}
         }
+       
+
     }
 }
