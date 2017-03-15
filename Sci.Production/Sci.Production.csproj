@@ -614,9 +614,6 @@
     <None Include="XLT\Quality_R21_CFA_InlineReport_detail.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Quality_R21_CFM_InlineReport_Summary.xltx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="XLT\Quality_R22_PerBrand.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
