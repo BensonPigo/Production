@@ -159,6 +159,7 @@
             // 
             // dateR_EarliestSewingInline
             // 
+            this.dateR_EarliestSewingInline.IsRequired = false;
             this.dateR_EarliestSewingInline.Location = new System.Drawing.Point(160, 195);
             this.dateR_EarliestSewingInline.Name = "dateR_EarliestSewingInline";
             this.dateR_EarliestSewingInline.Size = new System.Drawing.Size(280, 23);
@@ -166,6 +167,7 @@
             // 
             // dateR_EarliestSCIDelivery
             // 
+            this.dateR_EarliestSCIDelivery.IsRequired = false;
             this.dateR_EarliestSCIDelivery.Location = new System.Drawing.Point(160, 161);
             this.dateR_EarliestSCIDelivery.Name = "dateR_EarliestSCIDelivery";
             this.dateR_EarliestSCIDelivery.Size = new System.Drawing.Size(280, 23);
@@ -173,6 +175,7 @@
             // 
             // dateR_EstCutDate
             // 
+            this.dateR_EstCutDate.IsRequired = false;
             this.dateR_EstCutDate.Location = new System.Drawing.Point(160, 90);
             this.dateR_EstCutDate.Name = "dateR_EstCutDate";
             this.dateR_EstCutDate.Size = new System.Drawing.Size(280, 23);

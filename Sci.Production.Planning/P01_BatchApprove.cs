@@ -141,11 +141,23 @@ where ods.finished=0 and ods.isforecast = 0
     and factory.mdivisionid='{0}'", Sci.Env.User.Keyword);
                 if (!chkApprove) { strSQLCmd += " and  ot.apvdate is null"; }
                 if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and  ot.id  between @sp1 and  @sp2"; }
-                if (!MyUtility.Check.Empty(inline_b)) { strSQLCmd += string.Format(" and not(ot.artworkinline > '{1}' or ot.artworkoffline < '{0}')", inline_b, inline_e); }
-                if (!MyUtility.Check.Empty(sewinline_b)) { strSQLCmd += string.Format(" and not(ods.sewinline > '{1}' or ods.sewoffline < '{0}')", sewinline_b, sewinline_e); }
+                if (!MyUtility.Check.Empty(inline_b))
+                {strSQLCmd += string.Format(" and ot.artworkoffline >= '{0}'", Convert.ToDateTime(inline_b).ToString("d"));}
+                if (!MyUtility.Check.Empty(inline_e))
+                { strSQLCmd += string.Format(" and ot.artworkinline <= '{0}'", Convert.ToDateTime(inline_e).ToString("d"));}
+                if (!MyUtility.Check.Empty(sewinline_b))
+                { strSQLCmd += string.Format(" and ods.sewoffline >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("d")); }
+                if (!MyUtility.Check.Empty(sewinline_e))
+                { strSQLCmd += string.Format(" and ods.sewinline <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("d")); }
                 if (!MyUtility.Check.Empty(artworktype)) { strSQLCmd += " and ot.artworktypeid = @artworktypeid"; }
-                if (!MyUtility.Check.Empty(delivery_b)) { strSQLCmd += string.Format(" and ods.sciDelivery between '{0}' and '{1}'", delivery_b, delivery_e); }
-                if (!MyUtility.Check.Empty(approve_b)) { strSQLCmd += string.Format(" and ot.apvdate between '{0}' and '{1}'", approve_b, approve_e); }
+                if (!MyUtility.Check.Empty(delivery_b))
+                { strSQLCmd += string.Format(" and ods.sciDelivery >= '{0}'", Convert.ToDateTime(delivery_b).ToString("d")); }
+                if (!MyUtility.Check.Empty(delivery_e))
+                { strSQLCmd += string.Format(" and ods.sciDelivery <= '{0}'", Convert.ToDateTime(delivery_e).ToString("d")); }
+                if (!MyUtility.Check.Empty(approve_b))
+                { strSQLCmd += string.Format(" and ot.apvdate >= '{0}'", Convert.ToDateTime(approve_b).ToString("d")); }
+                if (!MyUtility.Check.Empty(approve_e))
+                { strSQLCmd += string.Format(" and ot.apvdate <= '{0}'", Convert.ToDateTime(approve_e).ToString("d")); }
                 if (!MyUtility.Check.Empty(factory)) { strSQLCmd += " and ods.factoryid = @factoryid"; }
                 
                 strSQLCmd += @" order by ods.FactoryID

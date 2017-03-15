@@ -34,15 +34,20 @@ namespace Sci.Production.Planning
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(sciDeliveryRange.Value1))
-            {
-                MyUtility.Msg.WarningBox(" < Sci Delivery > can't be empty!!");
-                return false;
-            }
+            //if (MyUtility.Check.Empty(sciDeliveryRange.Value1))
+            //{
+            //    MyUtility.Msg.WarningBox(" < Sci Delivery > can't be empty!!");
+            //    return false;
+            //}
 
-            if (MyUtility.Check.Empty(sewingDateRange.Value1))
+            //if (MyUtility.Check.Empty(sewingDateRange.Value1))
+            //{
+            //    MyUtility.Msg.WarningBox(" < Sewing Date > can't be empty!!");
+            //    return false;
+            //}
+            if (MyUtility.Check.Empty(sciDeliveryRange.Value1) && MyUtility.Check.Empty(sewingDateRange.Value1))
             {
-                MyUtility.Msg.WarningBox(" < Sewing Date > can't be empty!!");
+                MyUtility.Msg.WarningBox("< SCI Delivery > & < Sewing Date > can't be empty!!");
                 return false;
             }
 
@@ -228,15 +233,30 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
             condition.Clear();
             if (!MyUtility.Check.Empty(sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" AND o.scidelivery between '{0:d}' and '{1:d}'",
-                sciDelivery1, sciDelivery2));
+                sqlCmd.Append(string.Format(@" and o.scidelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(sewingDate1))
+            if (!MyUtility.Check.Empty(sciDelivery2))
+            {
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(sewingDate1) && !MyUtility.Check.Empty(sewingDate2))
             {
                 sqlCmd.Append(string.Format(@" AND (O.sewoffline !< '{0:d}' or o.sewInline !> '{1:d}')",
                 sewingDate1, sewingDate2));
             }
-
+            else
+            {
+                if (!MyUtility.Check.Empty(sewingDate1))
+                {
+                    sqlCmd.Append(string.Format(@" and O.sewoffline !< '{0}'", Convert.ToDateTime(sewingDate1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(sewingDate2))
+                {
+                    sqlCmd.Append(string.Format(@" and o.sewInline !> '{0}'", Convert.ToDateTime(sewingDate2).ToString("d")));
+                }
+            }
+           
             if (!MyUtility.Check.Empty(mdivision))
             {
                 sqlCmd.Append(" and O.mdivisionid = @MDivision");

@@ -69,8 +69,16 @@ left join PO_Supp_Detail psd2 WITH (NOLOCK) on psd2.ID = l.POID and psd2.SEQ1 = 
 left join MDivisionPoDetail mpd2 WITH (NOLOCK) on mpd2.MDivisionId = l.MDivisionID and mpd2.POID = l.POID and mpd2.Seq1 = psd.OutputSeq1 and mpd2.Seq2 = psd.OutputSeq2
 left join Invtrans i WITH (NOLOCK) on i.PoID = l.POID and i.Seq1 = ld.Seq1 and i.Seq2 = ld.Seq2 and i.Type = 1
 left join Invtrans i2 WITH (NOLOCK) on i2.InventoryPOID = l.POID and i2.InventorySeq1 = ld.Seq1 and i2.InventorySeq2 = ld.Seq2 and i2.Type = 4
-where l.ApvDate between '{0}' and '{1}'
-and l.Type = 'R'", Convert.ToDateTime(apvDate1).ToString("d"), Convert.ToDateTime(apvDate2).ToString("d")));
+where l.Type = 'R'"));
+
+            if (!MyUtility.Check.Empty(apvDate1))
+            {
+                sqlCmd.Append(string.Format(@" and l.ApvDate >= '{0}'", Convert.ToDateTime(apvDate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(apvDate2))
+            {
+                sqlCmd.Append(string.Format(@" and l.ApvDate <= '{0}'", Convert.ToDateTime(apvDate2).ToString("d")));
+            }
 
             if (!MyUtility.Check.Empty(reportType))
             {

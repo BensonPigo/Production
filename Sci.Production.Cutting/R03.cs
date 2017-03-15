@@ -167,8 +167,12 @@ where 1=1
 
             if (!MyUtility.Check.Empty(Est_CutDate1))
             {
-                sqlCmd.Append(string.Format(@" and wo.EstCutDate between '{0}' and '{1}'",
-                Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and wo.EstCutDate >= '{0}' ",Convert.ToDateTime(Est_CutDate1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(Est_CutDate2))
+            {
+                sqlCmd.Append(string.Format(" and wo.EstCutDate <= '{0}' ", Convert.ToDateTime(Est_CutDate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(CuttingSP1))
@@ -183,14 +187,22 @@ where 1=1
             
             if (!MyUtility.Check.Empty(EarliestSCIDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and MinSci.MinSCI between '{0}' and '{1}'",
-                Convert.ToDateTime(EarliestSCIDelivery1).ToString("d"), Convert.ToDateTime(EarliestSCIDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinSCI >= '{0}'", Convert.ToDateTime(EarliestSCIDelivery1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(EarliestSCIDelivery2))
+            {
+                sqlCmd.Append(string.Format(" and MinSci.MinSCI <= '{0}' ", Convert.ToDateTime(EarliestSCIDelivery2).ToString("d")));
             }
             
             if (!MyUtility.Check.Empty(EarliestSewingInline1))
             {
-                sqlCmd.Append(string.Format(@" and c.SewInLine between '{0}' and '{1}'",
-                Convert.ToDateTime(EarliestSewingInline1).ToString("d"), Convert.ToDateTime(EarliestSewingInline2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and c.SewInLine >= '{0}' ", Convert.ToDateTime(EarliestSewingInline1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(EarliestSewingInline2))
+            {
+                sqlCmd.Append(string.Format(" and c.SewInLine <= '{0}' ", Convert.ToDateTime(EarliestSewingInline2).ToString("d")));
             }
             #endregion
             sqlCmd.Append(@" order by wo.MDivisionID,o.FtyGroup,wo.EstCutDate,MincDate.MincoDate,c.SewInLine,wo.Cutno");

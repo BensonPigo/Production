@@ -83,11 +83,11 @@ namespace Sci.Production.Cutting
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateR_CuttingDate.Value1) && MyUtility.Check.Empty(dateR_CuttingDate.Value2))
-            {
-                MyUtility.Msg.WarningBox("CuttingDate can't empty!!");
-                return false;
-            }
+            //if (MyUtility.Check.Empty(dateR_CuttingDate.Value1) && MyUtility.Check.Empty(dateR_CuttingDate.Value2))
+            //{
+            //    MyUtility.Msg.WarningBox("CuttingDate can't empty!!");
+            //    return false;
+            //}
             if (MyUtility.Check.Empty(txt_CutCell1.Text.Trim()))
             {
                 MyUtility.Msg.WarningBox("CutCell can't empty!!");

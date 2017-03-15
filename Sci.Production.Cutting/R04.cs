@@ -368,8 +368,13 @@ where 1=1
                 }
                 if (!MyUtility.Check.Empty(Est_CutDate1))
                 {
-                    sqlCmd.Append(string.Format(" and wo.EstCutDate <= '{0}' and wo.EstCutDate is not null   ", Convert.ToDateTime(Est_CutDate1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and wo.EstCutDate >= '{0}' ", Convert.ToDateTime(Est_CutDate1).ToString("d")));
                 }
+                if (!MyUtility.Check.Empty(Est_CutDate2))
+                {
+                    sqlCmd.Append(string.Format(" and wo.EstCutDate <= '{0}' ", Convert.ToDateTime(Est_CutDate2).ToString("d")));
+                }
+
                 if (!MyUtility.Check.Empty(CutCell1))
                 {
                     sqlCmd.Append(string.Format(" and wo.CutCellid >= '{0}'", CutCell1));

@@ -40,11 +40,11 @@ namespace Sci.Production.Cutting
             Est_CutDate1 = dateR_EstCutDate.Value1;
             Est_CutDate2 = dateR_EstCutDate.Value2;
 
-            if (MyUtility.Check.Empty(Est_CutDate1) && MyUtility.Check.Empty(Est_CutDate2))
-            {
-                MyUtility.Msg.WarningBox("Can't all empty!!");
-                return false;
-            }
+            //if (MyUtility.Check.Empty(Est_CutDate1) && MyUtility.Check.Empty(Est_CutDate2))
+            //{
+            //    MyUtility.Msg.WarningBox("Can't all empty!!");
+            //    return false;
+            //}
 
             return base.ValidateInput();
         }
@@ -146,8 +146,11 @@ where 1=1
             }            
             if (!MyUtility.Check.Empty(Est_CutDate1))
             {
-                sqlCmd.Append(string.Format(@" and wo.EstCutDate between '{0}' and '{1}'",
-                Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and wo.EstCutDate >= '{0}' ", Convert.ToDateTime(Est_CutDate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(Est_CutDate2))
+            {
+                sqlCmd.Append(string.Format(" and wo.EstCutDate <= '{0}' ", Convert.ToDateTime(Est_CutDate2).ToString("d")));
             }
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);

@@ -89,10 +89,12 @@ and a.IsSubprocess = 1"));
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery between '{0}' and '{1}'",
-                Convert.ToDateTime(sciDelivery1).ToString("d"), Convert.ToDateTime(sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d"))); 
             }
-
+            if (!MyUtility.Check.Empty(sciDelivery2))
+            { 
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d"))); 
+            }
 
             if (!MyUtility.Check.Empty(mdivision))
             {

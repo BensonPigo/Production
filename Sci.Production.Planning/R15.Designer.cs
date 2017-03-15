@@ -89,6 +89,7 @@
             // 
             // dateRangeSciDelivery
             // 
+            this.dateRangeSciDelivery.IsRequired = false;
             this.dateRangeSciDelivery.Location = new System.Drawing.Point(115, 12);
             this.dateRangeSciDelivery.Name = "dateRangeSciDelivery";
             this.dateRangeSciDelivery.Size = new System.Drawing.Size(280, 23);
@@ -96,6 +97,7 @@
             // 
             // dateRangeCustRqsDate
             // 
+            this.dateRangeCustRqsDate.IsRequired = false;
             this.dateRangeCustRqsDate.Location = new System.Drawing.Point(115, 117);
             this.dateRangeCustRqsDate.Name = "dateRangeCustRqsDate";
             this.dateRangeCustRqsDate.Size = new System.Drawing.Size(280, 23);
@@ -159,6 +161,7 @@
             // 
             // dateRangeCutOffDate
             // 
+            this.dateRangeCutOffDate.IsRequired = false;
             this.dateRangeCutOffDate.Location = new System.Drawing.Point(115, 84);
             this.dateRangeCutOffDate.Name = "dateRangeCutOffDate";
             this.dateRangeCutOffDate.Size = new System.Drawing.Size(280, 23);
@@ -182,6 +185,7 @@
             // 
             // dateRangeBuyerDelivery
             // 
+            this.dateRangeBuyerDelivery.IsRequired = false;
             this.dateRangeBuyerDelivery.Location = new System.Drawing.Point(115, 48);
             this.dateRangeBuyerDelivery.Name = "dateRangeBuyerDelivery";
             this.dateRangeBuyerDelivery.Size = new System.Drawing.Size(280, 23);
@@ -257,6 +261,7 @@
             // 
             // dateRangePlanDate
             // 
+            this.dateRangePlanDate.IsRequired = false;
             this.dateRangePlanDate.Location = new System.Drawing.Point(115, 154);
             this.dateRangePlanDate.Name = "dateRangePlanDate";
             this.dateRangePlanDate.Size = new System.Drawing.Size(280, 23);

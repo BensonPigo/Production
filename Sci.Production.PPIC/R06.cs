@@ -91,10 +91,16 @@ isnull((select CONCAT(Seq,';') from PrepareData2 where ID = o.POID and ThirdCoun
 isnull((select CONCAT(Seq,';') from PrepareData2 where ID = o.POID and ThirdCountry = 1 for XML PATH('')),'') as Seq3rd
 from Orders o WITH (NOLOCK) 
 left join PO p WITH (NOLOCK) on p.ID = o.POID
-where o.SciDelivery between '{1}' and '{2}'", excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":"",
-                                            Convert.ToDateTime(sciDate1).ToString("d"), Convert.ToDateTime(sciDate2).ToString("d")));
+where 1=1", excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":""));
 
-           
+            if (!MyUtility.Check.Empty(sciDate1))
+            {
+                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(sciDate2))
+            {
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDate2).ToString("d")));
+            }
             if (!MyUtility.Check.Empty(mDivision))
             {
                 sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", mDivision));

@@ -42,12 +42,20 @@ namespace Sci.Production.Packing
             StringBuilder filter = new StringBuilder();
             if (!MyUtility.Check.Empty(delDate1))
             {
-                filter.Append(string.Format("BuyerDelivery >= '{0}' and BuyerDelivery <= '{1}' and ", delDate1, delDate2));
+                filter.Append(string.Format("BuyerDelivery >= '{0}' and ", Convert.ToDateTime(delDate1).ToString("d")));
             }
+            if (!MyUtility.Check.Empty(delDate2))
+            {
+                filter.Append(string.Format("BuyerDelivery <= '{0}' and ", Convert.ToDateTime(delDate2).ToString("d")));
+            }
+
             if (!MyUtility.Check.Empty(sciDate1))
             {
-
-                filter.Append(string.Format("SciDelivery >= '{0}' and SciDelivery <= '{1}' and ", sciDate1, sciDate2));
+                filter.Append(string.Format("SciDelivery >= '{0}' and ", Convert.ToDateTime(sciDate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(sciDate2))
+            {
+                filter.Append(string.Format("SciDelivery <= '{0}' and ", Convert.ToDateTime(sciDate2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(brand))
             {

@@ -99,12 +99,14 @@ where 1=1 "));
             #region --- 條件組合  ---
             condition.Clear();
             if (!MyUtility.Check.Empty(sciDelivery1))
-            {
-                sqlCmd.Append(string.Format(@" and a.SciDelivery between '{0}' and '{1}'",
-                Convert.ToDateTime(sciDelivery1).ToString("d"), Convert.ToDateTime(sciDelivery2).ToString("d")));
-                condition.Append(string.Format(@"SCI Delivery : {0} ~ {1}"
-                , Convert.ToDateTime(sciDelivery1).ToString("d")
-                , Convert.ToDateTime(sciDelivery2).ToString("d")));
+            { 
+              sqlCmd.Append(string.Format(@" and a.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
+              condition.Append(string.Format(@"SCI Delivery : {0} ~ ", Convert.ToDateTime(sciDelivery1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(sciDelivery2))
+            { 
+              sqlCmd.Append(string.Format(@" and a.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
+              condition.Append(string.Format(@"SCI Delivery :  ~ {0}", Convert.ToDateTime(sciDelivery2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(mdivision))

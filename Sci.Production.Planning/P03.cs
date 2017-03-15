@@ -402,13 +402,18 @@ and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numer
             { sqlcmd += string.Format(@" and b.InhouseOSP = '{0}'", inhouseosp); }
             if (!(MyUtility.Check.Empty(factoryid)))
             {sqlcmd += string.Format(@" and a.FactoryID ='{0}'", factoryid);}
-
-            if (!(MyUtility.Check.Empty(sciDelivery_b)))
-            { sqlcmd += string.Format(@" and a.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
+            if (!MyUtility.Check.Empty(sciDelivery_b))
+            { sqlcmd += string.Format(@" and a.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery_b).ToString("d")); }
+            if (!MyUtility.Check.Empty(sciDelivery_e))
+            { sqlcmd += string.Format(@" and a.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery_e).ToString("d")); }
             if (!(string.IsNullOrWhiteSpace(sewinline_b)))
-            { sqlcmd += string.Format(@" and not (c.InLine > '{1}' or c.OffLine < '{0}')", sewinline_b, sewinline_e); }
+            { sqlcmd += string.Format(@" and c.OffLine >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("d")); }
+            if (!(string.IsNullOrWhiteSpace(sewinline_e)))
+            { sqlcmd += string.Format(@" and c.InLine <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("d")); }
             if (!(string.IsNullOrWhiteSpace(inline_b)))
-            { sqlcmd += string.Format(@" and not (b.artworkInLine > '{1}' or b.artworkOffLine < '{0}')", inline_b, inline_e); }
+            { sqlcmd += string.Format(@" and b.artworkOffLine >= '{0}'", Convert.ToDateTime(inline_b).ToString("d")); }
+            if (!(string.IsNullOrWhiteSpace(inline_e)))
+            { sqlcmd += string.Format(@" and b.artworkInLine <= '{0}'", Convert.ToDateTime(inline_e).ToString("d")); }
 
             this.ShowWaitMessage("Querying....Please wait....");
 

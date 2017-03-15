@@ -59,6 +59,7 @@
             // 
             // dateRange1
             // 
+            this.dateRange1.IsRequired = false;
             this.dateRange1.IsSupportEditMode = false;
             this.dateRange1.Location = new System.Drawing.Point(106, 22);
             this.dateRange1.Name = "dateRange1";
@@ -67,6 +68,7 @@
             // 
             // dateRange2
             // 
+            this.dateRange2.IsRequired = false;
             this.dateRange2.IsSupportEditMode = false;
             this.dateRange2.Location = new System.Drawing.Point(106, 58);
             this.dateRange2.Name = "dateRange2";

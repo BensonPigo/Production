@@ -344,12 +344,14 @@ namespace Sci.Production.Planning
             }
             if (chkprice)
             { sqlcmd += @" and b.Price > 0"; }
-
-            if (!(MyUtility.Check.Empty(sciDelivery_b)))
-            { sqlcmd += string.Format(@" and a.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
+            if (!MyUtility.Check.Empty(sciDelivery_b))
+            { sqlcmd += string.Format(@" and a.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery_b).ToString("d")); }
+            if (!MyUtility.Check.Empty(sciDelivery_e))
+            { sqlcmd += string.Format(@" and a.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery_e).ToString("d")); }
             if (!(string.IsNullOrWhiteSpace(sewinline_b)))
-            { sqlcmd += string.Format(@" and not (a.SewInLine > '{1}' or a.SewOffLine < '{0}')", sewinline_b, sewinline_e); }
-
+            { sqlcmd += string.Format(@" and a.SewOffLine >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("d")); }
+            if (!(string.IsNullOrWhiteSpace(sewinline_e)))
+            { sqlcmd += string.Format(@" and a.SewInLine <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("d")); }
             this.ShowWaitMessage("Querying....Please wait....");
 
             Ict.DualResult result; 

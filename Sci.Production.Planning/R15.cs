@@ -119,35 +119,45 @@ namespace Sci.Production.Planning
                 "));
 
             #region --- 條件組合  ---
-
             if (!MyUtility.Check.Empty(sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery between '{0}' and '{1}'",
-                Convert.ToDateTime(sciDelivery1).ToString("d"), Convert.ToDateTime(sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
             }
-
+            if (!MyUtility.Check.Empty(sciDelivery2))
+            {
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
+            }
             if (!MyUtility.Check.Empty(BuyerDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and s.BuyerDelivery between '{0}' and '{1}'"
-                , Convert.ToDateTime(BuyerDelivery1).ToString("d"), Convert.ToDateTime(BuyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and s.BuyerDelivery >= '{0}'", Convert.ToDateTime(BuyerDelivery1).ToString("d")));
             }
-
+            if (!MyUtility.Check.Empty(BuyerDelivery2))
+            {
+                sqlCmd.Append(string.Format(@" and s.BuyerDelivery <= '{0}'", Convert.ToDateTime(BuyerDelivery2).ToString("d")));
+            }
             if (!MyUtility.Check.Empty(CustRqsDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.CRDDate between '{0}' and '{1}'"
-                , Convert.ToDateTime(CustRqsDate1).ToString("d"), Convert.ToDateTime(CustRqsDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.CRDDate >= '{0}'", Convert.ToDateTime(CustRqsDate1).ToString("d")));
             }
-
+            if (!MyUtility.Check.Empty(CustRqsDate2))
+            {
+                sqlCmd.Append(string.Format(@" and o.CRDDate <= '{0}'", Convert.ToDateTime(CustRqsDate2).ToString("d")));
+            }
             if (!MyUtility.Check.Empty(CutOffDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.SDPDate between '{0}' and '{1}'"
-                , Convert.ToDateTime(CutOffDate1).ToString("d"), Convert.ToDateTime(CutOffDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.SDPDate >= '{0}'", Convert.ToDateTime(CutOffDate1).ToString("d")));
             }
-
+            if (!MyUtility.Check.Empty(CutOffDate2))
+            {
+                sqlCmd.Append(string.Format(@" and o.SDPDate <= '{0}'", Convert.ToDateTime(CutOffDate2).ToString("d")));
+            }
             if (!MyUtility.Check.Empty(planDate1))
             {
-                sqlCmd.Append(string.Format(@" and o.PlanDate between '{0}' and '{1}'"
-                , Convert.ToDateTime(planDate1).ToString("d"), Convert.ToDateTime(planDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and o.PlanDate >= '{0}'", Convert.ToDateTime(planDate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(planDate2))
+            {
+                sqlCmd.Append(string.Format(@" and o.PlanDate <= '{0}'", Convert.ToDateTime(planDate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(spno1))

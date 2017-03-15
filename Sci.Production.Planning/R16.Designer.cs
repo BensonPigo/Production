@@ -55,6 +55,7 @@
             // 
             // sewingDateRange
             // 
+            this.sewingDateRange.IsRequired = false;
             this.sewingDateRange.Location = new System.Drawing.Point(111, 48);
             this.sewingDateRange.Name = "sewingDateRange";
             this.sewingDateRange.Size = new System.Drawing.Size(280, 23);
@@ -98,6 +99,7 @@
             // 
             // sciDeliveryRange
             // 
+            this.sciDeliveryRange.IsRequired = false;
             this.sciDeliveryRange.Location = new System.Drawing.Point(111, 12);
             this.sciDeliveryRange.Name = "sciDeliveryRange";
             this.sciDeliveryRange.Size = new System.Drawing.Size(280, 23);

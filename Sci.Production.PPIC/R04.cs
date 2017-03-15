@@ -65,8 +65,16 @@ namespace Sci.Production.PPIC
         {
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder sqlCondition = new StringBuilder();
-            sqlCondition.Append(string.Format(@"where l.FabricType = '{0}'
-and l.ApvDate between '{1}' and '{2}' ", (reportType == 0 ? "F" : "A"), Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
+            sqlCondition.Append(string.Format(@"where l.FabricType = '{0}' ", (reportType == 0 ? "F" : "A")));
+
+            if (!MyUtility.Check.Empty(date1))
+            {
+                sqlCondition.Append(string.Format(@" and l.ApvDate >= '{0}'", Convert.ToDateTime(date1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(date2))
+            {
+                sqlCondition.Append(string.Format(@" and l.ApvDate <= '{0}'", Convert.ToDateTime(date2).ToString("d")));
+            }
             if (!MyUtility.Check.Empty(mDivision))
             {
                 sqlCondition.Append(string.Format(" and l.MDivisionID = '{0}'", mDivision));

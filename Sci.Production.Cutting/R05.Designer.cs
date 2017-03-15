@@ -119,6 +119,7 @@
             // 
             // dateR_EstCutDate
             // 
+            this.dateR_EstCutDate.IsRequired = false;
             this.dateR_EstCutDate.Location = new System.Drawing.Point(107, 7);
             this.dateR_EstCutDate.Name = "dateR_EstCutDate";
             this.dateR_EstCutDate.Size = new System.Drawing.Size(280, 23);

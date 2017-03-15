@@ -38,11 +38,11 @@ namespace Sci.Production.Planning
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
-            {
-                MyUtility.Msg.ErrorBox(" < Sewing Date > can't be empty!!");
-                return false;
-            }
+            //if (MyUtility.Check.Empty(dateRange1.Value1))
+            //{
+            //    MyUtility.Msg.ErrorBox(" < Sewing Date > can't be empty!!");
+            //    return false;
+            //}
 
             #region -- 必輸的條件 --
             sewingDate1 = dateRange1.Value1;
@@ -117,7 +117,7 @@ AND Order_TmsCost.TMS > 0
 
             #region --- 條件組合  ---
             condition.Clear();
-            if (!MyUtility.Check.Empty(sewingDate1))
+            if (!MyUtility.Check.Empty(sewingDate1) && !MyUtility.Check.Empty(sewingDate2))
             {
                 sqlCmd.Append(string.Format(@" AND ((SewingSchedule.Inline BETWEEN '{0:d}' AND '{1}') OR (SewingSchedule.Offline BETWEEN '{0:d}' AND '{1}'))",
                 sewingDate1, Convert.ToDateTime(sewingDate2).ToString("d")));
@@ -125,7 +125,19 @@ AND Order_TmsCost.TMS > 0
                 , Convert.ToDateTime(sewingDate1).ToString("d")
                 , Convert.ToDateTime(sewingDate2).ToString("d")));
             }
-
+            else
+            {
+                if (!MyUtility.Check.Empty(sewingDate1))
+                {
+                    sqlCmd.Append(string.Format(@" and SewingSchedule.Inline >= '{0}' or SewingSchedule.Offline >='{0}' ", Convert.ToDateTime(sewingDate1).ToString("d")));
+                    condition.Append(string.Format(@"SCI Delivery : {0} ~ ", Convert.ToDateTime(sewingDate1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(sewingDate2))
+                {
+                    sqlCmd.Append(string.Format(@" and SewingSchedule.Inline <= '{0}' or SewingSchedule.Offline <='{0}'", Convert.ToDateTime(sewingDate2).ToString("d")));
+                    condition.Append(string.Format(@"SCI Delivery :  ~ {0} ", Convert.ToDateTime(sewingDate2).ToString("d")));
+                }
+            }
             if (!MyUtility.Check.Empty(mdivision))
             {
                 sqlCmd.Append(" and orders.mdivisionid = @MDivision");

@@ -73,16 +73,32 @@ sp.FtyHandle+'-'+isnull((select Name from Pass1 WITH (NOLOCK) where ID = sp.FtyH
 from Style_ProductionKits sp WITH (NOLOCK) 
 inner join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
 left join Reason r WITH (NOLOCK) on r.ReasonTypeID = 'ProductionKits' and r.ID = sp.DOC
-where sp.SCIDelivery between '{0}' and '{1}'", Convert.ToDateTime(sciDate1).ToString("d"), Convert.ToDateTime(sciDate2).ToString("d")));
+where 1=1 ")); 
 
+            if (!MyUtility.Check.Empty(sciDate1))
+            {
+                sqlCmd.Append(string.Format(@" and sp.SCIDelivery >= '{0}'", Convert.ToDateTime(sciDate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(sciDate2))
+            {
+                sqlCmd.Append(string.Format(@" and sp.SCIDelivery <= '{0}'", Convert.ToDateTime(sciDate2).ToString("d")));
+            }
             if (!MyUtility.Check.Empty(prodiveDate1))
             {
-                sqlCmd.Append(string.Format(" and sp.ProvideDate between '{0}' and '{1}'", Convert.ToDateTime(prodiveDate1).ToString("d"), Convert.ToDateTime(prodiveDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and sp.ProvideDate >= '{0}'", Convert.ToDateTime(prodiveDate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(prodiveDate2))
+            {
+                sqlCmd.Append(string.Format(@" and sp.ProvideDate <= '{0}'", Convert.ToDateTime(prodiveDate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(rcvDate1))
             {
-                sqlCmd.Append(string.Format(" and sp.ReceiveDate between '{0}' and '{1}'", Convert.ToDateTime(rcvDate1).ToString("d"), Convert.ToDateTime(rcvDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and sp.ReceiveDate >= '{0}'", Convert.ToDateTime(rcvDate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(rcvDate2))
+            {
+                sqlCmd.Append(string.Format(@" and sp.ReceiveDate <= '{0}'", Convert.ToDateTime(rcvDate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(brand))

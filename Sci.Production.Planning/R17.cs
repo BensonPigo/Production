@@ -44,11 +44,11 @@ namespace Sci.Production.Planning
 
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
-            {
-                MyUtility.Msg.WarningBox(" < Factory KPI Date > can't be empty!!");
-                return false;
-            }
+            //if (MyUtility.Check.Empty(dateRange1.Value1))
+            //{
+            //    MyUtility.Msg.WarningBox(" < Factory KPI Date > can't be empty!!");
+            //    return false;
+            //}
             return base.ValidateInput();
         }
 

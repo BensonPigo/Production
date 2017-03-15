@@ -105,17 +105,19 @@ namespace Sci.Production.Planning
             //o1.BuyerDelivery between '20150101' and '20150731' AND O1.Finished = 0 AND O2.Price > 0 and o1.FtyGroup = 'MWI' 
             //	and o1.id='15040605CW002'
             #region --- 條件組合  ---
+
             if (!MyUtility.Check.Empty(buyerDelivery1))
-            {
-                sqlCmd.Append(string.Format(@" and o1.BuyerDelivery between '{0}' and '{1}'"
-                , Convert.ToDateTime(buyerDelivery1).ToString("d"), Convert.ToDateTime(buyerDelivery2).ToString("d")));
-            }
+            { sqlCmd.Append(string.Format(@" and o1.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDelivery1).ToString("d"))); }
+
+            if (!MyUtility.Check.Empty(buyerDelivery2))
+            { sqlCmd.Append(string.Format(@" and o1.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDelivery2).ToString("d"))); }
 
             if (!MyUtility.Check.Empty(sciDelivery1))
-            {
-                sqlCmd.Append(string.Format(@" and o1.SciDelivery between '{0}' and '{1}'",
-                Convert.ToDateTime(sciDelivery1).ToString("d"), Convert.ToDateTime(sciDelivery2).ToString("d")));
-            }
+            { sqlCmd.Append(string.Format(@" and o1.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d"))); }
+
+            if (!MyUtility.Check.Empty(sciDelivery2))
+            { sqlCmd.Append(string.Format(@" and o1.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d"))); }
+
             if (!MyUtility.Check.Empty(spno1))
             {
                 sqlCmd.Append(" and o1.id >= @spno1 and o1.id <= @spno2");
@@ -126,16 +128,16 @@ namespace Sci.Production.Planning
             }
 
             if (!MyUtility.Check.Empty(sewinline1))
-            {
-                sqlCmd.Append(string.Format(@" and o1.sewinline between '{0}' and '{1}'"
-                , Convert.ToDateTime(sewinline1).ToString("d"), Convert.ToDateTime(sewinline2).ToString("d")));
-            }
+            { sqlCmd.Append(string.Format(@" and o1.sewinline >= '{0}'", Convert.ToDateTime(sewinline1).ToString("d"))); }
+
+            if (!MyUtility.Check.Empty(sewinline2))
+            { sqlCmd.Append(string.Format(@" and o1.sewinline <= '{0}'", Convert.ToDateTime(sewinline2).ToString("d"))); }
 
             if (!MyUtility.Check.Empty(cutinline1))
-            {
-                sqlCmd.Append(string.Format(@" and o1.cutinline between '{0}' and '{1}'"
-                , Convert.ToDateTime(cutinline1).ToString("d"), Convert.ToDateTime(cutinline2).ToString("d")));
-            }
+            { sqlCmd.Append(string.Format(@" and o1.cutinline >= '{0}'", Convert.ToDateTime(cutinline1).ToString("d"))); }
+
+            if (!MyUtility.Check.Empty(cutinline2))
+            { sqlCmd.Append(string.Format(@" and o1.cutinline <= '{0}'", Convert.ToDateTime(cutinline2).ToString("d"))); }
 
             if (!MyUtility.Check.Empty(artworktype))
             {

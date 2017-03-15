@@ -66,12 +66,20 @@ where o.Category = 'B'");
 
             if (!MyUtility.Check.Empty(buyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery between '{0}' and '{1}'", Convert.ToDateTime(buyerDelivery1).ToString("d"), Convert.ToDateTime(buyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDelivery1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(buyerDelivery2))
+            {
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDelivery2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(sciDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery between '{0}' and '{1}'", Convert.ToDateTime(sciDelivery1).ToString("d"), Convert.ToDateTime(sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(sciDelivery2))
+            {
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(brand))
