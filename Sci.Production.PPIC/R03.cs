@@ -706,25 +706,23 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                                 if (!MyUtility.Check.Empty(sdr["Supp"]))
                                 {
                                     objArray[0, subConCol - 1] = sdr["Supp"];
-                                }
-                                else
-                                {
-                                    objArray[0, subConCol - 1] = "";
+                                    
                                 }
                             }
                         }
                     }
+                  
                     objArray[0, ttlTMS-1] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * stdTMS;
-                }
+                  }
+                    
                 else
-                {
-                    objArray[0, 112] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * stdTMS;
-                }
+                     {
+                         objArray[0, 112] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * stdTMS;
+                     }
 
-                worksheet.Range[String.Format("A{0}:{1}{0}", intRowsStart, excelColEng)].Value2 = objArray;
                 worksheet.Range[String.Format("A{0}:{1}{0}", 1, excelColEng)].AutoFilter(1); //篩選
                 worksheet.Range[String.Format("A{0}:{1}{0}", 1, excelColEng)].Interior.Color = Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(191)))), ((int)(((byte)(191))))); //底色
-
+                worksheet.Range[String.Format("A{0}:{1}{0}", intRowsStart, excelColEng)].Value2 = objArray;
                 intRowsStart++;
             }
            
