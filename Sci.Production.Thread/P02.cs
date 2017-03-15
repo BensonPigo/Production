@@ -274,7 +274,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
            .Text("description", header: "Thread Desc", width: Widths.AnsiChars(18), iseditingreadonly: true)
            .Text("ThreadColorid", header: "Thread\r\nColor", width: Widths.AnsiChars(4), settings: thcolor).Get(out col_color)
            .Text("Colordesc", header: "Thread Color Desc", width: Widths.AnsiChars(18), iseditingreadonly: true)
-           .Numeric("ConsumptionQty", header: "Total\r\nCones.(M)", width: Widths.AnsiChars(2), integer_places: 6, settings: cons).Get(out col_cons)
+           .Numeric("ConsumptionQty", header: "Total\r\nCons.(M)", width: Widths.AnsiChars(2), integer_places: 6, settings: cons).Get(out col_cons)
            .Numeric("MeterToCone", header: "No. of Meters\r\nPer Cones", width: Widths.AnsiChars(6), integer_places: 7, decimal_places: 1, iseditingreadonly: true)
            .Numeric("TotalQty", header: "No. of\r\nCones", width: Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty1)
 
