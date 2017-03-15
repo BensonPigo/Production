@@ -51,6 +51,12 @@
     <Reference Include="Ict">
       <HintPath>..\_Dll\Ict.dll</HintPath>
     </Reference>
+    <Reference Include="Ict.Report2012">
+      <HintPath>..\_Dll\Ict.Report2012.dll</HintPath>
+    </Reference>
+    <Reference Include="Ict.Report2012.resources">
+      <HintPath>..\_Dll\en\Ict.Report2012.resources.dll</HintPath>
+    </Reference>
     <Reference Include="Ict.resources">
       <HintPath>..\_Dll\en\Ict.resources.dll</HintPath>
     </Reference>
@@ -62,12 +68,6 @@
     </Reference>
     <Reference Include="Ict.Win.App.resources">
       <HintPath>..\_Dll\en\Ict.Win.App.resources.dll</HintPath>
-    </Reference>
-    <Reference Include="Ict.Win.Report2010">
-      <HintPath>..\_Dll\Ict.Win.Report2010.dll</HintPath>
-    </Reference>
-    <Reference Include="Ict.Win.Report2010.resources">
-      <HintPath>..\_Dll\en\Ict.Win.Report2010.resources.dll</HintPath>
     </Reference>
     <Reference Include="Ict.Win.resources">
       <HintPath>..\_Dll\en\Ict.Win.resources.dll</HintPath>
@@ -84,17 +84,14 @@
     <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.Common.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.ProcessingObjectModel.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.WinForms.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>True</Private>

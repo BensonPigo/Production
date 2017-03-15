@@ -3723,7 +3723,6 @@ Sci.Production/XLT/Warehouse_R18_Material_Tracking.xltx -text
 Sci.Production/XLT/Warehouse_R19_Material_Borrowing.xltx -text
 Sci.Production/app.config -text
 _Dll/Ict.Win.App.dll -text
-_Dll/Ict.Win.Report2010.dll -text
 _Dll/Ict.Win.UI.dll -text
 _Dll/Ict.Win.dll -text
 _Dll/Ict.dll -text
@@ -3740,7 +3739,6 @@ _Dll/Sci.XML -text
 _Dll/Sci.dll -text
 _Dll/Sci.pdb -text
 _Dll/en/Ict.Win.App.resources.dll -text
-_Dll/en/Ict.Win.Report2010.resources.dll -text
 _Dll/en/Ict.Win.UI.resources.dll -text
 _Dll/en/Ict.Win.resources.dll -text
 _Dll/en/Ict.resources.dll -text

@@ -370,6 +370,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Ict.dll</HintPath>
     </Reference>
+    <Reference Include="Ict.Report2012, Version=1.0.1701.1900, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Ict.Report2012.dll</HintPath>
+    </Reference>
     <Reference Include="Ict.Win, Version=1.0.1412.3000, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Ict.Win.dll</HintPath>
@@ -377,10 +381,6 @@
     <Reference Include="Ict.Win.App, Version=1.0.1503.900, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Ict.Win.App.dll</HintPath>
-    </Reference>
-    <Reference Include="Ict.Win.Report2010, Version=1.0.1503.1100, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\_Dll\Ict.Win.Report2010.dll</HintPath>
     </Reference>
     <Reference Include="Ict.Win.UI, Version=1.0.1503.1600, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
