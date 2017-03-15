@@ -68,7 +68,7 @@ left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
 left join Order_QtyShip oq WITH (NOLOCK) on pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 left join Cutting ct WITH (NOLOCK) on ct.ID = o.CuttingSP
-where p.Status = 'Confirmed'
+where p.Status <> 'New'
 and p.PulloutDate between '{0}' and '{1}'", Convert.ToDateTime(pulloutDate1).ToString("d"), Convert.ToDateTime(pulloutDate2).ToString("d")));
             if (!MyUtility.Check.Empty(brand))
             {
