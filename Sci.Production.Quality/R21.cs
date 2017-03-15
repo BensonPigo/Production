@@ -53,21 +53,22 @@ namespace Sci.Production.Quality
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd_Summary = new StringBuilder();
-           
-            #region 組撈Summary Data SQL
-            sqlCmd_Summary.Append(
-@"select 
+            if (S_radioButton.Checked)
+            {
+                #region 組撈Summary Data SQL
+                sqlCmd_Summary.Append(
+    @"select DISTINCT
 c.StyleID
 ,a.OrderID
 ,iif(c.VasShas=0,'','v') as 'VAS/SHAS'
 ,c.BrandID
 ,c.CustPONo
 ,a.cDate
-,a.GarmentOutput
+,[GarmentOutput]= round(a.GarmentOutput/100,2)
 ,a.FactoryID
 ,a.SewingLineID
 ,case a.shift 
-when 'D' then 'night'
+when 'D' then 'DAY'
 when 'N' then 'NIGHT'
 when 'O' then 'SUBCON OUT'
 when 'I' then 'SUBCON IN'
@@ -82,136 +83,157 @@ when 'R' then 'Re-Stagger'
 when 'F' then 'Final'
 when 'B' then 'Buyer'
 else ''  end as Stage
-,a.Result
+,[Result]= 
+case a.result when 'P' then 'Pass'
+when 'F' then 'Fail'
+else '' end 
 ,a.InspectQty
 ,a.DefectQty
-,iif(a.InspectQty=0,0,round(a.DefectQty/a.InspectQty*100,3)) [SQR]
-from dbo.Cfa a WITH (NOLOCK) inner join dbo.Cfa_Detail b WITH (NOLOCK) 
-on b.id = a.ID 
+,iif(a.InspectQty=0,0,round(a.DefectQty/a.InspectQty,3)) [SQR]
+from dbo.Cfa a WITH (NOLOCK) 
 inner join dbo.orders c WITH (NOLOCK) 
 on c.id = a.OrderID
 where a.Status = 'Confirmed'");
-            if (!MyUtility.Check.Empty(id1))
-            {
-                sqlCmd_Summary.Append(string.Format("and a.OrderID >= '{0}'", id1));
-            }
-            if (!MyUtility.Check.Empty(id2))
-            {
-                sqlCmd_Summary.Append(string.Format(" and a.OrderID <= '{0}'", id2));
-            }
-            if (!MyUtility.Check.Empty(cdate1))
-            {
-                sqlCmd_Summary.Append(string.Format(" and a.cDate >= '{0}'", Convert.ToDateTime(cdate1).ToShortDateString()));
-            }
-            if (!MyUtility.Check.Empty(cdate2))
-            {
-                sqlCmd_Summary.Append(string.Format(" and a.cDate <= '{0}'", Convert.ToDateTime(cdate2).ToShortDateString()));
-            }
-            if (!MyUtility.Check.Empty(bdate1))
-            {
-                sqlCmd_Summary.Append(string.Format(" and c.BuyerDelivery >= '{0}'", Convert.ToDateTime(bdate1).ToShortDateString()));
-            }
-            if (!MyUtility.Check.Empty(bdate2))
-            {
-                sqlCmd_Summary.Append(string.Format(" and c.BuyerDelivery <= '{0}'", Convert.ToDateTime(bdate2).ToShortDateString()));
-            }
-            if (!MyUtility.Check.Empty(factory))
-            {
-                sqlCmd_Summary.Append(string.Format(" and a.FactoryID = '{0}'", factory));
-            }
-            if (!MyUtility.Check.Empty(brand))
-            {
-                sqlCmd_Summary.Append(string.Format(" and c.brandID = '{0}'", brand));
-            }
-        
-            DualResult result = DBProxy.Current.Select(null, sqlCmd_Summary.ToString(), out SummaryData);
-            if(!result)
-            {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                return failResult;
-            }
-            #endregion
-            StringBuilder sqlCmd_Detail = new StringBuilder();
+                if (!MyUtility.Check.Empty(id1))
+                {
+                    sqlCmd_Summary.Append(string.Format("and a.OrderID >= '{0}'", id1));
+                }
+                if (!MyUtility.Check.Empty(id2))
+                {
+                    sqlCmd_Summary.Append(string.Format(" and a.OrderID <= '{0}'", id2));
+                }
+                if (!MyUtility.Check.Empty(cdate1))
+                {
+                    sqlCmd_Summary.Append(string.Format(" and a.cDate >= '{0}'", Convert.ToDateTime(cdate1).ToShortDateString()));
+                }
+                if (!MyUtility.Check.Empty(cdate2))
+                {
+                    sqlCmd_Summary.Append(string.Format(" and a.cDate <= '{0}'", Convert.ToDateTime(cdate2).ToShortDateString()));
+                }
+                if (!MyUtility.Check.Empty(bdate1))
+                {
+                    sqlCmd_Summary.Append(string.Format(" and c.BuyerDelivery >= '{0}'", Convert.ToDateTime(bdate1).ToShortDateString()));
+                }
+                if (!MyUtility.Check.Empty(bdate2))
+                {
+                    sqlCmd_Summary.Append(string.Format(" and c.BuyerDelivery <= '{0}'", Convert.ToDateTime(bdate2).ToShortDateString()));
+                }
+                if (!MyUtility.Check.Empty(factory))
+                {
+                    sqlCmd_Summary.Append(string.Format(" and a.FactoryID = '{0}'", factory));
+                }
+                if (!MyUtility.Check.Empty(brand))
+                {
+                    sqlCmd_Summary.Append(string.Format(" and c.brandID = '{0}'", brand));
+                }
 
-            #region 組撈Detail Data SQL
-            sqlCmd_Detail.Append(
-@"select 
+                DualResult result = DBProxy.Current.Select(null, sqlCmd_Summary.ToString(), out SummaryData);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    return failResult;
+                }
+                #endregion
+            }
+            else
+            {
+                StringBuilder sqlCmd_Detail = new StringBuilder();
+
+                #region 組撈Detail Data SQL
+                sqlCmd_Detail.Append(
+    @"
+select DISTINCT
 c.FactoryID
 ,a.OrderID
-,iif(c.VasShas=0,'','v') as 'VAS/SHAS'
+,[VAS/SHAS]= iif(c.VasShas=0,'','v') 
 ,c.StyleID
 ,c.BrandID
 ,c.CustPONo
 ,a.cDate
-,a.GarmentOutput
+,[GarmentOutput]= round(a.GarmentOutput/100,2)
 ,a.SewingLineID
-,case a.shift 
-when 'D' then 'night'
+,[shift]= 
+case a.shift 
+when 'D' then 'DAY'
 when 'N' then 'NIGHT'
 when 'O' then 'SUBCON OUT'
 when 'I' then 'SUBCON IN'
-else '' end as Shift
+else '' end
 ,a.Team
 ,c.Qty
-,DBO.GETPASS1(a.CFA) as CFA
-,case a.Stage when 'I' then 'Comments/Roving'
+,[Cfa]= DBO.GETPASS1(a.CFA)
+,[Stage]= 
+case a.Stage when 'I' then 'Comments/Roving'
 when 'C' then 'Change Over'
 when 'P' then 'Stagger'
 when 'R' then 'Re-Stagger'
 when 'F' then 'Final'
 when 'B' then 'Buyer'
-else ''  end as Stage
-,a.Result
+else ''  end
+,[Result]= 
+case a.result when 'P' then 'Pass'
+when 'F' then 'Fail'
+else '' end 
 ,a.InspectQty
 ,a.DefectQty
-,iif(a.InspectQty=0,0,round(a.DefectQty/a.InspectQty*100,3)) [SQR]
-,'' as Area
-from dbo.Cfa a WITH (NOLOCK) inner join dbo.Cfa_Detail b WITH (NOLOCK) 
+,[SQR]= iif(a.InspectQty=0,0,round(a.DefectQty/a.InspectQty,3)) 
+,[Defect Description]= gd.Description
+,[Area]= b.CFAAreaID +' - '+ar.Description
+,[No. Of Defect]=b.Qty
+,[Remark]= b.Remark
+,[Action]= b.Action
+from dbo.Cfa a WITH (NOLOCK) 
+inner join dbo.Cfa_Detail b WITH (NOLOCK) 
 on b.id = a.ID 
 inner join dbo.orders c WITH (NOLOCK) 
 on c.id = a.OrderID
+outer apply(select Description from dbo.GarmentDefectCode a where a.id=b.GarmentDefectCodeID) as gd
+outer apply(select description from dbo.cfaarea a where a.id=b.CFAAreaID) as ar
 where a.Status = 'Confirmed'");
-            if (!MyUtility.Check.Empty(id1))
-            {
-                sqlCmd_Summary.Append(string.Format("and a.OrderID >= '{0}'", id1));
-            }
-            if (!MyUtility.Check.Empty(id2))
-            {
-                sqlCmd_Summary.Append(string.Format(" and a.OrderID <= '{0}'", id2));
-            }
-            if (!MyUtility.Check.Empty(cdate1))
-            {
-                sqlCmd_Summary.Append(string.Format(" and a.cDate >= '{0}'", Convert.ToDateTime(cdate1).ToShortDateString()));
-            }
-            if (!MyUtility.Check.Empty(cdate2))
-            {
-                sqlCmd_Summary.Append(string.Format(" and a.cDate <= '{0}'", Convert.ToDateTime(cdate2).ToShortDateString()));
-            }
-            if (!MyUtility.Check.Empty(bdate1))
-            {
-                sqlCmd_Summary.Append(string.Format(" and c.BuyerDelivery >= '{0}'", Convert.ToDateTime(bdate1).ToShortDateString()));
-            }
-            if (!MyUtility.Check.Empty(bdate2))
-            {
-                sqlCmd_Summary.Append(string.Format(" and c.BuyerDelivery <= '{0}'", Convert.ToDateTime(bdate2).ToShortDateString()));
-            }
-            if (!MyUtility.Check.Empty(factory))
-            {
-                sqlCmd_Summary.Append(string.Format(" and a.FactoryID = '{0}'", factory));
-            }
-            if (!MyUtility.Check.Empty(brand))
-            {
-                sqlCmd_Summary.Append(string.Format(" and c.brandID = '{0}'", brand));
-            }
-     
-            DualResult result1 = DBProxy.Current.Select(null, sqlCmd_Detail.ToString(), out DetailData);
-            if (!result)
-            {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result1.ToString());
-                return failResult;
+                if (!MyUtility.Check.Empty(id1))
+                {
+                    sqlCmd_Detail.Append(string.Format("and a.OrderID >= '{0}'", id1));
+                }
+                if (!MyUtility.Check.Empty(id2))
+                {
+                    sqlCmd_Detail.Append(string.Format(" and a.OrderID <= '{0}'", id2));
+                }
+                if (!MyUtility.Check.Empty(cdate1))
+                {
+                    sqlCmd_Detail.Append(string.Format(" and a.cDate >= '{0}'", Convert.ToDateTime(cdate1).ToShortDateString()));
+                }
+                if (!MyUtility.Check.Empty(cdate2))
+                {
+                    sqlCmd_Detail.Append(string.Format(" and a.cDate <= '{0}'", Convert.ToDateTime(cdate2).ToShortDateString()));
+                }
+                if (!MyUtility.Check.Empty(bdate1))
+                {
+                    sqlCmd_Detail.Append(string.Format(" and c.BuyerDelivery >= '{0}'", Convert.ToDateTime(bdate1).ToShortDateString()));
+                }
+                if (!MyUtility.Check.Empty(bdate2))
+                {
+                    sqlCmd_Detail.Append(string.Format(" and c.BuyerDelivery <= '{0}'", Convert.ToDateTime(bdate2).ToShortDateString()));
+                }
+                if (!MyUtility.Check.Empty(factory))
+                {
+                    sqlCmd_Detail.Append(string.Format(" and a.FactoryID = '{0}'", factory));
+                }
+                if (!MyUtility.Check.Empty(brand))
+                {
+                    sqlCmd_Detail.Append(string.Format(" and c.brandID = '{0}'", brand));
+                }
 
+                DualResult result1 = DBProxy.Current.Select(null, sqlCmd_Detail.ToString(), out DetailData);
+                if (!result1)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result1.ToString());
+                    return failResult;
+
+                }
+                #endregion
             }
-            #endregion
+            
+         
             return Result.True;
         }
         // 產生Excel 必須要有
@@ -228,8 +250,8 @@ where a.Status = 'Confirmed'");
                     return false;
                 }
 
-                Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFM_InlineReport_Summary.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(SummaryData,"","Quality_R21_CFM_InlineReport_Summary.xltx",2,true,null,  excel);
+                Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_Summary.xltx"); //預先開啟excel app
+                MyUtility.Excel.CopyToXls(SummaryData,"","Quality_R21_CFA_InlineReport_Summary.xltx",2,true,null,  excel);
                 Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表                 
 
                 excel.Cells.EntireColumn.AutoFit();
