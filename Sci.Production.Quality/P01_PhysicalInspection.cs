@@ -115,7 +115,18 @@ namespace Sci.Production.Quality
         }
         protected override void OnRequeryPost(DataTable datas)
         {
-            
+            if (!datas.Columns.Contains("CutWidth"))
+            {
+                datas.ColumnsDecimalAdd("CutWidth");
+                foreach (DataRow dr in datas.Rows)
+                {
+                    dr["CutWidth"] = MyUtility.GetValue.Lookup(string.Format(@"
+                                                                        select width
+                                                                        from Fabric 
+                                                                        inner join Fir on Fabric.SCIRefno = fir.SCIRefno
+                                                                        where Fir.ID = '{0}'", dr["id"]), null, null);
+                }
+            }
             base.OnRequeryPost(datas);
             datas.Columns.Add("Name", typeof(string));
             datas.Columns.Add("POID", typeof(string));
@@ -221,7 +232,7 @@ namespace Sci.Production.Quality
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
             .Numeric("Actualyds", header: "Act.Yds\nInspected", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2)
-            .Numeric("fullwidth", header: "Cut. Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2,iseditingreadonly:true)
+            .Numeric("CutWidth", header: "Cut. Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2,iseditingreadonly:true)
             .Numeric("fullwidth", header: "Full width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
             .Numeric("actualwidth", header: "Actual Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
             .Numeric("totalpoint", header: "Total Points", width: Widths.AnsiChars(7), integer_places: 6, iseditingreadonly: true, settings: TotalPointcell)
@@ -727,7 +738,7 @@ Where DetailUkey = {15};",
             excel.Cells[1, 4] = this.color_box.Text;
             excel.Cells[1, 6] = this.style_box.Text;
             excel.Cells[1, 8] = dt1.Rows[0]["SeasonID"];
-            excel.Cells[1, 10] = dt1.Rows[0]["Inspector"];
+            excel.Cells[1, 10] = dt1.Rows[0]["Name"];
             excel.Cells[2, 2] = this.scirefno_box.Text;
             excel.Cells[2, 4] = this.result_box.Text;
             excel.Cells[2, 6] = this.lastinspdate_box.Value;
@@ -763,7 +774,7 @@ Where DetailUkey = {15};",
                 worksheet.get_Range(cell,cell).NumberFormat = "0.00";
                     
                 excel.Cells[14+(i*8), 3] = this.grid.Rows[rowcount].Cells["Actualyds"].Value.ToString();
-                excel.Cells[14+(i*8), 4] = this.grid.Rows[rowcount].Cells["fullwidth"].Value.ToString();
+                excel.Cells[14+(i*8), 4] = this.grid.Rows[rowcount].Cells["Cutwidth"].Value.ToString();
                 excel.Cells[14+(i*8), 5] = this.grid.Rows[rowcount].Cells["fullwidth"].Value.ToString();
                 excel.Cells[14+(i*8), 6] = this.grid.Rows[rowcount].Cells["actualwidth"].Value.ToString();
                 excel.Cells[14+(i*8), 7] = this.grid.Rows[rowcount].Cells["totalpoint"].Value.ToString();
@@ -813,13 +824,36 @@ Where DetailUkey = {15};",
                 DataTable dtcombo;
                 DualResult dcResult;
 
-                if (dcResult = DBProxy.Current.Select("Production", string.Format(
-        @"select a.ID,a.Roll,'Continuity' type_c,d.Result as Result_c,d.Remark as Remark_c,d.Inspector as Inspector_c,'Shadebond' type_s,b.Result as Result_s,b.Remark as Remark_s,b.Inspector as Inspector_s,'Weight' type_w,c.Result as Result_w,c.Remark as Remark_w,c.Inspector as Inspector_w,'' as Comment 
-        from FIR_Physical a WITH (NOLOCK) 
-		left join FIR_Shadebone b WITH (NOLOCK) on a.ID=b.ID and a.Roll=b.Roll
-		left join FIR_Weight c WITH (NOLOCK) on a.ID=c.ID and a.Roll=c.Roll
-		left join FIR_Continuity d WITH (NOLOCK) on a.id=d.ID and a.Roll=d.roll
-		where a.ID='{0}' and a.Roll='{1}'", textID.Text,dt.Rows[i]["roll"].ToString()), out dtcombo))
+                if (dcResult = DBProxy.Current.Select("Production", string.Format(@"
+select  a.ID
+        ,a.Roll
+        ,type_c = 'Continuity' 
+        ,Result_c = d.Result 
+        ,Remark_c = d.Remark 
+        ,Inspector_c = d.Inspector 
+        ,Name_c = (select Concat(Pass1.Name, ' Ext.', Pass1.ExtNo) 
+                   from Pass1
+                   where Pass1.ID = d.Inspector) 
+        ,type_s = 'Shadebond' 
+        ,Result_s = b.Result 
+        ,Remark_s = b.Remark 
+        ,Inspector_s = b.Inspector 
+        ,Name_s = (select Concat(Pass1.Name, ' Ext.', Pass1.ExtNo) 
+                   from Pass1
+                   where Pass1.ID = b.Inspector) 
+        ,type_w = 'Weight' 
+        ,Result_w = c.Result 
+        ,Remark_w = c.Remark 
+        ,Inspector_w = c.Inspector 
+        ,Name_w = (select Concat(Pass1.Name, ' Ext.', Pass1.ExtNo) 
+                   from Pass1
+                   where Pass1.ID = c.Inspector) 
+        ,Comment = '' 
+from FIR_Physical a WITH (NOLOCK) 
+left join FIR_Shadebone b WITH (NOLOCK) on a.ID=b.ID and a.Roll=b.Roll
+left join FIR_Weight c WITH (NOLOCK) on a.ID=c.ID and a.Roll=c.Roll
+left join FIR_Continuity d WITH (NOLOCK) on a.id=d.ID and a.Roll=d.roll
+where a.ID='{0}' and a.Roll='{1}'", textID.Text, dt.Rows[i]["roll"].ToString()), out dtcombo))
                 {
                     if (dtcombo.Rows.Count < 1 )
                     {
@@ -846,15 +880,15 @@ Where DetailUkey = {15};",
 
                         excel.Cells[19 + (i * 8), 2] = dtcombo.Rows[0]["Result_c"].ToString();
                         excel.Cells[19 + (i * 8), 3] = dtcombo.Rows[0]["Remark_c"].ToString();
-                        excel.Cells[19 + (i * 8), 4] = dtcombo.Rows[0]["Inspector_c"].ToString();
+                        excel.Cells[19 + (i * 8), 4] = dtcombo.Rows[0]["Name_c"].ToString();
 
                         excel.Cells[20 + (i * 8), 2] = dtcombo.Rows[0]["Result_s"].ToString();
                         excel.Cells[20 + (i * 8), 3] = dtcombo.Rows[0]["Remark_s"].ToString();
-                        excel.Cells[20 + (i * 8), 4] = dtcombo.Rows[0]["Inspector_s"].ToString();
+                        excel.Cells[20 + (i * 8), 4] = dtcombo.Rows[0]["Name_s"].ToString();
 
                         excel.Cells[21 + (i * 8), 2] = dtcombo.Rows[0]["Result_w"].ToString();
                         excel.Cells[21 + (i * 8), 3] = dtcombo.Rows[0]["Remark_w"].ToString();
-                        excel.Cells[21 + (i * 8), 4] = dtcombo.Rows[0]["Inspector_w"].ToString();
+                        excel.Cells[21 + (i * 8), 4] = dtcombo.Rows[0]["Name_w"].ToString();
                         worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Interior.Color = Color.Pink;
                         worksheet.Range[excel.Cells[17 + (i * 8), 1], excel.Cells[17 + (i * 8), 4]].Borders.LineStyle = 1;
                     }
