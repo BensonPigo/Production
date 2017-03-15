@@ -106,8 +106,7 @@ order by p.ID,pd.Seq", orderID);
             Helper.Controls.Grid.Generator(this.grid1)
                 .Text("PackingListID", header: "Packing List ID", width: Widths.AnsiChars(15))
                 .Text("CTNStartNo", header: "Ctn#", width: Widths.AnsiChars(6))
-                .Text("Type", header: "Trans. Type", width: Widths.AnsiChars(12))
-                .Text("id", header: "Trans. No", width: Widths.AnsiChars(12))
+                .Text("Type", header: "Trans. Type", width: Widths.AnsiChars(12))                
                 .Date("TypeDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Text("Location", header: "Location", width: Widths.AnsiChars(8))
                 .DateTime("UpdateDate", header: "Last update datetime", width: Widths.AnsiChars(20));
