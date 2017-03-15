@@ -190,7 +190,11 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
                     }
                 }
 
+                worksheet.Range[String.Format("A{0}:{1}{0}", 1, excelColEng)].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204))))); //第一列底色
+                worksheet.Range[String.Format("A{0}:{1}{0}", 2, excelColEng)].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204))))); //第二列底色
+                worksheet.Range[String.Format("A{0}:{1}{0}", 2, excelColEng)].AutoFilter(1); //篩選
                 worksheet.Range[String.Format("A{0}:{1}{0}", intRowsStart, excelColEng)].Value2 = objArray;
+               
                 intRowsStart++;
             }
 
