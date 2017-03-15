@@ -1,15 +1,3 @@
-USE [Production]
-GO
-
-/****** Object:  UserDefinedFunction [dbo].[GetWKAmount]    Script Date: 2017/3/15 下午 12:02:00 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
 CREATE FUNCTION [dbo].[GetWKAmount]
 (
 	@ExportID VARCHAR(13),

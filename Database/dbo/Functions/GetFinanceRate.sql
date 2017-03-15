@@ -1,14 +1,3 @@
-USE [Production]
-GO
-
-/****** Object:  UserDefinedFunction [dbo].[GetFinanceRate]    Script Date: 2017/3/15 下午 12:02:23 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
 CREATE FUNCTION [dbo].[GetFinanceRate]
 (
 	@rateTypeID VARCHAR(2), 

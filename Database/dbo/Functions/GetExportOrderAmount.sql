@@ -1,15 +1,3 @@
-USE [Production]
-GO
-
-/****** Object:  UserDefinedFunction [dbo].[GetExportOrderAmount]    Script Date: 2017/3/15 下午 12:01:48 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
 CREATE FUNCTION [dbo].[GetExportOrderAmount]
 (
 	@ExportID VARCHAR(13),
