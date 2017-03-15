@@ -35,7 +35,6 @@
             this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
             this.dateRange2 = new Sci.Win.UI.DateRange();
             this.label6 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.txtSpno2 = new Sci.Win.UI.TextBox();
             this.txtSpno1 = new Sci.Win.UI.TextBox();
@@ -53,6 +52,11 @@
             this.cbbFabricType = new System.Windows.Forms.ComboBox();
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.label1 = new Sci.Win.UI.Label();
+            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioSummary = new Sci.Win.UI.RadioButton();
+            this.radioDetail = new Sci.Win.UI.RadioButton();
+            this.label13 = new Sci.Win.UI.Label();
+            this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
@@ -142,17 +146,6 @@
             this.label6.Text = "Buyer Delivery";
             this.label6.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label6.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(424, 122);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(86, 21);
-            this.checkBox1.TabIndex = 14;
-            this.checkBox1.Text = "Summary";
-            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // txtbrand1
             // 
@@ -310,9 +303,53 @@
             this.label1.TabIndex = 125;
             this.label1.Text = "Factory";
             // 
+            // radioPanel1
+            // 
+            this.radioPanel1.Controls.Add(this.radioSummary);
+            this.radioPanel1.Controls.Add(this.radioDetail);
+            this.radioPanel1.Location = new System.Drawing.Point(115, 362);
+            this.radioPanel1.Name = "radioPanel1";
+            this.radioPanel1.Size = new System.Drawing.Size(175, 26);
+            this.radioPanel1.TabIndex = 127;
+            // 
+            // radioSummary
+            // 
+            this.radioSummary.AutoSize = true;
+            this.radioSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSummary.Location = new System.Drawing.Point(78, 3);
+            this.radioSummary.Name = "radioSummary";
+            this.radioSummary.Size = new System.Drawing.Size(85, 21);
+            this.radioSummary.TabIndex = 1;
+            this.radioSummary.Text = "Summary";
+            this.radioSummary.UseVisualStyleBackColor = true;
+            // 
+            // radioDetail
+            // 
+            this.radioDetail.AutoSize = true;
+            this.radioDetail.Checked = true;
+            this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetail.Location = new System.Drawing.Point(10, 3);
+            this.radioDetail.Name = "radioDetail";
+            this.radioDetail.Size = new System.Drawing.Size(62, 21);
+            this.radioDetail.TabIndex = 0;
+            this.radioDetail.TabStop = true;
+            this.radioDetail.Text = "Detail";
+            this.radioDetail.UseVisualStyleBackColor = true;
+            // 
+            // label13
+            // 
+            this.label13.Lines = 0;
+            this.label13.Location = new System.Drawing.Point(13, 362);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(99, 23);
+            this.label13.TabIndex = 126;
+            this.label13.Text = "Report Type";
+            // 
             // R11
             // 
-            this.ClientSize = new System.Drawing.Size(556, 393);
+            this.ClientSize = new System.Drawing.Size(556, 436);
+            this.Controls.Add(this.radioPanel1);
+            this.Controls.Add(this.label13);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtfactory1);
             this.Controls.Add(this.cbbFabricType);
@@ -329,7 +366,6 @@
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.dateRange2);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label4);
@@ -349,7 +385,6 @@
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.dateRange2, 0);
-            this.Controls.SetChildIndex(this.checkBox1, 0);
             this.Controls.SetChildIndex(this.label7, 0);
             this.Controls.SetChildIndex(this.label9, 0);
             this.Controls.SetChildIndex(this.label10, 0);
@@ -369,6 +404,10 @@
             this.Controls.SetChildIndex(this.cbbFabricType, 0);
             this.Controls.SetChildIndex(this.txtfactory1, 0);
             this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.label13, 0);
+            this.Controls.SetChildIndex(this.radioPanel1, 0);
+            this.radioPanel1.ResumeLayout(false);
+            this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -383,7 +422,6 @@
         private Win.UI.Label label4;
         private Win.UI.DateRange dateRange2;
         private Win.UI.Label label6;
-        private Win.UI.CheckBox checkBox1;
         private Class.txtbrand txtbrand1;
         private Win.UI.TextBox txtSpno2;
         private Win.UI.TextBox txtSpno1;
@@ -401,5 +439,9 @@
         private System.Windows.Forms.ComboBox cbbFabricType;
         private Class.txtfactory txtfactory1;
         private Win.UI.Label label1;
+        private Win.UI.RadioPanel radioPanel1;
+        private Win.UI.RadioButton radioSummary;
+        private Win.UI.RadioButton radioDetail;
+        private Win.UI.Label label13;
     }
 }

@@ -223,7 +223,7 @@ where s.Status = 'Confirmed' and s.type = '{0}'
   , o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty, p.NETQty, p.LossQty, s.IssueDate,FromFtyInventoryUkey)");
 
             // List & Summary 各撈自己需要的欄位
-            if (this.checkBox1.Checked)
+            if (this.radioSummary.Checked)
             {
                 #region -- Summary Sql Command --
                 sqlCmd.Append(string.Format(@"
@@ -307,7 +307,7 @@ from cte t"));
             string ExcelXltx = "";
             int DescIndex = 0;
 
-            if (checkBox1.Checked)
+            if (this.radioSummary.Checked)
             {
                 ExcelXltx = "Warehouse_R11_Summary.xltx";
                 DescIndex = 5;
