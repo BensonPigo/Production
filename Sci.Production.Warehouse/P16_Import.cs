@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -225,13 +226,16 @@ Where a.id = '{0}' and c.lock = 0 ", dr_master["requestid"])); //
                 //判斷為P15(副料)呼叫還是P16(主料)呼叫
                 if (this.Text.ToString().Contains("P15"))
                 {
-                    findrow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}'"
-                        , tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString()));
+                    findrow = dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
+                                                      && row["poid"].EqualString(tmp["poid"].ToString()) && row["seq1"].EqualString(tmp["seq1"])
+                                                      && row["seq2"].EqualString(tmp["seq2"].ToString())).ToArray();
                 }
                 else
                 {
-                    findrow = dt_detail.Select(string.Format("poid = '{0}' and seq1 = '{1}' and seq2 = '{2}' and roll ='{3}'and dyelot='{4}'"
-                        , tmp["poid"].ToString(), tmp["seq1"].ToString(), tmp["seq2"].ToString(), tmp["roll"].ToString(), tmp["dyelot"].ToString()));
+                    findrow = dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
+                                                                          && row["poid"].EqualString(tmp["poid"].ToString()) && row["seq1"].EqualString(tmp["seq1"])
+                                                                          && row["seq2"].EqualString(tmp["seq2"].ToString()) && row["roll"].EqualString(tmp["roll"])
+                                                                          && row["dyelot"].EqualString(tmp["dyelot"])).ToArray();
                 }
 
                 if (findrow.Length > 0)
