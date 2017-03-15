@@ -178,6 +178,9 @@ where 1=1
             objSheets.Cells[1, 2] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d"));// 條件字串寫入excel
             objSheets.Cells[1, 6] = WorkOrder.ToString();   // 條件字串寫入excel
             objSheets.Cells[1, 8] = factory.ToString();   // 條件字串寫入excel
+            objSheets.Columns[8].ColumnWidth = 13.5;
+            objSheets.Columns[14].ColumnWidth = 12.85;
+            objSheets.Columns[17].ColumnWidth = 11;
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
