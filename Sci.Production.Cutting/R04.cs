@@ -115,25 +115,24 @@ end"
                 sqlCmd.Append(@"
 select wo.id,co.Status,wo.EstCutDate, wo.mdivisionid,co.CDate,c.Finished,[ATofCES] = d5.ct
 into #tmpWO
-from MDivision WITH (NOLOCK) 
-left join dbo.WorkOrder  as wo WITH (NOLOCK)on MDivision.ID = wo.MDivisionID 
-and wo.EstCutDate is not null
-inner join Cutting as c WITH (NOLOCK) on c.ID = wo.ID
+from WorkOrder WO
 left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
-left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'New'
+left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'NEW' 
+INNER join Cutting as c WITH (NOLOCK) on c.ID = wo.ID
+
 outer apply(	
 	select Count(co5.ID) as ct 
 	from CuttingOutput co5 WITH (NOLOCK) 
 	inner join CuttingOutput_Detail cd5 WITH (NOLOCK) on co5.ID = cd5.ID 
 	inner join WorkOrder w5 WITH (NOLOCK) on cd5.WorkOrderUKey = w5.UKey 
 	where 1=1
-		and co5.Status != 'New'
+		and co5.Status != 'New' 
 		and co5.CDate = wo.EstCutDate
 		and co5.CDate < w5.EstCutDate
 		and w5.EstCutDate > wo.EstCutDate
-		and co5.MDivisionId = MDivision.id		
+		and co5.MDivisionId = WO.mdivisionid
 ) as d5
-where 1 = 1
+where 1 = 1 AND wo.EstCutDate is not null
 ");
                 if (!MyUtility.Check.Empty(WorkOrder))
                 {
@@ -200,27 +199,23 @@ drop table #tmpWO
             #region radioBtnByCutCell
             if (radioBtn_ByCutCell.Checked)
             {
-                sqlCmd.Append(@"
-select distinct wo.EstCutDate 
-into #DateRanges 
-from workorder wo WITH (NOLOCK) 
-where 1 = 1
-");
-                if (!MyUtility.Check.Empty(Est_CutDate1))
-                {
-                    sqlCmd.Append(string.Format(" and wo.EstCutDate between '{0}' and '{1}' ", Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d")));
-                }
+                sqlCmd.Append(string.Format(@"
+create table #dateranges ([EstCutDate] [date])
+declare @startDate date = '{0}' 
+declare @EndDate date = '{1}'
+while @startDate <= @EndDate
+begin
+	insert into #dateranges values(@startDate)	set @startDate =  DATEADD(DAY, 1,@startDate)
+end"
+                     , Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d")));
 
                 sqlCmd.Append(@"
-select wo.id,co.Status
-,wo.EstCutDate, wo.mdivisionid,co.CDate
-,cc.id as ccid,wo.cutcellid,c.Finished
-,[ATofCES] = d5.ct
+select wo.id,co.Status,wo.EstCutDate, wo.mdivisionid,co.CDate,cc.id as ccid,wo.cutcellid,c.Finished,
+[ATofCES] = d5.ct
 into #tmpWO
-from MDivision WITH (NOLOCK) 
-left join WorkOrder as wo WITH (NOLOCK) on MDivision.ID = wo.MDivisionID and wo.EstCutDate is not null
+from  WorkOrder as wo  
 inner join Cutting as c WITH (NOLOCK) on c.ID = wo.ID 
-inner join CutCell as cc WITH (NOLOCK) on cc.ID = wo.CutCellID and MDivision.ID = cc.MDivisionID
+inner join CutCell as cc WITH (NOLOCK) on cc.ID = wo.CutCellID and WO.MDivisionID = cc.MDivisionID
 left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
 left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'New'
 outer apply(	
@@ -233,10 +228,10 @@ outer apply(
 		and co5.CDate = wo.EstCutDate
 		and co5.CDate < w5.EstCutDate
 		and w5.EstCutDate > wo.EstCutDate
-		and co5.MDivisionId = MDivision.id	
+		and co5.MDivisionId = WO.MDivisionId
 		AND W5.CutCellid = CC.ID	
 ) as d5
-where 1 = 1
+where 1 = 1  AND wo.EstCutDate is not null
 ");
                 if (!MyUtility.Check.Empty(WorkOrder))
                 {
@@ -306,9 +301,9 @@ outer apply(
 outer apply(	
 		select [ATofCES] as ct 
 		from #tmpWO 
-		where EstCutDate = dr.EstCutDate
+		where EstCutDate = dr.EstCutDate  AND cutcellid = m2.ccid
 ) as d5
-order by dr.EstCutDate,m2.ccid
+order by m2.ccid, dr.EstCutDate
 drop table #DateRanges
 drop table #tmpWO
 ");
