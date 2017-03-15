@@ -311,6 +311,9 @@ namespace Sci.Production.Subcon
                     //CurrentDetailData["factoryid"] = dr["factoryid"];
                     //CurrentDetailData["sewinline"] = dr["sewinline"];
                     CurrentDetailData["orderid"] = e.FormattedValue;
+                    DataTable D;
+                    DBProxy.Current.Select(null, string.Format("select POID FROM Orders WITH (NOLOCK) where ID = '{0}'", e.FormattedValue), out D);
+                    CurrentDetailData["poid"] = D.Rows[0][0].ToString();
                 }
             };
             #endregion
@@ -406,7 +409,7 @@ namespace Sci.Production.Subcon
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("factoryid", header: "Order Factory", iseditingreadonly: true)  //0
-            .Text("POID", header: "MasterSP#", width: Widths.AnsiChars(13), settings: ts4)  //1
+            .Text("POID", header: "MasterSP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), settings: ts4)  //1
             .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true)   //2
             .Text("refno", header: "Ref#", width: Widths.AnsiChars(20),settings:ts)    //3
@@ -424,11 +427,11 @@ namespace Sci.Production.Subcon
             ;     
             #endregion
             #region 可編輯欄位變色
-            detailgrid.Columns[1].DefaultCellStyle.BackColor = Color.Pink;  
-            detailgrid.Columns[3].DefaultCellStyle.BackColor = Color.Pink;  
-            detailgrid.Columns[4].DefaultCellStyle.BackColor = Color.Pink; 
-            detailgrid.Columns[6].DefaultCellStyle.BackColor = Color.Pink; 
-            detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink; 
+            detailgrid.Columns[2].DefaultCellStyle.BackColor = Color.Pink;  
+            detailgrid.Columns[4].DefaultCellStyle.BackColor = Color.Pink;  
+            detailgrid.Columns[5].DefaultCellStyle.BackColor = Color.Pink; 
+            detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink; 
+            detailgrid.Columns[11].DefaultCellStyle.BackColor = Color.Pink; 
             #endregion
         }
 
