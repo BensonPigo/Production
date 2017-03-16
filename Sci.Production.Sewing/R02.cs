@@ -343,7 +343,7 @@ left join tmpTtlCPU tc on tc.SewingLineID = q.SewingLineID
 left join tmpSubconInCPU ic on ic.SewingLineID = q.SewingLineID
 left join tmpSubconOutCPU oc on oc.SewingLineID = q.SewingLineID
 left join tmpTtlManPower mp on mp.SewingLineID = q.SewingLineID
-order by {0}", orderby == 0 ? "q.SewingLineID" : "IIF(q.ManHour = 0,0,Round(isnull(oc.TotalCPU,0)/q.ManHour,2))");
+order by {0}", orderby == 0 ? "q.SewingLineID" : "CPUSewer");
                     MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
                         sqlcommand,  out printData);
                     #endregion
