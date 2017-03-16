@@ -41,6 +41,13 @@ namespace Sci.Production.Subcon
             issuedate1 = dateRange1.Value1;
             issuedate2 = dateRange1.Value2;
 
+            //IssueDate 為必輸條件
+            if (MyUtility.Check.Empty(issuedate1) || MyUtility.Check.Empty(issuedate2))
+            {
+                MyUtility.Msg.InfoBox("Issue Date can't empty!!");
+                return false;
+            }
+
             artworktype = txtartworktype_fty1.Text;
             mdivision = txtMdivision1.Text;
             factory = cbbFactory.Text;
