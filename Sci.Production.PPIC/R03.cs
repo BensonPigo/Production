@@ -278,9 +278,11 @@ t.CdCodeID,t.CPU,oq.Qty,t.FOCQty,t.LocalOrder,t.PoPrice,t.CMPPrice,t.KPILETA,t.L
 t.PackETA,t.MTLComplete,t.SewInLine,t.SewOffLine,t.CutInLine,t.CutOffLine,t.Category,oq.EstPulloutDate as PulloutDate,
 (select MAX(p.PulloutDate) from PackingList p WITH (NOLOCK) , PackingList_Detail pd WITH (NOLOCK) where p.ID = pd.ID and pd.OrderID = t.ID and pd.OrderShipmodeSeq = oq.Seq) as ActPulloutDate,
 t.SMR,t.MRHandle,t.MCHandle,t.OrigBuyerDelivery,t.DoxType,
-isnull((select SUM(pd.CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.OrderID = t.ID and pd.OrderShipmodeSeq = oq.Seq),0) as TotalCTN,
-isnull((select SUM(pd.CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.OrderID = t.ID and pd.OrderShipmodeSeq = oq.Seq and pd.TransferDate is null),0) as FtyCTN,
-isnull((select SUM(pd.CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.OrderID = t.ID and pd.OrderShipmodeSeq = oq.Seq and pd.ReceiveDate is not null),0) as ClogCTN,
+
+isnull((select SUM(pd.CTNQty) from PackingList_Detail pd WITH (NOLOCK) LEFT JOIN PackingList p on pd.ID=p.ID where pd.OrderID = t.ID and pd.OrderShipmodeSeq = oq.Seq and p.Type in ('B','L')),0) as TotalCTN,
+isnull((select SUM(pd.CTNQty) from PackingList_Detail pd WITH (NOLOCK) LEFT JOIN PackingList p on pd.ID=p.ID where pd.OrderID = t.ID and pd.OrderShipmodeSeq = oq.Seq and pd.TransferDate is null and p.Type in ('B','L')),0) as FtyCTN,
+isnull((select SUM(pd.CTNQty) from PackingList_Detail pd WITH (NOLOCK) LEFT JOIN PackingList p on pd.ID=p.ID where pd.OrderID = t.ID and pd.OrderShipmodeSeq = oq.Seq and pd.ReceiveDate is not null and p.Type in ('B','L')),0) as ClogCTN,
+
 t.VasShas,t.TissuePaper,t.MTLExport,t.SewLine,oq.ShipmodeID as ShipModeList,t.PlanDate,t.FirstProduction,t.OrderTypeID,
 t.SpecialMark,t.SampleReason,t.InspDate,t.InspResult,t.InspHandle,t.MnorderApv,t.PulloutComplete,t.FtyKPI,t.KPIChangeReason,t.EachConsApv,
 t.Junk,t.StyleUkey,t.CuttingSP,t.RainwearTestPassed,t.BrandFTYCode,t.CPUFactor,oq.Seq,t.ClogLastReceiveDate,t.IsMixMarker,t.GFR
@@ -321,9 +323,11 @@ dbo.getInvAdjQty(t.ID,t.Seq) as InvoiceAdjQty,ct.FirstCutDate,
 isnull((select Sum(pod.ShipQty) from Pullout_Detail pod WITH (NOLOCK) where pod.OrderID = t.ID and pod.OrderShipmodeSeq = t.Seq),0) as PulloutQty,
 ActPulloutTime = (select Count(Distinct ID) from Pullout_Detail WITH (NOLOCK) where OrderID=t.ID and ShipQty > 0),
 isnull((select Sum(CTNQty) from PackingList_Detail WITH (NOLOCK) where OrderID = t.ID and OrderShipmodeSeq = t.Seq),0) as PackingCTN,
-isnull((select Sum(CTNQty) from PackingList_Detail WITH (NOLOCK) where OrderID = t.ID and OrderShipmodeSeq = t.Seq),0) as TotalCTN,
-isnull((select Sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.OrderID = t.ID and pd.OrderShipmodeSeq = t.Seq and pd.TransferDate is null),0) as FtyCtn,
-isnull((select Sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.OrderID = t.ID and pd.OrderShipmodeSeq = t.Seq and pd.ReceiveDate is not null),0) as ClogCTN,
+
+isnull((select Sum(pd.CTNQty) from PackingList_Detail pd WITH (NOLOCK) LEFT JOIN PackingList p on pd.ID=p.ID where pd.OrderID = t.ID and pd.OrderShipmodeSeq = t.Seq and p.Type in ('B','L')),0) as TotalCTN,
+isnull((select Sum(pd.CTNQty) from PackingList_Detail pd WITH (NOLOCK) LEFT JOIN PackingList p on pd.ID=p.ID where pd.OrderID = t.ID and pd.OrderShipmodeSeq = t.Seq and p.Type in ('B','L') and pd.TransferDate is null),0) as FtyCtn,
+isnull((select Sum(pd.CTNQty) from PackingList_Detail pd WITH (NOLOCK) LEFT JOIN PackingList p on pd.ID=p.ID where pd.OrderID = t.ID and pd.OrderShipmodeSeq = t.Seq and p.Type in ('B','L') and pd.ReceiveDate is not null),0) as ClogCTN,
+
 (Select Max(ReceiveDate) from PackingList_Detail WITH (NOLOCK) where OrderID = t.ID and OrderShipmodeSeq = t.Seq) as ClogRcvDate,
 isnull((select CONCAT(Article,',') from (select distinct Article from Order_QtyShip_Detail WITH (NOLOCK) where ID = t.ID and Seq = t.Seq) a for xml path('')),'') as Article
 from tmpFilterSeperate t
