@@ -77,10 +77,10 @@ namespace Sci.Production.Subcon
 , b.Stitch
 , b.poqty
 , a.Currencyid
-, convert(decimal(20,2),b.UnitPrice) UnitPrice
-, convert(decimal(20,2),b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD',A.ISSUEDATE)) UnitPriceUSD
-, convert(decimal(20,3),b.Cost) Cost
-, b.cost - convert(decimal(20,4),b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD',A.ISSUEDATE)) variance
+, b.UnitPrice
+, b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD',A.ISSUEDATE) UnitPriceUSD
+, b.Cost
+, b.cost - b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD',A.ISSUEDATE) AS variance
 from dbo.system s WITH (NOLOCK) ,dbo.Artworkpo a WITH (NOLOCK) 
 inner join artworkpo_detail b WITH (NOLOCK) on b.id = a.id
 inner join orders c WITH (NOLOCK) on c.id = b.orderid
