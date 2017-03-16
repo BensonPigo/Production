@@ -59,25 +59,27 @@ namespace Sci.Production.Subcon
         {
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"Select a.MDivisionID
-,a.FactoryID
-,a.LocalSuppID
-,(select abb from LocalSupp WITH (NOLOCK) where id = a.LocalSuppID) supplier
-,a.Id
-,a.IssueDate
-,dbo.getpass1(a.Handle) handle
-,a.CurrencyID
-,CONVERT(VARCHAR(20),CAST(a.Amount+a.vat AS Money),1) as apAmount 
-,a.ArtworkTypeID
-,b.ArtworkPoID
-,b.OrderID
-,(select orders.StyleID from orders WITH (NOLOCK) where id = b.OrderID) style
-,dbo.getPass1(c.Handle) pohandle
---,CONVERT(VARCHAR(20),CAST(c.Amount+c.Vat AS Money),1) as poAmount
-,CONVERT(VARCHAR(20),CAST(b.Amount AS Money),1) as poAmount
-,c.IssueDate poDate
-,a.InvNo
-from artworkap a WITH (NOLOCK) inner join artworkap_detail b WITH (NOLOCK) on a.id = b.id 
+            sqlCmd.Append(string.Format(@"
+Select  a.MDivisionID
+        ,a.FactoryID
+        ,a.LocalSuppID
+        ,supplier = (select abb from LocalSupp WITH (NOLOCK) where id = a.LocalSuppID) 
+        ,a.Id
+        ,a.IssueDate
+        ,handle = (select concat(Pass1.name, ' Ext.', Pass1.ExtNo) from Pass1 where Pass1.id = a.Handle)
+        ,a.CurrencyID
+        ,apAmount = CONVERT(VARCHAR(20),CAST(a.Amount+a.vat AS Money),1) 
+        ,a.ArtworkTypeID
+        ,b.ArtworkPoID
+        ,b.OrderID
+        ,style = (select orders.StyleID from orders WITH (NOLOCK) where id = b.OrderID) 
+        ,pohandle = (select concat(Pass1.name, ' Ext.', Pass1.ExtNo) from Pass1 where Pass1.id = c.Handle)
+        --,CONVERT(VARCHAR(20),CAST(c.Amount+c.Vat AS Money),1) as poAmount
+        ,poAmount = CONVERT(VARCHAR(20),CAST(b.Amount AS Money),1) 
+        ,poDate = c.IssueDate 
+        ,a.InvNo
+from artworkap a WITH (NOLOCK) 
+inner join artworkap_detail b WITH (NOLOCK) on a.id = b.id 
 left join ArtworkPO c WITH (NOLOCK) on c.ID = b.ArtworkPoID
 where  a.ApvDate is null and a.issuedate between '{0}' and '{1}'
 ", Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
