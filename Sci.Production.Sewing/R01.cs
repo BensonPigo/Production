@@ -173,9 +173,15 @@ from #tmp
 ),
 GenTotal1
 as (
-select (s.TMS/s.QAQty) as TMS,s.RFT,sum(m.ActManPower) as ActManPower
+select (s.TMS/s.QAQty) as TMS,s.RFT,
+sum(m.ActManPower)- sum(iif(shift='Subcon-In',0,isnull(d.ActManPower,0))) ActManPower
 from GrandIncludeInOutSummaryData s
 left join GrandIncludeInOutMaxActManpower m on 1 = 1
+outer apply(
+	select ActManPower
+	from GrandIncludeInOutMaxActManpower m2
+	where m2.Shift = 'Subcon-In' and m2.Team = m.Team and m2.SewingLineID = m.SewingLineID	
+) d
 group by s.TMS,s.QAQty,s.RFT
 ),
 GrandExcludeOutMaxActManpower
@@ -193,9 +199,15 @@ where LastShift <> 'O'
 ),
 GenTotal2
 as (
-select (s.TMS/s.QAQty) as TMS,s.RFT,sum(m.ActManPower) as ActManPower
+select (s.TMS/s.QAQty) as TMS,s.RFT,
+sum(m.ActManPower) - sum(iif(shift='Subcon-In',0,isnull(d.ActManPower,0))) ActManPower
 from GrandExcludeOutSummaryData s
 left join GrandExcludeOutMaxActManpower m on 1 = 1
+outer apply(
+	select ActManPower
+	from GrandExcludeOutMaxActManpower m2
+	where m2.Shift = 'Subcon-In' and m2.Team = m.Team and m2.SewingLineID = m.SewingLineID	
+) d
 group by s.TMS,s.QAQty,s.RFT
 ),
 GrandExcludeInOutMaxActManpower
