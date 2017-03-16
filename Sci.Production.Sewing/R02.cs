@@ -266,12 +266,24 @@ group by OutputDate
 ),
 tmpTtlManPower
 as (
-select OutputDate,Sum(Manpower) as ManPower from (
-select OutputDate,FactoryID,SewingLineID,LastShift,Team,Max(ActManPower) as ManPower
-from #tmp
-where LastShift <> 'O'
-group by OutputDate,FactoryID,SewingLineID,LastShift,Team) a
-group by OutputDate
+	select OutputDate,Sum(a.Manpower) - sum(iif(LastShift='I',0,isnull(d.ManPower,0))) as ManPower 
+	from (
+		select OutputDate,FactoryID,SewingLineID,LastShift,Team,Max(ActManPower) as ManPower
+		from #tmp
+		where LastShift <> 'O'
+		group by OutputDate,FactoryID,SewingLineID,LastShift,Team
+	) a
+	outer apply(
+		select ManPower
+		from (
+			select OutputDate,FactoryID,SewingLineID,LastShift,Team,Max(ActManPower) as ManPower
+			from #tmp
+			where LastShift <> 'O'
+			group by OutputDate,FactoryID,SewingLineID,LastShift,Team
+		) m2
+		where m2.LastShift = 'I' and m2.Team = a.Team and m2.SewingLineID = a.SewingLineID	and a.OutputDate = m2.OutputDate
+	) d
+	group by OutputDate
 )
 select q.OutputDate,q.QAQty,tc.TotalCPU,isnull(ic.TotalCPU,0) as SInCPU,isnull(oc.TotalCPU,0) as SoutCPU,
 IIF(q.ManHour = 0,0,Round(isnull(tc.TotalCPU,0)/q.ManHour,2)) as CPUSewer,
@@ -325,13 +337,16 @@ from #tmp
 where LastShift = 'O'
 group by SewingLineID
 ),
+
 tmpTtlManPower
 as (
-select SewingLineID,Sum(Manpower) as ManPower from (
-select OutputDate,FactoryID,SewingLineID,LastShift,Team,Max(ActManPower) as ManPower
-from #tmp
-where LastShift <> 'O'
-group by OutputDate,FactoryID,SewingLineID,LastShift,Team) a
+select SewingLineID,Sum(Manpower) as ManPower
+from (
+    select OutputDate,FactoryID,SewingLineID,LastShift,Team,Max(ActManPower) as ManPower
+    from #tmp
+    where LastShift <> 'O'
+    group by OutputDate,FactoryID,SewingLineID,LastShift,Team
+) a
 group by SewingLineID
 )
 select q.SewingLineID,q.QAQty,tc.TotalCPU,isnull(ic.TotalCPU,0) as SInCPU,isnull(oc.TotalCPU,0) as SoutCPU,
@@ -374,7 +389,7 @@ as (
 select Sum(Manpower) as ManPower from (
 select OutputDate,FactoryID,SewingLineID,LastShift,Team,Max(ActManPower) as ManPower
 from #tmp
-where LastShift <> 'O'
+where LastShift <> 'O' and LastShift <> 'I'
 group by OutputDate,FactoryID,SewingLineID,LastShift,Team) a
 )
 select q.QAQty,q.TotalCPU,
