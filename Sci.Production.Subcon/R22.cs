@@ -97,6 +97,8 @@ namespace Sci.Production.Subcon
 	                                                 ,a.Category
 	                                                 ,b.LocalPoId
 	                                                 ,b.OrderId
+ 	                                                 ,b.OldSeq1
+	                                                 ,b.OldSeq2                                                           
 	                                                 ,b.Refno
 	                                                 ,dbo.getItemDesc(a.Category,b.Refno) Description
 	                                                 ,b.ThreadColorID
@@ -105,7 +107,7 @@ namespace Sci.Production.Subcon
 	                                                 ,b.Qty
                                                      ,b.price*b.qty amount
                                                      ,e.Amount+e.vat poamt
-	                                                 ,vs2.Name_Extno POHandle
+	                                                 ,vs2.Name POHandle
 	                                                 ,e.IssueDate
 	                                                 ,a.InvNo
                                             from LocalAP a WITH (NOLOCK) 
@@ -114,7 +116,11 @@ namespace Sci.Production.Subcon
                                             left join localsupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
                                             left join localpo e WITH (NOLOCK) on b.LocalPoId=e.Id 
                                             outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
-											outer apply (select * from dbo.View_ShowName vs where vs.id = e.AddName) vs2
+											outer apply (
+                                                (select name = concat(name, ' Ext.', ExtNo)
+                                                from TPEPass1
+                                                where id = (select PoHandle from Po where id = b.OrderId))
+                                            ) vs2
                                             where  a.issuedate between '{0}' and '{1}'
                                              and a.apvdate between '{2}' and '{3}'"
                     , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
