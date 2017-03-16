@@ -587,13 +587,13 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 objArray[0, 53] = dr["PoPrice"];
                 objArray[0, 54] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["PoPrice"]);
                 objArray[0, 55] = MyUtility.Convert.GetString(dr["LocalOrder"]).ToUpper() == "TRUE" ? dr["PoPrice"] : dr["CMPPrice"];
-                objArray[0, 56] = dr["KPILETA"];
+                objArray[0, 56] = dr["KPILETA"];  //BE
                 objArray[0, 57] = dr["PFRemark"];
-                objArray[0, 58] = dr["LETA"];
-                objArray[0, 59] = dr["MTLETA"];
-                objArray[0, 60] = dr["SewETA"];
-                objArray[0, 61] = dr["PackETA"];
-                objArray[0, 62] = MyUtility.Convert.GetString(dr["MTLDelay"]).ToUpper() == "TRUE" ? "Y" : "";
+                objArray[0, 58] = dr["LETA"];  //BG
+                objArray[0, 59] = dr["MTLETA"];  //BH
+                objArray[0, 60] = dr["SewETA"];  //BI
+                objArray[0, 61] = dr["PackETA"];  //BJ
+                objArray[0, 62] = MyUtility.Convert.GetString(dr["MTLDelay"]).ToUpper() == "TRUE" ? "Y" : ""; //BK
                 objArray[0, 63] = MyUtility.Check.Empty(dr["MTLExport"]) ? dr["MTLExportTimes"] : dr["MTLExport"];
                 objArray[0, 64] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper();   //MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : "";
                 objArray[0, 65] = dr["ArriveWHDate"];
