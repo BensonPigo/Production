@@ -87,10 +87,14 @@ namespace Sci.Production.Quality
             List<string> sqlWheres = new List<string>();
             List<string> sqlOrderWheres = new List<string>();
             #region --組WHERE--
-            if (!this.DateSCIDelivery.Value1.Empty() && !this.DateSCIDelivery.Value2.Empty())
+            if (!this.DateSCIDelivery.Value1.Empty())
             {
-                sqlOrderWheres.Add("SciDelivery between @SCIDate1 and @SCIDate2");
+                sqlOrderWheres.Add("SciDelivery >= @SCIDate1");
                 lis.Add(new SqlParameter("@SCIDate1", DateSCIStart));
+            }
+            if (!this.DateSCIDelivery.Value2.Empty())
+            {
+                sqlOrderWheres.Add("SciDelivery <= @SCIDate2");
                 lis.Add(new SqlParameter("@SCIDate2", DateSCIEnd));
             }
             if (!this.comboCategory.SelectedItem.ToString().Empty())

@@ -46,8 +46,8 @@
             this.txtcountry1 = new Sci.Production.Class.txtcountry();
             this.comboBox2 = new Sci.Win.UI.ComboBox();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
             this.radioButton2 = new Sci.Win.UI.RadioButton();
+            this.radioButton1 = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -166,6 +166,7 @@
             // 
             // dateRange1
             // 
+            this.dateRange1.IsRequired = false;
             this.dateRange1.Location = new System.Drawing.Point(115, 84);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
@@ -173,6 +174,7 @@
             // 
             // dateRange2
             // 
+            this.dateRange2.IsRequired = false;
             this.dateRange2.Location = new System.Drawing.Point(114, 120);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(280, 23);
@@ -228,18 +230,6 @@
             this.radioPanel1.Size = new System.Drawing.Size(248, 31);
             this.radioPanel1.TabIndex = 111;
             // 
-            // radioButton1
-            // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(4, 3);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(82, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Main List";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            // 
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
@@ -251,6 +241,18 @@
             this.radioButton2.TabStop = true;
             this.radioButton2.Text = "Detail List";
             this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioButton1.Location = new System.Drawing.Point(4, 3);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(82, 21);
+            this.radioButton1.TabIndex = 0;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "Main List";
+            this.radioButton1.UseVisualStyleBackColor = true;
             // 
             // R01
             // 
@@ -273,7 +275,6 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.EditMode = true;
             this.IsSupportToPrint = false;
             this.Name = "R01";
             this.Text = "R01. Garment Booking Report";

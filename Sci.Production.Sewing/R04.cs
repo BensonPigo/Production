@@ -35,11 +35,11 @@ namespace Sci.Production.Sewing
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
-            {
-                MyUtility.Msg.WarningBox("Output Date can't empty!!");
-                return false;
-            }
+            //if (MyUtility.Check.Empty(dateRange1.Value1))
+            //{
+            //    MyUtility.Msg.WarningBox("Output Date can't empty!!");
+            //    return false;
+            //}
 
             date1 = dateRange1.Value1;
             date2 = dateRange1.Value2;
@@ -73,7 +73,16 @@ left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType
 left join Rft r WITH (NOLOCK) on r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
-where s.OutputDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
+where 1=1"));
+
+            if (!MyUtility.Check.Empty(date1))
+            {
+                sqlCmd.Append(string.Format(" and s.OutputDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(date2))
+            {
+                sqlCmd.Append(string.Format(" and s.OutputDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+            }
             if (!MyUtility.Check.Empty(mDivision))
             {
                 sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'", mDivision));

@@ -160,6 +160,7 @@
             // 
             // dateRange1
             // 
+            this.dateRange1.IsRequired = false;
             this.dateRange1.IsSupportEditMode = false;
             this.dateRange1.Location = new System.Drawing.Point(102, 12);
             this.dateRange1.Name = "dateRange1";

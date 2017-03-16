@@ -83,16 +83,24 @@ namespace Sci.Production.Quality
             List<string> sqlRecDate = new List<string>();
             List<string> sqlArrDate = new List<string>();
             #region --組WHERE--
-
-            if (!this.DateReceivedSample.Value1.Empty() && !this.DateReceivedSample.Value2.Empty())
+            if (!this.DateReceivedSample.Value1.Empty())
             {
-                sqlRecDate.Add("ReceiveSampleDate between @DateRecStart and @DateRecEnd");
+                sqlRecDate.Add("ReceiveSampleDate >= @DateRecStart");
                 lis.Add(new SqlParameter("@DateRecStart", DateRecStart));
-                lis.Add(new SqlParameter("@DateRecEnd", DateRecEnd));
-            } if (!this.DateArriveWH.Value1.Empty() && !this.DateArriveWH.Value2.Empty())
+            }
+            if (!this.DateReceivedSample.Value2.Empty())
             {
-                sqlArrDate.Add("WhseArrival between @DateArrStart and @DateArrEnd");
+                sqlRecDate.Add("ReceiveSampleDate <= @DateRecEnd");
+                lis.Add(new SqlParameter("@DateRecEnd", DateRecEnd));
+            }
+            if (!this.DateArriveWH.Value1.Empty())
+            {
+                sqlArrDate.Add("WhseArrival >= @DateArrStart");
                 lis.Add(new SqlParameter("@DateArrStart", DateArrStart));
+            }
+            if (!this.DateArriveWH.Value2.Empty())
+            {
+                sqlArrDate.Add("WhseArrival <= @DateArrEnd");
                 lis.Add(new SqlParameter("@DateArrEnd", DateArrEnd));
             }
             if (!this.comboCategory.SelectedItem.ToString().Empty())

@@ -68,8 +68,16 @@ namespace Sci.Production.Shipping
 from VNConsumption vc WITH (NOLOCK) 
 inner join VNConsumption_Detail vcd WITH (NOLOCK) on vc.ID = vcd.ID
 left join VNContract_Detail vd WITH (NOLOCK) on vc.VNContractID = vd.ID and vcd.NLCode = vd.NLCode
-where vc.CDate between '{0}' and '{1}'
-and vc.Status = 'Confirmed'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
+where 1=1 and vc.Status = 'Confirmed'"));
+
+                if (!MyUtility.Check.Empty(date1))
+                {
+                    sqlCmd.Append(string.Format(" and vc.CDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(date2))
+                {
+                    sqlCmd.Append(string.Format(" and vc.CDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+                }
                 if (!MyUtility.Check.Empty(customSP1))
                 {
                     sqlCmd.Append(string.Format(" and vc.CustomSP between '{0}' and '{1}'", customSP1, customSP2));
@@ -89,7 +97,16 @@ and vc.Status = 'Confirmed'", Convert.ToDateTime(date1).ToString("d"), Convert.T
                 sqlCmd.Append(string.Format(@"select count(CustomSP) as RecCount
 from VNConsumption WITH (NOLOCK) 
 where Status = 'Confirmed'
-and CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
+and 1=1"));
+
+                if (!MyUtility.Check.Empty(date1))
+                {
+                    sqlCmd.Append(string.Format(" and CDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(date2))
+                {
+                    sqlCmd.Append(string.Format(" and CDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+                }
                 if (!MyUtility.Check.Empty(customSP1))
                 {
                     sqlCmd.Append(string.Format(" and CustomSP between '{0}' and '{1}'", customSP1, customSP2));
@@ -109,7 +126,16 @@ left join VNContract_Detail vd WITH (NOLOCK) on vd.ID = vc.VNContractID and vd.N
 left join VNNLCodeDesc vn WITH (NOLOCK) on vn.NLCode = vcd.NLCode
 left join Style s WITH (NOLOCK) on s.Ukey = vc.StyleUKey
 where vc.Status = 'Confirmed'
-and vc.CDate between '{0}' and '{1}' order by CustomSP,NLCode", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
+and 1=1 order by CustomSP,NLCode"));
+                if (!MyUtility.Check.Empty(date1))
+                {
+                    sqlCmd.Append(string.Format(" and vc.CDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(date2))
+                {
+                    sqlCmd.Append(string.Format(" and vc.CDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+                }
+                
                 if (!MyUtility.Check.Empty(customSP1))
                 {
                     sqlCmd.Append(string.Format(" and vc.CustomSP between '{0}' and '{1}'", customSP1, customSP2));
@@ -135,7 +161,17 @@ left join Style s WITH (NOLOCK) on s.Ukey = v.StyleUKey
 left join Reason r1 WITH (NOLOCK) on r1.ReasonTypeID = 'Fabric_Kind' and r1.ID = s.FabricType
 left join Reason r2 WITH (NOLOCK) on r2.ReasonTypeID = 'Style_Apparel_Type' and r2.ID = s.ApparelType
 where v.Status = 'Confirmed' 
-and v.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
+and 1=1"));
+
+                if (!MyUtility.Check.Empty(date1))
+                {
+                    sqlCmd.Append(string.Format(" and v.CDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(date2))
+                {
+                    sqlCmd.Append(string.Format(" and v.CDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+                }
+                
                 if (!MyUtility.Check.Empty(customSP1))
                 {
                     sqlCmd.Append(string.Format(" and v.CustomSP between '{0}' and '{1}'", customSP1, customSP2));

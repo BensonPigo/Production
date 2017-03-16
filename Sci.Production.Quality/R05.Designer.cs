@@ -136,6 +136,7 @@
             // 
             // DateSCIDelivery
             // 
+            this.DateSCIDelivery.IsRequired = false;
             this.DateSCIDelivery.Location = new System.Drawing.Point(128, 24);
             this.DateSCIDelivery.Name = "DateSCIDelivery";
             this.DateSCIDelivery.Size = new System.Drawing.Size(280, 23);

@@ -62,12 +62,12 @@ namespace Sci.Production.Shipping
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
-            {
-                MyUtility.Msg.WarningBox("< Buyer Delivery > can not empty!");
-                dateRange1.TextBox1.Focus();
-                return;
-            }
+            //if (MyUtility.Check.Empty(dateRange1.Value1))
+            //{
+            //    MyUtility.Msg.WarningBox("< Buyer Delivery > can not empty!");
+            //    dateRange1.TextBox1.Focus();
+            //    return;
+            //}
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"with tempData 
 as 
@@ -81,8 +81,16 @@ as
  left join Reason r WITH (NOLOCK) on r.ReasonTypeID = 'Delivery_OutStand' and r.ID = oq.OutstandingReason 
  where o.IsForecast = 0 
  and o.LocalOrder = 0 
- and oq.BuyerDelivery >= '{0}' 
- and oq.BuyerDelivery <= '{1}' ", Convert.ToDateTime(dateRange1.Value1).ToString("d"),Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+ and 1=1"));
+
+            if (!MyUtility.Check.Empty(dateRange1.Value1))
+            {
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            {
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+            }
             if (!MyUtility.Check.Empty(txtbrand1.Text))
             {
                 sqlCmd.Append(string.Format(" and o.BrandID = '{0}'",txtbrand1.Text));

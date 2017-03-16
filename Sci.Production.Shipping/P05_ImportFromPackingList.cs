@@ -84,13 +84,21 @@ as
 (select distinct ID
  from AllPackData
  where 1=1", txtmultifactory1.Text, MyUtility.Convert.GetString(masterData["ShipModeID"]), MyUtility.Convert.GetString(masterData["BrandID"]), MyUtility.Convert.GetString(masterData["Dest"]), MyUtility.Convert.GetString(masterData["CustCDID"])));
-            if (!MyUtility.Check.Empty(dateRange1.Value1) || !MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateRange1.Value1))
             {
-                sqlCmd.Append(string.Format(" and( SDPDate >= '{0}' and SDPDate <= '{1}')", Convert.ToDateTime(dateRange1.Value1).ToString("d"), Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and SDPDate >= '{0}' ", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateRange2.Value1)||!MyUtility.Check.Empty(dateRange2.Value2))
+            if (!MyUtility.Check.Empty(dateRange1.Value2))
             {
-                sqlCmd.Append(string.Format(@" and( BuyerDelivery >= '{0}' and BuyerDelivery <= '{1}')", Convert.ToDateTime(dateRange2.Value1).ToString("d"), Convert.ToDateTime(dateRange2.Value2).ToString("d")));                
+                sqlCmd.Append(string.Format(" and SDPDate <= '{0}' ", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateRange2.Value1))
+            {
+                sqlCmd.Append(string.Format(@" and BuyerDelivery >= '{0}' ", Convert.ToDateTime(dateRange2.Value1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateRange2.Value2))
+            {
+                sqlCmd.Append(string.Format(@" and BuyerDelivery <= '{0}' ", Convert.ToDateTime(dateRange2.Value2).ToString("d")));
             }
 
             sqlCmd.Append(@"

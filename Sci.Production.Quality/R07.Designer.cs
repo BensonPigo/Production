@@ -201,6 +201,7 @@
             // 
             // dateCutting
             // 
+            this.dateCutting.IsRequired = false;
             this.dateCutting.Location = new System.Drawing.Point(161, 127);
             this.dateCutting.Name = "dateCutting";
             this.dateCutting.Size = new System.Drawing.Size(280, 23);
@@ -208,6 +209,7 @@
             // 
             // dateSewing
             // 
+            this.dateSewing.IsRequired = false;
             this.dateSewing.Location = new System.Drawing.Point(161, 89);
             this.dateSewing.Name = "dateSewing";
             this.dateSewing.Size = new System.Drawing.Size(280, 23);
@@ -215,6 +217,7 @@
             // 
             // dateDelivery
             // 
+            this.dateDelivery.IsRequired = false;
             this.dateDelivery.Location = new System.Drawing.Point(161, 52);
             this.dateDelivery.Name = "dateDelivery";
             this.dateDelivery.Size = new System.Drawing.Size(280, 23);
@@ -222,6 +225,7 @@
             // 
             // dateArrive
             // 
+            this.dateArrive.IsRequired = false;
             this.dateArrive.Location = new System.Drawing.Point(161, 18);
             this.dateArrive.Name = "dateArrive";
             this.dateArrive.Size = new System.Drawing.Size(280, 23);

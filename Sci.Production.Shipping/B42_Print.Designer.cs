@@ -76,6 +76,7 @@
             // 
             // dateRange1
             // 
+            this.dateRange1.IsRequired = false;
             this.dateRange1.Location = new System.Drawing.Point(107, 12);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(251, 23);

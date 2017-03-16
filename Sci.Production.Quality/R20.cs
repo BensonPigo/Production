@@ -132,8 +132,13 @@ WHERE 1=1
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(Period1))
                 {
-                    sqlCmd.Append(string.Format(@" AND CDate BETWEEN '{0}' AND '{1}'", d1, d2));
+                    sqlCmd.Append(string.Format(" and CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
                 }
+                if (!MyUtility.Check.Empty(Period2))
+                {
+                    sqlCmd.Append(string.Format(" and CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
+                }
+
                 #endregion
                 sqlCmd.Append(@"
 order by CDate
@@ -155,7 +160,11 @@ WHERE 1=1 AND A.InspectQty<>0
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(Period1))
                 {
-                    sqlCmd.Append(string.Format(@" AND A.CDate BETWEEN ''{0}'' AND ''{1}''", d1, d2));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= ''{0}'' ", Convert.ToDateTime(Period1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(Period2))
+                {
+                    sqlCmd.Append(string.Format(@" and A.CDate <= ''{0}'' ", Convert.ToDateTime(Period2).ToString("d")));
                 }
 
                 if (!MyUtility.Check.Empty(Factory))
@@ -213,7 +222,11 @@ WHERE 1=1
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(Period1))
                 {
-                    sqlCmd.Append(string.Format(@" AND CDate BETWEEN '{0}' AND '{1}'", d1, d2));
+                    sqlCmd.Append(string.Format(@" and CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(Period2))
+                {
+                    sqlCmd.Append(string.Format(@" and CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
                 }
                 #endregion
                 sqlCmd.Append(@"
@@ -241,7 +254,11 @@ WHERE 1=1 AND A.InspectQty<>0
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(Period1))
                 {
-                    sqlCmd.Append(string.Format(@" AND A.CDate BETWEEN ''{0}'' AND ''{1}''", d1, d2));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= ''{0}'' ", Convert.ToDateTime(Period1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(Period2))
+                {
+                    sqlCmd.Append(string.Format(@" and A.CDate <= ''{0}'' ", Convert.ToDateTime(Period2).ToString("d")));
                 }
 
                 if (!MyUtility.Check.Empty(Factory))
@@ -318,8 +335,11 @@ WHERE 1=1
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(Period1))
                 {
-                    sqlCmd.Append(string.Format(@" AND A.CDate BETWEEN '{0}' and '{1}'",
-                    Convert.ToDateTime(Period1).ToString("d"), Convert.ToDateTime(Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(Period2))
+                {
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
                 }
 
                 if (!MyUtility.Check.Empty(Factory))
@@ -397,10 +417,12 @@ WHERE 1=1
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(Period1))
                 {
-                    sqlCmd.Append(string.Format(@" AND A.CDate BETWEEN '{0}' and '{1}'",
-                    Convert.ToDateTime(Period1).ToString("d"), Convert.ToDateTime(Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
                 }
-
+                if (!MyUtility.Check.Empty(Period2))
+                {
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
+                }
                 if (!MyUtility.Check.Empty(Factory))
                 {
                     sqlCmd.Append(string.Format(" and A.FactoryID = '{0}'", Factory));
@@ -455,8 +477,11 @@ WHERE 1=1
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(Period1))
                 {
-                    sqlCmd.Append(string.Format(@" AND A.CDate BETWEEN '{0}' and '{1}'",
-                    Convert.ToDateTime(Period1).ToString("d"), Convert.ToDateTime(Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(Period2))
+                {
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
                 }
 
                 if (!MyUtility.Check.Empty(Factory))
@@ -561,8 +586,11 @@ WHERE 1=1
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(Period1))
                 {
-                    sqlCmd.Append(string.Format(@" AND A.CDate BETWEEN '{0}' and '{1}'",
-                    Convert.ToDateTime(Period1).ToString("d"), Convert.ToDateTime(Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(Period2))
+                {
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
                 }
 
                 if (!MyUtility.Check.Empty(Factory))
@@ -666,8 +694,11 @@ WHERE 1=1
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(Period1))
                 {
-                    sqlCmd.Append(string.Format(@" AND A.CDate BETWEEN '{0}' and '{1}'",
-                    Convert.ToDateTime(Period1).ToString("d"), Convert.ToDateTime(Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(Period2))
+                {
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
                 }
 
                 if (!MyUtility.Check.Empty(Factory))

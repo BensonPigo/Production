@@ -73,24 +73,39 @@ namespace Sci.Production.Quality
            
             List<string> sqlWheres = new List<string>();
             #region --組WHERE--
-            if (!this.DateSCIDelivery.Value1.Empty() && !this.DateSCIDelivery.Value2.Empty())
+            if (!this.DateSCIDelivery.Value1.Empty())
             {
-                sqlWheres.Add("SciDelivery between @SCIDate1 and @SCIDate2");
+                sqlWheres.Add("SciDelivery >= @SCIDate1");
                 lis.Add(new SqlParameter("@SCIDate1", DateSCIStart));
+            }
+            if (!this.DateSCIDelivery.Value2.Empty())
+            {
+                sqlWheres.Add("SciDelivery <= @SCIDate2");
                 lis.Add(new SqlParameter("@SCIDate2", DateSCIEnd));
-            } 
-            if (!this.DateSewInLine.Value1.Empty() && !this.DateSewInLine.Value2.Empty())
+            }
+
+            if (!this.DateSewInLine.Value1.Empty())
             {
-                sqlWheres.Add("SewInLine between @SewDate1 and @SewDate2");
+                sqlWheres.Add("SewInLine >= @SewDate1");
                 lis.Add(new SqlParameter("@SewDate1", DateSewStart));
-                lis.Add(new SqlParameter("@SewDate2", DateSewEnd));
-            } 
-            if (!this.DateEstCutting.Value1.Empty() && !this.DateEstCutting.Value2.Empty())
+            }
+            if (!this.DateSewInLine.Value2.Empty())
             {
-                sqlWheres.Add("CutInLine between @Est1 and @Est2");
+                sqlWheres.Add("SewInLine <= @SewDate2");
+                lis.Add(new SqlParameter("@SewDate2", DateSewEnd));
+            }
+
+            if (!this.DateEstCutting.Value1.Empty())
+            {
+                sqlWheres.Add("CutInLine >= @Est1");
                 lis.Add(new SqlParameter("@Est1", DateEstStart));
+            }
+            if (!this.DateEstCutting.Value2.Empty())
+            {
+                sqlWheres.Add("CutInLine <= @Est2");
                 lis.Add(new SqlParameter("@Est2", DateEstEnd));
-            } 
+            }
+
             if (!this.txtSeason.Text.Empty())
             {
                 sqlWheres.Add("SeasonID = @Sea");

@@ -34,11 +34,11 @@ namespace Sci.Production.Shipping
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
-            {
-                MyUtility.Msg.WarningBox("Invoice Date can't empty!!");
-                return false;
-            }
+            //if (MyUtility.Check.Empty(dateRange1.Value1))
+            //{
+            //    MyUtility.Msg.WarningBox("Invoice Date can't empty!!");
+            //    return false;
+            //}
 
             shipper = comboBox1.Text;
             brand = txtbrand1.Text;
@@ -68,7 +68,7 @@ g.TotalGW,g.TotalCBM,g.AddDate,IIF(g.Status = 'Confirmed',g.EditDate,null) as Co
 from GMTBooking g WITH (NOLOCK) 
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
-where g.InvDate between '{0}' and '{1}'", Convert.ToDateTime(invdate1).ToString("d"), Convert.ToDateTime(invdate2).ToString("d")));
+where 1=1"));
             }
             else
             {
@@ -83,8 +83,17 @@ from GMTBooking g WITH (NOLOCK)
 left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
-where pl.ID<>'' and g.InvDate between '{0}' and '{1}' ", Convert.ToDateTime(invdate1).ToString("d"), Convert.ToDateTime(invdate2).ToString("d")));
+where pl.ID<>'' and 1=1 "));
             }
+            if (!MyUtility.Check.Empty(invdate1))
+            {
+                sqlCmd.Append(string.Format(" and g.InvDate >= '{0}' ", Convert.ToDateTime(invdate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(invdate2))
+            {
+                sqlCmd.Append(string.Format(" and g.InvDate <= '{0}' ", Convert.ToDateTime(invdate2).ToString("d")));
+            }
+
             if (!MyUtility.Check.Empty(shipper))
             {
                 sqlCmd.Append(string.Format(" and g.Shipper = '{0}'", shipper));
@@ -107,7 +116,11 @@ where pl.ID<>'' and g.InvDate between '{0}' and '{1}' ", Convert.ToDateTime(invd
             }
             if (!MyUtility.Check.Empty(etd1))
             {
-                sqlCmd.Append(string.Format(" and g.ETD between '{0}' and '{1}'", Convert.ToDateTime(etd1).ToString("d"), Convert.ToDateTime(etd2).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.ETD >= '{0}' ", Convert.ToDateTime(etd1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(etd2))
+            {
+                sqlCmd.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(etd2).ToString("d")));
             }
             if (status == "Confirmed")
             {

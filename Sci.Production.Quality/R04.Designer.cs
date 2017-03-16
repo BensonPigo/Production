@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.comboM = new Sci.Win.UI.ComboBox();
+            this.label4 = new Sci.Win.UI.Label();
             this.checkOutstandingOnly = new Sci.Win.UI.CheckBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.label3 = new Sci.Win.UI.Label();
@@ -38,8 +40,6 @@
             this.label2 = new Sci.Win.UI.Label();
             this.DateReceivedSample = new Sci.Win.UI.DateRange();
             this.label1 = new Sci.Win.UI.Label();
-            this.comboM = new Sci.Win.UI.ComboBox();
-            this.label4 = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60,6 +60,26 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(483, 262);
             this.panel1.TabIndex = 94;
+            // 
+            // comboM
+            // 
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(192, 138);
+            this.comboM.Name = "comboM";
+            this.comboM.Size = new System.Drawing.Size(121, 24);
+            this.comboM.TabIndex = 54;
+            // 
+            // label4
+            // 
+            this.label4.Lines = 0;
+            this.label4.Location = new System.Drawing.Point(27, 138);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(158, 22);
+            this.label4.TabIndex = 53;
+            this.label4.Text = "M";
             // 
             // checkOutstandingOnly
             // 
@@ -114,6 +134,7 @@
             // 
             // DateArriveWH
             // 
+            this.DateArriveWH.IsRequired = false;
             this.DateArriveWH.Location = new System.Drawing.Point(192, 58);
             this.DateArriveWH.Name = "DateArriveWH";
             this.DateArriveWH.Size = new System.Drawing.Size(280, 23);
@@ -130,6 +151,7 @@
             // 
             // DateReceivedSample
             // 
+            this.DateReceivedSample.IsRequired = false;
             this.DateReceivedSample.Location = new System.Drawing.Point(192, 20);
             this.DateReceivedSample.Name = "DateReceivedSample";
             this.DateReceivedSample.Size = new System.Drawing.Size(280, 23);
@@ -143,26 +165,6 @@
             this.label1.Size = new System.Drawing.Size(158, 23);
             this.label1.TabIndex = 0;
             this.label1.Text = "Received Sample Date";
-            // 
-            // comboM
-            // 
-            this.comboM.BackColor = System.Drawing.Color.White;
-            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboM.FormattingEnabled = true;
-            this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(192, 138);
-            this.comboM.Name = "comboM";
-            this.comboM.Size = new System.Drawing.Size(121, 24);
-            this.comboM.TabIndex = 54;
-            // 
-            // label4
-            // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(27, 138);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(158, 22);
-            this.label4.TabIndex = 53;
-            this.label4.Text = "M";
             // 
             // R04
             // 

@@ -48,12 +48,18 @@ namespace Sci.Production.Quality
             List<string> OWheres = new List<string>();
             #region --組WHERE--
 
-           if (!this.DateArriveWH.Value1.Empty() && !this.DateArriveWH.Value2.Empty())
-            {
-                sqlWheres.Add("r.WhseArrival between @DateArrStart and @DateArrEnd");
-                lis.Add(new SqlParameter("@DateArrStart", DateArrStart));
-                lis.Add(new SqlParameter("@DateArrEnd", DateArrEnd));
-            } if (!this.Supp.Empty())
+           if (!this.DateArriveWH.Value1.Empty())
+           {
+               sqlWheres.Add("r.WhseArrival >= @DateArrStart");
+               lis.Add(new SqlParameter("@DateArrStart", DateArrStart));
+           }
+           if (!this.DateArriveWH.Value2.Empty())
+           {
+               sqlWheres.Add("r.WhseArrival <= @DateArrEnd");
+               lis.Add(new SqlParameter("@DateArrEnd", DateArrEnd));
+           }
+            
+            if (!this.Supp.Empty())
            {
                sqlWheres.Add("ps.suppid = @Supp");
                lis.Add(new SqlParameter("@Supp", Supp));

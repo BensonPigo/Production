@@ -143,9 +143,17 @@ from Order_QtyShip oq WITH (NOLOCK)
 inner join Orders o WITH (NOLOCK) on oq.ID = o.ID
 inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
 left join Style s WITH (NOLOCK) on o.StyleUkey = s.Ukey
-where oq.BuyerDelivery between '{1}' and '{2}'", 
-                                             contractID,
-                                             Convert.ToDateTime(dateRange1.Value1).ToString("d"),Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+where 1=1", contractID));
+
+            if (!MyUtility.Check.Empty(dateRange1.Value1))
+            {
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            {
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+            }
+
             if (!MyUtility.Check.Empty(txtstyle1.Text))
             {
                 sqlCmd.Append(string.Format(" and o.StyleID = '{0}'",txtstyle1.Text));

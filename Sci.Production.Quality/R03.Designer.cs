@@ -160,6 +160,7 @@
             // 
             // DateEstCutting
             // 
+            this.DateEstCutting.IsRequired = false;
             this.DateEstCutting.Location = new System.Drawing.Point(142, 85);
             this.DateEstCutting.Name = "DateEstCutting";
             this.DateEstCutting.Size = new System.Drawing.Size(280, 23);
@@ -167,6 +168,7 @@
             // 
             // DateSewInLine
             // 
+            this.DateSewInLine.IsRequired = false;
             this.DateSewInLine.Location = new System.Drawing.Point(142, 47);
             this.DateSewInLine.Name = "DateSewInLine";
             this.DateSewInLine.Size = new System.Drawing.Size(280, 23);
@@ -181,6 +183,7 @@
             // 
             // DateSCIDelivery
             // 
+            this.DateSCIDelivery.IsRequired = false;
             this.DateSCIDelivery.Location = new System.Drawing.Point(142, 10);
             this.DateSCIDelivery.Name = "DateSCIDelivery";
             this.DateSCIDelivery.Size = new System.Drawing.Size(280, 23);

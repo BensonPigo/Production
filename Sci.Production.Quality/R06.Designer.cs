@@ -134,6 +134,7 @@
             // 
             // DateArriveWH
             // 
+            this.DateArriveWH.IsRequired = false;
             this.DateArriveWH.Location = new System.Drawing.Point(141, 23);
             this.DateArriveWH.Name = "DateArriveWH";
             this.DateArriveWH.Size = new System.Drawing.Size(280, 23);

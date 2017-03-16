@@ -148,6 +148,7 @@
             // 
             // dateInspectionDate
             // 
+            this.dateInspectionDate.IsRequired = false;
             this.dateInspectionDate.Location = new System.Drawing.Point(120, 73);
             this.dateInspectionDate.Name = "dateInspectionDate";
             this.dateInspectionDate.Size = new System.Drawing.Size(280, 23);
@@ -155,6 +156,7 @@
             // 
             // dateBuyerdelivery
             // 
+            this.dateBuyerdelivery.IsRequired = false;
             this.dateBuyerdelivery.Location = new System.Drawing.Point(120, 45);
             this.dateBuyerdelivery.Name = "dateBuyerdelivery";
             this.dateBuyerdelivery.Size = new System.Drawing.Size(280, 23);

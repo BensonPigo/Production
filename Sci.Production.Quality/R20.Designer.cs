@@ -248,6 +248,7 @@
             // 
             // datePeriod
             // 
+            this.datePeriod.IsRequired = false;
             this.datePeriod.Location = new System.Drawing.Point(100, 7);
             this.datePeriod.Name = "datePeriod";
             this.datePeriod.Size = new System.Drawing.Size(280, 23);

@@ -96,28 +96,47 @@ namespace Sci.Production.Quality
             List<string> RWheres = new List<string>();
             List<string> OWheres = new List<string>();
             #region --組WHERE--
-
-            if (!this.dateArrive.Value1.Empty() && !this.dateArrive.Value2.Empty())
+            if (!this.dateArrive.Value1.Empty())
             {
-                RWheres.Add("R.WhseArrival between @ArrDate1 and @ArrDate2");
+                RWheres.Add("R.WhseArrival >= @ArrDate1");
                 lis.Add(new SqlParameter("@ArrDate1", DateArrStart));
+            }
+            if (!this.dateArrive.Value2.Empty())
+            {
+                RWheres.Add("R.WhseArrival <= @ArrDate2");
                 lis.Add(new SqlParameter("@ArrDate2", DateArrEnd));
-            } if (!this.dateDelivery.Value1.Empty() && !this.dateDelivery.Value2.Empty())
+            }
+            if (!this.dateDelivery.Value1.Empty())
             {
-                OWheres.Add("O.SciDelivery between @SCIDate1 and @SCIDate2");
+                OWheres.Add("O.SciDelivery >= @SCIDate1");
                 lis.Add(new SqlParameter("@SCIDate1", DateSCIStart));
+            }
+            if (!this.dateDelivery.Value2.Empty())
+            {
+                OWheres.Add("O.SciDelivery <= @SCIDate2");
                 lis.Add(new SqlParameter("@SCIDate2", DateSCIEnd));
-            } if (!this.dateSewing.Value1.Empty() && !this.dateSewing.Value2.Empty())
+            }
+            if (!this.dateSewing.Value1.Empty())
             {
-                OWheres.Add("O.SewInLine between @SewDate1 and @SewDate2");
+                OWheres.Add("O.SewInLine >= @SewDate1");
                 lis.Add(new SqlParameter("@SewDate1", DateSewStart));
-                lis.Add(new SqlParameter("@SewDate2", DateSewEnd));
-            } if (!this.dateCutting.Value1.Empty() && !this.dateCutting.Value2.Empty())
+            }
+            if (!this.dateSewing.Value2.Empty())
             {
-                OWheres.Add("O.CutInLine between @Est1 and @Est2");
+                OWheres.Add("O.SewInLine <= @SewDate2");
+                lis.Add(new SqlParameter("@SewDate2", DateSewEnd));
+            }
+            if (!this.dateCutting.Value1.Empty())
+            {
+                OWheres.Add("O.CutInLine >= @Est1");
                 lis.Add(new SqlParameter("@Est1", DateEstStart));
+            }
+            if (!this.dateCutting.Value2.Empty())
+            {
+                OWheres.Add("O.CutInLine <= @Est2");
                 lis.Add(new SqlParameter("@Est2", DateEstEnd));
-            } if (!this.txtSPnoStart.Text.Empty())
+            }
+            if (!this.txtSPnoStart.Text.Empty())
             {
                 OWheres.Add("O.Id between @sp1 and @sp2");
                 lis.Add(new SqlParameter("@sp1", spStrat));
@@ -172,7 +191,7 @@ namespace Sci.Production.Quality
 
             #endregion
             sqlWhere = string.Join(" and ", sqlWheres);
-            RWhere = string.Join("", RWheres);
+            RWhere = string.Join(" and ", RWheres);
             OWhere = string.Join(" and ", OWheres);
             if (!sqlWhere.Empty())
             {
