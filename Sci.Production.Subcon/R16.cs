@@ -32,15 +32,7 @@ namespace Sci.Production.Subcon
 
             txtFinanceEnReason1.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(cbbStatus, 1, 1, "Only Approved,Only Unapproved,All");
-            cbbStatus.SelectedIndex = 0;
-
-            //DataTable ex;
-            //DBProxy.Current.Select(null, "select Exchangeid from System", out ex);
-            //string exchang = ex.Rows[0]["Exchangeid"].ToString();
-            //int exc = int.Parse(exchang);
-            //txtFinanceEnReason1.SelectedIndex = exc;
-             
-
+            cbbStatus.SelectedIndex = 2;
             
         }
 
