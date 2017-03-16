@@ -33,13 +33,14 @@ namespace Sci.Production.Subcon
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
+            issuedate1 = dateRange1.Value1;
+            issuedate2 = dateRange1.Value2;
+
+            if (issuedate1.Empty() || issuedate2.Empty())
             {
                 MyUtility.Msg.WarningBox("Issue Date can't empty!!");
                 return false;
             }
-            issuedate1 = dateRange1.Value1;
-            issuedate2 = dateRange1.Value2;
 
             artworktype = txtartworktype_fty1.Text;
             mdivision = txtMdivision1.Text;
@@ -136,9 +137,9 @@ where a.issuedate between '{0}' and '{1}'
             }
 
             if (orderby.ToUpper() == "ISSUE DATE")
-                sqlCmd.Append(" order by a.issuedate ");
+                sqlCmd.Append(" order by a.mdivisionid, a.FactoryId, a.id, a.issuedate ");
             else
-                sqlCmd.Append(" order by d.localsuppid ");
+                sqlCmd.Append(" order by a.mdivisionid, a.FactoryId, a.id, d.localsuppid ");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
             if (!result)
