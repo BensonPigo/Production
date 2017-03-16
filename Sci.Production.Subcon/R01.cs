@@ -151,9 +151,9 @@ namespace Sci.Production.Subcon
             }
 
             if (orderby.ToUpper() == "ISSUE DATE")
-                sqlCmd.Append(" order by a.issuedate ");
+                sqlCmd.Append(" order by a.mdivisionid, a.FactoryId, a.ID, a.issuedate ");
             else
-                sqlCmd.Append(" order by a.localsuppid ");
+                sqlCmd.Append(" order by a.mdivisionid, a.FactoryId, a.ID, a.localsuppid ");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
             if (!result)
