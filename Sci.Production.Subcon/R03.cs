@@ -139,9 +139,9 @@ where a.issuedate between '{0}' and '{1}'
             }
 
             if (orderby.ToUpper() == "ISSUE DATE")
-                sqlCmd.Append(" order by a.issuedate ");
+                sqlCmd.Append(" order by a.mdivisionid, a.FactoryId, a.ID, a.issuedate ");
             else
-                sqlCmd.Append(" order by d.localsuppid ");
+                sqlCmd.Append(" order by a.mdivisionid, a.FactoryId, a.ID, d.localsuppid ");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
             if (!result)
