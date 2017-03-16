@@ -2207,6 +2207,8 @@
     <Build Include="dbo\Functions\GetFinanceRate.sql" />
     <Build Include="dbo\Functions\GetWKAmount.sql" />
     <Build Include="dbo\Functions\GetExportOrderAmount.sql" />
+    <Build Include="dbo\Functions\GetPoPriceByArticleSize.sql" />
+    <Build Include="dbo\Functions\GetSuitRate.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

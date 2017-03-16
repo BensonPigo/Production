@@ -58,6 +58,7 @@ Database/dbo/Functions/GetLossAccessory.sql -text
 Database/dbo/Functions/GetLossAccessory_1.sql -text
 Database/dbo/Functions/GetLossFabric.sql -text
 Database/dbo/Functions/GetOutputInformation.sql -text
+Database/dbo/Functions/GetPoPriceByArticleSize.sql -text
 Database/dbo/Functions/GetPriceFromMtl.sql -text
 Database/dbo/Functions/GetRequestETA.sql -text
 Database/dbo/Functions/GetRequestETA_1.sql -text
@@ -68,6 +69,7 @@ Database/dbo/Functions/GetSizeCodeColumnByID.sql -text
 Database/dbo/Functions/GetSizeCodeColumnByID_1.sql -text
 Database/dbo/Functions/GetStdQty.sql -text
 Database/dbo/Functions/GetStyleGMTLT.sql -text
+Database/dbo/Functions/GetSuitRate.sql -text
 Database/dbo/Functions/GetSuppColor.sql -text
 Database/dbo/Functions/GetSuppColorList.sql -text
 Database/dbo/Functions/GetSuppColor_Solution.sql -text
