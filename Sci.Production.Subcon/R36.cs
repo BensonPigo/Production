@@ -344,30 +344,24 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
             }
 
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }
 
             if ("Debit Note List".EqualString(this.comboBox1.Text))
             {
-                Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNote(LocalSupplier).xltx");
-                xl.dicDatas.Add("##SD", dt);
-                xl.Save(outpath, false);
+                MyUtility.Excel.CopyToXls(dt, "", "Subcon_R36_DebitNote(LocalSupplier).xltx", 2, true, null, null);      // 將datatable copy to excel
+                return true;
             }
 
             else if ("Summary".EqualString(this.comboBox1.Text))
             {
+                
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier).xltx");
-
                 string d1 = (MyUtility.Check.Empty(debitdate1)) ? "" : Convert.ToDateTime(debitdate1).ToString("yyyy/MM/dd");
                 string d2 = (MyUtility.Check.Empty(debitdate2)) ? "" : Convert.ToDateTime(debitdate2).ToString("yyyy/MM/dd");
                 string d3 = (MyUtility.Check.Empty(aprdate1)) ? "" : Convert.ToDateTime(aprdate1).ToString("yyyy/MM/dd");
                 string d4 = (MyUtility.Check.Empty(aprdate2)) ? "" : Convert.ToDateTime(aprdate2).ToString("yyyy/MM/dd");
                 string d5 = (MyUtility.Check.Empty(SettledDate1)) ? "" : Convert.ToDateTime(SettledDate1).ToString("yyyy/MM/dd");
                 string d6 = (MyUtility.Check.Empty(SettledDate2)) ? "" : Convert.ToDateTime(SettledDate2).ToString("yyyy/MM/dd");
+               
                 x1.dicDatas.Add("##DebiteDate", d1 + "~" + d2);
                 x1.dicDatas.Add("##ApprovedDate", d3+"~"+d4);
                 x1.dicDatas.Add("##SettledDate", d5 + "~" + d6);
@@ -378,11 +372,15 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 x1.dicDatas.Add("##FACTORY", factoryid);
                 x1.dicDatas.Add("##Status", status);
                 x1.dicDatas.Add("##PaymentSettled", payment);
-                x1.dicDatas.Add("##SD", dtSummary);
-                x1.Save(outpath, false);
+                Sci.Utility.Excel.SaveXltReportCls.xltRptTable dtSummary1 = new SaveXltReportCls.xltRptTable(dtSummary);
+                x1.dicDatas.Add("##SD", dtSummary1);
+                dtSummary1.ShowHeader = false;
+                x1.Save();
+                return true;
             }
             else if ("Detail".EqualString(this.comboBox1.Text))
             {
+                
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNoteDetail(LocalSupplier).xltx");
                 string d1 = (MyUtility.Check.Empty(debitdate1)) ? "" : Convert.ToDateTime(debitdate1).ToString("yyyy/MM/dd");
                 string d2 = (MyUtility.Check.Empty(debitdate2)) ? "" : Convert.ToDateTime(debitdate2).ToString("yyyy/MM/dd");
@@ -402,11 +400,15 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 x1.dicDatas.Add("##PaymentSettled", payment);
                 //SaveXltReportCls.xltRptTable xdt = new SaveXltReportCls.xltRptTable(dtDetail);
                 //xdt.boAutoFitColumn = true;
-                x1.dicDatas.Add("##SD", dtDetail);
-                x1.Save(outpath, false);
+                Sci.Utility.Excel.SaveXltReportCls.xltRptTable dtDetail1 = new SaveXltReportCls.xltRptTable(dtDetail);
+                x1.dicDatas.Add("##SD", dtDetail1);
+                dtDetail1.ShowHeader = false;
+                x1.Save();
+                return true;
             }
             else if ("Debit Schedule Detail".EqualString(this.comboBox1.Text))
             {
+               
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitScheduleDetail(LocalSupplier).xltx");
                 string d1 = (MyUtility.Check.Empty(debitdate1)) ? "" : Convert.ToDateTime(debitdate1).ToString("yyyy/MM/dd");
                 string d2 = (MyUtility.Check.Empty(debitdate2)) ? "" : Convert.ToDateTime(debitdate2).ToString("yyyy/MM/dd");
@@ -426,8 +428,11 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 x1.dicDatas.Add("##PaymentSettled", payment);
                 //SaveXltReportCls.xltRptTable xdt = new SaveXltReportCls.xltRptTable(dtSchedule);
                 //xdt.boAutoFitColumn = true;
-                x1.dicDatas.Add("##SD", dtSchedule);
-                x1.Save(outpath, false);
+                Sci.Utility.Excel.SaveXltReportCls.xltRptTable dtSchedule1 = new SaveXltReportCls.xltRptTable(dtSchedule);
+                x1.dicDatas.Add("##SD", dtSchedule1);
+                dtSchedule1.ShowHeader = false;
+                x1.Save();
+                return true;
             }
             return true;
         }
