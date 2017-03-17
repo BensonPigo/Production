@@ -244,18 +244,34 @@ tmpListPoCombo
 as (
 select * from tmpFilterSubProcess
 union
-select o.ID,o.MDivisionID,o.FtyGroup,o.FactoryID,o.BuyerDelivery,o.SciDelivery,o.POID,o.CRDDate,o.CFMDate,
+
+--原本的sql
+--select o.ID,o.MDivisionID,o.FtyGroup,o.FactoryID,o.BuyerDelivery,o.SciDelivery,o.POID,o.CRDDate,o.CFMDate,
+--o.Dest,o.StyleID,o.SeasonID,o.BrandID,o.ProjectID,o.Customize1,o.BuyMonth,o.CustPONo,o.CustCDID,o.ProgramID,
+--o.CdCodeID,o.CPU,o.Qty,o.FOCQty,o.LocalOrder,o.PoPrice,o.CMPPrice,o.KPILETA,o.LETA,o.MTLETA,o.SewETA,
+--o.PackETA,o.MTLComplete,o.SewInLine,o.SewOffLine,o.CutInLine,o.CutOffLine,o.Category,o.PulloutDate,
+--o.ActPulloutDate,o.SMR,o.MRHandle,o.MCHandle,o.OrigBuyerDelivery,o.DoxType,o.TotalCTN,o.FtyCTN,o.ClogCTN,
+--o.VasShas,o.TissuePaper,o.MTLExport,o.SewLine,o.ShipModeList,o.PlanDate,o.FirstProduction,o.OrderTypeID,
+--o.SpecialMark,o.SampleReason,o.InspDate,IIF(o.InspResult='P','Pass',IIF(o.InspResult='F','Fail',''))InspResult,
+--o.InspHandle,o.MnorderApv,o.PulloutComplete,o.FtyKPI,
+--o.KPIChangeReason,o.EachConsApv,o.Junk,o.StyleUkey,o.CuttingSP,o.RainwearTestPassed,o.BrandFTYCode,o.CPUFactor,
+--o.ClogLastReceiveDate,o.IsMixMarker,o.GFR
+--from Orders o  WITH (NOLOCK) 
+--where POID in (select distinct POID from tmpFilterSubProcess)
+
+select o.ID,o.MDivisionID,o.FtyGroup,o.FactoryID,o.BuyerDelivery,o.SciDelivery,O.POID,o.CRDDate,o.CFMDate,
 o.Dest,o.StyleID,o.SeasonID,o.BrandID,o.ProjectID,o.Customize1,o.BuyMonth,o.CustPONo,o.CustCDID,o.ProgramID,
 o.CdCodeID,o.CPU,o.Qty,o.FOCQty,o.LocalOrder,o.PoPrice,o.CMPPrice,o.KPILETA,o.LETA,o.MTLETA,o.SewETA,
 o.PackETA,o.MTLComplete,o.SewInLine,o.SewOffLine,o.CutInLine,o.CutOffLine,o.Category,o.PulloutDate,
 o.ActPulloutDate,o.SMR,o.MRHandle,o.MCHandle,o.OrigBuyerDelivery,o.DoxType,o.TotalCTN,o.FtyCTN,o.ClogCTN,
 o.VasShas,o.TissuePaper,o.MTLExport,o.SewLine,o.ShipModeList,o.PlanDate,o.FirstProduction,o.OrderTypeID,
 o.SpecialMark,o.SampleReason,o.InspDate,IIF(o.InspResult='P','Pass',IIF(o.InspResult='F','Fail',''))InspResult,
-o.InspHandle,o.MnorderApv,o.PulloutComplete,o.FtyKPI,
+(o.InspHandle +'-'+ I.Name)InspHandle,o.MnorderApv,o.PulloutComplete,o.FtyKPI,
 o.KPIChangeReason,o.EachConsApv,o.Junk,o.StyleUkey,o.CuttingSP,o.RainwearTestPassed,o.BrandFTYCode,o.CPUFactor,
 o.ClogLastReceiveDate,o.IsMixMarker,o.GFR
 from Orders o  WITH (NOLOCK) 
-where POID in (select distinct POID from tmpFilterSubProcess)
+OUTER APPLY(SELECT Name FROM Pass1 WITH (NOLOCK) WHERE Pass1.ID=O.InspHandle)I
+where POID IN (select distinct POID from tmpFilterSubProcess)
 )");
             }
             else
