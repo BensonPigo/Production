@@ -56,6 +56,15 @@ namespace Sci.Production.Warehouse
 
         }
 
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            gridicon.Append.Enabled = false;
+            gridicon.Append.Visible = false;
+            gridicon.Insert.Enabled = false;
+            gridicon.Insert.Visible = false;
+        }
+
         // 新增時預設資料
         protected override void ClickNewAfter()
         {
