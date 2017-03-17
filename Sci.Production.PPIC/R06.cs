@@ -82,7 +82,13 @@ as (
 select ID,ThirdCountry,Seq+IIF(Qty = '','','('+Qty+')') as Seq
 from PrepareData1
 )
-select o.ID,o.StyleID,o.Category,o.SeasonID,o.SewInLine,o.LETA,o.KPILETA,o.BuyerDelivery,o.SciDelivery,
+select o.ID,o.StyleID,
+Category = (CASE WHEN o.Category = 'B' THEN 'Bulk'
+WHEN o.Category = 'S' THEN 'Sample'
+WHEN o.Category = 'O' THEN 'Other'
+WHEN o.Category = 'M' THEN 'Material'
+END)
+,o.SeasonID,o.SewInLine,o.LETA,o.KPILETA,o.BuyerDelivery,o.SciDelivery,
 o.BrandID,o.CPU,o.SewETA,o.PackETA,o.MDivisionID,o.FactoryID,dbo.getPass1(o.LocalMR) as LocalMR,
 dbo.getTPEPass1(o.MCHandle) as MCHandle,dbo.getTPEPass1(o.MRHandle) as MRHandle,
 dbo.getTPEPass1(o.SMR) as SMR,dbo.getTPEPass1(p.POSMR) as POSMR,
