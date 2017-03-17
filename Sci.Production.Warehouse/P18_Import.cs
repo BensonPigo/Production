@@ -242,15 +242,15 @@ where a.status='Confirmed' and a.id='{0}'", transid)); //
 
         private void txtTransferOutID_Validating(object sender, CancelEventArgs e)
         {
-            if (MyUtility.Check.Empty(txtTransferOutID.Text))
-                return;
-            if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.transferout WITH (NOLOCK) where status='Confirmed' and id ='{0}')"
-                    , this.txtTransferOutID.Text), null))
-            {
-                MyUtility.Msg.WarningBox("< Transfer out ID > is not found!!");
-                e.Cancel = true;
-                return;
-            }
+            //if (MyUtility.Check.Empty(txtTransferOutID.Text))
+            //    return;
+            //if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.transferout WITH (NOLOCK) where status='Confirmed' and id ='{0}')"
+            //        , this.txtTransferOutID.Text), null))
+            //{
+            //    MyUtility.Msg.WarningBox("< Transfer out ID > is not found!!");
+            //    e.Cancel = true;
+            //    return;
+            //}
         }
     }
 }
