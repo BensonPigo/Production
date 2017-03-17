@@ -10,6 +10,7 @@ using Ict.Win;
 using Sci;
 using Sci.Data;
 using Sci.Production.PublicPrg;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -203,9 +204,10 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I'
             dr2 = dtGridBS1.Select("qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(string.Format(@"topoid = '{0}' and toseq1 = '{1}' and toseq2 = '{2}' 
-                        and toroll ='{3}'and todyelot='{4}' and tostocktype='{5}' and FromFtyinventoryUkey = '{6}'"
-                    , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"], tmp["tostocktype"], tmp["fromFtyInventoryUkey"]));
+                DataRow[] findrow = dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["fromftyinventoryukey"].EqualString(tmp["fromftyinventoryukey"])
+                                       && row["topoid"].EqualString(tmp["topoid"].ToString()) && row["toseq1"].EqualString(tmp["toseq1"])
+                                       && row["toseq2"].EqualString(tmp["toseq2"].ToString()) && row["toroll"].EqualString(tmp["toroll"])
+                                       && row["todyelot"].EqualString(tmp["todyelot"]) && row["tostocktype"].EqualString(tmp["tostocktype"])).ToArray();
 
                 if (findrow.Length > 0)
                 {
