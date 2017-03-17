@@ -178,5 +178,14 @@ order by v.CDate", sqlCondition);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printAdjust);
             return result;
         }
+
+        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select id,startdate,EndDate from [Production].[dbo].[VNContract]", "20,10,10", this.Text, false, ",", headercaptions: "Contract No, Start Date, End Date");
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            textBox2.Text = item.GetSelectedString();            
+            
+        }
     }
 }
