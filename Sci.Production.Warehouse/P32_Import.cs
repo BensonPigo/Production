@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -300,9 +301,10 @@ drop table #tmp
 
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(
-                    string.Format(@"fromFtyinventoryukey = {0} and topoid = '{1}' and toseq1 = '{2}' and toseq2 = '{3}' and toroll ='{4}'and todyelot='{5}' and tostocktype='{6}' "
-                    , tmp["fromFtyinventoryukey"], tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"], tmp["tostocktype"]));
+                DataRow[] findrow = dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["fromftyinventoryukey"].EqualString(tmp["fromftyinventoryukey"])
+                                       && row["topoid"].EqualString(tmp["topoid"].ToString()) && row["toseq1"].EqualString(tmp["toseq1"])
+                                       && row["toseq2"].EqualString(tmp["toseq2"].ToString()) && row["toroll"].EqualString(tmp["toroll"])
+                                       && row["todyelot"].EqualString(tmp["todyelot"]) && row["tostocktype"].EqualString(tmp["tostocktype"])).ToArray();
 
                 if (findrow.Length > 0)
                 {
