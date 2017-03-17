@@ -262,7 +262,7 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'B'
 //                    e.Cancel = true;
 //                    return;
 //                }
-            }
+            //}
 
         }
     }
