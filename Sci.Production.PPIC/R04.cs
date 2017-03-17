@@ -88,7 +88,7 @@ namespace Sci.Production.PPIC
 isnull(o.StyleID,'') as StyleID,l.OrderID,ld.Seq1+' '+ld.Seq2 as Seq,isnull(c.Name,'') as ColorName,
 isnull(psd.Refno,'') as Refno,l.ApvDate,ld.RejectQty,ld.RequestQty,ld.IssueQty,
 IIF(l.Status= 'Received',l.EditDate,null) as FinishedDate,IIF(l.Type='R','Replacement','Lacking') as Type,
-isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),'') as Description,
+concat(ld.PPICReasonID,isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),'')) as Description,
 IIF(l.Status = 'Received',IIF(DATEDIFF(ss,l.ApvDate,l.EditDate) <= 10800,'Y','N'),'N') as OnTime
 from Lack l WITH (NOLOCK) 
 inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
