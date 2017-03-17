@@ -81,7 +81,7 @@ namespace Sci.Production.Subcon
             [Style] = o.StyleID,
             [Season] = o.SeasonID,
             [Brand] = o.BrandID,
-            [Comb] = bd.Patterncode,
+            [Comb] = b.PatternPanel,
             [Article] = b.Article,
             [Color] = b.ColorId,
             [Line] = b.SewinglineId,
@@ -136,7 +136,7 @@ namespace Sci.Production.Subcon
             }
             if (!MyUtility.Check.Empty(dateBundleTransDate1))
             {
-                sqlCmd.Append(string.Format(@" and b.Cdate between '{0}' and '{1}'",
+                sqlCmd.Append(string.Format(@" and bt.TransferDate between '{0}' and '{1}'",
                     Convert.ToDateTime(dateBundleTransDate1).ToString("d"), Convert.ToDateTime(dateBundleTransDate2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(Factory))
