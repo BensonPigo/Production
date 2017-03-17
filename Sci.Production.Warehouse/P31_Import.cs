@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -214,9 +215,10 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq1.se
             }
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(
-                    string.Format(@"fromftyinventoryukey = {0} and topoid = '{1}' and toseq1 = '{2}' and toseq2 = '{3}' and toroll ='{4}'and todyelot='{5}' and tostocktype='{6}' "
-                    , tmp["fromftyinventoryukey"], tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"], tmp["tostocktype"]));
+                DataRow[] findrow = dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["fromftyinventoryukey"].EqualString(tmp["fromftyinventoryukey"])
+                                       && row["topoid"].EqualString(tmp["topoid"].ToString()) && row["toseq1"].EqualString(tmp["toseq1"])
+                                       && row["toseq2"].EqualString(tmp["toseq2"].ToString()) && row["toroll"].EqualString(tmp["toroll"])
+                                       && row["todyelot"].EqualString(tmp["todyelot"]) && row["tostocktype"].EqualString(tmp["tostocktype"])).ToArray();
 
                 if (findrow.Length > 0)
                 {
@@ -238,39 +240,39 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq1.se
         // To SP# Valid
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            string sp = textBox1.Text.TrimEnd();
+//            string sp = textBox1.Text.TrimEnd();
 
-            DataRow tmp;
+//            DataRow tmp;
 
-            if (MyUtility.Check.Empty(sp)) return;
+//            if (MyUtility.Check.Empty(sp)) return;
 
-            if (txtSeq1.checkEmpty(showErrMsg: false))
-            {
-                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}')"
-                    , sp), null))
-                {
-                    MyUtility.Msg.WarningBox("SP# is not found!!");
-                    e.Cancel = true;
-                    return;
-                }
-            }
-            else
-            {
-                if (!MyUtility.Check.Seek(string.Format(@"select sizespec,refno,colorid,dbo.getmtldesc(id,seq1,seq2,2,0) as [description]
-                        from po_supp_detail WITH (NOLOCK) where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, txtSeq1.seq1, txtSeq1.seq2), out tmp, null))
-                {
-                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-                    e.Cancel = true;
-                    return;
-                }
-                else
-                {
-                    this.displayBox2.Value = tmp["sizespec"];
-                    this.displayBox3.Value = tmp["refno"];
-                    this.displayBox4.Value = tmp["colorid"];
-                    this.editBox1.Text = tmp["description"].ToString();
-                }
-            }
+//            if (txtSeq1.checkEmpty(showErrMsg: false))
+//            {
+//                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}')"
+//                    , sp), null))
+//                {
+//                    MyUtility.Msg.WarningBox("SP# is not found!!");
+//                    e.Cancel = true;
+//                    return;
+//                }
+//            }
+//            else
+//            {
+//                if (!MyUtility.Check.Seek(string.Format(@"select sizespec,refno,colorid,dbo.getmtldesc(id,seq1,seq2,2,0) as [description]
+//                        from po_supp_detail WITH (NOLOCK) where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, txtSeq1.seq1, txtSeq1.seq2), out tmp, null))
+//                {
+//                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
+//                    e.Cancel = true;
+//                    return;
+//                }
+//                else
+//                {
+//                    this.displayBox2.Value = tmp["sizespec"];
+//                    this.displayBox3.Value = tmp["refno"];
+//                    this.displayBox4.Value = tmp["colorid"];
+//                    this.editBox1.Text = tmp["description"].ToString();
+//                }
+//            }
 
         }
     }
