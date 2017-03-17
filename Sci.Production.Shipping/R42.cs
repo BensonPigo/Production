@@ -61,21 +61,27 @@ namespace Sci.Production.Shipping
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"select MDivisionID,FactoryID,ID,StyleID,SeasonID,BrandID,Category,SciDelivery,BuyerDelivery,OrderTypeID,Article,SizeCode,Qty,
+            sqlCmd.Append(string.Format(@"
+select MDivisionID,FactoryID,ID,StyleID,SeasonID,BrandID,Category,SciDelivery,BuyerDelivery,OrderTypeID,Article,SizeCode,
+[qty]= sum(Qty),
 IIF(CustomSP = '','',SUBSTRING(CustomSP,0,len(CustomSP))) as CustomSP
 from (
-select o.MDivisionID,o.FactoryID,o.ID,o.StyleID,o.SeasonID,o.BrandID,IIF(o.Category  = 'B','Bulk','Sample') as Category,
-o.SciDelivery,oq.BuyerDelivery,o.OrderTypeID,oqd.Article,oqd.SizeCode,oqd.Qty,oa.Seq as ASeq,os.Seq as SSeq,
-isnull((select CONCAT(CustomSP, ',') from (
-select distinct v.CustomSP+'('+v.VNContractID+')' as CustomSP from VNConsumption v WITH (NOLOCK) ,VNConsumption_Article va WITH (NOLOCK) ,VNConsumption_SizeCode vs WITH (NOLOCK) 
-where v.ID = va.ID and v.ID = vs.ID and v.StyleID = o.StyleID and v.BrandID = o.BrandID and va.Article = oqd.Article and vs.SizeCode = oqd.SizeCode) a
-ORDER BY CustomSP
-FOR XML PATH('')),'') as CustomSP
-from Order_QtyShip oq WITH (NOLOCK) 
-inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.Id = oqd.Id and oq.Seq = oqd.Seq
-inner join Orders o WITH (NOLOCK) on o.ID = oq.Id
-left join Order_Article oa WITH (NOLOCK) on o.ID = oa.ID and oa.Article = oqd.Article
-left join Order_SizeCode os WITH (NOLOCK) on o.ID = os.ID and os.SizeCode = oqd.SizeCode
+	select o.MDivisionID,o.FactoryID,o.ID,o.StyleID,o.SeasonID,o.BrandID,IIF(o.Category  = 'B','Bulk','Sample') as Category,
+	o.SciDelivery,oq.BuyerDelivery,o.OrderTypeID,oqd.Article,oqd.SizeCode,
+	oqd.Qty,oa.Seq as ASeq,os.Seq as SSeq,
+	isnull((select CONCAT(CustomSP, ',') 
+	from (
+		select distinct v.CustomSP+'('+v.VNContractID+')' as CustomSP 
+		from VNConsumption v WITH (NOLOCK) ,VNConsumption_Article va WITH (NOLOCK) ,VNConsumption_SizeCode vs WITH (NOLOCK) 
+		where v.ID = va.ID and v.ID = vs.ID and v.StyleID = o.StyleID and v.BrandID = o.BrandID and va.Article = oqd.Article and vs.SizeCode = oqd.SizeCode
+		) a
+	ORDER BY CustomSP
+	FOR XML PATH('')),'') as CustomSP
+	from Order_QtyShip oq WITH (NOLOCK) 
+	inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.Id = oqd.Id and oq.Seq = oqd.Seq
+	inner join Orders o WITH (NOLOCK) on o.ID = oq.Id
+	left join Order_Article oa WITH (NOLOCK) on o.ID = oa.ID and oa.Article = oqd.Article
+	left join Order_SizeCode os WITH (NOLOCK) on o.ID = os.ID and os.SizeCode = oqd.SizeCode
 where oq.BuyerDelivery between '{0}' and '{1}'
 and {2}
 and o.LocalOrder = 0
@@ -90,6 +96,7 @@ and oqd.Qty > 0", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(da
                 sqlCmd.Append(string.Format(" and o.FactoryID = '{0}'", factory));
             }
             sqlCmd.Append(@") a
+group by  MDivisionID,FactoryID,ID,StyleID,SeasonID,BrandID,Category,SciDelivery,BuyerDelivery,OrderTypeID,Article,SizeCode,CustomSP,a.ASeq,a.SSeq
 order by a.ID,a.BuyerDelivery,a.ASeq,a.SSeq");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
