@@ -223,7 +223,7 @@ select StyleID,ModularParent,CPUAdjusted,BrandID,CdCodeID,CDDesc,StyleDesc,Seaso
 from tmp3rdData
 group by StyleID,ModularParent,CPUAdjusted,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID
 )
-select StyleID,ModularParent,CPUAdjusted,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
+select StyleID,ModularParent,[CPUAdjusted] = CPUAdjusted*100,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
 Order by StyleID,SeasonID", sqlCmd.ToString());
             result = DBProxy.Current.Select(null, querySql, out Style);
