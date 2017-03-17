@@ -228,7 +228,7 @@ outer apply (
 	from ArtworkPo po WITH (NOLOCK) 
     inner join ArtworkPo_Detail pod WITH (NOLOCK) on pod.id = po.Id 
     inner join orders WITH (NOLOCK) ON orders.id = pod.orderid
-		where po.ArtworkTypeID = cte.artworktypeid and orders.POId = aa.POID AND po.Status = 'Approved') t
+		where po.ArtworkTypeID = cte.artworktypeid and orders.POId = aa.POID AND po.Status = 'Approved'  AND Orders.Category=aa.Category ) t
 		) x
 outer apply(
 	select orders.POID
@@ -236,7 +236,7 @@ outer apply(
 	,sum(orders.qty*Price) order_amt 
 	from orders WITH (NOLOCK) 
 	inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
-	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid
+	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid  AND Orders.Category=aa.Category
 	group by orders.poid,ArtworkTypeID) y
 outer apply (
 	select isnull(sum(t.localpo_amt),0.00) localpo_amt,isnull(sum(t.localpo_qty),0) localpo_qty 
@@ -290,7 +290,7 @@ outer apply (
 	from ArtworkPo po WITH (NOLOCK) 
     inner join ArtworkPo_Detail pod WITH (NOLOCK) on pod.id = po.Id 
     inner join orders WITH (NOLOCK) on orders.id = pod.orderid
-		where po.ArtworkTypeID = cte.artworktypeid and orders.POId = aa.POID AND po.Status = 'Approved') t
+		where po.ArtworkTypeID = cte.artworktypeid and orders.POId = aa.POID AND po.Status = 'Approved'  AND Orders.Category=aa.Category) t
 		) x		
 outer apply(
 	select orders.POID
@@ -298,7 +298,7 @@ outer apply(
 	,sum(orders.qty*Price) order_amt 
 	from orders WITH (NOLOCK) 
 	inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
-	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid
+	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid  AND Orders.Category=aa.Category
 	group by orders.poid,ArtworkTypeID) y
 where po_qty > 0
 ", ratetype));
