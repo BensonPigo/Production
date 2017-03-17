@@ -254,10 +254,10 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O'"));
             dr2 = dtGridBS1.Select("qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(string.Format(@"topoid = '{0}' and toseq1 = '{1}' and toseq2 = '{2}' 
-                        and toroll ='{3}'and todyelot='{4}' and tostocktype='{5}' and FromFtyinventoryUkey = '{6}'"
-                    , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"], tmp["tostocktype"], tmp["fromFtyInventoryUkey"]));
-
+                DataRow[] findrow = dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["fromftyinventoryukey"].EqualString(tmp["fromftyinventoryukey"])
+                                       && row["topoid"].EqualString(tmp["topoid"].ToString()) && row["toseq1"].EqualString(tmp["toseq1"])
+                                       && row["toseq2"].EqualString(tmp["toseq2"].ToString()) && row["toroll"].EqualString(tmp["toroll"])
+                                       && row["todyelot"].EqualString(tmp["todyelot"]) && row["tostocktype"].EqualString(tmp["tostocktype"])).ToArray();
                 if (findrow.Length > 0)
                 {
                     findrow[0]["qty"] = tmp["qty"];
@@ -279,45 +279,45 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O'"));
         //SP# Valid
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            string sp = textBox1.Text.TrimEnd();
+//            string sp = textBox1.Text.TrimEnd();
 
-            if (MyUtility.Check.Empty(sp)) return;
+//            if (MyUtility.Check.Empty(sp)) return;
 
-            if (txtSeq1.checkEmpty(showErrMsg: false))
-            {
-                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from ftyinventory WITH (NOLOCK) where poid ='{0}')"
-                    , sp), null))
-                {
-                    MyUtility.Msg.WarningBox("SP# is not found!!");
-                    e.Cancel = true;
-                    return;
-                }
-            }
-            else
-            {
-                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from mdivisionpodetail WITH (NOLOCK) where poid ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}')", sp, txtSeq1.seq1, txtSeq1.seq2), null))
-                {
-                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-                    e.Cancel = true;
-                    return;
-                }
-            }
+//            if (txtSeq1.checkEmpty(showErrMsg: false))
+//            {
+//                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from ftyinventory WITH (NOLOCK) where poid ='{0}')"
+//                    , sp), null))
+//                {
+//                    MyUtility.Msg.WarningBox("SP# is not found!!");
+//                    e.Cancel = true;
+//                    return;
+//                }
+//            }
+//            else
+//            {
+//                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from mdivisionpodetail WITH (NOLOCK) where poid ='{0}' 
+//                        and seq1 = '{1}' and seq2 = '{2}')", sp, txtSeq1.seq1, txtSeq1.seq2), null))
+//                {
+//                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
+//                    e.Cancel = true;
+//                    return;
+//                }
+//            }
 
         }
 
         //Seq Valid
         private void txtSeq1_Leave(object sender, EventArgs e)
         {
-            string sp = textBox1.Text.TrimEnd();
-            if (MyUtility.Check.Empty(sp) || txtSeq1.checkEmpty(showErrMsg: false)) return;
+//            string sp = textBox1.Text.TrimEnd();
+//            if (MyUtility.Check.Empty(sp) || txtSeq1.checkEmpty(showErrMsg: false)) return;
 
-            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}' 
-                        and seq1 = '{1}' and seq2 = '{2}')", sp, txtSeq1.seq1, txtSeq1.seq2), null))
-            {
-                MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-                return;
-            }
+//            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}' 
+//                        and seq1 = '{1}' and seq2 = '{2}')", sp, txtSeq1.seq1, txtSeq1.seq2), null))
+//            {
+//                MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
+//                return;
+//            }
 
         }
 
