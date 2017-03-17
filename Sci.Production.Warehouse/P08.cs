@@ -95,8 +95,7 @@ namespace Sci.Production.Warehouse
         // delete前檢查
         protected override bool ClickDeleteBefore()
         {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() == "CONFIRMED")
+            if (CurrentMaintain["Status"].EqualString("CONFIRMED"))
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't delete.", "Warning");
                 return false;
@@ -108,8 +107,7 @@ namespace Sci.Production.Warehouse
         protected override bool ClickEditBefore()
         {
             //!EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() == "CONFIRMED")
+            if (CurrentMaintain["Status"].EqualString("CONFIRMED"))
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
                 return false;
