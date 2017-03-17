@@ -265,17 +265,17 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
         // SP# Valid
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            string sp = textBox1.Text.TrimEnd();
+            //string sp = textBox1.Text.TrimEnd();
 
-            if (MyUtility.Check.Empty(sp)) return;
+            //if (MyUtility.Check.Empty(sp)) return;
 
-            if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}')"
-                , sp), null))
-            {
-                MyUtility.Msg.WarningBox("SP# is not found!!");
-                e.Cancel = true;
-                return;
-            }
+            //if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}')"
+            //    , sp), null))
+            //{
+            //    MyUtility.Msg.WarningBox("SP# is not found!!");
+            //    e.Cancel = true;
+            //    return;
+            //}
 
         }
 
@@ -375,12 +375,11 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
               
                 foreach (DataRow tmp in dr2)
                 {
-                    DataRow[] findrow = dt_detail.Select(
-                        string.Format(@"fromftyinventoryukey = {0} 
-                    and topoid = '{1}' and toseq1 = '{2}' and toseq2 = '{3}' and toroll ='{4}'and todyelot='{5}' and tostocktype='{6}' "
-                        , tmp["fromftyinventoryukey"]
-                        , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"], tmp["tostocktype"]));
-
+                    DataRow[] findrow = dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
+                                                           && row["topoid"].EqualString(tmp["topoid"].ToString()) && row["toseq1"].EqualString(tmp["toseq1"])
+                                                           && row["toseq2"].EqualString(tmp["toseq2"].ToString()) && row["toroll"].EqualString(tmp["toroll"])
+                                                           && row["todyelot"].EqualString(tmp["todyelot"]) && row["tostocktype"].EqualString(tmp["tostocktype"])).ToArray();
+ 
                     if (findrow.Length > 0)
                     {
                         findrow[0]["qty"] = tmp["qty"];
