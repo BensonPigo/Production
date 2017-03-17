@@ -83,46 +83,50 @@ namespace Sci.Production.Subcon
             else
             {
                 #region -- List Sql Command --
-                sqlCmd.Append(string.Format(@"Select distinct a.MDivisionID
-                                                     ,c.FactoryID
-	                                                 ,a.FactoryId
-	                                                 ,a.LocalSuppID
-	                                                 ,d.Abb
-	                                                 ,a.id
-	                                                 ,a.IssueDate
-	                                                 ,a.ApvDate
-	                                                 ,vs1.Name_Extno Handle
-	                                                 ,a.CurrencyID
-	                                                 ,a.Amount+a.Vat APAmount
-	                                                 ,a.Category
-	                                                 ,b.LocalPoId
-	                                                 ,b.OrderId
- 	                                                 ,b.OldSeq1
-	                                                 ,b.OldSeq2                                                           
-	                                                 ,b.Refno
-	                                                 ,dbo.getItemDesc(a.Category,b.Refno) Description
-	                                                 ,b.ThreadColorID
-	                                                 ,b.UnitID
-	                                                 ,b.Price
-	                                                 ,b.Qty
-                                                     ,b.price*b.qty amount
-                                                     ,e.Amount+e.vat poamt
-	                                                 ,vs2.Name POHandle
-	                                                 ,e.IssueDate
-	                                                 ,a.InvNo
-                                            from LocalAP a WITH (NOLOCK) 
-                                            inner join LocalAP_Detail b WITH (NOLOCK) on b.id=a.id
-                                            left join Orders c WITH (NOLOCK) on b.OrderId=c.ID
-                                            left join localsupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
-                                            left join localpo e WITH (NOLOCK) on b.LocalPoId=e.Id 
-                                            outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
-											outer apply (
-                                                (select name = concat(name, ' Ext.', ExtNo)
-                                                from TPEPass1
-                                                where id = (select PoHandle from Po where id = b.OrderId))
-                                            ) vs2
-                                            where  a.issuedate between '{0}' and '{1}'
-                                             and a.apvdate between '{2}' and '{3}'"
+                sqlCmd.Append(string.Format(@"
+Select  a.MDivisionID
+            ,c.FactoryID
+	        ,a.FactoryId
+	        ,a.LocalSuppID
+	        ,d.Abb
+	        ,a.id
+	        ,a.IssueDate
+	        ,a.ApvDate
+	        ,vs1.Name_Extno Handle
+	        ,a.CurrencyID
+	        ,a.Amount+a.Vat APAmount
+	        ,a.Category
+	        ,b.LocalPoId
+	        ,b.OrderId
+	        ,b.Refno
+	        ,dbo.getItemDesc(a.Category,b.Refno) Description
+	        ,b.ThreadColorID
+	        ,b.UnitID
+	        ,b.Price
+	        ,b.Qty
+            ,b.price*b.qty amount
+            ,PoAmount.Amount poamt
+	        ,vs2.Name POHandle
+	        ,e.IssueDate
+	        ,a.InvNo
+from LocalAP a WITH (NOLOCK) 
+inner join LocalAP_Detail b WITH (NOLOCK) on b.id=a.id
+left join Orders c WITH (NOLOCK) on b.OrderId=c.ID
+left join localsupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
+left join localpo e WITH (NOLOCK) on b.LocalPoId=e.Id                                             
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
+outer apply (
+    (select name = concat(name, ' Ext.', ExtNo)
+    from TPEPass1
+    where id = (select PoHandle from Po where id = b.OrderId))
+) vs2
+outer apply (
+    select amount = sum(isnull(F.Price * F.Qty, 0.00)) 
+    from LocalPo_Detail f
+    where e.id = f.id and c.id = f.orderid    
+) PoAmount
+where  a.issuedate between '{0}' and '{1}'
+    and a.apvdate between '{2}' and '{3}'"
                     , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
                     , Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")));
                 #endregion
