@@ -79,6 +79,7 @@ namespace Sci.Production.Quality
                     declare @y1 varchar(4) = cast(datepart(year, dateadd(year,-2, @d) ) as varchar(4))
                     declare @y2 varchar(4) = cast(datepart(year, dateadd(year,-1, @d) ) as varchar(4))
                     declare @y3 varchar(4) = cast(datepart(year,@d) as varchar(4))
+                    declare @yMax varchar(4) = (select max(year) from ADIDASComplainTarget)
 
                     select Target,Claimed.Claimed,sh.qty[Shipped],convert(varchar(10),Claimed.month1)[month1],convert(varchar(10),Claimed.YEAR1)[YEAR1]
                     into #temp
@@ -93,7 +94,7 @@ namespace Sci.Production.Quality
 
                    outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a WITH (NOLOCK) 
 		                         WHERE a.YearMonth BETWEEN ff.startMonth AND ff.EndMonth and a.BrandID = 'ADIDAS')sh
-                    where year in (@y1,@y2,@y3)
+                    where year in (@yMax)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1
 
                     select dRanges.name[ ],dRanges.starts,tg1.Target1 [Target],isnull(SUM(year1.Claimed),0)[Claimed1],isnull(SUM(year1.Shipped),0)[Shipped1],isnull(year1.adicomp,0)[adicomp1],isnull(SUM(year2.Claimed),0)[Claimed2],isnull(SUM(year2.Shipped),0)[Shipped2],isnull(year2.adicomp,0)[adicomp2],isnull(SUM(year3.Claimed),0)[Claimed3],isnull(SUM(year3.Shipped),0)[Shipped3],isnull(year3.adicomp,0)[adicomp3] from dbo.#temp
@@ -214,6 +215,7 @@ namespace Sci.Production.Quality
                  declare @y1 varchar(4) = cast(datepart(year, dateadd(year,-2, @d) ) as varchar(4))
                  declare @y2 varchar(4) = cast(datepart(year, dateadd(year,-1, @d) ) as varchar(4))
                  declare @y3 varchar(4) = cast(datepart(year,@d) as varchar(4))
+                 declare @yMax varchar(4) = (select max(year) from ADIDASComplainTarget)
 
 
                  select distinct id,CountryID  into #Tfactory from dbo.SCIFty WITH (NOLOCK) 
@@ -221,7 +223,7 @@ namespace Sci.Production.Quality
 
                  --select * from #Tfactory
 
-                 select Target,year[year2] into #Ttarget from dbo.ADIDASComplainTarget WITH (NOLOCK) where Year in (@y1,@y2,@y3)
+                 select Target,year[year2] into #Ttarget from dbo.ADIDASComplainTarget WITH (NOLOCK) where Year in (@yMax)
 
                  --select * from #Ttarget
 
