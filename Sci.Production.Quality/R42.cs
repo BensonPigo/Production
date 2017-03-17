@@ -196,13 +196,17 @@ namespace Sci.Production.Quality
                 dt.ColumnsDecimalAdd("Qty", expression: Qty_SumColumns);
                 dt.ColumnsDecimalAdd("Complaint_Value", expression: Complaint_SumColumns);
                 
+                //var total_Rows = dt.Sum(month_Columns, "Shell_Supplier");
                 var total_Rows = dt.Sum(month_Columns, "Shell_Supplier");
-                
-                foreach (var ttl_row in total_Rows)
+                if (!MyUtility.Check.Empty(total_Rows)) 
                 {
-                    ttl_row["Shell_Supplier"] = ttl_row["Shell_Supplier"].ToString().Trim() + "Total";
+                    foreach (var ttl_row in total_Rows)
+                    {
+                        ttl_row["Shell_Supplier"] = ttl_row["Shell_Supplier"].ToString().Trim() + "Total";
+                    }
+                    total_Rows[total_Rows.Count - 1]["Shell_Supplier"] = "GRAND TOTAL";
                 }
-                total_Rows[total_Rows.Count - 1]["Shell_Supplier"] = "GRAND TOTAL";
+                                
     
                 if (null == dt_All || 0 == dt_All.Rows.Count)
                 {
