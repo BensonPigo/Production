@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
@@ -163,8 +164,8 @@ Where c.OrderID = '{0}' and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid
             dr2 = dtGridBS1.Select("qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = dt_detail.Select(string.Format(@"poid = '{0}' and scirefno = '{1}' and sizespec = '{2}' "
-                    , tmp["poid"], tmp["scirefno"], tmp["sizespec"]));
+                DataRow[] findrow = dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["poid"].EqualString(tmp["poid"])
+                                                                                && row["scirefno"].EqualString(tmp["scirefno"]) && row["sizespec"].EqualString(tmp["sizespec"])).ToArray();
 
                 if (findrow.Length > 0)
                 {
@@ -185,17 +186,17 @@ Where c.OrderID = '{0}' and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            string sp = textBox1.Text.TrimEnd();
+            //string sp = textBox1.Text.TrimEnd();
 
-            if (MyUtility.Check.Empty(sp)) return;
+            //if (MyUtility.Check.Empty(sp)) return;
 
-            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from dbo.localinventory WITH (NOLOCK) where orderid ='{0}' and mdivisionid = '{1}')"
-                , sp,Sci.Env.User.Keyword), null))
-            {
-                MyUtility.Msg.WarningBox("SP# is not found!!");
-                e.Cancel = true;
-                return;
-            }
+            //if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from dbo.localinventory WITH (NOLOCK) where orderid ='{0}' and mdivisionid = '{1}')"
+            //    , sp,Sci.Env.User.Keyword), null))
+            //{
+            //    MyUtility.Msg.WarningBox("SP# is not found!!");
+            //    e.Cancel = true;
+            //    return;
+            //}
 
         }
 
