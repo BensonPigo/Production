@@ -76,7 +76,7 @@ namespace Sci.Production.Subcon
             [Style] = o.StyleID,
             [Season] = o.SeasonID,
             [Brand] = o.BrandID,
-            [Comb] = bd.Patterncode,
+            [Comb] = b.PatternPanel,
             [Article] = b.Article,
             [Color] = b.ColorId,
             [Line] = b.SewinglineId,
