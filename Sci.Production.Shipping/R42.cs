@@ -62,7 +62,7 @@ namespace Sci.Production.Shipping
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"select MDivisionID,FactoryID,ID,StyleID,SeasonID,BrandID,Category,SciDelivery,BuyerDelivery,OrderTypeID,Article,SizeCode,Qty,
-IIF(CustomSP = '','',SUBSTRING(CustomSP,0,len(CustomSP)-1)) as CustomSP
+IIF(CustomSP = '','',SUBSTRING(CustomSP,0,len(CustomSP))) as CustomSP
 from (
 select o.MDivisionID,o.FactoryID,o.ID,o.StyleID,o.SeasonID,o.BrandID,IIF(o.Category  = 'B','Bulk','Sample') as Category,
 o.SciDelivery,oq.BuyerDelivery,o.OrderTypeID,oqd.Article,oqd.SizeCode,oqd.Qty,oa.Seq as ASeq,os.Seq as SSeq,
