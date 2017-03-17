@@ -105,6 +105,7 @@
             // 
             // dateRangePoIssueDate
             // 
+            this.dateRangePoIssueDate.IsRequired = false;
             this.dateRangePoIssueDate.Location = new System.Drawing.Point(115, 12);
             this.dateRangePoIssueDate.Name = "dateRangePoIssueDate";
             this.dateRangePoIssueDate.Size = new System.Drawing.Size(280, 23);

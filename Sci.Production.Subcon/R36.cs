@@ -84,17 +84,27 @@ namespace Sci.Production.Subcon
                 lis.Add(new SqlParameter("@SDNo1", SDNo1));
                 lis.Add(new SqlParameter("@SDNo2", SDNo2));
             } 
-            if (!this.dateRange_Debit.Value1.Empty() && !this.dateRange_Debit.Value2.Empty())
+            if (!this.dateRange_Debit.Value1.Empty())
             {
-                sqlWheres.Add("a.Issuedate between @debitdate1 and @debitdate2");
+                sqlWheres.Add("a.Issuedate >= @debitdate1");
                 lis.Add(new SqlParameter("@debitdate1", debitdate1));
-                lis.Add(new SqlParameter("@debitdate2", debitdate2));
-            } if (!this.dateRange_Approve.Value1.Empty() && !this.dateRange_Approve.Value2.Empty())
+            }
+            if (!this.dateRange_Debit.Value2.Empty())
             {
-                sqlWheres.Add("a.CfmDate between @aprdate1 and @aprdate2");
+                sqlWheres.Add("a.Issuedate <= @debitdate2");
+                lis.Add(new SqlParameter("@debitdate2", debitdate2));
+            }
+            if (!this.dateRange_Approve.Value1.Empty())
+            {
+                sqlWheres.Add("a.CfmDate >= @aprdate1");
                 lis.Add(new SqlParameter("@aprdate1", aprdate1));
+            }
+            if (!this.dateRange_Approve.Value2.Empty())
+            {
+                sqlWheres.Add("a.CfmDate <= @aprdate2");
                 lis.Add(new SqlParameter("@aprdate2", aprdate2));
-            } if (!this.txtLocalSupp1.TextBox1.Text.Empty())
+            }
+            if (!this.txtLocalSupp1.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("a.localsuppid = @localsuppid");
                 lis.Add(new SqlParameter("@localsuppid", Supplier));
@@ -114,24 +124,39 @@ namespace Sci.Production.Subcon
             {
                 sqlWheres.Add("a.Status = @status");
                 lis.Add(new SqlParameter("@status", status));
-            } if (!this.dateRange4.Value1.Empty() && !this.dateRange4.Value2.Empty())
+            } 
+            if (!this.dateRange4.Value1.Empty())
             {
-                sqlWheres.Add("a.amtrevisedate between @amtrevisedate1 and @amtrevisedate2");
+                sqlWheres.Add("a.amtrevisedate >= @amtrevisedate1");
                 lis.Add(new SqlParameter("@amtrevisedate1", amtrevisedate1));
-                lis.Add(new SqlParameter("@amtrevisedate2", amtrevisedate2));
-            } if (!this.dateRange5.Value1.Empty() && !this.dateRange5.Value2.Empty())
+            }
+            if (!this.dateRange4.Value2.Empty())
             {
-                sqlWheres.Add("a.ReceiveDate between @ReceiveDate1 and @ReceiveDate2");
+                sqlWheres.Add("a.amtrevisedate <= @amtrevisedate2");
+                lis.Add(new SqlParameter("@amtrevisedate2", amtrevisedate2));
+            }
+            if (!this.dateRange5.Value1.Empty())
+            {
+                sqlWheres.Add("a.ReceiveDate >= @ReceiveDate1");
                 lis.Add(new SqlParameter("@ReceiveDate1", ReceiveDate1));
+            }
+            if (!this.dateRange5.Value2.Empty())
+            {
+                sqlWheres.Add("a.ReceiveDate <= @ReceiveDate2");
                 lis.Add(new SqlParameter("@ReceiveDate2", ReceiveDate2));
             } 
             int needSettleData = 0;
-            if (!this.dateRange3.Value1.Empty() && !this.dateRange3.Value2.Empty())
+            if (!this.dateRange3.Value1.Empty())
             {
                 lis.Add(new SqlParameter("@SettledDate1", SettledDate1));
+                needSettleData = 1;
+            }
+            if (!this.dateRange3.Value2.Empty())
+            {
                 lis.Add(new SqlParameter("@SettledDate2", SettledDate2));
                 needSettleData = 1;
-            } if (this.comboBox3.Text == "Settled")
+            } 
+            if (this.comboBox3.Text == "Settled")
             {
                 lis.Add(new SqlParameter("@payment", payment));
                 needSettleData = 1;

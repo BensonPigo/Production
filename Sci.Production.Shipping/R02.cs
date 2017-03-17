@@ -30,11 +30,11 @@ namespace Sci.Production.Shipping
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
-            {
-                MyUtility.Msg.WarningBox("Pullout Date can't empty!!");
-                return false;
-            }
+            //if (MyUtility.Check.Empty(dateRange1.Value1))
+            //{
+            //    MyUtility.Msg.WarningBox("Pullout Date can't empty!!");
+            //    return false;
+            //}
 
             mDivisionID = comboBox1.Text;
             pulloutDate1 = dateRange1.Value1;
@@ -68,16 +68,31 @@ left join Country c WITH (NOLOCK) on c.ID = o.Dest
 left join GMTBooking g WITH (NOLOCK) on g.ID = pd.INVNo
 left join PackingList pl WITH (NOLOCK) on pl.ID = pd.PackingListID
 left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
-where p.PulloutDate between '{0}' and '{1}'", Convert.ToDateTime(pulloutDate1).ToString("d"), Convert.ToDateTime(pulloutDate2).ToString("d")));
+where 1=1"));
 
+            if (!MyUtility.Check.Empty(pulloutDate1))
+            {
+                sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}' ", Convert.ToDateTime(pulloutDate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(pulloutDate2))
+            {
+                sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}' ", Convert.ToDateTime(pulloutDate2).ToString("d")));
+            }
             if (!MyUtility.Check.Empty(sdpDate1))
             {
-                sqlCmd.Append(string.Format(" and oq.SDPDate between '{0}' and '{1}'", Convert.ToDateTime(sdpDate1).ToString("d"), Convert.ToDateTime(sdpDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.SDPDate >= '{0}' ", Convert.ToDateTime(sdpDate1).ToString("d")));
             }
-
+            if (!MyUtility.Check.Empty(sdpDate2))
+            {
+                sqlCmd.Append(string.Format(" and oq.SDPDate <= '{0}' ", Convert.ToDateTime(sdpDate2).ToString("d")));
+            }
             if (!MyUtility.Check.Empty(sciDlv1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery between '{0}' and '{1}'", Convert.ToDateTime(sciDlv1).ToString("d"), Convert.ToDateTime(sciDlv2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}' ", Convert.ToDateTime(sciDlv1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(sciDlv2))
+            {
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}' ", Convert.ToDateTime(sciDlv2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(mDivisionID))

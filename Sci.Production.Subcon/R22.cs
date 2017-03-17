@@ -74,10 +74,7 @@ namespace Sci.Production.Subcon
 	                                                ,a.PaytermID+'-' +(select Name from PayTerm WITH (NOLOCK) where id = a.paytermid) payterm
                                              from LocalAP a WITH (NOLOCK) 
                                              left join LocalSupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
-                                             where  a.issuedate between '{0}' and '{1}'
-                                                    and a.apvdate between '{2}' and '{3}'"
-                                                     , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
-                                                     , Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")));
+                                             where 1=1"));
                 #endregion
             }
             else
@@ -125,12 +122,21 @@ outer apply (
     from LocalPo_Detail f
     where e.id = f.id and c.id = f.orderid    
 ) PoAmount
-where  a.issuedate between '{0}' and '{1}'
-    and a.apvdate between '{2}' and '{3}'"
-                    , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
-                    , Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")));
+where 1=1"));
                 #endregion
             }
+            System.Data.SqlClient.SqlParameter sp_issueDate1 = new System.Data.SqlClient.SqlParameter();
+            sp_issueDate1.ParameterName = "@issueDate1";
+
+            System.Data.SqlClient.SqlParameter sp_issueDate2 = new System.Data.SqlClient.SqlParameter();
+            sp_issueDate2.ParameterName = "@issueDate2";
+
+            System.Data.SqlClient.SqlParameter sp_approveDate1 = new System.Data.SqlClient.SqlParameter();
+            sp_approveDate1.ParameterName = "@approveDate1";
+
+            System.Data.SqlClient.SqlParameter sp_approveDate2 = new System.Data.SqlClient.SqlParameter();
+            sp_approveDate2.ParameterName = "@approveDate2";
+
             System.Data.SqlClient.SqlParameter sp_category = new System.Data.SqlClient.SqlParameter();
             sp_category.ParameterName = "@category";
 
@@ -144,6 +150,34 @@ where  a.issuedate between '{0}' and '{1}'
             sp_subcon.ParameterName = "@subcon";
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+
+            if (!MyUtility.Check.Empty(issueDate1))
+            {
+                sqlCmd.Append(" and a.issuedate >= @issueDate1");
+                sp_issueDate1.Value = issueDate1;
+                cmds.Add(sp_issueDate1);
+            }
+
+            if (!MyUtility.Check.Empty(issueDate2))
+            {
+                sqlCmd.Append(" and a.issuedate <= @issueDate2");
+                sp_issueDate2.Value = issueDate2;
+                cmds.Add(sp_issueDate2);
+            }
+
+            if (!MyUtility.Check.Empty(approveDate1))
+            {
+                sqlCmd.Append(" and a.apvdate >= @approveDate1");
+                sp_approveDate1.Value = approveDate1;
+                cmds.Add(sp_approveDate1);
+            }
+
+            if (!MyUtility.Check.Empty(approveDate2))
+            {
+                sqlCmd.Append(" and a.apvdate <= @approveDate2");
+                sp_approveDate2.Value = approveDate2;
+                cmds.Add(sp_approveDate2);
+            }
 
             if (!MyUtility.Check.Empty(category))
             {

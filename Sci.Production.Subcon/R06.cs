@@ -31,7 +31,7 @@ namespace Sci.Production.Subcon
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
+            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))
             {
                 MyUtility.Msg.WarningBox("Farm Out Date can't empty!!");
                 return false;
@@ -85,6 +85,12 @@ where a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}'
 ", Convert.ToDateTime(farmoutdate1).ToString("d"), Convert.ToDateTime(farmoutdate2).ToString("d")));
             #endregion
 
+            System.Data.SqlClient.SqlParameter sp_farmoutdate1 = new System.Data.SqlClient.SqlParameter();
+            sp_farmoutdate1.ParameterName = "@farmoutdate1";
+
+            System.Data.SqlClient.SqlParameter sp_farmoutdate2 = new System.Data.SqlClient.SqlParameter();
+            sp_farmoutdate2.ParameterName = "@farmoutdate2";
+
             System.Data.SqlClient.SqlParameter sp_artworktype = new System.Data.SqlClient.SqlParameter();
             sp_artworktype.ParameterName = "@artworktype";
 
@@ -117,6 +123,20 @@ where a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}'
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 
+            if (!MyUtility.Check.Empty(farmoutdate1))
+            {
+                sqlCmd.Append(" and a.issuedate >= @farmoutdate1");
+                sp_farmoutdate1.Value = farmoutdate1;
+                cmds.Add(sp_farmoutdate1);
+            }
+
+            if (!MyUtility.Check.Empty(farmoutdate2))
+            {
+                sqlCmd.Append(" and a.issuedate <= @farmoutdate2");
+                sp_farmoutdate2.Value = farmoutdate2;
+                cmds.Add(sp_farmoutdate2);
+            }
+
             if (!MyUtility.Check.Empty(bundleno1))
             {
                 sqlCmd.Append(" and b.bundleno >= @bundleno1");
@@ -133,9 +153,14 @@ where a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}'
 
             if (!MyUtility.Check.Empty(scidelivery1))
             {
-                sqlCmd.Append(" and c.scidelivery between @scidelivery1 and @scidelivery2");
+                sqlCmd.Append(" and c.scidelivery >= @scidelivery1");
                 sp_scidelivery1.Value = scidelivery1;
                 cmds.Add(sp_scidelivery1);
+                
+            }
+            if (!MyUtility.Check.Empty(scidelivery2))
+            {
+                sqlCmd.Append(" and c.scidelivery <= @scidelivery2");
                 sp_scidelivery2.Value = scidelivery2;
                 cmds.Add(sp_scidelivery2);
             }

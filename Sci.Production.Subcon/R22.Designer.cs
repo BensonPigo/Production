@@ -113,6 +113,7 @@
             // 
             // dateRange1
             // 
+            this.dateRange1.IsRequired = false;
             this.dateRange1.Location = new System.Drawing.Point(115, 12);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
@@ -159,6 +160,7 @@
             // 
             // dateRange2
             // 
+            this.dateRange2.IsRequired = false;
             this.dateRange2.Location = new System.Drawing.Point(115, 48);
             this.dateRange2.Name = "dateRange2";
             this.dateRange2.Size = new System.Drawing.Size(280, 23);

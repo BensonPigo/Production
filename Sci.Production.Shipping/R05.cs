@@ -35,11 +35,11 @@ namespace Sci.Production.Shipping
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
-            {
-                MyUtility.Msg.WarningBox("Date can't empty!!");
-                return false;
-            }
+            //if (MyUtility.Check.Empty(dateRange1.Value1))
+            //{
+            //    MyUtility.Msg.WarningBox("Date can't empty!!");
+            //    return false;
+            //}
 
             mDivision = comboBox1.Text;
             date1 = dateRange1.Value1;
@@ -61,7 +61,15 @@ isnull((select CONCAT(InvNo,'/') from (select distinct InvNo from ShareExpense W
 from ShippingAP s WITH (NOLOCK) 
 left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
 where s.ApvDate is null
-and s.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
+and 1=1"));
+            if (!MyUtility.Check.Empty(date1))
+            {
+                sqlCmd.Append(string.Format(" and s.CDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(date2))
+            {
+                sqlCmd.Append(string.Format(" and s.CDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+            }
 
             if (!MyUtility.Check.Empty(mDivision))
             {

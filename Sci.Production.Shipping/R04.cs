@@ -35,11 +35,11 @@ namespace Sci.Production.Shipping
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
-            {
-                MyUtility.Msg.WarningBox("Buyer Delivery can't empty!!");
-                return false;
-            }
+            //if (MyUtility.Check.Empty(dateRange1.Value1))
+            //{
+            //    MyUtility.Msg.WarningBox("Buyer Delivery can't empty!!");
+            //    return false;
+            //}
 
             mDivision = comboBox1.Text;
             buyerDlv1 = dateRange1.Value1;
@@ -72,7 +72,16 @@ oq.OutstandingRemark
 from Orders o WITH (NOLOCK) 
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
-where oq.BuyerDelivery between '{0}' and '{1}'", Convert.ToDateTime(buyerDlv1).ToString("d"), Convert.ToDateTime(buyerDlv2).ToString("d")));
+where 1=1"));
+
+            if (!MyUtility.Check.Empty(buyerDlv1))
+            {
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(buyerDlv1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(buyerDlv2))
+            {
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(buyerDlv2).ToString("d")));
+            }
 
             if (!MyUtility.Check.Empty(estPullout1))
             {

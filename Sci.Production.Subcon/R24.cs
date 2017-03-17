@@ -48,7 +48,7 @@ namespace Sci.Production.Subcon
         protected override bool ValidateInput()
         {
 
-            if (cbbStatus.SelectedIndex != 1 && MyUtility.Check.Empty(dateRangeAPDate.Value1))
+            if (cbbStatus.SelectedIndex != 1 && MyUtility.Check.Empty(dateRangeAPDate.Value1) && MyUtility.Check.Empty(dateRangeAPDate.Value2))
             {
                 MyUtility.Msg.WarningBox("A/P Date can't empty!!");
                 return false;
@@ -146,8 +146,22 @@ as
             switch (statusindex)
             {
                 case 0:
-                    sqlCmd.Append(string.Format(@" where a.apvdate is not null and a.issuedate between '{0}' and '{1}'"
-                        , Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
+                    if (!MyUtility.Check.Empty(APdate1) && !MyUtility.Check.Empty(APdate2))
+                    {
+                        sqlCmd.Append(string.Format(@" where a.apvdate is not null and a.issuedate between '{0}' and '{1}'"
+                            , Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
+                    }
+                    else
+                    {
+                        if (!MyUtility.Check.Empty(APdate1))
+                        {
+                            sqlCmd.Append(string.Format(@" where a.apvdate is not null and a.issuedate >= '{0}' ", Convert.ToDateTime(APdate1).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(APdate2))
+                        {
+                            sqlCmd.Append(string.Format(@" where a.apvdate is not null and  a.issuedate <= '{0}' ", Convert.ToDateTime(APdate2).ToString("d")));
+                        }
+                    }
                     break;
 
                 case 1:
@@ -155,8 +169,22 @@ as
                     break;
 
                 case 2:
-                    sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate between '{0}' and '{1}')"
-                        , Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
+                    if (!MyUtility.Check.Empty(APdate1) && !MyUtility.Check.Empty(APdate2))
+                    {
+                        sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate between '{0}' and '{1}')"
+                            , Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
+                    }
+                    else
+                    {
+                        if (!MyUtility.Check.Empty(APdate1))
+                        {
+                            sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate >= '{0}') ", Convert.ToDateTime(APdate1).ToString("d")));
+                        }
+                        if (!MyUtility.Check.Empty(APdate2))
+                        {
+                            sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate <= '{0}') ", Convert.ToDateTime(APdate2).ToString("d")));
+                        }
+                    }
                     break;
             }
 
@@ -174,11 +202,16 @@ as
                 cmds.Add(sp_spno2);
             }
 
-            if (!MyUtility.Check.Empty(GLdate1) && !MyUtility.Check.Empty(GLdate2))
+            if (!MyUtility.Check.Empty(GLdate1))
             {
-                sqlCmd.Append(" and a.ApvDate between @GLdate1 and @GLdate2");
+                sqlCmd.Append(" and a.ApvDate >= @GLdate1");
                 sp_GLdate1.Value = GLdate1;
                 cmds.Add(sp_GLdate1);
+            }
+
+            if (!MyUtility.Check.Empty(GLdate2))
+            {
+                sqlCmd.Append(" and a.ApvDate <= @GLdate2");
                 sp_GLdate2.Value = GLdate2;
                 cmds.Add(sp_GLdate2);
             }

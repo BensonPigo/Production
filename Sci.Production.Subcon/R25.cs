@@ -62,10 +62,14 @@ namespace Sci.Production.Subcon
             List<SqlParameter> lis = new List<SqlParameter>();
             string sqlWhere = ""; string order = "";
             List<string> sqlWheres = new List<string>();
-            if (!this.dateRange1.Value1.Empty() && !this.dateRange1.Value2.Empty())
+            if (!this.dateRange1.Value1.Empty())
             {
-                sqlWheres.Add("lr.issuedate between @ReceiveDate and @ReceiveDate2");
+                sqlWheres.Add("lr.issuedate >= @ReceiveDate");
                 lis.Add(new SqlParameter("@ReceiveDate", ReceiveDate));
+            }
+            if (!this.dateRange1.Value2.Empty())
+            {
+                sqlWheres.Add("lr.issuedate <= @ReceiveDate2");
                 lis.Add(new SqlParameter("@ReceiveDate2", ReceiveDate2));
             }
             if (!this.textBox1.Text.Empty())

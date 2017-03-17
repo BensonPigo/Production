@@ -40,7 +40,7 @@ namespace Sci.Production.Subcon
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) || MyUtility.Check.Empty(dateRange2.Value1))
+            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2)|| MyUtility.Check.Empty(dateRange2.Value1)  && MyUtility.Check.Empty(dateRange2.Value2))
             {
                 MyUtility.Msg.WarningBox("< Issue Date > & < Approve Date > can't empty!!");
                 return false;
@@ -75,10 +75,7 @@ namespace Sci.Production.Subcon
                                                     ,a.PayTermID+'-' +(select Name from PayTerm WITH (NOLOCK) where id = a.paytermid) payterm
                                             from ArtworkAP a WITH (NOLOCK) 
                                             left join LocalSupp b WITH (NOLOCK) on a.LocalSuppID=b.ID
-                                            where  a.issuedate between '{0}' and '{1}'
-                                                    and a.apvdate between '{2}' and '{3}'"
-                                                  , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
-                                                  ,Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")));
+                                            where 1=1"));
                 #endregion
             }
             else
@@ -107,12 +104,21 @@ namespace Sci.Production.Subcon
                                              left join Orders d WITH (NOLOCK) on c.OrderID=d.id
                                              left join ArtworkPO e WITH (NOLOCK) on e.id=c.ArtworkPoID
                                              inner join ArtworkPO_Detail f WITH (NOLOCK) on c.ArtworkPoID=f.id and c.ArtworkPo_DetailUkey=f.Ukey
-                                            where  a.issuedate between '{0}' and '{1}'
-                                            and a.apvdate between '{2}' and '{3}'"
-                                                  , Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d")
-                                                  , Convert.ToDateTime(approveDate1).ToString("d"), Convert.ToDateTime(approveDate2).ToString("d")));
+                                            where  1=1"));
                 #endregion
             }
+            System.Data.SqlClient.SqlParameter sp_issueDate1 = new System.Data.SqlClient.SqlParameter();
+            sp_issueDate1.ParameterName = "@issueDate1";
+
+            System.Data.SqlClient.SqlParameter sp_issueDate2 = new System.Data.SqlClient.SqlParameter();
+            sp_issueDate2.ParameterName = "@issueDate2";
+
+            System.Data.SqlClient.SqlParameter sp_approveDate1 = new System.Data.SqlClient.SqlParameter();
+            sp_approveDate1.ParameterName = "@approveDate1";
+
+            System.Data.SqlClient.SqlParameter sp_approveDate2 = new System.Data.SqlClient.SqlParameter();
+            sp_approveDate2.ParameterName = "@approveDate2";
+
             System.Data.SqlClient.SqlParameter sp_artworktype = new System.Data.SqlClient.SqlParameter();
             sp_artworktype.ParameterName = "@artworktype";
 
@@ -126,6 +132,33 @@ namespace Sci.Production.Subcon
             sp_subcon.ParameterName = "@subcon";
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+
+            if (!MyUtility.Check.Empty(issueDate1))
+            {
+                sqlCmd.Append(" and a.issuedate >= @issueDate1");
+                sp_issueDate1.Value = issueDate1;
+                cmds.Add(sp_issueDate1);
+            }
+
+            if (!MyUtility.Check.Empty(issueDate2))
+            {
+                sqlCmd.Append(" and a.issuedate <= @issueDate2");
+                sp_issueDate2.Value = issueDate2;
+                cmds.Add(sp_issueDate2);
+            }
+            if (!MyUtility.Check.Empty(approveDate1))
+            {
+                sqlCmd.Append(" and a.apvdate >= @approveDate1");
+                sp_approveDate1.Value = approveDate1;
+                cmds.Add(sp_approveDate1);
+            }
+
+            if (!MyUtility.Check.Empty(approveDate2))
+            {
+                sqlCmd.Append(" and a.apvdate <= @approveDate2");
+                sp_approveDate2.Value = approveDate2;
+                cmds.Add(sp_approveDate2);
+            }
 
             if (!MyUtility.Check.Empty(artworktype))
             {

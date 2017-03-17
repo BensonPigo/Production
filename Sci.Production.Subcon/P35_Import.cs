@@ -82,8 +82,10 @@ namespace Sci.Production.Subcon
                                                                                                             dr_localAp["localsuppid"],Env.User.Keyword);
                 if(!MyUtility.Check.Empty(sp_b)){strSQLCmd+= " and b.orderid between @sp1 and @sp2";}
                 if (!MyUtility.Check.Empty(poid_b)) { strSQLCmd += " and b.id between @localpoid1 and  @localpoid2"; }
-                if (!MyUtility.Check.Empty(delivery_b)) { strSQLCmd += string.Format(" and b.Delivery between '{0}' and '{1}'", delivery_b, delivery_e); }
-                if (!MyUtility.Check.Empty(issuedate_b)) { strSQLCmd += string.Format(" and a.issuedate between '{0}' and '{1}'", issuedate_b, issuedate_e); }
+                if (!MyUtility.Check.Empty(delivery_b)) { strSQLCmd += string.Format(" and b.Delivery >= '{0}' ", delivery_b); }
+                if (!MyUtility.Check.Empty(delivery_e)) { strSQLCmd += string.Format(" and b.Delivery <= '{0}' ", delivery_e); }
+                if (!MyUtility.Check.Empty(issuedate_b)) { strSQLCmd += string.Format(" and a.issuedate >= '{0}' ", issuedate_b); }
+                if (!MyUtility.Check.Empty(issuedate_e)) { strSQLCmd += string.Format(" and a.issuedate <= '{0}' ", issuedate_e); }
                 strSQLCmd += " order by b.id,b.orderid,b.refno,b.threadcolorid";
 
                 #region 準備sql參數資料

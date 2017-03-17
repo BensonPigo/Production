@@ -114,6 +114,7 @@
             // 
             // dateBundle
             // 
+            this.dateBundle.IsRequired = false;
             this.dateBundle.Location = new System.Drawing.Point(125, 77);
             this.dateBundle.Name = "dateBundle";
             this.dateBundle.Size = new System.Drawing.Size(280, 23);

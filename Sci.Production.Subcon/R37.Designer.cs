@@ -151,6 +151,7 @@
             // 
             // SettDate
             // 
+            this.SettDate.IsRequired = false;
             this.SettDate.Location = new System.Drawing.Point(139, 74);
             this.SettDate.Name = "SettDate";
             this.SettDate.Size = new System.Drawing.Size(280, 23);
@@ -158,6 +159,7 @@
             // 
             // ConDate
             // 
+            this.ConDate.IsRequired = false;
             this.ConDate.Location = new System.Drawing.Point(139, 45);
             this.ConDate.Name = "ConDate";
             this.ConDate.Size = new System.Drawing.Size(280, 23);
@@ -165,6 +167,7 @@
             // 
             // DebDate
             // 
+            this.DebDate.IsRequired = false;
             this.DebDate.Location = new System.Drawing.Point(139, 16);
             this.DebDate.Name = "DebDate";
             this.DebDate.Size = new System.Drawing.Size(280, 23);

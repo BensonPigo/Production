@@ -224,6 +224,7 @@
             // 
             // dateRangeApvDate
             // 
+            this.dateRangeApvDate.IsRequired = false;
             this.dateRangeApvDate.Location = new System.Drawing.Point(590, 82);
             this.dateRangeApvDate.Name = "dateRangeApvDate";
             this.dateRangeApvDate.Size = new System.Drawing.Size(280, 23);
@@ -240,6 +241,7 @@
             // 
             // dateRangeSciDelivery
             // 
+            this.dateRangeSciDelivery.IsRequired = false;
             this.dateRangeSciDelivery.Location = new System.Drawing.Point(590, 15);
             this.dateRangeSciDelivery.Name = "dateRangeSciDelivery";
             this.dateRangeSciDelivery.Size = new System.Drawing.Size(280, 23);
@@ -256,6 +258,7 @@
             // 
             // dateRangeArrived
             // 
+            this.dateRangeArrived.IsRequired = false;
             this.dateRangeArrived.Location = new System.Drawing.Point(140, 48);
             this.dateRangeArrived.Name = "dateRangeArrived";
             this.dateRangeArrived.Size = new System.Drawing.Size(280, 23);
@@ -281,6 +284,7 @@
             // 
             // dateRangeSewInLine
             // 
+            this.dateRangeSewInLine.IsRequired = false;
             this.dateRangeSewInLine.Location = new System.Drawing.Point(590, 48);
             this.dateRangeSewInLine.Name = "dateRangeSewInLine";
             this.dateRangeSewInLine.Size = new System.Drawing.Size(280, 23);
@@ -288,6 +292,7 @@
             // 
             // dateRangeBooking
             // 
+            this.dateRangeBooking.IsRequired = false;
             this.dateRangeBooking.Location = new System.Drawing.Point(140, 15);
             this.dateRangeBooking.Name = "dateRangeBooking";
             this.dateRangeBooking.Size = new System.Drawing.Size(280, 23);

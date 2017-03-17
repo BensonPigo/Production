@@ -61,17 +61,27 @@ namespace Sci.Production.Subcon
             List<string> sqlWheres = new List<string>();
             #region --組WHERE--
             
-            if (!this.DebDate.Value1.Empty() && !this.DebDate.Value2.Empty())
+            if (!this.DebDate.Value1.Empty())
             {
-                sqlWheres.Add("a.Issuedate between @DebDate1 and @DebDate2");
+                sqlWheres.Add("a.Issuedate >= @DebDate1");
                 list.Add(new SqlParameter("@DebDate1", DebDate1));
-                list.Add(new SqlParameter("@DebDate2", DebDate2));
-            }if (!this.ConDate.Value1.Empty() && !this.ConDate.Value2.Empty())
+            }
+            if (!this.DebDate.Value2.Empty())
             {
-                sqlWheres.Add("a.cfmdate between @ConDate1 and @ConDate2");
+                sqlWheres.Add("a.Issuedate <= @DebDate2");
+                list.Add(new SqlParameter("@DebDate2", DebDate2));
+            }
+            if (!this.ConDate.Value1.Empty())
+            {
+                sqlWheres.Add("a.cfmdate >= @ConDate1");
                 list.Add(new SqlParameter("@ConDate1", ConDate1));
+            }
+            if (!this.ConDate.Value2.Empty())
+            {
+                sqlWheres.Add("a.cfmdate <= @ConDate2");
                 list.Add(new SqlParameter("@ConDate2", ConDate2));
-            }if (!this.DebNo1.Text.Empty())
+            }
+            if (!this.DebNo1.Text.Empty())
             {
                 sqlWheres.Add("a.Id between @DebNo1 and @DebNo2");
                 list.Add(new SqlParameter("@DebNo1", DebitNo1));
@@ -91,10 +101,15 @@ namespace Sci.Production.Subcon
             } if (this.comboPay.Text == "Settled")
             {
                 list.Add(new SqlParameter("@payment", Pay));
-            } if (!this.SettDate.Value1.Empty() && !this.SettDate.Value2.Empty())
+            }
+            if (!this.SettDate.Value1.Empty())
             {
-                sqlHaving = "and finalVoucher.[Settled Date] between @SettledDate1 and @SettledDate2";
+                sqlHaving = "and finalVoucher.[Settled Date] >= @SettledDate1";
                 list.Add(new SqlParameter("@SettledDate1", SettDate1));
+            }
+            if (!this.SettDate.Value2.Empty())
+            {
+                sqlHaving = "and finalVoucher.[Settled Date] <= @SettledDate2";
                 list.Add(new SqlParameter("@SettledDate2", SettDate2));
             }
             #endregion

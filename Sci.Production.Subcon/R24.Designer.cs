@@ -118,6 +118,7 @@
             // 
             // dateRangeAPDate
             // 
+            this.dateRangeAPDate.IsRequired = false;
             this.dateRangeAPDate.Location = new System.Drawing.Point(115, 12);
             this.dateRangeAPDate.Name = "dateRangeAPDate";
             this.dateRangeAPDate.Size = new System.Drawing.Size(280, 23);
@@ -134,6 +135,7 @@
             // 
             // dateRangeGLDate
             // 
+            this.dateRangeGLDate.IsRequired = false;
             this.dateRangeGLDate.Location = new System.Drawing.Point(115, 48);
             this.dateRangeGLDate.Name = "dateRangeGLDate";
             this.dateRangeGLDate.Size = new System.Drawing.Size(280, 23);

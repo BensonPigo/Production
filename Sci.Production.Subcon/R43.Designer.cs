@@ -103,6 +103,7 @@
             // 
             // dateBundleReceive
             // 
+            this.dateBundleReceive.IsRequired = false;
             this.dateBundleReceive.Location = new System.Drawing.Point(169, 19);
             this.dateBundleReceive.Name = "dateBundleReceive";
             this.dateBundleReceive.Size = new System.Drawing.Size(280, 23);

@@ -103,16 +103,24 @@ namespace Sci.Production.Subcon
                 lis.Add(new SqlParameter("@SP", SP));
                 lis.Add(new SqlParameter("@SP2", SP2));
             }
-            if (!this.SCI_Delivery.Empty() && !this.SCI_Delivery2.Empty())
+            if (!this.SCI_Delivery.Empty())
             {
-                sqlWheres.Add("c.scidelivery between @SCI_Delivery and @SCI_Delivery2");
+                sqlWheres.Add("c.scidelivery >= @SCI_Delivery");
                 lis.Add(new SqlParameter("@SCI_Delivery", SCI_Delivery));
+            }
+            if (!this.SCI_Delivery2.Empty())
+            {
+                sqlWheres.Add("c.scidelivery <= @SCI_Delivery2");
                 lis.Add(new SqlParameter("@SCI_Delivery2", SCI_Delivery2));
             }
-            if (!this.Issue_Date1.Empty() && !this.Issue_Date2.Empty())
+            if (!this.Issue_Date1.Empty())
             {
-                sqlWheres.Add("a.issuedate between @Issue_Date1 and @Issue_Date2");
+                sqlWheres.Add("a.issuedate >= @Issue_Date1");
                 lis.Add(new SqlParameter("@Issue_Date1", Issue_Date1));
+            }
+            if (!this.Issue_Date2.Empty())
+            {
+                sqlWheres.Add("a.issuedate <= @Issue_Date2");
                 lis.Add(new SqlParameter("@Issue_Date2", Issue_Date2));
             }
             if (!this.Location_Poid.Empty() && !this.Location_Poid2.Empty())

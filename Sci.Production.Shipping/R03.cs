@@ -34,11 +34,11 @@ namespace Sci.Production.Shipping
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
-            {
-                MyUtility.Msg.WarningBox("Pullout Date can't empty!!");
-                return false;
-            }
+            //if (MyUtility.Check.Empty(dateRange1.Value1))
+            //{
+            //    MyUtility.Msg.WarningBox("Pullout Date can't empty!!");
+            //    return false;
+            //}
 
             mDivision = comboBox1.Text;
             pulloutDate1 = dateRange1.Value1;
@@ -69,7 +69,16 @@ left join Order_QtyShip oq WITH (NOLOCK) on pd.OrderID = oq.Id and pd.OrderShipm
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 left join Cutting ct WITH (NOLOCK) on ct.ID = o.CuttingSP
 where p.Status <> 'New'
-and p.PulloutDate between '{0}' and '{1}'", Convert.ToDateTime(pulloutDate1).ToString("d"), Convert.ToDateTime(pulloutDate2).ToString("d")));
+and 1=1"));
+
+            if (!MyUtility.Check.Empty(pulloutDate1))
+            {
+                sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}' ", Convert.ToDateTime(pulloutDate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(pulloutDate2))
+            {
+                sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}' ", Convert.ToDateTime(pulloutDate2).ToString("d")));
+            }
             if (!MyUtility.Check.Empty(brand))
             {
                 sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", brand));

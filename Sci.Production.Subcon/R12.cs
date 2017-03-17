@@ -37,7 +37,7 @@ namespace Sci.Production.Subcon
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
+            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))
             {
                 MyUtility.Msg.WarningBox("AP Date can't empty!!");
                 return false;
@@ -81,9 +81,14 @@ Select  a.MDivisionID
 from artworkap a WITH (NOLOCK) 
 inner join artworkap_detail b WITH (NOLOCK) on a.id = b.id 
 left join ArtworkPO c WITH (NOLOCK) on c.ID = b.ArtworkPoID
-where  a.ApvDate is null and a.issuedate between '{0}' and '{1}'
-", Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
+where  a.ApvDate is null and 1=1"));
             #endregion
+
+            System.Data.SqlClient.SqlParameter sp_APdate1 = new System.Data.SqlClient.SqlParameter();
+            sp_APdate1.ParameterName = "@APdate1";
+
+            System.Data.SqlClient.SqlParameter sp_APdate2 = new System.Data.SqlClient.SqlParameter();
+            sp_APdate2.ParameterName = "@APdate2";
 
             System.Data.SqlClient.SqlParameter sp_artworktype = new System.Data.SqlClient.SqlParameter();
             sp_artworktype.ParameterName = "@artworktype";
@@ -98,6 +103,21 @@ where  a.ApvDate is null and a.issuedate between '{0}' and '{1}'
             sp_subcon.ParameterName = "@subcon";
 
              IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+
+             if (!MyUtility.Check.Empty(APdate1))
+             {
+                 sqlCmd.Append(" and a.issuedate >= @APdate1");
+                 sp_APdate1.Value = APdate1;
+                 cmds.Add(sp_APdate1);
+             }
+
+             if (!MyUtility.Check.Empty(APdate2))
+             {
+                 sqlCmd.Append(" and a.issuedate <= @APdate2");
+                 sp_APdate2.Value = APdate2;
+                 cmds.Add(sp_APdate2);
+             }
+
 
             if (!MyUtility.Check.Empty(artworktype))
             {

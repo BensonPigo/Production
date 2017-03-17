@@ -84,6 +84,7 @@
             // 
             // dateBundle
             // 
+            this.dateBundle.IsRequired = false;
             this.dateBundle.Location = new System.Drawing.Point(145, 70);
             this.dateBundle.Name = "dateBundle";
             this.dateBundle.Size = new System.Drawing.Size(280, 23);
@@ -145,6 +146,7 @@
             // 
             // dateBundleTransDate
             // 
+            this.dateBundleTransDate.IsRequired = false;
             this.dateBundleTransDate.Location = new System.Drawing.Point(145, 99);
             this.dateBundleTransDate.Name = "dateBundleTransDate";
             this.dateBundleTransDate.Size = new System.Drawing.Size(280, 23);

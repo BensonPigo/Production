@@ -131,13 +131,19 @@ namespace Sci.Production.Subcon
             }
             if (!MyUtility.Check.Empty(dateBundle1))
             {
-                sqlCmd.Append(string.Format(@" and b.Cdate between '{0}' and '{1}'",
-                    Convert.ToDateTime(dateBundle1).ToString("d"), Convert.ToDateTime(dateBundle2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'",Convert.ToDateTime(dateBundle1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateBundle2))
+            {
+                sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'",Convert.ToDateTime(dateBundle2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateBundleTransDate1))
             {
-                sqlCmd.Append(string.Format(@" and bt.TransferDate between '{0}' and '{1}'",
-                    Convert.ToDateTime(dateBundleTransDate1).ToString("d"), Convert.ToDateTime(dateBundleTransDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and bt.TransferDate >= '{0}'",Convert.ToDateTime(dateBundleTransDate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateBundleTransDate2))
+            {
+                sqlCmd.Append(string.Format(@" and bt.TransferDate <= '{0}'",Convert.ToDateTime(dateBundleTransDate2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(Factory))
             {

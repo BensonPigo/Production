@@ -105,6 +105,7 @@
             // 
             // dateRangePoDate
             // 
+            this.dateRangePoDate.IsRequired = false;
             this.dateRangePoDate.Location = new System.Drawing.Point(115, 12);
             this.dateRangePoDate.Name = "dateRangePoDate";
             this.dateRangePoDate.Size = new System.Drawing.Size(280, 23);

@@ -35,12 +35,12 @@ namespace Sci.Production.Shipping
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
-            {
-                MyUtility.Msg.WarningBox("Date can't empty!!");
-                dateRange1.TextBox1.Focus();
-                return false;
-            }
+            //if (MyUtility.Check.Empty(dateRange1.Value1))
+            //{
+            //    MyUtility.Msg.WarningBox("Date can't empty!!");
+            //    dateRange1.TextBox1.Focus();
+            //    return false;
+            //}
 
             if (comboBox1.SelectedIndex == -1)
             {
@@ -82,11 +82,21 @@ from (
 	inner join Orders o WITH (NOLOCK) on o.ID = oq.Id
 	left join Order_Article oa WITH (NOLOCK) on o.ID = oa.ID and oa.Article = oqd.Article
 	left join Order_SizeCode os WITH (NOLOCK) on o.ID = os.ID and os.SizeCode = oqd.SizeCode
-where oq.BuyerDelivery between '{0}' and '{1}'
-and {2}
+where 1=1
+and {0}
 and o.LocalOrder = 0
 and o.Junk = 0
-and oqd.Qty > 0", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d"), category == 0 ? "o.Category = 'B'" : category == 1 ? "o.Category = 'S'" : "(o.Category = 'B' or o.Category = 'S')"));
+and oqd.Qty > 0", category == 0 ? "o.Category = 'B'" : category == 1 ? "o.Category = 'S'" : "(o.Category = 'B' or o.Category = 'S')"));
+
+            if (!MyUtility.Check.Empty(date1))
+            {
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(date2))
+            {
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+            }
+            
             if (!MyUtility.Check.Empty(mDivision))
             {
                 sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", mDivision));

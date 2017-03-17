@@ -27,12 +27,12 @@ namespace Sci.Production.Shipping
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
-            {
-                MyUtility.Msg.WarningBox("Date can't empty!!");
-                dateRange1.TextBox1.Focus();
-                return false;
-            }
+            //if (MyUtility.Check.Empty(dateRange1.Value1))
+            //{
+            //    MyUtility.Msg.WarningBox("Date can't empty!!");
+            //    dateRange1.TextBox1.Focus();
+            //    return false;
+            //}
 
             date1 = dateRange1.Value1;
             date2 = dateRange1.Value2;
@@ -46,7 +46,15 @@ namespace Sci.Production.Shipping
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCondition = new StringBuilder();
-            sqlCondition.Append(string.Format(" v.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
+            if (!MyUtility.Check.Empty(date1))
+            {
+                sqlCondition.Append(string.Format(" and v.CDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(date2))
+            {
+                sqlCondition.Append(string.Format(" and v.CDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+            }
+            
             if (!MyUtility.Check.Empty(nlCode))
             {
                 sqlCondition.Append(string.Format(" and vd.NLCode = '{0}'", nlCode));
@@ -141,7 +149,7 @@ namespace Sci.Production.Shipping
             string sqlCmd = string.Format(@"select v.ID,v.CDate,v.VNContractID,v.DeclareNo,IIF(v.BLNo='',v.WKNo,v.BLNo) as BLWK,vd.NLCode,vd.HSCode,vd.Qty,vd.UnitID,vd.Remark
 from VNImportDeclaration v WITH (NOLOCK) 
 inner join VNImportDeclaration_Detail vd WITH (NOLOCK) on v.ID = vd.ID
-where {0} and v.Status = 'Confirmed'
+where 1=1 {0} and v.Status = 'Confirmed'
 order by v.ID", sqlCondition);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printImport);
             return result;
@@ -160,7 +168,7 @@ inner join VNExportDeclaration_Detail ed WITH (NOLOCK) on v.ID = ed.ID
 left join VNConsumption c WITH (NOLOCK) on c.VNContractID = v.VNContractID and c.CustomSP = ed.CustomSP
 left join VNConsumption_Detail vd WITH (NOLOCK) on c.ID = vd.ID
 left join VNContract_Detail vcd WITH (NOLOCK) on vcd.ID = v.VNContractID and vcd.NLCode = vd.NLCode
-where {0} and (v.Status = 'Confirmed' or v.Status = 'Junked')
+where 1=1 {0} and (v.Status = 'Confirmed' or v.Status = 'Junked')
 order by v.ID", sqlCondition);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printExport);
             return result;
@@ -173,7 +181,7 @@ order by v.ID", sqlCondition);
 from VNContractQtyAdjust v WITH (NOLOCK) 
 inner join VNContractQtyAdjust_Detail vd WITH (NOLOCK) on v.ID =vd.ID
 left join VNContract_Detail cd WITH (NOLOCK) on cd.ID = v.VNContractID and cd.NLCode = vd.NLCode
-where {0} and v.Status = 'Confirmed'
+where 1=1  {0} and v.Status = 'Confirmed'
 order by v.CDate", sqlCondition);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printAdjust);
             return result;

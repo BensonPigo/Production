@@ -36,7 +36,7 @@ namespace Sci.Production.Subcon
             issuedate1 = dateRange1.Value1;
             issuedate2 = dateRange1.Value2;
 
-            if (issuedate1.Empty() || issuedate2.Empty())
+            if (issuedate1.Empty() && issuedate2.Empty())
             {
                 MyUtility.Msg.WarningBox("Issue Date can't empty!!");
                 return false;
@@ -75,8 +75,13 @@ from farmout a WITH (NOLOCK)
 inner join farmout_detail b WITH (NOLOCK) on b.ID = a.Id
 inner join Orders c WITH (NOLOCK) on c.ID = b.Orderid
 inner join ArtworkPO d WITH (NOLOCK) on d.ID = b.ArtworkPoid
-where a.issuedate between '{0}' and '{1}'
-", Convert.ToDateTime(issuedate1).ToString("d"), Convert.ToDateTime(issuedate2).ToString("d")));
+where 1=1"));
+
+            System.Data.SqlClient.SqlParameter sp_issuedate1 = new System.Data.SqlClient.SqlParameter();
+            sp_issuedate1.ParameterName = "@issuedate1";
+
+            System.Data.SqlClient.SqlParameter sp_issuedate2 = new System.Data.SqlClient.SqlParameter();
+            sp_issuedate2.ParameterName = "@issuedate2";
 
             System.Data.SqlClient.SqlParameter sp_artworktype = new System.Data.SqlClient.SqlParameter();
             sp_artworktype.ParameterName = "@artworktype";
@@ -98,6 +103,20 @@ where a.issuedate between '{0}' and '{1}'
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 
+
+            if (!MyUtility.Check.Empty(issuedate1))
+            {
+                sqlCmd.Append(" and a.issuedate >= @issuedate1");
+                sp_issuedate1.Value = issuedate1;
+                cmds.Add(sp_issuedate1);
+            }
+
+            if (!MyUtility.Check.Empty(issuedate2))
+            {
+                sqlCmd.Append(" and a.issuedate <= @issuedate2");
+                sp_issuedate2.Value = issuedate2;
+                cmds.Add(sp_issuedate2);
+            }
 
             if (!MyUtility.Check.Empty(artworktype))
             {

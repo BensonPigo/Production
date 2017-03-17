@@ -89,9 +89,12 @@ and a.ArtworkTypeID = oa.ArtworkTypeID and a.LocalSuppID = ot.localsuppid  and a
 
                 strSQLCmd += string.Format("     and oa.ArtworkTypeID = '{0}' and ot.localsuppid='{1}'", dr_artworkpo["artworktypeid"], dr_artworkpo["localsuppid"]);
                 if (poType == "O") { strSQLCmd += "     and ((o.Category = 'B' and ot.InhouseOSP='O' and ot.price > 0) or (o.category !='B'))"; }
-                if (!(dateRange2.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
-                if (!(dateRange1.Value1 == null)) { strSQLCmd += string.Format(" and ot.ApvDate between '{0}' and '{1}'", apvdate_b, apvdate_e); }
-                if (!(dateRange3.Value1 == null)) { strSQLCmd += string.Format(" and not (ot.ArtworkInLine > '{0}' or ot.ArtworkOffLine < '{1}') ", Inline_b, Inline_e); }
+                if (!(dateRange2.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
+                if (!(dateRange2.Value2 == null)) { strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
+                if (!(dateRange1.Value1 == null)) { strSQLCmd += string.Format(" and ot.ApvDate >= '{0}' ", apvdate_b); }
+                if (!(dateRange1.Value2 == null)) { strSQLCmd += string.Format(" and ot.ApvDate <= '{0}' ", apvdate_e); }
+                if (!(dateRange3.Value1 == null)) { strSQLCmd += string.Format(" and ot.ArtworkInLine <= '{0}' ", Inline_b); }
+                if (!(dateRange3.Value2 == null)) { strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e); }
                 if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
 
                 strSQLCmd += " group by q.id,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.Cost,oa.PatternDesc";

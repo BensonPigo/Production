@@ -97,8 +97,12 @@ namespace Sci.Production.Subcon
             }
             if (!MyUtility.Check.Empty(dateBundleReceive1))
             {
-                sqlCmd.Append(@" and bio.InComing between @BundleReceive1 and @BundleReceive2 ");
+                sqlCmd.Append(@" and bio.InComing >= @BundleReceive1");
                 cmds.Add(new SqlParameter("@BundleReceive1", Convert.ToDateTime(dateBundleReceive1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateBundleReceive2))
+            {
+                sqlCmd.Append(@" and bio.InComing <= @BundleReceive2 ");
                 cmds.Add(new SqlParameter("@BundleReceive2", Convert.ToDateTime(dateBundleReceive2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(M))

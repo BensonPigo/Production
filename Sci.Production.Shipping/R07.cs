@@ -56,8 +56,16 @@ s.MDivisionID,s.CurrencyID,SUM(s.Amount+s.VAT) as Amt,s.PayTermID+'-'+ISNULL(p.N
 from ShippingAP s WITH (NOLOCK) 
 left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
 left join PayTerm p WITH (NOLOCK) on s.PayTermID = p.ID
-where s.CDate between '{0}' and '{1}'", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d")));
+where 1=1"));
+            if (!MyUtility.Check.Empty(date1))
+            {
+                sqlCmd.Append(string.Format(" and s.CDate >= '{0}'", Convert.ToDateTime(date1).ToString("d")));
+            }
 
+            if (!MyUtility.Check.Empty(date2))
+            {
+                sqlCmd.Append(string.Format(" and s.CDate <= '{0}'", Convert.ToDateTime(date2).ToString("d")));
+            }
             if (!MyUtility.Check.Empty(apvDate1))
             {
                 sqlCmd.Append(string.Format(" and s.ApvDate >= '{0}'", Convert.ToDateTime(apvDate1).ToString("d")));

@@ -106,11 +106,17 @@ where a.ID = b.ID
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
-                    if (!MyUtility.Check.Empty(sewinline_b)) { strSQLCmd += string.Format(" and c.sewinline between '{0}' and '{1}'", sewinline_b, sewinline_e); }
-                    if (!MyUtility.Check.Empty(scidelivery_b)) { strSQLCmd += string.Format(" and c.scidelivery between '{0}' and '{1}'", scidelivery_b, scidelivery_e); }
-                    if (!MyUtility.Check.Empty(booking_b)) { strSQLCmd += string.Format(" and a.EstCTNBooking between '{0}' and '{1}'", booking_b, booking_e); }
-                    if (!MyUtility.Check.Empty(arrived_b)) { strSQLCmd += string.Format(" and a.EstCTNArrive between '{0}' and '{1}'", arrived_b, arrived_e); }
-                    if (!MyUtility.Check.Empty(approved_b)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate between '{0}' and '{1}'", approved_b, approved_e); }
+                    if (!MyUtility.Check.Empty(sewinline_b)) { strSQLCmd += string.Format(" and c.sewinline >= '{0}' ", sewinline_b); }
+                    if (!MyUtility.Check.Empty(sewinline_e)) { strSQLCmd += string.Format(" and c.sewinline <= '{0}' ", sewinline_e); }
+                    if (!MyUtility.Check.Empty(scidelivery_b)) { strSQLCmd += string.Format(" and c.scidelivery >= '{0}' ", scidelivery_b); }
+                    if (!MyUtility.Check.Empty(scidelivery_e)) { strSQLCmd += string.Format(" and c.scidelivery <= '{0}' ", scidelivery_e); }
+                    if (!MyUtility.Check.Empty(booking_b)) { strSQLCmd += string.Format(" and a.EstCTNBooking >= '{0}' ", booking_b); }
+                    if (!MyUtility.Check.Empty(booking_e)) { strSQLCmd += string.Format(" and a.EstCTNBooking <= '{0}' ", booking_e); }
+                    if (!MyUtility.Check.Empty(arrived_b)) { strSQLCmd += string.Format(" and a.EstCTNArrive >= '{0}' ", arrived_b); }
+                    if (!MyUtility.Check.Empty(arrived_e)) { strSQLCmd += string.Format(" and a.EstCTNArrive <= '{0}' ", arrived_e); }
+                    if (!MyUtility.Check.Empty(approved_b)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate >= '{0}' ", approved_b); }
+                    if (!MyUtility.Check.Empty(approved_e)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate <= '{0}' ", approved_e); }
+
                     strSQLCmd += " group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine ";
 
                     #region 準備sql參數資料
@@ -163,11 +169,14 @@ and b.PurchaseQty > 0
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
-                    if (!MyUtility.Check.Empty(sewinline_b)) { strSQLCmd += string.Format(" and c.sewinline between '{0}' and '{1}'", sewinline_b, sewinline_e); }
-                    if (!MyUtility.Check.Empty(scidelivery_b)) { strSQLCmd += string.Format(" and c.scidelivery between '{0}' and '{1}'", scidelivery_b, scidelivery_e); }
-                    if (!MyUtility.Check.Empty(booking_b)) { strSQLCmd += string.Format(" and a.EstBookDate between '{0}' and '{1}'", booking_b, booking_e); }
-                    if (!MyUtility.Check.Empty(arrived_b)) { strSQLCmd += string.Format(" and a.EstArriveDate between '{0}' and '{1}'", arrived_b, arrived_e); }
-                    
+                    if (!MyUtility.Check.Empty(sewinline_b)) { strSQLCmd += string.Format(" and c.sewinline >= '{0}' ", sewinline_b); }
+                    if (!MyUtility.Check.Empty(sewinline_e)) { strSQLCmd += string.Format(" and c.sewinline <= '{0}' ", sewinline_e); }
+                    if (!MyUtility.Check.Empty(scidelivery_b)) { strSQLCmd += string.Format(" and c.scidelivery >= '{0}' ", scidelivery_b); }
+                    if (!MyUtility.Check.Empty(scidelivery_e)) { strSQLCmd += string.Format(" and c.scidelivery <= '{0}' ", scidelivery_e); }
+                    if (!MyUtility.Check.Empty(booking_b)) { strSQLCmd += string.Format(" and a.EstBookDate >= '{0}' ", booking_b); }
+                    if (!MyUtility.Check.Empty(booking_e)) { strSQLCmd += string.Format(" and a.EstBookDate <= '{0}' ", booking_e); }
+                    if (!MyUtility.Check.Empty(arrived_b)) { strSQLCmd += string.Format(" and a.EstArriveDate >= '{0}' ", arrived_b); }
+                    if (!MyUtility.Check.Empty(arrived_e)) { strSQLCmd += string.Format(" and a.EstArriveDate <= '{0}' ", arrived_e); }
                     //strSQLCmd += " group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstArriveDate,a.ID ";
 
                     #region 準備sql參數資料

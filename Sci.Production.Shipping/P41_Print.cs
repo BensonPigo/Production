@@ -42,6 +42,15 @@ namespace Sci.Production.Shipping
         // 非同步取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            StringBuilder sqlCondition = new StringBuilder();
+            if (!MyUtility.Check.Empty(date1))
+            {
+                sqlCondition.Append(string.Format(" and e.CDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(date2))
+            {
+                sqlCondition.Append(string.Format(" and e.CDate <= '{0}' ", Convert.ToDateTime(date2).ToString("d")));
+            }
             string sqlCmd = string.Format(@"with FirstStepFilterData
 as (
 select e.ID,e.CDate,e.InvNo,e.VNContractID,e.VNExportPortID,e.DataFrom, isnull(ep.Name,'') as ExportPort,
@@ -56,7 +65,7 @@ from VNExportDeclaration e WITH (NOLOCK)
 left join VNExportPort ep WITH (NOLOCK) on e.VNExportPortID = ep.ID
 left join GMTBooking g WITH (NOLOCK) on e.InvNo = g.ID
 left join PackingList pl WITH (NOLOCK) on e.InvNo = pl.INVNo
-where e.CDate between '{0}' and '{1}'
+where 1=1 '{0}'
 and e.Status = 'Confirmed'
 ),
 SecondStepFilterData
@@ -65,7 +74,7 @@ select *,(select sum(ROUND(ed.ExportQty*c.CPU*c.VNMultiple,2))
 from VNExportDeclaration_Detail ed WITH (NOLOCK) 
 inner join VNConsumption c WITH (NOLOCK) on c.CustomSP = ed.CustomSP
 where ed.ID = FirstStepFilterData.ID
-and c.VNContractID = FirstStepFilterData.VNContractID) as CMP from FirstStepFilterData where {2}
+and c.VNContractID = FirstStepFilterData.VNContractID) as CMP from FirstStepFilterData where {1}
 ),
 tmpDetail
 as (
@@ -96,7 +105,7 @@ select '2' as Type,0 as rno,'' as InvNo,'' as VNExportPortID,'' as ExportPort,''
 InvNo as InvNo1,OrderID,StyleID,SizeCode,CustomSP,TtlExportQty,FOB
 from tmpSumDetail
 
-", Convert.ToDateTime(date1).ToString("d"), Convert.ToDateTime(date2).ToString("d"), MyUtility.Check.Empty(brand) ? "1=1" : string.Format("BrandID = '{0}'", brand));
+", sqlCondition, MyUtility.Check.Empty(brand) ? "1=1" : string.Format("BrandID = '{0}'", brand));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
             if (!result)
             {

@@ -132,9 +132,12 @@ and Order_TmsCost.localsuppid !=''", poType, Sci.Env.User.Keyword);
                 SqlCmd += string.Format(" AND Order_TmsCost.InhouseOSP = '{0}'", poType);
 
                 if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
-                if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate between '{0}' and '{1}'", apvdate_b, apvdate_e); }
-                if (!(string.IsNullOrWhiteSpace(Inline_b))) { SqlCmd += string.Format(" and not (Order_TmsCost.ArtworkInLine > '{0}' or Order_TmsCost.ArtworkOffLine < '{1}') ", Inline_b, Inline_e); }
-                if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format(" and Orders.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
+                if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate >= '{0}' ", apvdate_b); }
+                if (!(string.IsNullOrWhiteSpace(apvdate_e))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate <= '{0}' ", apvdate_e); }
+                if (!(string.IsNullOrWhiteSpace(Inline_b))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkInLine <= '{0}' ", Inline_b); }
+                if (!(string.IsNullOrWhiteSpace(Inline_e))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkOffLine >= '{0}' ", Inline_e); }
+                if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format("and  Orders.SciDelivery >= '{0}' ", sciDelivery_b); }
+                if (!(string.IsNullOrWhiteSpace(sciDelivery_e))) { SqlCmd += string.Format("and  Orders.SciDelivery <= '{0}' ", sciDelivery_e); }
                 if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", sp_b, sp_e); }
                 SqlCmd += @"
 group by
@@ -199,9 +202,12 @@ and orders.Junk = 0
 and Order_TmsCost.localsuppid !=''", poType, Sci.Env.User.Keyword);
                 SqlCmd += string.Format(" and Order_TmsCost.InhouseOSP = '{0}'", poType);
                 if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
-                if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate between '{0}' and '{1}'", apvdate_b, apvdate_e); }
-                if (!(string.IsNullOrWhiteSpace(Inline_b))) { SqlCmd += string.Format(" and not (Order_TmsCost.ArtworkInLine > '{0}' or Order_TmsCost.ArtworkOffLine < '{1}') ", Inline_b, Inline_e); }
-                if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format(" and Orders.SciDelivery between '{0}' and '{1}'", sciDelivery_b, sciDelivery_e); }
+                if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate >= '{0}' ", apvdate_b); }
+                if (!(string.IsNullOrWhiteSpace(apvdate_e))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate <= '{0}' ", apvdate_e); }
+                if (!(string.IsNullOrWhiteSpace(Inline_b))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkInLine <= '{0}' ", Inline_b); }
+                if (!(string.IsNullOrWhiteSpace(Inline_e))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkOffLine >= '{0}' ", Inline_e); }
+                if (!(string.IsNullOrWhiteSpace(sciDelivery_b))) { SqlCmd += string.Format("and  Orders.SciDelivery >= '{0}' ", sciDelivery_b); }
+                if (!(string.IsNullOrWhiteSpace(sciDelivery_e))) { SqlCmd += string.Format("and  Orders.SciDelivery <= '{0}' ", sciDelivery_e); }
                 if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", sp_b, sp_e); }
                 SqlCmd += @" 
 group by orders.FTYGroup,
