@@ -121,14 +121,14 @@ where 1=1");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            worksheet.Cells[2, 2] = string.Format("{0}~{1}", MyUtility.Check.Empty(cdate1) ? "" : Convert.ToDateTime(cdate1).ToString("d"),MyUtility.Check.Empty(cdate2) ? "" : Convert.ToDateTime(cdate2).ToString("d"));
-            worksheet.Cells[2, 6] = string.Format("{0}~{1}", MyUtility.Check.Empty(apvdate1) ? "" : Convert.ToDateTime(apvdate1).ToString("d"), MyUtility.Check.Empty(apvdate2) ? "" : Convert.ToDateTime(apvdate2).ToString("d"));
-            worksheet.Cells[2, 10] = mDivision;
-            worksheet.Cells[2, 12] = factory;
-            worksheet.Cells[2, 14] = typedesc;
+            worksheet.Cells[3, 2] = string.Format("{0}~{1}", MyUtility.Check.Empty(cdate1) ? "" : Convert.ToDateTime(cdate1).ToString("d"),MyUtility.Check.Empty(cdate2) ? "" : Convert.ToDateTime(cdate2).ToString("d"));
+            worksheet.Cells[3, 6] = string.Format("{0}~{1}", MyUtility.Check.Empty(apvdate1) ? "" : Convert.ToDateTime(apvdate1).ToString("d"), MyUtility.Check.Empty(apvdate2) ? "" : Convert.ToDateTime(apvdate2).ToString("d"));
+            worksheet.Cells[3, 10] = mDivision;
+            worksheet.Cells[3, 12] = factory;
+            worksheet.Cells[3, 14] = typedesc;
 
             //填內容值
-            int intRowsStart = 4;
+            int intRowsStart = 5;
             object[,] objArray = new object[1, 22];
             foreach (DataRow dr in printData.Rows)
             {
