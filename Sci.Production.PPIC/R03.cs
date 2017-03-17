@@ -653,6 +653,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 for (int i = 112; i < lastCol; i++)
                 {
                     objArray[0, i] = 0;
+                    objArray[0, subConCol - 1] = "";
                 }
 
                 if (artwork || pap)
