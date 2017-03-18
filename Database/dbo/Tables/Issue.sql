@@ -3,6 +3,7 @@
     [Type]         VARCHAR (1)   CONSTRAINT [DF_Issue_Type] DEFAULT ('') NOT NULL,
     [IssueDate]    DATE          NOT NULL,
     [MDivisionID]  VARCHAR (8)   CONSTRAINT [DF_Issue_MDivisionID] DEFAULT ('') NOT NULL,
+	[FactoryID]    VARCHAR (8)   CONSTRAINT [DF_Issue_FactoryID] DEFAULT ('') NOT NULL,
     [Status]       VARCHAR (15)  CONSTRAINT [DF_Issue_Status] DEFAULT ('') NULL,
     [CutplanID]    VARCHAR (13)  CONSTRAINT [DF_Issue_CutplanID] DEFAULT ('') NULL,
     [Remark]       NVARCHAR (60) CONSTRAINT [DF_Issue_Remark] DEFAULT ('') NULL,
