@@ -126,7 +126,7 @@ left join VNContract_Detail vd WITH (NOLOCK) on vd.ID = vc.VNContractID and vd.N
 left join VNNLCodeDesc vn WITH (NOLOCK) on vn.NLCode = vcd.NLCode
 left join Style s WITH (NOLOCK) on s.Ukey = vc.StyleUKey
 where vc.Status = 'Confirmed'
-and 1=1 order by CustomSP,NLCode"));
+and 1=1 "));
                 if (!MyUtility.Check.Empty(date1))
                 {
                     sqlCmd.Append(string.Format(" and vc.CDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
@@ -140,6 +140,8 @@ and 1=1 order by CustomSP,NLCode"));
                 {
                     sqlCmd.Append(string.Format(" and vc.CustomSP between '{0}' and '{1}'", customSP1, customSP2));
                 }
+
+                sqlCmd.Append(" order by CustomSP,NLCode");
 
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
                 if (!result)
