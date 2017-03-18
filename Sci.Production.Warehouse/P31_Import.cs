@@ -58,6 +58,7 @@ select  selected = 0
         ,FromPoId = a.id 
         ,FromSeq1 = a.Seq1 
         ,FromSeq2 = a.Seq2 
+        ,FromFactoryID = orders.FactoryID
         ,fromseq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) 
         ,[Description] = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) 
         ,a.stockunit
@@ -72,6 +73,7 @@ select  selected = 0
         ,topoid = b.id 
         ,toseq1 = b.seq1 
         ,toseq2 = b.seq2 
+        ,toFactoryID = (select FactoryID from Orders where b.id = Orders.id)
         ,a.fabrictype
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
