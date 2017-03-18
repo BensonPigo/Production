@@ -2201,14 +2201,14 @@
     <Build Include="dbo\Stored Procedures\Cutting_P01_print_cuttingschedule.sql" />
     <Build Include="dbo\Tables\MNOrder_FabricCode_QT.sql" />
     <Build Include="dbo\Tables\MNOrder_FabricCode_Article.sql" />
-    <Build Include="dbo\Tables\Local_Issue_Detail.sql" />
-    <Build Include="dbo\Tables\Local_Issue.sql" />
     <Build Include="dbo\Tables\ClipMapping.sql" />
     <Build Include="dbo\Functions\GetFinanceRate.sql" />
     <Build Include="dbo\Functions\GetWKAmount.sql" />
     <Build Include="dbo\Functions\GetExportOrderAmount.sql" />
     <Build Include="dbo\Functions\GetPoPriceByArticleSize.sql" />
     <Build Include="dbo\Functions\GetSuitRate.sql" />
+    <Build Include="dbo\Tables\LocalIssue_Detail.sql" />
+    <Build Include="dbo\Tables\LocalIssue.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

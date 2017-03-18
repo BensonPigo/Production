@@ -316,6 +316,8 @@ Database/dbo/Tables/LocalDebit.sql -text
 Database/dbo/Tables/LocalDebit_Detail.sql -text
 Database/dbo/Tables/LocalDebit_History.sql -text
 Database/dbo/Tables/LocalInventory.sql -text
+Database/dbo/Tables/LocalIssue.sql -text
+Database/dbo/Tables/LocalIssue_Detail.sql -text
 Database/dbo/Tables/LocalItem.sql -text
 Database/dbo/Tables/LocalItem_Quot.sql -text
 Database/dbo/Tables/LocalPO.sql -text
@@ -325,8 +327,6 @@ Database/dbo/Tables/LocalReceiving_Detail.sql -text
 Database/dbo/Tables/LocalSupp.sql -text
 Database/dbo/Tables/LocalSupp_AccountNo.sql -text
 Database/dbo/Tables/LocalSupp_Bank.sql -text
-Database/dbo/Tables/Local_Issue.sql -text
-Database/dbo/Tables/Local_Issue_Detail.sql -text
 Database/dbo/Tables/LocationTrans.sql -text
 Database/dbo/Tables/LocationTrans_detail.sql -text
 Database/dbo/Tables/LossRateAccessory.sql -text

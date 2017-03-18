@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Local_Issue] (
+﻿CREATE TABLE [dbo].[LocalIssue] (
     [ID]          VARCHAR (13)   NOT NULL,
     [MDivisionID] VARCHAR (8)    NOT NULL,
     [FactoryID]   VARCHAR (8)    NOT NULL,
@@ -11,8 +11,4 @@
     [Remark]      NVARCHAR (100) NULL,
     CONSTRAINT [PK_Local_Issue] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
-
-
-
-
 
