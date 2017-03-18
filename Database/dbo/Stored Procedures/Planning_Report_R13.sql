@@ -117,61 +117,61 @@ BEGIN
 	) dd
 	left join (
 		select o.ddCRDDate, o.ProjectID, o.AGC, o.Country
-			,iif(SUM(M01) = 0 , 0 , sum(BalQty_MDP) / sum(M01)) as MDP
-			,iif(SUM(M01) = 0 , 0 , sum(BalQty_Dol_MDP) / sum(M01)) as [Dol-MDP]
+			,iif(SUM(M01) = 0 , 0 , CAST(sum(BalQty_MDP) AS numeric) / CAST(sum(M01) AS numeric)) as MDP
+			,iif(SUM(M01) = 0 , 0 , CAST(sum(BalQty_Dol_MDP)  AS numeric) / CAST(sum(M01)AS numeric)) as [Dol-MDP]
 		from #tmpOrderDetail o where ddCRDDate in (select * from #dates)
 		group by o.ddCRDDate,o.ProjectID,o.AGC,o.Country
 		union
 		select o.ddCRDDate, o.ProjectID, '', ''
-			,iif(SUM(M01) = 0 , 0 , sum(BalQty_MDP) / sum(M01)) as MDP
-			,iif(SUM(M01) = 0 , 0 , sum(BalQty_Dol_MDP) / sum(M01)) as [Dol-MDP]
+			,iif(SUM(M01) = 0 , 0 , CAST(sum(BalQty_MDP) AS numeric) / CAST(sum(M01) AS numeric)) as MDP
+			,iif(SUM(M01) = 0 , 0 , CAST(sum(BalQty_Dol_MDP) AS numeric) / CAST(sum(M01) AS numeric)) as [Dol-MDP]
 		from #tmpOrderDetail o  where ddCRDDate in (select * from #dates)
 		group by o.ddCRDDate, o.ProjectID
 		union
 		select o.ddCRDDate, '合計', '', ''
-			,iif(SUM(M01) = 0 , 0 , sum(BalQty_MDP) / sum(M01)) as MDP
-			,iif(SUM(M01) = 0 , 0 , sum(BalQty_Dol_MDP) / sum(M01)) as [Dol-MDP]
+			,iif(SUM(M01) = 0 , 0 , CAST(sum(BalQty_MDP) AS numeric) / CAST(sum(M01) AS numeric)) as MDP
+			,iif(SUM(M01) = 0 , 0 , CAST(sum(BalQty_Dol_MDP) AS numeric) / CAST(sum(M01) AS numeric)) as [Dol-MDP]
 		from #tmpOrderDetail o  where ddCRDDate in (select * from #dates)
 		group by o.ddCRDDate
 	) crd on dd.dd = crd.ddCRDDate and dd.ProjectID = crd.ProjectID and dd.AGC = crd.AGC and dd.Country = crd.Country
 	left join (
 		select o.ddBuyerDelivery, o.ProjectID, o.AGC, o.Country
-			,iif(SUM(M03) = 0 , 0 , sum(SDP) / sum(M03)) as [SDP]
+			,iif(SUM(M03) = 0 , 0 , CAST(sum(SDP) AS numeric) / CAST(sum(M03) AS numeric)) as [SDP]
 		from #tmpOrderDetail o where ddBuyerDelivery in (select * from #dates)
 		group by o.ddBuyerDelivery,o.ProjectID,o.AGC,o.Country
 		union
 		select o.ddBuyerDelivery, o.ProjectID, '', ''	
-			,iif(SUM(M03) = 0 , 0 , sum(SDP) / sum(M03)) as [SDP]
+			,iif(SUM(M03) = 0 , 0 , CAST(sum(SDP) AS numeric) / CAST(sum(M03) AS numeric)) as [SDP]
 		from #tmpOrderDetail o  where ddBuyerDelivery in (select * from #dates)
 		group by o.ddBuyerDelivery, o.ProjectID
 		union 
 		select o.ddBuyerDelivery, '合計', '', ''	
-			,iif(SUM(M03) = 0 , 0 , sum(SDP) / sum(M03)) as [SDP]
+			,iif(SUM(M03) = 0 , 0 , CAST(sum(SDP) AS numeric) / CAST(sum(M03) AS numeric)) as [SDP]
 		from #tmpOrderDetail o  where ddBuyerDelivery in (select * from #dates)
 		group by o.ddBuyerDelivery
 	) buy on dd.dd = buy.ddBuyerDelivery and dd.ProjectID = buy.ProjectID and dd.AGC = buy.AGC and dd.Country = buy.Country
 	left join (
 		select o.ddPlanDate, o.ProjectID, o.AGC, o.Country
-			,iif(SUM(M05) = 0 , 0 , sum(OCPnew) / sum(M05)) as [OCP-New]
-			,iif(SUM(M05) = 0 , 0 , sum(PDPinLine) / sum(M05)) as [PDP in Line]
-			,iif(SUM(M08) = 0 , 0 , sum(Sdol) / sum(M08)) as [SDol 0]
-			,iif(SUM(M08) = 0 , 0 , sum(SLTPDP) / sum(M08)) as [SLT PDP]
+			,iif(SUM(M05) = 0 , 0 , CAST(sum(OCPnew) AS numeric) / CAST(sum(M05) AS numeric)) as [OCP-New]
+			,iif(SUM(M05) = 0 , 0 , CAST(sum(PDPinLine) AS numeric) / CAST(sum(M05) AS numeric)) as [PDP in Line]
+			,iif(SUM(M08) = 0 , 0 , CAST(sum(Sdol) AS numeric) / CAST(sum(M08) AS numeric)) as [SDol 0]
+			,iif(SUM(M08) = 0 , 0 , CAST(sum(SLTPDP) AS numeric) / CAST(sum(M08) AS numeric)) as [SLT PDP]
 		from #tmpOrderDetail o where ddPlanDate in (select * from #dates)
 		group by o.ddPlanDate,o.ProjectID,o.AGC,o.Country
 		union
 		select o.ddPlanDate, o.ProjectID, '', ''
-			,iif(SUM(M05) = 0 , 0 , sum(OCPnew) / sum(M05)) as [OCP-New]
-			,iif(SUM(M05) = 0 , 0 , sum(PDPinLine) / sum(M05)) as [PDP in Line]
-			,iif(SUM(M08) = 0 , 0 , sum(Sdol) / sum(M08)) as [SDol 0]
-			,iif(SUM(M08) = 0 , 0 , sum(SLTPDP) / sum(M08)) as [SLT PDP]
+			,iif(SUM(M05) = 0 , 0 , CAST(sum(OCPnew) AS numeric) / CAST(sum(M05) AS numeric)) as [OCP-New]
+			,iif(SUM(M05) = 0 , 0 , CAST(sum(PDPinLine) AS numeric) / CAST(sum(M05) AS numeric)) as [PDP in Line]
+			,iif(SUM(M08) = 0 , 0 , CAST(sum(Sdol) AS numeric) / CAST(sum(M08) AS numeric)) as [SDol 0]
+			,iif(SUM(M08) = 0 , 0 , CAST(sum(SLTPDP) AS numeric) / CAST(sum(M08) AS numeric)) as [SLT PDP]
 		from #tmpOrderDetail o where ddPlanDate in (select * from #dates)
 		group by o.ddPlanDate, o.ProjectID
 		union
 		select o.ddPlanDate, '合計', '', ''
-			,iif(SUM(M05) = 0 , 0 , sum(OCPnew) / sum(M05)) as [OCP-New]
-			,iif(SUM(M05) = 0 , 0 , sum(PDPinLine) / sum(M05)) as [PDP in Line]
-			,iif(SUM(M08) = 0 , 0 , sum(Sdol) / sum(M08)) as [SDol 0]
-			,iif(SUM(M08) = 0 , 0 , sum(SLTPDP) / sum(M08)) as [SLT PDP]
+			,iif(SUM(M05) = 0 , 0 , CAST(sum(OCPnew) AS numeric) / CAST(sum(M05) AS numeric)) as [OCP-New]
+			,iif(SUM(M05) = 0 , 0 , CAST(sum(PDPinLine) AS numeric) / CAST(sum(M05) AS numeric)) as [PDP in Line]
+			,iif(SUM(M08) = 0 , 0 , CAST(sum(Sdol) AS numeric) / CAST(sum(M08) AS numeric)) as [SDol 0]
+			,iif(SUM(M08) = 0 , 0 , CAST(sum(SLTPDP) AS numeric) / CAST(sum(M08) AS numeric)) as [SLT PDP]
 		from #tmpOrderDetail o where ddPlanDate in (select * from #dates)
 		group by o.ddPlanDate
 	) pl on dd.dd = pl.ddPlanDate and dd.ProjectID = pl.ProjectID and dd.AGC = pl.AGC and dd.Country = pl.Country
@@ -202,61 +202,61 @@ BEGIN
 	) dd
 	left join (
 		select o.ddCRDDate, o.ProjectID, o.AGC+'-'+o.FactoryID as AGC, o.Country
-			,iif(SUM(M01) = 0 , 0 , sum(BalQty_MDP) / sum(M01)) as MDP
-			,iif(SUM(M01) = 0 , 0 , sum(BalQty_Dol_MDP) / sum(M01)) as [Dol-MDP]
+			,iif(SUM(M01) = 0 , 0 , CAST(sum(BalQty_MDP) AS numeric) / CAST(sum(M01) AS numeric)) as MDP
+			,iif(SUM(M01) = 0 , 0 , CAST(sum(BalQty_Dol_MDP) AS numeric) / CAST(sum(M01) AS numeric)) as [Dol-MDP]
 		from #tmpOrderDetail o where ddCRDDate in (select * from #dates)
 		group by o.ddCRDDate,o.ProjectID,o.AGC,o.Country,o.FactoryID
 		union
 		select o.ddCRDDate, o.ProjectID, o.AGC, ''
-			,iif(SUM(M01) = 0 , 0 , sum(BalQty_MDP) / sum(M01)) as MDP
-			,iif(SUM(M01) = 0 , 0 , sum(BalQty_Dol_MDP) / sum(M01)) as [Dol-MDP]
+			,iif(SUM(M01) = 0 , 0 , CAST(sum(BalQty_MDP) AS numeric) / CAST(sum(M01) AS numeric)) as MDP
+			,iif(SUM(M01) = 0 , 0 , CAST(sum(BalQty_Dol_MDP) AS numeric) / CAST(sum(M01) AS numeric)) as [Dol-MDP]
 		from #tmpOrderDetail o where ddCRDDate in (select * from #dates)
 		group by o.ddCRDDate, o.ProjectID,o.AGC
 		union
 		select o.ddCRDDate, '合計', '', ''
-			,iif(SUM(M01) = 0 , 0 , sum(BalQty_MDP) / sum(M01)) as MDP
-			,iif(SUM(M01) = 0 , 0 , sum(BalQty_Dol_MDP) / sum(M01)) as [Dol-MDP]
+			,iif(SUM(M01) = 0 , 0 , CAST(sum(BalQty_MDP) AS numeric) / CAST(sum(M01) AS numeric)) as MDP
+			,iif(SUM(M01) = 0 , 0 , CAST(sum(BalQty_Dol_MDP) AS numeric) / CAST(sum(M01) AS numeric)) as [Dol-MDP]
 		from #tmpOrderDetail o where ddCRDDate in (select * from #dates)
 		group by o.ddCRDDate
 	) crd on dd.dd = crd.ddCRDDate and dd.ProjectID = crd.ProjectID and dd.AGC = crd.AGC and dd.Country = crd.Country
 	left join (
 		select o.ddBuyerDelivery, o.ProjectID, o.AGC+'-'+o.FactoryID as AGC, o.Country
-			,iif(SUM(M03) = 0 , 0 , sum(SDP) / sum(M03)) as [SDP]
+			,iif(SUM(M03) = 0 , 0 , CAST(sum(SDP) AS numeric) / CAST(sum(M03) AS numeric)) as [SDP]
 		from #tmpOrderDetail o where ddBuyerDelivery in (select * from #dates)
 		group by o.ddBuyerDelivery,o.ProjectID,o.AGC,o.Country,o.FactoryID
 		union
 		select o.ddBuyerDelivery, o.ProjectID, o.AGC, ''
-			,iif(SUM(M03) = 0 , 0 , sum(SDP) / sum(M03)) as [SDP]
+			,iif(SUM(M03) = 0 , 0 , CAST(sum(SDP) AS numeric) / CAST(sum(M03) AS numeric)) as [SDP]
 		from #tmpOrderDetail o  where ddBuyerDelivery in (select * from #dates)
 		group by o.ddBuyerDelivery, o.ProjectID,o.AGC
 		union
 		select o.ddBuyerDelivery, '合計', '', ''
-			,iif(SUM(M03) = 0 , 0 , sum(SDP) / sum(M03)) as [SDP]
+			,iif(SUM(M03) = 0 , 0 , CAST(sum(SDP) AS numeric) / CAST(sum(M03) AS numeric)) as [SDP]
 		from #tmpOrderDetail o  where ddBuyerDelivery in (select * from #dates)
 		group by o.ddBuyerDelivery
 	) buy on dd.dd = buy.ddBuyerDelivery and dd.ProjectID = buy.ProjectID and dd.AGC = buy.AGC and dd.Country = buy.Country
 	left join (
 		select o.ddPlanDate, o.ProjectID, o.AGC+'-'+o.FactoryID as AGC, o.Country
-			,iif(SUM(M05) = 0 , 0 , sum(OCPnew) / sum(M05)) as [OCP-New]
-			,iif(SUM(M05) = 0 , 0 , sum(PDPinLine) / sum(M05)) as [PDP in Line]
-			,iif(SUM(M08) = 0 , 0 , sum(Sdol) / sum(M08)) as [SDol 0]
-			,iif(SUM(M08) = 0 , 0 , sum(SLTPDP) / sum(M08)) as [SLT PDP]
+			,iif(SUM(M05) = 0 , 0 , CAST(sum(OCPnew) AS numeric) / CAST(sum(M05) AS numeric)) as [OCP-New]
+			,iif(SUM(M05) = 0 , 0 , CAST(sum(PDPinLine) AS numeric) / CAST(sum(M05) AS numeric)) as [PDP in Line]
+			,iif(SUM(M08) = 0 , 0 , CAST(sum(Sdol) AS numeric) / CAST(sum(M08) AS numeric)) as [SDol 0]
+			,iif(SUM(M08) = 0 , 0 , CAST(sum(SLTPDP) AS numeric) / CAST(sum(M08) AS numeric)) as [SLT PDP]
 		from #tmpOrderDetail o where ddPlanDate in (select * from #dates)
 		group by o.ddPlanDate,o.ProjectID,o.AGC,o.Country,o.FactoryID
 		union
 		select o.ddPlanDate, o.ProjectID, o.AGC, ''
-			,iif(SUM(M05) = 0 , 0 , sum(OCPnew) / sum(M05)) as [OCP-New]
-			,iif(SUM(M05) = 0 , 0 , sum(PDPinLine) / sum(M05)) as [PDP in Line]
-			,iif(SUM(M08) = 0 , 0 , sum(Sdol) / sum(M08)) as [SDol 0]
-			,iif(SUM(M08) = 0 , 0 , sum(SLTPDP) / sum(M08)) as [SLT PDP]
+			,iif(SUM(M05) = 0 , 0 , CAST(sum(OCPnew) AS numeric) / CAST(sum(M05) AS numeric)) as [OCP-New]
+			,iif(SUM(M05) = 0 , 0 , CAST(sum(PDPinLine) AS numeric) / CAST(sum(M05) AS numeric)) as [PDP in Line]
+			,iif(SUM(M08) = 0 , 0 , CAST(sum(Sdol) AS numeric) / CAST(sum(M08) AS numeric)) as [SDol 0]
+			,iif(SUM(M08) = 0 , 0 , CAST(sum(SLTPDP) AS numeric) / CAST(sum(M08) AS numeric)) as [SLT PDP]
 		from #tmpOrderDetail o where ddPlanDate in (select * from #dates)
 		group by o.ddPlanDate, o.ProjectID,o.AGC
 		union
 		select o.ddPlanDate, '合計', '', ''
-			,iif(SUM(M05) = 0 , 0 , sum(OCPnew) / sum(M05)) as [OCP-New]
-			,iif(SUM(M05) = 0 , 0 , sum(PDPinLine) / sum(M05)) as [PDP in Line]
-			,iif(SUM(M08) = 0 , 0 , sum(Sdol) / sum(M08)) as [SDol 0]
-			,iif(SUM(M08) = 0 , 0 , sum(SLTPDP) / sum(M08)) as [SLT PDP]
+			,iif(SUM(M05) = 0 , 0 , CAST(sum(OCPnew) AS numeric) / CAST(sum(M05) AS numeric)) as [OCP-New]
+			,iif(SUM(M05) = 0 , 0 , CAST(sum(PDPinLine) AS numeric) / CAST(sum(M05) AS numeric)) as [PDP in Line]
+			,iif(SUM(M08) = 0 , 0 , CAST(sum(Sdol) AS numeric) / CAST(sum(M08) AS numeric)) as [SDol 0]
+			,iif(SUM(M08) = 0 , 0 , CAST(sum(SLTPDP) AS numeric) / CAST(sum(M08) AS numeric)) as [SLT PDP]
 		from #tmpOrderDetail o where ddPlanDate in (select * from #dates)
 		group by o.ddPlanDate
 	) pl on dd.dd = pl.ddPlanDate and dd.ProjectID = pl.ProjectID and dd.AGC = pl.AGC and dd.Country = pl.Country

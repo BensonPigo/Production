@@ -76,7 +76,7 @@ namespace Sci.Production.Planning
               .Text("KPIItem", header: "KPIItem", width: Widths.AnsiChars(5), iseditingreadonly: true)
               .Text("XlsColumn", header: "XlsColumn", width: Widths.AnsiChars(5), iseditingreadonly: false)
               .Numeric("Target", header: "Target", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: false)
-              .Text("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
+              .Text("Description", header: "Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
              ;
         }
 
