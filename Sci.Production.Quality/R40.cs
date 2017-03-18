@@ -80,6 +80,7 @@ namespace Sci.Production.Quality
                     declare @y2 varchar(4) = cast(datepart(year, dateadd(year,-1, @d) ) as varchar(4))
                     declare @y3 varchar(4) = cast(datepart(year,@d) as varchar(4))
                     declare @yMax varchar(4) = (select max(year) from ADIDASComplainTarget)
+                    declare @Target numeric(8,8) = (select round(target/100,6) from dbo.ADIDASComplainTarget)
 
                     select Target,Claimed.Claimed,sh.qty[Shipped],convert(varchar(10),Claimed.month1)[month1],convert(varchar(10),Claimed.YEAR1)[YEAR1]
                     into #temp
@@ -97,16 +98,20 @@ namespace Sci.Production.Quality
                     where year in (@yMax)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1
 
-                    select dRanges.name[ ],dRanges.starts,tg1.Target1 [Target],isnull(SUM(year1.Claimed),0)[Claimed1],isnull(SUM(year1.Shipped),0)[Shipped1],isnull(year1.adicomp,0)[adicomp1],isnull(SUM(year2.Claimed),0)[Claimed2],isnull(SUM(year2.Shipped),0)[Shipped2],isnull(year2.adicomp,0)[adicomp2],isnull(SUM(year3.Claimed),0)[Claimed3],isnull(SUM(year3.Shipped),0)[Shipped3],isnull(year3.adicomp,0)[adicomp3] from dbo.#temp
+                    select dRanges.name[ ],dRanges.starts,[Target]=@Target,isnull(SUM(year1.Claimed),0)[Claimed1],isnull(SUM(year1.Shipped),0)[Shipped1],isnull(year1.adicomp,0)[adicomp1],isnull(SUM(year2.Claimed),0)[Claimed2],isnull(SUM(year2.Shipped),0)[Shipped2],isnull(year2.adicomp,0)[adicomp2],isnull(SUM(year3.Claimed),0)[Claimed3],isnull(SUM(year3.Shipped),0)[Shipped3],isnull(year3.adicomp,0)[adicomp3] from dbo.#temp
                     inner join @dRanges as dRanges on  dRanges.starts between dRanges.starts and dRanges.ends 
-					OUTER APPLY(SELECT #temp.Claimed,#temp.Shipped,adicomp=round(sum(#temp.Claimed)/sum(#temp.Shipped),6)*100 FROM #temp WHERE YEAR1=@y1 and dRanges.starts=month1 group by #temp.Claimed,#temp.Shipped)AS year1
-					OUTER APPLY(SELECT #temp.Claimed,#temp.Shipped,adicomp=round(sum(#temp.Claimed)/sum(#temp.Shipped),6)*100 FROM #temp WHERE YEAR1=@y2 and dRanges.starts=month1 group by #temp.Claimed,#temp.Shipped)AS year2
-					OUTER APPLY(SELECT #temp.Claimed,#temp.Shipped,adicomp=round(sum(#temp.Claimed)/sum(#temp.Shipped),6)*100 FROM #temp WHERE YEAR1=@y3 and dRanges.starts=month1 group by #temp.Claimed,#temp.Shipped)AS year3
+					OUTER APPLY(SELECT #temp.Claimed,#temp.Shipped,adicomp=round(sum(#temp.Claimed)/sum(#temp.Shipped),6) FROM #temp WHERE YEAR1=@y1 and dRanges.starts=month1 group by #temp.Claimed,#temp.Shipped)AS year1
+					OUTER APPLY(SELECT #temp.Claimed,#temp.Shipped,adicomp=round(sum(#temp.Claimed)/sum(#temp.Shipped),6) FROM #temp WHERE YEAR1=@y2 and dRanges.starts=month1 group by #temp.Claimed,#temp.Shipped)AS year2
+					OUTER APPLY(SELECT #temp.Claimed,#temp.Shipped,adicomp=round(sum(#temp.Claimed)/sum(#temp.Shipped),6) FROM #temp WHERE YEAR1=@y3 and dRanges.starts=month1 group by #temp.Claimed,#temp.Shipped)AS year3
 					outer apply(select Target1=isnull(sum(#temp.Target),0) from #temp where YEAR1 in (@y1,@y2,@y3) and dRanges.starts=month1)AS tg1
-					GROUP BY dRanges.name,tg1.Target1,year1.Claimed,year1.Shipped,year2.Claimed,year2.Shipped,year3.Claimed,year3.Shipped,dRanges.starts,year1.adicomp,year2.adicomp,year3.adicomp
+					GROUP BY dRanges.name,Target,year1.Claimed,year1.Shipped,year2.Claimed,year2.Shipped,year3.Claimed,year3.Shipped,dRanges.starts,year1.adicomp,year2.adicomp,year3.adicomp
                     order by dRanges.starts
                     DROP TABLE #temp");
                 result = DBProxy.Current.Select("", sqlcmd, out dtt);
+                if (MyUtility.Check.Empty(dtt))
+                {
+                    return new DualResult(false, "Data not found");
+                }
 
                 dtt.Columns.Remove("starts");
                 int startIndex = 1;
@@ -249,7 +254,7 @@ namespace Sci.Production.Quality
                  --select * from #Shipped
 
 			
-                 select  month=dRanges.name,fty=#Tfactory.ID,isnull(SUM(#Ttarget.Target),0)[Target],isnull(SUM(#TClaimed.Claimed),0)[Claimed],isnull(SUM(#Shipped.Qty),0)[Shipped],adicomp=isnull(round(SUM(#TClaimed.Claimed)/SUM(#Shipped.Qty),6)*100,0) ,#TClaimed.YEAR1,#TClaimed.month1,factoryid=#TClaimed.factory,#Tfactory.CountryID
+                 select  month=dRanges.name,fty=#Tfactory.ID,isnull(SUM(#Ttarget.Target),0)[Target],isnull(SUM(#TClaimed.Claimed),0)[Claimed],isnull(SUM(#Shipped.Qty),0)[Shipped],adicomp=isnull(round(SUM(#TClaimed.Claimed)/SUM(#Shipped.Qty),6),0) ,#TClaimed.YEAR1,#TClaimed.month1,factoryid=#TClaimed.factory,#Tfactory.CountryID
 				 into #AllTemp
 				 from #Tfactory
                  LEFT join #dRanges as dRanges on 1=1--dRanges.starts between dRanges.starts and dRanges.ends 
@@ -289,7 +294,7 @@ namespace Sci.Production.Quality
                 for (int i = 0; i < allFactory.Rows.Count; i++)
                 {
                     string sss = allFactory.Rows[i]["fty"].ToString();
-                    string o = string.Format("outer apply (select {0}_Claimed = sum(claimed),{0}_Shipped = sum(shipped),{0}_Adicomp=iif(isnull(sum(shipped),0)=0,0,round(sum(claimed)/sum(shipped),6)*100) from #AllTemp t where t.month = s.month and t.fty = '{0}') as {0}", sss);
+                    string o = string.Format("outer apply (select {0}_Claimed = sum(claimed),{0}_Shipped = sum(shipped),{0}_Adicomp=iif(isnull(sum(shipped),0)=0,0,round(sum(claimed)/sum(shipped),6)) from #AllTemp t where t.month = s.month and t.fty = '{0}') as {0}", sss);
                     s = s + Environment.NewLine + o;
                 }
                 s = s + Environment.NewLine + "order by starts";
@@ -387,9 +392,9 @@ namespace Sci.Production.Quality
 			            [adicomp3]  =isnull(year3.adicomp,0)
 		            from #AllTemp as t
                     inner join @dRanges as dRanges on  dRanges.starts between dRanges.starts and dRanges.ends 
-		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=round(sum(s.Claimed)/sum(s.Shipped),6)*100 FROM #AllTemp as s WHERE YEAR1=@y1 and dRanges.starts=month1 and fty='{0}' group by s.Claimed,s.Shipped)AS year1
-		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=round(sum(s.Claimed)/sum(s.Shipped),6)*100 FROM #AllTemp as s WHERE YEAR1=@y2 and dRanges.starts=month1 and fty='{0}' group by s.Claimed,s.Shipped)AS year2
-		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=round(sum(s.Claimed)/sum(s.Shipped),6)*100 FROM #AllTemp as s WHERE YEAR1=@y3 and dRanges.starts=month1 and fty='{0}' group by s.Claimed,s.Shipped)AS year3
+		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=round(sum(s.Claimed)/sum(s.Shipped),6) FROM #AllTemp as s WHERE YEAR1=@y1 and dRanges.starts=month1 and fty='{0}' group by s.Claimed,s.Shipped)AS year1
+		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=round(sum(s.Claimed)/sum(s.Shipped),6) FROM #AllTemp as s WHERE YEAR1=@y2 and dRanges.starts=month1 and fty='{0}' group by s.Claimed,s.Shipped)AS year2
+		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=round(sum(s.Claimed)/sum(s.Shipped),6) FROM #AllTemp as s WHERE YEAR1=@y3 and dRanges.starts=month1 and fty='{0}' group by s.Claimed,s.Shipped)AS year3
 		            outer apply(select Target1=isnull(sum(s.Target),0) from #AllTemp as s where YEAR1 in (@y1,@y2,@y3) and dRanges.starts=month1)AS tg1
 					where  t.CountryID= (select f.CountryID from dbo.Factory f WITH (NOLOCK) where f.id='" + userfactory + @"') and t.fty=t.factoryid and t.year1 in (@y1,@y2,@y3) 
 					GROUP BY dRanges.name,tg1.Target1,year1.Claimed,year1.Shipped,year2.Claimed,year2.Shipped,year3.Claimed,year3.Shipped,dRanges.starts,year1.adicomp,year2.adicomp,year3.adicomp
@@ -703,7 +708,7 @@ namespace Sci.Production.Quality
                 xAxis.MajorGridlines.Border.Color = ColorTranslator.ToOle(Color.Black);
                 xAxis.HasTitle = false;  //設定 x軸 座標軸標題 = false(不顯示)，不打就是不顯示
                 //yAxis.MinimumScale = 0;//設定 x軸 數值 最小值 
-                xAxis.MaximumScale = 10;//設定 x軸 數值 最大值     
+                //xAxis.MaximumScale = 10;//設定 y軸 數值 最大值     
 
                 xAxis.TickLabels.Font.Size = 14;//設定 x軸 字體大小
 
