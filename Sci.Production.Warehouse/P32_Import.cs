@@ -164,12 +164,13 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             , bd.FromSeq1
             , bd.FromSeq2
             , bd.FromStocktype
+                  , FromFactoryID = orders.FactoryID
             , qty = sum(bd.qty) 
     from borrowback_detail bd WITH (NOLOCK) 
-	inner join Orders orders on bd.FromPOID = orders.ID
-	inner join Factory factory on orders.FtyGroup = factory.ID
+      inner join Orders orders on bd.FromPOID = orders.ID
+      inner join Factory factory on orders.FtyGroup = factory.ID
     where bd.id = '{0}' and factory.MDivisionID = '{1}'
-    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2, bd.FromStocktype
+    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2, bd.FromStocktype, orders.FactoryID
     )
 ,cte2 as(
     select  bd.ToPoid
@@ -179,8 +180,8 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             , qty = sum(bd.qty) 
     from borrowback b WITH (NOLOCK) 
     inner join borrowback_detail bd WITH (NOLOCK) on b.Id= bd.ID 
-	inner join Orders orders on bd.FromPOID = orders.ID
-	inner join Factory factory on orders.FtyGroup = factory.ID
+      inner join Orders orders on bd.FromPOID = orders.ID
+      inner join Factory factory on orders.FtyGroup = factory.ID
     where b.BorrowId='{0}' and b.Status = 'Confirmed' and factory.MDivisionID = '{1}'
     group by bd.ToPoid, bd.ToSeq1, bd.ToSeq2, bd.ToStocktype
     )
@@ -188,6 +189,7 @@ select  cte1.FromPoId
         , cte1.FromSeq1
         , cte1.FromSeq2 
         , cte1.FromStocktype
+            , cte1.FromFactoryID
 into #tmp
 from cte1 
 left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 and cte2.ToSeq2 =  cte1.FromSeq2 
@@ -202,6 +204,7 @@ select  selected = 0
         , fromseq =concat(Ltrim(Rtrim(bd.ToSeq1)), ' ', bd.ToSeq2) 
         , FromDyelot = c.dyelot 
         , FromRoll = c.roll 
+            , FromFactoryID = orders.FactoryID
         , FromStocktype = c.StockType 
         , AccuDiffQty = c.InQty - c.OutQty + c.AdjustQty 
         , balance = c.InQty - c.OutQty + c.AdjustQty 
@@ -212,6 +215,7 @@ select  selected = 0
         , toseq2 = bd.FromSeq2 
         , toRoll = c.roll 
         , toDyelot = c.dyelot 
+            , ToFactoryID = #tmp.FromFactoryID
         , toseq = concat(Ltrim(Rtrim(bd.FromSeq1)), ' ', bd.FromSeq2) 
         , location = stuff((select ',' + mtllocationid 
                             from (select mtllocationid 
@@ -225,11 +229,11 @@ select  selected = 0
 from dbo.BorrowBack_Detail as bd WITH (NOLOCK) 
 inner join #tmp on bd.FromPoId = #tmp.FromPOID and bd.FromSeq1 = #tmp.FromSeq1 and bd.FromSeq2 = #tmp.FromSeq2
 inner join ftyinventory c WITH (NOLOCK) on bd.topoid = c.poid and bd.toseq1 = c.seq1 and bd.toseq2 = c.seq2 
-inner join Orders orders on bd.FromPOID = orders.ID
+inner join Orders orders on c.POID = orders.ID
 inner join Factory factory on orders.FtyGroup = factory.ID
 left join PO_Supp_Detail p WITH (NOLOCK) on p.ID= bd.ToPoid and p.SEQ1 = bd.ToSeq1 and p.SEQ2 = bd.ToSeq2
-where bd.id='{0}' and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and c.stocktype !='O' and factory.MDivisionID = '{1}'
-    and not(c.StockType in ('I'))
+where bd.id='{0}' and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and factory.MDivisionID = '{1}'
+    and not(c.StockType in ('I', 'O'))
 drop table #tmp
 ", dr_master["BorrowId"], Sci.Env.User.Keyword);
 
