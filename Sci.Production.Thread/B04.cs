@@ -15,6 +15,9 @@ namespace Sci.Production.Thread
             : base(menuitem)
         {
             InitializeComponent();
+
+            string defaultfilter = string.Format("MDivisionid = '{0}' ", keyword);
+            this.DefaultFilter = defaultfilter;
         }
         protected override void ClickEditAfter()
         {
