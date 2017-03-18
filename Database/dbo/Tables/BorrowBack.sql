@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[BorrowBack] (
     [Id]          VARCHAR (13)   CONSTRAINT [DF_BorrowBack_Id] DEFAULT ('') NOT NULL,
     [MDivisionID] VARCHAR (8)    CONSTRAINT [DF_BorrowBack_MDivisionID] DEFAULT ('') NULL,
+    [FactoryID]   VARCHAR (8)    NULL,
     [Type]        VARCHAR (1)    CONSTRAINT [DF_BorrowBack_Type] DEFAULT ('') NULL,
     [EstBackDate] DATE           NULL,
     [BackDate]    DATE           NULL,
@@ -14,6 +15,8 @@
     [EditDate]    DATETIME       NULL,
     CONSTRAINT [PK_BorrowBack] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
