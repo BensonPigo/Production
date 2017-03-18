@@ -2,6 +2,7 @@
     [Id]          VARCHAR (13)  CONSTRAINT [DF_IssueLack_Id] DEFAULT ('') NOT NULL,
     [Type]        VARCHAR (1)   CONSTRAINT [DF_IssueLack_Type] DEFAULT ('') NOT NULL,
     [MDivisionID] VARCHAR (8)   CONSTRAINT [DF_IssueLack_MDivisionID] DEFAULT ('') NOT NULL,
+    [FactoryID]   VARCHAR (8)   NULL,
     [IssueDate]   DATE          NULL,
     [Status]      VARCHAR (15)  CONSTRAINT [DF_IssueLack_Status] DEFAULT ('') NULL,
     [RequestID]   VARCHAR (13)  CONSTRAINT [DF_IssueLack_RequestID] DEFAULT ('') NULL,
@@ -15,6 +16,8 @@
     [EditDate]    DATETIME      NULL,
     CONSTRAINT [PK_IssueLack] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
