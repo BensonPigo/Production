@@ -28,7 +28,7 @@ namespace Sci.Production.Planning
             InitializeComponent();
             txtMdivision1.Text = Sci.Env.User.Keyword;
             txtfactory1.Text = Sci.Env.User.Factory;
-            cbxCategory.SelectedIndex = 0;
+            cbxCategory.SelectedIndex = 1;  //Bulk
         }
 
         // 驗證輸入條件
@@ -101,13 +101,26 @@ where 1=1 "));
             if (!MyUtility.Check.Empty(sciDelivery1))
             { 
               sqlCmd.Append(string.Format(@" and a.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
-              condition.Append(string.Format(@"SCI Delivery : {0} ~ ", Convert.ToDateTime(sciDelivery1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(sciDelivery2))
             { 
               sqlCmd.Append(string.Format(@" and a.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
-              condition.Append(string.Format(@"SCI Delivery :  ~ {0}", Convert.ToDateTime(sciDelivery2).ToString("d")));
             }
+
+            #region [condition]處理
+            if (!MyUtility.Check.Empty(sciDelivery1) && !MyUtility.Check.Empty(sciDelivery2))
+            {
+                condition.Append(string.Format(@"SCI Delivery : {0} ~ {1} ", Convert.ToDateTime(sciDelivery1).ToString("d"), Convert.ToDateTime(sciDelivery2).ToString("d")));
+            }
+            else if (!MyUtility.Check.Empty(sciDelivery1) && MyUtility.Check.Empty(sciDelivery2))
+            {
+                condition.Append(string.Format(@"SCI Delivery : {0} ~ ", Convert.ToDateTime(sciDelivery1).ToString("d")));
+            }
+            else if (MyUtility.Check.Empty(sciDelivery1) && !MyUtility.Check.Empty(sciDelivery2))
+            {
+                condition.Append(string.Format(@"SCI Delivery :  ~ {0}", Convert.ToDateTime(sciDelivery2).ToString("d")));
+            }
+            #endregion
 
             if (!MyUtility.Check.Empty(mdivision))
             {
@@ -140,7 +153,7 @@ where 1=1 "));
                     sqlCmd.Append(@" and (Category = 'M' )");
                     break;
             }
-            condition.Append(string.Format(@"    Category : {0}", cbxCategory.SelectedText));
+            condition.Append(string.Format(@"    Category : {0}", cbxCategory.Items[selectindex]));
 
             #endregion
 
@@ -256,11 +269,88 @@ order by a.FtyGroup, a.StyleID,a.SeasonID
             MyUtility.Excel.CopyToXls(printData, "", "Planning_R11.xltx", 3, true, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 1] = condition.ToString();   // 條件字串寫入excel
-            
+
+            string strArtworkType = string.Empty;
             for (int i = 0; i < dtArtworkType.Rows.Count; i++)  //列印動態欄位的表頭
             {
-                objSheets.Cells[3, 12+i] = dtArtworkType.Rows[i]["id"].ToString();
+                strArtworkType = dtArtworkType.Rows[i]["id"].ToString().Trim();
+
+                #region ArtworkType折行處理，讓EXCEL看起來較美觀
+                switch (strArtworkType)
+                {
+                    case "BONDING (MACHINE)":
+                        strArtworkType = "BONDING" + Environment.NewLine + "(MACHINE)";
+                        break;
+                    case "BONDING (HAND)":
+                        strArtworkType = "BONDING" + Environment.NewLine + "(HAND)";
+                        break;
+                    case "HEAT TRANSFER":
+                        strArtworkType = "HEAT" + Environment.NewLine + "TRANSFER";
+                        break;
+                    case "DIE CUT":
+                        strArtworkType = "DIE" + Environment.NewLine + "CUT";
+                        break;
+                    case "SUBLIMATION PRINT":
+                        strArtworkType = "SUBLIMATION" + Environment.NewLine + "PRINT";
+                        break;
+                    case "QUILTING(AT)":
+                        strArtworkType = "QUILTING" + Environment.NewLine + "(AT)";
+                        break;
+                    case "SUBLIMATION SPRAY":
+                        strArtworkType = "SUBLIMATION" + Environment.NewLine + "SPRAY";
+                        break;
+                    case "SUBLIMATION ROLLER":
+                        strArtworkType = "SUBLIMATION" + Environment.NewLine + "ROLLER";
+                        break;
+                    case "SMALL HOT PRESS":
+                        strArtworkType = "SMALL" + Environment.NewLine + "HOT PRESS";
+                        break;
+                    case "BIG HOT PRESS":
+                        strArtworkType = "BIG" + Environment.NewLine + "HOT PRESS";
+                        break;
+                    case "DOWN FILLING":
+                        strArtworkType = "DOWN" + Environment.NewLine + "FILLING";
+                        break;
+                    case "ZIG ZAG":
+                        strArtworkType = "ZIG" + Environment.NewLine + "ZAG";
+                        break;
+                    case "QUILTING(HAND)":
+                        strArtworkType = "QUILTING" + Environment.NewLine + "(HAND)";
+                        break;
+                    case "D-chain ZIG ZAG":
+                        strArtworkType = "D-chain" + Environment.NewLine + "ZIG ZAG";
+                        break;
+                    case "REAL FLATSEAM":
+                        strArtworkType = "REAL" + Environment.NewLine + "FLATSEAM";
+                        break;
+                    case "BIG HOT FOR BONDING":
+                        strArtworkType = "BIG HOT" + Environment.NewLine + "FOR BONDING";
+                        break;
+                    case "EMBOSS/DEBOSS":
+                        strArtworkType = "EMBOSS/" + Environment.NewLine + "DEBOSS";
+                        break;
+                    case "GMT WASH":
+                        strArtworkType = "GMT" + Environment.NewLine + "WASH";
+                        break;
+                    case "PAD PRINTING":
+                        strArtworkType = "PAD" + Environment.NewLine + "PRINTING";
+                        break;
+                    case "Garment Dye":
+                        strArtworkType = "Garment" + Environment.NewLine + "Dye";
+                        break;
+                    default:
+                        break;
+                }
+                #endregion
+
+                objSheets.Cells[3, 12 + i] = strArtworkType;
+
             }
+
+            objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
+            objApp.Cells.EntireRow.AutoFit();       //自動欄高
+            objApp.Cells.EntireColumn.AutoFit();    //自動欄寬，不知為何還要多跑一次才會讓格式變美，先讓他多跑一次
+            objApp.Cells.EntireRow.AutoFit();       //自動欄高
 
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
