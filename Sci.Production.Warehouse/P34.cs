@@ -57,6 +57,7 @@ namespace Sci.Production.Warehouse
         {
             base.ClickNewAfter();
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "B";
             CurrentMaintain["IssueDate"] = DateTime.Now;

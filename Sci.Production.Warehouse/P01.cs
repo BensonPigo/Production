@@ -452,6 +452,10 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
                 sp_mdivision.ParameterName = "@MDivisionid";
                 sp_mdivision.Value = Sci.Env.User.Keyword;
                 cmds.Add(sp_mdivision);
+                System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
+                sp_factory.ParameterName = "@factoryid";
+                sp_factory.Value = Sci.Env.User.Factory;
+                cmds.Add(sp_factory);
                 System.Data.SqlClient.SqlParameter sp_loginid = new System.Data.SqlClient.SqlParameter();
                 sp_loginid.ParameterName = "@loginid";
                 sp_loginid.Value = Sci.Env.User.UserID;

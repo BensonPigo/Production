@@ -126,6 +126,7 @@ BEGIN
 		INSERT INTO [dbo].[Adjust]
 					([ID]
 					,[MDivisionID]
+					,[FactoryID]
 					,[IssueDate]
 					,[Remark]
 					,[Status]
@@ -138,6 +139,7 @@ BEGIN
 				VALUES
 					(@newid
 					,@MDivisionid
+					,@FactoryID
 					,GETDATE()
 					,'Add by stocktaking'
 					,'Confirmed'

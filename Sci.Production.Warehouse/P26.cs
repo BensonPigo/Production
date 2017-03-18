@@ -62,6 +62,7 @@ namespace Sci.Production.Warehouse
         {
             base.ClickNewAfter();
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["IssueDate"] = DateTime.Now;
             CurrentMaintain["Status"] = "New";
             comboBox1.SelectedIndex = 0;

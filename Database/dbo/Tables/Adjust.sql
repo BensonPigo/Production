@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[Adjust] (
     [ID]            VARCHAR (13)  CONSTRAINT [DF_Adjust_ID] DEFAULT ('') NOT NULL,
     [MDivisionID]   VARCHAR (8)   CONSTRAINT [DF_Adjust_MDivisionID] DEFAULT ('') NULL,
+	[FactoryID]     VARCHAR (8)   CONSTRAINT [DF_Adjust_FactoryID] DEFAULT ('') NULL,
     [IssueDate]     DATE          NOT NULL,
     [Remark]        NVARCHAR (60) CONSTRAINT [DF_Adjust_Remark] DEFAULT ('') NULL,
     [Status]        VARCHAR (15)  CONSTRAINT [DF_Adjust_Status] DEFAULT ('') NULL,

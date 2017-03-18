@@ -250,6 +250,7 @@ Where a.id = '{0}'", masterID);
         {
             base.ClickNewAfter();
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "B";
             CurrentMaintain["issuedate"] = DateTime.Now;

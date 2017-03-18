@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[Stocktaking] (
     [ID]          VARCHAR (13)  CONSTRAINT [DF_Stocktaking_ID] DEFAULT ('') NOT NULL,
     [MDivisionID] VARCHAR (8)   CONSTRAINT [DF_Stocktaking_MDivisionID] DEFAULT ('') NOT NULL,
+	[FactoryID]   VARCHAR (8)   CONSTRAINT [DF_Stocktaking_FactoryID] DEFAULT ('') NOT NULL,
     [IssueDate]   DATE          NOT NULL,
     [Remark]      NVARCHAR (60) CONSTRAINT [DF_Stocktaking_Remark] DEFAULT ('') NULL,
     [Status]      VARCHAR (15)  CONSTRAINT [DF_Stocktaking_Status] DEFAULT ('') NOT NULL,

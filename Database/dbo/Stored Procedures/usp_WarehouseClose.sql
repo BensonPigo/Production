@@ -4,8 +4,10 @@
 CREATE PROCEDURE [dbo].[usp_WarehouseClose] 
 	-- Add the parameters for the stored procedure here
 	@poid varchar(13) -- 採購母單單號
-	,@MDivisionid varchar(8),
-	@loginid varchar(10)
+	,@MDivisionid varchar(8)
+	,@loginid varchar(10)
+	,@Factoryid varchar(8)
+	
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -17,6 +19,7 @@ BEGIN
 	DECLARE @RowCountVar INT;
 	DECLARE	@newid varchar(13) -- A2C id
 	DECLARE @msg nvarchar(500) ='';
+	DECLARE @OrdersFactoryID varchar(8) ='';
 
 	BEGIN TRY
 		BEGIN TRANSACTION;
@@ -68,13 +71,15 @@ BEGIN
 		ELSE 
 		BEGIN
 			INSERT INTO [dbo].[SubTransfer]
-				   ([Id]				   ,[MDivisionID]				   ,[Type]
+				   ([Id]				   ,[MDivisionID]				   ,[FactoryID]
+				   ,[Type]
 				   ,[IssueDate]				   ,[Status]				   ,[Remark]
 				   ,[AddName]				   ,[AddDate]				   ,[EditName]
 				   ,[EditDate])
 			VALUES
 					(@poid
 					,@MDivisionid
+					,@Factoryid
 					,'D' -- A2C
 					,GETDATE()
 					,'Confirmed'
@@ -86,16 +91,20 @@ BEGIN
 					);
 		END
 
+		select @OrdersFactoryID=FactoryID from Orders where ID=@poid
+
 		INSERT INTO [dbo].[SubTransfer_Detail]
-           ([ID]				,[FromFtyInventoryUkey]           ,[FromMDivisionID]           ,[FromPOID]
+           ([ID]				,[FromFtyInventoryUkey]           ,[FromMDivisionID]           ,[FromFactoryID]
+		   ,[FromPOID]
            ,[FromSeq1]           ,[FromSeq2]						,[FromRoll]					,[FromStockType]
            ,[FromDyelot]           
-		   ,[ToMDivisionID]    ,[ToPOID]							,[ToSeq1]
+		   ,[ToMDivisionID]    ,[ToFactoryID]						,[ToPOID]					,[ToSeq1]
            ,[ToSeq2]           ,[ToRoll]							,[ToStockType]				,[ToDyelot]
            ,[Qty])
 		 SELECT [POID]
 			,Ukey
 			,'' [FromMDivisionID] 
+			,@OrdersFactoryID [FromFactoryID] 
 			,[POID]
 			,[Seq1]
 			,[Seq2]
@@ -103,6 +112,7 @@ BEGIN
 			,'B' [FromStock]
 			,[Dyelot]
 			,'' [ToMDivisionID]
+			,@OrdersFactoryID [ToFactoryID] 
 			,[POID]
 			,[Seq1]
 			,[Seq2]
