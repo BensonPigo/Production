@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[Receiving] (
     [Id]              VARCHAR (13)   CONSTRAINT [DF_Receiving_Id] DEFAULT ('') NOT NULL,
     [MDivisionID]     VARCHAR (8)    CONSTRAINT [DF_Receiving_MDivisionID] DEFAULT ('') NOT NULL,
+    [FactoryID]       VARCHAR (8)    NULL,
     [InvNo]           VARCHAR (25)   CONSTRAINT [DF_Receiving_InvNo] DEFAULT ('') NULL,
     [Type]            VARCHAR (1)    CONSTRAINT [DF_Receiving_Type] DEFAULT ('') NOT NULL,
     [ExportId]        VARCHAR (13)   CONSTRAINT [DF_Receiving_ExportId] DEFAULT ('') NULL,
@@ -10,7 +11,7 @@
     [WhseArrival]     DATE           NULL,
     [Status]          VARCHAR (15)   CONSTRAINT [DF_Receiving_Status] DEFAULT ('') NULL,
     [Transfer2Taipei] DATE           NULL,
-	[Remark]          NVARCHAR(100)  NULL,
+    [Remark]          NVARCHAR (100) NULL,
     [InspectionRate]  NUMERIC (5, 2) CONSTRAINT [DF_Receiving_InspectionRate] DEFAULT ((0)) NULL,
     [AddName]         VARCHAR (10)   CONSTRAINT [DF_Receiving_AddName] DEFAULT ('') NULL,
     [AddDate]         DATETIME       NULL,
@@ -18,6 +19,8 @@
     [EditDate]        DATETIME       NULL,
     CONSTRAINT [PK_Receiving] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
