@@ -194,18 +194,17 @@ namespace Sci.Production.Planning
                 xrt.ShowHeader = false;
                 //xrt.Borders.AllCellsBorders = true;
                 xrt.Borders.DependOnColumn.Add(1, 3);
-
+                
                 sxrc.dicDatas.Add("##tbl", xrt);
                 
                 if (boDetail)
                 {
                     Microsoft.Office.Interop.Excel.Workbook wkb = sxrc.ExcelApp.ActiveWorkbook;
                     Microsoft.Office.Interop.Excel.Worksheet wks = wkb.Sheets[1];
-
                     Microsoft.Office.Interop.Excel.Worksheet wksnew = wkb.Sheets.Add( After: wks);
                     wksnew.Name = "Detail Log";
                     wksnew.Cells[1, 1].Value = "##detailTbl";
-                    
+                 
                     SaveXltReportCls.xltRptTable xrt2 = new SaveXltReportCls.xltRptTable(dsData[2]);
                     xrt2.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo(GCN("CRDDate")) { NumberFormate = "yyyy/MM/dd" });
                     xrt2.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo(GCN("BuyerDelivery")) { NumberFormate = "yyyy/MM/dd" });
@@ -215,13 +214,15 @@ namespace Sci.Production.Planning
                     xrt2.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo(GCN("OrigBuyerDelivery")) { NumberFormate = "yyyy/MM/dd" });
                     xrt2.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo(GCN("FirstProduction")) { NumberFormate = "yyyy/MM/dd" });
                     xrt2.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo(GCN("dLastProduction")) { NumberFormate = "yyyy/MM/dd" });
-                    
+                
                     xrt2.boAddFilter = true;
                     xrt2.boTitleBold = true;
                     xrt2.boAutoFitColumn = true;
-                    sxrc.dicDatas.Add("##detailTbl", xrt2);
+                    xrt2.HeaderColor = Color.FromArgb(204, 255, 204);//背景顏色
+                    xrt2.boFreezePanes = true; // 進行凍結視窗
+                    sxrc.dicDatas.Add("##detailTbl", xrt2);  
                 }
-
+              
                 sxrc.Save();
             }
             else
@@ -261,6 +262,7 @@ namespace Sci.Production.Planning
                         xrt.lisColumnInfo.Add(new SaveXltReportCls.xlsColumnInfo("Failed-QTY") { NumberFormate = "##,###,##0" });
                         xrt.Borders.AllCellsBorders = true;
                         //xrt.boAutoFitColumn = true;
+                       
                         sxrc.dicDatas.Add(k2, xrt);
 
                         idxRow += 2;    //多跨一行，所以+2                       
@@ -410,7 +412,7 @@ namespace Sci.Production.Planning
             grid1.CancelEdit();
             RefreshData();
         }
-
+       
         private string GCN(string ColumnName)
         {
             string strColName;
