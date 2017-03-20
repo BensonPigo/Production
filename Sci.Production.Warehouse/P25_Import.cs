@@ -57,10 +57,15 @@ select  selected = 0
         , [Description] = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) 
         , fromRoll = c.Roll 
         , fromDyelot = c.Dyelot 
+        , fromFactoryID = orders.FactoryID
         , fromStocktype = c.StockType 
         , balance = c.inqty-c.outqty + c.adjustqty 
         , qty = 0.00 
-        , a.FabricType
+        , FabricType =  case a.FabricType 
+                            when 'f' then 'Fabric'
+					        when 'a' then 'Accessory'
+					        else 'Other'				  
+		                end 
         , a.stockunit
         , a.InputQty
         , topoid = a.id 
@@ -68,6 +73,7 @@ select  selected = 0
         , toseq2 = a.SEQ2 
         , toroll = c.Roll 
         , todyelot = c.Dyelot 
+        , toFactoryID  = orders.FactoryID
         , toStocktype = 'O' 
         , Fromlocation = stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = c.Ukey) t 
                            for xml path('')), 1, 1, '') 
