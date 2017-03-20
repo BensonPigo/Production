@@ -73,11 +73,11 @@ where l.Type = 'R'"));
 
             if (!MyUtility.Check.Empty(apvDate1))
             {
-                sqlCmd.Append(string.Format(@" and l.ApvDate >= '{0}'", Convert.ToDateTime(apvDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) >= '{0}'", Convert.ToDateTime(apvDate1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(apvDate2))
             {
-                sqlCmd.Append(string.Format(@" and l.ApvDate <= '{0}'", Convert.ToDateTime(apvDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) <= '{0}'", Convert.ToDateTime(apvDate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(reportType))
