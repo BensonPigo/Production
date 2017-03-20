@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[TransferOut] (
     [Id]            VARCHAR (13)   CONSTRAINT [DF_TransferOut_Id] DEFAULT ('') NOT NULL,
     [MDivisionID]   VARCHAR (8)    CONSTRAINT [DF_TransferOut_MDivisionID] DEFAULT ('') NOT NULL,
+    [FactoryID]     VARCHAR (8)    NULL,
     [IssueDate]     DATE           NOT NULL,
     [Status]        VARCHAR (15)   CONSTRAINT [DF_TransferOut_Status] DEFAULT ('') NOT NULL,
     [Remark]        NVARCHAR (100) CONSTRAINT [DF_TransferOut_Remark] DEFAULT ('') NULL,
@@ -12,6 +13,8 @@
     [EditDate]      DATETIME       NULL,
     CONSTRAINT [PK_TransferOut] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
