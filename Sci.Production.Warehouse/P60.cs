@@ -188,14 +188,15 @@ namespace Sci.Production.Warehouse
             .Text("unitId", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))
             .Numeric("onRoad", header: "On Road", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, iseditingreadonly: true)
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6,settings:ns)
-            .Text("location", header: "Location", width: Widths.AnsiChars(20))
+            // 2017/03/20 暫時 移除 Location
+            //.Text("location", header: "Location", width: Widths.AnsiChars(20))
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20))
             ;     //
             #endregion 欄位設定
 
-            detailgrid.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            //detailgrid.Columns["location"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Confirm
@@ -212,10 +213,15 @@ namespace Sci.Production.Warehouse
 
             #region 檢查負數庫存
 
-            sqlcmd = string.Format(@"Select d.OrderId,d.Refno,d.ThreadColorID,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.LocalReceiving_Detail d WITH (NOLOCK) left join dbo.LocalInventory f WITH (NOLOCK) 
-on d.OrderId = f.OrderID and d.Refno = f.Refno and d.ThreadColorID = f.ThreadColorID
+            sqlcmd = string.Format(@"
+Select   d.OrderId
+         ,d.Refno
+         ,d.ThreadColorID
+         ,d.Qty
+         ,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+from dbo.LocalReceiving_Detail d WITH (NOLOCK) 
+left join dbo.LocalInventory f WITH (NOLOCK) on d.OrderId = f.OrderID and d.Refno = f.Refno 
+      and d.ThreadColorID = f.ThreadColorID
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -266,13 +272,15 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             foreach (var item in bs1)
             {
-                sqlupd2.Append(string.Format(@"merge into dbo.localinventory t
+                sqlupd2.Append(string.Format(@"
+merge into dbo.localinventory t
 using (select '{1}','{2}','{3}',{0},'{4}') as s (orderid,refno,threadcolorid,qty,unitid)
 on t.orderid = s.orderid and t.refno = s.refno and t.threadcolorid = s.threadcolorid 
 when matched then
-update set inqty = inqty + s.qty
+      update set inqty = inqty + s.qty
 when not matched then
-insert (MDivisionID, orderid, refno, threadcolorid, inqty, unitid) values ('', s.orderid,s.refno,s.threadcolorid,s.qty,s.unitid);"
+      insert (MDivisionID, orderid, refno, threadcolorid, inqty, unitid) 
+      values ('', s.orderid,s.refno,s.threadcolorid,s.qty,s.unitid);"
                     , item.qty, item.orderid, item.refno, item.threadcolorid,item.unitid));
             }
 
@@ -340,10 +348,15 @@ insert (MDivisionID, orderid, refno, threadcolorid, inqty, unitid) values ('', s
 
             #region 檢查負數庫存
 
-            sqlcmd = string.Format(@"Select d.OrderId,d.Refno,d.ThreadColorID,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
-from dbo.LocalReceiving_Detail d WITH (NOLOCK) left join dbo.LocalInventory f WITH (NOLOCK) 
-on d.OrderId = f.OrderID and d.Refno = f.Refno and d.ThreadColorID = f.ThreadColorID
+            sqlcmd = string.Format(@"
+Select  d.OrderId
+        ,d.Refno
+        ,d.ThreadColorID
+        ,d.Qty
+        ,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) 
+from dbo.LocalReceiving_Detail d WITH (NOLOCK) 
+left join dbo.LocalInventory f WITH (NOLOCK) on d.OrderId = f.OrderID and d.Refno = f.Refno 
+      and d.ThreadColorID = f.ThreadColorID
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -394,13 +407,15 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             foreach (var item in bs1)
             {
-                sqlupd2.Append(string.Format(@"merge into dbo.localinventory t
+                sqlupd2.Append(string.Format(@"
+merge into dbo.localinventory t
 using (select '{1}','{2}','{3}',{0},'{4}') as s (orderid,refno,threadcolorid,qty,unitid)
 on t.orderid = s.orderid and t.refno = s.refno and t.threadcolorid = s.threadcolorid 
 when matched then
-update set inqty = inqty - s.qty
+      update set inqty = inqty - s.qty
 when not matched then
-insert (MDivisionID, orderid,refno,threadcolorid,inqty,unitid) values ('', s.orderid,s.refno,s.threadcolorid,0 - s.qty,s.unitid);"
+      insert (MDivisionID, orderid,refno,threadcolorid,inqty,unitid) 
+      values ('', s.orderid,s.refno,s.threadcolorid,0 - s.qty,s.unitid);"
                     , item.qty, item.orderid, item.refno, item.threadcolorid,item.unitid));
             }
 
@@ -456,13 +471,19 @@ insert (MDivisionID, orderid,refno,threadcolorid,inqty,unitid) values ('', s.ord
 
         private string DoUpdateLocalPoInQty()
         {
-            string sqlcmd = string.Format(@"update dbo.LocalPO_Detail 
-set InQty = isnull((select sum(d.Qty) ttl_receiving from dbo.LocalReceiving c inner join dbo.LocalReceiving_Detail d on c.id = d.id  
- where c.Status = 'Confirmed' and d.LocalPo_detailukey = LocalPO_Detail.Ukey and d.LocalPoId = LocalPO_Detail.Id),0)
-from LocalPO_Detail join (select LocalPoId,LocalPo_detailukey from dbo.LocalReceiving a inner join dbo.LocalReceiving_Detail b 
-on b.id = a.id where a.id='{0}'
- ) s
-on LocalPO_Detail.id = s.LocalPoId and LocalPO_Detail.ukey = s.LocalPo_detailukey", CurrentMaintain["id"]);
+            string sqlcmd = string.Format(@"
+update dbo.LocalPO_Detail 
+      set InQty = isnull((select sum(d.Qty) ttl_receiving 
+                          from dbo.LocalReceiving c 
+                          inner join dbo.LocalReceiving_Detail d on c.id = d.id  
+                          where c.Status = 'Confirmed' and d.LocalPo_detailukey = LocalPO_Detail.Ukey 
+                              and d.LocalPoId = LocalPO_Detail.Id)
+                        , 0)
+from LocalPO_Detail 
+join (select LocalPoId,LocalPo_detailukey 
+      from dbo.LocalReceiving a 
+      inner join dbo.LocalReceiving_Detail b on b.id = a.id where a.id='{0}'
+) s on LocalPO_Detail.id = s.LocalPoId and LocalPO_Detail.ukey = s.LocalPo_detailukey", CurrentMaintain["id"]);
 
             return sqlcmd;
 
