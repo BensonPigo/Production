@@ -164,8 +164,12 @@ namespace Sci.Production.Planning
 
             if (!MyUtility.Check.Empty(spno1))
             {
-                sqlCmd.Append(" and o.id >= @spno1 and o.id <= @spno2");
+                sqlCmd.Append(" and o.id >= @spno1 ");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@spno1", spno1));
+            }
+            if (!MyUtility.Check.Empty(spno2))
+            {
+                sqlCmd.Append(" and o.id <= @spno2 ");
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@spno2", spno2));
             }
 
@@ -307,7 +311,9 @@ namespace Sci.Production.Planning
                 ,t.TotalCTN
                 --,t.FtyCTN
                 ,t.TotalCTN-t.FtyCTN as FtyCtn
-                , t.ClogCTN, t.InspDate, t.ActPulloutDate,t.FtyKPI,t.KPIChangeReason
+                , t.ClogCTN, t.InspDate, t.ActPulloutDate,t.FtyKPI
+                --,t.KPIChangeReason
+                ,KPIChangeReason.KPIChangeReason  KPIChangeReason
                 ,t.PlanDate, dbo.getTPEPass1(t.SMR) [SMR], dbo.getTPEPass1(T.MRHandle) [Handle]
                 ,(select dbo.getTPEPass1(p.POSMR) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [PO SMR]
                 ,(select dbo.getTPEPass1(p.POHandle) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [PO Handle]
@@ -324,6 +330,12 @@ namespace Sci.Production.Planning
             sqlCmd.Append(string.Format(@" from #cte t inner join #cte2 on #cte2.OrderID = t.OrderID"));
             if (isArtwork) 
                 sqlCmd.Append(string.Format(@" left join #tmscost_pvt on #tmscost_pvt.orderid = t.orderid "));
+
+            //KPIChangeReason
+            sqlCmd.Append(@"  outer apply ( select ID + '-' + Name KPIChangeReason  from Reason 
+				where ReasonTypeID = 'Order_BuyerDelivery' and ID = t.KPIChangeReason 
+				and t.KPIChangeReason !='' and t.KPIChangeReason is not null ) KPIChangeReason  ");
+
             sqlCmd.Append(string.Format(@" order by {0}", orderby));
 
 
@@ -370,14 +382,31 @@ namespace Sci.Production.Planning
 
                 for (int i = 0; i < dtArtworkType.Rows.Count; i++)  //列印動態欄位的表頭
                 {
-                    objSheets.Cells[1, 54 + i] = dtArtworkType.Rows[i]["id"].ToString();
+                    objSheets.Cells[1, 55 + i] = dtArtworkType.Rows[i]["id"].ToString();
                 }
+
+                //首列資料篩選
+                Microsoft.Office.Interop.Excel.Range firstRow = (Microsoft.Office.Interop.Excel.Range)objSheets.Rows[1];
+                firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
+                objApp.Cells.EntireColumn.AutoFit();  //自動欄寬
+
                 if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
             else
-                MyUtility.Excel.CopyToXls(printData, "", "Planning_R15_WIP.xltx", 1, true);      // 將datatable copy to excel
+            {
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R15_WIP.xltx"); //預先開啟excel app
+                MyUtility.Excel.CopyToXls(printData, "", "Planning_R15_WIP.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
+                //首列資料篩選
+                Microsoft.Office.Interop.Excel.Range firstRow = (Microsoft.Office.Interop.Excel.Range)objSheets.Rows[1];
+                firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
+                objApp.Cells.EntireColumn.AutoFit();  //自動欄寬
+
+                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            }
             
             return true;
         }
