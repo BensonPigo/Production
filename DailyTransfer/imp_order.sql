@@ -583,25 +583,22 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			delete;
 
 -------------Order_FabricCode_QT-----------------
-		Merge Production.dbo.Order_FabricCode_QT as t
-		Using (select a.* from Trade_To_Pms.dbo.Order_FabricCode_QT a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
-		on t.id=s.id and t.FabricPanelCode=s.FabricPanelCode and t.seqno=s.seqno
-		when matched then 
-			update set
-			t.FabricCode= s.FabricCode,
-			t.QTFabricCode= s.QTFabricCode,
-			t.QTFabricPanelCode= s.QTFabricPanelCode,
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate,
-			t.PatternPanel= s.PatternPanel,
-			t.QTPatternPanel= s.QTPatternPanel
-		when not matched by target then 
-			insert(Id,FabricCode,FabricPanelCode,SeqNO,QTFabricCode,QTFabricPanelCode,AddName,AddDate,EditName,EditDate,PatternPanel,QTPatternPanel)
-			values(s.Id,s.FabricCode,s.FabricPanelCode,s.SeqNO,s.QTFabricCode,s.QTFabricPanelCode,s.AddName,s.AddDate,s.EditName,s.EditDate,s.PatternPanel,s.QTPatternPanel)
-		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
-			delete;
+		  Merge Production.dbo.Order_FabricCode_QT as t
+  Using (select a.* from Trade_To_Pms.dbo.Order_FabricCode_QT a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
+  on t.id=s.id and t.FabricPanelCode=s.FabricPanelCode and t.seqno=s.seqno
+  when matched then 
+   update set
+   t.QTFabricPanelCode= s.QTFabricPanelCode,
+   t.AddName= s.AddName,
+   t.AddDate= s.AddDate,
+   t.EditName= s.EditName,
+   t.EditDate= s.EditDate
+  when not matched by target then 
+   insert(Id,FabricPanelCode,SeqNO,QTFabricPanelCode,AddName,AddDate,EditName,EditDate)
+   values(s.Id,s.FabricPanelCode,s.SeqNO,s.QTFabricPanelCode,s.AddName,s.AddDate,s.EditName,s.EditDate)
+  when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+   delete;
+
 		-------------Order_Bof -----------------------Bill of Fabric
 
 		Merge Production.dbo.Order_Bof as t
