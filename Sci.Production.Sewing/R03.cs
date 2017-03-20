@@ -61,14 +61,14 @@ namespace Sci.Production.Sewing
             #region 組撈基礎資料的SQL
             sqlCmd.Append(@"with tmp1stData
 as (
-select distinct o.ID,o.ProgramID,o.StyleID,o.SeasonID,o.BrandID,o.MDivisionID,o.FactoryID,
+select 
+o.ID,o.ProgramID,o.StyleID,o.SeasonID,o.BrandID,o.MDivisionID,o.FactoryID,
 o.CdCodeID,o.CPU,o.POID,so.SewingLineID,so.Manpower,sod.WorkHour,sod.QAQty,
 o.CPUFactor,isnull(sl.Rate/100,0) as Rate,s.Description as StyleDesc,c.Description as CDDesc,
 s.ModularParent,s.CPUAdjusted
 from Orders o WITH (NOLOCK) 
 inner join SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
 inner join SewingOutput so WITH (NOLOCK) on so.ID = sod.ID
-inner join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID
 inner join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
 inner join CDCode c WITH (NOLOCK) on c.ID = o.CdCodeID
 left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = s.Ukey and sl.Location = sod.ComboType
