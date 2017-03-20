@@ -47,11 +47,26 @@ namespace Sci.Production.Warehouse
             --sum(TMP.inqty - TMP.outqty+tmp.adjust) over ( order by tmp.addDate,TMP.inqty desc, TMP.outqty,tmp.adjust) as [balance] 
             sum(TMP.inqty - TMP.outqty+tmp.adjust) over (order by IssueDate,tmp.addDate, name) as [balance] 
             from (
-	            select a.IssueDate, a.id
-                ,Case type when 'A' then 'P35. Adjust Bulk Qty' when 'B' then 'P34. Adjust Stock Qty' end as name
-                ,0 as inqty,0 as outqty, sum(QtyAfter - QtyBefore) adjust, remark ,'' location,AddDate
-                from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
-                where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
+			select 	a.IssueDate
+					, a.id
+                	, name = Case type 
+            					when 'A' then 'P35. Adjust Bulk Qty' 
+    							when 'B' then 'P34. Adjust Stock Qty' 
+						     end
+                	,inqty = 0 
+                	,outqty = 0
+                	,adjust = sum(QtyAfter - QtyBefore) 
+                	,remark 
+                	,location = MtlLocation.location 
+                	,AddDate
+            from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
+            outer apply(
+				select location = stuff((select ',' + t.MtlLocationID from (SELECT MtlLocationID from FtyInventory fty 
+																		    join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+																		    Where b.poid = fty.poid and b.seq1 = fty.seq1 and b.seq2 = fty.seq2 and b.Roll = fty.Roll and b.Dyelot = fty.Dyelot)t 
+									     for xml path('')),1,1,'') 
+			) MtlLocation            
+            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()));
@@ -61,13 +76,28 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type,AddDate
+            selectCommand1.Append(string.Format(@"
+            group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type,AddDate, MtlLocation.location 
 
             union all
-            select a.IssueDate, a.id
-            ,'P31. Material Borrow out' name
-            ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location,AddDate
+            select 	a.IssueDate
+            		, a.id
+            		,name = 'P31. Material Borrow out' 
+            		,inqty = 0
+            		,released = sum(qty) 
+            		,adjust = 0
+            		,remark 
+            		,location = MtlLocation.location
+            		,AddDate
             from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
+            outer apply(
+				select location = stuff((select ',' + t.MtlLocationID 
+										 from (SELECT MtlLocationID from FtyInventory fty 
+											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+											   Where b.FromPoId = fty.poid and b.FromSeq1 = fty.seq1 and b.FromSeq2 = fty.seq2 
+											   		and b.FromRoll = fty.Roll and b.FromDyelot = fty.Dyelot)t 
+									     for xml path('')),1,1,'') 
+			) MtlLocation             
             where type='A' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  
             and a.id = b.id "
                 , dr["id"].ToString()
@@ -79,14 +109,30 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,AddDate
+            selectCommand1.Append(string.Format(@"
+            group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
-	        select issuedate, a.id
-            ,'P31. Material Borrow In' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location,AddDate
+			select 	issuedate
+					,a.id
+            		,name = 'P31. Material Borrow In' 
+            		,arrived = sum(qty) 
+            		,ouqty = 0 
+            		,adjust = 0 
+            		,remark 
+            		,location = MtlLocation.location
+            		,AddDate
             from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
+            outer apply(
+				select location = stuff((select ',' + t.MtlLocationID 
+										 from (SELECT MtlLocationID from FtyInventory fty 
+											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+											   Where b.ToPoId = fty.poid and b.ToSeq1 = fty.seq1 and b.ToSeq2 = fty.seq2 
+											   		and b.ToRoll = fty.Roll and b.ToDyelot = fty.Dyelot)t 
+									     for xml path('')),1,1,'') 
+			) MtlLocation                
             where type='A' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
-            and a.id = b.id "
+                and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()));
@@ -95,15 +141,30 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,AddDate
+            selectCommand1.Append(string.Format(@"
+            group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
-	            select a.IssueDate, a.id
-            ,'P32. Return Borrowing out' name
-            ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location,AddDate
+            select 	a.IssueDate
+            		,a.id
+            		,name = 'P32. Return Borrowing out' 
+            		,inqty = 0
+            		,released = sum(qty) 
+            		,adjust = 0
+            		,remark 
+            		,location = MtlLocation.location
+            		,AddDate
             from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b  WITH (NOLOCK) 
+            outer apply(
+				select location = stuff((select ',' + t.MtlLocationID 
+										 from (SELECT MtlLocationID from FtyInventory fty 
+											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+											   Where b.FromPoId = fty.poid and b.FromSeq1 = fty.seq1 and b.FromSeq2 = fty.seq2 
+											   		and b.FromRoll = fty.Roll and b.FromDyelot = fty.Dyelot)t 
+									     for xml path('')),1,1,'') 
+			) MtlLocation
             where type='B' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  
-            and a.id = b.id "
+                and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()));
@@ -113,14 +174,30 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,AddDate
+            selectCommand1.Append(string.Format(@"
+            group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
-	            select issuedate, a.id
-            ,'P32. Return Borrowing In' name, sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location,AddDate
+            select 	issuedate
+            		,a.id
+            		,name = 'P32. Return Borrowing In' 
+            		,arrived = sum(qty) 
+            		,ouqty = 0
+            		,adjust = 0
+            		,remark 
+            		,location = MtlLocation.location
+            		,AddDate
             from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
+            outer apply(
+				select location = stuff((select ',' + t.MtlLocationID 
+										 from (SELECT MtlLocationID from FtyInventory fty 
+											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+											   Where b.ToPoId = fty.poid and b.ToSeq1 = fty.seq1 and b.ToSeq2 = fty.seq2 
+											   		and b.ToRoll = fty.Roll and b.ToDyelot = fty.Dyelot)t 
+									     for xml path('')),1,1,'') 
+			) MtlLocation 
             where type='B' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
-            and a.id = b.id "
+                and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()));
@@ -129,7 +206,8 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,AddDate
+            selectCommand1.Append(string.Format(@"
+            group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
 	            select issuedate, a.id
@@ -161,16 +239,33 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1, Seq2, remark, a.IssueDate, a.type, AddDate, MtlLocation.location
+            selectCommand1.Append(string.Format(@"
+            group by a.id, poid, seq1, Seq2, remark, a.IssueDate, a.type, AddDate, MtlLocation.location
 
             union all
-            select issuedate, a.id
-            ,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
-            when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
-            , 0 as inqty,sum(b.Qty) outqty ,0 as adjust, remark ,'' location,AddDate
+            select 	issuedate
+            		,a.id
+            		,name = case FabricType 
+		            			when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
+		           				when 'F' then 'P16. Issue Fabric Lacking & Replacement' 
+		       		 end 
+        			,inqty = 0
+        			,outqty = sum(b.Qty)  
+        			,adjust = 0 
+        			,remark 
+        			,location = MtlLocation.location
+        			,AddDate
             from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
+            outer apply(
+				select location = stuff((select ',' + t.MtlLocationID 
+										 from (SELECT MtlLocationID from FtyInventory fty 
+											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+											   Where b.PoId = fty.poid and b.Seq1 = fty.seq1 and b.Seq2 = fty.seq2 
+											   		and b.Roll = fty.Roll and b.Dyelot = fty.Dyelot)t 
+									     for xml path('')),1,1,'') 
+			) MtlLocation 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  
-            and a.id = b.id and Type='R'  "
+                and a.id = b.id and Type='R'  "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
                 , dr["seq2"].ToString()));
@@ -179,13 +274,28 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark  ,a.IssueDate,a.FabricType,AddDate
+            selectCommand1.Append(string.Format(@"
+            group by a.id, poid, seq1,Seq2, remark  ,a.IssueDate,a.FabricType,AddDate, MtlLocation.location 
 
             union all
-            select issuedate, a.id
-            ,'P17. R/Mtl Return' name
-            , 0 as inqty, sum(0-b.Qty) released,0 as adjust, remark,'' location,AddDate
+            select 	issuedate
+            		,a.id
+            		,name = 'P17. R/Mtl Return' 
+            		,inqty = 0
+            		,released = sum(0-b.Qty) 
+            		,adjust = 0
+            		,remark
+            		,location = MtlLocation.location
+            		,AddDate
             from IssueReturn a WITH (NOLOCK) , IssueReturn_Detail b WITH (NOLOCK) 
+            outer apply(
+				select location = stuff((select ',' + t.MtlLocationID 
+										 from (SELECT MtlLocationID from FtyInventory fty 
+											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+											   Where b.PoId = fty.poid and b.Seq1 = fty.seq1 and b.Seq2 = fty.seq2 
+											   		and b.Roll = fty.Roll and b.Dyelot = fty.Dyelot)t 
+									     for xml path('')),1,1,'') 
+			) MtlLocation   
             where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
@@ -195,7 +305,8 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.Id, poid, seq1,Seq2, remark,a.IssueDate,AddDate
+            selectCommand1.Append(string.Format(@"
+            group by a.Id, poid, seq1,Seq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
             select case type when 'A' then a.eta else a.WhseArrival end as issuedate, a.id
@@ -220,14 +331,28 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,a.eta,AddDate,X.Location
+            selectCommand1.Append(string.Format(@"
+            group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,a.eta,AddDate,X.Location
 
             union all
-            select issuedate
-            , a.id
-            ,'P37. Return Receiving Material' name            
-            , 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location,AddDate
+            select 	issuedate
+            		,a.id
+            		,name = 'P37. Return Receiving Material'             
+            		,inqty = 0
+            		,released = sum(Qty) 
+            		,adjust = 0
+            		,remark
+            		,location = MtlLocation.location
+            		,AddDate
             from ReturnReceipt a WITH (NOLOCK) , ReturnReceipt_Detail b WITH (NOLOCK) 
+            outer apply(
+				select location = stuff((select ',' + t.MtlLocationID 
+										 from (SELECT MtlLocationID from FtyInventory fty 
+											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+											   Where b.PoId = fty.poid and b.Seq1 = fty.seq1 and b.Seq2 = fty.seq2 
+											   		and b.Roll = fty.Roll and b.Dyelot = fty.Dyelot)t 
+									     for xml path('')),1,1,'') 
+			) MtlLocation     
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
@@ -237,7 +362,9 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate ,AddDate                                                                              
+            selectCommand1.Append(string.Format(@"
+            group by a.id, poid, seq1,Seq2, remark,a.IssueDate ,AddDate, MtlLocation.location 
+                                                                              
             union all
 	        select issuedate, a.id
 	        ,'P23. Transfer Inventory to Bulk' as name
@@ -261,7 +388,8 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and fromroll='{0}' and fromdyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type ,AddDate,X.Location                                                                               
+            selectCommand1.Append(string.Format(@"
+            group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type ,AddDate,X.Location                                                                               
             union all
 	            select issuedate, a.id
             ,'P23. Transfer Inventory to Bulk' name
@@ -286,7 +414,8 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and Toroll='{0}' and Todyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, ToPoid, ToSeq1,ToSeq2, remark ,a.IssueDate,AddDate
+            selectCommand1.Append(string.Format(@"
+            group by a.id, ToPoid, ToSeq1,ToSeq2, remark ,a.IssueDate,AddDate
 
             union all
 	            select issuedate, a.id
@@ -311,12 +440,28 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,AddDate
+            selectCommand1.Append(string.Format(@"
+            group by a.id, poid, seq1,Seq2, remark,a.IssueDate,AddDate
 
             union all
-	        select issuedate, a.id
-            ,'P19. TransferOut' name, 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location,AddDate
+	        select 	issuedate
+	        		,a.id
+            		,name = 'P19. TransferOut' 
+            		,inqty = 0
+            		,released = sum(Qty) 
+            		,adjust = 0
+            		,remark
+            		,location = MtlLocation.location
+            		,AddDate
             from TransferOut a WITH (NOLOCK) , TransferOut_Detail b WITH (NOLOCK) 
+            outer apply(
+				select location = stuff((select ',' + t.MtlLocationID 
+										 from (SELECT MtlLocationID from FtyInventory fty 
+											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+											   Where b.PoId = fty.poid and b.Seq1 = fty.seq1 and b.Seq2 = fty.seq2 
+											   		and b.Roll = fty.Roll and b.Dyelot = fty.Dyelot)t 
+									     for xml path('')),1,1,'') 
+			) MtlLocation   
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()
@@ -326,7 +471,8 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, Seq1,Seq2, remark,a.IssueDate,AddDate
+            selectCommand1.Append(string.Format(@"
+            group by a.id, poid, Seq1,Seq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
 	            select issuedate, a.id
@@ -355,7 +501,8 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and ToRoll='{0}' and ToDyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, topoid, toSeq1, toSeq2,a.IssueDate,a.Type,a.remark,AddDate
+            selectCommand1.Append(string.Format(@"
+            group by a.id, topoid, toSeq1, toSeq2,a.IssueDate,a.Type,a.remark,AddDate
             
             union all
             select issuedate, a.id
@@ -381,7 +528,8 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and roll='{0}' and dyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(string.Format(@"group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type,a.remark,AddDate,X.location
+            selectCommand1.Append(string.Format(@"
+            group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type,a.remark,AddDate,X.location
 
             union all
             select issuedate, a.id
@@ -412,7 +560,8 @@ namespace Sci.Production.Warehouse
                 selectCommand1.Append(string.Format(@" and FromRoll='{0}' and FromDyelot = '{1}'", dr["roll"], dr["dyelot"]));
             }
 
-            selectCommand1.Append(@"group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,a.remark,AddDate, ToPoid, ToSeq1,ToSeq2
+            selectCommand1.Append(@"
+            group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,a.remark,AddDate, ToPoid, ToSeq1,ToSeq2
                 ) tmp
                 group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name, AddDate
                 order by IssueDate,tmp.addDate,name");
