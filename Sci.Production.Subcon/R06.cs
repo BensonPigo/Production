@@ -203,6 +203,8 @@ where a.Status = 'Confirmed' and a.issuedate between '{0}' and '{1}'
                 cmds.Add(sp_style);
             }
 
+            sqlCmd.Append(" Order by a.MDivisionID, a.id, c.POID, b.Orderid, e.BundleGroup, b.BundleNo");
+
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
             if (!result)
             {
