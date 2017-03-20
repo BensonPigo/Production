@@ -91,11 +91,10 @@ namespace Sci.Production.Quality
 
            cmd = string.Format(@"
    
-	select 
-	ps.SuppID, rd.SEQ1,rd.Seq2, ps.ID as PoId,rd.Dyelot,
-	rd.stockqty,
-	f.TotalInspYds,
-	f.id as Fir_id,
+	select  DISTINCT
+	ps.SuppID, rd.SEQ1,rd.Seq2,
+	[PoId]=ps.ID,rd.Dyelot,
+	[Fir_id]= f.id,
 	f.Refno
 	into #tmpAllData
 from Receiving r WITH (NOLOCK) 
@@ -108,7 +107,8 @@ inner join PO p WITH (NOLOCK) on p.ID = ps.ID
 	select SID.* ,
 	ref.*,
 	s.AbbEN,
-	tmpSum.*,
+	TtlYds.TotalInspYds,
+	TtlQty.stockqty,
     Yard.yrds,
 	Point.Defect,
 	Point.Point
@@ -146,22 +146,24 @@ outer apply(
 		) a group by defect
 ) as Point
 outer apply(
-	SELECT  
-        [stockqty]= sum(stockqty)
-		,[TotalInspYds]= sum(TotalInspYds) 
-		,[Inspected]= iif(sum(stockqty)!=0,round(sum(TotalInspYds)/sum(stockqty)*100,2),0) 				
-	FROM #tmpAllData
-	where #tmpAllData.SuppID = SID.SuppID
-)as tmpSum
+	select [TotalInspYds]= sum(TotalInspYds) 
+	from FIR , #tmpAllData
+	where id=#tmpAllData.Fir_id
+	and #tmpAllData.SuppID = SID.SuppID
+)as TtlYds
+outer apply(
+	select [stockqty]= sum(stockqty) 
+	from Receiving_Detail a,(select distinct poid,seq1,seq2,suppid from #tmpAllData) b
+	where a.PoId=b.PoId and a.Seq1=b.Seq1 and a.Seq2=b.Seq2
+	and b.SuppID = SID.SuppID	
+) as TtlQty
 outer apply (
 	select [yrds]=count (*) *5	
-	from Receiving r WITH (NOLOCK) 
-	inner join Receiving_Detail rd WITH (NOLOCK) on r.id=rd.id 
-	inner join fir f WITH (NOLOCK) on rd.PoId=f.POID and rd.Seq1=f.SEQ1 and rd.Seq2=f.seq2
-	inner join FIR_Physical fp on fp.ID=f.ID
-	inner join FIR_Physical_Defect fpd on fpd.FIR_PhysicalDetailUKey = fp.DetailUkey
-	 " + sqlWhere + @"
-	and f.Suppid=SID.SuppID
+	from dbo.fir a 
+	inner join dbo.FIR_Physical b on b.id = a.id
+	inner join dbo.FIR_Physical_Defect c on c.FIR_PhysicalDetailUKey = b.DetailUkey
+	inner join (select distinct poid,seq1,seq2 from #tmpAllData where Suppid=SID.SuppID) d 
+	on a.poid=d.PoId and a.seq1=d.seq1 and a.Seq2=d.seq2	
 )  as Yard
 order by Refno
 
@@ -185,7 +187,7 @@ order by Refno
        	,Tmp.abben
        	,Tmp.stockqty
        	,Tmp.TotalInspYds
-       	,Tmp.Inspected
+       	,[Inspected]= iif(Tmp.stockqty<>0,round(Tmp.TotalInspYds/Tmp.stockqty*100,2),0) 
        	,Tmp.yrds
        	,Tmp.[Fabric(%)]
         ,(select sl.id from SuppLevel sl WITH (NOLOCK) where type='F' and range1 <= isnull(tmp.[Fabric(%)],0) and range2 >= isnull(tmp.[Fabric(%)],0)) id		
@@ -207,16 +209,16 @@ order by Refno
        	,(select id from SuppLevel WITH (NOLOCK) where type='F' and range1 <= isnull(SHORTWIDTHLevel.SHORTWIDTH,0) and range2 >= isnull(SHORTWIDTHLevel.SHORTWIDTH,0))SHORTWIDTHLevel            
 	   into #TmpFinal
 	from (
-		select tmp.SuppID
+		select 
+			SuppID
        		,refno
        		,abben
        		,stockqty
        		,TotalInspYds
-       		,Inspected
-       		,yrds
+       		,yrds			
        		,[Fabric(%)]= IIF(TotalInspYds!=0, round((yrds/TotalInspYds)*100,2),0)        		
 			from  #tmp tmp	
-		)Tmp
+		)Tmp 	
 	outer apply
 			(								
 					select distinct SuppID,
@@ -233,8 +235,9 @@ order by Refno
 					WHERE ta1.SuppID=Tmp.SuppID
 			) as point
 	outer apply(
-			select Sum(RD.stockqty)SHRINKAGEyards 
-       		from #tmpAllData rd WITH (NOLOCK) 
+			select Sum(rd1.stockqty)SHRINKAGEyards 
+       		from  #tmpAllData rd WITH (NOLOCK) 
+			inner join Receiving_Detail rd1 on rd.PoId=rd1.PoId and rd.Seq1=rd1.Seq1 and rd.Seq2=rd1.Seq2
 				Where exists(select FL.* 
        						from FIR_Laboratory FL WITH (NOLOCK) 
        						inner join dbo.FIR_Laboratory_Heat h WITH (NOLOCK) on h.ID = FL.ID 
@@ -247,14 +250,16 @@ order by Refno
        						inner join dbo.FIR_Laboratory_Wash W WITH (NOLOCK) on W.ID = FL.ID
 							INNER JOIN FIR F WITH (NOLOCK) ON FL.POID=F.POID AND F.Suppid=Tmp.SuppID
        						where FL.WashEncode=1 and W.Result = 'Fail' and FL.POID = RD.poid and FL.SEQ1 = RD.seq1 
-       						and FL.seq2 = RD.seq2 and W.Dyelot = RD.dyelot )
-							group by PoId,Seq1,Seq2,Dyelot 
+       						and FL.seq2 = RD.seq2 and W.Dyelot = RD.dyelot 
+							)
+							group by rd1.PoId,rd1.Seq1,rd1.Seq2,rd1.Dyelot 
        			)SHRINKAGE
 	outer apply(
 					select iif(Tmp.stockqty!=0,round(SHRINKAGE.SHRINKAGEyards/Tmp.stockqty*100,2),0)SHINGKAGE
 				)SHINGKAGELevel 
-	outer apply(SELECT Sum(RD.stockqty)MIGRATIONyards
+	outer apply(SELECT Sum(RD1.stockqty)MIGRATIONyards
        		from #tmpAllData rd WITH (NOLOCK) 
+			inner join Receiving_Detail rd1 on rd.PoId=rd1.PoId and rd.Seq1=rd1.Seq1 and rd.Seq2=rd1.Seq2
        		Where exists(select * from dbo.FIR_Laboratory l WITH (NOLOCK) 
 							inner join dbo.FIR_Laboratory_Heat h WITH (NOLOCK) on h.ID = l.ID
 							INNER JOIN FIR F WITH (NOLOCK) ON L.POID=F.POID AND F.Suppid=Tmp.SuppID 
@@ -273,13 +278,14 @@ order by Refno
        			)MIGRATION 
 	outer apply(select iif(Tmp.stockqty!=0,round(MIGRATION.MIGRATIONyards/Tmp.stockqty*100,2),0)MIGRATION)MIGRATIONLevel 
 	outer apply(
-			select Sum(rd.stockqty)SHADINGyards
+			select Sum(rd1.stockqty)SHADINGyards
        		from #tmpAllData rd WITH (NOLOCK) 
+			inner join Receiving_Detail rd1 on rd.PoId=rd1.PoId and rd.Seq1=rd1.Seq1 and rd.Seq2=rd1.Seq2
 				Where exists(
 					select * from fir f WITH (NOLOCK) 
        						inner join FIR_Shadebone fs WITH (NOLOCK) on fs.ID = f.ID
 							where f.ShadebondEncode =1 and fs.Result = 'Fail' 
-							and f.poid =rd.poid and f.SEQ2 = rd.seq1 and f.seq2 = rd.seq2 and fs.Dyelot  = rd.dyelot 
+							and f.poid =rd.poid and f.SEQ1 = rd.seq1 and f.seq2 = rd.seq2 and fs.Dyelot  = rd.dyelot 
 							and f.suppid=Tmp.SuppID
 							) 
 					or exists(
