@@ -115,15 +115,16 @@ namespace Sci.Production.Subcon
             #endregion
             sqlWhere = string.Join(" and ", sqlWheres);
             #region --撈List資料--
-            cmd = string.Format(@"SELECT a.ID, [Subcon DBC]=Iif(a.IsSubcon=1,'Y','N'),a.Issuedate,a.BrandID,title='Debit Memo List (Taipei)',a.SendFrom,a.Attn,a.CC,
+            cmd = string.Format(@"SELECT distinct a.ID, [Subcon DBC]=Iif(a.IsSubcon=1,'Y','N'),a.Issuedate,a.BrandID,title='Debit Memo List (Taipei)',a.SendFrom,a.Attn,a.CC,
 	               a.subject,a.Handle + '-' + vs1.Name_Extno[Handle],a.SMR+'-'+vs2.Name_Extno[SMR],a.CurrencyID,a.Amount,a.Received,
-	               a.Cfm,a.CfmDate
+	               a.Cfm+ '-' + vs3.Name_Extno[cfm],a.CfmDate
 	               ,finalVoucher.[Voucher No.]
 	               ,finalVoucher.[Voucher Date]
 	               ,finalVoucher.[Settled Date]
                FROM  Debit a WITH (NOLOCK) 
 	               outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
-	               outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2  
+	               outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
+                   outer apply (select * from dbo.View_ShowName vs where vs.id = a.cfm ) vs3  
 	               outer apply ( 
 		            select top 1 tmpSum.*
 		            from dbo.LocalDebit LocDeb WITH (NOLOCK) 
@@ -146,9 +147,9 @@ namespace Sci.Production.Subcon
 		            where a.type='F' and " + sqlWhere + ' ' + sqlHaving);
             #endregion
             #region --撈Detail List資料--
-            cmdDt = string.Format(@"SELECT a.ID, [Subcon DBC]=Iif(a.IsSubcon=1,'Y','N'),a.Issuedate,a.BrandID,title='Debit Memo Detail List (Taipei)',a.SendFrom,a.Attn,a.CC,
+            cmdDt = string.Format(@"SELECT distinct a.ID, [Subcon DBC]=Iif(a.IsSubcon=1,'Y','N'),a.Issuedate,a.BrandID,title='Debit Memo Detail List (Taipei)',a.SendFrom,a.Attn,a.CC,
 	                   a.subject,a.Handle + '-' + vs1.Name_Extno[Handle],a.SMR+'-'+vs2.Name_Extno[SMR],a.CurrencyID,a.Amount,a.Received,
-	                   a.Cfm,a.CfmDate
+	                   a.Cfm+ '-' + vs3.Name_Extno[cfm],a.CfmDate
 	                   ,finalVoucher.[Voucher No.]
 	                   ,finalVoucher.[Voucher Date]
 	                   ,finalVoucher.[Settled Date]
@@ -157,6 +158,7 @@ namespace Sci.Production.Subcon
 	                   left join Debit_Detail dd on a.ID = dd.ID
 	                   outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 	                   outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2  
+                       outer apply (select * from dbo.View_ShowName vs where vs.id = a.cfm ) vs3 
 	                   outer apply ( 
 		                select top 1 tmpSum.*
 		                from dbo.LocalDebit LocDeb WITH (NOLOCK) 
