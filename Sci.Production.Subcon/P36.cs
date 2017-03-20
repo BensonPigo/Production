@@ -36,13 +36,18 @@ namespace Sci.Production.Subcon
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
         }
 
         // Refresh
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            if (!MyUtility.Check.Empty(CurrentMaintain["cfmdate"]))
+            {
+                this.displayBox7.Text = Convert.ToDateTime(CurrentMaintain["cfmdate"]).ToString("yyyy/MM/dd HH:mm:ss");
+            }
+            else this.displayBox7.Text = "";
+          
             lblStatus.Text = CurrentMaintain["status"].ToString();
             if (!MyUtility.Check.Empty(CurrentMaintain["amtrevisedate"]))
             {
@@ -63,7 +68,8 @@ over (order by issuedate
 )
 SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], numTotalAmt.Value.ToString()), out dr);
             displayBoxVoucherID.Text = null == dr ? "" : dr["voucherid"].ToString();
-            displayBoxSettleDate.Text = null == dr ? "" : dr["voucherdate"].ToString();
+            displayBoxSettleDate.Text = null == dr ? "" : Convert.ToDateTime(dr["voucherdate"]).ToString("yyyy/MM/dd HH:mm:ss");
+            
         }
 
         // Detail Grid 設定

@@ -67,6 +67,7 @@
             this.displayBox5 = new Sci.Win.UI.DisplayBox();
             this.displayBox7 = new Sci.Win.UI.DisplayBox();
             this.displayBoxSettleDate = new Sci.Win.UI.DisplayBox();
+            this.dateBox4 = new Sci.Win.UI.DateBox();
             this.txtuser3 = new Sci.Production.Class.txtuser();
             this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
             this.txtuser_SMR = new Sci.Production.Class.txtuser();
@@ -74,7 +75,6 @@
             this.txtAccountNo1 = new Sci.Production.Class.txtAccountNo();
             this.txtuser5 = new Sci.Production.Class.txtuser();
             this.txtuser4 = new Sci.Production.Class.txtuser();
-            this.dateBox4 = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -169,7 +169,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(4517, 184);
+            this.gridicon.Location = new System.Drawing.Point(4642, 184);
             // 
             // refresh
             // 
@@ -675,7 +675,6 @@
             // displayBox7
             // 
             this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cfmdate", true));
             this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox7.Location = new System.Drawing.Point(800, 45);
             this.displayBox7.Name = "displayBox7";
@@ -690,6 +689,16 @@
             this.displayBoxSettleDate.Name = "displayBoxSettleDate";
             this.displayBoxSettleDate.Size = new System.Drawing.Size(169, 23);
             this.displayBoxSettleDate.TabIndex = 7;
+            // 
+            // dateBox4
+            // 
+            this.dateBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "receiveDate", true));
+            this.dateBox4.IsSupportEditMode = false;
+            this.dateBox4.Location = new System.Drawing.Point(800, 16);
+            this.dateBox4.Name = "dateBox4";
+            this.dateBox4.ReadOnly = true;
+            this.dateBox4.Size = new System.Drawing.Size(130, 23);
+            this.dateBox4.TabIndex = 83;
             // 
             // txtuser3
             // 
@@ -762,16 +771,6 @@
             this.txtuser4.Size = new System.Drawing.Size(300, 23);
             this.txtuser4.TabIndex = 1;
             this.txtuser4.TextBox1Binding = "";
-            // 
-            // dateBox4
-            // 
-            this.dateBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "receiveDate", true));
-            this.dateBox4.IsSupportEditMode = false;
-            this.dateBox4.Location = new System.Drawing.Point(800, 16);
-            this.dateBox4.Name = "dateBox4";
-            this.dateBox4.ReadOnly = true;
-            this.dateBox4.Size = new System.Drawing.Size(130, 23);
-            this.dateBox4.TabIndex = 83;
             // 
             // P36
             // 
