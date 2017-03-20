@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[ReturnReceipt] (
     [Id]           VARCHAR (13)  CONSTRAINT [DF_ReturnReceipt_Id] DEFAULT ('') NOT NULL,
     [MDivisionID]  VARCHAR (8)   CONSTRAINT [DF_ReturnReceipt_MDivisionID] DEFAULT ('') NOT NULL,
+    [FactoryID]    VARCHAR (8)   NULL,
     [IssueDate]    DATE          NULL,
     [Status]       VARCHAR (15)  CONSTRAINT [DF_ReturnReceipt_Status] DEFAULT ('') NULL,
     [WhseReasonId] VARCHAR (5)   CONSTRAINT [DF_ReturnReceipt_WhseReasonId] DEFAULT ('') NULL,
@@ -12,6 +13,8 @@
     [EditDate]     DATETIME      NULL,
     CONSTRAINT [PK_ReturnReceipt] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
