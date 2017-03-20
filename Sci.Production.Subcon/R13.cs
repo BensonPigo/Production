@@ -81,7 +81,7 @@ namespace Sci.Production.Subcon
             else
             {
                 #region -- List Sql Command --
-                sqlCmd.Append(string.Format(@"Select a.MDivisionID
+                sqlCmd.Append(string.Format(@"Select distinct a.MDivisionID
                                                     ,a.FactoryID
                                                     ,a.LocalSuppID
                                                     ,b.abb
@@ -95,7 +95,7 @@ namespace Sci.Production.Subcon
                                                     ,c.OrderID
                                                     ,d.StyleID
                                                     ,dbo.getPass1(e.Handle) pohandle
-                                                    ,f.Amount poAmount
+                                                    ,[poAmount]=SUM(f.Amount) OVER (PARTITION BY c.ArtworkPoID)
                                                     ,e.IssueDate
                                                     ,a.InvNo
                                              from ArtworkAP a WITH (NOLOCK) 
