@@ -1,84 +1,45 @@
-﻿
-CREATE FUNCTION [dbo].[getSewingOutputCumulateOfDays](@style VARCHAR(15), @sewingline VARCHAR(2), @outputdate DATE, @factory VARCHAR(8))
-RETURNS varchar(max)
-BEGIN
-	DECLARE @cumulate int --要回傳的字串
+﻿-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE FUNCTION [dbo].[getSewingOutputCumulateOfDays]
+(	
+	-- Add the parameters for the function here
+	@style VARCHAR(15), @sewingline VARCHAR(2), @outputdate DATE, @factory VARCHAR(8)
+)
+RETURNS TABLE 
+AS
+RETURN 
+(
+	with SewingDates as (
+		select s.OutputDate
+		from SewingOutput s WITH (NOLOCK)
+		inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
+		left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
+		left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+		where (o.StyleID = @style or mo.StyleID = @style)
+		and s.SewingLineID = @sewingline
+		and  s.OutputDate between dateadd(day,-365,@outputdate) and  @outputdate
+		and s.FactoryID = @factory
+	), wkHour as(
+		select top 360  w.Hours, w.Date
+		from WorkHour w WITH (NOLOCK)
+		where w.FactoryID = @factory
+		and w.SewingLineID = @sewingline
+		and w.Date between dateadd(day,-365,@outputdate) and  @outputdate
+		--and w.Date <= @outputdate	
+		order by w.date desc
+	)
+	select cumulate = Count(wkHour.Date)
+	from wkHour
+	where wkHour.Date >  (select max(date) 
+						from wkHour a 
+						--left join SewingDates b on a.Date =b.OutputDate 
+						--where b.OutputDate is null and a.Hours <> 0
 
-	DECLARE cursor_SewingData CURSOR FOR
-	select distinct s.OutputDate
-	from SewingOutput s WITH (NOLOCK)
-	inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
-	left join Orders o WITH (NOLOCK) on o.ID =  sd.OrderId
-	left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-	where (o.StyleID = @style or mo.ID = @style)
-	and s.SewingLineID = @sewingline
-	and s.OutputDate < @outputdate
-	and s.FactoryID = @factory
-	order by s.OutputDate desc
+						where --exists( select 1 from SewingDates b where a.Date =b.OutputDate and  a.Hours <> 0)
+								 (a.Hours <> 0 and not exists(select 1 from SewingDates b where a.Date =b.OutputDate  ) )
 
-	DECLARE @cursordate DATE, --暫存OutputDate
-			@currentcountdate DATE,
-			@exist INT,
-			@countday INT,
-			@recorddate DATE
-	SET @cumulate = 1
-	SET @currentcountdate = @outputdate
-	SET @recorddate = @outputdate
-	SET @exist = 0
-	--開始run cursor
-	OPEN cursor_SewingData
-	--將第一筆資料填入變數
-	FETCH NEXT FROM cursor_SewingData INTO @cursordate
-	WHILE @@FETCH_STATUS = 0
-	BEGIN
-		IF @cursordate <> DATEADD(day,-1,@currentcountdate)
-			BEGIN
-
-				DECLARE @i int,
-						@max int,
-						@hour numeric(3,1)
-				SET @i = 1
-				SET @max = DATEDIFF(day,@cursordate,@currentcountdate)
-				WHILE(@i <= @max)
-				BEGIN
-					select @hour = Hours 
-					from WorkHour WITH (NOLOCK)
-					where FactoryID = @factory
-					and SewingLineID = @sewingline
-					and Date = DATEADD(day,-@i,@currentcountdate) 
-					IF @hour <> 0
-						BEGIN
-							IF DATEADD(day,-@i,@recorddate) <> @cursordate
-								BEGIN
-									SET @exist = 1
-								END
-							ELSE
-								BEGIN
-									SET @cumulate = @cumulate + 1
-									SET @recorddate = DATEADD(day,-@i,@recorddate)
-									SET @currentcountdate = @cursordate
-									SET @hour = 0
-								END
-							BREAK
-						END
-					
-					SET @i = @i + 1
-				END
-			END
-		ELSE
-			BEGIN
-				SET @cumulate = @cumulate + 1
-				SET @currentcountdate = @cursordate
-				SET @recorddate = DATEADD(day,-1,@recorddate)
-			END
-		IF @exist = 1
-			BREAK
-	FETCH NEXT FROM cursor_SewingData INTO @cursordate
-	END
-	--關閉cursor與參數的關聯
-	CLOSE cursor_SewingData
-	--將cursor物件從記憶體移除
-	DEALLOCATE cursor_SewingData
-
-	RETURN @cumulate
-END
+					)
+)
