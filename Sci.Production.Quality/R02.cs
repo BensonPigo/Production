@@ -224,10 +224,10 @@ namespace Sci.Production.Quality
 	                   (Select MinSciDelivery from DBO.GetSCI(A.Poid,x.Category))[MinSciDelivery],
 	                   (Select MinBuyerDelivery from DBO.GetSCI(A.Poid,x.Category))[MinBuyerDelivery],A.refno,C.Name,PS.SizeSpec,
 	                   PS.stockunit,(P.SuppID+'-'+s.AbbEN)Supplier,A.Result
-	                   ,IIF(A.Status='Confirme',A.InspQty,NULL)[Inspected Qty]
-	                   ,IIF(A.Status='Confirme',A.RejectQty,NULL)[Rejected Qty]
-	                   ,IIF(A.Status='Confirme',A.Defect,NULL)[Defect Type]
-	                   ,IIF(A.Status='Confirme',A.InspDate,NULL)[Inspection Date]
+	                   ,IIF(A.Status='Confirmed',A.InspQty,NULL)[Inspected Qty]
+	                   ,IIF(A.Status='Confirmed',A.RejectQty,NULL)[Rejected Qty]
+	                   ,IIF(A.Status='Confirmed',A.Defect,NULL)[Defect Type]
+	                   ,IIF(A.Status='Confirmed',A.InspDate,NULL)[Inspection Date]
 	                   ,AIRL.Result,AIRL.NonOven,AIRL.Oven,AIRL.OvenScale,AIRL.OvenDate,AIRL.NonWash,AIRL.Wash,AIRL.WashScale,
 	                   AIRL.WashDate
                 from dbo.AIR A WITH (NOLOCK) 
