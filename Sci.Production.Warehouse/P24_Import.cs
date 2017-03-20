@@ -52,6 +52,7 @@ select 	selected = 0
 		, fromPoId = a.id
 		, fromseq1 = a.Seq1
 		, fromseq2 = a.Seq2 
+        , fromFactoryID = orders.FactoryID
 		, fromseq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
 		, Description = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0)
 		, fromRoll = c.Roll
@@ -67,6 +68,7 @@ select 	selected = 0
 		, toseq2 = a.SEQ2 
 		, toroll = c.Roll 
 		, todyelot = c.Dyelot 
+        , toFactoryID = orders.FactoryID
 		, toStocktype = 'O' 
 		, Fromlocation = stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = c.Ukey) t 
 							for xml path('')), 1, 1, '') 
