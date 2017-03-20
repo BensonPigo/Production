@@ -47,7 +47,7 @@ namespace Sci.Production.Warehouse
                 #region -- Sql Command --
                 strSQLCmd.Append(string.Format(@"
 with cte as 
-(select rtrim(pd.id) as poid, rtrim(pd.seq1) seq1,pd.seq2,pd.Qty,pd.ShipQty,pd.StockQty,pd.InputQty,pd.OutputQty
+(select rtrim(pd.id) as poid, rtrim(pd.seq1) seq1,pd.seq2,pd.Qty,pd.ShipQty,pd.StockQty,pd.InputQty,pd.OutputQty,o.FactoryID ToFactoryID
 	,x.taipei_issue_date,x.taipei_qty,pd.POUnit,pd.StockUnit 
 	from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
 	inner join dbo.orders o WITH (NOLOCK) on o.id = pd.id
@@ -59,7 +59,7 @@ with cte as
 	) x
 	where f.MDivisionID ='{0}' and pd.id = @poid AND X.taipei_qty > 0
 )
-select m.poid,m.seq1,m.seq2,m.StockUnit,m.Qty*isnull(u.Rate,1) as poqty,m.InputQty*isnull(u.Rate,1) as inputQty
+select m.ToFactoryID,m.poid,m.seq1,m.seq2,m.StockUnit,m.Qty*isnull(u.Rate,1) as poqty,m.InputQty*isnull(u.Rate,1) as inputQty
 ,dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
 ,m.taipei_issue_date,m.taipei_qty*isnull(u.Rate,1) as taipei_qty ,m.POUnit,accu_qty into #tmp
 from cte m left join Unit_Rate u WITH (NOLOCK) on u.UnitFrom = POUnit and u.UnitTo = StockUnit
@@ -77,7 +77,7 @@ cross apply
   ) xxx
 where m.taipei_qty > accu_qty;
 select * from #tmp;
-select 0 AS selected,'' as id,fi.POID FromPOID,fi.seq1 Fromseq1,fi.seq2 Fromseq2,concat(Ltrim(Rtrim(fi.seq1)), ' ', fi.seq2) as fromseq
+select 0 AS selected,'' as id,o.FactoryID FromFactoryID,fi.POID FromPOID,fi.seq1 Fromseq1,fi.seq2 Fromseq2,concat(Ltrim(Rtrim(fi.seq1)), ' ', fi.seq2) as fromseq
 ,fi.roll FromRoll,fi.dyelot FromDyelot,fi.stocktype FromStockType,fi.Ukey as fromftyinventoryukey 
 ,fi.InQty,fi.OutQty,fi.AdjustQty
 ,fi.InQty - fi.OutQty + fi.AdjustQty as balanceQty
@@ -87,11 +87,12 @@ select 0 AS selected,'' as id,fi.POID FromPOID,fi.seq1 Fromseq1,fi.seq2 Fromseq2
 	where t.POID = fi.POID and t.seq1 = fi.seq1 and t.seq2 = fi.seq2 and t.StockType = 'I' 
 	and t.Roll = fi.Roll and t.Dyelot = fi.Dyelot),0) as accu_qty
 ,stuff((select ',' + t1.MtlLocationID from (select MtlLocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where FtyInventory_Detail.Ukey = fi.Ukey)t1 for xml path('')), 1, 1, '') as [FromLocation]
-,rtrim(fi.poid) ToPOID,rtrim(fi.seq1) ToSeq1, fi.seq2 ToSeq2
+,rtrim(fi.poid) ToPOID,rtrim(fi.seq1) ToSeq1, fi.seq2 ToSeq2 , cte.ToFactoryID
 ,fi.roll ToRoll,fi.dyelot ToDyelot,'I' as [ToStockType]
 ,'' as [ToLocation]
 from #tmp cte 
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = cte.poid and fi.seq1 = cte.seq1 and fi.seq2 = cte.SEQ2 and fi.StockType = 'B'
+left join dbo.orders o WITH (NOLOCK) on fi.poid=o.id 
 where fi.Lock = 0 
 Order by frompoid,fromseq1,fromseq2,fromdyelot,fromroll,balanceQty desc
 drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));

@@ -46,7 +46,7 @@ namespace Sci.Production.Warehouse
                 #region -- Sql Command --
                 strSQLCmd.Append(string.Format(@"
 ;with cte as (
-select rtrim(pd.ID) poid ,rtrim(pd.seq1) seq1,pd.seq2,pd.POUnit,pd.StockUnit,pd.Qty*isnull(u.RateValue,1) poqty
+select rtrim(pd.ID) poid ,rtrim(pd.seq1) seq1,pd.seq2,pd.POUnit,pd.StockUnit,pd.Qty*isnull(u.RateValue,1) poqty,o.FactoryID ToFactoryID
 	,dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
 	,x.InventoryPOID,x.InventorySeq1,x.InventorySeq2
 	,x.earliest,x.lastest,x.taipei_qty*isnull(u.RateValue,1) taipei_qty
@@ -76,6 +76,7 @@ cross apply
   ) xx
 select * from #tmp;
 select 0 AS selected,'' as id
+,o.FactoryID FromFactoryID
 ,fi.POID FromPOID
 ,fi.seq1 Fromseq1
 ,fi.seq2 Fromseq2
@@ -92,6 +93,7 @@ select 0 AS selected,'' as id
 	and t.Roll = fi.Roll and t.Dyelot = fi.Dyelot),0) as [accu_qty]
 ,stuff((select ',' + t1.MtlLocationID from (select MtlLocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where FtyInventory_Detail.Ukey = fi.Ukey)t1 
 	for xml path('')), 1, 1, '') as [Location]
+,#tmp.ToFactoryID
 ,rtrim(#tmp.poid) ToPOID
 ,rtrim(#tmp.seq1) ToSeq1
 ,#tmp.seq2 ToSeq2
@@ -101,6 +103,7 @@ select 0 AS selected,'' as id
 ,'' as [ToLocation]
 from #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID and fi.seq1 = Inventoryseq1 and fi.seq2 = InventorySEQ2 and fi.StockType = 'I'
+left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID 
 where fi.Lock = 0 
 Order by frompoid,fromseq1,fromseq2,fromdyelot,fromroll,balanceQty desc
 drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
