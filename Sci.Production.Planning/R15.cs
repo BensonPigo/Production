@@ -27,10 +27,12 @@ namespace Sci.Production.Planning
             InitializeComponent();
             txtMdivision1.Text = Sci.Env.User.Keyword;
             txtfactory1.Text = Sci.Env.User.Factory;
-            cbxCategory.SelectedIndex = 0;
+            cbxCategory.SelectedIndex = 1;  //Bulk
             MyUtility.Tool.SetupCombox(cbxOrderBy, 2, 1, "orderid,SPNO,brandid,Brand");
             cbxOrderBy.SelectedIndex = 0;
             dateRangeBuyerDelivery.Select();
+            dateRangeBuyerDelivery.Value1 = DateTime.Now;
+            dateRangeBuyerDelivery.Value2 = DateTime.Now.AddDays(30);
         }
 
         // 驗證輸入條件
@@ -302,13 +304,20 @@ namespace Sci.Production.Planning
                 ,#cte2.firstSewingDate,#cte2.AVG_QAQTY
                 ,DATEADD(DAY,iif(isnull(#cte2.AVG_QAQTY,0) = 0,0,ceiling((t.qty+t.FOCQty - #cte2.sewing_output)/(#cte2.AVG_QAQTY*1.0))),#cte2.firstSewingDate) [Est_offline]
                 ,IIF(isnull(t.TotalCTN,0)=0, 0, round(t.ClogCTN / (t.TotalCTN*1.0),4) * 100 ) [pack_rate]
-                ,t.TotalCTN, t.FtyCTN, t.ClogCTN, t.InspDate, t.ActPulloutDate,t.FtyKPI,t.KPIChangeReason
+                ,t.TotalCTN
+                --,t.FtyCTN
+                ,t.TotalCTN-t.FtyCTN as FtyCtn
+                , t.ClogCTN, t.InspDate, t.ActPulloutDate,t.FtyKPI,t.KPIChangeReason
                 ,t.PlanDate, dbo.getTPEPass1(t.SMR) [SMR], dbo.getTPEPass1(T.MRHandle) [Handle]
                 ,(select dbo.getTPEPass1(p.POSMR) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [PO SMR]
                 ,(select dbo.getTPEPass1(p.POHandle) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [PO Handle]
-                ,(select dbo.getTPEPass1(p.McHandle) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [MC Handle],t.DoxType
+                --,(select dbo.getTPEPass1(p.McHandle) from dbo.PO p WITH (NOLOCK) where p.ID =t.POID) [MC Handle]
+                ,dbo.getTPEPass1(t.McHandle) [MC Handle]
+                ,t.DoxType
                 ,(select article+',' from (select distinct q.Article  from dbo.Order_Qty q WITH (NOLOCK) where q.ID = t.OrderID) t for xml path('')) article_list
-                , t.Customize1 [SpecMark], t.GFR, t.SampleReason
+                --, t.Customize1 [SpecMark]
+                , (select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Style_SpecialMark' and ID = t.SpecialMark) [SpecMark]
+                , t.GFR, t.SampleReason
                 ,(select s.StdTms * t.CPU from System s WITH (NOLOCK) ) [TMS]"));
             if (isArtwork) 
                 sqlCmd.Append(string.Format(@",{0} ",artworktypes.ToString().Substring(0, artworktypes.ToString().Length - 1)));
