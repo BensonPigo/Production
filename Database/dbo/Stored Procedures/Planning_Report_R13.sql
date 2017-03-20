@@ -286,16 +286,16 @@ BEGIN
 	) a 
 	left join (select * from #dates) dd on 1 = 1
 	left join (
-		select ddCRDDate, 1 as idx,COUNT(ID) as PO,SUM(Qty) as QTY,sum(BalQty_MDP) as MDP,sum(BalQty_MDP) / SUM(Qty) as ''%'', (select count(ID) as failedQty from #tmpOrderDetail where FailQtyMDP > 0 and @where@ ) as ''Failed-PO'', sum(FailQtyMDP) as [Failed-QTY]
+		select ddCRDDate, 1 as idx,COUNT(ID) as PO,SUM(Qty) as QTY,sum(BalQty_MDP) as MDP, CAST(sum(BalQty_MDP) AS numeric) / CAST(SUM(Qty) AS numeric) as ''%'', (select count(ID) as failedQty from #tmpOrderDetail where FailQtyMDP > 0 and @where@ ) as ''Failed-PO'', sum(FailQtyMDP) as [Failed-QTY]
 		from #tmpOrderDetail
 		where 1 = 1 and ddCRDDate in (select * from #dates) and @where@ group by ddCRDDate
-		union select ddCRDDate, 2 as idx,COUNT(ID) as PO,SUM(Qty) as QTY,sum(BalQty_MDP) as MDP,sum(BalQty_MDP) / SUM(Qty) as ''%'', (select count(ID) as failedQty from #tmpOrderDetail where FailQtyMDP > 0 and @where@ ) as ''Failed-PO'', sum(FailQtyMDP) as [Failed-QTY]
+		union select ddCRDDate, 2 as idx,COUNT(ID) as PO,SUM(Qty) as QTY,sum(BalQty_MDP) as MDP, CAST(sum(BalQty_MDP) AS numeric) / CAST(SUM(Qty) AS numeric) as ''%'', (select count(ID) as failedQty from #tmpOrderDetail where FailQtyMDP > 0 and @where@ ) as ''Failed-PO'', sum(FailQtyMDP) as [Failed-QTY]
 		from #tmpOrderDetail
 		where 1 = 1 and OrderTypeID in (''CC'',''CR'',''CM'') and ddCRDDate in (select * from #dates) and @where@ group by ddCRDDate
-		union select ddCRDDate, 3 as idx,COUNT(ID) as PO,SUM(Qty) as QTY,sum(BalQty_MDP) as MDP,sum(BalQty_MDP) / SUM(Qty) as ''%'', (select count(ID) as failedQty from #tmpOrderDetail where FailQtyMDP > 0 and @where@ ) as ''Failed-PO'', sum(FailQtyMDP) as [Failed-QTY]
+		union select ddCRDDate, 3 as idx,COUNT(ID) as PO,SUM(Qty) as QTY,sum(BalQty_MDP) as MDP,  CAST(sum(BalQty_MDP) AS numeric) /  CAST(SUM(Qty) AS numeric) as ''%'', (select count(ID) as failedQty from #tmpOrderDetail where FailQtyMDP > 0 and @where@ ) as ''Failed-PO'', sum(FailQtyMDP) as [Failed-QTY]
 		from #tmpOrderDetail
 		where 1 = 1 and OrderTypeID not in (''CC'',''CR'',''CM'') and ddCRDDate in (select * from #dates) and @where@ group by ddCRDDate
-		union select ddCRDDate, 4 as idx,COUNT(ID) as PO,SUM(Qty) as QTY,sum(BalQty_MDP) as MDP,sum(BalQty_MDP) / SUM(Qty) as ''%'', (select count(ID) as failedQty from #tmpOrderDetail where FailQtyMDP > 0 and @where@ ) as ''Failed-PO'', sum(FailQtyMDP) as [Failed-QTY]
+		union select ddCRDDate, 4 as idx,COUNT(ID) as PO,SUM(Qty) as QTY,sum(BalQty_MDP) as MDP, CAST(sum(BalQty_MDP) AS numeric) / CAST(SUM(Qty) AS numeric) as ''%'', (select count(ID) as failedQty from #tmpOrderDetail where FailQtyMDP > 0 and @where@ ) as ''Failed-PO'', sum(FailQtyMDP) as [Failed-QTY]
 		from #tmpOrderDetail
 		where 1 = 1 and OrderTypeID not in (''CC'',''CR'',''CM'') and BalQty_Dol_MDP > 0 and ddCRDDate in (select * from #dates) and @where@ group by ddCRDDate
 	) b on a.idx = b.idx and dd.Month = b.ddCRDDate order by dd.Month, a.idx'
