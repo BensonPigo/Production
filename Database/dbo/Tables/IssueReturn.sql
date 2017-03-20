@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[IssueReturn] (
     [Id]          VARCHAR (13)  CONSTRAINT [DF_IssueReturn_Id] DEFAULT ('') NOT NULL,
     [MDivisionID] VARCHAR (8)   CONSTRAINT [DF_IssueReturn_MDivisionID] DEFAULT ('') NOT NULL,
+    [FactoryID]   VARCHAR (8)   NULL,
     [IssueDate]   DATE          NULL,
     [Status]      VARCHAR (15)  CONSTRAINT [DF_IssueReturn_Status] DEFAULT ('') NULL,
     [IssueId]     VARCHAR (13)  CONSTRAINT [DF_IssueReturn_IssueId] DEFAULT ('') NULL,
@@ -11,6 +12,8 @@
     [EditDate]    DATETIME      NULL,
     CONSTRAINT [PK_IssueReturn] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
