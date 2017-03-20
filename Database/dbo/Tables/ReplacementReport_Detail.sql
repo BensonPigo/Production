@@ -3,7 +3,7 @@
     [Seq1]                 VARCHAR (3)    CONSTRAINT [DF_ReplacementReport_Detail_Seq1] DEFAULT ('') NULL,
     [Seq2]                 VARCHAR (2)    CONSTRAINT [DF_ReplacementReport_Detail_Seq2] DEFAULT ('') NULL,
     [Refno]                VARCHAR (20)   CONSTRAINT [DF_ReplacementReport_Detail_Refno] DEFAULT ('') NULL,
-    [SCIRefno]             VARCHAR (26)   CONSTRAINT [DF_ReplacementReport_Detail_SCIRefno] DEFAULT ('') NULL,
+    [SCIRefno]             VARCHAR (30)   CONSTRAINT [DF_ReplacementReport_Detail_SCIRefno] DEFAULT ('') NULL,
     [INVNo]                VARCHAR (25)   CONSTRAINT [DF_ReplacementReport_Detail_INVNo] DEFAULT ('') NULL,
     [ETA]                  DATE           NULL,
     [ColorID]              VARCHAR (6)   CONSTRAINT [DF_ReplacementReport_Detail_ColorID] DEFAULT ('') NULL,

@@ -17,7 +17,7 @@ Begin
 	Begin
 		Create Table #Tmp_BoaExpend
 			(  ExpendUkey BigInt Identity(1,1) Not Null, ID Varchar(13), Order_BOAUkey BigInt
-			 , RefNo VarChar(20), SCIRefNo VarChar(26), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
+			 , RefNo VarChar(20), SCIRefNo VarChar(30), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
 			 , SizeCode VarChar(8), SizeSpec VarChar(15), SizeUnit VarChar(8), Remark NVarChar(Max)
 			 , OrderQty Numeric(6,0), Price Numeric(8,4), UsageQty Numeric(9,2), UsageUnit VarChar(8), SysUsageQty  Numeric(9,2)
 			 , BomZipperInsert VarChar(5), BomCustPONo VarChar(30), Keyword VarChar(Max)
@@ -61,7 +61,7 @@ Begin
 	 Where ID = @ID;
 
 	--定義欄位
-	Declare @SCIRefNo Varchar(26);
+	Declare @SCIRefNo Varchar(30);
 	Declare @RefNo Varchar(20);
 	Declare @Price Numeric(8,4);
 	Declare @OrderQty Numeric(6,0);
@@ -145,7 +145,7 @@ Begin
 	Declare @BoaBomTypeSize Bit;
 	Declare @BoaBomTypeColor Bit;
 	Declare @BoaCursor Table
-		(  RowID BigInt Identity(1,1) Not Null, Ukey BigInt, SCIRefNo VarChar(26), SuppID VarChar(6)
+		(  RowID BigInt Identity(1,1) Not Null, Ukey BigInt, SCIRefNo VarChar(30), SuppID VarChar(6)
 		 , PatternPanel VarChar(2), SizeItem VarChar(3), SizeItem_Elastic VarChar(3), ConsPC Numeric(8,4), Remark NVarChar(Max)
 		 , BomTypeZipper Bit, BomTypePo Bit
 		 , BomTypeSize Bit, BomTypeColor Bit

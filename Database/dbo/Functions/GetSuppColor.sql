@@ -1,7 +1,7 @@
 ﻿
 CREATE Function [dbo].[GetSuppColor]
 (
-	  @SCIRefNo		VarChar(20)				--
+	  @SCIRefNo		VarChar(30)				--
 	 ,@SuppID		VarChar(6)				--
 	 ,@ColorID		VarChar(6)				--
 	 ,@BrandID		VarChar(8)

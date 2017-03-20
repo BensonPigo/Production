@@ -2,11 +2,11 @@
 CREATE Function [dbo].[GetLossAccessory]
 (
 	  @PoID			VarChar(13)		--採購母單
-	 ,@SCIRefNo		VarChar(26)		--SCI Ref No.(空值表示為全部計算)
+	 ,@SCIRefNo		VarChar(30)		--SCI Ref No.(空值表示為全部計算)
 )
 Returns @AccessoryColorQty Table
 	(  RowID			BigInt Identity(1,1) Not Null
-	 , SciRefNo			VarChar(26)
+	 , SciRefNo			VarChar(30)
 	 , LossType			Numeric(1,0)
 	 , MtltypeID		VarChar(20)
 	 , ColorID			VarChar(100)
@@ -69,7 +69,7 @@ Begin
 	Declare @LossQty Numeric(3,0);
 	Declare @LossStep Numeric(6,0);
 	Declare @tmpBOA Table
-		(  RowID BigInt Identity(1,1) Not Null, BoaUkey BigInt, SCIRefNo VarChar(26)
+		(  RowID BigInt Identity(1,1) Not Null, BoaUkey BigInt, SCIRefNo VarChar(30)
 		 , SuppID VarChar(6), LossType Numeric(1,0), LossPercent Numeric(3,1)
 		 , LossQty Numeric(3,0), LossStep Numeric(6,0)
 		);

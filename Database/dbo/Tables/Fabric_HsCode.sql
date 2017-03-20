@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[Fabric_HsCode] (
-    [SCIRefno]    VARCHAR (26)   CONSTRAINT [DF_Fabric_HsCode_SCIRefno] DEFAULT ('') NOT NULL,
+    [SCIRefno]    VARCHAR (30)   CONSTRAINT [DF_Fabric_HsCode_SCIRefno] DEFAULT ('') NOT NULL,
     [Ukey]        BIGINT         CONSTRAINT [DF_Fabric_HsCode_Ukey] DEFAULT ((0)) NULL,
     [SuppID]      VARCHAR (8)    CONSTRAINT [DF_Fabric_HsCode_SuppID] DEFAULT ('') NOT NULL,
     [Year]        VARCHAR (4)    CONSTRAINT [DF_Fabric_HsCode_Year] DEFAULT ('') NOT NULL,

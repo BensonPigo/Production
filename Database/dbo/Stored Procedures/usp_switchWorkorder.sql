@@ -117,7 +117,7 @@ BEGIN
 	Declare @MarkerLength  varchar(13)
 	Declare @ConsPC numeric(6,4)
 	Declare @Cons numeric(9,4)
-	Declare @SCIRefno varchar(26)
+	Declare @SCIRefno varchar(30)
 	Declare @Refno varchar(20)
 	Declare @MarkerNo varchar(10)
 	Declare @MarkerVerion varchar(3)

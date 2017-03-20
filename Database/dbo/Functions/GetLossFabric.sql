@@ -25,7 +25,7 @@ Begin
 	Declare @FabricColorQtyRowCount Int;		--資料筆數
 
 	Declare @FabricColorQty_Detial Table
-		(  RowID BigInt Identity(1,1) Not Null, SciRefNo VarChar(26), LossType Numeric(1,0)
+		(  RowID BigInt Identity(1,1) Not Null, SciRefNo VarChar(30), LossType Numeric(1,0)
 		 , FabricCombo VarChar(2), FabricCode VarChar(3)
 		 , ColorID VarChar(6), Article VarChar(8), SizeSeq VarChar(2), SizeCode VarChar(8)
 		 , MarkerLength Numeric(7,4), MarkerYDS Numeric(10,4), TotalQty Numeric(7,0), Qty Numeric(6,0)
@@ -44,7 +44,7 @@ Begin
 	Declare @LimitUP_LossQty Numeric(6,0);
 	Declare @LossSampleFabric Numeric(3,1);
 	
-	Declare @SciRefNo VarChar(26);
+	Declare @SciRefNo VarChar(30);
 	Declare @WeaveTypeID VarChar(20);
 	Declare @ColorID VarChar(6);
 	Declare @Article VarChar(8);
@@ -232,7 +232,7 @@ Begin
 	Declare @LossType Numeric(1,0);
 	Declare @LossPercent Numeric(3,1);
 	Declare @tmpBOF Table
-		(RowID BigInt Identity(1,1) Not Null, BofUkey BigInt, FabricCode VarChar(3), SCIRefNo VarChar(26), LossType Numeric(1,0), LossPercent Numeric(3,1));
+		(RowID BigInt Identity(1,1) Not Null, BofUkey BigInt, FabricCode VarChar(3), SCIRefNo VarChar(30), LossType Numeric(1,0), LossPercent Numeric(3,1));
 	Declare @tmpBOFRowID Int;		--Row ID
 	Declare @tmpBOFRowCount Int;	--總資料筆數
 	

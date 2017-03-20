@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[Fabric_Content] (
-    [SCIRefno]        VARCHAR (26)   CONSTRAINT [DF_Fabric_Content_SCIRefno] DEFAULT ('') NOT NULL,
+    [SCIRefno]        VARCHAR (30)   CONSTRAINT [DF_Fabric_Content_SCIRefno] DEFAULT ('') NOT NULL,
     [Ukey]            BIGINT         CONSTRAINT [DF_Fabric_Content_Ukey] DEFAULT ((0)) NOT NULL,
     [Layerno]         NUMERIC (2)    CONSTRAINT [DF_Fabric_Content_Layerno] DEFAULT ((0)) NOT NULL,
     [percentage]      NUMERIC (5, 2) CONSTRAINT [DF_Fabric_Content_percentage] DEFAULT ((0)) NOT NULL,

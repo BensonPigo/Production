@@ -2,7 +2,7 @@
     [Id]             VARCHAR (13)   CONSTRAINT [DF_MNOrder_BOA_Id] DEFAULT ('') NULL,
     [UKey]           BIGINT         CONSTRAINT [DF_MNOrder_BOA_UKey] DEFAULT ((0)) NOT NULL,
     [Refno]          VARCHAR (20)   CONSTRAINT [DF_MNOrder_BOA_Refno] DEFAULT ('') NULL,
-    [SCIRefno]       VARCHAR (26)   CONSTRAINT [DF_MNOrder_BOA_SCIRefno] DEFAULT ('') NULL,
+    [SCIRefno]       VARCHAR (30)   CONSTRAINT [DF_MNOrder_BOA_SCIRefno] DEFAULT ('') NULL,
     [SuppID]         VARCHAR (6)    CONSTRAINT [DF_MNOrder_BOA_SuppID] DEFAULT ('') NULL,
     [Seq]            VARCHAR (3)    CONSTRAINT [DF_MNOrder_BOA_Seq] DEFAULT ('') NULL,
     [UsedQty]        NUMERIC (8, 4) CONSTRAINT [DF_MNOrder_BOA_UsedQty] DEFAULT ((0)) NULL,

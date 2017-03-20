@@ -3,7 +3,7 @@
     [Style_BOAUkey] BIGINT       CONSTRAINT [DF_Style_BOA_CustCD_Style_BOAUkey] DEFAULT ((0)) NOT NULL,
     [CustCDID]      VARCHAR (16) CONSTRAINT [DF_Style_BOA_CustCD_CustCDID] DEFAULT ('') NOT NULL,
     [Refno]         VARCHAR (20) CONSTRAINT [DF_Style_BOA_CustCD_Refno] DEFAULT ('') NULL,
-    [SCIRefno]      VARCHAR (26) CONSTRAINT [DF_Style_BOA_CustCD_SCIRefno] DEFAULT ('') NULL,
+    [SCIRefno]      VARCHAR (30) CONSTRAINT [DF_Style_BOA_CustCD_SCIRefno] DEFAULT ('') NULL,
     [AddName]       VARCHAR (10) CONSTRAINT [DF_Style_BOA_CustCD_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME     NULL,
     [EditName]      VARCHAR (10) CONSTRAINT [DF_Style_BOA_CustCD_EditName] DEFAULT ('') NULL,

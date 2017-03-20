@@ -39,7 +39,7 @@
     [AddDate]          DATETIME        NULL,
     [EditName]         VARCHAR (10)    CONSTRAINT [DF_Inventory_EditName] DEFAULT ('') NULL,
     [EditDate]         DATETIME        NULL,
-    [SCIRefno]         VARCHAR (26)    NULL DEFAULT (''),
+    [SCIRefno]         VARCHAR (30)    NULL DEFAULT (''),
     [SuppID]           VARCHAR (6)     NULL DEFAULT (''),
     CONSTRAINT [PK_Inventory] PRIMARY KEY CLUSTERED ([POID], [ProjectID], [Seq1], [Seq2], [MDivisionID], [FactoryID], [UnitID], [InventoryRefnoID])
 );

@@ -2,7 +2,7 @@
     [Id]              VARCHAR (13)    CONSTRAINT [DF_Issue_Summary_Id] DEFAULT ('') NOT NULL,
     [Ukey]            BIGINT          IDENTITY (1, 1) NOT NULL,
     [Poid]            VARCHAR (13)    CONSTRAINT [DF_Issue_Summary_Poid] DEFAULT ('') NOT NULL,
-    [SCIRefno]        VARCHAR (26)    CONSTRAINT [DF_Issue_Summary_SCIRefno] DEFAULT ('') NOT NULL,
+    [SCIRefno]        VARCHAR (30)    CONSTRAINT [DF_Issue_Summary_SCIRefno] DEFAULT ('') NOT NULL,
     [Colorid]         VARCHAR (6)     CONSTRAINT [DF_Issue_Summary_Colorid] DEFAULT ('') NOT NULL,
     [SizeSpec]        VARCHAR (15)    CONSTRAINT [DF_Issue_Summary_SizeSpec] DEFAULT ('') NOT NULL,
     [BomFactory]      VARCHAR (10)    CONSTRAINT [DF_Issue_Summary_BomFactory] DEFAULT ('') NOT NULL,

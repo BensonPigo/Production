@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[Fabric_Supp] (
-    [SCIRefno]      VARCHAR (26)   NOT NULL,
+    [SCIRefno]      VARCHAR (30)   NOT NULL,
     [BrandID]       VARCHAR (8)    NULL,
     [Refno]         VARCHAR (20)   NULL,
     [SuppRefno]     VARCHAR (30)   NULL,

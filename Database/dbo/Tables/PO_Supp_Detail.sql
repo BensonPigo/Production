@@ -4,7 +4,7 @@
     [SEQ2]            VARCHAR (2)     CONSTRAINT [DF_PO_Supp_Detail_SEQ2] DEFAULT ('') NOT NULL,
     [FactoryID]       VARCHAR (8)     DEFAULT ('') NULL,
     [Refno]           VARCHAR (20)    CONSTRAINT [DF_PO_Supp_Detail_Refno] DEFAULT ('') NOT NULL,
-    [SCIRefno]        VARCHAR (26)    CONSTRAINT [DF_PO_Supp_Detail_SCIRefno] DEFAULT ('') NULL,
+    [SCIRefno]        VARCHAR (30)    CONSTRAINT [DF_PO_Supp_Detail_SCIRefno] DEFAULT ('') NULL,
     [FabricType]      VARCHAR (1)     CONSTRAINT [DF_PO_Supp_Detail_FabricType] DEFAULT ('') NOT NULL,
     [Price]           NUMERIC (14, 4) CONSTRAINT [DF_PO_Supp_Detail_Price] DEFAULT ((0)) NOT NULL,
     [UsedQty]         NUMERIC (10, 4) CONSTRAINT [DF_PO_Supp_Detail_UsedQty] DEFAULT ((0)) NULL,

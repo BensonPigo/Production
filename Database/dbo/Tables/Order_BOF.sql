@@ -2,7 +2,7 @@
     [Id]                 VARCHAR (13)    CONSTRAINT [DF_Order_BOF_Id] DEFAULT ('') NOT NULL,
     [FabricCode]         VARCHAR (3)     CONSTRAINT [DF_Order_BOF_FabricCode] DEFAULT ('') NOT NULL,
     [Refno]              VARCHAR (20)    CONSTRAINT [DF_Order_BOF_Refno] DEFAULT ('') NOT NULL,
-    [SCIRefno]           VARCHAR (26)    CONSTRAINT [DF_Order_BOF_SCIRefno] DEFAULT ('') NOT NULL,
+    [SCIRefno]           VARCHAR (30)    CONSTRAINT [DF_Order_BOF_SCIRefno] DEFAULT ('') NOT NULL,
     [SuppID]             VARCHAR (6)     CONSTRAINT [DF_Order_BOF_SuppID] DEFAULT ('') NOT NULL,
     [ConsPC]             NUMERIC (11, 4) CONSTRAINT [DF_Order_BOF_ConsPC] DEFAULT ((0)) NULL,
     [Seq1]               VARCHAR (3)     CONSTRAINT [DF_Order_BOF_Seq1] DEFAULT ('') NOT NULL,

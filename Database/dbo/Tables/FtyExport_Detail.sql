@@ -3,7 +3,7 @@
     [POID]       VARCHAR (13)    CONSTRAINT [DF_FtyExport_Detail_POID] DEFAULT ('') NOT NULL,
     [Seq1]       VARCHAR (3)     CONSTRAINT [DF_FtyExport_Detail_Seq1] DEFAULT ('') NOT NULL,
     [Seq2]       VARCHAR (2)     CONSTRAINT [DF_FtyExport_Detail_Seq2] DEFAULT ('') NOT NULL,
-    [SCIRefno]   VARCHAR (26)    CONSTRAINT [DF_FtyExport_Detail_SCIRefno] DEFAULT ('') NOT NULL,
+    [SCIRefno]   VARCHAR (30)    CONSTRAINT [DF_FtyExport_Detail_SCIRefno] DEFAULT ('') NOT NULL,
     [RefNo]      VARCHAR (21)    CONSTRAINT [DF_FtyExport_Detail_RefNo] DEFAULT ('') NOT NULL,
     [SuppID]     VARCHAR (8)     CONSTRAINT [DF_FtyExport_Detail_SuppNo] DEFAULT ('') NULL,
     [FabricType] VARCHAR (1)     CONSTRAINT [DF_FtyExport_Detail_Type] DEFAULT ('') NULL,

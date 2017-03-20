@@ -2,7 +2,7 @@
     [StyleUkey]           BIGINT         CONSTRAINT [DF_Style_BOA_StyleUkey] DEFAULT ((0)) NULL,
     [Ukey]                BIGINT         CONSTRAINT [DF_Style_BOA_Ukey] DEFAULT ((0)) NOT NULL,
     [Refno]               VARCHAR (20)   CONSTRAINT [DF_Style_BOA_Refno] DEFAULT ('') NULL,
-    [SCIRefno]            VARCHAR (26)   CONSTRAINT [DF_Style_BOA_SCIRefno] DEFAULT ('') NULL,
+    [SCIRefno]            VARCHAR (30)   CONSTRAINT [DF_Style_BOA_SCIRefno] DEFAULT ('') NULL,
     [SEQ1]                VARCHAR (3)    CONSTRAINT [DF_Style_BOA_SEQ1] DEFAULT ('') NULL,
     [ConsPC]              NUMERIC (10, 4) CONSTRAINT [DF_Style_BOA_ConsPC] DEFAULT ((0)) NULL,
     [PatternPanel]        VARCHAR (2)    CONSTRAINT [DF_Style_BOA_PattenPanel] DEFAULT ('') NULL,

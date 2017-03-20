@@ -6,7 +6,7 @@
 CREATE FUNCTION [dbo].[getStockUnit]
 (
 	-- Add the parameters for the function here
-	@scirefno varchar(26),@suppid varchar(6)
+	@scirefno varchar(30),@suppid varchar(6)
 )
 RETURNS varchar(8)
 AS

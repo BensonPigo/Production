@@ -1,7 +1,7 @@
 ﻿
 CREATE Function [dbo].[GetPriceFromMtl]
 (
-	  @SCIRefNo			VarChar(26)				--SCI Ref#
+	  @SCIRefNo			VarChar(30)				--SCI Ref#
 	 ,@SuppID			VarChar(6)				--Supplier ID
 	 ,@SeasonID			VarChar(10)				--Season ID
 	 ,@PoQty			Numeric(9,2)			--PoQty
