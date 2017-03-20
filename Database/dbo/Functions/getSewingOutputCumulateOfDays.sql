@@ -31,7 +31,7 @@ RETURN
 		--and w.Date <= @outputdate	
 		order by w.date desc
 	)
-	select cumulate = Count(wkHour.Date)
+	select cumulate = IIF(Count(wkHour.Date)=0,1,Count(wkHour.Date))
 	from wkHour
 	where wkHour.Date >  (select max(date) 
 						from wkHour a 
