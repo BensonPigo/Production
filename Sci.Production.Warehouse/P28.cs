@@ -275,7 +275,7 @@ iseditingreadonly: true)
             sqlcmd.Append(string.Format(@";with cte
 as
 (
-select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,rtrim(o.id) poid,o.Category,o.FtyGroup
+select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,rtrim(o.id) poid,o.Category,o.FtyGroup,o.FactoryID 
 ,rtrim(pd.seq1) seq1,pd.seq2,pd.id stockpoid,pd.seq1 stockseq1,pd.seq2 stockseq2
 ,ROUND(xz.taipei_qty*v.RateValue,2,1) N'inputqty',pd.POUnit,pd.StockUnit
 ,mpd.InQty
@@ -356,6 +356,7 @@ select * from #tmp where inputqty > accu_qty;
 select 
 convert(bit,0) as selected,
 fi.Ukey FromFtyInventoryUkey,
+o.FactoryID fromFactoryID,
 fi.POID FromPoid,
 fi.Seq1 FromSeq1,
 fi.Seq2 Fromseq2,
@@ -364,11 +365,12 @@ fi.Dyelot FromDyelot,
 fi.StockType FromStockType,
 fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty,
 0.00 as Qty,
-rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'I' tostocktype 
+rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'I' tostocktype ,t.FactoryID ToFactoryID
 ,stuff((select ',' + mtllocationid from (select MtlLocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = fi.Ukey)t for xml path('')), 1, 1, '') fromlocation
 ,'' tolocation
 from #tmp t inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.POID 
 and fi.seq1 = t.Seq1 and fi.Seq2 = t.Seq2
+left join orders o on fi.poid=o.id
 where inputqty > accu_qty and fi.StockType ='B' and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
 drop table #tmp");
             #endregion
@@ -483,21 +485,21 @@ drop table #tmp");
             StringBuilder insertMaster = new StringBuilder();
             StringBuilder insertDetail = new StringBuilder();
 
-            insertMaster.Append(string.Format(@"insert into dbo.subtransfer (id,type,issuedate,mdivisionid,status,addname,adddate,remark)
-            values ('{0}','A',getdate(),'{1}','New','{2}',getdate(),'Batch create by P28')",tmpId,Env.User.Keyword,Env.User.UserID));
+            insertMaster.Append(string.Format(@"insert into dbo.subtransfer (id,type,issuedate,mdivisionid,FactoryID,status,addname,adddate,remark)
+            values ('{0}','A',getdate(),'{1}','{3}','New','{2}',getdate(),'Batch create by P28')", tmpId, Env.User.Keyword, Env.User.UserID, Sci.Env.User.Factory));
 
             foreach (DataRow item in findrow)
             {
                 insertDetail.Append(string.Format(@"insert into dbo.subtransfer_detail ([ID]
            ,[FromFtyInventoryUkey]
-           ,[FromMDivisionID]
+           ,[FromFactoryID]
            ,[FromPOID]
            ,[FromSeq1]
            ,[FromSeq2]
            ,[FromRoll]
            ,[FromStockType]
            ,[FromDyelot]
-           ,[ToMDivisionID]
+           ,[ToFactoryID]
            ,[ToPOID]
            ,[ToSeq1]
            ,[ToSeq2]
@@ -507,8 +509,8 @@ drop table #tmp");
            ,[Qty]
            ,[ToLocation])
 values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
-,'{9}','{10}','{11}','{12}','{13}','{14}','{15}',{16},'{17}');", tmpId, item["fromftyinventoryukey"], "", item["frompoid"], item["fromseq1"], item["fromseq2"], item["fromroll"], item["fromstocktype"], item["fromdyelot"]
-          , "", item["topoid"], item["toseq1"], item["toseq2"], item["toroll"], item["toStocktype"], item["toDyelot"], item["qty"], item["tolocation"]));
+,'{9}','{10}','{11}','{12}','{13}','{14}','{15}',{16},'{17}');", tmpId, item["fromftyinventoryukey"], item["FromFactoryID"], item["frompoid"], item["fromseq1"], item["fromseq2"], item["fromroll"], item["fromstocktype"], item["fromdyelot"]
+          , item["ToFactoryID"], item["topoid"], item["toseq1"], item["toseq2"], item["toroll"], item["toStocktype"], item["toDyelot"], item["qty"], item["tolocation"]));
             }
 
             TransactionScope _transactionscope = new TransactionScope();

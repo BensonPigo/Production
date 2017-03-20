@@ -276,7 +276,7 @@ namespace Sci.Production.Warehouse
             sqlcmd.Append(string.Format(@";with cte
 as
 (
-select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,f.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup,o.CFMDate,o.CutInLine,o.ProjectID
+select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,f.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup,o.CFMDate,o.CutInLine,o.ProjectID,o.FactoryID 
 ,rtrim(pd.seq1) seq1,pd.seq2,pd.StockPOID,pd.StockSeq1,pd.StockSeq2
 --,pd.Qty*v.RateValue PoQty
 ,ROUND(x.taipei_qty*v.RateValue,2,1) N'PoQty'
@@ -355,7 +355,7 @@ select * from #tmp;
 select 
 convert(bit,0) as selected,
 fi.Ukey FromFtyInventoryUkey,
-f.MDivisionID FromMdivisionID,
+o.FactoryID FromFactoryID,
 fi.POID FromPoid,
 fi.Seq1 FromSeq1,
 fi.Seq2 Fromseq2,
@@ -364,13 +364,13 @@ fi.Dyelot FromDyelot,
 fi.StockType FromStockType,
 fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty,
 0.00 as Qty,
-t.MDivisionID toMdivisionID,rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'B' tostocktype 
+t.FactoryID  toFactoryID ,rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'B' tostocktype 
 ,stuff((select ',' + mtllocationid from (select MtlLocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = fi.Ukey)t for xml path('')), 1, 1, '') fromlocation
 ,'' tolocation
 from #tmp t inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.StockPOID 
 and fi.seq1 = t.StockSeq1 and fi.Seq2 = t.StockSeq2
 inner join dbo.orders o WITH (NOLOCK) on fi.POID=o.id
-inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
+--inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
 where fi.StockType ='I' and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
 drop table #tmp");
             #endregion
@@ -483,21 +483,21 @@ drop table #tmp");
             StringBuilder insertMaster = new StringBuilder();
             StringBuilder insertDetail = new StringBuilder();
 
-            insertMaster.Append(string.Format(@"insert into dbo.subtransfer (id,type,issuedate,mdivisionid,status,addname,adddate,remark)
-            values ('{0}','B',getdate(),'{1}','New','{2}',getdate(),'Batch create by P29')",tmpId,Env.User.Factory,Env.User.UserID));
+            insertMaster.Append(string.Format(@"insert into dbo.subtransfer (id,type,issuedate,mdivisionid,FactoryID,status,addname,adddate,remark)
+            values ('{0}','B',getdate(),'{1}','{3}','New','{2}',getdate(),'Batch create by P29')", tmpId, Env.User.Keyword, Env.User.UserID,Sci.Env.User.Factory));
 
             foreach (DataRow item in findrow)
             {
                 insertDetail.Append(string.Format(@"insert into dbo.subtransfer_detail ([ID]
            ,[FromFtyInventoryUkey]
-           ,[FromMDivisionID]
+           ,[FromFactoryID]
            ,[FromPOID]
            ,[FromSeq1]
            ,[FromSeq2]
            ,[FromRoll]
            ,[FromStockType]
            ,[FromDyelot]
-           ,[ToMDivisionID]
+           ,[toFactoryID]
            ,[ToPOID]
            ,[ToSeq1]
            ,[ToSeq2]
@@ -507,8 +507,8 @@ drop table #tmp");
            ,[Qty]
            ,[ToLocation])
 values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
-,'{9}','{10}','{11}','{12}','{13}','{14}','{15}',{16},'{17}');", tmpId, item["fromftyinventoryukey"], "", item["frompoid"], item["fromseq1"], item["fromseq2"], item["fromroll"], item["fromstocktype"], item["fromdyelot"]
-          , "", item["topoid"], item["toseq1"], item["toseq2"], item["toroll"], item["toStocktype"], item["toDyelot"], item["qty"], item["tolocation"]));
+,'{9}','{10}','{11}','{12}','{13}','{14}','{15}',{16},'{17}');", tmpId, item["fromftyinventoryukey"], item["FromFactoryID"], item["frompoid"], item["fromseq1"], item["fromseq2"], item["fromroll"], item["fromstocktype"], item["fromdyelot"]
+          , item["toFactoryID"], item["topoid"], item["toseq1"], item["toseq2"], item["toroll"], item["toStocktype"], item["toDyelot"], item["qty"], item["tolocation"]));
             }
 
             TransactionScope _transactionscope = new TransactionScope();
