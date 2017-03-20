@@ -45,34 +45,45 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
                 #region -- SQL Command --
-                strSQLCmd.Append(string.Format(@"select 0 as selected 
-,'' id
-, c.ukey as FromFtyinventoryUkey
-, a.id as fromPoId
-,a.Seq1 as fromseq1
-,a.Seq2 as fromseq2
-,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as fromseq
-,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
-,c.Roll as fromRoll
-,c.Dyelot as fromDyelot
-,c.StockType as fromStocktype
-,c.inqty-c.outqty + c.adjustqty as balance
-,0.00 as qty
-,isnull(stuff((select ',' + cast(mtllocationid as varchar) 
-		from (select mtllocationid from ftyinventory_detail WITH (NOLOCK) where ukey = c.ukey)t for xml path('')), 1, 1, ''),'') as location
-,a.FabricType
-,a.stockunit
-,a.InputQty
-,a.id as topoid
-,a.SEQ1 as toseq1
-,a.SEQ2 as toseq2
-,c.Roll as toroll
-,c.Dyelot as todyelot
-,'I' as toStocktype
-,'' tolocation
+                strSQLCmd.Append(string.Format(@"
+select  selected = 0 
+        , id = '' 
+        , FromFtyinventoryUkey = c.ukey
+        , fromPoId = a.id 
+        , fromseq1 = a.Seq1 
+        , fromseq2 = a.Seq2
+        , fromseq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) 
+        , [Description] = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0)
+        , fromRoll = c.Roll 
+        , fromDyelot = c.Dyelot
+        , fromFactoryID = Orders.FactoryID
+        , fromStocktype = c.StockType
+        , balance = c.inqty - c.outqty + c.adjustqty 
+        , qty = 0.00 
+        , location = isnull(stuff((select ',' + cast(mtllocationid as varchar) 
+                                   from (select mtllocationid 
+                                         from ftyinventory_detail WITH (NOLOCK) 
+                                         where ukey = c.ukey)t 
+                                   for xml path(''))
+                                  , 1, 1, '')
+                            ,'')
+        , a.FabricType
+        , a.stockunit
+        , a.InputQty
+        , topoid = a.id 
+        , toseq1 = a.SEQ1
+        , toseq2 = a.SEQ2
+        , toroll = c.Roll
+        , todyelot = c.Dyelot
+        , toFactoryID = Orders.FactoryID
+        , toStocktype = 'I' 
+        , tolocation = '' 
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
-Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O'"));
+inner join dbo.Orders on c.Poid = Orders.id
+inner join Factory on Orders.FactoryID = Factory.ID
+Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O' 
+    and Factory.MDivisionID = '{0}'", Sci.Env.User.Keyword));
                 #endregion
 
                 System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
