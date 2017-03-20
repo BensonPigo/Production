@@ -44,7 +44,7 @@ namespace Sci.Production.Subcon
             base.OnDetailEntered();
             if (!MyUtility.Check.Empty(CurrentMaintain["cfmdate"]))
             {
-                this.displayBox7.Text = Convert.ToDateTime(CurrentMaintain["cfmdate"]).ToString("yyyy/MM/dd HH:mm:ss");
+                this.displayBox7.Text = Convert.ToDateTime(CurrentMaintain["cfmdate"]).ToString("yyyy/MM/dd");
             }
             else this.displayBox7.Text = "";
           
@@ -68,7 +68,7 @@ over (order by issuedate
 )
 SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], numTotalAmt.Value.ToString()), out dr);
             displayBoxVoucherID.Text = null == dr ? "" : dr["voucherid"].ToString();
-            displayBoxSettleDate.Text = null == dr ? "" : Convert.ToDateTime(dr["voucherdate"]).ToString("yyyy/MM/dd HH:mm:ss");
+            displayBoxSettleDate.Text = null == dr ? "" : Convert.ToDateTime(dr["voucherdate"]).ToString("yyyy/MM/dd");
             
         }
 

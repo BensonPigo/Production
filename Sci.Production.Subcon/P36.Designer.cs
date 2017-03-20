@@ -169,7 +169,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(4642, 184);
+            this.gridicon.Location = new System.Drawing.Point(4767, 184);
             // 
             // refresh
             // 
@@ -678,7 +678,7 @@
             this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox7.Location = new System.Drawing.Point(800, 45);
             this.displayBox7.Name = "displayBox7";
-            this.displayBox7.Size = new System.Drawing.Size(169, 23);
+            this.displayBox7.Size = new System.Drawing.Size(107, 23);
             this.displayBox7.TabIndex = 4;
             // 
             // displayBoxSettleDate
@@ -687,7 +687,7 @@
             this.displayBoxSettleDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBoxSettleDate.Location = new System.Drawing.Point(703, 106);
             this.displayBoxSettleDate.Name = "displayBoxSettleDate";
-            this.displayBoxSettleDate.Size = new System.Drawing.Size(169, 23);
+            this.displayBoxSettleDate.Size = new System.Drawing.Size(91, 23);
             this.displayBoxSettleDate.TabIndex = 7;
             // 
             // dateBox4
