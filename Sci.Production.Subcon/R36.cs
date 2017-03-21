@@ -166,7 +166,13 @@ namespace Sci.Production.Subcon
                 lis.Add(new SqlParameter("@payment", payment));
                 needSettleData = 0;
             }
+            if (this.comboBox3.Text == " ")
+            {
+                needSettleData = 1;
+            }
+          
             lis.Add(new SqlParameter("@NeedSettleData", needSettleData));
+
             if (this.comboBox4.Text == "By Handle")
             {
                 order="order by  a.handle";
@@ -239,8 +245,9 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 	   a.AmtReviseDate,vs4.Name_Extno as AccRH,a.ReceiveDate,vs5.Name_Extno as AccAH,a.cfmdate,
 	   cur_schedule.VoucherID[VoucherNo],cur_schedule.VoucherDate,cur_schedule.VoucherDate[Settled Date],
 	   b1.ttlCA,b1.ttlAddition,ttl.ttlSA,ttl.ttlRA
+        into #tmp
 		from DBO.LocalDebit a WITH (NOLOCK) 
-			inner join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
+			left join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
 			inner join LocalDebit_Detail b WITH (NOLOCK) on a.id = b.id
 			left join dbo.Reason R WITH (NOLOCK) on a.AddName = R.AddName
 		   	outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
@@ -266,7 +273,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 		) as tmpSum
 		where tmpSum.VoucherDate is not null and tmpSum.Amount >= a.Amount+a.Tax
 	)AS cur_schedule
-" + sqlWhere + ' ' + order);
+" + sqlWhere + ' ' + order + ' ' + @"SELECT DISTINCT * FROM #tmp");
            #endregion
            #region --撈DetailExcel資料--
            cmdDetail = string.Format(@"
