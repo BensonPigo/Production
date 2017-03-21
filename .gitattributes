@@ -2800,6 +2800,9 @@ Sci.Production.Subcon/P30_Import.cs -text
 Sci.Production.Subcon/P30_Import.resx -text
 Sci.Production.Subcon/P30_Print.rdlc -text
 Sci.Production.Subcon/P30_PrintData.cs -text
+Sci.Production.Subcon/P32.Designer.cs -text
+Sci.Production.Subcon/P32.cs -text
+Sci.Production.Subcon/P32.resx -text
 Sci.Production.Subcon/P35.Designer.cs -text
 Sci.Production.Subcon/P35.cs -text
 Sci.Production.Subcon/P35.resx -text
