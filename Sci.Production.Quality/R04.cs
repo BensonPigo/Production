@@ -68,9 +68,9 @@ namespace Sci.Production.Quality
             else { OUTSTAN = "NO";
             Outstanding = "0";
             }
-            lis.Add(new SqlParameter("@Outstanding", Outstanding));
+           // lis.Add(new SqlParameter("@Outstanding", Outstanding));
 
-            string sqlWhere = ""; string sqlRec = ""; string sqlArr = "";
+            string sqlWhere = ""; string sqlRec = ""; string sqlArr = ""; string sqlOutStanding = ""; string sqlFactorys = "";
 
             DateRecStart = DateReceivedSample.Value1;
             DateRecEnd = DateReceivedSample.Value2;
@@ -82,6 +82,7 @@ namespace Sci.Production.Quality
             List<string> sqlWheres = new List<string>();
             List<string> sqlRecDate = new List<string>();
             List<string> sqlArrDate = new List<string>();
+            List<string> sqlFactory = new List<string>();     
             #region --組WHERE--
             if (!this.DateReceivedSample.Value1.Empty())
             {
@@ -119,17 +120,23 @@ namespace Sci.Production.Quality
                     lis.Add(new SqlParameter("@Cate", "M"));
                 }
             }
-            
-
             if (!this.comboFactory.Text.ToString().Empty())
             {
-                sqlWheres.Add("Factoryid = @Factory");
+                sqlFactory.Add("r.Factoryid = @Factory");
                 lis.Add(new SqlParameter("@Factory", factory));
             }
             if (!this.comboM.Text.ToString().Empty())
             {
-                sqlWheres.Add("MDivisionID=@MDivisionID");
+                sqlFactory.Add("r.MDivisionID=@MDivisionID");
                 lis.Add(new SqlParameter("@MDivisionID", M));
+            }
+            if (checkOutstandingOnly.Checked == true)
+            {
+                sqlOutStanding = " and (C.Crocking ='' or C.Wash ='' or C.Heat ='' or oven_result.Result='' or ColorFastness_result.Result='')";
+            }
+            else
+            {
+                sqlOutStanding = " ";
             }
 
             #endregion
@@ -137,6 +144,7 @@ namespace Sci.Production.Quality
             sqlWhere = string.Join(" and ", sqlWheres);
             sqlRec = string.Join(" and ", sqlRecDate);
             sqlArr = string.Join(" and ", sqlArrDate);
+            sqlFactorys = string.Join(" and ", sqlFactory);
             if (!sqlWhere.Empty())
             {
                 sqlWhere = " AND " + sqlWhere;
@@ -146,6 +154,10 @@ namespace Sci.Production.Quality
             } if (!sqlArr.Empty())
             {
                 sqlArr = " AND " + sqlArr;
+            }
+            if (!sqlFactorys.Empty())
+            {
+                sqlFactorys = " and " + sqlFactorys;
             }
 
             #region --撈ListExcel資料--
@@ -167,7 +179,7 @@ namespace Sci.Production.Quality
                 ,(select top 1 orders.[category] from orders WITH (NOLOCK) where id = b.POID) [category]
                 ,b.ArriveQty,oven_result.Result,c.Crocking,c.Heat,ColorFastness_result.Result,c.Wash
                 from  FIR b WITH (NOLOCK) 
-                inner join (select distinct a.id,a1.PoId,a1.Seq1,a1.seq2 from Receiving a WITH (NOLOCK) 
+                inner join (select distinct a.id,a1.PoId,a1.Seq1,a1.seq2,a.MDivisionID,a.factoryid from Receiving a WITH (NOLOCK) 
 				                inner join Receiving_Detail a1 WITH (NOLOCK) on a1.Id = a.Id
                             where 1=1" + sqlArr + @")
                 r on r.id = b.ReceivingID and r.PoId = b.POID and r.seq1 = b.seq1 and r.seq2 = b.SEQ2
@@ -179,8 +191,9 @@ namespace Sci.Production.Quality
                 OUTER APPLY(
 	                select  c1.Result from ColorFastness c1 WITH (NOLOCK) inner join ColorFastness_Detail  c2 WITH (NOLOCK) on c2.id = c1.id
 	                where c1.POID = b.POID and c2.seq1 = b.seq1 and c2.seq2 = b.SEQ2 and c1.Status = 'Confirmed')ColorFastness_result
-                where 1=1 and (@Outstanding = 1 and (C.Crocking ='' or C.Wash ='' or C.Heat ='' or oven_result.Result='' or ColorFastness_result.Result=''))
-                " + sqlRec+@"
+                where 1=1 "
+                        + sqlFactorys            
+           + sqlOutStanding + sqlRec + @"
             ");
             #endregion
 
