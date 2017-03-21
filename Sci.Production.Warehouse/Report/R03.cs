@@ -196,7 +196,7 @@ select  factory.MDivisionID
         ,a.id
         ,style = (select StyleID from dbo.orders WITH (NOLOCK) where id = a.id) 
         ,b.FinalETD
-        ,supp = .suppid+'-'+c.AbbEN 
+        ,supp = a.suppid+'-'+c.AbbEN 
         ,c.CountryID
         ,b.Refno
         ,b.SEQ1
