@@ -62,6 +62,7 @@ Database/dbo/Functions/GetPoPriceByArticleSize.sql -text
 Database/dbo/Functions/GetPriceFromMtl.sql -text
 Database/dbo/Functions/GetRequestETA.sql -text
 Database/dbo/Functions/GetRequestETA_1.sql -text
+Database/dbo/Functions/GetReveivingDate.sql -text
 Database/dbo/Functions/GetSCI.sql -text
 Database/dbo/Functions/GetSCI_1.sql -text
 Database/dbo/Functions/GetSimilarStyleList.sql -text

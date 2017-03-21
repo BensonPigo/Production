@@ -2206,6 +2206,7 @@
     <Build Include="dbo\Tables\LocalIssue_Detail.sql" />
     <Build Include="dbo\Tables\LocalIssue.sql" />
     <Build Include="dbo\Functions\getSewingOutputCumulateOfDays.sql" />
+    <Build Include="dbo\Functions\GetReveivingDate.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
