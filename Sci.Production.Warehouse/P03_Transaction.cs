@@ -11,6 +11,8 @@ using Sci.Data;
 using Ict;
 using Sci.Production.PublicPrg;
 using System.Linq;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
@@ -787,9 +789,9 @@ namespace Sci.Production.Warehouse
             this.grid1.IsEditingReadOnly = true;
             this.grid1.DataSource = bindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                 .Date("issuedate", header: "Date", width: Widths.AnsiChars(10))
-                 .Text("id", header: "Transaction#", width: Widths.AnsiChars(15), settings: ts2)
-                .Text("name", header: "Name", width: Widths.AnsiChars(25))
+                 .Date("IssueDate", header: "Date", width: Widths.AnsiChars(10))
+                 .Text("ID", header: "Transaction#", width: Widths.AnsiChars(15), settings: ts2)
+                .Text("Name", header: "Name", width: Widths.AnsiChars(25))
                  .Numeric("InQty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("OutQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("Adjust", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
@@ -847,6 +849,45 @@ namespace Sci.Production.Warehouse
 
             MyUtility.Msg.InfoBox("Finished!!");
             this.Dispose();  //重算完自動關閉視窗
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel("");
+            //MyUtility.Excel.CopyToXls(grid1.GetTable(), "", "", headerRow: 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
+
+            this.ShowWaitMessage("Excel Processing...");
+            Excel.Worksheet worksheet = objApp.Sheets[1];
+            worksheet.Columns[1].NumberFormat = "yyyy-MM-dd";
+            worksheet.Columns[2].NumberFormat = "@";
+            worksheet.Columns[3].NumberFormat = "@";
+            worksheet.Columns[4].NumberFormat = "0.00";
+            worksheet.Columns[5].NumberFormat = "0.00";
+            worksheet.Columns[6].NumberFormat = "0.00";
+            worksheet.Columns[7].NumberFormat = "0.00";
+            worksheet.Columns[8].NumberFormat = "@";
+            worksheet.Columns[9].NumberFormat = "@";
+
+            for (int i = 1; i <= grid1.Columns.Count; i++)
+            {
+                worksheet.Cells[1, i] = grid1.Columns[i - 1].Name;
+            }
+
+            for (int i = 0; i < grid1.Rows.Count; i++)
+            {
+                for (int j = 0; j < grid1.Columns.Count; j++)
+                {
+                    worksheet.Cells[i + 2, j + 1] = grid1.Rows[i].Cells[j].Value;
+                }
+            }
+
+            worksheet.Rows.AutoFit();
+            worksheet.Columns.AutoFit();
+            objApp.Visible = true;
+            this.HideWaitMessage();
+
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
         }
     }
 }

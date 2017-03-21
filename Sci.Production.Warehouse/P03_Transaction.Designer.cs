@@ -32,6 +32,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.panel2 = new Sci.Win.UI.Panel();
+            this.numericBox4 = new Sci.Win.UI.NumericBox();
             this.button3 = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.numericBox3 = new Sci.Win.UI.NumericBox();
@@ -40,7 +41,6 @@
             this.button2 = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.panel2.SuspendLayout();
@@ -97,6 +97,27 @@
             this.panel2.Size = new System.Drawing.Size(1008, 48);
             this.panel2.TabIndex = 0;
             // 
+            // numericBox4
+            // 
+            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBox4.IsSupportEditMode = false;
+            this.numericBox4.Location = new System.Drawing.Point(708, 15);
+            this.numericBox4.Name = "numericBox4";
+            this.numericBox4.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox4.ReadOnly = true;
+            this.numericBox4.Size = new System.Drawing.Size(100, 23);
+            this.numericBox4.TabIndex = 5;
+            this.numericBox4.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // button3
             // 
             this.button3.Location = new System.Drawing.Point(834, 11);
@@ -105,7 +126,7 @@
             this.button3.TabIndex = 1;
             this.button3.Text = "Print";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Visible = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // label1
             // 
@@ -201,27 +222,6 @@
             this.button1.Text = "Close";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // numericBox4
-            // 
-            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox4.IsSupportEditMode = false;
-            this.numericBox4.Location = new System.Drawing.Point(708, 15);
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox4.ReadOnly = true;
-            this.numericBox4.Size = new System.Drawing.Size(100, 23);
-            this.numericBox4.TabIndex = 5;
-            this.numericBox4.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
             // 
             // P03_Transaction
             // 
