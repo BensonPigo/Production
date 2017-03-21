@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using Sci.Utility.Excel;
 using Ict;
+using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 
 namespace Sci.Production.Subcon
 {
@@ -221,6 +222,7 @@ select a.ID, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ 
 		,a.Description ,a.exchange,a.currencyid,a.amount,a.tax,a.taxrate,a.amtrevisedate,a.amtrevisename,a.receivedate
 		,a.receivename,a.cfmdate,a.cfmname,V.VoucherID,a.printdate,a.status,a.statuseditdate,
 		vs3.Name_Extno as addname,a.adddate,vs4.Name_Extno as edit,a.editdate
+        INTO #TEMP
 		from DBO.LocalDebit a WITH (NOLOCK) 
 			inner join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
 			left join dbo.Reason R WITH (NOLOCK) on a.AddName = R.AddName
@@ -228,7 +230,7 @@ select a.ID, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ 
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.addname ) vs3
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.editname ) vs4" + sqlWhere + ' ' + order);
+			outer apply (select * from dbo.View_ShowName vs where vs.id = a.editname ) vs4" + sqlWhere + ' ' + order + ' ' +@"SELECT DISTINCT * FROM #TEMP");
             #endregion
            #region --撈SummaryExcel資料--
            cmdSummary = string.Format(@"
@@ -372,7 +374,11 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 
             if ("Debit Note List".EqualString(this.comboBox1.Text))
             {
-                MyUtility.Excel.CopyToXls(dt, "", "Subcon_R36_DebitNote(LocalSupplier).xltx", 2, true, null, null);      // 將datatable copy to excel
+                Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNote(LocalSupplier).xltx");
+                Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt1 = new SaveXltReportCls.xltRptTable(dt);
+                x1.dicDatas.Add("##SD", dt1);
+                dt1.ShowHeader = false;
+                x1.Save();
                 return true;
             }
 
@@ -461,7 +467,5 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
             }
             return true;
         }
-      
-
     }
 }
