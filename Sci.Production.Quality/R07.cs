@@ -211,7 +211,10 @@ namespace Sci.Production.Quality
             select 
             Est.inspection
             ,[First].cutinline
-            ,iif(Est.inspection < [First].cutinline,DATEDIFF(day,Est.inspection,getdate())-Getdate(),datediff(day,[First].cutinline,getdate())-Getdate())[Urgent Inspection]
+            ,[Urgent Inspection]= 
+	        iif(Est.inspection < [First].cutinline,
+	        DATEDIFF(day,getdate(),Est.inspection),
+	        datediff(day,getdate(),[First].cutinline))
             ,t.PoId
             ,t.seq1+'-'+t.seq2 [Seq]
             ,O.FactoryID
@@ -244,14 +247,15 @@ namespace Sci.Production.Quality
             inner join dbo.PO_Supp ps WITH (NOLOCK) on ps.id = T.POID and ps.SEQ1 = T.SEQ1
             inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = T.POID and psd.SEQ1 = T.SEQ1 and psd.SEQ2 = T.SEQ2
             outer apply dbo.getsci(t.poid,x.category) as w
-            outer apply(select case when x.Category='M' then DATEADD(day,7,t.WhseArrival)
-	            when Datediff(day,w.MinSciDelivery,x.kpileta) >=21 
+            outer apply(
+	            select case when x.Category='M' then DATEADD(day,7,t.WhseArrival)
+	            when Datediff(day,x.kpileta,w.MinSciDelivery) >=21 
 		            then iif(x.KPILETA <= DATEADD(day,3,t.WhseArrival)
 	            ,DATEADD(day,7,t.WhseArrival),x.KPILETA)
-	            when Datediff(day,w.MinSciDelivery,x.kpileta) < 21 
+	            when Datediff(day,x.kpileta,w.MinSciDelivery) < 21 
 		            then iif(DATEADD(day,-21,w.MinSciDelivery) <= DATEADD(day,3,t.WhseArrival)
 	            ,DATEADD(day,7,t.WhseArrival),DATEADD(day,-21,w.MinSciDelivery))
-            end  inspection)Est
+            end  inspection)  Est
             outer apply((select min(orders.CutInLine)cutinline from dbo.orders WITH (NOLOCK) where orders.poid= t.PoId))[First] 
             outer apply(select o.factoryid,o.BrandId,o.StyleID,o.SeasonId from dbo.orders o WITH (NOLOCK) where o.id = t.PoId)O
             outer apply(select f.WeaveTypeID from dbo.Fabric f WITH (NOLOCK) where f.scirefno = psd.SCIRefno)Weave" + sqlWhere);
