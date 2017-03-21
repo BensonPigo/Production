@@ -53,22 +53,12 @@ namespace Sci.Production.PPIC
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"with tmpData
-as (
-select l.MDivisionID,l.FactoryID,l.POID,ld.Seq1,ld.Seq2,isnull(psd.Refno,'') as Refno,isnull(f.MtlTypeID,'') as MtlTypeID,
-ld.RequestQty,isnull(mpd.InQty,0)+isnull(mpd2.InQty ,0) as InQty,isnull(psd.NETQty,0) as NETQty1,isnull(psd2.NETQty,0) as NETQty2,
-isnull(psd.POUnit,'') as POUnit,isnull(psd.StockUnit,'') as StockUnit,isnull(psd2.POUnit,'') as INVPOUnit,
-isnull(psd2.StockUnit,'') as INVStockUnit,
-sum(isnull(i.Qty,0)) as StockQty1,sum(isnull(i2.Qty,0)) as StockQty2
-from Lack l WITH (NOLOCK) 
-inner join Lack_Detail ld WITH (NOLOCK) on ld.ID = l.ID
-left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
-left join MDivisionPoDetail mpd WITH (NOLOCK) on mpd.MDivisionId = l.MDivisionID and mpd.POID = l.POID and mpd.Seq1 = ld.Seq1 and mpd.Seq2 = ld.Seq2
-left join PO_Supp_Detail psd2 WITH (NOLOCK) on psd2.ID = l.POID and psd2.SEQ1 = psd.OutputSeq1 and psd2.SEQ2 = psd.OutputSeq2
-left join MDivisionPoDetail mpd2 WITH (NOLOCK) on mpd2.MDivisionId = l.MDivisionID and mpd2.POID = l.POID and mpd2.Seq1 = psd.OutputSeq1 and mpd2.Seq2 = psd.OutputSeq2
-left join Invtrans i WITH (NOLOCK) on i.PoID = l.POID and i.Seq1 = ld.Seq1 and i.Seq2 = ld.Seq2 and i.Type = 1
-left join Invtrans i2 WITH (NOLOCK) on i2.InventoryPOID = l.POID and i2.InventorySeq1 = ld.Seq1 and i2.InventorySeq2 = ld.Seq2 and i2.Type = 4
+            sqlCmd.Append(string.Format(@"
+with tmpData as (
+	select DISTINCT l.MDivisionID,l.FactoryID,l.POID,ld.Seq1,ld.Seq2,
+	l.FabricType
+	from Lack l WITH (NOLOCK) 
+	inner join Lack_Detail ld WITH (NOLOCK) on ld.ID = l.ID	
 where l.Type = 'R'"));
 
             if (!MyUtility.Check.Empty(apvDate1))
@@ -95,22 +85,75 @@ where l.Type = 'R'"));
                 sqlCmd.Append(string.Format(" and l.FactoryID = '{0}'", factory));
             }
 
-            sqlCmd.Append(@" group by l.MDivisionID,l.FactoryID,l.POID,ld.Seq1,ld.Seq2,isnull(psd.Refno,''),isnull(f.MtlTypeID,''),ld.RequestQty,
-isnull(mpd.InQty,0)+isnull(mpd2.InQty ,0),isnull(psd.NETQty,0),isnull(psd2.NETQty,0),
-isnull(psd.POUnit,''),isnull(psd.StockUnit,''),isnull(psd2.POUnit,''),isnull(psd2.StockUnit,'')
-),
-tmpData2
-as (
-select MDivisionID,FactoryID,POID,Seq1,Seq2,Refno,MtlTypeID,RequestQty,InQty,
-NETQty1*IIF(POUnit is null or StockUnit is null,1, dbo.getUnitRate(POUnit,StockUnit))+
-NETQty2*IIF(INVPOUnit is null or INVStockUnit is null,1, dbo.getUnitRate(INVPOUnit,INVStockUnit)) as NETQty,
-StockQty1*IIF(POUnit is null or StockUnit is null,1, dbo.getUnitRate(POUnit,StockUnit))+
-StockQty2*IIF(INVPOUnit is null or INVStockUnit is null,1, dbo.getUnitRate(INVPOUnit,INVStockUnit)) as StockQty
-from tmpData)
-select MDivisionID,FactoryID,POID,Seq1,Seq2,Refno,MtlTypeID,Sum(RequestQty) as RequestQty,InQty,NETQty,StockQty
-from tmpData2
-group by MDivisionID,FactoryID,POID,Seq1,Seq2,Refno,MtlTypeID,InQty,NETQty,StockQty
-order by MDivisionID,FactoryID,POID,Seq1,Seq2");
+            sqlCmd.Append(@" 
+),TMP1 AS( 
+	SELECT distinct T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,T.FabricType,
+	isnull(psd.Refno,'') as Refno,isnull(f.MtlTypeID,'') as MtlTypeID,
+	INQTY = isnull(mpd.InQty,0)+isnull(mpd2.InQty ,0)+ ISnull(mpd7.InQty ,0 ),
+	isnull(psd.NETQty,0) as NETQty1,
+	isnull(psd2.NETQty,0) as NETQty2,
+	isnull(psd.POUnit,'') as POUnit,isnull(psd.StockUnit,'') as StockUnit,isnull(psd2.POUnit,'') as INVPOUnit,
+	isnull(psd2.StockUnit,'') as INVStockUnit,
+	isnull(i.Qty,0) as StockQty1,
+	isnull(i2.Qty,0) as StockQty2,
+	isnull(i7.Qty,0) as StockQty71,
+	isnull(i72.Qty,0) as StockQty72,
+	IIF(T.Seq1 LIKE'7_',1,0) IS7
+	FROM tmpData T
+	outer apply (select * from PO_Supp_Detail WITH (NOLOCK) where ID = T.POID and SEQ1 = T.Seq1 and SEQ2 = T.Seq2)psd
+	outer apply (select * from PO_Supp_Detail WITH (NOLOCK) where ID = T.POID and SEQ1 = psd.OutputSeq1 and SEQ2 = psd.OutputSeq2)psd2
+	outer apply (select * from Fabric  WITH (NOLOCK) where SCIRefno = psd.SCIRefno)f
+	outer apply (select inqty from MDivisionPoDetail WITH (NOLOCK) where MDivisionId = T.MDivisionID and POID = T.POID and Seq1 = T.Seq1 and Seq2 = T.Seq2) mpd
+	outer apply (select sum(InQty) inqty 
+		from PO_Supp_Detail psd3 left join MDivisionPoDetail m on m.Seq1 = psd3.SEQ1 and m.Seq2 = psd3.SEQ2
+		where m.MDivisionId = T.MDivisionID and m.POID = T.POID and psd3.ID = T.POID and psd3.OutputSeq1 = psd.Seq1 and psd3.OutputSeq2 = psd.SEQ2) mpd2
+		outer apply (select inqty from MDivisionPoDetail WITH (NOLOCK) where MDivisionId = T.MDivisionID and POID = T.POID and Seq1 = PSD.OutputSeq1 and Seq2 = PSD.OutputSeq2
+	)mpd7
+	outer apply (select SUM(Qty)Qty from Invtrans  WITH (NOLOCK) where PoID = T.POID and Seq1 = T.Seq1 and Seq2 = T.Seq2 and Type = 1) i
+	outer apply (select SUM(Qty)Qty from Invtrans  WITH (NOLOCK) where InventoryPOID = T.POID and InventorySeq1 = T.Seq1 and InventorySeq2 = T.Seq2 and Type = 4) i2
+	outer apply (select SUM(Qty)Qty from Invtrans  WITH (NOLOCK) where PoID = T.POID and Seq1 = PSD.OutputSeq1 and Seq2 = PSD.OutputSeq2 and Type = 1) i7	
+	outer apply (select SUM(Qty)Qty from Invtrans  WITH (NOLOCK) where InventoryPOID = T.POID and InventorySeq1 = PSD.OutputSeq1 and InventorySeq2 = PSD.OutputSeq2 and Type = 4) i72
+),tmp2 as(
+	SELECT T.FabricType,T.FactoryID,T.INQTY,T.INVPOUnit,T.IS7,T.MDivisionID,T.MtlTypeID,T.NETQty1,T.NETQty2,T.POID,T.POUnit,
+	T.Refno,T.Seq1,T.Seq2,T.StockUnit,T.INVStockUnit,
+	SUM(T.StockQty1)StockQty1,SUM(T.StockQty2)StockQty2,SUM(T.StockQty71)StockQty71,SUM(T.StockQty72)StockQty72
+	FROM TMP1 T
+	GROUP BY T.FabricType,T.FactoryID,T.INQTY,T.INVPOUnit,T.IS7,T.MDivisionID,T.MtlTypeID,T.NETQty1,T.NETQty2,T.POID,T.POUnit,
+	T.Refno,T.Seq1,T.Seq2,T.StockUnit,T.INVStockUnit
+),tmpData2 as (
+	select MDivisionID,FactoryID,POID,Seq1,Seq2,Refno,MtlTypeID,
+	InQty,
+	NETQty1*IIF(POUnit is null or StockUnit is null,1, dbo.getUnitRate(POUnit,StockUnit))+
+	NETQty2*IIF(INVPOUnit is null or INVStockUnit is null,1, dbo.getUnitRate(INVPOUnit,INVStockUnit)) as NETQty,
+	StockQty1*IIF(POUnit is null or StockUnit is null,1, dbo.getUnitRate(POUnit,StockUnit))+
+	StockQty2*IIF(INVPOUnit is null or INVStockUnit is null,1, dbo.getUnitRate(INVPOUnit,INVStockUnit)) +
+	IIF(IS7 = 0,0,
+	StockQty71*IIF(POUnit is null or StockUnit is null,1, dbo.getUnitRate(POUnit,StockUnit))+
+	StockQty72*IIF(INVPOUnit is null or INVStockUnit is null,1, dbo.getUnitRate(INVPOUnit,INVStockUnit)) )
+	as StockQty,
+	FabricType
+	from tmp2	
+)
+select MDivisionID,FactoryID,POID,Seq1,Seq2,Refno,MtlTypeID,
+InQty,
+NETQty,
+StockQty,
+[Allowance Qty]=InQty-NETQty-StockQty,
+RequestQty
+from tmpData2 T
+OUTER APPLY(
+	SELECT  SUM(RequestQty) RequestQty
+	FROM Lack L
+	inner join Lack_Detail ld WITH (NOLOCK) on ld.ID = l.ID
+	WHERE l.Type = 'R' 
+	and l.FabricType = T.FabricType
+	and l.MDivisionID = T.MDivisionID and l.FactoryID = T.FactoryID
+	AND POID = T.POID AND SEQ1 = T.Seq1 AND SEQ2 = T.Seq2
+)R
+GROUP BY MDivisionID,FactoryID,POID,Seq1,Seq2,Refno,MtlTypeID,InQty,NETQty,StockQty,InQty-NETQty-StockQty,RequestQty
+order by MDivisionID,FactoryID,POID,Seq1,Seq2
+"
+                );
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (!result)
