@@ -72,7 +72,8 @@
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.txt_SPStart);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(0, 1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1046, 65);
             this.panel1.TabIndex = 1;
@@ -159,7 +160,8 @@
             // 
             this.panel3.Controls.Add(this.btn_Close);
             this.panel3.Controls.Add(this.btn_Excel);
-            this.panel3.Location = new System.Drawing.Point(0, 529);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel3.Location = new System.Drawing.Point(0, 530);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1046, 44);
             this.panel3.TabIndex = 3;
@@ -177,6 +179,7 @@
             // 
             // btn_Excel
             // 
+            this.btn_Excel.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.btn_Excel.Location = new System.Drawing.Point(859, 8);
             this.btn_Excel.Name = "btn_Excel";
             this.btn_Excel.Size = new System.Drawing.Size(89, 30);
@@ -191,7 +194,8 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Location = new System.Drawing.Point(0, 66);
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 65);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -202,7 +206,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.grid2);
-            this.splitContainer1.Size = new System.Drawing.Size(1046, 463);
+            this.splitContainer1.Size = new System.Drawing.Size(1046, 465);
             this.splitContainer1.SplitterDistance = 229;
             this.splitContainer1.TabIndex = 4;
             // 
@@ -215,11 +219,12 @@
             this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 5);
+            this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -233,7 +238,7 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1046, 226);
+            this.grid1.Size = new System.Drawing.Size(1046, 229);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
@@ -246,11 +251,12 @@
             this.grid2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(0, 1);
+            this.grid2.Location = new System.Drawing.Point(0, 0);
             this.grid2.Name = "grid2";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
@@ -264,7 +270,7 @@
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(1046, 227);
+            this.grid2.Size = new System.Drawing.Size(1046, 232);
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
             // 
