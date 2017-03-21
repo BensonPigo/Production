@@ -59,7 +59,7 @@ namespace Sci.Production.Shipping
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"select oq.BuyerDelivery,oq.EstPulloutDate,o.BrandID,o.ID,IIF(o.Category = 'B','Bulk','Sample') as Category,o.CustPONo,
+            sqlCmd.Append(string.Format(@"select oq.BuyerDelivery,oq.EstPulloutDate,o.BrandID,b.BuyerID,o.ID,IIF(o.Category = 'B','Bulk','Sample') as Category,o.CustPONo,
 o.StyleID,o.SeasonID,oq.Qty,o.MDivisionID,o.FactoryID,isnull(c.Alias,'') as Alias,o.PoPrice,o.Customize1,o.Customize2,
 oq.ShipmodeID,IIF(o.ScanAndPack = 1,'Y','') as SMP,IIF(o.VasShas = 1,'Y','') as VasShas,
 (select isnull(sum(ShipQty),0) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) - [dbo].getInvAdjQty(o.ID,oq.Seq) as ShipQty,
@@ -72,6 +72,7 @@ oq.OutstandingRemark
 from Orders o WITH (NOLOCK) 
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
+left join Brand b WITH (NOLOCK) on o.BrandID=b.id
 where 1=1"));
 
             if (!MyUtility.Check.Empty(buyerDlv1))
@@ -152,34 +153,35 @@ where 1=1"));
 
             //填內容值
             int intRowsStart = 2;
-            object[,] objArray = new object[1, 25];
+            object[,] objArray = new object[1, 26];
             foreach (DataRow dr in printData.Rows)
             {
                 objArray[0, 0] = dr["BuyerDelivery"];
                 objArray[0, 1] = dr["EstPulloutDate"];
                 objArray[0, 2] = dr["BrandID"];
-                objArray[0, 3] = dr["ID"];
-                objArray[0, 4] = dr["Category"];
-                objArray[0, 5] = dr["CustPONo"];
-                objArray[0, 6] = dr["StyleID"];
-                objArray[0, 7] = dr["SeasonID"];
-                objArray[0, 8] = dr["Qty"];
-                objArray[0, 9] = dr["ShipQty"];
-                objArray[0, 10] = dr["MDivisionID"];
-                objArray[0, 11] = dr["FactoryID"];
-                objArray[0, 12] = dr["Alias"];
-                objArray[0, 13] = dr["Payment"];
-                objArray[0, 14] = dr["PoPrice"];
-                objArray[0, 15] = dr["Customize1"];
-                objArray[0, 16] = dr["Customize2"];
-                objArray[0, 17] = dr["ShipmodeID"];
-                objArray[0, 18] = dr["SMP"];
-                objArray[0, 19] = dr["VasShas"];
-                objArray[0, 20] = dr["Handle"];
-                objArray[0, 21] = dr["SMR"];
-                objArray[0, 22] = dr["LocalMR"];
-                objArray[0, 23] = dr["OSReason"];
-                objArray[0, 24] = dr["OutstandingRemark"];
+                objArray[0, 3] = dr["BuyerID"];
+                objArray[0, 4] = dr["ID"];
+                objArray[0, 5] = dr["Category"];
+                objArray[0, 6] = dr["CustPONo"];
+                objArray[0, 7] = dr["StyleID"];
+                objArray[0, 8] = dr["SeasonID"];
+                objArray[0, 9] = dr["Qty"];
+                objArray[0, 10] = dr["ShipQty"];
+                objArray[0, 11] = dr["MDivisionID"];
+                objArray[0, 12] = dr["FactoryID"];
+                objArray[0, 13] = dr["Alias"];
+                objArray[0, 14] = dr["Payment"];
+                objArray[0, 15] = dr["PoPrice"];
+                objArray[0, 16] = dr["Customize1"];
+                objArray[0, 17] = dr["Customize2"];
+                objArray[0, 18] = dr["ShipmodeID"];
+                objArray[0, 19] = dr["SMP"];
+                objArray[0, 20] = dr["VasShas"];
+                objArray[0, 21] = dr["Handle"];
+                objArray[0, 22] = dr["SMR"];
+                objArray[0, 23] = dr["LocalMR"];
+                objArray[0, 24] = dr["OSReason"];
+                objArray[0, 25] = dr["OutstandingRemark"];
                 worksheet.Range[String.Format("A{0}:Y{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
