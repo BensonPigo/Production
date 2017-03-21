@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
@@ -106,25 +107,27 @@ namespace Sci.Production.Subcon
             }
             DualResult result;
 
-            string sqlcmd = string.Format(@"select lr.FactoryId [Factory] 
-                                                  ,lr.Id [ID]
-                                                  ,lr.IssueDate [Receive_Date]
-                                                  ,lr.LocalSuppID [Supplier]
-                                                  ,lr.InvNo [Invoice]
-                                                  ,lrd.OrderId [SP]
-                                                  ,lrd.Category [Category]
-                                                  ,lrd.Refno [Refno]
-                                                  ,[Description]=dbo.getItemDesc(lrd.Category,lrd.Refno)
-                                                  ,lrd.ThreadColorID [Color_Shade]
-                                                  ,c.UnitId [Unit]
-                                                  ,c.Qty [PO_Qty]
-                                                  ,lrd.Qty [Qty]
-                                                  ,c.Qty-lrd.Qty [On_Road]
-                                                  ,lrd.Location [Location]
-                                                  ,lr.Remark [Remark]
-                                         from dbo.LocalReceiving lr WITH (NOLOCK) 
-                                         left join dbo.LocalReceiving_Detail lrd WITH (NOLOCK) on  lr.id=lrd.Id
-                                         left join dbo.LocalPO_Detail c WITH (NOLOCK) on lrd.LocalPo_detailukey=c.Ukey  " + sqlWhere + " " + order);
+            string sqlcmd = string.Format(@"
+select  lr.FactoryId [Factory] 
+        ,lr.Id [ID]
+        ,lr.IssueDate [Receive_Date]
+        ,lr.LocalSuppID + ' - ' + LS.Abb [Supplier]
+        ,lr.InvNo [Invoice]
+        ,lrd.OrderId [SP]
+        ,lrd.Category [Category]
+        ,lrd.Refno [Refno]
+        ,[Description]=dbo.getItemDesc(lrd.Category,lrd.Refno)
+        ,lrd.ThreadColorID [Color_Shade]
+        ,c.UnitId [Unit]
+        ,c.Qty [PO_Qty]
+        ,lrd.Qty [Qty]
+        ,lrd.Qty [On_Road]
+        ,lrd.Location [Location]
+        ,lr.Remark [Remark]
+from dbo.LocalReceiving lr WITH (NOLOCK) 
+left join dbo.LocalSupp LS on lr.LocalSuppID = LS.ID
+left join dbo.LocalReceiving_Detail lrd WITH (NOLOCK) on  lr.id=lrd.Id
+left join dbo.LocalPO_Detail c WITH (NOLOCK) on lrd.LocalPo_detailukey=c.Ukey  " + sqlWhere + " " + order);
             result = DBProxy.Current.Select("", sqlcmd,lis, out dtt);
         
             return result; //base.OnAsyncDataLoad(e);
@@ -133,27 +136,26 @@ namespace Sci.Production.Subcon
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (dtt.Rows.Count <= 0)
+            if (dtt == null || dtt.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            saveDialog.ShowDialog();
-            string outpath = saveDialog.FileName;
-            if (outpath.Empty())
-            {
-                return false;
-            }														
-            string xlt = @"Subcon_R25.xltx";
-            SaveXltReportCls xl = new SaveXltReportCls(xlt);
-            
-            xl.dicDatas.Add("##dr1", string.Format("Receive Date: {0}~{1}  ,SP#:{2}  ,Refno:{3} Category:{4}  Supplier:{5}  ,Factory:{6}  ",
-                (MyUtility.Check.Empty(ReceiveDate)) ? "" : Convert.ToDateTime(ReceiveDate).ToString("yyyy/MM/dd"),
-                (MyUtility.Check.Empty(ReceiveDate2)) ? "" : Convert.ToDateTime(ReceiveDate2).ToString("yyyy/MM/dd"), 
-                SP,Refno,Category, Supplier, Factory));
-            xl.dicDatas.Add("##Factory", dtt);            
-            xl.Save(outpath, false);            
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R25.xltx");
+            MyUtility.Excel.CopyToXls(dtt, "", "Subcon_R25.xltx", 3, showExcel: false, showSaveMsg: false, excelApp : objApp);
+
+            this.ShowWaitMessage("Excel Processing...");
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.Sheets[1];
+            worksheet.Cells[2, 1] = string.Format("Receive Date: {0}~{1}  ,SP#:{2}  ,Refno:{3} Category:{4}  Supplier:{5}  ,Factory:{6}  ",
+                                                    (MyUtility.Check.Empty(ReceiveDate)) ? "" : Convert.ToDateTime(ReceiveDate).ToString("yyyy/MM/dd"),
+                                                    (MyUtility.Check.Empty(ReceiveDate2)) ? "" : Convert.ToDateTime(ReceiveDate2).ToString("yyyy/MM/dd"),
+                                                    SP, Refno, Category, Supplier, Factory);            
+
+            objApp.Visible = true;
+            this.HideWaitMessage();
+
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
             return false;
         }
     }
