@@ -54,58 +54,98 @@ namespace Sci.Production.Shipping
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"select distinct p.PulloutDate,oq.BuyerDelivery,pd.OrderID,isnull(o.CustPONo,'') as CustPONo,
-isnull(o.StyleID,'') as StyleID,isnull(oq.Qty,0) as Qty,pd.ShipQty,IIF(ct.WorkType = '1','Y','') as byCombo,
-case pd.Status when 'P' then 'Partial' when 'C' then 'Complete' when 'E' then 'Exceed'when 'S' then 'Shortage' else '' end as StatusExp,
-isnull(IIF(o.LocalOrder = 1, o.PoPrice,o.CMPPrice),0) as CMP,
-isnull(IIF(o.LocalOrder = 1, Round(o.PoPrice*pd.ShipQty,3),Round(o.CPU*o.CPUFactor*pd.ShipQty,3)),0) as CMPAmt,
-isnull(o.PoPrice,0) as PoPrice,isnull(o.PoPrice,0)*pd.ShipQty as FOBAmt, isnull(o.BrandID,'') as BrandID,isnull(o.MDivisionID,'') as MDivisionID,
-isnull(o.FactoryID,'') as FactoryID,isnull(oq.ShipmodeID,'') as ShipmodeID,isnull(c.Alias,'') as Alias,
-isnull(IIF(ct.WorkType = '1',(select sum(cw.Qty) from CuttingOutput_WIP cw WITH (NOLOCK) , Orders os WITH (NOLOCK) where cw.OrderID = os.ID and os.CuttingSP = o.CuttingSP),(select sum(Qty) from CuttingOutput_WIP WITH (NOLOCK) where OrderID = pd.OrderID)),0) as CutQty
-from Pullout p WITH (NOLOCK) 
-inner join Pullout_Detail pd WITH (NOLOCK) on p.ID = pd.ID
-left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
-left join Order_QtyShip oq WITH (NOLOCK) on pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
-left join Country c WITH (NOLOCK) on o.Dest = c.ID
-left join Cutting ct WITH (NOLOCK) on ct.ID = o.CuttingSP
-where p.Status <> 'New'
-and 1=1"));
+            string sqlWhere = "";
+            List<string> sqlList = new List<string>();
 
+            #region 組Where 條件
             if (!MyUtility.Check.Empty(pulloutDate1))
             {
-                sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}' ", Convert.ToDateTime(pulloutDate1).ToString("d")));
+                sqlList.Add(string.Format(" p.PulloutDate >= '{0}' ", Convert.ToDateTime(pulloutDate1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(pulloutDate2))
             {
-                sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}' ", Convert.ToDateTime(pulloutDate2).ToString("d")));
+                sqlList.Add(string.Format(" p.PulloutDate <= '{0}' ", Convert.ToDateTime(pulloutDate2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(brand))
             {
-                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", brand));
+                sqlList.Add(string.Format(" o.BrandID = '{0}'", brand));
             }
             if (!MyUtility.Check.Empty(mDivision))
             {
-                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", mDivision));
+                sqlList.Add(string.Format(" o.MDivisionID = '{0}'", mDivision));
             }
             if (!MyUtility.Check.Empty(factory))
             {
-                sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", factory));
+                sqlList.Add(string.Format(" o.FtyGroup = '{0}'", factory));
             }
             if (category == "Bulk")
             {
-                sqlCmd.Append(" and o.Category = 'B'");
+                sqlList.Add(" o.Category = 'B'");
             }
             else if (category == "Sample")
             {
-                sqlCmd.Append(" and o.Category = 'S'");
+                sqlList.Add(" o.Category = 'S'");
             }
             else
             {
-                sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
+                sqlList.Add(" (o.Category = 'B' or o.Category = 'S')");
             }
+           
+            #endregion
 
+            sqlWhere = string.Join(" and ", sqlList);
+            if (!MyUtility.Check.Empty(sqlWhere))
+            {
+                sqlWhere = " and " + sqlWhere;
+            }
+            sqlCmd.Append(string.Format(
+@"
+select distinct p.PulloutDate,oq.BuyerDelivery,pd.OrderID,isnull(o.CustPONo,'') as CustPONo,
+	isnull(o.StyleID,'') as StyleID,isnull(oq.Qty,0) as Qty,
+	[ShipQty]= pd.ShipQty,
+	IIF(ct.WorkType = '1','Y','') as byCombo,
+	case pd.Status when 'P' then 'Partial' when 'C' then 'Complete' when 'E' then 'Exceed'when 'S' then 'Shortage' else '' end as StatusExp,
+	isnull(IIF(o.LocalOrder = 1, o.PoPrice,o.CMPPrice),0) as CMP,	
+	o.LocalOrder,o.CPU,o.CPUFactor,
+	isnull(o.PoPrice,0) as PoPrice,
+	isnull(o.PoPrice,0)*pd.ShipQty as FOBAmt, 
+	isnull(o.BrandID,'') as BrandID,
+	isnull(o.MDivisionID,'') as MDivisionID,
+	isnull(o.FactoryID,'') as FactoryID,
+	isnull(oq.ShipmodeID,'') as ShipmodeID,
+	isnull(c.Alias,'') as Alias,
+	isnull(IIF(ct.WorkType = '1',(select sum(cw.Qty) from CuttingOutput_WIP cw WITH (NOLOCK) , Orders os WITH (NOLOCK) where cw.OrderID = os.ID and os.CuttingSP = o.CuttingSP),
+	(select sum(Qty) from CuttingOutput_WIP WITH (NOLOCK) where OrderID = pd.OrderID)),0) as CutQty
+	into #temp1
+	from Pullout p WITH (NOLOCK) 
+	inner join Pullout_Detail pd WITH (NOLOCK) on p.ID = pd.ID
+	left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
+	left join Order_QtyShip oq WITH (NOLOCK) on pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
+	left join Country c WITH (NOLOCK) on o.Dest = c.ID
+	left join Cutting ct WITH (NOLOCK) on ct.ID = o.CuttingSP
+	where p.Status <> 'New'
+	and 1=1" +sqlWhere+@"  
+	
 
-            sqlCmd.Append(" order by p.PulloutDate,pd.OrderID");
+	select PulloutDate,BuyerDelivery,OrderID,CustPONo,StyleID,Qty,
+[ShipQty]= sum(ShipQty),
+byCombo,StatusExp,CMP,
+PoPrice,FOBAmt,BrandID,MDivisionID,
+FactoryID,ShipmodeID,Alias,CutQty,
+LocalOrder,CPU,CPUFactor  
+into #temp2
+	from #temp1
+	group by PulloutDate,BuyerDelivery,OrderID,CustPONo,StyleID,Qty,byCombo,StatusExp,CMP,PoPrice,FOBAmt,BrandID,MDivisionID,
+FactoryID,ShipmodeID,Alias,CutQty,LocalOrder,CPU,CPUFactor  
+
+select *, isnull(IIF(LocalOrder = 1, Round(PoPrice * ShipQty,3),Round(CPU * CPUFactor * ShipQty,3)),0) as CMPAmt
+from #temp2
+order by PulloutDate,OrderID
+
+drop table #temp1,#temp2
+"));
+
+          
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (!result)
