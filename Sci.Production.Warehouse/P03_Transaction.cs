@@ -47,7 +47,7 @@ namespace Sci.Production.Warehouse
             --sum(TMP.inqty - TMP.outqty+tmp.adjust) over ( order by tmp.addDate,TMP.inqty desc, TMP.outqty,tmp.adjust) as [balance] 
             sum(TMP.inqty - TMP.outqty+tmp.adjust) over (order by IssueDate,tmp.addDate, name) as [balance] 
             from (
-			select 	a.IssueDate
+ 			select 	a.IssueDate
 					, a.id
                 	, name = Case type 
             					when 'A' then 'P35. Adjust Bulk Qty' 
@@ -61,10 +61,18 @@ namespace Sci.Production.Warehouse
                 	,AddDate
             from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
             outer apply(
-				select location = stuff((select ',' + t.MtlLocationID from (SELECT MtlLocationID from FtyInventory fty 
-																		    join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-																		    Where b.poid = fty.poid and b.seq1 = fty.seq1 and b.seq2 = fty.seq2 and b.Roll = fty.Roll and b.Dyelot = fty.Dyelot)t 
-									     for xml path('')),1,1,'') 
+				select  location = stuff((select ',' + x.location								
+								          from(select location = stuff((select ',' + t.MtlLocationID 
+															            from
+																            (SELECT MtlLocationID from FtyInventory fty 
+																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+																             Where ad.poid = fty.poid and ad.seq1 = fty.seq1 and ad.seq2 = fty.seq2 and ad.Roll = fty.Roll and ad.Dyelot = fty.Dyelot
+																	            and MtlLocationID != '' and MtlLocationID is not null)t 
+															            for xml path('')),1,1,'') 
+									           from Adjust_Detail ad
+									           where b.id = ad.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
+								          )x			
+								          for xml path('')),1,1,'') 
 			) MtlLocation            
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id"
                 , dr["id"].ToString()
@@ -91,12 +99,18 @@ namespace Sci.Production.Warehouse
             		,AddDate
             from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
             outer apply(
-				select location = stuff((select ',' + t.MtlLocationID 
-										 from (SELECT MtlLocationID from FtyInventory fty 
-											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-											   Where b.FromPoId = fty.poid and b.FromSeq1 = fty.seq1 and b.FromSeq2 = fty.seq2 
-											   		and b.FromRoll = fty.Roll and b.FromDyelot = fty.Dyelot)t 
-									     for xml path('')),1,1,'') 
+				select  location = stuff((select ',' + x.location								
+								          from(select location = stuff((select ',' + t.MtlLocationID 
+															            from
+																            (SELECT MtlLocationID from FtyInventory fty 
+																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+																             Where BBD.FromPOID = fty.poid and BBD.Fromseq1 = fty.seq1 and BBD.Fromseq2 = fty.seq2 and BBD.FromRoll = fty.Roll 
+																				and BBD.FromDyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
+															            for xml path('')),1,1,'') 
+									           from BorrowBack_Detail BBD
+									           where b.id = BBD.id and Frompoid='{0}' and Fromseq1 = '{1}'and Fromseq2 = '{2}'
+								          )x			
+								          for xml path('')),1,1,'') 
 			) MtlLocation             
             where type='A' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  
             and a.id = b.id "
@@ -124,12 +138,18 @@ namespace Sci.Production.Warehouse
             		,AddDate
             from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
             outer apply(
-				select location = stuff((select ',' + t.MtlLocationID 
-										 from (SELECT MtlLocationID from FtyInventory fty 
-											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-											   Where b.ToPoId = fty.poid and b.ToSeq1 = fty.seq1 and b.ToSeq2 = fty.seq2 
-											   		and b.ToRoll = fty.Roll and b.ToDyelot = fty.Dyelot)t 
-									     for xml path('')),1,1,'') 
+				select  location = stuff((select ',' + x.location								
+								          from(select location = stuff((select ',' + t.MtlLocationID 
+															            from
+																            (SELECT MtlLocationID from FtyInventory fty 
+																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+																             Where BBD.ToPOID = fty.poid and BBD.Toseq1 = fty.seq1 and BBD.Toseq2 = fty.seq2 and BBD.ToRoll = fty.Roll 
+																				and BBD.ToDyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
+															            for xml path('')),1,1,'') 
+									           from BorrowBack_Detail BBD
+									           where b.id = BBD.id and  Topoid='{0}' and Toseq1 = '{1}'and Toseq2 = '{2}'
+								          )x			
+								          for xml path('')),1,1,'') 
 			) MtlLocation                
             where type='A' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
                 and a.id = b.id "
@@ -156,12 +176,18 @@ namespace Sci.Production.Warehouse
             		,AddDate
             from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b  WITH (NOLOCK) 
             outer apply(
-				select location = stuff((select ',' + t.MtlLocationID 
-										 from (SELECT MtlLocationID from FtyInventory fty 
-											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-											   Where b.FromPoId = fty.poid and b.FromSeq1 = fty.seq1 and b.FromSeq2 = fty.seq2 
-											   		and b.FromRoll = fty.Roll and b.FromDyelot = fty.Dyelot)t 
-									     for xml path('')),1,1,'') 
+				select  location = stuff((select ',' + x.location								
+								          from(select location = stuff((select ',' + t.MtlLocationID 
+															            from
+																            (SELECT MtlLocationID from FtyInventory fty 
+																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+																             Where BBD.FromPOID = fty.poid and BBD.Fromseq1 = fty.seq1 and BBD.Fromseq2 = fty.seq2 and BBD.FromRoll = fty.Roll 
+																				and BBD.FromDyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
+															            for xml path('')),1,1,'') 
+									           from BorrowBack_Detail BBD
+									           where b.id = BBD.id and Frompoid='{0}' and Fromseq1 = '{1}'and Fromseq2 = '{2}'
+								          )x			
+								          for xml path('')),1,1,'') 
 			) MtlLocation
             where type='B' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  
                 and a.id = b.id "
@@ -189,12 +215,18 @@ namespace Sci.Production.Warehouse
             		,AddDate
             from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
             outer apply(
-				select location = stuff((select ',' + t.MtlLocationID 
-										 from (SELECT MtlLocationID from FtyInventory fty 
-											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-											   Where b.ToPoId = fty.poid and b.ToSeq1 = fty.seq1 and b.ToSeq2 = fty.seq2 
-											   		and b.ToRoll = fty.Roll and b.ToDyelot = fty.Dyelot)t 
-									     for xml path('')),1,1,'') 
+				select  location = stuff((select ',' + x.location								
+								          from(select location = stuff((select ',' + t.MtlLocationID 
+															            from
+																            (SELECT MtlLocationID from FtyInventory fty 
+																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+																             Where BBD.ToPOID = fty.poid and BBD.Toseq1 = fty.seq1 and BBD.Toseq2 = fty.seq2 and BBD.ToRoll = fty.Roll 
+																				and BBD.ToDyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
+															            for xml path('')),1,1,'') 
+									           from BorrowBack_Detail BBD
+									           where b.id = BBD.id and  Topoid='{0}' and Toseq1 = '{1}'and Toseq2 = '{2}'
+								          )x			
+								          for xml path('')),1,1,'') 
 			) MtlLocation 
             where type='B' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
                 and a.id = b.id "
@@ -225,10 +257,18 @@ namespace Sci.Production.Warehouse
                 ,AddDate
             from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
             outer apply(
-				select location = stuff((select ',' + t.MtlLocationID from (SELECT MtlLocationID from FtyInventory fty 
-																		    join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-																		    Where b.poid = fty.poid and b.seq1 = fty.seq1 and b.seq2 = fty.seq2 and b.Roll = fty.Roll and b.Dyelot = fty.Dyelot)t 
-									     for xml path('')),1,1,'') 
+				select  location = stuff((select ',' + x.location								
+								          from(select location = stuff((select ',' + t.MtlLocationID 
+															            from
+																            (SELECT MtlLocationID from FtyInventory fty 
+																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+																             Where Is_D.POID = fty.poid and Is_D.seq1 = fty.seq1 and Is_D.seq2 = fty.seq2 and Is_D.Roll = fty.Roll 
+																				and Is_D.Dyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
+															            for xml path('')),1,1,'') 
+									           from Issue_Detail Is_D
+									           where b.id = Is_D.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
+								          )x			
+								          for xml path('')),1,1,'') 
 			) MtlLocation
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
@@ -257,12 +297,18 @@ namespace Sci.Production.Warehouse
         			,AddDate
             from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
             outer apply(
-				select location = stuff((select ',' + t.MtlLocationID 
-										 from (SELECT MtlLocationID from FtyInventory fty 
-											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-											   Where b.PoId = fty.poid and b.Seq1 = fty.seq1 and b.Seq2 = fty.seq2 
-											   		and b.Roll = fty.Roll and b.Dyelot = fty.Dyelot)t 
-									     for xml path('')),1,1,'') 
+				select  location = stuff((select ',' + x.location								
+								          from(select location = stuff((select ',' + t.MtlLocationID 
+															            from
+																            (SELECT MtlLocationID from FtyInventory fty 
+																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+																             Where IL_D.POID = fty.poid and IL_D.seq1 = fty.seq1 and IL_D.seq2 = fty.seq2 and IL_D.Roll = fty.Roll 
+																				and IL_D.Dyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
+															            for xml path('')),1,1,'') 
+									           from IssueLack_Detail IL_D
+									           where b.id = IL_D.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
+								          )x			
+								          for xml path('')),1,1,'') 
 			) MtlLocation 
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  
                 and a.id = b.id and Type='R'  "
@@ -289,12 +335,18 @@ namespace Sci.Production.Warehouse
             		,AddDate
             from IssueReturn a WITH (NOLOCK) , IssueReturn_Detail b WITH (NOLOCK) 
             outer apply(
-				select location = stuff((select ',' + t.MtlLocationID 
-										 from (SELECT MtlLocationID from FtyInventory fty 
-											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-											   Where b.PoId = fty.poid and b.Seq1 = fty.seq1 and b.Seq2 = fty.seq2 
-											   		and b.Roll = fty.Roll and b.Dyelot = fty.Dyelot)t 
-									     for xml path('')),1,1,'') 
+				select  location = stuff((select ',' + x.location								
+								          from(select location = stuff((select ',' + t.MtlLocationID 
+															            from
+																            (SELECT MtlLocationID from FtyInventory fty 
+																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+																             Where IR_D.POID = fty.poid and IR_D.seq1 = fty.seq1 and IR_D.seq2 = fty.seq2 and IR_D.Roll = fty.Roll 
+																				and IR_D.Dyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
+															            for xml path('')),1,1,'') 
+									           from IssueReturn_Detail IR_D
+									           where b.id = IR_D.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
+								          )x			
+								          for xml path('')),1,1,'') 
 			) MtlLocation   
             where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
@@ -346,12 +398,18 @@ namespace Sci.Production.Warehouse
             		,AddDate
             from ReturnReceipt a WITH (NOLOCK) , ReturnReceipt_Detail b WITH (NOLOCK) 
             outer apply(
-				select location = stuff((select ',' + t.MtlLocationID 
-										 from (SELECT MtlLocationID from FtyInventory fty 
-											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-											   Where b.PoId = fty.poid and b.Seq1 = fty.seq1 and b.Seq2 = fty.seq2 
-											   		and b.Roll = fty.Roll and b.Dyelot = fty.Dyelot)t 
-									     for xml path('')),1,1,'') 
+				select  location = stuff((select ',' + x.location								
+								          from(select location = stuff((select ',' + t.MtlLocationID 
+															            from
+																            (SELECT MtlLocationID from FtyInventory fty 
+																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+																             Where RR_D.POID = fty.poid and RR_D.seq1 = fty.seq1 and RR_D.seq2 = fty.seq2 and RR_D.Roll = fty.Roll 
+																				and RR_D.Dyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
+															            for xml path('')),1,1,'') 
+									           from ReturnReceipt_Detail RR_D
+									           where b.id = RR_D.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
+								          )x			
+								          for xml path('')),1,1,'') 
 			) MtlLocation     
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
@@ -455,12 +513,18 @@ namespace Sci.Production.Warehouse
             		,AddDate
             from TransferOut a WITH (NOLOCK) , TransferOut_Detail b WITH (NOLOCK) 
             outer apply(
-				select location = stuff((select ',' + t.MtlLocationID 
-										 from (SELECT MtlLocationID from FtyInventory fty 
-											   join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-											   Where b.PoId = fty.poid and b.Seq1 = fty.seq1 and b.Seq2 = fty.seq2 
-											   		and b.Roll = fty.Roll and b.Dyelot = fty.Dyelot)t 
-									     for xml path('')),1,1,'') 
+				select  location = stuff((select ',' + x.location								
+								          from(select location = stuff((select ',' + t.MtlLocationID 
+															            from
+																            (SELECT MtlLocationID from FtyInventory fty 
+																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
+																             Where TfD_D.POID = fty.poid and TfD_D.seq1 = fty.seq1 and TfD_D.seq2 = fty.seq2 and TfD_D.Roll = fty.Roll 
+																				and TfD_D.Dyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
+															            for xml path('')),1,1,'') 
+									           from TransferOut_Detail TfD_D
+									           where b.id = TfD_D.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
+								          )x			
+								          for xml path('')),1,1,'') 
 			) MtlLocation   
             where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id "
                 , dr["id"].ToString()
