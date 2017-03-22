@@ -119,6 +119,24 @@ namespace Sci.Production.Quality
             #region radiobtn_PerLine
             if (radiobtn_PerLine.Checked)
             {
+
+                string sqlWhere="";
+                List<string> sqlList = new List<string>();
+                  #region Append畫面上的條件
+                if (!MyUtility.Check.Empty(Period1))
+                {
+                    sqlList.Add(string.Format(" CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(Period2))
+                {
+                    sqlList.Add(string.Format(" CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
+                }
+                sqlWhere = string.Join(" and ",sqlList);
+                if (!MyUtility.Check.Empty(sqlWhere))
+                {
+                    sqlWhere = " and " + sqlWhere;
+                }
+                #endregion
                 sqlCmd.Append(@"
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(CDate),N',' + QUOTENAME(CDate))
@@ -127,19 +145,18 @@ FROM
     SELECT DISTINCT(CDate) 
     FROM RFT WITH (NOLOCK) 
 ) t
-WHERE 1=1
-");
-                #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(Period1))
-                {
-                    sqlCmd.Append(string.Format(" and CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(Period2))
-                {
-                    sqlCmd.Append(string.Format(" and CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
-                }
-
-                #endregion
+WHERE 1=1" + sqlWhere+
+           @"
+order by CDate
+DECLARE @cols2 NVARCHAR(MAX)= N''
+SELECT @cols2 = @cols2  + iif( @cols2 = N'',N'isnull('+QUOTENAME(CDate)+ N',0) '+QUOTENAME(CDate),N',' +N'isnull('+ QUOTENAME(CDate)+ N',0) '+QUOTENAME(CDate))
+FROM 
+(
+    SELECT DISTINCT(CDate) 
+    FROM RFT WITH (NOLOCK) 
+) t
+WHERE 1=1" + sqlWhere);
+              
                 sqlCmd.Append(@"
 order by CDate
 
@@ -194,13 +211,17 @@ group by  A.FACTORYID,A.SEWINGLINEID,A.CDATE
 Order by [Factory], [Line],[CDate]
 
 select *
+into #tmpnn
 from #tmpall as S
 pivot(
   AVG(RFT)
   for [CDate] in ('+@cols+')
 ) as X
 
-drop table #tmpall'
+select  [Factory], [Line],'+@cols2+'
+from #tmpnn
+
+drop table #tmpall,#tmpnn'
 EXEC sp_executesql @sql
 ");
             }
@@ -209,6 +230,23 @@ EXEC sp_executesql @sql
             #region radiobtn_PerCell
             if (radiobtn_PerCell.Checked)
             {
+                string sqlWhere = "";
+                List<string> sqlList = new List<string>();
+                #region Append畫面上的條件
+                if (!MyUtility.Check.Empty(Period1))
+                {
+                    sqlList.Add(string.Format(" CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(Period2))
+                {
+                    sqlList.Add(string.Format(" CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
+                }
+                sqlWhere = string.Join(" and ", sqlList);
+                if (!MyUtility.Check.Empty(sqlWhere))
+                {
+                    sqlWhere = " and " + sqlWhere;
+                }
+                #endregion
                 sqlCmd.Append(@"
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(CDate),N',' + QUOTENAME(CDate))
@@ -217,18 +255,18 @@ FROM
     SELECT DISTINCT(CDate) 
     FROM RFT WITH (NOLOCK) 
 ) t
-WHERE 1=1
-");
-                #region Append畫面上的條件
-                if (!MyUtility.Check.Empty(Period1))
-                {
-                    sqlCmd.Append(string.Format(@" and CDate >= '{0}' ", Convert.ToDateTime(Period1).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(Period2))
-                {
-                    sqlCmd.Append(string.Format(@" and CDate <= '{0}' ", Convert.ToDateTime(Period2).ToString("d")));
-                }
-                #endregion
+WHERE 1=1" + sqlWhere +
+           @"
+order by CDate
+DECLARE @cols2 NVARCHAR(MAX)= N''
+SELECT @cols2 = @cols2  + iif( @cols2 = N'',N'isnull('+QUOTENAME(CDate)+ N',0) '+QUOTENAME(CDate),N',' +N'isnull('+ QUOTENAME(CDate)+ N',0) '+QUOTENAME(CDate))
+FROM 
+(
+    SELECT DISTINCT(CDate) 
+    FROM RFT WITH (NOLOCK) 
+) t
+WHERE 1=1" + sqlWhere);
+
                 sqlCmd.Append(@"
 order by CDate
 
@@ -288,13 +326,17 @@ group by  A.FACTORYID,SewingCell.SewingCell,A.CDATE
 Order by [Factory], [Cell],[CDate]
 
 select *
+into #tmpnn
 from #tmpall as S
 pivot(
   AVG(RFT)
   for [CDate] in ('+@cols+')
 ) as X
 
-drop table #tmpall'
+select Factory,Cell,'+@cols2+'
+from #tmpnn
+
+drop table #tmpall,#tmpnn'
 EXEC sp_executesql @sql
 ");
             }
@@ -839,11 +881,22 @@ drop table #tmpall
             #region radiobtn_AllData
             if (radiobtn_AllData.Checked)
             {
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_AllData.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_AllData.xltx", 1, true, null, objApp);// 將datatable copy to excel
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_AllData.xltx"); //預先開啟excel app
+                MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_AllData.xltx", 1, true, null, objApp);// 將datatable copy to excel
+                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
+                int count = printData.Rows.Count;
+                objSheets.Cells[count + 3, 11] = "Total RFT (%):";
+                objSheets.Cells[count + 3, 12] = string.Format(@"=ROUND((SUM(K2:K{0})-SUM(L2:L{0}))/SUM(K2:K{0})*100,2) &"" %""", count + 1);
+
+                objSheets.Cells[count + 3, 14] = "Total QC:";
+                objSheets.Cells[count + 3, 15] = string.Format(@"=SUM(O2:O{0})", count + 1);
+                //objSheets.get_Range(string.Format("L:L{0}", count + 3), Type.Missing).NumberFormat = "0.00%";
+                
+                objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
+                objApp.Cells.EntireRow.AutoFit();       ////自動欄高
+                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
             #endregion
 
