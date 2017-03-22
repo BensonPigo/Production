@@ -79,7 +79,6 @@ namespace Sci.Production.Warehouse
             string seq1 = txtSeq1.seq1;
             string seq2 = txtSeq1.seq2;
             String location1 = textBox3.Text.TrimEnd();
-            String location2 = textBox4.Text.TrimEnd();
             string factory = txtfactory1.Text;
             bool chkbalance = checkBox1.Checked;
 
@@ -176,7 +175,7 @@ from dbo.FtyInventory a WITH (NOLOCK)
 inner join Orders on orders.id = a.poid
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
-where 1=1 And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'", location1, location2));
+where 1=1 And b.mtllocationid = '{0}' ", location1));
                     if (!MyUtility.Check.Empty(spno)) 
                         sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
 
@@ -300,7 +299,7 @@ left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 inner join dbo.orders WITH (NOLOCK) on orders.ID = p.ID
 where 1=1
-And b.mtllocationid >= '{0}' and b.mtllocationid <= '{1}'", location1, location2));
+And b.mtllocationid = '{0}' ", location1));
 
                     if (!MyUtility.Check.Empty(dateRange1.Value1))
                         sqlcmd.Append(string.Format(" and '{0}' <= orders.scidelivery", Convert.ToDateTime(dateRange1.Value1).ToString("d")));

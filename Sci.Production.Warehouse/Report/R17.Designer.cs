@@ -35,8 +35,6 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
-            this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
@@ -135,25 +133,6 @@
             this.textBox3.Size = new System.Drawing.Size(106, 23);
             this.textBox3.TabIndex = 3;
             // 
-            // textBox4
-            // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(229, 76);
-            this.textBox4.MaxLength = 10;
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(106, 23);
-            this.textBox4.TabIndex = 4;
-            // 
-            // label5
-            // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(211, 76);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(15, 23);
-            this.label5.TabIndex = 103;
-            this.label5.Text = "~";
-            // 
             // label6
             // 
             this.label6.Lines = 0;
@@ -228,8 +207,6 @@
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.textBox4);
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label1);
@@ -249,8 +226,6 @@
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.textBox3, 0);
-            this.Controls.SetChildIndex(this.textBox4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.checkBox1, 0);
             this.Controls.SetChildIndex(this.comboBox1, 0);
@@ -271,8 +246,6 @@
         private Win.UI.Label label1;
         private Win.UI.Label label4;
         private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox4;
-        private Win.UI.Label label5;
         private Win.UI.Label label6;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.ComboBox comboBox1;
