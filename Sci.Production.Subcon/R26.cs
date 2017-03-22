@@ -162,28 +162,29 @@ namespace Sci.Production.Subcon
             if (this.Report_Type == "PO List")
             {
                 #region Po List
-                string sqlcd = string.Format(@"select DISTINCT c.FactoryID
-	                                                 ,a.FactoryId
-	                                                 ,b.OrderId
-	                                                 ,c.StyleID
-	                                                 ,c.SeasonID
-	                                                 ,a.LocalSuppID+'-'+d.Abb [Supp]
-	                                                 ,b.Delivery
-	                                                 ,b.Refno
-	                                                 ,b.ThreadColorID
-	                                                 ,a.IssueDate
-	                                                 ,dbo.getItemDesc(a.Category,b.Refno) [Description]
-	                                                 ,b.qty
-	                                                 ,b.UnitId
-	                                                 ,b.Price
-	                                                 ,b.Qty*b.Price[Amount]
-	                                                 ,b.InQty
-	                                                 ,b.APQty
-	                                                 ,b.Remark
-                                            from localpo a WITH (NOLOCK) 
-                                            inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
-                                            inner join orders c WITH (NOLOCK) on c.poid=b.OrderId
-                                            left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID " + sqlWhere);
+                string sqlcd = string.Format(@"
+select DISTINCT c.FactoryID
+	        ,a.FactoryId
+	        ,b.OrderId
+	        ,c.StyleID
+	        ,c.SeasonID
+	        ,[Supp] = a.LocalSuppID+'-'+d.Abb 
+	        ,b.Delivery
+	        ,b.Refno
+	        ,b.ThreadColorID
+	        ,a.IssueDate
+	        ,[Description] = dbo.getItemDesc(a.Category,b.Refno) 
+	        ,b.qty
+	        ,b.UnitId
+	        ,b.Price
+	        ,[Amount] = b.Qty*b.Price
+	        ,b.InQty
+	        ,b.APQty
+	        ,b.Remark
+from localpo a WITH (NOLOCK) 
+inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
+inner join orders c WITH (NOLOCK) on c.ID = b.POID
+left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID " + sqlWhere);
                 result = DBProxy.Current.Select("", sqlcd, lis, out dtt);
                 if (!result)
                 { return result; }
@@ -192,29 +193,53 @@ namespace Sci.Production.Subcon
             else if (this.Report_Type == "PO Order")
             {
                 #region Po Order
-                string cmd = string.Format(@"select  a.id [LocalPOID]
-                                                    ,a.FactoryId [Factory]
-		                                            ,a.FactoryId+'-'+a.Id [TheOrderID]
-                                                    ,b.OrderId [SP]
-                                                    ,a.LocalSuppID [Supp]
-                                                    ,b.Delivery [Delivery]
-                                                    ,b.Refno [Code]
-                                                    ,b.ThreadColorID [Color_Shade]
-                                                    ,a.IssueDate [Issue_Date]
-                                                    ,[Description]=dbo.getItemDesc(a.Category,b.Refno)
-                                                    ,sum(b.Qty) [Order_Qty]
-                                                    ,b.UnitId [Unit]
-                                                    ,sum(b.price) [Price]
-                                                    ,sum(b.qty * b.price) [Amount]
-                                                    ,sum(b.InQty) [In-Coming]
-                                                    ,sum(b.APQty) [AP_Qty]
-                                       from localpo a WITH (NOLOCK) 
-                                       inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
-                                       inner join orders c WITH (NOLOCK) on c.poid=b.OrderId
-                                       left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID
-                                       " + sqlWhere + @"
-		                               group by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID, a.IssueDate, a.Category, b.Refno, b.UnitId
-		                               order by a.id, a.FactoryId");
+                string cmd = string.Format(@"
+select  [LocalPOID] = a.id 
+        ,[Factory] = a.FactoryId 
+		,[TheOrderID] = a.FactoryId+'-'+a.Id 
+        ,[SP] = b.OrderId 
+        ,[Supp] = a.LocalSuppID 
+        ,[Delivery] = b.Delivery 
+        ,[Code] = b.Refno 
+        ,[Color_Shade] = b.ThreadColorID 
+        ,[Issue_Date] = a.IssueDate 
+        ,[Description] = dbo.getItemDesc(a.Category,b.Refno)
+        ,[Order_Qty] = sum(b.Qty) 
+        ,[Unit] = b.UnitId 
+        ,[Price] = sum(b.price) 
+        ,[Amount] = sum(b.qty * b.price) 
+        ,[In-Coming] = sum(b.InQty) 
+        ,[AP_Qty] = sum(b.APQty) 
+into #tmp
+from localpo a WITH (NOLOCK) 
+inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
+inner join orders c WITH (NOLOCK) on c.id=b.poid
+left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID
+" + sqlWhere + @"
+group by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID, a.IssueDate, a.Category, b.UnitId 
+order by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID, a.IssueDate, a.Category, b.UnitId;
+
+select  tmp.LocalPOID
+        , tmp.Factory
+		, tmp.TheOrderID
+        , SP = IIF(Lag(tmp.SP, 1, 0) over (order by tmp.SP) = tmp.SP, ''
+                                                                    , tmp.SP) 
+        , tmp.Supp
+        , tmp.Delivery
+        , tmp.Code
+        , tmp.Color_Shade
+        , tmp.Issue_Date
+        , tmp.Description
+        , tmp.Order_Qty
+        , tmp.Unit
+        , tmp.Price
+        , tmp.Amount
+        , tmp.[In-Coming]
+        , tmp.AP_Qty
+from #tmp tmp;
+
+drop table #tmp;
+");
                 
                 
                 result = DBProxy.Current.Select("", cmd, lis, out da);
@@ -227,39 +252,40 @@ namespace Sci.Production.Subcon
             else //if (this.comboBox1.Text == "PO Form")
             {
                 #region PO Form
-                result = DBProxy.Current.Select("", @"select distinct e.NameEN [Title1] 
-                                                       ,e.AddressEN [Title2]
-                                                       ,e.Tel [Title3]
-                                                       ,a.LocalSuppID+'-'+d.Abb [To#]
-                                                       ,d.Tel [Tel]
-                                                       ,d.Fax [Fax]
-                                                       ,format(a.IssueDate,'yyyy/MM/dd') [Issue_Date]
-                                                       ,b.OrderId [PO]
-                                                       ,b.Refno [Code]
-                                                       ,b.ThreadColorID [Color_Shade]
-                                                       ,[Description]=dbo.getItemDesc(a.Category,b.Refno)
-                                                       ,b.Qty [Quantity]
-                                                       ,b.UnitId [Unit]
-                                                       ,cast(cast(isnull(b.Price , 0 ) as float) as varchar)[Unit_Price]
-													   ,cast(isnull(b.Qty*b.Price , 0 ) as float)[Amount]
-                                                       ,[Total_Quantity]=sum(b.Qty) OVER (PARTITION BY b.orderid,b.Refno) 
-                                                       ,a.Remark [Remark] 
-                                                       ,a.CurrencyId [Total1] 
-                                                       ,a.Amount [Total2]
-                                                       ,a.CurrencyId [currencyid]
-                                                       ,a.VatRate [VatRate]
-                                                       ,a.Amount+a.Vat [Grand_Total]
-                                                       ,format(b.Delivery,'yyyy/MM/dd')[Delivery] 
-													   ,a.id [id]
-													   ,a.FactoryId [ftyid] 
-													   ,a.LocalSuppID [lospid] 
-													   ,a.Category[Category]   
-                                                        into #temp  
-	                                         from dbo.localpo a WITH (NOLOCK) 
-											 inner join LocalPO_Detail b WITH (NOLOCK) on b.id=a.Id
-                                             inner join orders c WITH (NOLOCK) on c.poid=b.OrderId
-											 left join LocalSupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
-                                             left join Factory  e WITH (NOLOCK) on e.id = a.factoryid" + sqlWhere + " " + all, lis, out dt);
+                result = DBProxy.Current.Select("", @"
+select distinct e.NameEN [Title1] 
+        ,e.AddressEN [Title2]
+        ,e.Tel [Title3]
+        ,a.LocalSuppID+'-'+d.Abb [To#]
+        ,d.Tel [Tel]
+        ,d.Fax [Fax]
+        ,format(a.IssueDate,'yyyy/MM/dd') [Issue_Date]
+        ,b.OrderId [PO]
+        ,b.Refno [Code]
+        ,b.ThreadColorID [Color_Shade]
+        ,[Description]=dbo.getItemDesc(a.Category,b.Refno)
+        ,b.Qty [Quantity]
+        ,b.UnitId [Unit]
+        ,cast(cast(isnull(b.Price , 0 ) as float) as varchar)[Unit_Price]
+		,cast(isnull(b.Qty*b.Price , 0 ) as float)[Amount]
+        ,[Total_Quantity]=sum(b.Qty) OVER (PARTITION BY b.orderid,b.Refno) 
+        ,a.Remark [Remark] 
+        ,a.CurrencyId [Total1] 
+        ,a.Amount [Total2]
+        ,a.CurrencyId [currencyid]
+        ,a.VatRate [VatRate]
+        ,a.Amount+a.Vat [Grand_Total]
+        ,format(b.Delivery,'yyyy/MM/dd')[Delivery] 
+		,a.id [id]
+		,a.FactoryId [ftyid] 
+		,a.LocalSuppID [lospid] 
+		,a.Category[Category]   
+        into #temp  
+from dbo.localpo a WITH (NOLOCK) 
+inner join LocalPO_Detail b WITH (NOLOCK) on b.id=a.Id
+inner join orders c WITH (NOLOCK) on c.id=b.poid
+left join LocalSupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
+left join Factory  e WITH (NOLOCK) on e.id = a.factoryid" + sqlWhere + " " + all, lis, out dt);
 
 
                 if (!result )
@@ -318,7 +344,7 @@ namespace Sci.Production.Subcon
                                              from orders c WITH (NOLOCK) 
                                              inner join (select distinct OrderId from localpo a WITH (NOLOCK) 
                                              inner join localpo_detail b WITH (NOLOCK) on a.id = b.id
-                                             inner join Orders c WITH (NOLOCK) on c.poid = b.orderid  " + sqlWhere + @") m  on m.OrderId = c.poid 
+                                             inner join Orders c WITH (NOLOCK) on c.id=b.poid  " + sqlWhere + @") m  on m.OrderId = c.poid 
                                              inner join country co WITH (NOLOCK) on co.id = c.dest"
                                              );
                 result = DBProxy.Current.Select("", scmd, lis, out shm);
@@ -395,11 +421,16 @@ namespace Sci.Production.Subcon
                     finalda.Columns.RemoveAt(1);
                     finalda.Columns.RemoveAt(0);
 
+                    x1.ExcelApp.Cells[3, 1] = "##SP";
+                    x1.ExcelApp.Cells[4, 1] = "";
+
                     x1.dicDatas.Add("##LocalPOID" + idxstr, TheOrderID.Substring(4));
                     x1.dicDatas.Add("##Factory" + idxstr, Factory1);
                     x1.dicDatas.Add("##theorderid" + idxstr, TheOrderID);
                     x1.dicDatas.Add("##date" + idxstr, date);
                     x1.dicDatas.Add("##SP" + idxstr, finalda);
+
+                    
                     idx += 1;
                 }
                 x1.Save();
