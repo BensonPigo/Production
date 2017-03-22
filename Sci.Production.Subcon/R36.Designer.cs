@@ -29,15 +29,11 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.comboBox4 = new Sci.Win.UI.ComboBox();
             this.dateRange5 = new Sci.Win.UI.DateRange();
             this.dateRange4 = new Sci.Win.UI.DateRange();
             this.comboBox3 = new Sci.Win.UI.ComboBox();
             this.comboBox2 = new Sci.Win.UI.ComboBox();
-            this.txtuser2 = new Sci.Production.Class.txtuser();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.txtLocalSupp1 = new Sci.Production.Class.txtLocalSupp();
             this.textBox2 = new Sci.Win.UI.TextBox();
             this.label15 = new Sci.Win.UI.Label();
             this.textBox1 = new Sci.Win.UI.TextBox();
@@ -59,6 +55,10 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.comboBox5 = new Sci.Win.UI.ComboBox();
+            this.txtuser2 = new Sci.Production.Class.txtuser();
+            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.txtLocalSupp1 = new Sci.Production.Class.txtLocalSupp();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -76,7 +76,7 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.txtfactory1);
+            this.panel1.Controls.Add(this.comboBox5);
             this.panel1.Controls.Add(this.comboBox4);
             this.panel1.Controls.Add(this.dateRange5);
             this.panel1.Controls.Add(this.dateRange4);
@@ -108,15 +108,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(448, 368);
             this.panel1.TabIndex = 0;
-            // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(135, 196);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(120, 23);
-            this.txtfactory1.TabIndex = 8;
             // 
             // comboBox4
             // 
@@ -183,33 +174,6 @@
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(121, 24);
             this.comboBox2.TabIndex = 9;
-            // 
-            // txtuser2
-            // 
-            this.txtuser2.DisplayBox1Binding = "";
-            this.txtuser2.Location = new System.Drawing.Point(134, 169);
-            this.txtuser2.Name = "txtuser2";
-            this.txtuser2.Size = new System.Drawing.Size(300, 23);
-            this.txtuser2.TabIndex = 7;
-            this.txtuser2.TextBox1Binding = "";
-            // 
-            // txtuser1
-            // 
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(134, 142);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 6;
-            this.txtuser1.TextBox1Binding = "";
-            // 
-            // txtLocalSupp1
-            // 
-            this.txtLocalSupp1.DisplayBox1Binding = "";
-            this.txtLocalSupp1.Location = new System.Drawing.Point(134, 115);
-            this.txtLocalSupp1.Name = "txtLocalSupp1";
-            this.txtLocalSupp1.Size = new System.Drawing.Size(300, 23);
-            this.txtLocalSupp1.TabIndex = 5;
-            this.txtLocalSupp1.TextBox1Binding = "";
             // 
             // textBox2
             // 
@@ -406,6 +370,44 @@
             this.comboBox1.Size = new System.Drawing.Size(143, 24);
             this.comboBox1.TabIndex = 1;
             // 
+            // comboBox5
+            // 
+            this.comboBox5.BackColor = System.Drawing.Color.White;
+            this.comboBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox5.FormattingEnabled = true;
+            this.comboBox5.IsSupportUnselect = true;
+            this.comboBox5.Location = new System.Drawing.Point(134, 195);
+            this.comboBox5.Name = "comboBox5";
+            this.comboBox5.Size = new System.Drawing.Size(121, 24);
+            this.comboBox5.TabIndex = 20;
+            // 
+            // txtuser2
+            // 
+            this.txtuser2.DisplayBox1Binding = "";
+            this.txtuser2.Location = new System.Drawing.Point(134, 169);
+            this.txtuser2.Name = "txtuser2";
+            this.txtuser2.Size = new System.Drawing.Size(300, 23);
+            this.txtuser2.TabIndex = 7;
+            this.txtuser2.TextBox1Binding = "";
+            // 
+            // txtuser1
+            // 
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(134, 142);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(300, 23);
+            this.txtuser1.TabIndex = 6;
+            this.txtuser1.TextBox1Binding = "";
+            // 
+            // txtLocalSupp1
+            // 
+            this.txtLocalSupp1.DisplayBox1Binding = "";
+            this.txtLocalSupp1.Location = new System.Drawing.Point(134, 115);
+            this.txtLocalSupp1.Name = "txtLocalSupp1";
+            this.txtLocalSupp1.Size = new System.Drawing.Size(300, 23);
+            this.txtLocalSupp1.TabIndex = 5;
+            this.txtLocalSupp1.TextBox1Binding = "";
+            // 
             // R36
             // 
             this.ClientSize = new System.Drawing.Size(627, 405);
@@ -461,6 +463,6 @@
         private Win.UI.DateRange dateRange4;
         private Win.UI.ComboBox comboBox3;
         private Win.UI.ComboBox comboBox2;
-        private Class.txtfactory txtfactory1;
+        private Win.UI.ComboBox comboBox5;
     }
 }

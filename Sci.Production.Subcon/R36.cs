@@ -36,6 +36,10 @@ namespace Sci.Production.Subcon
             : base(menuitem)
         {
             InitializeComponent();
+            DataTable factory;
+            DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory WITH (NOLOCK) ", out factory);
+            MyUtility.Tool.SetupCombox(comboBox5, 1, factory);
+            comboBox5.Text = Sci.Env.User.Factory;
             this.comboBox1.SelectedIndex = 0;
             this.comboBox2.SelectedIndex = 0;
             this.comboBox3.SelectedIndex = 0;
@@ -45,9 +49,9 @@ namespace Sci.Production.Subcon
         protected override bool ValidateInput()
         {
             bool dateRange1_Empty = !this.dateRange_Debit.HasValue, dateRange2_Empty = !this.dateRange_Approve.HasValue, dateRange3_Empty = !this.dateRange3.HasValue, textbox1_Empty = this.textBox1.Text.Empty(), textbox2_Empty = this.textBox2.Text.Empty(), txtLocalSupp1_Empty =this.txtLocalSupp1.TextBox1.Text.Empty()
-                , txtuser1_Empty = this.txtuser1.TextBox1.Text.Empty(), txtuser2_Empty =this.txtuser2.TextBox1.Text.Empty(), txtfactory1_Empty = this.txtfactory1.Text.Empty(), comboBox2_Empty = this.comboBox2.Text.Empty(), comboBox3_Empty =this.comboBox3.Text.Empty(), dateRange4_Empty =!this.dateRange4.HasValue, dateRange5_Empty = !this.dateRange5.HasValue;
+                , txtuser1_Empty = this.txtuser1.TextBox1.Text.Empty(), txtuser2_Empty = this.txtuser2.TextBox1.Text.Empty(), comboBox5_Empty = this.comboBox5.Text.Empty(), comboBox2_Empty = this.comboBox2.Text.Empty(), comboBox3_Empty = this.comboBox3.Text.Empty(), dateRange4_Empty = !this.dateRange4.HasValue, dateRange5_Empty = !this.dateRange5.HasValue;
 
-            if (dateRange1_Empty && dateRange2_Empty && dateRange3_Empty && textbox1_Empty && textbox2_Empty && txtLocalSupp1_Empty && txtuser1_Empty && txtuser2_Empty && txtfactory1_Empty && comboBox2_Empty && comboBox3_Empty
+            if (dateRange1_Empty && dateRange2_Empty && dateRange3_Empty && textbox1_Empty && textbox2_Empty && txtLocalSupp1_Empty && txtuser1_Empty && txtuser2_Empty && comboBox5_Empty && comboBox2_Empty && comboBox3_Empty
                && dateRange4_Empty && dateRange5_Empty)
             {
                 MyUtility.Msg.ErrorBox("Please select at least one field entry");
@@ -67,7 +71,7 @@ namespace Sci.Production.Subcon
             handle = txtuser1.TextBox1.Text;
             smr = txtuser2.TextBox1.Text;
             status = comboBox2.SelectedItem.ToString();
-            factoryid = txtfactory1.Text;
+            factoryid = comboBox5.Text.ToString();
             amtrevisedate1 = dateRange4.Value1;
             amtrevisedate2 = dateRange4.Value2;
             ReceiveDate1 = dateRange5.Value1;
@@ -117,7 +121,7 @@ namespace Sci.Production.Subcon
             {
                 sqlWheres.Add("a.smr = @smr");
                 lis.Add(new SqlParameter("@smr", smr));
-            } if (!this.txtfactory1.Text.Empty())
+            } if (!this.factoryid.Empty())
             {
                 sqlWheres.Add("a.factoryid = @factoryid");
                 lis.Add(new SqlParameter("@factoryid", factoryid));
