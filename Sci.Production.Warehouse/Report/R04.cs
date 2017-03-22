@@ -98,7 +98,7 @@ select  operation = case a.type
                                                                    , a.InventoryPOID)) 
         ,ETA = (select eta 
                 from Inventory WITH (NOLOCK) 
-                where ukey = a.InventoryUkey) 
+                where Inventory.Ukey = a.InventoryUkey and Inventory.POID=d.ID and Inventory.Seq1=d.SEQ1 and Inventory.Seq2=d.SEQ2 and Inventory.MDivisionID=Factory.MDivisionID and (Inventory.FactoryID=orders.FactoryID or Inventory.FactoryID=a.TransferFactory ) and Inventory.UnitID=d.POUnit and Inventory.ProjectID=orders.ProjectID and Inventory.InventoryRefnoID=a.InventoryRefnoId) 
         ,cuttingInline = (select min(cutting.CutInLine) 
                           from Cutting WITH (NOLOCK) 
                           where id = a.InventoryPOID) 
@@ -134,7 +134,7 @@ select  operation = case a.type
         ,Qty = a.Qty* v.RateValue 
         ,a.UnitID
         ,reason = a.ReasonID +'-'+(select ReasonEN from InvtransReason WITH (NOLOCK) where id = a.ReasonID) 
-        ,handle = dbo.getTPEPass1((select PoHandle from Inventory WITH (NOLOCK) where Ukey = a.InventoryUkey)) 
+        ,handle = dbo.getTPEPass1((select PoHandle from Inventory WITH (NOLOCK) where Inventory.Ukey = a.InventoryUkey and Inventory.POID=d.ID and Inventory.Seq1=d.SEQ1 and Inventory.Seq2=d.SEQ2 and Inventory.MDivisionID=Factory.MDivisionID and (Inventory.FactoryID=orders.FactoryID or Inventory.FactoryID=a.TransferFactory ) and Inventory.UnitID=d.POUnit and Inventory.ProjectID=orders.ProjectID and Inventory.InventoryRefnoID=a.InventoryRefnoId)) 
 from dbo.invtrans a WITH (NOLOCK) 
 inner join InventoryRefno b WITH (NOLOCK) on b.id = a.InventoryRefnoId
 inner join PO_Supp_Detail d WITH (NOLOCK) on d.ID = a.InventoryPOID and d.SEQ1 = a.InventorySeq1 and d.seq2 =  a.InventorySeq2
