@@ -157,7 +157,6 @@ with cte as (
                 ,o.BrandID
                 ,o.Category
                 ,o.SciDelivery 
-                ,factory.MDivisionID
         from dbo.orders o WITH (NOLOCK) 
         inner join factory on o.FactoryID = factory.id
         where o.id = pd.id
@@ -188,7 +187,7 @@ with cte as (
         on q.POID = pd.ID and q.seq1 = pd.seq1 and q.seq2 = pd.SEQ2");
             }
 
-            sqlcmd.Append(string.Format(@" where 1=1 and x.MDivisionID='{0}'", Env.User.Keyword));
+            sqlcmd.Append(string.Format(@" where 1=1 "));
 
             if (!MyUtility.Check.Empty(spno)) sqlcmd.Append(string.Format(@" and pd.id='{0}'", spno));
             if (!MyUtility.Check.Empty(refno)) sqlcmd.Append(string.Format(@" and pd.Refno ='{0}'", refno));

@@ -92,8 +92,7 @@ and a.Status = 'Confirmed'");
                     break;
             }
 
-            sqlcmd.Append(string.Format(@" and a.mdivisionid = '{0}'
-Group by a.id, frompoid, FromSeq1,FromSeq2 
+            sqlcmd.Append(string.Format(@" Group by a.id, frompoid, FromSeq1,FromSeq2 
 ,FromStockType
 , a.IssueDate, estbackdate, backdate
 )
@@ -101,15 +100,15 @@ select cte.id,cte.FromPOID,cte.FromSeq1,cte.FromSeq2
 ,case cte.FromStockType when 'B' then 'Bulk' when 'I' then 'Inventory' else  cte.FromStockType end as stocktype
 , cte.qty 
 ,isnull((select sum(qty) from BorrowBack x WITH (NOLOCK) inner join BorrowBack_Detail y WITH (NOLOCK) on y.id = x.id 
-where x.mdivisionid = '{0}' and x.Status = 'Confirmed' and x.type='B' and y.ToPOID = cte.FromPOID and y.ToSeq1 = cte.FromSeq1
+where x.Status = 'Confirmed' and x.type='B' and y.ToPOID = cte.FromPOID and y.ToSeq1 = cte.FromSeq1
 and y.ToSeq2 = cte.FromSeq2 and y.ToStockType = cte.FromStockType),0.00) as backQty
 , cte.qty - isnull((select sum(qty) from BorrowBack x WITH (NOLOCK) inner join BorrowBack_Detail y WITH (NOLOCK) on y.id = x.id 
-where x.mdivisionid = '{0}' and x.Status = 'Confirmed' and x.type='B' and y.ToPOID = cte.FromPOID and y.ToSeq1 = cte.FromSeq1
+where x.Status = 'Confirmed' and x.type='B' and y.ToPOID = cte.FromPOID and y.ToSeq1 = cte.FromSeq1
 and y.ToSeq2 = cte.FromSeq2 and y.ToStockType = cte.FromStockType),0.00) as balance
 ,cte.IssueDate
 ,cte.EstBackDate
 ,cte.BackDate
-from cte", Env.User.Keyword));
+from cte"));
 
             #endregion
 
