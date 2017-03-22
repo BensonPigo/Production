@@ -109,12 +109,13 @@ group by FactoryID, CDate, OrderID, SewingLineID, Shift, a.GarmentOutput,Result
 ,src as 
 (
 select cte.FactoryID,o.BrandID
-	, cast (count(*) as numeric(15,4)) inspTimes
-	, cast (sum(iif(Result = 'Pass',1,0)) as numeric(15,4)) passTimes
-	, cast (ROUND(sum(iif(Result = 'Pass',1.0,0.0))/count(*), 4) * 100 as numeric(15,4)) [pass_rate]
+	, cast (count(*) as numeric(15,4)) [1inspTimes]
+	, cast (sum(iif(Result = 'P',1,0)) as numeric(15,4)) [2passTimes]
+	, cast (ROUND(sum(iif(Result = 'P',1.0,0.0))/count(*), 4) as numeric(15,4)) [3pass_rate]
 from cte inner join dbo.orders o WITH (NOLOCK) on o.id = cte.OrderID
 group by cte.FactoryID,o.BrandID
 )
+
 
 , _unpivot as
 (
@@ -122,7 +123,7 @@ group by cte.FactoryID,o.BrandID
 	SRC
 	unpivot (
 	total
-	for vv  in ( [inspTimes] ,[passTimes], [pass_rate])
+	for vv  in ( [1inspTimes] ,[2passTimes], [3pass_rate])
 	)as pvt 
 )
 
@@ -155,7 +156,7 @@ FROM
     SELECT DISTINCT DynamicColumnName
     FROM #tmpall 
 ) t
-SELECT @cols3 = concat(@cols3 , ',' , QUOTENAME(DynamicColumnName) , '= Avg(' , QUOTENAME(DynamicColumnName),')')
+SELECT @cols3 = concat(@cols3 , ',' , QUOTENAME(DynamicColumnName) , iif(DynamicColumnName like '%_rate',concat('= avg(' , QUOTENAME(DynamicColumnName),')') ,concat('= sum(' , QUOTENAME(DynamicColumnName),')')))
 FROM 
 (
     SELECT DISTINCT DynamicColumnName
@@ -184,12 +185,13 @@ group by FactoryID, CDate, OrderID, SewingLineID, Shift, a.GarmentOutput,Result
 
 ,src as 
 (select cte.FactoryID,o.BrandID
-	, cast (count(*) as numeric(15,4)) inspTimes
-	, cast (sum(iif(Result = ''Pass'',1,0)) as numeric(15,4)) passTimes
-	, cast (ROUND(sum(iif(Result = ''Pass'',1.0,0.0))/count(*), 4) * 100 as numeric(15,4)) [pass_rate]
+	, cast (count(*) as numeric(15,4)) [1inspTimes]
+	, cast (sum(iif(Result = ''P'',1,0)) as numeric(15,4)) [2passTimes]
+	, cast (ROUND(sum(iif(Result = ''P'',1.0,0.0))/count(*), 4) as numeric(15,4)) [3pass_rate]
 from cte inner join dbo.orders o WITH (NOLOCK) on o.id = cte.OrderID
 group by cte.FactoryID,o.BrandID
 )
+
 
 , _unpivot as
 (
@@ -197,7 +199,7 @@ group by cte.FactoryID,o.BrandID
 	SRC
 	unpivot (
 	total
-	for vv  in ( [inspTimes] ,[passTimes], [pass_rate])
+	for vv  in ( [1inspTimes] ,[2passTimes], [3pass_rate])
 	)as pvt 
 )
 
@@ -217,15 +219,15 @@ from query
 
 ;with A as(
 	select
-		 [FactoryID] = FactoryID
-		,[sum_inspTimes] = sum([inspTimes])
-		,[sum_passTimes] = sum([passTimes])
-		,[sum_pass_rate] = sum([pass_rate])
+		  [FactoryID] = FactoryID
+		,[sum_inspTimes] = sum([1inspTimes])
+		,[sum_passTimes] = sum([2passTimes])
+		,[sum_pass_rate] = round(sum([2passTimes])/sum([1inspTimes]),4)
 	from #All
 	pivot
 	(
 		max(total)
-			for [vv] in ([inspTimes],[passTimes],[pass_rate])
+			for [vv] in ([1inspTimes],[2passTimes],[3pass_rate])
 	) a
 	group by FactoryID
 )
@@ -256,8 +258,8 @@ union all
 (
 select 
 	[FactoryID] = ''Total'' 
-	,avg([sum_inspTimes])
-	,avg([sum_passTimes])
+	,sum([sum_inspTimes])
+	,sum([sum_passTimes])
 	,avg([sum_pass_rate])
 	'+@cols3+'
 from #C
@@ -317,9 +319,9 @@ group by FactoryID, CDate, OrderID, SewingLineID, Shift, a.GarmentOutput,Result
 ,src as 
 (
 select cte.CDate, cte.FactoryID
-	, cast (count(*) as numeric(15,4)) inspTimes
-	, cast (sum(iif(Result = 'Pass',1,0)) as numeric(15,4)) passTimes
-	, cast (ROUND(sum(iif(Result = 'Pass',1.0,0.0))/count(*), 4) * 100 as numeric(15,4)) [pass_rate]
+	, cast (count(*) as numeric(15,4)) [1inspTimes]
+	, cast (sum(iif(Result = 'P',1,0)) as numeric(15,4)) [2passTimes]
+	, cast (ROUND(sum(iif(Result = 'P',1.0,0.0))/count(*), 4) as numeric(15,4)) [3pass_rate]
 from cte inner join dbo.orders o WITH (NOLOCK) on o.id = cte.OrderID
 group by cte.CDate, cte.FactoryID
 )
@@ -330,7 +332,7 @@ group by cte.CDate, cte.FactoryID
 	SRC
 	unpivot (
 	total
-	for vv  in ( [inspTimes] ,[passTimes], [pass_rate])
+	for vv  in ( [1inspTimes] ,[2passTimes], [3pass_rate])
 	)as pvt 
 )
 
@@ -365,7 +367,7 @@ FROM
     FROM #tmpall 
 ) t
 --print @cols2
-SELECT @cols3 = concat(@cols3 , ',' , QUOTENAME(DynamicColumnName) , '= Avg(' , QUOTENAME(DynamicColumnName),')')
+SELECT @cols3 = concat(@cols3 , ',' , QUOTENAME(DynamicColumnName) , iif(DynamicColumnName like '%_rate',concat('= avg(' , QUOTENAME(DynamicColumnName),')') ,concat('= sum(' , QUOTENAME(DynamicColumnName),')')))
 FROM 
 (
     SELECT DISTINCT DynamicColumnName
@@ -399,12 +401,11 @@ group by FactoryID, CDate, OrderID, SewingLineID, Shift, a.GarmentOutput,Result
 )
 
 ,src as 
-(
-select cte.CDate, cte.FactoryID
-	, cast (count(*) as numeric(15,4)) inspTimes
-	, cast (sum(iif(Result = ''Pass'',1,0)) as numeric(15,4)) passTimes
-	, cast (ROUND(sum(iif(Result = ''Pass'',1.0,0.0))/count(*), 4) * 100 as numeric(15,4)) [pass_rate]
-from cte inner join dbo.orders o on o.id = cte.OrderID
+(select cte.CDate, cte.FactoryID
+	, cast (count(*) as numeric(15,4)) [1inspTimes]
+	, cast (sum(iif(Result = ''P'',1,0)) as numeric(15,4)) [2passTimes]
+	, cast (ROUND(sum(iif(Result = ''P'',1.0,0.0))/count(*), 4) as numeric(15,4)) [3pass_rate]
+from cte inner join dbo.orders o WITH (NOLOCK) on o.id = cte.OrderID
 group by cte.CDate, cte.FactoryID
 )
 
@@ -414,7 +415,7 @@ group by cte.CDate, cte.FactoryID
 	SRC
 	unpivot (
 	total
-	for vv  in ( [inspTimes] ,[passTimes], [pass_rate])
+	for vv  in ( [1inspTimes] ,[2passTimes], [3pass_rate])
 	)as pvt 
 )
 
@@ -435,14 +436,14 @@ from query
 ;with A as(
 	select
 		[DateA] = CDate
-		,[sum_inspTimes] = sum([inspTimes])
-		,[sum_passTimes] = sum([passTimes])
-		,[sum_pass_rate] = sum([pass_rate])
+		,[sum_inspTimes] = sum([1inspTimes])
+		,[sum_passTimes] = sum([2passTimes])
+		,[sum_pass_rate] = round(sum([2passTimes])/sum([1inspTimes]),4)
 	from #All
 	pivot
 	(
 		max(total)
-			for [vv] in ([inspTimes],[passTimes],[pass_rate])
+			for [vv] in ([1inspTimes],[2passTimes],[3pass_rate])
 	) a
 	group by CDate
 )
@@ -475,8 +476,8 @@ union all
 select 
 	null
 	'+@cols3+'
-	,avg([sum_inspTimes])
-	,avg([sum_passTimes])
+	,sum([sum_inspTimes])
+	,sum([sum_passTimes])
 	,avg([sum_pass_rate])
 from #C
 )
@@ -532,11 +533,10 @@ group by FactoryID, CDate, OrderID, SewingLineID, Shift, a.GarmentOutput,Result
 )
 
 ,src as 
-(
-select cte.CDate,o.BrandID
-	, cast (count(*) as numeric(15,4)) inspTimes
-	, cast (sum(iif(Result = 'Pass',1,0)) as numeric(15,4)) passTimes
-	, cast (ROUND(sum(iif(Result = 'Pass',1.0,0.0))/count(*), 4) * 100 as numeric(15,4)) [pass_rate]
+(select cte.CDate,o.BrandID
+	, cast (count(*) as numeric(15,4)) [1inspTimes]
+	, cast (sum(iif(Result = 'P',1,0)) as numeric(15,4)) [2passTimes]
+	, cast (ROUND(sum(iif(Result = 'P',1.0,0.0))/count(*), 4) as numeric(15,4)) [3pass_rate]
 from cte inner join dbo.orders o WITH (NOLOCK) on o.id = cte.OrderID
 group by cte.CDate,o.BrandID
 )
@@ -547,7 +547,7 @@ group by cte.CDate,o.BrandID
 	SRC
 	unpivot (
 	total
-	for vv  in ( [inspTimes] ,[passTimes], [pass_rate])
+	for vv  in ( [1inspTimes] ,[2passTimes], [3pass_rate])
 	)as pvt 
 )
 
@@ -582,7 +582,7 @@ FROM
     FROM #tmpall 
 ) t
 --print @cols2
-SELECT @cols3 = concat(@cols3 , ',' , QUOTENAME(DynamicColumnName) , '= Avg(' , QUOTENAME(DynamicColumnName),')')
+SELECT @cols3 = concat(@cols3 , ',' , QUOTENAME(DynamicColumnName) , iif(DynamicColumnName like '%_rate',concat('= avg(' , QUOTENAME(DynamicColumnName),')') ,concat('= sum(' , QUOTENAME(DynamicColumnName),')')))
 FROM 
 (
     SELECT DISTINCT DynamicColumnName
@@ -616,11 +616,10 @@ group by FactoryID, CDate, OrderID, SewingLineID, Shift, a.GarmentOutput,Result
 )
 
 ,src as 
-(
-select cte.CDate,o.BrandID
-	, cast (count(*) as numeric(15,4)) inspTimes
-	, cast (sum(iif(Result = ''Pass'',1,0)) as numeric(15,4)) passTimes
-	, cast (ROUND(sum(iif(Result = ''Pass'',1.0,0.0))/count(*), 4) * 100 as numeric(15,4)) [pass_rate]
+(select cte.CDate,o.BrandID
+	, cast (count(*) as numeric(15,4)) [1inspTimes]
+	, cast (sum(iif(Result = ''P'',1,0)) as numeric(15,4)) [2passTimes]
+	, cast (ROUND(sum(iif(Result = ''P'',1.0,0.0))/count(*), 4) as numeric(15,4)) [3pass_rate]
 from cte inner join dbo.orders o WITH (NOLOCK) on o.id = cte.OrderID
 group by cte.CDate,o.BrandID
 )
@@ -631,7 +630,7 @@ group by cte.CDate,o.BrandID
 	SRC
 	unpivot (
 	total
-	for vv  in ( [inspTimes] ,[passTimes], [pass_rate])
+	for vv  in ( [1inspTimes] ,[2passTimes], [3pass_rate])
 	)as pvt 
 )
 
@@ -652,14 +651,14 @@ from query
 ;with A as(
 	select
 		[DateA] = CDate
-		,[sum_inspTimes] = sum([inspTimes])
-		,[sum_passTimes] = sum([passTimes])
-		,[sum_pass_rate] = sum([pass_rate])
+		,[sum_inspTimes] = sum([1inspTimes])
+		,[sum_passTimes] = sum([2passTimes])
+		,[sum_pass_rate] = round(sum([2passTimes])/sum([1inspTimes]),4)
 	from #All
 	pivot
 	(
 		max(total)
-			for [vv] in ([inspTimes],[passTimes],[pass_rate])
+			for [vv] in ([1inspTimes],[2passTimes],[3pass_rate])
 	) a
 	group by CDate
 )
@@ -692,8 +691,8 @@ union all
 select 
 	null
 	'+@cols3+'
-	,avg([sum_inspTimes])
-	,avg([sum_passTimes])
+	,sum([sum_inspTimes])
+	,sum([sum_passTimes])
 	,avg([sum_pass_rate])
 from #C
 )
