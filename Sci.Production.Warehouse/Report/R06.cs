@@ -100,12 +100,12 @@ SELECT  --a.MDivisionID,
         ,[description] = dbo.getMtlDesc(c.id,c.seq1,c.seq2,2,0) 
         ,c.SizeSpec
         ,c.ColorID
-        ,b.WhseInQty
+        ,b.FTYInQty
         --,c.POUnit,c.StockUnit
         ,productionQty = (isnull(c.NETQty,0)+isnull(c.LossQty,0)) * (select v.RateValue 
                                                                      from dbo.View_Unitrate v 
                                                                      where FROM_U = c.POUnit and TO_U = c.StockUnit) 
-        ,b.FTYInQty
+        ,b.WhseInQty
         ,b.RequestQty
         ,sisType = iif(a.type='L','Lacking','Replacement') 
         ,reason = (select PPICReason.Description 
