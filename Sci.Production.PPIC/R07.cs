@@ -248,7 +248,28 @@ BEGIN
 								SET @currentissms = @tmpissms
 								SET @currentisbulk = @tmpisbulk
 							END
-						IF @tmpstyle <> '' --換線後須新增新的資料
+						SET @workhour = null
+						select @workhour = Hours from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = @sewingdate and FactoryID = @factory and Hours > 0
+						IF @workhour is null
+							BEGIN
+								INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine,OffLine) VALUES (@factory,@sewingline,'Holiday',@sewingdate,@sewingdate);
+								SET @tmpisholiday = 1
+								IF @tmpisholiday = 1 AND @tmpinsertline = @sewingline
+								    BEGIN
+								    ----補下線日期
+								        UPDATE @tempPintData 
+								        SET OffLine = DATEADD(DAY,-1,@sewingdate), IsBulk = @tmpisbulk, IsSMS = @tmpissms, IsLastMonth = @tmplastmonth, IsNextMonth = @tmpnextmonth, MinBuyerDelivery = @tmpmindlv 
+								        where FactoryID = @tmpinsertfactory and SewingLineID = @tmpinsertline and InLine = @tmpinsertsewdate and StyleID <> 'Holiday' ;
+								    END
+
+								SET @tmpinsertfactory = @factory
+								SET @tmpinsertline = @sewingline
+								SET @tmpinsertsewdate = @sewingdate
+								
+							END
+						ELSE
+						BEGIN
+							IF @tmpstyle <> '' --換線後須新增新的資料
 							BEGIN
 								INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine) VALUES (@factory,@sewingline,@tmpstyle,@sewingdate);
 								SET @tmpinsertfactory = @factory
@@ -270,6 +291,7 @@ BEGIN
 										SET @tmpisholiday = 1
 									END
 							END
+						END
 						SET @currentstyle = @tmpstyle
 					END
 				ELSE
@@ -293,6 +315,19 @@ BEGIN
 								SET @tmpinsertline = @sewingline
 								SET @tmpinsertsewdate = @sewingdate
 								
+							END
+						ELSE
+							BEGIN
+								SET @workhour = null--若為工廠已從假日轉不是假日
+						select @workhour = Hours from WorkHour WITH (NOLOCK) where SewingLineID = @sewingline and Date = DATEADD(DAY,-1,@sewingdate) and FactoryID = @factory and Hours > 0
+								IF @workhour is null
+									BEGIN
+										INSERT INTO @tempPintData(FactoryID,SewingLineID,StyleID,InLine) VALUES (@factory,@sewingline,@tmpstyle,@sewingdate);
+										SET @tmpinsertfactory = @factory
+										SET @tmpinsertline = @sewingline
+										SET @tmpinsertsewdate = @sewingdate
+										SET @tmpisholiday = 0
+									END
 							END
 					END
 			END
