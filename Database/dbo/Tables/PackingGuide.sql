@@ -8,7 +8,7 @@
     [CTNStartNo]         INT            CONSTRAINT [DF_PackingGuide_CTNStartNo] DEFAULT ((0)) NULL,
     [SpecialInstruction] NVARCHAR (MAX) CONSTRAINT [DF_PackingGuide_SpecialInstruction] DEFAULT ('') NULL,
     [CBM]                NUMERIC (10, 3) CONSTRAINT [DF_PackingGuide_CBM] DEFAULT ((0)) NULL,
-    [Remark]             NVARCHAR (125) CONSTRAINT [DF_PackingGuide_Remark] DEFAULT ('') NULL,
+    [Remark]             NVARCHAR (150) CONSTRAINT [DF_PackingGuide_Remark] DEFAULT ('') NULL,
     [OrderShipmodeSeq]   VARCHAR (2)    CONSTRAINT [DF_PackingGuide_OrderShipmodeSeq] DEFAULT ('') NULL,
     [AddName]            VARCHAR (10)   CONSTRAINT [DF_PackingGuide_AddName] DEFAULT ('') NULL,
     [AddDate]            DATETIME       NULL,

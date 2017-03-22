@@ -16,7 +16,7 @@
     [NNW]               NUMERIC (9, 3)  CONSTRAINT [DF_PackingList_NNW] DEFAULT ((0)) NULL,
     [CBM]               NUMERIC (10, 3) CONSTRAINT [DF_PackingList_CBM] DEFAULT ((0)) NULL,
     [CargoReadyDate]    DATE            NULL,
-    [Remark]            NVARCHAR (125)  CONSTRAINT [DF_PackingList_Remark] DEFAULT ('') NULL,
+    [Remark]            NVARCHAR (150)  CONSTRAINT [DF_PackingList_Remark] DEFAULT ('') NULL,
     [EstCTNBooking]     DATE            NULL,
     [EstCTNArrive]      DATE            NULL,
     [ApvToPurchase]     BIT             CONSTRAINT [DF_PackingList_ApvToPurchase] DEFAULT ((0)) NULL,
