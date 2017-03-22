@@ -702,6 +702,7 @@ where s.Type = 'EXPORT'");
             }
 
             int allColumn = reportType == 1 ? 23 : 27;
+            int counts = accnoData.Rows.Count;
             int i = 0;
             if (reportType != 3)
             {
@@ -746,7 +747,14 @@ where s.Type = 'EXPORT'");
                         objArray[0, 20] = MyUtility.Check.Empty(dr[20]) ? 0 : dr[20];
                         objArray[0, 21] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
                         objArray[0, 22] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
-                        objArray[0, 23] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
+                        if (counts > 0)
+                        {
+                            for (int t = 1; t <= counts; t++)
+                            {
+                                objArray[0, 22 + t] = MyUtility.Check.Empty(dr[22 + t]) ? 0 : dr[22 + t];
+                            }
+                        }
+
                     }
                     else
                     {
@@ -762,6 +770,14 @@ where s.Type = 'EXPORT'");
                         objArray[0, 25] = MyUtility.Check.Empty(dr[25]) ? 0 : dr[25];
                         objArray[0, 26] = MyUtility.Check.Empty(dr[26]) ? 0 : dr[26];
                         objArray[0, 27] = MyUtility.Check.Empty(dr[27]) ? 0 : dr[27];
+                        if (counts > 0)
+                        {
+                            for (int t = 1; t <= counts; t++)
+                            {
+                                objArray[0, 27 + t] = MyUtility.Check.Empty(dr[27 + t]) ? 0 : dr[27 + t];
+                            }
+                        }
+
                     }
                     i = 0;
                     foreach (DataRow ddr in accnoData.Rows)
