@@ -26,7 +26,7 @@ namespace Sci.Production.Planning
             InitializeComponent();
             txtMdivision1.Text = Sci.Env.User.Keyword;
             txtfactory1.Text = Sci.Env.User.Factory;
-            cbxCategory.SelectedIndex = 0;
+            cbxCategory.SelectedIndex = 1;  //Bulk
             dateRange1.Value1 = DateTime.Now.AddDays(-DateTime.Now.Day+1);
             dateRange1.Value2 = DateTime.Now.AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day);
         }
