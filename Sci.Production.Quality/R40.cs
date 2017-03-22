@@ -94,7 +94,7 @@ namespace Sci.Production.Quality
 					            EndMonth = format(dateadd(month,2, concat(Claimed.YEAR1,'/',Claimed.month1,'/1' )),'yyyyMM') ) as ff 
 
                    outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a WITH (NOLOCK) 
-		                         WHERE a.YearMonth BETWEEN ff.startMonth AND ff.EndMonth and a.BrandID = 'ADIDAS')sh
+		                         WHERE a.YearMonth BETWEEN ff.startMonth AND ff.EndMonth and a.BrandID = '{0}')sh
                     where year in (@yMax)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1
 
@@ -106,7 +106,7 @@ namespace Sci.Production.Quality
 					outer apply(select Target1=isnull(sum(#temp.Target),0) from #temp where YEAR1 in (@y1,@y2,@y3) and dRanges.starts=month1)AS tg1
 					GROUP BY dRanges.name,Target,year1.Claimed,year1.Shipped,year2.Claimed,year2.Shipped,year3.Claimed,year3.Shipped,dRanges.starts,year1.adicomp,year2.adicomp,year3.adicomp
                     order by dRanges.starts
-                    DROP TABLE #temp");
+                    DROP TABLE #temp",Brand);
                 result = DBProxy.Current.Select("", sqlcmd, out dtt);
                 if (MyUtility.Check.Empty(dtt))
                 {
@@ -249,7 +249,7 @@ namespace Sci.Production.Quality
 					startMonth = format(dateadd(month,-3, concat(t.YEAR1,'/',t.month1,'/1' )),'yyyyMM'),
 					EndMonth = format(dateadd(month,2, concat(t.YEAR1,'/',t.month1,'/1' )),'yyyyMM') ) as ff 
                  outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a WITH (NOLOCK) 
-		                      WHERE a.YearMonth BETWEEN ff.startMonth AND ff.EndMonth and a.BrandID = 'ADIDAS')sh
+		                      WHERE a.YearMonth BETWEEN ff.startMonth AND ff.EndMonth and a.BrandID = '{0}')sh
 
                  --select * from #Shipped
 
@@ -272,7 +272,7 @@ namespace Sci.Production.Quality
                  drop table #Ttarget
                  drop table #TClaimed
                  drop table #Shipped
-				-- drop table #AllTemp");
+				-- drop table #AllTemp",Brand);
                 SqlConnection conn;
                 result = DBProxy.Current.OpenConnection("", out conn);
                 if (!result) { return result; }
