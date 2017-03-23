@@ -60,7 +60,7 @@ namespace Sci.Production.Class
         {
            // base.OnValidating(e);
             string textValue = this.textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(textValue) || textValue != this.textBox1.OldValue)
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
                 string Sql = string.Format("Select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'", textValue);
                 if (!MyUtility.Check.Seek(Sql, "Production"))
