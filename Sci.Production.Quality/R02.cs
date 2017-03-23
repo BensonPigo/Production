@@ -114,20 +114,6 @@ namespace Sci.Production.Quality
                 lis.Add(new SqlParameter("@SewDate2", DateSewEnd));
             }
 
-
-
-            if (!this.DateSCIDelivery.Value1.Empty())
-            {
-                OWheres.Add("O.SciDelivery >= @SCIDate1");
-                lis.Add(new SqlParameter("@SCIDate1", DateSCIStart));
-            }
-            if (!this.DateSCIDelivery.Value2.Empty())
-            {
-                OWheres.Add("O.SciDelivery <= @SCIDate2");
-                lis.Add(new SqlParameter("@SCIDate2", DateSCIEnd));
-            }
-
-
             if (!this.DateEstCutting.Value1.Empty() && !this.DateEstCutting.Value2.Empty())
             {
                 OWheres.Add("O.CutInLine between @Est1 and @Est2");
@@ -236,7 +222,7 @@ namespace Sci.Production.Quality
                  + RWhere + @"
 			                ) t
                 on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2
-                inner join (select distinct O.POID,O.Factoryid,O.BrandId,O.StyleID,O.SeasonId,O.Category from dbo.Orders o WITH (NOLOCK) "
+                inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,o.SciDelivery,o.SewInLine,o.CutInLine from dbo.Orders o WITH (NOLOCK) "
                  + OWhere + @"
 			                 ) x on x. poid = A.POID
                 inner join dbo.PO_Supp P WITH (NOLOCK) on P.id = A.POID and P.SEQ1 = A.SEQ1 
