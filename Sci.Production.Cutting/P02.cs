@@ -1321,57 +1321,22 @@ namespace Sci.Production.Cutting
 
         private void getqtybreakdown(string masterID)
         {
-            DataTable fabcodetb;
-
-            #region 找出有哪些部位
-            string fabcodesql = string.Format(@"
-Select distinct a.FabricPanelCode
-from Order_ColorCombo a ,Order_EachCons b  
-where a.id = b.id 
-and a.FabricCode is not null 
-and a.FabricCode !='' 
-and a.id = '{0}' 
-order by FabricPanelCode"
-                , masterID);
-            DualResult fabresult = DBProxy.Current.Select("Production", fabcodesql, out fabcodetb);
-            #endregion
-
             #region 建立Grid
-            string settbsql = "Select a.id,article,sizecode,a.qty,0 as balance"; //寫SQL建立Table
-            foreach (DataRow dr in fabcodetb.Rows) //組動態欄位
-            {
-                settbsql = settbsql + ", 0 as " + dr["FabricPanelCode"];
-            }
-            settbsql = settbsql + string.Format(" From Order_Qty a WITH (NOLOCK) ,orders b WITH (NOLOCK) Where b.cuttingsp ='{0}' and a.id = b.id order by id,article,sizecode", masterID);
+            string settbsql = string.Format(@"
+Select a.id,article,sizecode,a.qty,0 as balance
+ From Order_Qty a WITH (NOLOCK) ,orders b WITH (NOLOCK) 
+Where b.cuttingsp ='{0}' and a.id = b.id 
+order by id,article,sizecode", masterID);
 
             DualResult gridResult = DBProxy.Current.Select(null, settbsql, out qtybreakTb);
             MyUtility.Tool.ProcessWithDatatable(qtybreakTb, "sizecode", "Select distinct SizeCode from #tmp", out sizeGroup);
             MyUtility.Tool.ProcessWithDatatable(qtybreakTb, "article", "Select distinct Article from #tmp", out artTb);
             MyUtility.Tool.ProcessWithDatatable(qtybreakTb, "id", "Select distinct id from #tmp", out spTb);
             #endregion
-
-            #region 寫入部位數量
-            string getqtysql = string.Format(
-            @"Select b.article,b.sizecode,b.qty,c.FabricPanelCode,b.orderid 
-            From Workorder a WITH (NOLOCK) , workorder_Distribute b WITH (NOLOCK) , workorder_PatternPanel c WITH (NOLOCK) 
-            Where a.id = '{0}' and a.ukey = b.workorderukey and a.ukey = c.workorderukey 
-            and b.workorderukey = c.workorderukey and b.article !=''", masterID);
-            DataTable getqtytb;
-
-            gridResult = DBProxy.Current.Select(null, getqtysql, out getqtytb);
-            foreach (DataRow dr in getqtytb.Rows)
-            {
-                DataRow[] gridselect = qtybreakTb.Select(string.Format("id = '{0}' and article = '{1}' and sizecode = '{2}'", dr["orderid"], dr["article"], dr["sizecode"], dr["FabricPanelCode"], dr["Qty"]));
-                if (gridselect.Length != 0)
-                {
-                    gridselect[0][dr["FabricPanelCode"].ToString()] = MyUtility.Convert.GetDecimal((gridselect[0][dr["FabricPanelCode"].ToString()])) + MyUtility.Convert.GetDecimal(dr["Qty"]);
-                }
-            }
-            #endregion
-
+            
             #region 判斷是否Complete
             DataTable panneltb;
-            fabcodesql = string.Format(@"Select distinct a.Article,a.FabricPanelCode
+            string fabcodesql = string.Format(@"Select distinct a.Article,a.FabricPanelCode
             from Order_ColorCombo a WITH (NOLOCK) ,Order_EachCons b WITH (NOLOCK) 
             where a.id = '{0}' and a.FabricCode is not null 
             and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.FabricPanelCode
