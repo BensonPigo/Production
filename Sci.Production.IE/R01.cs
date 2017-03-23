@@ -13,7 +13,7 @@ namespace Sci.Production.IE
 {
     public partial class R01 : Sci.Win.Tems.PrintForm
     {
-        string factory, style, season, team;
+        string factory, style, season, team, inline1, inline2;
         DataTable printData;
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -65,6 +65,8 @@ namespace Sci.Production.IE
             style = textBox2.Text;
             season = textBox3.Text;
             team = comboBox1.SelectedIndex == -1 || comboBox1.SelectedIndex == 0 ? "" : comboBox1.SelectedIndex == 1 ? "A" : "B";
+            inline1 = String.Format("{0:yyyy-MM-dd}", InlineDate.Value1);
+            inline2 = String.Format("{0:yyyy-MM-dd}", InlineDate.Value2);
 
             return base.ValidateInput();
         }
@@ -73,7 +75,8 @@ namespace Sci.Production.IE
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"select lm.FactoryID,
+            sqlCmd.Append(@"
+select lm.FactoryID,
 	   lm.StyleID,
 	   lm.ComboType,
 	   lm.SeasonID,
@@ -94,8 +97,27 @@ namespace Sci.Production.IE
 	   isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.AddName),'') as CreateBy,lm.AddDate,
 	   isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.EditName),'') as EditBy,lm.EditDate
 from LineMapping lm WITH (NOLOCK) 
-where 1 = 1
 ");
+            if (!MyUtility.Check.Empty(inline1) || !MyUtility.Check.Empty(inline2))
+            {
+                string dateQuery = "";
+                if (!MyUtility.Check.Empty(inline1))
+                    dateQuery += (string.Format("and '{0}' <= convert(varchar(10), Inline, 120) ", inline1));
+                if (!MyUtility.Check.Empty(inline2))
+                    dateQuery += (string.Format("and convert(varchar(10), Inline, 120) <= '{0}' ", inline2));
+                sqlCmd.Append(string.Format(@"
+inner join(
+	select distinct Orders.StyleID
+			, Orders.SeasonID
+			, Orders.BrandID
+	from SewingSchedule
+	join Orders on SewingSchedule.OrderID = Orders.ID
+	where Orders.Finished = 1 {0}
+) s on lm.StyleID = s.StyleID and lm.SeasonID = s.SeasonID and lm.BrandID = s.BrandID
+", dateQuery));
+            }
+
+            sqlCmd.Append("where 1 = 1");
             if (!MyUtility.Check.Empty(factory))
             {
                 sqlCmd.Append(string.Format(" and lm.FactoryID = '{0}'",factory));
