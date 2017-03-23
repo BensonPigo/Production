@@ -171,7 +171,7 @@ select DISTINCT c.FactoryID
 	        ,[Supp] = a.LocalSuppID+'-'+d.Abb 
 	        ,b.Delivery
 	        ,b.Refno
-	        ,b.ThreadColorID
+	        ,b.ThreadColorID + ' - ' + ThreadColor.Description
 	        ,a.IssueDate
 	        ,[Description] = dbo.getItemDesc(a.Category,b.Refno) 
 	        ,b.qty
@@ -184,7 +184,8 @@ select DISTINCT c.FactoryID
 from localpo a WITH (NOLOCK) 
 inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
 inner join orders c WITH (NOLOCK) on c.ID = b.POID
-left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID " + sqlWhere);
+left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID 
+left join ThreadColor on b.ThreadColorID = ThreadColor.ID" + sqlWhere);
                 result = DBProxy.Current.Select("", sqlcd, lis, out dtt);
                 if (!result)
                 { return result; }
@@ -198,10 +199,10 @@ select  [LocalPOID] = a.id
         ,[Factory] = a.FactoryId 
 		,[TheOrderID] = a.FactoryId+'-'+a.Id 
         ,[SP] = b.OrderId 
-        ,[Supp] = a.LocalSuppID 
+        ,[Supp] = a.LocalSuppID  
         ,[Delivery] = b.Delivery 
         ,[Code] = b.Refno 
-        ,[Color_Shade] = b.ThreadColorID 
+        ,[Color_Shade] = b.ThreadColorID + ' - ' + ThreadColor.Description
         ,[Issue_Date] = a.IssueDate 
         ,[Description] = dbo.getItemDesc(a.Category,b.Refno)
         ,[Order_Qty] = sum(b.Qty) 
@@ -214,10 +215,10 @@ into #tmp
 from localpo a WITH (NOLOCK) 
 inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
 inner join orders c WITH (NOLOCK) on c.id=b.poid
-left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID
+left join ThreadColor on b.ThreadColorID = ThreadColor.ID
 " + sqlWhere + @"
-group by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID, a.IssueDate, a.Category, b.UnitId 
-order by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID, a.IssueDate, a.Category, b.UnitId;
+group by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID + ' - ' + ThreadColor.Description, a.IssueDate, a.Category, b.UnitId 
+order by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID + ' - ' + ThreadColor.Description, a.IssueDate, a.Category, b.UnitId;
 
 select  tmp.LocalPOID
         , tmp.Factory
@@ -478,29 +479,6 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid" + sqlWhere + " " + all
            return true; //return base.OnToExcel(report);
         }
 
-        private void comboBox1_TextChanged(object sender, EventArgs e)
-        {
-            if (comboBox1.Text == "PO List")
-            {
-                print.Enabled = false;
-                toexcel.Enabled = true;
-
-            }
-            else if (comboBox1.Text == "PO Form")
-            {
-                toexcel.Enabled = false;
-                print.Enabled = true;
-                if (checkBox1.Checked==true)
-                    toexcel.Enabled = true;
-            }
-            else if (comboBox1.Text == "PO Order")
-            {
-                print.Enabled = false;
-                toexcel.Enabled = true;
-
-            }
-        }
-
         private void txtartworktype_fty1_TextChanged(object sender, EventArgs e)
         {
             checkBox1.Checked = false;
@@ -522,6 +500,29 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid" + sqlWhere + " " + all
         {
             if(comboBox1.Text == "PO Form")
                 toexcel.Enabled = checkBox1.Checked;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox1.Text == "PO List")
+            {
+                print.Enabled = false;
+                toexcel.Enabled = true;
+
+            }
+            else if (comboBox1.Text == "PO Form")
+            {
+                toexcel.Enabled = false;
+                print.Enabled = true;
+                if (checkBox1.Checked == true)
+                    toexcel.Enabled = true;
+            }
+            else if (comboBox1.Text == "PO Order")
+            {
+                print.Enabled = false;
+                toexcel.Enabled = true;
+
+            }
         }
 
     }
