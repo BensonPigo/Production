@@ -53,7 +53,6 @@ namespace Sci.Production.Planning
             comboBox3.DisplayMember = "Value";
             comboBox3.SelectedIndex = 1;  //inhouse
 
-            MyUtility.Tool.SetGridFrozen(this.grid1);
             grid1.RowPostPaint += (s, e) =>
             {
                 //DataGridViewRow dvr = detailgrid.Rows[e.RowIndex];

@@ -419,7 +419,6 @@ delete from #tmp2 where qty = 0;
             };
 
             #region --設定Grid1的顯示欄位--
-            MyUtility.Tool.SetGridFrozen(grid1);
 
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;

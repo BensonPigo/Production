@@ -52,7 +52,6 @@ namespace Sci.Production.Warehouse
 
             base.OnFormLoaded();
             comboBox1.SelectedIndex = 1;
-            MyUtility.Tool.SetGridFrozen(this.grid1);
 
             #region Supp 開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();

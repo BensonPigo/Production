@@ -289,7 +289,6 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
                 }
             };
             #endregion
-            MyUtility.Tool.SetGridFrozen(this.detailgrid);
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("BundleNo", header: "Bundle No", width: Widths.AnsiChars(10), iseditingreadonly: true)  //0

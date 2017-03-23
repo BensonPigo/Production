@@ -651,7 +651,6 @@ namespace Sci.Production.Warehouse
             }
 
             bindingSource1.DataSource = selectDataTable1;
-            MyUtility.Tool.SetGridFrozen(grid1);
 
             #region 開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();

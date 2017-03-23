@@ -86,7 +86,6 @@ namespace Sci.Production.Warehouse
             this.gridBOA.DataSource = BOA;
 
             //設定Grid1的顯示欄位
-            MyUtility.Tool.SetGridFrozen(gridBOA);
             this.gridBOA.IsEditingReadOnly = true; 
             Helper.Controls.Grid.Generator(this.gridBOA)
                  .Text("id", header: "SP#", width: Widths.AnsiChars(13))

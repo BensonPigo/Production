@@ -29,7 +29,6 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             cbxStatus.SelectedIndex = 0;
             cbxStockType.SelectedIndex = 0;
-            MyUtility.Tool.SetGridFrozen(this.grid1);
             Ict.Win.UI.DataGridViewTextBoxColumn columnStatus = new Ict.Win.UI.DataGridViewTextBoxColumn();
             Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
             

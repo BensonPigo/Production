@@ -109,7 +109,6 @@ SELECT invtrans.ID,Type,case Type
                 this.editBox1.Text = remark;
             }
             bindingSource1.DataSource = selectDataTable1;
-            MyUtility.Tool.SetGridFrozen(grid1);
             //設定Grid1的顯示欄位
             this.grid1.IsEditingReadOnly = true;
             this.grid1.DataSource = bindingSource1;

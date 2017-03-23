@@ -46,7 +46,6 @@ namespace Sci.Production.Warehouse
                 }
             };
 
-            MyUtility.Tool.SetGridFrozen(this.grid1);
 
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
             ts1.CellMouseDoubleClick += (s, e) =>

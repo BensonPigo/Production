@@ -31,7 +31,6 @@ namespace Sci.Production.Warehouse
             //data.Tables.Add("dtSummary");
 
             //設定Grid1的顯示欄位
-            MyUtility.Tool.SetGridFrozen(grid1);
             this.grid1.IsEditingReadOnly = true;
             this.grid1.DataSource = bindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
@@ -55,7 +54,6 @@ namespace Sci.Production.Warehouse
                  ;
 
             //設定Grid2的顯示欄位
-            MyUtility.Tool.SetGridFrozen(grid2);
             this.grid2.IsEditingReadOnly = true;
             this.grid2.DataSource = bindingSource2;
             Helper.Controls.Grid.Generator(this.grid2)
@@ -85,7 +83,6 @@ namespace Sci.Production.Warehouse
             };
             #endregion
             //設定Grid3的顯示欄位
-            MyUtility.Tool.SetGridFrozen(grid3);
             this.grid3.IsEditingReadOnly = true;
             this.grid3.DataSource = bindingSource3;
             Helper.Controls.Grid.Generator(this.grid3)

@@ -130,7 +130,6 @@ order by ColorID, SizeSpec ,SewinLine
                 //MyUtility.Tool.SetupCombox(comboSize, 1, dt3);
             }
             //設定Grid1的顯示欄位
-            MyUtility.Tool.SetGridFrozen(grid1);
             MyUtility.Tool.AddMenuToPopupGridFilter(this, this.grid1, null, "factoryid,colorid,sizespec");
             this.grid1.IsEditingReadOnly = true;
             this.grid1.DataSource = listControlBindingSource1;

@@ -42,7 +42,6 @@ namespace Sci.Production.Warehouse
                 }
             };
 
-            MyUtility.Tool.SetGridFrozen(this.grid1);
 
             //設定Grid1的顯示欄位
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示

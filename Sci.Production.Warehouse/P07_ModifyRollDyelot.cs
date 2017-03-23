@@ -43,10 +43,8 @@ namespace Sci.Production.Warehouse
             di_stocktype.Add("I", "Inventory");
 
             listControlBindingSource1.DataSource = source;
-            //MyUtility.Tool.SetGridFrozen(grid1);
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_fabrictype;
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
-            MyUtility.Tool.SetGridFrozen(grid1);
 
             //設定Grid1的顯示欄位
             this.grid1.IsEditingReadOnly = true;

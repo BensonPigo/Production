@@ -54,7 +54,6 @@ namespace Sci.Production.Warehouse
             di_fabrictype.Add("F", "Fabric");
             di_fabrictype.Add("A", "Accessory");
             listControlBindingSource1.DataSource = selectDataTable1;
-            //MyUtility.Tool.SetGridFrozen(grid1);
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_fabrictype;
             
             //設定Grid1的顯示欄位

@@ -26,7 +26,6 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             cbxCategory.SelectedIndex = 0;
             cbxFabricType.SelectedIndex = 0;
-            MyUtility.Tool.SetGridFrozen(this.grid1);
 
             #region -- Grid1 設定 --
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示

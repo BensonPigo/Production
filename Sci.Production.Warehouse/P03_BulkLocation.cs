@@ -77,7 +77,6 @@ order by EditName,ID"
             }
 
             //設定Grid1的顯示欄位
-            MyUtility.Tool.SetGridFrozen(this.grid1);
             this.grid1.IsEditingReadOnly = true;
             this.grid1.DataSource = bindingSource1;
             

@@ -374,7 +374,6 @@ namespace Sci.Production.Subcon
                 }
             };
             #endregion
-            MyUtility.Tool.SetGridFrozen(this.detailgrid);
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: ts4)  //0

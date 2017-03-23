@@ -59,7 +59,6 @@ namespace Sci.Production.Planning
             comboBox4.Items.AddRange(items2);
             comboBox4.SelectedIndex = 0;
 
-            MyUtility.Tool.SetGridFrozen(this.grid1);
             grid1.RowPostPaint += (s, e) =>
             {
                 //DataGridViewRow dvr = detailgrid.Rows[e.RowIndex];
