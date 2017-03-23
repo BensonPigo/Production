@@ -116,7 +116,10 @@ namespace Sci.Production.PPIC
             sqlCmd.Append(string.Format(@"select DISTINCT
             o.FactoryID,o.BrandID,o.SewLine,o.Id,o.StyleID,o.CustPONo,o.CustCDID,o.Customize2,o.DoxType,oq.Qty,c.Alias,o.SewOffLine,
             isnull(o.InspDate,iif(oq.EstPulloutDate is null,dateadd(day,2,o.SewOffLine),dateadd(day,-2,oq.EstPulloutDate))) as InspDate,
-            oq.SDPDate,oq.EstPulloutDate,oq.Seq,oq.ShipmodeID,oq.BuyerDelivery,o.SciDelivery,
+            oq.SDPDate
+            --,oq.EstPulloutDate
+            ,iif(oq.EstPulloutDate is null , o.BuyerDelivery , oq.EstPulloutDate) EstPulloutDate
+            ,oq.Seq,oq.ShipmodeID,oq.BuyerDelivery,o.SciDelivery,
             iif(oq.BuyerDelivery > o.CRDDate, o.CRDDate, null) as CRDDate,
             o.BuyMonth,o.Customize1,
             iif(o.ScanAndPack = 1,'Y','') as ScanAndPack,
@@ -196,7 +199,8 @@ namespace Sci.Production.PPIC
             and o.PulloutComplete = 0
             and o.Finished = 0
             and o.Qty > 0
-            and (oq.EstPulloutDate <= '{1}' or oq.EstPulloutDate is null or dateadd(day,4,o.SewOffLine) <= '{1}')",
+            and oq.EstPulloutDate <= '{1}' or oq.EstPulloutDate is null
+            and iif(o.PulloutDate is null, dateadd(day,4,o.SewOffLine) , o.PulloutDate) <= '{1}'  ",
             Sci.Env.User.Keyword, Convert.ToDateTime(dateBox1.Value).ToString("d")));
             if (txtdropdownlist1.SelectedValue.ToString() == "BS")
             {
@@ -310,7 +314,7 @@ namespace Sci.Production.PPIC
                 }
             }
             listControlBindingSource1.DataSource = gridData;
-            this.grid1.AutoResizeColumns();
+            //this.grid1.AutoResizeColumns(); //先註解，會很慢
         }
 
         //Find Now
