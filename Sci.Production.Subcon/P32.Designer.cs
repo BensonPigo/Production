@@ -207,7 +207,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.grid2);
             this.splitContainer1.Size = new System.Drawing.Size(1046, 465);
-            this.splitContainer1.SplitterDistance = 229;
+            this.splitContainer1.SplitterDistance = 228;
             this.splitContainer1.TabIndex = 4;
             // 
             // grid1
@@ -238,7 +238,7 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1046, 229);
+            this.grid1.Size = new System.Drawing.Size(1046, 228);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
@@ -270,7 +270,7 @@
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(1046, 232);
+            this.grid2.Size = new System.Drawing.Size(1046, 233);
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
             // 

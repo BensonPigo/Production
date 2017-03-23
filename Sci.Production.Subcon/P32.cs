@@ -22,7 +22,7 @@ namespace Sci.Production.Subcon
         DateTime? sewingdate1, sewingdate2, scidate1, scidate2;
         List<string> sqlWheres = new List<string>();
         StringBuilder sqlcmd = new StringBuilder();
-        StringBuilder cmd = new StringBuilder();
+    
         public P32(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -34,7 +34,7 @@ namespace Sci.Production.Subcon
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(15),iseditingreadonly:true)
-                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Date("MinSciDelivery", header: "Earliest Sci Dlv", iseditingreadonly: true)
                  .Date("MinSewinLine", header: "Earliest SewInline", iseditingreadonly: true)
                  .Text("Carton", header: "Carton", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -54,14 +54,14 @@ namespace Sci.Production.Subcon
                  .Text("Refno", header: "Refno", width: Widths.AnsiChars(21), iseditingreadonly: true)
                  .Text("ThreadColorID", header: "ThreadColor", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Text("Unit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 0, iseditingreadonly: true)
+                 .Text("UnitId", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Numeric("Price", header: "Price", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Date("Delivery", header: "Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("RequestID", header: "RequestID", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                 .Numeric("InQty", header: "InQty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Numeric("APQty", header: "APQty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                 .Numeric("InQty", header: "InQty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 0, iseditingreadonly: true)
+                 .Numeric("APQty", header: "APQty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 0, iseditingreadonly: true)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(40), iseditingreadonly: true)
                  ;
             #endregion  
@@ -72,8 +72,19 @@ namespace Sci.Production.Subcon
         private void button1_Click(object sender, EventArgs e)
         {
             
-            SP1 = txt_SPStart.Text;
-            SP2 = txt_SPEnd.Text;
+            if (sqlcmd != null)
+            {
+                sqlcmd.Clear();
+                sqlWhere = "";
+                sqlWheres.Clear();
+                if (dataSet != null) 
+                {
+                    dataSet.Clear();
+                    dtGrid1.Clear();
+                    dtGrid2.Clear();
+                }
+            }
+          
             bool sewingdate1_Empty = !this.dateRange_Sewing.HasValue, scidate_Empty = !this.dateRange_SCI.HasValue, txtsp_Empty1 = this.txt_SPStart.Text.Empty(), txtsp_Empty = this.txt_SPEnd.Text.Empty();
             if (sewingdate1_Empty && scidate_Empty && txtsp_Empty1 && txtsp_Empty)
             {
@@ -88,34 +99,39 @@ namespace Sci.Production.Subcon
             sewingdate2 = dateRange_Sewing.Value2;
             scidate1 = dateRange_SCI.Value1;
             scidate2 = dateRange_SCI.Value2;
-         
-           
             
             #region --組WHERE--
             if (!this.txt_SPStart.Text.Empty())
             {
-                sqlWheres.Add(" LD.POID >= '"+ SP1 +"' AND LD.POID <= '" + SP2+"'");
+                sqlWheres.Add(" and LD.POID >= '"+ SP1 + "'");
             }
-            if (!this.dateRange_SCI.Value1.Empty() && !this.dateRange_SCI.Value2.Empty())
+            if (!this.txt_SPEnd.Text.Empty())
             {
-                sqlWheres.Add(" GetSCI.MinSciDelivery >= '" + Convert.ToDateTime(scidate1).ToShortDateString() + "' AND GetSCI.MinSciDelivery <= '" + Convert.ToDateTime(scidate2).ToShortDateString()+"'");
+                sqlWheres.Add(" and LD.POID <= '" + SP2 + "'");
+            }
+            if (!this.dateRange_SCI.Value1.Empty() )
+            {
+                sqlWheres.Add(" and o.SciDelivery >= '" + Convert.ToDateTime(scidate1).ToShortDateString() + "'");
+
+            } 
+            if (!this.dateRange_SCI.Value2.Empty())
+            {
+                sqlWheres.Add(" and o.SciDelivery <= '" + Convert.ToDateTime(scidate2).ToShortDateString() + "'");
 
             }
-            if (!this.dateRange_Sewing.Value1.Empty() && !this.dateRange_Sewing.Value2.Empty())
+            if (!this.dateRange_Sewing.Value1.Empty())
             {
-                sqlWheres.Add(" GetSCI.MinSewinLine >= '" + Convert.ToDateTime(sewingdate1).ToShortDateString() + "' AND GetSCI.MinSewinLine <= '" + Convert.ToDateTime(sewingdate2).ToShortDateString()+"'");
+                sqlWheres.Add(" and o.SewInLine >= '" + Convert.ToDateTime(sewingdate1).ToShortDateString() + "'");
             }
-
+            if (!this.dateRange_Sewing.Value2.Empty())
+            {
+                sqlWheres.Add(" and o.SewInLine <= '" + Convert.ToDateTime(sewingdate2).ToShortDateString() + "'");
+            }
+             sqlWhere = string.Join(" ", sqlWheres);
             #endregion
-            sqlWhere = string.Join("and", sqlWheres);
-            if (!sqlWhere.Empty())
-            {
-                sqlWhere = "and " + sqlWhere;
-            }
-           
           
             #region -- sql command --
-            //grid1
+             this.ShowWaitMessage("Data Loading....");
             sqlcmd.Append(string.Format(@"
                     select distinct LD.OrderId,
 				                    O.StyleID,
@@ -126,10 +142,9 @@ namespace Sci.Production.Subcon
 				                    EmbThread=IIF(L.Category='EMB_THREAD','Y','N')
                     from LocalPO_Detail LD WITH (NOLOCK)
                     left join LocalPO L WITH (NOLOCK) on L.Id=LD.Id
-                    left join orders O WITH (NOLOCK) on LD.OrderId=O. POID
+                    left join orders O WITH (NOLOCK) on LD.OrderId=O.ID and LD.POID = o.POID
                     cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
                     where 1=1 " + sqlWhere));
-            //if (!MyUtility.Check.Empty(SPNO)){ sqlcmd.Append(" and LD.OrderId = @spno"); }
             sqlcmd.Append(" order by LD.OrderId");
             sqlcmd.Append(Environment.NewLine); // 換行
             //Grid2
@@ -154,21 +169,13 @@ namespace Sci.Production.Subcon
                     left join LocalPO L WITH (NOLOCK) on LD.Id=L.Id
                     left join LocalSupp S WITH (NOLOCK) on L.LocalSuppID=S.ID
                     left join localitem I WITH (NOLOCK) on I.refno = LD.refno 
-                    left join orders O WITH (NOLOCK) on LD.OrderId=O.POID
+                    left join orders O WITH (NOLOCK) on LD.OrderId=O.ID and LD.POID = o.POID
                     cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
                     where 1=1 
                     " + sqlWhere));
-            //if (!MyUtility.Check.Empty(SPNO)) { sqlcmd.Append(" and LD.OrderId = @spno"); }
             sqlcmd.Append(" order by LD.OrderId, L.Category, L.LocalSuppID");
-
-            //System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            //sp1.ParameterName = "@spno";
-            //sp1.Value = SPNO;
-            //IList<System.Data.SqlClient.SqlParameter> paras = new List<System.Data.SqlClient.SqlParameter>();
-            //paras.Add(sp1);
             #endregion
-            this.ShowWaitMessage("Data Loading....");
-            
+           
             DBProxy.Current.DefaultTimeout = 1200;
             try
             {
@@ -185,8 +192,7 @@ namespace Sci.Production.Subcon
             finally
             {
                 DBProxy.Current.DefaultTimeout = 0;
-            }
-
+            }           
             this.HideWaitMessage();
             dtGrid1 = dataSet.Tables[0];
             dtGrid2 = dataSet.Tables[1];
@@ -196,19 +202,11 @@ namespace Sci.Production.Subcon
             }
             dtGrid1.TableName = "dtGrid1";
             dtGrid2.TableName = "dtGrid2";
-           
-            //DataRelation relation = new DataRelation("rel1"
-            //    , new DataColumn[] { dtGrid1.Columns["OrderId"] }
-            //    , new DataColumn[] { dtGrid2.Columns["OrderId"] }
-            //    );
-         //   dataSet.Relations.Add(relation);
             listControlBindingSource1.DataSource = dtGrid1;
-            //listControlBindingSource1.DataMember = "dtGrid1";
             listControlBindingSource2.DataSource = dtGrid2;
-            //listControlBindingSource2.DataMember = "dtGrid2";
+            this.grid1.AutoResizeColumns();//調整寬度
+            this.grid2.AutoResizeColumns();
         }
-        
-       
         private void btn_Close_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -223,96 +221,11 @@ namespace Sci.Production.Subcon
         }
         private void btn_Excel_Click(object sender, EventArgs e)
         {
-            cmd.Clear();
-            sqlWhere = "";
-            sqlWheres.Clear();
-            if (dtGrid1.Rows.Count <= 0)
-            {
-                MyUtility.Msg.WarningBox("Data not found!");
-                return;
-            }
-
-            if (!this.txt_SPStart.Text.Empty())
-            {
-                sqlWheres.Add(" LD.POID >= '" + SP1 + "' AND LD.POID <= '" + SP2 + "'");
-            }
-            if (!this.dateRange_SCI.Value1.Empty() && !this.dateRange_SCI.Value2.Empty())
-            {
-                sqlWheres.Add(" GetSCI.MinSciDelivery >= '" + Convert.ToDateTime(scidate1).ToShortDateString() + "' AND GetSCI.MinSciDelivery <= '" + Convert.ToDateTime(scidate2).ToShortDateString() + "'");
-
-            }
-            if (!this.dateRange_Sewing.Value1.Empty() && !this.dateRange_Sewing.Value2.Empty())
-            {
-                sqlWheres.Add(" GetSCI.MinSewinLine >= '" + Convert.ToDateTime(sewingdate1).ToShortDateString() + "' AND GetSCI.MinSewinLine <= '" + Convert.ToDateTime(sewingdate2).ToShortDateString() + "'");
-            }
-            if (orderid != null)
-            {
-                sqlWheres.Add(" LD.OrderId = '" + orderid + "'");
-            }
-            sqlWhere = string.Join("and", sqlWheres);
-            if (!sqlWhere.Empty())
-            {
-                sqlWhere = "and " + sqlWhere;
-            }
-
-            //grid1
-            cmd.Append(string.Format(@"
-                    select distinct LD.OrderId,
-				                    O.StyleID,
-			                        GetSCI.MinSciDelivery,
-				                    GetSCI.MinSewinLine,
-				                    Carton=IIF(L.Category='CARTON','Y','N'),
-				                    SPThread=IIF(L.Category='SP_THREAD','Y','N'),
-				                    EmbThread=IIF(L.Category='EMB_THREAD','Y','N')
-                    from LocalPO_Detail LD WITH (NOLOCK)
-                    left join LocalPO L WITH (NOLOCK) on L.Id=LD.Id
-                    left join orders O WITH (NOLOCK) on LD.OrderId=O. POID
-                    cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
-                    where 1=1 " + sqlWhere));
-            //if (!MyUtility.Check.Empty(SPNO)){ sqlcmd.Append(" and LD.OrderId = @spno"); }
-            cmd.Append(" order by LD.OrderId");
-            cmd.Append(Environment.NewLine); // 換行
-            //Grid2
-            cmd.Append(string.Format(@"
-                    select distinct LD.OrderId,
-	                       L.Category,
-	                       L.LocalSuppID,
-	                       S.Abb,
-	                       LD.Refno,
-	                       LD.ThreadColorID,
-	                       I.Description,
-	                       LD.Qty,
-	                       LD.UnitId,
-	                       LD.Price,
-	                       Amount=LD.Qty*LD.Price,
-	                       LD.Delivery,
-	                       LD.RequestID,
-	                       LD.InQty,
-	                       LD.APQty,
-	                       LD.Remark
-                    from LocalPO_Detail LD WITH (NOLOCK)
-                    left join LocalPO L WITH (NOLOCK) on LD.Id=L.Id
-                    left join LocalSupp S WITH (NOLOCK) on L.LocalSuppID=S.ID
-                    left join localitem I WITH (NOLOCK) on I.refno = LD.refno 
-                    left join orders O WITH (NOLOCK) on LD.OrderId=O.POID
-                    cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
-                    where 1=1 
-                    " + sqlWhere));
-            //if (!MyUtility.Check.Empty(SPNO)) { sqlcmd.Append(" and LD.OrderId = @spno"); }
-            sqlcmd.Append(" order by LD.OrderId, L.Category, L.LocalSuppID");
-
-            DataSet ds;
-           if (!SQL.Selects("", cmd.ToString(), out ds))
-              {
-                  ShowErr(sqlcmd.ToString());
-                  return;
-              }
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_P32.xltx"); //預先開啟excel app
-
-            MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_P32.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(dtGrid1, "", "Subcon_P32.xltx", 1, true, null, objApp);      // 將datatable copy to excel
             objApp.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[2];   // 取得工作表
-            MyUtility.Excel.CopyToXls(ds.Tables[1], "", "Subcon_P32.xltx", 1, true, null, null, true, objSheets, false);// 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(dtGrid2, "", "Subcon_P32.xltx", 1, true, null, null, true, objSheets, false);// 將datatable copy to excel
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return;
