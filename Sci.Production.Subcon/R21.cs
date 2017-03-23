@@ -61,36 +61,46 @@ namespace Sci.Production.Subcon
         {
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"Select (select FactoryId from orders WITH (NOLOCK) where id = b.OrderId) order_factory
-                                                 ,a.MDivisionID
-                                                 ,a.FactoryID
-                                                 ,a.LocalSuppID
-                                                 ,(select abb from LocalSupp WITH (NOLOCK) where id = a.LocalSuppID) supplier
-                                                 ,a.Id
-                                                 ,a.Status
-                                                 ,a.IssueDate
-                                                 ,vs1.Name_Extno Handle
-                                                 ,a.CurrencyID
-                                                 ,a.Amount+a.vat apAmount
-                                                 ,a.Category
-                                                 ,b.OrderID
-                                                 ,b.Refno
-                                                 ,b.ThreadColorID
-                                                 ,b.UnitID
-                                                 ,b.Price
-                                                 ,b.Qty
-                                                 ,b.Price*b.Qty ApAmount
-                                                 ,b.LocalPoId
-                                                 ,vs2.Name_Extno POHandle
-                                                 ,c.Amount+c.Vat poAmount
-                                                 ,c.IssueDate poDate
-                                                 ,a.InvNo
-                                       from localap a WITH (NOLOCK) 
-                                       inner join LocalAP_Detail b on a.id = b.id 
-                                       left join LocalPO c on c.ID = b.LocalPoId
-                                       outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
-                                       outer apply (select * from dbo.View_ShowName vs where vs.id = c.AddName) vs2
-                                       where a.ApvDate is null and 1=1"));
+            sqlCmd.Append(string.Format(@"
+Select (select FactoryId from orders WITH (NOLOCK) where id = b.OrderId) order_factory
+        ,a.MDivisionID
+        ,a.FactoryID
+        ,a.LocalSuppID
+        ,(select abb from LocalSupp WITH (NOLOCK) where id = a.LocalSuppID) supplier
+        ,a.Id
+        ,a.Status
+        ,a.IssueDate
+        ,vs1.Name_Extno Handle
+        ,a.CurrencyID
+        ,a.Amount+a.vat apAmount
+        ,a.Category
+        ,b.OrderID
+        ,b.Refno
+        ,b.ThreadColorID
+        ,b.UnitID
+        ,b.Price
+        ,b.Qty
+        ,b.Price*b.Qty ApAmount
+        ,b.LocalPoId
+        ,vs2.Name POHandle
+        ,PoAmount.Amount poAmount
+        ,c.IssueDate poDate
+        ,a.InvNo
+from localap a WITH (NOLOCK) 
+inner join LocalAP_Detail b on a.id = b.id 
+left join LocalPO c on c.ID = b.LocalPoId
+outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
+outer apply (
+    (select name = concat(name, ' Ext.', ExtNo)
+    from TPEPass1
+    where id = (select PoHandle from Po where id = b.OrderId))
+) vs2
+outer apply (
+    select amount = sum(isnull(F.Price * F.Qty, 0.00)) 
+    from LocalPo_Detail f
+    where c.id = f.id and b.orderid = f.orderid    
+) PoAmount
+where a.ApvDate is null and 1=1"));
             #endregion
             System.Data.SqlClient.SqlParameter sp_APdate1 = new System.Data.SqlClient.SqlParameter();
             sp_APdate1.ParameterName = "@APdate1";
@@ -153,9 +163,9 @@ namespace Sci.Production.Subcon
             }
 
             if (orderby.ToUpper() == "SUPPLIER")
-                sqlCmd.Append(" order by a.localsuppid ");
+                sqlCmd.Append(" order by a.localsuppid, a.MDivisionID, a.FactoryID, a.Id, a.handle ");
             else
-                sqlCmd.Append(" order by a.handle ");
+                sqlCmd.Append(" order by a.handle, a.MDivisionID, a.FactoryID, a.Id, a.LocalSuppID ");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
             if (!result)
