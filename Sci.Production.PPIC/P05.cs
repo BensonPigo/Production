@@ -205,7 +205,12 @@ as
 	    left join SewingSchedule ss WITH (NOLOCK) on ss.OrderID = o.ID and ss.ComboType = sl.Location
 	    where sl.StyleUkey = o.StyleUkey
 	    group by sl.Location) a) as AlloQty,o.KPILETA,o.MTLETA,o.MTLExport,o.SewETA,o.PackETA,
- o.SewInLine,o.SewOffLine,oq.EstPulloutDate,oq.BuyerDelivery,o.SewLine,o.SciDelivery,oq.ProdRemark,
+ o.SewInLine,o.SewOffLine
+
+--,oq.EstPulloutDate  改成跟舊系統一樣，先抓Order_QtyShip.EstPulloutDate。若為NULL，再抓Orders.BuyerDelivery
+,iif(oq.EstPulloutDate is null , o.BuyerDelivery , oq.EstPulloutDate) EstPulloutDate
+
+,oq.BuyerDelivery,o.SewLine,o.SciDelivery,oq.ProdRemark,
  iif(oq.ReadyDate is null,iif(o.SewOffLine is null, null,(iif(DATEPART(WEEKDAY,DATEADD(day,s.ReadyDay,o.SewOffLine)) <= s.ReadyDay,DATEADD(day,s.ReadyDay+1,o.SewOffLine),DATEADD(day,s.ReadyDay,o.SewOffLine)))),oq.ReadyDate) as ReadyDate,
  iif(p.MTLDelay is null,'','Y') as MTLDelay
  from Order_QtyShip oq WITH (NOLOCK) 
