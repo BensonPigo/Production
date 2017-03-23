@@ -33,11 +33,11 @@
             this.label7 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.comboBox2 = new Sci.Win.UI.ComboBox();
-            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
             this.label5 = new Sci.Win.UI.Label();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
+            this.txtbrand1 = new Sci.Production.Class.txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -97,15 +97,6 @@
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
             this.dateRange1.TabIndex = 102;
             // 
-            // txtbrand1
-            // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(112, 48);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(84, 23);
-            this.txtbrand1.TabIndex = 105;
-            // 
             // comboBox2
             // 
             this.comboBox2.BackColor = System.Drawing.Color.White;
@@ -116,18 +107,6 @@
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(74, 24);
             this.comboBox2.TabIndex = 108;
-            // 
-            // txtdropdownlist1
-            // 
-            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist1.FormattingEnabled = true;
-            this.txtdropdownlist1.IsSupportUnselect = true;
-            this.txtdropdownlist1.Location = new System.Drawing.Point(112, 159);
-            this.txtdropdownlist1.Name = "txtdropdownlist1";
-            this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist1.TabIndex = 111;
-            this.txtdropdownlist1.Type = "Fty_CMT_Forecast";
             // 
             // label5
             // 
@@ -148,6 +127,27 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(74, 24);
             this.comboBox1.TabIndex = 112;
+            // 
+            // txtdropdownlist1
+            // 
+            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlist1.FormattingEnabled = true;
+            this.txtdropdownlist1.IsSupportUnselect = true;
+            this.txtdropdownlist1.Location = new System.Drawing.Point(112, 159);
+            this.txtdropdownlist1.Name = "txtdropdownlist1";
+            this.txtdropdownlist1.Size = new System.Drawing.Size(200, 24);
+            this.txtdropdownlist1.TabIndex = 111;
+            this.txtdropdownlist1.Type = "Fty_CMT_Forecast";
+            // 
+            // txtbrand1
+            // 
+            this.txtbrand1.BackColor = System.Drawing.Color.White;
+            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand1.Location = new System.Drawing.Point(112, 48);
+            this.txtbrand1.Name = "txtbrand1";
+            this.txtbrand1.Size = new System.Drawing.Size(84, 23);
+            this.txtbrand1.TabIndex = 105;
             // 
             // R13
             // 
