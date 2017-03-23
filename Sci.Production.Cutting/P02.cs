@@ -1324,12 +1324,15 @@ namespace Sci.Production.Cutting
             DataTable fabcodetb;
 
             #region 找出有哪些部位
-            string fabcodesql = string.Format(@"Select distinct a.FabricPanelCode
-            from Order_ColorCombo a WITH (NOLOCK) ,Order_EachCons b WITH (NOLOCK) 
-            where a.id = '{0}' and a.FabricCode is not null and a.FabricCode !='' 
-            and b.id = '{0}' and a.id = b.id 
-            --and b.cuttingpiece='0' and  b.FabricCombo = a.FabricPanelCode
-            order by FabricPanelCode", masterID);
+            string fabcodesql = string.Format(@"
+Select distinct a.FabricPanelCode
+from Order_ColorCombo a ,Order_EachCons b  
+where a.id = b.id 
+and a.FabricCode is not null 
+and a.FabricCode !='' 
+and a.id = '{0}' 
+order by FabricPanelCode"
+                , masterID);
             DualResult fabresult = DBProxy.Current.Select("Production", fabcodesql, out fabcodetb);
             #endregion
 
