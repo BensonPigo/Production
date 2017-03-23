@@ -65,11 +65,12 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
-            strSQLCmd.Append(string.Format(@"with cte_order as
-                                                               (
-	                                                            select distinct poid from dbo.orders WITH (NOLOCK) LEFT JOIN dbo.Factory on orders.FtyGroup=Factory.ID 
-	                                                            where orders.Finished=1 and Orders.WhseClose is null and Factory.MDivisionID = '{0}'
-                                                                ", Sci.Env.User.Keyword));
+            strSQLCmd.Append(string.Format(@"
+with cte_order as(
+    select distinct poid 
+    from dbo.orders WITH (NOLOCK) 
+    LEFT JOIN dbo.Factory on orders.FtyGroup=Factory.ID 
+    where orders.Finished=1 and Orders.WhseClose is null and Factory.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(pulloutdate1))
             {
@@ -108,63 +109,76 @@ namespace Sci.Production.Warehouse
             }
 
             strSQLCmd.Append(string.Format(@"
-	                    EXCEPT
-	                    select temp.POID from ( 
-							                    select distinct poid from dbo.orders WITH (NOLOCK) LEFT JOIN dbo.Factory on orders.FtyGroup=Factory.ID
-							                    where orders.Finished=0 and Orders.WhseClose is null and Factory.MDivisionID = '{0}'
-						                      ) temp
-                )select * into #cte_temp from cte_order
+    EXCEPT
+	select temp.POID 
+    from ( 
+        select distinct poid 
+        from dbo.orders WITH (NOLOCK) 
+        LEFT JOIN dbo.Factory on orders.FtyGroup=Factory.ID
+        where orders.Finished=0 and Orders.WhseClose is null and Factory.MDivisionID = '{0}'
+	) temp
+)
 
+select * into #cte_temp 
+from cte_order
 
-            select fty.POID,fty.Seq1,fty.Seq2 from #cte_temp cte 
-		                                      left join FtyInventory fty WITH (NOLOCK) on cte.POID=fty.POID 
-		                                      where fty.Lock=1 and StockType='B'
+select  fty.POID
+        ,fty.Seq1
+        ,fty.Seq2 
+from #cte_temp cte 
+left join FtyInventory fty WITH (NOLOCK) on cte.POID=fty.POID 
+where fty.Lock=1 and StockType='B'
 
-                select 0 Selected
-                , m.poid
-                ,x.FactoryID
-                ,Category =case when x.Category='B'then 'Bulk'
-			                   when x.Category='M'then 'Material'
-			                   when x.Category='O'then 'Other'
-			                   when x.Category='S'then 'Sample'
-			                   end
-                ,x.StyleID,x.BrandID,x.BuyerDelivery,m.ActPulloutDate,m.ppicClose
-                ,dbo.getPOComboList(m.poid,m.poid) [PoCombo] 
-                from (
-                    select a.POID
-                    ,max(a.ActPulloutDate) ActPulloutDate, max(a.gmtclose) ppicClose
-                    from dbo.orders a WITH (NOLOCK) 
-                    LEFT JOIN dbo.Factory f on a.FtyGroup=f.ID
-                    inner join (select poid from #cte_temp 
-								EXCEPT
-								select distinct fty.POID from #cte_temp cte 
-														 left join FtyInventory fty WITH (NOLOCK) on cte.POID=fty.POID 
-														 where fty.Lock=1 and StockType='B'
-							   ) b on b.POID = a.POID
-                    where  f.MDivisionID = '{0}' and a.Finished=1 and a.WhseClose is null 
-                    group by a.poid
-                ) m
-                cross apply (select a1.* from dbo.orders a1 WITH (NOLOCK) LEFT JOIN dbo.Factory on a1.FtyGroup=Factory.ID where a1.id=m.POID and Factory.MDivisionID = '{0}' {1} ) x
-                order by m.POID
-                Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
+select  0 Selected
+        , m.poid
+    ,x.FactoryID
+    ,Category =case when x.Category='B'then 'Bulk'
+			        when x.Category='M'then 'Material'
+			        when x.Category='O'then 'Other'
+			        when x.Category='S'then 'Sample'
+			        end
+    ,x.StyleID
+    ,x.BrandID
+    ,x.BuyerDelivery
+    ,m.ActPulloutDate
+    ,m.ppicClose
+    ,dbo.getPOComboList(m.poid,m.poid) [PoCombo] 
+from (
+    select  a.POID
+            ,max(a.ActPulloutDate) ActPulloutDate
+            , max(a.gmtclose) ppicClose
+    from dbo.orders a WITH (NOLOCK) 
+    LEFT JOIN dbo.Factory f on a.FtyGroup=f.ID
+    inner join (
+        select poid from #cte_temp 
+		EXCEPT
+		select distinct fty.POID 
+        from #cte_temp cte 
+		left join FtyInventory fty WITH (NOLOCK) on cte.POID=fty.POID 
+		where fty.Lock=1 and StockType='B'
+	) b on b.POID = a.POID
+    where  f.MDivisionID = '{0}' and a.Finished=1 and a.WhseClose is null 
+    group by a.poid
+) m
+cross apply (
+    select a1.* 
+    from dbo.orders a1 WITH (NOLOCK) 
+    LEFT JOIN dbo.Factory on a1.FtyGroup=Factory.ID 
+    where a1.id=m.POID and Factory.MDivisionID = '{0}' {1} 
+) x
+order by m.POID
+Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
 
             this.ShowWaitMessage("Data Loading....");
 
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtBatch))
             {
-                if (dtBatch[1].Rows.Count == 0) { MyUtility.Msg.WarningBox("Data not found!!"); }
-                listControlBindingSource1.DataSource = dtBatch[1];
-                if(dtBatch[0].Rows.Count > 0)
-                {
-                    StringBuilder warningmsg = new StringBuilder();
-                    foreach (DataRow row in dtBatch[0].Rows)
-                    {
-                        warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} is Lock" + Environment.NewLine, row["poid"].ToString().Trim(), row["seq1"].ToString().Trim(), row["seq2"].ToString().Trim()));
-                    }
-                    MyUtility.Msg.WarningBox(warningmsg.ToString());
+                if (dtBatch[1].Rows.Count == 0) { 
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                    return;
                 }
-                //dtFtyinventory.DefaultView.Sort = "fabrictype,poid,seq1,seq2,location,dyelot,roll";
+                listControlBindingSource1.DataSource = dtBatch[1];
             }
             else { ShowErr(strSQLCmd.ToString(), result); }
             this.HideWaitMessage();
