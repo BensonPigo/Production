@@ -96,12 +96,12 @@ namespace Sci.Production.Quality
 
             if (!this.DateArriveWH.Value1.Empty())
             {
-                sqlWheres.Add("R.WhseArrival >= @ArrDate1");
+                RWheres.Add("R.WhseArrival >= @ArrDate1");
                 lis.Add(new SqlParameter("@ArrDate1", DateArrStart));
             }
             if (!this.DateArriveWH.Value2.Empty())
             {
-                sqlWheres.Add("R.WhseArrival <= @ArrDate2");
+                RWheres.Add("R.WhseArrival <= @ArrDate2");
                 lis.Add(new SqlParameter("@ArrDate2", DateArrEnd));
             }
             
@@ -246,13 +246,13 @@ namespace Sci.Production.Quality
 	V.Result AS RESULT3,
 	CFD.Result AS RESULT4
 from dbo.FIR F WITH (NOLOCK) 
-    inner join (select distinct R.WhseArrival,R.InvNo,R.ExportId,R.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty
+    inner join (select R.WhseArrival,R.InvNo,R.ExportId,R.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty
 			    from dbo.Receiving R WITH (NOLOCK) 
 			    inner join dbo.Receiving_Detail RD WITH (NOLOCK) on RD.Id = R.Id"
                 + RWhere+ @" 
 			    ) t
     on t.PoId = F.POID and t.Seq1 = F.SEQ1 and t.Seq2 = F.SEQ2
-    inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category from dbo.Orders o WITH (NOLOCK) "
+    inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,o.SciDelivery,o.SewInLine,o.CutInLine from dbo.Orders o WITH (NOLOCK) "
                 + OWhere+ @"
 		        ) O on O.poid = F.POID
     inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
