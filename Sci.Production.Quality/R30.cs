@@ -100,7 +100,7 @@ where 1=1
             }
             if (!MyUtility.Check.Empty(Factory))
             {
-                sqlCmd.Append(string.Format(" and a.FactoryID <='{0}'", Factory));
+                sqlCmd.Append(string.Format(" and a.FactoryID ='{0}'", Factory));
             }
             #endregion
 
