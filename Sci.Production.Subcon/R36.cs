@@ -282,12 +282,13 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
            #region --撈DetailExcel資料--
            cmdDetail = string.Format(@"
 select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ s.Abb as SupplierByPay,a.TaipeiCurrencyID, 
-	   a.TaipeiAMT,a.exchange,a.currencyid,a.amount,a.Tax,a.taxrate,a.amount+a.tax as ttlAmount,vs3.Name_Extno as AmtRN,
+	   a.TaipeiAMT,a.exchange,a.currencyid,[amount1]=a.amount,a.Tax,a.taxrate,a.amount+a.tax as ttlAmount,vs3.Name_Extno as AmtRN,
 	   a.AmtReviseDate,vs4.Name_Extno as AccRH,a.ReceiveDate,vs5.Name_Extno as AccAH,a.cfmdate,
 	   cur_schedule.VoucherID[VoucherNo],cur_schedule.VoucherDate,cur_schedule.VoucherDate[Settled Date],
-	   b.Orderid,b.qty,b.UnitID,b.Amount,b.Addition,b.taipeiReason,R.name,b.Description
+	   b.Orderid,b.qty,b.UnitID,[amount2]=b.Amount,b.Addition,b.taipeiReason,R.name,b.Description
+        into #tmp1
 		from DBO.LocalDebit a WITH (NOLOCK) 
-			inner join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
+			left join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
 			inner join LocalDebit_Detail b WITH (NOLOCK) on a.id = b.id
 			left join dbo.Reason R WITH (NOLOCK) on b.Reasonid = R.id and R.ReasonTypeID = 'DebitNote_Factory'
 		    outer apply (select * from dbo.Debit_Schedule vs WITH (NOLOCK) where a.id =  vs.ID ) V
@@ -309,7 +310,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 		) as tmpSum
 		where tmpSum.VoucherDate is not null and tmpSum.Amount >= a.Amount+a.Tax
 	)AS cur_schedule
-" + sqlWhere + ' ' + order);
+" + sqlWhere + ' ' + order + ' ' + @"SELECT DISTINCT * FROM #tmp1");
            #endregion
            #region --撈ScheduleExcel資料--
            cmdSchedule = string.Format(@"select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ s.Abb as SupplierByPay,a.TaipeiCurrencyID, 
