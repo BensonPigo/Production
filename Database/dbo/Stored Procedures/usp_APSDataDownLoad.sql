@@ -522,7 +522,8 @@ BEGIN
 				--否有設定LearningCurve
 				SET @cmd = 'insert into #LnEff Select Max(ld.Snvalue) as lnEff From ['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApply l,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveApplyDetail la,['+ @apsservername + '].'+@apsdatabasename+'.dbo.LnCurveDetail ld where la.ProductionEventID = '+CONVERT(varchar(max),@apsno) + ' and l.ID = la.ApplyID and l.LnCurveTemplateID = ld.TemplateID'
 				execute (@cmd)
-				select @apseff = isnull((lnEff/100),0) from #LnEff
+				--select @apseff = isnull((lnEff/100),0) from #LnEff  --ALGER 非NULL才要更新
+				select @apseff = (lnEff/100) from #LnEff
 
 				IF @apseff is not null
 					SET @maxeff = @maxeff*@apseff
@@ -548,7 +549,7 @@ BEGIN
 						insert into SewingSchedule(OrderID,ComboType,SewingLineID,AlloQty,Inline,Offline,MDivisionID,FactoryID,Sewer,TotalSewingTime,MaxEff,StandardOutput,WorkDay,WorkHour,APSNo,OrderFinished,AddName,AddDate)
 						values (@orderid,@combotype,@sewinglineid,@alloqty,@inline,@offline,
 						(select MDivisionID from Factory WITH (NOLOCK) where ID = @factoryid),
-						@factoryid,@sewer,@gsd,CONVERT(numeric(5,2),isnull(@maxeff*100,0)),CONVERT(int,ROUND(isnull((3600/ NULLIF(@gsd*@sewer*@maxeff, 0 ) ),0),0)),
+						@factoryid,@sewer,@gsd,CONVERT(numeric(5,2),isnull(@maxeff*100,0)),CONVERT(int,ROUND(isnull(((3600.00/NULLIF(@gsd,0))*@sewer*@maxeff ),0),0)),
 						isnull((select COUNT(*) from WorkHour WITH (NOLOCK) where SewingLineID = @sewinglineid and FactoryID = @factoryid and Date >= CONVERT(DATE,@inline) and Date <= CONVERT(DATE,@offline) and Hours > 0),0),
 						CONVERT(numeric(8,3),@duration),@apsno,(select Finished from Orders WITH (NOLOCK) where ID = @orderid),@login,@editdate);
 
