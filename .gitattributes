@@ -2720,6 +2720,9 @@ Sci.Production.Shipping/R10.resx -text
 Sci.Production.Shipping/R11.Designer.cs -text
 Sci.Production.Shipping/R11.cs -text
 Sci.Production.Shipping/R11.resx -text
+Sci.Production.Shipping/R13.Designer.cs -text
+Sci.Production.Shipping/R13.cs -text
+Sci.Production.Shipping/R13.resx -text
 Sci.Production.Shipping/R40.Designer.cs -text
 Sci.Production.Shipping/R40.cs -text
 Sci.Production.Shipping/R40.resx -text
@@ -3659,6 +3662,7 @@ Sci.Production/XLT/Shipping_R10_ShareExpenseExportBySPByFee.xltx -text
 Sci.Production/XLT/Shipping_R10_ShareExpenseExportFeeReport.xltx -text
 Sci.Production/XLT/Shipping_R11_NonSharedListGarment.xltx -text
 Sci.Production/XLT/Shipping_R11_NonSharedListMaterial.xltx -text
+Sci.Production/XLT/Shipping_R13_FactoryCMTForecast.xltx -text
 Sci.Production/XLT/Shipping_R40_ProdQtyDetail.xltx -text
 Sci.Production/XLT/Shipping_R40_ScrapQtyDetail.xltx -text
 Sci.Production/XLT/Shipping_R40_Summary(Only[!!-~]Liquidation).xltx -text
