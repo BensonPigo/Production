@@ -316,7 +316,7 @@ select distinct e.NameEN [Title1]
         into #temp  
 from dbo.localpo a WITH (NOLOCK) 
 inner join LocalPO_Detail b WITH (NOLOCK) on b.id=a.Id
-inner join orders c WITH (NOLOCK) on c.id=b.OrderID
+inner join orders c WITH (NOLOCK) on c.id=b.POID
 left join LocalSupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
 left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
 " + sqlWhere + " " + all, lis, out dt);
