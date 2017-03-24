@@ -66,6 +66,9 @@ namespace Sci.Production.Subcon
                  ;
             #endregion  
         
+            this.grid2.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+            this.grid2.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+
         }
 
         //Query
