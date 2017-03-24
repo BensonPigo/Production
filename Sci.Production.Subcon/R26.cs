@@ -150,7 +150,39 @@ namespace Sci.Production.Subcon
             {
                 sqlWhere = " where " + sqlWhere;
             }
-            all = "select Title1,Title2,Title3,To#,Tel,Fax,Issue_Date,Delivery,PO,Code,Color_Shade,Description,Quantity,Unit,Unit_Price,Amount,[Total_Quantity]=sum(Quantity) over (PARTITION BY TO#),Remark,[Total1]=SUM(Amount)OVER (PARTITION BY to#,po,Issue_Date,Delivery)*VatRate,[Total2]=SUM(amount)OVER (PARTITION BY to#,po,Issue_Date,Delivery) ,CurrencyId,VatRate,[Grand_Total]=sum(Amount) OVER (PARTITION BY to#,po,Issue_Date,Delivery)+SUM(Amount)OVER (PARTITION BY to#,po,Issue_Date,Delivery)*VatRate  from #temp";
+            all = @"
+select  Title1
+        ,Title2
+        ,Title3
+        ,To#
+        ,Tel
+        ,Fax
+        ,Issue_Date
+        ,Delivery
+        ,PO
+        ,Code
+        ,Color_Shade
+        ,Description
+        ,Quantity
+        ,Unit
+        ,Unit_Price
+        ,Amount
+        ,[AccuAmount] =  sum(Amount) Over (PARTITION BY Issue_Date,Delivery 
+                                           Order by Issue_Date, Delivery, to#, Title1, PO, Code 
+                                           rows between unbounded preceding and Current Row)
+        ,[Total_Quantity]=sum(Quantity) over (PARTITION BY Issue_Date, Delivery, TO#)
+        ,Remark
+        --,[Total1]=SUM(Amount)OVER (PARTITION BY to#,po,Issue_Date,Delivery)*VatRate
+        ,[Total1] = sum(Amount * VatRate) Over (PARTITION BY Issue_Date,Delivery 
+                                           Order by Issue_Date, Delivery, to#, Title1, PO, Code 
+                                           rows between unbounded preceding and Current Row)
+        ,[Total2]=SUM(amount)OVER (PARTITION BY to#,po,Issue_Date,Delivery) 
+        ,CurrencyId
+        ,VatRate
+        ,[Grand_Total]=sum(Amount) OVER (PARTITION BY to#,po,Issue_Date,Delivery)+SUM(Amount)OVER (PARTITION BY to#,po,Issue_Date,Delivery)*VatRate  
+from #temp
+order by Issue_Date, Delivery, to#, Title1, PO, Code
+drop table #temp";
             #endregion
 
 
@@ -284,9 +316,10 @@ select distinct e.NameEN [Title1]
         into #temp  
 from dbo.localpo a WITH (NOLOCK) 
 inner join LocalPO_Detail b WITH (NOLOCK) on b.id=a.Id
-inner join orders c WITH (NOLOCK) on c.id=b.poid
+inner join orders c WITH (NOLOCK) on c.id=b.OrderID
 left join LocalSupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
-left join Factory  e WITH (NOLOCK) on e.id = a.factoryid" + sqlWhere + " " + all, lis, out dt);
+left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
+" + sqlWhere + " " + all, lis, out dt);
 
 
                 if (!result )
@@ -309,6 +342,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid" + sqlWhere + " " + all
                             Unit = row1["Unit"].ToString(),
                             Unit_Price = row1["Unit_Price"].ToString(),
                             Amount = row1["Amount"].ToString(),
+                            AccuAmount = row1["AccuAmount"].ToString(),
                             Total_Quantity = row1["Total_Quantity"].ToString(),
                             Remark = row1["Remark"].ToString(),
                             Title1 = row1["Title1"].ToString(),
@@ -323,7 +357,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid" + sqlWhere + " " + all
                             Total2 = row1["Total2"].ToString(),
                             CurrencyId = row1["currencyid"].ToString(),
                             vat = row1["VatRate"].ToString(),
-                            Grand_Total =row1["Grand_Total"].ToString()
+                            Grand_Total = string.Format("{0}", Convert.ToDecimal(row1["AccuAmount"].ToString()) + Convert.ToDecimal(row1["Total1"].ToString()))//row1["Grand_Total"].ToString()
                         }).ToList();
 
                     report.ReportDataSource = data;

@@ -16,6 +16,7 @@ namespace Sci.Production.Subcon
         public string Unit { get; set; }
         public string Unit_Price { get; set; }
         public string Amount { get; set; }
+        public string AccuAmount { get; set; }
         public string Total_Quantity { get; set; }
         public string Remark { get; set; }
         public string Title1 { get; set; }
