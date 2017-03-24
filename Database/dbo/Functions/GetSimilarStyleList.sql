@@ -16,7 +16,7 @@ BEGIN
 		--for XML path('')
 		select r.STY
 		from (
-		select MasterStyleUkey 
+		select DISTINCT MasterStyleUkey 
 		from Style_SimilarStyle tmpStyles WITH (NOLOCK)
 		where (MasterStyleUkey=@StyleUKey or ChildrenStyleUkey=@StyleUKey)
 		) tmpStyle
