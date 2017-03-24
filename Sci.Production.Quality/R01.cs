@@ -107,33 +107,33 @@ namespace Sci.Production.Quality
             
             if (!this.DateSCIDelivery.Value1.Empty())
             {
-                sqlWheres.Add("O.SciDelivery >= @SCIDate1");
+                OWheres.Add("O.SciDelivery >= @SCIDate1");
                 lis.Add(new SqlParameter("@SCIDate1", DateSCIStart));
             }
             if (!this.DateSCIDelivery.Value2.Empty())
             {
-                sqlWheres.Add("O.SciDelivery <= @SCIDate2");
+                OWheres.Add("O.SciDelivery <= @SCIDate2");
                 lis.Add(new SqlParameter("@SCIDate2", DateSCIEnd));
             }
 
             if (!this.DateSewInLine.Value1.Empty())
             {
-                sqlWheres.Add("O.SewInLine >= @SewDate1");
+                OWheres.Add("O.SewInLine >= @SewDate1");
                 lis.Add(new SqlParameter("@SewDate1", DateSewStart));
             }
             if (!this.DateSewInLine.Value2.Empty())
             {
-                sqlWheres.Add("O.SewInLine <= @SewDate2");
+                OWheres.Add("O.SewInLine <= @SewDate2");
                 lis.Add(new SqlParameter("@SewDate2", DateSewEnd));
             }
             if (!this.DateEstCutting.Value1.Empty())
             {
-                sqlWheres.Add("O.CutInLine >= @Est1");
+                OWheres.Add("O.CutInLine >= @Est1");
                 lis.Add(new SqlParameter("@Est1", DateEstStart));
             }
             if (!this.DateEstCutting.Value2.Empty())
             {
-                sqlWheres.Add("O.CutInLine <= @Est2");
+                OWheres.Add("O.CutInLine <= @Est2");
                 lis.Add(new SqlParameter("@Est2", DateEstEnd));
             }
             if (!this.txtSPStart.Text.Empty())
@@ -157,7 +157,7 @@ namespace Sci.Production.Quality
             {
                 if (Category != "")
                 {
-                    sqlWheres.Add("O.Category = @Cate");
+                    OWheres.Add("O.Category = @Cate");
                     if (Category == "Bulk")
                     {
                         lis.Add(new SqlParameter("@Cate", "B"));
@@ -251,8 +251,8 @@ from dbo.FIR F WITH (NOLOCK)
 			    inner join dbo.Receiving_Detail RD WITH (NOLOCK) on RD.Id = R.Id"
                 + RWhere+ @" 
 			    ) t
-    on t.PoId = F.POID and t.Seq1 = F.SEQ1 and t.Seq2 = F.SEQ2
-    inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,o.SciDelivery,o.SewInLine,o.CutInLine from dbo.Orders o WITH (NOLOCK) "
+    on t.PoId = F.POID and t.Seq1 = F.SEQ1 and t.Seq2 = F.SEQ2 AND T.Id=F.ReceivingID
+    inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category from dbo.Orders o WITH (NOLOCK) "
                 + OWhere+ @"
 		        ) O on O.poid = F.POID
     inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
@@ -284,7 +284,7 @@ OUTER APPLY(
         where ov.POID=F.POID and od.SEQ1=F.Seq1 and seq2=F.Seq2 and ov.Status='Confirmed'
         )V
 OUTER APPLY(
-         select cd.Result from dbo.ColorFastness CF WITH (NOLOCK) inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
+         select distinct cd.Result from dbo.ColorFastness CF WITH (NOLOCK) inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
         where CF.Status = 'Confirmed' and CF.POID=F.POID and cd.SEQ1=F.Seq1 and cd.seq2=F.Seq2
         )CFD" + sqlWhere) + @" 
 GROUP BY 
