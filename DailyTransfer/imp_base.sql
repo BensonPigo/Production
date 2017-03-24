@@ -2764,6 +2764,91 @@ set ProphetSingleSizeDeduct =
 (select ProphetSingleSizeDeduct from Trade_To_Pms.dbo.Tradesystem s)
 
 	
+--------Buyer---------------
+
+Merge Production.dbo.Buyer as t
+Using Trade_To_Pms.dbo.Buyer as s
+on t.ID=s.ID
+when matched then
+	update set
+	t.CountryID= s.CountryID,
+	t.NameCH= s.NameCH,
+	t.NameEN= s.NameEN,
+	t.Tel= s.Tel,
+	t.Fax= s.Fax,
+	t.Contact1= s.Contact1,
+	t.Contact2= s.Contact2,
+	t.AddressCH= s.AddressCH,
+	t.AddressEN= s.AddressEN,
+	t.BillTo1= s.BillTo1,
+	t.BillTo2= s.BillTo2,
+	t.BillTo3= s.BillTo3,
+	t.BillTo4= s.BillTo4,
+	t.BillTo5= s.BillTo5,
+	t.CurrencyID= s.CurrencyID,
+	t.Remark= s.Remark,
+	t.ZipCode= s.ZipCode,
+	t.Email= s.Email,
+	t.MrTeam= s.MrTeam,
+	t.AddName= s.AddName,
+	t.AddDate= s.AddDate,
+	t.EditName= s.EditName,
+	t.EditDate= s.EditDate,
+	t.Junk= s.Junk
+when not matched by target then
+	insert(ID
+	,CountryID
+	,NameCH
+	,NameEN
+	,Tel
+	,Fax
+	,Contact1
+	,Contact2
+	,AddressCH
+	,AddressEN
+	,BillTo1
+	,BillTo2
+	,BillTo3
+	,BillTo4
+	,BillTo5
+	,CurrencyID
+	,Remark
+	,ZipCode
+	,Email
+	,MrTeam
+	,AddName
+	,AddDate
+	,EditName
+	,EditDate
+	,Junk
+	)
+	values(s.ID,
+	s.CountryID,
+	s.NameCH,
+	s.NameEN,
+	s.Tel,
+	s.Fax,
+	s.Contact1,
+	s.Contact2,
+	s.AddressCH,
+	s.AddressEN,
+	s.BillTo1,
+	s.BillTo2,
+	s.BillTo3,
+	s.BillTo4,
+	s.BillTo5,
+	s.CurrencyID,
+	s.Remark,
+	s.ZipCode,
+	s.Email,
+	s.MrTeam,
+	s.AddName,
+	s.AddDate,
+	s.EditName,
+	s.EditDate,
+	s.Junk)
+when not matched by source then 
+	delete;	
 
 END
 
