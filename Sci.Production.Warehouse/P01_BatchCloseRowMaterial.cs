@@ -174,7 +174,8 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtBatch))
             {
-                if (dtBatch[1].Rows.Count == 0) { 
+                if (dtBatch[1].Rows.Count == 0) {
+                    this.HideWaitMessage();
                     MyUtility.Msg.WarningBox("Data not found!!");
                     return;
                 }
