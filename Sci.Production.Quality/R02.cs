@@ -206,9 +206,12 @@ namespace Sci.Production.Quality
             #region --撈ListExcel資料--
 
             cmd = string.Format(@"select A.POID,(A.seq1+'-'+A.seq2)SEQ,x.FactoryID,x.BrandID,x.StyleID,x.SeasonID,t.ExportId,t.InvNo,t.WhseArrival,
-                       t.StockQty,
-	                   (Select MinSciDelivery from DBO.GetSCI(A.Poid,x.Category))[MinSciDelivery],
-	                   (Select MinBuyerDelivery from DBO.GetSCI(A.Poid,x.Category))[MinBuyerDelivery],A.refno,C.Name,PS.SizeSpec,
+t.StockQty,
+(Select MinSciDelivery from DBO.GetSCI(A.Poid,x.Category))[MinSciDelivery],
+(Select MinBuyerDelivery from DBO.GetSCI(A.Poid,x.Category))[MinBuyerDelivery],
+A.refno,
+iif(C.Name is null,oc.name,c.name ) name,
+PS.SizeSpec,
 	                   PS.stockunit,(P.SuppID+'-'+s.AbbEN)Supplier,A.Result
 	                   ,IIF(A.Status='Confirmed',A.InspQty,NULL)[Inspected Qty]
 	                   ,IIF(A.Status='Confirmed',A.RejectQty,NULL)[Rejected Qty]
@@ -217,19 +220,21 @@ namespace Sci.Production.Quality
 	                   ,AIRL.Result,AIRL.NonOven,AIRL.Oven,AIRL.OvenScale,AIRL.OvenDate,AIRL.NonWash,AIRL.Wash,AIRL.WashScale,
 	                   AIRL.WashDate
                 from dbo.AIR A WITH (NOLOCK) 
-                inner join (select distinct r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2,RD.StockQty from dbo.Receiving r WITH (NOLOCK) 
+                inner join (select r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2,RD.StockQty from dbo.Receiving r WITH (NOLOCK) 
 			                inner join dbo.Receiving_Detail rd WITH (NOLOCK) on rd.Id = r.Id "
                  + RWhere + @"
 			                ) t
-                on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2
-                inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,o.SciDelivery,o.SewInLine,o.CutInLine from dbo.Orders o WITH (NOLOCK) "
+                on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2 AND T.ID=a.ReceivingID
+                inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category from dbo.Orders o WITH (NOLOCK) "
                  + OWhere + @"
 			                 ) x on x. poid = A.POID
                 inner join dbo.PO_Supp P WITH (NOLOCK) on P.id = A.POID and P.SEQ1 = A.SEQ1 
                 inner join dbo.PO_Supp_Detail PS WITH (NOLOCK) on PS.ID = A.POID and PS.SEQ1 = A.SEQ1 and PS.SEQ2 = A.SEQ2
-                INNER join dbo.Color C WITH (NOLOCK) on C.ID = PS.ColorID and C.BrandId = PS.BrandId
+                left join dbo.Color C WITH (NOLOCK) on C.ID = PS.ColorID and C.BrandId = x.BrandId
                 inner join supp s WITH (NOLOCK) on s.id = P.SuppID
                 OUTER APPLY(select * from dbo.AIR_Laboratory AL WITH (NOLOCK) where AL.OvenEncode = 1 and AL.ID = A.ID)AIRL
+                OUTER APPLY(select * from dbo.AIR_Laboratory AL WITH (NOLOCK) where AL.ID = A.ID)AIRL_OVER
+        outer apply (select name from dbo.color c where c.id=ps.colorid_old and C.BrandId = x.BrandId) as oc
                " + sqlWhere);
             #endregion
             return base.ValidateInput();
