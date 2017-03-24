@@ -105,10 +105,15 @@ namespace Sci.Production.Warehouse
             StringBuilder sqlCmd = new StringBuilder();
             if (!MyUtility.Check.Empty(sciDelivery1) || !MyUtility.Check.Empty(sciDelivery2))
             {
-                sqlCmd.Append(string.Format(@";with cte as
-(
-select distinct o.mdivisionid,o.POID,o.StyleID,o.SeasonID from dbo.orders o WITH (NOLOCK) 
-where 1=1"));
+                sqlCmd.Append(string.Format(@"
+;with cte as(
+    select  distinct 
+            o.mdivisionid
+            ,o.POID
+            ,o.StyleID
+            ,o.SeasonID 
+    from dbo.orders o WITH (NOLOCK) 
+    where 1=1"));
 
                 if (!MyUtility.Check.Empty(sciDelivery1))
                 {
@@ -139,28 +144,32 @@ where 1=1"));
                     cmds.Add(sp_season);
                 }
                 sqlCmd.Append(")");
-                sqlCmd.Append(string.Format(@"select --isnull(d.mdivisionid,cte.mdivisionid)
-orders.FactoryID
-,sp = a.id
-,seq = concat(b.SEQ1, b.Seq2)
---,b.SEQ2
-,supp = a.suppid+'-'+c.AbbEN
-,description = dbo.getMtlDesc(b.id,b.seq1,b.seq2,2,0) 
-,MaterialType = iif(b.fabrictype = 'F','Fabric',iif(b.fabrictype='A','Accessory',b.fabrictype))
-,OrderQty = b.Qty
-,ShipQty = isnull(b.ShipQty, 0) + isnull(b.ShipFOC, 0)
---,b.ShipFOC
-,PoUnit = b.POUnit
-,complete = iif(b.Complete=1,'Y','N') 
---,b.Final ETD
-,EstETA = b.ETA
---,b.FinalETA
-,ArrivedQty = d.InQty
-,ReleasedQty = d.OutQty
-,AdjustQty = d.AdjustQty
-,Balance = d.InQty - d.OutQty + d.AdjustQty
-,StockUnit = b.StockUnit
- from cte 
+                sqlCmd.Append(string.Format(@"
+select --isnull(d.mdivisionid,cte.mdivisionid)
+        orders.FactoryID
+        ,sp = a.id
+        ,seq = concat(b.SEQ1, b.Seq2)
+        --,b.SEQ2
+        ,supp = a.suppid+'-'+c.AbbEN
+        ,description = dbo.getMtlDesc(b.id,b.seq1,b.seq2,2,0) 
+        ,MaterialType = case b.fabrictype when 'F' then 'Fabric'
+                                          when 'A' then 'Accessory'
+                                          else 'Other'
+                        end
+        ,OrderQty = b.Qty
+        ,ShipQty = isnull(b.ShipQty, 0) + isnull(b.ShipFOC, 0)
+        --,b.ShipFOC
+        ,PoUnit = b.POUnit
+        ,complete = iif(b.Complete=1,'Y','N') 
+        --,b.Final ETD
+        ,EstETA = b.ETA
+        --,b.FinalETA
+        ,ArrivedQty = d.InQty
+        ,ReleasedQty = d.OutQty
+        ,AdjustQty = d.AdjustQty
+        ,Balance = d.InQty - d.OutQty + d.AdjustQty
+        ,StockUnit = b.StockUnit
+from cte 
 inner join dbo.PO_Supp a WITH (NOLOCK) on a.id = cte.poid
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.id and b.SEQ1 = a.SEQ1
 inner join Orders orders on b.id = orders.id
@@ -171,28 +180,32 @@ where 1= 1 and c.ThirdCountry = 1"));
             }
             else
             {
-                sqlCmd.Append(string.Format(@"select --isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders WITH (NOLOCK) where id = a.id))
-orders.FactoryID
-,sp = a.id
-,seq = concat(b.SEQ1, b.Seq2)
---,b.SEQ2
-,supp = a.suppid+'-'+c.AbbEN
-,description = dbo.getMtlDesc(b.id,b.seq1,b.seq2,2,0) 
-,MaterialType = iif(b.fabrictype = 'F','Fabric',iif(b.fabrictype='A','Accessory',b.fabrictype))
-,OrderQty = b.Qty
-,ShipQty = isnull(b.ShipQty, 0) + isnull(b.ShipFOC, 0)
---,b.ShipFOC
-,PoUnit = b.POUnit
-,complete = iif(b.Complete=1,'Y','N') 
---,b.Final ETD
-,EstETA = b.ETA
---,b.FinalETA
-,ArrivedQty = d.InQty
-,ReleasedQty = d.OutQty
-,AdjustQty = d.AdjustQty
-,Balance = d.InQty - d.OutQty + d.AdjustQty
-,StockUnit = b.StockUnit
- from dbo.PO_Supp a WITH (NOLOCK) 
+                sqlCmd.Append(string.Format(@"
+select --isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders WITH (NOLOCK) where id = a.id))
+        orders.FactoryID
+        ,sp = a.id
+        ,seq = concat(b.SEQ1, ' - ', b.Seq2)
+        --,b.SEQ2
+        ,supp = a.suppid+'-'+c.AbbEN
+        ,description = dbo.getMtlDesc(b.id,b.seq1,b.seq2,2,0) 
+        ,MaterialType = case b.fabrictype when 'F' then 'Fabric'
+                                          when 'A' then 'Accessory'
+                                          else 'Other'
+                        end
+        ,OrderQty = b.Qty
+        ,ShipQty = isnull(b.ShipQty, 0) + isnull(b.ShipFOC, 0)
+        --,b.ShipFOC
+        ,PoUnit = b.POUnit
+        ,complete = iif(b.Complete=1,'Y','N') 
+        --,b.Final ETD
+        ,EstETA = b.ETA
+        --,b.FinalETA
+        ,ArrivedQty = d.InQty
+        ,ReleasedQty = d.OutQty
+        ,AdjustQty = d.AdjustQty
+        ,Balance = d.InQty - d.OutQty + d.AdjustQty
+        ,StockUnit = b.StockUnit
+from dbo.PO_Supp a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.id and b.SEQ1 = a.SEQ1
 inner join Orders orders on b.id = orders.id
 inner join Factory factory on orders.FactoryID = factory.id
