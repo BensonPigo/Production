@@ -14,24 +14,17 @@ BEGIN
 		--from Style_SimilarStyle as tmp WITH (NOLOCK) 
 		--where ChildrenStyleUkey = @StyleUKey 
 		--for XML path('')
-		select r.STY
+		select r.MasterStyleID+'/'
 		from (
-		select DISTINCT MasterStyleUkey 
-		from Style_SimilarStyle tmpStyles WITH (NOLOCK)
-		where (MasterStyleUkey=@StyleUKey or ChildrenStyleUkey=@StyleUKey)
-		) tmpStyle
-		outer apply(
-		     SELECT  ( select distinct B.MasterStyleID+'',
-						  (SELECT '/'+C.ChildrenStyleID
-						   from Style_SimilarStyle s2 WITH (NOLOCK)
-						   OUTER APPLY(SELECT DISTINCT MasterStyleID FROM Style_SimilarStyle WITH (NOLOCK) where MasterStyleUkey=tmpStyle.MasterStyleUkey)B
-						   OUTER APPLY(SELECT ChildrenStyleID FROM Style_SimilarStyle WITH (NOLOCK) where MasterStyleUkey=tmpStyle.MasterStyleUkey)C
-						   where (s2.MasterStyleUkey=@StyleUKey or s2.ChildrenStyleUkey=@StyleUKey)
-						   for xml path(''))
-						FROM Style_SimilarStyle WITH (NOLOCK)
-						OUTER APPLY(SELECT DISTINCT MasterStyleID FROM Style_SimilarStyle WITH (NOLOCK) where MasterStyleUkey=tmpStyle.MasterStyleUkey)B
-						FOR XML PATH(''))AS STY
-					) r
+		    SELECT distinct MasterStyleID
+			FROM Style_SimilarStyle 
+			where MasterStyleUkey in (select  distinct MasterStyleUkey from Style_SimilarStyle where MasterStyleUkey=@StyleUKey or ChildrenStyleUkey=@StyleUKey)
+			UNION
+			SELECT distinct ChildrenStyleID 
+			FROM Style_SimilarStyle 
+			where MasterStyleUkey in (select  distinct MasterStyleUkey from Style_SimilarStyle where MasterStyleUkey=@StyleUKey or ChildrenStyleUkey=@StyleUKey)
+			)r
+		FOR XML PATH('')
 		)		
 		,'')
 
