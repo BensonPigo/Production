@@ -1144,19 +1144,15 @@ namespace Sci.Production.Cutting
         }
         private void totalDisQty()
         {
-            //gridValid();
-            if (!MyUtility.Check.Empty(CurrentDetailData["Ukey"]))
+            if (distributebs.DataSource != null)
             {
+                DataTable forsumqty = ((DataTable)distributebs.DataSource).DefaultView.ToTable();
                 object comput;
                 int disqty;
-                comput = distqtyTb.Compute("SUM(Qty)", string.Format("workorderUkey = '{0}'", CurrentDetailData["Ukey"]));
+                comput = forsumqty.Compute("SUM(Qty)", "");
                 if (comput == DBNull.Value) disqty = 0;
                 else disqty = Convert.ToInt32(comput);
                 totaldisqtybox.Value = disqty;
-            }
-            else
-            {
-                totaldisqtybox.Value = 0;
             }
         }
 
@@ -1590,7 +1586,7 @@ order by id,article,sizecode", masterID);
             newRow["SEQ1"] = OldRow["SEQ1"];
             newRow["SEQ2"] = OldRow["SEQ2"];
             //CutRef
-            newRow["Cutplanid"] = OldRow["Cutplanid"];
+            //newRow["Cutplanid"] = OldRow["Cutplanid"];
             //Cutno
             newRow["Layer"] = OldRow["Layer"];
             newRow["Colorid"] = OldRow["Colorid"];

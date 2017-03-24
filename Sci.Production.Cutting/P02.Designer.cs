@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -104,8 +104,8 @@
             this.textBox_PatternPanel = new Sci.Win.UI.DisplayBox();
             this.rightpanel = new Sci.Win.UI.Panel();
             this.numericBox_MarkerLengthY = new Sci.Win.UI.TextBox();
-            this.textBox_MarkerLength = new Sci.Win.UI.TextBox();
             this.txtCell1 = new Sci.Production.Class.txtCell();
+            this.textBox_MarkerLength = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -184,7 +184,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(4496, 561);
+            this.refresh.Location = new System.Drawing.Point(4553, 561);
             // 
             // detailgridcont
             // 
@@ -193,7 +193,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(3, 91);
-            this.detailgridcont.Size = new System.Drawing.Size(629, 586);
+            this.detailgridcont.Size = new System.Drawing.Size(631, 585);
             // 
             // detail2
             // 
@@ -243,7 +243,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1007, 730);
+            this.browse.Size = new System.Drawing.Size(1007, 713);
             // 
             // tabs
             // 
@@ -706,14 +706,14 @@
             this.sizeratio_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.sizeratio_grid.Location = new System.Drawing.Point(1, 281);
             this.sizeratio_grid.Name = "sizeratio_grid";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.sizeratio_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.sizeratio_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.sizeratio_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.sizeratio_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.sizeratio_grid.RowTemplate.Height = 24;
@@ -786,14 +786,14 @@
             this.distribute_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.distribute_grid.Location = new System.Drawing.Point(1, 420);
             this.distribute_grid.Name = "distribute_grid";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.distribute_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.distribute_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.distribute_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.distribute_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.distribute_grid.RowTemplate.Height = 24;
@@ -842,19 +842,19 @@
             this.qtybreak_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.qtybreak_grid.Location = new System.Drawing.Point(1, 555);
             this.qtybreak_grid.Name = "qtybreak_grid";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.qtybreak_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.qtybreak_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.qtybreak_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.qtybreak_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.qtybreak_grid.RowTemplate.Height = 24;
             this.qtybreak_grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.qtybreak_grid.Size = new System.Drawing.Size(367, 118);
+            this.qtybreak_grid.Size = new System.Drawing.Size(367, 364);
             this.qtybreak_grid.TabIndex = 49;
             this.qtybreak_grid.TabStop = false;
             // 
@@ -1090,16 +1090,6 @@
             this.numericBox_MarkerLengthY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numericBox_MarkerLengthY.Validated += new System.EventHandler(this.numericBox_MarkerLengthY_Validated);
             // 
-            // textBox_MarkerLength
-            // 
-            this.textBox_MarkerLength.BackColor = System.Drawing.Color.White;
-            this.textBox_MarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox_MarkerLength.Location = new System.Drawing.Point(282, 4);
-            this.textBox_MarkerLength.Name = "textBox_MarkerLength";
-            this.textBox_MarkerLength.Size = new System.Drawing.Size(74, 23);
-            this.textBox_MarkerLength.TabIndex = 59;
-            this.textBox_MarkerLength.Visible = false;
-            // 
             // txtCell1
             // 
             this.txtCell1.BackColor = System.Drawing.Color.White;
@@ -1109,6 +1099,16 @@
             this.txtCell1.Name = "txtCell1";
             this.txtCell1.Size = new System.Drawing.Size(30, 23);
             this.txtCell1.TabIndex = 10;
+            // 
+            // textBox_MarkerLength
+            // 
+            this.textBox_MarkerLength.BackColor = System.Drawing.Color.White;
+            this.textBox_MarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox_MarkerLength.Location = new System.Drawing.Point(282, 4);
+            this.textBox_MarkerLength.Name = "textBox_MarkerLength";
+            this.textBox_MarkerLength.Size = new System.Drawing.Size(74, 23);
+            this.textBox_MarkerLength.TabIndex = 59;
+            this.textBox_MarkerLength.Visible = false;
             // 
             // P02
             // 
@@ -1123,6 +1123,7 @@
             this.IsSupportNew = false;
             this.KeyField1 = "id";
             this.Name = "P02";
+            this.Text = "() () ";
             this.WorkAlias = "Cutting";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
