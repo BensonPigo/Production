@@ -70,7 +70,7 @@ namespace Sci.Production.PPIC
                 .Date("SewOffLine", header: "Offline", iseditingreadonly: true)
                 .Date("InspDate", header: "F-Insp", iseditingreadonly: true)
                 .Date("SDPDate", header: "Cut-off Date", settings: cutoffDate)
-                .Date("EstPulloutDate", header: "E. P/Out", iseditingreadonly: true)
+                .Date("EstPulloutDate", header: "Est. Pullout", iseditingreadonly: true)
                 .Text("Seq", header: "Ship Seq", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("ShipmodeID", header: "Mode", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Del", iseditingreadonly: true)

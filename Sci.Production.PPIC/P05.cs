@@ -89,7 +89,7 @@ namespace Sci.Production.PPIC
                         {
                             if ((MyUtility.Convert.GetDate(e.FormattedValue) > Convert.ToDateTime(DateTime.Today).AddYears(1) || MyUtility.Convert.GetDate(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddYears(-1)))
                             {
-                                MyUtility.Msg.WarningBox("< Exp P/Out > is invalid!!");
+                                MyUtility.Msg.WarningBox("< Est. Pullout > is invalid!!");
                                 dr["EstPulloutDate"] = DBNull.Value;
                                 if (!MyUtility.Check.Empty(dr["BuyerDelivery"]) && !MyUtility.Check.Empty(dr["ReadyDate"]))
                                  {
@@ -152,7 +152,7 @@ namespace Sci.Production.PPIC
                 .Date("SewInLine", header: "Inline", iseditingreadonly: true)
                 .Date("SewOffLine", header: "Offline", iseditingreadonly: true)
                 .Date("ReadyDate", header: "Ready", settings: readyDate)
-                .Date("EstPulloutDate", header: "Exp P/Out", settings: estPulloutDate)
+                .Date("EstPulloutDate", header: "Est. Pullout", settings: estPulloutDate)
                 .Date("BuyerDelivery", header: "Buy Del", iseditingreadonly: true)
                 .Numeric("Diff", header: "Diff", iseditingreadonly: true)
                 .Text("SewLine", header: "Line", width: Widths.AnsiChars(10), iseditingreadonly: true)
