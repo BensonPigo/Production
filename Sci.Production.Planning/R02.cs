@@ -27,7 +27,7 @@ namespace Sci.Production.Planning
             InitializeComponent();
             txtMdivision1.Text = Sci.Env.User.Keyword;
             txtfactory1.Text = Sci.Env.User.Factory;
-            cbxCategory.SelectedIndex = 0;
+            cbxCategory.SelectedIndex = 1;  //Bulk
         }
 
         // 驗證輸入條件
