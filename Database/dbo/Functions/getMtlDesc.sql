@@ -8,9 +8,9 @@ BEGIN
 	DECLARE @suppcolor nvarchar(max); -- 暫存 supplier color
 	DECLARE @po_desc nvarchar(max); -- 暫存 po_supp_detail 相關欄位
     DECLARE @string nvarchar(max)  -- 最後回傳的字串
-	DECLARE @StockSP VARCHAR(18)	-- 暫存po_supp_detail.stockpoid
-	DECLARE @scirefno varchar(30)	-- 暫存po_supp_detail.scirefno
-	DECLARE @refno varchar(23)		-- 暫存po_supp_detail.refno
+	DECLARE @StockSP VARCHAR(25)	-- 暫存po_supp_detail.stockpoid
+	DECLARE @scirefno varchar(35)	-- 暫存po_supp_detail.scirefno
+	DECLARE @refno varchar(35)		-- 暫存po_supp_detail.refno
 
     SET @string = ''
 	SET @po_desc=''
