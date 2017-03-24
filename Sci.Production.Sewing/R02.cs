@@ -235,8 +235,9 @@ from tmp2ndFilter");
                 try
                 {
                     #region 組SQL
-                    MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
-                        @";with tmpQty 
+                    MyUtility.Tool.ProcessWithDatatable(SewOutPutData, "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category"
+                        ,
+@";with tmpQty 
 as (
 select OutputDate,StdTMS,Sum(QAQty) as QAQty, Sum(WorkHour*ActManPower) as ManHour
 from #tmp
