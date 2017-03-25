@@ -198,49 +198,23 @@ sqlWhere = string.Join(" and ", sqlWheres);
             #region --撈ListExcel資料--
             
            cmd= string.Format(@"
---declare @debitdate1 datetime = '2015-05-01'
---declare @debitdate2 datetime = '2015-05-21'
---declare @aprdate1 datetime = '2015-05-11'
---declare @aprdate2 datetime = '2015-05-30'
---declare @localsuppid varchar(8) = 'G008B'
---declare @handle Char(10) = ''
---declare @smr Char(10) = ''
---declare @factoryid Char(8) = ''
---declare @amtrevisedate1 datetime =  '2016-08-03'
---declare @amtrevisedate2 datetime =  '2016-08-04'
---declare @ReceiveDate1 datetime =  '2016-09-03'
---declare @ReceiveDate2 datetime = '2016-09-23'
---declare @status varchar(30) = 'new'
---declare @SDNo char(13) = ''
---declare @orderby varchar(30) = 'a.handle'
-
-select a.ID, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ s.Abb as SupplierByPay, 
-		( select stuff(s.SPList ,1,1,'')
-		  from (
-			   select (select  ','+Orderid 
-			   from dbo.LocalDebit_Detail WITH (NOLOCK) 
-			   for xml path('')
-			   ) as SPList
-		  ) as s) [SPList],
-		  ( select stuff(R.ReasonList ,1,1,'')
-		  from (
-			   select (select  ','+Name 
-			   from dbo.Reason WITH (NOLOCK) 
-			   for xml path('')
-			   ) as ReasonList
-		  ) as R) [ReasonList]
+    select a.ID, vs1.Name_Extno as Handle, vs2.Name_Extno as SMR,a.LocalSuppID+'-'+ s.Abb as SupplierByPay
+        ,(SELECT Orderid + ',' from LocalDebit_Detail LDD where LDD.ID=a.id FOR XML PATH('')) [SPList]
+        ,(SELECT distinct R.Name + ',' from LocalDebit_Detail LDD 
+        left join Reason R on R.ReasonTypeID='DebitNote_Factory' and R.ID=LDD.Reasonid
+        where LDD.ID=a.id FOR XML PATH('')) [ReasonList]
 		,a.Description ,a.exchange,a.currencyid,a.amount,a.tax,a.taxrate,a.amtrevisedate,a.amtrevisename,a.receivedate
 		,a.receivename,a.cfmdate,a.cfmname,V.VoucherID,a.printdate,a.status,a.statuseditdate,
 		vs3.Name_Extno as addname,a.adddate,vs4.Name_Extno as edit,a.editdate
         INTO #TEMP
 		from DBO.LocalDebit a WITH (NOLOCK) 
-			inner join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
+			left join dbo.LocalSupp s WITH (NOLOCK) on a.localsuppid = s.ID
 			left join dbo.Reason R WITH (NOLOCK) on a.AddName = R.AddName
 		    outer apply (select * from dbo.Debit_Schedule vs WITH (NOLOCK) where a.id =  vs.ID ) V
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.Handle ) vs1
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.SMR ) vs2
 			outer apply (select * from dbo.View_ShowName vs where vs.id = a.addname ) vs3
-			outer apply (select * from dbo.View_ShowName vs where vs.id = a.editname ) vs4" + sqlWhere + ' ' + order + ' ' +@"SELECT DISTINCT * FROM #TEMP");
+			outer apply (select * from dbo.View_ShowName vs where vs.id = a.editname ) vs4" + sqlWhere + ' ' + order + ' ' + @"SELECT DISTINCT * FROM #TEMP");
             #endregion
            #region --撈SummaryExcel資料--
            cmdSummary = string.Format(@"
