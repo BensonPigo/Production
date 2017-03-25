@@ -96,11 +96,13 @@ Database/dbo/Functions/getMtlDesc.sql -text
 Database/dbo/Functions/getOrderUnitPrice.sql -text
 Database/dbo/Functions/getPOComboList.sql -text
 Database/dbo/Functions/getPass1.sql -text
+Database/dbo/Functions/getPass1_ExtNo.sql -text
 Database/dbo/Functions/getPulloutComplete.sql -text
 Database/dbo/Functions/getRate.sql -text
 Database/dbo/Functions/getSewingOutputCumulateOfDays.sql -text
 Database/dbo/Functions/getStockUnit.sql -text
 Database/dbo/Functions/getTPEPass1.sql -text
+Database/dbo/Functions/getTPEPass1_ExtNo.sql -text
 Database/dbo/Functions/getUnitRate.sql -text
 Database/dbo/Functions/getUsdPrice.sql -text
 Database/dbo/Functions/getVNUnitTransfer.sql -text

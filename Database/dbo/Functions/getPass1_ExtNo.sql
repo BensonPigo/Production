@@ -1,10 +1,10 @@
 ﻿
 -- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date, ,>
--- Description:	<Description, ,>
+-- Author:		<JEFF.YEH>
+-- Create date: <2017/03/25>
+-- Description:	<Pass1的id+Name+ExtNo>
 -- =============================================
-CREATE FUNCTION [dbo].[getPass1]
+CREATE FUNCTION [dbo].[getPass1_ExtNo]
 (
 	-- Add the parameters for the function here
 	@id as varchar(10)
@@ -16,7 +16,8 @@ BEGIN
 	DECLARE @rtn as varchar(45);
 
 	-- Add the T-SQL statements to compute the return value here
-	SELECT @rtn = CONCAT(a.id, ':', a.Name) from dbo.Pass1 a WITH (NOLOCK) where a.ID = @id;
+	SELECT @rtn = CONCAT(a.id, ':', a.Name, iif(a.ExtNo is null or  a.ExtNo = '','', CONCAT(' #', a.ExtNo))) 
+	from dbo.Pass1 a WITH (NOLOCK) where a.ID = @id;
 
 	-- Return the result of the function
 	RETURN @rtn;
