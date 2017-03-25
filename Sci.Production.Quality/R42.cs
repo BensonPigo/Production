@@ -143,11 +143,29 @@ namespace Sci.Production.Quality
                 result = DBProxy.Current.SelectByConn(conn, sqlcmd, out alldt);
                 if (!result) { return result; }
 
-                string sp = @"select  * from (
-	                         select Shell_Supplier=supplier,idx=ROW_NUMBER()OVER(partition by supplier order by supplier) from  #temp cc
-	                         where m in (select m from (select *,idx=ROW_NUMBER()over(order by cnt desc) from (select m,cnt=count(*) from #temp where supplier = cc.supplier group by m) c) d where idx = 1)
-                             AND supplier!=''
-	                         group by supplier,refno) main";
+                string sp = @"select  * 
+from 
+(
+	select [Shell_Supplier]=supplier,
+	idx=ROW_NUMBER()OVER(partition by supplier order by supplier) 
+	from  #temp cc
+	where m in (
+				select m 
+				from (
+						select *,
+						idx=ROW_NUMBER()over(order by cnt desc) 
+						from (
+								select m,
+								cnt=count(*) 
+								from #temp 
+								where supplier = cc.supplier 
+								group by m
+							) c
+					) d where idx = 1
+				)
+    AND supplier!=''
+	--group by supplier,refno --加上這一段會讓解果只剩下一筆,所以註解掉 WILLY_20170325
+) main";
 
                 month12 = alldt[0];
                 string month_Columns = "";
