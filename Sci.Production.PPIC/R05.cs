@@ -13,9 +13,9 @@ namespace Sci.Production.PPIC
 {
     public partial class R05 : Sci.Win.Tems.PrintForm
     {
-        DataTable printData;
-        DateTime? apvDate1, apvDate2;
-        string reportType, mDivision, factory, reportTypeName;
+        DataTable _printData;
+        DateTime? _apvDate1, _apvDate2;
+        string _reportType, _mDivision, _factory, _reportTypeName;
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -39,12 +39,12 @@ namespace Sci.Production.PPIC
                 MyUtility.Msg.WarningBox("SCI Delivery can't empty!!");
                 return false;
             }
-            apvDate1 = dateRange1.Value1;
-            apvDate2 = dateRange1.Value2;
-            reportType = comboBox1.Text == "Fabric" ? "F" : comboBox1.Text == "Accessory" ? "A" : "";
-            mDivision = comboBox2.Text;
-            factory = comboBox3.Text;
-            reportTypeName = comboBox1.Text;
+            _apvDate1 = dateRange1.Value1;
+            _apvDate2 = dateRange1.Value2;
+            _reportType = comboBox1.Text == "Fabric" ? "F" : comboBox1.Text == "Accessory" ? "A" : "";
+            _mDivision = comboBox2.Text;
+            _factory = comboBox3.Text;
+            _reportTypeName = comboBox1.Text;
 
             return base.ValidateInput();
         }
@@ -56,38 +56,39 @@ namespace Sci.Production.PPIC
             sqlCmd.Append(string.Format(@"
 with tmpData as (
 	select DISTINCT l.MDivisionID,l.FactoryID,l.POID,ld.Seq1,ld.Seq2,
-	l.FabricType
+	l.FabricType,
+	[RequestQty] = sum(RequestQty) over(partition by l.MDivisionID,l.FactoryID,l.POID,ld.Seq1,ld.Seq2,l.FabricType) 
 	from Lack l WITH (NOLOCK) 
 	inner join Lack_Detail ld WITH (NOLOCK) on ld.ID = l.ID	
 where l.Type = 'R'"));
 
-            if (!MyUtility.Check.Empty(apvDate1))
+            if (!MyUtility.Check.Empty(_apvDate1))
             {
-                sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) >= '{0}'", Convert.ToDateTime(apvDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) >= '{0}'", Convert.ToDateTime(_apvDate1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(apvDate2))
+            if (!MyUtility.Check.Empty(_apvDate2))
             {
-                sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) <= '{0}'", Convert.ToDateTime(apvDate2).ToString("d")));
-            }
-
-            if (!MyUtility.Check.Empty(reportType))
-            {
-                sqlCmd.Append(string.Format(" and l.FabricType = '{0}'", reportType));
+                sqlCmd.Append(string.Format(@" and convert(date,l.ApvDate) <= '{0}'", Convert.ToDateTime(_apvDate2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(mDivision))
+            if (!MyUtility.Check.Empty(_reportType))
             {
-                sqlCmd.Append(string.Format(" and l.MDivisionID = '{0}'", mDivision));
+                sqlCmd.Append(string.Format(" and l.FabricType = '{0}'", _reportType));
             }
 
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(_mDivision))
             {
-                sqlCmd.Append(string.Format(" and l.FactoryID = '{0}'", factory));
+                sqlCmd.Append(string.Format(" and l.MDivisionID = '{0}'", _mDivision));
+            }
+
+            if (!MyUtility.Check.Empty(_factory))
+            {
+                sqlCmd.Append(string.Format(" and l.FactoryID = '{0}'", _factory));
             }
 
             sqlCmd.Append(@" 
 ),TMP1 AS( 
-	SELECT distinct T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,T.FabricType,
+	SELECT T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,T.FabricType,RequestQty,
 	isnull(psd.Refno,'') as Refno,isnull(f.MtlTypeID,'') as MtlTypeID,
 	INQTY = isnull(mpd.InQty,0)+isnull(mpd2.InQty ,0)+ ISnull(mpd7.InQty ,0 ),
 	isnull(psd.NETQty,0) as NETQty1,
@@ -113,15 +114,8 @@ where l.Type = 'R'"));
 	outer apply (select SUM(Qty)Qty from Invtrans  WITH (NOLOCK) where InventoryPOID = T.POID and InventorySeq1 = T.Seq1 and InventorySeq2 = T.Seq2 and Type = 4) i2
 	outer apply (select SUM(Qty)Qty from Invtrans  WITH (NOLOCK) where PoID = T.POID and Seq1 = PSD.OutputSeq1 and Seq2 = PSD.OutputSeq2 and Type = 1) i7	
 	outer apply (select SUM(Qty)Qty from Invtrans  WITH (NOLOCK) where InventoryPOID = T.POID and InventorySeq1 = PSD.OutputSeq1 and InventorySeq2 = PSD.OutputSeq2 and Type = 4) i72
-),tmp2 as(
-	SELECT T.FabricType,T.FactoryID,T.INQTY,T.INVPOUnit,T.IS7,T.MDivisionID,T.MtlTypeID,T.NETQty1,T.NETQty2,T.POID,T.POUnit,
-	T.Refno,T.Seq1,T.Seq2,T.StockUnit,T.INVStockUnit,
-	SUM(T.StockQty1)StockQty1,SUM(T.StockQty2)StockQty2,SUM(T.StockQty71)StockQty71,SUM(T.StockQty72)StockQty72
-	FROM TMP1 T
-	GROUP BY T.FabricType,T.FactoryID,T.INQTY,T.INVPOUnit,T.IS7,T.MDivisionID,T.MtlTypeID,T.NETQty1,T.NETQty2,T.POID,T.POUnit,
-	T.Refno,T.Seq1,T.Seq2,T.StockUnit,T.INVStockUnit
 ),tmpData2 as (
-	select MDivisionID,FactoryID,POID,Seq1,Seq2,Refno,MtlTypeID,
+	select MDivisionID,FactoryID,POID,Seq1,Seq2,Refno,MtlTypeID,RequestQty,
 	InQty,
 	NETQty1*IIF(POUnit is null or StockUnit is null,1, dbo.getUnitRate(POUnit,StockUnit))+
 	NETQty2*IIF(INVPOUnit is null or INVStockUnit is null,1, dbo.getUnitRate(INVPOUnit,INVStockUnit)) as NETQty,
@@ -132,30 +126,17 @@ where l.Type = 'R'"));
 	StockQty72*IIF(INVPOUnit is null or INVStockUnit is null,1, dbo.getUnitRate(INVPOUnit,INVStockUnit)) )
 	as StockQty,
 	FabricType
-	from tmp2	
+	from TMP1
 )
-select MDivisionID,FactoryID,POID,Seq1,Seq2,Refno,MtlTypeID,
-InQty,
-NETQty,
-StockQty,
+select MDivisionID,FactoryID,POID,Seq1,Seq2,Refno,MtlTypeID,InQty,NETQty,StockQty,
 [Allowance Qty]=InQty-NETQty-StockQty,
 RequestQty
 from tmpData2 T
-OUTER APPLY(
-	SELECT  SUM(RequestQty) RequestQty
-	FROM Lack L
-	inner join Lack_Detail ld WITH (NOLOCK) on ld.ID = l.ID
-	WHERE l.Type = 'R' 
-	and l.FabricType = T.FabricType
-	and l.MDivisionID = T.MDivisionID and l.FactoryID = T.FactoryID
-	AND POID = T.POID AND SEQ1 = T.Seq1 AND SEQ2 = T.Seq2
-)R
-GROUP BY MDivisionID,FactoryID,POID,Seq1,Seq2,Refno,MtlTypeID,InQty,NETQty,StockQty,InQty-NETQty-StockQty,RequestQty
 order by MDivisionID,FactoryID,POID,Seq1,Seq2
 "
                 );
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out _printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -168,9 +149,9 @@ order by MDivisionID,FactoryID,POID,Seq1,Seq2
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            SetCount(_printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (_printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -181,16 +162,16 @@ order by MDivisionID,FactoryID,POID,Seq1,Seq2
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            worksheet.Cells[3, 3] = string.Format("{0}~{1}", MyUtility.Check.Empty(apvDate1) ? "" : Convert.ToDateTime(apvDate1).ToString("d"), MyUtility.Check.Empty(apvDate2) ? "" : Convert.ToDateTime(apvDate2).ToString("d"));
-            worksheet.Cells[4, 3] = reportTypeName;
-            worksheet.Cells[3, 8] = mDivision;
-            worksheet.Cells[4, 8] = factory;
+            worksheet.Cells[3, 3] = string.Format("{0}~{1}", MyUtility.Check.Empty(_apvDate1) ? "" : Convert.ToDateTime(_apvDate1).ToString("d"), MyUtility.Check.Empty(_apvDate2) ? "" : Convert.ToDateTime(_apvDate2).ToString("d"));
+            worksheet.Cells[4, 3] = _reportTypeName;
+            worksheet.Cells[3, 8] = _mDivision;
+            worksheet.Cells[4, 8] = _factory;
             worksheet.Cells[3, 12] = DateTime.Today.ToString("d");
 
             //填內容值
             int intRowsStart = 6;
             object[,] objArray = new object[1, 12];
-            foreach (DataRow dr in printData.Rows)
+            foreach (DataRow dr in _printData.Rows)
             {
                 objArray[0, 0] = dr["MDivisionID"];
                 objArray[0, 1] = dr["FactoryID"];
