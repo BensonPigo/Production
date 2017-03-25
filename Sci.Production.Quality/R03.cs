@@ -154,21 +154,21 @@ namespace Sci.Production.Quality
             ) 
             ,summary as
             (
-            select a.POID
-            ,(select count(1) total_cnt from dbo.FIR WITH (NOLOCK) where poid = a.POID) total_cnt
-            ,(select count(1) from dbo.fir f WITH (NOLOCK) 
-            where POID = a.poid and (Result!='' or (f.Result='' and f.nonContinuity =1 and f.Nonphysical = 1 and f.nonShadebond = 1 and f.nonWeight =1))
-            ) insp_cnt
-            ,(select count(1) from dbo.FIR_Laboratory l WITH (NOLOCK) where POID = a.POID and (l.Result!='' or (l.Result='' and l.nonCrocking=1 and l.nonHeat=1 and l.nonWash=1))
-            ) lab_cnt
-            ,(SELECT count(1) from (select distinct o.poid,q.Article from dbo.orders o WITH (NOLOCK) inner join dbo.Order_Qty q WITH (NOLOCK) on q.id =o.id where o.poid = a.poid) t
-            ) total_article_cnt
-            ,(SELECT count(1) from dbo.oven WITH (NOLOCK) where poid=a.POID) oven_cnt
-            ,(select count(1) from dbo.ColorFastness WITH (NOLOCK) where poid=a.POID) ColorFastness_cnt
-            ,(select count(1) from dbo.AIR WITH (NOLOCK) where poid = a.POID) AIR_Total_cnt
-            ,(select count(1) from dbo.AIR WITH (NOLOCK) where poid = a.POID and air.Status = 'Confirmed' and Result!='') AIR_Insp_Cnt
-            ,(select count(1) from dbo.AIR_Laboratory WITH (NOLOCK) where poid = a.POID) AIR_Laboratory_Total_cnt
-            ,(select count(1) from dbo.AIR_Laboratory al WITH (NOLOCK) where poid = a.POID and (result !='' or (al.NonOven =1 and al.NonWash = 1))) AIR_Laboratory_cnt
+            select 
+[POID]=a.POID,
+[total_cnt]=(select count(1) total_cnt from dbo.FIR WITH (NOLOCK) where poid = a.POID) ,
+[insp_cnt]= (	select count(1) 
+	from dbo.fir f WITH (NOLOCK) 
+	where POID = a.poid 
+	and (Result!='' or (f.Result='' and f.nonContinuity =1 and f.Nonphysical = 1 and f.nonShadebond = 1 and f.nonWeight     =1))),
+[lab_cnt]= (select count(1) from dbo.FIR_Laboratory l WITH (NOLOCK) where POID = a.POID and (l.Result!='' or (l.Result=''       and l.nonCrocking=1 and l.nonHeat=1 and l.nonWash=1))),
+[total_article_cnt]= (SELECT count(1) from (select distinct o.poid,q.Article from dbo.orders o WITH (NOLOCK) inner join         dbo.Order_Qty q WITH (NOLOCK) on q.id =o.id where o.poid = a.poid) t) 
+,[oven_cnt]= (SELECT count(1) from dbo.oven WITH (NOLOCK) where poid=a.POID) 
+,[ColorFastness_cnt]= (select count(1) from dbo.ColorFastness WITH (NOLOCK) where poid=a.POID) 
+,[AIR_Total_cnt]= (select count(1) from dbo.AIR WITH (NOLOCK) where poid = a.POID) 
+,[AIR_Insp_Cnt]= (select count(1) from dbo.AIR WITH (NOLOCK) where poid = a.POID and air.Status = 'Confirmed' and Result!       ='') 
+,[AIR_Laboratory_Total_cnt]= (select count(1) from dbo.AIR_Laboratory WITH (NOLOCK) where poid = a.POID) 
+,[AIR_Laboratory_cnt]= (select count(1) from dbo.AIR_Laboratory al WITH (NOLOCK) where poid = a.POID and (result !='' or        (al.NonOven =1 and al.NonWash = 1))) 
              from dbo.FIR a WITH (NOLOCK) inner join rawdata r on r.POID = a.POID
             )
             select distinct O.POID 
