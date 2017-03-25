@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 
 namespace Sci.Production.PPIC
 {
@@ -16,6 +17,7 @@ namespace Sci.Production.PPIC
         DataTable printData;
         DateTime? cdate1, cdate2, apvdate1, apvdate2;
         string mDivision, factory, type, typedesc;
+
         public R08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -49,22 +51,30 @@ namespace Sci.Production.PPIC
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"select r.ID,r.CDate,r.ApvDate,r.POID,r.MDivisionID,r.FactoryID,isnull(o.StyleID,'') as StyleID,
-rd.Seq1+'-'+rd.Seq2 as Seq,IIF(r.Type='F','Fabric','Accessory') as Type,isnull(f.MtlTypeID,'') as MtlTypeID,
-rd.Refno,isnull(f.DescDetail,'') as DescDetail,rd.ColorID,rd.EstInQty,rd.ActInQty,rd.TotalRequest,
-rd.AfterCuttingRequest,IIF(rd.Responsibility='M','Mill',IIF(rd.Responsibility = 'S','Subcon in Local',IIF(rd.Responsibility = 'F','Factory',IIF(rd.Responsibility = 'T','SCI dep. (purchase / s. mrs / sample room)','')))) as Responsibility,
+            #region sqlcmd 主table
+            sqlCmd.Append(@"
+select r.ID,r.CDate,r.ApvDate,r.POID,r.MDivisionID,r.FactoryID,o.StyleID,
+[Seq] = CONCAT(rd.Seq1,'-',rd.Seq2),
+[Type] = IIF(r.Type='F','Fabric','Accessory'),
+f.MtlTypeID,rd.Refno,
+f.DescDetail,rd.ColorID,rd.EstInQty,rd.ActInQty,rd.TotalRequest,rd.AfterCuttingRequest,
+[Responsibility] = 
+	CASE WHEN rd.Responsibility = 'M' THEN 'Mill'
+		 WHEN rd.Responsibility = 'S' THEN 'Subcon in Local'
+		 WHEN rd.Responsibility = 'F' THEN 'Factory'
+		 WHEN rd.Responsibility = 'T' THEN 'SCI dep. (purchase / s. mrs / sample room)'
+	END,
 rd.ResponsibilityReason,rd.Suggested,
-IIF(p.POSMR is null,'',iif(tpe.ExtNo='','',dbo.getTPEPass1(p.POSMR)+' #'+tpe.ExtNo)) as POSMR,
-iif(pas.ExtNo='',dbo.getPass1(r.ApplyName),dbo.getPass1(r.ApplyName)+' #'+pas.ExtNo) as Prepare
+[POSMR] = dbo.[getTPEPass1_ExtNo](p.POSMR),
+[Prepare] = dbo.[getPass1_ExtNo](r.ApplyName)
 from ReplacementReport r WITH (NOLOCK) 
 inner join ReplacementReport_Detail rd WITH (NOLOCK) on rd.ID = r.ID
 left join Orders o WITH (NOLOCK) on o.ID = r.POID
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = rd.SCIRefno
 left join PO p WITH (NOLOCK) on p.ID = r.POID
-outer apply(select TPEPass1.ExtNo from TPEPass1 WITH (NOLOCK) where TPEPass1.ID=p.POSMR )tpe
-outer apply(select ExtNo from Pass1 WITH (NOLOCK) where Pass1.ID=r.ApplyName)pas
 where 1=1");
-
+            #endregion
+            #region 使用者輸入條件
             if (!MyUtility.Check.Empty(cdate1))
             {
                 sqlCmd.Append(string.Format(" and r.CDate >= '{0}'", Convert.ToDateTime(cdate1).ToString("d")));
@@ -93,6 +103,7 @@ where 1=1");
             {
                 sqlCmd.Append(string.Format(" and r.Type = '{0}'", type));
             }
+            #endregion
             sqlCmd.Append(" order by r.ID,Seq");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
@@ -117,16 +128,16 @@ where 1=1");
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\PPIC_R08_ReplacementReportList.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            Microsoft.Office.Interop.Excel.Application excel 
+                = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R08_ReplacementReportList.xltx"); //預先開啟excel app
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            //表頭
             worksheet.Cells[3, 2] = string.Format("{0}~{1}", MyUtility.Check.Empty(cdate1) ? "" : Convert.ToDateTime(cdate1).ToString("d"),MyUtility.Check.Empty(cdate2) ? "" : Convert.ToDateTime(cdate2).ToString("d"));
-            worksheet.Cells[3, 6] = string.Format("{0}~{1}", MyUtility.Check.Empty(apvdate1) ? "" : Convert.ToDateTime(apvdate1).ToString("d"), MyUtility.Check.Empty(apvdate2) ? "" : Convert.ToDateTime(apvdate2).ToString("d"));
-            worksheet.Cells[3, 10] = mDivision;
-            worksheet.Cells[3, 12] = factory;
-            worksheet.Cells[3, 14] = typedesc;
-
+            worksheet.Cells[3, 5] = string.Format("{0}~{1}", MyUtility.Check.Empty(apvdate1) ? "" : Convert.ToDateTime(apvdate1).ToString("d"), MyUtility.Check.Empty(apvdate2) ? "" : Convert.ToDateTime(apvdate2).ToString("d"));
+            worksheet.Cells[3, 7] = "M: " + mDivision;
+            worksheet.Cells[3, 9] = factory;
+            worksheet.Cells[3, 11] = typedesc;
             //填內容值
             int intRowsStart = 5;
             object[,] objArray = new object[1, 22];
@@ -155,11 +166,20 @@ where 1=1");
                 objArray[0, 20] = dr["POSMR"];
                 objArray[0, 21] = dr["Prepare"];
                 worksheet.Range[String.Format("A{0}:V{0}", intRowsStart)].Value2 = objArray;
+                //對於DescDetail做列高調整
+                int c = 0;//計算此列要調多少倍列高
+                string[] D = dr["DescDetail"].ToString().Split('\r');//換行字元
+                c = D.Length;
+                foreach (string item in D)
+                {
+                    if (item.Length > 80) c++;//80是依據範本檔欄寬77大約去算的字元數量(不含中文)
+                }
+                Microsoft.Office.Interop.Excel.Range rangeRow 
+                    = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[intRowsStart, System.Type.Missing];
+                rangeRow.RowHeight = 16.25 * c;//16.25為單行列高
                 intRowsStart++;
             }
             
-            excel.Cells.EntireColumn.AutoFit();
-            //excel.Cells.EntireRow.AutoFit();
             this.HideWaitMessage();
             excel.Visible = true;
             return true;
