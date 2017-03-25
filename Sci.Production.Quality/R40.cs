@@ -94,11 +94,23 @@ namespace Sci.Production.Quality
 					            EndMonth = format(dateadd(month,2, concat(Claimed.YEAR1,'/',Claimed.month1,'/1' )),'yyyyMM') ) as ff 
 
                    outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a WITH (NOLOCK) 
-		                         WHERE a.YearMonth BETWEEN ff.startMonth AND ff.EndMonth and a.BrandID = '{0}')sh
+		                        WHERE a.YearMonth BETWEEN ff.startMonth AND ff.EndMonth and a.BrandID = '{0}'
+                                and FactoryID in (select id from dbo.SCIFty where CountryID = (select CountryID from Factory where id='{1}'))
+    )sh
                     where year in (@yMax)
                     group by Target,Claimed.Claimed,sh.qty,Claimed.month1,Claimed.YEAR1
 
-                    select dRanges.name[ ],dRanges.starts,[Target]=@Target,isnull(SUM(year1.Claimed),0)[Claimed1],isnull(SUM(year1.Shipped),0)[Shipped1],isnull(year1.adicomp,0)[adicomp1],isnull(SUM(year2.Claimed),0)[Claimed2],isnull(SUM(year2.Shipped),0)[Shipped2],isnull(year2.adicomp,0)[adicomp2],isnull(SUM(year3.Claimed),0)[Claimed3],isnull(SUM(year3.Shipped),0)[Shipped3],isnull(year3.adicomp,0)[adicomp3] from dbo.#temp
+                    select dRanges.name[ ],dRanges.starts,[Target]=@Target,
+                    isnull(year1.Claimed,0)[Claimed1],
+                    isnull(year1.Shipped,0)[Shipped1],
+                    isnull(year1.adicomp,0)[adicomp1],
+                    isnull(year2.Claimed,0)[Claimed2],
+                    isnull(year2.Shipped,0)[Shipped2],
+                    isnull(year2.adicomp,0)[adicomp2],
+                    isnull(year3.Claimed,0)[Claimed3],
+                    isnull(year3.Shipped,0)[Shipped3],
+                    isnull(year3.adicomp,0)[adicomp3] 
+                    from dbo.#temp
                     inner join @dRanges as dRanges on  dRanges.starts between dRanges.starts and dRanges.ends 
 					OUTER APPLY(SELECT #temp.Claimed,#temp.Shipped,adicomp=round(sum(#temp.Claimed)/sum(#temp.Shipped),6) FROM #temp WHERE YEAR1=@y1 and dRanges.starts=month1 group by #temp.Claimed,#temp.Shipped)AS year1
 					OUTER APPLY(SELECT #temp.Claimed,#temp.Shipped,adicomp=round(sum(#temp.Claimed)/sum(#temp.Shipped),6) FROM #temp WHERE YEAR1=@y2 and dRanges.starts=month1 group by #temp.Claimed,#temp.Shipped)AS year2
@@ -106,7 +118,7 @@ namespace Sci.Production.Quality
 					outer apply(select Target1=isnull(sum(#temp.Target),0) from #temp where YEAR1 in (@y1,@y2,@y3) and dRanges.starts=month1)AS tg1
 					GROUP BY dRanges.name,Target,year1.Claimed,year1.Shipped,year2.Claimed,year2.Shipped,year3.Claimed,year3.Shipped,dRanges.starts,year1.adicomp,year2.adicomp,year3.adicomp
                     order by dRanges.starts
-                    DROP TABLE #temp",Brand);
+                    DROP TABLE #temp", Brand, userfactory);
                 result = DBProxy.Current.Select("", sqlcmd, out dtt);
                 if (MyUtility.Check.Empty(dtt))
                 {
