@@ -13,10 +13,10 @@ namespace Sci.Production.PPIC
 {
     public partial class R07 : Sci.Win.Tems.PrintForm
     {
-        int year, month;
-        string mDivision, factory;
-        DataTable printData;
-        DateTime startDate;
+        int _year, _month;
+        string _mDivision, _factory;
+        DataTable _printData;
+        DateTime _startDate;
         public R07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -46,11 +46,11 @@ namespace Sci.Production.PPIC
                 MyUtility.Msg.WarningBox("Month can't empty!!");
                 return false;
             }
-            year = (int)numericUpDown1.Value;
-            month = (int)numericUpDown2.Value;
-            mDivision = comboBox1.Text;
-            factory = comboBox2.Text;
-            startDate = Convert.ToDateTime(string.Format("{0}/{1}/1", MyUtility.Convert.GetString(year), MyUtility.Convert.GetString(month)));
+            _year = (int)numericUpDown1.Value;
+            _month = (int)numericUpDown2.Value;
+            _mDivision = comboBox1.Text;
+            _factory = comboBox2.Text;
+            _startDate = Convert.ToDateTime(string.Format("{0}/{1}/1", MyUtility.Convert.GetString(_year), MyUtility.Convert.GetString(_month)));
 
             return base.ValidateInput();
         }
@@ -74,14 +74,14 @@ from SewingSchedule s WITH (NOLOCK)
 left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
 left join Style st WITH (NOLOCK) on st.Ukey = o.StyleUkey
 where (s.Inline between @sewinginline and @sewingoffline or s.Offline between @sewinginline and @sewingoffline)
-", startDate.ToString("d"), startDate.AddMonths(1).ToString("d")));
-            if (!MyUtility.Check.Empty(mDivision))
+", _startDate.ToString("d"), _startDate.AddMonths(1).ToString("d")));
+            if (!MyUtility.Check.Empty(_mDivision))
             {
-                sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'",mDivision));
+                sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'",_mDivision));
             }
-            if (!MyUtility.Check.Empty(factory))
+            if (!MyUtility.Check.Empty(_factory))
             {
-                sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'",factory));
+                sqlCmd.Append(string.Format(" and s.FactoryID = '{0}'",_factory));
             }
                 sqlCmd.Append(@"
 order by s.FactoryID,s.SewingLineID,s.Inline,o.StyleID
@@ -365,7 +365,7 @@ DEALLOCATE cursor_factoryline
 select * from @tempPintData order by FactoryID,SewingLineID,InLine");
             #endregion
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out _printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -378,9 +378,9 @@ select * from @tempPintData order by FactoryID,SewingLineID,InLine");
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            SetCount(_printData.Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (_printData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -398,8 +398,8 @@ select * from @tempPintData order by FactoryID,SewingLineID,InLine");
             string line = "";
             int ftyCount = 0;
             int colCount = 1;
-            int monthDays = (startDate.AddMonths(1).AddDays(-1).Subtract(startDate)).Days+1;
-            foreach (DataRow dr in printData.Rows)
+            int monthDays = (_startDate.AddMonths(1).AddDays(-1).Subtract(_startDate)).Days+1;
+            foreach (DataRow dr in _printData.Rows)
             {
                 //當有換工廠別時，要換Sheet
                 if (writeFty != MyUtility.Convert.GetString(dr["FactoryID"]))
@@ -468,9 +468,9 @@ select * from @tempPintData order by FactoryID,SewingLineID,InLine");
 
                 //算上下線日的總天數，用來做合併儲存格
                 DateTime sewingStartDate = Convert.ToDateTime(dr["Inline"]);
-                DateTime sewingEndDate = !MyUtility.Check.Empty(dr["Offline"]) ? Convert.ToDateTime(dr["Offline"]) : startDate.AddMonths(1).AddDays(-1);
-                int startCol = (sewingStartDate.Subtract(startDate)).Days + 2;
-                int endCol = (sewingEndDate.Subtract(startDate)).Days + 2;
+                DateTime sewingEndDate = !MyUtility.Check.Empty(dr["Offline"]) ? Convert.ToDateTime(dr["Offline"]) : _startDate.AddMonths(1).AddDays(-1);
+                int startCol = (sewingStartDate.Subtract(_startDate)).Days + 2;
+                int endCol = (sewingEndDate.Subtract(_startDate)).Days + 2;
                 int totalDays = (sewingEndDate.Subtract(sewingStartDate)).Days+1;
 
                 //將中間沒有Schedule的格子塗黑
