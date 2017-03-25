@@ -9,13 +9,15 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using System.Collections; 
+
 
 namespace Sci.Production.Planning
 {
     public partial class R02 : Sci.Win.Tems.PrintForm
     {
         int selectindex = 0;
-        string factory, mdivision, spno1, spno2, artworktype,subcons;
+        string factory, mdivision, spno1, spno2, artworktype, subcons, strDateRange, strMinDate, strMaxDate;
         DateTime? sciDelivery1, sciDelivery2, buyerDelivery1, buyerDelivery2, sewinline1, sewinline2
             , cutinline1, cutinline2;
         DataTable printData;
@@ -55,6 +57,11 @@ namespace Sci.Production.Planning
             spno1 = txtSpno1.Text;
             spno2 = txtSpno2.Text;
             #endregion
+
+            strMinDate = GetMinOrMax("Min", sciDelivery1, buyerDelivery1, sewinline1, cutinline1);
+            strMaxDate = GetMinOrMax("Max", sciDelivery2, buyerDelivery2, sewinline2, cutinline2);
+            strDateRange = strMinDate + "~" + strMaxDate;
+
             subcons = txtMultiSubcon1.Subcons;
             mdivision = txtMdivision1.Text;
             factory = txtfactory1.Text;
@@ -102,8 +109,6 @@ namespace Sci.Production.Planning
 	inner join dbo.View_Order_Artworks o2 on o2.id = o1.ID
 	where 1=1 "));
 
-            //o1.BuyerDelivery between '20150101' and '20150731' AND O1.Finished = 0 AND O2.Price > 0 and o1.FtyGroup = 'MWI' 
-            //	and o1.id='15040605CW002'
             #region --- 條件組合  ---
 
             if (!MyUtility.Check.Empty(buyerDelivery1))
@@ -120,10 +125,14 @@ namespace Sci.Production.Planning
 
             if (!MyUtility.Check.Empty(spno1))
             {
-                sqlCmd.Append(" and o1.id >= @spno1 and o1.id <= @spno2");
+                sqlCmd.Append(" and o1.id >= @spno1 ");
                 sp_spno1.Value = spno1;
-                sp_spno2.Value = spno2;
                 cmds.Add(sp_spno1);
+            }
+            if (!MyUtility.Check.Empty(spno2))
+            {
+                sqlCmd.Append(" and o1.id <= @spno2");
+                sp_spno2.Value = spno2;
                 cmds.Add(sp_spno2);
             }
 
@@ -172,7 +181,8 @@ namespace Sci.Production.Planning
             }
 
             #endregion
-            //sqlCmd.Append(")");
+
+
             sqlCmd.Append(string.Format(@" group by o1.MDivisionID,o1.ID,o1.StyleID,o1.StyleUkey,o1.FactoryID,o1.SewLine
 ,o1.SewInLine,o1.SewOffLine
 	,o1.SciDelivery,o1.BuyerDelivery,o1.MTLETA,o1.CutInLine
@@ -246,6 +256,7 @@ order by k.FactoryID,k.ID");
 
             DBProxy.Current.DefaultTimeout = 1800;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            totalpoqty = 0; totalpartsqty = 0;  //初始化
             foreach (DataRow dr in printData.Rows) 
             {
              string poqty = dr["poqty"].ToString();
@@ -286,13 +297,7 @@ order by k.FactoryID,k.ID");
                 MyUtility.Msg.WarningBox("Lines of Data is over 1,048,576 in excel file, please narrow down range of condition.");
                 return false;
             }
-            //var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            //saveDialog.ShowDialog();
-            //string outpath = saveDialog.FileName;
-            //if (outpath.Empty())
-            //{
-            //    return false;
-            //}
+
             if (checkBox1.Checked)
             {
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Planning_R02_Detail.xltx");
@@ -300,9 +305,8 @@ order by k.FactoryID,k.ID");
                 MyUtility.Excel.CopyToXls(printData, "", "Planning_R02_Detail.xltx", 6, true, null, objApp);      // 將datatable copy to excel
                 objApp.Visible = false;
                 Microsoft.Office.Interop.Excel.Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                string d1 = (MyUtility.Check.Empty(sciDelivery1)) ? "" : Convert.ToDateTime(sciDelivery1).ToString("yyyy/MM/dd");
-                string d2 = (MyUtility.Check.Empty(sciDelivery2)) ? "" : Convert.ToDateTime(sciDelivery2).ToString("yyyy/MM/dd");
-                objSheet.Cells[4, 16] = d1 + "~" + d2;   // 條件字串寫入excel
+
+                objSheet.Cells[4, 16] = strDateRange;   // 條件字串寫入excel
                 objSheet.Cells[3, 13] = totalpoqty;   // 條件字串寫入excel
                 objSheet.Cells[4, 13] = totalpartsqty;   // 條件字串寫入excel
                 objApp.Visible = true;
@@ -316,10 +320,8 @@ order by k.FactoryID,k.ID");
                 MyUtility.Excel.CopyToXls(printData, "", "Planning_R02.xltx", 6, true, null, objApp2);      // 將datatable copy to excel
                 objApp2.Visible = false;
                 Microsoft.Office.Interop.Excel.Worksheet objSheet2 = objApp2.ActiveWorkbook.Worksheets[1];   // 取得工作表
-               
-                string d3 = (MyUtility.Check.Empty(sciDelivery1)) ? "" : Convert.ToDateTime(sciDelivery1).ToString("yyyy/MM/dd");
-                string d4 = (MyUtility.Check.Empty(sciDelivery2)) ? "" : Convert.ToDateTime(sciDelivery2).ToString("yyyy/MM/dd");
-                objSheet2.Cells[4, 16] = d3 + "~" + d4;   // 條件字串寫入excel
+
+                objSheet2.Cells[4, 16] = strDateRange;   // 條件字串寫入excel
                 objSheet2.Cells[3, 13] = totalpoqty;   // 條件字串寫入excel
                 objSheet2.Cells[4, 13] = totalpartsqty;   // 條件字串寫入excel
                 objApp2.Visible = true;
@@ -329,5 +331,20 @@ order by k.FactoryID,k.ID");
             }
          
         }
+
+        //依type傳回最大或最小日期
+        private string GetMinOrMax(string type, DateTime? dt1, DateTime? dt2, DateTime? dt3, DateTime? dt4)
+        {
+            List<string> list = new List<string>();
+            if (!MyUtility.Check.Empty(dt1)) list.Add(Convert.ToDateTime(dt1).ToString("yyyy/MM/dd"));
+            if (!MyUtility.Check.Empty(dt2)) list.Add(Convert.ToDateTime(dt2).ToString("yyyy/MM/dd"));
+            if (!MyUtility.Check.Empty(dt3)) list.Add(Convert.ToDateTime(dt3).ToString("yyyy/MM/dd"));
+            if (!MyUtility.Check.Empty(dt4)) list.Add(Convert.ToDateTime(dt4).ToString("yyyy/MM/dd"));
+            list.Sort();
+            if (type == "Min") return list[0];
+            else return list[list.Count - 1];
+        }
+
+
     }
 }

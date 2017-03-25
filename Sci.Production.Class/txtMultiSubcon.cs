@@ -32,8 +32,8 @@ namespace Sci.Production.Class
                 string sqlcmd = string.Format(@"select id,abb from dbo.LocalSupp WITH (NOLOCK) ");
 
                 Sci.Win.Tools.SelectItem2 selectSubcons = new Win.Tools.SelectItem2(sqlcmd,
-                                "Supp ID,Supp Abb", "13,60", this.Text);
-                selectSubcons.Width = 800;
+                                "Supp ID,Supp Abb", "10,15", this.Text);
+                selectSubcons.Width = 410;
                 DialogResult result = selectSubcons.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
                 this.Text = selectSubcons.GetSelectedString();
