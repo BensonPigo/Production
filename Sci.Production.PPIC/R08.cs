@@ -165,21 +165,10 @@ where 1=1");
                 objArray[0, 19] = dr["Suggested"];
                 objArray[0, 20] = dr["POSMR"];
                 objArray[0, 21] = dr["Prepare"];
-                worksheet.Range[String.Format("A{0}:V{0}", intRowsStart)].Value2 = objArray;
-                //對於DescDetail做列高調整
-                int c = 0;//計算此列要調多少倍列高
-                string[] D = dr["DescDetail"].ToString().Split('\r');//換行字元
-                c = D.Length;
-                foreach (string item in D)
-                {
-                    if (item.Length > 80) c++;//80是依據範本檔欄寬77大約去算的字元數量(不含中文)
-                }
-                Microsoft.Office.Interop.Excel.Range rangeRow 
-                    = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[intRowsStart, System.Type.Missing];
-                rangeRow.RowHeight = 16.25 * c;//16.25為單行列高
+                worksheet.Range[String.Format("A{0}:V{0}", intRowsStart)].Value2 = objArray;                
                 intRowsStart++;
             }
-            
+            excel.Cells.EntireRow.AutoFit();
             this.HideWaitMessage();
             excel.Visible = true;
             return true;
