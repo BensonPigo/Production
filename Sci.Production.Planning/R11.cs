@@ -21,7 +21,7 @@ namespace Sci.Production.Planning
         DataTable printData, dtArtworkType;
         StringBuilder condition = new StringBuilder();
         StringBuilder artworktypes = new StringBuilder();
-
+        StringBuilder pvtid = new StringBuilder();
         public R11(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -63,9 +63,11 @@ namespace Sci.Production.Planning
             }
 
             artworktypes.Clear();
+            pvtid.Clear();
             for (int i = 0; i < dtArtworkType.Rows.Count;i++ )
             {
                 artworktypes.Append(string.Format(@"[{0}],", dtArtworkType.Rows[i]["id"].ToString()));
+                pvtid.Append(string.Format(@",isnull([{0}],0)[{0}]",dtArtworkType.Rows[i]["id"].ToString()));
             }
             return base.ValidateInput();
         }
@@ -209,11 +211,12 @@ group by aa.StyleUkey,bb.ArtworkTypeID
     )as pvt )",artworktypes.ToString().Substring(0,artworktypes.ToString().Length-1)));
 
             sqlCmd.Append(string.Format(@"
-select a.FtyGroup,a.StyleID,a.SeasonID,a.CdCodeID,a.CPU,a.ttl_qty,a.ttl_cpu
-,round(B.ttl_output/ NULLIF(ttl_target,0),4) [Avg. Eff.]
+select DISTINCT a.FtyGroup,a.StyleID,a.SeasonID,a.CdCodeID,a.CPU,a.ttl_qty,a.ttl_cpu
+,isnull(round(B.ttl_output/ NULLIF(ttl_target,0),4),0) [Avg. Eff.]
 ,iif(xxx.outputdate is null,'Only Sample',xxx.sewinglineid+' ('+convert(varchar,xxx.outputdate)+')')remark
-,(select 'Y' from dbo.Style_TmsCost WITH (NOLOCK) where StyleUkey = a.StyleUkey and ArtworkTypeID = 'GMT WASH' and price > 0) wash
-,pvt.*
+--,(select 'Y' from dbo.Style_TmsCost WITH (NOLOCK) where StyleUkey = a.StyleUkey and ArtworkTypeID = 'GMT WASH' and price > 0) wash
+,W.WASH
+{0}
 from
 (select FtyGroup,styleukey,Styleid,seasonid,cdcodeid,cpu,sum(qty) ttl_qty,sum(qty*cpu) ttl_cpu from rawdata_order group by FtyGroup,styleukey,Styleid,seasonid,cdcodeid,cpu) a
 inner join tmscost_pvt pvt on pvt.StyleUkey = a.StyleUkey
@@ -226,10 +229,11 @@ left join
 from rawdata_output group by StyleUkey) b on b.StyleUkey = a.StyleUkey
 outer apply (select outputdate,SewingLineID from max_output M 
 				where m.StyleUkey = a.StyleUkey) xxx
+OUTER APPLY(select IIF(ArtworkUnit='GMT WASH',IIF(price > 0,'Y','N'),'N')WASH from dbo.Style_TmsCost WITH (NOLOCK) where StyleUkey = a.StyleUkey )W
 order by a.FtyGroup, a.StyleID,a.SeasonID
- "));
+ ", pvtid.ToString()));
 
-
+           
             DBProxy.Current.DefaultTimeout = 1800;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
             DBProxy.Current.DefaultTimeout = 0;
@@ -343,7 +347,7 @@ order by a.FtyGroup, a.StyleID,a.SeasonID
                 }
                 #endregion
 
-                objSheets.Cells[3, 12 + i] = strArtworkType;
+                objSheets.Cells[3, 11 + i] = strArtworkType;
 
             }
 
