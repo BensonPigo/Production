@@ -37,8 +37,8 @@ namespace Sci.Production.Warehouse
                 MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2) &&
                 MyUtility.Check.Empty(dateRange4.Value1) && MyUtility.Check.Empty(dateRange3.Value2) &&
                 MyUtility.Check.Empty(dateRange3.Value1) && MyUtility.Check.Empty(dateRange4.Value2) &&
-                (MyUtility.Check.Empty(txtSpno1.Text) || MyUtility.Check.Empty(txtSpno2.Text)) &&
-                (MyUtility.Check.Empty(txtRefno1.Text) || MyUtility.Check.Empty(txtRefno2.Text)))
+                (MyUtility.Check.Empty(txtSpno1.Text) && MyUtility.Check.Empty(txtSpno2.Text)) &&
+                (MyUtility.Check.Empty(txtRefno1.Text) && MyUtility.Check.Empty(txtRefno2.Text)))
             {
                 MyUtility.Msg.WarningBox("< Supp Delivery > & < SCI Delivery > & < ETA > & < FinalETA >& < SP# > & < Refno > can't be empty!!");
                 return false;
@@ -248,14 +248,30 @@ where 1=1 "));
             }
 
             #region --- 條件組合  ---
-            if (!MyUtility.Check.Empty(spno1))
+            if (!MyUtility.Check.Empty(spno1) && !MyUtility.Check.Empty(spno2))
             {
+                //若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料
                 sqlCmd.Append(" and a.id >= @spno1 and a.id <= @spno2");
-                sp_spno1.Value = spno1;
-                sp_spno2.Value = spno2;
+                sp_spno1.Value = spno1.PadRight(10, '0');
+                sp_spno2.Value = spno2.PadRight(10, 'Z');
                 cmds.Add(sp_spno1);
                 cmds.Add(sp_spno2);
             }
+            else if (!MyUtility.Check.Empty(spno1))
+            {
+                //只有 sp1 輸入資料
+                sqlCmd.Append(" and a.id like @spno1 ");
+                sp_spno1.Value = spno1 + "%";
+                cmds.Add(sp_spno1);
+            }
+            else if (!MyUtility.Check.Empty(spno2))
+            {
+                //只有 sp2 輸入資料
+                sqlCmd.Append(" and a.id like @spno2 ");
+                sp_spno2.Value = spno2 + "%";
+                cmds.Add(sp_spno2);
+            }
+
             if (!MyUtility.Check.Empty(suppDelivery1) || !MyUtility.Check.Empty(suppDelivery2))
             {
                 if (!MyUtility.Check.Empty(suppDelivery1))
@@ -309,12 +325,27 @@ where 1=1 "));
                 sqlCmd.Append(string.Format(@" and b.FabricType = '{0}'", fabrictype));
             }
 
-            if (!MyUtility.Check.Empty(refno1))
+            if (!MyUtility.Check.Empty(refno1) && !MyUtility.Check.Empty(refno2))
             {
+                //Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
                 sqlCmd.Append(" and b.refno >= @refno1 and b.refno <= @refno2");
                 sp_refno1.Value = refno1;
                 sp_refno2.Value = refno2;
                 cmds.Add(sp_refno1);
+                cmds.Add(sp_refno2);
+            }
+            else if (!MyUtility.Check.Empty(refno1))
+            {
+                //只輸入 Refno1
+                sqlCmd.Append(" and b.refno like @refno1");
+                sp_refno1.Value = refno1 + "%";
+                cmds.Add(sp_refno1);
+            }
+            else if (!MyUtility.Check.Empty(refno2))
+            {
+                //只輸入 Refno2
+                sqlCmd.Append(" and b.refno like @refno2");
+                sp_refno2.Value = refno2 + "%";
                 cmds.Add(sp_refno2);
             }
 
