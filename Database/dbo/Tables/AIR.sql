@@ -22,6 +22,8 @@
     [AddDate]             DATETIME        NULL,
     [EditName]            VARCHAR (10)    CONSTRAINT [DF_AIR_EditName] DEFAULT ('') NULL,
     [EditDate]            DATETIME        NULL,
+    [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
+    [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
     CONSTRAINT [PK_AIR] PRIMARY KEY CLUSTERED ([ID] ASC, [ReceivingID] ASC)
 );
 

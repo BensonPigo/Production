@@ -16,6 +16,8 @@
     [Qty]             NUMERIC (10, 2) CONSTRAINT [DF_Issue_Summary_Qty] DEFAULT ((0)) NULL,
     [seq1]            VARCHAR (3)     NULL,
     [seq2]            VARCHAR (2)     NULL,
+    [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
+    [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
     CONSTRAINT [PK_Issue_Summary_1] PRIMARY KEY CLUSTERED ([Id] ASC, [Ukey] ASC)
 );
 

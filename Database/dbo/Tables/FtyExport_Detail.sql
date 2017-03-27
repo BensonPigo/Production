@@ -15,6 +15,8 @@
     [LocalPOID]  VARCHAR (13)    CONSTRAINT [DF_FtyExport_Detail_LocalPOID] DEFAULT ('') NOT NULL,
     [Price]      NUMERIC (12, 4) CONSTRAINT [DF_FtyExport_Detail_LocalPO_DetailUKey] DEFAULT ((0)) NULL,
     [CurrencyId] VARCHAR (3)     CONSTRAINT [DF_FtyExport_Detail_CurrencyId] DEFAULT ('') NULL,
+    [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
+    [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
     CONSTRAINT [PK_FtyExport_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [POID] ASC, [Seq1] ASC, [Seq2] ASC, [SCIRefno] ASC, [RefNo] ASC, [LocalPOID] ASC)
 );
 

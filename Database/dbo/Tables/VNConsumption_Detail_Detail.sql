@@ -8,6 +8,8 @@
     [FabricBrandID] VARCHAR (8)     DEFAULT ('') NULL,
     [FabricType]    VARCHAR (1)     DEFAULT ('') NULL,
     [UKey]          BIGINT          IDENTITY (1, 1) NOT NULL,
+    [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
+    [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
     CONSTRAINT [PK_VNConsumption_Detail _Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
 

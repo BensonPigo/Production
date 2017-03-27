@@ -37,6 +37,8 @@ CREATE TABLE [dbo].[FIR] (
     [EditName]            VARCHAR (10)    CONSTRAINT [DF_FIR_EditName] DEFAULT ('') NULL,
     [EditDate]            DATETIME        NULL,
     [Status]              VARCHAR (15)    CONSTRAINT [DF_FIR_Status] DEFAULT ('') NULL,
+    [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
+    [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
     CONSTRAINT [PK_FIR] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

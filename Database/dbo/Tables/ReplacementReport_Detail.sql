@@ -30,6 +30,8 @@
     [Suggested]            NVARCHAR (100) CONSTRAINT [DF_ReplacementReport_Detail_Suggested] DEFAULT ('') NULL,
     [OccurCost]            NUMERIC (7, 3) CONSTRAINT [DF_ReplacementReport_Detail_OccurCost] DEFAULT ((0)) NULL,
     [UKey]                 BIGINT         IDENTITY (1, 1) NOT NULL,
+    [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
+    [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
     CONSTRAINT [PK_ReplacementReport_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
 

@@ -31,6 +31,8 @@
     [FabricCode]         VARCHAR (3)    CONSTRAINT [DF_WorkOrder_FabricCode] DEFAULT ('') NULL,
     [FabricPanelCode]         VARCHAR (2)    CONSTRAINT [DF_WorkOrder_FabricPanelCode] DEFAULT ('') NULL,
     [Order_EachconsUkey] BIGINT         CONSTRAINT [DF_WorkOrder_Order_EachconsUkey] DEFAULT ((0)) NULL,
+    [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
+    [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
     CONSTRAINT [PK_WorkOrder] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
