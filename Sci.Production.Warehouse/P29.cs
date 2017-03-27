@@ -278,12 +278,12 @@ as
 select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,f.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup,o.CFMDate,o.CutInLine,o.ProjectID,o.FactoryID 
 ,rtrim(pd.seq1) seq1,pd.seq2,pd.StockPOID,pd.StockSeq1,pd.StockSeq2
 --,pd.Qty*v.RateValue PoQty
-,ROUND(x.taipei_qty*v.RateValue,2,1) N'PoQty'
+,ROUND(x.taipei_qty*isnull(v.RateValue,1),2,1) N'PoQty'
 ,pd.POUnit,pd.StockUnit
 ,mpd.InQty
 from dbo.orders o WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
-inner join View_Unitrate v on v.FROM_U = pd.POUnit and v.TO_U = pd.StockUnit
+left join View_Unitrate v on v.FROM_U = pd.POUnit and v.TO_U = pd.StockUnit
 left join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.ID and mpd.Seq1 = pd.SEQ1 and mpd.Seq2 = pd.SEQ2
 inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
 outer apply

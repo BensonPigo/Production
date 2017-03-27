@@ -633,7 +633,7 @@ select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInvent
 ,a.Ukey as FtyInventoryUkey,POID,a.seq1,a.Seq2,roll,stocktype,a.Dyelot,inqty-OutQty+AdjustQty qty
 ,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
 ,sum(inqty-OutQty+AdjustQty) 
-over (order by c.GroupQty DESC,inqty-OutQty+AdjustQty desc
+over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty desc
 rows between unbounded preceding and current row) as running_total
 ,c.GroupQty
 from cte c 
@@ -641,7 +641,7 @@ inner join dbo.FtyInventory a WITH (NOLOCK) on a.Dyelot=c.Dyelot
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
 where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
 and p.SCIRefno = '{2}' and p.ColorID = '{3}' and a.Seq1 BETWEEN '00' AND '99'
-order by c.GroupQty DESC,Qty desc", Sci.Env.User.Keyword, materials["poid"], materials["scirefno"], materials["colorid"], stocktype);
+order by c.GroupQty DESC,a.Dyelot,Qty desc", Sci.Env.User.Keyword, materials["poid"], materials["scirefno"], materials["colorid"], stocktype);
             }
             else if (isIssue==false && stocktype == "B")//P28 Auto Pick
             {
@@ -659,13 +659,13 @@ select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInvent
 ,a.Ukey as FtyInventoryUkey,POID,a.seq1,a.Seq2,roll,stocktype,a.Dyelot,inqty-OutQty+AdjustQty qty
 ,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
 ,sum(inqty-OutQty+AdjustQty) 
-over (order by c.GroupQty DESC,inqty-OutQty+AdjustQty DESC
+over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty DESC
 rows between unbounded preceding and current row) as running_total
 from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
 inner join cte c on c.Dyelot=a.Dyelot
 where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
 and p.seq1 = '{2}' and p.seq2 = '{3}'
-order by c.GroupQty DESC,Qty DESC", Sci.Env.User.Keyword, materials["poid"], materials["seq1"], materials["seq2"], stocktype);
+order by c.GroupQty DESC,a.Dyelot,Qty DESC", Sci.Env.User.Keyword, materials["poid"], materials["seq1"], materials["seq2"], stocktype);
             }
             else//P29 Auto Pick
             {
@@ -683,13 +683,13 @@ select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInvent
 ,a.Ukey as FtyInventoryUkey,POID,a.seq1,a.Seq2,roll,stocktype,a.Dyelot,inqty-OutQty+AdjustQty qty
 ,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
 ,sum(inqty-OutQty+AdjustQty) 
-over (order by c.GroupQty DESC,inqty-OutQty+AdjustQty DESC
+over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty DESC
 rows between unbounded preceding and current row) as running_total
 from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
 inner join cte c on c.Dyelot=a.Dyelot
 where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
 and p.seq1 = '{2}' and p.seq2 = '{3}'
-order by c.GroupQty DESC,Qty DESC", Sci.Env.User.Keyword, materials["StockPOID"], materials["StockSeq1"], materials["StockSeq2"], stocktype);
+order by c.GroupQty DESC,a.Dyelot,Qty DESC", Sci.Env.User.Keyword, materials["StockPOID"], materials["StockSeq1"], materials["StockSeq2"], stocktype);
             }
             DualResult result = DBProxy.Current.Select("", sqlcmd, out dt);
             if (!result)
