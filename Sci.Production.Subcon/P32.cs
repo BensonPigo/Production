@@ -18,7 +18,7 @@ namespace Sci.Production.Subcon
     public partial class P32 : Sci.Win.Tems.QueryForm
     {
         protected DataTable dtGrid1, dtGrid2; DataSet dataSet;
-        string SP1, SP2; string orderid; string sqlWhere = "";
+        string SP1, SP2,M; string orderid; string sqlWhere = "";
         DateTime? sewingdate1, sewingdate2, scidate1, scidate2;
         List<string> sqlWheres = new List<string>();
         StringBuilder sqlcmd = new StringBuilder();
@@ -102,7 +102,7 @@ namespace Sci.Production.Subcon
             sewingdate2 = dateRange_Sewing.Value2;
             scidate1 = dateRange_SCI.Value1;
             scidate2 = dateRange_SCI.Value2;
-            
+            M = Sci.Env.User.Keyword;
             #region --組WHERE--
             if (!this.txt_SPStart.Text.Empty())
             {
@@ -136,19 +136,57 @@ namespace Sci.Production.Subcon
             #region -- sql command --
              this.ShowWaitMessage("Data Loading....");
             sqlcmd.Append(string.Format(@"
-                    select distinct LD.OrderId,
+                    select  distinct 
+									LD.OrderId,
 				                    O.StyleID,
 			                        GetSCI.MinSciDelivery,
 				                    GetSCI.MinSewinLine,
-				                    Carton=IIF(L.Category='CARTON','Y','N'),
-				                    SPThread=IIF(L.Category='SP_THREAD','Y','N'),
-				                    EmbThread=IIF(L.Category='EMB_THREAD','Y','N')
-                    from LocalPO_Detail LD WITH (NOLOCK)
+									(select distinct L.Category+',' 
+					from LocalPO_Detail LD WITH (NOLOCK)
                     left join LocalPO L WITH (NOLOCK) on L.Id=LD.Id
                     left join orders O WITH (NOLOCK) on LD.OrderId=O.ID and LD.POID = o.POID
                     cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
-                    where 1=1 " + sqlWhere));
-            sqlcmd.Append(" order by LD.OrderId");
+                    where 1=1 "+ sqlWhere + @" and  L.MdivisionID= '{0}'
+                    FOR XML PATH(''))as c
+				into #tmp  	
+				from LocalPO_Detail LD WITH (NOLOCK)
+                    left join LocalPO L WITH (NOLOCK) on L.Id=LD.Id
+                    left join orders O WITH (NOLOCK) on LD.OrderId=O.ID and LD.POID = o.POID
+                    cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
+                    where 1=1 " + sqlWhere + @" and  L.MdivisionID= '{0}' order by LD.OrderId
+                    
+                    select  #tmp.OrderId,
+							#tmp.StyleID,
+							#tmp.MinSciDelivery,
+							#tmp.MinSewinLine,
+							 case
+							  when #tmp.c='CARTON,' then 'Y'
+							  when #tmp.c='CARTON,SP_THREAD,' then 'Y'
+							  when #tmp.c='CARTON,EMB_THREAD,' then 'Y'
+							  when #tmp.c='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
+							  ELSE 'N'
+							END
+							AS Carton,
+								 case
+							  when #tmp.c='SP_THREAD,' then 'Y'
+							  when #tmp.c='CARTON,SP_THREAD,' then 'Y'
+							  when #tmp.c='EMB_THREAD,SP_THREAD,' then 'Y'
+							  when #tmp.c='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
+							  ELSE 'N'
+							END
+							AS SPThread,
+									 case
+							  when #tmp.c='EMB_THREAD,' then 'Y'
+							  when #tmp.c='CARTON,EMB_THREAD,' then 'Y'
+							  when #tmp.c='EMB_THREAD,SP_THREAD,' then 'Y'
+							  when #tmp.c='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
+							  ELSE 'N'
+							END
+							AS EmbThread
+					from #tmp
+				
+				drop table  #tmp", M));
+
             sqlcmd.Append(Environment.NewLine); // 換行
             //Grid2
             sqlcmd.Append(string.Format(@"
@@ -175,8 +213,7 @@ namespace Sci.Production.Subcon
                     left join orders O WITH (NOLOCK) on LD.OrderId=O.ID and LD.POID = o.POID
                     cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
                     where 1=1 
-                    " + sqlWhere));
-            sqlcmd.Append(" order by LD.OrderId, L.Category, L.LocalSuppID");
+                    " + sqlWhere + @"and  L.MdivisionID= '{0}' order by LD.OrderId, L.Category, L.LocalSuppID", M));
             #endregion
            
             DBProxy.Current.DefaultTimeout = 1200;
@@ -226,9 +263,15 @@ namespace Sci.Production.Subcon
         {
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_P32.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls(dtGrid1, "", "Subcon_P32.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+            objApp.Cells.EntireColumn.AutoFit(); //自動欄寬
+           // objApp.Columns().ColumnWidth = 14;
             objApp.Visible = false;
+           // objApp.Cells.ColumnWidth = 14;
+            //objAppEntireColumn.AutoFit(); //自動欄寬
+            
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[2];   // 取得工作表
             MyUtility.Excel.CopyToXls(dtGrid2, "", "Subcon_P32.xltx", 1, true, null, null, true, objSheets, false);// 將datatable copy to excel
+            objSheets.Cells.EntireColumn.AutoFit(); //自動欄寬
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return;
