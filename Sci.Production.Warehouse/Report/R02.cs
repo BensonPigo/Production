@@ -85,12 +85,20 @@ namespace Sci.Production.Warehouse
                 if (!MyUtility.Check.Empty(dateRange1.Value2))
                     sqlDateRange += string.Format(" and a.issuedate <= '{0}'", Convert.ToDateTime(dateRange1.Value2).ToString("d"));
 
-                string sqlcmd = string.Format(@"select a.issuedate, b.frompoid poid, b.fromseq1 seq1,b.fromseq2 seq2, sum(b.qty) qty, 
-isnull((select stockunit from po_supp_detail WITH (NOLOCK) where id= b.FromPOID and seq1 = b.FromSeq1 and seq2 = b.FromSeq2),'') as unit
-,dbo.getmtldesc(b.FromPOID,b.FromSeq1,b.FromSeq2,2,0) as description
-from dbo.SubTransfer a WITH (NOLOCK) inner join dbo.SubTransfer_Detail b WITH (NOLOCK) on a.id = b.id
-where a.Status = 'Confirmed' and a.type='D' 
-{0}
+                string sqlcmd = string.Format(@"
+select 	a.issuedate
+		,poid = b.frompoid 
+		,seq1 = b.fromseq1 
+		,seq2 = b.fromseq2 
+		,qty = sum(b.qty) 
+		,unit =  isnull((select stockunit 
+						 from po_supp_detail WITH (NOLOCK) 
+						 where id= b.FromPOID and seq1 = b.FromSeq1 and seq2 = b.FromSeq2)
+						,'')
+		,description = dbo.getmtldesc(b.FromPOID,b.FromSeq1,b.FromSeq2,2,0)
+from dbo.SubTransfer a WITH (NOLOCK) 
+inner join dbo.SubTransfer_Detail b WITH (NOLOCK) on a.id = b.id
+where a.Status = 'Confirmed' and a.type='D' {0}
 group by a.issuedate , b.FromPOID, b.FromSeq1,b.FromSeq2
 order by a.issuedate, b.FromPOID, b.FromSeq1,b.FromSeq2
 ", sqlDateRange);
