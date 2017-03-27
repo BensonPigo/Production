@@ -189,7 +189,7 @@
             this.IsSupportPrint = false;
             this.Name = "B02";
             this.Text = "B02. Lean Measurement Target Setting";
-            this.UniqueExpress = "ID";
+            this.UniqueExpress = "EffectiveDate,MDivisionID,Type";
             this.WorkAlias = "ChgOverTarget";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

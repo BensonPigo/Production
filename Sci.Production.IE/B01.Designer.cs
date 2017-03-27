@@ -268,7 +268,7 @@
             this.IsSupportPrint = false;
             this.Name = "B01";
             this.Text = "B01. Changeover Check List Activities index";
-            this.UniqueExpress = "ID";
+            this.UniqueExpress = "CODE,BRANDID";
             this.WorkAlias = "ChgOverCheckList";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
