@@ -54,12 +54,53 @@ namespace Sci.Production.PPIC
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
-with tmpData as (
-	select DISTINCT l.MDivisionID,l.FactoryID,l.POID,ld.Seq1,ld.Seq2,
-	l.FabricType,
-	[RequestQty] = sum(RequestQty) over(partition by l.MDivisionID,l.FactoryID,l.POID,ld.Seq1,ld.Seq2,l.FabricType) 
-	from Lack l WITH (NOLOCK) 
-	inner join Lack_Detail ld WITH (NOLOCK) on ld.ID = l.ID	
+select distinct 
+l.MDivisionID,l.FactoryID,l.POID,ld.Seq1,ld.Seq2,l.FabricType,
+Refno = isnull(psd.Refno,''),
+NETQty1 = isnull(psd.NETQty,0),
+POUnit = isnull(psd.POUnit,''),
+StockUnit = isnull(psd.StockUnit,''),
+OutputSeq1,OutputSeq2,SCIRefno,
+NETQty2 = isnull(psd2.NETQty,0),
+INVPOUnit = isnull(psd2.POUnit,''),
+INVStockUnit = isnull(psd2.StockUnit,''),
+f.MtlTypeID,
+[INQTY] = isnull(mpd.InQty,0)+isnull(mpd2.InQty ,0)+ISnull(mpd7.InQty ,0 ),
+IS7 = IIF(ld.Seq1 LIKE'7_',1,0),
+c1 = isnull(c1.c1,1),
+c2 = isnull(c2.c2,1)
+into #tmpData
+from Lack l WITH (NOLOCK) 
+inner join Lack_Detail ld WITH (NOLOCK) on ld.ID = l.ID	
+outer apply (
+	select Refno,NETQty,POUnit,StockUnit,OutputSeq1,OutputSeq2,SCIRefno
+	from PO_Supp_Detail WITH (NOLOCK) 
+	where ID = l.POID and SEQ1 = ld.Seq1 and SEQ2 = ld.Seq2
+)psd
+outer apply (
+	select NETQty,POUnit,StockUnit 
+	from PO_Supp_Detail WITH (NOLOCK) 
+	where ID = L.POID and SEQ1 = psd.OutputSeq1 and SEQ2 = psd.OutputSeq2
+)psd2
+outer apply (select MtlTypeID from Fabric  WITH (NOLOCK) where SCIRefno = psd.SCIRefno)f
+outer apply (
+	select inqty 
+	from MDivisionPoDetail WITH (NOLOCK) 
+	where MDivisionId = L.MDivisionID and POID = L.POID and Seq1 = LD.Seq1 and Seq2 = LD.Seq2
+) mpd
+outer apply (
+	select sum(InQty) inqty 
+	from PO_Supp_Detail psd3 INNER join MDivisionPoDetail m on m.Seq1 = psd3.SEQ1 and m.Seq2 = psd3.SEQ2
+	where psd3.ID = L.POID and psd3.OutputSeq1 = LD.Seq1 and psd3.OutputSeq2 = LD.SEQ2
+	AND m.MDivisionId = L.MDivisionID and m.POID = L.POID  
+) mpd2
+outer apply (
+	select inqty 
+	from MDivisionPoDetail WITH (NOLOCK) 
+	where MDivisionId = L.MDivisionID and POID = L.POID and Seq1 = PSD.OutputSeq1 and Seq2 = PSD.OutputSeq2
+)mpd7
+outer apply(select RateValue c1 from View_Unitrate WITH (NOLOCK) where FROM_U = psd.POUnit and TO_U = psd.StockUnit) c1
+outer apply(select RateValue c2 from View_Unitrate WITH (NOLOCK) where FROM_U = psd2.POUnit and TO_U = psd2.StockUnit) c2
 where l.Type = 'R'"));
 
             if (!MyUtility.Check.Empty(_apvDate1))
@@ -87,52 +128,44 @@ where l.Type = 'R'"));
             }
 
             sqlCmd.Append(@" 
-),TMP1 AS( 
-	SELECT T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,T.FabricType,RequestQty,
-	isnull(psd.Refno,'') as Refno,isnull(f.MtlTypeID,'') as MtlTypeID,
-	INQTY = isnull(mpd.InQty,0)+isnull(mpd2.InQty ,0)+ ISnull(mpd7.InQty ,0 ),
-	isnull(psd.NETQty,0) as NETQty1,
-	isnull(psd2.NETQty,0) as NETQty2,
-	isnull(psd.POUnit,'') as POUnit,isnull(psd.StockUnit,'') as StockUnit,isnull(psd2.POUnit,'') as INVPOUnit,
-	isnull(psd2.StockUnit,'') as INVStockUnit,
-	isnull(i.Qty,0) as StockQty1,
-	isnull(i2.Qty,0) as StockQty2,
-	isnull(i7.Qty,0) as StockQty71,
-	isnull(i72.Qty,0) as StockQty72,
-	IIF(T.Seq1 LIKE'7_',1,0) IS7
-	FROM tmpData T
-	outer apply (select * from PO_Supp_Detail WITH (NOLOCK) where ID = T.POID and SEQ1 = T.Seq1 and SEQ2 = T.Seq2)psd
-	outer apply (select * from PO_Supp_Detail WITH (NOLOCK) where ID = T.POID and SEQ1 = psd.OutputSeq1 and SEQ2 = psd.OutputSeq2)psd2
-	outer apply (select * from Fabric  WITH (NOLOCK) where SCIRefno = psd.SCIRefno)f
-	outer apply (select inqty from MDivisionPoDetail WITH (NOLOCK) where MDivisionId = T.MDivisionID and POID = T.POID and Seq1 = T.Seq1 and Seq2 = T.Seq2) mpd
-	outer apply (select sum(InQty) inqty 
-		from PO_Supp_Detail psd3 left join MDivisionPoDetail m on m.Seq1 = psd3.SEQ1 and m.Seq2 = psd3.SEQ2
-		where m.MDivisionId = T.MDivisionID and m.POID = T.POID and psd3.ID = T.POID and psd3.OutputSeq1 = psd.Seq1 and psd3.OutputSeq2 = psd.SEQ2) mpd2
-		outer apply (select inqty from MDivisionPoDetail WITH (NOLOCK) where MDivisionId = T.MDivisionID and POID = T.POID and Seq1 = PSD.OutputSeq1 and Seq2 = PSD.OutputSeq2
-	)mpd7
-	outer apply (select SUM(Qty)Qty from Invtrans  WITH (NOLOCK) where PoID = T.POID and Seq1 = T.Seq1 and Seq2 = T.Seq2 and Type = 1) i
-	outer apply (select SUM(Qty)Qty from Invtrans  WITH (NOLOCK) where InventoryPOID = T.POID and InventorySeq1 = T.Seq1 and InventorySeq2 = T.Seq2 and Type = 4) i2
-	outer apply (select SUM(Qty)Qty from Invtrans  WITH (NOLOCK) where PoID = T.POID and Seq1 = PSD.OutputSeq1 and Seq2 = PSD.OutputSeq2 and Type = 1) i7	
-	outer apply (select SUM(Qty)Qty from Invtrans  WITH (NOLOCK) where InventoryPOID = T.POID and InventorySeq1 = PSD.OutputSeq1 and InventorySeq2 = PSD.OutputSeq2 and Type = 4) i72
-),tmpData2 as (
-	select MDivisionID,FactoryID,POID,Seq1,Seq2,Refno,MtlTypeID,RequestQty,
-	InQty,
-	NETQty1*IIF(POUnit is null or StockUnit is null,1, dbo.getUnitRate(POUnit,StockUnit))+
-	NETQty2*IIF(INVPOUnit is null or INVStockUnit is null,1, dbo.getUnitRate(INVPOUnit,INVStockUnit)) as NETQty,
-	StockQty1*IIF(POUnit is null or StockUnit is null,1, dbo.getUnitRate(POUnit,StockUnit))+
-	StockQty2*IIF(INVPOUnit is null or INVStockUnit is null,1, dbo.getUnitRate(INVPOUnit,INVStockUnit)) +
-	IIF(IS7 = 0,0,
-	StockQty71*IIF(POUnit is null or StockUnit is null,1, dbo.getUnitRate(POUnit,StockUnit))+
-	StockQty72*IIF(INVPOUnit is null or INVStockUnit is null,1, dbo.getUnitRate(INVPOUnit,INVStockUnit)) )
-	as StockQty,
-	FabricType
-	from TMP1
+;with s1 as(
+select T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,StockQty1 = isnull(sum(i.qty) over(partition by MDivisionID,FactoryID,FabricType,POID,Seq1,Seq2,i.type),0)
+	from #tmpData T	outer apply(select Qty,Type from Invtrans  WITH (NOLOCK) where PoID = T.POID and Seq1 = T.Seq1 and Seq2 = T.Seq2 and Type = 1) i
+),s2 as(
+select T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,StockQty2 = isnull(sum(i2.qty) over(partition by MDivisionID,FactoryID,FabricType,POID,Seq1,Seq2,i2.type),0)
+	from #tmpData T	outer apply(select Qty,Type from Invtrans  WITH (NOLOCK) where InventoryPOID = T.POID and InventorySeq1 = T.Seq1 and InventorySeq2 = T.Seq2 and Type = 4) i2
+),s71 as(
+select T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,StockQty71 = isnull(sum(i7.qty) over(partition by MDivisionID,FactoryID,FabricType,POID,OutputSeq1,OutputSeq2,i7.type),0)
+	from #tmpData T	outer apply(select Qty,Type from Invtrans  WITH (NOLOCK) where PoID = T.POID and Seq1 = T.OutputSeq1 and Seq2 = T.OutputSeq2 and Type = 1) i7	
+),s72 as(
+select T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,StockQty72 = isnull(sum(i72.qty) over(partition by MDivisionID,FactoryID,FabricType,POID,OutputSeq1,OutputSeq2,i72.type),0)
+	from #tmpData T	outer apply(select Qty,Type from Invtrans  WITH (NOLOCK) where InventoryPOID = T.POID and InventorySeq1 = T.OutputSeq1 and InventorySeq2 = T.OutputSeq2 and Type = 4) i72
+),RequestQty as(
+	select  T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,RequestQty = isnull(sum(RequestQty) over(partition by MDivisionID,FactoryID,FabricType,POID,Seq1,Seq2),0)
+	from #tmpData T 
+	OUTER APPLY(
+		SELECT  RequestQty	FROM Lack L	inner join Lack_Detail ld WITH (NOLOCK) on ld.ID = l.ID
+		WHERE l.Type = 'R' and l.FabricType = T.FabricType	and l.MDivisionID = T.MDivisionID and l.FactoryID = T.FactoryID	AND POID = T.POID AND SEQ1 = T.Seq1 AND SEQ2 = T.Seq2
+	)R
+), AllTMP AS(
+	select DISTINCT 
+	T.*,S1.StockQty1,S2.StockQty2,S71.StockQty71,S72.StockQty72,RequestQty
+	from #tmpData T
+	outer apply(SELECT StockQty1 FROM S1 WHERE MDivisionID = T.MDivisionID AND FactoryID = T.FactoryID AND POID = T.POID AND Seq1 = T.Seq1 AND Seq2 = T.Seq2)S1
+	outer apply(SELECT StockQty2 FROM S2 WHERE MDivisionID = T.MDivisionID AND FactoryID = T.FactoryID AND POID = T.POID AND Seq1 = T.Seq1 AND Seq2 = T.Seq2)S2
+	outer apply(SELECT StockQty71 FROM S71 WHERE MDivisionID = T.MDivisionID AND FactoryID = T.FactoryID AND POID = T.POID AND Seq1 = T.Seq1 AND Seq2 = T.Seq2)S71
+	outer apply(SELECT StockQty72 FROM S72 WHERE MDivisionID = T.MDivisionID AND FactoryID = T.FactoryID AND POID = T.POID AND Seq1 = T.Seq1 AND Seq2 = T.Seq2)S72
+	outer apply(SELECT RequestQty FROM RequestQty WHERE MDivisionID = T.MDivisionID AND FactoryID = T.FactoryID AND POID = T.POID AND Seq1 = T.Seq1 AND Seq2 = T.Seq2)R	
 )
-select MDivisionID,FactoryID,POID,Seq1,Seq2,Refno,MtlTypeID,InQty,NETQty,StockQty,
-[Allowance Qty]=InQty-NETQty-StockQty,
-RequestQty
-from tmpData2 T
+select 
+	MDivisionID,FactoryID,POID,Seq1,Seq2,Refno,MtlTypeID,InQty,
+	[NETQty] = NETQty1*c1 + NETQty2*c2,
+	[StockQty] = StockQty1 * c1 + StockQty2 * c2 + IIF(IS7 = 0,0,StockQty71 * c1 + StockQty72 * c2),
+	[Allowance Qty] = InQty - (NETQty1*c1 + NETQty2*c2) - (StockQty1 * c1 + StockQty2 * c2 + IIF(IS7 = 0,0,StockQty71 * c1 + StockQty72 * c2)),
+	RequestQty
+from AllTMP
 order by MDivisionID,FactoryID,POID,Seq1,Seq2
+drop table #tmpData
 "
                 );
 
