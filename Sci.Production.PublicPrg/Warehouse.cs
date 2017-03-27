@@ -620,47 +620,76 @@ for xml path('') ", ukey), out dt);
             if (isIssue)//P10 Auto Pick
             {
                 sqlcmd = string.Format(@"
-select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')) location
-,a.Ukey as FtyInventoryUkey,POID,a.seq1,a.Seq2,roll,stocktype,Dyelot,inqty-OutQty+AdjustQty qty
-,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
-,sum(inqty-OutQty+AdjustQty) 
-over (order by a.Dyelot,(select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path(''))
-,a.Seq1,a.seq2,inqty-OutQty+AdjustQty desc
-rows between unbounded preceding and current row) as running_total
+with cte as 
+(
+select Dyelot,sum(inqty-OutQty+AdjustQty) as GroupQty
 from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
 where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
 and p.SCIRefno = '{2}' and p.ColorID = '{3}' and a.Seq1 BETWEEN '00' AND '99'
-order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["poid"], materials["scirefno"], materials["colorid"], stocktype);
+Group by Dyelot
+) 
+
+select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')) location
+,a.Ukey as FtyInventoryUkey,POID,a.seq1,a.Seq2,roll,stocktype,a.Dyelot,inqty-OutQty+AdjustQty qty
+,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
+,sum(inqty-OutQty+AdjustQty) 
+over (order by c.GroupQty DESC,inqty-OutQty+AdjustQty desc
+rows between unbounded preceding and current row) as running_total
+,c.GroupQty
+from cte c 
+inner join dbo.FtyInventory a WITH (NOLOCK) on a.Dyelot=c.Dyelot
+inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
+where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
+and p.SCIRefno = '{2}' and p.ColorID = '{3}' and a.Seq1 BETWEEN '00' AND '99'
+order by c.GroupQty DESC,Qty desc", Sci.Env.User.Keyword, materials["poid"], materials["scirefno"], materials["colorid"], stocktype);
             }
             else if (isIssue==false && stocktype == "B")//P28 Auto Pick
             {
                 sqlcmd = string.Format(@"
-select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')) location
-,a.Ukey as FtyInventoryUkey,POID,a.seq1,a.Seq2,roll,stocktype,Dyelot,inqty-OutQty+AdjustQty qty
-,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
-,sum(inqty-OutQty+AdjustQty) 
-over (order by a.Dyelot,(select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path(''))
-,a.Seq1,a.seq2,inqty-OutQty+AdjustQty desc
-rows between unbounded preceding and current row) as running_total
+with cte as 
+(
+select Dyelot,sum(inqty-OutQty+AdjustQty) as GroupQty
 from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
 where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
 and p.seq1 = '{2}' and p.seq2 = '{3}'
-order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["poid"], materials["seq1"], materials["seq2"], stocktype);
+Group by Dyelot
+) 
+
+select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')) location
+,a.Ukey as FtyInventoryUkey,POID,a.seq1,a.Seq2,roll,stocktype,a.Dyelot,inqty-OutQty+AdjustQty qty
+,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
+,sum(inqty-OutQty+AdjustQty) 
+over (order by c.GroupQty DESC,inqty-OutQty+AdjustQty DESC
+rows between unbounded preceding and current row) as running_total
+from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
+inner join cte c on c.Dyelot=a.Dyelot
+where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
+and p.seq1 = '{2}' and p.seq2 = '{3}'
+order by c.GroupQty DESC,Qty DESC", Sci.Env.User.Keyword, materials["poid"], materials["seq1"], materials["seq2"], stocktype);
             }
             else//P29 Auto Pick
             {
                 sqlcmd = string.Format(@"
-select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')) location
-,a.Ukey as FtyInventoryUkey,POID,a.seq1,a.Seq2,roll,stocktype,Dyelot,inqty-OutQty+AdjustQty qty
-,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
-,sum(inqty-OutQty+AdjustQty) 
-over (order by a.Dyelot,(select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path(''))
-,a.Seq1,a.seq2,inqty-OutQty+AdjustQty desc
-rows between unbounded preceding and current row) as running_total
+with cte as 
+(
+select Dyelot,sum(inqty-OutQty+AdjustQty) as GroupQty
 from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
 where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
 and p.seq1 = '{2}' and p.seq2 = '{3}'
-order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["StockPOID"], materials["StockSeq1"], materials["StockSeq2"], stocktype);
+Group by Dyelot
+) 
+
+select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')) location
+,a.Ukey as FtyInventoryUkey,POID,a.seq1,a.Seq2,roll,stocktype,a.Dyelot,inqty-OutQty+AdjustQty qty
+,inqty,outqty,adjustqty,inqty-OutQty+AdjustQty balanceqty
+,sum(inqty-OutQty+AdjustQty) 
+over (order by c.GroupQty DESC,inqty-OutQty+AdjustQty DESC
+rows between unbounded preceding and current row) as running_total
+from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
+inner join cte c on c.Dyelot=a.Dyelot
+where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
+and p.seq1 = '{2}' and p.seq2 = '{3}'
+order by c.GroupQty DESC,Qty DESC", Sci.Env.User.Keyword, materials["StockPOID"], materials["StockSeq1"], materials["StockSeq2"], stocktype);
             }
             DualResult result = DBProxy.Current.Select("", sqlcmd, out dt);
             if (!result)
@@ -670,6 +699,7 @@ order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["S
             }
             else
             {
+                DataTable findrow=null;
                 foreach (DataRow dr2 in dt.Rows)
                 {
                     if ((decimal)dr2["running_total"] < request)
@@ -679,31 +709,33 @@ order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["S
                     }
                     else
                     {
+                        //依照最後一塊料的Dyelot來找到對應的Group來取得最後一塊料
+                        findrow = dt.AsEnumerable().Where(row => row["Dyelot"].EqualString(dr2["Dyelot"].ToString())).CopyToDataTable();
                         break;
                     }
-
                 }
 
-                if (accu_issue < request)   // 累計發料數小於需求數時，再反向。
+                if (accu_issue < request && findrow!=null)   // 累計發料數小於需求數時，再反向取得最後一塊料。
                 {
                     decimal balance = request - accu_issue;
                     //dt.DefaultView.Sort = "Dyelot,location,Seq1,seq2,Qty asc";
-                    for (int i = dt.Rows.Count - 1; i >= 0; i--)
+                    for (int i = findrow.Rows.Count - 1; i >= 0; i--)
                     {
-                        DataRow find = items.Find(item => item["ftyinventoryukey"].ToString() == dt.Rows[i]["ftyinventoryukey"].ToString());
+                        DataRow find = items.Find(item => item["ftyinventoryukey"].ToString() == findrow.Rows[i]["ftyinventoryukey"].ToString());
                         if (MyUtility.Check.Empty(find))// if overlape
                         {
                             if (balance > 0m)
                             {
-                                if (balance >= (decimal)dt.Rows[i]["qty"])
+                                if (balance >= (decimal)findrow.Rows[i]["qty"])
                                 {
-                                    items.Add(dt.Rows[i]);
-                                    balance -= (decimal)dt.Rows[i]["qty"];
+                                    items.Add(findrow.Rows[i]);
+                                    balance -= (decimal)findrow.Rows[i]["qty"];
                                 }
                                 else//最後裁切
                                 {
-                                    dt.Rows[i]["qty"] = balance;
-                                    items.Add(dt.Rows[i]);
+                                    findrow.Rows[i]["qty"] = balance;
+                                    items.Add(findrow
+                                        .Rows[i]);
                                     balance = 0m;
                                 }
                             }
@@ -718,6 +750,10 @@ order by Dyelot,location,Seq1,seq2,Qty desc", Sci.Env.User.Keyword, materials["S
                         }
                     }
                 }
+                
+
+                    
+                
             }
             return items;
         }
