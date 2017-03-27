@@ -220,7 +220,7 @@ drop table #tmpData
                 objArray[0, 11] = MyUtility.Convert.GetDecimal(dr["RequestQty"]) > MyUtility.Convert.GetDecimal(dr["InQty"]) - MyUtility.Convert.GetDecimal(dr["NETQty"]) - MyUtility.Convert.GetDecimal(dr["StockQty"]) ? "FAIL" : "PASS";
                 
                 worksheet.Range[String.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
-                worksheet.Range[String.Format("A{0}:L{0}", intRowsStart)].Borders.Weight = 1;//設定全框線
+                worksheet.Range[String.Format("A{0}:L{0}", intRowsStart)].Borders.Weight = 2;//設定全框線
                 intRowsStart++;
             }
 
