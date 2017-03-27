@@ -2309,9 +2309,9 @@ ROW_NUMBER() OVER(ORDER BY pg.SEQ) AS Row
 " + articleGroupList.Select(item => string.Format(", [{0}].FabricPanelCode as [{0}]", item)).JoinToString("\r\n") + @"
 From Pattern p
 Left Join Pattern_GL pg on pg.PatternUKEY = p.UKey
-Outer Apply (Select FabricPanelCode from Pattern_GL_FabricPanelCode lc where lc.PatternUKEY = p.UKey and lc.PatternCode = pg.PatternCode and lc.ArticleGroup = 'F_CODE') F_Code
+Outer Apply (Select FabricPanelCode from Pattern_GL_LectraCode lc where lc.PatternUKEY = p.UKey and lc.PatternCode = pg.PatternCode and lc.ArticleGroup = 'F_CODE') F_Code
 " + articleGroupList.Select(item => string.Format(
-"Outer Apply (Select FabricPanelCode from Pattern_GL_FabricPanelCode lc where lc.PatternUKEY = p.UKey and lc.PatternCode = pg.PatternCode and lc.ArticleGroup = '{0}') [{0}]", item)).JoinToString("\r\n") + @"
+"Outer Apply (Select FabricPanelCode from Pattern_GL_LectraCode lc where lc.PatternUKEY = p.UKey and lc.PatternCode = pg.PatternCode and lc.ArticleGroup = '{0}') [{0}]", item)).JoinToString("\r\n") + @"
 Where pg.PatternUKey = @PatternUKey
 Order by pg.SEQ
 ";
