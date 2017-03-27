@@ -37,7 +37,7 @@ namespace Sci.Production.Warehouse
         {
             if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) &&
                 MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2) &&
-                (MyUtility.Check.Empty(txtSpno1.Text) || MyUtility.Check.Empty(txtSpno2.Text))) 
+                (MyUtility.Check.Empty(txtSpno1.Text) && MyUtility.Check.Empty(txtSpno2.Text))) 
             {
                 MyUtility.Msg.WarningBox("< Scrap Date > & < Buyer Delivery > & < SP# > can't be empty!!");
                 return false;
@@ -164,12 +164,27 @@ where s.Status = 'Confirmed' and s.type = '{0}'
                 if (!MyUtility.Check.Empty(buyerDelivery2))
                     sqlCmd.Append(string.Format(@" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDelivery2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(spno1))
+            if (!MyUtility.Check.Empty(spno1) && !MyUtility.Check.Empty(spno2))
             {
-                sqlCmd.Append(" and sd.FromPOID >= @spno1 and sd.FromPOID <= @spno2");
-                sp_spno1.Value = spno1;
-                sp_spno2.Value = spno2;
+                //若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料
+                sqlCmd.Append(" and sd.FromPoid >= @spno1 and sd.FromPoid <= @spno2");
+                sp_spno1.Value = spno1.PadRight(10, '0');
+                sp_spno2.Value = spno2.PadRight(10, 'Z');
                 cmds.Add(sp_spno1);
+                cmds.Add(sp_spno2);
+            }
+            else if (!MyUtility.Check.Empty(spno1))
+            {
+                //只有 sp1 輸入資料
+                sqlCmd.Append(" and sd.FromPoid like @spno1 ");
+                sp_spno1.Value = spno1 + "%";
+                cmds.Add(sp_spno1);
+            }
+            else if (!MyUtility.Check.Empty(spno2))
+            {
+                //只有 sp2 輸入資料
+                sqlCmd.Append(" and sd.FromPoid like @spno2 ");
+                sp_spno2.Value = spno2 + "%";
                 cmds.Add(sp_spno2);
             }
             if (!MyUtility.Check.Empty(issueDate1) || !MyUtility.Check.Empty(issueDate2))
@@ -209,12 +224,27 @@ where s.Status = 'Confirmed' and s.type = '{0}'
                 cmds.Add(sp_brand);
             }
 
-            if (!MyUtility.Check.Empty(refno1))
+            if (!MyUtility.Check.Empty(refno1) && !MyUtility.Check.Empty(refno2))
             {
+                //Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
                 sqlCmd.Append(" and p.refno >= @refno1 and p.refno <= @refno2");
                 sp_refno1.Value = refno1;
                 sp_refno2.Value = refno2;
                 cmds.Add(sp_refno1);
+                cmds.Add(sp_refno2);
+            }
+            else if (!MyUtility.Check.Empty(refno1))
+            {
+                //只輸入 Refno1
+                sqlCmd.Append(" and p.refno like @refno1");
+                sp_refno1.Value = refno1 + "%";
+                cmds.Add(sp_refno1);
+            }
+            else if (!MyUtility.Check.Empty(refno2))
+            {
+                //只輸入 Refno2
+                sqlCmd.Append(" and p.refno like @refno2");
+                sp_refno2.Value = refno2 + "%";
                 cmds.Add(sp_refno2);
             }
             #endregion
