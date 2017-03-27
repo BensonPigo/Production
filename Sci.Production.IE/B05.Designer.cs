@@ -272,6 +272,7 @@
             this.DefaultControl = "displayBox1";
             this.DefaultControlForEdit = "displayBox1";
             this.DefaultOrder = "ID";
+            this.EnableGridJunkColor = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
