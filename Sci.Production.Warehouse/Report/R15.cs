@@ -121,12 +121,27 @@ where a.type = 'D' AND a.Status = 'Confirmed'
                 sqlCmd.Append(string.Format(@" and A.WhseReasonID = '{0}'", reason));
             }
 
-            if (!MyUtility.Check.Empty(spno1))
+            if (!MyUtility.Check.Empty(spno1) && !MyUtility.Check.Empty(spno2))
             {
-                sqlCmd.Append(" and b.poid >= @spno1 and b.poid <= @spno2");
-                sp_spno1.Value = spno1;
-                sp_spno2.Value = spno2;
+                //若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料
+                sqlCmd.Append(" and b.Poid >= @spno1 and b.Poid <= @spno2");
+                sp_spno1.Value = spno1.PadRight(10, '0');
+                sp_spno2.Value = spno2.PadRight(10, 'Z');
                 cmds.Add(sp_spno1);
+                cmds.Add(sp_spno2);
+            }
+            else if (!MyUtility.Check.Empty(spno1))
+            {
+                //只有 sp1 輸入資料
+                sqlCmd.Append(" and b.Poid like @spno1 ");
+                sp_spno1.Value = spno1 + "%";
+                cmds.Add(sp_spno1);
+            }
+            else if (!MyUtility.Check.Empty(spno2))
+            {
+                //只有 sp2 輸入資料
+                sqlCmd.Append(" and b.Poid like @spno2 ");
+                sp_spno2.Value = spno2 + "%";
                 cmds.Add(sp_spno2);
             }
 
