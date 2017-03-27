@@ -198,7 +198,7 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             #endregion
             DataTable headertb;
             #region 找ArticleGroup 當Table Header
-            string headercodesql = string.Format("Select distinct ArticleGroup from Pattern_GL_FabricPanelCode WITH (NOLOCK) where PatternUkey = '{0}' and ArticleGroup !='F_CODE' order by ArticleGroup", patternukey);
+            string headercodesql = string.Format("Select distinct ArticleGroup from Pattern_GL_LectraCode WITH (NOLOCK) where PatternUkey = '{0}' and ArticleGroup !='F_CODE' order by ArticleGroup", patternukey);
 
             DualResult headerResult = DBProxy.Current.Select(null, headercodesql, out headertb);
             if (!headerResult)
@@ -221,7 +221,7 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             #endregion
             #region 寫入FCode~CodeA~CodeZ
             string lecsql = "";
-            lecsql = string.Format("Select * from Pattern_GL_FabricPanelCode a WITH (NOLOCK) where a.PatternUkey = '{0}'", patternukey);
+            lecsql = string.Format("Select * from Pattern_GL_LectraCode a WITH (NOLOCK) where a.PatternUkey = '{0}'", patternukey);
             DataTable drtb;
             DualResult drre = DBProxy.Current.Select(null, lecsql, out drtb);
             if (!drre)
