@@ -137,6 +137,7 @@
             this.DefaultControl = "displayBox1";
             this.DefaultControlForEdit = "displayBox2";
             this.DefaultOrder = "ID";
+            this.EnableGridJunkColor = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
