@@ -190,7 +190,7 @@ namespace Sci.Production.Quality
 
             result = DBProxy.Current.SelectByConn(conn, sqlcmd, out alldt);
             if (!result) { return result; }
-
+            if (alldt[0].Rows.Count<=0) return new DualResult(false, "No datas");
             
             dym = alldt[0];
             for (int i = 0; i < dym.Rows.Count; i++)
