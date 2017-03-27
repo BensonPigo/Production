@@ -83,20 +83,26 @@ namespace Sci.Production.Subcon
                 if (dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON")
                 {
                     strSQLCmd = string.Format(@"
-select 1 as Selected,c.POID ,b.OrderID ,c.StyleID,c.SeasonID ,b.RefNo 
+select distinct 1 as Selected,c.POID ,b.OrderID ,c.StyleID,c.SciDelivery,c.SeasonID ,b.RefNo 
 ,dbo.getitemdesc('{2}',b.refno) as description 
 ,'' as threadcolorid
-,sum(b.CTNQty) qty, d.UnitID,d.Price, sum(b.CTNQty) * d.Price as amount 
+,sum(b.CTNQty) qty, d.UnitID,d.Price, sum(b.CTNQty) * d.Price as amount
+,[std_price]=round(y.order_amt /iif(y.order_qty=0,1,y.order_qty),3) 
 ,'' as remark ,a.EstCTNArrive etd ,a.ID as requestid, '' as id
 ,c.FactoryID ,c.SewInLine
 from dbo.PackingList a WITH (NOLOCK) 
-        , dbo.PackingList_Detail b WITH (NOLOCK) 
-        , dbo.Orders c WITH (NOLOCK) 
-        , LocalItem d WITH (NOLOCK) 
-where a.ID = b.ID 
-    and b.OrderID = c.ID
-    and b.RefNo = d.RefNo
-    and a.ApvToPurchase = 1 
+inner join PackingList_Detail b WITH (NOLOCK) on a.ID = b.ID
+inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID 	
+inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
+inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
+outer apply(select o1.POID
+	               ,isnull(sum(o1.qty),0) order_qty
+	               ,sum(o1.qty*ot.Price) order_amt 
+	         from orders o1 WITH (NOLOCK) 
+	         inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = o1.ID 
+	         where o1.poid= c.poid
+	         group by o1.poid) y
+where a.ApvToPurchase = 1 
     and a.LocalPOID =''
     and d.localsuppid= '{3}'
     and a.factoryid = '{0}'    
@@ -117,7 +123,7 @@ where a.ID = b.ID
                     if (!MyUtility.Check.Empty(approved_b)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate >= '{0}' ", approved_b); }
                     if (!MyUtility.Check.Empty(approved_e)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate <= '{0}' ", approved_e); }
 
-                    strSQLCmd += " group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine ";
+                    strSQLCmd += " group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID";
 
                     #region 準備sql參數資料
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -142,28 +148,34 @@ where a.ID = b.ID
                 else
                 {
                     strSQLCmd = string.Format(@"
-select 1 as Selected,c.POID ,a.OrderID ,a.StyleID,a.SeasonID ,b.RefNo 
+select distinct 1 as Selected,c.POID ,a.OrderID ,a.StyleID,c.SciDelivery,a.SeasonID ,b.RefNo 
 ,dbo.getitemdesc('{2}',b.refno) as description 
 ,b.threadcolorid
 ,b.PurchaseQty as qty
 ,d.UnitID,d.Price
 ,b.PurchaseQty * d.Price as amount 
+,[std_price]=round(y.order_amt /iif(y.order_qty=0,1,y.order_qty),3)
 ,'' as remark ,a.EstArriveDate etd 
 ,a.OrderID as requestid
 , '' as id
 ,c.FactoryID ,c.SewInLine
 from dbo.ThreadRequisition a WITH (NOLOCK) 
-        , dbo.ThreadRequisition_Detail b WITH (NOLOCK) 
-        , dbo.Orders c WITH (NOLOCK) 
-        , LocalItem d WITH (NOLOCK) 
-where a.OrderID = b.OrderID 
-    and b.OrderID = c.ID
-    and b.RefNo = d.RefNo
-    and a.status = 'Approved' 
+inner join ThreadRequisition_Detail b WITH (NOLOCK) on a.OrderID = b.OrderID
+inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
+inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
+inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
+outer apply(select o1.POID
+	              ,isnull(sum(o1.qty),0) order_qty
+	              ,sum(o1.qty*ot.Price) order_amt 
+	        from orders o1 WITH (NOLOCK) 
+	        inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = o1.ID 
+	        where o1.poid= c.poid
+	        group by o1.poid) y
+where a.status = 'Approved' 
     and a.factoryid = '{0}'
     and d.localsuppid= '{3}'
     and a.Mdivisionid = '{1}'
-and b.PurchaseQty > 0
+and b.PurchaseQty > 0 and b.PoId =''
                                                                 "
                         , Env.User.Factory, Env.User.Keyword, dr_localPO["category"], dr_localPO["localsuppid"]);
 
@@ -338,6 +350,7 @@ and b.PurchaseQty > 0
                                                                                 , tmp["orderid"].ToString()
                                                                                 , tmp["refno"].ToString()
                                                                                 , tmp["threadcolorid"].ToString())
+                                                                                
                                                            );
                     if (findrow.Length > 0)
                     {

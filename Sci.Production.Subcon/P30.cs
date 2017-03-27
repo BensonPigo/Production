@@ -184,7 +184,7 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
                 return false;
             }
-
+           
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'LocalPO1'), 'LocalPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
@@ -224,8 +224,8 @@ namespace Sci.Production.Subcon
                 //(e.Details).Columns.Add("Amount", typeof(decimal));
                 (e.Details).Columns["amount"].Expression = "price * qty";
 
-            //    foreach (DataRow dr in e.Details.Rows)
-            //    {
+                //foreach (DataRow dr in e.Details.Rows)
+                    //{
             //        //dr["Price"] = (Decimal)dr["unitprice"] * (Decimal)dr["qtygarment"];
             //        //DataTable order_dt;
             //        //DBProxy.Current.Select(null, string.Format("select factoryid, sewinline, scidelivery from orders where id='{0}'", dr["orderid"].ToString()), out order_dt);
@@ -235,7 +235,7 @@ namespace Sci.Production.Subcon
             //        //    dr["sewinline"] = order_dt.Rows[0]["sewinline"];
             //        //}
             //        dr["description"] = Prgs.GetItemDesc(e.Master["category"].ToString(), dr["refno"].ToString());
-            //    }
+                    //}
             }
             return base.OnRenewDataDetailPost(e);
         }
@@ -258,7 +258,6 @@ namespace Sci.Production.Subcon
                 {
                     displayBox7.Text = Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToShortDateString();
                 }
-
             }
             txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
@@ -410,28 +409,34 @@ namespace Sci.Production.Subcon
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("factoryid", header: "Order Factory", iseditingreadonly: true)  //0
             .Text("POID", header: "MasterSP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
-            .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), settings: ts4)  //1
-            .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true)   //2
-            .Text("refno", header: "Ref#", width: Widths.AnsiChars(20),settings:ts)    //3
-            .Text("threadColorid", header: "Color Shade",settings:ts2)    //4
-             .Text("Description", header: "Description", width: Widths.AnsiChars(15), iseditingreadonly: true)   //5
-             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, settings: ns)    //6
-            .Text("Unitid", header: "Unit", width: Widths.AnsiChars(5), iseditingreadonly: true)   //7
-            .Numeric("price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 4, iseditingreadonly: true)     //8
-            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(9), iseditingreadonly: true, decimal_places: 2, integer_places: 14)   //9
-            .Date("delivery", header: "Delivery", width: Widths.AnsiChars(10))   //10
-            .Text("Requestid", header: "Request ID", width: Widths.AnsiChars(13), iseditingreadonly: true) //11
-            .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true) //12
-            .Numeric("apqty", header: "AP Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true) //13
-            .Text("remark", header: "Remark", width: Widths.AnsiChars(25)) 
+            .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), settings: ts4)  //2
+            .Text("StyleID", header: "Style", width: Widths.AnsiChars(13))  //3
+            .Date("SciDelivery", header: "Sci Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)   //4
+            .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true)   //5
+            .Text("refno", header: "Ref#", width: Widths.AnsiChars(20),settings:ts)    //6
+            .Text("threadColorid", header: "Color Shade",settings:ts2)    //7
+            .Text("Description", header: "Description", width: Widths.AnsiChars(15), iseditingreadonly: true)   //8
+            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, settings: ns)    //9
+            .Text("Unitid", header: "Unit", width: Widths.AnsiChars(5), iseditingreadonly: true)   //10
+            .Numeric("price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 4, iseditingreadonly: true) //11
+            .Numeric("amount", header: "Amount", width: Widths.AnsiChars(9), iseditingreadonly: true, decimal_places: 2, integer_places: 14)  //12
+            .Numeric("std_price", header: "Standard Price", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 4, iseditingreadonly: true) //13
+            .Date("delivery", header: "Delivery", width: Widths.AnsiChars(10)) //14
+            .Text("Requestid", header: "Request ID", width: Widths.AnsiChars(13), iseditingreadonly: true) //15
+            .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true) //16
+            .Numeric("apqty", header: "AP Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true) //17
+            .Text("remark", header: "Remark", width: Widths.AnsiChars(25)) //18
             ;     
             #endregion
             #region 可編輯欄位變色
-            detailgrid.Columns[2].DefaultCellStyle.BackColor = Color.Pink;  
-            detailgrid.Columns[4].DefaultCellStyle.BackColor = Color.Pink;  
-            detailgrid.Columns[5].DefaultCellStyle.BackColor = Color.Pink; 
+            detailgrid.Columns[2].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns[3].DefaultCellStyle.BackColor = Color.Pink;  
+            detailgrid.Columns[6].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink; 
-            detailgrid.Columns[11].DefaultCellStyle.BackColor = Color.Pink; 
+            detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;  
+            detailgrid.Columns[14].DefaultCellStyle.BackColor = Color.Pink; 
+            detailgrid.Columns[18].DefaultCellStyle.BackColor = Color.Pink; 
+            
             #endregion
         }
 
@@ -451,6 +456,8 @@ namespace Sci.Production.Subcon
                 txtartworktype_fty1.Focus();
                 return;
             }
+            DataTable dg = (DataTable)detailgridbs.DataSource;
+            if (dg.Columns["std_price"] == null) dg.Columns.Add("std_price", typeof(String));
             var frm = new Sci.Production.Subcon.P30_Import(dr, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
@@ -517,6 +524,15 @@ namespace Sci.Production.Subcon
             sqlupd3 = string.Format("update Localpo set status='Approved', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
+            //針對表身資料將ThreadRequisition_Detail.poid塞值
+            StringBuilder sqlupd4 = new StringBuilder();
+            foreach (DataRow ddr in DetailDatas)
+            {
+                sqlupd4.Append(string.Format(@"update ThreadRequisition_Detail set POID='{0}' " +
+                                "where OrderID='{1}' and Refno='{2}' and ThreadColorID='{3}'; " 
+                                , ddr["poid"].ToString(), ddr["orderid"].ToString(), ddr["refno"].ToString() , ddr["threadcolorid"].ToString()));
+            }
+
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
@@ -534,6 +550,12 @@ namespace Sci.Production.Subcon
                         ShowErr(sqlupd3, result);
                         return;
                     }
+                    if (!(result = DBProxy.Current.Execute(null, sqlupd4.ToString())))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(sqlupd4.ToString(), result);
+                        return;
+                    }
 
                     _transactionscope.Complete();
                     MyUtility.Msg.InfoBox("Approve successful");
@@ -544,6 +566,7 @@ namespace Sci.Production.Subcon
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
+                return;
             }
             _transactionscope.Dispose();
             _transactionscope = null;
@@ -590,6 +613,16 @@ namespace Sci.Production.Subcon
             sqlupd3 = string.Format(@"update Localpo set status='New',apvname='', apvdate = null , editname = '{0}' 
                                                     , editdate = GETDATE() where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
+            
+            StringBuilder sqlupd4 = new StringBuilder();
+            foreach (DataRow ddr in DetailDatas)
+            {
+                sqlupd4.Append(string.Format(@"update ThreadRequisition_Detail set POID='' " +
+                                "where OrderID='{0}' and Refno='{1}' and ThreadColorID='{2}'; "
+                                , ddr["orderid"].ToString(), ddr["refno"].ToString(), ddr["threadcolorid"].ToString()));
+            }
+
+
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
@@ -609,6 +642,12 @@ namespace Sci.Production.Subcon
                         return;
                     }
 
+                    if (!(result = DBProxy.Current.Execute(null, sqlupd4.ToString())))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(sqlupd4.ToString(), result);
+                        return;
+                    }
                     _transactionscope.Complete();
                     MyUtility.Msg.InfoBox("UnApprove successful");
                 }
@@ -617,6 +656,7 @@ namespace Sci.Production.Subcon
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
+                return;
             }
             _transactionscope.Dispose();
             _transactionscope = null;
