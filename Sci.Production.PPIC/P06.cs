@@ -98,6 +98,7 @@ namespace Sci.Production.PPIC
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
+            #region 檢核
             DualResult result;
             if (MyUtility.Check.Empty(dateBox1.Value))
             {
@@ -111,6 +112,9 @@ namespace Sci.Production.PPIC
                 txtdropdownlist1.Focus();
                 return;
             }
+            #endregion
+
+            this.ShowWaitMessage("Data processing, please wait...");
             StringBuilder sqlCmd = new StringBuilder();
             # region 組SQL
             sqlCmd.Append(string.Format(@"select DISTINCT
@@ -199,8 +203,7 @@ namespace Sci.Production.PPIC
             and o.PulloutComplete = 0
             and o.Finished = 0
             and o.Qty > 0
-            and oq.EstPulloutDate <= '{1}' or oq.EstPulloutDate is null
-            and iif(o.PulloutDate is null, dateadd(day,4,o.SewOffLine) , o.PulloutDate) <= '{1}'  ",
+            and (oq.EstPulloutDate <= '{1}' or oq.EstPulloutDate is null or iif(o.PulloutDate is null, dateadd(day,4,o.SewOffLine) , o.PulloutDate) <= '{1}') ",
             Sci.Env.User.Keyword, Convert.ToDateTime(dateBox1.Value).ToString("d")));
             if (txtdropdownlist1.SelectedValue.ToString() == "BS")
             {
@@ -211,100 +214,6 @@ namespace Sci.Production.PPIC
                 sqlCmd.Append(string.Format(" and o.Category = '{0}'", txtdropdownlist1.SelectedValue));
             }
             # endregion
-            # region 組SQL
-//            sqlCmd.Append(string.Format(@"with OrderData
-//as
-//(select o.FactoryID,o.BrandID,o.SewLine,o.ID,o.StyleID,o.CustPONo,o.CustCDID,o.Customize2,o.DoxType,
-//        oq.Qty,o.Dest,o.SewOffLine,oq.SDPDate,oq.EstPulloutDate,oq.Seq,oq.ShipmodeID,oq.BuyerDelivery,
-//	    o.SciDelivery,o.BuyMonth,o.Customize1,iif(o.ScanAndPack = 1,'Y','') as ScanAndPack,
-//	    iif(o.RainwearTestPassed = 1,'Y','') as RainwearTestPassed,oq.ProdRemark,oq.ShipRemark,
-//	    isnull(o.InspDate,iif(oq.EstPulloutDate is null,dateadd(day,2,o.SewOffLine),dateadd(day,-2,oq.EstPulloutDate))) as InspDate,
-//	    iif(oq.BuyerDelivery > o.CRDDate, o.CRDDate, null) as CRDDate
-// from Orders o, Order_QtyShip oq
-// where o.MDivisionID = '{0}'
-// and o.PulloutComplete = 0
-// and o.Finished = 0
-// and o.Qty > 0
-// and o.ID = oq.Id
-// and (oq.EstPulloutDate <= '{1}' or dateadd(day,4,o.SewOffLine) <= '{1}')", Sci.Env.User.Keyword, Convert.ToDateTime(dateBox1.Value).ToString("d")));
-//            if (txtdropdownlist1.SelectedValue.ToString() == "BS")
-//            {
-//                sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
-//            }
-//            else
-//            {
-//                sqlCmd.Append(string.Format(" and o.Category = '{0}'", txtdropdownlist1.SelectedValue));
-//            }
-//            sqlCmd.Append(@"),
-//distinctOrder
-//as
-//(select distinct ID,Seq
-// from OrderData
-//),
-//CTNData
-//as
-//(select a.ID,a.Seq,a.CTNQty,iif(a.CTNQty = 0,0,Round((cast(a.ClogQty as float)/a.CTNQty)*100,0)) as InClogCTN
-// from (select do.ID,do.Seq,isnull(sum(pd1.CTNQty),0) as CTNQty,isnull(sum(pd2.CTNQty),0) as ClogQty
-//       from distinctOrder do
-//       left join PackingList_Detail pd1 on do.ID = pd1.OrderID and do.Seq = pd1.OrderShipmodeSeq
-//       left join PackingList_Detail pd2 on pd1.OrderID = pd2.OrderID and pd1.OrderShipmodeSeq = pd2.OrderShipmodeSeq and pd1.CTNStartNo = pd2.CTNStartNo and pd1.Article = pd2.Article and pd1.SizeCode = pd2.SizeCode and pd2.ReceiveDate is not null
-//       group by do.ID,do.Seq) a
-// where a.CTNQty > 0
-//),
-//CBM
-//as
-//(select do.ID,do.Seq,isnull(sum(p.CBM),0) as CBM
-// from distinctOrder do, PackingList p
-// where do.ID = p.OrderID
-// and do.Seq = p.OrderShipmodeSeq
-// group by do.ID,do.Seq
-//),
-//RefNo
-//as
-//(select distinct do.ID,do.Seq,pd.RefNo,STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension
-// from distinctOrder do
-// left join PackingList_Detail pd on pd.OrderID = do.ID and pd.OrderShipmodeSeq = do.Seq
-// left join LocalItem li on li.RefNo = pd.RefNo
-// where pd.RefNo is not null and pd.RefNo <> ''
-//),
-//CTNDim
-//as
-//(select distinct a.ID,a.Seq,(select cast(b.Dimension as nvarchar)+'; ' from RefNo b where a.ID = b.ID and a.Seq = b.Seq for xml path('')) as Dimension
-// from RefNo a
-//),
-//Location
-//as
-//(select distinct do.ID,do.Seq,pd.ClogLocationId
-// from distinctOrder do
-// left join PackingList_Detail pd on pd.OrderID = do.ID and pd.OrderShipmodeSeq = do.Seq
-// where pd.ClogLocationId is not null and pd.ClogLocationId <> ''
-//),
-//BinLocation
-//as
-//(select distinct a.ID,a.Seq,(select cast(b.ClogLocationId as nvarchar)+'; ' from Location b where a.ID = b.ID and a.Seq = b.Seq for xml path('')) as ClogLocationId
-// from Location a
-//),
-//MtlFormA
-//as
-//(select distinct do.ID,ed.Seq1+'-'+iif(min(ed.FormXReceived) is null,iif(min(ed.FormXReceived)is null, '  /  /    ',convert(char(10),min(ed.FormXReceived),111)) ,iif(max(ed.FormXReceived) is null,'  /  /    ',convert(char(10),max(ed.FormXReceived),111))) as Seq
-// from distinctOrder do, Export_Detail ed
-// where do.ID = ed.PoID
-// group by do.ID,ed.Seq1
-//),
-//LastMtlFormA
-//as
-//(select distinct mf1.ID, (select CAST(mf2.Seq as nvarchar)+' ; ' from MtlFormA mf2 where mf2.ID = mf1.ID for xml path('')) as MtlFormA
-// from MtlFormA mf1
-//)
-//select od.*,isnull(cd.CTNQty,0) as CTNQty,isnull(cd.InClogCTN,0) as InClogCTN,isnull(CBM.CBM,0) as CBM,isnull(CTNDim.Dimension,'') as Dimension,isnull(bl.ClogLocationId,'') as ClogLocationId,isnull(lm.MtlFormA,'') as MtlFormA,c.Alias
-//from OrderData od
-//left join CTNData cd on od.ID = cd.ID and od.Seq = cd.Seq
-//left join CBM on od.ID = cbm.ID and od.Seq = cbm.Seq
-//left join CTNDim on od.ID = CTNDim.ID and od.Seq = CTNDim.Seq
-//left join BinLocation bl on od.ID = bl.ID and od.Seq = bl.Seq
-//left join LastMtlFormA lm on od.id = lm.ID
-//left join Country c on c.ID = od.Dest");
-            #endregion
 
             if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData))
             {
@@ -314,7 +223,8 @@ namespace Sci.Production.PPIC
                 }
             }
             listControlBindingSource1.DataSource = gridData;
-            //this.grid1.AutoResizeColumns(); //先註解，會很慢
+            this.grid1.AutoResizeColumns(); //先註解，會很慢
+            this.HideWaitMessage();
         }
 
         //Find Now
