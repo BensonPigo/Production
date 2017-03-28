@@ -854,7 +854,7 @@
             this.qtybreak_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.qtybreak_grid.RowTemplate.Height = 24;
             this.qtybreak_grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.qtybreak_grid.Size = new System.Drawing.Size(367, 364);
+            this.qtybreak_grid.Size = new System.Drawing.Size(367, 126);
             this.qtybreak_grid.TabIndex = 49;
             this.qtybreak_grid.TabStop = false;
             // 
