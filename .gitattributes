@@ -3138,6 +3138,8 @@ Sci.Production.Warehouse/P03_Wkno.resx -text
 Sci.Production.Warehouse/P04.Designer.cs -text
 Sci.Production.Warehouse/P04.cs -text
 Sci.Production.Warehouse/P04.resx -text
+Sci.Production.Warehouse/P04_LocalTransaction.Designer.cs -text
+Sci.Production.Warehouse/P04_LocalTransaction.cs -text
 Sci.Production.Warehouse/P07.Designer.cs -text
 Sci.Production.Warehouse/P07.cs -text
 Sci.Production.Warehouse/P07.resx -text
