@@ -135,12 +135,16 @@ namespace Sci.Production.Subcon
 
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@";with cte
-as
-(
-	select t.*,ArtworkType.ID artworktypeid
-	from dbo.ArtworkType WITH (NOLOCK) ,(select distinct b.OrderId from dbo.localap a WITH (NOLOCK) 
-	inner join dbo.LocalAP_Detail b WITH (NOLOCK) on b.id = a.id ");
+            sqlCmd.Append(@"
+;with cte as (
+	select distinct b.OrderId 
+            , a.FactoryID
+			, artworktypeid = a.Category
+    from dbo.localap a WITH (NOLOCK) 
+    inner join dbo.LocalAP_Detail b WITH (NOLOCK) on b.id = a.id  
+	join ArtworkType c on a.Category = c.ID 
+    where c.Classify='P' 
+");
 
             #region -- 條件組合 --
             switch (statusindex)
@@ -148,41 +152,41 @@ as
                 case 0:
                     if (!MyUtility.Check.Empty(APdate1) && !MyUtility.Check.Empty(APdate2))
                     {
-                        sqlCmd.Append(string.Format(@" where a.apvdate is not null and a.issuedate between '{0}' and '{1}'"
+                        sqlCmd.Append(string.Format(@" and a.apvdate is not null and a.issuedate between '{0}' and '{1}'"
                             , Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(APdate1))
                         {
-                            sqlCmd.Append(string.Format(@" where a.apvdate is not null and a.issuedate >= '{0}' ", Convert.ToDateTime(APdate1).ToString("d")));
+                            sqlCmd.Append(string.Format(@" and a.apvdate is not null and a.issuedate >= '{0}' ", Convert.ToDateTime(APdate1).ToString("d")));
                         }
                         if (!MyUtility.Check.Empty(APdate2))
                         {
-                            sqlCmd.Append(string.Format(@" where a.apvdate is not null and  a.issuedate <= '{0}' ", Convert.ToDateTime(APdate2).ToString("d")));
+                            sqlCmd.Append(string.Format(@" and a.apvdate is not null and  a.issuedate <= '{0}' ", Convert.ToDateTime(APdate2).ToString("d")));
                         }
                     }
                     break;
 
                 case 1:
-                    sqlCmd.Append(@" where a.apvdate is null");
+                    sqlCmd.Append(@" and a.apvdate is null");
                     break;
 
                 case 2:
                     if (!MyUtility.Check.Empty(APdate1) && !MyUtility.Check.Empty(APdate2))
                     {
-                        sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate between '{0}' and '{1}')"
+                        sqlCmd.Append(string.Format(@" and (a.apvdate is null or a.issuedate between '{0}' and '{1}')"
                             , Convert.ToDateTime(APdate1).ToString("d"), Convert.ToDateTime(APdate2).ToString("d")));
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(APdate1))
                         {
-                            sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate >= '{0}') ", Convert.ToDateTime(APdate1).ToString("d")));
+                            sqlCmd.Append(string.Format(@" and (a.apvdate is null or a.issuedate >= '{0}') ", Convert.ToDateTime(APdate1).ToString("d")));
                         }
                         if (!MyUtility.Check.Empty(APdate2))
                         {
-                            sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate <= '{0}') ", Convert.ToDateTime(APdate2).ToString("d")));
+                            sqlCmd.Append(string.Format(@" and (a.apvdate is null or a.issuedate <= '{0}') ", Convert.ToDateTime(APdate2).ToString("d")));
                         }
                     }
                     break;
@@ -239,16 +243,13 @@ as
 
             #endregion
 
-            sqlCmd.Append(@")t
-	where Artworktype.Classify='P' ");
-
             if (!MyUtility.Check.Empty(artworktype))
             {
                 sqlCmd.Append(" and artworktype.id = @artworktype");
             }
 
             sqlCmd.Append(string.Format(@")
-select aa.FactoryID
+select cte.FactoryID
 ,cte.artworktypeid
 ,aa.POID
 ,aa.StyleID
