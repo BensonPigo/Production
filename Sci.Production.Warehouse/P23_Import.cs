@@ -74,7 +74,7 @@ cross apply
 			where s1.type ='B' and s1.Status ='Confirmed' and s2.ToStockType = 'B' 
 				and s2.ToPOID = m.poid and s2.ToSeq1 = m.seq1 and s2.ToSeq2 = m.seq2 and s1.Id !='{1}'
   ) xx
-select * from #tmp;
+select * from #tmp order by poid,seq1,seq2,poqty DESC;
 select 0 AS selected,'' as id
 ,o.FactoryID FromFactoryID
 ,fi.POID FromPOID
@@ -105,7 +105,7 @@ from #tmp
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID and fi.seq1 = Inventoryseq1 and fi.seq2 = InventorySEQ2 and fi.StockType = 'I'
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID 
 where fi.Lock = 0 
-Order by frompoid,fromseq1,fromseq2,fromdyelot,fromroll,balanceQty desc
+Order by frompoid,fromseq1,fromseq2,fromdyelot,balanceQty desc
 drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 #endregion
                 System.Data.SqlClient.SqlParameter sqlp1 = new System.Data.SqlClient.SqlParameter();

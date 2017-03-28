@@ -277,14 +277,12 @@ as
 (
 select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,'Y','') complete,f.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup,o.CFMDate,o.CutInLine,o.ProjectID,o.FactoryID 
 ,rtrim(pd.seq1) seq1,pd.seq2,pd.StockPOID,pd.StockSeq1,pd.StockSeq2
---,pd.Qty*v.RateValue PoQty
 ,ROUND(x.taipei_qty*isnull(v.RateValue,1),2,1) N'PoQty'
 ,pd.POUnit,pd.StockUnit
-,mpd.InQty
+,InQty = isnull(xx.InQty,0)
 from dbo.orders o WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
 left join View_Unitrate v on v.FROM_U = pd.POUnit and v.TO_U = pd.StockUnit
-left join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.ID and mpd.Seq1 = pd.SEQ1 and mpd.Seq2 = pd.SEQ2
 inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
 outer apply
 (select count(1) cnt from FtyInventory fi WITH (NOLOCK) left join FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
@@ -299,9 +297,15 @@ cross apply
 (
 select sum(iif(i.type=2,i.qty,0-i.qty)) taipei_qty 
  from dbo.Invtrans i WITH (NOLOCK) 
- where i.InventoryPOID = pd.StockPOID and i.InventorySeq1 = pd.StockSeq1 
-and i.PoID = pd.ID and i.InventorySeq2 = pd.StockSeq2 and (i.type=2 or i.type=6)
-)x
+ where i.InventoryPOID = pd.StockPOID and i.InventorySeq1 = pd.StockSeq1 and i.PoID = pd.ID and i.InventorySeq2 = pd.StockSeq2 and (i.type=2 or i.type=6)
+)x -- 需要轉的數量
+cross apply
+(
+	select sum(s2.Qty) as InQty 
+    from dbo.SubTransfer s1 WITH (NOLOCK) 
+    inner join dbo.SubTransfer_Detail s2 WITH (NOLOCK) on s2.Id= s1.Id 
+	where s1.type ='B' and s1.Status ='Confirmed' and s2.ToStockType = 'B' and s2.ToPOID = pd.id and s2.ToSeq1 = pd.seq1 and s2.ToSeq2 = pd.seq2 
+) xx --已轉的數量
 where pd.seq1 like '7%' and f.MDivisionID = '{0}'", Env.User.Keyword));
 
             #region -- 條件 --
@@ -349,7 +353,7 @@ where pd.seq1 like '7%' and f.MDivisionID = '{0}'", Env.User.Keyword));
 select *,0.00 qty into #tmp from cte
 where PoQty > InQty
 
-select * from #tmp;
+select * from #tmp order by poid,seq1,seq2,poqty DESC;
 
 select 
 convert(bit,0) as selected,
@@ -366,11 +370,11 @@ fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty,
 t.FactoryID  toFactoryID ,rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'B' tostocktype 
 ,stuff((select ',' + mtllocationid from (select MtlLocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = fi.Ukey)t for xml path('')), 1, 1, '') fromlocation
 ,'' tolocation
-from #tmp t inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.StockPOID 
-and fi.seq1 = t.StockSeq1 and fi.Seq2 = t.StockSeq2
+from #tmp t 
+inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.StockPOID and fi.seq1 = t.StockSeq1 and fi.Seq2 = t.StockSeq2
 inner join dbo.orders o WITH (NOLOCK) on fi.POID=o.id
---inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
 where fi.StockType ='I' and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
+order by fi.Dyelot,fi.InQty - fi.OutQty + fi.AdjustQty DESC
 drop table #tmp");
             #endregion
             DataSet dataSet;
@@ -382,10 +386,12 @@ drop table #tmp");
 
             master = dataSet.Tables[0];
             master.TableName = "Master";
-            master.DefaultView.Sort = "poid,seq1,seq2";
+            //master.DefaultView.Sort = "poid,seq1,seq2,poqty";
+            //dataSet.Tables[0].DefaultView.Sort = "poid,seq1,seq2,poqty";
 
             detail = dataSet.Tables[1];
             detail.TableName = "Detail";
+            //dataSet.Tables[1].DefaultView.Sort = "fromdyelot,balanceQty";
 
             DataRelation relation = new DataRelation("rel1"
                     , new DataColumn[] { master.Columns["poid"], master.Columns["seq1"], master.Columns["seq2"] }
@@ -397,7 +403,6 @@ drop table #tmp");
             //master.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
             master.Columns.Add("requestqty", typeof(decimal), "poqty - inqty - sum(child.qty)");
             master.Columns.Add("total_qty", typeof(decimal));
-     
 
             listControlBindingSource1.DataSource = dataSet;
             listControlBindingSource1.DataMember = "Master";
