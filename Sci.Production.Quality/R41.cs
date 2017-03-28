@@ -197,7 +197,7 @@ namespace Sci.Production.Quality
             {
                 string dyear = dym.Rows[i]["cd"].ToString();
                 string dmonth = dym.Rows[i]["name"].ToString();
-                string a = string.Format("SELECT top 10 Defect,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' and m  ='{1}' GROUP BY Defect", dyear, dmonth);
+                string a = string.Format("SELECT top 10 Defect,Qty, Amount,row_number() over (order by Qty desc) as rnk FROM #temp WHERE y = '{0}' and m  ='{1}'", dyear, dmonth);
                 defect1 += a + ' ' + Environment.NewLine;
             }
 
@@ -655,12 +655,6 @@ order by Defect_Code", factory);
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            //saveDialog.ShowDialog();
-            //string outpath = saveDialog.FileName;
-            //if (outpath.Empty())
-            //{
-            //    return false;
-            //}
 
             SaveXltReportCls sxc = new SaveXltReportCls("Quality_R41.xltx");
             SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
@@ -878,67 +872,67 @@ order by Defect_Code", factory);
                     SaveXltReportCls.xlsColumnInfo xlc = new SaveXltReportCls.xlsColumnInfo(i + 1);
                     if (x_All.Columns[i].ColumnName == "January_Percentage")
                     {
-                        xlc.NumberFormate = "0%";
+                        xlc.NumberFormate = "0.00%";
                         xlc.IsNumber = false;
                     }
                     if (x_All.Columns[i].ColumnName == "February_Percentage")
                     {
-                        xlc.NumberFormate = "0%";
+                        xlc.NumberFormate = "0.00%";
                         xlc.IsNumber = false;
                     }
                     if (x_All.Columns[i].ColumnName == "March_Percentage")
                     {
-                        xlc.NumberFormate = "0%";
+                        xlc.NumberFormate = "0.00%";
                         xlc.IsNumber = false;
                     }
                     if (x_All.Columns[i].ColumnName == "April_Percentage")
                     {
-                        xlc.NumberFormate = "0%";
+                        xlc.NumberFormate = "0.00%";
                         xlc.IsNumber = false;
                     }
                     if (x_All.Columns[i].ColumnName == "May_Percentage")
                     {
-                        xlc.NumberFormate = "0%";
+                        xlc.NumberFormate = "0.00%";
                         xlc.IsNumber = false;
                     }
                     if (x_All.Columns[i].ColumnName == "June_Percentage")
                     {
-                        xlc.NumberFormate = "0%";
+                        xlc.NumberFormate = "0.00%";
                         xlc.IsNumber = false;
                     }
                     if (x_All.Columns[i].ColumnName == "July_Percentage")
                     {
-                        xlc.NumberFormate = "0%";
+                        xlc.NumberFormate = "0.00%";
                         xlc.IsNumber = false;
                     }
                     if (x_All.Columns[i].ColumnName == "August_Percentage")
                     {
-                        xlc.NumberFormate = "0%";
+                        xlc.NumberFormate = "0.00%";
                         xlc.IsNumber = false;
                     }
                     if (x_All.Columns[i].ColumnName == "September_Percentage")
                     {
-                        xlc.NumberFormate = "0%";
+                        xlc.NumberFormate = "0.00%";
                         xlc.IsNumber = false;
                     }
                     if (x_All.Columns[i].ColumnName == "October_Percentage")
                     {
-                        xlc.NumberFormate = "0%";
+                        xlc.NumberFormate = "0.00%";
                         xlc.IsNumber = false;
                     }
                     if (x_All.Columns[i].ColumnName == "November_Percentage")
                     {
-                        xlc.NumberFormate = "0%";
+                        xlc.NumberFormate = "0.00%";
                         xlc.IsNumber = false;
                     }
                     if (x_All.Columns[i].ColumnName == "December_Percentage")
                     {
-                        xlc.NumberFormate = "0%";
+                        xlc.NumberFormate = "0.00%";
                         xlc.IsNumber = false;
                     }
                     if (x_All.Columns[i].ColumnName == "YTD_Percentage")
                     {
-                        xlc.NumberFormate = "0%";
+                        xlc.NumberFormate = "0.00%";
                         xlc.IsNumber = false;
                     }
                     if (x_All.Columns[i].ColumnName == "January_Amount")
