@@ -58,7 +58,7 @@ namespace Sci.Production.Warehouse
             refno2 = txtRefno2.Text;
             #endregion
 
-            country = txtcountry1.Text;
+            country = txtcountry1.TextBox1.Text;
             supp = txtsupplier1.TextBox1.Text;
             style = txtstyle1.Text;
             season = txtseason1.Text;
@@ -103,155 +103,92 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            if (!MyUtility.Check.Empty(sciDelivery1) || !MyUtility.Check.Empty(sciDelivery2))
-            {
-                sqlCmd.Append(string.Format(@";with cte as
-(
-select  distinct o.mdivisionid
-                 , o.POID
-                 , o.StyleID
-                 , o.SeasonID 
-from dbo.orders o WITH (NOLOCK) 
-where 1=1"));
-
-                if (!MyUtility.Check.Empty(sciDelivery1))
-                {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= o.SciDelivery ", Convert.ToDateTime(sciDelivery1).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(sciDelivery2))
-                {
-                    sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
-                }
-                if (!MyUtility.Check.Empty(style))
-                {
-                    sqlCmd.Append(" and o.styleid = @style");
-                    sp_style.Value = style;
-                    cmds.Add(sp_style);
-                }
-                if (!MyUtility.Check.Empty(season))
-                {
-                    sqlCmd.Append(" and o.seasonid = @season");
-                    sp_season.Value = season;
-                    cmds.Add(sp_season);
-                }
-                sqlCmd.Append(")");
-                sqlCmd.Append(string.Format(@"
-select  factory.MDivisionID
-        , orders.FactoryID
-        , a.id
-        ,cte.StyleID
-        ,b.FinalETD
-        ,supp = a.suppid+'-'+c.AbbEN 
-        ,c.CountryID
-        ,b.Refno
-        ,b.SEQ1
-        ,b.SEQ2
-        ,fabrictype = iif(b.fabrictype = 'F','Fabric',iif(b.fabrictype='A','Accessory',b.fabrictype)) 
-        ,dbo.getMtlDesc(b.id,b.seq1,b.seq2,2,0)
-        ,b.Qty
-        ,b.NETQty
-        ,b.NETQty+b.LossQty
-        ,b.ShipQty
-        ,b.ShipFOC
-        ,b.ApQty
-        ,b.InputQty
-        ,b.POUnit
-        ,iif(b.Complete=1,'Y','N')
-        --,b.ETA
-        ,b.FinalETA
-        ,(select t.orderid+',' from (select OrderID from DBO.PO_Supp_Detail_OrderList WITH (NOLOCK) where id=b.id and seq1=b.seq1 and seq2 = b.SEQ2) t for xml path('')) orderlist
-        ,d.InQty
-        ,b.StockUnit
-        ,d.OutQty
-        ,d.AdjustQty
-        ,balance = d.InQty - d.OutQty + d.AdjustQty 
-        ,d.ALocation
-        ,d.BLocation
-        ,case b.FabricType 
-            when 'F' then (select x.result+'/' 
-                           from (select result = iif(t2.result='P','Pass',iif(t2.result='F','Fail',t2.Result)) 
-                                 from dbo.FIR t2 WITH (NOLOCK) 
-                                 where t2.POID = b.ID and t2.seq1 = b.seq1 and t2.seq2 = b.seq2) x 
-                           for xml path(''))
-            when 'A' then (select x.result+'/' 
-                           from (select result = iif(t3.result='P','Pass',iif(t3.result='F','Fail',t3.Result)) 
-                                 from dbo.AIR t3 WITH (NOLOCK) 
-                                 where t3.POID = b.ID and t3.seq1 = b.seq1 and t3.seq2 = b.seq2) x 
-                           for xml path(''))
-         end
-from cte 
-inner join dbo.PO_Supp a WITH (NOLOCK) on a.id = cte.poid
-inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.id and b.SEQ1 = a.SEQ1
-inner join dbo.Orders orders on b.id = orders.id
-inner join dbo.Factory factory on orders.FactoryId = factory.id
-inner join dbo.Supp c WITH (NOLOCK) on c.id = a.SuppID
-left join dbo.MDivisionPoDetail d WITH (NOLOCK) on d.POID = b.ID and d.seq1 = b.seq1 and d.seq2 = b.SEQ2
-where 1= 1 "));
-            }
-            else
-            {
-                sqlCmd.Append(string.Format(@"
-select  factory.MDivisionID
-        , orders.FactoryID
-        ,a.id
-        ,style = (select StyleID from dbo.orders WITH (NOLOCK) where id = a.id) 
-        ,b.FinalETD
-        ,supp = a.suppid+'-'+c.AbbEN 
-        ,c.CountryID
-        ,b.Refno
-        ,b.SEQ1
-        ,b.SEQ2
-        ,fabrictype = iif(b.fabrictype = 'F','Fabric',iif(b.fabrictype='A','Accessory',b.fabrictype)) 
-        ,dbo.getMtlDesc(b.id,b.seq1,b.seq2,2,0)
-        ,b.Qty
-        ,b.NETQty
-        ,b.NETQty+b.LossQty
-        ,b.ShipQty
-        ,b.ShipFOC
-        ,b.ApQty
-        ,b.InputQty
-        ,b.POUnit
-        ,iif(b.Complete=1,'Y','N')
-        --,b.ETA
-        ,b.FinalETA
+            sqlCmd.Append(string.Format(@"
+select  F.MDivisionID
+        ,O.FactoryID
+        ,PS.id
+        ,style = (select StyleID from dbo.orders WITH (NOLOCK) where id = PS.id) 
+        ,PSD.FinalETD
+        ,supp = PS.suppid+'-'+S.NameEN 
+        ,S.CountryID
+        ,PSD.Refno
+        ,PSD.SEQ1
+        ,PSD.SEQ2
+        ,fabrictype = case PSD.fabrictype 
+                        when 'F' then 'Fabric'
+                        when 'A' then 'Accessory'
+                        when 'O' then 'Other'
+                      end 
+        ,dbo.getMtlDesc(PSD.id,PSD.seq1,PSD.seq2,2,0)
+        ,PSD.Qty
+        ,PSD.NETQty
+        ,PSD.NETQty+PSD.LossQty
+        ,PSD.ShipQty
+        ,PSD.ShipFOC
+        ,PSD.ApQty
+        ,PSD.InputQty
+        ,PSD.POUnit
+        ,iif(PSD.Complete=1,'Y','N')
+        --,PSD.ETA
+        ,PSD.FinalETA
         ,orderlist = (select t.orderid+',' 
                       from (select OrderID 
                             from DBO.PO_Supp_Detail_OrderList WITH (NOLOCK) 
-                            where id=b.id and seq1=b.seq1 and seq2 = b.SEQ2) t 
+                            where id=PSD.id and seq1=PSD.seq1 and seq2 = PSD.SEQ2) t 
                       for xml path('')) 
-        ,d.InQty
-        ,b.StockUnit
-        ,d.OutQty
-        ,d.AdjustQty
-        ,d.InQty - d.OutQty + d.AdjustQty balance
-        ,d.ALocation
-        ,d.BLocation
-        ,case b.FabricType 
+        ,MDPD.InQty
+        ,PSD.StockUnit
+        ,MDPD.OutQty
+        ,MDPD.AdjustQty
+        ,MDPD.InQty - MDPD.OutQty + MDPD.AdjustQty balance
+        ,MDPD.ALocation
+        ,MDPD.BLocation
+        ,case PSD.FabricType 
             when 'F' then (select x.result+'/' 
                            from (select result = iif(t2.result='P','Pass',iif(t2.result='F','Fail',t2.Result)) 
                                  from dbo.FIR t2 WITH (NOLOCK) 
-                                 where t2.POID = b.ID and t2.seq1 = b.seq1 and t2.seq2 = b.seq2) x 
+                                 where t2.POID = PSD.ID and t2.seq1 = PSD.seq1 and t2.seq2 = PSD.seq2) x 
                            for xml path(''))
             when 'A' then (select x.result+'/' 
                            from (select result = iif(t3.result='P','Pass',iif(t3.result='F','Fail',t3.Result)) 
                                  from dbo.AIR t3 WITH (NOLOCK) 
-                                 where t3.POID = b.ID and t3.seq1 = b.seq1 and t3.seq2 = b.seq2) x 
+                                 where t3.POID = PSD.ID and t3.seq1 = PSD.seq1 and t3.seq2 = PSD.seq2) x 
                            for xml path(''))
          end
- from dbo.PO_Supp a WITH (NOLOCK) 
-inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.id and b.SEQ1 = a.SEQ1
-inner join dbo.Orders orders on b.id = orders.id
-inner join dbo.Factory factory on orders.FactoryId = factory.id
-inner join dbo.Supp c WITH (NOLOCK) on c.id = a.SuppID
-left join dbo.MDivisionPoDetail d WITH (NOLOCK) on d.POID = b.ID and d.seq1 = b.seq1 and d.seq2 = b.SEQ2
-where 1=1 "));
-            }
+from dbo.PO_Supp_Detail PSD
+join dbo.PO_Supp PS on PSD.id = PS.id and PSD.Seq1 = PS.Seq1
+join dbo.Supp S on S.id = PS.SuppID
+join dbo.Orders O on o.id = PSD.id
+join dbo.Factory F on f.id = o.FactoryId
+left join dbo.MDivisionPoDetail MDPD on MDPD.POID = PSD.ID and MDPD.Seq1 = PSD.Seq1 and MDPD.Seq2 = PSD.Seq2
+where 1=1  
+"));
 
             #region --- 條件組合  ---
+            if (!MyUtility.Check.Empty(sciDelivery1))
+            {
+                sqlCmd.Append(string.Format(@" and '{0}' <= O.SciDelivery ", Convert.ToDateTime(sciDelivery1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(sciDelivery2))
+            {
+                sqlCmd.Append(string.Format(@" and O.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(style))
+            {
+                sqlCmd.Append(" and O.styleid = @style");
+                sp_style.Value = style;
+                cmds.Add(sp_style);
+            }
+            if (!MyUtility.Check.Empty(season))
+            {
+                sqlCmd.Append(" and O.seasonid = @season");
+                sp_season.Value = season;
+                cmds.Add(sp_season);
+            }
             if (!MyUtility.Check.Empty(spno1) && !MyUtility.Check.Empty(spno2))
             {
                 //若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料
-                sqlCmd.Append(" and a.id >= @spno1 and a.id <= @spno2");
+                sqlCmd.Append(" and PSD.id >= @spno1 and PSD.id <= @spno2");
                 sp_spno1.Value = spno1.PadRight(10, '0');
                 sp_spno2.Value = spno2.PadRight(10, 'Z');
                 cmds.Add(sp_spno1);
@@ -260,14 +197,14 @@ where 1=1 "));
             else if (!MyUtility.Check.Empty(spno1))
             {
                 //只有 sp1 輸入資料
-                sqlCmd.Append(" and a.id like @spno1 ");
+                sqlCmd.Append(" and PSD.id like @spno1 ");
                 sp_spno1.Value = spno1 + "%";
                 cmds.Add(sp_spno1);
             }
             else if (!MyUtility.Check.Empty(spno2))
             {
                 //只有 sp2 輸入資料
-                sqlCmd.Append(" and a.id like @spno2 ");
+                sqlCmd.Append(" and PSD.id like @spno2 ");
                 sp_spno2.Value = spno2 + "%";
                 cmds.Add(sp_spno2);
             }
@@ -275,60 +212,60 @@ where 1=1 "));
             if (!MyUtility.Check.Empty(suppDelivery1) || !MyUtility.Check.Empty(suppDelivery2))
             {
                 if (!MyUtility.Check.Empty(suppDelivery1))
-                    sqlCmd.Append(string.Format(@" and '{0}' <= Coalesce(b.finaletd,b.CFMETD,b.SystemETD)", Convert.ToDateTime(suppDelivery1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= Coalesce(PSD.finaletd, PSD.CFMETD, PSD.SystemETD)", Convert.ToDateTime(suppDelivery1).ToString("d")));
                 if (!MyUtility.Check.Empty(suppDelivery2))
-                    sqlCmd.Append(string.Format(@" and Coalesce(b.finaletd,b.CFMETD,b.SystemETD) <= '{0}'", Convert.ToDateTime(suppDelivery2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and Coalesce(PSD.finaletd, PSD.CFMETD, PSD.SystemETD) <= '{0}'", Convert.ToDateTime(suppDelivery2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(eta1) || !MyUtility.Check.Empty(eta2))
             {
                 if (!MyUtility.Check.Empty(eta1))
-                    sqlCmd.Append(string.Format(@" and '{0}' <= b.ETA", Convert.ToDateTime(eta1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= PSD.ETA", Convert.ToDateTime(eta1).ToString("d")));
                 if (!MyUtility.Check.Empty(eta2))
-                    sqlCmd.Append(string.Format(@" and b.ETA <= '{0}'", Convert.ToDateTime(eta2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and PSD.ETA <= '{0}'", Convert.ToDateTime(eta2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(ata1) || !MyUtility.Check.Empty(ata2))
             {
                 if (!MyUtility.Check.Empty(ata1))
-                    sqlCmd.Append(string.Format(@" and '{0}' <= b.FinalETA", Convert.ToDateTime(ata1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= PSD.FinalETA", Convert.ToDateTime(ata1).ToString("d")));
                 if (!MyUtility.Check.Empty(ata2))
-                    sqlCmd.Append(string.Format(@" and b.FinalETA <= '{0}'", Convert.ToDateTime(ata2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and PSD.FinalETA <= '{0}'", Convert.ToDateTime(ata2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(country))
             {
-                sqlCmd.Append(string.Format(" and c.country = '(0}'",country));
+                sqlCmd.Append(string.Format(" and S.countryID = '{0}'", country));
             }
 
             if (!MyUtility.Check.Empty(supp))
             {
-                sqlCmd.Append(string.Format(" and a.suppid = '{0}'",supp));
+                sqlCmd.Append(string.Format(" and PS.suppid = '{0}'",supp));
             }
 
             if (!MyUtility.Check.Empty(mdivision))
             {
-                sqlCmd.Append(" and factory.mdivisionid = @MDivision");
+                sqlCmd.Append(" and F.mdivisionid = @MDivision");
                 sp_mdivision.Value = mdivision;
                 cmds.Add(sp_mdivision);
             }
 
             if (!MyUtility.Check.Empty(factory))
             {
-                sqlCmd.Append(" and orders.FactoryID = @FactoryID");
+                sqlCmd.Append(" and O.FactoryID = @FactoryID");
                 sp_factory.Value = factory;
                 cmds.Add(sp_factory);
             }
 
             if (!MyUtility.Check.Empty(fabrictype))
             {
-                sqlCmd.Append(string.Format(@" and b.FabricType = '{0}'", fabrictype));
+                sqlCmd.Append(string.Format(@" and PSD.FabricType = '{0}'", fabrictype));
             }
 
             if (!MyUtility.Check.Empty(refno1) && !MyUtility.Check.Empty(refno2))
             {
                 //Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
-                sqlCmd.Append(" and b.refno >= @refno1 and b.refno <= @refno2");
+                sqlCmd.Append(" and PSD.refno >= @refno1 and PSD.refno <= @refno2");
                 sp_refno1.Value = refno1;
                 sp_refno2.Value = refno2;
                 cmds.Add(sp_refno1);
@@ -337,25 +274,25 @@ where 1=1 "));
             else if (!MyUtility.Check.Empty(refno1))
             {
                 //只輸入 Refno1
-                sqlCmd.Append(" and b.refno like @refno1");
+                sqlCmd.Append(" and PSD.refno like @refno1");
                 sp_refno1.Value = refno1 + "%";
                 cmds.Add(sp_refno1);
             }
             else if (!MyUtility.Check.Empty(refno2))
             {
                 //只輸入 Refno2
-                sqlCmd.Append(" and b.refno like @refno2");
+                sqlCmd.Append(" and PSD.refno like @refno2");
                 sp_refno2.Value = refno2 + "%";
                 cmds.Add(sp_refno2);
             }
 
             if (orderby.ToUpper().TrimEnd() == "SUPPLIER")
             {
-                sqlCmd.Append(" ORDER BY A.SUPPID,B.ID,B.SEQ1,B.SEQ2 ");
+                sqlCmd.Append(" ORDER BY PS.SUPPID, PSD.ID, PSD.SEQ1, PSD.SEQ2 ");
             }
             else
             {
-                sqlCmd.Append(" ORDER BY B.ID,B.SEQ1,B.SEQ2 ");
+                sqlCmd.Append(" ORDER BY PSD.ID, PSD.SEQ1, PSD.SEQ2 ");
             }
 
             #endregion
@@ -388,13 +325,16 @@ where 1=1 "));
             this.ShowWaitMessage("Excel Processing...");
             Excel.Worksheet worksheet = objApp.Sheets[1];
 
+            objApp.Rows.AutoFit();
+            objApp.Columns.AutoFit();
+
             for (int i = 1; i <= printData.Rows.Count; i++)
             {   
                 string str = worksheet.Cells[i + 1, 12].Value;
                 if(!MyUtility.Check.Empty(str))
                     worksheet.Cells[i + 1, 12] = str.Trim();
             }
-            
+
             objApp.Visible = true;
 
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
