@@ -180,6 +180,10 @@ from
                     Qty_SumColumns += month + "_Qty+";
                     Complaint_SumColumns += month + "_Complaint_Value+";
                 }
+                if (alldt[0].Rows.Count<=0)
+                {
+                    return new DualResult(false, "Data not found! ");
+                }
                 Qty_SumColumns = Qty_SumColumns.Substring(0, Qty_SumColumns.Length - 1);
                 Complaint_SumColumns = Complaint_SumColumns.Substring(0, Complaint_SumColumns.Length - 1);
                 result = DBProxy.Current.SelectByConn(conn, sp, out dt);
