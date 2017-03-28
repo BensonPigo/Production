@@ -12,6 +12,7 @@ using Ict;
 using System.Linq;
 using System.Data.SqlClient;
 using System.Runtime.InteropServices;
+using Sci.Utility.Excel;
 
 namespace Sci.Production.Subcon
 {
@@ -261,20 +262,15 @@ namespace Sci.Production.Subcon
         }
         private void btn_Excel_Click(object sender, EventArgs e)
         {
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_P32.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(dtGrid1, "", "Subcon_P32.xltx", 1, true, null, objApp);      // 將datatable copy to excel
-            objApp.Cells.EntireColumn.AutoFit(); //自動欄寬
-           // objApp.Columns().ColumnWidth = 14;
-            objApp.Visible = false;
-           // objApp.Cells.ColumnWidth = 14;
-            //objAppEntireColumn.AutoFit(); //自動欄寬
-            
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[2];   // 取得工作表
-            MyUtility.Excel.CopyToXls(dtGrid2, "", "Subcon_P32.xltx", 1, true, null, null, true, objSheets, false);// 將datatable copy to excel
-            objSheets.Cells.EntireColumn.AutoFit(); //自動欄寬
-            if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
-            if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-            return;
+            Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_P32.xltx");
+            Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt1 = new SaveXltReportCls.xltRptTable(dtGrid1);
+            Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt2 = new SaveXltReportCls.xltRptTable(dtGrid2);
+            x1.dicDatas.Add("##dt1", dt1);
+            x1.dicDatas.Add("##dt2", dt2);
+            dt1.ShowHeader = false;
+            dt2.ShowHeader = false;
+            x1.Save();
+            return ;
 
         }
 
