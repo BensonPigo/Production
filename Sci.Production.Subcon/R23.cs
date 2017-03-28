@@ -152,18 +152,18 @@ as
                 case 2:
                     if (!MyUtility.Check.Empty(IssueDate1) && !MyUtility.Check.Empty(IssueDate2))
                     {
-                        sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate between '{0}' and '{1}')"
+                        sqlCmd.Append(string.Format(@" where (a.issuedate between '{0}' and '{1}')"
                             , Convert.ToDateTime(IssueDate1).ToString("d"), Convert.ToDateTime(IssueDate2).ToString("d")));
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(IssueDate1))
                         {
-                            sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate >= '{0}') ", Convert.ToDateTime(IssueDate1).ToString("d")));
+                            sqlCmd.Append(string.Format(@" where (a.issuedate >= '{0}') ", Convert.ToDateTime(IssueDate1).ToString("d")));
                         }
                         if (!MyUtility.Check.Empty(IssueDate2))
                         {
-                            sqlCmd.Append(string.Format(@" where (a.apvdate is null or a.issuedate <= '{0}') ", Convert.ToDateTime(IssueDate2).ToString("d")));
+                            sqlCmd.Append(string.Format(@" where (a.issuedate <= '{0}') ", Convert.ToDateTime(IssueDate2).ToString("d")));
                         }
                     }
                     break;
