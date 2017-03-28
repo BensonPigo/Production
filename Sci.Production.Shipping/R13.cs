@@ -79,12 +79,12 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 					from Order_TmsCost ot
 					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
 					where ot.ID = o.ID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0)))
-,LocalPSCost= IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1, 
+,LocalPSCost= Isnull(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1, 
 						(select sum(ot.Price) 
 						from Order_TmsCost ot
 						inner join ArtworkType a on ot.ArtworkTypeID = a.ID
 						where ot.ID = o.id and a.Classify = 'P')
-					,0)
+					,0),0)
 
 From Orders o
 Left join FtyShipper_Detail fd on o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
