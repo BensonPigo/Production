@@ -51,6 +51,8 @@ namespace Sci.Production.Quality
             this.comboMaterialType.ValueMember = "fabrictype";
             this.comboMaterialType.DisplayMember = "fabrictype";
             this.comboMaterialType.SelectedIndex = 0;
+
+            this.comboMaterialType.SelectedValue = "Fabric";
             print.Enabled = false;
         }
         protected override bool ValidateInput()
@@ -166,13 +168,18 @@ namespace Sci.Production.Quality
                 ,psd.seq1+'-'+psd.seq2[SEQ#]
                 ,(select ExportId from dbo.Receiving WITH (NOLOCK) where id = f.ReceivingID)[ExportId]
                 ,f.ReceivingID
-                ,[defectYDS]=f.TotalDefectPoint*5
+                ,[defectYDS]= defect.count*5
                 ,f.TotalInspYds
 
                 from order_rawdata a
                 inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.POID
                 inner join FIR f WITH (NOLOCK) on f.POID = psd.ID and f.SEQ1 = psd.Seq1 and f.seq2 = psd.Seq2
-                where " + sqlWhere + @" AND  psd.SEQ1 NOT BETWEEN '50'AND'79'");
+                outer apply(
+	                select count(1) [count] from dbo.FIR_Physical x 
+	                inner join dbo.FIR_Physical_Defect y on y.FIR_PhysicalDetailUKey = x.DetailUkey 
+	                where x.ID = f.ID
+                ) as Defect
+                where " + sqlWhere + @" AND  psd.SEQ1 NOT BETWEEN '50'AND'79' and f.Physical<>'' and f.PhysicalEncode=1 ");
             #endregion
             #region --撈 Accessory Detail 資料--
             cmdAccessoryDetail = string.Format(@" with order_rawdata as
@@ -203,7 +210,8 @@ namespace Sci.Production.Quality
                 from order_rawdata a
                 inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.POID
                 inner join AIR AR WITH (NOLOCK) on AR.POID = psd.ID and AR.SEQ1 = psd.Seq1 and AR.seq2 = psd.Seq2
-                where " + sqlWhere + @" AND  psd.SEQ1 NOT BETWEEN '50'AND'79' ");
+                where " + sqlWhere + @" AND  psd.SEQ1 NOT BETWEEN '50'AND'79' AND AR.Result<>''
+and ar.Status='Confirmed' ");
             #endregion
             #region --撈 Fabric Summary 資料--
             cmdFabricSummary = string.Format(@"
@@ -213,44 +221,63 @@ namespace Sci.Production.Quality
 	                where Junk =0  " + sqlOrdersWhere + @"
                 )
                 select
-	                psd.ID,psd.SEQ1,psd.SEQ2,ps.SuppID,f.Refno,s.AbbEN,DelayItemsRef.TF
-	                ,n.StockUnit,n.StockQty,n.PoUnit,n.ShipQty,f.TotalDefectPoint,f.TotalInspYds
-                into #tmp
-                from order_rawdata a
-                inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.POID
-                inner join FIR f WITH (NOLOCK) on f.POID = psd.ID and f.SEQ1 = psd.Seq1 and f.seq2 = psd.Seq2
-                inner join dbo.PO_Supp as ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
-                inner join dbo.Supp as s WITH (NOLOCK) on s.ID = ps.SuppID
-                inner join dbo.Receiving as m WITH (NOLOCK) on m.id = f.ReceivingID
-                inner join dbo.Receiving_Detail as n WITH (NOLOCK) on n.Id = m.Id and n.PoId = psd.ID and n.seq1 = psd.seq1 and n.seq2 = psd.SEQ2
-                OUTER APPLY (SELECT iif(" + CATEGORY + @"='B',iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = f.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
-									                 ,iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = f.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y',''))  
-								                      TF)DelayItemsRef
-                WHERE " + sqlWhere + @" AND psd.SEQ1 NOT BETWEEN '50'AND'79'
+	    psd.ID,psd.SEQ1,psd.SEQ2,ps.SuppID,f.Refno,s.AbbEN,DelayItemsRef.TF
+	    ,n.StockUnit,n.StockQty,n.PoUnit,n.ShipQty,
+		[TotalDefectPoint]= Defect.count,
+		f.TotalInspYds
+    into #tmp
+    from order_rawdata a
+    inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.POID
+    inner join FIR f WITH (NOLOCK) on f.POID = psd.ID and f.SEQ1 = psd.Seq1 and f.seq2 = psd.Seq2
+    inner join dbo.PO_Supp as ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
+    inner join dbo.Supp as s WITH (NOLOCK) on s.ID = ps.SuppID
+    inner join dbo.Receiving as m WITH (NOLOCK) on m.id = f.ReceivingID
+    inner join dbo.Receiving_Detail as n WITH (NOLOCK) on n.Id = m.Id and n.PoId = psd.ID and n.seq1 = psd.seq1 and n.seq2 = psd.SEQ2
+    OUTER APPLY (SELECT iif('b'='B',iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = f.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
+					,iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = f.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y',''))  
+					TF)DelayItemsRef
+	outer apply(
+	                select count(1) [count] from dbo.FIR_Physical x 
+	                inner join dbo.FIR_Physical_Defect y on y.FIR_PhysicalDetailUKey = x.DetailUkey 
+	                where x.ID = f.ID
+                ) as Defect
+                WHERE " + sqlWhere + @" AND psd.SEQ1 NOT BETWEEN '50'AND'79' and f.Physical<>'' and f.PhysicalEncode=1
 
                 /*
 	                if want summary
                 */
               --  declare @summary bit = 1
                 if @summary  = 1
-	            select
-		            (Suppid+'-'+AbbEN)[Supplier]
-		            ,ItemRef = max(s.counts)
-		            ,SUM(iif(TF='Y',1,0))[TotalDelay]
-		            ,sum([ShipQty])[ShipQty]
-		            ,sum([ArriveQty])[ArriveQty]
-		            ,[Balance]=sum([ShipQty])-sum([ArriveQty])
-		            ,100-ROUND((sum(iif(TF='Y',1,0))/sum(s.counts)*100),0)[% On-Time Delivery]
-		            ,SUM(TotalDefectPoint)*5[TotalDefect]
-		            ,SUM(TotalInspYds)[TotalInspected]
-		            ,SUM([ShipQty])[Total Arrived]
-		            ,IIF(SUM(TotalInspYds)!=0,ROUND(SUM((TotalDefectPoint)*5) /SUM(TotalInspYds)*100,0),0)[DefectPercentage]
-		            ,IIF(sum([ArriveQty])!=0,ROUND(SUM(TotalInspYds)/sum([ArriveQty])*100,0),0)[Total % of Inspection]
-	                ,[QualityRating]=100-IIF(SUM(TotalInspYds)!=0,ROUND(SUM(TotalDefectPoint)*5/SUM(TotalInspYds)*100,0),0)		
-	            from #tmp tmp
-	            outer apply( select count(distinct Refno) counts from #tmp as sTmp where sTmp.suppid = tmp.SuppID )as s
-	            outer apply (select dbo.getUnitRate(StockUnit,'YDS')*StockQty as ArriveQty) aq
-	            GROUP BY SuppID,AbbEN
+	            	select
+		(Suppid+'-'+AbbEN)[Supplier]
+		,ItemRef = max(s.counts)
+		,[TotalDelay]=(delay.DelayCount)
+		,sum([ShipQty])[ShipQty]
+		,sum([ArriveQty])[ArriveQty]
+		,[Balance]=sum([ShipQty])-sum([ArriveQty])
+		,100-ROUND((CONVERT(float,delay.DelayCount)/ max(s.counts)*100),2)[% On-Time Delivery]
+		,[TotalDefectPoint]= (Defect.TotalDefectPoint)*5
+		,[TotalInspYds]=yds.TotalInspYds
+		,SUM([ShipQty])[Total Arrived]
+		,IIF(yds.TotalInspYds!=0,ROUND((Defect.TotalDefectPoint)*5 /yds.TotalInspYds*100,2),0)[DefectPercentage]
+		,IIF(sum([ArriveQty])!=0,ROUND(yds.TotalInspYds/sum([ArriveQty])*100,2),0)[Total % of Inspection]
+	    ,[QualityRating]=100-IIF(yds.TotalInspYds!=0,ROUND((Defect.TotalDefectPoint)*5/yds.TotalInspYds*100,2),0)		
+	from #tmp tmp
+	outer apply( select count(distinct Refno) counts from #tmp as sTmp where sTmp.suppid = tmp.SuppID )as s
+	outer apply(select dbo.getUnitRate(StockUnit,'YDS')*StockQty as ArriveQty) aq
+	outer apply(select count(distinct Refno) DelayCount from #tmp as sTmp where sTmp.suppid = tmp.SuppID and tf='Y') as delay
+	outer apply(
+		select sum(TotalInspYds) as TotalInspYds from(
+		select distinct id,seq1,seq2,TotalInspYds from #tmp
+		where SuppID=tmp.SuppID) a 
+		) as yds
+	outer apply(
+		select sum(TotalDefectPoint) as TotalDefectPoint from(
+		select distinct id,seq1,seq2,TotalDefectPoint from #tmp
+		where SuppID=tmp.SuppID) a 
+		) as Defect
+	GROUP BY SuppID,AbbEN,delay.DelayCount,yds.TotalInspYds,Defect.TotalDefectPoint
+
 	
             else
 	            select * from #tmp
@@ -281,7 +308,8 @@ namespace Sci.Production.Quality
             OUTER APPLY (SELECT iif(" + CATEGORY + @"='B',iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = ai.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
                                                      ,iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = ai.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y',''))  
                                                        TF)DelayItemsRef
-            WHERE " + sqlWhere + @" AND psd.SEQ1 NOT BETWEEN '50'AND'79'
+            WHERE " + sqlWhere + @" AND psd.SEQ1 NOT BETWEEN '50'AND'79' AND Ai.Result<>''
+and ai.Status='Confirmed' 
 
             /*
                  if want summary
@@ -295,20 +323,21 @@ namespace Sci.Production.Quality
 		            ,[Quality Rating]=iif(s.ItemRef!=0,round((fr.failCount /cast(s.ItemRef AS decimal))*100,0,1),0)
 	            from (
                  select
-                     SuppID,AbbEN
-                     ,ItemRef = max(s.counts)
-                     ,SUM(iif(TF='Y',1,0))[TotalDelay]
-                     ,sum([ShipQty])[ShipQty]
-                     ,sum([ArriveQty])[ArriveQty]
-                     ,[Balance]=sum([ShipQty])-sum([ArriveQty])
-                     ,100-ROUND((sum(iif(TF='Y',1,0))/sum(s.counts)*100),0)[% On-Time Delivery]
-                     ,SUM(InspQty)[TotalInspectedQty]
+        SuppID,AbbEN
+        ,ItemRef = max(s.counts)
+		,[TotalDelay]=(delay.DelayCount)
+        ,sum([ShipQty])[ShipQty]
+        ,sum([ArriveQty])[ArriveQty]
+        ,[Balance]=sum([ShipQty])-sum([ArriveQty])        
+		,100-ROUND((CONVERT(float,delay.DelayCount)/ max(s.counts)*100),2)[% On-Time Delivery]
+        ,SUM(InspQty)[TotalInspectedQty]
    
-                 from #tmp tmp
-                 outer apply( select count(distinct Refno) counts from #tmp as sTmp where sTmp.suppid = tmp.SuppID )as s
-                 outer apply (select dbo.getUnitRate(StockUnit,'YDS')*StockQty as ArriveQty) aq
+    from #tmp tmp
+    outer apply( select count(distinct Refno) counts from #tmp as sTmp where sTmp.suppid = tmp.SuppID )as s
+    outer apply (select dbo.getUnitRate(StockUnit,'YDS')*StockQty as ArriveQty) aq
+	outer apply(select count(distinct Refno) DelayCount from #tmp as sTmp where sTmp.suppid = tmp.SuppID and tf='Y') as delay
     
-                 GROUP BY SuppID,AbbEN
+    GROUP BY SuppID,AbbEN,delay.DelayCount
 	             ) as s 
                  outer apply( select failCount =count(*) from (select distinct  Refno from #tmp as sTmp where sTmp.suppid = s.SuppID and Result='fail' ) as f)as fr
 
