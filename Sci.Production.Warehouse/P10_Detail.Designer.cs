@@ -87,6 +87,10 @@
             // 
             this.undo.Location = new System.Drawing.Point(918, 5);
             // 
+            // delete
+            // 
+            this.delete.Click += new System.EventHandler(this.delete_Click);
+            // 
             // next
             // 
             this.next.Location = new System.Drawing.Point(783, 5);

@@ -26,7 +26,8 @@ namespace Sci.Production.Warehouse
         {
             var frm = new Sci.Production.Warehouse.P10_Detail_Detail(CurrentDetailData, (DataTable)gridbs.DataSource);
             frm.P10_Detail = this;
-            frm.ShowDialog(this);            
+            frm.ShowDialog(this);
+            sum_checkedqty();
             //base.OnSubDetailInsert(index);
             //CurrentSubDetailData["Issue_SummaryUkey"] = 0;
         }
@@ -49,7 +50,7 @@ namespace Sci.Production.Warehouse
                     return;
                 }
                 gridbs.DataSource = dtFtyinventory;
-                dtFtyinventory.DefaultView.Sort = "dyelot,qty desc";
+                dtFtyinventory.DefaultView.Sort = "dyelot,balanceqty desc";
             }
 
             this.dis_ID.Text = CurrentDetailData["id"].ToString();
@@ -80,6 +81,11 @@ namespace Sci.Production.Warehouse
 
         protected override bool OnGridSetup()
         {
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            ns.CellValidating += (s, e) =>
+                {                
+                    sum_checkedqty();
+                };
             Helper.Controls.Grid.Generator(this.grid)
                 //.Text("id", header: "id", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
                 //.Numeric("Issue_SummaryUkey", header: "Issue_SummaryUkey", width: Widths.AnsiChars(8), integer_places: 10)    //6
@@ -89,7 +95,7 @@ namespace Sci.Production.Warehouse
             .Text("seq2", header: "seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)  //3
             .Text("roll", header: "roll", width: Widths.AnsiChars(10), iseditingreadonly: true)  //4
             .Text("dyelot", header: "dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //5
-            .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8)    //6
+            .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: ns)    //6
             .Text("location", header: "Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(10), iseditingreadonly: true)  //5
             .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //6
             .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //6
@@ -139,7 +145,24 @@ namespace Sci.Production.Warehouse
                 dr2.SetAdded();
                 subDT.ImportRow(dr2);
             }
-
+            sum_checkedqty();
         }
+        private void sum_checkedqty()
+        {
+            grid.EndEdit();
+            DataTable subDT = (DataTable)gridbs.DataSource;
+            Object SumIssueQTY = subDT.Compute("Sum(qty)","");
+            this.num_issue.Text = SumIssueQTY.ToString();
+            if (!MyUtility.Check.Empty(SumIssueQTY) && !MyUtility.Check.Empty(CurrentDetailData["requestqty"].ToString()))
+            {
+                this.num_variance.Value = Convert.ToDecimal(CurrentDetailData["requestqty"].ToString()) - Convert.ToDecimal(SumIssueQTY.ToString());
+            }
+        }
+
+        private void delete_Click(object sender, EventArgs e)
+        {
+            sum_checkedqty();
+        }
+
     }
 }

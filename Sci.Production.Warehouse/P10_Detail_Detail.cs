@@ -34,7 +34,7 @@ namespace Sci.Production.Warehouse
             Object localPrice = dt.Compute("Sum(qty)", "selected = 1");
             if (!MyUtility.Check.Empty(localPrice) && !MyUtility.Check.Empty(dr_master["requestqty"].ToString()))
             {
-                num_variance.Text = (Convert.ToDecimal(dr_master["requestqty"].ToString()) - Convert.ToDecimal(localPrice.ToString())).ToString();
+                num_variance.Value = Convert.ToDecimal(dr_master["requestqty"].ToString()) - Convert.ToDecimal(localPrice.ToString());
             }
             this.displayBox1.Value = localPrice.ToString();              
         }
