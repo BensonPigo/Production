@@ -218,24 +218,7 @@ namespace Sci.Production.Subcon
         {
             if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
             {
-                //(e.Details).Columns.Add("factoryid", typeof(String));
-                //(e.Details).Columns.Add("sewinline", typeof(DateTime));
-                //(e.Details).Columns.Add("description", typeof(String));
-                //(e.Details).Columns.Add("Amount", typeof(decimal));
                 (e.Details).Columns["amount"].Expression = "price * qty";
-
-                //foreach (DataRow dr in e.Details.Rows)
-                    //{
-            //        //dr["Price"] = (Decimal)dr["unitprice"] * (Decimal)dr["qtygarment"];
-            //        //DataTable order_dt;
-            //        //DBProxy.Current.Select(null, string.Format("select factoryid, sewinline, scidelivery from orders where id='{0}'", dr["orderid"].ToString()), out order_dt);
-            //        //if (order_dt.Rows.Count > 0)
-            //        //{
-            //        //    dr["factoryid"] = order_dt.Rows[0]["factoryid"].ToString();
-            //        //    dr["sewinline"] = order_dt.Rows[0]["sewinline"];
-            //        //}
-            //        dr["description"] = Prgs.GetItemDesc(e.Master["category"].ToString(), dr["refno"].ToString());
-                    //}
             }
             return base.OnRenewDataDetailPost(e);
         }
@@ -510,50 +493,52 @@ namespace Sci.Production.Subcon
             #endregion
 
             #region 開始更新相關table資料
-            sqlupd2 = string.Format(@"with MyCTE 
-                                                    as
-                                                    (
-                                                        select requestid 
-                                                        from localpo_detail WITH (NOLOCK) 
-                                                        where localpo_detail.id = '{0}' group by requestid
-                                                    )
-                                                    update dbo.PackingList
-                                                    set LocalPOID = '{0}' 
-                                                    where id in (select requestid from mycte)", dr["id"]);
-
+            if (CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "CARTON")
+            {
+                sqlupd2 = string.Format(@"with MyCTE 
+                                        as
+                                        (
+                                            select requestid 
+                                            from localpo_detail WITH (NOLOCK) 
+                                            where localpo_detail.id = '{0}' group by requestid
+                                        )
+                                        update dbo.PackingList
+                                        set LocalPOID = '{0}' 
+                                        where id in (select requestid from mycte)", dr["id"]);
+            }
+            else if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
+            {
+                //針對表身資料將ThreadRequisition_Detail.poid塞值
+                foreach (DataRow ddr in DetailDatas)
+                {
+                    sqlupd2 += string.Format(@"update ThreadRequisition_Detail set POID='{0}' " +
+                                    "where OrderID='{1}' and Refno='{2}' and ThreadColorID='{3}'; "
+                                    , ddr["poid"].ToString(), ddr["orderid"].ToString(), ddr["refno"].ToString(), ddr["threadcolorid"].ToString());
+                }
+            }
+            
             sqlupd3 = string.Format("update Localpo set status='Approved', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
                                 "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-
-            //針對表身資料將ThreadRequisition_Detail.poid塞值
-            StringBuilder sqlupd4 = new StringBuilder();
-            foreach (DataRow ddr in DetailDatas)
-            {
-                sqlupd4.Append(string.Format(@"update ThreadRequisition_Detail set POID='{0}' " +
-                                "where OrderID='{1}' and Refno='{2}' and ThreadColorID='{3}'; " 
-                                , ddr["poid"].ToString(), ddr["orderid"].ToString(), ddr["refno"].ToString() , ddr["threadcolorid"].ToString()));
-            }
 
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
                 try
                 {
-                    if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
+                    if (!MyUtility.Check.Empty(sqlupd2))
                     {
-                        _transactionscope.Dispose();
-                        ShowErr(sqlupd2, result2);
-                        return;
-                    } 
+                        if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
+                        {
+                            _transactionscope.Dispose();
+                            ShowErr(sqlupd2, result2);
+                            return;
+                        } 
+                    }
+
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
                         _transactionscope.Dispose();
                         ShowErr(sqlupd3, result);
-                        return;
-                    }
-                    if (!(result = DBProxy.Current.Execute(null, sqlupd4.ToString())))
-                    {
-                        _transactionscope.Dispose();
-                        ShowErr(sqlupd4.ToString(), result);
                         return;
                     }
 
@@ -566,7 +551,6 @@ namespace Sci.Production.Subcon
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
-                return;
             }
             _transactionscope.Dispose();
             _transactionscope = null;
@@ -594,46 +578,47 @@ namespace Sci.Production.Subcon
             String sqlupd2 = "", sqlupd3 = "";
             DualResult result, result2;
             
-
             #region 開始更新相關table資料
-            sqlupd2 = string.Format(@"with MyCTE 
-                                                    as
-                                                    (
-                                                        select requestid 
-                                                        from localpo_detail WITH (NOLOCK) 
-                                                        where localpo_detail.id = '{0}' group by requestid
-                                                    )
-                                                    update dbo.PackingList
-                                                    set LocalPOID = '' 
-                                                    where id in (select requestid from mycte)", dr["id"]);
-
-            sqlupd3 = string.Format("update Localpo set status='Approved', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
-                                "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+            if (CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "CARTON")
+            {
+                sqlupd2 = string.Format(@"with MyCTE 
+                                        as
+                                        (
+                                            select requestid 
+                                            from localpo_detail WITH (NOLOCK) 
+                                            where localpo_detail.id = '{0}' group by requestid
+                                        )
+                                        update dbo.PackingList
+                                        set LocalPOID = '' 
+                                        where id in (select requestid from mycte)", dr["id"]);
+            }
+            else if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
+            {
+                foreach (DataRow ddr in DetailDatas)
+                {
+                    sqlupd2 += string.Format(@"update ThreadRequisition_Detail set POID='' " +
+                                    "where OrderID='{0}' and Refno='{1}' and ThreadColorID='{2}'; "
+                                    , ddr["orderid"].ToString(), ddr["refno"].ToString(), ddr["threadcolorid"].ToString());
+                }
+            }
 
             sqlupd3 = string.Format(@"update Localpo set status='New',apvname='', apvdate = null , editname = '{0}' 
                                                     , editdate = GETDATE() where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-
-            
-            StringBuilder sqlupd4 = new StringBuilder();
-            foreach (DataRow ddr in DetailDatas)
-            {
-                sqlupd4.Append(string.Format(@"update ThreadRequisition_Detail set POID='' " +
-                                "where OrderID='{0}' and Refno='{1}' and ThreadColorID='{2}'; "
-                                , ddr["orderid"].ToString(), ddr["refno"].ToString(), ddr["threadcolorid"].ToString()));
-            }
-
 
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
                 try
                 {
-                    if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
+                    if (!MyUtility.Check.Empty(sqlupd2))
                     {
-                        _transactionscope.Dispose();
-                        ShowErr(sqlupd2, result2);
-                        return;
-                    } 
+                        if (!(result2 = DBProxy.Current.Execute(null, sqlupd2)))
+                        {
+                            _transactionscope.Dispose();
+                            ShowErr(sqlupd2, result2);
+                            return;
+                        } 
+                    }
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
                     {
@@ -642,12 +627,6 @@ namespace Sci.Production.Subcon
                         return;
                     }
 
-                    if (!(result = DBProxy.Current.Execute(null, sqlupd4.ToString())))
-                    {
-                        _transactionscope.Dispose();
-                        ShowErr(sqlupd4.ToString(), result);
-                        return;
-                    }
                     _transactionscope.Complete();
                     MyUtility.Msg.InfoBox("UnApprove successful");
                 }
@@ -656,7 +635,6 @@ namespace Sci.Production.Subcon
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
-                return;
             }
             _transactionscope.Dispose();
             _transactionscope = null;
