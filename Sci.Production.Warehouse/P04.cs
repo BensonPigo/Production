@@ -40,7 +40,7 @@ namespace Sci.Production.Warehouse
                 if (dataRow != null)
                 {
                     var form = new Sci.Production.Warehouse.P04_LocalTransaction(dataRow);
-                    form.ShowDialog(this);
+                    form.Show(this);
                 }
             };
             #endregion 

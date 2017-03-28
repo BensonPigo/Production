@@ -21,19 +21,20 @@ namespace Sci.Production.Warehouse
         DataTable dataTable;
         List<SqlParameter> sqlPar = new List<SqlParameter>();
 
-        public P04_LocalTransaction(DataRow dataRow)
+        public P04_LocalTransaction(DataRow dataRow):base()
         {
             InitializeComponent();
             this.dataRow = dataRow;
 
-            sqlPar.Add(new SqlParameter("@Poid", dataRow["sp"].ToString()));
-            sqlPar.Add(new SqlParameter("@Refno", dataRow["refno"].ToString()));
-            sqlPar.Add(new SqlParameter("@ColorID", dataRow["threadColor"].ToString()));
+            sqlPar.Add(new SqlParameter("@Poid", dataRow["sp"].ToString().Trim()));
+            sqlPar.Add(new SqlParameter("@Refno", dataRow["refno"].ToString().Trim()));
+            sqlPar.Add(new SqlParameter("@ColorID", dataRow["threadColor"].ToString().Trim()));
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            
             #region SQL Command
             string sql = @"
 select 	s.date
@@ -77,6 +78,7 @@ order by s.date, s.Name
                 if (dataTable == null || dataTable.Rows.Count == 0)
                 {
                     MyUtility.Msg.InfoBox("Data not found!!");
+                    this.Close();
                 }
                 else
                 {
@@ -85,9 +87,9 @@ order by s.date, s.Name
                     string releasedQty = dataTable.Compute("sum(releasedQty)", null).ToString();
                     string balance = (Convert.ToDecimal(arrivedQty) - Convert.ToDecimal(releasedQty)).ToString();
 
-                    this.numArrived.Value = (arrivedQty.Empty()) ? decimal.Parse(arrivedQty) : 0;
-                    this.numReleaced.Value = (releasedQty.Empty()) ? decimal.Parse(releasedQty) : 0;
-                    this.numBalance.Value = (balance.Empty()) ? decimal.Parse(balance) : 0;
+                    this.numArrived.Value = (arrivedQty.Empty()) ? 0 : decimal.Parse(arrivedQty);
+                    this.numReleaced.Value = (releasedQty.Empty()) ? 0 : decimal.Parse(releasedQty);
+                    this.numBalance.Value = (balance.Empty()) ? 0 : decimal.Parse(balance);
                 }
             }
             else
@@ -99,8 +101,8 @@ order by s.date, s.Name
             #region Set Grid
             Helper.Controls.Grid.Generator(this.grid1)
                .Text("date", header: "Date", iseditingreadonly: true, width: Widths.AnsiChars(13))
-               .Text("transaction", header: "Transaction#", iseditingreadonly: true, width: Widths.AnsiChars(10))
-               .Text("name", header: "Name", iseditingreadonly: true, width: Widths.AnsiChars(10))
+               .Text("transaction", header: "Transaction#", iseditingreadonly: true, width: Widths.AnsiChars(25))
+               .Text("name", header: "Name", iseditingreadonly: true, width: Widths.AnsiChars(30))
                .Numeric("arrivedQty", header: "Arrived Qty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
                .Numeric("releasedQty", header: "Released Qty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
                .Numeric("balance", header: "Balance", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
@@ -184,5 +186,9 @@ WHERE OrderId = @Poid and Refno = @Refno and ThreadColorID = @ColorID
             this.Close();
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+        }
     }    
 }
