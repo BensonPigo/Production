@@ -160,27 +160,48 @@ namespace Sci.Production.Subcon
 							#tmp.StyleID,
 							#tmp.MinSciDelivery,
 							#tmp.MinSewinLine,
-							 case
+							 	 case
 							  when #tmp.c='CARTON,' then 'Y'
 							  when #tmp.c='CARTON,SP_THREAD,' then 'Y'
+							  when #tmp.c='SP_THREAD,CARTON,' then 'Y'
 							  when #tmp.c='CARTON,EMB_THREAD,' then 'Y'
+							  when #tmp.c='EMB_THREAD,CARTON,' then 'Y'
 							  when #tmp.c='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
+							  when #tmp.c='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
+							  when #tmp.c='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
+							  when #tmp.c='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
+							  when #tmp.c='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
+							  when #tmp.c='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
 							  ELSE 'N'
 							END
 							AS Carton,
 								 case
 							  when #tmp.c='SP_THREAD,' then 'Y'
 							  when #tmp.c='CARTON,SP_THREAD,' then 'Y'
+							  when #tmp.c='SP_THREAD,CARTON,' then 'Y'
 							  when #tmp.c='EMB_THREAD,SP_THREAD,' then 'Y'
+							  when #tmp.c='SP_THREAD,EMB_THREAD,' then 'Y'
 							  when #tmp.c='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
+							  when #tmp.c='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
+							  when #tmp.c='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
+							  when #tmp.c='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
+							  when #tmp.c='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
+							  when #tmp.c='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
 							  ELSE 'N'
 							END
 							AS SPThread,
 									 case
 							  when #tmp.c='EMB_THREAD,' then 'Y'
 							  when #tmp.c='CARTON,EMB_THREAD,' then 'Y'
+							  when #tmp.c='EMB_THREAD,CARTON,' then 'Y'
 							  when #tmp.c='EMB_THREAD,SP_THREAD,' then 'Y'
+							  when #tmp.c='SP_THREAD,EMB_THREAD,' then 'Y'
 							  when #tmp.c='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
+							  when #tmp.c='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
+							  when #tmp.c='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
+							  when #tmp.c='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
+							  when #tmp.c='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
+							  when #tmp.c='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
 							  ELSE 'N'
 							END
 							AS EmbThread
@@ -256,7 +277,10 @@ namespace Sci.Production.Subcon
         private void listControlBindingSource1_PositionChanged(object sender, EventArgs e)
         {
             var parent = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
-            if (parent == null) return;
+            if (parent == null)
+            {
+                return;
+            }
             orderid = parent["orderid"].ToString();
             listControlBindingSource2.Filter = " orderid = '"+ orderid+"'";
         }
