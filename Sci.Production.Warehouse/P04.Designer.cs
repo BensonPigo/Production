@@ -28,11 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
             this.tb_Spno = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnQuery = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.btnToExcel = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.SuspendLayout();
@@ -41,7 +46,7 @@
             // 
             this.panel1.Controls.Add(this.tb_Spno);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.btnQuery);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -66,14 +71,15 @@
             this.label1.TabIndex = 18;
             this.label1.Text = "SP#";
             // 
-            // button1
+            // btnQuery
             // 
-            this.button1.Location = new System.Drawing.Point(272, 8);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnQuery.Location = new System.Drawing.Point(272, 8);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 1;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // grid1
             // 
@@ -86,6 +92,7 @@
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid1.DataSource = this.listControlBindingSource1;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -96,21 +103,49 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(847, 313);
+            this.grid1.Size = new System.Drawing.Size(847, 324);
             this.grid1.TabIndex = 4;
             this.grid1.TabStop = false;
+            // 
+            // btnToExcel
+            // 
+            this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnToExcel.Location = new System.Drawing.Point(671, 379);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(90, 30);
+            this.btnToExcel.TabIndex = 5;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
+            // 
+            // btnClose
+            // 
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(767, 379);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 6;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // P04
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(847, 361);
+            this.ClientSize = new System.Drawing.Size(847, 409);
+            this.Controls.Add(this.btnToExcel);
+            this.Controls.Add(this.btnClose);
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.panel1);
             this.Name = "P04";
             this.Text = "P04 Material Status(Local)";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.grid1, 0);
+            this.Controls.SetChildIndex(this.btnClose, 0);
+            this.Controls.SetChildIndex(this.btnToExcel, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
@@ -120,11 +155,14 @@
 
         #endregion
 
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Panel panel1;
         private Win.UI.TextBox tb_Spno;
         private Win.UI.Label label1;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnQuery;
         private Win.UI.Grid grid1;
+        private Win.UI.Button btnToExcel;
+        private Win.UI.Button btnClose;
 
     }
 }
