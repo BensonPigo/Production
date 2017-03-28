@@ -635,7 +635,7 @@ select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInvent
 ,sum(inqty-OutQty+AdjustQty) 
 over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty desc
 rows between unbounded preceding and current row) as running_total
-,c.GroupQty
+--,c.GroupQty
 from cte c 
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.Dyelot=c.Dyelot
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
@@ -661,6 +661,7 @@ select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInvent
 ,sum(inqty-OutQty+AdjustQty) 
 over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty DESC
 rows between unbounded preceding and current row) as running_total
+--,c.GroupQty
 from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
 inner join cte c on c.Dyelot=a.Dyelot
 where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
@@ -685,6 +686,7 @@ select (select t.mtllocationid+',' from (select MtlLocationID from dbo.FtyInvent
 ,sum(inqty-OutQty+AdjustQty) 
 over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty DESC
 rows between unbounded preceding and current row) as running_total
+--,c.GroupQty
 from dbo.FtyInventory a WITH (NOLOCK) inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID and p.seq1 = a.Seq1 and p.seq2 = a.Seq2
 inner join cte c on c.Dyelot=a.Dyelot
 where poid='{1}' and Stocktype='{4}' and inqty-OutQty+AdjustQty > 0
