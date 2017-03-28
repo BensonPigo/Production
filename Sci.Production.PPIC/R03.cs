@@ -110,16 +110,16 @@ o.SpecialMark,o.SampleReason,o.InspDate,IIF(o.InspResult='P','Pass',IIF(o.InspRe
 o.FtyKPI,o.KPIChangeReason,o.EachConsApv,o.Junk,o.StyleUkey,o.CuttingSP,o.RainwearTestPassed,o.BrandFTYCode,
 o.CPUFactor,o.ClogLastReceiveDate,o.IsMixMarker,o.GFR
 from Orders o WITH (NOLOCK) 
-inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
+left join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 OUTER APPLY(SELECT Name FROM Pass1 WITH (NOLOCK) WHERE Pass1.ID=O.InspHandle)I
 where 1=1");
             if (!MyUtility.Check.Empty(buyerDlv1))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'",Convert.ToDateTime(buyerDlv1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'",Convert.ToDateTime(buyerDlv1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(buyerDlv2))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'",Convert.ToDateTime(buyerDlv2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'",Convert.ToDateTime(buyerDlv2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(sciDlv1))
             {
