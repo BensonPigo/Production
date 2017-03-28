@@ -35,7 +35,7 @@ namespace Sci.Production.Warehouse
             
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk)
-                .CheckBox("complete", header: "Complete" + Environment.NewLine + "Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+                .Text("complete", header: "Complete" + Environment.NewLine + "Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(3), iseditingreadonly: true,alignment:DataGridViewContentAlignment.MiddleCenter)
                  .Text("poid", header: "Issue SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Issue" + Environment.NewLine + "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                  .Text("seq2", header: "Issue" + Environment.NewLine + "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -274,7 +274,7 @@ iseditingreadonly: true)
             sqlcmd.Append(string.Format(@";with cte
 as
 (
-select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,0,1) complete,rtrim(o.id) poid,o.Category,o.FtyGroup,o.FactoryID 
+select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,'Y','') complete,rtrim(o.id) poid,o.Category,o.FtyGroup,o.FactoryID 
 ,rtrim(pd.seq1) seq1,pd.seq2,pd.id stockpoid,pd.seq1 stockseq1,pd.seq2 stockseq2
 ,ROUND(xz.taipei_qty*v.RateValue,2,1) N'inputqty',pd.POUnit,pd.StockUnit
 ,mpd.InQty
@@ -559,7 +559,7 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
         {
             if (checkBox1.Checked)
             {
-                listControlBindingSource1.Filter = "complete = 1";
+                listControlBindingSource1.Filter = "complete = 'Y'";
             }
             else
             {

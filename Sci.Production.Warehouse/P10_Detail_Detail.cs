@@ -32,7 +32,11 @@ namespace Sci.Production.Warehouse
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Object localPrice = dt.Compute("Sum(qty)", "selected = 1");
-            this.displayBox1.Value = localPrice.ToString();
+            if (!MyUtility.Check.Empty(localPrice) && !MyUtility.Check.Empty(dr_master["requestqty"].ToString()))
+            {
+                num_variance.Text = (Convert.ToDecimal(dr_master["requestqty"].ToString()) - Convert.ToDecimal(localPrice.ToString())).ToString();
+            }
+            this.displayBox1.Value = localPrice.ToString();              
         }
 
         protected override void OnFormLoaded()
@@ -65,6 +69,7 @@ inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1
 Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
 and a.scirefno='{2}' and a.colorid='{3}' and a.sizespec = '{4}'
 and ltrim(a.seq1) between '01' and '99'
+order by c.Dyelot,Qty DESC
 "
                 , dr_master["poid"], Sci.Env.User.Keyword, dr_master["scirefno"], dr_master["colorid"], dr_master["sizespec"]));
             #endregion
@@ -76,7 +81,7 @@ and ltrim(a.seq1) between '01' and '99'
                 if (dtFtyinventory.Rows.Count == 0)
                 { MyUtility.Msg.WarningBox("Data not found!!"); }
                 listControlBindingSource1.DataSource = dtFtyinventory;
-                dtFtyinventory.DefaultView.Sort = "seq1,seq2,location,dyelot,balanceqty desc";
+                dtFtyinventory.DefaultView.Sort = "dyelot,balanceqty desc";
             }
             else { ShowErr(strSQLCmd.ToString(), result); }
             P10_Detail.HideWaitMessage();

@@ -43,13 +43,13 @@ namespace Sci.Production.Warehouse
                         (temp, "", @"select t.*,FTY.InQty,FTY.OutQty,FTY.AdjustQty,FTY.InQty-FTY.OutQty+FTY.AdjustQty as balanceqty,[location]=dbo.Getlocation(FTY.Ukey)   
             from #tmp t
             Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
-            --drop #tmp", out dtFtyinventory, "#tmp")))
+            ", out dtFtyinventory, "#tmp")))
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;
                 }
                 gridbs.DataSource = dtFtyinventory;
-                dtFtyinventory.DefaultView.Sort = "seq1,seq2,location,dyelot,balanceqty desc";
+                dtFtyinventory.DefaultView.Sort = "dyelot,qty desc";
             }
 
             this.dis_ID.Text = CurrentDetailData["id"].ToString();
