@@ -219,6 +219,15 @@ namespace Sci.Production.Subcon
             if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
             {
                 (e.Details).Columns["amount"].Expression = "price * qty";
+
+                (e.Details).Columns.Add("std_price", typeof(decimal));
+                decimal std_price;
+                foreach (DataRow dr in e.Details.Rows)
+                {
+                    std_price = 0m;
+                    decimal.TryParse(MyUtility.GetValue.Lookup(string.Format("select [std_price]=round(sum(a.qty*b.Price)/iif(isnull(sum(a.qty),0)=0,1,isnull(sum(a.qty),0)),3) from orders a WITH (NOLOCK) inner join Order_TmsCost b WITH (NOLOCK) on b.id = a.ID where a.id = '{0}'", dr["orderid"])), out std_price);
+                    dr["std_price"] = std_price;
+                }
             }
             return base.OnRenewDataDetailPost(e);
         }
@@ -384,6 +393,7 @@ namespace Sci.Production.Subcon
                 {
                     //CurrentDetailData["amount"] = (decimal)CurrentDetailData["price"] * (decimal)e.FormattedValue;
                     CurrentDetailData["qty"] = e.FormattedValue;
+                    
                 }
             };
             #endregion
@@ -403,7 +413,7 @@ namespace Sci.Production.Subcon
             .Text("Unitid", header: "Unit", width: Widths.AnsiChars(5), iseditingreadonly: true)   //10
             .Numeric("price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 4, iseditingreadonly: true) //11
             .Numeric("amount", header: "Amount", width: Widths.AnsiChars(9), iseditingreadonly: true, decimal_places: 2, integer_places: 14)  //12
-            .Numeric("std_price", header: "Standard Price", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 4, iseditingreadonly: true) //13
+            .Numeric("std_price", header: "Standard Price", width: Widths.AnsiChars(6), decimal_places: 3, integer_places: 4, iseditingreadonly: true) //13
             .Date("delivery", header: "Delivery", width: Widths.AnsiChars(10)) //14
             .Text("Requestid", header: "Request ID", width: Widths.AnsiChars(13), iseditingreadonly: true) //15
             .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true) //16
@@ -440,7 +450,7 @@ namespace Sci.Production.Subcon
                 return;
             }
             DataTable dg = (DataTable)detailgridbs.DataSource;
-            if (dg.Columns["std_price"] == null) dg.Columns.Add("std_price", typeof(String));
+            if (dg.Columns["std_price"] == null) dg.Columns.Add("std_price", typeof(Decimal));
             var frm = new Sci.Production.Subcon.P30_Import(dr, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
