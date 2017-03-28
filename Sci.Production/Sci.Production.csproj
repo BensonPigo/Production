@@ -922,6 +922,9 @@
     <None Include="XLT\Warehouse_P04.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Warehouse_P04_LocalTransaction.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Warehouse_P07_ImportExcelFormat.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
