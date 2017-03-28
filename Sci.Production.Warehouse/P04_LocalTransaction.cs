@@ -12,7 +12,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P04_LocalTransaction : Sci.Win.Subs.Base
     {
-        public P04_LocalTransaction()
+        public P04_LocalTransaction(DataRow dataRow)
         {
             InitializeComponent();
         }

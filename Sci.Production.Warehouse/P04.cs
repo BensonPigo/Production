@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Ict;
 using Ict.Win;
 using Sci;
 using System.Data.SqlClient;
@@ -31,6 +32,18 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
 
+            #region Balance 開窗 P04_LocalTransaction
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings setBalance = new DataGridViewGeneratorNumericColumnSettings();
+            setBalance.CellMouseDoubleClick += (s, e) =>
+            {
+                var dataRow = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (dataRow != null)
+                {
+                    var form = new Sci.Production.Warehouse.P04_LocalTransaction(dataRow);
+                    form.ShowDialog(this);
+                }
+            };
+            #endregion 
             #region Set Grid
             Helper.Controls.Grid.Generator(this.grid1)
                 .Text("sp", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
@@ -41,7 +54,7 @@ namespace Sci.Production.Warehouse
                 .Text("threadColor", header: "ThreadColorID", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Numeric("inQty", header: "InQty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Numeric("outQty", header: "OutQty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
-                .Numeric("balance", header: "Balance", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6));
+                .Numeric("balance", header: "Balance", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6), settings: setBalance);
             #endregion
         }
 
