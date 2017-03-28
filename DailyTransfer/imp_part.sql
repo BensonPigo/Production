@@ -184,7 +184,7 @@ s.EditDate
 
 	Merge [Machine].[dbo].[PartQuot] as t
 	Using (select distinct a.* from [Trade_To_Pms].[dbo].[MmsQuot] a WITH (NOLOCK) inner join  [Trade_To_Pms].[dbo].Part b WITH (NOLOCK)
-	on a.refno=b.refno where a.type='P')	 as s
+	on a.PartUkey=b.Ukey where a.type='P')	 as s
 	on t.id=s.refno and  t.ukey=s.id --and t.purchaseFrom='T' 
 	when matched then
 		update set 
