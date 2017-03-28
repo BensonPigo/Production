@@ -90,8 +90,8 @@ namespace Sci.Production.Quality
 			                    INNER JOIN DBO.ADIDASComplain_Detail b WITH (NOLOCK) ON B.ID = a.ID
 			                    where year(a.StartDate) in (@y1,@y2,@y3)
 			                    group by a.StartDate) Claimed
-                   outer apply (SELECT startMonth = format(dateadd(month,-3, concat(Claimed.YEAR1,'/',Claimed.month1,'/1' )),'yyyyMM'),
-					            EndMonth = format(dateadd(month,2, concat(Claimed.YEAR1,'/',Claimed.month1,'/1' )),'yyyyMM') ) as ff 
+                   outer apply (SELECT startMonth = format(dateadd(month,-8, concat(Claimed.YEAR1,'/',Claimed.month1,'/1' )),'yyyyMM'),
+					            EndMonth = format(dateadd(month,-3, concat(Claimed.YEAR1,'/',Claimed.month1,'/1' )),'yyyyMM') ) as ff 
 
                    outer apply (SELECT ISNULL(SUM(a.Qty),0)/6 AS Qty FROM ADIDASComplain_MonthlyQty a WITH (NOLOCK) 
 		                        WHERE a.YearMonth BETWEEN ff.startMonth AND ff.EndMonth and a.BrandID = '{0}'
