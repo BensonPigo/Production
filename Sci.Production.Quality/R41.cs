@@ -69,7 +69,7 @@ namespace Sci.Production.Quality
 
         System.Data.DataTable[] alldatatable;
         System.Data.DataTable fm = null;
-        System.Data.DataTable datatab;        
+        System.Data.DataTable datatab;
         System.Data.DataTable dt_All;
 
         protected override bool ValidateInput()
@@ -79,11 +79,10 @@ namespace Sci.Production.Quality
             return base.ValidateInput();
         }
 
-
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             List<SqlParameter> lis = new List<SqlParameter>();
-            string sqlWhere = ""; string gb = ""; string gb1 = ""; string gb2 = ""; string gb3 = ""; string ob = ""; string ob1 = ""; string sqlWh1="";
+            string sqlWhere = ""; string gb = ""; string gb1 = ""; string gb2 = ""; string gb3 = ""; string ob = ""; string ob1 = ""; string sqlWh1 = "";
             List<string> sqlWheres = new List<string>();
 
             if (Brand != "")
@@ -124,9 +123,9 @@ namespace Sci.Production.Quality
             {
                 sqlWh1 = " where " + sqlWh1;
             }
-            
+
             #region Defect
-            
+
 
             string sqlcmd = string.Format(@"create table #dRanges(starts int , ends int, name varchar(20))
                                                  insert into #dRanges values
@@ -190,8 +189,8 @@ namespace Sci.Production.Quality
 
             result = DBProxy.Current.SelectByConn(conn, sqlcmd, out alldt);
             if (!result) { return result; }
-            if (alldt[0].Rows.Count<=0) return new DualResult(false, "No datas");
-            
+            if (alldt[0].Rows.Count <= 0) return new DualResult(false, "No datas");
+
             dym = alldt[0];
             for (int i = 0; i < dym.Rows.Count; i++)
             {
@@ -214,11 +213,11 @@ namespace Sci.Production.Quality
 
             result = DBProxy.Current.SelectByConn(conn, defect2, out dts);
             if (!result) { return result; }
-           
+
             #endregion
 
             #region Style
-          
+
             string scmd = string.Format(@"create table #dRanges(starts int , ends int, name varchar(20))
                                                  insert into #dRanges values
                                                   (1,1,'January'),
@@ -304,7 +303,7 @@ namespace Sci.Production.Quality
             #endregion
 
             #region Country
-           
+
             string sqcmd = string.Format(@"create table #dRanges(starts int , ends int, name varchar(20))
                                                  insert into #dRanges values
                                                   (1,1,'January'),
@@ -387,7 +386,7 @@ namespace Sci.Production.Quality
 
             result = DBProxy.Current.SelectByConn(connection, country2, out datbs);
             if (!result) { return result; }
-      
+
             #endregion
 
             #region Factory
@@ -578,7 +577,7 @@ order by Defect_Code", factory);
                     for (int rowIdx = 0; rowIdx < datatab.Rows.Count; rowIdx++)
                     {
                         if (datatab.Rows[rowIdx][colIdx] == DBNull.Value) continue;
-                         TTColumnAMT1 += Convert.ToDecimal(datatab.Rows[rowIdx][colIdx]);
+                        TTColumnAMT1 += Convert.ToDecimal(datatab.Rows[rowIdx][colIdx]);
                     }
 
                     totalrow1[colIdx] = TTColumnAMT1;
@@ -586,7 +585,7 @@ order by Defect_Code", factory);
                 Decimal YTD_Quality = 0;
                 Decimal YTD_Percentage = 0;
                 Decimal YTD_Amount = 0;
-                for (int idx = datatab.Rows.Count - 1 ; idx >= 0; idx--)
+                for (int idx = datatab.Rows.Count - 1; idx >= 0; idx--)
                 {
                     DataRow row = datatab.Rows[idx];
 
@@ -648,8 +647,6 @@ order by Defect_Code", factory);
             return result;
         }
 
-
-
         Dictionary<string, System.Data.DataTable> dicFTY = new Dictionary<string, System.Data.DataTable>();
 
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -665,7 +662,7 @@ order by Defect_Code", factory);
             for (int i = 0; i < dym.Rows.Count; i++)
             {
                 string dyear = dym.Rows[i]["cd"].ToString();
-                string dmonth =dym.Rows[i]["name"].ToString();
+                string dmonth = dym.Rows[i]["name"].ToString();
 
 
                 SaveXltReportCls.xltRptTable dxt = new SaveXltReportCls.xltRptTable(dt[i]);
@@ -692,7 +689,7 @@ order by Defect_Code", factory);
                 dxt.ShowHeader = true;
                 sxc.dicDatas.Add("##defect" + i, dxt);
 
-               
+
             }
 
             //for (int a = 0; a < dts.Length; a++)
@@ -725,7 +722,7 @@ order by Defect_Code", factory);
                 alldxtb.Borders.OutsideVertical = true;
                 alldxtb.ShowHeader = true;
                 sxc.dicDatas.Add("##adefect" + a, alldxtb);
-                
+
             }
             SaveXltReportCls.ReplaceAction adr = addrow;
             sxc.dicDatas.Add("##addRow", adr);
@@ -736,7 +733,7 @@ order by Defect_Code", factory);
             for (int i = 0; i < sym.Rows.Count; i++)
             {
                 string syear = sym.Rows[i]["cd"].ToString();
-                string smonth =sym.Rows[i]["name"].ToString();
+                string smonth = sym.Rows[i]["name"].ToString();
 
 
                 SaveXltReportCls.xltRptTable sxt = new SaveXltReportCls.xltRptTable(da[i]);
@@ -796,12 +793,12 @@ order by Defect_Code", factory);
             #endregion
 
             #region Country
-            
+
             //for (int i = 0; i < datb.Length; i++)
             for (int i = 0; i < cym.Rows.Count; i++)
             {
                 string cyear = cym.Rows[i]["cd"].ToString();
-                string cmonth =cym.Rows[i]["name"].ToString();
+                string cmonth = cym.Rows[i]["name"].ToString();
 
 
                 SaveXltReportCls.xltRptTable cxt = new SaveXltReportCls.xltRptTable(datb[i]);
@@ -1009,7 +1006,7 @@ order by Defect_Code", factory);
                 sxc.dicDatas.Add("##psd" + fty, x_All);
                 x_All.ShowHeader = false;
                 x_All.Borders.AllCellsBorders = true;
-                
+
             }
 
             sxc.VarToSheetName = "##SUPSheetName";
@@ -1021,17 +1018,52 @@ order by Defect_Code", factory);
             sxc.dicDatas.Add("##addfilter", d);
 
             sxc.Save();
+            #endregion
+            clearall();
             return true;
         }
-            #endregion
 
+        private void clearall()
+        {
+            Brand = null;
+            Year = null;
+
+            alldt = null;
+            dym = null;
+            dy = null;
+            defect1 = "";
+            defect2 = "";
+            dt = null;
+            dts = null;
+
+            allda = null;
+            sym = null;
+            sy = null;
+            style1 = "";
+            style2 = "";
+            da = null;
+            das = null;
+
+            alldatb = null;
+            cym = null;
+            cy = null;
+            country1 = "";
+            country2 = "";
+            datb = null;
+            datbs = null;
+
+            alldatatable = null;
+            fm = null;
+            datatab = null;
+            dt_All = null;
+        }
         void CopySheet(Worksheet mySheet, int rowNo, int columnNo)
         {
             Microsoft.Office.Interop.Excel._Application myExcel = null;
             Microsoft.Office.Interop.Excel._Workbook myBook = null;
             myExcel = mySheet.Application;
             myBook = myExcel.ActiveWorkbook;
-            
+
             Worksheet aftersheet = mySheet;
 
             List<Worksheet> lisWK = new List<Worksheet>();
@@ -1044,13 +1076,13 @@ order by Defect_Code", factory);
                 aftersheet.Cells[5, 1].Font.Color = Color.Transparent;
                 aftersheet.Cells[6, 1] = "##addfilter";
 
-   
+
 
                 lisWK.Add(aftersheet);
             }
 
             foreach (var wkSheet in lisWK)
-            {                
+            {
                 wkSheet.Cells[1, 1] = ""; wkSheet.get_Range("A1:B1").Merge();
                 wkSheet.Cells[1, 2] = "";
                 wkSheet.Cells[1, 3] = "January"; wkSheet.get_Range("C1:E1").Merge();
@@ -1083,13 +1115,13 @@ order by Defect_Code", factory);
                 wkSheet.Cells[1, 33].HorizontalAlignment = XlVAlign.xlVAlignCenter;
                 wkSheet.Cells[1, 36].HorizontalAlignment = XlVAlign.xlVAlignCenter;
                 wkSheet.Cells[1, 39].HorizontalAlignment = XlVAlign.xlVAlignCenter;
-                
+
                 for (int idx = 1; idx < 14; idx++)
                 {
                     wkSheet.Cells[2, idx * 3] = "Quality";
                     wkSheet.Cells[2, idx * 3 + 1] = "Percentage";
-                    wkSheet.Cells[2, idx * 3 + 2] = "Amount US$"; 
-                }                
+                    wkSheet.Cells[2, idx * 3 + 2] = "Amount US$";
+                }
             }
 
             //mySheet.Delete();
@@ -1099,7 +1131,7 @@ order by Defect_Code", factory);
         void addrow(Worksheet mySheet, int rowNo, int columnNo)
         {
             Range fRow1 = (Range)mySheet.Rows[5];
-            Range fRow2 = (Range)mySheet.Rows[6]; 
+            Range fRow2 = (Range)mySheet.Rows[6];
             Range fRow3 = (Range)mySheet.Rows[7];
             Range fRow4 = (Range)mySheet.Rows[8];
             Range fRow5 = (Range)mySheet.Rows[9];
@@ -1110,7 +1142,7 @@ order by Defect_Code", factory);
             Range fRow10 = (Range)mySheet.Rows[20];
             Range fRow11 = (Range)mySheet.Rows[21];
             Range fRow12 = (Range)mySheet.Rows[22];
-            Range fRow13= (Range)mySheet.Rows[23];
+            Range fRow13 = (Range)mySheet.Rows[23];
             Range fRow14 = (Range)mySheet.Rows[24];
             Range fRow15 = (Range)mySheet.Rows[25];
             Range fRow16 = (Range)mySheet.Rows[26];
@@ -1125,7 +1157,7 @@ order by Defect_Code", factory);
             Range fRow25 = (Range)mySheet.Rows[41];
             Range fRow26 = (Range)mySheet.Rows[42];
             Range fRow27 = (Range)mySheet.Rows[43];
-            
+
             fRow1.Insert(XlInsertShiftDirection.xlShiftDown, Type.Missing);
             fRow2.Insert(XlInsertShiftDirection.xlShiftDown, Type.Missing);
             fRow3.Insert(XlInsertShiftDirection.xlShiftDown, Type.Missing);
@@ -1174,15 +1206,15 @@ order by Defect_Code", factory);
                     if (row.Cells[2].value.ToString().Length == 2)
                     {
                         row.Interior.Color = System.Drawing.Color.Gold;
-    
+
                     }
-                    
+
                 }
                 count++;
 
                 if (row.Cells[1].Value == null) continue;
                 if (row.Cells[1].Value.StartsWith("GRAND TOTAL"))
-                {                    
+                {
                     row.Interior.Color = System.Drawing.Color.Aquamarine;
                     row.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
                     row.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignCenter;
