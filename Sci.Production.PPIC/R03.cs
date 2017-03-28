@@ -18,7 +18,7 @@ namespace Sci.Production.PPIC
         bool bulk, sample, material, forecast,hisOrder,artwork,pap,seperate,poCombo;
         DateTime? buyerDlv1, buyerDlv2, sciDlv1, sciDlv2, cutoff1, cutoff2, custRQS1, custRQS2, planDate1, planDate2, orderCfm1, orderCfm2;
         DataTable printData, subprocessColumnName, orderArtworkData;
-        decimal stdTMS;
+        decimal stdTMS; int subtrue = 0;
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -528,6 +528,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                     if (MyUtility.Convert.GetString(dr["ColumnN"]).ToUpper() == "SUBCON")
                     {
                         subConCol = MyUtility.Convert.GetInt(dr["rno"]);
+                         subtrue = 1;
                     }
                     if (MyUtility.Convert.GetString(dr["ColumnN"]).ToUpper() == "TTL_TMS")
                     {
@@ -669,7 +670,12 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 for (int i = 112; i < lastCol; i++)
                 {
                     objArray[0, i] = 0;
-                    objArray[0, subConCol - 1] = "";
+                    if (subtrue == 1)
+                    {
+                       objArray[0, subConCol - 1] = "";
+
+                    }
+                   
                 }
 
                 if (artwork || pap)
@@ -746,7 +752,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 worksheet.Range[String.Format("A{0}:{1}{0}", intRowsStart, excelColEng)].Value2 = objArray;
                 intRowsStart++;
             }
-           
+            subtrue = 0;
             excel.Cells.EntireColumn.AutoFit(); //所有列最適列高
             excel.Visible = true;
             return true;
