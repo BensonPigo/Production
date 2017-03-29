@@ -43,7 +43,7 @@
             this.lblSupplier = new Sci.Win.UI.Label();
             this.lblFactory = new Sci.Win.UI.Label();
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
-            this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
+            this.txtSupp = new Sci.Production.Class.txtsubcon();
             this.SuspendLayout();
             // 
             // print
@@ -199,21 +199,22 @@
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
             this.txtfactory1.TabIndex = 133;
             // 
-            // txtsupplier1
+            // txtSupp
             // 
-            this.txtsupplier1.DisplayBox1Binding = "";
-            this.txtsupplier1.Location = new System.Drawing.Point(106, 105);
-            this.txtsupplier1.Name = "txtsupplier1";
-            this.txtsupplier1.Size = new System.Drawing.Size(147, 23);
-            this.txtsupplier1.TabIndex = 134;
-            this.txtsupplier1.TextBox1Binding = "";
+            this.txtSupp.DisplayBox1Binding = "";
+            this.txtSupp.IsIncludeJunk = false;
+            this.txtSupp.Location = new System.Drawing.Point(106, 105);
+            this.txtSupp.Name = "txtSupp";
+            this.txtSupp.Size = new System.Drawing.Size(170, 23);
+            this.txtSupp.TabIndex = 134;
+            this.txtSupp.TextBox1Binding = "";
             // 
             // R40
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(554, 200);
-            this.Controls.Add(this.txtsupplier1);
+            this.Controls.Add(this.txtSupp);
             this.Controls.Add(this.txtfactory1);
             this.Controls.Add(this.lblFactory);
             this.Controls.Add(this.lblSupplier);
@@ -249,7 +250,7 @@
             this.Controls.SetChildIndex(this.lblSupplier, 0);
             this.Controls.SetChildIndex(this.lblFactory, 0);
             this.Controls.SetChildIndex(this.txtfactory1, 0);
-            this.Controls.SetChildIndex(this.txtsupplier1, 0);
+            this.Controls.SetChildIndex(this.txtSupp, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -272,6 +273,6 @@
         private Win.UI.Label lblSupplier;
         private Win.UI.Label lblFactory;
         private Class.txtfactory txtfactory1;
-        private Class.txtsupplier txtsupplier1;
+        private Class.txtsubcon txtSupp;
     }
 }
