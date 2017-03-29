@@ -67,7 +67,6 @@ Database/dbo/Functions/GetSCI.sql -text
 Database/dbo/Functions/GetSCI_1.sql -text
 Database/dbo/Functions/GetSimilarStyleList.sql -text
 Database/dbo/Functions/GetSizeCodeColumnByID.sql -text
-Database/dbo/Functions/GetSizeCodeColumnByID_1.sql -text
 Database/dbo/Functions/GetStdQty.sql -text
 Database/dbo/Functions/GetStyleGMTLT.sql -text
 Database/dbo/Functions/GetSuitRate.sql -text
