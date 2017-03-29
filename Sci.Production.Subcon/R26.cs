@@ -448,7 +448,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
 
                 foreach (string TheOrderID in lis)
                 {
-                    string idxstr = (idx == 0) ? "" : idx.ToString(); //為了讓第一筆idx是空值
+                    string idxstr = idx.ToString(); //為了讓第一筆idx是空值
 
                     DataTable finalda = da.Select(string.Format("TheOrderID = '{0}'", TheOrderID)).CopyToDataTable();
                     
@@ -487,7 +487,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                 int idx = 0;
                 foreach (DataRow row in shm.Rows)
                 {
-                    string idxstr = (idx == 0) ? "" : idx.ToString(); //為了讓第一筆idx是空值
+                    string idxstr = idx.ToString(); //為了讓第一筆idx是空值
                     id = row["id"].ToString();
                     name = row["name"].ToString();
                     A = row["A"].ToString();

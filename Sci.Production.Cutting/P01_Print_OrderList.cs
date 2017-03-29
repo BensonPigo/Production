@@ -146,7 +146,7 @@ namespace Sci.Production.Cutting
 
                 for (int sgIdx = 1; sgIdx < dts.Length; sgIdx++)
                 {
-                    string idxStr = (sgIdx == 1) ? "" : (sgIdx - 1).ToString();
+                    string idxStr = (sgIdx - 1).ToString();
                     string SizeGroup = dts[sgIdx].Rows[0]["SizeGroup"].ToString();
                     string MarkerDownloadID = dts[sgIdx].Compute("MAX(MarkerDownloadID)", "").ToString();
 
@@ -396,7 +396,7 @@ namespace Sci.Production.Cutting
 
                 for (int sgIdx = 1; sgIdx < dts.Length; sgIdx++)
                 {
-                    string idxStr = sgIdx == 1 ? "" : (sgIdx - 1).ToString();
+                    string idxStr = (sgIdx - 1).ToString();
                     string SizeGroup = dts[sgIdx].Rows[0]["SizeGroup"].ToString();
 
                     dts[sgIdx].Columns.RemoveAt(0);

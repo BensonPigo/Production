@@ -798,7 +798,7 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
             Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
             foreach (DataRow row in rpt3.Rows)
             {
-                string sIdx = (idx == 0) ? "" : idx.ToString();
+                string sIdx = idx.ToString();
                 idx += 1;
                 string oid = row["ID"].ToString();
                 sxr.dicDatas.Add(sxr._v + "Title" + sIdx, row["Title"].ToString());

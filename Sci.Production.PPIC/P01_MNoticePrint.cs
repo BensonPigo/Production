@@ -106,7 +106,7 @@ namespace Sci.Production.PPIC
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
                     string ID = dt.Rows[i]["ID"].ToString();
-                    string idxStr = (i == 0) ? "" : i.ToString();
+                    string idxStr = i.ToString();
 
                     res = DBProxy.Current.SelectSP("", "PPIC_Report02", new List<SqlParameter> { new SqlParameter("@ID", ID), new SqlParameter("@WithZ", chkAdditional.Checked) }, out dts);
 
@@ -161,7 +161,7 @@ namespace Sci.Production.PPIC
                 int ii = 0;
                 foreach (DataRow row in dtCustCD.Rows)
                 {
-                    string idxStr = ii == 0 ? "" : ii.ToString();
+                    string idxStr = ii.ToString();
                     ii += 1;
 
                     string CustCDID = row["CustCDID"].ToString();
