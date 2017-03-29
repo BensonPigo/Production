@@ -148,7 +148,7 @@ namespace Sci.Production.Quality
                                                   ,[Qty]=SUM(B.QTY)
                                                   ,[Amount]=SUM(B.ValueinUSD)
                                                   ,row_number() over (partition by YEAR(A.StartDate),MONTH(A.StartDate) 
-					                               order by SUM(B.Qty) desc) as rnk
+					                               order by SUM(B.Qty) desc,SUM(B.ValueinUSD) DESC) as rnk
                                             into #temp
                                             from dbo.ADIDASComplain a WITH (NOLOCK) 
                                             inner join dbo.ADIDASComplain_Detail b WITH (NOLOCK) on a.id=b.id
@@ -196,7 +196,7 @@ namespace Sci.Production.Quality
             {
                 string dyear = dym.Rows[i]["cd"].ToString();
                 string dmonth = dym.Rows[i]["name"].ToString();
-                string a = string.Format("SELECT top 10 Defect,Qty, Amount,row_number() over (order by Qty desc) as rnk FROM #temp WHERE y = '{0}' and m  ='{1}'", dyear, dmonth);
+                string a = string.Format("SELECT top 10 Defect,Qty, Amount, rnk FROM #temp WHERE y = '{0}' and m  ='{1}'", dyear, dmonth);
                 defect1 += a + ' ' + Environment.NewLine;
             }
 
@@ -219,7 +219,7 @@ left join dbo.ADIDASComplainDefect_Detail c WITH (NOLOCK) on c.id=b.DefectMainID
 where b.BrandID ='{1}' 
 AND year(a.StartDate) = '{0}'
 group by B.DefectMainID, B.DefectSubID,C.SubName 
-order by SUM(B.ValueinUSD)desc,SUM(B.Qty) desc"
+order by  SUM(B.Qty) desc,SUM(B.ValueinUSD) desc"
                     , dyear1, Brand);
                 defect2 += b + ' ' + Environment.NewLine;
             }
@@ -252,7 +252,7 @@ order by SUM(B.ValueinUSD)desc,SUM(B.Qty) desc"
                                           ,[Qty]=SUM(B.QTY)
                                           ,[Amount]=SUM(B.ValueinUSD)
                                           ,row_number() over (partition by YEAR(A.StartDate),MONTH(A.StartDate) 
-                                           order by SUM(B.Qty) desc) as rnk
+                                           order by SUM(B.Qty) desc,SUM(B.ValueinUSD) desc) as rnk
                                            into #temp
                                            from dbo.ADIDASComplain a WITH (NOLOCK) 
                                            inner join dbo.ADIDASComplain_Detail b WITH (NOLOCK) on a.id=b.id" + " " + sqlWhere + " " + gb1 + " " + ob + " " +
@@ -296,7 +296,7 @@ order by SUM(B.ValueinUSD)desc,SUM(B.Qty) desc"
             {
                 string syear = sym.Rows[i]["cd"].ToString();
                 string smonth = sym.Rows[i]["name"].ToString();
-                string a = string.Format("SELECT top 10 Style,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' and m  ='{1}' GROUP BY style", syear, smonth);
+                string a = string.Format("SELECT top 10 Style,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' and m  ='{1}' GROUP BY style ORDER BY SUM(Qty) DESC,SUM(Amount) DESC ", syear, smonth);
                 style1 += a + ' ' + Environment.NewLine;
             }
 
@@ -307,7 +307,7 @@ order by SUM(B.ValueinUSD)desc,SUM(B.Qty) desc"
             for (int i = 0; i < sy.Rows.Count; i++)
             {
                 string syear1 = sy.Rows[i]["yy"].ToString();
-                string b = string.Format("SELECT top 10 Style,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' GROUP BY Style", syear1);
+                string b = string.Format("SELECT top 10 Style,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' GROUP BY Style ORDER BY SUM(Qty) DESC,SUM(Amount) DESC", syear1);
                 style2 += b + ' ' + Environment.NewLine;
             }
 
@@ -338,7 +338,7 @@ order by SUM(B.ValueinUSD)desc,SUM(B.Qty) desc"
                                           ,[Qty]=SUM(B.QTY)
                                           ,[Amount]=SUM(B.ValueinUSD)
                                           ,row_number() over (partition by YEAR(A.StartDate),MONTH(A.StartDate) 
-                                           order by SUM(B.Qty) desc) as rnk
+                                           order by SUM(B.Qty) desc,SUM(B.ValueinUSD) desc) as rnk
                                            into #temp
                                            from dbo.ADIDASComplain a WITH (NOLOCK) 
                                            inner join dbo.ADIDASComplain_Detail b WITH (NOLOCK) on a.id=b.id" + " " + sqlWhere + " " + gb2 + " " + ob + " " +
@@ -382,7 +382,7 @@ order by SUM(B.ValueinUSD)desc,SUM(B.Qty) desc"
             {
                 string cyear = cym.Rows[i]["cd"].ToString();
                 string cmonth = cym.Rows[i]["name"].ToString();
-                string a = string.Format("SELECT top 10 Country,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' and m  ='{1}' GROUP BY Country", cyear, cmonth);
+                string a = string.Format("SELECT top 10 Country,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' and m  ='{1}' GROUP BY Country ORDER BY SUM(Qty) DESC,SUM(Amount) DESC", cyear, cmonth);
                 country1 += a + ' ' + Environment.NewLine;
             }
 
@@ -393,7 +393,7 @@ order by SUM(B.ValueinUSD)desc,SUM(B.Qty) desc"
             for (int i = 0; i < cy.Rows.Count; i++)
             {
                 string cyear1 = cy.Rows[i]["yy"].ToString();
-                string b = string.Format("SELECT top 10 Country,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' GROUP BY Country", cyear1);
+                string b = string.Format("SELECT top 10 Country,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' GROUP BY Country ORDER BY SUM(Qty) DESC,SUM(Amount) DESC", cyear1);
                 country2 += b + ' ' + Environment.NewLine;
             }
 
