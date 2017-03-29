@@ -983,6 +983,12 @@
     <Compile Include="P61_Import.Designer.cs">
       <DependentUpon>P61_Import.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R40.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R40.Designer.cs">
+      <DependentUpon>R40.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -1508,6 +1514,9 @@
     <EmbeddedResource Include="P61_Import.resx">
       <DependentUpon>P61_Import.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R40.resx">
+      <DependentUpon>R40.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
