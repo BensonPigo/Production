@@ -55,7 +55,7 @@ SET
       ,a.EditDate	      =b.EditDate
       ,a.ETA	      =b.ETA
 	  ,a.SCIRefno = b.SCIRefno
-	  ,A.MDivisionID = IIF(C.MDivisionID IS NULL,'',C.MDivisionID)
+	  ,A.MDivisionID = isnull(C.MDivisionID,'')
 from Production.dbo.Inventory as a 
 inner join Trade_To_Pms.dbo.Inventory as b ON a.POID=b.POID and a.Seq1=b.Seq1 and a.Seq2=b.Seq2 and a.FactoryID=b.FactoryID and a.UnitID=b.UnitID and a.ProjectID=b.ProjectID and a.InventoryRefnoId=b.InventoryRefnoId
 INNER JOIN Production.DBO.SCIFty C ON A.FactoryID = C.ID 
@@ -142,7 +142,7 @@ select
       ,EditDate
       ,ETA
 	  ,SCIRefno
-	  , iif( (SELECT MDivisionID FROM Production.dbo.SCIFty WITH (NOLOCK) WHERE ID= A.FactoryID ) is null,'',(SELECT MDivisionID FROM Production.dbo.SCIFty WITH (NOLOCK) WHERE ID= A.FactoryID ))
+	  ,isnull((SELECT MDivisionID FROM Production.dbo.SCIFty WITH (NOLOCK) WHERE ID= A.FactoryID ),'')	 
 from (
 select [SameNo]= ROW_NUMBER() over (partition by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId order by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId)
 ,b.* from Trade_To_Pms.dbo.Inventory as b WITH (NOLOCK)
@@ -233,7 +233,7 @@ SET
       ,a.Confirmed	      =b.Confirmed
       ,a.Qty	      =b.Qty
       ,a.Type	      =isnull(b.Type,'')
-      ,a.TransferMDivisionID	      = iif(c.MDivisionID is null,'',c.MDivisionID) 
+      ,a.TransferMDivisionID	      = isnull(c.MDivisionID ,'') 
 	  ,a.TransferFactory	      = b.TransferFactory
       ,a.InventoryUkey	      =b.InventoryUkey
       ,a.InventoryRefnoId	      =b.InventoryRefnoId
@@ -351,8 +351,8 @@ select
       ,ISNULL(Confirmed,0)
       ,ISNULL(Qty,0)
       ,ISNULL(Type,'')
-	  ,TransferFactory
-      ,iif(c.MDivisionID is null,'',c.MDivisionID) as TransferMDivisionID
+	  ,TransferFactory      
+	  ,isnull(c.MDivisionID,'')
       ,InventoryUkey
       ,InventoryRefnoId
       ,PoID
@@ -405,7 +405,7 @@ AND b.Confirmed=1
 --InReason  InvtransReason
 
 update invtrans
-set TransferMDivisionID = iif(c.MDivisionID is null,'',c.MDivisionID)
+set TransferMDivisionID = isnull(c.MDivisionID ,'')
 from invtrans b
 left JOIN Production.dbo.SCIFty c on b.TransferFactory=c.ID
 where b.TransferMDivisionID is null
