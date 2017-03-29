@@ -137,76 +137,84 @@ namespace Sci.Production.Subcon
             #region -- sql command --
              this.ShowWaitMessage("Data Loading....");
             sqlcmd.Append(string.Format(@"
-                    select  distinct 
+                    select  DISTINCT
 									LD.OrderId,
 				                    O.StyleID,
 			                        GetSCI.MinSciDelivery,
 				                    GetSCI.MinSewinLine,
 									(select distinct L.Category+',' 
-					from LocalPO_Detail LD WITH (NOLOCK)
-                    left join LocalPO L WITH (NOLOCK) on L.Id=LD.Id
-                    left join orders O WITH (NOLOCK) on LD.OrderId=O.ID and LD.POID = o.POID
-                    cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
-                    where 1=1 "+ sqlWhere + @" and  L.MdivisionID= '{0}'
+									from LocalPO L WITH (NOLOCK)
+									where L.Id=L1.ID and  L.MdivisionID= '{0}'
                     FOR XML PATH(''))as c
-				into #tmp  	
+				into #tmp1  	
 				from LocalPO_Detail LD WITH (NOLOCK)
-                    left join LocalPO L WITH (NOLOCK) on L.Id=LD.Id
+                    left join LocalPO L1 WITH (NOLOCK) on L1.Id=LD.Id
                     left join orders O WITH (NOLOCK) on LD.OrderId=O.ID and LD.POID = o.POID
                     cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
-                    where 1=1 " + sqlWhere + @" and  L.MdivisionID= '{0}' order by LD.OrderId
+                    where 1=1 " + sqlWhere + @" and  L1.MdivisionID= '{0}' order by LD.OrderId
+                    
+                    SELECT DISTINCT #tmp1.OrderId,
+					   #tmp1.StyleID,
+					   #tmp1.MinSciDelivery,
+					   #tmp1.MinSewinLine,
+					    (SELECT   TMP2.c+''
+					     FROM #tmp1 AS TMP2
+					     WHERE TMP2.OrderId=#tmp1.OrderId 
+					     FOR XML PATH(''))AS Category
+				    INTO #tmp
+				    FROM #tmp1
                     
                     select  #tmp.OrderId,
 							#tmp.StyleID,
 							#tmp.MinSciDelivery,
 							#tmp.MinSewinLine,
 							 	 case
-							  when #tmp.c='CARTON,' then 'Y'
-							  when #tmp.c='CARTON,SP_THREAD,' then 'Y'
-							  when #tmp.c='SP_THREAD,CARTON,' then 'Y'
-							  when #tmp.c='CARTON,EMB_THREAD,' then 'Y'
-							  when #tmp.c='EMB_THREAD,CARTON,' then 'Y'
-							  when #tmp.c='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
-							  when #tmp.c='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
-							  when #tmp.c='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
-							  when #tmp.c='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
-							  when #tmp.c='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
-							  when #tmp.c='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
+							  when #tmp.Category='CARTON,' then 'Y'
+							  when #tmp.Category='CARTON,SP_THREAD,' then 'Y'
+							  when #tmp.Category='SP_THREAD,CARTON,' then 'Y'
+							  when #tmp.Category='CARTON,EMB_THREAD,' then 'Y'
+							  when #tmp.Category='EMB_THREAD,CARTON,' then 'Y'
+							  when #tmp.Category='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
+							  when #tmp.Category='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
+							  when #tmp.Category='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
+							  when #tmp.Category='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
+							  when #tmp.Category='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
+							  when #tmp.Category='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
 							  ELSE 'N'
 							END
 							AS Carton,
 								 case
-							  when #tmp.c='SP_THREAD,' then 'Y'
-							  when #tmp.c='CARTON,SP_THREAD,' then 'Y'
-							  when #tmp.c='SP_THREAD,CARTON,' then 'Y'
-							  when #tmp.c='EMB_THREAD,SP_THREAD,' then 'Y'
-							  when #tmp.c='SP_THREAD,EMB_THREAD,' then 'Y'
-							  when #tmp.c='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
-							  when #tmp.c='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
-							  when #tmp.c='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
-							  when #tmp.c='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
-							  when #tmp.c='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
-							  when #tmp.c='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
+							  when #tmp.Category='SP_THREAD,' then 'Y'
+							  when #tmp.Category='CARTON,SP_THREAD,' then 'Y'
+							  when #tmp.Category='SP_THREAD,CARTON,' then 'Y'
+							  when #tmp.Category='EMB_THREAD,SP_THREAD,' then 'Y'
+							  when #tmp.Category='SP_THREAD,EMB_THREAD,' then 'Y'
+							  when #tmp.Category='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
+							  when #tmp.Category='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
+							  when #tmp.Category='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
+							  when #tmp.Category='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
+							  when #tmp.Category='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
+							  when #tmp.Category='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
 							  ELSE 'N'
 							END
 							AS SPThread,
 									 case
-							  when #tmp.c='EMB_THREAD,' then 'Y'
-							  when #tmp.c='CARTON,EMB_THREAD,' then 'Y'
-							  when #tmp.c='EMB_THREAD,CARTON,' then 'Y'
-							  when #tmp.c='EMB_THREAD,SP_THREAD,' then 'Y'
-							  when #tmp.c='SP_THREAD,EMB_THREAD,' then 'Y'
-							  when #tmp.c='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
-							  when #tmp.c='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
-							  when #tmp.c='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
-							  when #tmp.c='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
-							  when #tmp.c='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
-							  when #tmp.c='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
+							  when #tmp.Category='EMB_THREAD,' then 'Y'
+							  when #tmp.Category='CARTON,EMB_THREAD,' then 'Y'
+							  when #tmp.Category='EMB_THREAD,CARTON,' then 'Y'
+							  when #tmp.Category='EMB_THREAD,SP_THREAD,' then 'Y'
+							  when #tmp.Category='SP_THREAD,EMB_THREAD,' then 'Y'
+							  when #tmp.Category='CARTON,EMB_THREAD,SP_THREAD,' then 'Y'
+							  when #tmp.Category='CARTON,SP_THREAD,EMB_THREAD,' then 'Y'
+							  when #tmp.Category='EMB_THREAD,SP_THREAD,CARTON,' then 'Y'
+							  when #tmp.Category='EMB_THREAD,CARTON,SP_THREAD,' then 'Y'
+							  when #tmp.Category='SP_THREAD,CARTON,EMB_THREAD,' then 'Y'
+							  when #tmp.Category='SP_THREAD,EMB_THREAD,CARTON,' then 'Y'
 							  ELSE 'N'
 							END
 							AS EmbThread
 					from #tmp
-				
+				DROP TABLE  #tmp1
 				drop table  #tmp", M));
 
             sqlcmd.Append(Environment.NewLine); // 換行

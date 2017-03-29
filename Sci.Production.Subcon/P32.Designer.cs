@@ -80,6 +80,7 @@
             // 
             // btn_Query
             // 
+            this.btn_Query.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_Query.Location = new System.Drawing.Point(927, 11);
             this.btn_Query.Name = "btn_Query";
             this.btn_Query.Size = new System.Drawing.Size(107, 30);
