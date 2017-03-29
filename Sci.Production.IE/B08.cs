@@ -45,14 +45,16 @@ namespace Sci.Production.IE
             if (excel == null) return;
 
             DataTable ExcelDataTable, MFactory, UpdateData;
-            string sqlCmd = "select FactoryID,ID,Name,Skill,OnBoardDate,ResignationDate,SewingLineID,SPACE(250) as ErrorMsg from Employee WITH (NOLOCK)	where 1 = 0";
+            string sqlCmd = "select MDIVISIONID,FactoryID,ID,Name,Skill,OnBoardDate,ResignationDate,SewingLineID,SPACE(250) as ErrorMsg from Employee WITH (NOLOCK)	where 1 = 0";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out ExcelDataTable);
 
             sqlCmd = string.Format("select * from Factory WITH (NOLOCK)	where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             result = DBProxy.Current.Select(null, sqlCmd, out MFactory);
             MFactory.PrimaryKey = new DataColumn[] { MFactory.Columns["ID"] };
 
-            UpdateData = ((DataTable)gridbs.DataSource).Clone();
+            //UpdateData = ((DataTable)gridbs.DataSource).Clone();
+            sqlCmd = "select * from Employee WITH (NOLOCK)    where 1 = 0";
+            result = DBProxy.Current.Select(null, sqlCmd, out UpdateData);
 
             this.ShowWaitMessage("Starting EXCEL...");
             excel.Visible = false;
