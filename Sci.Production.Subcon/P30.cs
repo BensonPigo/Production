@@ -30,10 +30,10 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             this.DefaultFilter = "mdivisionid = '" + Sci.Env.User.Keyword + "'";
-            
+              
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
-
+          
             this.txtsubcon1.TextBox1.Validated += (s, e) =>
             {
                 if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
@@ -47,7 +47,7 @@ namespace Sci.Production.Subcon
             };
 
         }
-
+      
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
@@ -212,20 +212,25 @@ namespace Sci.Production.Subcon
 
             return base.ClickSaveBefore();
         }
-
+        
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
             {
                 (e.Details).Columns["amount"].Expression = "price * qty";
-
                 (e.Details).Columns.Add("std_price", typeof(decimal));
                 decimal std_price;
                 foreach (DataRow dr in e.Details.Rows)
                 {
+                    DataTable category;
+                    DBProxy.Current.Select(null,string.Format("select a.category from localpo a where a.id='{0}'", dr["id"].ToString()),out category);
+
                     std_price = 0m;
-                    decimal.TryParse(MyUtility.GetValue.Lookup(string.Format("select [std_price]=round(sum(a.qty*b.Price)/iif(isnull(sum(a.qty),0)=0,1,isnull(sum(a.qty),0)),3) from orders a WITH (NOLOCK) inner join Order_TmsCost b WITH (NOLOCK) on b.id = a.ID where a.id = '{0}'", dr["orderid"])), out std_price);
+                    decimal.TryParse(MyUtility.GetValue.Lookup(string.Format(@"select [std_price]=round(sum(a.qty*b.Price)/iif(isnull(sum(a.qty),0)=0,1,isnull(sum(a.qty),0)),3) 
+                                                                               from orders a WITH (NOLOCK) 
+                                                                               inner join Order_TmsCost b WITH (NOLOCK) on b.id = a.ID
+                                                                               where a.poid = '{0}' and b.ArtworkTypeID='{1}'", dr["poid"], category.Rows[0]["category"].ToString())), out std_price);
                     dr["std_price"] = std_price;
                 }
             }
@@ -403,7 +408,7 @@ namespace Sci.Production.Subcon
             .Text("factoryid", header: "Order Factory", iseditingreadonly: true)  //0
             .Text("POID", header: "MasterSP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), settings: ts4)  //2
-            .Text("StyleID", header: "Style", width: Widths.AnsiChars(13))  //3
+            .Text("StyleID", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)  //3
             .Date("SciDelivery", header: "Sci Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)   //4
             .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true)   //5
             .Text("refno", header: "Ref#", width: Widths.AnsiChars(20),settings:ts)    //6
@@ -422,8 +427,7 @@ namespace Sci.Production.Subcon
             ;     
             #endregion
             #region 可編輯欄位變色
-            detailgrid.Columns[2].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns[3].DefaultCellStyle.BackColor = Color.Pink;  
+            detailgrid.Columns[2].DefaultCellStyle.BackColor = Color.Pink;  
             detailgrid.Columns[6].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink; 
             detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;  

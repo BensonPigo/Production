@@ -100,7 +100,7 @@ outer apply(select o1.POID
 	               ,sum(o1.qty*ot.Price) order_amt 
 	         from orders o1 WITH (NOLOCK) 
 	         inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = o1.ID 
-	         where o1.poid= c.poid
+	         where o1.poid= c.poid and ot.ArtworkTypeID='{2}'
 	         group by o1.poid) y
 where a.ApvToPurchase = 1 
     and a.LocalPOID =''
@@ -169,7 +169,7 @@ outer apply(select o1.POID
 	              ,sum(o1.qty*ot.Price) order_amt 
 	        from orders o1 WITH (NOLOCK) 
 	        inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = o1.ID 
-	        where o1.poid= c.poid
+	        where o1.poid= c.poid and ot.ArtworkTypeID='{2}'
 	        group by o1.poid) y
 where a.status = 'Approved' 
     and a.factoryid = '{0}'
