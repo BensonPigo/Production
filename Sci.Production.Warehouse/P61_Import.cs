@@ -10,196 +10,137 @@ using Ict.Win;
 using Sci;
 using Sci.Data;
 using System.Linq;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
     public partial class P61_Import : Sci.Win.Subs.Base
     {
-        DataRow dr_master;
-        DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        bool flag;
-        string poType;
-        protected DataTable dtArtwork;
-
+        DataRow P61;
+        DataTable P61_Detail; 
         public P61_Import(DataRow master, DataTable detail)
         {
             InitializeComponent();
-            dr_master = master;
-            dt_detail = detail;
-        }
-
-        //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
-        {
-            StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.textBox1.Text.TrimEnd();
-
-            if (string.IsNullOrWhiteSpace(sp))
-            {
-                MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                textBox1.Focus();
-                return;
-            }
-
-            else
-            {
-                // 建立可以符合回傳的Cursor
-
-                strSQLCmd.Append(string.Format(@"select 0 as selected ,'' id
-, c.mdivisionid
-, c.OrderID as PoId
-, c.Refno as scirefno
-, c.ThreadColorID as [sizespec]
-,dbo.getItemDesc('',c.Refno) as [Description]
-,0.00 as Qty
-,c.inqty-c.outqty + c.adjustqty as balance
-from dbo.LocalInventory c WITH (NOLOCK) 
-Where c.OrderID = '{0}' and c.inqty-c.outqty + c.adjustqty > 0 and c.mdivisionid='{1}'", sp, Sci.Env.User.Keyword)); // 
-
-                this.ShowWaitMessage("Data Loading....");
-                Ict.DualResult result;
-                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtArtwork))
-                {
-                    if (dtArtwork.Rows.Count == 0)
-                    { MyUtility.Msg.WarningBox("Data not found!!"); }
-                    listControlBindingSource1.DataSource = dtArtwork;
-                    dtArtwork.DefaultView.Sort = "scirefno,sizespec,balance desc";
-                }
-                else { ShowErr(strSQLCmd.ToString(), result); }
-                this.HideWaitMessage();
-            }
-        }
-
-        private void sum_checkedqty()
-        {
-            listControlBindingSource1.EndEdit();
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            Object localPrice = dt.Compute("Sum(qty)", "selected = 1");
-            this.displayBox1.Value = localPrice.ToString();
+            P61 = master;
+            P61_Detail = detail;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
-            ns.CellValidating += (s, e) =>
-                {
-                    if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
-                    {
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["qty"] = e.FormattedValue;
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["selected"] = true;
-                        this.sum_checkedqty();
-                    }
-                };
-
+            #region CheckBox = true
             this.grid1.CellValueChanged += (s, e) =>
             {
                 if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
                     DataRow dr = grid1.GetDataRow(e.RowIndex);
-                    if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
+                    if (Convert.ToBoolean(dr["Selected"]) == true && Convert.ToDecimal(dr["Qty"].ToString()) == 0)
                     {
-                        dr["qty"] = dr["balance"];
-                    }
-                    else if (Convert.ToBoolean(dr["selected"]) == false)
+                        dr["Qty"] = dr["stockQty"];
+                    } else if (Convert.ToBoolean(dr["Selected"]) == false)
                     {
-                        dr["qty"] = 0;
+                        dr["Qty"] = 0;
                     }
                     dr.EndEdit();
-                    this.sum_checkedqty();
                 }
             };
-
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
+            #endregion 
+            #region IssueQty != 0
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings setQty = new DataGridViewGeneratorNumericColumnSettings();
+            setQty.CellValidating = (s, e) =>
+            {
+                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                dr["Qty"] = e.FormattedValue;
+                dr["Selected"] = (Convert.ToDecimal(e.FormattedValue) != 0);
+                dr.EndEdit();
+            };
+            #endregion 
+            #region Set Grid
+            this.grid1.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid1)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
-                .Text("scirefno", header: "Ref#", iseditingreadonly: true, width: Widths.AnsiChars(26)) //1
-
-                .Text("sizespec", header: "Color#", iseditingreadonly: true, width: Widths.AnsiChars(15)) //3
-                
-                .Numeric("balance", header: "Stock Qty",iseditingreadonly: true, decimal_places: 2, integer_places: 10) //6
-                .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns)  //7
-               .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)); //8
-
-            grid1.Columns[4].DefaultCellStyle.BackColor = Color.Pink;
+                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("ThreadColorID", header: "ThreadColor", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("unit", header: "Unit", iseditingreadonly: true)
+                .Numeric("stockQty", header: "Stock Qty", iseditingreadonly: true)
+                .Numeric("Qty", header: "Issue Qty", iseditingreadonly: false, minimum: -99999, settings: setQty)
+                .EditText("desc", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true);
+            #endregion 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
-            this.Close();
-        }
+            #region SqlCommand & SqlParameter
+            string strSql = @"
+select	selected = 0
+		, Qty = 0
+		, *
+        , ID = ''
+from (
+	select	Linv.OrderID
+            , Linv.Refno
+			, Linv.ThreadColorID
+			, unit = Linv.UnitId
+			, StockQty = Linv.InQty - Linv.OutQty + Linv.AdjustQty
+			, [Desc] = LItem.Description
+	from LocalInventory Linv
+	left join LocalItem LItem on Linv.Refno = LItem.RefNo
+    Where Linv.OrderID = @SP
+) as s
+where s.StockQty > 0
+order by s.Refno, s.ThreadColorID, s.StockQty, s.[Desc]
+";
 
+            List<SqlParameter> listPar = new List<SqlParameter>();
+            listPar.Add(new SqlParameter("@SP", txtSP.Text.Trim()));
+            #endregion 
+            #region SQL Data Loading...
+            Ict.DualResult result;
+            DataTable dataTable;
 
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            //listControlBindingSource1.EndEdit();
-            grid1.ValidateControl();
-            DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
-            if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
-
-            DataRow[] dr2 = dtGridBS1.Select("Selected = 1");
-            if (dr2.Length == 0)
+            if (result = DBProxy.Current.Select(null, strSql, listPar, out dataTable))
             {
-                MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
-                return;
-            }
-
-            dr2 = dtGridBS1.Select("qty = 0 and Selected = 1");
-            if (dr2.Length > 0)
-            {
-                MyUtility.Msg.WarningBox("Qty of selected row can't be zero!", "Warning");
-                return;
-            }
-            dr2 = dtGridBS1.Select("qty > balance");
-            if (dr2.Length > 0)
-            {
-                MyUtility.Msg.WarningBox("Qty of selected row can't more than Stock Qty!", "Warning");
-                return;
-            }
-
-            dr2 = dtGridBS1.Select("qty <> 0 and Selected = 1");
-            foreach (DataRow tmp in dr2)
-            {
-                DataRow[] findrow = dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["poid"].EqualString(tmp["poid"])
-                                                                                && row["scirefno"].EqualString(tmp["scirefno"]) && row["sizespec"].EqualString(tmp["sizespec"])).ToArray();
-
-                if (findrow.Length > 0)
+                if (dataTable == null || dataTable.Rows.Count == 0)
                 {
-                    findrow[0]["qty"] = tmp["qty"];
+                    MyUtility.Msg.InfoBox("Data not found!!");
+                }
+                listControlBindingSource1.DataSource = dataTable;
+            }
+            else
+            {
+                ShowErr(strSql, result);
+            }
+            #endregion 
+        }
+
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            grid1.ValidateControl();
+            DataRow[] dataRow = this.grid1.GetTable().Select("Selected = 1");
+            foreach (DataRow dr in dataRow)
+            {
+                DataRow[] checkDR = P61_Detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["OrderID"].EqualString(dr["OrderID"])
+                                                                        && row["Refno"].EqualString(dr["Refno"]) && row["ThreadColorID"].EqualString(dr["ThreadColorID"])
+                                                                  ).ToArray();
+                if (checkDR.Length > 0)
+                {
+                    checkDR[0]["Qty"] = dr["Qty"];
                 }
                 else
                 {
-                    tmp["id"] = dr_master["id"];
-                    tmp.AcceptChanges();
-                    tmp.SetAdded();
-                    dt_detail.ImportRow(tmp);
+                    dr["ID"] = P61["ID"];
+                    dr.AcceptChanges();
+                    dr.SetAdded();
+                    P61_Detail.ImportRow(dr);
                 }
             }
-
-
             this.Close();
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void btnCanel_Click(object sender, EventArgs e)
         {
-            //string sp = textBox1.Text.TrimEnd();
-
-            //if (MyUtility.Check.Empty(sp)) return;
-
-            //if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from dbo.localinventory WITH (NOLOCK) where orderid ='{0}' and mdivisionid = '{1}')"
-            //    , sp,Sci.Env.User.Keyword), null))
-            //{
-            //    MyUtility.Msg.WarningBox("SP# is not found!!");
-            //    e.Cancel = true;
-            //    return;
-            //}
-
+            this.Close();
         }
-
-
     }
 }
