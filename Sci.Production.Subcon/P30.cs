@@ -223,14 +223,11 @@ namespace Sci.Production.Subcon
                 decimal std_price;
                 foreach (DataRow dr in e.Details.Rows)
                 {
-                    DataTable category;
-                    DBProxy.Current.Select(null,string.Format("select a.category from localpo a where a.id='{0}'", dr["id"].ToString()),out category);
-
                     std_price = 0m;
                     decimal.TryParse(MyUtility.GetValue.Lookup(string.Format(@"select [std_price]=round(sum(a.qty*b.Price)/iif(isnull(sum(a.qty),0)=0,1,isnull(sum(a.qty),0)),3) 
                                                                                from orders a WITH (NOLOCK) 
                                                                                inner join Order_TmsCost b WITH (NOLOCK) on b.id = a.ID
-                                                                               where a.poid = '{0}' and b.ArtworkTypeID='{1}'", dr["poid"], category.Rows[0]["category"].ToString())), out std_price);
+                                                                               where a.poid = '{0}' and b.ArtworkTypeID='{1}'", dr["poid"], e.Master["category"].ToString())), out std_price);
                     dr["std_price"] = std_price;
                 }
             }
@@ -268,7 +265,7 @@ namespace Sci.Production.Subcon
             #endregion
 
         }
-
+        
         // detail 新增時設定預設值
         protected override void OnDetailGridInsert(int index = -1)
         {
