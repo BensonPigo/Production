@@ -207,7 +207,20 @@ namespace Sci.Production.Quality
             for (int i = 0; i < dy.Rows.Count; i++)
             {
                 string dyear1 = dy.Rows[i]["yy"].ToString();
-                string b = string.Format("SELECT top 10 Defect,SUM(Qty) AS Qty, SUM(Amount) AS Amount ,row_number() over (order by SUM(Qty) desc) as rnk FROM #temp WHERE y = '{0}' GROUP BY Defect", dyear1);
+                string b = string.Format(@"
+select top 10
+    [Defect] = C.SubName
+    ,[Qty] = SUM(B.QTY)
+    ,[Amount] = SUM(B.ValueinUSD)
+	 ,row_number() over (order by SUM(Qty) desc) as rnk 
+from dbo.ADIDASComplain a WITH (NOLOCK) 
+inner join dbo.ADIDASComplain_Detail b WITH (NOLOCK) on a.id=b.id
+left join dbo.ADIDASComplainDefect_Detail c WITH (NOLOCK) on c.id=b.DefectMainID AND C.SubID=B.DefectSubID 
+where b.BrandID ='{1}' 
+AND year(a.StartDate) = '{0}'
+group by B.DefectMainID, B.DefectSubID,C.SubName 
+order by SUM(B.ValueinUSD)desc,SUM(B.Qty) desc"
+                    , dyear1, Brand);
                 defect2 += b + ' ' + Environment.NewLine;
             }
 
