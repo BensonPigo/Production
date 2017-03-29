@@ -34,7 +34,21 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            
+            this.loadData();
+            #region Set Grid
+            Helper.Controls.Grid.Generator(this.grid1)
+               .Text("date", header: "Date", iseditingreadonly: true, width: Widths.AnsiChars(13))
+               .Text("transactionID", header: "Transaction#", iseditingreadonly: true, width: Widths.AnsiChars(25))
+               .Text("name", header: "Name", iseditingreadonly: true, width: Widths.AnsiChars(30))
+               .Numeric("arrivedQty", header: "Arrived Qty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
+               .Numeric("releasedQty", header: "Released Qty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
+               .Numeric("balance", header: "Balance", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
+               .Text("remark", header: "Remark", iseditingreadonly: true, width: Widths.AnsiChars(10));
+            #endregion 
+        }
+
+        private void loadData()
+        {
             #region SQL Command
             string sql = @"
 select 	s.date
@@ -42,7 +56,7 @@ select 	s.date
 		, s.Name
 		, s.arrivedQty
 		, s.releasedQty
-		, [balance] = sum(arrivedQty -releasedQty) Over (order by s.date, s.Name)
+		, [balance] = sum(arrivedQty -releasedQty) Over (order by s.date, s.transactionID, s.Name)
 		, s.remark
 From (
 	SELECT	[date] = a.IssueDate
@@ -67,9 +81,9 @@ From (
 	inner join localissue_Detail b ON a.id=b.id
 	WHERE b.OrderId like @Poid and b.Refno = @Refno and b.ThreadColorID = @ColorID
 ) s	
-order by s.date, s.Name             
+order by s.date, s.transactionID, s.Name          
 ";
-            #endregion 
+            #endregion
             this.ShowWaitMessage("Data Loading....");
             #region SQL Data Loading....
             Ict.DualResult result;
@@ -96,18 +110,8 @@ order by s.date, s.Name
             {
                 ShowErr(sql, result);
             }
-            #endregion 
+            #endregion
             this.HideWaitMessage();
-            #region Set Grid
-            Helper.Controls.Grid.Generator(this.grid1)
-               .Text("date", header: "Date", iseditingreadonly: true, width: Widths.AnsiChars(13))
-               .Text("transaction", header: "Transaction#", iseditingreadonly: true, width: Widths.AnsiChars(25))
-               .Text("name", header: "Name", iseditingreadonly: true, width: Widths.AnsiChars(30))
-               .Numeric("arrivedQty", header: "Arrived Qty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
-               .Numeric("releasedQty", header: "Released Qty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
-               .Numeric("balance", header: "Balance", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
-               .Text("remark", header: "Remark", iseditingreadonly: true, width: Widths.AnsiChars(10));
-            #endregion 
         }
 
         private void btnReCalculate_Click(object sender, EventArgs e)
@@ -160,6 +164,7 @@ WHERE OrderId = @Poid and Refno = @Refno and ThreadColorID = @ColorID
             }
             #endregion
             this.HideWaitMessage();
+            this.loadData();
         }
 
         private void btnToExcel_Click(object sender, EventArgs e)
