@@ -59,21 +59,51 @@ namespace Sci.Production.Shipping
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"select oq.BuyerDelivery,oq.EstPulloutDate,o.BrandID,b.BuyerID,o.ID,IIF(o.Category = 'B','Bulk','Sample') as Category,o.CustPONo,
-o.StyleID,o.SeasonID,oq.Qty,o.MDivisionID,o.FactoryID,isnull(c.Alias,'') as Alias,o.PoPrice,o.Customize1,o.Customize2,
-oq.ShipmodeID,IIF(o.ScanAndPack = 1,'Y','') as SMP,IIF(o.VasShas = 1,'Y','') as VasShas,
-(select isnull(sum(ShipQty),0) from Pullout_Detail WITH (NOLOCK) where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) - [dbo].getInvAdjQty(o.ID,oq.Seq) as ShipQty,
-isnull((select Term from PayTermAR WITH (NOLOCK) where ID = o.PayTermARID),'') as Payment,
-o.MRHandle+' - '+isnull((select Name + ' #' + ExtNo from TPEPass1 WITH (NOLOCK) where ID = o.MRHandle),'') as Handle,
-o.SMR+' - '+isnull((select Name + ' #' + ExtNo from TPEPass1 WITH (NOLOCK) where ID = o.SMR),'') as SMR,
-o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo from Pass1 WITH (NOLOCK) where ID = o.LocalMR),'') as LocalMR,
-oq.OutstandingReason + ' - ' + isnull((select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Delivery_OutStand' and Id = oq.OutstandingReason),'') as OSReason,
-oq.OutstandingRemark
+            sqlCmd.Append(string.Format(@"
+select 	oq.BuyerDelivery
+		,oq.EstPulloutDate
+		,o.BrandID
+		,b.BuyerID
+		,o.ID
+		,Category = IIF(o.Category = 'B', 'Bulk'
+										, 'Sample')
+		,o.CustPONo
+		,o.StyleID
+		,o.SeasonID
+		,oq.Qty
+		,o.MDivisionID
+		,o.FactoryID
+		,Alias = isnull(c.Alias,'')
+		,o.PoPrice
+		,o.Customize1
+		,o.Customize2
+		,oq.ShipmodeID
+		,SMP = IIF(o.ScanAndPack = 1,'Y','')
+		,VasShas = IIF(o.VasShas = 1,'Y','') 
+		,ShipQty = (select isnull(sum(ShipQty), 0) 
+					from Pullout_Detail WITH (NOLOCK) 
+					where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) - [dbo].getInvAdjQty(o.ID,oq.Seq) 
+		,Payment = isnull((select Term 
+						   from PayTermAR WITH (NOLOCK) 
+						   where ID = o.PayTermARID), '')
+		,Handle = o.MRHandle+' - '+isnull((select Name + ' #' + ExtNo 
+										   from TPEPass1 WITH (NOLOCK) 
+										   where ID = o.MRHandle), '') 
+		,SMR = o.SMR+' - '+isnull((select Name + ' #' + ExtNo 
+								   from TPEPass1 WITH (NOLOCK) 
+								   where ID = o.SMR), '')
+		,LocalMR = o.LocalMR+' - '+isnull((select Name + ' #' + ExtNo 
+										   from Pass1 WITH (NOLOCK) 
+										   where ID = o.LocalMR), '')
+		,OSReason = oq.OutstandingReason + ' - ' + isnull((select Name 
+														   from Reason WITH (NOLOCK) 
+														   where ReasonTypeID = 'Delivery_OutStand' and Id = oq.OutstandingReason), '') 
+		,oq.OutstandingRemark
 from Orders o WITH (NOLOCK) 
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 left join Brand b WITH (NOLOCK) on o.BrandID=b.id
-where 1=1 and o.PulloutComplete=0 "));
+where 1=1 and o.PulloutComplete=0 and o.Qty > 0"));
 
             if (!MyUtility.Check.Empty(buyerDlv1))
             {
