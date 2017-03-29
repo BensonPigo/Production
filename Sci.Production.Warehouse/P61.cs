@@ -17,6 +17,10 @@ namespace Sci.Production.Warehouse
             :base(menuitem)
         {
             InitializeComponent();
+            gridicon.Append.Enabled = false;
+            gridicon.Append.Visible = false;
+            gridicon.Insert.Enabled = false;
+            gridicon.Insert.Visible = false;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)

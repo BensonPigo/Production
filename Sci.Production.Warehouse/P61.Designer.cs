@@ -71,7 +71,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.dateBox3);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 140);
+            this.masterpanel.Size = new System.Drawing.Size(885, 140);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
@@ -90,17 +90,17 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 140);
-            this.detailpanel.Size = new System.Drawing.Size(892, 209);
+            this.detailpanel.Size = new System.Drawing.Size(885, 308);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(774, 104);
+            this.gridicon.Location = new System.Drawing.Point(767, 104);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 209);
+            this.detailgridcont.Size = new System.Drawing.Size(885, 308);
             // 
             // detail2
             // 
@@ -116,16 +116,15 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(885, 486);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(885, 448);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 448);
             // 
             // browse
             // 
@@ -160,7 +159,7 @@
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(803, 39);
+            this.btnImport.Location = new System.Drawing.Point(796, 39);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
             this.btnImport.TabIndex = 64;
@@ -193,7 +192,7 @@
             this.lblStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.lblStatus.Lines = 0;
-            this.lblStatus.Location = new System.Drawing.Point(768, 9);
+            this.lblStatus.Location = new System.Drawing.Point(761, 9);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(115, 23);
             this.lblStatus.TabIndex = 66;
@@ -224,7 +223,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lineShape1.Name = "lineShape1";
             this.lineShape1.X1 = 5;
-            this.lineShape1.X2 = 884;
+            this.lineShape1.X2 = 877;
             this.lineShape1.Y1 = 99;
             this.lineShape1.Y2 = 99;
             // 
@@ -235,7 +234,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(892, 140);
+            this.shapeContainer1.Size = new System.Drawing.Size(885, 140);
             this.shapeContainer1.TabIndex = 68;
             this.shapeContainer1.TabStop = false;
             // 
@@ -286,7 +285,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(893, 548);
+            this.Grid2New = 0;
             this.GridAlias = "LocalIssue_Detail";
+            this.GridNew = 0;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
