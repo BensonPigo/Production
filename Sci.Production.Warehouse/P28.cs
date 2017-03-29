@@ -276,14 +276,12 @@ as
 (
 select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,'Y','') complete,rtrim(o.id) poid,o.Category,o.FtyGroup,o.FactoryID 
 ,rtrim(pd.seq1) seq1,pd.seq2,pd.id stockpoid,pd.seq1 stockseq1,pd.seq2 stockseq2
-,ROUND(xz.taipei_qty*v.RateValue,2,1) N'inputqty',pd.POUnit,pd.StockUnit
-,mpd.InQty
+,ROUND(xz.taipei_qty*isnull(v.RateValue,1),2,1) N'inputqty',pd.POUnit,pd.StockUnit
 ,isnull(x.accu_qty,0.00) accu_qty
 from dbo.orders o WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
-inner join View_Unitrate v on v.FROM_U = pd.POUnit and v.TO_U = pd.StockUnit
-inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
-left join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.ID and mpd.Seq1 = pd.SEQ1 and mpd.Seq2 = pd.SEQ2"));
+left  join View_Unitrate v on v.FROM_U = pd.POUnit and v.TO_U = pd.StockUnit
+inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup"));
             if (!(string.IsNullOrWhiteSpace(InputDate_b)))
             {
                 sqlcmd.Append(string.Format(@" cross apply
@@ -302,16 +300,17 @@ outer apply
 ) yz--Detail資料數量
 outer apply
 (
-select sum(sd.Qty) accu_qty from dbo.SubTransfer s WITH (NOLOCK) inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on sd.ID = s.Id where
- s.type='A' and s.Status= 'Confirmed' and sd.FromPOID = pd.ID and sd.FromSeq1 = pd.SEQ1
- and sd.FromSeq2 = pd.SEQ2 and FromStockType = 'B' and toStockType='I'
+    select sum(sd.Qty) accu_qty 
+    from dbo.SubTransfer s WITH (NOLOCK) 
+    inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on sd.ID = s.Id 
+    where s.type='A' and s.Status= 'Confirmed' and sd.FromPOID = pd.ID and sd.FromSeq1 = pd.SEQ1 and sd.FromSeq2 = pd.SEQ2 and FromStockType = 'B' and toStockType='I'
 ) x
 cross apply
-	(select sum(i.Qty) taipei_qty
-		from dbo.Invtrans i WITH (NOLOCK) 
-		where (i.type=1 OR I.TYPE=4) and i.InventoryPOID = pd.ID and i.InventorySeq1 = pd.seq1 and i.InventorySeq2 = pd.SEQ2
-	) xz
-where pd.inputqty > 0 and f.MDivisionID = '{0}'", Env.User.Keyword));
+(   select sum(i.Qty) taipei_qty
+    from dbo.Invtrans i WITH (NOLOCK) 
+    where (i.type=1 OR I.TYPE=4) and i.InventoryPOID = pd.ID and i.InventorySeq1 = pd.seq1 and i.InventorySeq2 = pd.SEQ2
+) xz
+where f.MDivisionID = '{0}'", Env.User.Keyword));
 
             #region -- 條件 --
             switch (selectindex)
@@ -350,7 +349,7 @@ where pd.inputqty > 0 and f.MDivisionID = '{0}'", Env.User.Keyword));
             sqlcmd.Append(@")
 select *,0.00 qty into #tmp from cte
 
-select * from #tmp where inputqty > accu_qty;
+select * from #tmp where inputqty > accu_qty order by poid,seq1,seq2 ;
 
 select 
 convert(bit,0) as selected,
@@ -367,10 +366,11 @@ fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty,
 rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'I' tostocktype ,t.FactoryID ToFactoryID
 ,stuff((select ',' + mtllocationid from (select MtlLocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = fi.Ukey)t for xml path('')), 1, 1, '') fromlocation
 ,'' tolocation
-from #tmp t inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.POID 
-and fi.seq1 = t.Seq1 and fi.Seq2 = t.Seq2
+from #tmp t 
+inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.POID and fi.seq1 = t.Seq1 and fi.Seq2 = t.Seq2
 left join orders o on fi.poid=o.id
 where inputqty > accu_qty and fi.StockType ='B' and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
+order by fromdyelot,balanceQty desc
 drop table #tmp");
             #endregion
             DataSet dataSet;
@@ -382,7 +382,7 @@ drop table #tmp");
 
             master = dataSet.Tables[0];
             master.TableName = "Master";
-            master.DefaultView.Sort = "poid,seq1,seq2";
+            //master.DefaultView.Sort = "poid,seq1,seq2";
 
             detail = dataSet.Tables[1];
             detail.TableName = "Detail";

@@ -74,7 +74,7 @@ cross apply
 			where s1.type ='B' and s1.Status ='Confirmed' and s2.ToStockType = 'B' 
 				and s2.ToPOID = m.poid and s2.ToSeq1 = m.seq1 and s2.ToSeq2 = m.seq2 and s1.Id !='{1}'
   ) xx
-select * from #tmp order by poid,seq1,seq2,poqty DESC;
+select * from #tmp order by poid,seq1,seq2 ;
 select 0 AS selected,'' as id
 ,o.FactoryID FromFactoryID
 ,fi.POID FromPOID

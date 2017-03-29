@@ -353,7 +353,7 @@ where pd.seq1 like '7%' and f.MDivisionID = '{0}'", Env.User.Keyword));
 select *,0.00 qty into #tmp from cte
 where PoQty > InQty
 
-select * from #tmp order by poid,seq1,seq2,poqty DESC;
+select * from #tmp order by poid,seq1,seq2 ;
 
 select 
 convert(bit,0) as selected,
@@ -374,7 +374,7 @@ from #tmp t
 inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.StockPOID and fi.seq1 = t.StockSeq1 and fi.Seq2 = t.StockSeq2
 inner join dbo.orders o WITH (NOLOCK) on fi.POID=o.id
 where fi.StockType ='I' and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
-order by fi.Dyelot,fi.InQty - fi.OutQty + fi.AdjustQty DESC
+order by fi.Dyelot,BalanceQty DESC
 drop table #tmp");
             #endregion
             DataSet dataSet;

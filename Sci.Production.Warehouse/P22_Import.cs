@@ -61,9 +61,11 @@ with cte as
 )
 select m.ToFactoryID,m.poid,m.seq1,m.seq2,m.StockUnit,m.Qty*isnull(u.Rate,1) as poqty,m.InputQty*isnull(u.Rate,1) as inputQty
 ,dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
-,m.taipei_issue_date,m.taipei_qty*isnull(u.Rate,1) as taipei_qty ,m.POUnit,accu_qty into #tmp
-from cte m left join Unit_Rate u WITH (NOLOCK) on u.UnitFrom = POUnit and u.UnitTo = StockUnit
-cross apply
+,m.taipei_issue_date,m.taipei_qty*isnull(u.Rate,1) as taipei_qty ,m.POUnit,accu_qty 
+into #tmp
+from cte m 
+left join Unit_Rate u WITH (NOLOCK) on u.UnitFrom = POUnit and u.UnitTo = StockUnit
+outer apply
 (select isnull(sum(qty) ,0) as accu_qty
 	from (
 		select sum(r2.StockQty) as qty from dbo.Receiving r1 WITH (NOLOCK) inner join dbo.Receiving_Detail r2 WITH (NOLOCK) on r2.Id= r1.Id 
@@ -74,9 +76,8 @@ cross apply
 			where s1.type ='A' and s1.Status ='Confirmed' and s2.ToStockType = 'I' 
 				and s2.ToPOID = m.poid and s2.ToSeq1 = m.seq1 and s2.ToSeq2 = m.seq2 and s1.Id !='{1}'
 		) xx
-  ) xxx
-where m.taipei_qty > accu_qty;
-select * from #tmp;
+  ) xxx;
+select * from #tmp order by poid,seq1,seq2 ;
 select 0 AS selected,'' as id,o.FactoryID FromFactoryID,fi.POID FromPOID,fi.seq1 Fromseq1,fi.seq2 Fromseq2,concat(Ltrim(Rtrim(fi.seq1)), ' ', fi.seq2) as fromseq
 ,fi.roll FromRoll,fi.dyelot FromDyelot,fi.stocktype FromStockType,fi.Ukey as fromftyinventoryukey 
 ,fi.InQty,fi.OutQty,fi.AdjustQty
@@ -94,7 +95,7 @@ from #tmp cte
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = cte.poid and fi.seq1 = cte.seq1 and fi.seq2 = cte.SEQ2 and fi.StockType = 'B'
 left join dbo.orders o WITH (NOLOCK) on fi.poid=o.id 
 where fi.Lock = 0 
-Order by frompoid,fromseq1,fromseq2,fromdyelot,fromroll,balanceQty desc
+Order by frompoid,fromseq1,fromseq2,fromdyelot,balanceQty desc
 drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 #endregion
                 System.Data.SqlClient.SqlParameter sqlp1 = new System.Data.SqlClient.SqlParameter();
