@@ -302,15 +302,24 @@ namespace Sci.Production.Subcon
                         return;
                     }
                 }
-                if (MyUtility.Check.Seek(string.Format("select factoryid, sewinline from orders WITH (NOLOCK) where id = '{0}'", e.FormattedValue), out dr, null))
+                if (MyUtility.Check.Seek(string.Format("select b.orderid from orders a WITH (NOLOCK) inner join localpo_detail b WITH (NOLOCK) on a.id=b.orderid where a.id = '{0}'and a.MDivisionID='{1}'", e.FormattedValue, Sci.Env.User.Keyword), out dr, null))
                 {
-                    //CurrentDetailData["factoryid"] = dr["factoryid"];
-                    //CurrentDetailData["sewinline"] = dr["sewinline"];
                     CurrentDetailData["orderid"] = e.FormattedValue;
                     DataTable D;
-                    DBProxy.Current.Select(null, string.Format("select POID FROM Orders WITH (NOLOCK) where ID = '{0}'", e.FormattedValue), out D);
-                    CurrentDetailData["poid"] = D.Rows[0][0].ToString();
+                    DBProxy.Current.Select(null, string.Format("select FactoryID,POID,StyleID,SciDelivery,sewinline FROM Orders WITH (NOLOCK) where ID = '{0}' and MDivisionID='{1}'", e.FormattedValue, Sci.Env.User.Keyword), out D);
+                    CurrentDetailData["factoryid"] = D.Rows[0][0].ToString();
+                    CurrentDetailData["poid"] = D.Rows[0][1].ToString();
+                    CurrentDetailData["StyleID"] = D.Rows[0][2].ToString();
+                    CurrentDetailData["SciDelivery"] = D.Rows[0][3].ToString();
+                    CurrentDetailData["sewinline"] = D.Rows[0][4].ToString();
                 }
+                else
+                {
+                    MyUtility.Msg.ErrorBox("< SP# :" + e.FormattedValue + " > not found!!!");
+                    CurrentDetailData["orderid"] = "";
+                    return;
+                }
+
             };
             #endregion
 
