@@ -23,13 +23,13 @@ left join (
 ) b on a.Id = b.Id and a.FabricPanelCode = b.FabricPanelCode
 left join MNOrder c on a.Id = c.ID
 outer apply (	
-	select ColorID=STUFF((SELECT CHAR(10)+ColorID FROM dbo.Color_multiple d where BrandID = c.BrandID and d.ID = a.ColorID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
+	select ColorID=STUFF((SELECT CHAR(10)+ColorID FROM dbo.Color_multiple d where BrandID = c.BrandID and d.ID = a.ColorID FOR XML PATH('')),1,1,'')
 ) d
 WHERE a.ID = @poid AND FABRICCODE != '' and a.Article in (select Article from @tbl)
 
 if exists(select 1 from #tmp)
 	begin
-		declare @rptcol nvarchar(max) = STUFF((SELECT ',['+FabricPanelCode+']' FROM #tmp group by FabricPanelCode order by FabricPanelCode FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
+		declare @rptcol nvarchar(max) = STUFF((SELECT ',['+FabricPanelCode+']' FROM #tmp group by FabricPanelCode order by FabricPanelCode FOR XML PATH('')),1,1,'')
 		declare @sql nvarchar(max) = 'SELECT CODE=Article,'+@rptcol+' FROM(
 			select Article,ColorID,FabricPanelCode from #tmp
 			union select ''MAT.'',FabricCode,FabricPanelCode from #tmp

@@ -2209,6 +2209,7 @@
     <Build Include="dbo\Functions\GetReveivingDate.sql" />
     <Build Include="dbo\Functions\getTPEPass1_ExtNo.sql" />
     <Build Include="dbo\Functions\getPass1_ExtNo.sql" />
+    <Build Include="dbo\Tables\MNOrder_SizeSpec_OrderCombo.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

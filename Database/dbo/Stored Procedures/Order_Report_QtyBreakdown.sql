@@ -5,7 +5,7 @@ CREATE PROCEDURE [dbo].[Order_Report_QtyBreakdown]
 AS
 BEGIN
 
-declare @poid varchar(13) = (select POID from MNOrder where ID = @OrderID)
+declare @poid varchar(13) = (select POID from Orders where ID = @OrderID)
 declare @tbl table (id varchar(13), Article varchar(8))
 
 if(@ByType = 0)
@@ -28,10 +28,10 @@ select * into #tmp_col from GetSizeCodeColumnByID(@OrderID,@ByType)
 if exists(select 1 from #tmp_col)
 	begin
 		declare @str1 nvarchar(max),@str2 nvarchar(max),@str3 nvarchar(max),@str4 nvarchar(max)
-		select @str1=STUFF((SELECT ',['+SizeCode+']' FROM #tmp_col order by Seq FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
-		select @str2=STUFF((SELECT '+isnull(['+SizeCode+'],0)' FROM #tmp_col order by Seq FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
-		select @str3=STUFF((SELECT ',sum(['+SizeCode+'])' FROM #tmp_col order by Seq FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
-		select @str4=STUFF((SELECT '+isnull(sum(['+SizeCode+']),0)' FROM #tmp_col order by Seq FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
+		select @str1=STUFF((SELECT ',['+SizeCode+']' FROM #tmp_col order by Seq FOR XML PATH('')),1,1,'')
+		select @str2=STUFF((SELECT '+isnull(['+SizeCode+'],0)' FROM #tmp_col order by Seq FOR XML PATH('')),1,1,'')
+		select @str3=STUFF((SELECT ',sum(['+SizeCode+'])' FROM #tmp_col order by Seq FOR XML PATH('')),1,1,'')
+		select @str4=STUFF((SELECT '+isnull(sum(['+SizeCode+']),0)' FROM #tmp_col order by Seq FOR XML PATH('')),1,1,'')
 
 		declare @sql nvarchar(max) = 'select '' ''=Article,'+ @str1 +',Total='+ @str2 +'
 		from (SELECT Article,SizeCode,Qty FROM #tmp) a

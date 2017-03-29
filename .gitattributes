@@ -350,6 +350,7 @@ Database/dbo/Tables/MNOrder_Qty.sql -text
 Database/dbo/Tables/MNOrder_SizeCode.sql -text
 Database/dbo/Tables/MNOrder_SizeItem.sql -text
 Database/dbo/Tables/MNOrder_SizeSpec.sql -text
+Database/dbo/Tables/MNOrder_SizeSpec_OrderCombo.sql -text
 Database/dbo/Tables/MachineType.sql -text
 Database/dbo/Tables/MachineType_ThreadRatio.sql -text
 Database/dbo/Tables/MailTo.sql -text
