@@ -1395,7 +1395,7 @@ a.StyleUkey	= b.StyleUkey
 --,a.QAReceived = b.QAReceived
 ,a.StyleCUkey1_Old = b.StyleCUkey1_Old
 from Production.dbo.Style_ProductionKits as a 
-inner join Trade_To_Pms.dbo.Style_ProductionKits as b ON a.ukey=b.ukey AND a.FactoryID=b.FactoryID
+inner join Trade_To_Pms.dbo.Style_ProductionKits as b ON a.ukey=b.ukey --AND a.FactoryID=b.FactoryID
 left join Trade_To_Pms.dbo.Factory as c ON c.ID=b.FactoryID
 -------------------------- INSERT INTO 抓
 RAISERROR('imp_Style - Starts',0,0)
@@ -1470,7 +1470,8 @@ b.Ukey
 ,b.StyleCUkey1_Old
 from Trade_To_Pms.dbo.Style_ProductionKits as b WITH (NOLOCK)
 left join Trade_To_Pms.dbo.Factory as c WITH (NOLOCK) ON c.ID=b.FactoryID
-where not exists(select 1 from Production.dbo.Style_ProductionKits as a WITH (NOLOCK) where a.ukey=b.ukey AND a.FactoryID=b.FactoryID)
+where not exists(select 1 from Production.dbo.Style_ProductionKits as a WITH (NOLOCK) where a.ukey=b.ukey-- AND a.FactoryID=b.FactoryID
+)
 	and b.FactoryID in (select id from Production.dbo.Factory WITH (NOLOCK))
 
 
