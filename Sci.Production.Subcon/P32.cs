@@ -274,9 +274,11 @@ namespace Sci.Production.Subcon
             dtGrid2.TableName = "dtGrid2";
             listControlBindingSource1.DataSource = dtGrid1;
             listControlBindingSource2.DataSource = dtGrid2;
+            listControlBindingSource1_PositionChanged(sender,e);
             this.grid1.AutoResizeColumns();//調整寬度
             this.grid2.AutoResizeColumns();
         }
+
         private void btn_Close_Click(object sender, EventArgs e)
         {
             this.Close();
