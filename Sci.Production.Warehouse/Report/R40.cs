@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Sci.Production.Warehouse.Report
+namespace Sci.Production.Warehouse
 {
     public partial class R40 : Sci.Win.Tems.PrintForm
     {

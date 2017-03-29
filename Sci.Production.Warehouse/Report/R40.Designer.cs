@@ -1,4 +1,4 @@
-﻿namespace Sci.Production.Warehouse.Report
+﻿namespace Sci.Production.Warehouse
 {
     partial class R40
     {
