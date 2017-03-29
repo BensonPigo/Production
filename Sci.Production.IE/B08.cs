@@ -20,7 +20,7 @@ namespace Sci.Production.IE
             this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
             
         }
-
+       
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -288,7 +288,7 @@ namespace Sci.Production.IE
                 {
                     returnData = returnData + currentRecord["ID"].ToString() + ",";
                 }
-                this.textBox3.Text = returnData;
+                CurrentMaintain["Skill"] = returnData.ToString();
             }
         }
     }
