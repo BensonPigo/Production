@@ -23,9 +23,17 @@ namespace Sci.Production.Warehouse
         {
             string ID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"
-select * 
+select  LID.ID
+        , LID.OrderID
+        , LID.Refno
+        , LID.ThreadColorID
+        , [Desc] = Litem.Description
+        , [unit] = Linv.UnitID
+        , LID.Qty
 from LocalIssue LI
 join LocalIssue_Detail LID on LI.ID = LID.ID
+join LocalInventory Linv on LID.OrderID = Linv.OrderID and LID.Refno = Linv.Refno and LID.ThreadColorID = Linv.ThreadColorID
+left join LocalItem Litem on LID.Refno = Litem.Refno
 where LI.ID = '{0}' and LI.MDivisionID = '{1}'", ID, Sci.Env.User.Keyword);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -85,7 +93,7 @@ where LI.ID = '{0}' and LI.MDivisionID = '{1}'", ID, Sci.Env.User.Keyword);
             #region 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IO", "Issue", (DateTime)CurrentMaintain["Issuedate"]);
+                string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IO", "LocalIssue", (DateTime)CurrentMaintain["Issuedate"]);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
