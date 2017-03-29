@@ -1360,11 +1360,6 @@ Delete b
 from Production.dbo.Order_EachCons b
 where id in (select id from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------Order_FabricCode_Article
-Delete b
-from Production.dbo.Order_FabricCode_Article b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------Order_FabricCode_QT
 Delete b
 from Production.dbo.Order_FabricCode_QT b
