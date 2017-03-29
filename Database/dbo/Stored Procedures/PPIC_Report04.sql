@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[PPIC_Report04]
 	@ID varchar(13)
 	,@WithZ bit = 0
+	,@ByType int = 0 --0單張 , 1 By CustCDID , 2 By PO
 AS
 BEGIN
 
