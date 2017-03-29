@@ -77,7 +77,7 @@ namespace Sci.Production.PPIC
                 sxr.dicDatas.Add(sxr._v + "POID", poid);
 
                 System.Data.DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@POID", poid), new SqlParameter("@WithZ", chkAdditional.Checked), new SqlParameter("@fullsize", 1) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", poid), new SqlParameter("@WithZ", chkAdditional.Checked), new SqlParameter("@fullsize", 1) }, out dts);
 
                 sxrc.xltRptTable xltTbl = new sxrc.xltRptTable(dts[0], 1, 0, false, 18, 2);
                 for (int i = 3; i <= 18; i++)
@@ -109,6 +109,7 @@ namespace Sci.Production.PPIC
                     string idxStr = (i == 0) ? "" : i.ToString();
 
                     res = DBProxy.Current.SelectSP("", "PPIC_Report02", new List<SqlParameter> { new SqlParameter("@ID", ID), new SqlParameter("@WithZ", chkAdditional.Checked) }, out dts);
+
                     sxr.dicDatas.Add(sxr._v + "Now" + idxStr, DateTime.Now);
                     sxr.dicDatas.Add(sxr._v + "SP" + idxStr, ID);
                     sxr.dicDatas.Add(sxr._v + "MAKER" + idxStr, dt.Rows[i]["MAKER"].ToString());
@@ -154,7 +155,6 @@ namespace Sci.Production.PPIC
                 if (dtCustCD == null) { MyUtility.Msg.WarningBox("data not found!!"); this.HideWaitMessage();  return true; }
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice_Combo.xltx");
                 sxrc sxr = new sxrc(xltPath, true);
-
                 sxr.CopySheets.Add("1,2,3", dtCustCD.Rows.Count - 1);
                 sxr.VarToSheetName = sxr._v + "sname";
 
@@ -170,7 +170,7 @@ namespace Sci.Production.PPIC
                     DataRow drvar = GetTitleDataByCustCD(poid, ID);
 
                     System.Data.DataTable[] dts;
-                    DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report04", new List<SqlParameter> { new SqlParameter("@ID", ID), new SqlParameter("@WithZ", chkAdditional.Checked) }, out dts);
+                    DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report04", new List<SqlParameter> { new SqlParameter("@ID", ID), new SqlParameter("@WithZ", chkAdditional.Checked) , new SqlParameter("@ByType", 1) }, out dts);
 
                     if (drvar == null | !res) 
                     {
