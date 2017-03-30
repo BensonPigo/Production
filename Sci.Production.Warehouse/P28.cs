@@ -347,9 +347,18 @@ where f.MDivisionID = '{0}'", Env.User.Keyword));
 
             #endregion
             sqlcmd.Append(@")
-select *,0.00 qty into #tmp from cte
+select *,0.00 qty into #tmp from cte where inputqty > accu_qty
 
-select * from #tmp where inputqty > accu_qty order by poid,seq1,seq2 ;
+select * from #tmp order by poid,seq1,seq2 ;
+
+with GroupDyelot as
+(
+	select t.poid as topoid,t.seq1 as toseq1,t.SEQ2 as toseq2,t.FactoryID as toFactoryID,t.StockPOID as FromPoid,t.StockSeq1 as FromSeq1,t.StockSeq2 as Fromseq2,a.Dyelot as FromDyelot,sum(a.inqty-a.OutQty+a.AdjustQty) as GroupQty
+	from dbo.FtyInventory a WITH (NOLOCK) 
+	inner join #tmp t WITH (NOLOCK) on t.StockPOID = a.POID and t.StockSeq1 = a.Seq1 and t.StockSeq2 = a.Seq2
+	where Stocktype='B' and a.inqty-a.OutQty+a.AdjustQty > 0 and a.Lock = 0
+	Group by t.poid,t.seq1,t.SEQ2,t.FactoryID,t.StockPOID,t.StockSeq1,t.StockSeq2,a.Dyelot
+)
 
 select 
 convert(bit,0) as selected,
@@ -366,11 +375,13 @@ fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty,
 rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'I' tostocktype ,t.FactoryID ToFactoryID
 ,stuff((select ',' + mtllocationid from (select MtlLocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = fi.Ukey)t for xml path('')), 1, 1, '') fromlocation
 ,'' tolocation
+,g.GroupQty
 from #tmp t 
 inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.POID and fi.seq1 = t.Seq1 and fi.Seq2 = t.Seq2
 left join orders o on fi.poid=o.id
-where inputqty > accu_qty and fi.StockType ='B' and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
-order by fromdyelot,balanceQty desc
+left join GroupDyelot g on g.toFactoryID=t.FactoryID and g.topoid=t.poID and g.toseq1=t.seq1 and g.toseq2=t.SEQ2 and g.FromDyelot=fi.Dyelot and g.FromPoid=fi.POID and g.FromSeq1=fi.Seq1 and g.Fromseq2=fi.Seq2 
+where fi.StockType ='B' and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
+order by topoid,toseq1,toseq2,g.GroupQty DESC,fi.Dyelot,BalanceQty DESC
 drop table #tmp");
             #endregion
             DataSet dataSet;
