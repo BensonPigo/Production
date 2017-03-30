@@ -64,10 +64,11 @@ From (
 			,[Name] ='P60.Local PO Receiving - incoming' 
 			,[arrivedQty] = b.Qty 
 			,[releasedQty] = '0.00' 
-			,[remark] = a.Remark 
+			,[remark] = isnull(a.Remark, '')
 	FROM LocalReceiving A
 	INNER JOIN LocalReceiving_Detail B ON  A.ID=B.Id 
-	WHERE b.OrderId like @Poid and b.Refno = @Refno and b.ThreadColorID = @ColorID
+	WHERE b.OrderId = @Poid and b.Refno = @Refno and b.ThreadColorID = @ColorID 
+        and a.Status = 'CONFIRMED'
 
 	Union all
 
@@ -76,10 +77,11 @@ From (
 			,[Name] ='P61.Issue Local Item' 
 			,[arrivedQty] = '0.00' 
 			,[releasedQty] = b.Qty
-			,[remark] = a.Remark 
+			,[remark] = isnull(a.Remark, '')
 	FROM localissue a 
 	inner join localissue_Detail b ON a.id=b.id
-	WHERE b.OrderId like @Poid and b.Refno = @Refno and b.ThreadColorID = @ColorID
+	WHERE b.OrderId = @Poid and b.Refno = @Refno and b.ThreadColorID = @ColorID
+        and a.Status = 'CONFIRMED'
 ) s	
 order by s.date, s.transactionID, s.Name          
 ";
@@ -134,8 +136,8 @@ outer apply(
 			,[Released Qty]= '0.00' 
 		FROM LocalReceiving A
 		INNER JOIN LocalReceiving_Detail B ON  A.ID=B.Id 
-		WHERE b.OrderId=LocalInventory.OrderID and b.Refno=LocalInventory.Refno and b.ThreadColorID=LocalInventory.ThreadColorID
-
+		WHERE b.OrderId = LocalInventory.OrderID and b.Refno = LocalInventory.Refno and b.ThreadColorID = LocalInventory.ThreadColorID
+            and a.Status = 'CONFIRMED' 
 		Union all
 
 		SELECT	b.OrderId
@@ -145,7 +147,8 @@ outer apply(
 				,[Released Qty]= b.Qty
 		FROM localissue a 
 		inner join localissue_Detail b ON a.id=b.id
-		WHERE b.OrderId=LocalInventory.OrderID and b.Refno=LocalInventory.Refno and b.ThreadColorID=LocalInventory.ThreadColorID
+		WHERE b.OrderId = LocalInventory.OrderID and b.Refno = LocalInventory.Refno and b.ThreadColorID = LocalInventory.ThreadColorID
+            and a.Status = 'CONFIRMED'
 	) s
 )s
 WHERE OrderId = @Poid and Refno = @Refno and ThreadColorID = @ColorID
