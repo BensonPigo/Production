@@ -1070,9 +1070,10 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			t.AddName= s.AddName,
 			t.AddDate= s.AddDate,
 			t.POID =s.POID
+			t.OrderComboID = s.OrderComboID
 		when not matched by target then
-			insert(ID,BrandID,ProgramID,StyleID,SeasonID,Qty,OrderUnit,FactoryID,CTNQty,CustCDID,CustPONO,Customize1,BuyerDelivery,MRHandle,SMR,PACKING,Packing2,MarkBack,MarkFront,MarkLeft,MarkRight,Label,SizeRange,AddName,AddDate,POID)
-			values(s.ID,s.BrandID,s.ProgramID,s.StyleID,s.SeasonID,s.Qty,s.OrderUnit,s.FactoryID,s.CTNQty,s.CustCDID,s.CustPONO,s.Customize1,s.BuyerDelivery,s.MRHandle,s.SMR,s.PACKING,s.Packing2,s.MarkBack,s.MarkFront,s.MarkLeft,s.MarkRight,s.Label,s.SizeRange,s.AddName,s.AddDate,s.POID);
+			insert(ID,BrandID,ProgramID,StyleID,SeasonID,Qty,OrderUnit,FactoryID,CTNQty,CustCDID,CustPONO,Customize1,BuyerDelivery,MRHandle,SMR,PACKING,Packing2,MarkBack,MarkFront,MarkLeft,MarkRight,Label,SizeRange,AddName,AddDate,POID,OrderComboID)
+			values(s.ID,s.BrandID,s.ProgramID,s.StyleID,s.SeasonID,s.Qty,s.OrderUnit,s.FactoryID,s.CTNQty,s.CustCDID,s.CustPONO,s.Customize1,s.BuyerDelivery,s.MRHandle,s.SMR,s.PACKING,s.Packing2,s.MarkBack,s.MarkFront,s.MarkLeft,s.MarkRight,s.Label,s.SizeRange,s.AddName,s.AddDate,s.POID,s.OrderComboID);
 		
 		----------------MNOrder_Qty---------------------------M/NOtice Qty breakdown
 		Merge Production.dbo.MNOrder_Qty as t
