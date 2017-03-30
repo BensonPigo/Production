@@ -82,8 +82,8 @@ namespace Sci.Production.Thread
                 lis.Add(new SqlParameter("@M", M));
             }
             
-           // if (sqlWheres.Count > 0)
-                sqlWhere = string.Join(" and ", sqlWheres);
+            if (sqlWheres.Count > 0)
+                sqlWhere = "and " + string.Join(" and ", sqlWheres);
             #endregion
 
             cmd = string.Format(@"
@@ -99,7 +99,7 @@ namespace Sci.Production.Thread
                     ,UsedCone
                     ,ThreadLocationID
              from dbo.ThreadStock WITH (NOLOCK) 
-             where isnull(NewCone+UsedCone,0)>0 and " + sqlWhere);
+             where isnull(NewCone+UsedCone,0)>0  " + sqlWhere);
 
             return base.ValidateInput();
         }
