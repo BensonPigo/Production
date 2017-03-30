@@ -884,6 +884,7 @@
             this.Text = "B01. Local Purchase Item";
             this.UniqueExpress = "refno";
             this.WorkAlias = "LocalItem";
+            this.EnableGridJunkColor = true;
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
