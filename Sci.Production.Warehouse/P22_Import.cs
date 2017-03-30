@@ -91,11 +91,12 @@ select 0 AS selected,'' as id,o.FactoryID FromFactoryID,fi.POID FromPOID,fi.seq1
 ,rtrim(fi.poid) ToPOID,rtrim(fi.seq1) ToSeq1, fi.seq2 ToSeq2 , cte.ToFactoryID
 ,fi.roll ToRoll,fi.dyelot ToDyelot,'I' as [ToStockType]
 ,'' as [ToLocation]
+,GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over(partition by cte.ToFactoryID,fi.POID,fi.seq1,fi.seq2,fi.dyelot)
 from #tmp cte 
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = cte.poid and fi.seq1 = cte.seq1 and fi.seq2 = cte.SEQ2 and fi.StockType = 'B'
 left join dbo.orders o WITH (NOLOCK) on fi.poid=o.id 
 where fi.Lock = 0 
-Order by frompoid,fromseq1,fromseq2,fromdyelot,balanceQty desc
+Order by GroupQty desc,fromdyelot,balanceQty desc
 drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 #endregion
                 System.Data.SqlClient.SqlParameter sqlp1 = new System.Data.SqlClient.SqlParameter();

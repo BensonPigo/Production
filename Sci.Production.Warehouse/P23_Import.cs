@@ -101,11 +101,12 @@ select 0 AS selected,'' as id
 ,fi.roll ToRoll,fi.dyelot ToDyelot
 ,'B' as [ToStockType]
 ,'' as [ToLocation]
+,GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over(partition by #tmp.ToFactoryID,#tmp.poid,#tmp.seq1,#tmp.seq2,fi.dyelot)
 from #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID and fi.seq1 = Inventoryseq1 and fi.seq2 = InventorySEQ2 and fi.StockType = 'I'
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID 
 where fi.Lock = 0 
-Order by frompoid,fromseq1,fromseq2,fromdyelot,balanceQty desc
+Order by GroupQty desc,fromdyelot,balanceQty desc
 drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 #endregion
                 System.Data.SqlClient.SqlParameter sqlp1 = new System.Data.SqlClient.SqlParameter();
