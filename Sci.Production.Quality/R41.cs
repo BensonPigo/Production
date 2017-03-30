@@ -472,167 +472,131 @@ order by  SUM(B.Qty) desc,SUM(B.ValueinUSD) desc"
             for (int i = 0; i < fm.Rows.Count; i++)
             {
                 string factory = fm.Rows[i]["fty"].ToString();
-
-                string a = string.Format(@"DECLARE @January_sumQty numeric(10,0) select @January_sumQty=SUM([Quality]) from (select Description,Defect_Code from #defect1 where Description!='' and Defect_Code!='')as main
-outer apply (select [Quality]=sum(qty) from #temp t where  m='January' and FactoryID='{0}' and t.DefectMainID+t.DefectSubID=main.Defect_Code and Description=main.Description group by t.Qty,t.Amount) as January
-DECLARE @February_sumQty numeric(10,0) select @February_sumQty=SUM([Quality]) from (select Description,Defect_Code from #defect1 where Description!='' and Defect_Code!='')as main
-outer apply (select [Quality]=sum(qty) from #temp t where m='February' and FactoryID='{0}' and t.DefectMainID+t.DefectSubID=main.Defect_Code and Description=main.Description group by t.Qty,t.Amount) as February
-DECLARE @March_sumQty numeric(10,0) select @March_sumQty=SUM([Quality]) from (select Description,Defect_Code from #defect1 where Description!='' and Defect_Code!='')as main
-outer apply (select [Quality]=sum(qty) from #temp t where  m='March'and FactoryID='{0}' and t.DefectMainID+t.DefectSubID=main.Defect_Code and Description=main.Description group by t.Qty,t.Amount) as March
-DECLARE @April_sumQty numeric(10,0) select @April_sumQty=SUM([Quality]) from (select Description,Defect_Code from #defect1 where Description!='' and Defect_Code!='')as main
-outer apply (select [Quality]=sum(qty) from #temp t where  m='April'and FactoryID='{0}' and t.DefectMainID+t.DefectSubID=main.Defect_Code and Description=main.Description group by t.Qty,t.Amount) as April
-DECLARE @May_sumQty numeric(10,0) select @May_sumQty=SUM([Quality]) from (select Description,Defect_Code from #defect1 where Description!='' and Defect_Code!='')as main
-outer apply (select [Quality]=sum(qty) from #temp t where  m='May'and FactoryID='{0}' and t.DefectMainID+t.DefectSubID=main.Defect_Code and Description=main.Description group by t.Qty,t.Amount) as May
-DECLARE @June_sumQty numeric(10,0) select @June_sumQty=SUM([Quality]) from (select Description,Defect_Code from #defect1 where Description!='' and Defect_Code!='')as main
-outer apply (select [Quality]=sum(qty) from #temp t where  m='June'and FactoryID='{0}' and t.DefectMainID+t.DefectSubID=main.Defect_Code and Description=main.Description group by t.Qty,t.Amount) as June
-DECLARE @July_sumQty numeric(10,0) select @July_sumQty=SUM([Quality]) from (select Description,Defect_Code from #defect1 where Description!='' and Defect_Code!='')as main
-outer apply (select [Quality]=sum(qty) from #temp t where m='July'and FactoryID='{0}' and FactoryID='{0}' and t.DefectMainID+t.DefectSubID=main.Defect_Code and Description=main.Description group by t.Qty,t.Amount) as July
-DECLARE @August_sumQty numeric(10,0) select @August_sumQty=SUM([Quality]) from (select Description,Defect_Code from #defect1 where Description!='' and Defect_Code!='')as main
-outer apply (select [Quality]=sum(qty) from #temp t where  m='August'and FactoryID='{0}' and t.DefectMainID+t.DefectSubID=main.Defect_Code and Description=main.Description group by t.Qty,t.Amount) as August
-DECLARE @September_sumQty numeric(10,0) select @September_sumQty=SUM([Quality]) from (select Description,Defect_Code from #defect1 where Description!='' and Defect_Code!='')as main
-outer apply (select [Quality]=sum(qty) from #temp t where  m='September' and FactoryID='{0}'and t.DefectMainID+t.DefectSubID=main.Defect_Code and Description=main.Description group by t.Qty,t.Amount) as September
-DECLARE @October_sumQty numeric(10,0) select @October_sumQty=SUM([Quality]) from (select Description,Defect_Code from #defect1 where Description!='' and Defect_Code!='')as main
-outer apply (select [Quality]=sum(qty) from #temp t where  m='October'and FactoryID='{0}' and t.DefectMainID+t.DefectSubID=main.Defect_Code and Description=main.Description group by t.Qty,t.Amount) as October
-DECLARE @November_sumQty numeric(10,0) select @November_sumQty=SUM([Quality]) from (select Description,Defect_Code from #defect1 where Description!='' and Defect_Code!='')as main
-outer apply (select [Quality]=sum(qty) from #temp t where  m='November'and FactoryID='{0}' and t.DefectMainID+t.DefectSubID=main.Defect_Code and Description=main.Description group by t.Qty,t.Amount) as November
-DECLARE @December_sumQty numeric(10,0) select @December_sumQty=SUM([Quality]) from (select Description,Defect_Code from #defect1 where Description!='' and Defect_Code!='')as main
-outer apply (select [Quality]=sum(qty) from #temp t where  m='December'and FactoryID='{0}' and t.DefectMainID+t.DefectSubID=main.Defect_Code and Description=main.Description group by t.Qty,t.Amount) as December
-DECLARE @YTD_sumQty numeric(10,0) select @YTD_sumQty=SUM([Quality]) from (select Description,Defect_Code from #defect1 where Description!='' and Defect_Code!='')as main
-outer apply (select [Quality]=sum(qty) from #temp t where  m='December'and FactoryID='{0}' and t.DefectMainID+t.DefectSubID=main.Defect_Code and Description=main.Description group by t.Qty,t.Amount) as YTD
-
-
-select main.Description,
-main.Defect_Code,
-[January_Quality]=sum(January.Quality),
-[January_Percentage]=January.Percentage,
-[January_Amount]=sum(January.Amount),
-[February_Quality]=sum(February.Quality),
-[February_Percentage]=February.Percentage,
-[February_Amount]=sum(February.Amount),
-[March_Quality]=sum(March.Quality),
-[March_Percentage]=March.Percentage,
-[March_Amount]=sum(March.Amount),
-[April_Quality]=sum(April.Quality),
-[April_Percentage]=April.Percentage,
-[April_Amount]=sum(April.Amount),
-[May_Quality]=sum(May.Quality),
-[May_Percentage]=May.Percentage,
-[May_Amount]=sum(May.Amount),
-[June_Quality]=sum(June.Quality),
-[June_Percentage]=June.Percentage,
-[June_Amount]=sum(June.Amount),
-[July_Quality]=sum(July.Quality),
-[July_Percentage]=July.Percentage,
-[July_Amount]=sum(July.Amount),
-[August_Quality]=sum(August.Quality),
-[August_Percentage]=August.Percentage,
-[August_Amount]=sum(August.Amount),
-[September_Quality]=sum(September.Quality),
-[September_Percentage]=September.Percentage,
-[September_Amount]=sum(September.Amount),
-[October_Quality]=sum(October.Quality),
-[October_Percentage]=October.Percentage,
-[October_Amount]=sum(October.Amount),
-[November_Quality]=sum(November.Quality),
-[November_Percentage]=November.Percentage,
-[November_Amount]=sum(November.Amount),
-[December_Quality]=sum(December.Quality),
-[December_Percentage]=December.Percentage,
-[December_Amount]=sum(December.Amount),
-[YTD_Quality]=sum(YTD.Quality),
-[YTD_Percentage]=YTD.Percentage,
-[YTD_Amount]=sum(YTD.Amount)
-from (select distinct Description,Defect_Code from #defect1 where Description!='' and Defect_Code!='')as main
-outer apply (select distinct [Quality]=t.qty,[Percentage]=(t.qty/@January_sumQty) ,[Amount]=t.Amount from #temp t where  m='January' and t.Defect_Code=main.Defect_Code and t.Description=main.Description and t.factoryid='{0}' ) as January
-outer apply (select distinct [Quality]=t.qty,[Percentage]=(t.qty/@February_sumQty) ,[Amount]=t.Amount from #temp t where  m='February' and t.Defect_Code=main.Defect_Code and t.Description=main.Description and t.factoryid='{0}') as February
-outer apply (select distinct [Quality]=t.qty,[Percentage]=(t.qty/@March_sumQty )  ,[Amount]=t.Amount from #temp t where  m='March' and t.Defect_Code=main.Defect_Code and t.Description=main.Description and t.factoryid='{0}') as March
-outer apply (select distinct [Quality]=t.qty,[Percentage]=(t.qty/@April_sumQty )  ,[Amount]=t.Amount from #temp t where  m='April' and t.Defect_Code=main.Defect_Code and t.Description=main.Description and t.factoryid='{0}') as April
-outer apply (select distinct [Quality]=t.qty,[Percentage]=(t.qty/@May_sumQty ) ,[Amount]=t.Amount from #temp t where  m='May' and t.Defect_Code=main.Defect_Code and t.Description=main.Description and t.factoryid='{0}') as May
-outer apply (select distinct [Quality]=t.qty,[Percentage]=(t.qty/@June_sumQty ) ,[Amount]=t.Amount from #temp t where  m='June' and t.Defect_Code=main.Defect_Code and t.Description=main.Description and t.factoryid='{0}') as June
-outer apply (select distinct [Quality]=t.qty,[Percentage]=(t.qty/@July_sumQty ) ,[Amount]=t.Amount from #temp t where  m='July' and t.Defect_Code=main.Defect_Code and t.Description=main.Description and t.factoryid='{0}') as July
-outer apply (select distinct [Quality]=t.qty,[Percentage]=(t.qty/@August_sumQty ),[Amount]=t.Amount from #temp t where  m='August' and t.Defect_Code=main.Defect_Code and t.Description=main.Description and t.factoryid='{0}') as August
-outer apply (select distinct [Quality]=t.qty,[Percentage]=(t.qty/@September_sumQty)  ,[Amount]=t.Amount from #temp t where  m='September' and t.Defect_Code=main.Defect_Code and t.Description=main.Description and t.factoryid='{0}') as September
-outer apply (select distinct [Quality]=t.qty,[Percentage]=(t.qty/@October_sumQty )  ,[Amount]=t.Amount from #temp t where  m='October' and t.Defect_Code=main.Defect_Code and t.Description=main.Description and t.factoryid='{0}') as October
-outer apply (select distinct [Quality]=t.qty,[Percentage]=(t.qty/@November_sumQty )  ,[Amount]=t.Amount from #temp t where  m='November' and t.Defect_Code=main.Defect_Code and t.Description=main.Description and t.factoryid='{0}') as November
-outer apply (select distinct [Quality]=t.qty,[Percentage]=(t.qty/@December_sumQty ) ,[Amount]=t.Amount from #temp t where  m='December' and t.Defect_Code=main.Defect_Code and t.Description=main.Description and t.factoryid='{0}') as December
-outer apply (select distinct [Quality]=0,[Percentage]=cast(cast(0 as numeric(5,4)) as varchar(20)),[Amount]=0 ) as YTD 
-group by main.Description,main.Defect_Code
-,January.Percentage
-,February.Percentage
-,March.Percentage
-,April.Percentage
-,May.Percentage
-,June.Percentage
-,July.Percentage
-,August.Percentage
-,September.Percentage
-,October.Percentage
-,November.Percentage
-,December.Percentage
-,YTD.Percentage
-order by Defect_Code", factory);
-
-                result = DBProxy.Current.SelectByConn(connction, a, out datatab);
-
-
-                int startIndex1 = 2;
-                //最後一列Total
-
-                DataRow totalrow1 = datatab.NewRow();
-                totalrow1[0] = "GRAND TOTAL";
-
-                //for dt每個欄位
-                decimal TTColumnAMT1 = 0;
-                for (int colIdx = startIndex1; colIdx < datatab.Columns.Count; colIdx++)
+                #region 撈完全準備好的Datatable By factory做不同Sheet
+                string a = string.Format(@"
+--準備主要資料
+SELECT
+	c.name,
+    [Description]=iif(d.subname='',c.name,d.subname),
+	[Defect_Code]=concat(b.DefectMainID,b.DefectSubID),
+	DefectMainID,
+    [M] = format(A.StartDate,'MMMMM'),
+    [Qty] = SUM(B.Qty),
+	[Amount] = convert(numeric(10,4),SUM(B.ValueinUSD)) 
+into #tmp
+FROM dbo.ADIDASComplain A WITH (NOLOCK)
+INNER JOIN dbo.ADIDASComplain_Detail B WITH (NOLOCK) on b.ID = A.ID
+left join (dbo.ADIDASComplainDefect c WITH (NOLOCK) inner join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on c.id = d.ID)
+on c.ID = b.DefectMainID  and d.SubID = b.DefectSubID
+where b.BrandID ='{0}' and year(a.StartDate)='{1}' and FactoryID = '{2}'
+group by b.FactoryID, A.StartDate, B.DefectMainID, c.Name, B.DefectSubID,d.SubName
+order by B.DefectMainID,[Defect_Code]
+--↓補上缺的Main,已經有的則不補上
+select * into #t_all
+from
+(
+	select distinct [Description] = name,[Defect_Code]=DefectMainID,DefectMainID,[M]=null,[Qty]=null,[Amount]=null
+	from #tmp
+	where DefectMainID not in (select distinct [Defect_Code] from #tmp)
+	union all
+	select [Description],[Defect_Code],DefectMainID,[M],[Qty],[Amount]
+	from #tmp
+)a
+--↓準備每個月qty / Amount 
+select * 
+into #t_qty 
+from #t_all
+PIVOT(SUM(Qty) FOR [M] IN ([January],[February],[March],[April],[May],[June],[July],[August],[September],[October],[November],[December])) AS pt
+select * 
+into #t_Amount 
+from #t_all
+PIVOT(sum([Amount]) FOR [M] IN ([January],[February],[March],[April],[May],[June],[July],[August],[September],[October],[November],[December])) AS pt
+--把以上準備的table先各月分sum起來，且加上最後一組YTD總和，按照報表要求排列
+;WITH Amount as(
+	select a.Description,a.Defect_Code,
+		[January_A] = sum(a.[January]),[February_A] = sum(a.[February]),[March_A] = sum(a.[March]),[April_A] = sum(a.[April]),
+		[May_A] = sum(a.[May]),[June_A] = sum(a.[June]),[July_A] = sum(a.[July]),[August_A] = sum(a.[August]),
+		[September_A] = sum(a.[September]),[October_A] = sum(a.[October]),[November_A] = sum(a.[November]),[December_A] = sum(a.[December]),
+		[YTD_A] = iif(DefectMainID = Defect_Code,ta.Amount,null)
+	from #t_Amount a
+	outer apply(select Amount from(select DefectMainID,sum(Amount) Amount from #t_all group by DefectMainID) t where t.DefectMainID = a.DefectMainID )ta
+	group by a.Description,a.Defect_Code,iif(DefectMainID = Defect_Code,ta.Amount,null)
+),qty as(
+	select q.Description,q.Defect_Code,
+		[January_Q] = sum(q.[January]),[February_Q] = sum(q.[February]),[March_Q] = sum(q.[March]),[April_Q] = sum(q.[April]),
+		[May_Q] = sum(q.[May]),[June_Q] = sum(q.[June]),[July_Q] = sum(q.[July]),[August_Q] = sum(q.[August]),
+		[September_Q] = sum(q.[September]),[October_Q] = sum(q.[October]),[November_Q] = sum(q.[November]),[December_Q] = sum(q.[December]),
+		[YTD_Q] = iif(DefectMainID=Defect_Code,tq.qty,null)
+		from #t_qty  q
+	outer apply(select qty from(select DefectMainID,sum(qty) qty from #t_all group by DefectMainID) t where t.DefectMainID = q.DefectMainID )tq
+	group by q.Description,q.Defect_Code,iif(DefectMainID=Defect_Code,tq.qty,null)
+),TQTY_by_monthly as(
+	select distinct 
+		[January_TQ] = sum(q.[January])over(),[February_TQ] = sum(q.[February])over(),[March_TQ] = sum(q.[March])over(),[April_TQ] = sum(q.[April])over(),
+		[May_TQ] = sum(q.[May])over(),[June_TQ] = sum(q.[June])over(),[July_TQ] = sum(q.[July])over(),[August_TQ] = sum(q.[August])over(),
+		[September_TQ] = sum(q.[September])over(),[October_TQ] = sum(q.[October])over(),[November_TQ] = sum(q.[November])over(),[December_TQ] = sum(q.[December])over(),
+		[YTD_TQ] = tq.qty
+	from #t_qty  q
+	outer apply(select sum(qty) qty from #t_all)tq
+)
+select q.Description,q.Defect_Code,
+	January_Q,	[January_P] = January_Q/t.January_TQ,		[January_A],
+	February_Q,	[February_P] = February_Q/t.February_TQ,	[February_A],
+	March_Q,	[March_P] = March_Q/t.March_TQ,				[March_A],
+	April_Q,	[April_P] = April_Q/t.April_TQ,				[April_A],
+	May_Q,		[May_P] = May_Q/t.May_TQ,					[May_A],
+	June_Q,		[June_P] = June_Q/t.June_TQ,				[June_A],
+	July_Q,		[July_P] = July_Q/t.July_TQ,				[July_A],
+	August_Q,	[August_P] = August_Q/t.August_TQ,			[August_A],
+	September_Q,[September_P] = September_Q/t.September_TQ,	[September_A],
+	October_Q,	[October_P] = October_Q/t.October_TQ,		[October_A],
+	November_Q,	[November_P] = November_Q/t.November_TQ,	[November_A],
+	December_Q,	[December_P] = December_Q/t.December_TQ,	[December_A],
+	YTD_Q,		[YTD_P] = YTD_Q/t.YTD_TQ,					[YTD_A]
+into #last--這邊不格式化因為下面還需要加總,格式化後會變文字
+from qty q inner join Amount a on q.Defect_Code = a.Defect_Code,TQTY_by_monthly t
+order by Defect_Code
+---↓附上最後一列加總並且格式化
+select Description,Defect_Code,
+	January_Q,	format(January_P,'P2')January_P,	format(January_A,'C2')January_A,
+	February_Q,	format(February_P,'P2')February_P,	format(February_A,'C2')February_A,
+	March_Q,	format(March_P,'P2')March_P,		format(March_A,'C2')March_A,
+	April_Q,	format(April_P,'P2')April_P,		format(April_A,'C2')April_A,
+	May_Q,		format(May_P,'P2')May_P,			format(May_A,'C2')May_A,
+	June_Q,		format(June_P,'P2')June_P,			format(June_A,'C2')June_A,
+	July_Q,		format(July_P,'P2')July_P,			format(July_A,'C2')July_A,
+	August_Q,	format(August_P,'P2')August_P,		format(August_A,'C2')August_A,
+	September_Q,format(September_P,'P2')September_P,format(September_A,'C2')September_A,
+	October_Q,	format(October_P,'P2')October_P,	format(October_A,'C2')October_A,
+	November_Q,	format(November_P,'P2')November_P,	format(November_A,'C2')November_A,
+	December_Q,	format(December_P,'P2')December_P,	format(December_A,'C2')December_A,
+	YTD_Q,		format(YTD_P,'P2')YTD_P,			format(YTD_A,'C2')YTD_A
+from #last
+union all
+select 'GRAND TOTAL',null,
+	sum(January_Q),		format(sum(January_P),'P2'),	format(sum(January_A),'C2'),
+	sum(February_Q),	format(sum(February_P),'P2'),	format(sum(February_A),'C2'),
+	sum(March_Q),		format(sum(March_P),'P2'),		format(sum(March_A),'C2'),
+	sum(April_Q),		format(sum(April_P),'P2'),		format(sum(April_A),'C2'),
+	sum(May_Q),			format(sum(May_P),'P2'),		format(sum(May_A),'C2'),
+	sum(June_Q),		format(sum(June_P),'P2'),		format(sum(June_A),'C2'),
+	sum(July_Q),		format(sum(July_P),'P2'),		format(sum(July_A),'C2'),
+	sum(August_Q),		format(sum(August_P),'P2'),		format(sum(August_A),'C2'),
+	sum(September_Q),	format(sum(September_P),'P2'),	format(sum(September_A),'C2'),
+	sum(October_Q),		format(sum(October_P),'P2'),	format(sum(October_A),'C2'),
+	sum(November_Q),	format(sum(November_P),'P2'),	format(sum(November_A),'C2'),
+	sum(December_Q),	format(sum(December_P),'P2'),	format(sum(December_A),'C2'),
+	sum(YTD_Q),			format(sum(YTD_P),'P2'),		format(sum(YTD_A),'C2')
+from #last
+drop table #tmp,#t_all,#t_qty,#t_Amount,#last
+"
+                    , Brand, Year, factory);
+                DualResult r = DBProxy.Current.Select(null, a,out datatab);
+                if (!r)
                 {
-                    TTColumnAMT1 = 0;
-                    //for dt每一列
-                    for (int rowIdx = 0; rowIdx < datatab.Rows.Count; rowIdx++)
-                    {
-                        if (datatab.Rows[rowIdx][colIdx] == DBNull.Value) continue;
-                        TTColumnAMT1 += Convert.ToDecimal(datatab.Rows[rowIdx][colIdx]);
-                    }
-
-                    totalrow1[colIdx] = TTColumnAMT1;
+                    MyUtility.Msg.ErrorBox("SQL command Error!");
                 }
-                Decimal YTD_Quality = 0;
-                Decimal YTD_Percentage = 0;
-                Decimal YTD_Amount = 0;
-                for (int idx = datatab.Rows.Count - 1; idx >= 0; idx--)
-                {
-                    DataRow row = datatab.Rows[idx];
-
-                    string code = row["Defect_Code"].ToString();
-
-                    if (code.Length == 2)
-                    {
-                        row["YTD_Quality"] = YTD_Quality;
-                        row["YTD_Percentage"] = YTD_Percentage;
-                        row["YTD_Amount"] = YTD_Amount;
-
-                        YTD_Quality = 0;
-                        YTD_Percentage = 0;
-                        YTD_Amount = 0;
-
-                        continue;
-                    }
-
-                    for (int mon = 0; mon < 12; mon++)
-                    {
-                        YTD_Quality += row[mon * 3 + 2] == DBNull.Value ? 0 : Convert.ToDecimal(row[mon * 3 + 2]);
-                        YTD_Percentage += row[mon * 3 + 3] == DBNull.Value ? 0 : Convert.ToDecimal(row[mon * 3 + 3]);
-                        YTD_Amount += row[mon * 3 + 4] == DBNull.Value ? 0 : Convert.ToDecimal(row[mon * 3 + 4]);
-                    }
-
-                }
-
-                if (null == datatab || datatab.Rows.Count == 0)
-                {
-                    return new DualResult(false, "Data not found");
-                }
-
-
-                datatab.Rows.Add(totalrow1);
+                #endregion
                 dicFTY.Add(factory, datatab);
             }
 
@@ -875,151 +839,15 @@ order by Defect_Code", factory);
             {
                 string fty = item.Key;
                 SaveXltReportCls.xltRptTable x_All = new SaveXltReportCls.xltRptTable(item.Value);
-
-
-                for (int i = 0; i < x_All.Columns.Count; i++)
-                {
-                    SaveXltReportCls.xlsColumnInfo xlc = new SaveXltReportCls.xlsColumnInfo(i + 1);
-                    if (x_All.Columns[i].ColumnName == "January_Percentage")
-                    {
-                        xlc.NumberFormate = "0.00%";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "February_Percentage")
-                    {
-                        xlc.NumberFormate = "0.00%";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "March_Percentage")
-                    {
-                        xlc.NumberFormate = "0.00%";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "April_Percentage")
-                    {
-                        xlc.NumberFormate = "0.00%";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "May_Percentage")
-                    {
-                        xlc.NumberFormate = "0.00%";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "June_Percentage")
-                    {
-                        xlc.NumberFormate = "0.00%";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "July_Percentage")
-                    {
-                        xlc.NumberFormate = "0.00%";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "August_Percentage")
-                    {
-                        xlc.NumberFormate = "0.00%";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "September_Percentage")
-                    {
-                        xlc.NumberFormate = "0.00%";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "October_Percentage")
-                    {
-                        xlc.NumberFormate = "0.00%";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "November_Percentage")
-                    {
-                        xlc.NumberFormate = "0.00%";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "December_Percentage")
-                    {
-                        xlc.NumberFormate = "0.00%";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "YTD_Percentage")
-                    {
-                        xlc.NumberFormate = "0.00%";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "January_Amount")
-                    {
-                        xlc.NumberFormate = "$#,##0.00";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "February_Amount")
-                    {
-                        xlc.NumberFormate = "$#,##0.00";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "March_Amount")
-                    {
-                        xlc.NumberFormate = "$#,##0.00";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "April_Amount")
-                    {
-                        xlc.NumberFormate = "$#,##0.00";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "May_Amount")
-                    {
-                        xlc.NumberFormate = "$#,##0.00";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "June_Amount")
-                    {
-                        xlc.NumberFormate = "$#,##0.00";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "July_Amount")
-                    {
-                        xlc.NumberFormate = "$#,##0.00";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "August_Amount")
-                    {
-                        xlc.NumberFormate = "$#,##0.00";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "September_Amount")
-                    {
-                        xlc.NumberFormate = "$#,##0.00";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "October_Amount")
-                    {
-                        xlc.NumberFormate = "$#,##0.00";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "November_Amount")
-                    {
-                        xlc.NumberFormate = "$#,##0.00";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "December_Amount")
-                    {
-                        xlc.NumberFormate = "$#,##0.00";
-                        xlc.IsNumber = false;
-                    }
-                    if (x_All.Columns[i].ColumnName == "YTD_Amount")
-                    {
-                        xlc.NumberFormate = "$#,##0.00";
-                        xlc.IsNumber = false;
-                    }
-                    xlc.IsAutoFit = true;
-                    x_All.lisColumnInfo.Add(xlc);
-                }
-
-
                 sxc.dicDatas.Add("##SUPSheetName" + fty, item.Key);
                 sxc.dicDatas.Add("##psd" + fty, x_All);
+                //凍結窗格
+                x_All.boFreezePanes = true;
+                x_All.intFreezeColumn = 2;
+
                 x_All.ShowHeader = false;
                 x_All.Borders.AllCellsBorders = true;
-
+                x_All.boAutoFitColumn = true;
             }
 
             sxc.VarToSheetName = "##SUPSheetName";
@@ -1088,9 +916,7 @@ order by Defect_Code", factory);
                 aftersheet.Cells[5, 1] = "##SUPSheetName" + item.Key;
                 aftersheet.Cells[5, 1].Font.Color = Color.Transparent;
                 aftersheet.Cells[6, 1] = "##addfilter";
-
-
-
+                
                 lisWK.Add(aftersheet);
             }
 
