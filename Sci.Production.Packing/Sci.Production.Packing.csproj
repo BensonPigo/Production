@@ -170,6 +170,7 @@
     <Compile Include="P03_ExcelImport.Designer.cs">
       <DependentUpon>P03_ExcelImport.cs</DependentUpon>
     </Compile>
+    <Compile Include="P09_IDX_CTRL.cs" />
     <Compile Include="P14_Print_OrderList.cs">
       <SubType>Form</SubType>
     </Compile>
