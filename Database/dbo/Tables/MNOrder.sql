@@ -25,6 +25,7 @@
     [AddName]       VARCHAR (10)   CONSTRAINT [DF_MNOrder_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME       NULL,
     [POID]          VARCHAR (13)   NULL,
+    [OrderComboID] VARCHAR(13) NULL, 
     CONSTRAINT [PK_MNOrder] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
