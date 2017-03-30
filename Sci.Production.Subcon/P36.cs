@@ -68,8 +68,13 @@ over (order by issuedate
 )
 SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], numTotalAmt.Value.ToString()), out dr);
             displayBoxVoucherID.Text = null == dr ? "" : dr["voucherid"].ToString();
-            displayBoxSettleDate.Text = null == dr ? "" : Convert.ToDateTime(dr["voucherdate"]).ToString("yyyy/MM/dd");
-            
+            if (dr != null)
+            {
+                if (!MyUtility.Check.Empty(dr["voucherdate"]))
+                {
+                    displayBoxSettleDate.Text = Convert.ToDateTime(dr["voucherdate"]).ToString("yyyy/MM/dd");
+                }
+            }
         }
 
         // Detail Grid 設定
