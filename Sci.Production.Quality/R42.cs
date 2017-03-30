@@ -51,7 +51,9 @@ namespace Sci.Production.Quality
         System.Data.DataTable[] alldt;
         System.Data.DataTable month12 = null;
         System.Data.DataTable allsupplier = null;
-        System.Data.DataTable dat;
+        System.Data.DataTable dat;        
+        System.Data.DataTable dt_temp = new System.Data.DataTable(); //for Printing Detail Report only
+        Dictionary<string, System.Data.DataTable> PrintingData = new Dictionary<string, System.Data.DataTable>();
         protected override bool ValidateInput()
         {
             Brand = combo_Brand.Text.ToString();
@@ -142,8 +144,19 @@ namespace Sci.Production.Quality
                 if (!result) { return result; }
                 result = DBProxy.Current.SelectByConn(conn, sqlcmd, out alldt);
                 if (!result) { return result; }
-
-                string sp = @"select  * 
+                month12 = alldt[0];
+                string month_Columns = "";
+                string Qty_SumColumns = "";
+                string Complaint_SumColumns = "";
+                var total_Rows= new List<System.Data.DataRow>();
+                if (alldt[0].Rows.Count <= 0)
+                {
+                    return new DualResult(false, "Data not found! ");
+                }
+                #region Pilling & Snagging Summery
+                if (Report_Type1 == "True")
+                {
+                    string sp = @"select  * 
 from 
 (
 	select [Shell_Supplier]=supplier,
@@ -164,98 +177,182 @@ from
 					) d where idx = 1
 				)
     AND supplier!=''
-	--group by supplier,refno --加上這一段會讓解果只剩下一筆,所以註解掉 WILLY_20170325
+	--group by supplier,refno --加上這一段會讓結果只剩下一筆,所以註解掉 WILLY_20170325
 ) main";
 
-                month12 = alldt[0];
-                string month_Columns = "";
-                string Qty_SumColumns = "";
-                string Complaint_SumColumns = "";
-                for (int i = 0; i < month12.Rows.Count; i++)
-                {
-                    string month = month12.Rows[i]["mon"].ToString();
-                    string o = string.Format("left join (select {0}_idx=ROW_NUMBER()OVER(partition by supplier order by supplier),{0}_supplier=supplier,{0}_Style=styleid,{0}_Shell=Refno,{0}_Qty=qty,{0}_Complaint_Value=ValueinUSD from #temp where m = '{0}') {0} on main.Shell_Supplier = {0}.{0}_supplier and main.idx = {0}.{0}_idx", month);
-                    sp = sp + Environment.NewLine + o;
-                    month_Columns += month + "_Qty," + month + "_Complaint_Value,";
-                    Qty_SumColumns += month + "_Qty+";
-                    Complaint_SumColumns += month + "_Complaint_Value+";
-                }
-                if (alldt[0].Rows.Count<=0)
-                {
-                    return new DualResult(false, "Data not found! ");
-                }
-                Qty_SumColumns = Qty_SumColumns.Substring(0, Qty_SumColumns.Length - 1);
-                Complaint_SumColumns = Complaint_SumColumns.Substring(0, Complaint_SumColumns.Length - 1);
-                result = DBProxy.Current.SelectByConn(conn, sp, out dt);
-                if (!result) { return result; }
-
-                dt.Columns.Remove("idx");
-                dt.Columns.Remove("January_idx");
-                dt.Columns.Remove("February_idx");
-                dt.Columns.Remove("March_idx");
-                dt.Columns.Remove("April_idx");
-                dt.Columns.Remove("May_idx");
-                dt.Columns.Remove("June_idx");
-                dt.Columns.Remove("July_idx");
-                dt.Columns.Remove("August_idx");
-                dt.Columns.Remove("September_idx");
-                dt.Columns.Remove("October_idx");
-                dt.Columns.Remove("November_idx");
-                dt.Columns.Remove("December_idx");
-                dt.Columns.Remove("January_supplier");
-                dt.Columns.Remove("February_supplier");
-                dt.Columns.Remove("March_supplier");
-                dt.Columns.Remove("April_supplier");
-                dt.Columns.Remove("May_supplier");
-                dt.Columns.Remove("June_supplier");
-                dt.Columns.Remove("July_supplier");
-                dt.Columns.Remove("August_supplier");
-                dt.Columns.Remove("September_supplier");
-                dt.Columns.Remove("October_supplier");
-                dt.Columns.Remove("November_supplier");
-                dt.Columns.Remove("December_supplier");
-
-                dt.ColumnsDecimalAdd("Qty", expression: Qty_SumColumns);
-                dt.ColumnsDecimalAdd("Complaint_Value", expression: Complaint_SumColumns);
-                
-                //var total_Rows = dt.Sum(month_Columns, "Shell_Supplier");
-                var total_Rows = dt.Sum(month_Columns, "Shell_Supplier");
-                if (!MyUtility.Check.Empty(total_Rows)) 
-                {
-                    foreach (var ttl_row in total_Rows)
+                    for (int i = 0; i < month12.Rows.Count; i++)
                     {
-                        ttl_row["Shell_Supplier"] = ttl_row["Shell_Supplier"].ToString().Trim() + "Total";
+                        string month = month12.Rows[i]["mon"].ToString();
+                        string o = string.Format("left join (select {0}_idx=ROW_NUMBER()OVER(partition by supplier order by supplier),{0}_supplier=supplier,{0}_Style=styleid,{0}_Shell=Refno,{0}_Qty=qty,{0}_Complaint_Value=ValueinUSD from #temp where m = '{0}') {0} on main.Shell_Supplier = {0}.{0}_supplier and main.idx = {0}.{0}_idx", month);
+                        sp = sp + Environment.NewLine + o;
+                        month_Columns += month + "_Qty," + month + "_Complaint_Value,";
+                        Qty_SumColumns += month + "_Qty+";
+                        Complaint_SumColumns += month + "_Complaint_Value+";
                     }
-                    total_Rows[total_Rows.Count - 1]["Shell_Supplier"] = "GRAND TOTAL";
+                   
+                    Qty_SumColumns = Qty_SumColumns.Substring(0, Qty_SumColumns.Length - 1);
+                    Complaint_SumColumns = Complaint_SumColumns.Substring(0, Complaint_SumColumns.Length - 1);
+                    result = DBProxy.Current.SelectByConn(conn, sp, out dt);
+                    if (!result) { return result; }
+
+
+                    dt.Columns.Remove("idx");
+                    dt.Columns.Remove("January_idx");
+                    dt.Columns.Remove("February_idx");
+                    dt.Columns.Remove("March_idx");
+                    dt.Columns.Remove("April_idx");
+                    dt.Columns.Remove("May_idx");
+                    dt.Columns.Remove("June_idx");
+                    dt.Columns.Remove("July_idx");
+                    dt.Columns.Remove("August_idx");
+                    dt.Columns.Remove("September_idx");
+                    dt.Columns.Remove("October_idx");
+                    dt.Columns.Remove("November_idx");
+                    dt.Columns.Remove("December_idx");
+                    dt.Columns.Remove("January_supplier");
+                    dt.Columns.Remove("February_supplier");
+                    dt.Columns.Remove("March_supplier");
+                    dt.Columns.Remove("April_supplier");
+                    dt.Columns.Remove("May_supplier");
+                    dt.Columns.Remove("June_supplier");
+                    dt.Columns.Remove("July_supplier");
+                    dt.Columns.Remove("August_supplier");
+                    dt.Columns.Remove("September_supplier");
+                    dt.Columns.Remove("October_supplier");
+                    dt.Columns.Remove("November_supplier");
+                    dt.Columns.Remove("December_supplier");
+
+                    dt.ColumnsDecimalAdd("Qty", expression: Qty_SumColumns);
+                    dt.ColumnsDecimalAdd("Complaint_Value", expression: Complaint_SumColumns);
+                    total_Rows = dt.Sum(month_Columns, "Shell_Supplier");
+                    if (!MyUtility.Check.Empty(total_Rows))
+                    {
+                        foreach (var ttl_row in total_Rows)
+                        {
+                            ttl_row["Shell_Supplier"] = ttl_row["Shell_Supplier"].ToString().Trim() + "Total";
+                        }
+                        total_Rows[total_Rows.Count - 1]["Shell_Supplier"] = "GRAND TOTAL";
+                    }
+                    if (null == dt_All || 0 == dt_All.Rows.Count)
+                    {
+
+                        dt_All = dt;
+                    }
+                    else
+                    {
+                        dt_All.Merge(dt);
+                    }
+
+
                 }
-                                
-    
-                if (null == dt_All || 0 == dt_All.Rows.Count)
-                {
-                 
-                    dt_All = dt;
-                }
+                #endregion
+                #region Printing Summery
                 else
                 {
-                    dt_All.Merge(dt);
+                    System.Data.DataTable dt_printing = new System.Data.DataTable(); //for Printing Detail Report only
+                    month12 = alldt[0];
+                    dt_printing.Clear();
+                    dt_printing.Columns.Add("Shell_Supplier", typeof(string));
+                    bool First = true;
+                    //Type=  Pilling & Snagging Detail                  
+                    for (int i = 0; i < month12.Rows.Count; i++)
+                    {
+                        DataRow dr;
+                        string month = month12.Rows[i]["mon"].ToString();
+                        dt_printing.Columns.Add(string.Format("{0}_Style", month), typeof(string));
+                        dt_printing.Columns.Add(string.Format("{0}_Shell", month), typeof(string));
+                        dt_printing.Columns.Add(string.Format("{0}_Qty", month), typeof(int));
+                        dt_printing.Columns.Add(string.Format("{0}_Complaint_Value", month), typeof(string));
+
+                        string scmd = string.Format(@"
+                    select 		           
+		            {0}_Style=styleid,{0}_Shell=Refno,{0}_Qty=qty,{0}_Complaint_Value=ValueinUSD 
+                    from #temp where m = '{0}'", month);
+
+                        month_Columns += month + "_Qty," + month + "_Complaint_Value,";
+                        Qty_SumColumns += month + "_Qty+";
+                        Complaint_SumColumns += month + "_Complaint_Value+";
+                        result = DBProxy.Current.SelectByConn(conn, scmd, out dt_temp);
+                        int counts = dt_temp.Rows.Count;
+                        //DataTable第一次塞值避免null, 所以要先NewRow
+                        if (First)
+                        {
+                            First = false;
+                            for (int t = 0; t < dt_temp.Rows.Count; t++)
+                            {
+                                dr = dt_printing.NewRow();
+                                dr[month + "_Style"] = dt_temp.Rows[t][month + "_Style"];
+                                dr[month + "_Shell"] = dt_temp.Rows[t][month + "_Shell"];
+                                dr[month + "_Qty"] = dt_temp.Rows[t][month + "_Qty"];
+                                dr[month + "_Complaint_Value"] = dt_temp.Rows[t][month + "_Complaint_Value"];
+                                dt_printing.Rows.Add(dr);
+                            }
+                            dt_printing.Rows[0]["Shell_Supplier"] = "Other -";
+                        }
+                        else
+                        {
+                            for (int t = 0; t < dt_temp.Rows.Count; t++)
+                            {
+                                //如果DatatTble欄位數不夠,就要NewRow
+                                if (t >= dt_printing.Rows.Count)
+                                {
+                                    dr = dt_printing.NewRow();
+                                    dr[month + "_Style"] = dt_temp.Rows[t][month + "_Style"];
+                                    dr[month + "_Shell"] = dt_temp.Rows[t][month + "_Shell"];
+                                    dr[month + "_Qty"] = dt_temp.Rows[t][month + "_Qty"];
+                                    dr[month + "_Complaint_Value"] = dt_temp.Rows[t][month + "_Complaint_Value"];
+                                    dt_printing.Rows.Add(dr);
+                                }
+                                else
+                                {
+                                    dt_printing.Rows[t][month + "_Style"] = dt_temp.Rows[t][month + "_Style"];
+                                    dt_printing.Rows[t][month + "_Shell"] = dt_temp.Rows[t][month + "_Shell"];
+                                    dt_printing.Rows[t][month + "_Qty"] = dt_temp.Rows[t][month + "_Qty"];
+                                    dt_printing.Rows[t][month + "_Complaint_Value"] = dt_temp.Rows[t][month + "_Complaint_Value"];
+                                }
+                            }
+                        }
+
+                        if (!result)
+                        {
+                            return result;
+                        }
+                    }
+                     total_Rows = dt_printing.Sum(month_Columns, "");
+                     if (!MyUtility.Check.Empty(total_Rows))
+                     {
+                         foreach (var ttl_row in total_Rows)
+                         {
+                             ttl_row["Shell_Supplier"] = ttl_row["Shell_Supplier"].ToString().Trim() + "Total";
+                         }
+                         total_Rows[total_Rows.Count - 1]["Shell_Supplier"] = "GRAND TOTAL";
+                     }
+                     if (null == dt_All || 0 == dt_All.Rows.Count)
+                     {
+                         dt_All = dt_printing;
+                     }
+                     else
+                     {
+                         dt_All.Merge(dt_printing);
+                     }
                 }
+                #endregion
 
                 if (!result)
-                {
-                    //return result;
+                {                    
                     this.ShowErr(result);
                 }
-                
-
-                
 
                 allsupplier = alldt[3];
                 dicSUP.Clear();
-                for (int i = 0; i < allsupplier.Rows.Count; i++)
+                #region Pilling & Snagging Detail
+                if (Report_Type1 == "True")
                 {
-                    string sss = allsupplier.Rows[i]["Shell_Supplier"].ToString();
+                    for (int i = 0; i < allsupplier.Rows.Count; i++)
+                    {
+                        string sss = allsupplier.Rows[i]["Shell_Supplier"].ToString();
 
-                    string scmd = string.Format(@"SELECT 
+                        string scmd = string.Format(@"SELECT 
                     a.startdate as Month
                     ,A.AGCCode [FactoryID]
                     ,A.FactoryName [FactoryName]
@@ -283,15 +380,56 @@ from
                     left join dbo.ADIDASComplainDefect c WITH (NOLOCK) on c.ID=b.DefectMainID
                     left join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on d.id=b.DefectMainID and d.SubID=b.DefectSubID" + " " + sqlWhere + "and supplier='{0}'" + rt + " " + ob, sss);
 
+                        result = DBProxy.Current.SelectByConn(conn, scmd, out dat);
+                        dicSUP.Add(sss, dat);
+                        if (!result)
+                        {
+                            return result;
+                        }
+                    }
+                }
+                #endregion
+                #region Printing Detail
+                else
+                {
+
+                    string scmd = string.Format(@"SELECT 
+                    a.startdate as Month
+                    ,A.AGCCode [FactoryID]
+                    ,A.FactoryName [FactoryName]
+                    ,B.SalesID [Sales_Org._ID]
+                    ,B.SalesName [Sales_Org._Name]
+                    ,B.Article [Article_ID]
+                    ,B.ArticleName [Article_Name]
+                    ,B.StyleID [Style]
+                    ,B.Refno [Shell]
+                    ,B.OrderID [SP#]
+                    ,B.custPONO [PONo]
+                    ,B.FactoryID [Factory]
+                    ,B.ProductionDate [Prod_Date]
+                    ,B.DefectMainID [Defect MainID]
+                    ,c.Name [Defect_Main_Name]
+                    ,B.DefectSubID [Defect_Sub_ID]
+                    ,d.SubName [Defect_Sub_Name]
+                    ,B.FOB [FOB_Price]
+                    ,B.Qty [Qty]
+                    ,B.ValueinUSD [Complaint_Value]
+                    ,B.ValueINExRate[Exrate]
+                    FROM 
+                    DBO.ADIDASComplain A WITH (NOLOCK) 
+                    INNER JOIN DBO.ADIDASComplain_Detail B WITH (NOLOCK) ON B.ID = A.ID
+                    left join dbo.ADIDASComplainDefect c WITH (NOLOCK) on c.ID=b.DefectMainID
+                    left join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on d.id=b.DefectMainID and d.SubID=b.DefectSubID" + " " + sqlWhere + " " + rt + "  " + ob);
+
                     result = DBProxy.Current.SelectByConn(conn, scmd, out dat);
-                    dicSUP.Add(sss, dat);
+                    dicSUP.Add("other", dat);
                     if (!result)
                     {
                         return result;
                     }
                 }
-                
-            return result;  //base.OnAsyncDataLoad(e);
+                #endregion
+                return result;  //base.OnAsyncDataLoad(e);
         }
 
         Dictionary<string, System.Data.DataTable> dicSUP = new Dictionary<string, System.Data.DataTable>();
@@ -300,16 +438,9 @@ from
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
 
-                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-                //saveDialog.ShowDialog();
-                //string outpath = saveDialog.FileName;
-                //if (outpath.Empty())
-                //{
-                //    return false;
-                //}
+                var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);     
                 Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Quality_R42.xltx");
                 SaveXltReportCls.xltRptTable xdt_All = new SaveXltReportCls.xltRptTable(dt_All);
-
 
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic.Add(" ", "1,1");
@@ -325,7 +456,7 @@ from
                 dic.Add("October", "38,41");
                 dic.Add("November", "42,45");
                 dic.Add("December", "46,49");
-                dic.Add("YTD", "50,51");
+                if (Report_Type1 == "True") dic.Add("YTD", "50,51");
                 xdt_All.lisTitleMerge.Add(dic);
                 xdt_All.ShowHeader = true;
               
@@ -379,12 +510,20 @@ from
 
         void Addcolor(Worksheet mySheet, int rowNo, int columnNo)
         {
-
-            mySheet.get_Range("A2", "AY2").Interior.Color = Color.SkyBlue;
-            mySheet.get_Range("A2", "AY2").Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
-
+            if (Report_Type1 == "True")
+            {
+                 mySheet.get_Range("A2", "AY2").Interior.Color = Color.SkyBlue;
+                 mySheet.get_Range("A2", "AY2").Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            }
+            else
+            {
+                mySheet.get_Range("A2", "AW2").Interior.Color = Color.SkyBlue;
+                mySheet.get_Range("A2", "AW2").Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            }
+           
+            
             Microsoft.Office.Interop.Excel.Range usedRange = mySheet.UsedRange;
-            Microsoft.Office.Interop.Excel.Range rows = usedRange.Rows;
+            Microsoft.Office.Interop.Excel.Range rows = usedRange.Rows;            
             int count = 0;
             
             foreach (Microsoft.Office.Interop.Excel.Range row in rows)
@@ -399,7 +538,7 @@ from
                     if (firstCellValue.StrEndsWith("GRAND TOTAL"))
                     {
                         row.Interior.Color = System.Drawing.Color.Aquamarine;
-               row.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                        row.Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
                     }
                     else if (firstCellValue.StrEndsWith("Total"))
                     {
