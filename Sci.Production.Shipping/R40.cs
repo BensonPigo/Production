@@ -56,6 +56,12 @@ namespace Sci.Production.Shipping
         {
             StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL
+            /*
+             * VNContract_Detail.Qty + sum(import數量) - sum(export數量) + sum(adjust數量)
+             * export 在 SQL 帶負數
+             * import & export Status = confirm
+             * adjust Status != new
+             */
             sqlCmd.Append(string.Format(@"
 DECLARE @contract VARCHAR(15)
 		,@mdivision VARCHAR(8)
@@ -80,34 +86,35 @@ from (
 			,vid.Qty
 	from VNImportDeclaration vi WITH (NOLOCK) 
 	inner join VNImportDeclaration_Detail vid WITH (NOLOCK) on vid.ID = vi.ID
-	where vi.VNContractID = @contract
+	where vi.VNContractID = @contract and vi.Status = 'Confirmed'
 
 	union all
 	select 	vcd.NLCode
-			,vcd.Qty
+			, 0 - (vcd.Qty * ved.ExportQty)
 	from VNExportDeclaration ve WITH (NOLOCK) 
 	inner join VNExportDeclaration_Detail ved WITH (NOLOCK) on ved.ID = ve.ID
 	inner join VNConsumption vc WITH (NOLOCK) on vc.VNContractID = ve.VNContractID and ved.CustomSP = vc.CustomSP
 	inner join VNConsumption_Detail vcd WITH (NOLOCK) on vcd.ID = vc.ID
-	where ve.VNContractID = @contract
+	where ve.VNContractID = @contract and ve.Status = 'Confirmed'
 
 	union all
 	select 	vcd.NLCode
 			,vcd.Qty
 	from VNContractQtyAdjust vc WITH (NOLOCK) 
 	inner join VNContractQtyAdjust_Detail vcd WITH (NOLOCK) on vc.ID = vcd.ID
-	where vc.VNContractID = @contract
+	where vc.VNContractID = @contract and vc.Status != 'New'
 ) a
 group by a.NLCode;", contract, Sci.Env.User.Keyword));
 
             if (liguidationonly)
             {
+                #region liguidationonly = true
                 sqlCmd.Append(@"
 select 	isnull(tc.HSCode,'') as HSCode
 		,a.NLCode
 		,isnull(vcd.DescEN,'') as Description
 		,isnull(tc.UnitID,'') as UnitID
-		,isnull(tc.Qty,0) - isnull(td.Qty,0) as LiqQty
+		,isnull(tc.Qty,0) + isnull(td.Qty,0) as LiqQty
 from (
 	select NLCode 
 	from #tmpContract 
@@ -130,10 +137,15 @@ where 1 = 1");
                     sqlCmd.Append(string.Format(" and a.NLCode = '{0}'", nlcode));
                 }
                 sqlCmd.Append(@"                                                                                                       
-order by CONVERT(int,SUBSTRING(a.NLCode,3,3))");
+order by CONVERT(int,SUBSTRING(a.NLCode,3,3))
+
+drop table #tmpContract;
+drop table #tmpDeclare;");
+                #endregion 
             }
             else
             {
+                #region liguidationonly = false
                 sqlCmd.Append(string.Format(@"
 --撈W/House資料
 select 	distinct o.POID
@@ -591,6 +603,7 @@ select * from #tmpProdQty where Qty > 0 {0} {1} order by ID,Article,SizeCode
 --Scrap明細
 select * from #tmpScrapQty where Qty > 0 {0} {1} order by POID,Seq", MyUtility.Check.Empty(hscode) ? "" : string.Format("and HSCode = '{0}'", hscode)
                                                                        , MyUtility.Check.Empty(nlcode) ? "" : string.Format("and NLCode = '{0}'", nlcode)));
+                #endregion 
             }
             #endregion
 
