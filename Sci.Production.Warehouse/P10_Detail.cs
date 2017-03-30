@@ -41,16 +41,19 @@ namespace Sci.Production.Warehouse
                 DataTable dtFtyinventory;
                 Ict.DualResult result;
                 if (!(result = MyUtility.Tool.ProcessWithDatatable
-                        (temp, "", @"select t.*,FTY.InQty,FTY.OutQty,FTY.AdjustQty,FTY.InQty-FTY.OutQty+FTY.AdjustQty as balanceqty,[location]=dbo.Getlocation(FTY.Ukey)   
+                        (temp, "", @"          
+            select t.*,FTY.InQty,FTY.OutQty,FTY.AdjustQty,FTY.InQty-FTY.OutQty+FTY.AdjustQty as balanceqty,[location]=dbo.Getlocation(FTY.Ukey),GroupQty = Sum(FTY.InQty-FTY.OutQty+FTY.AdjustQty) over(partition by t.dyelot)
             from #tmp t
             Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
+            order by GroupQty desc,t.dyelot,balanceqty desc
+
             ", out dtFtyinventory, "#tmp")))
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;
                 }
                 gridbs.DataSource = dtFtyinventory;
-                dtFtyinventory.DefaultView.Sort = "dyelot,balanceqty desc";
+                //dtFtyinventory.DefaultView.Sort = "dyelot,balanceqty desc";
             }
 
             this.dis_ID.Text = CurrentDetailData["id"].ToString();
@@ -76,7 +79,8 @@ namespace Sci.Production.Warehouse
             decimal DECqty;
             if (!decimal.TryParse(STRqty, out DECqty))
             { DECqty = 0; }
-            this.num_variance.Value = DECrequestqty - DECaccu_issue - DECqty;
+
+            this.num_variance.Value = this.num_balance.Value - this.num_issue.Value;
         }
 
         protected override bool OnGridSetup()
@@ -153,10 +157,8 @@ namespace Sci.Production.Warehouse
             DataTable subDT = (DataTable)gridbs.DataSource;
             Object SumIssueQTY = subDT.Compute("Sum(qty)","");
             this.num_issue.Text = SumIssueQTY.ToString();
-            if (!MyUtility.Check.Empty(SumIssueQTY) && !MyUtility.Check.Empty(CurrentDetailData["requestqty"].ToString()))
-            {
-                this.num_variance.Value = Convert.ToDecimal(CurrentDetailData["requestqty"].ToString()) - Convert.ToDecimal(SumIssueQTY.ToString());
-            }
+            this.num_variance.Value = this.num_balance.Value - this.num_issue.Value;
+
         }
 
         private void delete_Click(object sender, EventArgs e)

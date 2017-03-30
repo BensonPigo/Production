@@ -172,6 +172,7 @@
             this.dis_sizespec.Name = "dis_sizespec";
             this.dis_sizespec.Size = new System.Drawing.Size(124, 23);
             this.dis_sizespec.TabIndex = 120;
+            this.dis_sizespec.Visible = false;
             // 
             // label11
             // 
@@ -181,6 +182,7 @@
             this.label11.Size = new System.Drawing.Size(75, 23);
             this.label11.TabIndex = 119;
             this.label11.Text = "SizeSpec";
+            this.label11.Visible = false;
             // 
             // dis_colorid
             // 

@@ -614,11 +614,12 @@ for xml path('') ", ukey), out dt);
             List<DataRow> items = new List<DataRow>();
             String sqlcmd;
             DataTable dt;
-
-            decimal request = decimal.Parse(materials["requestqty"].ToString());
+            decimal request; //需求總數
+            
             decimal accu_issue = 0m;
             if (isIssue)//P10 Auto Pick
             {
+                request = decimal.Parse(materials["requestqty"].ToString()) - decimal.Parse(materials["accu_issue"].ToString());
                 sqlcmd = string.Format(@"
 with cte as 
 (
@@ -645,6 +646,7 @@ order by c.GroupQty DESC,a.Dyelot,Qty desc", Sci.Env.User.Keyword, materials["po
             }
             else if (isIssue==false && stocktype == "B")//P28 Auto Pick
             {
+                request = decimal.Parse(materials["requestqty"].ToString());
                 sqlcmd = string.Format(@"
 with cte as 
 (
@@ -670,6 +672,7 @@ order by c.GroupQty DESC,a.Dyelot,Qty DESC", Sci.Env.User.Keyword, materials["po
             }
             else//P29 Auto Pick
             {
+                request = decimal.Parse(materials["requestqty"].ToString());
                 sqlcmd = string.Format(@"
 with cte as 
 (

@@ -136,10 +136,10 @@ namespace Sci.Production.Warehouse
             Helper.Controls.Grid.Generator(this.detailgrid)
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
             //.Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(20), iseditingreadonly: true)  //1
-            .Text("Colorid", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)  //2
+            .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(17), iseditingreadonly: true)  //1
+            .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
            // .Text("SizeSpec", header: "SizeSpec", width: Widths.AnsiChars(10), iseditingreadonly: true)  //3
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4            
+            .EditText("Description", header: "Description", width: Widths.AnsiChars(40), iseditingreadonly: true) //4            
             .Numeric("requestqty", name: "requestqty", header: "Request", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //5
             .Numeric("accu_issue", name: "accu_issue", header: "Accu. Issued", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
             .Numeric("", name: "bal_qty", header: "Bal. Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //7
