@@ -265,6 +265,8 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             button29.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
             button30.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_PFHis WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             button32.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing2"]) ? Color.Blue : Color.Black;
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_EachCons", "ID")) button22.ForeColor = Color.Blue;
+            else button22.ForeColor = Color.Black;
         }
 
         protected override void ClickNewAfter()
@@ -1167,6 +1169,14 @@ where POID = @poid group by POID,b.spno";
                 return false;
             }
             return base.ClickEditBefore();
+        }
+
+        private void button22_Click_1(object sender, EventArgs e)
+        {
+            if (null == this.CurrentMaintain) return;
+            var frm = new Sci.Production.PublicForm.P01_EachConsumption(false, CurrentMaintain["id"].ToString(), null, null, false, true,false);
+            frm.ShowDialog(this);
+            this.OnDetailEntered();
         }
 
     }

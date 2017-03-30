@@ -189,7 +189,7 @@ AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
         private void button2_Click(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
-            var frm = new Sci.Production.Cutting.P01_EachConsumption(false, CurrentMaintain["id"].ToString(), null, null, false, true);
+            var frm = new Sci.Production.PublicForm.P01_EachConsumption(false, CurrentMaintain["id"].ToString(), null, null, false, true,true);
             frm.ShowDialog(this);
             this.OnDetailEntered();
         }

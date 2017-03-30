@@ -490,7 +490,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
         private void button23_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain; if (null == dr) return;
-            var frm = new Sci.Production.Cutting.P01_EachConsumption(false, CurrentMaintain["id"].ToString(), null, null, false, false);
+            var frm = new Sci.Production.PublicForm.P01_EachConsumption(false, CurrentMaintain["id"].ToString(), null, null, false, false,false);
             frm.ShowDialog(this);
         }
 

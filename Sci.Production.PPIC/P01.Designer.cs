@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.button22 = new Sci.Win.UI.Button();
             this.button33 = new Sci.Win.UI.Button();
             this.button31 = new Sci.Win.UI.Button();
             this.button32 = new Sci.Win.UI.Button();
@@ -141,8 +142,8 @@
             this.lineShape6 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.txttpeuser5 = new Sci.Production.Class.txttpeuser();
-            this.txttpeuser3 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser4 = new Sci.Production.Class.txttpeuser();
+            this.txttpeuser3 = new Sci.Production.Class.txttpeuser();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -285,11 +286,6 @@
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Location = new System.Drawing.Point(4, 24);
-            this.detail.Size = new System.Drawing.Size(1000, 661);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtmfactory1);
@@ -421,12 +417,12 @@
             this.detailcont.Controls.Add(this.txtuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
-            this.detailcont.Size = new System.Drawing.Size(1000, 661);
+            this.detailcont.Size = new System.Drawing.Size(897, 395);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 661);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 395);
+            this.detailbtm.Size = new System.Drawing.Size(897, 0);
             // 
             // browse
             // 
@@ -463,6 +459,7 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.button22);
             this.tabPage1.Controls.Add(this.button33);
             this.tabPage1.Controls.Add(this.button31);
             this.tabPage1.Controls.Add(this.button32);
@@ -569,14 +566,25 @@
             this.tabPage1.Controls.Add(this.label50);
             this.tabPage1.Controls.Add(this.shapeContainer2);
             this.tabPage1.Controls.Add(this.txttpeuser5);
-            this.tabPage1.Controls.Add(this.txttpeuser3);
             this.tabPage1.Controls.Add(this.txttpeuser4);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Controls.Add(this.txttpeuser3);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
+            // 
+            // button22
+            // 
+            this.button22.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.button22.Location = new System.Drawing.Point(797, 598);
+            this.button22.Name = "button22";
+            this.button22.Size = new System.Drawing.Size(194, 27);
+            this.button22.TabIndex = 111;
+            this.button22.Text = "Each Cons.";
+            this.button22.UseVisualStyleBackColor = true;
+            this.button22.Click += new System.EventHandler(this.button22_Click_1);
             // 
             // button33
             // 
@@ -1640,7 +1648,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(987, 649);
+            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -1708,15 +1716,6 @@
             this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser5.TabIndex = 70;
             // 
-            // txttpeuser3
-            // 
-            this.txttpeuser3.DisplayBox1Binding = "";
-            this.txttpeuser3.DisplayBox2Binding = "";
-            this.txttpeuser3.Location = new System.Drawing.Point(468, 4);
-            this.txttpeuser3.Name = "txttpeuser3";
-            this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser3.TabIndex = 6;
-            // 
             // txttpeuser4
             // 
             this.txttpeuser4.DisplayBox1Binding = "";
@@ -1725,6 +1724,15 @@
             this.txttpeuser4.Name = "txttpeuser4";
             this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser4.TabIndex = 7;
+            // 
+            // txttpeuser3
+            // 
+            this.txttpeuser3.DisplayBox1Binding = "";
+            this.txttpeuser3.DisplayBox2Binding = "";
+            this.txttpeuser3.Location = new System.Drawing.Point(468, 4);
+            this.txttpeuser3.Name = "txttpeuser3";
+            this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser3.TabIndex = 6;
             // 
             // label1
             // 
@@ -2122,7 +2130,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1000, 661);
+            this.shapeContainer1.Size = new System.Drawing.Size(992, 655);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
@@ -3462,5 +3470,6 @@
         private Win.UI.DisplayBox displayBox29;
         private Win.UI.Button button33;
         private Class.txtmfactory txtmfactory1;
+        private Win.UI.Button button22;
     }
 }
