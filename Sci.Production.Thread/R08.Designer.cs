@@ -49,6 +49,8 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
+            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.label10 = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -56,17 +58,22 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(430, 12);
+            this.print.TabIndex = 1;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(430, 48);
+            this.toexcel.TabIndex = 2;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(430, 84);
+            this.close.TabIndex = 3;
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtMdivision1);
+            this.panel1.Controls.Add(this.label10);
             this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.label9);
             this.panel1.Controls.Add(this.textLOC2);
@@ -87,8 +94,8 @@
             this.panel1.Controls.Add(this.label1);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(409, 275);
-            this.panel1.TabIndex = 95;
+            this.panel1.Size = new System.Drawing.Size(409, 292);
+            this.panel1.TabIndex = 0;
             // 
             // label8
             // 
@@ -119,7 +126,7 @@
             this.textLOC2.Location = new System.Drawing.Point(256, 193);
             this.textLOC2.Name = "textLOC2";
             this.textLOC2.Size = new System.Drawing.Size(113, 23);
-            this.textLOC2.TabIndex = 22;
+            this.textLOC2.TabIndex = 7;
             this.textLOC2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC1_MouseDown);
             // 
             // textLOC1
@@ -129,7 +136,7 @@
             this.textLOC1.Location = new System.Drawing.Point(117, 193);
             this.textLOC1.Name = "textLOC1";
             this.textLOC1.Size = new System.Drawing.Size(113, 23);
-            this.textLOC1.TabIndex = 21;
+            this.textLOC1.TabIndex = 6;
             this.textLOC1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC1_MouseDown);
             // 
             // textITEM
@@ -139,7 +146,7 @@
             this.textITEM.Location = new System.Drawing.Point(116, 159);
             this.textITEM.Name = "textITEM";
             this.textITEM.Size = new System.Drawing.Size(127, 23);
-            this.textITEM.TabIndex = 20;
+            this.textITEM.TabIndex = 5;
             this.textITEM.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textITEM_MouseDown);
             // 
             // textTYPE
@@ -149,7 +156,7 @@
             this.textTYPE.Location = new System.Drawing.Point(117, 123);
             this.textTYPE.Name = "textTYPE";
             this.textTYPE.Size = new System.Drawing.Size(135, 23);
-            this.textTYPE.TabIndex = 19;
+            this.textTYPE.TabIndex = 4;
             this.textTYPE.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textTYPE_MouseDown);
             // 
             // textSHA
@@ -159,14 +166,14 @@
             this.textSHA.Location = new System.Drawing.Point(117, 86);
             this.textSHA.Name = "textSHA";
             this.textSHA.Size = new System.Drawing.Size(122, 23);
-            this.textSHA.TabIndex = 18;
+            this.textSHA.TabIndex = 3;
             this.textSHA.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textSHA_MouseDown);
             // 
             // radioPanel1
             // 
             this.radioPanel1.Controls.Add(this.radioButton2);
             this.radioPanel1.Controls.Add(this.radioButton1);
-            this.radioPanel1.Location = new System.Drawing.Point(116, 227);
+            this.radioPanel1.Location = new System.Drawing.Point(116, 256);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(175, 26);
             this.radioPanel1.TabIndex = 15;
@@ -202,7 +209,7 @@
             this.textBox2.Location = new System.Drawing.Point(240, 52);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(100, 23);
-            this.textBox2.TabIndex = 9;
+            this.textBox2.TabIndex = 2;
             this.textBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
             // 
             // textBox1
@@ -212,7 +219,7 @@
             this.textBox1.Location = new System.Drawing.Point(116, 52);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 8;
+            this.textBox1.TabIndex = 1;
             this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
             // 
             // dateRange1
@@ -221,12 +228,12 @@
             this.dateRange1.Location = new System.Drawing.Point(116, 17);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 7;
+            this.dateRange1.TabIndex = 0;
             // 
             // label7
             // 
             this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(19, 230);
+            this.label7.Location = new System.Drawing.Point(19, 259);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(90, 23);
             this.label7.TabIndex = 6;
@@ -286,11 +293,29 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Date";
             // 
+            // txtMdivision1
+            // 
+            this.txtMdivision1.BackColor = System.Drawing.Color.White;
+            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision1.Location = new System.Drawing.Point(117, 226);
+            this.txtMdivision1.Name = "txtMdivision1";
+            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision1.TabIndex = 8;
+            // 
+            // label10
+            // 
+            this.label10.Lines = 0;
+            this.label10.Location = new System.Drawing.Point(19, 226);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(90, 23);
+            this.label10.TabIndex = 27;
+            this.label10.Text = "M";
+            // 
             // R08
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(522, 320);
+            this.ClientSize = new System.Drawing.Size(522, 335);
             this.Controls.Add(this.panel1);
             this.Name = "R08";
             this.Text = "R08. Thread Issue List";
@@ -330,5 +355,7 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Class.txtMdivision txtMdivision1;
+        private Win.UI.Label label10;
     }
 }

@@ -26,6 +26,7 @@ namespace Sci.Production.Thread
             : base(menuitem)
         {
             InitializeComponent();
+            this.txtMdivision1.Text = Env.User.Keyword;
         }
 
         protected override bool ValidateInput()
@@ -114,6 +115,12 @@ namespace Sci.Production.Thread
                 sqlPar.Add(new SqlParameter("@loc1", textLOC1.Text.ToString()));
                 sqlPar.Add(new SqlParameter("@loc2", textLOC2.Text.ToString()));
                 excelHead.Add("Location", textLOC1.Text.ToString() + " ~ " + textLOC2.Text.ToString());
+            }
+
+            if (!MyUtility.Check.Empty(txtMdivision1.Text.ToString()))
+            {
+                sqlWhere.Add("ti.MDivisionID = @M");
+                sqlPar.Add(new SqlParameter("@M", txtMdivision1.Text.ToString()));
             }
 
             if (radioButton1.Checked == true)
