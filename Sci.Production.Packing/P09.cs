@@ -311,8 +311,12 @@ order by ID,Seq", textBox1.Text);
         //Start to Scan
         private void button2_Click(object sender, EventArgs e)
         {
-            DataRow dr = grid1.GetDataRow(grid1.GetSelectedRowIndex());
-            if (MyUtility.Convert.GetString(dr["NotYetScan"]) == "0")
+            if (grid1.GetTable() != null && grid1.GetTable().Rows.Count == 0)
+            {
+                return;
+            }
+            DataRow dr = grid1.GetDataRow(grid1.GetSelectedRowIndex());            
+            if (dr != null && MyUtility.Convert.GetString(dr["NotYetScan"]) == "0")
             {
                 MyUtility.Msg.WarningBox("This carton had been scanned, so can't scan again!!");
                 return;
