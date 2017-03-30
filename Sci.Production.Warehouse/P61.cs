@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Transactions;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
@@ -34,6 +37,7 @@ select  LID.ID
         , [Desc] = Litem.Description
         , [unit] = Linv.UnitID
         , LID.Qty
+        , LID.ukey
 from LocalIssue LI
 join LocalIssue_Detail LID on LI.ID = LID.ID
 join LocalInventory Linv on LID.OrderID = Linv.OrderID and LID.Refno = Linv.Refno and LID.ThreadColorID = Linv.ThreadColorID
@@ -76,6 +80,7 @@ where LI.ID = '{0}' and LI.MDivisionID = '{1}'", ID, Sci.Env.User.Keyword);
 
         protected override bool ClickSaveBefore()
         {
+            this.detailgrid.EndEdit();
             #region Check 必輸條件
             /*--- IssueQty != 0 ---*/
             List<string> listErr = new List<string>();
@@ -112,7 +117,89 @@ where LI.ID = '{0}' and LI.MDivisionID = '{1}'", ID, Sci.Env.User.Keyword);
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+            DualResult result;
+            List<SqlParameter> listPar = new List<SqlParameter>();
+            listPar.Add(new SqlParameter("@ID", CurrentMaintain["ID"]));
+            listPar.Add(new SqlParameter("@UserID", Env.User.UserID));
+            #region Check 庫存
+            DataTable dataTable;
+            string checkStockQty = @"
+select *
+from (
+	select	Linv.OrderID
+			, Linv.Refno
+			, Linv.ThreadColorID 
+			, StockQty = Linv.InQty - Linv.OutQty + Linv.AdjustQty - LID.Qty 
+	from LocalInventory Linv
+	inner join LocalIssue_Detail LID on Linv.OrderID = LID.OrderID 
+		and Linv.Refno = LID.Refno and Linv.ThreadColorID = LID.ThreadColorID
+	where LID.ID = @ID
+) s
+where s.StockQty < 0";
+            if (!(result = DBProxy.Current.Select(null, checkStockQty, listPar, out dataTable)))
+            {
+                ShowErr(checkStockQty, result);
+                return;
+            } else
+            {
+                if(dataTable != null && dataTable.Rows.Count > 0){
+                    List<string> listErr = new List<string>();
+                    foreach (DataRow dr in dataTable.Rows)
+                    {
+                        listErr.Add(string.Format("< SP# > : {0}, < Refno > : {1}, < ThreadColor > : {2}"
+                                                  , dr["OrderID"], dr["Refno"], dr["ThreadColorID"]));
+                    }
+                    MyUtility.Msg.InfoBox(listErr.JoinToString("/n/r"), "Local Stock Quantity can not less then zero!!");
+                    return;
+                }
+            }
+            #endregion
+            #region SQL Command : 更新表頭
+            string strUpdateLocalIssue = @"
+Update LocalIssue
+Set Status = 'Confirmed'
+	, EditName = @UserID
+	, EditDate = GETDATE()
+from LocalIssue 
+where ID = @ID";
+            #endregion
+            #region SQL Command : Update 庫存
+            string strUpdateLocalInv = @"
+UPDATE Linv
+Set Linv.OutQty = Linv.OutQty + LID.Qty
+from LocalInventory Linv
+inner join LocalIssue_Detail LID on Linv.OrderID = LID.OrderID 
+	and Linv.Refno = LID.Refno and Linv.ThreadColorID = LID.ThreadColorID
+where LID.ID = @ID";
+            #endregion
+            #region SQL Updating...
+            TransactionScope transactionScope = new TransactionScope();
+            using (transactionScope)
+            {
+                try {
+                    if (!(result = DBProxy.Current.Execute(null, strUpdateLocalIssue, listPar)))
+                    {
+                        transactionScope.Dispose();
+                        ShowErr(strUpdateLocalIssue, result);
+                        return;
+                    }
+                    if (!(result = DBProxy.Current.Execute(null, strUpdateLocalInv, listPar)))
+                    {
+                        transactionScope.Dispose();
+                        ShowErr(strUpdateLocalInv, result);
+                        return;
+                    }
+                    transactionScope.Complete();
+                    MyUtility.Msg.InfoBox("Confirmed successful");
+                } catch (Exception e) {
+                    transactionScope.Dispose();
+                    ShowErr("Commit transcation error.", e);
+                    return;
+                }
+            }
+            #endregion 
             this.RenewData();
+            this.ReloadDatas();
             this.OnDetailEntered();
             this.EnsureToolbarExt();
         }
@@ -120,7 +207,59 @@ where LI.ID = '{0}' and LI.MDivisionID = '{1}'", ID, Sci.Env.User.Keyword);
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
+            DualResult result;
+            List<SqlParameter> listPar = new List<SqlParameter>();
+            listPar.Add(new SqlParameter("@ID", CurrentMaintain["ID"]));
+            listPar.Add(new SqlParameter("@UserID", Env.User.UserID));
+            #region SQL Command : 更新表頭
+            string strUpdateLocalIssue = @"
+Update LocalIssue
+Set Status = 'New'
+	, EditName = @UserID
+	, EditDate = GETDATE()
+from LocalIssue 
+where ID = @ID";
+            #endregion
+            #region SQL Command : Update 庫存
+            string strUpdateLocalInv = @"
+UPDATE Linv
+Set Linv.OutQty = Linv.OutQty - LID.Qty
+from LocalInventory Linv
+inner join LocalIssue_Detail LID on Linv.OrderID = LID.OrderID 
+	and Linv.Refno = LID.Refno and Linv.ThreadColorID = LID.ThreadColorID
+where LID.ID = @ID";
+            #endregion
+            #region SQL Updating...
+            TransactionScope transactionScope = new TransactionScope();
+            using (transactionScope)
+            {
+                try
+                {
+                    if (!(result = DBProxy.Current.Execute(null, strUpdateLocalIssue, listPar)))
+                    {
+                        transactionScope.Dispose();
+                        ShowErr(strUpdateLocalIssue, result);
+                        return;
+                    }
+                    if (!(result = DBProxy.Current.Execute(null, strUpdateLocalInv, listPar)))
+                    {
+                        transactionScope.Dispose();
+                        ShowErr(strUpdateLocalInv, result);
+                        return;
+                    }
+                    transactionScope.Complete();
+                    MyUtility.Msg.InfoBox("UnConfirmed successful");
+                }
+                catch (Exception e)
+                {
+                    transactionScope.Dispose();
+                    ShowErr("Commit transcation error.", e);
+                    return;
+                }
+            }
+            #endregion 
             this.RenewData();
+            this.ReloadDatas();
             this.OnDetailEntered();
             this.EnsureToolbarExt();
         }
