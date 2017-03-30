@@ -514,27 +514,44 @@ PIVOT(sum([Amount]) FOR [M] IN ([January],[February],[March],[April],[May],[June
 --把以上準備的table先各月分sum起來，且加上最後一組YTD總和，按照報表要求排列
 ;WITH Amount as(
 	select a.Description,a.Defect_Code,
-		[January_A] = sum(a.[January]),[February_A] = sum(a.[February]),[March_A] = sum(a.[March]),[April_A] = sum(a.[April]),
-		[May_A] = sum(a.[May]),[June_A] = sum(a.[June]),[July_A] = sum(a.[July]),[August_A] = sum(a.[August]),
-		[September_A] = sum(a.[September]),[October_A] = sum(a.[October]),[November_A] = sum(a.[November]),[December_A] = sum(a.[December]),
+		[January_A] = sum(a.[January]),         [February_A] = sum(a.[February]),
+        [March_A] = sum(a.[March]),             [April_A] = sum(a.[April]),
+		[May_A] = sum(a.[May]),                 [June_A] = sum(a.[June]),
+        [July_A] = sum(a.[July]),               [August_A] = sum(a.[August]),
+		[September_A] = sum(a.[September]),     [October_A] = sum(a.[October]),
+        [November_A] = sum(a.[November]),       [December_A] = sum(a.[December]),
 		[YTD_A] = iif(DefectMainID = Defect_Code,ta.Amount,null)
 	from #t_Amount a
-	outer apply(select Amount from(select DefectMainID,sum(Amount) Amount from #t_all group by DefectMainID) t where t.DefectMainID = a.DefectMainID )ta
+	outer apply(
+        select Amount 
+        from(select DefectMainID,sum(Amount) Amount 
+        from #t_all group by DefectMainID) t where t.DefectMainID = a.DefectMainID 
+    )ta
 	group by a.Description,a.Defect_Code,iif(DefectMainID = Defect_Code,ta.Amount,null)
 ),qty as(
 	select q.Description,q.Defect_Code,
-		[January_Q] = sum(q.[January]),[February_Q] = sum(q.[February]),[March_Q] = sum(q.[March]),[April_Q] = sum(q.[April]),
-		[May_Q] = sum(q.[May]),[June_Q] = sum(q.[June]),[July_Q] = sum(q.[July]),[August_Q] = sum(q.[August]),
-		[September_Q] = sum(q.[September]),[October_Q] = sum(q.[October]),[November_Q] = sum(q.[November]),[December_Q] = sum(q.[December]),
+		[January_Q] = sum(q.[January]),     [February_Q] = sum(q.[February]),
+        [March_Q] = sum(q.[March]),         [April_Q] = sum(q.[April]),
+		[May_Q] = sum(q.[May]),             [June_Q] = sum(q.[June]),
+        [July_Q] = sum(q.[July]),           [August_Q] = sum(q.[August]),
+		[September_Q] = sum(q.[September]), [October_Q] = sum(q.[October]),
+        [November_Q] = sum(q.[November]),   [December_Q] = sum(q.[December]),
 		[YTD_Q] = iif(DefectMainID=Defect_Code,tq.qty,null)
 		from #t_qty  q
-	outer apply(select qty from(select DefectMainID,sum(qty) qty from #t_all group by DefectMainID) t where t.DefectMainID = q.DefectMainID )tq
+	outer apply(
+        select qty 
+        from(select DefectMainID,sum(qty) qty from #t_all group by DefectMainID) t 
+        where t.DefectMainID = q.DefectMainID 
+    )tq
 	group by q.Description,q.Defect_Code,iif(DefectMainID=Defect_Code,tq.qty,null)
 ),TQTY_by_monthly as(
 	select distinct 
-		[January_TQ] = sum(q.[January])over(),[February_TQ] = sum(q.[February])over(),[March_TQ] = sum(q.[March])over(),[April_TQ] = sum(q.[April])over(),
-		[May_TQ] = sum(q.[May])over(),[June_TQ] = sum(q.[June])over(),[July_TQ] = sum(q.[July])over(),[August_TQ] = sum(q.[August])over(),
-		[September_TQ] = sum(q.[September])over(),[October_TQ] = sum(q.[October])over(),[November_TQ] = sum(q.[November])over(),[December_TQ] = sum(q.[December])over(),
+		[January_TQ] = sum(q.[January])over(),      [February_TQ] = sum(q.[February])over(),
+        [March_TQ] = sum(q.[March])over(),          [April_TQ] = sum(q.[April])over(),
+		[May_TQ] = sum(q.[May])over(),              [June_TQ] = sum(q.[June])over(),
+        [July_TQ] = sum(q.[July])over(),            [August_TQ] = sum(q.[August])over(),
+		[September_TQ] = sum(q.[September])over(),  [October_TQ] = sum(q.[October])over(),
+        [November_TQ] = sum(q.[November])over(),    [December_TQ] = sum(q.[December])over(),
 		[YTD_TQ] = tq.qty
 	from #t_qty  q
 	outer apply(select sum(qty) qty from #t_all)tq
