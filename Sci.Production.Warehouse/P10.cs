@@ -447,8 +447,10 @@ namespace Sci.Production.Warehouse
                     }
                     sum_subDetail(dr, subDT);
                 }
-
             }
+            //強制觸發CellValueNeeded，否則游標在Issue QTY上可能會無法觸發。
+            detailgrid.SelectRowToNext();
+            detailgrid.SelectRowToPrev();
         }
 
         private void txtRequest_Validating(object sender, CancelEventArgs e)
