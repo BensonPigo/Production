@@ -40,10 +40,10 @@ namespace Sci.Production.Warehouse
                  .Text("stockseq1", header: "Stock" + Environment.NewLine + "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                  .Text("stockseq2", header: "Stock" + Environment.NewLine + "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
 
-                 .Numeric("poqty", header: "Order Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Numeric("InQty", header: "Accu Trans.", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Numeric("total_qty", header: "Trans. Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Numeric("requestqty", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                 .Numeric("poqty", header: "Order Qty", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                 .Numeric("InQty", header: "Accu Trans.", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                 .Numeric("total_qty", header: "Trans. Qty", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                 .Numeric("requestqty", header: "Balance", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Text("TransID", header: "Trans. ID" , width: Widths.AnsiChars(13), iseditingreadonly: true)
                   ;
             #endregion
@@ -182,10 +182,10 @@ namespace Sci.Production.Warehouse
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk2)
                  .Text("fromroll", header: "Roll#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                  .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                 .Numeric("balanceQty", header: "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Numeric("qty", header: "Trans. Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, settings: ns).Get(out col_Qty)
-                  .Text("fromlocation", header: "From Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                  .Text("tolocation", header: "To Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(20), iseditingreadonly: false, settings: ts2).Get(out col_tolocation)
+                 .Numeric("balanceQty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                 .Numeric("qty", header: "Trans. Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, settings: ns).Get(out col_Qty)
+                  .Text("fromlocation", header: "From Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                  .Text("tolocation", header: "To Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: false, settings: ts2).Get(out col_tolocation)
                   ;
             col_Qty.DefaultCellStyle.BackColor = Color.Pink;
             col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
@@ -387,6 +387,8 @@ left join GroupDyelot g on g.toFactoryID=t.FactoryID and g.topoid=t.poID and g.t
 where fi.StockType ='I' and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
 order by topoid,toseq1,toseq2,g.GroupQty DESC,fi.Dyelot,BalanceQty DESC
 drop table #tmp");
+
+            this.ShowWaitMessage("Data Loading....");
             #endregion
             DataSet dataSet;
             if (!SQL.Selects("", sqlcmd.ToString(), out dataSet))
@@ -426,6 +428,7 @@ drop table #tmp");
                 return;
             }
             btnCreate.Enabled = true;
+            this.HideWaitMessage();
         }
 
         private void btnAutoPick_Click(object sender, EventArgs e)
@@ -587,19 +590,19 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
         {
             if (MyUtility.Check.Empty(master))
             {
-                MyUtility.Msg.WarningBox("All TransID NO data");
+                MyUtility.Msg.WarningBox("Did not finish Inventory To Bulk");
                 return;
             }
             if (!master.Columns.Contains("TransID"))
             {
-                MyUtility.Msg.WarningBox("All TransID NO data");
+                MyUtility.Msg.WarningBox("Did not finish Inventory To Bulk");
                 return;
             }
             master.DefaultView.RowFilter = "TransID<>''";
             DataTable Exceldt = master.DefaultView.ToTable();
             if (Exceldt.Rows.Count == 0)
             {
-                MyUtility.Msg.WarningBox("All TransID NO data");
+                MyUtility.Msg.WarningBox("Did not finish Inventory To Bulk");
                 return;
             }
             Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(Exceldt);
