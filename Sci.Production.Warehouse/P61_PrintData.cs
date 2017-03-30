@@ -9,9 +9,9 @@ namespace Sci.Production.Warehouse
     class P61_PrintData
     {
         public string POID { get; set; }
-        public string SCIREFNO { get; set; }
+        public string Refno { get; set; }
         public string DESCRIPTION { get; set; }
-        public string SIZESPEC { get; set; }
+        public string ThreadColorID { get; set; }
         public string QTY { get; set; }
     }
 }

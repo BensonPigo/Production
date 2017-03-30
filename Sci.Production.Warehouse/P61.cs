@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Transactions;
 using System.Data.SqlClient;
+using Sci.Win;
+using System.Reflection;
 
 namespace Sci.Production.Warehouse
 {
@@ -199,7 +202,6 @@ where LID.ID = @ID";
             }
             #endregion 
             this.RenewData();
-            this.ReloadDatas();
             this.OnDetailEntered();
             this.EnsureToolbarExt();
         }
@@ -259,7 +261,6 @@ where LID.ID = @ID";
             }
             #endregion 
             this.RenewData();
-            this.ReloadDatas();
             this.OnDetailEntered();
             this.EnsureToolbarExt();
         }
@@ -289,6 +290,66 @@ where LID.ID = @ID";
             var frm = new Sci.Production.Warehouse.P61_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
+        }
+
+        protected override bool ClickDeleteBefore()
+        {
+            #region Check Status
+            if (CurrentMaintain["Status"].EqualString("Confirmed"))
+            {
+                MyUtility.Msg.InfoBox("Data is confirmed, can't delete.", "Warning");
+                return false;
+            }
+            #endregion 
+            return base.ClickDeleteBefore();
+        }
+
+        protected override bool ClickPrint()
+        {
+            #region Check Status
+            if (!CurrentMaintain["Status"].EqualString("Confirmed"))
+            {
+                MyUtility.Msg.InfoBox("Data is not confirmed, can't print.", "Warning");
+                return false;
+            }
+            #endregion 
+            ReportDefinition report = new ReportDefinition();
+            #region Set RDLC_Title Data
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", CurrentMaintain["ID"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", CurrentMaintain["FactoryID"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", string.Format("{0:yyyy-MM-dd}", CurrentMaintain["IssueDate"])));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", CurrentMaintain["Remark"].ToString()));
+            #endregion 
+            #region Set RDLC_Detail Data
+            List<P61_PrintData> data = detailgrid.GetTable().AsEnumerable()
+                .Select(row => new P61_PrintData(){
+                    POID = row["OrderID"].ToString().Trim(),
+                    Refno = row["Refno"].ToString().Trim(),
+                    DESCRIPTION = row["Desc"].ToString().Trim(),
+                    ThreadColorID = row["ThreadColorID"].ToString().Trim(),
+                    QTY = row["Qty"].ToString().Trim()
+                }).ToList();
+
+            report.ReportDataSource = data;
+            #endregion
+            #region Open RDLC
+            DualResult result;
+            Type nameSpace = typeof(P61_PrintData);
+            Assembly assembly = nameSpace.Assembly;
+            string name = "P61_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(assembly, nameSpace, name, out reportresource)))
+            {
+                return false;
+            }
+            report.ReportResource = reportresource;
+
+            var form = new Sci.Win.Subs.ReportView(report);
+            form.MdiParent = MdiParent;
+            form.Show();
+            #endregion 
+            return true;
         }
     }
 }
