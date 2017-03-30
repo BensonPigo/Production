@@ -90,7 +90,7 @@ where LI.ID = '{0}' and LI.MDivisionID = '{1}'", ID, Sci.Env.User.Keyword);
             DataTable dataTable = this.detailgrid.GetTable();
             foreach (DataRow dr in dataTable.Rows)
             {
-                if (Convert.ToDecimal(dr["Qty"]) == 0)
+                if (dr.RowState != DataRowState.Deleted && Convert.ToDecimal(dr["Qty"]) == 0)
                 {
                     listErr.Add(string.Format(@"< SP# > : {0}, < Refno > : {1}, < ThreadColor > : {2}", dr["OrderID"], dr["Refno"], dr["ThreadColorID"]));
                 }

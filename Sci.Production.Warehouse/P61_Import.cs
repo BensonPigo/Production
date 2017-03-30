@@ -79,8 +79,8 @@ select	selected = 0
         , ID = ''
 from (
 	select	Linv.OrderID
-            , Linv.Refno
-			, Linv.ThreadColorID
+            , Refno = Ltrim(Rtrim(Linv.Refno))
+			, ThreadColorID = Ltrim(Rtrim(Linv.ThreadColorID))
 			, unit = Linv.UnitId
 			, StockQty = Linv.InQty - Linv.OutQty + Linv.AdjustQty
 			, [Desc] = LItem.Description
