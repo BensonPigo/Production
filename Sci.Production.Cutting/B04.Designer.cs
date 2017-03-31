@@ -43,10 +43,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(828, 228);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkBoxJunk);
@@ -56,20 +52,14 @@
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.txt_ID);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(828, 190);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 190);
-            this.detailbtm.Size = new System.Drawing.Size(828, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(676, 228);
+            this.browse.Size = new System.Drawing.Size(828, 400);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(836, 257);
+            this.tabs.Size = new System.Drawing.Size(836, 429);
             // 
             // createby
             // 
@@ -156,7 +146,7 @@
             // 
             // B04
             // 
-            this.ClientSize = new System.Drawing.Size(836, 290);
+            this.ClientSize = new System.Drawing.Size(836, 462);
             this.DefaultFilter = "Type=\'RC\'";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
