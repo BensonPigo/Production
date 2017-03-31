@@ -25,7 +25,7 @@ namespace Sci.Production.Class
             this.Size = new System.Drawing.Size(80, 23);
         }
 
-        public void setDefalutIndex(string defaultValue = null)
+        public void setDefalutIndex(bool defaultValue = false)
         {
             DataTable dataTable;
             DBProxy.Current.Select(null, "Select ID From MDivision", out dataTable);
@@ -37,7 +37,7 @@ namespace Sci.Production.Class
             this.ValueMember = "ID";
             this.DisplayMember = "ID";
 
-            this.SelectedValue = (defaultValue == null) ? Sci.Env.User.Keyword : defaultValue;
+            this.SelectedValue = (defaultValue) ? Sci.Env.User.Keyword : "";
         }
     }
 }
