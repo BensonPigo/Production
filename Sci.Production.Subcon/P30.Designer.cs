@@ -384,7 +384,6 @@
             // displayBox7
             // 
             this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "apvdate", true));
             this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBox7.Location = new System.Drawing.Point(342, 112);
             this.displayBox7.Name = "displayBox7";
