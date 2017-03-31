@@ -63,8 +63,8 @@ namespace Sci.Production.Planning
                                           A3.ALIAS AS B ,
                                           SUM(A1.QTY )OVER (PARTITION BY A1.FACTORYID,A3.ALIAS)AS C,
                                           SUM(A4.ShipQty)OVER (PARTITION BY A1.FACTORYID,A3.ALIAS) AS D,  
-                                          SUM(A5.ShipQty)OVER (PARTITION BY A1.FACTORYID,A3.ALIAS) AS E, 
-                                           SUM(A4.ShipQty)  / case when A1.QTY = 0 then 1 else a1.qty end * 100 AS F
+                                          SUM(A5.ShipQty)OVER (PARTITION BY A1.FACTORYID,A3.ALIAS) AS E 
+                                          -- ,SUM(A4.ShipQty)  / case when A1.QTY = 0 then 1 else a1.qty end * 100 AS F
                                    INTO #TMP 
                                    FROM ORDERS A1 WITH (NOLOCK) 
                                    LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
@@ -84,9 +84,9 @@ namespace Sci.Production.Planning
 
                 strSQL += @" GROUP BY A1.FACTORYID, A3.ALIAS, A1.QTY,A4.ShipQty,A5.ShipQty  
                              ORDER BY  A1.FACTORYID, A3.ALIAS 
-                            SELECT DISTINCT #TMP.A,#TMP.B,#TMP.C,#TMP.D,#TMP.E,SUM(#TMP.F)OVER (PARTITION BY #TMP.A,#TMP.B) AS F		
+                             SELECT DISTINCT #TMP.A,#TMP.B,#TMP.C,#TMP.D,#TMP.E,F=format(CAST(#TMP.C AS decimal)/CAST(#TMP.D AS decimal),'#,###,###,##0.00')
                             FROM #TMP
-                            GROUP BY #TMP.A,#TMP.B,#TMP.C,#TMP.D,#TMP.E	,#TMP.F	
+                            GROUP BY #TMP.A,#TMP.B,#TMP.C,#TMP.D,#TMP.E	
                             DROP TABLE #TMP ";
                 result = DBProxy.Current.Select(null, strSQL, null, out gdtDatas);
                 if (!result) return result;
@@ -384,7 +384,7 @@ namespace Sci.Production.Planning
                 worksheet.Cells[row + 1, 3] = string.Format("=SUM(C2:C{0})", MyUtility.Convert.GetString(row));
                 worksheet.Cells[row + 1, 4] = string.Format("=SUM(D2:D{0})", MyUtility.Convert.GetString(row));
                 worksheet.Cells[row + 1, 5] = string.Format("=SUM(E2:E{0})", MyUtility.Convert.GetString(row));
-                worksheet.Cells[row + 1, 6] = string.Format("=SUM(F2:F{0})", MyUtility.Convert.GetString(row));
+                worksheet.Cells[row + 1, 6] = string.Format("=(C{0}/D{0})", MyUtility.Convert.GetString(row+1));
                 worksheet.Range[String.Format("A{0}:F{1}",2, row+1)].Borders.Color = Color.Black;
                 if ((gdtSP != null) && (gdtSP.Rows.Count > 0))
                 {
