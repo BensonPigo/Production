@@ -3,7 +3,7 @@ CREATE PROCEDURE [dbo].[PPIC_Report_SizeSpec]
 	@ID varchar(13)
 	,@WithZ bit = 0
 	,@fullsize bit = 0
-	,@ByType int = 0 --0單張 , 1 By CustCDID , 2 By PO
+	,@ByType int = 0 --0單張 , 1 By OrderCombo , 2 By PO
 AS
 BEGIN
 	

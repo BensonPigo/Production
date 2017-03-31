@@ -1,7 +1,7 @@
 ﻿
 CREATE PROCEDURE [dbo].[Order_Report_QtyBreakdown]
 	@OrderID varchar(13)
-	,@ByType int = 0 --0單張 , 1 By CustCDID , 2 By PO
+	,@ByType int = 0 --0單張 , 1 By OrderComboID , 2 By PO
 AS
 BEGIN
 
@@ -11,7 +11,7 @@ declare @tbl table (id varchar(13), Article varchar(8))
 if(@ByType = 0)
 	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID = @OrderID
 else if(@ByType = 1)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where POID = @poid AND CustCDID = (select CustCDID from MNOrder where ID = @OrderID) )
+	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where POID = @poid AND OrderComboID = @OrderID)
 else if(@ByType = 2)
 	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where POID = @poid )
 
