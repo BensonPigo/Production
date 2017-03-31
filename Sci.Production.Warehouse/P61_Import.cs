@@ -142,5 +142,17 @@ order by s.Refno, s.ThreadColorID, s.StockQty, s.[Desc]
         {
             this.Close();
         }
+
+        private void checkBalance_Click(object sender, EventArgs e)
+        {
+            if (checkBalance.Checked)
+            {
+                this.listControlBindingSource1.Filter = "StockQty > 0";
+            }
+            else
+            {
+                this.listControlBindingSource1.Filter = "";
+            }
+        }
     }
 }

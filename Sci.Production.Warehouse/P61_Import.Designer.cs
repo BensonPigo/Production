@@ -35,6 +35,7 @@
             this.txtSP = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.checkBalance = new Sci.Win.UI.CheckBox();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
@@ -102,6 +103,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.checkBalance);
             this.groupBox2.Controls.Add(this.btnCanel);
             this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -110,6 +112,18 @@
             this.groupBox2.Size = new System.Drawing.Size(1008, 53);
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
+            // 
+            // checkBalance
+            // 
+            this.checkBalance.AutoSize = true;
+            this.checkBalance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBalance.Location = new System.Drawing.Point(9, 16);
+            this.checkBalance.Name = "checkBalance";
+            this.checkBalance.Size = new System.Drawing.Size(255, 21);
+            this.checkBalance.TabIndex = 4;
+            this.checkBalance.Text = "Only show data of stock quantity > 0";
+            this.checkBalance.UseVisualStyleBackColor = true;
+            this.checkBalance.Click += new System.EventHandler(this.checkBalance_Click);
             // 
             // groupBox1
             // 
@@ -141,6 +155,7 @@
             this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid1.DataSource = this.listControlBindingSource1;
             this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -155,7 +170,6 @@
             this.grid1.Size = new System.Drawing.Size(1008, 419);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            this.grid1.DataSource = this.listControlBindingSource1;
             // 
             // P61_Import
             // 
@@ -166,6 +180,7 @@
             this.Name = "P61_Import";
             this.Text = "P61. Import Detail";
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -187,5 +202,6 @@
         private Win.UI.Panel panel1;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.CheckBox checkBalance;
     }
 }
