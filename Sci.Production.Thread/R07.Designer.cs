@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
             this.label10 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
@@ -51,6 +51,7 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
+            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
             this.panel1.SuspendLayout();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -59,21 +60,21 @@
             // 
             this.print.Enabled = false;
             this.print.Location = new System.Drawing.Point(433, 12);
-            this.print.TabIndex = 1;
+            this.print.TabIndex = 0;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(433, 48);
-            this.toexcel.TabIndex = 2;
+            this.toexcel.TabIndex = 1;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(433, 84);
-            this.close.TabIndex = 3;
+            this.close.TabIndex = 2;
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.txtMdivision1);
+            this.panel1.Controls.Add(this.comboMDivision);
             this.panel1.Controls.Add(this.label10);
             this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.label9);
@@ -97,15 +98,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(409, 295);
             this.panel1.TabIndex = 0;
-            // 
-            // txtMdivision1
-            // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(117, 225);
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 8;
             // 
             // label10
             // 
@@ -312,6 +304,17 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Date";
             // 
+            // comboMDivision
+            // 
+            this.comboMDivision.BackColor = System.Drawing.Color.White;
+            this.comboMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMDivision.FormattingEnabled = true;
+            this.comboMDivision.IsSupportUnselect = true;
+            this.comboMDivision.Location = new System.Drawing.Point(116, 225);
+            this.comboMDivision.Name = "comboMDivision";
+            this.comboMDivision.Size = new System.Drawing.Size(80, 24);
+            this.comboMDivision.TabIndex = 8;
+            // 
             // R07
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -357,6 +360,6 @@
         private Win.UI.Label label9;
         private Win.UI.Label label8;
         private Win.UI.Label label10;
-        private Class.txtMdivision txtMdivision1;
+        private Class.comboMDivision comboMDivision;
     }
 }

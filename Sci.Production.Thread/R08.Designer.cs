@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.label10 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
             this.textLOC2 = new Sci.Win.UI.TextBox();
@@ -49,8 +51,7 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
-            this.label10 = new Sci.Win.UI.Label();
+            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
             this.panel1.SuspendLayout();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -58,21 +59,21 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(430, 12);
-            this.print.TabIndex = 1;
+            this.print.TabIndex = 0;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(430, 48);
-            this.toexcel.TabIndex = 2;
+            this.toexcel.TabIndex = 1;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(430, 84);
-            this.close.TabIndex = 3;
+            this.close.TabIndex = 2;
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.txtMdivision1);
+            this.panel1.Controls.Add(this.comboMDivision);
             this.panel1.Controls.Add(this.label10);
             this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.label9);
@@ -96,6 +97,15 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(409, 292);
             this.panel1.TabIndex = 0;
+            // 
+            // label10
+            // 
+            this.label10.Lines = 0;
+            this.label10.Location = new System.Drawing.Point(19, 226);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(90, 23);
+            this.label10.TabIndex = 27;
+            this.label10.Text = "M";
             // 
             // label8
             // 
@@ -176,7 +186,7 @@
             this.radioPanel1.Location = new System.Drawing.Point(116, 256);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(175, 26);
-            this.radioPanel1.TabIndex = 15;
+            this.radioPanel1.TabIndex = 9;
             // 
             // radioButton2
             // 
@@ -293,23 +303,16 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Date";
             // 
-            // txtMdivision1
+            // comboMDivision
             // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(117, 226);
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 8;
-            // 
-            // label10
-            // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(19, 226);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(90, 23);
-            this.label10.TabIndex = 27;
-            this.label10.Text = "M";
+            this.comboMDivision.BackColor = System.Drawing.Color.White;
+            this.comboMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMDivision.FormattingEnabled = true;
+            this.comboMDivision.IsSupportUnselect = true;
+            this.comboMDivision.Location = new System.Drawing.Point(117, 226);
+            this.comboMDivision.Name = "comboMDivision";
+            this.comboMDivision.Size = new System.Drawing.Size(80, 24);
+            this.comboMDivision.TabIndex = 8;
             // 
             // R08
             // 
@@ -355,7 +358,7 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-        private Class.txtMdivision txtMdivision1;
         private Win.UI.Label label10;
+        private Class.comboMDivision comboMDivision;
     }
 }
