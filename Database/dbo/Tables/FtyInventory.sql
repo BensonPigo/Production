@@ -1,7 +1,6 @@
 ﻿CREATE TABLE [dbo].[FtyInventory] (
     [Ukey]                  BIGINT          IDENTITY (1, 1) NOT NULL,
     [MDivisionPoDetailUkey] BIGINT          NULL,
-    [MDivisionID]           VARCHAR (8)     CONSTRAINT [DF_FtyInventory_MDivisionID] DEFAULT ('') NULL,
     [POID]                  VARCHAR (13)    CONSTRAINT [DF_FtyInventory_POID] DEFAULT ('') NOT NULL,
     [Seq1]                  VARCHAR (3)     CONSTRAINT [DF_FtyInventory_Seq1] DEFAULT ('') NOT NULL,
     [Seq2]                  VARCHAR (2)     CONSTRAINT [DF_FtyInventory_Seq2] DEFAULT ('') NOT NULL,
@@ -16,6 +15,8 @@
     [Lock]                  BIT             CONSTRAINT [DF_FtyInventory_Lock] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_FtyInventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

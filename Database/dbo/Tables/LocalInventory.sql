@@ -1,5 +1,4 @@
 ﻿CREATE TABLE [dbo].[LocalInventory] (
-    [MDivisionID]   VARCHAR (8)    NOT NULL,
     [OrderID]       VARCHAR (13)   CONSTRAINT [DF_LocalInventory_POID] DEFAULT ('') NOT NULL,
     [Refno]         VARCHAR (21)   CONSTRAINT [DF_LocalInventory_Refno] DEFAULT ('') NOT NULL,
     [ThreadColorID] VARCHAR (15)   CONSTRAINT [DF_LocalInventory_ColorID] DEFAULT ('') NOT NULL,
@@ -9,6 +8,8 @@
     [UnitId]        VARCHAR (8)    CONSTRAINT [DF_LocalInventory_UnitId] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_LocalInventory_1] PRIMARY KEY CLUSTERED ([OrderID] ASC, [Refno] ASC, [ThreadColorID] ASC)
 );
+
+
 
 
 

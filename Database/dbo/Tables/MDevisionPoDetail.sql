@@ -1,16 +1,15 @@
 ﻿CREATE TABLE [dbo].[MDivisionPoDetail] (
-    [MDivisionID] VARCHAR (8)     CONSTRAINT [DF_MDivisionPoDetail_MDivisionId] DEFAULT ('') NOT NULL,
-    [POID]        VARCHAR (13)    CONSTRAINT [DF_MDivisionPoDetail_POID] DEFAULT ('') NOT NULL,
-    [Seq1]        VARCHAR (3)     CONSTRAINT [DF_MDivisionPoDetail_Seq1] DEFAULT ('') NOT NULL,
-    [Seq2]        VARCHAR (2)     CONSTRAINT [DF_MDivisionPoDetail_Seq2] DEFAULT ('') NOT NULL,
-    [InQty]       NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_InQty] DEFAULT ((0)) NULL,
-    [OutQty]      NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_OutQty] DEFAULT ((0)) NULL,
-    [AdjustQty]   NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_AdjustQty] DEFAULT ((0)) NULL,
-    [LInvQty]     NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_LInvQty] DEFAULT ((0)) NULL,
-    [LObQty]      NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_LObQty] DEFAULT ((0)) NULL,
-    [ALocation]   VARCHAR (100)   CONSTRAINT [DF_MDivisionPoDetail_ALocation] DEFAULT ('') NULL,
-    [BLocation]   VARCHAR (100)   CONSTRAINT [DF_MDivisionPoDetail_BLocation] DEFAULT ('') NULL,
-    [Ukey]        BIGINT          IDENTITY (1, 1) NOT NULL,
+    [POID]      VARCHAR (13)    CONSTRAINT [DF_MDivisionPoDetail_POID] DEFAULT ('') NOT NULL,
+    [Seq1]      VARCHAR (3)     CONSTRAINT [DF_MDivisionPoDetail_Seq1] DEFAULT ('') NOT NULL,
+    [Seq2]      VARCHAR (2)     CONSTRAINT [DF_MDivisionPoDetail_Seq2] DEFAULT ('') NOT NULL,
+    [InQty]     NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_InQty] DEFAULT ((0)) NULL,
+    [OutQty]    NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_OutQty] DEFAULT ((0)) NULL,
+    [AdjustQty] NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_AdjustQty] DEFAULT ((0)) NULL,
+    [LInvQty]   NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_LInvQty] DEFAULT ((0)) NULL,
+    [LObQty]    NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_LObQty] DEFAULT ((0)) NULL,
+    [ALocation] VARCHAR (100)   CONSTRAINT [DF_MDivisionPoDetail_ALocation] DEFAULT ('') NULL,
+    [BLocation] VARCHAR (100)   CONSTRAINT [DF_MDivisionPoDetail_BLocation] DEFAULT ('') NULL,
+    [Ukey]      BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK__MDivisio__07AF6F03481FB32F] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -32,15 +31,10 @@
 
 
 
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'MDivision',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'MDivisionPoDetail',
-    @level2type = N'COLUMN',
-    @level2name = N'MDivisionId'
+
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
     @value = N'PO#',
@@ -102,8 +96,7 @@ CREATE NONCLUSTERED INDEX [POID]
 
 
 GO
-CREATE NONCLUSTERED INDEX [MDID_POID]
-    ON [dbo].[MDivisionPoDetail]([MDivisionID] ASC, [POID] ASC, [Seq1] ASC, [Seq2] ASC);
+
 
 
 
