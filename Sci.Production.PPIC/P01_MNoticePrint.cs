@@ -73,7 +73,7 @@ namespace Sci.Production.PPIC
                 sxr.dicDatas.Add(sxr._v + "NOW", DateTime.Now);
                 sxr.dicDatas.Add(sxr._v + "PO_MAKER", drvar["MAKER"].ToString());
                 sxr.dicDatas.Add(sxr._v + "PO_STYLENO", drvar["sty"].ToString());
-                sxr.dicDatas.Add(sxr._v + "PO_QTY", drvar["QTY"]);
+                sxr.dicDatas.Add(sxr._v + "PO_QTY", drvar["QTY"].ToString());
                 sxr.dicDatas.Add(sxr._v + "POID", poid);
 
                 System.Data.DataTable[] dts;
