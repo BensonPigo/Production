@@ -61,22 +61,16 @@ namespace Sci.Production.Planning
             {
                 string strSQL = @" SELECT A1.FACTORYID AS A, 
                                           A3.ALIAS AS B ,
-                                          A1.QTY AS C,
-                                          SUM(A4.ShipQty) AS D,  
-                                          SUM(A5.ShipQty) AS E, 
-                                          SUM(A4.ShipQty)  /  case when A1.QTY = 0 then 1 else a1.qty end * 100 AS F
-                                         -- ttlOrderQty =  sum(A1.QTY) OVER (PARTITION BY A1.FACTORYID,A3.ALIAS),
-	                                     -- ttlTimeQty = sum(toq.D) OVER (PARTITION BY A1.FACTORYID,A3.ALIAS),
-	                                     -- ttlDelay = sum(ttq.E) OVER (PARTITION BY A1.FACTORYID,A3.ALIAS),
-	                                     -- ttlSdp = sum(tsdp.F) OVER (PARTITION BY A1.FACTORYID,A3.ALIAS)
+                                          SUM(A1.QTY )OVER (PARTITION BY A1.FACTORYID,A3.ALIAS)AS C,
+                                          SUM(A4.ShipQty)OVER (PARTITION BY A1.FACTORYID,A3.ALIAS) AS D,  
+                                          SUM(A5.ShipQty)OVER (PARTITION BY A1.FACTORYID,A3.ALIAS) AS E, 
+                                           SUM(A4.ShipQty)  / case when A1.QTY = 0 then 1 else a1.qty end * 100 AS F
+                                   INTO #TMP 
                                    FROM ORDERS A1 WITH (NOLOCK) 
                                    LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
                                    LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
                                    LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
                                    LEFT JOIN PullOut_Detail A5 WITH (NOLOCK) ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
-                                --   outer apply(select SUM(s.ShipQty)D from PullOut_Detail s where A1.ID = s.ORDERID AND s.PullOutDate <= A1.FtyKPI )toq
-                                --   outer apply(select SUM(s2.ShipQty)E from PullOut_Detail s2 where A1.ID = s2.ORDERID AND s2.PullOutDate <= A1.FtyKPI )ttq
-                                --   outer apply(select SUM(s3.ShipQty) / case when A1.QTY = 0 then 1 else a1.qty end * 100 AS F from PullOut_Detail s3 where A1.ID = s3.ORDERID AND s3.PullOutDate <= A1.FtyKPI )tsdp
                                    WHERE 1= 1 ";
                 if (dateRange1.Value1 != null)
                     strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
@@ -88,7 +82,12 @@ namespace Sci.Production.Planning
                 else  //factory有值
                     strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory1.Text);
 
-                strSQL += " GROUP BY A1.FACTORYID, A3.ALIAS, A1.QTY  ORDER BY  A1.FACTORYID, A3.ALIAS ";
+                strSQL += @" GROUP BY A1.FACTORYID, A3.ALIAS, A1.QTY,A4.ShipQty,A5.ShipQty  
+                             ORDER BY  A1.FACTORYID, A3.ALIAS 
+                            SELECT DISTINCT #TMP.A,#TMP.B,#TMP.C,#TMP.D,#TMP.E,SUM(#TMP.F)OVER (PARTITION BY #TMP.A,#TMP.B) AS F		
+                            FROM #TMP
+                            GROUP BY #TMP.A,#TMP.B,#TMP.C,#TMP.D,#TMP.E	,#TMP.F	
+                            DROP TABLE #TMP ";
                 result = DBProxy.Current.Select(null, strSQL, null, out gdtDatas);
                 if (!result) return result;
                 if ((gdtDatas == null) || (gdtDatas.Rows.Count == 0))
@@ -100,9 +99,10 @@ namespace Sci.Production.Planning
                                                         , (SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' + REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) AS H 
                                                         , A1.QTY AS I 
                                                         , Sum(A4.ShipQty) AS J
-                                                        , Sum(A5.ShipQty) AS K
+                                                        , ISNULL(Sum(A5.ShipQty),0) AS K
                                                         , (select strData+',' from (Select REPLACE(convert(varchar,PulloutDate),'-','/') as strData from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID)t for xml path('')) AS L
-                                                        , (select strData+',' from (Select ShipmodeID  as strData from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) t for xml path('')) AS M
+                                                        --, (select strData+',' from (Select ShipmodeID  as strData from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) t for xml path('')) AS M
+                                                        ,t.strData AS M
                                                         , (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) AS N
                                                         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END AS O
                                                         , (SELECT TOP 1 A1.ReasonID  from Order_History A1 WITH (NOLOCK) Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery' ) AS P
@@ -119,6 +119,7 @@ namespace Sci.Production.Planning
                                                 LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
                                                 LEFT JOIN PullOut_Detail A5 WITH (NOLOCK) ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
                                                 LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
+                                                OUTER APPLY(Select DISTINCT ShipmodeID  as strData from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) t
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.MRHandle ) vs1
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.SMR ) vs2
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
@@ -137,7 +138,7 @@ namespace Sci.Production.Planning
                 strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
                                                         , A1.BuyerDelivery, A1.FtyKPI, A1.QTY 
                                                         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
-                                                        , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo
+                                                        , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo
                                                         HAVING Sum(A5.ShipQty) > 0 ";
                 result = DBProxy.Current.Select(null, strSQL, null, out gdtSP);
                 if (!result) return result;
@@ -154,9 +155,10 @@ namespace Sci.Production.Planning
                                                         ,(SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' +  REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) AS H 
                                                         , A1.QTY AS I 
                                                         , Sum(A4.ShipQty) AS J
-                                                        , Sum(A5.ShipQty) AS K
+                                                        , ISNULL(Sum(A5.ShipQty),0) AS K
                                                         , (select strData+',' from (Select REPLACE(convert(varchar,PulloutDate),'-','/') as strData from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID)t for xml path('')) AS L
-                                                        , (select strData+',' from (Select ShipmodeID  as strData from Order_QtyShip  WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) t for xml path('')) AS M
+                                                       -- , (select strData+',' from (Select ShipmodeID  as strData from Order_QtyShip  WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) t for xml path('')) AS M
+                                                        ,t.strData AS M
                                                         , (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) AS N
                                                         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END AS O
                                                         , (SELECT TOP 1 A1.ReasonID  from Order_History A1 WITH (NOLOCK) Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery' ) AS P
@@ -173,6 +175,7 @@ namespace Sci.Production.Planning
                                                 LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
                                                 LEFT JOIN PullOut_Detail A5 WITH (NOLOCK) ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
                                                 LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
+                                                OUTER APPLY(Select DISTINCT ShipmodeID  as strData from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) t
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.MRHandle ) vs1
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.SMR ) vs2
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
@@ -191,7 +194,7 @@ namespace Sci.Production.Planning
                     strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
                                                         , A1.BuyerDelivery, A1.FtyKPI, A1.QTY 
                                                         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
-                                                        , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo ";
+                                                        , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo ";
                     result = DBProxy.Current.Select(null, strSQL, null, out gdtOrderDetail);
                     if (!result) return result;
 
@@ -204,14 +207,14 @@ namespace Sci.Production.Planning
                                                         , A1.QTY AS G
                                                         , A4.ShipQty AS H
                                                         ,Convert(varchar,A4.PulloutDate) AS I 
-                                                        ,(Select ShipmodeID+','  from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID FOR XML PATH(''))as J   
-                                                      -- ,J.strData AS J
-                                                      --  , (Select ShipmodeID  as strData from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) AS J                                                     
+                                                        ,(SELECT distinct oq.ShipmodeID+','
+		                                                  from Order_QtyShip oq WITH (NOLOCK) 
+		                                                  where oq.id=a1.id 
+		                                                  for xml path(''))as J                                                
                                                 FROM ORDERS A1 WITH (NOLOCK) 
                                                 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
                                                 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
                                                 LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
-                                             --   OUTER APPLY(Select ShipmodeID  as strData from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID)J
                                                 WHERE 1= 1 ";
                     if (dateRange1.Value1 != null)
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
@@ -235,7 +238,10 @@ namespace Sci.Production.Planning
                                                 , A1.QTY AS G
                                                 , A4.ShipQty AS H
                                                 , Convert(varchar,A4.PulloutDate ) AS I   
-                                                ,(Select ShipmodeID+','  from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID FOR XML PATH(''))as J    
+                                                ,(SELECT distinct oq.ShipmodeID+','
+		                                          from Order_QtyShip oq WITH (NOLOCK) 
+		                                          where oq.id=a1.id 
+		                                          for xml path(''))as J   
                                                 , (SELECT TOP 1 A1.ReasonID  from Order_History A1 WITH (NOLOCK) Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery' ) AS K
                                                 , (Select TOP 1 A2.Name  from Order_History A1 WITH (NOLOCK) 
                                                                           LEFT JOIN Reason A2 WITH (NOLOCK) ON A2.ID = A1.ReasonID 
@@ -269,7 +275,8 @@ namespace Sci.Production.Planning
                                                         , Sum(A4.ShipQty) AS J
                                                         , Sum(A5.ShipQty) AS K
                                                         , (select strData+',' from (Select REPLACE(convert(varchar,PulloutDate),'-','/') as strData from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID)t for xml path('')) AS L
-                                                        , (select strData+',' from (Select ShipmodeID  as strData from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) t for xml path('')) AS M
+                                                       -- , (select strData+',' from (Select ShipmodeID  as strData from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) t for xml path('')) AS M
+                                                        ,t.strData AS M
                                                         , (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) AS N
                                                         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END AS O
                                                         , (SELECT TOP 1 A1.ReasonID  from Order_History A1 WITH (NOLOCK) Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery' ) AS P
@@ -286,6 +293,7 @@ namespace Sci.Production.Planning
                                                 LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
                                                 LEFT JOIN PullOut_Detail A5 WITH (NOLOCK) ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
                                                 LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
+                                                OUTER APPLY(Select DISTINCT ShipmodeID  as strData from Order_QtyShip WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) t
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.MRHandle ) vs1
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.SMR ) vs2
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
@@ -304,7 +312,7 @@ namespace Sci.Production.Planning
                     strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
                                                         , A1.BuyerDelivery, A1.FtyKPI, A1.QTY 
                                                         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
-                                                        , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo
+                                                        , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo
                                                         HAVING Sum(A5.ShipQty) > 0 ";
                     result = DBProxy.Current.Select(null, strSQL, null, out gdtSP);
                     if (!result) return result;
@@ -373,10 +381,10 @@ namespace Sci.Production.Planning
                 }
                 worksheet.Cells[row + 1, 1] = "Total";
                 worksheet.Cells[row + 1, 2] = " ";
-                worksheet.Cells[row + 1, 3] = string.Format("=SUM(C3:C{0})", MyUtility.Convert.GetString(row));
-                worksheet.Cells[row + 1, 4] = string.Format("=SUM(D3:D{0})", MyUtility.Convert.GetString(row));
-                worksheet.Cells[row + 1, 5] = string.Format("=SUM(E3:E{0})", MyUtility.Convert.GetString(row));
-                worksheet.Cells[row + 1, 6] = string.Format("=SUM(F3:F{0})", MyUtility.Convert.GetString(row));
+                worksheet.Cells[row + 1, 3] = string.Format("=SUM(C2:C{0})", MyUtility.Convert.GetString(row));
+                worksheet.Cells[row + 1, 4] = string.Format("=SUM(D2:D{0})", MyUtility.Convert.GetString(row));
+                worksheet.Cells[row + 1, 5] = string.Format("=SUM(E2:E{0})", MyUtility.Convert.GetString(row));
+                worksheet.Cells[row + 1, 6] = string.Format("=SUM(F2:F{0})", MyUtility.Convert.GetString(row));
                 worksheet.Range[String.Format("A{0}:F{1}",2, row+1)].Borders.Color = Color.Black;
                 if ((gdtSP != null) && (gdtSP.Rows.Count > 0))
                 {
@@ -437,6 +445,7 @@ namespace Sci.Production.Planning
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1, true); //篩選
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
+                       
                       //  excel.ActiveSheet.Columns(6).NumberFormatlocal = "yyyy/MM/dd";
                       //  excel.ActiveSheet.Columns(7).NumberFormatlocal = "yyyy/MM/dd"; 
                         for (int intIndex = 0; intIndex < gdtOrderDetail.Rows.Count; intIndex++)
@@ -447,7 +456,7 @@ namespace Sci.Production.Planning
                             }
                             worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
                             worksheet.Range[String.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].EntireColumn.AutoFit();//自動調整欄寬
-                  
+                            worksheet.Range[String.Format("F{0}:G{0}", intIndex + 2)].NumberFormatLocal= "yyyy/MM/dd"; 
                         }
                          //設定分割列數
                         excel.ActiveWindow.SplitRow = 1; 
@@ -472,8 +481,8 @@ namespace Sci.Production.Planning
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1, true); //篩選
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
-                      //  excel.ActiveSheet.Columns(5).NumberFormatlocal = "yyyy/MM/dd";
-                      //  excel.ActiveSheet.Columns(9).NumberFormatlocal = "yyyy/MM/dd"; 
+                        excel.ActiveSheet.Columns(5).NumberFormatlocal = "yyyy/MM/dd";
+                        excel.ActiveSheet.Columns(9).NumberFormatlocal = "yyyy/MM/dd"; 
 
 
                         for (int intIndex = 0; intIndex < gdtPullOut.Rows.Count; intIndex++)
@@ -508,8 +517,8 @@ namespace Sci.Production.Planning
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1,true); //篩選
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
-                     //   excel.ActiveSheet.Columns(5).NumberFormatlocal = "yyyy/MM/dd";
-                     //   excel.ActiveSheet.Columns(9).NumberFormatlocal = "yyyy/MM/dd"; 
+                        excel.ActiveSheet.Columns(5).NumberFormatlocal = "yyyy/MM/dd";
+                        excel.ActiveSheet.Columns(9).NumberFormatlocal = "yyyy/MM/dd"; 
                         for (int intIndex = 0; intIndex < gdtFailDetail.Rows.Count; intIndex++)
                         {
                             
