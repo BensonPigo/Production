@@ -28,6 +28,7 @@
     [BomTypeFactory]      BIT            NULL,
     [BomTypePo]           BIT            NULL,
     [Keyword]             VARCHAR (MAX)  NULL,
+    [Seq1] VARCHAR(3) NULL, 
     CONSTRAINT [PK_Order_BOA] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
