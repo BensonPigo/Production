@@ -60,7 +60,7 @@ namespace Sci.Production.Class
         {
            // base.OnValidating(e);
             string textValue = this.textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
+            if (!string.IsNullOrWhiteSpace(textValue) || textValue != this.textBox1.OldValue)
             {
                 string Sql = string.Format("Select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'", textValue);
                 if (!MyUtility.Check.Seek(Sql, "Production"))
@@ -96,6 +96,17 @@ namespace Sci.Production.Class
             if (myForm.EditMode == false)
             {
                 this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
+            }
+            if (!this.IsIncludeJunk)
+            {
+                string textValue = this.textBox1.Text;
+                string Sql = string.Format("Select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'", textValue);
+                string lookupresult = MyUtility.GetValue.Lookup(Sql, "Production");
+                if (lookupresult == "True")
+                {
+                    this.displayBox1.Text = "";
+                    return;
+                }
             }
             this.displayBox1.Text = MyUtility.GetValue.Lookup("Abb", this.textBox1.Text.ToString(), "LocalSupp", "ID", "Production");
         }
