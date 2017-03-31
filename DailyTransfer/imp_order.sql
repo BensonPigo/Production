@@ -693,10 +693,11 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			t.EditDate= s.EditDate,
 			t.SizeItem_Elastic= s.SizeItem_Elastic,
 			t.BomTypePo= s.BomTypePo,
-			t.Keyword=s.Keyword
+			t.Keyword=s.Keyword,
+			t.Seq1 = s.Seq1
 		when not matched by target then
-			insert(Id,Ukey,Refno,SCIRefno,SuppID,Seq,ConsPC,BomTypeSize,PatternPanel,SizeItem,BomTypeZipper,Remark,ProvidedPatternRoom,ColorDetail,isCustCD,lossType,LossPercent,LossQty,LossStep,AddName,AddDate,EditName,EditDate,SizeItem_Elastic,BomTypePo,Keyword)			
-			values(s.Id,s.Ukey,s.Refno,s.SCIRefno,s.SuppID,s.Seq1,s.ConsPC,s.BomTypeSize,s.PatternPanel,s.SizeItem,s.BomTypeZipper,s.Remark,s.ProvidedPatternRoom,s.ColorDetail,s.isCustCD,s.lossType,s.LossPercent,s.LossQty,s.LossStep,s.AddName,s.AddDate,s.EditName,s.EditDate,s.SizeItem_Elastic,s.BomTypePo,s.Keyword)
+			insert(Id,Ukey,Refno,SCIRefno,SuppID,Seq,ConsPC,BomTypeSize,PatternPanel,SizeItem,BomTypeZipper,Remark,ProvidedPatternRoom,ColorDetail,isCustCD,lossType,LossPercent,LossQty,LossStep,AddName,AddDate,EditName,EditDate,SizeItem_Elastic,BomTypePo,Keyword,Seq1)			
+			values(s.Id,s.Ukey,s.Refno,s.SCIRefno,s.SuppID,s.Seq1,s.ConsPC,s.BomTypeSize,s.PatternPanel,s.SizeItem,s.BomTypeZipper,s.Remark,s.ProvidedPatternRoom,s.ColorDetail,s.isCustCD,s.lossType,s.LossPercent,s.LossQty,s.LossStep,s.AddName,s.AddDate,s.EditName,s.EditDate,s.SizeItem_Elastic,s.BomTypePo,s.Keyword,s.Seq1)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 
