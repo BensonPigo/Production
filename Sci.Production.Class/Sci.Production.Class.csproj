@@ -52,6 +52,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="comboMDivision.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="comboMDivision.Designer.cs">
+      <DependentUpon>comboMDivision.cs</DependentUpon>
+    </Compile>
     <Compile Include="Command\TradeSystem.cs" />
     <Compile Include="Command\UserPrg.cs" />
     <Compile Include="Holiday.cs">

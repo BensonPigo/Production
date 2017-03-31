@@ -1,0 +1,43 @@
+﻿using Sci.Data;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Sci.Production.Class
+{
+    public partial class comboMDivision : Sci.Win.UI.ComboBox
+    {
+        public comboMDivision()
+        {
+            InitializeComponent();
+            this.Size = new System.Drawing.Size(80, 23);
+        }
+
+        public comboMDivision(IContainer container)
+        {
+            container.Add(this);
+            InitializeComponent();
+            this.Size = new System.Drawing.Size(80, 23);
+        }
+
+        public void setDefalutIndex(string defaultValue = null)
+        {
+            DataTable dataTable;
+            DBProxy.Current.Select(null, "Select ID From MDivision", out dataTable);
+            DataRow dataRow = dataTable.NewRow();
+            dataRow["ID"] = "";
+            dataTable.Rows.Add(dataRow);
+            dataTable.DefaultView.Sort = "ID";
+            this.DataSource = dataTable;
+            this.ValueMember = "ID";
+            this.DisplayMember = "ID";
+
+            this.SelectedValue = (defaultValue == null) ? Sci.Env.User.Keyword : defaultValue;
+        }
+    }
+}

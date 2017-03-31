@@ -1454,6 +1454,8 @@ Sci.Production.Class/ProductionGridExts.cs -text
 Sci.Production.Class/Properties/AssemblyInfo.cs -text
 Sci.Production.Class/Sci.Production.Class.csproj -text
 Sci.Production.Class/VFPColors.cs -text
+Sci.Production.Class/comboMDivision.Designer.cs -text
+Sci.Production.Class/comboMDivision.cs -text
 Sci.Production.Class/txtAccountNo.Designer.cs -text
 Sci.Production.Class/txtAccountNo.cs -text
 Sci.Production.Class/txtAccountNo.resx -text
