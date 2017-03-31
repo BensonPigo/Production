@@ -25,81 +25,77 @@ namespace Sci.Production.Class
             get { return this.m_type; }
         }
 
-       [Category("Custom Properties")]
-       [Description("IsSubprocess 填 'Y'、'Warehouse' or 不填")]
+        [Category("Custom Properties")]
+        [Description("IsSubprocess 填Y或不填")]
         public string cSubprocess
         {
             set { this.m_subprocess = value; }
             get { return this.m_subprocess; }
         }
 
-       protected override void OnPopUp(TextBoxPopUpEventArgs e)
-       {
-           base.OnPopUp(e);
+        protected override void OnPopUp(TextBoxPopUpEventArgs e)
+        {
+            base.OnPopUp(e);
 
-           string sqlWhere = "Where 1=1";
-           string sqlCmd = string.Empty;
+            string sqlWhere = "Where 1=1";
+            string sqlCmd = string.Empty;
 
-           if (!string.IsNullOrWhiteSpace(cClassify))
-           {
-               sqlWhere = sqlWhere + " And Classify in (" + this.cClassify + ")";
-           };
+            if (!string.IsNullOrWhiteSpace(cClassify))
+            {
+                sqlWhere = sqlWhere + " And Classify in (" + this.cClassify + ")";
+            };
 
-           if (!string.IsNullOrWhiteSpace(cSubprocess))
-           {
-               if (this.cSubprocess == "Y")
-               { sqlWhere = sqlWhere + " And IsSubprocess =1 "; }
-               else if (this.cSubprocess.EqualString("Warehouse"))
-               { }
-               else
-               { sqlWhere = sqlWhere + " And IsSubprocess =0 "; };
-           };
-           sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere + " order by Seq";
-           Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,4", this.Text, false, ",");
-           item.Size = new System.Drawing.Size(435, 510);
-           DialogResult result = item.ShowDialog();
-           if (result == DialogResult.Cancel) { return; }
-           this.Text = item.GetSelectedString();
-           this.ValidateText();
-       }
+            if (!string.IsNullOrWhiteSpace(cSubprocess))
+            {
+                if (this.cSubprocess == "Y")
+                { sqlWhere = sqlWhere + " And IsSubprocess =1 "; }
+                else
+                { sqlWhere = sqlWhere + " And IsSubprocess =0 "; };
+            };
+            sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere + " order by Seq";
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20,4", this.Text, false, ",");
+            item.Size = new System.Drawing.Size(435, 510);
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            this.Text = item.GetSelectedString();
+            this.ValidateText();
+        }
 
-       protected override void OnValidating(CancelEventArgs e)
-       {
-           base.OnValidating(e);
+        protected override void OnValidating(CancelEventArgs e)
+        {
+            base.OnValidating(e);
 
-           string str = this.Text;
-           if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
-           {
+            string str = this.Text;
+            if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
+            {
 
-               string sqlWhere = string.Format("Where 1=1 and id='{0}'", str);
-               string sqlCmd = string.Empty;
+                string sqlWhere = string.Format("Where 1=1 and id='{0}'", str);
+                string sqlCmd = string.Empty;
 
-               if (!string.IsNullOrWhiteSpace(cClassify))
-               {
-                   sqlWhere = sqlWhere + " And Classify in (" + this.cClassify + ")";
-               };
+                if (!string.IsNullOrWhiteSpace(cClassify))
+                {
+                    sqlWhere = sqlWhere + " And Classify in (" + this.cClassify + ")";
+                };
 
-               if (!string.IsNullOrWhiteSpace(cSubprocess))
-               {
-                   if (this.cSubprocess == "Y")
-                   { sqlWhere = sqlWhere + " And IsSubprocess =1 "; }
-                   else if(this.cSubprocess.EqualString("Warehouse"))
-                   {}
-                   else
-                   { sqlWhere = sqlWhere + " And IsSubprocess =0 "; };
-               };
-               sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere;
+                if (!string.IsNullOrWhiteSpace(cSubprocess))
+                {
+                    if (this.cSubprocess == "Y")
+                    { sqlWhere = sqlWhere + " And IsSubprocess =1 "; }
+                    else
+                    { sqlWhere = sqlWhere + " And IsSubprocess =0 "; };
+                };
+                sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere;
 
-               if (MyUtility.Check.Seek(sqlCmd) == false)
-               {
-                   MyUtility.Msg.WarningBox(string.Format("< Artworktype : {0} > not found!!!", str));
-                   this.Text = "";
-                   e.Cancel = true;
-                   return;
-               }
-           }
-           
-       }
+                if (MyUtility.Check.Seek(sqlCmd) == false)
+                {
+                    MyUtility.Msg.WarningBox(string.Format("< Artworktype : {0} > not found!!!", str));
+                    this.Text = "";
+                    e.Cancel = true;
+                    return;
+                }
+            }
+
+        }
 
         public txtartworktype_fty()
         {
