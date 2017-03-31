@@ -28,8 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource();
+            this.components = new System.ComponentModel.Container();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
             this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             this.cbxCategory = new Sci.Win.UI.ComboBox();
@@ -99,6 +100,7 @@
             this.txtmfactory1.Name = "txtmfactory1";
             this.txtmfactory1.Size = new System.Drawing.Size(117, 23);
             this.txtmfactory1.TabIndex = 2;
+            this.txtmfactory1.Visible = false;
             // 
             // cbxCategory
             // 
@@ -210,6 +212,7 @@
             this.label7.Size = new System.Drawing.Size(75, 23);
             this.label7.TabIndex = 11;
             this.label7.Text = "Factory";
+            this.label7.Visible = false;
             // 
             // label4
             // 
@@ -280,8 +283,8 @@
             this.btnClose.TabIndex = 2;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             this.btnClose.Visible = false;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnCreate
             // 
