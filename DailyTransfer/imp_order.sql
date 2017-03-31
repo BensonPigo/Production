@@ -1069,7 +1069,7 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			t.SizeRange= s.SizeRange,
 			t.AddName= s.AddName,
 			t.AddDate= s.AddDate,
-			t.POID =s.POID
+			t.POID =s.POID,
 			t.OrderComboID = s.OrderComboID
 		when not matched by target then
 			insert(ID,BrandID,ProgramID,StyleID,SeasonID,Qty,OrderUnit,FactoryID,CTNQty,CustCDID,CustPONO,Customize1,BuyerDelivery,MRHandle,SMR,PACKING,Packing2,MarkBack,MarkFront,MarkLeft,MarkRight,Label,SizeRange,AddName,AddDate,POID,OrderComboID)
