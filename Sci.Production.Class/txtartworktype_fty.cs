@@ -26,7 +26,7 @@ namespace Sci.Production.Class
         }
 
        [Category("Custom Properties")]
-       [Description("IsSubprocess 填Y或不填")]
+       [Description("IsSubprocess 填 'Y'、'Warehouse' or 不填")]
         public string cSubprocess
         {
             set { this.m_subprocess = value; }
@@ -49,6 +49,8 @@ namespace Sci.Production.Class
            {
                if (this.cSubprocess == "Y")
                { sqlWhere = sqlWhere + " And IsSubprocess =1 "; }
+               else if (this.cSubprocess.EqualString("Warehouse"))
+               { }
                else
                { sqlWhere = sqlWhere + " And IsSubprocess =0 "; };
            };
@@ -81,6 +83,8 @@ namespace Sci.Production.Class
                {
                    if (this.cSubprocess == "Y")
                    { sqlWhere = sqlWhere + " And IsSubprocess =1 "; }
+                   else if(this.cSubprocess.EqualString("Warehouse"))
+                   {}
                    else
                    { sqlWhere = sqlWhere + " And IsSubprocess =0 "; };
                };

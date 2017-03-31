@@ -143,7 +143,7 @@
             // 
             this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
             this.txtartworktype_fty1.cClassify = "";
-            this.txtartworktype_fty1.cSubprocess = "Y";
+            this.txtartworktype_fty1.cSubprocess = "Warehouse";
             this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_fty1.Location = new System.Drawing.Point(490, 54);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
