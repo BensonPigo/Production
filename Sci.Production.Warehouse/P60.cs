@@ -279,8 +279,8 @@ on t.orderid = s.orderid and t.refno = s.refno and t.threadcolorid = s.threadcol
 when matched then
       update set inqty = inqty + s.qty
 when not matched then
-      insert (MDivisionID, orderid, refno, threadcolorid, inqty, unitid) 
-      values ('', s.orderid,s.refno,s.threadcolorid,s.qty,s.unitid);"
+      insert (orderid, refno, threadcolorid, inqty, unitid) 
+      values (s.orderid,s.refno,s.threadcolorid,s.qty,s.unitid);"
                     , item.qty, item.orderid, item.refno, item.threadcolorid,item.unitid));
             }
 
@@ -414,8 +414,8 @@ on t.orderid = s.orderid and t.refno = s.refno and t.threadcolorid = s.threadcol
 when matched then
       update set inqty = inqty - s.qty
 when not matched then
-      insert (MDivisionID, orderid,refno,threadcolorid,inqty,unitid) 
-      values ('', s.orderid,s.refno,s.threadcolorid,0 - s.qty,s.unitid);"
+      insert (orderid,refno,threadcolorid,inqty,unitid) 
+      values (s.orderid,s.refno,s.threadcolorid,0 - s.qty,s.unitid);"
                     , item.qty, item.orderid, item.refno, item.threadcolorid,item.unitid));
             }
 
