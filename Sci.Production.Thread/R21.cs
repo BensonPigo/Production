@@ -22,16 +22,7 @@ namespace Sci.Production.Thread
             : base(menuitem)
         {
             InitializeComponent();
-            DataTable m = null;
-            string sqlm = (@"select ID FROM DBO.MDivision WITH (NOLOCK) ");
-            DBProxy.Current.Select("", sqlm, out m);
-            m.Rows.Add(new string[] { "" });
-            m.DefaultView.Sort = "ID";
-            this.comboBox1.DataSource = m;
-            this.comboBox1.ValueMember = "ID";
-            this.comboBox1.DisplayMember = "ID";
-            this.comboBox1.SelectedIndex = 0;
-            this.comboBox1.Text = Sci.Env.User.Keyword;
+            this.comboMDivision.setDefalutIndex(true);
             print.Enabled = false;
         }
         protected override bool ValidateInput()
@@ -44,7 +35,7 @@ namespace Sci.Production.Thread
             Thread = textITEM.Text.ToString();
             LOC1 = textLOC1.Text.ToString();
             LOC2 = textLOC2.Text.ToString();
-            M = comboBox1.SelectedValue.ToString();
+            M = comboMDivision.Text.ToString();
             lis = new List<SqlParameter>();
             string sqlWhere = "";
             List<string> sqlWheres = new List<string>();
@@ -76,7 +67,7 @@ namespace Sci.Production.Thread
                 lis.Add(new SqlParameter("@LOC1", LOC1));
                 lis.Add(new SqlParameter("@LOC2", LOC2));
             }
-            if (!this.comboBox1.Text.Empty())
+            if (!this.M.Empty())
             {
                 sqlWheres.Add("ThreadStock.mDivisionid = @M");
                 lis.Add(new SqlParameter("@M", M));
@@ -138,17 +129,6 @@ namespace Sci.Production.Thread
 
             this.HideWaitMessage();
             return true;
-            //var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            //saveDialog.ShowDialog();
-            //string outpath = saveDialog.FileName;
-            //if (outpath.Empty())
-            //{
-            //    return false;
-            //}
-
-            //Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Thread_R21.xltx");
-            //xl.dicDatas.Add("##TSL", dt);
-            //xl.Save(outpath, false);
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)

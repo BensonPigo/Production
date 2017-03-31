@@ -28,8 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
             this.label8 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
@@ -50,20 +51,23 @@
             // 
             // print
             // 
+            this.print.Location = new System.Drawing.Point(463, 12);
             this.print.TabIndex = 1;
             this.print.Visible = false;
             // 
             // toexcel
             // 
+            this.toexcel.Location = new System.Drawing.Point(463, 48);
             this.toexcel.TabIndex = 2;
             // 
             // close
             // 
+            this.close.Location = new System.Drawing.Point(463, 84);
             this.close.TabIndex = 3;
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.comboBox1);
+            this.panel1.Controls.Add(this.comboMDivision);
             this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.label6);
@@ -79,36 +83,36 @@
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(54, 23);
+            this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(422, 253);
+            this.panel1.Size = new System.Drawing.Size(434, 190);
             this.panel1.TabIndex = 0;
             // 
-            // comboBox1
+            // comboMDivision
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(73, 219);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 8;
+            this.comboMDivision.BackColor = System.Drawing.Color.White;
+            this.comboMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMDivision.FormattingEnabled = true;
+            this.comboMDivision.IsSupportUnselect = true;
+            this.comboMDivision.Location = new System.Drawing.Point(99, 153);
+            this.comboMDivision.Name = "comboMDivision";
+            this.comboMDivision.Size = new System.Drawing.Size(80, 24);
+            this.comboMDivision.TabIndex = 7;
             // 
             // label8
             // 
             this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(16, 220);
+            this.label8.Location = new System.Drawing.Point(16, 154);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(53, 23);
+            this.label8.Size = new System.Drawing.Size(80, 23);
             this.label8.TabIndex = 14;
-            this.label8.Text = "M......:";
+            this.label8.Text = "M";
             // 
             // label7
             // 
             this.label7.BackColor = System.Drawing.SystemColors.Control;
             this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(228, 186);
+            this.label7.Location = new System.Drawing.Point(220, 129);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(20, 23);
             this.label7.TabIndex = 13;
@@ -119,7 +123,7 @@
             // 
             this.label6.BackColor = System.Drawing.SystemColors.Control;
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(226, 11);
+            this.label6.Location = new System.Drawing.Point(251, 7);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(22, 23);
             this.label6.TabIndex = 12;
@@ -130,10 +134,10 @@
             // 
             this.textLOC2.BackColor = System.Drawing.Color.White;
             this.textLOC2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textLOC2.Location = new System.Drawing.Point(251, 182);
+            this.textLOC2.Location = new System.Drawing.Point(243, 125);
             this.textLOC2.Name = "textLOC2";
             this.textLOC2.Size = new System.Drawing.Size(113, 23);
-            this.textLOC2.TabIndex = 7;
+            this.textLOC2.TabIndex = 6;
             this.textLOC2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textLOC2_PopUp);
             this.textLOC2.Validating += new System.ComponentModel.CancelEventHandler(this.textLOC2_Validating);
             // 
@@ -141,7 +145,7 @@
             // 
             this.textLOC1.BackColor = System.Drawing.Color.White;
             this.textLOC1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textLOC1.Location = new System.Drawing.Point(107, 182);
+            this.textLOC1.Location = new System.Drawing.Point(99, 125);
             this.textLOC1.Name = "textLOC1";
             this.textLOC1.Size = new System.Drawing.Size(113, 23);
             this.textLOC1.TabIndex = 5;
@@ -152,7 +156,7 @@
             // 
             this.textITEM.BackColor = System.Drawing.Color.White;
             this.textITEM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textITEM.Location = new System.Drawing.Point(107, 139);
+            this.textITEM.Location = new System.Drawing.Point(99, 96);
             this.textITEM.Name = "textITEM";
             this.textITEM.Size = new System.Drawing.Size(127, 23);
             this.textITEM.TabIndex = 4;
@@ -163,7 +167,7 @@
             // 
             this.textTYPE.BackColor = System.Drawing.Color.White;
             this.textTYPE.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textTYPE.Location = new System.Drawing.Point(72, 96);
+            this.textTYPE.Location = new System.Drawing.Point(99, 65);
             this.textTYPE.Name = "textTYPE";
             this.textTYPE.Size = new System.Drawing.Size(135, 23);
             this.textTYPE.TabIndex = 3;
@@ -174,7 +178,7 @@
             // 
             this.textSHA.BackColor = System.Drawing.Color.White;
             this.textSHA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textSHA.Location = new System.Drawing.Point(72, 51);
+            this.textSHA.Location = new System.Drawing.Point(99, 36);
             this.textSHA.Name = "textSHA";
             this.textSHA.Size = new System.Drawing.Size(122, 23);
             this.textSHA.TabIndex = 2;
@@ -185,7 +189,7 @@
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
             this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(251, 8);
+            this.textBox2.Location = new System.Drawing.Point(267, 8);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(148, 23);
             this.textBox2.TabIndex = 1;
@@ -196,7 +200,7 @@
             // 
             this.textBox1.BackColor = System.Drawing.Color.White;
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(72, 8);
+            this.textBox1.Location = new System.Drawing.Point(99, 7);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(148, 23);
             this.textBox1.TabIndex = 0;
@@ -206,51 +210,51 @@
             // label5
             // 
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(16, 182);
+            this.label5.Location = new System.Drawing.Point(16, 125);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(65, 23);
+            this.label5.Size = new System.Drawing.Size(80, 23);
             this.label5.TabIndex = 4;
-            this.label5.Text = "Location:";
+            this.label5.Text = "Location";
             // 
             // label4
             // 
             this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(16, 139);
+            this.label4.Location = new System.Drawing.Point(16, 96);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(88, 23);
+            this.label4.Size = new System.Drawing.Size(80, 23);
             this.label4.TabIndex = 3;
-            this.label4.Text = "Thread Item:";
+            this.label4.Text = "Thread Item";
             // 
             // label3
             // 
             this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(16, 96);
+            this.label3.Location = new System.Drawing.Point(16, 65);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(53, 23);
+            this.label3.Size = new System.Drawing.Size(80, 23);
             this.label3.TabIndex = 2;
-            this.label3.Text = "Type:";
+            this.label3.Text = "Type";
             // 
             // label2
             // 
             this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(16, 51);
+            this.label2.Location = new System.Drawing.Point(16, 36);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(53, 23);
+            this.label2.Size = new System.Drawing.Size(80, 23);
             this.label2.TabIndex = 1;
-            this.label2.Text = "Shade:";
+            this.label2.Text = "Shade";
             // 
             // label1
             // 
             this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(16, 8);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(53, 23);
+            this.label1.Size = new System.Drawing.Size(80, 23);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Refno:";
+            this.label1.Text = "Refno";
             // 
             // R21
             // 
-            this.ClientSize = new System.Drawing.Size(627, 314);
+            this.ClientSize = new System.Drawing.Size(555, 240);
             this.Controls.Add(this.panel1);
             this.Name = "R21";
             this.Text = "R21.Thread Stock List";
@@ -283,6 +287,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.Label label8;
-        private Win.UI.ComboBox comboBox1;
+        private Class.comboMDivision comboMDivision;
     }
 }

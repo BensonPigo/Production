@@ -33,16 +33,7 @@ namespace Sci.Production.Thread
             this.comboBox1.SelectedIndex = 0;
             this.comboBox1.Text = Sci.Env.User.Factory;
 
-            DataTable m = null;
-            string sqlm = (@"select ID FROM DBO.MDivision WITH (NOLOCK) ");
-            DBProxy.Current.Select("", sqlm, out m);
-            m.Rows.Add(new string[] { "" });
-            m.DefaultView.Sort = "ID";
-            this.comboBox2.DataSource = m;
-            this.comboBox2.ValueMember = "ID";
-            this.comboBox2.DisplayMember = "ID";
-            this.comboBox2.SelectedIndex = 0;
-            this.comboBox2.Text = Sci.Env.User.Keyword;
+            this.comboMDivision.setDefalutIndex(true);
             print.Enabled = false;
         }
 
@@ -64,7 +55,7 @@ namespace Sci.Production.Thread
             EstArr1 = dateRange_Arr.Value1;
             EstArr2 = dateRange_Arr.Value2;
             fac = comboBox1.SelectedValue.ToString();
-            M = comboBox2.SelectedValue.ToString();
+            M = comboMDivision.Text.ToString();
             lis = new List<SqlParameter>();
             string sqlWhere = ""; string order = "order by ThreadTypeID,td.ThreadColorID,t.StyleID,t.OrderID";
             List<string> sqlWheres = new List<string>();
@@ -107,7 +98,7 @@ namespace Sci.Production.Thread
                 lis.Add(new SqlParameter("@fac", fac));
                 
             }
-            if (!this.comboBox2.Text.Empty())
+            if (!this.M.Empty())
             {
                 sqlWheres.Add("t.MDivisionID = @M");
                 lis.Add(new SqlParameter("@M", M));
