@@ -1,7 +1,7 @@
 ﻿
 CREATE PROCEDURE [dbo].[Order_Report_QtyBreakdown]
 	@OrderID varchar(13)
-	,@ByType int = 0 --0單張 , 1 By OrderComboID , 2 By PO
+	,@ByType int = 0 --0單張 , 1 By OrderCombo , 2 By PO
 AS
 BEGIN
 
@@ -11,13 +11,13 @@ declare @tbl table (id varchar(13), Article varchar(8))
 if(@ByType = 0)
 	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID = @OrderID
 else if(@ByType = 1)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where POID = @poid AND OrderComboID = @OrderID)
+	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from MNOrder where POID = @poid AND OrderComboID = @OrderID)
 else if(@ByType = 2)
-	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from Production.dbo.MNOrder where POID = @poid )
+	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from MNOrder where POID = @poid )
 
 
 --主要資料
-SELECT b.id,b.Article,SizeCode,Qty into #tmp FROM @tbl a left join DBO.MNOrder_Qty b on a.Article = b.Article and a.id = b.ID 
+SELECT b.id,b.Article,SizeCode,Qty into #tmp FROM @tbl a left join DBO.Order_Qty b on a.Article = b.Article and a.id = b.ID 
 where b.ID is not null
 
 

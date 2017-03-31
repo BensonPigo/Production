@@ -4,26 +4,26 @@ CREATE PROCEDURE [dbo].[PPIC_Report_Color_MaterialCode]
 	@ID varchar(13)
 AS
 BEGIN
-	declare @POID varchar(13) = (select POID from MNOrder WITH (NOLOCK) where ID = @ID)
+	declare @POID varchar(13) = (select POID from Orders where ID = @ID)
 
-	select ' ' = c.ID+'-->'+c.Name from MNOrder a WITH (NOLOCK)
-	inner join MNOrder_ColorCombo b WITH (NOLOCK) on a.ID = b.Id
-	inner join Color c WITH (NOLOCK) on b.ColorID = c.ID AND a.BrandID = c.BrandId
-	where a.ID in (select ID from dbo.MNOrder WITH (NOLOCK) where poid = @poid and CustCDID = (select CustCDID from MNOrder WITH (NOLOCK) where Id = @ID))
+	select ' ' = c.ID+'-->'+c.Name from MNOrder a
+	inner join Order_ColorCombo b on a.ID = b.Id
+	inner join Color c on b.ColorID = c.ID AND a.BrandID = c.BrandId
+	where a.ID in ( select ID from dbo.Orders where poid = @poid )
 	group by c.ID,c.Name
 
 
-	SELECT 'Fabric:'=FabricCode + '-->' + b.Refno + ';' + c.[Description] FROM MNOrder a WITH (NOLOCK)
-	inner join dbo.MNOrder_BOF b WITH (NOLOCK) on a.ID = b.Id 
-	inner join dbo.Fabric c WITH (NOLOCK) on b.SCIRefno = c.SCIRefno and a.BrandID = c.BrandID
-	where a.ID in (select ID from dbo.MNOrder WITH (NOLOCK) where poid = @poid and CustCDID = (select CustCDID from MNOrder WITH (NOLOCK) where Id = @ID))
+	SELECT 'Fabric:'=FabricCode + '-->' + b.Refno + ';' + c.[Description] FROM Orders a
+	inner join dbo.Order_BOF b on a.ID = b.Id 
+	inner join dbo.Fabric c on b.SCIRefno = c.SCIRefno and a.BrandID = c.BrandID
+	where a.ID in ( select ID from dbo.Orders where poid = @poid )
 
 
-	select 'Accessories:'=d.tt from MNOrder a WITH (NOLOCK)
-	inner join dbo.MNOrder_BOA	b WITH (NOLOCK) on a.ID = b.Id
-	inner join dbo.Fabric c WITH (NOLOCK) on b.SCIRefno = c.SCIRefno and a.BrandID = c.BrandID
-	outer apply (select b.Seq+case when PatternPanel <> '' then '-'+PatternPanel else '' end + '-->' + b.Refno + ';' + c.[Description] as tt) d
-	where a.ID in (select ID from dbo.MNOrder WITH (NOLOCK) where poid = @poid and CustCDID = (select CustCDID from MNOrder WITH (NOLOCK) where Id = @ID))
+	select 'Accessories:'=d.tt from MNOrder a
+	inner join dbo.Order_BOA	b on a.ID = b.Id
+	inner join dbo.Fabric c on b.SCIRefno = c.SCIRefno and a.BrandID = c.BrandID
+	outer apply (select b.Seq1+case when PatternPanel <> '' then '-'+PatternPanel else '' end + '-->' + b.Refno + ';' + c.[Description] as tt) d
+	where a.ID in ( select ID from dbo.Orders where poid = @poid )
 	order by d.tt
 
 END

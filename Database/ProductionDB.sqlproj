@@ -2206,6 +2206,7 @@
     <Build Include="dbo\Functions\getTPEPass1_ExtNo.sql" />
     <Build Include="dbo\Functions\getPass1_ExtNo.sql" />
     <Build Include="dbo\Tables\MNOrder_SizeSpec_OrderCombo.sql" />
+    <Build Include="dbo\Functions\GetSizeCodeColumnByID.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

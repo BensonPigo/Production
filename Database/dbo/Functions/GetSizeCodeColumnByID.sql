@@ -1,12 +1,5 @@
-﻿USE [Production]
-GO
-/****** Object:  UserDefinedFunction [dbo].[GetSizeCodeColumnByID]    Script Date: 2017/3/29 上午 11:37:55 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-ALTER FUNCTION [dbo].[GetSizeCodeColumnByID]
+﻿
+CREATE FUNCTION [dbo].[GetSizeCodeColumnByID]
 (
 	@OrderID varchar(13) = ''
 	,@ByType int = 0 --0單張 , 1 By CustCDID , 2 By PO
