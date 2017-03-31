@@ -999,19 +999,19 @@ where POID = @poid group by POID,b.spno";
         //M/Notice Sheet
      private void button26_Click(object sender, EventArgs e)
      {
-         if (CurrentMaintain["SMnorderApv"].ToString() == null || CurrentMaintain["SMnorderApv"].ToString() == "")
-         {
+         //if (CurrentMaintain["SMnorderApv"].ToString() == null || CurrentMaintain["SMnorderApv"].ToString() == "")
+         //{
              var dr = this.CurrentMaintain; if (null == dr) return;
              var frm = new Sci.Production.PPIC.P01_MNoticePrint(_menuitem, dr["ID"].ToString());
              frm.ShowDialog(this);
              this.RenewData();
              return;
-         }
-         else
-         {
-             string poid = CurrentMaintain["POID"].ToString();
-             SMNoticePrg.PrintSMNotice(poid, SMNoticePrg.EnuPrintSMType.Order);
-         }
+         //}
+         //else
+         //{
+         //    string poid = CurrentMaintain["POID"].ToString();
+         //    SMNoticePrg.PrintSMNotice(poid, SMNoticePrg.EnuPrintSMType.Order);
+         //}
      }
 
         private static void MoveSubBlockIntoMainSheet(MsExcel.Worksheet mainSheet, ref int rowPosition, MsExcel.Worksheet subBlockSheet, int? blankRowsAfterThisBlock = null)
