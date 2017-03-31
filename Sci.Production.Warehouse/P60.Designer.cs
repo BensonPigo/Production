@@ -76,7 +76,7 @@
             this.masterpanel.Controls.Add(this.label25);
             this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 189);
+            this.masterpanel.Size = new System.Drawing.Size(892, 189);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
@@ -98,7 +98,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 189);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 288);
+            this.detailpanel.Size = new System.Drawing.Size(892, 160);
             // 
             // gridicon
             // 
@@ -113,7 +113,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 288);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 160);
             // 
             // detail2
             // 
@@ -129,16 +129,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1058, 515);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 477);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -338,7 +338,7 @@
             this.KeyField1 = "ID";
             this.Name = "P60";
             this.Text = "P60. Local PO Receiving - incoming";
-            this.UnApvChkValue = "Approved";
+            this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
             this.WorkAlias = "LocalReceiving";
             this.Controls.SetChildIndex(this.tabs, 0);

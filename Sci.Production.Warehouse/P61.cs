@@ -58,7 +58,7 @@ where LI.ID = '{0}' and LI.MDivisionID = '{1}'", ID, Sci.Env.User.Keyword);
                 .Text("ThreadColorID", header: "ThreadColor", iseditingreadonly: false)
                 .EditText("desc", header: "Description", iseditingreadonly: false)
                 .Text("unit", header: "Unit", iseditingreadonly: false)
-                .Numeric("Qty", header: "Issue Qty", iseditingreadonly: false, minimum: -100);
+                .Numeric("Qty", header: "Issue Qty", iseditingreadonly: false, minimum: -999999);
             #endregion 
         }
 
@@ -213,6 +213,41 @@ where LID.ID = @ID";
             List<SqlParameter> listPar = new List<SqlParameter>();
             listPar.Add(new SqlParameter("@ID", CurrentMaintain["ID"]));
             listPar.Add(new SqlParameter("@UserID", Env.User.UserID));
+            #region Check 庫存
+            DataTable dataTable;
+            string checkStockQty = @"
+select *
+from (
+	select	Linv.OrderID
+			, Linv.Refno
+			, Linv.ThreadColorID 
+			, StockQty = Linv.InQty - Linv.OutQty + Linv.AdjustQty + LID.Qty 
+	from LocalInventory Linv
+	inner join LocalIssue_Detail LID on Linv.OrderID = LID.OrderID 
+		and Linv.Refno = LID.Refno and Linv.ThreadColorID = LID.ThreadColorID
+	where LID.ID = @ID
+) s
+where s.StockQty < 0";
+            if (!(result = DBProxy.Current.Select(null, checkStockQty, listPar, out dataTable)))
+            {
+                ShowErr(checkStockQty, result);
+                return;
+            }
+            else
+            {
+                if (dataTable != null && dataTable.Rows.Count > 0)
+                {
+                    List<string> listErr = new List<string>();
+                    foreach (DataRow dr in dataTable.Rows)
+                    {
+                        listErr.Add(string.Format("< SP# > : {0}, < Refno > : {1}, < ThreadColor > : {2}"
+                                                  , dr["OrderID"], dr["Refno"], dr["ThreadColorID"]));
+                    }
+                    MyUtility.Msg.InfoBox(listErr.JoinToString("/n/r"), "Local Stock Quantity can not less then zero!!");
+                    return;
+                }
+            }
+            #endregion
             #region SQL Command : 更新表頭
             string strUpdateLocalIssue = @"
 Update LocalIssue

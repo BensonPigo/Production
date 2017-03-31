@@ -156,7 +156,7 @@ and a.status = 'Approved' and a.LocalSuppID = '{0}'", dr_master["localsuppid"]);
                 .Text("unitid", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))
                 .Numeric("price", header: "PO Price", decimal_places: 4, integer_places: 8, iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Numeric("onRoad", header: "On Road", decimal_places: 2, integer_places: 6, iseditingreadonly: true, width: Widths.AnsiChars(6))
-                .Numeric("Qty", header: "Qty", decimal_places: 2, integer_places: 6, settings: ns, width: Widths.AnsiChars(6)).Get(out col_qty)
+                .Numeric("Qty", header: "Qty", decimal_places: 2, integer_places: 6, minimum: -999999, settings: ns, width: Widths.AnsiChars(6)).Get(out col_qty)
                 .Text("remark", header: "Remark", width:Widths.AnsiChars(20)).Get(out col_remark)
                ; 
 

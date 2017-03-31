@@ -64,7 +64,7 @@ namespace Sci.Production.Warehouse
                 .Text("ThreadColorID", header: "ThreadColor", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("unit", header: "Unit", iseditingreadonly: true)
                 .Numeric("stockQty", header: "Stock Qty", iseditingreadonly: true)
-                .Numeric("Qty", header: "Issue Qty", iseditingreadonly: false, minimum: -99999, settings: setQty)
+                .Numeric("Qty", header: "Issue Qty", iseditingreadonly: false, minimum: -999999, settings: setQty)
                 .EditText("desc", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true);
             #endregion 
         }
@@ -88,7 +88,7 @@ from (
 	left join LocalItem LItem on Linv.Refno = LItem.RefNo
     Where Linv.OrderID = @SP
 ) as s
-where s.StockQty > 0
+where s.StockQty >= 0
 order by s.Refno, s.ThreadColorID, s.StockQty, s.[Desc]
 ";
 

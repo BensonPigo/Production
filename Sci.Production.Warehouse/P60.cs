@@ -56,8 +56,6 @@ namespace Sci.Production.Warehouse
             CurrentMaintain["IssueDate"] = DateTime.Now;
         }
 
-
-
         // delete前檢查
         protected override bool ClickDeleteBefore()
         {
@@ -135,8 +133,6 @@ namespace Sci.Production.Warehouse
             return base.ClickSaveBefore();
         }
 
-
-
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
@@ -187,7 +183,7 @@ namespace Sci.Production.Warehouse
             .Numeric("poqty", header: "PO Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, iseditingreadonly: true)
             .Text("unitId", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))
             .Numeric("onRoad", header: "On Road", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, iseditingreadonly: true)
-            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6,settings:ns)
+            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, minimum: -999999, settings: ns)
             // 2017/03/20 暫時 移除 Location
             //.Text("location", header: "Location", width: Widths.AnsiChars(20))
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20))
@@ -357,7 +353,7 @@ Select  d.OrderId
 from dbo.LocalReceiving_Detail d WITH (NOLOCK) 
 left join dbo.LocalInventory f WITH (NOLOCK) on d.OrderId = f.OrderID and d.Refno = f.Refno 
       and d.ThreadColorID = f.ThreadColorID
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
+where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 ShowErr(sqlcmd, result2);
@@ -535,6 +531,7 @@ Where a.id = '{0}' ", masterID);
             frm.ShowDialog(this);
             this.RenewData();
         }
+
         protected override bool ClickPrint()
         {
             DataRow row = this.CurrentDataRow;
