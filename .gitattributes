@@ -1452,7 +1452,6 @@ Sci.Production.Class/Holiday.resx -text
 Sci.Production.Class/ProductionEnv.cs -text
 Sci.Production.Class/ProductionGridExts.cs -text
 Sci.Production.Class/Properties/AssemblyInfo.cs -text
-Sci.Production.Class/SCIControl.cs -text
 Sci.Production.Class/Sci.Production.Class.csproj -text
 Sci.Production.Class/VFPColors.cs -text
 Sci.Production.Class/comboMDivision.Designer.cs -text
@@ -2098,6 +2097,7 @@ Sci.Production.PPIC/R08.Designer.cs -text
 Sci.Production.PPIC/R08.cs -text
 Sci.Production.PPIC/R08.resx -text
 Sci.Production.PPIC/Resources/Carton.bmp -text
+Sci.Production.PPIC/SCIControl.cs -text
 Sci.Production.PPIC/SMNoticePrg.cs -text
 Sci.Production.PPIC/Sci.Production.PPIC.csproj -text
 Sci.Production.PPIC/UIClassPrg.cs -text
