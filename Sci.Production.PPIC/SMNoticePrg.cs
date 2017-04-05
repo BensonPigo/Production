@@ -14,9 +14,11 @@ using Sci.Win.UI;
 using MsExcel = Microsoft.Office.Interop.Excel;
 using System.Data.SqlClient;
 using Ict;
+using System.Drawing;
 
 namespace Sci.Production.Class.Commons
 {
+
     /// <summary>
     /// 用來處理Pattern/Marker/IE/SMNotice等等的QueryFor，因為他們有共同特性，會用登入者的CountryList欄位來做篩選
     /// </summary>
@@ -25,7 +27,7 @@ namespace Sci.Production.Class.Commons
         private static object MissingType = System.Type.Missing;
 
         #region QueryFors setup
-        
+
         /// <summary>
         /// 要把下拉選單做成哪一種
         /// </summary>
@@ -65,24 +67,39 @@ namespace Sci.Production.Class.Commons
                         statusFieldName = "StatusPattern";
                         //如果不是Admin，就要拿國別來篩選目前使用者能不能看到(申請單的細項的指派工廠SMNotice_Detail.Factory)
                         if (Env.User.IsAdmin == false)
-                            creteria.Add("CHARINDEX((Select CountryID From Factory Where ID in (Select d.Factory From SMNotice_Detail d Where ID = SMNotice.ID and d.Type in ('P', 'M'))), (Select CountryList from Pass1 where ID = '" + Env.User.UserID + "'), 1) > 0");
+                            //creteria.Add("CHARINDEX((Select CountryID From Factory Where ID in (Select d.Factory From SMNotice_Detail d Where ID = SMNotice.ID and d.Type in ('P', 'M'))), (Select CountryList from Pass1 where ID = '" + Env.User.UserID + "'), 1) > 0");
+                            creteria.Add(@"
+Exists (
+	Select 1 
+	From dbo.SplitString((Select CountryList from Pass1 WITH (NOLOCK) where ID = '" + Env.User.UserID + @"'), ',') x
+	inner Join Factory f WITH (NOLOCK)  on f.CountryID = x.Data
+	Inner Join SMNotice_Detail smd WITH (NOLOCK)  on smd.ID = SMNotice.ID and smd.Type in ('P', 'M') and smd.Factory = f.ID
+)
+");
                         break;
                     case SMNoticeCategoryEnum.IE:
                         statusFieldName = "StatusIE";
                         //如果不是Admin，就要拿國別來篩選目前使用者能不能看到
                         if (Env.User.IsAdmin == false)
-                            creteria.Add("CHARINDEX((Select CountryID From Factory Where ID in (Select d.Factory From SMNotice_Detail d Where ID = SMNotice.ID and d.Type = 'I')), (Select CountryList from Pass1 where ID = '" + Env.User.UserID + "'), 1) > 0");
+                            creteria.Add(@"
+Exists (
+	Select 1 
+	From dbo.SplitString((Select CountryList from Pass1 WITH (NOLOCK) where ID = '" + Env.User.UserID + @"'), ',') x
+	inner Join Factory f WITH (NOLOCK)  on f.CountryID = x.Data
+	Inner Join SMNotice_Detail smd WITH (NOLOCK)  on smd.ID = SMNotice.ID and smd.Type in ('I') and smd.Factory = f.ID
+)
+");
                         break;
                     case SMNoticeCategoryEnum.Main:
                         statusFieldName = "Status";
                         //如果不是Admin，就要拿BrandID來篩選目前使用者能不能看到
-                        if (Env.User.IsAdmin == false)
-                        {
-                            //有特殊權限(AllCustomer)不用檢查BrandID
-                            bool IsAllCustomer = AuthPrg.hasSpecialAuth("CUST");
-                            if (IsAllCustomer == false)
-                                creteria.Add("SMNotice.BrandID In (Select BrandID From PASS_AuthBrand Where ID = '" + Env.User.UserID + "')");
-                        }
+                        //if (Env.User.IsAdmin == false)
+                        //{
+                        //    //有特殊權限(AllCustomer)不用檢查BrandID
+                        //    bool IsAllCustomer = AuthPrg.hasSpecialAuth("CUST");
+                        //    if (IsAllCustomer == false)
+                        //        creteria.Add("SMNotice.BrandID In (Select BrandID From PASS_AuthBrand Where ID = '" + Env.User.UserID + "')");
+                        //}
                         break;
                     default:
                         throw new NotImplementedException();
@@ -100,7 +117,7 @@ namespace Sci.Production.Class.Commons
             });
             SharedQueryForsSetup("SMNoticeStatus", queryfors, showErr, reloadDatas, resetDefaultWhere);
         }
-        
+
         /// <summary>
         /// (Pattern.P02 - Pattern List)建立畫面上的UseFor下拉選單，並且處理他的SelectIndexChanged
         /// </summary>
@@ -136,7 +153,7 @@ namespace Sci.Production.Class.Commons
             });
             SharedQueryForsSetup("PatternStatus", queryfors, showErr, reloadDatas, resetDefaultWhere);
         }
-        
+
         /// <summary>
         /// (Pattern.P03 - Pattern List)建立畫面上的UseFor下拉選單，並且處理他的SelectIndexChanged
         /// </summary>
@@ -278,7 +295,7 @@ namespace Sci.Production.Class.Commons
             using (var helper = new AutoUpdator())
             {
                 var dtSMNotice = helper.LoadReferenceTable("Select ID, StatusPattern, StatusIE From SMNotice Where ID = @ID", "SMNotice", "ID", id);
-                
+
                 var rowSMNotice = dtSMNotice.AsEnumerable().FirstOrDefault();
                 if (rowSMNotice == null)
                 {
@@ -295,7 +312,7 @@ namespace Sci.Production.Class.Commons
                             {
                                 var dtPattern = helper.LoadTable("Select ID, Version, ActFtyPattern, EditName, EditDate From Pattern Where ID = @ID And Version = (Select max(Version) From Pattern Where ID = @ID)", "ID", id);
                                 var dtMarker = helper.LoadTable("Select ID, Version, ActFtyMarker, EditName, EditDate From Marker Where ID = @ID And Version = (Select max(Version) From Marker Where ID = @ID)", "ID", id);
-                                
+
                                 if (dtPattern.Rows.Count != 0)
                                     originalFactoryId = dtPattern.Rows[0].Field<string>("ActFtyPattern");
                                 else if (dtMarker.Rows.Count != 0)
@@ -416,22 +433,32 @@ namespace Sci.Production.Class.Commons
 
         #region Print SMNotice
 
+        /// <summary>
+        /// 
+        /// </summary>
         public enum EnuPrintSMType
-        { 
-            SMNotice
-            ,Order        
+        {
+            /// <summary>
+            /// 
+            /// </summary>
+            SMNotice,
+            /// <summary>
+            /// 
+            /// </summary>
+            Order
         }
 
 
         /// <summary>
         /// 列印SMNotice報表
         /// </summary>
+        /// <param name="enuType"></param>
         /// <param name="ID"></param>
         public static void PrintSMNotice(string ID, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
             var xltFolder = Sci.Env.Cfg.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "PPIC_Pattern-P01_PrintSMnotice.xlt");
-            
+
             if (System.IO.File.Exists(xltPath) == false)
             {
                 MyUtility.Msg.WarningBox("can't find template file (" + xltPath + ")");
@@ -445,19 +472,17 @@ namespace Sci.Production.Class.Commons
             try
             {
                 app.DisplayAlerts = false;
-                
                 book = app.Workbooks.Open(tmpFileName);
-                
 #if DEBUG
                 app.Visible = true;
-#endif                                
+#endif
                 var mainSheet = book.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
-                
+
                 var pageHBreakList = new List<int>(); //換頁符號的水平插入點，基本上P2的時候換一次，之後的TrimCard每頁換一次
 
                 //依照Type移除Title共用的部分
                 if (enuType == EnuPrintSMType.SMNotice)
-                {                    
+                {
                     mainSheet.get_Range("A9:AC13").Delete();
                 }
                 else
@@ -489,16 +514,18 @@ namespace Sci.Production.Class.Commons
                 //{
                 //    mainSheet.HPageBreaks[1].Delete();
                 //}
-                //mainSheet.VPageBreaks.Add(mainSheet.Range["AD1"]);
+                //mainSheet.VPageBreaks.Add(mainSheet.Range["AA1"]);
                 pageHBreakList.ForEach(hBreakIndex => mainSheet.HPageBreaks.Add(mainSheet.Range["A" + hBreakIndex]));
 
                 mainSheet.Cells[1, 1].Select();
                 app.DisplayAlerts = true;
 
 #if !DEBUG
-            app.Visible = true;
+                app.Visible = true;
 #endif
+
                 mainSheet.Protect("SCIMIS919", Type.Missing, Type.Missing, Type.Missing, Type.Missing, true, true, true);
+
             }
             finally
             {
@@ -511,7 +538,7 @@ namespace Sci.Production.Class.Commons
                 System.GC.Collect();
             }
 
-         //   MyUtility.Msg.InfoBox("print complete");
+            //    MyUtility.Msg.InfoBox("print complete");
         }
 
         /// <summary>
@@ -612,13 +639,13 @@ where o.POID = @ID
                     sheet.GetRange("Block1BrandID_O").SetValue(row.Field<string>("BrandID"));
                     sheet.GetRange("Block1OrderType_O").SetValue(row.Field<string>("OrderTypeID"));
                     sheet.GetRange("Block1ProgramID_O").SetValue(row.Field<string>("ProgramID"));
-                    
+
                     //line2
                     sheet.GetRange("Block1StyleID_O").SetValue(row.Field<string>("StyleID"));
                     sheet.GetRange("Block1SeasonID_O").SetValue(row.Field<string>("SeasonID"));
                     sheet.GetRange("Block1Factory_O").SetValue(row.Field<string>("FactoryID"));
                     sheet.GetRange("Block1Delivery_O").SetValue(row.Field<string>("BuyerDelivery"));
-                    
+
                     //line3
                     sheet.GetRange("Block1Description_O").SetValue(row.Field<string>("Description"));
                     sheet.GetRange("Block1CDCodeID_O").SetValue(row.Field<string>("CdCodeID"));
@@ -626,7 +653,7 @@ where o.POID = @ID
 
                     //line4
                     sheet.GetRange("Block1SPNo_O").SetValue(row.Field<string>("spno"));
-                    
+
                 }
                 rowPosition += 7;
 
@@ -651,13 +678,14 @@ where o.POID = @ID
             if (enuType == EnuPrintSMType.SMNotice)
             {
                 sqlX = @"
-Select fabricCode.FabricPanelCode, fabricCode.PatternPanel, bof.FabricCode, q.QTWith 
-	From SMNotice sm
-	Left Join Style s on s.Ukey = sm.StyleUkey
-	Left Join Style_BOF bof on bof.StyleUkey = s.Ukey
-	Left Join Style_FabricCode fabricCode on fabricCode.Style_BOFUkey = bof.Ukey
+Select 
+    fabricCode.FabricPanelCode, fabricCode.PatternPanel, bof.FabricCode, q.QTWith 
+From SMNotice sm
+Left Join Style s on s.Ukey = sm.StyleUkey
+Left Join Style_BOF bof on bof.StyleUkey = s.Ukey
+Inner Join Style_FabricCode fabricCode on fabricCode.Style_BOFUkey = bof.Ukey
 Outer Apply (
-    Select Top 1 Concat(qt.QTFabricCode, qt.QTPatternPanel) as QTWith
+    Select Top 1 Concat(fabricCode.FabricCode, fabricCode.PatternPanel) as QTWith
     From Style_FabricCode_QT qt
     Where qt.StyleUkey = sm.StyleUkey
     and qt.FabricPanelCode = fabricCode.FabricPanelCode
@@ -678,9 +706,16 @@ Select article.Article
 
                 sqlZ = @"
 Select color.Article, color.FabricCode, color.FabricPanelCode, color.ColorID
+, Cast(iif(xc.VividCnt is null, 0, iif(xc.VividCnt > 0, 1, 0)) as bit) as VIVID
 	From SMNotice sm
 	Left Join Style s on s.Ukey = sm.StyleUkey
 	Left Join Style_ColorCombo color on color.StyleUkey = s.Ukey and FabricCode <> ''
+    Left Join Color c on c.ID = color.ColorID and c.BrandId = s.BrandID
+    outer apply (
+	    Select Count(*) as VividCnt 
+	    From Color_multiple cm
+	    Inner Join Color c2 on c2.ID = cm.ColorID and c2.BrandId = cm.BrandID and c2.VIVID =1
+	    where cm.ColorUkey = c.Ukey) xc
 	where sm.ID = @ID
 ";
             }
@@ -692,7 +727,7 @@ Select fabricCode.FabricPanelCode, fabricCode.PatternPanel, bof.FabricCode, q.QT
 	Left Join Order_BOF bof on bof.ID = o.ID
 	Left Join Order_FabricCode fabricCode on fabricCode.Order_BOFUkey = bof.Ukey
 Outer Apply (
-    Select Top 1 Concat(qt.QTFabricCode, qt.QTPatternPanel) as QTWith
+    Select Top 1 Concat(fabricCode.FabricCode, fabricCode.PatternPanel) as QTWith
     From Order_FabricCode_QT qt
     Where qt.Id = o.ID
     and qt.FabricPanelCode = fabricCode.FabricPanelCode
@@ -712,12 +747,19 @@ Select distinct article.Article
 
                 sqlZ = @"
 Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.ColorID
+, Cast(iif(xc.VividCnt is null, 0, iif(xc.VividCnt > 0, 1, 0)) as bit) as VIVID
 	From Orders o
 	Left Join Order_ColorCombo color on color.Id = o.ID and FabricCode <> ''
+    Left Join Color c on c.ID = color.ColorID and c.BrandId = o.BrandID
+    outer apply (
+	    Select Count(*) as VividCnt 
+	    From Color_multiple cm
+	    Inner Join Color c2 on c2.ID = cm.ColorID and c2.BrandId = cm.BrandID and c2.VIVID =1
+	    where cm.ColorUkey = c.Ukey) xc
 	where o.POID = @ID
 ";
             }
-            
+
             using (var drX = DBProxy.Current.SelectEx(sqlX, "ID", ID)) //抓X軸
             using (var drY = DBProxy.Current.SelectEx(sqlY, "ID", ID)) //抓Y軸
             using (var drZ = DBProxy.Current.SelectEx(sqlZ, "ID", ID)) //抓Z軸
@@ -738,6 +780,11 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
                     return false;
                 }
 
+                if (drX.ExtendedData.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("Pattern panel not key in");
+                    return true;
+                }
                 var dataX = drX.ExtendedData
                     .AsEnumerable()
                     .Select(row => new
@@ -760,86 +807,198 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
                         FabricPanelCode = row.Field<string>("FabricPanelCode"),
                         ColorID = row.Field<string>("ColorID"),
                     })
-                    .ToDictionary(item => new Tuple<string, string>(item.Article, item.FabricPanelCode), item => item.ColorID); ;
+                    .ToDictionary(
+                        item => new Tuple<string, string>(item.Article, item.FabricPanelCode),
+                        item => item.ColorID);
 
-                var linesOfExcel = new List<IEnumerable<object>>();
-                linesOfExcel.Add(
-                    //第一行要印Art# 和有使用到的FabricPanelCode
-                    new[] { (object)"Art#" }.Concat(dataX.Select(pair => pair.Key))
-                );
-                linesOfExcel.Add(
-                    //第二行要印PatternPanel
-                    new[] { (object)"Pattern Panel" }.Concat(dataX.Select(pair => pair.Value.PatternPanel))
-                );
+                //找出需要改為灰底的欄位
+                var vividColors = drZ.ExtendedData.AsEnumerable().Where(row => row.Field<bool>("VIVID") == true).Select(row => row.Field<string>("ColorID")).ToList();
 
-                //接著把Article，串上屬於他的Color
-                dataY.ToList().ForEach(article =>
+                #region ColorCombo-Fabric
                 {
-                    var colorsOfThisArticle = dataX.Select(pair =>
+                    var linesOfExcel = new List<IEnumerable<object>>();
+                    linesOfExcel.Add(
+                        //第一行要印Art# 和有使用到的FabricPanelCode
+                        new[] { (object)"Art#" }.Concat(dataX.Select(pair => pair.Key))
+                    );
+                    linesOfExcel.Add(
+                        //第二行要印PatternPanel
+                        new[] { (object)"Pattern Panel" }.Concat(dataX.Select(pair => pair.Value.PatternPanel))
+                    );
+
+                    //接著把Article，串上屬於他的Color
+                    dataY.ToList().ForEach(article =>
                     {
-                        var key = new Tuple<string, string>(article, pair.Key);
-                        if (dataZ.ContainsKey(key))
-                            return dataZ[key];
-                        else
-                            return string.Empty;
-                    }).ToList();
-                    linesOfExcel.Add(new[] { (object)article }.Concat(colorsOfThisArticle));
-                });
+                        var colorsOfThisArticle = dataX.Select(pair =>
+                        {
+                            var key = new Tuple<string, string>(article, pair.Key);
+                            if (dataZ.ContainsKey(key))
+                                return dataZ[key];
+                            else
+                                return string.Empty;
+                        }).ToList();
+                        linesOfExcel.Add(new[] { (object)article }.Concat(colorsOfThisArticle));
+                    });
 
-                linesOfExcel.Add(
-                    //倒數第二行要印FabricCode
-                    new[] { (object)"FabricCode" }.Concat(dataX.Select(pair => pair.Value.FabricCode))
-                );
+                    linesOfExcel.Add(
+                        //倒數第二行要印FabricCode
+                        new[] { (object)"FabricCode" }.Concat(dataX.Select(pair => pair.Value.FabricCode))
+                    );
 
-                linesOfExcel.Add(
-                    //倒數第一行要印QTWith
-                    new[] { (object)"QT with" }.Concat(dataX.Select(pair => pair.Value.QTWith))
-                );
+                    linesOfExcel.Add(
+                        //倒數第一行要印QTWith
+                        new[] { (object)"QT with" }.Concat(dataX.Select(pair => pair.Value.QTWith))
+                    );
 
-                //最後變成string[][]，再轉為object[,]準備放給ExlceRange.Value2
-                var rangeValue2 = linesOfExcel.DoubleArrayConvert2DArray();
+                    //最後變成string[][]，再轉為object[,]準備放給ExlceRange.Value2
+                    var rangeValue2 = linesOfExcel.DoubleArrayConvert2DArray();
 
-                //關於第二區塊的WorkSheet
-                var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P1B2") as MsExcel.Worksheet;
-
-                try
-                {
-                    //======Excel動態生成區塊開始=======
-                    //column的動態新增:
-                    var columnNeeded = rangeValue2.GetLength(1);
-                    if (columnNeeded > 26)
+                    //尋找要改變顏色的欄位的座標
+                    var cellLocationsForVividColor = new List<Point>();
+                    for (int y = 0; y < rangeValue2.GetLength(0); y++)
                     {
-                        thisSheet.GetRange(2, 2, 2, 4).Copy();
-                        thisSheet.GetRange(28, 2, 28 + columnNeeded - 28, 4).PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
-                    }
-                    //row的動態新增:
-                    if (dataY.Count > 1)
-                    {
-                        //將動態的行空間製造出來(第四行是TemplateRow，所以從第5行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
-                        thisSheet.Range[thisSheet.Rows[5], thisSheet.Rows[5 + dataY.Count - 2]].Insert();
-
-                        //把Template行複製給剛剛製作出來的空間
-                        thisSheet.Rows[4].Copy();
-                        thisSheet.Range[thisSheet.Rows[5], thisSheet.Rows[5 + dataY.Count - 2]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+                        for (int x = 0; x < rangeValue2.GetLength(1); x++)
+                        {
+                            var value = (string)rangeValue2[y, x];
+                            if (string.IsNullOrWhiteSpace(value) == false &&
+                                vividColors.Contains(value))
+                            {
+                                cellLocationsForVividColor.Add(new Point(x, y));
+                            }
+                        }
                     }
 
-                    //把值放給剛剛動態製作出來的空間 (從Row2開始放值)
-                    var leftTopCell = thisSheet.Cells[2, 1];
-                    var rightBottomCell = thisSheet.Cells[2 + rangeValue2.GetLength(0) - 1, 1 + rangeValue2.GetLength(1) - 1];
-                    thisSheet.Range[leftTopCell, rightBottomCell].Value2 = rangeValue2;
-                    //======Excel動態生成區塊結束=======
+                    //關於第二區塊的WorkSheet
+                    var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P1B2") as MsExcel.Worksheet;
 
-                    //搬回去給主WorkSheet
-                    MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet);
+                    try
+                    {
+                        //======Excel動態生成區塊開始=======
+                        //column的動態新增:
+                        var columnNeeded = rangeValue2.GetLength(1);
+                        if (columnNeeded > 26)
+                        {
+                            thisSheet.GetRange(2, 2, 2, 4).Copy();
+                            thisSheet.GetRange(28, 2, 28 + columnNeeded - 28, 4).PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+                        }
+                        //row的動態新增:
+                        if (dataY.Count > 1)
+                        {
+                            //將動態的行空間製造出來(第四行是TemplateRow，所以從第5行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
+                            thisSheet.Range[thisSheet.Rows[5], thisSheet.Rows[5 + dataY.Count - 2]].Insert();
 
-                    return true;
+                            //把Template行複製給剛剛製作出來的空間
+                            thisSheet.Rows[4].Copy();
+                            thisSheet.Range[thisSheet.Rows[5], thisSheet.Rows[5 + dataY.Count - 2]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+                        }
+
+                        //把值放給剛剛動態製作出來的空間 (從Row2開始放值)
+                        var leftTopCell = thisSheet.Cells[2, 1];
+                        var rightBottomCell = thisSheet.Cells[2 + rangeValue2.GetLength(0) - 1, 1 + rangeValue2.GetLength(1) - 1];
+                        thisSheet.Range[leftTopCell, rightBottomCell].Value2 = rangeValue2;
+
+                        //開始把VIVID的格子變色
+                        cellLocationsForVividColor.ToList().ForEach(point =>
+                        {
+                            thisSheet.Cells[point.Y + 2, point.X + 1].Interior.Color = Color.FromArgb(239, 169, 64);
+                        });
+
+                        //VIVID顏色設定灰底
+                        //======Excel動態生成區塊結束=======
+
+                        //搬回去給主WorkSheet
+                        MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet);
+                    }
+                    finally
+                    {
+                        thisSheet.Delete();
+                        Marshal.ReleaseComObject(thisSheet);
+                        thisSheet = null;
+                    }
                 }
-                finally
+                #endregion
+
+                #region Washing Fabric Swatch
                 {
-                    thisSheet.Delete();
-                    Marshal.ReleaseComObject(thisSheet);
-                    thisSheet = null;
+                    var linesOfExcel = new List<IEnumerable<object>>();
+                    linesOfExcel.Add(
+                        //第一行要印Art# 和有使用到的SizeCode (Washing Fabric Swatch只需要印第一個SizeCode)
+                        new[] { (object)"Art#" }.Concat(dataX.Take(1).Select(pair => pair.Key))
+                    );
+
+                    //接著把Article，串上屬於他的Color (Washing Fabric Swatch只需要印第一個SizeCode)
+                    dataY.ToList().ForEach(article =>
+                    {
+                        var colorsOfThisArticle = dataX.Take(1).Select(pair =>
+                        {
+                            var key = new Tuple<string, string>(article, pair.Key);
+                            if (dataZ.ContainsKey(key))
+                                return dataZ[key];
+                            else
+                                return string.Empty;
+                        }).ToList();
+                        linesOfExcel.Add(new[] { (object)article }.Concat(colorsOfThisArticle));
+                    });
+
+                    //最後變成string[][]，再轉為object[,]準備放給ExlceRange.Value2
+                    var rangeValue2 = linesOfExcel.DoubleArrayConvert2DArray();
+
+                    //尋找要改變顏色的欄位的座標
+                    var cellLocationsForVividColor = new List<Point>();
+                    for (int y = 0; y < rangeValue2.GetLength(0); y++)
+                    {
+                        for (int x = 0; x < rangeValue2.GetLength(1); x++)
+                        {
+                            var value = (string)rangeValue2[y, x];
+                            if (string.IsNullOrWhiteSpace(value) == false &&
+                                vividColors.Contains(value))
+                            {
+                                cellLocationsForVividColor.Add(new Point(x, y));
+                            }
+                        }
+                    }
+
+                    //關於第Washing Fabric Swatch的WorkSheet(這個區塊不用複製去MainSheet)
+                    var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("washing fabric swatch") as MsExcel.Worksheet;
+
+                    try
+                    {
+                        //======Excel動態生成區塊開始=======
+                        //row的動態新增:
+                        if (dataY.Count > 1)
+                        {
+                            //將動態的行空間製造出來(第3行是TemplateRow，所以從第4行開始加，並且少加入1行，因為到時候會連TemplateRow一起放值用掉)
+                            thisSheet.Range[thisSheet.Rows[3], thisSheet.Rows[3 + dataY.Count - 2]].Insert();
+
+                            //把Template行複製給剛剛製作出來的空間
+                            thisSheet.Rows[3].Copy();
+                            thisSheet.Range[thisSheet.Rows[4], thisSheet.Rows[4 + dataY.Count - 2]].PasteSpecial(MsExcel.XlPasteType.xlPasteAll, MsExcel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+                        }
+
+                        //把值放給剛剛動態製作出來的空間 (從Row2開始放值)
+                        var leftTopCell = thisSheet.Cells[2, 1];
+                        var rightBottomCell = thisSheet.Cells[2 + rangeValue2.GetLength(0) - 1, 1 + rangeValue2.GetLength(1) - 1];
+                        thisSheet.Range[leftTopCell, rightBottomCell].Value2 = rangeValue2;
+
+                        //開始把VIVID的格子變色
+                        cellLocationsForVividColor.ToList().ForEach(point =>
+                        {
+                            thisSheet.Cells[point.Y + 2, point.X + 1].Interior.Color = Color.FromArgb(239, 169, 64);
+                        });
+
+                        //VIVID顏色設定灰底
+                        //======Excel動態生成區塊結束=======
+                    }
+                    finally
+                    {
+                        Marshal.ReleaseComObject(thisSheet);
+                        thisSheet = null;
+                    }
                 }
+                #endregion
+
+
+                return true;
             }
         }
 
@@ -899,7 +1058,7 @@ Where o.ID = @ID
 Order by fc.FabricPanelCode
 ";
             }
-            
+
             using (var dr = DBProxy.Current.SelectEx(sql, "ID", ID))
             {
                 if (dr == false)
@@ -985,12 +1144,19 @@ Select article.Article
 	Left Join Style s on s.Ukey = sm.StyleUkey
 	Left Join Style_Article article on article.StyleUkey = s.Ukey
 	where sm.ID = @ID
-";                
+";
                 sqlZ = @"
 Select color.Article, color.FabricCode, color.FabricPanelCode, color.ColorID, color.PatternPanel
+, Cast(iif(xc.VividCnt is null, 0, iif(xc.VividCnt > 0, 1, 0)) as bit) as VIVID
 	From SMNotice sm
 	Left Join Style s on s.Ukey = sm.StyleUkey
 	Left Join Style_ColorCombo color on color.StyleUkey = s.Ukey and FabricCode = ''
+    Left Join Color c on c.ID = color.ColorID and c.BrandId = s.BrandID
+    outer apply (
+	    Select Count(*) as VividCnt 
+	    From Color_multiple cm
+	    Inner Join Color c2 on c2.ID = cm.ColorID and c2.BrandId = cm.BrandID and c2.VIVID =1
+	    where cm.ColorUkey = c.Ukey) xc
 	where sm.ID = @ID
 ";
             }
@@ -1009,17 +1175,24 @@ From Orders o
 Where o.POID = @ID)x
 order by case when x.FabricPanelCode like 'A%' then 1 else 2 end, x.FabricPanelCode
 ";
-                
+
                 sqlY = @"
 Select distinct article.Article
 	From Orders o
 	Left Join Order_Article article on article.id = o.ID
 	where o.POID = @ID
-";                
+";
                 sqlZ = @"
 Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.ColorID, color.PatternPanel
+, Cast(iif(xc.VividCnt is null, 0, iif(xc.VividCnt > 0, 1, 0)) as bit) as VIVID
 	From Orders o
 	Left Join Order_ColorCombo color on color.Id = o.ID and FabricCode = ''
+    Left Join Color c on c.ID = color.ColorID and c.BrandId = o.BrandID
+    outer apply (
+	    Select Count(*) as VividCnt 
+	    From Color_multiple cm
+	    Inner Join Color c2 on c2.ID = cm.ColorID and c2.BrandId = cm.BrandID and c2.VIVID =1
+	    where cm.ColorUkey = c.Ukey) xc
 	where o.ID = @ID
 ";
 
@@ -1066,8 +1239,8 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
                         .AsEnumerable()
                         .Select(row => row.Field<string>("FabricPanelCode"))
                         .Distinct()
-                        .Where(FabricPanelCode => dataZ.Any(pair => pair.Key.Item2 == FabricPanelCode))
-                        .OrderBy(FabricPanelCode => FabricPanelCode.Length == 1 ? "A" + FabricPanelCode : FabricPanelCode)
+                        .Where(fabricPanelCode => dataZ.Any(pair => pair.Key.Item2 == fabricPanelCode))
+                        .OrderBy(fabricPanelCode => fabricPanelCode.Length == 1 ? "A" + fabricPanelCode : fabricPanelCode)
                         .ToList();
 
                     var dataY = drY.ExtendedData
@@ -1081,12 +1254,15 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
                         new[] { (object)"Art#" }.Concat(dataX.ToArray())
                     );
 
+                    //找出需要改為灰底的欄位
+                    var vividColors = drZ.ExtendedData.AsEnumerable().Where(row => row.Field<bool>("VIVID") == true).Select(row => row.Field<string>("ColorID")).ToList();
+
                     //接著把Article，串上屬於他的Color
                     dataY.ToList().ForEach(article =>
                     {
-                        var colorsOfThisArticle = dataX.Select(FabricPanelCode =>
+                        var colorsOfThisArticle = dataX.Select(fabricPanelCode =>
                         {
-                            var key = new Tuple<string, string>(article, FabricPanelCode);
+                            var key = new Tuple<string, string>(article, fabricPanelCode);
                             if (dataZ.ContainsKey(key))
                                 return dataZ[key];
                             else
@@ -1097,6 +1273,22 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
 
                     //最後變成string[][]，再轉為object[,]準備放給ExlceRange.Value2
                     var rangeValue2 = linesOfExcel.DoubleArrayConvert2DArray();
+
+                    //尋找要改變顏色的欄位的座標
+                    var cellLocationsForVividColor = new List<Point>();
+                    for (int y = 0; y < rangeValue2.GetLength(0); y++)
+                    {
+                        for (int x = 0; x < rangeValue2.GetLength(1); x++)
+                        {
+                            var value = (string)rangeValue2[y, x];
+                            if (string.IsNullOrWhiteSpace(value) == false &&
+                                vividColors.Contains(value))
+                            {
+                                cellLocationsForVividColor.Add(new Point(x, y));
+                            }
+                        }
+                    }
+
                     //======Excel動態生成區塊開始=======
                     var columnNeeded = rangeValue2.GetLength(1);
                     if (columnNeeded > 26)
@@ -1118,6 +1310,12 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
                     var leftTopCell = thisSheet.Cells[2, 1];
                     var rightBottomCell = thisSheet.Cells[2 + rangeValue2.GetLength(0) - 1, 1 + rangeValue2.GetLength(1) - 1];
                     thisSheet.Range[leftTopCell, rightBottomCell].Value2 = rangeValue2;
+
+                    //開始把VIVID的格子變色
+                    cellLocationsForVividColor.ToList().ForEach(point =>
+                    {
+                        thisSheet.Cells[point.Y + 2, point.X + 1].Interior.Color = Color.FromArgb(239, 169, 64);
+                    });
                     //======Excel動態生成區塊結束=======
 
                     //搬回去給主WorkSheet
@@ -1144,7 +1342,7 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
         /// <returns></returns>
         private static bool PrintSMNoticeBlock5(MsExcel.Worksheet sheet, string ID, ref int rowPosition, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
-            var sql = "";
+            string sql = "", sql2 = "";
             if (enuType == EnuPrintSMType.SMNotice)
             {
                 sql = @"
@@ -1168,6 +1366,13 @@ Select 2 as tp, Concat(color.Article, '/', color.FabricPanelCode) as Caption, r.
 	and Substring(color.ColorID, 1, 1) = 'X') x
 order by x.tp, x.Caption
 ";
+                sql2 = @"
+Select c.ID
+From SMNotice sm
+Inner Join Style s on s.Ukey = sm.StyleUkey
+Inner Join Color c on c.BrandID = s.BrandID and c.VIVID = 1
+where sm.ID = @ID
+";
             }
             else
             {
@@ -1190,10 +1395,18 @@ Select 2 as tp, Concat(color.Article, '/', color.FabricPanelCode) as Caption, r.
 	and Substring(color.ColorID, 1, 1) = 'X') x
 order by x.tp, x.Caption
 ";
+                sql2 = @"
+Select c.ID
+From SMNotice sm
+Inner Join Style s on s.Ukey = sm.StyleUkey
+Inner Join Color c on c.BrandID = s.BrandID and c.VIVID = 1
+where sm.ID = @ID
+";
             }
-
             using (var dr = DBProxy.Current.SelectEx(sql, "ID", ID))
+            using (var dr2 = DBProxy.Current.SelectEx(sql2, "ID", ID))
             {
+                var allVividColors = dr2.ExtendedData.AsEnumerable().Select(row => row.Field<string>("ID")).ToList();
                 var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P1B5") as MsExcel.Worksheet;
                 try
                 {
@@ -1205,6 +1418,21 @@ order by x.tp, x.Caption
                     else if (dr.ExtendedData.Rows.Count == 0)
                         return true;
                     var rangeValue = dr.ExtendedData.AsEnumerable().Select(row => new[] { row.Field<string>("Caption"), string.Empty, row.Field<string>("ColorID") }.Concat(row.Field<string>("ColorList").Split('|'))).DoubleArrayConvert2DArray();
+
+                    //尋找要改變顏色的欄位的座標
+                    var cellLocationsForVividColor = new List<Point>();
+                    for (int y = 0; y < rangeValue.GetLength(0); y++)
+                    {
+                        for (int x = 0; x < rangeValue.GetLength(1); x++)
+                        {
+                            var value = (string)rangeValue[y, x];
+                            if (string.IsNullOrWhiteSpace(value) == false &&
+                                allVividColors.Contains(value))
+                            {
+                                cellLocationsForVividColor.Add(new Point(x, y));
+                            }
+                        }
+                    }
 
                     //一共有多少筆資料要被放入
                     var recordCount = dr.ExtendedData.Rows.Count;
@@ -1231,6 +1459,12 @@ order by x.tp, x.Caption
                     var areaLeft = 1;
                     var areaTop = 1;
                     thisSheet.GetRange(areaLeft, areaTop, areaLeft + columnNeeded - 1, areaTop + rowNeeded - 1).Value2 = rangeValue;
+
+                    //開始把VIVID的格子變色
+                    cellLocationsForVividColor.ToList().ForEach(point =>
+                    {
+                        thisSheet.Cells[point.Y + 1, point.X + 1].Interior.Color = Color.FromArgb(239, 169, 64);
+                    });
                     //======Excel動態生成區塊結束=======
 
                     //搬回去給主WorkSheet
@@ -1264,8 +1498,12 @@ Select Concat(boa.PatternPanel, '[', IsNull(boa.SizeItem, ''), ']:') as Mix1, Co
 From SMNotice sm
 inner join Style_BOA boa on boa.StyleUkey = sm.StyleUkey
 Inner Join Fabric f on f.SCIRefno = boa.SCIRefno
-Inner Join MtlType mt on mt.ID = f.MtltypeId and mt.ID like '%TAPE'
-Where sm.ID = @ID and boa.PatternPanel <> '' and boa.ProvidedPatternRoom = 1
+--Inner Join MtlType mt on mt.ID = f.MtltypeId and (mt.ID like '%TAPE' or mt.ID like '%ELASTIC%')
+Where 1 = 1
+And sm.ID = @ID 
+And boa.PatternPanel <> '' 
+And IsNull(boa.ProvidedPatternRoom, 0) = 1
+And IsNull(f.BomTypeCalculate, 0) = 1
 Order by boa.PatternPanel
 ";
             }
@@ -1274,14 +1512,18 @@ Order by boa.PatternPanel
                 sql = @"
 Select Concat(boa.PatternPanel, '[', IsNull(boa.SizeItem, ''), ']:') as Mix1, Concat(IsNull(boa.Refno, ''), ' ', IsNull(f.Description, '')) as Mix2
 From Orders o
-inner join Order_BOA boa on boa.Id = o.ID
+Inner join Order_BOA boa on boa.Id = o.ID
 Inner Join Fabric f on f.SCIRefno = boa.SCIRefno
-Inner Join MtlType mt on mt.ID = f.MtltypeId and mt.ID like '%TAPE'
-Where o.ID = @ID and boa.PatternPanel <> '' and boa.ProvidedPatternRoom = 1
+--Inner Join MtlType mt on mt.ID = f.MtltypeId and (mt.ID like '%TAPE' or mt.ID like '%ELASTIC%')
+Where 1 = 1
+And o.ID = @ID 
+And boa.PatternPanel <> '' 
+And IsNull(boa.ProvidedPatternRoom, 0) = 1
+And IsNull(f.BomTypeCalculate, 0) = 1
 Order by boa.PatternPanel
-";          
+";
             }
-            
+
             using (var dr = DBProxy.Current.SelectEx(sql, "ID", ID))
             {
                 var thisSheet = (sheet.Parent as MsExcel.Workbook).Worksheets.get_Item("P1B6") as MsExcel.Worksheet;
@@ -1349,10 +1591,11 @@ Select boa.PatternPanel + iif(boa.SizeItem <> '', '[' + IsNull(boa.SizeItem, '')
 From SMNotice sm
 Inner join Style_BOA boa on boa.StyleUkey = sm.StyleUkey
 Inner Join Fabric f on f.SCIRefno = boa.SCIRefno
-Inner Join MtlType mt on mt.ID = f.MtltypeId and not (mt.ID like '%TAPE')
+--Inner Join MtlType mt on mt.ID = f.MtltypeId and not (mt.ID like '%TAPE' or mt.ID like '%ELASTIC%')
 Where sm.ID = @ID 
 and boa.PatternPanel <> '' 
-and boa.ProvidedPatternRoom = 1
+and IsNull(boa.ProvidedPatternRoom, 0) = 1
+And IsNull(f.BomTypeCalculate, 0) = 0
 Order by boa.PatternPanel
 ";
             }
@@ -1363,10 +1606,11 @@ Select boa.PatternPanel + iif(boa.SizeItem <> '', '[' + IsNull(boa.SizeItem, '')
 From Orders o
 Inner join Order_BOA boa on boa.Id = o.ID
 Inner Join Fabric f on f.SCIRefno = boa.SCIRefno
-Inner Join MtlType mt on mt.ID = f.MtltypeId and not (mt.ID like '%TAPE')
+--Inner Join MtlType mt on mt.ID = f.MtltypeId and not (mt.ID like '%TAPE' or mt.ID  like '%ELASTIC%')
 Where o.ID = @ID 
 and boa.PatternPanel <> '' 
 and boa.ProvidedPatternRoom = 1
+And IsNull(f.BomTypeCalculate, 0) = 0
 Order by boa.PatternPanel
 ";
             }
@@ -1531,16 +1775,16 @@ order by q.Article, q.SizeCode
 
                     //換成用FabricPanelCode 和 Article當X座標與Y座標的字典備用
                     var dataZ = drZ.ExtendedData
-                       .AsEnumerable()
-                       .Select(row => new
-                       {
-                           Article = row.Field<string>("Article"),
-                           SizeCode = row.Field<string>("SizeCode"),
-                           Qty = row.Field<int?>("Qty"),
-                       })
-                       .ToDictionary(
-                           item => new Tuple<string, string>(item.Article, item.SizeCode),
-                           item => item.Qty);
+                        .AsEnumerable()
+                        .Select(row => new
+                        {
+                            Article = row.Field<string>("Article"),
+                            SizeCode = row.Field<string>("SizeCode"),
+                            Qty = row.Field<decimal?>("Qty"),
+                        })
+                        .ToDictionary(
+                            item => new Tuple<string, string>(item.Article, item.SizeCode),
+                            item => item.Qty);
 
                     var linesOfExcel = new List<IEnumerable<object>>();
                     linesOfExcel.Add(
@@ -1709,6 +1953,7 @@ Where o.ID = @ID
         /// <param name="sheet"></param>
         /// <param name="ID"></param>
         /// <param name="rowPosition"></param>
+        /// <param name="pageHBreakList"></param>
         /// <param name="enuType"></param>
         /// <returns></returns>
         private static bool PrintSMNoticeBlock11(MsExcel.Worksheet sheet, string ID, ref int rowPosition, List<int> pageHBreakList, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
@@ -1752,7 +1997,7 @@ From Orders o
 Where o.ID = @ID
 ";
             }
-            
+
             using (var dr = DBProxy.Current.SelectEx(sql, "ID", ID))
             using (var drStyleInfo = DBProxy.Current.SelectEx(sqlStyleInfo, "ID", ID))
             {
@@ -1908,7 +2153,7 @@ Where o.ID = @ID
                 app.DisplayAlerts = true;
 
 #if !DEBUG
-            app.Visible = true;
+                app.Visible = true;
 #endif
             }
             finally
@@ -2033,10 +2278,10 @@ order by x.tp, x.PNO
                                 })
                             //把Article 和 ColorName組合成一對一對的資料，並且以長度2做切分
                             .SelectMany(item => item.AsEnumerable().Select((item2, idx) => new
-                                {
-                                    LineIndex = Convert.ToInt32(idx / 2),
-                                    ArticlePair = item2,
-                                })
+                            {
+                                LineIndex = Convert.ToInt32(idx / 2),
+                                ArticlePair = item2,
+                            })
                                 .GroupBy(item2 => item2.LineIndex, item2 => item2.ArticlePair)
                                 .Select(item2 => new
                                 {
@@ -2096,8 +2341,10 @@ order by x.tp, x.PNO
         /// 列印SMNotice報表
         /// </summary>
         /// <param name="uKey"></param>
-        public static void PrintGarmentList(long uKey)
+        /// <param name="savePath"></param>
+        public static void PrintGarmentList(long uKey, string savePath = null)
         {
+            var directlyOpenExportReport = (savePath == null);
             var xltFolder = Sci.Env.Cfg.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "Pattern-P02.Garment List-Print.xlt");
             var bmpFolder = System.IO.Path.Combine(xltFolder, "BMP");
@@ -2111,6 +2358,7 @@ order by x.tp, x.PNO
             System.IO.File.Copy(xltPath, tmpFileName, true);
             var app = new MsExcel.Application();
             MsExcel.Workbook book = null;
+            MsExcel.Worksheet mainSheet = null;
             try
             {
                 app.DisplayAlerts = false;
@@ -2119,7 +2367,7 @@ order by x.tp, x.PNO
 #if DEBUG
                 app.Visible = true;
 #endif
-                var mainSheet = book.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
+                mainSheet = book.Worksheets[1] as Microsoft.Office.Interop.Excel.Worksheet;
 
                 int rowPosition = 1; //各責任區域輪流使用
                 PrintGarmentListBlock1(mainSheet, uKey, ref rowPosition); //Block1: Header - Pattern
@@ -2134,7 +2382,8 @@ order by x.tp, x.PNO
                 using (var dr = DBProxy.Current.SelectEx(@"select StyleID, SeasonID, PatternNO from Pattern where UKey = @UKey", "Ukey", uKey))
                 {
                     var row = dr.ExtendedData.Rows[0];
-                    var savePath = System.IO.Path.Combine(saveDir, string.Format("{0}-{1}-{2}-GL.xlsx", row["StyleID"], row["SeasonID"], row["PatternNo"]));
+                    if (savePath == null)
+                        savePath = System.IO.Path.Combine(saveDir, string.Format("{0}-{1}-{2}-GL_{3}.xlsx", row["StyleID"], row["SeasonID"], row["PatternNo"], DateTime.Now.ToString("yyyyMMdd_HHmmss")));
                     if (System.IO.File.Exists(savePath))
                     {
                         while (true)
@@ -2147,22 +2396,18 @@ order by x.tp, x.PNO
                             catch (Exception)
                             {
                                 if (MyUtility.Msg.QuestionBox("file already exists and was opend, do yo want to retry?") == System.Windows.Forms.DialogResult.No)
-                                return;
+                                    return;
                             }
                         }
                     }
                     book.SaveAs(Filename: savePath);
-                    
                 }
-                
-                app.DisplayAlerts = true;
-
-#if !DEBUG
-            app.Visible = true;
-#endif
             }
             finally
             {
+                book.Close();
+                app.Quit();
+                Marshal.ReleaseComObject(mainSheet);
                 Marshal.ReleaseComObject(book);
                 Marshal.ReleaseComObject(app);
                 book = null;
@@ -2172,7 +2417,11 @@ order by x.tp, x.PNO
                 System.GC.Collect();
             }
 
-            MyUtility.Msg.InfoBox("print complete");
+            if (directlyOpenExportReport)
+            {
+                System.Diagnostics.Process.Start(savePath);
+                MyUtility.Msg.InfoBox("print complete");
+            }
         }
 
         /// <summary>
@@ -2309,9 +2558,9 @@ ROW_NUMBER() OVER(ORDER BY pg.SEQ) AS Row
 " + articleGroupList.Select(item => string.Format(", [{0}].FabricPanelCode as [{0}]", item)).JoinToString("\r\n") + @"
 From Pattern p
 Left Join Pattern_GL pg on pg.PatternUKEY = p.UKey
-Outer Apply (Select FabricPanelCode from Pattern_GL_LectraCode lc where lc.PatternUKEY = p.UKey and lc.PatternCode = pg.PatternCode and lc.ArticleGroup = 'F_CODE') F_Code
+Outer Apply (Select FabricPanelCode from Pattern_GL_LectraCode lc where lc.PatternUKEY = p.UKey and lc.Seq = pg.Seq and lc.ArticleGroup = 'F_CODE') F_Code
 " + articleGroupList.Select(item => string.Format(
-"Outer Apply (Select FabricPanelCode from Pattern_GL_LectraCode lc where lc.PatternUKEY = p.UKey and lc.PatternCode = pg.PatternCode and lc.ArticleGroup = '{0}') [{0}]", item)).JoinToString("\r\n") + @"
+"Outer Apply (Select FabricPanelCode from Pattern_GL_LectraCode lc where lc.PatternUKEY = p.UKey and lc.Seq = pg.Seq and lc.ArticleGroup = '{0}') [{0}]", item)).JoinToString("\r\n") + @"
 Where pg.PatternUKey = @PatternUKey
 Order by pg.SEQ
 ";
@@ -2331,8 +2580,8 @@ Order by pg.SEQ
 
                 var dynamicCodeHeader = Enumerable.Repeat(
                     articleGroupList
-                        .Select(code => code.ToUpper().StartsWith("CODE") ? 
-                            code.Substring(4).ToUpper() : 
+                        .Select(code => code.ToUpper().StartsWith("CODE") ?
+                            code.Substring(4).ToUpper() :
                             code.ToUpper())
                         .Cast<object>(), 1).DoubleArrayConvert2DArray();
 
@@ -2445,7 +2694,8 @@ Order by (
                 {
                     var groupData = dr.ExtendedData.AsEnumerable()
                     .GroupBy(
-                        row => new {
+                        row => new
+                        {
                             PieceName = row.Field<string>("PieceName"),
                             PieceDesc = row.Field<string>("PieceDesc"),
                             CuttingWidth = row.Field<string>("CuttingWidth"),
@@ -2454,7 +2704,8 @@ Order by (
                             DirectionEN = row.Field<string>("DirectionEN"),
                             Article = row.Field<string>("Article"),
                         },
-                        row => new {
+                        row => new
+                        {
                             SizeCode = row.Field<string>("SizeCode"),
                             Detail = row.Field<string>("Detail"),
                         })
@@ -2600,8 +2851,7 @@ Where p.UKey = @UKey
                         thisSheet.GetRange("A2").RowHeight = heightOfRemark;
                     }
                     thisSheet.GetRange("A3").Value = string.Format("Approval#:{0}", row.Field<string>("CFMName"));
-                    var checkerDate = row.Field<DateTime?>("CheckerDate");
-                    thisSheet.GetRange("H3").Value = checkerDate == null? "" : ((DateTime)checkerDate).ToString("MM/dd");
+                    thisSheet.GetRange("H3").Value = row.Field<DateTime?>("CheckerDate").ToStringEx("MM/dd");
 
                     //搬回去給主WorkSheet
                     MoveSubBlockIntoMainSheet(sheet, ref rowPosition, thisSheet);
@@ -2654,24 +2904,57 @@ Where p.UKey = @UKey
         #endregion
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class extension
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sheet"></param>
+        /// <param name="rangeName"></param>
+        /// <returns></returns>
         public static MsExcel.Range GetRange(this MsExcel.Worksheet sheet, string rangeName)
         {
             return sheet.get_Range(rangeName) as MsExcel.Range;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="range"></param>
+        /// <returns></returns>
         public static T GetValue<T>(this MsExcel.Range range)
         {
             return (T)range.get_Value();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="range"></param>
+        /// <param name="value"></param>
         public static void SetValue(this MsExcel.Range range, object value)
         {
             range.Value = value;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sheet"></param>
+        /// <param name="cellA_X"></param>
+        /// <param name="cellA_Y"></param>
+        /// <param name="cellB_X"></param>
+        /// <param name="cellB_Y"></param>
+        /// <returns></returns>
         public static MsExcel.Range GetRange(this MsExcel.Worksheet sheet, int cellA_X, int cellA_Y, int cellB_X, int cellB_Y)
         {
             return sheet.Range[sheet.Cells[cellA_Y, cellA_X], sheet.Cells[cellB_Y, cellB_X]];
         }
+
         /// <summary>
         /// 把二層的物件陣列，轉為單層二維物件陣列
         /// </summary>
@@ -2697,12 +2980,18 @@ Where p.UKey = @UKey
                         return true;
                     })
                     .ToList();
-                return true;   
+                return true;
             })
             .ToList();
             return value2;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sheet"></param>
+        /// <param name="firstRow"></param>
+        /// <param name="rowNumberToInsert"></param>
         public static void InsertMutipleRows(this MsExcel.Worksheet sheet, MsExcel.Range firstRow, int rowNumberToInsert)
         {
             var insertPos = sheet.Cells[1, firstRow.Row + 1].EntireRow;
@@ -2726,405 +3015,6 @@ Where p.UKey = @UKey
                     step *= 2;
                 else
                     step = diff;
-            }
-        }
-
-
-
-        /// <summary>
-        /// <para>透過原本的Select做查詢把結果包成DualDisposableResult(DataTable)</para>
-        /// <para>使用ExtendedData取出結果資料表。會把傳入的Args兩兩一組的轉為SqlParameter，所以如果傳入的Args不是偶數會跳Exeception</para>
-        /// </summary>
-        /// <param name="proxy"></param>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public static DualDisposableResult<DataTable> SelectEx(this Sci.Data.IDBProxy proxy, string sql, params object[] args)
-        {
-            return SelectEx(proxy, sql, false, args);
-        }
-
-        /// <summary>
-        /// <para>透過原本的Select做查詢把結果包成DualDisposableResult(DataTable)</para>
-        /// <para>使用ExtendedData取出結果資料表。會把傳入的Args兩兩一組的轉為SqlParameter，所以如果傳入的Args不是偶數會跳Exeception</para>
-        /// </summary>
-        /// <param name="proxy"></param>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public static DualDisposableResult<DataTable> SelectEx(this Sci.Data.IDBProxy proxy, string sql, bool withSchema, params object[] args)
-        {
-            SqlConnection cn;
-            if (proxy.OpenConnection("", out cn) == false)
-            {
-                return new DualDisposableResult<DataTable>(new DualResult(false, "can't open Connection"));
-            }
-            DualDisposableResult<DataTable> dr;
-            var ps = new List<SqlParameter>();
-            var argsClone = args.ToList();
-            while (argsClone.Any())
-            {
-                object v = argsClone[1];
-                ps.Add(new SqlParameter((string)argsClone[0], v == null ? DBNull.Value : v));
-                argsClone = argsClone.Skip(2).ToList();
-            }
-            using (var adapter = new SqlDataAdapter(sql, cn))
-            {
-                adapter.SelectCommand.Parameters.AddRange(ps.ToArray());
-
-                var dt = new DataTable();
-                try
-                {
-                    adapter.Fill(dt);
-                    if (withSchema)
-                        adapter.FillSchema(dt, SchemaType.Source);
-                    dr = new DualDisposableResult<DataTable>(new DualResult(true));
-                    dr.ExtendedData = dt;
-                }
-                catch (Exception ex)
-                {
-                    var mixEx = new AggregateException(ex.Message + "\r\nsql: " + sql, ex);
-                    dr = new DualDisposableResult<DataTable>(new DualResult(false, mixEx));
-                }
-            }
-            return dr;
-        }
-
-        /// <summary>
-        /// 可以一次撈多個Table放在DataSet內回傳(透過ExtendData屬性)
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="proxy"></param>
-        /// <param name="sql"></param>
-        /// <param name="withSchema"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public static DualDisposableResult<T> SelectEx<T>(this Sci.Data.IDBProxy proxy, string sql, bool withSchema, params object[] args) where T : DataSet, new()
-        {
-            SqlConnection cn;
-
-            if (proxy.OpenConnection("", out cn) == false)
-            {
-                return new DualDisposableResult<T>(new DualResult(false, "can't open Connection"));
-            }
-            DualDisposableResult<T> dr;
-            var ps = new List<SqlParameter>();
-            var argsClone = args.ToList();
-            while (argsClone.Any())
-            {
-                object v = argsClone[1];
-                ps.Add(new SqlParameter((string)argsClone[0], v == null ? DBNull.Value : v));
-                argsClone = argsClone.Skip(2).ToList();
-            }
-            using (var adapter = new SqlDataAdapter(sql, cn))
-            {
-                adapter.SelectCommand.Parameters.AddRange(ps.ToArray());
-
-                var tInstance = new T();
-                try
-                {
-                    adapter.Fill(tInstance);
-                    if (withSchema)
-                        adapter.FillSchema(tInstance, SchemaType.Source);
-                    dr = new DualDisposableResult<T>(new DualResult(true));
-                    dr.ExtendedData = tInstance;
-                }
-                catch (Exception ex)
-                {
-                    var mixEx = new AggregateException(ex.Message + "\r\nsql: " + sql, ex);
-                    dr = new DualDisposableResult<T>(new DualResult(false, mixEx));
-                }
-            }
-            return dr;
-        }
-
-
-
-        /// <summary>
-        /// 合併原本的DualResult物件，並且讓裡面含有一個ExtendedData屬性來放置要回傳的主要結果(該結果必須有實作IDisposable)
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        public class DualDisposableResult<T> : IDisposable where T : class, IDisposable
-        {
-            /// <summary>
-            /// 是否要隨著Dispose事件，連帶把ExtendedData也呼叫Dispose()，預設為true，代表殼物件Dispoes時，會連帶Dispose ExtendedData
-            /// </summary>
-            public bool? DisposeExtendedData { get; set; }
-            /// <summary>
-            /// 主要回傳結果，型態由殼層定義，有實作IDisposable
-            /// </summary>
-            public T ExtendedData { get; set; }
-            /// <summary>
-            /// 儲存真正的DualResult，以供呼叫端地取用(例如BaseForm.ShowErr就會使用這個屬性)
-            /// </summary>
-            public DualResult InnerResult { get; set; }
-            /// <summary>
-            /// DualDisposableResult
-            /// </summary>
-            /// <param name="innerResult"></param>
-            public DualDisposableResult(DualResult innerResult)
-            {
-                this.InnerResult = innerResult;
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public string Description
-            {
-                get
-                {
-                    return this.InnerResult.Description;
-                }
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            /// <returns></returns>
-            public Exception GetException()
-            {
-                return this.InnerResult.GetException();
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public bool IsEmpty
-            {
-                get
-                {
-                    return this.InnerResult.IsEmpty;
-                }
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public BaseResult.MessageInfos Messages
-            {
-                get
-                {
-                    return this.InnerResult.Messages;
-                }
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public IResult Parent
-            {
-                get
-                {
-                    return this.InnerResult.Parent;
-                }
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public bool Result
-            {
-                get
-                {
-                    return this.InnerResult.Result;
-                }
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public int StatusCode
-            {
-                get
-                {
-                    return this.InnerResult.StatusCode;
-                }
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public string StatusDesc
-            {
-                get
-                {
-                    return this.InnerResult.StatusDesc;
-                }
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            /// <returns></returns>
-            public BaseResult.MessageInfos ToMessages()
-            {
-                return this.InnerResult.ToMessages();
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            /// <returns></returns>
-            public string ToSimpleString()
-            {
-                return this.InnerResult.ToSimpleString();
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            /// <returns></returns>
-            public override string ToString()
-            {
-                return this.InnerResult.ToString();
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public void Dispose()
-            {
-                if (this.DisposeExtendedData.GetValueOrDefault(true) == true)
-                {
-                    if (this.ExtendedData != null)
-                    {
-                        this.ExtendedData.Dispose();
-                        this.ExtendedData = null;
-                    }
-                }
-            }
-            /// <summary>
-            /// 隱含轉換布林結果
-            /// </summary>
-            /// <param name="result"></param>
-            /// <returns></returns>
-            public static implicit operator bool(DualDisposableResult<T> result)
-            {
-                return result.Result;
-            }
-        }
-
-        /// <summary>
-        /// 合併原本的DualResult物件，並且讓裡面含有一個ExtendedData屬性來放置要回傳的主要結果
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        public class DualResult<T>
-        {
-            /// <summary>
-            /// 主要回傳結果，型態由殼層定義
-            /// </summary>
-            public T ExtendedData { get; set; }
-            /// <summary>
-            /// 儲存真正的DualResult，以供呼叫端地取用(例如BaseForm.ShowErr就會使用這個屬性)
-            /// </summary>
-            public DualResult InnerResult { get; set; }
-            /// <summary>
-            /// DualResult
-            /// </summary>
-            /// <param name="innerResult"></param>
-            public DualResult(DualResult innerResult)
-            {
-                this.InnerResult = innerResult;
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public string Description
-            {
-                get
-                {
-                    return this.InnerResult.Description;
-                }
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            /// <returns></returns>
-            public Exception GetException()
-            {
-                return this.InnerResult.GetException();
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public bool IsEmpty
-            {
-                get
-                {
-                    return this.InnerResult.IsEmpty;
-                }
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public BaseResult.MessageInfos Messages
-            {
-                get
-                {
-                    return this.InnerResult.Messages;
-                }
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public IResult Parent
-            {
-                get
-                {
-                    return this.InnerResult.Parent;
-                }
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public bool Result
-            {
-                get
-                {
-                    return this.InnerResult.Result;
-                }
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public int StatusCode
-            {
-                get
-                {
-                    return this.InnerResult.StatusCode;
-                }
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            public string StatusDesc
-            {
-                get
-                {
-                    return this.InnerResult.StatusDesc;
-                }
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            /// <returns></returns>
-            public BaseResult.MessageInfos ToMessages()
-            {
-                return this.InnerResult.ToMessages();
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            /// <returns></returns>
-            public string ToSimpleString()
-            {
-                return this.InnerResult.ToSimpleString();
-            }
-            /// <summary>
-            /// 轉呼叫InnerResult的同名方法或屬性
-            /// </summary>
-            /// <returns></returns>
-            public override string ToString()
-            {
-                return this.InnerResult.ToString();
-            }
-            /// <summary>
-            /// 隱含轉換布林結果
-            /// </summary>
-            /// <param name="result"></param>
-            /// <returns></returns>
-            public static implicit operator bool(DualResult<T> result)
-            {
-                return result.Result;
             }
         }
     }
