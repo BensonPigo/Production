@@ -295,7 +295,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.KeyField2 = "ID";
-            this.Name = "P61";
+            this.Name = "P61. Issue Local Item";
             this.Text = "P61. Issue Local Item";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";

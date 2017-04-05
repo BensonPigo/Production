@@ -149,10 +149,10 @@ where s.StockQty < 0";
                     List<string> listErr = new List<string>();
                     foreach (DataRow dr in dataTable.Rows)
                     {
-                        listErr.Add(string.Format("< SP# > : {0}, < Refno > : {1}, < ThreadColor > : {2}"
-                                                  , dr["OrderID"], dr["Refno"], dr["ThreadColorID"]));
+                        listErr.Add(string.Format("<SP#>:{0}, <Refno>:{1}, <ThreadColor>:{2}"
+                                                  , dr["OrderID"].ToString().Trim(), dr["Refno"].ToString().Trim(), dr["ThreadColorID"].ToString().Trim()));
                     }
-                    MyUtility.Msg.InfoBox(listErr.JoinToString("/n/r"), "Local Stock Quantity can not less then zero!!");
+                    MyUtility.Msg.InfoBox(listErr.JoinToString("\n\r") + "\n\r Local Stock Quantity can not less then zero!!", "Local Stock Quantity can not less then zero!!");
                     return;
                 }
             }
