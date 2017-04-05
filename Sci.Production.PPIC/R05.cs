@@ -92,7 +92,7 @@ outer apply (
 	select sum(InQty) inqty 
 	from PO_Supp_Detail psd3 INNER join MDivisionPoDetail m on m.Seq1 = psd3.SEQ1 and m.Seq2 = psd3.SEQ2
 	where psd3.ID = L.POID and psd3.OutputSeq1 = LD.Seq1 and psd3.OutputSeq2 = LD.SEQ2
-	AND m.MDivisionId = L.MDivisionID and m.POID = L.POID  
+	and m.POID = L.POID  
 ) mpd2
 outer apply (
 	select inqty 
