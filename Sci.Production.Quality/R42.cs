@@ -53,6 +53,7 @@ namespace Sci.Production.Quality
         System.Data.DataTable allsupplier = null;
         System.Data.DataTable dat;        
         System.Data.DataTable dt_temp = new System.Data.DataTable(); //for Printing Detail Report only
+        System.Data.DataTable dt_printing = new System.Data.DataTable(); //for Printing Detail Report only
         Dictionary<string, System.Data.DataTable> PrintingData = new Dictionary<string, System.Data.DataTable>();
         protected override bool ValidateInput()
         {
@@ -115,7 +116,7 @@ namespace Sci.Production.Quality
                                                   (11,11,'November'),
                                                   (12,12,'December')
 
-                                    SELECT isnull(B.Supplier,'Other') as supplier 
+                                    SELECT iif(B.Supplier<>'',B.Supplier,'Other') as supplier  
                                     ,format(a.startdate,'MMMMM')[m]
                                     ,b.StyleID
                                     ,b.refno
@@ -137,7 +138,6 @@ namespace Sci.Production.Quality
                                     select  distinct * from (
 	                         select Shell_Supplier=supplier from  #temp cc
 	                         where m in (select m from (select *,idx=ROW_NUMBER()over(order by cnt desc) from (select m,cnt=count(*) from #temp where supplier = cc.supplier group by m) c) d where idx = 1)
-                                AND SUPPLIER != ''
 	                         group by supplier,refno) main");
                 SqlConnection conn;
                 result = DBProxy.Current.OpenConnection("", out conn);
@@ -176,7 +176,6 @@ from
 							) c
 					) d where idx = 1
 				)
-    AND supplier!=''
 	--group by supplier,refno --加上這一段會讓結果只剩下一筆,所以註解掉 WILLY_20170325
 ) main";
 
@@ -249,7 +248,7 @@ from
                 #region Printing Summery
                 else
                 {
-                    System.Data.DataTable dt_printing = new System.Data.DataTable(); //for Printing Detail Report only
+                   
                     month12 = alldt[0];
                     dt_printing.Clear();
                     dt_printing.Columns.Add("Shell_Supplier", typeof(string));
@@ -262,7 +261,7 @@ from
                         dt_printing.Columns.Add(string.Format("{0}_Style", month), typeof(string));
                         dt_printing.Columns.Add(string.Format("{0}_Shell", month), typeof(string));
                         dt_printing.Columns.Add(string.Format("{0}_Qty", month), typeof(int));
-                        dt_printing.Columns.Add(string.Format("{0}_Complaint_Value", month), typeof(string));
+                        dt_printing.Columns.Add(string.Format("{0}_Complaint_Value", month), typeof(decimal));
 
                         string scmd = string.Format(@"
                     select 		           
@@ -318,6 +317,13 @@ from
                             return result;
                         }
                     }
+                    Qty_SumColumns = Qty_SumColumns.Substring(0, Qty_SumColumns.Length - 1);
+                    Complaint_SumColumns = Complaint_SumColumns.Substring(0, Complaint_SumColumns.Length - 1);
+
+                    dt_printing.ColumnsDecimalAdd("Qty");
+                    dt_printing.ColumnsDecimalAdd("Complaint_Value");
+                    decimal TTLQty = 0;
+                    decimal TTLValue = 0;
                      total_Rows = dt_printing.Sum(month_Columns, "");
                      if (!MyUtility.Check.Empty(total_Rows))
                      {
@@ -327,6 +333,23 @@ from
                          }
                          total_Rows[total_Rows.Count - 1]["Shell_Supplier"] = "GRAND TOTAL";
                      }
+
+                     //加總不同月份的數量及Complaint_Value,再丟進Total
+                     for (int i = 1; i < dt_printing.Columns.Count; i++)
+                     {
+                         if ((i+1)%4==0)
+                         {
+                             TTLQty += MyUtility.Convert.GetDecimal(dt_printing.Rows[dt_printing.Rows.Count - 1][i]);
+                            
+                         }
+                         if ((i)%4==0)
+                         {
+                             TTLValue += MyUtility.Convert.GetDecimal(dt_printing.Rows[dt_printing.Rows.Count - 1][i]); 
+                         }
+                        
+                     }
+                     dt_printing.Rows[dt_printing.Rows.Count - 1][dt_printing.Columns.Count - 1] = TTLValue;
+                     dt_printing.Rows[dt_printing.Rows.Count - 1][dt_printing.Columns.Count - 2] = TTLQty;
                      if (null == dt_All || 0 == dt_All.Rows.Count)
                      {
                          dt_All = dt_printing;
@@ -378,7 +401,7 @@ from
                     DBO.ADIDASComplain A WITH (NOLOCK) 
                     INNER JOIN DBO.ADIDASComplain_Detail B WITH (NOLOCK) ON B.ID = A.ID
                     left join dbo.ADIDASComplainDefect c WITH (NOLOCK) on c.ID=b.DefectMainID
-                    left join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on d.id=b.DefectMainID and d.SubID=b.DefectSubID" + " " + sqlWhere + "and supplier='{0}'" + rt + " " + ob, sss);
+                    left join dbo.ADIDASComplainDefect_Detail d WITH (NOLOCK) on d.id=b.DefectMainID and d.SubID=b.DefectSubID" + " " + sqlWhere + "and supplier='{0}'" + rt + " " + ob, sss == "Other" ? "" : sss);
 
                         result = DBProxy.Current.SelectByConn(conn, scmd, out dat);
                         dicSUP.Add(sss, dat);
@@ -456,7 +479,7 @@ from
                 dic.Add("October", "38,41");
                 dic.Add("November", "42,45");
                 dic.Add("December", "46,49");
-                if (Report_Type1 == "True") dic.Add("YTD", "50,51");
+                dic.Add("YTD", "50,51");
                 xdt_All.lisTitleMerge.Add(dic);
                 xdt_All.ShowHeader = true;
               
@@ -510,18 +533,10 @@ from
 
         void Addcolor(Worksheet mySheet, int rowNo, int columnNo)
         {
-            if (Report_Type1 == "True")
-            {
-                 mySheet.get_Range("A2", "AY2").Interior.Color = Color.SkyBlue;
-                 mySheet.get_Range("A2", "AY2").Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
-            }
-            else
-            {
-                mySheet.get_Range("A2", "AW2").Interior.Color = Color.SkyBlue;
-                mySheet.get_Range("A2", "AW2").Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
-            }
-           
-            
+
+            mySheet.get_Range("A2", "AY2").Interior.Color = Color.SkyBlue;
+            mySheet.get_Range("A2", "AY2").Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+         
             Microsoft.Office.Interop.Excel.Range usedRange = mySheet.UsedRange;
             Microsoft.Office.Interop.Excel.Range rows = usedRange.Rows;            
             int count = 0;
@@ -548,6 +563,33 @@ from
                 }
                 count++;
             }
+
+            Range formatRange;
+            Range ReplaceRange;
+            Range ReplaceRange1;
+   
+
+            
+            if (Report_Type2 == "True")
+            {
+                //單獨將Total金額轉成貨幣
+                formatRange = mySheet.get_Range(string.Format("AY{0}", dt_printing.Rows.Count + 2), string.Format("AY{0}", dt_printing.Rows.Count + 2));
+                formatRange.NumberFormat = "$#,##0.00";
+
+                //只顯示total的值,其他數值為0都轉空白
+                ReplaceRange = mySheet.get_Range(string.Format("AY{0}", 3), string.Format("AY{0}", dt_printing.Rows.Count + 1));
+                ReplaceRange.Replace("0", "");
+                ReplaceRange1 = mySheet.get_Range(string.Format("AX{0}", 3), string.Format("AX{0}", dt_printing.Rows.Count + 1));
+                ReplaceRange1.Replace("0", "");
+            }
+            else
+            {
+                //單獨將Total金額轉成貨幣
+                formatRange = mySheet.get_Range(string.Format("AY{0}", 2), string.Format("AY{0}", dt_All.Rows.Count + 2));
+                formatRange.NumberFormat = "$#,##0.00";
+            }
+            
+          
         }
 
         void CopySheet(Worksheet mySheet, int rowNo, int columnNo)
@@ -579,17 +621,15 @@ from
                 aftersheet.Cells[3, 1].Font.Color = Color.Transparent;
 
                 aftersheet.Cells[4,1] = "##addfilter";
+                aftersheet.Name = item.Key;//Sheet Name
             }
         }
 
         void addfilter(Worksheet mySheet, int rowNo, int columnNo)
-        {
+        {         
             Range firstRow = (Range)mySheet.Rows[1];
             firstRow.AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlAnd, Type.Missing, true);
             firstRow.Interior.Color = Color.SkyBlue;
-
-            
-
 
         }
     }
