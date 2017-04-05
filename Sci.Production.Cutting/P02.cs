@@ -312,9 +312,9 @@ namespace Sci.Production.Cutting
 
             Helper.Controls.Grid.Generator(this.qtybreak_grid)
                 .Text("id", header: "SP#", width: Widths.AnsiChars(13))
-                .Text("article", header: "article", width: Widths.AnsiChars(8))
-                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(4))
-                .Numeric("Qty", header: "Order \nQty", width: Widths.AnsiChars(5), integer_places: 6)
+                .Text("article", header: "article", width: Widths.AnsiChars(7))
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(3))
+                .Numeric("Qty", header: "Order \nQty", width: Widths.AnsiChars(3), integer_places: 6)
                 .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(5), integer_places: 6, settings: breakqty);
             #endregion
 
@@ -2075,6 +2075,11 @@ order by id,article,sizecode", masterID);
         private void distribute_grid_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
 
+        }
+
+        private void btn_Refresh_Click(object sender, EventArgs e)
+        {
+            this.RenewData();
         }
     }
 }
