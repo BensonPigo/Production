@@ -50,7 +50,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(847, 49);
+            this.panel1.Size = new System.Drawing.Size(1008, 49);
             this.panel1.TabIndex = 3;
             // 
             // tb_Spno
@@ -103,7 +103,7 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(847, 324);
+            this.grid1.Size = new System.Drawing.Size(1008, 573);
             this.grid1.TabIndex = 4;
             this.grid1.TabStop = false;
             // 
@@ -111,7 +111,7 @@
             // 
             this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnToExcel.Location = new System.Drawing.Point(671, 379);
+            this.btnToExcel.Location = new System.Drawing.Point(831, 628);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(90, 30);
             this.btnToExcel.TabIndex = 5;
@@ -122,7 +122,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(767, 379);
+            this.btnClose.Location = new System.Drawing.Point(927, 628);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 6;
@@ -134,13 +134,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(847, 409);
+            this.ClientSize = new System.Drawing.Size(1008, 661);
             this.Controls.Add(this.btnToExcel);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.panel1);
             this.Name = "P04";
-            this.Text = "P04 Material Status(Local)";
+            this.Text = "P04. Material Status(Local)";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.grid1, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
