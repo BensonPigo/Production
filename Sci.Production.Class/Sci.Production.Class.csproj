@@ -69,6 +69,9 @@
     <Compile Include="ProductionGridExts.cs" />
     <Compile Include="ProductionEnv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SCIControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="txtartworktype_fty.cs">
       <SubType>Component</SubType>
     </Compile>
