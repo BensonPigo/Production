@@ -738,10 +738,27 @@ order by c.GroupQty DESC,a.Dyelot,Qty DESC", Sci.Env.User.Keyword, materials["St
                                 }
                                 else//最後裁切
                                 {
-                                    findrow.Rows[i]["qty"] = balance;
-                                    items.Add(findrow
-                                        .Rows[i]);
-                                    balance = 0m;
+                                    //P10最後裁切若有小數點需無條件進位
+                                    if (isIssue)
+                                    {
+                                        if (Math.Ceiling(balance) >= (decimal)findrow.Rows[i]["qty"])
+                                        {
+                                            items.Add(findrow.Rows[i]);
+                                            balance = 0m;
+                                        }
+                                        else
+                                        {
+                                            findrow.Rows[i]["qty"] = Math.Ceiling(balance);
+                                            items.Add(findrow.Rows[i]);
+                                            balance = 0m;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        findrow.Rows[i]["qty"] = balance;
+                                        items.Add(findrow.Rows[i]);
+                                        balance = 0m;
+                                    }
                                 }
                             }
                             else
