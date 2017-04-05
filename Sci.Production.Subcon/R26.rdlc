@@ -444,6 +444,39 @@
                                               <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
                                           </Textbox>
+                                          <Textbox Name="txtVatRate">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value>=First(Fields!vat.Value)</Value>
+                                                    <Style />
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <Top>0.09249cm</Top>
+                                            <Left>9.85061cm</Left>
+                                            <Height>0.6cm</Height>
+                                            <Width>2.5cm</Width>
+                                            <ZIndex>13</ZIndex>
+                                            <Visibility>
+                                              <Hidden>true</Hidden>
+                                            </Visibility>
+                                            <Style>
+                                              <Border>
+                                                <Style>None</Style>
+                                              </Border>
+                                              <BackgroundColor>DarkViolet</BackgroundColor>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
                                         </ReportItems>
                                         <KeepTogether>true</KeepTogether>
                                         <Style>
@@ -1752,7 +1785,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>="("+")"+"%"</Value>
+                  <Value>="("+ ReportItems!txtVatRate.Value +")"+"%"</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
