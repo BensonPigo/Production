@@ -122,7 +122,7 @@ namespace Sci.Production.Packing
                     {
                         System.Diagnostics.Debug.WriteLine(line);
                         IList<string> sl = line.Split(" \t\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                        if (sl[0] != "1")
+                        if (sl.Count == 0 || sl[0] != "1")
                         {
                             MyUtility.Msg.WarningBox("Format is not correct!");
                             return;
