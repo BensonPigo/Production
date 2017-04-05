@@ -116,12 +116,8 @@ namespace Sci.Production.Subcon
 
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@";with cte
-as
-(
-	select t.*,ArtworkType.ID artworktypeid
-	from dbo.ArtworkType WITH (NOLOCK) ,(select distinct b.OrderId from dbo.localpo a	WITH (NOLOCK) 
-	inner join dbo.Localpo_Detail b WITH (NOLOCK) on b.id = a.id ");
+            List<string> sqlFilter1 = new List<string>();
+            List<string> sqlFilter2 = new List<string>();
 
             #region -- 條件組合 --
             switch (statusindex)
@@ -129,41 +125,41 @@ as
                 case 0:
                     if (!MyUtility.Check.Empty(IssueDate1) && !MyUtility.Check.Empty(IssueDate2))
                     {
-                        sqlCmd.Append(string.Format(@" where a.apvdate is not null and a.issuedate between '{0}' and '{1}'"
+                        sqlFilter1.Add(string.Format(@"LP.apvdate is not null and LP.issuedate between '{0}' and '{1}'"
                             , Convert.ToDateTime(IssueDate1).ToString("d"), Convert.ToDateTime(IssueDate2).ToString("d")));
                     }
                     else 
                     {
                         if (!MyUtility.Check.Empty(IssueDate1))
                         {
-                            sqlCmd.Append(string.Format(@" where a.apvdate is not null and a.issuedate >= '{0}' ", Convert.ToDateTime(IssueDate1).ToString("d")));
+                            sqlFilter1.Add(string.Format(@"LP.apvdate is not null and LP.issuedate >= '{0}' ", Convert.ToDateTime(IssueDate1).ToString("d")));
                         }
                         if (!MyUtility.Check.Empty(IssueDate2))
                         {
-                            sqlCmd.Append(string.Format(@" where a.apvdate is not null and  a.issuedate <= '{0}' ", Convert.ToDateTime(IssueDate2).ToString("d")));
+                            sqlFilter1.Add(string.Format(@"LP.apvdate is not null and  LP.issuedate <= '{0}' ", Convert.ToDateTime(IssueDate2).ToString("d")));
                         }
                     }
                     break;
 
                 case 1:
-                    sqlCmd.Append(@" where a.apvdate is null");
+                    sqlFilter1.Add(@"LP.apvdate is null");
                     break;
 
                 case 2:
                     if (!MyUtility.Check.Empty(IssueDate1) && !MyUtility.Check.Empty(IssueDate2))
                     {
-                        sqlCmd.Append(string.Format(@" where (a.issuedate between '{0}' and '{1}')"
+                        sqlFilter1.Add(string.Format(@"(LP.issuedate between '{0}' and '{1}')"
                             , Convert.ToDateTime(IssueDate1).ToString("d"), Convert.ToDateTime(IssueDate2).ToString("d")));
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(IssueDate1))
                         {
-                            sqlCmd.Append(string.Format(@" where (a.issuedate >= '{0}') ", Convert.ToDateTime(IssueDate1).ToString("d")));
+                            sqlFilter1.Add(string.Format(@"(LP.issuedate >= '{0}') ", Convert.ToDateTime(IssueDate1).ToString("d")));
                         }
                         if (!MyUtility.Check.Empty(IssueDate2))
                         {
-                            sqlCmd.Append(string.Format(@" where (a.issuedate <= '{0}') ", Convert.ToDateTime(IssueDate2).ToString("d")));
+                            sqlFilter1.Add(string.Format(@"(LP.issuedate <= '{0}') ", Convert.ToDateTime(IssueDate2).ToString("d")));
                         }
                     }
                     break;
@@ -172,106 +168,107 @@ as
             
             if (!MyUtility.Check.Empty(spno1))
             {
-                sqlCmd.Append(" and b.orderid >= @spno1");
+                sqlFilter1.Add("LPD.OrderID >= @spno1");
                 sp_spno1.Value = spno1;
                 cmds.Add(sp_spno1);
             }
 
             if (!MyUtility.Check.Empty(spno2))
             {
-                sqlCmd.Append(" and b.orderid <= @spno2");
+                sqlFilter1.Add("LPD.OrderID <= @spno2");
                 sp_spno2.Value = spno2;
                 cmds.Add(sp_spno2);
             }
 
             if (!MyUtility.Check.Empty(artworktype))
             {
-                //sqlCmd.Append(" and a.category = @artworktype");
+                sqlFilter1.Add("LP.category = @artworktype");
                 sp_artworktype.Value = artworktype;
                 cmds.Add(sp_artworktype);
             }
 
             if (!MyUtility.Check.Empty(mdivision))
             {
-                sqlCmd.Append(" and a.mdivisionid = @MDivision");
+                sqlFilter1.Add("LP.mdivisionid = @MDivision");
                 sp_mdivision.Value = mdivision;
                 cmds.Add(sp_mdivision);
             }
 
             if (!MyUtility.Check.Empty(factory))
             {
-                sqlCmd.Append(" and a.factoryid = @factory");
+                sqlFilter1.Add("LP.factoryid = @factory");
                 sp_factory.Value = factory;
                 cmds.Add(sp_factory);
             }
 
-            #endregion
-
-            sqlCmd.Append(@")t
-	where Artworktype.Classify='P' ");
-
             if (!MyUtility.Check.Empty(artworktype))
             {
-                sqlCmd.Append(" and artworktype.id = @artworktype");
+                sqlFilter2.Add("s.Category = @artworktype");
             }
-
-            sqlCmd.Append(string.Format(@")
-select aa.FactoryID
-,cte.artworktypeid
-,aa.POID
-,aa.StyleID
-,aa.BrandID
-,dbo.getTPEPass1(aa.SMR) smr
-,y.order_qty
-,x.Po_qty
-,round(x.Po_amt,3)
-,round(x.Po_amt / iif(y.order_qty=0,1,y.order_qty),3) Po_price
---,y.order_amt
---,y.order_qty
-,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
-,round(x.Po_amt / iif(y.order_qty=0,1,y.order_qty) / iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2)  percentage
-from cte
-left join orders aa WITH (NOLOCK) on aa.id = cte.orderid
-left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
-outer apply (
-	select isnull(sum(t.Po_amt),0.00) Po_amt
-             , isnull(sum(t.Po_qty),0) Po_qty 
-from (
-	select currencyid,
-			pod.Price,
-			pod.Qty Po_qty
-			,pod.Qty*pod.Price*dbo.getRate('{0}',Po.CurrencyID,'USD',PO.ISSUEDATE) Po_amt
-			,dbo.getRate('{0}',Po.CurrencyID,'USD',PO.ISSUEDATE) rate
-	from localpo po WITH (NOLOCK) inner join Localpo_Detail pod WITH (NOLOCK) on Pod.id = Po.Id 
-		where po.Category = cte.artworktypeid and pod.OrderId = aa.POID AND po.Status = 'Approved') t
-		) x		
-outer apply(
-	select orders.POID
-	,sum(orders.qty) order_qty
-	,sum(orders.qty*Price) order_amt 
-	from orders WITH (NOLOCK) 
-	inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
-	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid
-	group by orders.poid,ArtworkTypeID) y
-where Po_qty > 0 
-", ratetype));
-            #endregion           
 
             if (ordertypeindex >= 4) //include Forecast 
             {
-                sqlCmd.Append(string.Format(@" and (aa.category in {0} OR aa.IsForecast =1)", ordertype));
+                sqlFilter2.Add(string.Format(@"(O.category in {0} OR O.IsForecast =1)", ordertype));
             }
             else
             {
-                sqlCmd.Append(string.Format(@" and aa.category in {0} ", ordertype));
+                sqlFilter2.Add(string.Format(@"O.category in {0} ", ordertype));
             }
 
             if (!MyUtility.Check.Empty(style))
             {
-                sqlCmd.Append(" and aa.styleid = @style");
+                sqlFilter2.Add("O.styleid = @style");
                 sp_style.Value = style;
                 cmds.Add(sp_style);
             }
+            #endregion
+
+            sqlCmd.Append(string.Format(@"
+select	O.FactoryID
+		, s.Category
+		, O.POID
+        , O.StyleID
+		, O.BrandID
+		, SMR = dbo.getTPEPass1(O.SMR)
+		, y.Order_Qty
+		, x.Po_Qty
+		, ROUND(x.Po_amt, 3)
+		, Po_price = round(x.Po_amt / iif(y.order_qty = 0, 1, y.order_qty), 3) 
+		, std_price = round(y.order_amt/iif(y.order_qty = 0, 1, y.order_qty), 3) 
+		, percentage = round(x.Po_amt / iif(y.order_qty = 0, 1, y.order_qty) / iif(y.order_amt = 0 or y.order_qty = 0, 1, (y.order_amt / y.order_qty)), 2)  
+from (
+	select	distinct LP.Category
+			, LPD.OrderId
+	from dbo.LocalPO LP
+	inner join dbo.LocalPO_Detail LPD on LP.Id = LPD.Id
+	where 1 = 1 {1}
+) s
+left join Orders O on s.OrderId = O.ID
+left join Order_TmsCost OTC on o.ID = OTC.ID and s.Category = OTC.ArtworkTypeID
+outer apply(
+	select	Price = sum(LPD.Price)
+			, Po_Qty = sum(LPD.Qty)
+			, Po_amt = sum(LPD.Qty * LPD.Price * dbo.getRate('{0}', LP.CurrencyID, 'USD', LP.IssueDate))
+			, Rate = sum(dbo.getRate('{0}', LP.CurrencyID, 'USD', LP.IssueDate))
+	from LocalPO LP
+	inner join LocalPO_Detail LPD on LP.Id = LPD.Id
+	where LP.Category = s.Category and LPD.OrderId = O.POID and LP.Status = 'Approved' 
+        {1}
+) x
+outer apply(
+	select	Orders.POID
+			, Order_Qty = sum(orders.Qty)
+			, Order_amt = sum(Orders.Qty * Price)
+	from Orders
+	inner join Order_TmsCost OTC on OTC.ID = Orders.ID
+	where O.POID = POID and ArtworkTypeID = s.Category
+	group by Orders.POID, ArtworkTypeID
+) y
+where Po_qty > 0 {2}
+", ratetype
+ , ("and " + sqlFilter1.JoinToString(" and "))
+ , ("and " + sqlFilter2.JoinToString(" and "))));
+            #endregion           
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
             if (!result)
