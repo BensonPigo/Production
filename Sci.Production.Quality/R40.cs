@@ -215,7 +215,8 @@ create table #dRangesM(m varchar(2) ,m1 int,  Mname varchar(3))
 create table #dRangesY( Y varchar(4))
 	insert into #dRangesY values
 	(format(dateadd(year,-2,getdate()),'yyyy')),(format(dateadd(year,-1,getdate()),'yyyy')),(format(getdate(),'yyyy'))
-select id into #F from Factory
+select * into #F 
+from dbo.SCIFty where id in  (select id from dbo.SCIFty where CountryID = (select CountryID from Factory where id='fac'))
 
 select *
 into #daterange
