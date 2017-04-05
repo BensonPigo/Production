@@ -45,9 +45,9 @@ BEGIN
 	IF (@Seq1 IS NOT NULL AND @SEQ1 !='')
 	BEGIN
 		SELECT @tUkey = M.Ukey FROM DBO.MDivisionPoDetail M  WITH (NOLOCK)
-		WHERE M.MDivisionID = @MDivisionid AND M.POID = @Poid AND M.SEQ1 = @Seq1 AND M.Seq2 = @Seq2;
+		WHERE M.POID = @Poid AND M.SEQ1 = @Seq1 AND M.Seq2 = @Seq2;
 
-		EXEC usp_SingleItemRecaculate @Ukey = @tUkey, @MDivisionid = @MDivisionid,@Poid = @Poid,@Seq1 = @Seq1,@Seq2 = @Seq2;
+		EXEC usp_SingleItemRecaculate @Ukey = @tUkey,@Poid = @Poid,@Seq1 = @Seq1,@Seq2 = @Seq2;
 	END
 	ELSE
 	BEGIN
@@ -90,28 +90,28 @@ BEGIN
 	BEGIN 
 		-- PO下的項目先歸零
 		SET @SQLCMD = N'UPDATE MDivisionPoDetail set inqty = 0,outqty = 0 ,adjustqty = 0, linvqty = 0 , lobqty = 0 
-		where MDivisionid = @pMDivisionid and POID = @pPoid';
+		where POID = @pPoid';
 		
 		select @currentDT = CONVERT(VARCHAR,GETDATE(),13)
 		RAISERROR ('%s on %s', 1,1, @SQLCMD,@currentDT);
 
-		EXEC sp_executesql @SQLCMD , N'@pMDivisionid varchar(8), @pPoid varchar(13)',@pMDivisionid = @MDivisionid, @pPoid = @tPoid ;
+		EXEC sp_executesql @SQLCMD , N'@pPoid varchar(13)', @pPoid = @tPoid ;
 
 		--- 依PO抓出MDivisionPoDetail的資料
 		DECLARE MYCURSOR CURSOR FOR  
-		select distinct B.Ukey,B.MDivisionid,B.seq1,B.seq2  from dbo.MDivisionPoDetail B WITH (NOLOCK)
-		WHERE B.MDivisionID = @MDivisionid AND B.POID = @tPoid;
+		select distinct B.Ukey,B.seq1,B.seq2  from dbo.MDivisionPoDetail B WITH (NOLOCK)
+		WHERE B.POID = @tPoid;
 
 		OPEN MYCURSOR ;
 
-		FETCH NEXT FROM MYCURSOR INTO @tUkey,@tMDivisionid,@tSeq1,@tSeq2;
+		FETCH NEXT FROM MYCURSOR INTO @tUkey,@tSeq1,@tSeq2;
 
 		WHILE @@FETCH_STATUS = 0 
 		BEGIN 
 			BEGIN TRY
-				EXEC usp_SingleItemRecaculate @Ukey = @tUkey, @MDivisionid = @tMDivisionid,@Poid = @tPoid,@Seq1 = @tSeq1,@Seq2 = @tSeq2;
+				EXEC usp_SingleItemRecaculate @Ukey = @tUkey, @Poid = @tPoid,@Seq1 = @tSeq1,@Seq2 = @tSeq2;
 				select @currentDT = CONVERT(VARCHAR,GETDATE(),13)
-				RAISERROR ('%s-%s-%s-%s be caculated on %s', 1,10, @tMDivisionid, @tPoid,@tSeq1,@tSeq2,@currentDT);
+				RAISERROR ('%s-%s-%s-%s be caculated on %s', 1,10, @tPoid,@tSeq1,@tSeq2,@currentDT);
 
 				-- 抓下一筆
 				FETCH NEXT FROM MYCURSOR INTO @tUkey,@tMDivisionid,@tSeq1,@tSeq2;
