@@ -200,7 +200,9 @@ namespace Sci.Production.Subcon
                 sp_factory.Value = factory;
                 cmds.Add(sp_factory);
             }
+            #endregion 
 
+            #region SQL Filter1
             if (!MyUtility.Check.Empty(artworktype))
             {
                 sqlFilter2.Add("s.Category = @artworktype");
