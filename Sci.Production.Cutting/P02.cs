@@ -2080,6 +2080,7 @@ order by id,article,sizecode", masterID);
         private void btn_Refresh_Click(object sender, EventArgs e)
         {
             this.RenewData();
+            sorting(comboBox1.Text);
         }
     }
 }
