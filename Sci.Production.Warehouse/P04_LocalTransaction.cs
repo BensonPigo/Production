@@ -83,7 +83,7 @@ From (
 	WHERE b.OrderId = @Poid and b.Refno = @Refno and b.ThreadColorID = @ColorID
         and a.Status = 'CONFIRMED'
 ) s	
-order by s.date, s.transactionID, s.Name          
+order by s.date, s.Name          
 ";
             #endregion
             this.ShowWaitMessage("Data Loading....");
