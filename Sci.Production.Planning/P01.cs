@@ -256,9 +256,9 @@ in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.
 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("artworktypeid", header: "Artwork Type", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: ts4)  //0
+            .Text("artworktypeid", header: "Artwork Type", width: Widths.AnsiChars(20), iseditingreadonly: true)  //0
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)    //1
-            .Text("artworkunit", header: "Unit", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)  //2
+            .Text("artworkunit", header: "Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
             .Numeric("tms", header: "TMS", width: Widths.AnsiChars(6), iseditingreadonly: true)    //3
             .ComboBox("InhouseOSP", header: "InHouse OSP", settings: cs).Get(out col_inhouse_osp)  //4
             .Text("localsuppid", header: "Subcon", settings: ts4)  //5
