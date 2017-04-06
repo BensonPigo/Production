@@ -51,7 +51,7 @@ namespace Sci.Production.Warehouse
                 .Text("refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .EditText("desc", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(30))
                 .Text("supp", header: "Supplier", iseditingreadonly: true, width: Widths.AnsiChars(13))
-                .Text("threadColor", header: "ThreadColorID", iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .Text("threadColor", header: "Thread Color", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Numeric("inQty", header: "InQty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Numeric("outQty", header: "OutQty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Numeric("balance", header: "Balance", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6), settings: setBalance);
