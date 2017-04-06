@@ -217,7 +217,8 @@ PS.SizeSpec,
 	                   ,IIF(A.Status='Confirmed',A.RejectQty,NULL)[Rejected Qty]
 	                   ,IIF(A.Status='Confirmed',A.Defect,NULL)[Defect Type]
 	                   ,IIF(A.Status='Confirmed',A.InspDate,NULL)[Inspection Date]
-	                   ,AIRL.Result,AIRL.NonOven,AIRL.Oven,AIRL.OvenScale,AIRL.OvenDate,AIRL.NonWash,AIRL.Wash,AIRL.WashScale,
+	                   ,AIRL_Encode.OvenEncode
+,AIRL.NonOven,AIRL.Oven,AIRL.OvenScale,AIRL.OvenDate,AIRL.NonWash,AIRL.Wash,AIRL.WashScale,
 	                   AIRL.WashDate
                 from dbo.AIR A WITH (NOLOCK) 
                 inner join (select r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2,RD.StockQty from dbo.Receiving r WITH (NOLOCK) 
@@ -233,7 +234,7 @@ PS.SizeSpec,
                 left join dbo.Color C WITH (NOLOCK) on C.ID = PS.ColorID and C.BrandId = x.BrandId
                 inner join supp s WITH (NOLOCK) on s.id = P.SuppID
                 OUTER APPLY(select * from dbo.AIR_Laboratory AL WITH (NOLOCK) where AL.OvenEncode = 1 and AL.ID = A.ID)AIRL
-                OUTER APPLY(select * from dbo.AIR_Laboratory AL WITH (NOLOCK) where AL.ID = A.ID)AIRL_OVER
+OUTER APPLY(select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) where AL.ID = A.ID and NonOven =1 and NonWash =1)AIRL_Encode                
         outer apply (select name from dbo.color c where c.id=ps.colorid_old and C.BrandId = x.BrandId) as oc
                " + sqlWhere);
             #endregion
