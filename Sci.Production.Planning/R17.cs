@@ -84,7 +84,7 @@ namespace Sci.Production.Planning
 
                 strSQL += @" GROUP BY A1.FACTORYID, A3.ALIAS, A1.QTY,A4.ShipQty,A5.ShipQty  
                              ORDER BY  A1.FACTORYID, A3.ALIAS 
-                             SELECT DISTINCT #TMP.A,#TMP.B,#TMP.C,#TMP.D,#TMP.E,F=format(CAST(#TMP.C AS decimal)/CAST(#TMP.D AS decimal),'#,###,###,##0.00')
+                             SELECT DISTINCT #TMP.A,#TMP.B,#TMP.C,#TMP.D,#TMP.E,F=Convert(varchar,convert(float,ROUND(convert(decimal,#TMP.D)/convert(decimal,#TMP.C)*100,2)))+'%'
                             FROM #TMP
                             GROUP BY #TMP.A,#TMP.B,#TMP.C,#TMP.D,#TMP.E	
                             DROP TABLE #TMP ";
@@ -384,7 +384,7 @@ namespace Sci.Production.Planning
                 worksheet.Cells[row + 1, 3] = string.Format("=SUM(C2:C{0})", MyUtility.Convert.GetString(row));
                 worksheet.Cells[row + 1, 4] = string.Format("=SUM(D2:D{0})", MyUtility.Convert.GetString(row));
                 worksheet.Cells[row + 1, 5] = string.Format("=SUM(E2:E{0})", MyUtility.Convert.GetString(row));
-                worksheet.Cells[row + 1, 6] = string.Format("=(C{0}/D{0})", MyUtility.Convert.GetString(row+1));
+                worksheet.Cells[row + 1, 6] = string.Format("=(D{0}/C{0})", MyUtility.Convert.GetString(row+1));
                 worksheet.Range[String.Format("A{0}:F{1}",2, row+1)].Borders.Color = Color.Black;
                 if ((gdtSP != null) && (gdtSP.Rows.Count > 0))
                 {
@@ -401,7 +401,7 @@ namespace Sci.Production.Planning
                         objArray_1[0, intIndex] = aryTitles[intIndex];
                     }
                     worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                    worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1, true); //篩選
+                    worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); //篩選
                     worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
                     worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
                    // excel.ActiveSheet.Columns(6).NumberFormatlocal = "yyyy/MM/dd";
@@ -442,7 +442,7 @@ namespace Sci.Production.Planning
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1, true); //篩選
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); //篩選
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
                        
@@ -478,7 +478,7 @@ namespace Sci.Production.Planning
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1, true); //篩選
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); //篩選
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
                         excel.ActiveSheet.Columns(5).NumberFormatlocal = "yyyy/MM/dd";
@@ -514,7 +514,7 @@ namespace Sci.Production.Planning
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
-                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1,true); //篩選
+                        worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); //篩選
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
                         excel.ActiveSheet.Columns(5).NumberFormatlocal = "yyyy/MM/dd";
