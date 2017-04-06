@@ -336,65 +336,64 @@ namespace Sci.Production.Planning
                 return;
             } 
             
-            string orderby = "";
             string sqlcmd="";
             sqlcmd = string.Format(@"SELECT 0 as selected,a.id, a.SciDelivery, a.CutInline, a.CutOffline, a.FactoryID
-, a.StyleID, a.SeasonID
-, a.Qty AS OrderQty
-, a.isforecast,a.poid
-, (select cast(t.article as varchar)+';' from (select article from order_qty WITH (NOLOCK) where id = a.ID group by article )t for xml path('')) as article
-,b.InhouseOSP
-,b.LocalSuppID
-,(select Abb from LocalSupp WITH (NOLOCK) where id = b.LocalSuppID) suppnm
-,b.ArtworkInLine
-,b.ArtworkOffLine
-,convert(date,c.Inline) as sewinline
-,convert(date,c.offline) as SewOffLine
-,a.StyleUkey
-,isnull((select sum(tmp3.qaqty)  
-    from 
-    (SELECT article,min(isnull(qaqty,0)) qaqty
-	    FROM style_location WITH (NOLOCK) 
-	    left join (
-				    SELECT 
-					      [ComboType]
-					      ,[Article]
-					      ,SUM([QAQty]) QAQTY
-				      FROM [Production].[dbo].[SewingOutput_Detail] WITH (NOLOCK) WHERE ORDERID=a.id
-				      GROUP BY ComboType,Article) TMP 
-	    on style_location.Location = tmp.ComboType where style_location.StyleUkey = a.styleukey
-	    group by article) tmp3),0) qaqty
-, 0 as stdq
-, 0 as err
-,'' as msg
-,C.alloqty
-,c.sewinglineid
-,a.scidelivery
-,a.buyerdelivery
-,round(a.qty/(3600*{0}/b.tms)*100/{1},3) as totalqty
-,round((a.qty-(isnull((select sum(tmp3.qaqty)  
-    from 
-    (SELECT article,min(isnull(qaqty,0)) qaqty
-	    FROM style_location WITH (NOLOCK) 
-	    left join (
-				    SELECT 
-					      [ComboType]
-					      ,[Article]
-					      ,SUM([QAQty]) QAQTY
-				      FROM [Production].[dbo].[SewingOutput_Detail] WITH (NOLOCK) WHERE ORDERID=a.id
-				      GROUP BY ComboType,Article) TMP 
-	    on style_location.Location = tmp.ComboType where style_location.StyleUkey = a.styleukey
-	    group by article) tmp3),0)))/(3600*{0}/b.tms)*100/{1},3) as balance
-,b.tms
-,b.qty
-,a.qty * b.tms as totaltms
-,b.artworktypeid
- FROM (Orders a WITH (NOLOCK) inner join  Order_tmscost b WITH (NOLOCK) on a.ID = b.ID) 
-inner join SewingSchedule c WITH (NOLOCK) on a.id = c.OrderID
-inner join factory WITH (NOLOCK) on factory.id = a.factoryid
- where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'LASER'
-and b.tms > 0  and factory.mdivisionid='{2}'
-" + orderby, numericBox3.Text, numericBox2.Text, Sci.Env.User.Keyword);
+                , a.StyleID, a.SeasonID
+                , a.Qty AS OrderQty
+                , a.isforecast,a.poid
+                , (select cast(t.article as varchar)+';' from (select article from order_qty WITH (NOLOCK) where id = a.ID group by article )t for xml path('')) as article
+                ,b.InhouseOSP
+                ,b.LocalSuppID
+                ,(select Abb from LocalSupp WITH (NOLOCK) where id = b.LocalSuppID) suppnm
+                ,b.ArtworkInLine
+                ,b.ArtworkOffLine
+                ,convert(date,c.Inline) as sewinline
+                ,convert(date,c.offline) as SewOffLine
+                ,a.StyleUkey
+                ,isnull((select sum(tmp3.qaqty)  
+                    from 
+                    (SELECT article,min(isnull(qaqty,0)) qaqty
+	                    FROM style_location WITH (NOLOCK) 
+	                    left join (
+				                    SELECT 
+					                      [ComboType]
+					                      ,[Article]
+					                      ,SUM([QAQty]) QAQTY
+				                      FROM [Production].[dbo].[SewingOutput_Detail] WITH (NOLOCK) WHERE ORDERID=a.id
+				                      GROUP BY ComboType,Article) TMP 
+	                    on style_location.Location = tmp.ComboType where style_location.StyleUkey = a.styleukey
+	                    group by article) tmp3),0) qaqty
+                , 0 as stdq
+                , 0 as err
+                ,'' as msg
+                ,C.alloqty
+                ,c.sewinglineid
+                ,a.scidelivery
+                ,a.buyerdelivery
+                ,round(a.qty/(3600*{0}/b.tms)*100/{1},3) as totalqty
+                ,round((a.qty-(isnull((select sum(tmp3.qaqty)  
+                    from 
+                    (SELECT article,min(isnull(qaqty,0)) qaqty
+	                    FROM style_location WITH (NOLOCK) 
+	                    left join (
+				                    SELECT 
+					                      [ComboType]
+					                      ,[Article]
+					                      ,SUM([QAQty]) QAQTY
+				                      FROM [Production].[dbo].[SewingOutput_Detail] WITH (NOLOCK) WHERE ORDERID=a.id
+				                      GROUP BY ComboType,Article) TMP 
+	                    on style_location.Location = tmp.ComboType where style_location.StyleUkey = a.styleukey
+	                    group by article) tmp3),0)))/(3600*{0}/b.tms)*100/{1},3) as balance
+                ,b.tms
+                ,b.qty
+                ,a.qty * b.tms as totaltms
+                ,b.artworktypeid
+                 FROM (Orders a WITH (NOLOCK) inner join  Order_tmscost b WITH (NOLOCK) on a.ID = b.ID) 
+                inner join SewingSchedule c WITH (NOLOCK) on a.id = c.OrderID
+                inner join factory WITH (NOLOCK) on factory.id = a.factoryid
+                 where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'LASER'
+                and b.tms > 0  and factory.mdivisionid='{2}' "
+                , numericBox3.Text, numericBox2.Text, Sci.Env.User.Keyword);
 
             if (!(MyUtility.Check.Empty(styleid)))
             {sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid);}
@@ -418,7 +417,7 @@ and b.tms > 0  and factory.mdivisionid='{2}'
             { sqlcmd += string.Format(@" and b.artworkOffLine >= '{0}'", Convert.ToDateTime(inline_b).ToString("d")); }
             if (!(string.IsNullOrWhiteSpace(inline_e)))
             { sqlcmd += string.Format(@" and b.artworkInLine <= '{0}'", Convert.ToDateTime(inline_e).ToString("d")); }
-            sqlcmd += string.Format(@"ORDER BY a.FactoryID, a.StyleID, a.SeasonID,a.POID");
+            sqlcmd += string.Format(@" ORDER BY a.FactoryID, a.StyleID, a.SeasonID,a.ID ");
             this.ShowWaitMessage("Querying....Please wait....");
 
             int wkdays = 0;
