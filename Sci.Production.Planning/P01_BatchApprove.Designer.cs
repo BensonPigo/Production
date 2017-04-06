@@ -299,9 +299,9 @@
             // 
             this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnToExcel.Location = new System.Drawing.Point(816, 17);
+            this.btnToExcel.Location = new System.Drawing.Point(810, 15);
             this.btnToExcel.Name = "btnToExcel";
-            this.btnToExcel.Size = new System.Drawing.Size(90, 30);
+            this.btnToExcel.Size = new System.Drawing.Size(96, 30);
             this.btnToExcel.TabIndex = 2;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
@@ -323,9 +323,9 @@
             // 
             this.btnApprove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnApprove.Location = new System.Drawing.Point(624, 17);
+            this.btnApprove.Location = new System.Drawing.Point(590, 15);
             this.btnApprove.Name = "btnApprove";
-            this.btnApprove.Size = new System.Drawing.Size(90, 30);
+            this.btnApprove.Size = new System.Drawing.Size(97, 30);
             this.btnApprove.TabIndex = 0;
             this.btnApprove.Text = "Approve";
             this.btnApprove.UseVisualStyleBackColor = true;
@@ -350,9 +350,9 @@
             // 
             this.btnUnApprove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUnApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnUnApprove.Location = new System.Drawing.Point(720, 17);
+            this.btnUnApprove.Location = new System.Drawing.Point(693, 15);
             this.btnUnApprove.Name = "btnUnApprove";
-            this.btnUnApprove.Size = new System.Drawing.Size(90, 30);
+            this.btnUnApprove.Size = new System.Drawing.Size(112, 30);
             this.btnUnApprove.TabIndex = 1;
             this.btnUnApprove.Text = "UnApprove";
             this.btnUnApprove.UseVisualStyleBackColor = true;
