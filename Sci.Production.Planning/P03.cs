@@ -242,6 +242,10 @@ namespace Sci.Production.Planning
                  .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                  .Text("msg", header: "Error Message", width: Widths.AnsiChars(20), settings: ts1, iseditingreadonly: true)
                   ;
+            grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns[16].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns[17].DefaultCellStyle.BackColor = Color.Pink;
             foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
             this.grid1.ColumnHeaderMouseClick += grid1_ColumnHeaderMouseClick;
 
@@ -252,7 +256,7 @@ namespace Sci.Production.Planning
             Helper.Controls.Grid.Generator(this.grid2)
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(6))
                 .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
-                .Numeric("balance", header: "Balance M", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
+                .Numeric("balance", header: "Balance M", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
                 .Numeric("Totaltms", header: "Total Tms", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true); ;
             
         }
@@ -333,8 +337,8 @@ namespace Sci.Production.Planning
             } 
             
             string orderby = "";
-            string sqlcmd
-                = string.Format(@"SELECT 0 as selected,a.id, a.SciDelivery, a.CutInline, a.CutOffline, a.FactoryID
+            string sqlcmd="";
+            sqlcmd = string.Format(@"SELECT 0 as selected,a.id, a.SciDelivery, a.CutInline, a.CutOffline, a.FactoryID
 , a.StyleID, a.SeasonID
 , a.Qty AS OrderQty
 , a.isforecast,a.poid
@@ -389,7 +393,8 @@ namespace Sci.Production.Planning
 inner join SewingSchedule c WITH (NOLOCK) on a.id = c.OrderID
 inner join factory WITH (NOLOCK) on factory.id = a.factoryid
  where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'LASER'
-and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numericBox2.Text,Sci.Env.User.Keyword);
+and b.tms > 0  and factory.mdivisionid='{2}'
+" + orderby, numericBox3.Text, numericBox2.Text, Sci.Env.User.Keyword);
 
             if (!(MyUtility.Check.Empty(styleid)))
             {sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid);}
@@ -413,7 +418,7 @@ and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numer
             { sqlcmd += string.Format(@" and b.artworkOffLine >= '{0}'", Convert.ToDateTime(inline_b).ToString("d")); }
             if (!(string.IsNullOrWhiteSpace(inline_e)))
             { sqlcmd += string.Format(@" and b.artworkInLine <= '{0}'", Convert.ToDateTime(inline_e).ToString("d")); }
-
+            sqlcmd += string.Format(@"ORDER BY a.FactoryID, a.StyleID, a.SeasonID,a.POID");
             this.ShowWaitMessage("Querying....Please wait....");
 
             int wkdays = 0;
