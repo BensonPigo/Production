@@ -2080,7 +2080,8 @@ order by id,article,sizecode", masterID);
         private void btn_Refresh_Click(object sender, EventArgs e)
         {
             this.RenewData();
-            sorting(comboBox1.Text);
+            sorting(comboBox1.Text);  //避免順序亂掉
+            this.OnDetailEntered(); ;
         }
     }
 }
