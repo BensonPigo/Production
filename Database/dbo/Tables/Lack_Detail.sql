@@ -8,9 +8,9 @@
     [RequestQty]      NUMERIC (10, 2) CONSTRAINT [DF_Lack_Detail_RequestQty] DEFAULT ((0)) NULL,
     [PPICReasonID]    VARCHAR (5)     CONSTRAINT [DF_Lack_Detail_PPICReasonID] DEFAULT ('') NOT NULL,
     [RejectQty]       INT             CONSTRAINT [DF_Lack_Detail_RejectQty] DEFAULT ((0)) NULL,
-    [Process]         VARCHAR (30)    CONSTRAINT [DF_Lack_Detail_Process] DEFAULT ('') NULL,
+    [Process]         VARCHAR (30)    CONSTRAINT [DF_Lack_Detail_Process] DEFAULT ('') NOT NULL,
     [IssueQty]        NUMERIC (10, 2) CONSTRAINT [DF_Lack_Detail_IssueQty] DEFAULT ((0)) NULL,
-    CONSTRAINT [PK_Lack_Detail] PRIMARY KEY CLUSTERED ([PPICReasonID], [Seq2], [Seq1], [ID])
+    CONSTRAINT [PK_Lack_Detail] PRIMARY KEY CLUSTERED ([ID], [Seq1], [Seq2], [PPICReasonID], [Process])
 );
 
 
