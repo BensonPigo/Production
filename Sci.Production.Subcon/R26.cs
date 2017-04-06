@@ -167,19 +167,21 @@ select  Title1
         ,Unit
         ,Unit_Price
         ,Amount
-        ,[AccuAmount] =  sum(Amount) Over (PARTITION BY Issue_Date,Delivery 
+        ,[AccuAmount] = sum(Amount) Over (PARTITION BY Issue_Date,Delivery 
                                            Order by Issue_Date, Delivery, to#, Title1, PO, Code 
                                            rows between unbounded preceding and Current Row)
-        ,[Total_Quantity]=sum(Quantity) over (PARTITION BY Issue_Date, Delivery, TO#)
+        ,[Total_Quantity] = sum(Quantity) over (PARTITION BY Issue_Date, Delivery, TO#)
         ,Remark
-        --,[Total1]=SUM(Amount)OVER (PARTITION BY to#,po,Issue_Date,Delivery)*VatRate
-        ,[Total1] = sum(Amount * VatRate) Over (PARTITION BY Issue_Date,Delivery 
-                                           Order by Issue_Date, Delivery, to#, Title1, PO, Code 
-                                           rows between unbounded preceding and Current Row)
+        --,[Total1]=SUM(Amount)OVER (PARTITION BY to#,po,Issue_Date,Delivery) * VatRate
+        ,[Total1] = sum(Amount * VatRate / 100) Over (PARTITION BY Issue_Date, Delivery 
+                                                        Order by Issue_Date, Delivery, to#, Title1, PO, Code 
+                                                        rows between unbounded preceding and Current Row)
+                     
         ,[Total2]=SUM(amount)OVER (PARTITION BY to#,po,Issue_Date,Delivery) 
         ,CurrencyId
         ,VatRate
-        ,[Grand_Total]=sum(Amount) OVER (PARTITION BY to#,po,Issue_Date,Delivery)+SUM(Amount)OVER (PARTITION BY to#,po,Issue_Date,Delivery)*VatRate  
+        ,[Grand_Total] = sum(Amount) OVER (PARTITION BY to#,po,Issue_Date,Delivery) 
+                         + SUM(Amount * VatRate / 100)OVER (PARTITION BY to#,po,Issue_Date,Delivery) 
 from #temp
 order by Issue_Date, Delivery, to#, Title1, PO, Code
 drop table #temp";

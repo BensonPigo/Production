@@ -256,7 +256,9 @@
                                                 <TextRuns>
                                                   <TextRun>
                                                     <Value>=First(Fields!Amount.Value)</Value>
-                                                    <Style />
+                                                    <Style>
+                                                      <Format>#,0.00</Format>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
@@ -975,7 +977,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>=CDate(ReportItems!txtIssueDate.Value)</Value>
-                  <Style />
+                  <Style>
+                    <Format>yyyy/MM/dd</Format>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style>
@@ -1691,14 +1695,15 @@
           </Style>
         </Textbox>
         <Textbox Name="txtTotal">
-          <CanGrow>true</CanGrow>
           <KeepTogether>true</KeepTogether>
           <Paragraphs>
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=ReportItems!txtAccuAmount.Value</Value>
-                  <Style />
+                  <Value>=CDec(ReportItems!txtAccuAmount.Value)</Value>
+                  <Style>
+                    <Format>#,0.00</Format>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -1720,14 +1725,15 @@
           </Style>
         </Textbox>
         <Textbox Name="Textbox87">
-          <CanGrow>true</CanGrow>
           <KeepTogether>true</KeepTogether>
           <Paragraphs>
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=ReportItems!txtGrandTotal.Value</Value>
-                  <Style />
+                  <Value>=CDec(ReportItems!txtGrandTotal.Value)</Value>
+                  <Style>
+                    <Format>#,0.00</Format>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -1779,7 +1785,6 @@
           </Style>
         </Textbox>
         <Textbox Name="txtVatValue">
-          <CanGrow>true</CanGrow>
           <KeepTogether>true</KeepTogether>
           <Paragraphs>
             <Paragraph>
@@ -1808,14 +1813,15 @@
           </Style>
         </Textbox>
         <Textbox Name="txtTotal1">
-          <CanGrow>true</CanGrow>
           <KeepTogether>true</KeepTogether>
           <Paragraphs>
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=ReportItems!txtVat.Value</Value>
-                  <Style />
+                  <Value>=CDec(ReportItems!txtVat.Value)</Value>
+                  <Style>
+                    <Format>#,0.00</Format>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
