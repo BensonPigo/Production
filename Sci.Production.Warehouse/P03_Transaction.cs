@@ -638,7 +638,7 @@ namespace Sci.Production.Warehouse
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1.ToString(), out selectDataTable1);
             if (selectResult1 == false)
             { ShowErr(selectCommand1.ToString(), selectResult1); }
-            else
+            else if (selectDataTable1.Rows.Count > 0)
             {
                 object inqty = selectDataTable1.Compute("sum(inqty)", null);
                 object outqty = selectDataTable1.Compute("sum(outqty)", null);

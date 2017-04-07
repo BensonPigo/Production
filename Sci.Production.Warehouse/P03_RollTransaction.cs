@@ -266,7 +266,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             //105.12.23 Jimmy
             if (dtFtyinventory.Rows.Count == 0 || dtTrans.Rows.Count == 0)
             {
-                MyUtility.Msg.ErrorBox("Data not found!!");
+                //MyUtility.Msg.ErrorBox("Data not found!!");
                 return;
             }
 
