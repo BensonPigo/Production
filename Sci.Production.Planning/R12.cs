@@ -768,14 +768,21 @@ namespace Sci.Production.Planning
             if (txtbrand1.Text != "") where += string.Format(" and O.BrandID = '{0}' ", txtbrand1.Text);
           //  if (txtcountry1.TextBox1.Text != "") where += string.Format(" and F.CountryID = '{0}'  ", txtcountry1.TextBox1.Text);
             if (txtseason1.Text != "") where += string.Format(" and SeasonID =  '{0}' ", txtseason1.Text);
-            SqlData1 = string.Format(@"Select O.ID , O.CPU , O.Cpu * {0} / 60 as SMV , O.CPU * {0} as TMS 
-, O.FactoryID , FB.BrandAreaCode , 
-		                                    O.Qty , O.StyleID , F.CountryID
-                                    From Orders O WITH (NOLOCK)
-                                    Left Outer Join Factory_BrandDefinition FB WITH (NOLOCK) 
-on FB.ID = O.FactoryID 
-                                    Left Join Factory F WITH (NOLOCK) on O.FactoryID = F.ID
-                                    Where 1=1 {1}", StandardTms, where);
+            SqlData1 = string.Format(@"
+Select  O.ID 
+        , O.CPU 
+        , O.Cpu * {0} / 60 as SMV
+        , O.CPU * {0} as TMS 
+        , O.FactoryID 
+        , FB.BrandAreaCode 
+        , O.Qty 
+        , O.StyleID 
+        , F.CountryID
+From Orders O WITH (NOLOCK)
+Left Outer Join Factory_BrandDefinition FB WITH (NOLOCK) 
+    on FB.ID = O.FactoryID 
+Left Join Factory F WITH (NOLOCK) on O.FactoryID = F.ID
+Where 1=1 {1}", StandardTms, where);
 
             BeginInvoke(() => { this.ShowWaitMessage("Wait – Style,Order Data capture, data may be many, please wait (Step 1/5)"); });
             result = DBProxy.Current.Select("", SqlData1, spList, out tmpData1);
@@ -785,15 +792,32 @@ on FB.ID = O.FactoryID
             #endregion
 
             #region tmpData2
-            SqlData2 = string.Format(@"select tmpData1.ID as OrderID , tmpData1.CPU as CPU, tmpData1.SMV as SMV, tmpData1.TMS as TMS, tmpData1.FactoryID as Factory, 
-	                                        tmpData1.BrandAreaCode as AGCCode, tmpData1.Qty as [Order Qty], tmpData1.StyleID as Style, tmpData1.CountryID as FactoryCountry, 
-	                                        SewingOutput_Detail.QAQty as ProdQty, Round(3600 / tmpData1.TMS * Round(SewingOutput.ManPower * SewingOutput_Detail.WorkHour ,1), 0)  as StardQty 
-                                            ,CASE WHEN SMV < 40 THEN 'A' WHEN SMV >= 40 and SMV < 50  THEN 'B' WHEN SMV >= 50 and SMV < 60  THEN 'C' WHEN SMV >= 60 and SMV < 70  THEN 'D'
-	                                        WHEN SMV >= 70 and SMV < 80  THEN 'E' WHEN SMV >= 80 and SMV < 90  THEN 'F'	WHEN SMV >= 90 and SMV < 100 THEN 'G'  ELSE 'H' END as SMVEFFX
-                                        from 
-                                        ({0}) tmpData1
-                                        Left Join SewingOutput_Detail WITH (NOLOCK) on OrderID = tmpData1.ID
-                                        Left Join SewingOutput WITH (NOLOCK) on SewingOutput.ID = SewingOutput_Detail.ID", SqlData1);
+            SqlData2 = string.Format(@"
+select  tmpData1.ID as OrderID 
+        , tmpData1.CPU as CPU
+        , tmpData1.SMV as SMV
+        , tmpData1.TMS as TMS
+        , tmpData1.FactoryID as Factory
+        , tmpData1.BrandAreaCode as AGCCode
+        , tmpData1.Qty as [Order Qty]
+        , tmpData1.StyleID as Style
+        , tmpData1.CountryID as FactoryCountry
+        , SewingOutput_Detail.QAQty as ProdQty
+        , Round(3600 / tmpData1.TMS * Round(SewingOutput.ManPower * SewingOutput_Detail.WorkHour ,1), 0)  as StardQty 
+        , CASE  WHEN SMV < 40 THEN 'A' 
+                WHEN SMV >= 40 and SMV < 50  THEN 'B' 
+                WHEN SMV >= 50 and SMV < 60  THEN 'C' 
+                WHEN SMV >= 60 and SMV < 70  THEN 'D'
+	            WHEN SMV >= 70 and SMV < 80  THEN 'E' 
+                WHEN SMV >= 80 and SMV < 90  THEN 'F'	
+                WHEN SMV >= 90 and SMV < 100 THEN 'G'  
+                ELSE 'H' 
+          END as SMVEFFX
+from (
+    {0}
+) tmpData1
+Left Join SewingOutput_Detail WITH (NOLOCK) on OrderID = tmpData1.ID
+Left Join SewingOutput WITH (NOLOCK) on SewingOutput.ID = SewingOutput_Detail.ID", SqlData1);
 
             BeginInvoke(() => { this.ShowWaitMessage("Wait – By Order, Factory Finishing details (Step 2/5)"); });
             result = DBProxy.Current.Select("", SqlData2, spList, out tmpData2);
@@ -813,22 +837,36 @@ on FB.ID = O.FactoryID
                 GroupBy = " tmpData2.Factory ";
             }
 
-            SqlData3 = string.Format(@"select {1}, tmpData2.FactoryCountry as Country , tmpData2.SMVEFFX 
-, count(*) as SUM_SMVEFFX_COUNT
-                                    from ({0}) tmpData2
-                                    group by {2}, tmpData2.FactoryCountry, tmpData2.SMVEFFX
-                                    order by {2}, tmpData2.FactoryCountry, tmpData2.SMVEFFX", SqlData2, select, GroupBy);
-            SqlData3_SUM = string.Format(@"select {1}, tmpData2.FactoryCountry as Country 
-,count(*) as SMVEFFX_COUNT
-                                    from ({0}) tmpData2
-                                    group by {2}, tmpData2.FactoryCountry
-                                    order by {2}, tmpData2.FactoryCountry", SqlData2, select, GroupBy);
-            All_SqlData3 = string.Format(@"select  tmpData2.SMVEFFX ,count(*) as SMVEFFX_COUNT
-                                    from ({0}) tmpData2
-                                    group by   tmpData2.SMVEFFX
-                                    order by   tmpData2.SMVEFFX", SqlData2);
-            All_SqlData3_SUM = string.Format(@"select  count(*) as SMVEFFX_COUNT
-                                    from ({0}) tmpData2", SqlData2);
+            SqlData3 = string.Format(@"
+select  {1}
+        , tmpData2.FactoryCountry as Country 
+        , tmpData2.SMVEFFX 
+        , count(*) as SUM_SMVEFFX_COUNT
+from ({0}) tmpData2
+group by {2}, tmpData2.FactoryCountry, tmpData2.SMVEFFX
+order by {2}, tmpData2.FactoryCountry, tmpData2.SMVEFFX", SqlData2, select, GroupBy);
+            SqlData3_SUM = string.Format(@"
+select  {1}
+        , tmpData2.FactoryCountry as Country 
+        , count(*) as SMVEFFX_COUNT
+from (
+    {0}
+) tmpData2
+group by {2}, tmpData2.FactoryCountry
+order by {2}, tmpData2.FactoryCountry", SqlData2, select, GroupBy);
+            All_SqlData3 = string.Format(@"
+select  tmpData2.SMVEFFX 
+        , count(*) as SMVEFFX_COUNT
+from (
+    {0}
+) tmpData2
+group by   tmpData2.SMVEFFX
+order by   tmpData2.SMVEFFX", SqlData2);
+            All_SqlData3_SUM = string.Format(@"
+select  count(*) as SMVEFFX_COUNT
+from (
+    {0}
+) tmpData2", SqlData2);
 
             BeginInvoke(() => { this.ShowWaitMessage("Wait – Group By Style , Country Finishing details (Step 3/5)"); });
             result = DBProxy.Current.Select("", SqlData3, spList, out tmpData3);
@@ -851,22 +889,42 @@ on FB.ID = O.FactoryID
                 GroupBy = " tmpData2.Factory ";
             }
 
-            SqlData4 = string.Format(@"select {1}, tmpData2.FactoryCountry as Country, tmpData2.SMVEFFX 
-	                                          ,CASE WHEN SUM(tmpData2.ProdQty) <= 3000 THEN 'AA' WHEN SUM(tmpData2.ProdQty) >= 3001 and SUM(tmpData2.ProdQty) <= 5000  THEN 'BB' WHEN SUM(tmpData2.ProdQty) >= 5001 and SUM(tmpData2.ProdQty) <= 7000  THEN 'CC' 
-		                                      WHEN SUM(tmpData2.ProdQty) >= 7001 and SUM(tmpData2.ProdQty) <= 9000  THEN 'DD'  WHEN SUM(tmpData2.ProdQty) >= 9001 and SUM(tmpData2.ProdQty) <= 10000  THEN 'EE' WHEN SUM(tmpData2.ProdQty) >= 10001 THEN 'FF'	 END as QtyEFFX
-	                                          ,SUM(tmpData2.ProdQty) as StyleProdQty, SUM(tmpData2.StardQty) as StyleStardQty, SUM(tmpData2.ProdQty)/SUM(tmpData2.StardQty) as EFFIC
-                                      from  ({0}) tmpData2
-                                      group by {2}, tmpData2.FactoryCountry, tmpData2.SMVEFFX
-                                      order by {2}, tmpData2.FactoryCountry, tmpData2.SMVEFFX"
+            SqlData4 = string.Format(@"
+select  {1}
+        , tmpData2.FactoryCountry as Country
+        , tmpData2.SMVEFFX 
+        , CASE  WHEN SUM(tmpData2.ProdQty) <= 3000 THEN 'AA' 
+                WHEN SUM(tmpData2.ProdQty) >= 3001 and SUM(tmpData2.ProdQty) <= 5000  THEN 'BB' 
+                WHEN SUM(tmpData2.ProdQty) >= 5001 and SUM(tmpData2.ProdQty) <= 7000  THEN 'CC' 
+                WHEN SUM(tmpData2.ProdQty) >= 7001 and SUM(tmpData2.ProdQty) <= 9000  THEN 'DD'  
+                WHEN SUM(tmpData2.ProdQty) >= 9001 and SUM(tmpData2.ProdQty) <= 10000  THEN 'EE' 
+                WHEN SUM(tmpData2.ProdQty) >= 10001 THEN 'FF'	 
+          END as QtyEFFX
+        , SUM(tmpData2.ProdQty) as StyleProdQty
+        , SUM(tmpData2.StardQty) as StyleStardQty
+        , SUM(tmpData2.ProdQty) / SUM(tmpData2.StardQty) as EFFIC
+from (
+    {0}
+) tmpData2
+group by {2}, tmpData2.FactoryCountry, tmpData2.SMVEFFX
+order by {2}, tmpData2.FactoryCountry, tmpData2.SMVEFFX"
                 , SqlData2, select, GroupBy);
 
-            All_SqlData4 = string.Format(@"select   tmpData2.SMVEFFX 
-	                                                ,CASE WHEN SUM(tmpData2.ProdQty) <= 3000 THEN 'AA' WHEN SUM(tmpData2.ProdQty) >= 3001 and SUM(tmpData2.ProdQty) <= 5000  THEN 'BB' WHEN SUM(tmpData2.ProdQty) >= 5001 and SUM(tmpData2.ProdQty) <= 7000  THEN 'CC' 
-		                                            WHEN SUM(tmpData2.ProdQty) >= 7001 and SUM(tmpData2.ProdQty) <= 9000  THEN 'DD'  WHEN SUM(tmpData2.ProdQty) >= 9001 and SUM(tmpData2.ProdQty) <= 10000  THEN 'EE' WHEN SUM(tmpData2.ProdQty) >= 10001 THEN 'FF'	 END as QtyEFFX
-	                                               , SUM(tmpData2.ProdQty)/SUM(tmpData2.StardQty) as EFFIC
-                                           from  ({0}) tmpData2
-                                           group by   tmpData2.SMVEFFX
-                                           order by   tmpData2.SMVEFFX", SqlData2);
+            All_SqlData4 = string.Format(@"
+select  tmpData2.SMVEFFX 
+        , CASE  WHEN SUM(tmpData2.ProdQty) <= 3000 THEN 'AA' 
+                WHEN SUM(tmpData2.ProdQty) >= 3001 and SUM(tmpData2.ProdQty) <= 5000  THEN 'BB' 
+                WHEN SUM(tmpData2.ProdQty) >= 5001 and SUM(tmpData2.ProdQty) <= 7000  THEN 'CC' 
+                WHEN SUM(tmpData2.ProdQty) >= 7001 and SUM(tmpData2.ProdQty) <= 9000  THEN 'DD'  
+                WHEN SUM(tmpData2.ProdQty) >= 9001 and SUM(tmpData2.ProdQty) <= 10000  THEN 'EE' 
+                WHEN SUM(tmpData2.ProdQty) >= 10001 THEN 'FF'	 
+          END as QtyEFFX
+        , SUM(tmpData2.ProdQty)/SUM(tmpData2.StardQty) as EFFIC
+from (
+    {0}
+) tmpData2
+group by   tmpData2.SMVEFFX
+order by   tmpData2.SMVEFFX", SqlData2);
 
             BeginInvoke(() => { this.ShowWaitMessage("Wait – Produce tmpEFFIC details (Step 3/5)"); });
             result = DBProxy.Current.Select("", SqlData4, spList, out tmpData4);
@@ -882,17 +940,19 @@ on FB.ID = O.FactoryID
                 GroupBy = " tmpData2.Factory ";
 
 
-            SqlStyleDetail = string.Format(@"select tmpData2.Style as Style,
-                           tmpData2.CPU as CPU,
-                           tmpData2.SMV as SMV, 
-                           tmpData2.AGCCode  as AGC,
-                           SUM(tmpData2.ProdQty) as SewingOutput, 
-                           SUM(tmpData2.StardQty) as StdOutput,
-                           ''AS EfficiencyRange, 
-                           tmpData2.FactoryCountry as Country
-                         from 
-                         ({0}) tmpData2
-                         group by tmpData2.Style, tmpData2.CPU, tmpData2.AGCCode, tmpData2.SMV, {1} ,tmpData2.FactoryCountry", SqlData2, GroupBy);
+            SqlStyleDetail = string.Format(@"
+select  tmpData2.Style as Style
+        , tmpData2.CPU as CPU
+        , tmpData2.SMV as SMV
+        , tmpData2.AGCCode  as AGC
+        , SUM(tmpData2.ProdQty) as SewingOutput
+        , SUM(tmpData2.StardQty) as StdOutput
+        , ''AS EfficiencyRange
+        , tmpData2.FactoryCountry as Country
+from (
+    {0}
+) tmpData2
+group by tmpData2.Style, tmpData2.CPU, tmpData2.AGCCode, tmpData2.SMV, {1} ,tmpData2.FactoryCountry", SqlData2, GroupBy);
 
             BeginInvoke(() => { this.ShowWaitMessage("Wait – Finishing Style Detail Data (Step 4/5)"); });
             result = DBProxy.Current.Select("", SqlStyleDetail, spList, out tmpStyleDetail);
@@ -906,12 +966,21 @@ on FB.ID = O.FactoryID
             #endregion
 
             #region tmpOrderDetail
-            SqlOrderDetail = string.Format(@"select DISTINCT tmpData2.OrderID as SP#, tmpData2.CPU as CPU
-, tmpData2.SMV as SMV, tmpData2.TMS as TMS, tmpData2.Factory as Factory
-, tmpData2.AGCCode  as AreaCode, tmpData2.[Order Qty] as [SP# Q'ty]
-, tmpData2.Style as Style, tmpData2.ProdQty as SewingOutput, tmpData2.StardQty as StdOutput 
-                                            from 
-                                            ({0}) tmpData2", SqlData2);
+            SqlOrderDetail = string.Format(@"
+select  DISTINCT 
+        tmpData2.OrderID as SP#
+        , tmpData2.CPU as CPU
+        , tmpData2.SMV as SMV
+        , tmpData2.TMS as TMS
+        , tmpData2.Factory as Factory
+        , tmpData2.AGCCode  as AreaCode
+        , tmpData2.[Order Qty] as [SP# Q'ty]
+        , tmpData2.Style as Style
+        , tmpData2.ProdQty as SewingOutput
+        , tmpData2.StardQty as StdOutput 
+from (
+    {0}
+) tmpData2", SqlData2);
 
             BeginInvoke(() => { this.ShowWaitMessage("Wait – Finishing Order Detail Data (Step 5/5)"); });
             result = DBProxy.Current.Select("", SqlOrderDetail, spList, out tmpOrderDetail);
