@@ -167,24 +167,27 @@ inner join dbo.Order_TmsCost ot on ot.ID = o.ID and ot.Price+ot.Qty+ot.TMS > 0
 inner join dbo.ArtworkType a on a.id = ot.ArtworkTypeID and a.IsSubprocess = 1 
 group by o.FactoryID,ot.ArtworkTypeID,ot.ArtworkUnit
 -------------------
+select * into #ltm2 
+from #ltm ,(select distinct [Artwork Type] from #lts)a
+-------------------
 select
 	[Factory Name],
 	[No of Styles],
 	[New Styles],
 	[Order Allocation (Qty)],
 	[Order Allocation (CPU)],
-	[Artwork Type],
+	m.[Artwork Type],
 	[No. of Style],
 	[Ttl. Order Qty],
 	[Total PCS/ Stitch],
 	[Unit],
 	[Total TMS],
 	[% Based on order allocation] = format(convert(float,[Ttl. Order Qty])/convert(float,[Order Allocation (Qty)]),'P'),
-	[% Based Subprocess allocation] = format(convert(float,[Ttl. Order Qty])/convert(float,sum([Ttl. Order Qty])over(partition by [Artwork Type])),'P'),
+	[% Based Subprocess allocation] = format(convert(float,[Ttl. Order Qty])/convert(float,sum([Ttl. Order Qty])over(partition by m.[Artwork Type])),'P'),
 	[o2] = 1
 into #lu
-from #ltm m left join #lts s on m.[Factory Name] = s.FactoryID
-order by [Artwork Type],[Factory Name]
+from #ltm2 m left join #lts s on m.[Factory Name] = s.FactoryID and m.[Artwork Type] =s.[Artwork Type]
+order by s.[Artwork Type],[Factory Name]
 -------------------
 select
 	[Artwork Type],
@@ -199,9 +202,8 @@ into #ltsr
 from #lts u
 group by [Artwork Type]
 -------------------
-select 	[Factory Name],[No of Styles],	 [New Styles],       [Order Allocation (Qty)], [Order Allocation (CPU)],[Artwork Type],
-        [No. of Style],[Ttl. Order Qty], [Total PCS/ Stitch],[Unit],	               [Total TMS],
-        [% Based on order allocation],   [% Based Subprocess allocation]
+select 	[Factory Name],	  [No of Styles],	  [New Styles], [Order Allocation (Qty)], [Order Allocation (CPU)],		 [Artwork Type],				  [No. of Style],		
+		[Ttl. Order Qty], [Total PCS/ Stitch], [Unit],	   [Total TMS],				  [% Based on order allocation], [% Based Subprocess allocation]
 from
 (
 	select
@@ -214,9 +216,8 @@ from
 		[Ttl. Order Qty] = CONVERT(nvarchar(20),[Ttl. Order Qty]),
 		[Total PCS/ Stitch],	[Unit], 	[Total TMS],	[% Based on order allocation],	[% Based Subprocess allocation],	[o2]
 	from(
-		select 	[Factory Name],[No of Styles],	 [New Styles],       [Order Allocation (Qty)], [Order Allocation (CPU)],[Artwork Type],
-                [No. of Style],[Ttl. Order Qty], [Total PCS/ Stitch],[Unit],	               [Total TMS],
-                [% Based on order allocation],   [% Based Subprocess allocation],              [o2]
+		select 	[Factory Name],	  [No of Styles],	  [New Styles], [Order Allocation (Qty)], [Order Allocation (CPU)],		 [Artwork Type],				  [No. of Style],		
+				[Ttl. Order Qty], [Total PCS/ Stitch], [Unit],	   [Total TMS],				  [% Based on order allocation], [% Based Subprocess allocation], [o2]
 		from #lu
 		union all
 		select *
@@ -228,7 +229,7 @@ from
 				[New Styles] = sum(m.[New Styles]),
 				[Order Allocation (Qty)] = sum(m.[Order Allocation (Qty)]),
 				[Order Allocation (CPU)] = sum(m.[Order Allocation (CPU)])
-			from #ltm  m
+			from #ltm2  m
 		)a,(select *,[o2] = 2 from #ltsr)b
 	)u
 	union all
@@ -241,7 +242,7 @@ from
 		[New Styles] = format(convert(float,sum(m.[New Styles]))/convert(float,sum([No of Styles])),'P'),
 		[Order Allocation (Qty)] = 'Ave CPU/Pc',
 		[Order Allocation (CPU)] = format(convert(float,sum(m.[Order Allocation (CPU)]))/convert(float,sum([Order Allocation (Qty)])),'P')
-	from #ltm  m
+	from #ltm2  m
 	)ba,(
 		select 
 			[Artwork Type],
@@ -256,13 +257,13 @@ from
 					[New Styles] = sum(m.[New Styles]),
 					[Order Allocation (Qty)] = sum(m.[Order Allocation (Qty)]),
 					[Order Allocation (CPU)] = sum(m.[Order Allocation (CPU)])
-				from #ltm  m
+				from #ltm2  m
 			)a,(select * from #ltsr)b
 		)c
 	)bb
 )al
 order by [Artwork Type],[o2],[Factory Name]
-drop table #tmporders,#m,#m2,#a,#b,#ltm,#lts,#lu,#ltsr"
+drop table #tmporders,#m,#m2,#a,#b,#ltm,#lts,#lu,#ltsr,#ltm2"
                 );
 
             DBProxy.Current.DefaultTimeout = 1800;
