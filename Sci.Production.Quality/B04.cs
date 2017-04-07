@@ -29,8 +29,7 @@ namespace Sci.Production.Quality
         }
         protected override void ClickEditAfter()
         {
-            base.ClickEditAfter();
-           // this.textBox1.ReadOnly = true;
+            base.ClickEditAfter();           
         }
 
         protected override bool ClickSaveBefore()
@@ -42,7 +41,7 @@ namespace Sci.Production.Quality
                 this.textBox1.Focus();
                 return false;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["Range1"]))
+            if (MyUtility.Check.Empty(CurrentMaintain["Range1"]) && CurrentMaintain["ID"].ToString()!="A")
             {
                 MyUtility.Msg.WarningBox("< Lower Rate Range > can not be empty!");
                 this.textBox2.Focus();
