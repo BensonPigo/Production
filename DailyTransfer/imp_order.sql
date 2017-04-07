@@ -11,6 +11,9 @@ BEGIN
 
 	declare @OldDate date = (select max(UpdateDate) from Production.dbo.OrderComparisonList WITH (NOLOCK)) --最後匯入資料日期
 	declare @dToDay date = CONVERT(date, GETDATE()) --今天日期
+
+	declare @Odate_s datetime = (SELECT TOP 1 DateStart FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
+	declare @Odate_e datetime = (SELECT TOP 1 DateEnd FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
 -----------------匯入訂單檢核表------------------------
 	delete from Production.dbo.OrderComparisonList
 	where ISNULL(UpdateDate,'')='' and isnull(OrderId,'')='' and isnull(FactoryID,'')=''
@@ -34,25 +37,6 @@ BEGIN
 
 	
 -------------------------------------------------------------------------Order
-	Merge Production.dbo.OrderComparisonList as t
-	Using (select c.*, a.StyleID as AStyleID,a.FactoryID as AFactory 
-		from #TOrder a
-		inner join Production.dbo.Orders c WITH (NOLOCK) on a.id=c.id
-		where a.qty > 0 and a.IsForecast = '0'
-	) as s
-	on t.orderid=s.id and t.factoryid=s.factoryid and t.updateDate = @dToDay
-	when matched then
-		update set
-		t.TransferDate = @OldDate,
-		t.OriginalQty=s.qty,
-		t.OriginalBuyerDelivery=s.BuyerDelivery,
-		t.DeleteOrder=1,
-		t.OriginalStyleID=s.AStyleID,
-		t.TransferToFactory =iif(s.AFactory is not null and s.AFactory in (select id from Production.dbo.Factory WITH (NOLOCK)),s.AFactory,t.TransferToFactory)		
-	when not matched by target then
-		insert(OrderId,UpdateDate,FactoryID)
-		values(s.id,@dToDay,s.FactoryID);
-	
 		--轉單為Cutting母單時,覆寫CutPlan母子單的工廠欄位
 		Update a
 		set a.MDivisionid = b.FTY_Group
@@ -86,60 +70,6 @@ BEGIN
 		from #TOrder a 		
 		inner join Production.dbo.Orders b on a.id=b.id and b.FtyGroup <> a.FTY_Group
 		where a.qty > 0 and a.IsForecast = '0'
-			
-		--OrderComparisonList 比對 production.order
-		Merge Production.dbo.OrderComparisonList as t
-		Using (select b.id,b.qty,b.FactoryID,b.BuyerDelivery,
-		 a.StyleID as AStyleID,a.FactoryID as AFactory 
-		from #TOrder a		
-		inner join Production.dbo.Orders b WITH (NOLOCK) on a.id=b.id and a.factoryid <> b.factoryid
-		where a.qty > 0 and a.IsForecast = '0'
-		) as s
-		on t.orderid=s.id and t.factoryid<>s.factoryid and t.updateDate = @dToDay
-		when matched then
-			update set 
-			t.TransferDate=@OldDate,
-			t.OriginalQty=s.qty,
-			t.OriginalBuyerDelivery=s.BuyerDelivery,
-			t.DeleteOrder=1,
-			t.OriginalStyleID=s.AStyleID,
-			t.TransferToFactory =iif(s.AFactory is not null and s.AFactory in (select id from Production.dbo.Factory WITH (NOLOCK)),s.AFactory,t.TransferToFactory)
-		when not matched by target then 
-		insert(OrderId,UpdateDate,FactoryID,TransferDate,OriginalQty,OriginalBuyerDelivery,DeleteOrder,OriginalStyleID,
-		TransferToFactory)
-		values(s.id,@dToDay,s.FactoryID,@OldDate,s.qty,s.BuyerDelivery,1,s.AStyleID,
-		iif(s.AFactory is not null and s.AFactory in (select id from Production.dbo.Factory WITH (NOLOCK)),s.AFactory,''));
-
-		
-
-		----OrderComparisonList 比對 Trade_To_Pms.order
-		Merge Production.dbo.OrderComparisonList as t
-		Using (select a.id,a.FactoryID,a.qty,a.BuyerDelivery,a.SciDelivery,a.styleid,a.KPILETA,a.LETA,a.CMPQDate
-		,a.EachConsApv,a.MnorderApv,a.SMnorderApv,a.MnorderApv2
-		, b.StyleID as AStyleID,b.FactoryID as AFactory 
-		from #TOrder a		
-		inner join Production.dbo.Orders b WITH (NOLOCK) on a.id=b.id and a.factoryid <> b.factoryid
-		where a.qty > 0 and a.IsForecast = '0'
-		) as s
-		on t.orderid=s.id and t.factoryid=s.factoryid and t.updateDate = @dToDay
-		when matched then
-			update set 
-			t.NewQty=s.qty,
-			t.NewBuyerDelivery=s.BuyerDelivery,
-			t.NewSCIDelivery=s.SciDelivery,
-			t.OriginalStyleID=s.styleid,
-			t.KPILETA=s.KPILETA,
-			t.NewLETA = s.LETA,
-			t.TransferDate=@OldDate,
-			t.NewOrder=1,
-			t.NewCMPQDate=s.CMPQDate,
-			t.NewEachConsApv=s.EachConsApv,
-			t.OriginalMnorderApv=s.MnorderApv,
-			t.OriginalSMnorderApv = s.SMnorderApv,
-			t.MnorderApv2=s.MnorderApv2						
-		when not matched by target then 
-		insert(OrderId,UpdateDate,FactoryID,NewQty,NewBuyerDelivery,NewSCIDelivery,OriginalStyleID,KPILETA,NewLETA,	TransferDate,NewOrder,NewCMPQDate,NewEachConsApv,OriginalMnorderApv,OriginalSMnorderApv,MnorderApv2)
-		values(s.id,@dToDay,s.FactoryID,s.qty,s.BuyerDelivery,s.SciDelivery,styleid,KPILETA,LETA,@OldDate,1,CMPQDate,EachConsApv,MnorderApv,SMnorderApv,MnorderApv2);
 
 	--需填入 Order.SDPDate = Buyer Delivery - 放假日(船期表)--
 		--如果買家到貨日不是工廠放假日,SDDate=BuyerDelivery
@@ -162,8 +92,195 @@ BEGIN
 		from #TOrder as t
 		left join Production.dbo.Orders as s1 on t.ID=s1.ID
 		where s1.ID is null
-		
-		
+
+----------------取得 BuyerDelivery & SciDelivery 日期在 Trade 給的日期範圍中 Orders 的資料------------------------
+	select * into #tmpOrders 
+	from Production.dbo.Orders a WITH (NOLOCK)
+	where (a.BuyerDelivery between @Odate_s and @Odate_e or a.SciDelivery between @Odate_s and @Odate_e)
+		and a.LocalOrder = 0
+				
+---------------------OrderComparisonList (1.Insert, 2.Delete, 3.ChangeFactory, 4.ChangeData, 5.NoChange)-----------------
+		----1.Insert 記錄 Trade 有 PMS 沒有的資料 (NewOrder = 1) 
+		Merge Production.dbo.OrderComparisonList as t
+		Using (	select a.* 
+				from Trade_To_Pms.dbo.Orders a
+				left join #tmpOrders b on a.ID = b.ID
+				where b.id is null) as s
+		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
+		when matched then
+			update set 
+				t.NewOrder				= 1
+				, t.OrderID				= s.ID
+				, t.OriginalStyleID		= s.StyleID
+				, t.NewQty = s.Qty
+				, t.NewBuyerDelivery	= s.BuyerDelivery
+				, t.NewSCIDelivery		= s.SCIDelivery
+				, t.MDivisionID			= s.MDivisionID
+				, t.FactoryID			= s.FactoryID
+				, t.UpdateDate			= @dToDay
+				, t.TransferDate		= @OldDate
+		when not matched by target then
+			insert(NewOrder, OrderID, OriginalStyleID, NewQty, NewBuyerDelivery, NewSCIDelivery, MDivisionID, FactoryID, UpdateDate, TransferDate)
+			values(1, s.ID, s.StyleID, s.Qty, s.BuyerDelivery, s.SCIDelivery, s.MDivisionID, s.FactoryID, @dToDay, @OldDate);
+
+		----2.Delete 記錄 Trade 沒有 PMS 有的資料 (DeleteOrder = 1)
+		Merge Production.dbo.OrderComparisonList as t
+		Using (	select a.*
+				from #tmpOrders a
+				left join Trade_To_Pms.dbo.Orders b on a.ID = b.ID
+				where b.id is null) as s
+		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
+		when matched then
+			update set
+				t.DeleteOrder				= 1
+				, t.OrderID					= s.ID
+				, t.OriginalStyleID			= s.StyleID
+				, t.OriginalQty				= s.Qty
+				, t.OriginalBuyerDelivery	= s.BuyerDelivery
+				, t.OriginalSciDelivery		= s.SciDelivery
+				, t.MDivisionID				= s.MDivisionID
+				, t.FactoryID				= s.FactoryID
+				, t.UpdateDate				= @dToday
+				, t.TransferDate			= @OldDate
+		when not matched by target then
+			insert(DeleteOrder, OrderID, OriginalStyleID, OriginalQty, OriginalBuyerDelivery, OriginalSciDelivery, MDivisionID, FactoryID, UpdateDate, TransferDate)
+			values(1, s.ID, s.StyleID, s.Qty, s.BuyerDelivery, s.SCIDelivery, s.MDivisionID, s.FactoryID, @dToDay, @OldDate);
+
+		----3.ChangeFactory 記錄換工廠
+		--------3.1.Delete 舊工廠的資料，資料帶入 PMS.Orders
+		Merge Production.dbo.OrderComparisonList as t
+		Using (	select	a.*
+						, Transfer2Factroy = b.FactoryID
+				from #tmpOrders a
+				join Trade_To_Pms.dbo.Orders b on a.ID = b.ID and a.FactoryID != b.FactoryID) as s
+		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
+		when matched then 
+			update set
+				t.DeleteOrder				= 1
+				, t.TransferToFactory		= s.Transfer2Factroy
+				, t.OrderID					= s.ID
+				, t.OriginalStyleID			= s.StyleID
+				, t.OriginalQty				= s.Qty
+				, t.OriginalBuyerDelivery	= s.BuyerDelivery
+				, t.OriginalSciDelivery		= s.SciDelivery
+				, t.MDivisionID				= s.MDivisionID
+				, t.FactoryID				= s.FactoryID				
+				, t.UpdateDate				= @dToday
+				, t.TransferDate			= @OldDate
+		when not matched by target then
+			insert(DeleteOrder, TransferToFactory, OrderID, OriginalStyleID, OriginalQty, OriginalBuyerDelivery, OriginalSciDelivery, MDivisionID, FactoryID, UpdateDate, TransferDate)
+			values(1, s.Transfer2Factroy, s.ID, s.StyleID, s.Qty, s.BuyerDelivery, s.SCIDelivery, s.MDivisionID, s.FactoryID, @dToDay, @OldDate);
+
+		 -------3.2.New 新工廠的資料，資料帶入 Trade.Orders
+	    Merge Production.dbo.OrderComparisonList as t
+		Using (	select b.*
+				from #tmpOrders a
+				join Trade_To_Pms.dbo.Orders b on a.ID = b.ID and a.FactoryID != b.FactoryID) as s
+		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
+		when matched then 
+			update set
+				t.NewOrder				= 1
+				, t.OrderID				= s.ID
+				, t.OriginalStyleID		= s.StyleID 
+				, t.NewQty				= s.Qty
+				, t.NewBuyerDelivery	= s.BuyerDelivery
+				, t.NewSCIDelivery		= s.SCIDelivery
+				, t.MDivisionID			= s.MDivisionID
+				, t.FactoryID			= s.FactoryID				
+				, t.UpdateDate			= @dToday
+				, t.TransferDate		= @OldDate
+		when not matched by target then
+			insert(NewOrder, OrderID, OriginalStyleID, NewQty, NewBuyerDelivery, NewSCIDelivery, MDivisionID, FactoryID, UpdateDate, TransferDate)
+			values(1, s.ID, s.StyleID, s.Qty, s.BuyerDelivery, s.SCIDelivery, s.MDivisionID, s.FactoryID, @dToDay, @OldDate);
+
+		----4.ChangeData 記錄資料異動
+		-------IIF => 如果 PMS & Trade 某一欄位相同，則新舊都存入 Null 代表沒有變動，
+		-------                                不同，則 Trade 存入 New，PMS 存入 Original
+		Merge Production.dbo.OrderComparisonList as t
+		Using (select	ID					= A.ID
+						, FactoryID			= A.FactoryID
+						, MDivisionID		= A.MDivisionID
+						, O_Qty				= iif(a.qty != b.qty, a.qty, null)
+						, N_Qty				= iif(a.qty != b.qty, b.qty, null)
+						, O_BuyerDelivery	= iif(a.BuyerDelivery != b.BuyerDelivery, A.BuyerDelivery, null)
+						, N_BuyerDelivery	= iif(a.BuyerDelivery != b.BuyerDelivery, b.BuyerDelivery, null)
+						, O_SciDelivery		= iif(a.SciDelivery != b.SciDelivery, A.SciDelivery, null)
+						, N_SciDelivery		= iif(a.SciDelivery != b.SciDelivery, b.SciDelivery, null)
+						, O_CMPQDate		= iif(a.CMPQDate != b.CMPQDate, A.CMPQDate, null)
+						, N_CMPQDate		= iif(a.CMPQDate != b.CMPQDate, b.CMPQDate, null)
+						, O_EachConsApv		= iif(a.EachConsApv != b.EachConsApv, A.EachConsApv, null)
+						, N_EachConsApv		= iif(a.EachConsApv != b.EachConsApv, b.EachConsApv, null)
+						, O_MnorderApv		= iif(a.MnorderApv != b.MnorderApv, A.MnorderApv, null)
+						, N_MnorderApv		= iif(a.MnorderApv != b.MnorderApv, b.MnorderApv, null)
+						, O_SMnorderApv		= iif(a.SMnorderApv != b.SMnorderApv, A.SMnorderApv, null)
+						, N_SMnorderApv		= iif(a.SMnorderApv != b.SMnorderApv, b.SMnorderApv, null)
+						, O_MnorderApv2		= iif(a.MnorderApv2 != b.MnorderApv2, A.MnorderApv2, null)
+						, N_MnorderApv2		= iif(a.MnorderApv2 != b.MnorderApv2, b.MnorderApv2, null)
+						, O_Junk			= iif(a.Junk != b.Junk, A.Junk, null)
+						, N_Junk			= iif(a.Junk != b.Junk, b.Junk, null)
+						, O_KPILETA			= iif(a.KPILETA != b.KPILETA, A.KPILETA, null)
+						, N_KPILETA			= iif(a.KPILETA != b.KPILETA, b.KPILETA, null)
+						, O_LETA			= IIF( A.LETA != B.LETA, A.LETA, null)
+						, N_LETA			= IIF( A.LETA != B.LETA, b.LETA, null)
+						, O_Style			= IIF(a.StyleID != b.StyleID , a.StyleID, null)
+						, N_Style			= IIF(a.StyleID != b.StyleID , b.StyleID, null)
+				from #tmpOrders a WITH (NOLOCK)
+				inner join Trade_To_Pms.dbo.Orders b on a.id = b.id and a.FactoryID = b.FactoryID
+				where	A.QTY != B.QTY 
+						OR A.BuyerDelivery != B.BuyerDelivery 
+						OR A.StyleID != B.StyleID 
+						OR A.EachConsApv != B.EachConsApv 
+						OR A.CMPQDate != B.CMPQDate 
+						OR A.SciDelivery != B.SciDelivery 
+						OR A.MnorderApv != B.MnorderApv 
+						OR A.SMnorderApv != B.SMnorderApv 
+						OR A.MnorderApv2 != B.MnorderApv2 
+						OR A.Junk != B.Junk 
+						OR A.KPILETA != B.KPILETA
+						OR A.LETA != B.LETA	) s
+		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToday
+		when matched then 
+			update set
+				t.OrderID					= s.ID
+				, t.FactoryID				= s.FactoryID
+				, t.MDivisionID				= s.MDivisionID
+				, t.OriginalQty				= s.O_Qty
+				, t.OriginalBuyerDelivery	= s.O_BuyerDelivery
+				, t.OriginalSciDelivery		= s.O_SciDelivery
+				, t.OriginalStyleID			= s.O_Style
+				, t.OriginalCMPQDate		= s.O_CMPQDate
+				, t.OriginalEachConsApv		= s.O_EachConsApv
+				, t.OriginalMnorderApv		= s.O_MnorderApv
+				, t.OriginalSMnorderApv		= s.O_SmnorderApv
+				, t.OriginalLETA			= s.O_LETA
+				, t.NewQty					= s.N_Qty
+				, t.NewBuyerDelivery		= s.N_BuyerDelivery
+				, t.NewSciDelivery			= s.N_SciDelivery
+				, t.NewStyleID				= s.N_Style
+				, t.NewCMPQDate				= s.N_CMPQDate
+				, t.NewEachConsApv			= s.N_EachConsApv
+				, t.NewMnorderApv			= s.N_MnorderApv
+				, t.NewSMnorderApv			= s.N_SMnorderApv
+				, t.NewLETA					= s.N_LETA
+				, t.KPILETA					= s.N_KPILETA
+				, t.MnorderApv2				= s.N_MnorderApv2
+				, t.JunkOrder				= s.N_Junk
+				, t.UpdateDate				= @dToday
+				, t.TransferDate			= @OldDate
+		when not matched by target then 
+			insert(OrderID, FactoryID, MDivisionID, OriginalQty, OriginalBuyerDelivery, OriginalSciDelivery, OriginalStyleID, OriginalCMPQDate, OriginalEachConsApv, OriginalMnorderApv, OriginalSMnorderApv, OriginalLETA
+					, NewQty, NewBuyerDelivery, NewSciDelivery, NewStyleID, NewCMPQDate, NewEachConsApv, NewMnorderApv, NewSMnorderApv, NewLETA, KPILETA, MnorderApv2, JunkOrder, UpdateDate, TransferDate)
+			values(s.ID, s.FactoryID, s.MDivisionID, s.O_Qty, s.O_BuyerDelivery, s.O_SciDelivery, s.O_Style, s.O_CMPQDate, s.O_EachConsApv, s.O_MnorderApv, s.O_SMnorderApv, s.O_LETA
+					, s.N_Qty, s.N_BuyerDelivery, s.N_SciDelivery, s.N_Style, s.N_CMPQDate, s.N_EachConsApv, s.N_MnorderApv, s.N_SMNorderApv, s.N_LETA, s.N_KPILETA, s.N_MnorderApv2, s.N_Junk, @dToday, @OldDate);
+
+        ----5.No Change!
+		Merge Production.dbo.OrderComparisonList as t
+		Using Production.dbo.Factory as s
+		on t.factoryid=s.id and UpdateDate =@dToDay
+		when not matched by Target then 
+			insert(OrderId,    UpdateDate,  TransferDate,FactoryID)
+			values('No Change!',@dToDay,    @OldDate,    s.ID);
+-----------------------------------------------------------------------------------------------------------
 ---------------------Order--------------------------------------
 		--------------Order.id= AOrder.id  if eof()
 		declare @OrderT table (ID varchar(13),isInsert bit) 
@@ -298,89 +415,6 @@ BuyMonth,   Dest,   Model,   HsCode1,   HsCode2,   PayTermARID,   ShipTermID,   
 values(s.ID ,s.BrandID ,s.ProgramID ,s.StyleID ,s.SeasonID ,s.ProjectID ,s.Category ,s.OrderTypeID ,
 s.BuyMonth ,s.Dest ,s.Model ,s.HsCode1 ,s.HsCode2 ,s.PayTermARID ,s.ShipTermID ,s.ShipModeList ,s.CdCodeID ,s.CPU ,s.Qty ,s.StyleUnit ,s.PoPrice ,s.CFMPrice ,s.CurrencyID ,s.Commission ,s.FactoryID ,s.BrandAreaCode ,s.BrandFTYCode ,s.CTNQty ,s.CustCDID ,s.CustPONo ,s.Customize1 ,s.Customize2 ,s.Customize3 ,s.CFMDate ,s.BuyerDelivery ,s.SciDelivery ,s.SewOffLine ,s.CutInLine ,s.CutOffLine ,s.PulloutDate ,s.CMPUnit ,s.CMPPrice ,s.CMPQDate ,s.CMPQRemark ,s.EachConsApv ,s.MnorderApv ,s.CRDDate ,s.InitialPlanDate ,s.PlanDate ,s.FirstProduction ,s.FirstProductionLock ,s.OrigBuyerDelivery ,s.ExCountry ,s.InDCDate ,s.CFMShipment ,s.PFETA ,s.PackLETA ,s.LETA ,s.MRHandle ,s.SMR ,s.ScanAndPack ,s.VasShas ,s.SpecialCust ,s.TissuePaper ,s.Junk ,s.Packing ,s.MarkFront ,s.MarkBack ,s.MarkLeft ,s.MarkRight ,s.Label ,s.OrderRemark ,s.ArtWorkCost ,s.StdCost ,s.CtnType ,s.FOCQty ,s.SMnorderApv ,s.FOC ,s.MnorderApv2 ,s.Packing2 ,s.SampleReason ,s.RainwearTestPassed ,s.SizeRange ,s.MTLComplete ,s.SpecialMark ,s.OutstandingRemark ,s.OutstandingInCharge ,s.OutstandingDate ,s.OutstandingReason ,s.StyleUkey ,s.POID ,s.IsNotRepeatOrMapping ,s.SplitOrderId ,s.FtyKPI ,s.AddName ,s.AddDate ,s.EditName ,s.EditDate ,s.IsForecast,s.GMTComplete ,s.PFOrder ,s.InspDate ,s.KPILETA ,s.MTLETA ,s.SewETA ,s.PackETA ,s.MTLExport ,s.DoxType ,s.FTY_Group ,s.MDivisionID ,S.MCHandle ,s.KPIChangeReason , S.MDClose ,s.CPUFactor ,s.SizeUnit ,s.CuttingSP ,s.IsMixMarker ,s.EachConsSource ,s.KPIEachConsApprove ,s.KPICmpq ,s.KPIMNotice ,s.GFR,s.SDPDate ,s.PulloutComplete,s.SewINLINE)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
-
-		-----------TrsOrder AOrder<>Order ----------------
-		Merge Production.dbo.OrderComparisonList as t
-		Using ( select * from #Torder where id in (select id from @OrderT where isInsert=1)) as s
-		on t.orderid=s.id and t.factoryid=s.factoryid and t.updateDate = @dToDay
-		when matched then
-			update set
-			t.NewQty = s.Qty,
-			t.NewBuyerDelivery = s.BuyerDelivery, 
-			t.NewSCIDelivery =s.SciDelivery, 
-			t.OriginalStyleID = s.StyleID, 
-			t.KPILETA =s.KPILETA, 
-			t.NewLETA =s.LETA,
-			t.TransferDate = @OldDate, 
-			t.NewOrder =1,
-			t.NewCMPQDate = s.CMPQDate, 
-			t.NewEachConsApv = s.EachConsApv,
-			t.OriginalMnorderApv =s.MnorderApv, 
-			t.OriginalSMnorderApv = s.SMnorderApv,
-			t.MnorderApv2 = s.MnorderApv2
-		when not matched by target then 
-			insert(OrderId,UpdateDate,FactoryID)
-			values(s.Id,@dToDay,s.FactoryID);
-
-		-----------TrsOrder AOrder=Order ----------------
-		Merge Production.dbo.OrderComparisonList as t
-		Using ( select A.ID,A.FactoryID,
-a.qty ,B.Qty AS Aqty,iif(a.qty<>b.qty,1,0) as diffQty,
-A.BuyerDelivery,b.BuyerDelivery as ABuyerDelivery,iif(a.BuyerDelivery<>b.BuyerDelivery,1,0) as diffDiv,
-A.SciDelivery,b.SciDelivery as ASciDelivery,iif(a.SciDelivery <> b.SciDelivery,1,0) as diffSciD, 
-A.CMPQDate,b.CMPQDate as ACMPQDate,iif(a.CMPQDate <> b.CMPQDate,1,0) as diffCmpD, 
-A.EachConsApv,b.EachConsApv as ACutDate,iif(a.EachConsApv <> b.EachConsApv ,1,0) as diffCutD, 
-A.MnorderApv,b.MnorderApv as AMnorderApv,iif(a.MnorderApv <> b.MnorderApv,1,0) as diffMnorderApv, 
-A.SMnorderApv,b.SMnorderApv as ASMnorderApv,iif(a.SMnorderApv <> b.SMnorderApv,1,0) as diffSMnorderApv, 
-A.MnorderApv2,b.MnorderApv2 as AMnorderApv2,iif(a.MnorderApv2 <> b.MnorderApv2,1,0) as diffMnorderApv2, 
-A.Junk,b.Junk as AJunk,iif(a.Junk <> b.Junk,1,0) as diffJunk,
-A.KPILETA,b.LETA as AKPILETA,iif(a.KPILETA <> b.KPILETA,1,0) as diffKPILETA,
-A.LETA, b.LETA as ALETA , IIF( A.LETA <> B.LETA,1,0) AS diffLETA,		
-a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
-		from Production.dbo.Orders a WITH (NOLOCK)
-		inner join #Torder b on a.id=b.id
-		where a.id in (select id from @OrderT where isInsert=0)
-			and (A.QTY <> B.QTY OR 
-			A.BuyerDelivery <> B.BuyerDelivery OR 
-			A.StyleID <> B.StyleID OR 
-			A.EachConsApv<>B.EachConsApv OR 
-			A.CMPQDate<>B.CMPQDate OR 
-			A.SciDelivery<>B.SciDelivery OR 
-			A.MnorderApv<>B.MnorderApv OR 
-			A.SMnorderApv<>B.SMnorderApv OR 
-			A.MnorderApv2<>B.MnorderApv2 OR 
-			A.Junk<>B.Junk OR 
-			(A.KPILETA IS NOT NULL
-			AND A.LETA <> B.LETA))
-		) as s
-		on t.orderid=s.id and t.updateDate = @dToDay  -- CHECK
-			when matched then
-				update set
-				t.OriginalQty =iif(diffQty=1,s.qty,t.OriginalQty),
-				t.NewQty = iif(diffQty=1,s.Aqty,t.NewQty),
-				t.OriginalBuyerDelivery = iif(diffDiv=1 or diffSciD=1,s.BuyerDelivery,t.OriginalBuyerDelivery),
-				t.NewBuyerDelivery = iif(diffDiv=1 or diffSciD=1,s.ABuyerDelivery,t.NewBuyerDelivery),
-				t.OriginalSCIDelivery=iif(diffSciD=1,s.SciDelivery,t.OriginalSCIDelivery),
-				t.NewSCIDelivery = iif(diffSciD=1,s.ASciDelivery,t.NewSCIDelivery),
-				t.OriginalStyleID = s.AStyleID,
-				t.OriginalCMPQDate = iif(diffCmpD=1,s.CMPQDate,t.OriginalCMPQDate),
-				t.NewCMPQDate = iif(diffCmpD=1,s.ACMPQDate,t.NewCMPQDate),
-				t.OriginalEachConsApv = iif(diffCutD=1, s.EachConsApv,t.OriginalEachConsApv),
-				t.NewEachConsApv = iif(diffCutD=1,s.ACutDate,t.NewEachConsApv),
-				t.OriginalMnorderApv = iif(diffMnorderApv=1,s.MnorderApv,t.OriginalMnorderApv),
-				t.NewMnorderApv = iif(diffMnorderApv=1,s.AMnorderApv,t.NewMnorderApv),
-				t.OriginalSMnorderApv = iif(diffSMnorderApv=1,s.SMnorderApv,t.OriginalSMnorderApv),
-				t.NewSMnorderApv = iif(diffSMnorderApv=1,s.ASMnorderApv,t.NewSMnorderApv),
-				t.MnorderApv2 = iif(diffMnorderApv2=1,s.AMnorderApv2,t.MnorderApv2),
-				t.JunkOrder = iif(diffJunk=1,s.AJunk,t.JunkOrder),
-				t.KPILETA = iif((diffKPILETA=1 and s.KPILETA is not null),s.KPILETA,t.KPILETA),
-				t.OriginalLETA= iif((diffKPILETA=1 and s.KPILETA is not null),s.LETA,t.OriginalLETA),
-				t.NewLETA=iif((diffKPILETA=1 and s.KPILETA is not null),s.ALETA,t.NewLETA)
-			when not matched by target then 
-				insert(orderid,UpdateDate,TransferDate, factoryid)
-				values(s.Id,   @dToDay,   @OldDate,   s.FactoryID);				
-
-
 
 	--------------Order_Qty--------------------------Qty BreakDown
 
@@ -1228,44 +1262,6 @@ a.StyleID,b.StyleID as AStyleID ,IIF(a.StyleID<> b.StyleID ,1,0) as diffStyleID
 			values(s.Id,s.UKey,s.Refno,s.SCIRefno,s.SuppID,s.Seq,s.UsedQty,s.BomTypeSize,s.BomTypeColor,s.BomTypePono,s.PatternPanel,s.SizeItem,s.BomTypeZipper,s.Remark,s.Description,s.FabricVer_Old,s.FabricUkey_Old)
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
-
---declare @Odate_s datetime = (SELECT TOP 1 DateStart FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
-declare @Odate_s datetime = (SELECT TOP 1 DateStart FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
-declare @Odate_e datetime = (SELECT TOP 1 DateEnd FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
-
-
---32246
-select * into #tmpOrders from Production.dbo.Orders a WITH (NOLOCK)
-where (
-a.BuyerDelivery between @Odate_s and @Odate_e
-or a.SciDelivery between @Odate_s and @Odate_e)
-and a.LocalOrder = 0
-
-
-	Merge  Production.dbo.OrderComparisonList as t
-	Using (select a.*,b.styleid as AStyle from #tmpOrders a inner join #TOrder b on a.id=b.id) as s
-	on t.orderid=s.id and t.factoryid=s.factoryid and t.updateDate = @dToDay
-	when matched then
-		update set
-		t.TransferDate=@OldDate,
-		t.OriginalQty =s.qty,
-		t.OriginalBuyerDelivery= s.BuyerDelivery,
-		t.DeleteOrder=1,
-		t.OriginalStyleID = iif(s.AStyle is not null,s.AStyle,s.styleid),
-		t.TransferToFactory = s.FactoryID
-	when not matched by target then
-			insert (orderid,UpdateDate,  factoryid)
-			values (   s.id,   @dToDay,s.factoryid);
-
-	-----------------No Change!------------------------------------------------------------------------------------------
-
-	Merge Production.dbo.OrderComparisonList as t
-	Using Production.dbo.Factory as s
-	on t.factoryid=s.id and UpdateDate =@dToDay
-	when not matched by Target then 
-	insert(OrderId,    UpdateDate,  TransferDate,FactoryID)
-	values('No Change!',@dToDay,    @OldDate,    s.ID);
------------------------------------------------------------------------------------------------------------
 		------------------Leo--------------------------------------
 
 ----刪除的判斷必須要依照#Torder的區間作刪除
