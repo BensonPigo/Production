@@ -27,7 +27,7 @@ namespace Sci.Production.Planning
             txtMdivision1.Text = Sci.Env.User.Keyword;
             txtfactory1.Text = Sci.Env.User.Factory;
             cbxCategory.SelectedIndex = 1;  //Bulk
-            dateRange1.Value1 = DateTime.Now.AddDays(-DateTime.Now.Day+1);
+            dateRange1.Value1 = DateTime.Now.AddDays(-DateTime.Now.Day + 1);
             dateRange1.Value2 = DateTime.Now.AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day);
         }
 
@@ -43,12 +43,12 @@ namespace Sci.Production.Planning
             #region -- 擇一必輸的條件 --
             sciDelivery1 = dateRange1.Value1;
             sciDelivery2 = dateRange1.Value2;
-            
+
             #endregion
             mdivision = txtMdivision1.Text;
             factory = txtfactory1.Text;
             selectindex = cbxCategory.SelectedIndex;
-           
+
             return base.ValidateInput();
         }
 
@@ -56,7 +56,7 @@ namespace Sci.Production.Planning
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
-            
+
             System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
             sp_factory.ParameterName = "@factory";
 
@@ -69,31 +69,16 @@ namespace Sci.Production.Planning
 
             StringBuilder sqlCmd = new StringBuilder();
 
-            sqlCmd.Append(string.Format(@"
-;with styleData as (
-Select ot.ArtworkTypeID
-,o.FtyGroup
-,o.styleid
-,count(o.styleid) target_count_style
-, sum(o.qty) target_total_order_qty
-, min(o.SewInLine) target_min_sewinline
-, sum(o.qty * ot.Qty) target_sum_stitch
-,ot.ArtworkUnit
-,sum(o.qty * ot.tms) target_sum_tms
-from dbo.orders o WITH (NOLOCK) 
-inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID 
-inner join dbo.ArtworkType a WITH (NOLOCK) on a.id = ot.ArtworkTypeID
-where ot.Price+ot.Qty+ot.TMS > 0
-and a.IsSubprocess = 1"));
+            sqlCmd.Append(@"select * into #tmporders from orders o where 1 = 1");
 
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(sciDelivery1))
             {
-                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d"))); 
+                sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(sciDelivery2))
-            { 
-                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d"))); 
+            {
+                sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(mdivision))
@@ -131,144 +116,158 @@ and a.IsSubprocess = 1"));
             condition.Append(string.Format(@"SCI Delivery : {0} ~ {1}"
                 , Convert.ToDateTime(sciDelivery1).ToString("d")
                 , Convert.ToDateTime(sciDelivery2).ToString("d")));
-
-sqlCmd.Append(string.Format(@"group by ot.ArtworkTypeID,o.FtyGroup,o.StyleID,ot.ArtworkUnit
-
-),
-
-targetData as (
-	Select t.ArtworkTypeID
-	,t.FtyGroup
-	,sum(t.target_count_style) target_count_style
-	,sum(t.target_total_order_qty) target_total_order_qty 
-	,sum(t.target_sum_stitch) target_sum_stitch
-	,t.ArtworkUnit
-	,sum(t.target_sum_tms) target_sum_tms
-	from styleData t WITH (NOLOCK) 
-	group by t.ArtworkTypeID,t.FtyGroup,t.ArtworkUnit
-)
-, orderData_basic as (
-	select o.FtyGroup
-	,o.StyleID
-	--,count(1) order_count_style
-    ,count(distinct o.StyleID) order_count_style
-	,min(SewInLine) order_min_sewinline
-	,sum(o.qty) order_total_qty
-	,sum(o.qty * t.CpuRate) order_total_cpu
-	from  dbo.orders o WITH (NOLOCK) 
-	inner join styleData s WITH (NOLOCK) on s.FtyGroup = o.FtyGroup and s.StyleID = o.StyleID
-	cross apply (select * from dbo.GetCPURate(o.OrderTypeID,o.ProgramID,o.Category,o.BrandID,'O')
-	where o.Junk=0 ) t
-	group by o.FtyGroup,o.StyleID
-)
-, orderDataCount as
+            sqlCmd.Append(@"
+Select 
+	[Factory Name] = o.FactoryID,
+	[No of Styles] = count(o.styleid),
+	[Order Allocation (Qty)] = sum(o.Qty),
+	[Order Allocation (CPU)] = Sum(o.qty * o.cpu * o.CPUFactor)
+into #m
+from #tmporders o
+group by o.FactoryID
+order by o.FactoryID
+-------------------
+SELECT o.FactoryID,o.StyleID,min(o.SewInLine)omsl
+into #a
+FROM #tmporders o
+group by o.FactoryID,o.StyleID 
+select o2.FactoryID,o2.StyleID,min(o2.SewInLine) o2msl
+into #b
+from Orders o2 
+WHERE SewInLine IS NOT NULL 
+group by o2.FactoryID,o2.StyleID 
+select
+	 a.FactoryID,
+	[New Styles] = count(a.StyleID)
+into #m2
+from #a a left join #b b on a.FactoryID = b.FactoryID and a.StyleID = b.StyleID
+where b.o2msl is null or a.omsl <= b.o2msl
+group by a.FactoryID
+-------------------
+select 
+	[Factory Name],
+	[No of Styles],
+	[New Styles] = isnull([New Styles],0),
+	[Order Allocation (Qty)],
+	[Order Allocation (CPU)]
+into #ltm
+from #m m left join #m2 m2 on m.[Factory Name] = m2.FactoryID
+-------------------
+select 
+o.FactoryID,
+	[Artwork Type] = ot.ArtworkTypeID,
+	[No. of Style] = count(o.StyleID),
+	[Ttl. Order Qty] = sum(o.Qty),
+	[Total PCS/ Stitch] = Sum(ot. qty),
+	[Unit] = ot.ArtworkUnit,
+	[Total TMS] = sum(ot.TMS)
+into #lts
+from #tmporders o
+inner join dbo.Order_TmsCost ot on ot.ID = o.ID and ot.Price+ot.Qty+ot.TMS > 0
+inner join dbo.ArtworkType a on a.id = ot.ArtworkTypeID and a.IsSubprocess = 1 
+group by o.FactoryID,ot.ArtworkTypeID,ot.ArtworkUnit
+-------------------
+select
+	[Factory Name],
+	[No of Styles],
+	[New Styles],
+	[Order Allocation (Qty)],
+	[Order Allocation (CPU)],
+	[Artwork Type],
+	[No. of Style],
+	[Ttl. Order Qty],
+	[Total PCS/ Stitch],
+	[Unit],
+	[Total TMS],
+	[% Based on order allocation] = format(convert(float,[Ttl. Order Qty])/convert(float,[Order Allocation (Qty)]),'P'),
+	[% Based Subprocess allocation] = format(convert(float,[Ttl. Order Qty])/convert(float,sum([Ttl. Order Qty])over(partition by [Artwork Type])),'P'),
+	[o2] = 1
+into #lu
+from #ltm m left join #lts s on m.[Factory Name] = s.FactoryID
+order by [Artwork Type],[Factory Name]
+-------------------
+select
+	[Artwork Type],
+	[No. of Style] = sum([No. of Style]),
+	[Ttl. Order Qty] = sum([Ttl. Order Qty]),
+	[Total PCS/ Stitch] = sum([Total PCS/ Stitch]),
+	[Unit] = '',
+	[Total TMS] = sum([Total TMS]),
+	[% Based on order allocation] = '',
+	[% Based Subprocess allocation] = ''
+into #ltsr 
+from #lts u
+group by [Artwork Type]
+-------------------
+select 	[Factory Name],[No of Styles],	 [New Styles],       [Order Allocation (Qty)], [Order Allocation (CPU)],[Artwork Type],
+        [No. of Style],[Ttl. Order Qty], [Total PCS/ Stitch],[Unit],	               [Total TMS],
+        [% Based on order allocation],   [% Based Subprocess allocation]
+from
 (
-	select a.id artworktypeid,x.* 
-	from dbo.artworktype a WITH (NOLOCK) 
-	cross join (select * from (select FtyGroup,sum(order_count_style) order_count_style
-	,sum(order_total_qty) order_total_qty
-	,sum(order_total_cpu) order_total_cpu
-	from orderData_basic
-	group by FtyGroup)x1) x
-	where a.IsSubprocess=1
-)
-, orderData as (
-	select a.id artworktypeid,x.* from dbo.artworktype a WITH (NOLOCK) 
-	cross join (select * from  orderData_basic) x
-	where a.IsSubprocess=1 
-)
-, combine (ArtworkTypeID,FtyGroup,order_count_style,new_styles,order_total_qty,order_total_cpu,target_count_style,
-			target_total_order_qty,ArtworkUnit,target_sum_stitch,target_sum_tms) as 
-(
-	select orderDataCount.ArtworkTypeID,orderDataCount.FtyGroup
-	,orderDataCount.order_count_style
-	,SUM(y.new_styles) new_styles
-	,orderDataCount.order_total_qty
-	,orderDataCount.order_total_cpu
-	,sum(y.target_count_style) target_count_style
-	,sum(y.target_total_order_qty) target_total_order_qty
-	,y.ArtworkUnit
-	,sum(y.target_sum_stitch) target_sum_stitch
-	,sum(y.target_sum_tms) target_sum_tms
-	from orderDataCount left join  (
-		select a.FtyGroup,a.StyleID,a.order_count_style,iif(a.order_min_sewinline = b.target_min_sewinline,b.target_count_style,0) new_styles
-		,a.order_total_qty,a.order_total_cpu,b.ArtworkTypeID,b.target_count_style,b.target_total_order_qty
-		,b.target_sum_stitch,b.ArtworkUnit,b.target_sum_tms
-		,a.order_min_sewinline , b.target_min_sewinline
-		from orderData a 
-		inner join styleData b on b.FtyGroup = a.FtyGroup and b.StyleID = a.StyleID and b.ArtworkTypeID = a.artworktypeid
-) y
-on orderDataCount.FtyGroup = y.FtyGroup and orderDataCount.artworktypeid = y.ArtworkTypeID
-group by orderDataCount.ArtworkTypeID,orderDataCount.FtyGroup,y.ArtworkUnit,orderDataCount.order_count_style,orderDataCount.order_total_qty
-,orderDataCount.order_total_cpu
-)
-, subtotal (ArtworkTypeID,FtyGroup,order_count_style,new_styles,order_total_qty,order_total_cpu,target_count_style,
-			target_total_order_qty,ArtworkUnit,target_sum_stitch,target_sum_tms,[BO %],[BS %],O) AS
-(
-	select ArtworkTypeID,'Subtotal',sum(order_count_style) ,
-		sum(new_styles),
-		ROUND(sum(order_total_qty),0),sum(order_total_cpu),sum(target_count_style),
-		sum(target_total_order_qty),'',sum(target_sum_stitch),sum(target_sum_tms) ,null,null,'ZZZZZZZ1' as o
-	from combine w
-	group by ArtworkTypeID
-)
-select FtyGroup,order_count_style,isnull(new_styles,0)new_styles,order_total_qty
-	,order_total_cpu,ArtworkTypeID,isnull(target_count_style,0)target_count_style,isnull(target_total_order_qty,0)target_total_order_qty
-	,target_sum_stitch,ArtworkUnit,isnull(target_sum_tms,0)target_sum_tms
-	,cast(isnull([BO %],0)as varchar(30))+'%'[BO %] 
-	,cast(isnull([BS %],0)as varchar(30))+'%'[BS %]
-from (
+	select
+		[Factory Name],	[No of Styles],
+		[New Styles] = CONVERT(nvarchar(20),[New Styles]),
+		[Order Allocation (Qty)] = CONVERT(nvarchar(20),[Order Allocation (Qty)]),
+		[Order Allocation (CPU)] = CONVERT(nvarchar(20),[Order Allocation (CPU)]),
+		[Artwork Type],
+		[No. of Style] = CONVERT(nvarchar(20),[No. of Style]),
+		[Ttl. Order Qty] = CONVERT(nvarchar(20),[No. of Style]),
+		[Total PCS/ Stitch],	[Unit], 	[Total TMS],	[% Based on order allocation],	[% Based Subprocess allocation],	[o2]
+	from(
+		select 	[Factory Name],[No of Styles],	 [New Styles],       [Order Allocation (Qty)], [Order Allocation (CPU)],[Artwork Type],
+                [No. of Style],[Ttl. Order Qty], [Total PCS/ Stitch],[Unit],	               [Total TMS],
+                [% Based on order allocation],   [% Based Subprocess allocation],              [o2]
+		from #lu
+		union all
+		select *
+		from
+		(
+			select
+				[Factory Name] = 'Subtotal',
+				[No of Styles] = sum(m.[No of Styles]),
+				[New Styles] = sum(m.[New Styles]),
+				[Order Allocation (Qty)] = sum(m.[Order Allocation (Qty)]),
+				[Order Allocation (CPU)] = sum(m.[Order Allocation (CPU)])
+			from #ltm  m
+		)a,(select *,[o2] = 2 from #ltsr)b
+	)u
+	union all
+	select *
+	from
+	(
+	select
+		[Factory Name] = 'Percentage',
+		[No of Styles] = null,
+		[New Styles] = format(convert(float,sum(m.[New Styles]))/convert(float,sum([No of Styles])),'P'),
+		[Order Allocation (Qty)] = 'Ave CPU/Pc',
+		[Order Allocation (CPU)] = format(convert(float,sum(m.[Order Allocation (CPU)]))/convert(float,sum([Order Allocation (Qty)])),'P')
+	from #ltm  m
+	)ba,(
+		select 
+			[Artwork Type],
+			[No. of Style] = format(convert(float,[No. of Style])/convert(float,[No of Styles]),'P'),
+			[Ttl. Order Qty] = format(convert(float,[Ttl. Order Qty])/convert(float,[Order Allocation (Qty)]),'P'),
+			[Total PCS/ Stitch] = null,	[Unit] = null,	[Total TMS] = null,	[% Based on order allocation] = null, [% Based Subprocess allocation] = null, [o2] = 3
+		from(
+			select * from(
+				select
+					[Factory Name] = 'Subtotal',
+					[No of Styles] = sum(m.[No of Styles]),
+					[New Styles] = sum(m.[New Styles]),
+					[Order Allocation (Qty)] = sum(m.[Order Allocation (Qty)]),
+					[Order Allocation (CPU)] = sum(m.[Order Allocation (CPU)])
+				from #ltm  m
+			)a,(select * from #ltsr)b
+		)c
+	)bb
+)al
+order by [Artwork Type],[o2],[Factory Name]
+drop table #tmporders,#m,#m2,#a,#b,#ltm,#lts,#lu,#ltsr"
+                );
 
-select FtyGroup,order_count_style,
-	concat( format(round(IIF(new_styles is NULL,0,new_styles),2),'#0.##'),'') new_styles,
-	order_total_qty,
-	concat( format(round(order_total_cpu,2),'#0.##'),'')order_total_cpu,
-	ArtworkTypeID,
-	concat( format(round(IIF(target_count_style is NULL,0,target_count_style),2),'#0.##'),'')target_count_style,
-	concat( format(round(IIF(target_total_order_qty is NULL,0,target_total_order_qty),2),'#0.##'),'')target_total_order_qty,
-	ArtworkUnit,target_sum_stitch,target_sum_tms 
-	,round(z.target_total_order_qty*100.00 / (select sum(orderData_basic.order_total_qty) from orderData_basic where FtyGroup = z.FtyGroup),2) [BO %]
-	,round(z.target_total_order_qty*100.00 / iif(sum(z.target_total_order_qty) over (partition by z.FtyGroup) = 0,1,sum(z.target_total_order_qty) over (partition by z.FtyGroup)),2) [BS %]
-	,FtyGroup as o
-	,ArtworkTypeID as q
-From combine z
-union all
-select FtyGroup,order_count_style,
-	concat( format(round(IIF(new_styles is NULL,0,new_styles),2),'#0.##'),'')new_styles,
-	order_total_qty,
-	concat( format(round(order_total_cpu,2),'#0.##'),'')order_total_cpu,
-	ArtworkTypeID,
-	concat( format(round(IIF(target_count_style is NULL,0,target_count_style),2),'#0.##'),'')target_count_style,
-	concat( format(round(IIF(target_total_order_qty is NULL,0,target_total_order_qty),2),'#0.##'),'')target_total_order_qty,
-	ArtworkUnit,target_sum_stitch,target_sum_tms
-	,[BO %],[BS %]
-	,O
-	,ArtworkTypeID as q
-from subtotal w
-union all
-select 'Percentage',null,
-	concat( format(ROUND(isnull(new_styles *100.00/order_count_style,0),2),'#0.##'),'%'),
-	null,
-	concat( format(ROUND(order_total_cpu*100.00/order_total_qty,2),'#0.##'),'%'),
-	'[CPU/Pcs]',
-	concat( format(ROUND(isnull(target_count_style*100.00 /order_count_style,0),2),'#0.##'),'%') ,
-	concat( format(ROUND(isnull(target_total_order_qty*100.00/order_total_qty,0),2),'#0.##'),'%'),
-	null,null,null
-	,null,null,'ZZZZZZZ2' as o
-	,ArtworkTypeID as q
-from subtotal
- ) as p
- order by q,o
- "));
-
-            //o1.BuyerDelivery between '20150101' and '20150731' AND O1.Finished = 0 AND O2.Price > 0 and o1.FtyGroup = 'MWI' 
-            //	and o1.id='15040605CW002'
-
-
-          
             DBProxy.Current.DefaultTimeout = 1800;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
-                        
+
             DBProxy.Current.DefaultTimeout = 0;
             if (!result)
             {
@@ -295,7 +294,7 @@ from subtotal
                 MyUtility.Msg.WarningBox("Columns of Data is over 16,384 in excel file, please narrow down range of condition.");
                 return false;
             }
-            
+
             if (printData.Rows.Count + 6 > 1048576)
             {
                 MyUtility.Msg.WarningBox("Lines of Data is over 1,048,576 in excel file, please narrow down range of condition.");
@@ -306,14 +305,14 @@ from subtotal
             MyUtility.Excel.CopyToXls(printData, "", "Planning_R01.xltx", 4, true, null, objApp);      // 將datatable copy to excel
             objApp.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
- 
+
             Microsoft.Office.Interop.Excel.Range usedRange = objSheets.UsedRange;
             Microsoft.Office.Interop.Excel.Range rows = usedRange.Rows;
             int count = 0;
 
-              foreach (Microsoft.Office.Interop.Excel.Range row in rows)
+            foreach (Microsoft.Office.Interop.Excel.Range row in rows)
             {
-                
+
                 if (count > 0)
                 {
                     Microsoft.Office.Interop.Excel.Range firstCell = row.Cells[1];
@@ -322,7 +321,7 @@ from subtotal
                     if (firstCellValue == null) continue;
                     if (firstCellValue.StrEndsWith("Subtotal"))
                     {
-                        row.Font.Bold =true;
+                        row.Font.Bold = true;
                     }
                     if (firstCellValue.StrEndsWith("Percentage"))
                     {
@@ -330,12 +329,12 @@ from subtotal
                         row.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].Weight = 4; //上
                         row.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 4; //下
                         row.Borders.Color = Color.Black;
-                       
+
                     }
-                  }
-                count++;    
+                }
+                count++;
             }
- 
+            objSheets.Columns.AutoFit();
             objSheets.Cells[2, 1] = condition.ToString();   // 條件字串寫入excel
             objSheets.Cells[3, 2] = DateTime.Now.ToShortDateString();  // 列印日期寫入excel
             objApp.Visible = true;
