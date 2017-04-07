@@ -185,7 +185,7 @@ from (
 																			 )
 													 , 0) as Qty
 	from #tmpPOID t
-	inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.POID and fi.MDivisionID = t.MDivisionID
+	inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.POID --and fi.MDivisionID = t.MDivisionID
 	inner join PO_Supp_Detail psd WITH (NOLOCK) on t.POID = psd.ID and psd.SEQ1 = fi.Seq1 and psd.SEQ2 = fi.Seq2
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
 	where (fi.StockType = 'B' or fi.StockType = 'I')
@@ -217,7 +217,9 @@ from (
 	from LocalInventory l WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
-	where l.MDivisionID = @mdivision and o.WhseClose is null
+	where 1=1
+    --l.MDivisionID = @mdivision 
+    and o.WhseClose is null
 ) a
 
 --撈Scrap資料
@@ -247,7 +249,7 @@ from (
 													   											  ,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),''))
 															  ,0) as Qty
 	from #tmpPOID t
-	inner join MDivisionPoDetail mdp WITH (NOLOCK) on mdp.POID = t.POID and mdp.MDivisionID = t.MDivisionID
+	inner join MDivisionPoDetail mdp WITH (NOLOCK) on mdp.POID = t.POID --and mdp.MDivisionID = t.MDivisionID
 	inner join PO_Supp_Detail psd WITH (NOLOCK) on t.POID = psd.ID and psd.SEQ1 = mdp.Seq1 and psd.SEQ2 = mdp.Seq2
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
 	where t.POID >= '{0}'
@@ -280,7 +282,9 @@ from (
 	from LocalInventory l WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
-	where l.MDivisionID = @mdivision and o.ID >= '{0}' and o.WhseClose is not null
+	where 1=1
+    --l.MDivisionID = @mdivision 
+    and o.ID >= '{0}' and o.WhseClose is not null
 ) a
 
 --撈已發料數量
@@ -322,7 +326,7 @@ from (
 																			,''))
 				 ,0) as Qty
 	from #tmpWHNotClose t
-	inner join MDivisionPoDetail mdp WITH (NOLOCK) on mdp.POID = t.ID and mdp.MDivisionID = t.MDivisionID
+	inner join MDivisionPoDetail mdp WITH (NOLOCK) on mdp.POID = t.ID --and mdp.MDivisionID = t.MDivisionID
 	inner join PO_Supp_Detail psd WITH (NOLOCK) on mdp.POID = psd.ID and psd.SEQ1 = mdp.Seq1 and psd.SEQ2 = mdp.Seq2
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
 
@@ -353,7 +357,7 @@ from (
 													 		,''))
 				 ,0) as Qty
 	from #tmpWHNotClose t
-	inner join LocalInventory l WITH (NOLOCK) on t.ID = l.OrderID and t.MDivisionID = l.MDivisionID
+	inner join LocalInventory l WITH (NOLOCK) on t.ID = l.OrderID --and t.MDivisionID = l.MDivisionID
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
 ) a
 
