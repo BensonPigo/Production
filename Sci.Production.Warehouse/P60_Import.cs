@@ -66,7 +66,7 @@ namespace Sci.Production.Warehouse
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 #endregion
 
-                string strSQLCmd = string.Format(@"select 0 as selected ,'' id, a.id as LocalPoId
+                string strSQLCmd = string.Format(@"select 1 as selected ,'' id, a.id as LocalPoId
 ,a.Category
 ,b.OrderId 
 ,b.Refno
