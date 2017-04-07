@@ -211,7 +211,7 @@ from
 		[Order Allocation (CPU)] = CONVERT(nvarchar(20),[Order Allocation (CPU)]),
 		[Artwork Type],
 		[No. of Style] = CONVERT(nvarchar(20),[No. of Style]),
-		[Ttl. Order Qty] = CONVERT(nvarchar(20),[No. of Style]),
+		[Ttl. Order Qty] = CONVERT(nvarchar(20),[Ttl. Order Qty]),
 		[Total PCS/ Stitch],	[Unit], 	[Total TMS],	[% Based on order allocation],	[% Based Subprocess allocation],	[o2]
 	from(
 		select 	[Factory Name],[No of Styles],	 [New Styles],       [Order Allocation (Qty)], [Order Allocation (CPU)],[Artwork Type],
