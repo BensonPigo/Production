@@ -87,8 +87,8 @@ where sp.StyleUkey = {0} order by sp.ProductionKitsGroup", this.KeyValue1);
                 .Text("POSMRName", header: "PO SMR", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Text("Reason", header: "Unnecessary to send", width: Widths.AnsiChars(1), iseditingreadonly: true);
 
-            grid.Columns[4].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns[5].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["SendToQA"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["QAReceived"].DefaultCellStyle.BackColor = Color.Pink;
             return true;
         }
 
