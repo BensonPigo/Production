@@ -90,7 +90,7 @@ from (
 
 	union all
 	select 	vcd.NLCode
-			, 0 - ((vcd.Qty * ved.ExportQty)+(vcd.Qty * ved.ExportQty)* vctd.Waste)
+			, 0 - round(((vcd.Qty * ved.ExportQty)+(vcd.Qty * ved.ExportQty)* vctd.Waste),3)
 	from VNExportDeclaration ve WITH (NOLOCK) 
 	inner join VNExportDeclaration_Detail ved WITH (NOLOCK) on ved.ID = ve.ID
 	inner join VNConsumption vc WITH (NOLOCK) on vc.VNContractID = ve.VNContractID and ved.CustomSP = vc.CustomSP
