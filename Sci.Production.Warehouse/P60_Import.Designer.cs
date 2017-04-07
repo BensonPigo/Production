@@ -46,6 +46,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.detailBS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label9 = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -113,6 +114,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.txtartworktype_fty1);
             this.groupBox1.Controls.Add(this.label1);
@@ -195,7 +197,7 @@
             // 
             this.txtSpno2.BackColor = System.Drawing.Color.White;
             this.txtSpno2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpno2.Location = new System.Drawing.Point(235, 54);
+            this.txtSpno2.Location = new System.Drawing.Point(245, 54);
             this.txtSpno2.Name = "txtSpno2";
             this.txtSpno2.Size = new System.Drawing.Size(116, 23);
             this.txtSpno2.TabIndex = 2;
@@ -242,6 +244,17 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
+            // label9
+            // 
+            this.label9.BackColor = System.Drawing.SystemColors.Control;
+            this.label9.Lines = 0;
+            this.label9.Location = new System.Drawing.Point(232, 57);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(10, 23);
+            this.label9.TabIndex = 106;
+            this.label9.Text = "~";
+            this.label9.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // P60_Import
             // 
             this.ClientSize = new System.Drawing.Size(1008, 661);
@@ -279,5 +292,6 @@
         private Win.UI.DateRange dateRange1;
         private Win.UI.Label label4;
         private Class.txtartworktype_fty txtartworktype_fty1;
+        private Win.UI.Label label9;
     }
 }
