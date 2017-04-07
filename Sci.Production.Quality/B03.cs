@@ -22,8 +22,7 @@ namespace Sci.Production.Quality
         }
         protected override void ClickEditAfter()
         {
-            base.ClickEditAfter();
-           // this.textBox1.ReadOnly = true;
+            base.ClickEditAfter();           
         }
 
         protected override bool ClickSaveBefore()
