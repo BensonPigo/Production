@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
@@ -63,6 +64,11 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
+            if (!checkCode())
+            {
+                return false;
+            }
+
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Description > can not be empty!");
@@ -72,6 +78,32 @@ namespace Sci.Production.Warehouse
 
             CurrentMaintain["ID"] = CurrentMaintain["ID"].ToString().Trim();
             return base.ClickSaveBefore();
+        }
+
+        private bool checkCode()
+        {
+            bool check = true;
+            string strSQL = @"  select * 
+                                from dbo.mtlLocation mtl
+                                where   mtl.ID = @ID
+                                        and mtl.StockType = @StockType";
+            List<SqlParameter> listPar = new List<SqlParameter>();
+            listPar.Add(new SqlParameter("@ID", CurrentMaintain["ID"].ToString()));
+            listPar.Add(new SqlParameter("@StockType", CurrentMaintain["Stocktype"].ToString()));
+
+            DataTable dt;
+            DualResult result;
+            if (!(result = DBProxy.Current.Select(null, strSQL, listPar, out dt)))
+            {
+                MyUtility.Msg.WarningBox(result.Description);
+                check = false;
+            }
+            else if (dt != null && dt.Rows.Count > 0)
+            {
+                MyUtility.Msg.InfoBox(string.Format("This <code> is areadly in {0}", comboBox1.Text.ToString()));
+                check = false;
+            }
+            return check;
         }
     }
 }
