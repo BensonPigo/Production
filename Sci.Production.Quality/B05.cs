@@ -23,30 +23,6 @@ namespace Sci.Production.Quality
             InitializeComponent();
             
         }
-
-        protected override bool ClickNew()
-        {
-            return base.ClickNew();
-        
-        }
-        protected override void ClickEditAfter()
-        {
-            base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
-        }
-        protected override bool ClickNewBefore()
-        {
-           
-            this.textBox1.ReadOnly = true;
-            this.numericBox1.ReadOnly = true;
-            return base.ClickNewBefore();
-        }
-        protected override void OnFormLoaded()
-        {          
-                    
-            base.OnFormLoaded();
-        }
-
         private void maskedTextBox1_TypeValidationCompleted(object sender, TypeValidationEventArgs e)
         {
             if (!e.IsValidInput)
@@ -55,11 +31,8 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.InfoBox("The value you entered is not a valid Number. Please change the value.");               
                 e.Cancel = true;
                 return;
-
             }
         }       
-    
-
         private void numericBox1_TextChanged(object sender, EventArgs e)
         {
             this.numericBox1.MaxLength = 2;
