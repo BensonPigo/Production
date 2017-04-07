@@ -50,13 +50,11 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.textBoxSp1 = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnApprove = new Sci.Win.UI.Button();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.btnUnApprove = new Sci.Win.UI.Button();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -280,21 +278,6 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "SP#";
             // 
-            // checkBox1
-            // 
-            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBox1.IsSupportEditMode = false;
-            this.checkBox1.Location = new System.Drawing.Point(6, 15);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.ReadOnly = true;
-            this.checkBox1.Size = new System.Drawing.Size(15, 14);
-            this.checkBox1.TabIndex = 20;
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
             // btnToExcel
             // 
             this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -334,9 +317,7 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.btnUnApprove);
-            this.groupBox2.Controls.Add(this.checkBox2);
             this.groupBox2.Controls.Add(this.btnToExcel);
-            this.groupBox2.Controls.Add(this.checkBox1);
             this.groupBox2.Controls.Add(this.btnClose);
             this.groupBox2.Controls.Add(this.btnApprove);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -358,19 +339,6 @@
             this.btnUnApprove.UseVisualStyleBackColor = true;
             this.btnUnApprove.Click += new System.EventHandler(this.btnUnApprove_Click);
             // 
-            // checkBox2
-            // 
-            this.checkBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBox2.IsSupportEditMode = false;
-            this.checkBox2.Location = new System.Drawing.Point(25, 15);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.ReadOnly = true;
-            this.checkBox2.Size = new System.Drawing.Size(15, 14);
-            this.checkBox2.TabIndex = 21;
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
             // P01_BatchApprove
             // 
             this.ClientSize = new System.Drawing.Size(1008, 561);
@@ -385,7 +353,6 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -412,13 +379,11 @@
         private Win.UI.Button btnQuery;
         private Win.UI.TextBox textBoxSp1;
         private Win.UI.Label label1;
-        private Win.UI.CheckBox checkBox1;
         private Win.UI.Button btnToExcel;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnApprove;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.Button btnUnApprove;
-        private Win.UI.CheckBox checkBox2;
         private Class.txtfactory txtfactory1;
     }
 }

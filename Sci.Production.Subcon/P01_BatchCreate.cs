@@ -277,32 +277,6 @@ Order_TmsCost.ApvDate
             this.grid1.Columns[12].Visible = poType == "O";
             this.grid1.Columns[13].Visible = poType == "O";
 
-            #region -- 全選 --
-            checkBox1.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetCheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
-            #endregion
-            #region -- 全不選 --
-            checkBox2.Click += (s, e) =>
-            {
-                if (null != col_chk)
-                {
-                    this.grid1.SetUncheckeds(col_chk);
-                    if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-                    {
-                        if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-                    }
-                }
-            };
-            #endregion
         }
 
         // Cancel

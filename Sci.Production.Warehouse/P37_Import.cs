@@ -217,32 +217,6 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                ;
 
             this.grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
-
-            // 全選
-            //checkBox1.Click += (s, e) =>
-            //{
-            //    if (null != col_chk)
-            //    {
-            //        this.grid1.SetCheckeds(col_chk);
-            //        if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-            //        {
-            //            if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-            //        }
-            //    }
-            //};
-
-            // 全不選
-            //checkBox2.Click += (s, e) =>
-            //{
-            //    if (null != col_chk)
-            //    {
-            //        this.grid1.SetUncheckeds(col_chk);
-            //        if (col_chk.Index == this.grid1.CurrentCellAddress.X)
-            //        {
-            //            if (this.grid1.IsCurrentCellInEditMode) this.grid1.RefreshEdit();
-            //        }
-            //    }
-            //};
         }
 
         //Close
