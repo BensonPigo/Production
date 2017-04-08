@@ -1,74 +1,19 @@
-﻿using System;
+﻿using Ict;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Sci;
-using Sci.Utility;
-using Sci.Win;
-using Sci.Win.UI;
-using Ict;
-using Ict.Win;
-using Ict.Win.UI;
-using System.Data.SqlClient;
-using Sci.Data;
-using Sci.Production.Class.Commons;
-using System.Drawing;
-using System.Collections;
-//using System.Web.UI.Design;
 
 //請有興趣使用但是目前沒有那個領域的控制項，而想加新東西的人；
 //或是目前有那個領域東西，但是一些通用行為不支援的情況
 //找Evaon，不要自己加，感謝
 namespace Sci.Production.Class
-{
-    ///// <summary>
-    ///// 用來給IdRestricter使用的介面
-    ///// </summary>
-    //public interface IIdBindableControl : IEquatable<object>
-    //{
-    //    ///// <summary>
-    //    ///// 可以被設定資料繫結的節點
-    //    ///// </summary>
-    //    //[Bindable(true)]
-    //    //string IDBinding { get; set; }
-    //}
-
-    ///// <summary>
-    ///// <para>用來規範有Lock的資料表的Pickup行為，包含開窗是否包含Locked，Validating時候是否允許Locked</para>
-    ///// <para>(Style)</para>
-    ///// </summary>
-    //public interface ILockEffectiveSwitch
-    //{
-    //    ///// <summary>
-    //    ///// 是否要於開窗中，顯示Lock的資料
-    //    ///// </summary>
-    //    //bool? DialogIncludeLocked { get; set; }
-    //    ///// <summary>
-    //    ///// 是否要於Validating中，允許Lock的資料
-    //    ///// </summary>
-    //    //bool? ValidatingIncludeLocked { get; set; }
-    //}
-
-    ///// <summary>
-    ///// <para>用來規範有Junk的資料表的Pickup行為，包含開窗是否包含Junked，Validating時候是否允許Junked</para>
-    ///// <para>(Style)</para>
-    ///// </summary>
-    //public interface IJunkEffectiveSwitch
-    //{
-    //    ///// <summary>
-    //    ///// 是否要於開窗中，顯示Junk的資料
-    //    ///// </summary>
-    //    //bool? DialogIncludeJunked { get; set; }
-    //    ///// <summary>
-    //    ///// 是否要於Validating中，允許Junk的資料
-    //    ///// </summary>
-    //    //bool? ValidatingIncludeJunked { get; set; }
-    //}
-    
+{    
     /// <summary>
     /// 延伸方法
     /// </summary>
