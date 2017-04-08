@@ -25,5 +25,15 @@ namespace Sci.Production.Quality
             base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
         }
+        protected override bool ClickSaveBefore()
+        {
+            if (MyUtility.Check.Empty(textBox1.Text))
+            {
+                MyUtility.Msg.WarningBox("<Defect Type> cannot be empty! ");
+                this.textBox1.Focus();
+                return false;
+            }
+            return base.ClickSaveBefore();
+        }
     }
 }
