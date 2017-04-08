@@ -320,24 +320,32 @@ set @cmd4 =N'
 Delete from '+@SerDbDboTb3+N'
 INSERT INTO '+@SerDbDboTb3+N'
 ([POCODE],[PROCESS],[FACILITY],[PDATE],[COLOR],[XSIZE],[QTY],[WORKERS],[HOURS])
-Select
-[POCode] = s.FactoryID+sd.OrderID+IIF((select StyleUnit from Orders where ID = sd.OrderID) = ''PCS'', '''', ''(''+sd.ComboType+'')'')
-,[Process] = ''SEWING''
-,[Facility] = s.SewingLineID
-,[PDate] = CONVERT(varchar(10), s.OutputDate, 120)
-,[Color] = sd.Article
-,[XSize] = sdd.SizeCode
-,[Qty] = sdd.QAQty
-,[Workers] = s.Manpower
-,[Hours] = (sdd.QAQty/sd.QAQty) * sd.WorkHour
-from SewingOutput s
-inner join SewingOutput_Detail sd on s.ID = sd.ID
-inner join SewingOutput_Detail_Detail sdd on sdd.SewingOutput_DetailUKey = sd.UKey 
-where sdd.OrderID in (Select distinct sd.OrderID 
-					  from SewingOutput s, SewingOutput_Detail sd
-					  where (s.LockDate is null or s.LockDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
-					  and s.ID = sd.ID
-					  and s.MDivisionID ='''+@M+N''')'
+select 
+	[POCode],[Process],[Facility],[PDate],[Color],[XSize]
+	,[Qty] = sum([Qty])
+	,[Workers],[Hours]
+from
+(
+	Select
+	[POCode] = s.FactoryID+sd.OrderID+IIF((select StyleUnit from Orders where ID = sd.OrderID) = ''PCS'', '''', ''(''+sd.ComboType+'')'')
+	,[Process] = ''SEWING''
+	,[Facility] = s.SewingLineID
+	,[PDate] = CONVERT(varchar(10), s.OutputDate, 120)
+	,[Color] = sd.Article
+	,[XSize] = sdd.SizeCode
+	,[Qty] = sdd.QAQty
+	,[Workers] = s.Manpower
+	,[Hours] = (sdd.QAQty/sd.QAQty) * sd.WorkHour
+	from SewingOutput s
+	inner join SewingOutput_Detail sd on s.ID = sd.ID
+	inner join SewingOutput_Detail_Detail sdd on sdd.SewingOutput_DetailUKey = sd.UKey 
+	where sdd.OrderID in (Select distinct sd.OrderID 
+						  from SewingOutput s, SewingOutput_Detail sd
+						  where (s.LockDate is null or s.LockDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
+						  and s.ID = sd.ID
+						  and s.MDivisionID ='''+@M+N''')
+)l
+group by [POCode],[Process],[Facility],[PDate],[Color],[XSize],[Workers],[Hours]'
 	END
 
 	Begin Try
