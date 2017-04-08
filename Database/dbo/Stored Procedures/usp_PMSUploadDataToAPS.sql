@@ -16,7 +16,7 @@ declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varch
 			@DatabaseName = [APSDatabaseName],
 			@loginId = [APSLoginId],
 			@LoginPwd = [APSLoginPwd]
-		from [Production].[dbo].[MDivision] 
+		from [Production].[dbo].[MDivision]
 		where [ID] = @M
 	END
 
@@ -50,7 +50,7 @@ IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp
 select t.SONO,s.id,s.Junk,s.FtyGroup,t.NCTR 
 into #tmp
 FROM '+@SerDbDboTb+N' t
-left join (select * from [Production].dbo.[Orders] WITH (NOLOCK) where MDivisionID = '''+ @M +N''') s
+left join (select * from [Production].dbo.[Orders] where MDivisionID = '''+ @M +N''') s
 on t.SONO collate Chinese_Taiwan_Stroke_CI_AS  = s.ID
 	
 Update '+@SerDbDboTb+N'
@@ -63,7 +63,7 @@ SONO in (
 and (CONVERT(date, OTDD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()) 
 	or CONVERT(date, COTD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()))
 and DELF <> ''Y''
-and NCTR collate Chinese_Taiwan_Stroke_CI_AS in (select ID from [Production].dbo.[Factory] WITH (NOLOCK) where MDivisionID = '''+ @M +N''')
+and NCTR collate Chinese_Taiwan_Stroke_CI_AS in (select ID from [Production].dbo.[Factory] where MDivisionID = '''+ @M +N''')
 Update '+@SerDbDboTb+N'
 set DELF=''Y'',
 UPDT= format(GETDATE(),''yyyy-MM-dd'')
@@ -77,7 +77,7 @@ SONO in(
 and (CONVERT(date, OTDD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()) 
 	or CONVERT(date, COTD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()))
 and DELF <> ''Y''
-and NCTR collate Chinese_Taiwan_Stroke_CI_AS in (select ID from [Production].dbo.[Factory] WITH (NOLOCK) where MDivisionID = '''+ @M +N''')
+and NCTR collate Chinese_Taiwan_Stroke_CI_AS in (select ID from [Production].dbo.[Factory] where MDivisionID = '''+ @M +N''')
 IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp'
 -------------------------------------------------第二部分-------------------------------------------------
 set @cmd2 =N'
@@ -119,24 +119,24 @@ Select
 ,[sPPRO] = IIF(o.EachConsApv is null, IIF(o.KPIEachConsApprove is null, '''', format(o.KPIEachConsApprove, ''yyyy-MM-dd'')), format(o.EachConsApv, ''yyyy-MM-dd''))
 ,[sPRGM] = PRGM.PRGM
 into #tmp
-From [Production].dbo.Orders o WITH (NOLOCK)
+From [Production].dbo.Orders o
 outer apply (select [dbo].getMTLExport(o.POID,o.MTLExport) as mtlOk )as mtlExport
 outer apply (select [dbo].GetHaveDelaySupp(o.POID)  as SuppDelay) as SDelay
 Inner Join [Production].dbo.Order_Qty oq on o.ID = oq.ID
 left join Style_Location sl on sl.StyleUkey = o.StyleUkey
-outer apply(select Name from Pass1 WITH (NOLOCK) where ID = o.LocalMR) P1
-outer apply(Select NameEN from Brand WITH (NOLOCK) where ID = o.BrandID) CUNM
-outer apply(Select Description from Style WITH (NOLOCK) where Ukey = o.StyleUKey) SYD1
-outer apply(Select Alias from Country WITH (NOLOCK) where ID = o.Dest) SHIP
+outer apply(select Name from Pass1 where ID = o.LocalMR) P1
+outer apply(Select NameEN from Brand where ID = o.BrandID) CUNM
+outer apply(Select Description from Style where Ukey = o.StyleUKey) SYD1
+outer apply(Select Alias from Country where ID = o.Dest) SHIP
 outer apply(
 	select GTMH = (
 		Select t.TotalSewingTime
-		from TimeStudy t WITH (NOLOCK)
+		from TimeStudy t
 		where StyleID = o.StyleID 
 		and SeasonID = o.SeasonID 
 		and BrandID = o.BrandID 
 		and ComboType 
-			= IIF(o.StyleUnit = ''PCS'', (select Location from Style_Location WITH (NOLOCK) where StyleUKey = o.StyleUkey), sl.Location)
+			= IIF(o.StyleUnit = ''PCS'', (select Location from Style_Location where StyleUKey = o.StyleUkey), sl.Location)
 	)
 )GTMH
 outer apply(
@@ -161,7 +161,7 @@ outer apply(
 			Select 
 				IIF(ot.Qty <> 0,a.Abbreviation+'':''+CONVERT(varchar,ot.Qty),'''') as Qty, 
 				IIF(ot.TMS <> 0 and a.Classify = ''O'' ,a.Abbreviation+'':''+CONVERT(varchar,ot.TMS),'''') as TMS 
-			from Order_TmsCost ot WITH (NOLOCK), ArtworkType a WITH (NOLOCK)
+			from Order_TmsCost ot, ArtworkType a 
 			where ot.ID  = o.ID 
 			and a.ID = ot.ArtworkTypeID 
 			and (a.Classify = ''S'' or a.IsSubprocess = 1) 
@@ -280,8 +280,8 @@ From (
 	Select Distinct [sSTYLENO] = ID
 	,[sSEASONCD] = SeasonID
 	,[sFULLPATH] = concat((select PicPath from System),Picture1)
-	from Style s WITH (NOLOCK)
-	inner join [J1-7362].[SCIAPS].[dbo].[IMAGEMAPPING] t WITH (NOLOCK)
+	from Style s
+	inner join '+@SerDbDboTb2+N' t 
 	on t.STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.ID
 	and t.SEASONCD collate Chinese_Taiwan_Stroke_CI_AS = s.SeasonID
 )s
@@ -294,8 +294,8 @@ Select Distinct  ID
 ,SeasonID
 ,BrandID
 into #tmps
-from Style s WITH (NOLOCK)
-left join [J1-7362].[SCIAPS].[dbo].[IMAGEMAPPING] t WITH (NOLOCK)
+from Style s
+left join '+@SerDbDboTb2+N' t 
 on t.STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.ID 
 and t.SEASONCD collate Chinese_Taiwan_Stroke_CI_AS = s.SeasonID
 where t.STYLENO is null
@@ -305,7 +305,7 @@ select distinct s.ID,s.SeasonID
 ,[FULLPATH] = 
 (
 	select top 1 concat((select PicPath from System),s2.Picture1) 
-	from Style s2 WITH (NOLOCK) where s2.id = s.id  and s2.SeasonID = s.SeasonID
+	from Style s2 where s2.id = s.id  and s2.SeasonID = s.SeasonID
 )
 from #tmps s
 IF OBJECT_ID(''tempdb.dbo.#tmps'', ''U'') IS NOT NULL DROP TABLE #tmps'
@@ -321,7 +321,7 @@ Delete from '+@SerDbDboTb3+N'
 INSERT INTO '+@SerDbDboTb3+N'
 ([POCODE],[PROCESS],[FACILITY],[PDATE],[COLOR],[XSIZE],[QTY],[WORKERS],[HOURS])
 Select
-[POCode] = s.FactoryID+sd.OrderID+IIF((select StyleUnit from Orders WITH (NOLOCK) where ID = sd.OrderID) = ''PCS'', '''', ''(''+sd.ComboType+'')'')
+[POCode] = s.FactoryID+sd.OrderID+IIF((select StyleUnit from Orders where ID = sd.OrderID) = ''PCS'', '''', ''(''+sd.ComboType+'')'')
 ,[Process] = ''SEWING''
 ,[Facility] = s.SewingLineID
 ,[PDate] = CONVERT(varchar(10), s.OutputDate, 120)
@@ -330,11 +330,11 @@ Select
 ,[Qty] = sdd.QAQty
 ,[Workers] = s.Manpower
 ,[Hours] = (sdd.QAQty/sd.QAQty) * sd.WorkHour
-from SewingOutput s WITH (NOLOCK)
-inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
-inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.SewingOutput_DetailUKey = sd.UKey 
+from SewingOutput s
+inner join SewingOutput_Detail sd on s.ID = sd.ID
+inner join SewingOutput_Detail_Detail sdd on sdd.SewingOutput_DetailUKey = sd.UKey 
 where sdd.OrderID in (Select distinct sd.OrderID 
-					  from SewingOutput s WITH (NOLOCK), SewingOutput_Detail sd WITH (NOLOCK)
+					  from SewingOutput s, SewingOutput_Detail sd
 					  where (s.LockDate is null or s.LockDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
 					  and s.ID = sd.ID
 					  and s.MDivisionID ='''+@M+N''')'
