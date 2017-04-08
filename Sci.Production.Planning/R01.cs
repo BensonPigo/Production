@@ -202,22 +202,28 @@ into #ltsr
 from #lts u
 group by [Artwork Type]
 -------------------
-select 	[Factory Name],	  [No of Styles],	  [New Styles], [Order Allocation (Qty)], [Order Allocation (CPU)],		 [Artwork Type],				  [No. of Style],		
-		[Ttl. Order Qty], [Total PCS/ Stitch], [Unit],	   [Total TMS],				  [% Based on order allocation], [% Based Subprocess allocation]
+select 	[Factory Name],	  [No of Styles],	  [New Styles],     [Order Allocation (Qty)], [Order Allocation (CPU)],
+        [Artwork Type],	  [No. of Style],	  [Ttl. Order Qty], [Total PCS/ Stitch],      [Unit],	   [Total TMS],
+        [% Based on order allocation],        [% Based Subprocess allocation]
 from
 (
 	select
-		[Factory Name],	[No of Styles],
-		[New Styles] = CONVERT(nvarchar(20),[New Styles]),
-		[Order Allocation (Qty)] = CONVERT(nvarchar(20),[Order Allocation (Qty)]),
-		[Order Allocation (CPU)] = CONVERT(nvarchar(20),[Order Allocation (CPU)]),
+		[Factory Name],	
+		[No of Styles] = format([No of Styles],'#,0.'),
+		[New Styles] = format([New Styles],'#,0.'),
+		[Order Allocation (Qty)] = format([Order Allocation (Qty)],'#,0.'),
+		[Order Allocation (CPU)] = format([Order Allocation (CPU)],'#,0.'),
 		[Artwork Type],
-		[No. of Style] = CONVERT(nvarchar(20),[No. of Style]),
-		[Ttl. Order Qty] = CONVERT(nvarchar(20),[Ttl. Order Qty]),
-		[Total PCS/ Stitch],	[Unit], 	[Total TMS],	[% Based on order allocation],	[% Based Subprocess allocation],	[o2]
+		[No. of Style] = format([No. of Style],'#,0.'),
+		[Ttl. Order Qty] = format([Ttl. Order Qty],'#,0.'),
+		[Total PCS/ Stitch] = format([Total PCS/ Stitch],'#,0.'),
+		[Unit],
+		[Total TMS] = format([Total TMS],'#,0.'),
+		[% Based on order allocation],	[% Based Subprocess allocation],	[o2]
 	from(
-		select 	[Factory Name],	  [No of Styles],	  [New Styles], [Order Allocation (Qty)], [Order Allocation (CPU)],		 [Artwork Type],				  [No. of Style],		
-				[Ttl. Order Qty], [Total PCS/ Stitch], [Unit],	   [Total TMS],				  [% Based on order allocation], [% Based Subprocess allocation], [o2]
+		select 	[Factory Name],	  [No of Styles],	  [New Styles],     [Order Allocation (Qty)], [Order Allocation (CPU)],
+                [Artwork Type],	  [No. of Style],	  [Ttl. Order Qty], [Total PCS/ Stitch],      [Unit],	   [Total TMS],
+                [% Based on order allocation],        [% Based Subprocess allocation],            [o2]
 		from #lu
 		union all
 		select *
@@ -229,7 +235,7 @@ from
 				[New Styles] = sum(m.[New Styles]),
 				[Order Allocation (Qty)] = sum(m.[Order Allocation (Qty)]),
 				[Order Allocation (CPU)] = sum(m.[Order Allocation (CPU)])
-			from #ltm2  m
+			from #ltm  m
 		)a,(select *,[o2] = 2 from #ltsr)b
 	)u
 	union all
@@ -242,13 +248,14 @@ from
 		[New Styles] = format(convert(float,sum(m.[New Styles]))/convert(float,sum([No of Styles])),'P'),
 		[Order Allocation (Qty)] = 'Ave CPU/Pc',
 		[Order Allocation (CPU)] = format(convert(float,sum(m.[Order Allocation (CPU)]))/convert(float,sum([Order Allocation (Qty)])),'P')
-	from #ltm2  m
+	from #ltm  m
 	)ba,(
 		select 
 			[Artwork Type],
 			[No. of Style] = format(convert(float,[No. of Style])/convert(float,[No of Styles]),'P'),
 			[Ttl. Order Qty] = format(convert(float,[Ttl. Order Qty])/convert(float,[Order Allocation (Qty)]),'P'),
-			[Total PCS/ Stitch] = null,	[Unit] = null,	[Total TMS] = null,	[% Based on order allocation] = null, [% Based Subprocess allocation] = null, [o2] = 3
+			[Total PCS/ Stitch] = null,	[Unit] = null,	[Total TMS] = null,	[% Based on order allocation] = null,
+            [% Based Subprocess allocation] = null, [o2] = 3
 		from(
 			select * from(
 				select
@@ -257,7 +264,7 @@ from
 					[New Styles] = sum(m.[New Styles]),
 					[Order Allocation (Qty)] = sum(m.[Order Allocation (Qty)]),
 					[Order Allocation (CPU)] = sum(m.[Order Allocation (CPU)])
-				from #ltm2  m
+				from #ltm  m
 			)a,(select * from #ltsr)b
 		)c
 	)bb
