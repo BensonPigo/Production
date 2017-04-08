@@ -309,8 +309,6 @@ namespace Sci.Production.Quality
             style_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Styleid"].ToString();
             season_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Seasonid"].ToString();
             brand_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["brandid"].ToString();
-            // if (queryDr["cutinline"] == DBNull.Value) estcutdate_box.Text = "";
-           // else estcutdate_box.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
                
             mtl_box.Text = CurrentMaintain["Complete"].ToString() == "1" ? "Y" : "";
             decimal detailRowCount = DetailDatas.Count;
@@ -334,20 +332,15 @@ namespace Sci.Production.Quality
             {
                 
                 Physicalcompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(PhysicalDate)", ""));
-                Weightcompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(WeightDate)", "")); //((DateTime)detailTb.Compute("Max(WeightDate)", ""));
-                ShadeBondcompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(ShadeBondDate)", "")); //((DateTime)detailTb.Compute("Max(ShadeBondDate)", ""));
-                Continuitycompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(ContinuityDate)", "")); //((DateTime)detailTb.Compute("Max(ContinuityDate)", ""));
+                Weightcompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(WeightDate)", "")); 
+                ShadeBondcompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(ShadeBondDate)", "")); 
+                Continuitycompletedate = MyUtility.Convert.GetDate(detailTb.Compute("Max(ContinuityDate)", "")); 
                 if (MyUtility.Math.DateMinus(Physicalcompletedate, Weightcompletedate).TotalSeconds < 0) completedate = Weightcompletedate;
                 else completedate = Physicalcompletedate;
 
                 if (MyUtility.Math.DateMinus(completedate, ShadeBondcompletedate).TotalSeconds < 0) completedate = ShadeBondcompletedate;
                 if (MyUtility.Math.DateMinus(completedate, Continuitycompletedate).TotalSeconds < 0) completedate = Continuitycompletedate;
-
-                /*if (DateTime.Compare(Physicalcompletedate, Weightcompletedate) < 0) completedate = Weightcompletedate;
-                else completedate = Physicalcompletedate;
-                if (DateTime.Compare(completedate, ShadeBondcompletedate) < 0) completedate = ShadeBondcompletedate;
-                if (DateTime.Compare(completedate, Continuitycompletedate) < 0) completedate = Continuitycompletedate;
-                */
+                             
                 Complete_box.Text = completedate ==null ? "": ((DateTime)completedate).ToShortDateString(); ;
             }
             else Complete_box.Text = "";
@@ -488,10 +481,25 @@ namespace Sci.Production.Quality
         private void modifyPhysicalInspectionToolStripMenuItem_Click(object sender, EventArgs e)
         {           
             var dr =this.CurrentDetailData; if (null == dr) return;
+            var currentID = this.CurrentDetailData["ID"].ToString();
             var frm = new Sci.Production.Quality.P01_PhysicalInspection(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
-            //this.RenewData();會讓資料renew導致記憶被洗掉
+            this.RenewData();
+            // 固定滑鼠指向位置,避免被renew影響
+            int rowindex = 0;
+            for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
+            {
+                DataGridViewRow dvr = detailgrid.Rows[rIdx];
+                DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
+
+                if (row["ID"].ToString() == currentID)
+                {
+                    rowindex = rIdx;
+                    break;
+                }
+            }
+            detailgrid.SelectRowTo(rowindex);
         }
 
         
