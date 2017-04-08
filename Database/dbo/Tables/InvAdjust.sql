@@ -26,7 +26,7 @@
     [AdjustDocFee]     NUMERIC (7, 2) CONSTRAINT [DF_InvAdjust_AdjustDocFee] DEFAULT ((0)) NULL,
     [AddName]          VARCHAR (10)   CONSTRAINT [DF_InvAdjust_AddName] DEFAULT ('') NULL,
     [AddDate]          DATETIME       NULL,
-    [Edit_Name]        VARCHAR (10)   CONSTRAINT [DF_InvAdjust_Eeit_Name] DEFAULT ('') NULL,
+    [EditName]        VARCHAR (10)   CONSTRAINT [DF_InvAdjust_Eeit_Name] DEFAULT ('') NULL,
     [EditDate]         DATETIME       NULL,
     [PriceCheckID]     VARCHAR (13)   CONSTRAINT [DF_InvAdjust_PriceCheckID] DEFAULT ('') NULL,
     [OrderShipmodeSeq] VARCHAR (2)    CONSTRAINT [DF_InvAdjust_OrderShipmodeSeq] DEFAULT ('') NULL,
@@ -182,5 +182,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'應收帳�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = N'Edit_Name';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'InvAdjust', @level2type = N'COLUMN', @level2name = 'EditName';
 
