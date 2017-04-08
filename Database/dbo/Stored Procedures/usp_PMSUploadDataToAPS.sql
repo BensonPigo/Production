@@ -346,7 +346,8 @@ from
 						  and s.ID = sd.ID
 						  and s.MDivisionID ='''+@M+N''')
 )l
-group by [POCode],[Process],[Facility],[PDate],[Color],[XSize],[Workers],[Hours]'
+group by [POCode],[Process],[Facility],[PDate],[Color],[XSize]
+'
 	END
 
 	Begin Try
