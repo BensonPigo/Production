@@ -323,7 +323,8 @@ INSERT INTO '+@SerDbDboTb3+N'
 select 
 	[POCode],[Process],[Facility],[PDate],[Color],[XSize]
 	,[Qty] = sum([Qty])
-	,[Workers],[Hours]
+	,[Workers]=AVG([Workers])
+	,[Hours]=SUM([Hours])
 from
 (
 	Select
