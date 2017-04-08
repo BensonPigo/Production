@@ -15,11 +15,15 @@ namespace Sci.Production.PublicForm
     public partial class GarmentList_ColorArticle : Sci.Win.Subs.Base
     {
         private string styleukey;
-        private string cutid;
-        public GarmentList_ColorArticle(string cID,string styukey)
+        private string sukey;
+        private string cid;
+        private string FC;
+        public GarmentList_ColorArticle(string ukey,string styukey,string id,string F)
         {
             InitializeComponent();
-            cutid = cID;
+            sukey = ukey;
+            cid = id;
+            FC = F;
             styleukey = styukey;
             requery();
             gridSetup();
@@ -27,10 +31,10 @@ namespace Sci.Production.PublicForm
         }
         private void requery()
         {
-            string sqlcmd = String.Format(
-            @"Select a.*
-            from Pattern_GL_Article a WITH (NOLOCK) 
-            Where a.PatternUkey = '{0}'", cutid);
+            string sqlcmd = String.Format(@"
+Select *
+from Pattern_GL_Article a WITH (NOLOCK),(SELECT DISTINCT PatternPanel FROM Order_ColorCombo WHERE Id='{1}' and FabricPanelCode='{2}')b
+            Where a.PatternUkey = '{0}'", sukey,cid,FC);
             DataTable gridtb;
             DualResult sqldr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
             if(!sqldr)
@@ -45,7 +49,8 @@ namespace Sci.Production.PublicForm
                 .Text("ArticleGroup", header: "Article Group", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SizeRange", header: "Size Range", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("Remark", header: "Comb", width: Widths.AnsiChars(20), iseditingreadonly: true);
+                .Text("PatternPanel", header: "Pattern Panel Combo", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
 
         }
         private void button1_Click(object sender, EventArgs e)

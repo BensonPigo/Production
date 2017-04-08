@@ -534,9 +534,7 @@
     <Compile Include="R08.Designer.cs">
       <DependentUpon>R08.cs</DependentUpon>
     </Compile>
-    <Compile Include="SCIControl.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="SCIControl.cs" />
     <Compile Include="SMNoticePrg.cs" />
     <Compile Include="UIClassPrg.cs" />
   </ItemGroup>

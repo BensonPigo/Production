@@ -242,7 +242,7 @@ AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
         {
             if (null == this.CurrentMaintain) return;
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["ID"].ToString(), "Orders", "ID");
-            var frm = new Sci.Production.PublicForm.GarmentList(ukey);
+            var frm = new Sci.Production.PublicForm.GarmentList(ukey, CurrentMaintain["ID"].ToString());
             frm.ShowDialog(this);
         }
 

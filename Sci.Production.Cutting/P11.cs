@@ -930,7 +930,7 @@ namespace Sci.Production.Cutting
             DataRow selectDr = ((DataRowView)ArticleSize_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
             string ukey = MyUtility.GetValue.Lookup("Styleukey", selectDr["poid"].ToString(), "Orders", "ID");
             Sci.Production.PublicForm.GarmentList callNextForm =
-    new Sci.Production.PublicForm.GarmentList(ukey);
+    new Sci.Production.PublicForm.GarmentList(ukey,null);
             callNextForm.ShowDialog(this);
         }
 

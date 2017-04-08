@@ -12,13 +12,10 @@ using Sci.Utility;
 using Sci.Win.UI;
 
 using MsExcel = Microsoft.Office.Interop.Excel;
-using System.Data.SqlClient;
-using Ict;
 using System.Drawing;
 
 namespace Sci.Production.Class.Commons
 {
-
     /// <summary>
     /// 用來處理Pattern/Marker/IE/SMNotice等等的QueryFor，因為他們有共同特性，會用登入者的CountryList欄位來做篩選
     /// </summary>
@@ -449,6 +446,7 @@ Exists (
         }
 
 
+        /// 列印SMNotice報表
         /// <summary>
         /// 列印SMNotice報表
         /// </summary>
@@ -456,7 +454,7 @@ Exists (
         /// <param name="ID"></param>
         public static void PrintSMNotice(string ID, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
-            var xltFolder = Sci.Env.Cfg.XltPathDir;
+            var xltFolder = Sci.Production.Class.Commons.TradeSystem.Env.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "PPIC_Pattern-P01_PrintSMnotice.xlt");
 
             if (System.IO.File.Exists(xltPath) == false)
@@ -521,7 +519,7 @@ Exists (
                 app.DisplayAlerts = true;
 
 #if !DEBUG
-                app.Visible = true;
+            app.Visible = true;
 #endif
 
                 mainSheet.Protect("SCIMIS919", Type.Missing, Type.Missing, Type.Missing, Type.Missing, true, true, true);
@@ -541,6 +539,7 @@ Exists (
             //    MyUtility.Msg.InfoBox("print complete");
         }
 
+        /// Block1: SMNotice/Style
         /// <summary>
         /// Block1: SMNotice/Style
         /// </summary>
@@ -662,6 +661,7 @@ where o.POID = @ID
             return true;
         }
 
+        /// Block2: BOF-ColorCombo
         /// <summary>
         /// Block2: BOF-ColorCombo
         /// </summary>
@@ -1002,6 +1002,7 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
             }
         }
 
+        /// Block3: BOF/Fabric
         /// <summary>
         /// Block3: BOF/Fabric
         /// </summary>
@@ -1110,6 +1111,7 @@ Order by fc.FabricPanelCode
             }
         }
 
+        /// Block4: BOa-ColorCombo
         /// <summary>
         /// Block4: BOa-ColorCombo
         /// </summary>
@@ -1332,6 +1334,7 @@ Select distinct color.Article, color.FabricCode, color.FabricPanelCode, color.Co
             }
         }
 
+        /// Block5: MixColor table
         /// <summary>
         /// Block5: MixColor table
         /// </summary>
@@ -1480,6 +1483,7 @@ where sm.ID = @ID
             }
         }
 
+        /// Block6: BOA/Accessory
         /// <summary>
         /// Block6: BOA/Accessory
         /// </summary>
@@ -1573,6 +1577,7 @@ Order by boa.PatternPanel
             }
         }
 
+        /// Block7: BOA/Accessory
         /// <summary>
         /// Block7: BOA/Accessory
         /// </summary>
@@ -1664,6 +1669,7 @@ Order by boa.PatternPanel
             }
         }
 
+        /// Block8: Order Qty BreakDown
         /// <summary>
         /// Block8: Order Qty BreakDown
         /// </summary>
@@ -1856,6 +1862,7 @@ order by q.Article, q.SizeCode
             }
         }
 
+        /// Block9: MR/SMR info
         /// <summary>
         /// Block9: MR/SMR info
         /// </summary>
@@ -1919,6 +1926,7 @@ Where o.ID = @ID
             }
         }
 
+        /// Block10: formal table for sign
         /// <summary>
         /// Block10: formal table for sign
         /// </summary>
@@ -1947,6 +1955,7 @@ Where o.ID = @ID
             }
         }
 
+        /// Block11: FabricColor TrimCard
         /// <summary>
         /// Block11: FabricColor TrimCard
         /// </summary>
@@ -2126,7 +2135,7 @@ Where o.ID = @ID
         /// <param name="smID"></param>
         public static void PrintSMNoticeDevTrimCard(string smID)
         {
-            var xltFolder = Sci.Env.Cfg.XltPathDir;
+            var xltFolder = Sci.Production.Class.Commons.TradeSystem.Env.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "Pattern-P01_PrintDev.xlt");
             if (System.IO.File.Exists(xltPath) == false)
             {
@@ -2153,7 +2162,7 @@ Where o.ID = @ID
                 app.DisplayAlerts = true;
 
 #if !DEBUG
-                app.Visible = true;
+            app.Visible = true;
 #endif
             }
             finally
@@ -2345,7 +2354,7 @@ order by x.tp, x.PNO
         public static void PrintGarmentList(long uKey, string savePath = null)
         {
             var directlyOpenExportReport = (savePath == null);
-            var xltFolder = Sci.Env.Cfg.XltPathDir;
+            var xltFolder = Sci.Production.Class.Commons.TradeSystem.Env.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "Pattern-P02.Garment List-Print.xlt");
             var bmpFolder = System.IO.Path.Combine(xltFolder, "BMP");
             if (System.IO.File.Exists(xltPath) == false)

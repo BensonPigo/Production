@@ -663,7 +663,7 @@ namespace Sci.Production.Cutting
         {
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["poid"].ToString(), "Orders", "ID");
             Sci.Production.PublicForm.GarmentList callNextForm =
-    new Sci.Production.PublicForm.GarmentList(ukey);
+    new Sci.Production.PublicForm.GarmentList(ukey,null);
             callNextForm.ShowDialog(this);
             OnDetailEntered();
         }

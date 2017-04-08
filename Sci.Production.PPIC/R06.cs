@@ -81,6 +81,11 @@ with tmpPO as (
 ),PrepareData2 as (
     select ID,ThirdCountry,Seq+IIF(Qty = '','','('+Qty+')') as Seq
     from PrepareData1
+),tok as (
+	select min(cast(p2.Complete as int)) Complete,t.ID
+	from tmpPO t inner join PO_Supp_Detail p on t.ID =p.ID and t.SEQ1 =p.SEQ1
+	left join PO_Supp_Detail p2 on p.StockPOID = p2.ID and p.StockSeq1 = p2.SEQ1 and p.StockSeq2 = p2.SEQ2	
+	group by t.ID
 )
 select o.ID,o.StyleID,
 Category = 
@@ -95,7 +100,8 @@ dbo.getTPEPass1(o.MCHandle) as MCHandle,dbo.getTPEPass1(o.MRHandle) as MRHandle,
 dbo.getTPEPass1(o.SMR) as SMR,dbo.getTPEPass1(p.POSMR) as POSMR,
 dbo.getTPEPass1(p.POHandle) as POHandle,o.Qty,o.CPU*o.Qty*o.CPUFactor as tCPU,o.MTLComplete,
 isnull((select CONCAT(Seq,';') from PrepareData2 where ID = o.POID and ThirdCountry = 0 for XML PATH('')),'') as SeqNo,
-isnull((select CONCAT(Seq,';') from PrepareData2 where ID = o.POID and ThirdCountry = 1 for XML PATH('')),'') as Seq3rd
+isnull((select CONCAT(Seq,';') from PrepareData2 where ID = o.POID and ThirdCountry = 1 for XML PATH('')),'') as Seq3rd,
+isnull((select tok.Complete from tok where tok.ID = o.POID),0) tok
 from Orders o WITH (NOLOCK) 
 left join PO p WITH (NOLOCK) on p.ID = o.POID
 where 1=1", _excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":""));
@@ -204,7 +210,7 @@ where 1=1", _excludeReplacement == 1?"and psd.SEQ1 not between '50' and '69'":""
                 objArray[0, 22] = dr["POSMR"];
                 objArray[0, 23] = dr["Qty"];
                 objArray[0, 24] = dr["tCPU"];
-                objArray[0, 25] = _complection == 1 && MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : MyUtility.Check.Empty(dr["SeqNo"]) && MyUtility.Check.Empty(dr["Seq3rd"]) ? "Y" : "N";
+                objArray[0, 25] = _complection == 1 && MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : MyUtility.Convert.GetString(dr["tok"]) == "1" ? "Y" : "N";
                 objArray[0, 26] = MyUtility.Convert.GetString(dr["MTLComplete"]).ToUpper() == "FALSE" ? "" : "Y"; ;
                 worksheet.Range[String.Format("A{0}:AA{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;

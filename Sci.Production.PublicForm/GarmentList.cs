@@ -14,12 +14,14 @@ namespace Sci.Production.PublicForm
     public partial class GarmentList : Sci.Win.Subs.Base
     {
         private string Styleyukey;
+        private string id;
         private DataTable headertb;
         private string patternukey;
-        public GarmentList(string cID)
+        public GarmentList(string ukey,string cid)
         {
             InitializeComponent();
-            Styleyukey = cID;
+            Styleyukey = ukey;
+            id = cid;
             requery();
             gridSetup();
             this.grid1.AutoResizeColumns();
@@ -119,8 +121,10 @@ namespace Sci.Production.PublicForm
 
         private void button2_Click(object sender, EventArgs e)
         {
+            int idx = this.grid1.GetSelectedRowIndex();
+            
             Sci.Production.PublicForm.GarmentList_ColorArticle callNextForm =
-new Sci.Production.PublicForm.GarmentList_ColorArticle(patternukey,Styleyukey);
+new Sci.Production.PublicForm.GarmentList_ColorArticle(patternukey, Styleyukey, id, ((DataTable)grid1.DataSource).Rows[idx][11].ToString());
             callNextForm.ShowDialog(this);
         }
     }
