@@ -168,7 +168,7 @@ namespace Sci.Production.Warehouse
             .Text("fabrictype", header: "Type", iseditingreadonly: true, width: Widths.AnsiChars(8))    //5
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //6
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //7
-            .Text("location", header: "From Location", iseditingreadonly: true, width: Widths.AnsiChars(30))    //8
+            .Text("fromlocation", header: "From Location", iseditingreadonly: true, width: Widths.AnsiChars(30))    //8
             ;     //
             #endregion 欄位設定
             this.detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
@@ -698,11 +698,11 @@ select
     ,a.ToDyelot
     ,a.ToRoll
     ,a.ToStockType
-    ,location = stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd where fd.Ukey = a.FromFtyInventoryUkey) t 
-	                for xml path('')), 1, 2, '') 
+    ,dbo.Getlocation(f.Ukey)  as Fromlocation
     ,a.ukey
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+left join FtyInventory f WITH (NOLOCK) on a.FromPOID=f.POID and a.FromSeq1=f.Seq1 and a.FromSeq2=f.Seq2 and a.FromRoll=f.Roll and a.FromDyelot=f.Dyelot and a.FromStockType=f.StockType
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
