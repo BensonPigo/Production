@@ -129,8 +129,11 @@ namespace Sci.Production.PPIC
                     sxr.dicDatas.Add(sxr._v + "S2_Tbl4" + idxStr, dts[3]); //COLOR list
                     sxr.dicDatas.Add(sxr._v + "S2_Tbl5" + idxStr, dts[4]); //Fabric list
                     sxr.dicDatas.Add(sxr._v + "S2_Tbl6" + idxStr, dts[5]); //Accessories list
+                    if (dts[6].Rows.Count>0)
                     sxr.dicDatas.Add(sxr._v + "S2SHIPINGMARK" + idxStr, new sxrc.xltLongString(dts[6].Rows[0]["shipingMark"].ToString()));
+                    if (dts[7].Rows.Count > 0)
                     sxr.dicDatas.Add(sxr._v + "S2PACKING" + idxStr, new sxrc.xltLongString(dts[7].Rows[0]["Packing"].ToString()));
+                    if (dts[8].Rows.Count > 0)
                     sxr.dicDatas.Add(sxr._v + "S2LH" + idxStr, new sxrc.xltLongString(dts[8].Rows[0]["Label"].ToString()));
 
                 }
