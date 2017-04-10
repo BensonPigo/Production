@@ -130,13 +130,21 @@ outer apply(Select Description from Style where Ukey = o.StyleUKey) SYD1
 outer apply(Select Alias from Country where ID = o.Dest) SHIP
 outer apply(
 	select GTMH = (
+		SELECT
+		IIF(o.StyleUnit = ''PCS'',(
 		Select t.TotalSewingTime
 		from TimeStudy t
-		where StyleID = o.StyleID 
-		and SeasonID = o.SeasonID 
-		and BrandID = o.BrandID 
-		and ComboType 
-			= IIF(o.StyleUnit = ''PCS'', (select Location from Style_Location where StyleUKey = o.StyleUkey), sl.Location)
+		where T.StyleID = o.StyleID 
+		and T.SeasonID = o.SeasonID 
+		and T.BrandID = o.BrandID 
+		),(
+		Select t.TotalSewingTime
+		from TimeStudy t
+		where T.StyleID = o.StyleID 
+		and T.SeasonID = o.SeasonID 
+		and T.BrandID = o.BrandID 
+		and T.ComboType = sl.Location
+		))
 	)
 )GTMH
 outer apply(
