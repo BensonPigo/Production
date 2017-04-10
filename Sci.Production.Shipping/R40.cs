@@ -162,6 +162,8 @@ from (
 	select 	isnull(f.HSCode,'') as HSCode
 			,isnull(f.NLCode,'') as NLCode
 			,t.POID,(fi.Seq1+'-'+fi.Seq2) as Seq
+            ,[Refno]=psd.Refno
+            ,[Description]=f.Description
 			,fi.Roll,fi.Dyelot,fi.StockType
 			,isnull((select CONCAT(fid.MtlLocationID,',') 
 					 from FtyInventory_Detail fid WITH (NOLOCK) 
@@ -194,6 +196,8 @@ from (
 	select 	isnull(li.HSCode,'') as HSCode
 			,isnull(li.NLCode,'') as NLCode
 			,l.OrderID as POID,'' as Seq
+            ,[RefNo]=l.Refno
+            ,[Description]=li.Description
 			,''as Roll
 			,'' as Dyelot
 			,'B' as StockType
@@ -218,7 +222,6 @@ from (
 	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
 	where 1=1
-    --l.MDivisionID = @mdivision 
     and o.WhseClose is null
 ) a
 
@@ -282,8 +285,7 @@ from (
 	from LocalInventory l WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
-	where 1=1
-    --l.MDivisionID = @mdivision 
+	where 1=1    
     and o.ID >= '{0}' and o.WhseClose is not null
 ) a
 
@@ -326,7 +328,7 @@ from (
 																			,''))
 				 ,0) as Qty
 	from #tmpWHNotClose t
-	inner join MDivisionPoDetail mdp WITH (NOLOCK) on mdp.POID = t.ID --and mdp.MDivisionID = t.MDivisionID
+	inner join MDivisionPoDetail mdp WITH (NOLOCK) on mdp.POID = t.ID 
 	inner join PO_Supp_Detail psd WITH (NOLOCK) on mdp.POID = psd.ID and psd.SEQ1 = mdp.Seq1 and psd.SEQ2 = mdp.Seq2
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
 
@@ -357,7 +359,7 @@ from (
 													 		,''))
 				 ,0) as Qty
 	from #tmpWHNotClose t
-	inner join LocalInventory l WITH (NOLOCK) on t.ID = l.OrderID --and t.MDivisionID = l.MDivisionID
+	inner join LocalInventory l WITH (NOLOCK) on t.ID = l.OrderID 
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
 ) a
 
@@ -514,7 +516,7 @@ select 	isnull(tc.HSCode,'') as HSCode
 		, a.NLCode
 		, isnull(vcd.DescEN,'') as Description
 		, isnull(tc.UnitID,'') as UnitID
-		, isnull(tc.Qty,0)-isnull(td.Qty,0) as LiqQty
+		, 0 - (isnull(tc.Qty,0)-isnull(td.Qty,0)) as LiqQty --將負數調整為正數
 		, isnull(tw.Qty,0) as WHQty
 		, isnull(ti.Qty,0) as WIPQty
 		, isnull(tp.Qty,0) as ProdQty
