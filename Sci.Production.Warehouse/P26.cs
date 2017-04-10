@@ -115,6 +115,15 @@ namespace Sci.Production.Warehouse
             DataTable result = null;
             StringBuilder warningmsg = new StringBuilder();
 
+            // Check ToLocation is not empty
+            for (int i = ((DataTable)detailgridbs.DataSource).Rows.Count - 1; i >= 0 ; i--)
+            {
+                if (((DataTable)detailgridbs.DataSource).Rows[i]["ToLocation"].Empty())
+                {
+                    ((DataTable)detailgridbs.DataSource).Rows[i].Delete();
+                }
+            }
+
             if (DetailDatas.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Detail can't be empty", "Warning");
