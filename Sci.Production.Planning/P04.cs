@@ -239,7 +239,11 @@ namespace Sci.Production.Planning
                  .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                  .Text("msg", header: "Error Message", width: Widths.AnsiChars(20), settings: ts1, iseditingreadonly: true)
                   ;
-            foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
+            grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns[16].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns[17].DefaultCellStyle.BackColor = Color.Pink;
+           // foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
             this.grid1.ColumnHeaderMouseClick += grid1_ColumnHeaderMouseClick;
             col_inhouseosp.DataSource = new BindingSource(di_inhouseOsp2, null);
             col_inhouseosp.ValueMember = "Key";
@@ -403,13 +407,13 @@ and b.tms > 0  and factory.mdivisionid='{2}'" + orderby, numericBox3.Text, numer
             { sqlcmd += string.Format(@" and a.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery_e).ToString("d")); }
             if (!(string.IsNullOrWhiteSpace(sewinline_b)))
             { sqlcmd += string.Format(@" and c.OffLine >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("d")); }
-            if (!!(string.IsNullOrWhiteSpace(sewinline_e)))
+            if (!(string.IsNullOrWhiteSpace(sewinline_e)))
             { sqlcmd += string.Format(@" and c.InLine <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("d")); }
             if (!(string.IsNullOrWhiteSpace(inline_b)))
             { sqlcmd += string.Format(@" and b.artworkOffLine >= '{0}'", Convert.ToDateTime(inline_b).ToString("d")); }
             if (!(string.IsNullOrWhiteSpace(inline_e)))
             { sqlcmd += string.Format(@" and b.artworkInLine <= '{0}'", Convert.ToDateTime(inline_e).ToString("d")); }
-
+            sqlcmd += string.Format(@" ORDER BY a.FactoryID, a.StyleID, a.SeasonID,a.ID ");
             this.ShowWaitMessage("Querying.... Please wait....");
             int wkdays = 0;
             DateTime inline;
