@@ -39,6 +39,7 @@ namespace Sci.Production.Warehouse
         {
             base.ClickEditAfter();
             this.textBox1.ReadOnly = true;
+            this.comboBox1.ReadOnly = true;
         }
 
         //存檔前檢查
@@ -64,9 +65,12 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            if (!checkCode())
+            if (IsDetailInserting)
             {
-                return false;
+                if (!checkCode())
+                {
+                    return false;
+                }
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
