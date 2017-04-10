@@ -289,13 +289,13 @@
             this.Grid2New = 0;
             this.GridAlias = "LocalIssue_Detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "ID,ukey";
+            this.GridUniqueKey = "OrderID,Refno,ThreadColorID";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.KeyField2 = "ID";
-            this.Name = "P61. Issue Local Item";
+            this.Name = "P61";
             this.Text = "P61. Issue Local Item";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
