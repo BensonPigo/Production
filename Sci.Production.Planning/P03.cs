@@ -427,7 +427,10 @@ namespace Sci.Production.Planning
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
             {
                 if (dtData.Rows.Count == 0)
-                { MyUtility.Msg.WarningBox("Data not found!!"); }
+                {
+                    this.HideWaitMessage();
+                    MyUtility.Msg.WarningBox("Data not found!!"); 
+                }
                 listControlBindingSource1.DataSource = dtData;
                 grid2_generate();
                 

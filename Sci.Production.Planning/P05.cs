@@ -411,7 +411,10 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
             {
                 if (dtData.Rows.Count == 0)
-                { MyUtility.Msg.WarningBox("Data not found!!"); }
+                {
+                    this.HideWaitMessage();
+                    MyUtility.Msg.WarningBox("Data not found!!"); 
+                }
                 listControlBindingSource1.DataSource = dtData;
                 dtData.Columns.Add("ttlStitch", typeof(decimal));
                 dtData.Columns["ttlStitch"].Expression = "alloqty * qty";

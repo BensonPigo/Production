@@ -360,7 +360,10 @@ namespace Sci.Production.Planning
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
             {
                 if (dtData.Rows.Count == 0)
-                { MyUtility.Msg.WarningBox("Data not found!!"); }
+                {
+                    this.HideWaitMessage();
+                    MyUtility.Msg.WarningBox("Data not found!!"); 
+                }
                 listControlBindingSource1.DataSource = dtData;
                 dtData.Columns.Add("totalqty", typeof(decimal));
                 dtData.Columns["totalqty"].Expression = "(orderqty - qaqty) * qty";
