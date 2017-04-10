@@ -238,7 +238,7 @@ namespace Sci.Production.Planning
             grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
             grid1.Columns[16].DefaultCellStyle.BackColor = Color.Pink;
             grid1.Columns[17].DefaultCellStyle.BackColor = Color.Pink;
-            foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
+           // foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
             this.grid1.ColumnHeaderMouseClick += grid1_ColumnHeaderMouseClick;
             col_inhouseosp.DataSource = new BindingSource(di_inhouseOsp2, null);
             col_inhouseosp.ValueMember = "Key";
@@ -403,7 +403,7 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
             { sqlcmd += string.Format(@" and b.artworkOffLine >= '{0}'", Convert.ToDateTime(inline_b).ToString("d")); }
             if (!(string.IsNullOrWhiteSpace(inline_e)))
             { sqlcmd += string.Format(@" and b.artworkInLine <= '{0}'", Convert.ToDateTime(inline_e).ToString("d")); }
-
+            sqlcmd += string.Format(@" ORDER BY a.FactoryID, a.StyleID, a.SeasonID,a.ID ");
             this.ShowWaitMessage("Querying....Please wait....");
             int wkdays = 0;
             DateTime inline;

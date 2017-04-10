@@ -242,7 +242,7 @@ namespace Sci.Production.Planning
             grid1.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
             grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
-           foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
+          // foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
            this.grid1.ColumnHeaderMouseClick += grid1_ColumnHeaderMouseClick;
                            
             col_inhouseosp.DataSource = new BindingSource(di_inhouseOsp2, null);
@@ -354,6 +354,7 @@ namespace Sci.Production.Planning
             { sqlcmd += string.Format(@" and a.SewOffLine >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("d")); }
             if (!(string.IsNullOrWhiteSpace(sewinline_e)))
             { sqlcmd += string.Format(@" and a.SewInLine <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("d")); }
+            sqlcmd += string.Format(@" ORDER BY a.FactoryID, a.StyleID, a.SeasonID,a.ID ");
             this.ShowWaitMessage("Querying....Please wait....");
 
             Ict.DualResult result; 

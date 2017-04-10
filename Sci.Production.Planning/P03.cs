@@ -246,7 +246,7 @@ namespace Sci.Production.Planning
             grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
             grid1.Columns[16].DefaultCellStyle.BackColor = Color.Pink;
             grid1.Columns[17].DefaultCellStyle.BackColor = Color.Pink;
-            foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
+         //   foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
             this.grid1.ColumnHeaderMouseClick += grid1_ColumnHeaderMouseClick;
 
             col_inhouseosp.DataSource = new BindingSource(di_inhouseOsp2, null);
