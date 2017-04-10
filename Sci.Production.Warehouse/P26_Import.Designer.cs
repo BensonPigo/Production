@@ -38,6 +38,7 @@
             this.textBox3 = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.textBox7 = new Sci.Win.UI.TextBox();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.radioButton1 = new Sci.Win.UI.RadioButton();
@@ -51,7 +52,6 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.radioPanel1.SuspendLayout();
@@ -91,7 +91,7 @@
             this.button1.Location = new System.Drawing.Point(906, 26);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(90, 30);
-            this.button1.TabIndex = 0;
+            this.button1.TabIndex = 6;
             this.button1.Text = "Query";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -104,7 +104,7 @@
             this.textBox1.Location = new System.Drawing.Point(138, 29);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(122, 23);
-            this.textBox1.TabIndex = 0;
+            this.textBox1.TabIndex = 1;
             this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // groupBox2
@@ -174,6 +174,16 @@
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
+            // txtSeq1
+            // 
+            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq1.Location = new System.Drawing.Point(267, 29);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.seq1 = "";
+            this.txtSeq1.seq2 = "";
+            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq1.TabIndex = 2;
+            // 
             // textBox7
             // 
             this.textBox7.BackColor = System.Drawing.Color.White;
@@ -182,7 +192,7 @@
             this.textBox7.Location = new System.Drawing.Point(823, 29);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(70, 23);
-            this.textBox7.TabIndex = 4;
+            this.textBox7.TabIndex = 5;
             // 
             // radioPanel1
             // 
@@ -191,7 +201,7 @@
             this.radioPanel1.Location = new System.Drawing.Point(6, 12);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(126, 88);
-            this.radioPanel1.TabIndex = 4;
+            this.radioPanel1.TabIndex = 0;
             this.radioPanel1.Value = "1";
             this.radioPanel1.ValueChanged += new System.EventHandler(this.radioPanel1_ValueChanged);
             // 
@@ -247,7 +257,7 @@
             this.textBox6.Location = new System.Drawing.Point(642, 29);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(91, 23);
-            this.textBox6.TabIndex = 3;
+            this.textBox6.TabIndex = 4;
             // 
             // textBox4
             // 
@@ -258,7 +268,7 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
             this.textBox4.Size = new System.Drawing.Size(122, 23);
-            this.textBox4.TabIndex = 5;
+            this.textBox4.TabIndex = 7;
             // 
             // textBox5
             // 
@@ -268,7 +278,7 @@
             this.textBox5.Location = new System.Drawing.Point(424, 29);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(122, 23);
-            this.textBox5.TabIndex = 2;
+            this.textBox5.TabIndex = 3;
             // 
             // label3
             // 
@@ -311,16 +321,6 @@
             this.grid1.Size = new System.Drawing.Size(1008, 370);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            // 
-            // txtSeq1
-            // 
-            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq1.Location = new System.Drawing.Point(267, 29);
-            this.txtSeq1.Name = "txtSeq1";
-            this.txtSeq1.seq1 = "";
-            this.txtSeq1.seq2 = "";
-            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq1.TabIndex = 10;
             // 
             // P26_Import
             // 
