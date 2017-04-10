@@ -581,11 +581,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
 ,a.Qty
 ,a.StockType
-,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = a.FtyInventoryUkey) t 
-	for xml path('')), 1, 1, '') location
+,dbo.Getlocation(f.Ukey)  as location
 ,a.ukey
 ,a.FtyInventoryUkey
-from dbo.IssueLack_Detail a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+from dbo.IssueLack_Detail a WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+left join FtyInventory f WITH (NOLOCK) on a.POID=f.POID and a.Seq1=f.Seq1 and a.Seq2=f.Seq2 and a.Roll=f.Roll and a.Dyelot=f.Dyelot and a.StockType=f.StockType
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
