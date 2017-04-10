@@ -194,6 +194,7 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString(),Sci.Env.User.Key
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     currentrow["ToLocation"] = item.GetSelectedString();
+                    currentrow.EndEdit();
                 }
             };
 

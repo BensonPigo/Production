@@ -410,7 +410,10 @@ Where a.id = '{0}' ", masterID);
             {
                 if (detailgridbs.DataSource != null && ((DataTable)detailgridbs.DataSource).Rows.Count > 0)
                 {
-                    ((DataTable)detailgridbs.DataSource).Rows.Clear();
+                    for (int i = 0; i < ((DataTable)detailgridbs.DataSource).Rows.Count; i++)
+                    {
+                        ((DataTable)detailgridbs.DataSource).Rows[i].Delete();
+                    }
                 }
             }
         }
