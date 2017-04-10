@@ -20,6 +20,7 @@ namespace Sci.Production.Quality
         private string loginID = Sci.Env.User.UserID;
         private DataRow maindr;
         private bool canedit;
+      
 
         public P02_Detail(bool CanEdit, string airID, DataRow mainDr)
         {
@@ -31,8 +32,7 @@ namespace Sci.Production.Quality
             canedit = CanEdit;
             btn_status(id);
             button_enable(canedit);
-
-
+           
             string air_cmd = string.Format("select * from air WITH (NOLOCK) where id='{0}'", id);
             DataRow dr;
 
@@ -95,8 +95,7 @@ namespace Sci.Production.Quality
                 InsDate_text.Value = MyUtility.Convert.GetDate(dr["inspdate"]);                  
                 Instor_text.Text = dr["inspector"].ToString();
                 Remark_text.Text = dr["remark"].ToString();
-                comboBox1.SelectedValue = dr["Result"].ToString();
-                //this.comboBox1.DisplayMember = dr["Result"].ToString();
+                comboBox1.SelectedValue = dr["Result"].ToString();                
                 this.editBox1.Text = dr["Defect"].ToString();
                 this.Arrive_qty_text.Text = dr["ArriveQty"].ToString();
             }
@@ -115,23 +114,26 @@ namespace Sci.Production.Quality
 
         }
 
-        //++1206
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            if (canedit)
-            {
-                this.undo.Text = "Close";
-            }
+            button_enable(canedit);
 
         }
+        // 上下筆
+        //public DualResult Set(bool canedit, IList<DataRow> dtList, DataRow current)
+        //{
+        //    private void Bind(int pos)
+        //    {
+        //        virtual protected void OnAttaching(DataRow data)
+        //    }
+        //}
+        
 
         private void save_Click(object sender, EventArgs e)
         {
             string strSqlcmd = "";
             this.Encode.Enabled = false;
-            //++1206
-            this.undo.Text = "Undo";
 
             DualResult result;
             DataTable dt;
@@ -172,8 +174,7 @@ namespace Sci.Production.Quality
                             MyUtility.Msg.InfoBox("When <Rejected Qty> has any value then <Defect> can not be empty !");
                             this.editBox1.Focus();
                             return;
-                        }
-                        //if ((editBox1.Text != null || editBox1.Text != "") && (this.RejQty_text.Text == "0.00"))
+                        }                        
                         if (( !MyUtility.Check.Empty(editBox1.Text)) && (this.RejQty_text.Text == "0.00"))
                         {
                             MyUtility.Msg.InfoBox("<Rejected Qty> can not be empty ,when <Defect> has not empty ! ");
@@ -246,15 +247,14 @@ namespace Sci.Production.Quality
                             this.Remark_text.ReadOnly = false;
                             this.editBox1.ReadOnly = false;
                             this.save.Text = "Save";
+                            this.undo.Text = "Undo";
                             
                             return;
                         }
                     }
                 }
             }
-            //++1206
-            this.undo.Visible = false;
-            this.btnClose.Visible = true;
+         
         }
 
                
@@ -398,21 +398,16 @@ namespace Sci.Production.Quality
         }
         private void button_enable(bool canedit)
         {
+            // Visable
+            this.save.Visible = (bool)canedit ;
+            this.undo.Visible = (bool)canedit ;
+            this.Encode.Visible = (bool)canedit;
+            this.btnClose.Visible = !(bool)canedit;
+            // Enable
+            save.Enabled = this.Encode.Text.ToString() == "Encode" ? true : false;
 
-            save.Enabled = (bool)canedit && this.Encode.Text.ToString()=="Encode";
-            if (maindr["Result"].ToString() == "Pass")
-            {
-                Encode.Enabled = (bool)canedit;
-               
-            }
-        
         }
-
-        private void undo_Click(object sender, EventArgs e)
-        {
-            return;
-        }
-
+       
         private void btn_status(object id)
         {
             string air_cmd = string.Format("select * from air WITH (NOLOCK) where id='{0}'", id);
@@ -434,6 +429,19 @@ namespace Sci.Production.Quality
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void undo_Click(object sender, EventArgs e)
+        {
+            if (this.undo.Text=="Undo")
+            {
+                return;
+            }
+            else
+            {
+                this.Close();
+            }
+                
         }
 
     }

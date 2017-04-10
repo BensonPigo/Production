@@ -62,8 +62,8 @@
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.InsDate_text = new Sci.Win.UI.DateBox();
-            this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
             this.btnClose = new Sci.Win.UI.Button();
+            this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -83,6 +83,7 @@
             // undo
             // 
             this.undo.Location = new System.Drawing.Point(579, 5);
+            this.undo.Text = "Close";
             this.undo.Click += new System.EventHandler(this.undo_Click);
             // 
             // save
@@ -417,6 +418,18 @@
             this.InsDate_text.Size = new System.Drawing.Size(145, 23);
             this.InsDate_text.TabIndex = 135;
             // 
+            // btnClose
+            // 
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnClose.Location = new System.Drawing.Point(413, 5);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 135;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Visible = false;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
             // txtsupplier1
             // 
             this.txtsupplier1.DisplayBox1Binding = "";
@@ -425,17 +438,6 @@
             this.txtsupplier1.Size = new System.Drawing.Size(214, 23);
             this.txtsupplier1.TabIndex = 134;
             this.txtsupplier1.TextBox1Binding = "";
-            // 
-            // btnClose
-            // 
-            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClose.Location = new System.Drawing.Point(350, 5);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 135;
-            this.btnClose.Text = "Close";
-            this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // P02_Detail
             // 
@@ -472,6 +474,7 @@
             this.Controls.Add(this.panel1);
             this.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "defect", true));
             this.Name = "P02_Detail";
+            this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "Accessory Inspection- SP+SEQ+Detail";
             this.WorkAlias = "AIR";
             this.Controls.SetChildIndex(this.panel1, 0);
