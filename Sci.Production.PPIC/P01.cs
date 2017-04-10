@@ -254,7 +254,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             button25.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"]))) ? Color.Blue : Color.Black;
 
             #region 控制[m/notice sheet]按鈕是否變色
-            bool enableMNotice1 = MyUtility.Check.Seek(string.Format("select ID FROM MNOrder WITH (NOLOCK) where POID = '{0}' and CustCDID = (select CustCDID from Orders WITH (NOLOCK) where ID = '{1}')", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"])));
+            bool enableMNotice1 = MyUtility.Check.Seek(string.Format("select ID FROM MNOrder WITH (NOLOCK) where POID = '{0}' and OrderComboID = (select OrderComboID from Orders WITH (NOLOCK) where ID = '{1}')", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"])));
             bool enableMNotice2 = !MyUtility.Check.Empty(CurrentMaintain["SMnorderApv"]);
             bool enableMNotice = enableMNotice1 || enableMNotice2;
             button26.ForeColor = enableMNotice ? Color.Blue : Color.Black;
