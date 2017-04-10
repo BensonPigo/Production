@@ -9,11 +9,20 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
+using Microsoft.Reporting.WinForms;
+using System.Data.SqlClient;
+using Sci.Win;
+using Sci;
+using Sci.Production;
+using Sci.Utility.Excel;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
     public partial class P07_Print : Sci.Win.Tems.PrintForm
     {
+        DataTable dt;
+        string id, Date1, Date2, ETA, Invoice, Wk, FTYID;
         public P07_Print(List<String> polist)
         {
             InitializeComponent();
@@ -39,13 +48,13 @@ namespace Sci.Production.Warehouse
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DataRow row = this.CurrentDataRow;
-            string id = row["ID"].ToString();
-            string Date1 = (MyUtility.Check.Empty(row["PackingReceive"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(row["PackingReceive"])).ToShortDateString();
-            string Date2 = (MyUtility.Check.Empty(row["WhseArrival"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToShortDateString();
-            string ETA = ((DateTime)MyUtility.Convert.GetDate(row["ETA"])).ToShortDateString();
-            string Invoice = row["invno"].ToString();
-            string Wk = row["exportid"].ToString();
-            string FTYID = row["Mdivisionid"].ToString();
+            id = row["ID"].ToString();
+            Date1 = (MyUtility.Check.Empty(row["PackingReceive"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(row["PackingReceive"])).ToShortDateString();
+            Date2 = (MyUtility.Check.Empty(row["WhseArrival"])) ? "" : ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToShortDateString();
+            ETA = ((DateTime)MyUtility.Convert.GetDate(row["ETA"])).ToShortDateString();
+            Invoice = row["invno"].ToString();
+            Wk = row["exportid"].ToString();
+            FTYID = row["Mdivisionid"].ToString();
          
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
@@ -67,15 +76,14 @@ namespace Sci.Production.Warehouse
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Wk", Wk));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FTYID", FTYID));
    
-            DataTable dt;
             string sql = @"select  
 			R.Roll,R.Dyelot,R.PoId,R.Seq1+'-'+R.Seq2 AS SEQ
             ,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
 			  AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
 			  AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
 			  ,'',dbo.getMtlDesc(R.poid,R.seq1,R.seq2,2,0))[Desc]
-			,R.ShipQty,R.pounit,R.StockQty,R.StockUnit, R.Weight,R.ActualWeight
-			,R.ActualWeight - R.Weight AS Vaniance
+			,R.ShipQty,R.pounit,R.StockQty,R.StockUnit,R.ShipQty - R.StockQty AS QtyVaniance
+            ,R.Weight,R.ActualWeight,R.ActualWeight - R.Weight AS Vaniance
 			,[SubQty]=sum(R.ShipQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
 			,[SubGW]=sum(R.Weight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ) 
 			,[SubAW]=sum(R.ActualWeight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
@@ -103,8 +111,8 @@ namespace Sci.Production.Warehouse
                                     Roll = row1["Roll"].ToString(),
                                     Dyelot = row1["dyelot"].ToString(),
                                     POID = row1["PoId"].ToString(),
-                                    SEQ = row1["SEQ"].ToString(), 
-                                    Desc = row1["Desc"].ToString().TrimEnd(new char[]{'\n', '\r'}),
+                                    SEQ = row1["SEQ"].ToString(),
+                                    Desc = row1["Desc"].ToString().TrimEnd(new char[] { '\n', '\r' }),
                                     ShipQty = row1["ShipQty"].ToString(),
                                     pounit = row1["pounit"].ToString(),
                                     StockQty = row1["StockQty"].ToString(),
@@ -120,32 +128,29 @@ namespace Sci.Production.Warehouse
             else
             {
 
-                e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Date1", Date1));                   
-                 List<P07_PrintData> data = dt.AsEnumerable()
-                                .Select(row1 => new P07_PrintData()
-                                {
-                                    POID = row1["PoId"].ToString(),
-                                    SEQ = row1["SEQ"].ToString(), 
-                                    Roll = row1["Roll"].ToString(),
-                                    Desc = row1["Desc"].ToString().TrimEnd(new char[] { '\n', '\r' }),
-                                    ShipQty = row1["ShipQty"].ToString(),
-                                    pounit = row1["pounit"].ToString(),
-                                    GW = row1["Weight"].ToString(),
-                                    AW = row1["ActualWeight"].ToString(),
-                                    Vaniance = row1["Vaniance"].ToString(),
-                                    SubQty = row1["SubQty"].ToString(),
-                                    SubGW = row1["SubGW"].ToString(),
-                                    SubAW = row1["SubAW"].ToString(),
-                                    SubVaniance = row1["SubVaniance"].ToString()
-                                 
-                                }).ToList();
-                 e.Report.ReportDataSource = data;
+                e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Date1", Date1));
+                List<P07_PrintData> data = dt.AsEnumerable()
+                               .Select(row1 => new P07_PrintData()
+                               {
+                                   POID = row1["PoId"].ToString(),
+                                   SEQ = row1["SEQ"].ToString(),
+                                   Roll = row1["Roll"].ToString(),
+                                   Desc = row1["Desc"].ToString().TrimEnd(new char[] { '\n', '\r' }),
+                                   ShipQty = row1["ShipQty"].ToString(),
+                                   pounit = row1["pounit"].ToString(),
+                                   GW = row1["Weight"].ToString(),
+                                   AW = row1["ActualWeight"].ToString(),
+                                   Vaniance = row1["Vaniance"].ToString(),
+                                   SubQty = row1["SubQty"].ToString(),
+                                   SubGW = row1["SubGW"].ToString(),
+                                   SubAW = row1["SubAW"].ToString(),
+                                   SubVaniance = row1["SubVaniance"].ToString()
+
+                               }).ToList();
+                e.Report.ReportDataSource = data;
 
             }
-           
-
-            
-            
+                                 
             return Result.True;
         }
 
@@ -177,14 +182,78 @@ namespace Sci.Production.Warehouse
                
             }
             else
-            {
-               
-                textBox1.Enabled = true;
-               
-                   
-                
-
+            {              
+                textBox1.Enabled = true;                                            
             }
+        }
+        protected override bool OnToExcel(ReportDefinition report)
+        {
+            if (dt.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return false;
+            }
+           
+
+            if (ReportResourceName == "P07_Report2.rdlc")
+            {
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P07_ArriveWearhouseReport.xltx"); //預先開啟excel app
+                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
+                int nRow = 7;
+
+                objSheets.Cells[3, 1] = Date2;
+                objSheets.Cells[4, 1] = "ETA:" + ETA;
+                objSheets.Cells[5, 1] = "Invoice#:" + Invoice + "   From FTY ID:" + FTYID;
+                objSheets.Cells[5, 6] = "WK#:" + Wk;              
+                foreach (DataRow dr in dt.Rows)
+                {
+                    objSheets.Cells[nRow, 1] = dr["Roll"].ToString();
+                    objSheets.Cells[nRow, 2] = dr["Dyelot"].ToString();
+                    objSheets.Cells[nRow, 3] = dr["PoId"].ToString();
+                    objSheets.Cells[nRow, 4] = dr["SEQ"].ToString();
+                    objSheets.Cells[nRow, 5] = dr["Desc"].ToString();
+                    objSheets.Cells[nRow, 6] = dr["ShipQty"].ToString() +" "+ dr["pounit"].ToString();
+                    objSheets.Cells[nRow, 7] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
+                    objSheets.Cells[nRow, 8] = dr["QtyVaniance"].ToString();
+                    nRow++;
+                }
+
+                objApp.Visible = true;
+                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            }
+            else
+            {
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P07_PackingListReveivingReport.xltx"); //預先開啟excel app
+                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
+                int nRow = 7;
+
+                objSheets.Cells[3, 1] = Date1;
+                objSheets.Cells[4, 1] = "ETA:" + ETA;
+                objSheets.Cells[5, 1] = "Invoice#:" + Invoice + "   From FTY ID:" + FTYID;
+                objSheets.Cells[5, 5] = "WK#:" + Wk;
+                foreach (DataRow dr in dt.Rows)
+                {
+                    objSheets.Cells[nRow, 1] = dr["Roll"].ToString();
+                    objSheets.Cells[nRow, 2] = dr["PoId"].ToString();
+                    objSheets.Cells[nRow, 3] = dr["SEQ"].ToString();
+                    objSheets.Cells[nRow, 4] = dr["Desc"].ToString();
+                    objSheets.Cells[nRow, 5] = dr["ShipQty"].ToString() + " " + dr["pounit"].ToString();
+                    objSheets.Cells[nRow, 6] = dr["Weight"].ToString();
+                    objSheets.Cells[nRow, 7] = dr["ActualWeight"].ToString();
+                    objSheets.Cells[nRow, 8] = dr["Vaniance"].ToString();
+                    nRow++;
+                }
+
+                objApp.Visible = true;
+                if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
+                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            }
+            
+
+            return true;
         }
 
 
