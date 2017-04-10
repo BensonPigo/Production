@@ -1786,7 +1786,7 @@ order by q.Article, q.SizeCode
                         {
                             Article = row.Field<string>("Article"),
                             SizeCode = row.Field<string>("SizeCode"),
-                            Qty = row.Field<decimal?>("Qty"),
+                            Qty = row.Field<int?>("Qty"),
                         })
                         .ToDictionary(
                             item => new Tuple<string, string>(item.Article, item.SizeCode),
