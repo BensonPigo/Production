@@ -252,7 +252,7 @@ namespace Sci.Production.Planning
             col_inhouseosp.DataSource = new BindingSource(di_inhouseOsp2, null);
             col_inhouseosp.ValueMember = "Key";
             col_inhouseosp.DisplayMember = "Value";
-            grid1.Columns[5].Frozen = true;//SP#
+
             Helper.Controls.Grid.Generator(this.grid2)
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(6))
                 .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)

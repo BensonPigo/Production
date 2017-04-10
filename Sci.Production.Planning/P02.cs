@@ -249,7 +249,6 @@ namespace Sci.Production.Planning
             col_inhouseosp.ValueMember = "Key";
             col_inhouseosp.DisplayMember = "Value";
          
-            grid1.Columns[5].Frozen = true;  //SP#
         }
 
         void grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
