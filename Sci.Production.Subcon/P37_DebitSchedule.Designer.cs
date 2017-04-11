@@ -33,13 +33,21 @@
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
             // 
+            // btmcont
+            // 
+            this.btmcont.Location = new System.Drawing.Point(0, 460);
+            // 
+            // gridcont
+            // 
+            this.gridcont.Size = new System.Drawing.Size(807, 438);
+            // 
             // save
             // 
             this.save.Click += new System.EventHandler(this.save_Click);
             // 
             // P37_DebitSchedule
             // 
-            this.ClientSize = new System.Drawing.Size(831, 497);
+            this.ClientSize = new System.Drawing.Size(831, 500);
             this.Name = "P37_DebitSchedule";
             this.Text = "Debit Schedule";
             this.Controls.SetChildIndex(this.btmcont, 0);

@@ -54,10 +54,9 @@ namespace Sci.Production.Subcon
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
             MyUtility.Tool.SetupCombox(queryfors, 1, 1, "未結清,未確認,已確認未轉傳票,ALL");
             queryfors.SelectedIndex = 0;
-
+           
         }
         // Refresh
         protected override void OnDetailEntered()
@@ -66,6 +65,14 @@ namespace Sci.Production.Subcon
             lblStatus.Text = CurrentMaintain["status"].ToString();
             lblSubconDebitNote.Visible = (!MyUtility.Check.Empty(CurrentMaintain["isSubcon"]));
             numBalance.Value = decimal.Parse(CurrentMaintain["amount"].ToString()) - decimal.Parse(CurrentMaintain["received"].ToString());
+            DataRow ftyVD;
+           MyUtility.Check.Seek(string.Format(@"SELECT VoucherDate FROM [FinanceEN].[dbo].[Voucher] WHERE ID=(SELECT VoucherFactory FROM Debit WHERE ID='{0}')"
+ , displayBox1.Text), out ftyVD);
+           if (ftyVD != null)
+           {
+               dateBox4.Text = Convert.ToDateTime(ftyVD["VoucherDate"]).ToString("yyyy/MM/dd");
+           }
+           else { dateBox4.Text = ""; }
         }
         // Detail Grid 設定
         protected override void OnDetailGridSetup()

@@ -184,7 +184,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(2517, 397);
+            this.gridicon.Location = new System.Drawing.Point(2767, 397);
             // 
             // refresh
             // 
@@ -785,7 +785,6 @@
             // 
             // dateBox4
             // 
-            this.dateBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SettleDate", true));
             this.dateBox4.IsSupportEditMode = false;
             this.dateBox4.Location = new System.Drawing.Point(458, 57);
             this.dateBox4.Name = "dateBox4";

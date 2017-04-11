@@ -5,7 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
 using Ict;
 using Ict.Win;
 using Sci;
@@ -23,22 +22,23 @@ namespace Sci.Production.Subcon
             this.KeyField1 = "ID";
             this.WorkAlias = "Debit_Schedule";
         }
-
+        
         protected override bool OnGridSetup()
         {
             Helper.Controls.Grid.Generator(this.grid)
                 .Date("issuedate", header: "Debit Date", width: Widths.AnsiChars(10))
                 .Numeric("amount", header: "Deibt Amount", integer_places: 12, decimal_places: 2)
-                .Text("voucherid", header: "Voucher No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("VOUCHERDATE", header: "Voucher Date.", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("addDate", header: "Create Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("voucherid", header: "Voucher No.", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                .DateTime("VOUCHERDATE", header: "Voucher Date", width: Widths.AnsiChars(10), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMdd)
+                .DateTime("addDate", header: "Create Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
                 .Text("addName", header: "Create Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("editDate", header: "Edit Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .DateTime("editDate", header: "Edit Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
                 .Text("editName", header: "Edit Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 ;
             return true;
         }
 
+     
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -46,9 +46,9 @@ namespace Sci.Production.Subcon
             datas.Columns.Add("VOUCHERDATE");
             foreach (DataRow dr in datas.Rows)
             {
-                dr["VOUCHERDATE"] = MyUtility.GetValue.Lookup(string.Format("SELECT VoucherDate from Voucher WITH (NOLOCK) where id = '{0}'", dr["voucherid"]), "Finance");
+                dr["VOUCHERDATE"] = MyUtility.GetValue.Lookup(string.Format("SELECT VoucherDate from [FinanceEN].[dbo].[Voucher] WITH (NOLOCK) where id = '{0}'", dr["voucherid"]));
             }
-            this.grid.AutoResizeColumns();
+            //this.grid.AutoResizeColumns();
         }
 
         protected override void OnEditModeChanged()
