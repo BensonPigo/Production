@@ -150,33 +150,33 @@ BEGIN
 
 
 	--Forecast
-	Select Forecast.ID, rtrim(Forecast.FactoryID) as FactoryID
+	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID
 		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
 	, Factory.CountryID
 	,cTms as ArtworkTypeTMS
 	,Style.CPU, ForecastTMSCPU, cCPU
-	,Forecast.Qty as ForecastQty
+	,Orders.Qty as ForecastQty
 	,Style_TmsCost.ArtworkTypeID
 	,CpuRate
-	,(cCPU * Forecast.Qty * CpuRate) as ForecastCapacity
-	,Forecast.BuyerDelivery
+	,(cCPU * Orders.Qty * CpuRate) as ForecastCapacity
+	,Orders.BuyerDelivery
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
 	,FactorySort
-	into #tmpForecast1 from Forecast
-	left join Factory on Factory.ID = Forecast.FactoryID
-	left join Style on Style.Ukey = Forecast.StyleUkey
+	into #tmpForecast1 from Orders
+	left join Factory on Factory.ID = Orders.FactoryID
+	left join Style on Style.Ukey = Orders.StyleUkey
 	left join Style_TmsCost on @CalArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = Style_TmsCost.ArtworkTypeID
 	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty, Style_TMSCost.Tms )) as cTms) amt
 	outer apply (select cTms / @mStandardTMS as ForecastTMSCPU ) fotmc
-	outer apply (select iif(@CalArtWorkType = 'CPU', Forecast.CPU, ForecastTMSCPU) as cCPU) ccpu
+	outer apply (select iif(@CalArtWorkType = 'CPU', Orders.CPU, ForecastTMSCPU) as cCPU) ccpu
 	outer apply (select CpuRate from GetCPURate('', '', '', '', 'O') ) gcRate
-	outer apply (select format(dateadd(day,-7,Forecast.BuyerDelivery),'yyyyMM') as Date1) odd1
-	outer apply (select dbo.GetHalfMonWithYear(Forecast.BuyerDelivery) as Date2) odd2
-	Where Forecast.BuyerDelivery Between @date_s and @date_e
-	And Forecast.Qty > 0
+	outer apply (select format(dateadd(day,-7,Orders.BuyerDelivery),'yyyyMM') as Date1) odd1
+	outer apply (select dbo.GetHalfMonWithYear(Orders.BuyerDelivery) as Date2) odd2
+	Where Orders.BuyerDelivery Between @date_s and @date_e
+	And Orders.Qty > 0
 	AND @HasForecast = 1
-	
+	AND Orders.IsForecast = 1
 	--
 	declare @tmpFinal table (
 		CountryID varchar(2)
