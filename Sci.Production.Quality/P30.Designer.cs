@@ -61,6 +61,8 @@
             this.textBox15 = new Sci.Win.UI.DateBox();
             this.textBox6 = new Sci.Win.UI.NumericBox();
             this.textBox9 = new Sci.Production.Class.txtuser();
+            this.button21 = new Sci.Win.UI.Button();
+            this.button20 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -77,6 +79,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.button21);
+            this.masterpanel.Controls.Add(this.button20);
             this.masterpanel.Controls.Add(this.textBox6);
             this.masterpanel.Controls.Add(this.textBox9);
             this.masterpanel.Controls.Add(this.btnFinished);
@@ -145,6 +149,8 @@
             this.masterpanel.Controls.SetChildIndex(this.btnFinished, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox9, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.button20, 0);
+            this.masterpanel.Controls.SetChildIndex(this.button21, 0);
             // 
             // detailpanel
             // 
@@ -192,7 +198,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(760, 387);
+            this.browse.Size = new System.Drawing.Size(913, 387);
             // 
             // tabs
             // 
@@ -457,9 +463,9 @@
             // btnFinished
             // 
             this.btnFinished.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnFinished.Location = new System.Drawing.Point(572, 91);
+            this.btnFinished.Location = new System.Drawing.Point(571, 173);
             this.btnFinished.Name = "btnFinished";
-            this.btnFinished.Size = new System.Drawing.Size(116, 30);
+            this.btnFinished.Size = new System.Drawing.Size(194, 27);
             this.btnFinished.TabIndex = 4;
             this.btnFinished.Text = "Finished";
             this.btnFinished.UseVisualStyleBackColor = true;
@@ -561,6 +567,26 @@
             this.textBox9.TabIndex = 41;
             this.textBox9.TextBox1Binding = "";
             // 
+            // button21
+            // 
+            this.button21.Location = new System.Drawing.Point(571, 135);
+            this.button21.Name = "button21";
+            this.button21.Size = new System.Drawing.Size(194, 27);
+            this.button21.TabIndex = 100;
+            this.button21.Text = "Accessory inspection list";
+            this.button21.UseVisualStyleBackColor = true;
+            this.button21.Click += new System.EventHandler(this.button21_Click);
+            // 
+            // button20
+            // 
+            this.button20.Location = new System.Drawing.Point(571, 105);
+            this.button20.Name = "button20";
+            this.button20.Size = new System.Drawing.Size(194, 27);
+            this.button20.TabIndex = 99;
+            this.button20.Text = "Fabric inspection list";
+            this.button20.UseVisualStyleBackColor = true;
+            this.button20.Click += new System.EventHandler(this.button20_Click);
+            // 
             // P30
             // 
             this.ClientSize = new System.Drawing.Size(921, 449);
@@ -638,5 +664,7 @@
         private Win.UI.DateBox textBox14;
         private Class.txtuser textBox9;
         private Win.UI.NumericBox textBox6;
+        private Win.UI.Button button21;
+        private Win.UI.Button button20;
     }
 }

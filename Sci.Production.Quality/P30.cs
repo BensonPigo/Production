@@ -17,17 +17,16 @@ namespace Sci.Production.Quality
 {
     public partial class P30 : Sci.Win.Tems.Input6
     {
-
-        bool ISEE = false;
         protected DataRow motherData;
         Size thisSize;
+        bool FirstTime = true;
         // (menuitem, args= 參數)
         public P30(ToolStripMenuItem menuitem,String history) : base(menuitem) 
         {
             InitializeComponent();
             thisSize = this.Size;
-            ISEE = true;
-            string mdClose=this.textBox8.Text;
+            FirstTime = false;
+           
 
             //設定init()
             string factoryId = Sci.Env.User.Factory;
@@ -42,18 +41,18 @@ namespace Sci.Production.Quality
                 this.DefaultFilter = string.Format("FactoryId= '{0}' and MDClose is not null", factoryId);
                 this.Text = "P31 .MD Master List(History)";
                 this.IsSupportEdit = false;
-
-            }         
-           
+            }                    
         }
         
         protected override void OnEditModeChanged()
-        {                      
-            base.OnEditModeChanged();
-            if (ISEE)
+        {
+            if (FirstTime)
             {
-                btnFinished.Enabled = !EditMode;
+                return;
             }
+            base.OnEditModeChanged();
+            button_enable();
+
         }
         public void colorSelect_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -352,9 +351,18 @@ namespace Sci.Production.Quality
                 this.comboBox1.DisplayMember = "Name";
                 this.comboBox1.ValueMember = "ID";
             }
-            else { ShowErr(cbResult); }       
+            else 
+            {
+                ShowErr(cbResult); 
+            }
+            
         }
-       
+
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+            button_enable();          
+        }
 
         protected override bool ClickSaveBefore()
         {
@@ -384,6 +392,20 @@ namespace Sci.Production.Quality
                 }
             return base.ClickSaveBefore();
         }
+
+        private void button_enable()
+        {
+            DataTable dt;
+            string cmd = string.Format("select MDClose from orders where id='{0}' ", textBox1.Text);
+            DBProxy.Current.Select(null, cmd, out dt);
+            if (dt.Rows.Count>0)
+            {
+                this.btnFinished.Text = MyUtility.Check.Empty(dt.Rows[0]["MDClose"]) ? "Finished" : "Back to Master List";
+                this.textBox8.Value = MyUtility.Convert.GetDate(dt.Rows[0]["MDClose"]);
+            }
+            btnFinished.Enabled = !this.EditMode;
+            
+        }
            
             
         protected override DualResult ClickSave()
@@ -395,52 +417,42 @@ namespace Sci.Production.Quality
         // Button Finished
         private void button1_Click(object sender, EventArgs e)
         {
-            
-            DataRow row = this.detailgrid.GetDataRow(this.detailgridbs.Position);
-            DialogResult buttonFinished = MyUtility.Msg.QuestionBox("Do you want to finished this order!", "Question", MessageBoxButtons.YesNo);
-            //訊息方塊選擇"NO" MDClose清空
-            if (buttonFinished == DialogResult.No)
+            if (this.btnFinished.Text=="Finished")
             {
-                
-                DialogResult BackToMasterList = MyUtility.Msg.QuestionBox("Do you want to back to master list?", "Question", MessageBoxButtons.OKCancel);
-                if (BackToMasterList == DialogResult.OK)
+                 DialogResult buttonFinished = MyUtility.Msg.QuestionBox("Do you want to finished this order!", "Question", MessageBoxButtons.YesNo);
+            //訊息方塊選擇"NO" MDClose清空
+                 if (buttonFinished == DialogResult.Yes)
+                 {
+                     string sqlCmdUpdate = "update orders  set MDClose= CONVERT(VARCHAR(20), GETDATE(), 120)  where id=@MdID";
+                     List<SqlParameter> spam = new List<SqlParameter>();
+                     spam.Add(new SqlParameter("@MdID", textBox1.Text));
+                     DualResult result = DBProxy.Current.Execute("Production", sqlCmdUpdate, spam);
+                     if (!result) { return; }
+                 }
+                 else
+                 {
+                     return;
+                 }
+            }
+            else
+            {
+                DialogResult buttonFinished = MyUtility.Msg.QuestionBox("Do you want to back to master list?", "Question", MessageBoxButtons.YesNo);
+                if (buttonFinished== DialogResult.Yes)
                 {
-
-                    string sqlCmdUpdate = "update orders  set MDClose= Null  where id=@MdID";
-                    DataRow row1 = this.detailgrid.GetDataRow(this.detailgridbs.Position);
-                    string sp1Value = row1["ID"].ToString();
+                      string sqlCmdUpdate = "update orders  set MDClose= Null  where id=@MdID";
+                    
                     List<SqlParameter> spam = new List<SqlParameter>();
-                    spam.Add(new SqlParameter("@MdID", sp1Value));
+                    spam.Add(new SqlParameter("@MdID", this.textBox1.Text));
                     DualResult result = DBProxy.Current.Execute("Production", sqlCmdUpdate,spam);
                     
                     if (!result) { return; }
-                   // MyUtility.Msg.WarningBox("order.mdclose 清空");
-                }
-                else { return; }
-            }
-            //訊息方塊選擇YES, MDClose填入Date()
-            else
-            {
-                string Today = DateTime.Now.ToShortDateString();
-                string sqlCmdUpdate = "update orders  set MDClose= CONVERT(VARCHAR(20), GETDATE(), 120)  where id=@MdID";
-                DataRow row1 = this.detailgrid.GetDataRow(this.detailgridbs.Position);
-                string sp1Value;
-                if (MyUtility.Check.Empty(row1))
-                {
-                     sp1Value = "";
                 }
                 else
                 {
-                     sp1Value = row1["ID"].ToString();
+                    return;
                 }
-                
-  
-                List<SqlParameter> spam = new List<SqlParameter>();
-                spam.Add(new SqlParameter("@MdID", sp1Value));
-                DualResult result= DBProxy.Current.Execute("Production", sqlCmdUpdate,spam);
-                this.textBox8.Value = MyUtility.Convert.GetDate( Today);
-                //MyUtility.Msg.WarningBox("order.mdclose insert date");
             }
+            OnDetailEntered();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -448,6 +460,18 @@ namespace Sci.Production.Quality
             int a = this.detailgrid.Rows.Count;
             var tab = (DataTable)this.detailgridbs.DataSource;
             int b = tab.Rows.Count;
+        }
+
+        private void button20_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Quality.P01 callNextForm = new Sci.Production.Quality.P01(MyUtility.Convert.GetString(this.textBox1.Text));
+            callNextForm.ShowDialog(this);
+        }
+
+        private void button21_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Quality.P02 callNextForm = new Sci.Production.Quality.P02(MyUtility.Convert.GetString(this.textBox1.Text));
+            callNextForm.ShowDialog(this);
         }
 
 
