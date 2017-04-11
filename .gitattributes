@@ -52,6 +52,7 @@ Database/dbo/Functions/GetDigitalValue.sql -text
 Database/dbo/Functions/GetExportOrderAmount.sql -text
 Database/dbo/Functions/GetFinanceRate.sql -text
 Database/dbo/Functions/GetFirResult.sql -text
+Database/dbo/Functions/GetHalfMonWithYear.sql -text
 Database/dbo/Functions/GetHaveDelaySupp.sql -text
 Database/dbo/Functions/GetInspectionResult.sql -text
 Database/dbo/Functions/GetLossAccessory.sql -text
