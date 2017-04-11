@@ -28,15 +28,6 @@ namespace Sci.Production.Quality
             InitializeComponent();
             detailgrid.ContextMenuStrip = contextMenuStrip1;            
         }
-         public P03(string POID)
-        {
-             
-            InitializeComponent();
-            DefaultFilter = string.Format("POID = '{0}'", POID);
-            InsertDetailGridOnDoubleClick = false;
-            IsSupportEdit = false;
-            detailgrid.ContextMenuStrip = contextMenuStrip1;
-        }
          protected override void OnDetailEntered()
          {
              base.OnDetailEntered();
@@ -135,8 +126,6 @@ where POID='{0}'
                  Complete_box.Text = completedate.ToString("yyyy/MM/dd");
              }
              else this.Complete_box.Text = "";
-             
-
          }
        
         //表身額外的資料來源
@@ -345,10 +334,8 @@ where POID='{0}'
                     spam_non.Add(new SqlParameter("@nonHeat", nonHeat));
                     spam_non.Add(new SqlParameter("@RSD", dr["ReceiveSampleDate"]));
                     spam_non.Add(new SqlParameter("@id", dr["ID"]));
-                    DBProxy.Current.Execute(null, save_non_cmd, spam_non);
-                    
-                }
-                
+                    DBProxy.Current.Execute(null, save_non_cmd, spam_non);                    
+                }               
             }
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
@@ -356,7 +343,6 @@ where POID='{0}'
             {
                 try
                 {
-
                     if (!(upResult = DBProxy.Current.Execute(null, save_po_cmd,spam_po)))
                     {
                         _transactionscope.Dispose();
