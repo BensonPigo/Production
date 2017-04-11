@@ -705,6 +705,11 @@ namespace Sci.Production.Quality
         private void encode_button_Click(object sender, EventArgs e)
         {
             string updatesql = "";
+            if (MyUtility.Check.Empty(CurrentData))
+            {
+                MyUtility.Msg.WarningBox("Data is not found! Each Dyelot must be tested! ");
+                return;
+            }
             if (!MyUtility.Convert.GetBool(maindr["HeatEncode"]))
             {
                 if (!MyUtility.Convert.GetBool(maindr["nonHeat"]))//判斷有勾選可Encode
