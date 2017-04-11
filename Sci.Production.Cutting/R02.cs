@@ -28,7 +28,7 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
             DataTable WorkOrder;
-            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
+            DBProxy.Current.Select(null, "Select Distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
             MyUtility.Tool.SetupCombox(cmb_MDivisionID, 1, WorkOrder);
             cmb_MDivisionID.Text = Sci.Env.User.Keyword;
             //createfolder();
@@ -152,9 +152,7 @@ and Cutplan.MDivisionID ='{2}' and Cutplan.CutCellID >= '{3}' and Cutplan.CutCel
                     sqlCmd.Append(@"
 IF OBJECT_ID('tempdb.dbo.#tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
-                    sqlCmd.Append(@"
-', 'U') IS NOT NULL
-  DROP TABLE #tmpall");
+                    sqlCmd.Append(@"', 'U') IS NOT NULL  DROP TABLE #tmpall");
                     sqlCmd.Append(string.Format("{0} ", i));
                     sqlCmd.Append(@"
 select distinct
