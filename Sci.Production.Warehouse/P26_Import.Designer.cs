@@ -91,7 +91,7 @@
             this.button1.Location = new System.Drawing.Point(906, 26);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(90, 30);
-            this.button1.TabIndex = 6;
+            this.button1.TabIndex = 7;
             this.button1.Text = "Query";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -192,7 +192,7 @@
             this.textBox7.Location = new System.Drawing.Point(823, 29);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(70, 23);
-            this.textBox7.TabIndex = 5;
+            this.textBox7.TabIndex = 6;
             // 
             // radioPanel1
             // 
@@ -246,7 +246,7 @@
             this.label1.Location = new System.Drawing.Point(346, 29);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 5;
+            this.label1.TabIndex = 3;
             this.label1.Text = "Ref#";
             // 
             // textBox6
@@ -257,7 +257,7 @@
             this.textBox6.Location = new System.Drawing.Point(642, 29);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(91, 23);
-            this.textBox6.TabIndex = 4;
+            this.textBox6.TabIndex = 5;
             // 
             // textBox4
             // 
@@ -268,7 +268,7 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
             this.textBox4.Size = new System.Drawing.Size(122, 23);
-            this.textBox4.TabIndex = 7;
+            this.textBox4.TabIndex = 8;
             // 
             // textBox5
             // 
@@ -278,7 +278,7 @@
             this.textBox5.Location = new System.Drawing.Point(424, 29);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(122, 23);
-            this.textBox5.TabIndex = 3;
+            this.textBox5.TabIndex = 4;
             // 
             // label3
             // 

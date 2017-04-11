@@ -386,5 +386,29 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString(),Sci.Env.User.Key
                 item["tolocation"] = this.textBox3.Text;
             }
         }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            bool re = base.ProcessCmdKey(ref msg, keyData);
+            if (radioButton2.Focused && radioButton2.Checked == true)
+            {
+                if (keyData == Keys.Tab || keyData == Keys.Enter)
+                {
+                    textBox4.Select();
+                    return true;
+                }
+            }
+
+            if (textBox4.Focused)
+            {
+                if(keyData == Keys.Tab || keyData == Keys.Enter)
+                {
+                    textBox4.TabStop = false;
+                    button1.Select();
+                    return true;
+                }
+            }
+            return re;
+        }
     }
 }
