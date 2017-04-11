@@ -269,6 +269,11 @@ namespace Sci.Production.Cutting
                 #region Color & Q'ty B'Down (PO Combo)
                 System.Data.DataTable rpt3;
                 DualResult res = DBProxy.Current.Select("", "select b.POComboList,Style=StyleID+'-'+SeasonID from dbo.Orders a WITH (NOLOCK) inner join Order_POComboList b WITH (NOLOCK) on a.id = b.ID where a.ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) }, out rpt3);
+                if (rpt3.Rows.Count <= 0)
+                {
+                    MyUtility.Msg.InfoBox("Data not find!");
+                    return false;
+                }
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ColorCombo_SizeBreakdown.xltx");
 
                 sxrc sxr = new sxrc(xltPath);
