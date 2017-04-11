@@ -25,7 +25,7 @@ namespace Sci.Production.Sewing
             DataTable factory;
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
             MyUtility.Tool.SetupCombox(comboBox1, 1, factory);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, 1, ",A,B");
+            //MyUtility.Tool.SetupCombox(comboBox2, 1, 1, ",A,B");
             MyUtility.Tool.SetupCombox(comboBox3, 1, 1, "Included,Excluded");
             dateBox1.Value = DateTime.Today.AddDays(-1);
             comboBox1.Text = Sci.Env.User.Factory;
@@ -62,22 +62,42 @@ namespace Sci.Production.Sewing
             #region 組撈Data SQL
             sqlCmd.Append(string.Format(@"
 ;with tmpSewingDetail as (
-    select s.OutputDate,s.Category,s.Shift,s.SewingLineID,IIF(sd.QAQty=0,s.Manpower,s.Manpower*sd.QAQty) as ActManPower,
-    s.Team,sd.OrderId,sd.ComboType,sd.WorkHour,sd.QAQty,sd.InlineQty,isnull(o.Category,'') as OrderCategory,
-    o.LocalOrder,isnull(o.CdCodeID,'') as OrderCdCodeID,
-    isnull(mo.MockupID,'') as MockupCDCodeID,s.FactoryID,
-    isnull(o.CPU,0) as OrderCPU,isnull(o.CPUFactor,0) as OrderCPUFactor,isnull(mo.Cpu,0) as MockupCPU,
-    isnull(mo.CPUFactor,0) as MockupCPUFactor,isnull(o.StyleID,'') as OrderStyle,isnull(mo.StyleID,'') as MockupStyle,
-    isnull(o.SeasonID,'') as OrderSeason,isnull(mo.SeasonID,'') as MockupSeason,isnull(sl.Rate,100)/100 as Rate,
-    StdTMS.StdTMS,
-    isnull(r.InspectQty,0) as InspectQty,isnull(r.RejectQty,0) as RejectQty
-    from SewingOutput s WITH (NOLOCK) 
+    select 
+	    s.OutputDate,
+	    s.Category,
+	    s.Shift,
+	    s.SewingLineID,
+	    [ActManPower] = IIF(sd.QAQty = 0, s.Manpower, s.Manpower * sd.QAQty),
+	    s.Team,
+	    sd.OrderId,
+	    sd.ComboType,
+	    sd.WorkHour,
+	    sd.QAQty,
+	    sd.InlineQty,
+	    [OrderCategory] = isnull(o.Category,''),
+	    o.LocalOrder,
+	    [OrderCdCodeID] = isnull(o.CdCodeID,''),
+	    [MockupCDCodeID] = isnull(mo.MockupID,''),
+	    s.FactoryID,
+	    [OrderCPU] = isnull(o.CPU,0),
+	    [OrderCPUFactor] = isnull(o.CPUFactor,0),
+	    [MockupCPU] = isnull(mo.Cpu,0),
+	    [MockupCPUFactor] = isnull(mo.CPUFactor,0),
+	    [OrderStyle] = isnull(o.StyleID,''),
+	    [MockupStyle] = isnull(mo.StyleID,''),
+	    [OrderSeason] = isnull(o.SeasonID,''),
+	    [MockupSeason] = isnull(mo.SeasonID,''),
+	    [Rate] = isnull(sl.Rate,100)/100,
+	    System.StdTMS,
+	    [InspectQty] = isnull(r.InspectQty,0),
+	    [RejectQty] = isnull(r.RejectQty,0)
+    from System,SewingOutput s WITH (NOLOCK) 
     inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
     left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
     left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
     left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType
-    left join Rft r WITH (NOLOCK) on r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
-    OUTER APPLY((select StdTMS from System WITH (NOLOCK) ))StdTMS
+    left join Rft r WITH (NOLOCK) on r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID 
+							      and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
     where s.OutputDate = '{0}'
     and s.FactoryID = '{1}'"
                 , Convert.ToDateTime(_date).ToString("d"), _factory));

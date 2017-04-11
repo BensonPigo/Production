@@ -114,6 +114,10 @@
             this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.IsSupportUnselect = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "",
+            "A",
+            "B"});
             this.comboBox2.Location = new System.Drawing.Point(88, 84);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(63, 24);
