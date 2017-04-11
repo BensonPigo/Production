@@ -325,6 +325,7 @@
             this.displayBox1.Name = "displayBox1";
             this.displayBox1.Size = new System.Drawing.Size(278, 29);
             this.displayBox1.TabIndex = 4;
+            this.displayBox1.TextChanged += new System.EventHandler(this.displayBox1_TextChanged);
             // 
             // label4
             // 

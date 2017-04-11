@@ -309,5 +309,10 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
             label17.Text = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(label17.Text) + 1);
             textBox1.Text = "";
         }
+
+        private void displayBox1_TextChanged(object sender, EventArgs e)
+        {
+            button3.Enabled = !displayBox1.Text.Empty();           
+        }
     }
 }
