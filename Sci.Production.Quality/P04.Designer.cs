@@ -499,7 +499,6 @@
             this.GridNew = 0;
             this.GridUniqueKey = "No";
             this.IsSupportClip = false;
-            this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportNew = false;

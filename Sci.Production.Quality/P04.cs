@@ -24,8 +24,7 @@ namespace Sci.Production.Quality
           
         public P04(ToolStripMenuItem menuitem)
             : base(menuitem)
-        {
-                   
+        {                
             InitializeComponent();         
             DefaultFilter = string.Format("MDivisionid='{0}'",Factory);                     
         }
@@ -502,6 +501,7 @@ left join Order_Qty c WITH (NOLOCK) on a.ID=c.ID and c.Article=b.Article where a
                 {
                     MyUtility.Msg.InfoBox("The OrderID is not verify");
                     SP_Text.Text = "";
+                    this.SP_Text.Focus();
                     return;
                 }
             }
@@ -515,12 +515,11 @@ left join Order_Qty c WITH (NOLOCK) on a.ID=c.ID and c.Article=b.Article where a
         private void Send_Mail()
         {           
               
-            string mailto = "fill the email account";
-            string mailcc = "fill the email account";
+            string mailto = "";
+            string mailcc = "";
             string subject = "Garment Test - Style #:" + style_text.Text + ", Season :" + Season_Text.Text;
             string content = "Garment Test - Style #:" + style_text.Text + ", Season :" + Season_Text.Text + " had been sent, please receive and confirm";
             var email = new MailTo(Sci.Env.User.MailAddress, mailto, mailcc, subject, null, content.ToString(), false, true);
-            //var email = new MailTo("willy.wei@sportscity.com", "willy.wei@sportscity.com", "willy.wei@sportscity.com", subject, null, content.ToString(), false, true);
             email.ShowDialog(this);            
           
         }
