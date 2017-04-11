@@ -13,6 +13,7 @@ namespace Sci.Production.Packing
 {
     public partial class P09 : Sci.Win.Tems.QueryForm
     {
+        P09_IDX_CTRL IDX = new P09_IDX_CTRL();
         protected bool canUnConfirm;
         protected DataTable PackID;
         public P09(ToolStripMenuItem menuitem)
@@ -321,7 +322,7 @@ order by ID,Seq", textBox1.Text);
                 MyUtility.Msg.WarningBox("This carton had been scanned, so can't scan again!!");
                 return;
             }
-
+            IDX.IdxCall(1, "8:?", 4);
             Sci.Production.Packing.P09_StartToScan callNextForm = new Sci.Production.Packing.P09_StartToScan(dr);
             DialogResult result = callNextForm.ShowDialog(this);
             if (result == System.Windows.Forms.DialogResult.OK)
