@@ -37,9 +37,9 @@ namespace Sci.Production.Planning
                .Numeric("totalqty", header: "TotalQty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true);
             
             this.checkBox1.Checked = true;
-            dateRange2.Value1 = DateTime.Now.AddMonths(1);
-            dateRange2.Value2 = DateTime.Now.AddMonths(2).AddDays(-1);
-
+            dateRange2.Value1 = DateTime.Today.AddMonths(1);
+            dateRange2.Value2 = DateTime.Today.AddMonths(2).AddDays(-1);
+           
             Dictionary<string, string> di_inhouseOsp = new Dictionary<string, string>();
             di_inhouseOsp.Add("", "All");
             di_inhouseOsp.Add("O", "OSP");

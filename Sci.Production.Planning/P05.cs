@@ -32,8 +32,8 @@ namespace Sci.Production.Planning
             base.OnFormLoaded();
             //grid2.AutoGenerateColumns = true;
 
-            dateRange1.Value1 = DateTime.Now.AddMonths(1);
-            dateRange1.Value2 = DateTime.Now.AddMonths(2).AddDays(-1);
+            dateRange1.Value1 = DateTime.Today.AddMonths(1);
+            dateRange1.Value2 = DateTime.Today.AddMonths(2).AddDays(-1);
 
             Dictionary<string, string> di_inhouseOsp = new Dictionary<string, string>();
             di_inhouseOsp.Add("", "All");
