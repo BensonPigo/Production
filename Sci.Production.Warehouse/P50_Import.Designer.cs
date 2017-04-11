@@ -53,6 +53,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label9 = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -139,12 +140,13 @@
             "Inventory"});
             this.cbbSort.Location = new System.Drawing.Point(87, 19);
             this.cbbSort.Name = "cbbSort";
-            this.cbbSort.Size = new System.Drawing.Size(100, 24);
+            this.cbbSort.Size = new System.Drawing.Size(119, 24);
             this.cbbSort.TabIndex = 5;
             this.cbbSort.SelectedIndexChanged += new System.EventHandler(this.cbbSort_SelectedIndexChanged);
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.label2);
@@ -204,7 +206,7 @@
             // 
             this.nbRandom.BackColor = System.Drawing.Color.White;
             this.nbRandom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.nbRandom.Location = new System.Drawing.Point(792, 58);
+            this.nbRandom.Location = new System.Drawing.Point(804, 58);
             this.nbRandom.Name = "nbRandom";
             this.nbRandom.NullValue = new decimal(new int[] {
             0,
@@ -223,7 +225,7 @@
             // label7
             // 
             this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(669, 57);
+            this.label7.Location = new System.Drawing.Point(681, 57);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(120, 23);
             this.label7.TabIndex = 12;
@@ -233,7 +235,7 @@
             // 
             this.txtLocation.BackColor = System.Drawing.Color.White;
             this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocation.Location = new System.Drawing.Point(767, 23);
+            this.txtLocation.Location = new System.Drawing.Point(779, 23);
             this.txtLocation.Name = "txtLocation";
             this.txtLocation.Size = new System.Drawing.Size(100, 23);
             this.txtLocation.TabIndex = 3;
@@ -243,7 +245,7 @@
             // label6
             // 
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(669, 23);
+            this.label6.Location = new System.Drawing.Point(681, 23);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(95, 23);
             this.label6.TabIndex = 10;
@@ -331,7 +333,7 @@
             // 
             this.txtSP2.BackColor = System.Drawing.Color.White;
             this.txtSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP2.Location = new System.Drawing.Point(530, 58);
+            this.txtSP2.Location = new System.Drawing.Point(551, 58);
             this.txtSP2.Name = "txtSP2";
             this.txtSP2.Size = new System.Drawing.Size(116, 23);
             this.txtSP2.TabIndex = 6;
@@ -368,6 +370,17 @@
             this.grid1.Size = new System.Drawing.Size(1008, 376);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
+            // 
+            // label9
+            // 
+            this.label9.BackColor = System.Drawing.SystemColors.Control;
+            this.label9.Lines = 0;
+            this.label9.Location = new System.Drawing.Point(530, 60);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(19, 23);
+            this.label9.TabIndex = 107;
+            this.label9.Text = "~";
+            this.label9.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P50_Import
             // 
@@ -413,5 +426,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label5;
         private Win.UI.ComboBox cbbSort;
+        private Win.UI.Label label9;
     }
 }
