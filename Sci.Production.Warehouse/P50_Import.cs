@@ -149,7 +149,7 @@ and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //3
                 .Text("refno", header: "Ref#", iseditingreadonly: true)      //5
                 .Text("Colorid", header: "Color", iseditingreadonly: true)      //5
-                .ComboBox("FabricType", header: "Fabric Type", iseditable: false).Get(out cbb_fabrictype)      //5
+                .ComboBox("FabricType", header: "Material Type", iseditable: false).Get(out cbb_fabrictype)      //5
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //5
                 .Text("location", header: "Bulk Location", iseditingreadonly: true)      //2
                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25))
