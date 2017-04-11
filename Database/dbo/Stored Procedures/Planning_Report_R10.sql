@@ -102,11 +102,12 @@ BEGIN
 	
 
 	--Fty Local Order
-	select ID,CPU,Qty,FactoryID,StyleUkey,BuyerDelivery into #FactoryOrder from FactoryOrder
-	Where FactoryOrder.BuyerDelivery Between @date_s and @date_e
-	And (@BrandID = '' or FactoryOrder.BrandID = @BrandID)
-	And FactoryOrder.Junk = 0 and FactoryOrder.Qty > 0  
+	select ID,CPU,Qty,FactoryID,StyleUkey,BuyerDelivery into #FactoryOrder from orders
+	Where orders.BuyerDelivery Between @date_s and @date_e
+	And (@BrandID = '' or orders.BrandID = @BrandID)
+	And orders.Junk = 0 and orders.Qty > 0  
 	AND @HasFtyLocalOrder = 1
+	AND LocalOrder = 1
 
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
 		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
