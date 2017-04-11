@@ -886,10 +886,28 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
         //Sewing Inline History
         private void button16_Click(object sender, EventArgs e)
         {
-            Sci.Win.UI.ShowHistory callNextForm = new Win.UI.ShowHistory("Order_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "SewInOffLine", caption: "History SP#", dataType: "D");
+            Sci.Win.UI.ShowHistory callNextForm = 
+                new Win.UI.ShowHistory("Order_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "SewInOffLine", caption: "History SP#", dataType: "D", setGrid: this.showHistory_SetGrid);
             callNextForm.ShowDialog(this);
         }
+        //改GridHeader&欄寬
+        void showHistory_SetGrid(Sci.Win.UI.ShowHistory history) { 
+            
+            Helper.Controls.Grid.Generator(history.grid1)
+                       .Date("NewValue", header: "New Date", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                       .Date("OldValue", header: "Old Date", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                       .Text("ReasonID", header: "Reason ID", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                       .Text("Reason", header: "Reason", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                       .EditText("Remark", header: "Remark", width: Widths.AnsiChars(22), iseditingreadonly: true)
+                       .Text("AddBy", header: "Update Date", width: Widths.AnsiChars(43), iseditingreadonly: true);
+            //排序
+            history.listControlBindingSource1.DataSourceChanged += (s, e) => {
+                if (history.listControlBindingSource1.DataSource == null) return;
+                var data = (System.Data.DataTable)history.listControlBindingSource1.DataSource;
+                data.DefaultView.Sort = "AddDate";
 
+            };
+        }
         //Cutting Combo
         private void button17_Click(object sender, EventArgs e)
         {
