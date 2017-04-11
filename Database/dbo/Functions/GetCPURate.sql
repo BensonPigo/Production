@@ -27,18 +27,18 @@ Begin
 	Begin
 		If IsNull(@OrderTypeID, '') != ''
 		Begin
- 			Select Top 1 @CpuRate = OrderType.CpuRate
-			  From dbo.OrderType WITH (NOLOCK)
-			 Where ID = @OrderTypeID
-			   And BrandID = @BrandID ;
+ 			Select Top 1 @CpuRate = Program.RateCost
+			  From Program WITH (NOLOCK)
+			 Where ID = @ProgramID
+			   And BrandID = @BrandID;
 		End;
 
 		If @CpuRate=0
 		Begin
- 			Select Top 1 @CpuRate = Program.RateCost
-			  From dbo.Program WITH (NOLOCK)
-			 Where ID = @ProgramID
-			   And BrandID = @BrandID;
+			Select Top 1 @CpuRate = OrderType.CpuRate
+			  From OrderType WITH (NOLOCK)
+			 Where ID = @OrderTypeID
+			   And BrandID = @BrandID ;
 		End;
  
  		If IsNull(@CpuRate, 0) = 0 And @Category = 'S'
