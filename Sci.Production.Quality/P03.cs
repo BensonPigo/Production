@@ -93,8 +93,7 @@ namespace Sci.Production.Quality
              else
              {
                  if (queryDr["cutinline"] == DBNull.Value) estcutdate_box.Text = "";
-                 else estcutdate_box.Value = MyUtility.Convert.GetDate(queryDr["cutinline"]);
-                     //Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
+                 else estcutdate_box.Value = MyUtility.Convert.GetDate(queryDr["cutinline"]);                     
              }
 
              mtl_box.Text = CurrentMaintain["Complete"].ToString() == "True" ? "Y" : "N";
@@ -105,7 +104,7 @@ namespace Sci.Production.Quality
              {
                  if (detailTb.Rows.Count != 0)
                  {
-                     //DataRow[] inspectAry = detailTb.Select("Result<>'' or Result in ('Pass','Fail') or (nonCrocking= 'T' or nonWash='T' or nonHeat='T')");
+                     
                      DataRow[] inspectAry = detailTb.Select("Result<>'' or (nonCrocking and nonWash and nonHeat)");
 
                      if (inspectAry.Length > 0)
@@ -461,23 +460,7 @@ where POID='{0}'
             }
             detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
         }
-        //權限 未完成
-        private void button_enable()
-        {
-            //return;
-            string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P03", "MenuDetail", "FormName");
-            string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
-            DataRow pass2_dr;
-            string pass2_cmd = string.Format("Select * from Pass2 WITH (NOLOCK) Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
-            int lApprove = 0; //有Confirm權限皆可按Pass的Approve, 有Check權限才可按Fail的Approve(TeamLeader 有Approve權限,Supervisor有Check)
-            int lCheck = 0;
-            if (MyUtility.Check.Seek(pass2_cmd, out pass2_dr))
-            {
-                lApprove = pass2_dr["CanConfirm"].ToString() == "True" ? 1 : 0;
-                lCheck = pass2_dr["CanCheck"].ToString() == "True" ? 1 : 0;
-            }
-
-        }
+       
         public void FinalResult(DataRow dr)
         {
             if (this.EditMode)
