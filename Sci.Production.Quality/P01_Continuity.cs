@@ -286,6 +286,11 @@ namespace Sci.Production.Quality
         private void encode_button_Click(object sender, EventArgs e)
         {
             string updatesql ="";
+            if (MyUtility.Check.Empty(CurrentData) && this.encode_button.Text=="Encode")
+            {
+                MyUtility.Msg.WarningBox("Data not found! ");
+                return;
+            }
             if (!MyUtility.Convert.GetBool(maindr["ContinuityEncode"])) //Encode
             {
                 if (!MyUtility.Convert.GetBool(maindr["nonContinuity"])) //只要沒勾選就要判斷，有勾選就可直接Encode
@@ -335,7 +340,7 @@ namespace Sci.Production.Quality
                 updatesql = string.Format(
                 @"Update Fir set ContinuityDate = GetDate(),ContinuityEncode=1,EditName='{0}',EditDate = GetDate(),Continuity = '{1}',Result ='{2}',Status='{4}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
                 #endregion
-                 //*****Send Excel Email 尚未完成 需寄給Encoder的Teamleader 與 Supervisor*****
+                #region Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
                 DataTable dt_Leader;
                 string cmd_leader = string.Format(@"select email from pass1	
 	where id=(select Supervisor from pass1 where  id='{0}')",Sci.Env.User.UserID);
@@ -350,9 +355,8 @@ namespace Sci.Production.Quality
                     var email = new MailTo(Sci.Env.User.MailAddress, mailto, "", subject, excelFile, content, true, true);
                     email.ShowDialog(this);
                 }
-
-               
-                //*********************************************************************************
+                #endregion
+                               
                 maindr["Result"] = returnstr[0];
                 maindr["Status"] = returnstr[1];
             }
@@ -451,7 +455,7 @@ namespace Sci.Production.Quality
                     return;
                 }
             }
-            //*****Send Excel Email 尚未完成 需寄給Factory MC*****
+            #region *****Send Excel Email 完成 需寄給Factory MC*****
             DataTable dt_MC;
             string cmd_MC = "select * from MailTo where Description='Material locked/Unlocked'";
             DBProxy.Current.Select("", cmd_MC, out dt_MC);
@@ -463,11 +467,11 @@ namespace Sci.Production.Quality
                 string subject = string.Format("WKNo: {0}, SP#: {1}, Seq: {2} Fabric Inspection Report", wk_box.Text, sp_box.Text, seq_box.Text);
                 string content = "Please see attached file ,Fabric Inspection Report";
                 ToExcel(true);
-                var email = new MailTo(Sci.Env.User.MailAddress, "willy.wei@sportscity.com.tw", "willy.wei@sportscity.com.tw", subject, excelFile, content, true, true);
+                var email = new MailTo(Sci.Env.User.MailAddress, mailto, mailCC, subject, excelFile, content, true, true);
                 email.ShowDialog(this);
             }
-
-            //*********************************************************************************
+            #endregion
+            
             OnRequery();
         }
 
@@ -475,6 +479,7 @@ namespace Sci.Production.Quality
         {
             if (maindr == null) return;
             encode_button.Enabled = this.CanEdit && !this.EditMode && maindr["Status"].ToString() != "Approved";
+            this.button3.Enabled = !this.EditMode;
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P01", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
             DataRow pass2_dr;
@@ -497,22 +502,10 @@ namespace Sci.Production.Quality
         }
 
         private void button3_Click(object sender, EventArgs e)
-        {
-            #region Excel Grid Value
-            DataTable dt;
-            DualResult xresult;
-            if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Continuity WITH (NOLOCK) where id='{0}'", textID.Text), out dt))
-            {
-                if (dt.Rows.Count <= 0)
-                {
-                    MyUtility.Msg.WarningBox("Data not found!");
-                    return;
-                }
-            }
-            #endregion
-            ToExcel(false);
-          
+        {           
+            ToExcel(false);        
         }
+
         private bool ToExcel(bool autoSave)
         {
             DataTable dt;
@@ -584,9 +577,5 @@ namespace Sci.Production.Quality
             return true;
         }
 
-
-
-
-      
     }
 }

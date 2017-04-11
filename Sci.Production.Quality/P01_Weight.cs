@@ -23,6 +23,7 @@ namespace Sci.Production.Quality
         private DataRow maindr;
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
+        string excelFile;
         public P01_Weight(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
 
@@ -299,6 +300,11 @@ namespace Sci.Production.Quality
         private void encode_button_Click(object sender, EventArgs e)
         {
             string updatesql ="";
+            if (MyUtility.Check.Empty(CurrentData) && encode_button.Text=="Encode")
+            {
+                MyUtility.Msg.WarningBox("Data not found! ");
+                return;
+            }
             if (!MyUtility.Convert.GetBool(maindr["WeightEncode"])) //Encode
             {
                 if (!MyUtility.Convert.GetBool(maindr["nonWeight"])) //只要沒勾選就要判斷，有勾選就可直接Encode
@@ -347,9 +353,23 @@ namespace Sci.Production.Quality
                 updatesql = string.Format(
                 @"Update Fir set WeightDate = GetDate(),WeightEncode=1,EditName='{0}',EditDate = GetDate(),Weight = '{1}',Result ='{2}',Status='{4}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
                 #endregion
-                 //*****Send Excel Email 尚未完成 需寄給Encoder的Teamleader 與 Supervisor*****
+                #region Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
+                DataTable dt_Leader;
+                string cmd_leader = string.Format(@"select email from pass1	
+	where id=(select Supervisor from pass1 where  id='{0}')", Sci.Env.User.UserID);
+                DBProxy.Current.Select("", cmd_leader, out dt_Leader);
+                if (!MyUtility.Check.Empty(dt_Leader))
+                {
+                    string mailto = dt_Leader.Rows[0]["email"].ToString();
 
-                //*********************************************************************************
+                    string subject = string.Format("WKNo: {0}, SP#: {1}, Seq: {2} Fabric Inspection Report", wk_box.Text, sp_box.Text, seq_box.Text);
+                    string content = "Please Approve and Check Fabric Inspection";
+                    ToExcel(true);
+                    var email = new MailTo(Sci.Env.User.MailAddress, mailto, "", subject, excelFile, content, true, true);
+                    email.ShowDialog(this);
+                }
+                #endregion
+
                 maindr["Result"] = returnstr[0];
                 maindr["Status"] = returnstr[1];
             }
@@ -445,9 +465,22 @@ namespace Sci.Production.Quality
                     return;
                 }
             }
-            //*****Send Excel Email 尚未完成 需寄給Factory MC*****
+            #region *****Send Excel Email 完成 需寄給Factory MC*****
+            DataTable dt_MC;
+            string cmd_MC = "select * from MailTo where Description='Material locked/Unlocked'";
+            DBProxy.Current.Select("", cmd_MC, out dt_MC);
+            if (!MyUtility.Check.Empty(dt_MC))
+            {
+                string mailto = dt_MC.Rows[0]["ToAddress"].ToString();
+                string mailCC = dt_MC.Rows[0]["CCAddress"].ToString();
 
-            //*********************************************************************************
+                string subject = string.Format("WKNo: {0}, SP#: {1}, Seq: {2} Fabric Inspection Report", wk_box.Text, sp_box.Text, seq_box.Text);
+                string content = "Please see attached file ,Fabric Inspection Report";
+                ToExcel(true);
+                var email = new MailTo(Sci.Env.User.MailAddress, mailto, mailCC, subject, excelFile, content, true, true);
+                email.ShowDialog(this);
+            }
+            #endregion
             OnRequery();
         }
 
@@ -455,6 +488,7 @@ namespace Sci.Production.Quality
         {
             if (maindr == null) return;
             encode_button.Enabled = this.CanEdit && !this.EditMode && maindr["Status"].ToString() != "Approved";
+            this.button3.Enabled = !this.EditMode;
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P01", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
             DataRow pass2_dr;
@@ -478,6 +512,12 @@ namespace Sci.Production.Quality
        
         private void button3_Click(object sender, EventArgs e)
         {
+
+            ToExcel(false);
+        }
+
+        private bool ToExcel(bool AutoSave)
+        {
             #region Excel Grid Value
             DataTable dt;
             DualResult xresult;
@@ -486,7 +526,7 @@ namespace Sci.Production.Quality
                 if (dt.Rows.Count <= 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
-                    return ;
+                    return false;
                 }
             }
             #endregion
@@ -495,24 +535,20 @@ namespace Sci.Production.Quality
             string SeasonID = "";
             string ContinuityEncode = "";
             DualResult xresult1;
-           
-            if (xresult1 = DBProxy.Current.Select("Production",string.Format(
-               "select Roll,Dyelot,WeightM2,averageWeightM2,Difference,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID from FIR_Weight a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", textID.Text), out dt1))          
+
+            if (xresult1 = DBProxy.Current.Select("Production", string.Format(
+               "select Roll,Dyelot,WeightM2,averageWeightM2,Difference,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID from FIR_Weight a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", textID.Text), out dt1))
             {
-                if (dt1.Rows.Count==0)
-                {
-                     SeasonID = "";
-                     ContinuityEncode = "";
-                }
-                else
+                if (dt1.Rows.Count > 0)
                 {
                     SeasonID = dt1.Rows[0]["SeasonID"].ToString();
-                    ContinuityEncode = dt1.Rows[0]["ContinuityEncode"].ToString(); 
-                }
+                    ContinuityEncode = dt1.Rows[0]["ContinuityEncode"].ToString();
+                }                
             }
             #endregion
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P01_Weight_Report.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(dt, "", "Quality_P01_Weight_Report.xltx", 5, true, null, objApp);      // 將datatable copy to excel
+            objApp.Visible = false;
+            MyUtility.Excel.CopyToXls(dt, "", "Quality_P01_Weight_Report.xltx", 5, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 2] = sp_box.Text.ToString();
             objSheets.Cells[2, 4] = seq_box.Text.ToString();
@@ -520,7 +556,7 @@ namespace Sci.Production.Quality
             objSheets.Cells[2, 8] = style_box.Text.ToString();
             objSheets.Cells[2, 10] = SeasonID;
             objSheets.Cells[3, 2] = scirefno_box.Text.ToString();
-            objSheets.Cells[3, 4] = ContinuityEncode; 
+            objSheets.Cells[3, 4] = ContinuityEncode;
             objSheets.Cells[3, 6] = result_box.Text.ToString();
             objSheets.Cells[3, 8] = lastinspdate_box.Value;
             objSheets.Cells[3, 10] = brand_box.Text.ToString();
@@ -533,9 +569,23 @@ namespace Sci.Production.Quality
             objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
             objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
+            if (AutoSave)
+            {
+                Random random = new Random();
+                excelFile = Env.Cfg.ReportTempDir + "QA_P01_Weight - " + Convert.ToDateTime(DateTime.Now).ToString("yyyyMMddHHmmss") + " - " + Convert.ToString(Convert.ToInt32(random.NextDouble() * 10000)) + ".xlsx";
+                objSheets.SaveAs(excelFile);
+                objApp.Workbooks.Close();
+                objApp.Quit();
+                objApp = null;
+            }
+            else
+            {
+                objApp.Visible = true;
+            }
+
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-           
+            return true;
         }
     }
 }
