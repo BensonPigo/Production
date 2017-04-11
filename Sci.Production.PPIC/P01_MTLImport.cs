@@ -85,7 +85,7 @@ union all
 select * from tmpReceive
 union all
 select * from tmpLocalReceiving
-order by type,ID", masterData["POID"].ToString(), masterData["ID"].ToString());
+order by ID", masterData["POID"].ToString(), masterData["ID"].ToString());
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out MTLImport);
             if (!result)
@@ -94,6 +94,7 @@ order by type,ID", masterData["POID"].ToString(), masterData["ID"].ToString());
             }
             listControlBindingSource1.DataSource = MTLImport;
             //設定Grid的顯示欄位
+           
             this.grid1.IsEditingReadOnly = true;
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
