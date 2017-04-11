@@ -884,6 +884,7 @@ SET
       ,a.Type	      =b.Type	
       ,a.Zone	      =b.Zone	
       ,a.FactorySort	      =b.FactorySort	
+	  ,a.IsSCI        =b.IsSCI
 
 from Production.dbo.Factory as a inner join Trade_To_Pms.dbo.Factory as b ON a.id=b.id
 --Factory1
