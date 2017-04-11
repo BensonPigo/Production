@@ -454,7 +454,8 @@ Exists (
         /// <param name="ID"></param>
         public static void PrintSMNotice(string ID, EnuPrintSMType enuType = EnuPrintSMType.SMNotice)
         {
-            var xltFolder = Sci.Production.Class.Commons.TradeSystem.Env.XltPathDir;
+            //var xltFolder = Sci.Production.Class.Commons.TradeSystem.Env.XltPathDir;
+            var xltFolder = Sci.Env.Cfg.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "PPIC_Pattern-P01_PrintSMnotice.xlt");
 
             if (System.IO.File.Exists(xltPath) == false)
@@ -2135,7 +2136,7 @@ Where o.ID = @ID
         /// <param name="smID"></param>
         public static void PrintSMNoticeDevTrimCard(string smID)
         {
-            var xltFolder = Sci.Production.Class.Commons.TradeSystem.Env.XltPathDir;
+            var xltFolder = Sci.Env.Cfg.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "Pattern-P01_PrintDev.xlt");
             if (System.IO.File.Exists(xltPath) == false)
             {
@@ -2354,7 +2355,7 @@ order by x.tp, x.PNO
         public static void PrintGarmentList(long uKey, string savePath = null)
         {
             var directlyOpenExportReport = (savePath == null);
-            var xltFolder = Sci.Production.Class.Commons.TradeSystem.Env.XltPathDir;
+            var xltFolder = Sci.Env.Cfg.XltPathDir;
             var xltPath = System.IO.Path.Combine(xltFolder, "Pattern-P02.Garment List-Print.xlt");
             var bmpFolder = System.IO.Path.Combine(xltFolder, "BMP");
             if (System.IO.File.Exists(xltPath) == false)
