@@ -245,7 +245,7 @@ namespace Sci.Production.Quality
                 }
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != 0)
                 {
-                    decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3) / (decimal)dr["HorizontalOriginal"];
+                    decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3 - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"]*100;
                     dr["HorizontalRate"] = Math.Round(newValue, 2);
                 }
                 else
@@ -278,7 +278,7 @@ namespace Sci.Production.Quality
                 }
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != 0)
                 {
-                    decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3) / (decimal)dr["VerticalOriginal"];
+                    decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3 - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] *100;
                     dr["VerticalRate"] = Math.Round(newValue, 2);
                 }
                 else
@@ -305,7 +305,7 @@ namespace Sci.Production.Quality
                 }               
                 if ((decimal)dr["HorizontalOriginal"] != 0)
                 {
-                    decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3) / (decimal)dr["HorizontalOriginal"];
+                    decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3 - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"] * 100;
                     dr["HorizontalRate"] = Math.Round(newValue, 2);
                     decimal newAvgValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3);
                     dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);                    
@@ -334,7 +334,7 @@ namespace Sci.Production.Quality
                 }
                 if ((decimal)dr["HorizontalOriginal"] != 0)
                 {
-                    decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3) / (decimal)dr["HorizontalOriginal"];
+                    decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3 - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"] * 100;
                     dr["HorizontalRate"] = Math.Round(newValue, 2);
                     decimal newAvgValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3);
                     dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);                    
@@ -362,7 +362,7 @@ namespace Sci.Production.Quality
                 }
                 if ((decimal)dr["HorizontalOriginal"] != 0)
                 {
-                    decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3) / (decimal)dr["HorizontalOriginal"];
+                    decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3 - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"] * 100;
                     dr["HorizontalRate"] = Math.Round(newValue, 2);
                     decimal newAvgValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3);
                     dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);
@@ -393,7 +393,7 @@ namespace Sci.Production.Quality
                 }
                 if ((decimal)dr["VerticalOriginal"] != 0)
                 {
-                    decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3) / (decimal)dr["VerticalOriginal"];
+                    decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3 - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
                     dr["VerticalRate"] = Math.Round(newValue, 2);
                     decimal newAvgValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3);
                     dr["Vertical_Average"] = Math.Round(newAvgValue, 2);                    
@@ -421,7 +421,7 @@ namespace Sci.Production.Quality
                 }
                 if ((decimal)dr["VerticalOriginal"] != 0)
                 {
-                    decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3) / (decimal)dr["VerticalOriginal"];
+                    decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3 - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
                     dr["VerticalRate"] = Math.Round(newValue, 2);
                     decimal newAvgValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3);
                     dr["Vertical_Average"] = Math.Round(newAvgValue, 2);
@@ -452,7 +452,7 @@ namespace Sci.Production.Quality
                 
                 if ((decimal)dr["VerticalOriginal"] != 0)
                 {
-                    decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3) / (decimal)dr["VerticalOriginal"];
+                    decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3 - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
                     dr["VerticalRate"] = Math.Round(newValue, 2);
                     decimal newAvgValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3);
                     dr["Vertical_Average"] = Math.Round(newAvgValue, 2);
