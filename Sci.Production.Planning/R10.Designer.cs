@@ -41,7 +41,7 @@
             this.cbDateType = new Sci.Win.UI.ComboBox();
             this.txtBrand1 = new Sci.Production.Class.txtbrand();
             this.numMonth = new System.Windows.Forms.NumericUpDown();
-            this.numYear1 = new System.Windows.Forms.NumericUpDown();
+            this.numYear = new System.Windows.Forms.NumericUpDown();
             this.lbMonth = new Sci.Win.UI.Label();
             this.lbSource = new Sci.Win.UI.Label();
             this.lbReportType = new Sci.Win.UI.Label();
@@ -53,7 +53,7 @@
             this.label1 = new Sci.Win.UI.Label();
             this.radioGroup2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMonth)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numYear1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
             // 
             // print
@@ -85,7 +85,7 @@
             this.radioGroup2.Controls.Add(this.cbDateType);
             this.radioGroup2.Controls.Add(this.txtBrand1);
             this.radioGroup2.Controls.Add(this.numMonth);
-            this.radioGroup2.Controls.Add(this.numYear1);
+            this.radioGroup2.Controls.Add(this.numYear);
             this.radioGroup2.Controls.Add(this.lbMonth);
             this.radioGroup2.Controls.Add(this.lbSource);
             this.radioGroup2.Controls.Add(this.lbReportType);
@@ -236,23 +236,23 @@
             0,
             0});
             // 
-            // numYear1
+            // numYear
             // 
-            this.numYear1.Location = new System.Drawing.Point(150, 105);
-            this.numYear1.Maximum = new decimal(new int[] {
+            this.numYear.Location = new System.Drawing.Point(150, 105);
+            this.numYear.Maximum = new decimal(new int[] {
             2100,
             0,
             0,
             0});
-            this.numYear1.Minimum = new decimal(new int[] {
+            this.numYear.Minimum = new decimal(new int[] {
             2000,
             0,
             0,
             0});
-            this.numYear1.Name = "numYear1";
-            this.numYear1.Size = new System.Drawing.Size(72, 23);
-            this.numYear1.TabIndex = 2;
-            this.numYear1.Value = new decimal(new int[] {
+            this.numYear.Name = "numYear";
+            this.numYear.Size = new System.Drawing.Size(72, 23);
+            this.numYear.TabIndex = 2;
+            this.numYear.Value = new decimal(new int[] {
             2015,
             0,
             0,
@@ -370,7 +370,7 @@
             this.radioGroup2.ResumeLayout(false);
             this.radioGroup2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMonth)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numYear1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -380,7 +380,7 @@
 
         private Win.UI.RadioGroup radioGroup2;
         private System.Windows.Forms.RadioButton rdMonth;
-        private System.Windows.Forms.NumericUpDown numYear1;
+        private System.Windows.Forms.NumericUpDown numYear;
         private Win.UI.Label lbMonth;
         private Win.UI.Label lbSource;
         private Win.UI.Label lbReportType;
