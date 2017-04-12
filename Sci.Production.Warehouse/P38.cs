@@ -16,6 +16,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P38 : Sci.Win.Tems.QueryForm
     {
+        const Byte UnLock = 0, Lock = 1;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public P38(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -183,12 +184,46 @@ where f.MDivisionID = '{0}' and fi.POID like @poid1
 
         private void btnLock_Click(object sender, EventArgs e)
         {
-            LockUnlock(1);
+            if (checkStatus(Lock))
+            {
+                LockUnlock(Lock);
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("It cannot be Lock.");
+            }
         }
 
         private void btnUnlock_Click(object sender, EventArgs e)
         {
-            LockUnlock(0);
+            if (checkStatus(UnLock))
+            {
+                LockUnlock(UnLock);
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("It cannot be UnLock.");
+            }
+        }
+
+        private bool checkStatus(Byte flag)
+        {
+            bool check = true;
+            string strCheckStatus = "";
+            #region 確認 Lock Or UnLock
+            switch (flag)
+            {
+                case UnLock:
+                    strCheckStatus = "UnLocked";
+                    break;
+                case Lock:
+                    strCheckStatus = "Locked";
+                    break;
+            }
+            #endregion 
+            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            check = !dt.AsEnumerable().Any(row => row["status"].EqualString(strCheckStatus) && row["Selected"].EqualString("1"));
+            return check;
         }
 
         private void LockUnlock(Byte flag)
