@@ -55,6 +55,8 @@ namespace Sci.Production.Quality
             this.comboMaterialType.SelectedIndex = 1;
             DataTable factory;
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
+            factory.Rows.Add(new string[] { "" });
+            factory.DefaultView.Sort = "FTYGroup";
             MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
             comboFactory.Text = Sci.Env.User.Factory;
             print.Enabled = false;
@@ -183,7 +185,7 @@ namespace Sci.Production.Quality
                 {
                     lis.Add(new SqlParameter("@MaterialType", "F"));
                 }
-            } if (!this.comboFactory.SelectedItem.ToString().Empty())
+            } if (!this.comboFactory.Text.Empty())
             {
                 OWheres.Add("O.factoryid = @Factory");
                 lis.Add(new SqlParameter("@Factory", Factory));
