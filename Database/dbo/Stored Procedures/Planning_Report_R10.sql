@@ -3,8 +3,8 @@
 CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	@ReportType int = 1 --1:整個月 2:半個月 --3:Production status 2017.01.04 Serena電話確認後，表示不用做了
 	,@BrandID varchar(20)
-	,@M varchar(20)
-	,@Fty varchar(20)
+	,@M varchar(20) = ''
+	,@Fty varchar(20) = ''
 	,@ArtWorkType varchar(20) --= 'CPU'
 	,@isSCIDelivery bit = 1
 	,@Year int = 2017
@@ -33,7 +33,7 @@ BEGIN
 
 	SELECT CountryID, Factory.CountryID + '-' + Country.Alias as CountryName , Factory.ID as FactoryID
 		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
-	, Factory.CPU
+	,Factory.CPU
 	,Factory_TMS.Year, Factory_TMS.Month, Factory_TMS.ArtworkTypeID, Factory_TMS.TMS 
 	,Capacity
 	,Capacity * fw.HalfMonth1 / (fw.HalfMonth1 + fw.HalfMonth2) as HalfCapacity1
@@ -48,20 +48,21 @@ BEGIN
 	outer apply (select DATEFROMPARTS(Factory_Tms.Year,Factory_Tms.Month,8) as OrderDate) od
 	left join ArtworkType on ArtworkType.Id = Factory_TMS.ArtworkTypeID
 	left join Factory_WorkHour fw on Factory.ID = fw.ID and fw.Year = Factory_TMS.Year and fw.Month = Factory_Tms.Month	
-	outer apply (select iif(@CalArtWorkType = 'CPU', Round(Factory_Tms.TMS * 3600 / @mStandardTMS ,0), Factory_Tms.TMS) as Capacity) cc
+	outer apply (select iif(@CalArtWorkType = 'CPU', Round(convert(numeric(10,0),Factory_Tms.TMS) * 3600 / @mStandardTMS ,0), convert(numeric(10,0),Factory_Tms.TMS)) as Capacity) cc
 	outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
 	outer apply (select cast(Factory_TMS.Year as varchar(4)) + cast(Factory_TMS.Month as varchar(2)) as Date2) odd2
 	Where ISsci = 1  And Factory.Junk = 0 And Artworktype.ReportDropdown = 1 
-	And Artworktype.ID = @ArtWorkType
+	And Artworktype.ID = @ArtWorkType And (Factory.MDivisionID = @M or @M = '') And (Factory.ID = @Fty or @Fty = '')
 
-	select id,FactoryID,CPU,OrderTypeID,ProgramID,Qty,Category,BrandID,BuyerDelivery,SciDelivery,CpuRate
-	into #Orders From orders 
+	select orders.id,FactoryID,orders.CPU,OrderTypeID,ProgramID,Qty,Category,BrandID,BuyerDelivery,SciDelivery,CpuRate
+	into #Orders From orders inner join Factory on Orders.FactoryID = Factory.ID
 	outer apply (select CpuRate from GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O') ) gcRate
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s and @date_e)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
 	And Orders.Junk = 0 and Orders.Qty > 0  And Orders.Category in ('B','S') 
-	AND @HasOrders = 1
+	AND @HasOrders = 1 
+	And (Factory.MDivisionID = @M or @M = '') And (Factory.ID = @Fty or @Fty = '')
 	
 	--Order
 	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID, CPURate
@@ -83,7 +84,8 @@ BEGIN
 	outer apply (select iif(@isSCIDelivery = 0, Orders.BuyerDelivery, Orders.SCIDelivery) as OrderDate) odd
 	outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
 	outer apply (select dbo.GetHalfMonWithYear(OrderDate) as Date2) odd2
-	
+	where 1=1 And (Factory.MDivisionID = @M or @M = '') And (Factory.ID = @Fty or @Fty = '')
+
 	print 'Sew2'
 	select * into #sew2 from Sewingoutput_Detail where ID in (select ID from #tmpOrder1)
 	print 'Sew1'
@@ -102,12 +104,14 @@ BEGIN
 	
 
 	--Fty Local Order
-	select ID,CPU,Qty,FactoryID,StyleUkey,BuyerDelivery into #FactoryOrder from orders
+	select orders.ID,orders.CPU,Qty,FactoryID,StyleUkey,BuyerDelivery into #FactoryOrder from orders
+	inner join Factory on Orders.FactoryID = Factory.ID
 	Where orders.BuyerDelivery Between @date_s and @date_e
 	And (@BrandID = '' or orders.BrandID = @BrandID)
 	And orders.Junk = 0 and orders.Qty > 0  
 	AND @HasFtyLocalOrder = 1
 	AND LocalOrder = 1
+	And (Factory.MDivisionID = @M or @M = '') And (Factory.ID = @Fty or @Fty = '')
 
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
 		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
@@ -176,7 +180,7 @@ BEGIN
 	Where Orders.BuyerDelivery Between @date_s and @date_e
 	And Orders.Qty > 0
 	AND @HasForecast = 1
-	AND Orders.IsForecast = 1
+	AND Orders.IsForecast = 1 And (Factory.MDivisionID = @M or @M = '') And (Factory.ID = @Fty or @Fty = '')
 	--
 	declare @tmpFinal table (
 		CountryID varchar(2)
