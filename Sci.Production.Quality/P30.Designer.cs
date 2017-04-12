@@ -160,7 +160,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(659, 276);
+            this.gridicon.Location = new System.Drawing.Point(796, 203);
             this.gridicon.TabIndex = 15;
             // 
             // refresh
