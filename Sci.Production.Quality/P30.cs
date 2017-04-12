@@ -314,7 +314,6 @@ namespace Sci.Production.Quality
             }
             base.OnDetailGridDelete();
         }
-        
 
         // delete rows when the pk value is empty
         protected override DualResult ClickSavePre()
@@ -405,9 +404,7 @@ namespace Sci.Production.Quality
             }
             btnFinished.Enabled = !this.EditMode;
             
-        }
-           
-            
+        }       
         protected override DualResult ClickSave()
         {
                      
@@ -453,6 +450,7 @@ namespace Sci.Production.Quality
                 }
             }
             OnDetailEntered();
+            ReloadDatas();
         }
 
         private void button2_Click(object sender, EventArgs e)

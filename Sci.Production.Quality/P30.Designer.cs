@@ -463,7 +463,7 @@
             // btnFinished
             // 
             this.btnFinished.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnFinished.Location = new System.Drawing.Point(571, 173);
+            this.btnFinished.Location = new System.Drawing.Point(702, 172);
             this.btnFinished.Name = "btnFinished";
             this.btnFinished.Size = new System.Drawing.Size(194, 27);
             this.btnFinished.TabIndex = 4;
@@ -569,7 +569,7 @@
             // 
             // button21
             // 
-            this.button21.Location = new System.Drawing.Point(571, 135);
+            this.button21.Location = new System.Drawing.Point(702, 134);
             this.button21.Name = "button21";
             this.button21.Size = new System.Drawing.Size(194, 27);
             this.button21.TabIndex = 100;
@@ -579,7 +579,7 @@
             // 
             // button20
             // 
-            this.button20.Location = new System.Drawing.Point(571, 105);
+            this.button20.Location = new System.Drawing.Point(702, 104);
             this.button20.Name = "button20";
             this.button20.Size = new System.Drawing.Size(194, 27);
             this.button20.TabIndex = 99;
