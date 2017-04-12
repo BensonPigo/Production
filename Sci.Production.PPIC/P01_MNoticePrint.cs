@@ -57,7 +57,7 @@ namespace Sci.Production.PPIC
             this.ShowWaitMessage("Data processing, please wait ...");
             if (radioButton_MNotice.Checked == true)
             {
-                string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
+                string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.MNOrder WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
 
                 DataRow drvar = GetTitleDataByCustCD(poid, _id);
 
@@ -93,7 +93,7 @@ namespace Sci.Production.PPIC
                 sxr.dicDatas.Add(sxr._v + "ExtraAction", ra);
 
                 System.Data.DataTable dt;
-                DualResult getIds = DBProxy.Current.Select("", "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY from Orders WITH (NOLOCK) where poid = @poid", new List<SqlParameter> { new SqlParameter("poid", poid) }, out dt);
+                DualResult getIds = DBProxy.Current.Select("", "select ID, FactoryID as MAKER, StyleID+'-'+SeasonID as sty, QTY from MNOrder WITH (NOLOCK) where poid = @poid", new List<SqlParameter> { new SqlParameter("poid", poid) }, out dt);
                 if (!getIds && dt.Rows.Count <= 0)
                 {
                     MyUtility.Msg.ErrorBox(getIds.ToString(), "error");
@@ -144,7 +144,7 @@ namespace Sci.Production.PPIC
              //M/Notict (Combo by ComboID)
             else
             {
-                string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
+                string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.MNOrder WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
 
                 System.Data.DataTable dtOrderCombo = GetDtByComboID(poid);
 
