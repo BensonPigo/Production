@@ -906,10 +906,10 @@ namespace Sci.Production.Quality
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
                 string cmd =
-                    @"select a.Article from Order_Qty a WITH (NOLOCK) 
-                    left join ColorFastness b WITH (NOLOCK) on a.ID=b.POID
-                    where a.id=@poid
-                    group by a.Article";
+                    @"select distinct oq.article 
+                    from orders o, order_qty oq 
+                    where o.id = oq.id and oq.qty > 0 
+                    and o.poid =@poid ";
                 List<SqlParameter> spm = new List<SqlParameter>();
                 spm.Add(new SqlParameter("@poid", PoID));
                 SelectItem item = new SelectItem(cmd, spm, "12", null, null);
@@ -926,8 +926,13 @@ namespace Sci.Production.Quality
         {
             DualResult dresult;
             DataTable dt;
-            string cmd = "select * from order_qty WITH (NOLOCK) where article=@art";
+            string cmd = @"select distinct oq.article 
+                    from orders o, order_qty oq 
+                    where o.id = oq.id and oq.qty > 0 
+                    and o.poid =@poid
+                    and oq.article=@art";
             List<SqlParameter> spm = new List<SqlParameter>();
+            spm.Add(new SqlParameter("@poid", PoID));
             spm.Add(new SqlParameter("@art", article.Text));
             if (dresult = DBProxy.Current.Select(null, cmd, spm, out dt))
             {

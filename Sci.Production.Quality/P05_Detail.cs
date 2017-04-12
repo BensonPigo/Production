@@ -869,18 +869,17 @@ SET IDENTITY_INSERT oven off";
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
                 string cmd =
-@"select a.Article from Order_Qty a WITH (NOLOCK) 
-left join Oven b WITH (NOLOCK) on a.ID=b.POID
-where a.id=@poid
-group by a.Article";
+                @"select distinct oq.article 
+                    from orders o, order_qty oq 
+                    where o.id = oq.id and oq.qty > 0 
+                    and o.poid =@poid ";
                 List<SqlParameter> spm = new List<SqlParameter>();
                 spm.Add(new SqlParameter("@poid", PoID));
                 SelectItem item = new SelectItem(cmd, spm, "12", null, null);
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
-                    return;
-                    
+                    return;                  
                 }
                 this.article.Text = item.GetSelectedString();
             }
@@ -891,8 +890,13 @@ group by a.Article";
             if (!this.EditMode || this.article.Text.Empty()) { return; }
             DualResult dresult;
             DataTable dt;
-            string cmd = "select * from order_qty WITH (NOLOCK) where article=@art";
+            string cmd = @"select distinct oq.article 
+                    from orders o, order_qty oq 
+                    where o.id = oq.id and oq.qty > 0 
+                    and o.poid =@poid
+                    and oq.article=@art";
             List<SqlParameter> spm = new List<SqlParameter>();
+            spm.Add(new SqlParameter("@poid", PoID));
             spm.Add(new SqlParameter("@art", article.Text));
             if (dresult = DBProxy.Current.Select(null,cmd,spm,out dt))
             {
