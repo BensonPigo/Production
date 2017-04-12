@@ -450,9 +450,22 @@ namespace Sci.Production.Quality
                 }
             }
             OnDetailEntered();
+            
+            int rowindex = 0;
+            for (int i = 0; i < CurrentDataRow.Table.Rows.Count; i++)
+            {                
+                if (CurrentDataRow.Table.Rows[i]["id"].ToString() == this.textBox1.Text)
+                {
+                    rowindex = i;
+                    break;
+                }                
+            }            
+            CurrentDataRow["id"] = CurrentDataRow.Table.Rows[rowindex+1]["id"].ToString();
+            RenewData();
             ReloadDatas();
+            gridbs.Position = rowindex;        
         }
-
+        
         private void button2_Click(object sender, EventArgs e)
         {
             int a = this.detailgrid.Rows.Count;
