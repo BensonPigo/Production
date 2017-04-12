@@ -186,6 +186,9 @@ from (
 																		 			 ,'')
 																			 )
 													 , 0) as Qty
+    ,[W/House Unit] = psd.POUnit
+    ,[W/House Qty(Usage Unit)] = fi.InQty-fi.OutQty+fi.AdjustQty
+    ,[Customs Unit] = f.CustomsUnit
 	from #tmpPOID t
 	inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.POID --and fi.MDivisionID = t.MDivisionID
 	inner join PO_Supp_Detail psd WITH (NOLOCK) on t.POID = psd.ID and psd.SEQ1 = fi.Seq1 and psd.SEQ2 = fi.Seq2
@@ -218,6 +221,9 @@ from (
 																		 								  ,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit))
 																		 		 ,''))
 												   ,0) as Qty
+    ,[W/House Unit] = ''
+    ,[W/House Qty(Usage Unit)] = 0.00
+    ,[Customs Unit] = ''
 	from LocalInventory l WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
@@ -300,6 +306,7 @@ select 	o.ID
 into #tmpWHNotClose 
 from Orders o  WITH (NOLOCK) 
 where o.WhseClose is null and (o.Category = 'B' or o.Category = 'S') and o.MDivisionID = @mdivision and o.LocalOrder = 0
+and o.Junk<>1
 
 --台北買的物料
 select * 
@@ -458,6 +465,7 @@ into #tmpNoPullOutComp
 from Orders WITH (NOLOCK) 
 where PulloutComplete = 0 and (Category = 'B' or Category = 'S') 
 	and MDivisionID = @mdivision and LocalOrder = 0
+and junk<>1
 
 select 	a.*
 		,a.SewQty - a.PullQty as Qty 
