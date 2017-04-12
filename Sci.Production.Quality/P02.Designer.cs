@@ -252,7 +252,7 @@
             // remark_box
             // 
             this.remark_box.BackColor = System.Drawing.Color.White;
-            this.remark_box.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AIRemark", true));
+            this.remark_box.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AIRRemark", true));
             this.remark_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.remark_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.remark_box.Location = new System.Drawing.Point(614, 79);

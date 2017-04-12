@@ -257,7 +257,7 @@ namespace Sci.Production.Quality
         {
             //因為表頭是PO不能覆蓋其他資料，必需自行存檔
             //string save_po_cmd = string.Format("update po set AirRemark = '{0}' where id = '{1}';", CurrentMaintain["AiRemark"], CurrentMaintain["ID"]);
-            string save_po_cmd = string.Format("update po set AiRemark = '{0}' where id = '{1}';", remark_box.Text.ToString(), CurrentMaintain["ID"]);
+            string save_po_cmd = string.Format("update po set AIRRemark = '{0}' where id = '{1}';", remark_box.Text.ToString(), CurrentMaintain["ID"]);
 
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
