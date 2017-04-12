@@ -201,6 +201,12 @@ namespace Sci.Production.Quality
                     dr["Roll"] = roll_dr["Roll"];
                     dr["Dyelot"] = roll_dr["Dyelot"];
                     dr["Ticketyds"] = roll_dr["StockQty"];
+                    dr["CutWidth"] = dr["CutWidth"] = MyUtility.GetValue.Lookup(string.Format(@"
+                                                                        select width
+                                                                        from Fabric 
+                                                                        inner join Fir on Fabric.SCIRefno = fir.SCIRefno
+                                                                        where Fir.ID = '{0}'", dr["id"]), null, null);
+
                     dr.EndEdit();
                 }
                 else
@@ -209,6 +215,7 @@ namespace Sci.Production.Quality
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
                     dr["Ticketyds"] = "";
+                    dr["CutWidth"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
                     return;
@@ -493,7 +500,7 @@ Where DetailUkey = {15};",
                     DualResult dResult = DBProxy.Current.Select(null, cmd, out dyeDt);
                     if (dResult)
                     {
-                        if (dyeDt.Rows.Count > 0)
+                        if (dyeDt != null && dyeDt.Rows.Count > 0)
                         {
                             string dye = "";
                             foreach (DataRow dr in dyeDt.Rows)
@@ -532,7 +539,7 @@ Where DetailUkey = {15};",
                 string cmd_leader = string.Format(@"select email from pass1	
 	where id=(select Supervisor from pass1 where  id='{0}')", Sci.Env.User.UserID);
                 DBProxy.Current.Select("", cmd_leader, out dt_Leader);
-                if (!MyUtility.Check.Empty(dt_Leader))
+                if (dt_Leader != null && dt_Leader.Rows.Count > 0)
                 {
                     string mailto = dt_Leader.Rows[0]["email"].ToString();
 
