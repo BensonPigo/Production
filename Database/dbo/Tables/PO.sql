@@ -30,7 +30,7 @@
     [EditName]                      VARCHAR (10)   CONSTRAINT [DF_PO_EditName] DEFAULT ('') NULL,
     [EditDate]                      DATETIME       NULL,
     [FIRRemark]                     VARCHAR (60)   CONSTRAINT [DF_PO_FIRRemark] DEFAULT ('') NULL,
-    [AIRemark]                      VARCHAR (60)   CONSTRAINT [DF_PO_AIRemark] DEFAULT ('') NULL,
+    [AIRRemark]                      VARCHAR (60)   CONSTRAINT [DF_PO_AIRemark] DEFAULT ('') NULL,
     [FIRLaboratoryRemark]           VARCHAR (60)   CONSTRAINT [DF_PO_FIRLaboratoryRemark] DEFAULT ('') NULL,
     [AIRLaboratoryRemark]           VARCHAR (60)   CONSTRAINT [DF_PO_AIRLaboratoryRemark] DEFAULT ('') NULL,
     [OvenLaboratoryRemark]          VARCHAR (60)   CONSTRAINT [DF_PO_OvenLaboratoryRemark] DEFAULT ('') NULL,
@@ -175,7 +175,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'主料檢�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'輔料檢驗備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'AIRemark';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'輔料檢驗備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = 'AIRRemark';
 
 
 GO
