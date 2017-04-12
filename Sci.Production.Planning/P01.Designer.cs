@@ -53,7 +53,7 @@
             this.dateBox3 = new Sci.Win.UI.DateBox();
             this.dateBox4 = new Sci.Win.UI.DateBox();
             this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.dateBox7 = new Sci.Win.UI.DateBox();
+            this.FirstCut_DateBox = new Sci.Win.UI.DateBox();
             this.numericBox_cutqty = new Sci.Win.UI.NumericBox();
             this.numericBox2 = new Sci.Win.UI.NumericBox();
             this.numericBox_NeedPerDay = new Sci.Win.UI.NumericBox();
@@ -100,7 +100,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.dateBox7);
+            this.masterpanel.Controls.Add(this.FirstCut_DateBox);
             this.masterpanel.Controls.Add(this.dateBox4);
             this.masterpanel.Controls.Add(this.dateBox3);
             this.masterpanel.Controls.Add(this.dateBox2);
@@ -111,7 +111,7 @@
             this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox7, 0);
+            this.masterpanel.Controls.SetChildIndex(this.FirstCut_DateBox, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -158,15 +158,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1000, 667);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(994, 621);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(994, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -440,15 +440,14 @@
             this.txtuser1.TabIndex = 9;
             this.txtuser1.TextBox1Binding = "";
             // 
-            // dateBox7
+            // FirstCut_DateBox
             // 
-            this.dateBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cutinline", true));
-            this.dateBox7.IsSupportEditMode = false;
-            this.dateBox7.Location = new System.Drawing.Point(773, 76);
-            this.dateBox7.Name = "dateBox7";
-            this.dateBox7.ReadOnly = true;
-            this.dateBox7.Size = new System.Drawing.Size(130, 23);
-            this.dateBox7.TabIndex = 12;
+            this.FirstCut_DateBox.IsSupportEditMode = false;
+            this.FirstCut_DateBox.Location = new System.Drawing.Point(773, 76);
+            this.FirstCut_DateBox.Name = "FirstCut_DateBox";
+            this.FirstCut_DateBox.ReadOnly = true;
+            this.FirstCut_DateBox.Size = new System.Drawing.Size(130, 23);
+            this.FirstCut_DateBox.TabIndex = 12;
             // 
             // numericBox_cutqty
             // 
@@ -578,7 +577,7 @@
         private Win.UI.NumericBox numericBox_NeedPerDay;
         private Win.UI.NumericBox numericBox2;
         private Win.UI.NumericBox numericBox_cutqty;
-        private Win.UI.DateBox dateBox7;
+        private Win.UI.DateBox FirstCut_DateBox;
         private Class.txtuser txtuser1;
         private Win.UI.DateBox dateBox4;
         private Win.UI.DateBox dateBox3;

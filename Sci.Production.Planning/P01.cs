@@ -88,6 +88,17 @@ in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.
             }
             button_batchApprove.Enabled = !this.EditMode;
             this.detailgrid.AutoResizeColumns();
+
+            DataTable CutDate_dt;
+            string cmd;
+            cmd = string.Format(@"
+                 SELECT DISTINCT C.FirstCutDate FROM Cutting C
+                 LEFT JOIN Orders O ON C.ID=O.CuttingSP
+                 WHERE O.ID='{0}'", CurrentMaintain["id"]);
+            DualResult res;
+            res = DBProxy.Current.Select(null, cmd, out CutDate_dt);
+            FirstCut_DateBox.Value = MyUtility.Convert.GetDate(CutDate_dt.Rows[0]["FirstCutDate"].ToString());
+
         }
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
