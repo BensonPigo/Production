@@ -337,6 +337,7 @@
             // 
             // button5
             // 
+            this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button5.Location = new System.Drawing.Point(752, 8);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(80, 30);
@@ -347,6 +348,7 @@
             // 
             // button4
             // 
+            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button4.Location = new System.Drawing.Point(666, 8);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(80, 30);
