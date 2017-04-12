@@ -195,7 +195,6 @@ namespace Sci.Production.Planning
                     int ArtWorkStart = 2;
 
 #if DEBUG
-                    sxrc.ExcelApp.Visible = true;
 #endif
 
                     foreach (string art in ArtworkLis)
@@ -248,6 +247,7 @@ namespace Sci.Production.Planning
                         sheetStart += 3; //每個Artwork間隔 n - 1 格
                     }
 
+                    sxrc.ExcelApp.Visible = true;
                     return new DualResult(true);
                 }
                 catch (Exception ex)
