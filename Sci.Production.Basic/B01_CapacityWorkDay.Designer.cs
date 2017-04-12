@@ -180,10 +180,10 @@
             // 
             this.tabPage2.Controls.Add(this.panel9);
             this.tabPage2.Controls.Add(this.panel8);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(520, 361);
+            this.tabPage2.Size = new System.Drawing.Size(520, 364);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Work day";
             // 
@@ -193,7 +193,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(3, 36);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(514, 322);
+            this.panel9.Size = new System.Drawing.Size(514, 325);
             this.panel9.TabIndex = 6;
             // 
             // grid2
@@ -216,7 +216,7 @@
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(514, 322);
+            this.grid2.Size = new System.Drawing.Size(514, 325);
             this.grid2.TabIndex = 4;
             this.grid2.TabStop = false;
             // 
@@ -253,6 +253,7 @@
             // 
             // button1
             // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.button1.Location = new System.Drawing.Point(434, 2);
