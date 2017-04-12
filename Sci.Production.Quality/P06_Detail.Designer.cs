@@ -146,7 +146,7 @@
             this.article.TabIndex = 102;
             this.article.TextChanged += new System.EventHandler(this.TextChanged);
             this.article.MouseDown += new System.Windows.Forms.MouseEventHandler(this.article_MouseDown);
-            this.article.Validated += new System.EventHandler(this.article_Validated);
+            this.article.Validating += new System.ComponentModel.CancelEventHandler(this.article_Validating);
             // 
             // testno
             // 

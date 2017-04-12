@@ -884,8 +884,8 @@ SET IDENTITY_INSERT oven off";
                 this.article.Text = item.GetSelectedString();
             }
         }
-       
-        private void article_Validated(object sender, EventArgs e)
+
+        private void article_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode || this.article.Text.Empty()) { return; }
             DualResult dresult;
@@ -898,13 +898,16 @@ SET IDENTITY_INSERT oven off";
             List<SqlParameter> spm = new List<SqlParameter>();
             spm.Add(new SqlParameter("@poid", PoID));
             spm.Add(new SqlParameter("@art", article.Text));
-            if (dresult = DBProxy.Current.Select(null,cmd,spm,out dt))
+            if (dresult = DBProxy.Current.Select(null, cmd, spm, out dt))
             {
-                if (dt.Rows.Count<=0)
+                if (dt.Rows.Count <= 0)
                 {
                     MyUtility.Msg.InfoBox("Article doesn't exist in orders");
                     article.Text = "";
-                    article.Focus();
+                    article.Select();
+                    e.Cancel = true;
+                    return;
+
                 }
             }
             else
@@ -1073,8 +1076,7 @@ SET IDENTITY_INSERT oven off";
             isModify = true;
         }
 
-        
-
+    
 
     }
 }

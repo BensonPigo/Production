@@ -922,7 +922,7 @@ namespace Sci.Production.Quality
             }
         }
 
-        private void article_Validated(object sender, EventArgs e)
+        private void article_Validating(object sender, CancelEventArgs e)
         {
             DualResult dresult;
             DataTable dt;
@@ -940,7 +940,9 @@ namespace Sci.Production.Quality
                 {
                     MyUtility.Msg.InfoBox("Article doesn't exist in orders");
                     article.Text = "";
-                    article.Focus();
+                    article.Select();
+                    e.Cancel = true;
+                    return;
                 }
             }
             else
@@ -948,6 +950,12 @@ namespace Sci.Production.Quality
                 return;
             }
         }
+
+        private void article_Validated(object sender, EventArgs e)
+        {
+            
+        }
+
         #endregion
 
         private void encode_btn_Click(object sender, EventArgs e)
@@ -1014,6 +1022,8 @@ namespace Sci.Production.Quality
             }
             OnRequery();
         }
+
+      
 
         private void ToExcel_Click(object sender, EventArgs e)
         {
@@ -1098,6 +1108,12 @@ namespace Sci.Production.Quality
         {
             isModify = true;
         }
+
+       
+
+      
+
+       
 
 
     }
