@@ -33,13 +33,13 @@
             this.panel2 = new Sci.Win.UI.Panel();
             this.button4 = new Sci.Win.UI.Button();
             this.label2 = new Sci.Win.UI.Label();
-            this.txtthreadcomb1 = new Sci.Production.Class.txtthreadcomb();
             this.button2 = new Sci.Win.UI.Button();
             this.btn_Generate = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
             this.panel1 = new Sci.Win.UI.Panel();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.label1 = new Sci.Win.UI.Label();
+            this.txtthreadcomb1 = new Sci.Production.Class.txtthreadcomb();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.panel1.SuspendLayout();
@@ -59,7 +59,7 @@
             // button3
             // 
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(732, 13);
+            this.button3.Location = new System.Drawing.Point(856, 13);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(80, 30);
             this.button3.TabIndex = 2;
@@ -100,17 +100,6 @@
             this.label2.Size = new System.Drawing.Size(133, 23);
             this.label2.TabIndex = 15;
             this.label2.Text = "Thread Combination";
-            // 
-            // txtthreadcomb1
-            // 
-            this.txtthreadcomb1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtthreadcomb1.BackColor = System.Drawing.Color.White;
-            this.txtthreadcomb1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtthreadcomb1.IsSupportSytsemContextMenu = false;
-            this.txtthreadcomb1.Location = new System.Drawing.Point(760, 10);
-            this.txtthreadcomb1.Name = "txtthreadcomb1";
-            this.txtthreadcomb1.Size = new System.Drawing.Size(90, 23);
-            this.txtthreadcomb1.TabIndex = 9;
             // 
             // button2
             // 
@@ -188,6 +177,17 @@
             this.label1.Size = new System.Drawing.Size(95, 23);
             this.label1.TabIndex = 13;
             this.label1.Text = "Machine Type";
+            // 
+            // txtthreadcomb1
+            // 
+            this.txtthreadcomb1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtthreadcomb1.BackColor = System.Drawing.Color.White;
+            this.txtthreadcomb1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtthreadcomb1.IsSupportSytsemContextMenu = false;
+            this.txtthreadcomb1.Location = new System.Drawing.Point(760, 10);
+            this.txtthreadcomb1.Name = "txtthreadcomb1";
+            this.txtthreadcomb1.Size = new System.Drawing.Size(90, 23);
+            this.txtthreadcomb1.TabIndex = 9;
             // 
             // P01_Generate
             // 
