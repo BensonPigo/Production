@@ -17,9 +17,9 @@ else if(@ByType = 2)
 	
 --FABRIC 主料，有FabricCode
 SELECT Article,c.BrandID,d.ColorID,a.FabricPanelCode,QTFabricPanelCode=isnull(b.QTFabricPanelCode,''),FabricCode 
-into #tmp FROM dbo.Order_ColorCombo a
+into #tmp FROM dbo.MNOrder_ColorCombo a
 left join (
-	SELECT Id,FabricPanelCode,QTFabricPanelCode FROM DBO.Order_FabricCode_QT where FabricPanelCode <> QTFabricPanelCode
+	SELECT Id,FabricPanelCode,QTFabricPanelCode FROM DBO.MNOrder_FabricCode_QT where FabricPanelCode <> QTFabricPanelCode
 ) b on a.Id = b.Id and a.FabricPanelCode = b.FabricPanelCode
 left join dbo.MNOrder c on a.Id = c.ID
 outer apply (	

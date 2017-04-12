@@ -16,7 +16,7 @@ else if(@ByType = 2)
 
 
 --主要資料
-SELECT b.id,b.Article,SizeCode,Qty into #tmp FROM @tbl a left join DBO.Order_Qty b on a.Article = b.Article and a.id = b.ID 
+SELECT b.id,b.Article,SizeCode,Qty into #tmp FROM @tbl a left join DBO.MNOrder_Qty b on a.Article = b.Article and a.id = b.ID 
 where b.ID is not null
 
 

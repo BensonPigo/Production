@@ -15,7 +15,7 @@ else if(@ByType = 1)
 else if(@ByType = 2)
 	insert into @tbl SELECT id,Article FROM DBO.ORDER_ARTICLE WHERE ID in (select id from MNOrder where POID = @poid )
 
-SELECT Article,c.ColorID,FabricPanelCode into #tmp FROM dbo.Order_ColorCombo a
+SELECT Article,c.ColorID,FabricPanelCode into #tmp FROM dbo.MNOrder_ColorCombo a
 left join dbo.MNOrder b on a.Id = b.ID
 outer apply (	
 	select ColorID=STUFF((SELECT CHAR(10)+ColorID FROM dbo.Color_multiple d where BrandID = b.BrandID and d.ID = a.ColorID FOR XML PATH('')),1,1,'')
