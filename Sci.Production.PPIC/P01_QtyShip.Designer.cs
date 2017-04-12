@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -43,12 +43,12 @@
             this.panel9 = new Sci.Win.UI.Panel();
             this.label1 = new Sci.Win.UI.Label();
             this.panel7 = new Sci.Win.UI.Panel();
+            this.rbOriQty = new System.Windows.Forms.RadioButton();
+            this.rbQty = new System.Windows.Forms.RadioButton();
             this.button1 = new Sci.Win.UI.Button();
             this.panel6 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.rbOriQty = new System.Windows.Forms.RadioButton();
-            this.rbQty = new System.Windows.Forms.RadioButton();
             this.panel5.SuspendLayout();
             this.panel8.SuspendLayout();
             this.panel10.SuspendLayout();
@@ -140,14 +140,14 @@
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid2.Location = new System.Drawing.Point(0, 0);
             this.grid2.Name = "grid2";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid2.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid2.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
@@ -191,8 +191,35 @@
             this.panel7.Size = new System.Drawing.Size(815, 40);
             this.panel7.TabIndex = 1;
             // 
+            // rbOriQty
+            // 
+            this.rbOriQty.AutoSize = true;
+            this.rbOriQty.ForeColor = System.Drawing.Color.Red;
+            this.rbOriQty.Location = new System.Drawing.Point(391, 10);
+            this.rbOriQty.Name = "rbOriQty";
+            this.rbOriQty.Size = new System.Drawing.Size(75, 21);
+            this.rbOriQty.TabIndex = 4;
+            this.rbOriQty.Text = "Ori. Qty";
+            this.rbOriQty.UseVisualStyleBackColor = true;
+            this.rbOriQty.CheckedChanged += new System.EventHandler(this.rarioButton_CheckedChanged);
+            // 
+            // rbQty
+            // 
+            this.rbQty.AutoSize = true;
+            this.rbQty.Checked = true;
+            this.rbQty.ForeColor = System.Drawing.Color.Red;
+            this.rbQty.Location = new System.Drawing.Point(319, 10);
+            this.rbQty.Name = "rbQty";
+            this.rbQty.Size = new System.Drawing.Size(48, 21);
+            this.rbQty.TabIndex = 3;
+            this.rbQty.TabStop = true;
+            this.rbQty.Text = "Qty";
+            this.rbQty.UseVisualStyleBackColor = true;
+            this.rbQty.CheckedChanged += new System.EventHandler(this.rarioButton_CheckedChanged);
+            // 
             // button1
             // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.button1.Location = new System.Drawing.Point(726, 5);
             this.button1.Name = "button1";
@@ -227,14 +254,14 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -242,32 +269,6 @@
             this.grid1.Size = new System.Drawing.Size(815, 135);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            // 
-            // rbOriQty
-            // 
-            this.rbOriQty.AutoSize = true;
-            this.rbOriQty.ForeColor = System.Drawing.Color.Red;
-            this.rbOriQty.Location = new System.Drawing.Point(391, 10);
-            this.rbOriQty.Name = "rbOriQty";
-            this.rbOriQty.Size = new System.Drawing.Size(75, 21);
-            this.rbOriQty.TabIndex = 4;
-            this.rbOriQty.Text = "Ori. Qty";
-            this.rbOriQty.UseVisualStyleBackColor = true;
-            this.rbOriQty.CheckedChanged += new System.EventHandler(this.rarioButton_CheckedChanged);
-            // 
-            // rbQty
-            // 
-            this.rbQty.AutoSize = true;
-            this.rbQty.Checked = true;
-            this.rbQty.ForeColor = System.Drawing.Color.Red;
-            this.rbQty.Location = new System.Drawing.Point(319, 10);
-            this.rbQty.Name = "rbQty";
-            this.rbQty.Size = new System.Drawing.Size(48, 21);
-            this.rbQty.TabIndex = 3;
-            this.rbQty.TabStop = true;
-            this.rbQty.Text = "Qty";
-            this.rbQty.UseVisualStyleBackColor = true;
-            this.rbQty.CheckedChanged += new System.EventHandler(this.rarioButton_CheckedChanged);
             // 
             // P01_QtyShip
             // 
