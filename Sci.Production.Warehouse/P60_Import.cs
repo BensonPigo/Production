@@ -39,7 +39,7 @@ namespace Sci.Production.Warehouse
             String spno2 = txtSpno2.Text;
             String category = txtartworktype_fty1.Text;
 
-            if (MyUtility.Check.Empty(localpoid) && MyUtility.Check.Empty(spno1) && MyUtility.Check.Empty(spno2) && MyUtility.Check.Empty(issueDate1))
+            if (MyUtility.Check.Empty(localpoid) &&(MyUtility.Check.Empty(spno1) || MyUtility.Check.Empty(spno2)) && MyUtility.Check.Empty(issueDate1))
             {
                 MyUtility.Msg.WarningBox("< Local Po# > < SP# > < Issue Date > can't be empty at the same time!!");
                 textBox1.Focus();
