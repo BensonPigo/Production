@@ -1254,14 +1254,14 @@ namespace Sci.Production.Planning
                 xl.Save();
 
                 int startRow = 3 + 1; //title有三列
-                int lastRow = dt1.Rows.Count + 3 + 1;
+                int lastRow = dt2.Rows.Count + 2 + 1;
                 wks.Cells[lastRow, 1] = "Total:";
-                wks.Cells[lastRow, 3] = string.Format("=SUM(C{0}:C{1})", startRow, lastRow - 1);
-                wks.Cells[lastRow, 4] = string.Format("=SUM(D{0}:D{1})", startRow, lastRow - 1);
+                wks.Cells[lastRow, 3] = string.Format("=SUM(C{0}:C{1})", startRow-1, lastRow - 1);
+                wks.Cells[lastRow, 4] = string.Format("=SUM(D{0}:D{1})", startRow-1, lastRow - 1);
                 wks.Cells[lastRow, 5] = string.Format("=IF(C{0}=0,0,(D{0}/C{0}))", lastRow);
-                wks.Cells[lastRow, 8] = string.Format("=SUM(H{0}:H{1})", startRow, lastRow - 1);
-                wks.Cells[lastRow, 9] = string.Format("=SUM(I{0}:I{1})", startRow, lastRow - 1);
-                wks.Cells[lastRow, 10] = string.Format("=SUM(J{0}:J{1})", startRow, lastRow - 1);
+                wks.Cells[lastRow, 8] = string.Format("=SUM(H{0}:H{1})", startRow-1, lastRow - 1);
+                wks.Cells[lastRow, 9] = string.Format("=SUM(I{0}:I{1})", startRow-1, lastRow - 1);
+                wks.Cells[lastRow, 10] = string.Format("=SUM(J{0}:J{1})", startRow-1, lastRow - 1);
                 wks.Cells[lastRow, 11] = string.Format("=(J{0}-I{0})", lastRow);
                 wks.Cells[lastRow, 12] = string.Format("=(J{0}/I{0})", lastRow);
                 wks.Cells[lastRow, 13] = string.Format("=((J{0}-I{0})/H{0})", lastRow);
