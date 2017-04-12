@@ -5,7 +5,7 @@ CREATE PROCEDURE [dbo].[Order_Report_FabColorCombination]
 AS
 BEGIN
 
-declare @poid varchar(13) = (select POID from Orders where ID = @OrderID)
+declare @poid varchar(13) = (select POID from MNOrder where ID = @OrderID)
 declare @tbl table (id varchar(13), Article varchar(8))
 
 if(@ByType = 0)
@@ -21,7 +21,7 @@ into #tmp FROM dbo.Order_ColorCombo a
 left join (
 	SELECT Id,FabricPanelCode,QTFabricPanelCode FROM DBO.Order_FabricCode_QT where FabricPanelCode <> QTFabricPanelCode
 ) b on a.Id = b.Id and a.FabricPanelCode = b.FabricPanelCode
-left join dbo.Orders c on a.Id = c.ID
+left join dbo.MNOrder c on a.Id = c.ID
 outer apply (	
 	select ColorID=STUFF((SELECT CHAR(10)+ColorID FROM dbo.Color_multiple d where BrandID = c.BrandID and d.ID = a.ColorID FOR XML PATH('')),1,1,'')
 ) d

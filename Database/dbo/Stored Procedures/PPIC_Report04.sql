@@ -5,7 +5,7 @@
 AS
 BEGIN
 
-declare @POID varchar(13) = (select POID from Orders WITH (NOLOCK) where ID = @ID)
+declare @POID varchar(13) = (select POID from MNOrder WITH (NOLOCK) where ID = @ID)
 
 --Page1--------------------------------------------------------------------------------------------------------------
 --##MAKER ##STYLENO ##QTY ##SP

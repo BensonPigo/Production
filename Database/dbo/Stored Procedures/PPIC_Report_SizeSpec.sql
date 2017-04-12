@@ -8,7 +8,7 @@ AS
 BEGIN
 	
 
-	declare @POID varchar(13) = (select POID from Orders where ID = @ID)
+	declare @POID varchar(13) = (select POID from MNOrder where ID = @ID)
 
 	SELECT distinct a.SizeCode,Seq into #tmp_Col FROM MNOrder_SizeCode a WITH (NOLOCK) inner join MNOrder_Qty b WITH (NOLOCK) on a.Id = b.ID and (@fullsize = 1 or a.SizeCode = b.SizeCode)
 	where a.Id = @POID

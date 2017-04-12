@@ -5,7 +5,7 @@ CREATE PROCEDURE [dbo].[Order_Report_QtyBreakdown]
 AS
 BEGIN
 
-declare @poid varchar(13) = (select POID from Orders where ID = @OrderID)
+declare @poid varchar(13) = (select POID from MNOrder where ID = @OrderID)
 declare @tbl table (id varchar(13), Article varchar(8))
 
 if(@ByType = 0)
