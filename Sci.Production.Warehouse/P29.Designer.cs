@@ -32,7 +32,6 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             this.cbxCategory = new Sci.Win.UI.ComboBox();
             this.label8 = new Sci.Win.UI.Label();
             this.cbxFabricType = new Sci.Win.UI.ComboBox();
@@ -56,6 +55,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grid1 = new Sci.Win.UI.Grid();
             this.grid2 = new Sci.Win.UI.Grid();
+            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel1.SuspendLayout();
@@ -91,16 +91,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 107);
             this.panel1.TabIndex = 1;
-            // 
-            // txtmfactory1
-            // 
-            this.txtmfactory1.BackColor = System.Drawing.Color.White;
-            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory1.Location = new System.Drawing.Point(87, 75);
-            this.txtmfactory1.Name = "txtmfactory1";
-            this.txtmfactory1.Size = new System.Drawing.Size(117, 23);
-            this.txtmfactory1.TabIndex = 2;
-            this.txtmfactory1.Visible = false;
             // 
             // cbxCategory
             // 
@@ -184,7 +174,6 @@
             // 
             // btnAutoPick
             // 
-            this.btnAutoPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAutoPick.Location = new System.Drawing.Point(916, 42);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
@@ -195,7 +184,6 @@
             // 
             // btnQuery
             // 
-            this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnQuery.Location = new System.Drawing.Point(916, 9);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
@@ -370,6 +358,16 @@
             this.grid2.Size = new System.Drawing.Size(433, 441);
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
+            // 
+            // txtmfactory1
+            // 
+            this.txtmfactory1.BackColor = System.Drawing.Color.White;
+            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory1.Location = new System.Drawing.Point(87, 75);
+            this.txtmfactory1.Name = "txtmfactory1";
+            this.txtmfactory1.Size = new System.Drawing.Size(117, 23);
+            this.txtmfactory1.TabIndex = 2;
+            this.txtmfactory1.Visible = false;
             // 
             // P29
             // 
