@@ -17,7 +17,6 @@ BEGIN
 		begin
 			declare @str1 nvarchar(max), @Unit nvarchar(10)
 			select @str1=STUFF((SELECT ',['+SizeCode+']' FROM #tmp_Col order by Seq FOR XML PATH('')),1,1,'')
-			select top 1 @Unit = SizeUnit from Order_SizeItem where Id = @POID
 			select top 1 @Unit = SizeUnit from MNOrder_SizeItem WITH (NOLOCK) where Id = @POID
 			declare @sql nvarchar(max) = 'select SizeItem,[Description          Unit : '+ @Unit +']=SizeDesc,'+ @str1 +' from (
 				--select a.SizeItem,a.Description,b.SizeCode,b.SizeSpec from Trade.dbo.MNOrder_SizeItem a
