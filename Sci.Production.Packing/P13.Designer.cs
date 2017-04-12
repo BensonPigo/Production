@@ -187,8 +187,9 @@
             // 
             // button3
             // 
+            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button3.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button3.Location = new System.Drawing.Point(835, 6);
+            this.button3.Location = new System.Drawing.Point(855, 6);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(80, 30);
             this.button3.TabIndex = 0;

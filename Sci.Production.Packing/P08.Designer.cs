@@ -238,8 +238,9 @@
             // 
             // button4
             // 
+            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button4.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button4.Location = new System.Drawing.Point(848, 7);
+            this.button4.Location = new System.Drawing.Point(863, 7);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(80, 30);
             this.button4.TabIndex = 1;
@@ -249,9 +250,10 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(746, 7);
+            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button3.Location = new System.Drawing.Point(766, 7);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
+            this.button3.Size = new System.Drawing.Size(91, 30);
             this.button3.TabIndex = 0;
             this.button3.Text = "Approve";
             this.button3.UseVisualStyleBackColor = true;
