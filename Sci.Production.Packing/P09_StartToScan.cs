@@ -13,6 +13,7 @@ namespace Sci.Production.Packing
 {
     public partial class P09_StartToScan : Sci.Win.Subs.Base
     {
+        P09_IDX_CTRL IDX = new P09_IDX_CTRL();
         DataRow MasterDR;
         public P09_StartToScan(DataRow MasterDataRow)
         {
@@ -204,6 +205,7 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                     if (MyUtility.Convert.GetInt(dr["ScanQty"]) >= MyUtility.Convert.GetInt(dr["QtyPerCTN"]))
                     {
                         MyUtility.Msg.WarningBox("PC/Ctn Scanned exceed PC/CTN, can't scanned!!");
+                        IDX.IdxCall(254, "a:" + textBox1.Text.Trim(), ("a:" + textBox1.Text.Trim()).Length);
                         textBox1.Text = "";
                         e.Cancel = true;
                         return;
@@ -224,6 +226,7 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox("Query structure fail!! Pls scan again.\r\n"+result.ToString());
+                        IDX.IdxCall(254, "a:" + textBox1.Text.Trim(), ("a:" + textBox1.Text.Trim()).Length);
                         textBox1.Text = "";
                         e.Cancel = true;
                         return;
@@ -247,6 +250,7 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                     if (noBarcodeRecCount == 0)
                     {
                         MyUtility.Msg.WarningBox("Wrong barcode, please check barcode again!!");
+                        IDX.IdxCall(254, "a:" + textBox1.Text.Trim(), ("a:" + textBox1.Text.Trim()).Length);
                         textBox1.Text = "";
                         e.Cancel = true;
                         return;
@@ -257,6 +261,8 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                         int newPos = listControlBindingSource1.Find("Barcode", "");
                         listControlBindingSource1.Position = newPos;
                         DataRow dr = grid1.GetDataRow(newPos);
+                        IDX.IdxCall(254, "A:" + textBox1.Text.Trim() + "=" + dr["QtyPerCtn"].ToString().Trim()
+                                       , ("A:" + textBox1.Text.Trim() + "=" + dr["QtyPerCtn"].ToString().Trim()).Length);
                         dr["Barcode"] = textBox1.Text;
                         displayBox1.Value = textBox1.Text;
                         Counter(dr);
@@ -284,6 +290,8 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                         {
                             listControlBindingSource1.Position = newPos;
                             DataRow dr = grid1.GetDataRow(newPos);
+                            IDX.IdxCall(254, "A:" + textBox1.Text.Trim() + "=" + dr["QtyPerCtn"].ToString().Trim()
+                                           , ("A:" + textBox1.Text.Trim() + "=" + dr["QtyPerCtn"].ToString().Trim()).Length);
                             dr["Barcode"] = textBox1.Text;
                             displayBox1.Value = textBox1.Text;
                             Counter(dr);
@@ -293,12 +301,12 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                         else
                         {
                             MyUtility.Msg.WarningBox("Selected data not found! Please scan again.");
+                            IDX.IdxCall(254, "a:" + textBox1.Text.Trim(), ("a:" + textBox1.Text.Trim()).Length);
                             textBox1.Text = "";
                             e.Cancel = true;
                             return;
                         }
                     }
-
                 }
             }
         }
@@ -309,10 +317,10 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
             label17.Text = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(label17.Text) + 1);
             textBox1.Text = "";
         }
-
+        
         private void displayBox1_TextChanged(object sender, EventArgs e)
         {
-            button3.Enabled = !displayBox1.Text.Empty();           
+            button3.Enabled = !displayBox1.Value.ToString().Empty();  
         }
     }
 }
