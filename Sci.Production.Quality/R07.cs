@@ -8,6 +8,8 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Quality
 {
@@ -283,15 +285,15 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
-            var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            //saveDialog.ShowDialog();
-            //string outpath = saveDialog.FileName;
-            //if (outpath.Empty())
-            //{
-            //    return false;
-            //}
 
-            Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R07.xltx");
+            this.ShowWaitMessage("Excel Processing...");
+            foreach (DataRow dr in dt.Rows)
+            {
+                dr["description"] = dr["description"].ToString().Trim();
+            }
+
+            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R07.xltx");
+            MyUtility.Excel.CopyToXls(dt, "", "Quality_R07.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: objApp);
 
             string d1 = (MyUtility.Check.Empty(DateArrStart)) ? "" : Convert.ToDateTime(DateArrStart).ToString("yyyy/MM/dd");
             string d2 = (MyUtility.Check.Empty(DateArrEnd)) ? "" : Convert.ToDateTime(DateArrEnd).ToString("yyyy/MM/dd");
@@ -301,20 +303,27 @@ namespace Sci.Production.Quality
             string d6 = (MyUtility.Check.Empty(DateSewEnd)) ? "" : Convert.ToDateTime(DateSewEnd).ToString("yyyy/MM/dd");
             string d7 = (MyUtility.Check.Empty(DateEstStart)) ? "" : Convert.ToDateTime(DateEstStart).ToString("yyyy/MM/dd");
             string d8 = (MyUtility.Check.Empty(DateEstEnd)) ? "" : Convert.ToDateTime(DateEstEnd).ToString("yyyy/MM/dd");
-            xl.dicDatas.Add("##ArrDate", d1 + "~" + d2);
-            xl.dicDatas.Add("##SciDelivery", d3 + "~" + d4);
-            xl.dicDatas.Add("##SewingDate", d5 + "~" + d6);
-            xl.dicDatas.Add("##EstCutting", d7 + "~" + d8);
-            xl.dicDatas.Add("##Spno", spStrat + "~" + spEnd);
-            xl.dicDatas.Add("##Season", Season);
-            xl.dicDatas.Add("##Brand", Brand);
-            xl.dicDatas.Add("##Refno", RefNo);
-            xl.dicDatas.Add("##Category", Category);
-            xl.dicDatas.Add("##Supplier", Supp);
-            xl.dicDatas.Add("##Material", MaterialType);
-            xl.dicDatas.Add("##Factory", Factory);
-            xl.dicDatas.Add("##body", dt);
-            xl.Save();
+
+            Excel.Worksheet worksheet = objApp.Sheets[1];
+            worksheet.Cells[1, 2] = d1 + "~" + d2; //##ArrDate
+            worksheet.Cells[1, 5] = d5 + "~" + d6; //##SewingDate
+            worksheet.Cells[1, 9] = spStrat + "~" + spEnd; //##Spno
+            worksheet.Cells[1, 13] = Brand; //##Brand
+            worksheet.Cells[1, 16] = Category; //##Category
+            worksheet.Cells[1, 20] = MaterialType; //##Material
+            worksheet.Cells[2, 2] = d3 + "~" + d4; //##SciDelivery
+            worksheet.Cells[2, 5] = d7 + "~" + d8; //##EstCutting
+            worksheet.Cells[2, 9] = Season; //##Season
+            worksheet.Cells[2, 13] = RefNo; //##Refno
+            worksheet.Cells[2, 16] = Supp; //##Supplier
+            worksheet.Cells[2, 20] = Factory; //##Factory
+
+            worksheet.Rows.AutoFit();
+            objApp.Visible = true;
+
+            this.HideWaitMessage();
+            if (objApp != null) Marshal.FinalReleaseComObject(objApp);
+            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);
             return true;
         }
     }
