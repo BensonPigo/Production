@@ -154,8 +154,13 @@ select 	distinct o.POID
 into #tmpPOID
 from Orders o WITH (NOLOCK) 
 where (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')
-and o.LocalOrder = 0 and o.MDivisionID = @mdivision
-and o.WhseClose is null  
+and o.MDivisionID = @mdivision
+and o.Finished!=1
+and o.WhseClose is null
+and o.Qty>0
+and o.IsForecast=0
+and o.LocalOrder = 0 
+and o.Junk=0
 
 select * 
 into #tmpWHQty
@@ -306,8 +311,16 @@ select 	o.ID
 		,o.POID 
 into #tmpWHNotClose 
 from Orders o  WITH (NOLOCK) 
-where o.WhseClose is null and (o.Category = 'B' or o.Category = 'S') and o.MDivisionID = @mdivision and o.LocalOrder = 0
+where (o.Category = 'B' or o.Category = 'S') 
+and o.MDivisionID = @mdivision 
 and o.Junk<>1
+and o.Finished!=1
+and o.WhseClose is null
+and o.Qty>0
+and o.IsForecast=0
+and o.LocalOrder = 0 
+
+
 
 --台北買的物料
 select * 
@@ -465,8 +478,13 @@ select 	ID,StyleID
 into #tmpNoPullOutComp
 from Orders WITH (NOLOCK) 
 where PulloutComplete = 0 and (Category = 'B' or Category = 'S') 
-	and MDivisionID = @mdivision and LocalOrder = 0
-and junk<>1
+and MDivisionID = @mdivision 
+and LocalOrder = 0
+and Junk<>1 
+and WhseClose is null
+and Finished!=1
+and Qty>0
+and IsForecast=0
 
 select 	a.*
 		,a.SewQty - a.PullQty as Qty 
