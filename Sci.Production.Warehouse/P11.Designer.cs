@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.label1 = new Sci.Win.UI.Label();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.label2 = new Sci.Win.UI.Label();
@@ -50,13 +49,13 @@
             this.label8 = new Sci.Win.UI.Label();
             this.disPOID = new Sci.Win.UI.DisplayBox();
             this.label9 = new Sci.Win.UI.Label();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             this.btnBOA = new Sci.Win.UI.Button();
             this.btnClear = new Sci.Win.UI.Button();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
             this.gridIssueBreakDown = new Sci.Win.UI.Grid();
-            this.gridIssueBreakDownBS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.gridIssueBreakDownBS = new Sci.Win.UI.ListControlBindingSource();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -140,7 +139,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(944, 128);
+            this.gridicon.Location = new System.Drawing.Point(1103, 128);
             // 
             // refresh
             // 
@@ -427,11 +426,11 @@
             // 
             this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClear.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnClear.Location = new System.Drawing.Point(805, 128);
+            this.btnClear.Location = new System.Drawing.Point(777, 128);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(80, 30);
+            this.btnClear.Size = new System.Drawing.Size(108, 30);
             this.btnClear.TabIndex = 8;
-            this.btnClear.Text = "Clear All";
+            this.btnClear.Text = "Clear Qty=0";
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.button9_Click);
             // 

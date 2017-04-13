@@ -32,7 +32,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            this.gridicon.Location = new System.Drawing.Point(891, 128); //此gridcon位置會跑掉，需強制設定gridcon位置
+            this.gridicon.Location = new System.Drawing.Point(891, 128); //此gridcon位置會跑掉，需強制設定gridcon位置        
             this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);//Issue此為PMS自行建立的資料，MDivisionID皆會有寫入值
 
             WorkAlias = "Issue";                        // PK: ID
@@ -98,7 +98,7 @@ from dbo.ftyinventory a WITH (NOLOCK) inner join dbo.po_supp_detail b WITH (NOLO
 inner join Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
 where lock=0 and inqty-outqty+adjustqty > 0 
-and poid='{1}' --and stocktype='B'
+and poid='{1}' and stocktype='B'
 and b.FabricType='A'
 and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, CurrentDetailData["poid"]);
                     IList<DataRow> x;
@@ -157,7 +157,7 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, Current
 from dbo.ftyinventory a WITH (NOLOCK) inner join dbo.po_supp_detail b WITH (NOLOCK) on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
 inner join Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
-where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-outqty+adjustqty > 0  --and stocktype='B' "
+where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-outqty+adjustqty > 0  and stocktype='B' "
                             , CurrentDetailData["poid"], seq[0], seq[1], Sci.Env.User.Keyword), out dr, null))
                         {
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
@@ -1007,7 +1007,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             //刪除表身重新匯入
             foreach (DataRow del in DetailDatas)
             {
-                del.Delete();
+                if (del["qty"].EqualDecimal(0)) del.Delete();              
             }
         }
 
@@ -1355,7 +1355,7 @@ inner join [Production].[dbo].po_supp_detail b WITH (NOLOCK) on b.id=a.POID and 
 inner join [Production].[dbo].Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join [Production].[dbo].MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
 where a.Lock=0 and a.InQty-a.OutQty+a.AdjustQty > 0 
-and a.POID='{1}' --and stocktype='B'
+and a.POID='{1}' and stocktype='B'
 and b.FabricType='A'
 and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, this.poid, 0), out subData);
             //將資料塞入表身
