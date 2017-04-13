@@ -11,14 +11,14 @@ using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
-    public partial class P01_EachConsumption_Detail : Sci.Win.Subs.Input4Plus
+    public partial class EachConsumption_Detail : Sci.Win.Subs.Input4Plus
     {
-        public P01_EachConsumption_Detail()
+        public EachConsumption_Detail()
         {
             InitializeComponent();
         }
 
-        public P01_EachConsumption_Detail(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
+        public EachConsumption_Detail(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             InitializeComponent();

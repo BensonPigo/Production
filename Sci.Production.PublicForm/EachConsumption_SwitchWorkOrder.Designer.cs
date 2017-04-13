@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.PublicForm
 {
-    partial class P01_EachConsumption_SwitchWorkOrder
+    partial class EachConsumption_SwitchWorkOrder
     {
         /// <summary>
         /// 設計工具所需的變數。

@@ -439,7 +439,6 @@ drop table #tmpall");
             {
                 for (int i = 0; i < CutCellcount; i++)
                 {
-                    sqlCmd.Append(string.Format("IF OBJECT_ID('tempdb.dbo.#tmpall{0}','U')IS NOT NULL DROP TABLE #tmpall{0}", i));
                     sqlCmd.Append(@"
 select distinct
 	[Request#] = c.ID,
@@ -448,16 +447,16 @@ select distinct
 	[Seq#] = Concat(w.Seq1, '-', w.Seq2),
 	[Style#] = o.StyleID,
 	[FabRef#] = pd.RefNo,
+	[Fab Desc] =[Production].dbo.getMtlDesc(c.POID, w.Seq1, w.Seq2,2,0),
 	[Color] = cd.ColorID,
 	[Comb.] = w.FabricCombo,
 	[Fab_Code] = fab.fab,
+	[Cut#] = cutno.cutno,
+	[Size Ratio] =sr.SizeCode,
+	[Cut Qty] = cq.SizeCode,
+	[Colorway] = woda.ac,
 	[Total Fab Cons] =sum(cd.Cons) over(partition by c.ID,cd.SewingLineID,cd.OrderID,w.Seq1,w.Seq2,w.FabricCombo),
-	c.POID,
-	w.seq1,
-	w.seq2
-into #tmpall");
-                    sqlCmd.Append(string.Format("{0}", i));
-                    sqlCmd.Append(@"
+	[Remark] = min(cd.Remark) over(partition by c.ID,cd.SewingLineID,cd.OrderID,w.Seq1,w.Seq2,w.FabricCombo)
 from Cutplan c WITH (NOLOCK) 
 inner join Cutplan_Detail cd WITH (NOLOCK) on c.ID = cd.ID
 inner join WorkOrder w WITH (NOLOCK) on cd.WorkOrderUkey = w.Ukey
@@ -472,129 +471,84 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 ) fab
-where 1 = 1
-");
-                    if (!MyUtility.Check.Empty(dateR_CuttingDate1))
-                    {
-                        sqlCmd.Append(string.Format(" and Cutplan.EstCutdate >= '{0}' ", Convert.ToDateTime(dateR_CuttingDate1).ToString("d")));
-                    }
-                    if (!MyUtility.Check.Empty(dateR_CuttingDate2))
-                    {
-                        sqlCmd.Append(string.Format(" and Cutplan.EstCutdate <= '{0}' ", Convert.ToDateTime(dateR_CuttingDate2).ToString("d")));
-                    }
-                    if (!MyUtility.Check.Empty(MD))
-                    {
-                        sqlCmd.Append(string.Format(" and Cutplan.MDivisionID ='{0}' ", MD));
-                    }
-                    if (!MyUtility.Check.Empty(CutCell1))
-                    {
-                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = '{0}' ", Cutcelltb.Rows[i][0].ToString()));
-                    }
-
-                    sqlCmd.Append(@"
-order by [Request#],[Line#],[SP#],[Seq#]
-
-select
-	[Request#] =G.Request#,
-	[Line#] =G.Line#,
-	[SP#] =G.SP#,
-	[Seq#] =G.Seq#,
-	[Style#] =G.Style#,
-	[FabRef#] =G.FabRef#,
-	[Fab Desc] =[Production].dbo.getMtlDesc(POID, Seq1, Seq2,2,0),
-	[Color] = G.Color,
-	[Comb.] =G.[Comb.],
-	[Fab_Code] =G.Fab_Code,
-	[Cut#] = cutno.cutno,
-	[Size Ratio] =sr.SizeCode,
-	[Cut Qty] = cq.SizeCode,
-	[Colorway] = woda.ac,
-	[Total Fab Cons] =G.[Total Fab Cons],
-	[Remark] = Remark.Remark
-from #tmpall ");
-                    sqlCmd.Append(string.Format("{0} ", i));
-                    sqlCmd.Append(
-@"G
 outer apply(
-	 select cutno = 
-	 stuff((
-		 Select distinct concat('/', Cutplan_Detail.CutNo)
-		 from Cutplan_Detail WITH (NOLOCK) 
-		 where Cutplan_Detail.ID = Request#
-		 and SewingLineID = Line#
-		 and OrderID = SP#
-		 and  (select Seq1+'-'+Seq2 
-			   from WorkOrder WITH (NOLOCK) 
-			   where UKey = Cutplan_Detail.WorkOrderUKey and CutplanID = Cutplan_Detail.ID) = Seq#
-		 for xml path('')
-	 ),1,1,'')
+select cutno = 
+	stuff((
+		Select distinct concat('/', cd2.CutNo)
+		from Cutplan_Detail cd2 WITH (NOLOCK) inner join WorkOrder w2 on cd2.WorkorderUkey = w2.Ukey
+		where cd2.ID = c.ID
+		and cd2.SewingLineID = cd.SewingLineID
+		and cd2.OrderID = cd.OrderID
+		and w2.SEQ1 = w.SEQ1 
+		and w2.SEQ2 = w.SEQ2
+		for xml path('')
+	),1,1,'')
 ) as cutno
 outer apply(
 	select SizeCode = 
 	stuff((
-		Select distinct concat(',',(SizeCode+'/'+Convert(varchar,Qty))) 
-		from WorkOrder_SizeRatio WITH (NOLOCK) 
-		inner join Cutplan_Detail WITH (NOLOCK) on WorkOrder_SizeRatio.WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
-		 where Cutplan_Detail.ID = Request#
-		 and SewingLineID = Line#
-		 and OrderID = SP#
-		 and  (select Seq1+'-'+Seq2 
-			   from WorkOrder WITH (NOLOCK) 
-			   where UKey = Cutplan_Detail.WorkOrderUKey and CutplanID = Cutplan_Detail.ID) = Seq#		
+		Select distinct concat(',',(SizeCode+'/'+ Convert(varchar,Qty))) 
+		from Cutplan_Detail cd2 WITH (NOLOCK) 		
+		inner join WorkOrder w2 on cd2.WorkorderUkey = w2.Ukey
+		inner join WorkOrder_SizeRatio ws2 WITH (NOLOCK) on cd2.WorkOrderUKey = ws2.WorkOrderUkey
+		where cd2.ID = c.ID
+		and cd2.SewingLineID = cd.SewingLineID
+		and cd2.OrderID = cd.OrderID
+		and w2.SEQ1 = w.SEQ1 
+		and w2.SEQ2 = w.SEQ2		 	
 		for xml path('')
-	 ),1,1,'')
+	),1,1,'')
 ) as sr
 outer apply(
-	select SizeCode = 
-	stuff((
-		Select distinct concat(',',SizeCode+'/'+Convert(varchar,Qty*
-						(select Layer from WorkOrder WITH (NOLOCK) where UKey = Cutplan_Detail.WorkOrderUKey))) 
-		from WorkOrder_SizeRatio WITH (NOLOCK) 
-		inner join Cutplan_Detail WITH (NOLOCK) on WorkOrder_SizeRatio.WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
-		 where Cutplan_Detail.ID = Request#
-		 and SewingLineID = Line#
-		 and OrderID = SP#
-		 and  (select Seq1+'-'+Seq2 
-			   from WorkOrder WITH (NOLOCK) 
-			   where UKey = Cutplan_Detail.WorkOrderUKey and CutplanID = Cutplan_Detail.ID) = Seq#
+select SizeCode = 
+stuff((
+		Select distinct concat(',',ws2.SizeCode+'/'+ Convert(varchar,ws2.Qty * w2.Layer)) 
+		from Cutplan_Detail cd2 WITH (NOLOCK)
+		inner join WorkOrder w2 WITH (NOLOCK) on cd2.WorkorderUkey = w2.Ukey
+		inner join WorkOrder_SizeRatio ws2 WITH (NOLOCK) on cd2.WorkOrderUKey = ws2.WorkOrderUkey
+		where cd2.ID = c.ID
+		and cd2.SewingLineID = cd.SewingLineID
+		and cd2.OrderID = cd.OrderID
+		and w2.SEQ1 = w.SEQ1 
+		and w2.SEQ2 = w.SEQ2
 		for xml path('')
-	 ),1,1,'')
+	),1,1,'')
 ) as cq
 outer apply(
-	 select AC = 
-	 stuff((
-		 Select distinct concat('/', WorkOrder_Distribute.Article)
-		 from WorkOrder_Distribute WITH (NOLOCK) 
-		 inner join Cutplan_Detail WITH (NOLOCK) on workOrder_Distribute.WorkOrderUKey = Cutplan_Detail.WorkOrderUKey
-		 where Article != ''
-		 and Cutplan_Detail.ID = Request#
-		 and SewingLineID = Line#
-		 and Cutplan_Detail.OrderID = SP#
-		 and  (select Seq1+'-'+Seq2 
-			   from WorkOrder WITH (NOLOCK) 
-			   where UKey = Cutplan_Detail.WorkOrderUKey and CutplanID = Cutplan_Detail.ID) = Seq#	
-		 for xml path('')
-	 ),1,1,'')
+select AC =
+	stuff((
+		Select distinct concat('/', wd2.Article)
+		from Cutplan_Detail cd2 WITH (NOLOCK)
+		inner join WorkOrder w2 WITH (NOLOCK) on cd2.WorkorderUkey = w2.Ukey
+		inner join WorkOrder_Distribute wd2 WITH (NOLOCK) on wd2.WorkOrderUKey = cd2.WorkOrderUKey
+		where wd2.Article != ''
+		and cd2.ID = c.ID
+		and cd2.SewingLineID = cd.SewingLineID
+		and cd2.OrderID = cd.OrderID
+		and w2.SEQ1 = w.SEQ1
+		and w2.SEQ2 = w.SEQ2
+		for xml path('')
+	),1,1,'')
 ) as woda
-outer apply(
-	 select Remark = 
-	 stuff((
-		 Select distinct concat(' ', Cutplan_Detail.Remark)
-		 from Cutplan_Detail WITH (NOLOCK) 
-		 where Cutplan_Detail.ID = Request#
-		 and SewingLineID = Line#
-		 and OrderID = SP#
-		 and  (select Seq1+'-'+Seq2 
-			   from WorkOrder WITH (NOLOCK) 
-			   where UKey = Cutplan_Detail.WorkOrderUKey and CutplanID = Cutplan_Detail.ID) = Seq#
-		 for xml path('')
-	 ),1,1,'')
-) as Remark
-
-order by [Request#],[Line#],[SP#],[Seq#]
-
-drop table #tmpall");
-                    sqlCmd.Append(string.Format("{0} ", i));
+where 1 = 1
+");
+                    if (!MyUtility.Check.Empty(dateR_CuttingDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and c.EstCutdate >= '{0}' ", Convert.ToDateTime(dateR_CuttingDate1).ToString("d")));
+                    }
+                    if (!MyUtility.Check.Empty(dateR_CuttingDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and c.EstCutdate <= '{0}' ", Convert.ToDateTime(dateR_CuttingDate2).ToString("d")));
+                    }
+                    if (!MyUtility.Check.Empty(MD))
+                    {
+                        sqlCmd.Append(string.Format(" and c.MDivisionID ='{0}' ", MD));
+                    }
+                    if (!MyUtility.Check.Empty(CutCell1))
+                    {
+                        sqlCmd.Append(string.Format(" and c.CutCellID = '{0}' ", Cutcelltb.Rows[i][0].ToString()));
+                    }
+                    sqlCmd.Append(" order by [Request#],[Line#],[SP#],[Seq#]");
                 }
             }
             #endregion
@@ -846,10 +800,7 @@ drop table #tmpall");
                     objSheets.Columns[16].ColumnWidth = 50;
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet                    
                 }
-                if (!boolsend)
-                {
-                    objApp.Visible = true;
-                }
+                if (!boolsend) objApp.Visible = true;
                 if (boolsend)
                 {
                     objApp.SaveWorkspace();

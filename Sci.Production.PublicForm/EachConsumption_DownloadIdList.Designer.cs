@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.PublicForm
 {
-    partial class P01_EachConsumption_DownloadIdList
+    partial class EachConsumption_DownloadIdList
     {
         /// <summary>
         /// 設計工具所需的變數。

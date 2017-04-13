@@ -150,29 +150,29 @@
     <Compile Include="GarmentList_ColorArticle.Designer.cs">
       <DependentUpon>GarmentList_ColorArticle.cs</DependentUpon>
     </Compile>
-    <Compile Include="P01_EachConsumption.cs">
+    <Compile Include="EachConsumption.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P01_EachConsumption.Designer.cs">
-      <DependentUpon>P01_EachConsumption.cs</DependentUpon>
+    <Compile Include="EachConsumption.Designer.cs">
+      <DependentUpon>EachConsumption.cs</DependentUpon>
     </Compile>
-    <Compile Include="P01_EachConsumption_Detail.cs">
+    <Compile Include="EachConsumption_Detail.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P01_EachConsumption_Detail.Designer.cs">
-      <DependentUpon>P01_EachConsumption_Detail.cs</DependentUpon>
+    <Compile Include="EachConsumption_Detail.Designer.cs">
+      <DependentUpon>EachConsumption_Detail.cs</DependentUpon>
     </Compile>
-    <Compile Include="P01_EachConsumption_DownloadIdList.cs">
+    <Compile Include="EachConsumption_DownloadIdList.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P01_EachConsumption_DownloadIdList.Designer.cs">
-      <DependentUpon>P01_EachConsumption_DownloadIdList.cs</DependentUpon>
+    <Compile Include="EachConsumption_DownloadIdList.Designer.cs">
+      <DependentUpon>EachConsumption_DownloadIdList.cs</DependentUpon>
     </Compile>
-    <Compile Include="P01_EachConsumption_SwitchWorkOrder.cs">
+    <Compile Include="EachConsumption_SwitchWorkOrder.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P01_EachConsumption_SwitchWorkOrder.Designer.cs">
-      <DependentUpon>P01_EachConsumption_SwitchWorkOrder.cs</DependentUpon>
+    <Compile Include="EachConsumption_SwitchWorkOrder.Designer.cs">
+      <DependentUpon>EachConsumption_SwitchWorkOrder.cs</DependentUpon>
     </Compile>
     <Compile Include="StdGSDList.cs">
       <SubType>Form</SubType>
@@ -195,17 +195,17 @@
     <EmbeddedResource Include="GarmentList_ColorArticle.resx">
       <DependentUpon>GarmentList_ColorArticle.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P01_EachConsumption.resx">
-      <DependentUpon>P01_EachConsumption.cs</DependentUpon>
+    <EmbeddedResource Include="EachConsumption.resx">
+      <DependentUpon>EachConsumption.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P01_EachConsumption_Detail.resx">
-      <DependentUpon>P01_EachConsumption_Detail.cs</DependentUpon>
+    <EmbeddedResource Include="EachConsumption_Detail.resx">
+      <DependentUpon>EachConsumption_Detail.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P01_EachConsumption_DownloadIdList.resx">
-      <DependentUpon>P01_EachConsumption_DownloadIdList.cs</DependentUpon>
+    <EmbeddedResource Include="EachConsumption_DownloadIdList.resx">
+      <DependentUpon>EachConsumption_DownloadIdList.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P01_EachConsumption_SwitchWorkOrder.resx">
-      <DependentUpon>P01_EachConsumption_SwitchWorkOrder.cs</DependentUpon>
+    <EmbeddedResource Include="EachConsumption_SwitchWorkOrder.resx">
+      <DependentUpon>EachConsumption_SwitchWorkOrder.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="StdGSDList.resx">
       <DependentUpon>StdGSDList.cs</DependentUpon>

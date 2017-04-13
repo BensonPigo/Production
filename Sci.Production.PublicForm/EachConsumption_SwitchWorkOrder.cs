@@ -12,13 +12,13 @@ using System.Transactions;
 
 namespace Sci.Production.PublicForm
 {
-    public partial class P01_EachConsumption_SwitchWorkOrder : Sci.Win.Subs.Base
+    public partial class EachConsumption_SwitchWorkOrder : Sci.Win.Subs.Base
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword; 
         private string cuttingid;
 
-        public P01_EachConsumption_SwitchWorkOrder(string cutid)
+        public EachConsumption_SwitchWorkOrder(string cutid)
         {
             InitializeComponent();
             cuttingid = cutid;

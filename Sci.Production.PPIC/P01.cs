@@ -1192,7 +1192,7 @@ where POID = @poid group by POID,b.spno";
         private void button22_Click_1(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
-            var frm = new Sci.Production.PublicForm.P01_EachConsumption(false, CurrentMaintain["id"].ToString(), null, null, false, true,false);
+            var frm = new Sci.Production.PublicForm.EachConsumption(false, CurrentMaintain["id"].ToString(), null, null, false, true,false);
             frm.ShowDialog(this);
             this.OnDetailEntered();
         }

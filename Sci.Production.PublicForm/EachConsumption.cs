@@ -15,9 +15,9 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.PublicForm
 {
-    public partial class P01_EachConsumption : Sci.Win.Subs.Input4Plus
+    public partial class EachConsumption : Sci.Win.Subs.Input4Plus
     {
-        public P01_EachConsumption()
+        public EachConsumption()
         {
             InitializeComponent();
         }
@@ -46,7 +46,7 @@ namespace Sci.Production.PublicForm
         private bool isSizeQtyGridCurrentChanging { get { return 0 < _isSizeQtyGridCurrentChanging; } }
         private bool IsSizeQtyAttached { get { return null != _sizeQtyAttached; } }
 
-        public P01_EachConsumption(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, bool cuttingPiece, bool switchToWorkorder,bool canSwitch)
+        public EachConsumption(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, bool cuttingPiece, bool switchToWorkorder,bool canSwitch)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             InitializeComponent();
@@ -162,21 +162,21 @@ namespace Sci.Production.PublicForm
         private void btnDetail_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentData; if (null == dr) return;
-            var frm = new Sci.Production.PublicForm.P01_EachConsumption_Detail(false, dr["ID"].ToString(), dr["ukey"].ToString(), detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex())["colorid"].ToString());
+            var frm = new Sci.Production.PublicForm.EachConsumption_Detail(false, dr["ID"].ToString(), dr["ukey"].ToString(), detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex())["colorid"].ToString());
             frm.ShowDialog(this);
         }
 
         private void btnDownloadIdList_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentData; if (null == dr) return;
-            var frm = new Sci.Production.PublicForm.P01_EachConsumption_DownloadIdList(false, dr["ID"].ToString(), null, null);
+            var frm = new Sci.Production.PublicForm.EachConsumption_DownloadIdList(false, dr["ID"].ToString(), null, null);
             frm.ShowDialog(this);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentData; if (null == dr) return;
-            var frm = new Sci.Production.PublicForm.P01_EachConsumption_SwitchWorkOrder(dr["ID"].ToString());
+            var frm = new Sci.Production.PublicForm.EachConsumption_SwitchWorkOrder(dr["ID"].ToString());
             frm.ShowDialog(this);
         }
     }
