@@ -481,6 +481,7 @@ namespace Sci.Production.Quality
             if (maindr == null) return;
             encode_button.Enabled = this.CanEdit && !this.EditMode && maindr["Status"].ToString() != "Approved";
             this.button3.Enabled = !this.EditMode;
+            this.btn_Print.Enabled = !this.EditMode;
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P01", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
             DataRow pass2_dr;
