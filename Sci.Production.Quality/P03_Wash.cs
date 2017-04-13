@@ -86,11 +86,12 @@ where a.ID='{0}'"
                 LIDate.Value = MyUtility.Convert.GetDate(fir_dr["WashDate"]);
                 ResultText.Text = fir_dr["Wash"].ToString();
                 checkBox1.Value = fir_dr["nonWash"].ToString();
+                Description_box.Text = fir_dr["DescDetail"].ToString();
             }
             else
             {
                 sptext.Text = ""; SEQtext.Text = ""; AQtytext.Text = ""; Wknotext.Text = ""; Arrdate.Text = ""; Styletext.Text = ""; Brandtext.Text = "";
-                Supptext.Text = ""; SRnotext.Text = ""; BRnotext.Text = ""; Colortext.Text = "";
+                Supptext.Text = ""; SRnotext.Text = ""; BRnotext.Text = ""; Colortext.Text = ""; Description_box.Text = "";
             }
 
 
@@ -515,8 +516,7 @@ where a.ID='{0}'"
               .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), settings: LabTechCell)
               .CellUser("Inspector", header: "Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
               .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
-              .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true)
-              .Text("DescDetail", header: "Description", width: Widths.AnsiChars(50), iseditingreadonly: true);
+              .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
             return true;
         }
         protected override void OnInsert()

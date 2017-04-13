@@ -82,11 +82,12 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 LIDate.Value = MyUtility.Convert.GetDate(fir_dr["CrockingDate"]);
                 ResultText.Text = fir_dr["Crocking"].ToString();
                 checkBox1.Value = fir_dr["nonCrocking"].ToString();
+                Description_box.Text = fir_dr["DescDetail"].ToString();
             }
             else
             {
                 sptext.Text = ""; SEQtext.Text = ""; AQtytext.Text = ""; Wknotext.Text = ""; Arrdate.Text = ""; Styletext.Text = ""; Brandtext.Text = "";
-                Supptext.Text = ""; SRnotext.Text = ""; BRnotext.Text = ""; Colortext.Text = "";
+                Supptext.Text = ""; SRnotext.Text = ""; BRnotext.Text = ""; Colortext.Text = ""; Description_box.Text = "";
             }
 
 
@@ -345,9 +346,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), iseditingreadonly: true, settings: LabTechCell)
             .CellUser("Inspector", header: "Name", width: Widths.AnsiChars(10), userNamePropertyName: "Name", iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
-            .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true)
-            .Text("DescDetail", header: "Description", width: Widths.AnsiChars(50), iseditingreadonly: true);
-
+            .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
 
             return true;
         }
