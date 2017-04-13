@@ -589,7 +589,7 @@
             // 
             // P30
             // 
-            this.ClientSize = new System.Drawing.Size(921, 449);
+            this.ClientSize = new System.Drawing.Size(921, 650);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.DefaultDetailOrder = "Type,Item,Colorid";
             this.DefaultFilter = "orders.IsForecast<>1";
