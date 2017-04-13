@@ -209,7 +209,7 @@
             this.seq1_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.seq1_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.seq1_box.IsSupportEditMode = false;
-            this.seq1_box.Location = new System.Drawing.Point(329, 136);
+            this.seq1_box.Location = new System.Drawing.Point(299, 136);
             this.seq1_box.Name = "seq1_box";
             this.seq1_box.Size = new System.Drawing.Size(49, 21);
             this.seq1_box.TabIndex = 1;
@@ -220,14 +220,14 @@
             this.label14.Lines = 0;
             this.label14.Location = new System.Drawing.Point(251, 137);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(75, 23);
+            this.label14.Size = new System.Drawing.Size(45, 23);
             this.label14.TabIndex = 86;
             this.label14.Text = "SEQ1:";
             // 
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.button1.Location = new System.Drawing.Point(510, 134);
+            this.button1.Location = new System.Drawing.Point(530, 134);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(72, 27);
             this.button1.TabIndex = 63;
@@ -241,7 +241,7 @@
             this.mtl_box.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "complete", true));
             this.mtl_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.mtl_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.mtl_box.Location = new System.Drawing.Point(514, 46);
+            this.mtl_box.Location = new System.Drawing.Point(530, 46);
             this.mtl_box.Name = "mtl_box";
             this.mtl_box.Size = new System.Drawing.Size(99, 21);
             this.mtl_box.TabIndex = 85;
@@ -251,7 +251,7 @@
             this.insp_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.insp_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.insp_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.insp_box.Location = new System.Drawing.Point(514, 18);
+            this.insp_box.Location = new System.Drawing.Point(530, 18);
             this.insp_box.Name = "insp_box";
             this.insp_box.Size = new System.Drawing.Size(99, 21);
             this.insp_box.TabIndex = 84;
@@ -262,7 +262,7 @@
             this.remark_box.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FirLaboratoryRemark", true));
             this.remark_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.remark_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.remark_box.Location = new System.Drawing.Point(514, 73);
+            this.remark_box.Location = new System.Drawing.Point(530, 73);
             this.remark_box.Multiline = true;
             this.remark_box.Name = "remark_box";
             this.remark_box.Size = new System.Drawing.Size(375, 53);
@@ -274,7 +274,7 @@
             this.seq2_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.seq2_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.seq2_box.IsSupportEditMode = false;
-            this.seq2_box.Location = new System.Drawing.Point(459, 137);
+            this.seq2_box.Location = new System.Drawing.Point(399, 137);
             this.seq2_box.Name = "seq2_box";
             this.seq2_box.Size = new System.Drawing.Size(45, 21);
             this.seq2_box.TabIndex = 2;
@@ -335,9 +335,9 @@
             // 
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(381, 136);
+            this.label13.Location = new System.Drawing.Point(351, 136);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(75, 23);
+            this.label13.Size = new System.Drawing.Size(45, 23);
             this.label13.TabIndex = 75;
             this.label13.Text = "SEQ2:";
             // 
@@ -355,7 +355,7 @@
             // 
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(416, 44);
+            this.label11.Location = new System.Drawing.Point(432, 44);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(95, 23);
             this.label11.TabIndex = 73;
@@ -365,7 +365,7 @@
             // 
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(416, 73);
+            this.label10.Location = new System.Drawing.Point(432, 73);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(95, 23);
             this.label10.TabIndex = 72;
@@ -375,7 +375,7 @@
             // 
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(187, 103);
+            this.label9.Location = new System.Drawing.Point(195, 103);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(123, 23);
             this.label9.TabIndex = 71;
@@ -385,7 +385,7 @@
             // 
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(416, 16);
+            this.label8.Location = new System.Drawing.Point(432, 16);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(95, 23);
             this.label8.TabIndex = 70;
@@ -395,7 +395,7 @@
             // 
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(187, 44);
+            this.label7.Location = new System.Drawing.Point(195, 44);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(123, 23);
             this.label7.TabIndex = 69;
@@ -405,7 +405,7 @@
             // 
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(187, 73);
+            this.label6.Location = new System.Drawing.Point(195, 73);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(123, 23);
             this.label6.TabIndex = 68;
@@ -415,7 +415,7 @@
             // 
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(187, 16);
+            this.label5.Location = new System.Drawing.Point(195, 16);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(123, 23);
             this.label5.TabIndex = 67;
@@ -494,7 +494,7 @@
             // estcutdate_box
             // 
             this.estcutdate_box.IsSupportEditMode = false;
-            this.estcutdate_box.Location = new System.Drawing.Point(313, 16);
+            this.estcutdate_box.Location = new System.Drawing.Point(321, 16);
             this.estcutdate_box.Name = "estcutdate_box";
             this.estcutdate_box.ReadOnly = true;
             this.estcutdate_box.Size = new System.Drawing.Size(100, 23);
@@ -503,7 +503,7 @@
             // scidelivery_box
             // 
             this.scidelivery_box.IsSupportEditMode = false;
-            this.scidelivery_box.Location = new System.Drawing.Point(313, 43);
+            this.scidelivery_box.Location = new System.Drawing.Point(321, 43);
             this.scidelivery_box.Name = "scidelivery_box";
             this.scidelivery_box.ReadOnly = true;
             this.scidelivery_box.Size = new System.Drawing.Size(100, 23);
@@ -512,7 +512,7 @@
             // leadtime_box
             // 
             this.leadtime_box.IsSupportEditMode = false;
-            this.leadtime_box.Location = new System.Drawing.Point(313, 73);
+            this.leadtime_box.Location = new System.Drawing.Point(321, 73);
             this.leadtime_box.Name = "leadtime_box";
             this.leadtime_box.ReadOnly = true;
             this.leadtime_box.Size = new System.Drawing.Size(100, 23);
@@ -521,7 +521,7 @@
             // Complete_box
             // 
             this.Complete_box.IsSupportEditMode = false;
-            this.Complete_box.Location = new System.Drawing.Point(313, 103);
+            this.Complete_box.Location = new System.Drawing.Point(321, 103);
             this.Complete_box.Name = "Complete_box";
             this.Complete_box.ReadOnly = true;
             this.Complete_box.Size = new System.Drawing.Size(100, 23);

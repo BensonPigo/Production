@@ -121,9 +121,15 @@ select  MAX(WashDate) AS date from FIR_Laboratory WITH (NOLOCK)
 where POID='{0}'
 ) a", CurrentMaintain["ID"]);
                  DBProxy.Current.Select(null, sqlDate, out dtMaxDate);
-
-                 completedate = ((DateTime)dtMaxDate.Rows[0]["MaxDate"]);
-                 Complete_box.Text = completedate.ToString("yyyy/MM/dd");
+                 if (MyUtility.Check.Empty(dtMaxDate.Rows[0]["MaxDate"]))
+                 {
+                     Complete_box.Text = "";              
+                 }
+                 else
+                 {
+                     completedate = ((DateTime)dtMaxDate.Rows[0]["MaxDate"]);
+                     Complete_box.Text = completedate.ToString("yyyy/MM/dd");
+                 }
              }
              else this.Complete_box.Text = "";
          }
@@ -525,7 +531,6 @@ order by a.seq1,a.seq2,a.Refno "
                 }
             }
             detailgrid.SelectRowTo(rowindex);
-        }
-
+        }        
     }
 }
