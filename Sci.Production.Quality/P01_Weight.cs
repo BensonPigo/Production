@@ -189,7 +189,7 @@ namespace Sci.Production.Quality
                 if (oldvalue == newvalue) return;
                 decimal M2 = MyUtility.Convert.GetDecimal(dr["WeightM2"]);
                 decimal AvgM2 = MyUtility.Convert.GetDecimal(e.FormattedValue);
-                decimal diff = M2==0 ? 0 : Math.Round(((M2 - AvgM2) / M2) * 100, 2);
+                decimal diff = M2==0 ? 0 : Math.Round(((AvgM2 - M2) / M2) * 100, 2);
                 dr["averageWeightM2"] = AvgM2;
                 dr["Difference"] = diff;
                 dr.EndEdit();
