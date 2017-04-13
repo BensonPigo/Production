@@ -1254,14 +1254,14 @@ namespace Sci.Production.Planning
 
                 int startRow = 3; //title有2列
                 int lastRow = dt2.Rows.Count + 3 ;
-                int wt = dt2.Columns.Count / 2;
+                int wt = dt2.Columns.Count-1;
                 wks.Cells[lastRow, 1] = "Total:";
                 string wt2,wt3;
                 for (int i = 0; i < wt; i++)
                 {
-                    wt2 = MyExcelPrg.GetExcelColumnName(i * 2 + 2);
+                    wt2 = MyExcelPrg.GetExcelColumnName(i + 2);
                     wt3 = string.Format("=SUM({0}{1}:{0}{2})", wt2, startRow, lastRow - 1);
-                    wks.Cells[lastRow, (i * 2 + 2)] = wt3;
+                    wks.Cells[lastRow, (i + 2)] = wt3;
                 }                
             }
             #endregion
