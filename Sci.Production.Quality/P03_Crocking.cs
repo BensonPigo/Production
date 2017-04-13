@@ -21,15 +21,15 @@ namespace Sci.Production.Quality
         private string loginID = Sci.Env.User.UserID;
         private DataRow maindr;
         private string ID;
-        
 
-        public P03_Crocking(bool canedit, string id, string keyvalue2, string keyvalue3,DataRow mainDr)
+
+        public P03_Crocking(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
             InitializeComponent();
             maindr = mainDr;
             ID = id.Trim();
-            
+
         }
 
         protected override void OnEditModeChanged()
@@ -43,20 +43,27 @@ namespace Sci.Production.Quality
             #region Encode Enable
             button_enable();
             encode_button.Text = MyUtility.Convert.GetBool(maindr["CrockingEncode"]) ? "Amend" : "Encode";
-            
+
             #endregion
             //表頭 資料設定
             this.save.Enabled = !MyUtility.Convert.GetBool(maindr["CrockingEncode"]);
             string fir_cmd = string.Format(
-                @"select distinct a.Poid,a.SEQ1+a.SEQ2 as seq,a.ArriveQty,
-				b.styleid,b.BrandID,c.ExportId,c.WhseArrival,f.SuppID,a.SCIRefno,a.Refno,d.ColorID,
-				e.CrockingDate,e.Crocking,e.nonCrocking												
-				 from FIR a WITH (NOLOCK) 
-				left join Orders b WITH (NOLOCK) on a.POID=b.POID
-				left join Receiving c WITH (NOLOCK) on a.ReceivingID=c.Id
-				left join PO_Supp_Detail d WITH (NOLOCK) on d.ID=a.POID and a.SEQ1=d.SEQ1 and a.seq2=d.SEQ2
-				left join FIR_Laboratory e WITH (NOLOCK) on a.ID=e.ID
-                left join PO_Supp f WITH (NOLOCK) on d.ID=f.ID and d.SEQ1=f.SEQ1
+@"select distinct 
+    a.Poid,a.ArriveQty,a.SCIRefno,a.Refno,
+	seq = CONCAT(a.SEQ1,a.SEQ2),
+    b.styleid,b.BrandID,
+    c.ExportId,c.WhseArrival,
+    d.ColorID,
+    e.CrockingDate,e.Crocking,e.nonCrocking,
+    f.SuppID,
+    g.DescDetail
+from FIR a WITH (NOLOCK) 
+left join Orders b WITH (NOLOCK) on a.POID=b.POID
+left join Receiving c WITH (NOLOCK) on a.ReceivingID=c.Id
+left join PO_Supp_Detail d WITH (NOLOCK) on d.ID=a.POID and a.SEQ1=d.SEQ1 and a.seq2=d.SEQ2
+left join FIR_Laboratory e WITH (NOLOCK) on a.ID=e.ID
+left join PO_Supp f WITH (NOLOCK) on d.ID=f.ID and d.SEQ1=f.SEQ1
+left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 				where a.ID='{0}'", ID);
             DataRow fir_dr;
             if (MyUtility.Check.Seek(fir_cmd, out fir_dr))
@@ -72,16 +79,16 @@ namespace Sci.Production.Quality
                 SRnotext.Text = fir_dr["Scirefno"].ToString();
                 BRnotext.Text = fir_dr["Refno"].ToString();
                 Colortext.Text = fir_dr["colorid"].ToString();
-                LIDate.Value=MyUtility.Convert.GetDate(fir_dr["CrockingDate"]);
+                LIDate.Value = MyUtility.Convert.GetDate(fir_dr["CrockingDate"]);
                 ResultText.Text = fir_dr["Crocking"].ToString();
                 checkBox1.Value = fir_dr["nonCrocking"].ToString();
             }
             else
             {
-                sptext.Text = "";  SEQtext.Text = ""; AQtytext.Text = ""; Wknotext.Text = ""; Arrdate.Text = ""; Styletext.Text = ""; Brandtext.Text = "";
+                sptext.Text = ""; SEQtext.Text = ""; AQtytext.Text = ""; Wknotext.Text = ""; Arrdate.Text = ""; Styletext.Text = ""; Brandtext.Text = "";
                 Supptext.Text = ""; SRnotext.Text = ""; BRnotext.Text = ""; Colortext.Text = "";
-            }         
-      
+            }
+
 
             return base.OnRequery();
         }
@@ -102,10 +109,10 @@ namespace Sci.Production.Quality
                 dr["poid"] = maindr["poid"];
                 dr["SEQ1"] = maindr["SEQ1"];
                 dr["SEQ2"] = maindr["SEQ2"];
-                dr["Last update"] = datas.Rows[i]["EditName"].ToString() +" - "+ datas.Rows[i]["EditDate"].ToString();
+                dr["Last update"] = datas.Rows[i]["EditName"].ToString() + " - " + datas.Rows[i]["EditDate"].ToString();
                 i++;
             }
-           
+
         }
         protected override bool OnGridSetup()
         {
@@ -122,13 +129,13 @@ namespace Sci.Production.Quality
                 {
                     if (e.RowIndex == -1) return;
                     if (this.EditMode == false) return;
-                    if (e.Button==System.Windows.Forms.MouseButtons.Right)
+                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
                     {
                         DataRow dr = grid.GetDataRow(e.RowIndex);
                         string sqlcmd = string.Format(@"Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
-                        SelectItem item = new SelectItem(sqlcmd, "15,12", dr["roll"].ToString(),false,",");
+                        SelectItem item = new SelectItem(sqlcmd, "15,12", dr["roll"].ToString(), false, ",");
                         DialogResult result = item.ShowDialog();
-                        if (result==DialogResult.Cancel)
+                        if (result == DialogResult.Cancel)
                         {
                             return;
                         }
@@ -136,28 +143,7 @@ namespace Sci.Production.Quality
                     }
                 };
 
-                dryScaleCell.EditingMouseDown += (s, e) =>
-                    {
-                        if (e.RowIndex == -1) return;
-                        if (this.EditMode == false) return;
-                        if (e.Button==System.Windows.Forms.MouseButtons.Right)
-                        {
-                            DataRow dr = grid.GetDataRow(e.RowIndex);
-                            string scalecmd = @"select id from Scale WITH (NOLOCK) where junk!=1";
-                            SelectItem item1 = new SelectItem(scalecmd, "15", dr["DryScale"].ToString());
-                            DialogResult result = item1.ShowDialog();
-                            if (result==DialogResult.Cancel)
-                            {
-                                return;
-                            }
-                            e.EditingControl.Text = item1.GetSelectedString();
-                            dr["DryScale"] = item1.GetSelectedString(); 
-                        }
-                    
-                    };
-
-              
-                wetScaleCell.EditingMouseDown += (s, e) =>
+            dryScaleCell.EditingMouseDown += (s, e) =>
                 {
                     if (e.RowIndex == -1) return;
                     if (this.EditMode == false) return;
@@ -165,103 +151,102 @@ namespace Sci.Production.Quality
                     {
                         DataRow dr = grid.GetDataRow(e.RowIndex);
                         string scalecmd = @"select id from Scale WITH (NOLOCK) where junk!=1";
-                        SelectItem item1 = new SelectItem(scalecmd, "15", dr["WetScale"].ToString());
+                        SelectItem item1 = new SelectItem(scalecmd, "15", dr["DryScale"].ToString());
                         DialogResult result = item1.ShowDialog();
                         if (result == DialogResult.Cancel)
                         {
                             return;
                         }
-                        e.EditingControl.Text = item1.GetSelectedString(); //將選取selectitem value帶入GridView
-                        dr["WetScale"] = item1.GetSelectedString();
+                        e.EditingControl.Text = item1.GetSelectedString();
+                        dr["DryScale"] = item1.GetSelectedString();
                     }
 
                 };
-                LabTechCell.EditingMouseDown += (s, e) =>
-                { 
-                    if (e.RowIndex == -1) return;
-                    if (this.EditMode == false) return;
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                    {
-                        DataRow dr = grid.GetDataRow(e.RowIndex);
-                        string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) ";
-                        SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Inspector"].ToString());
-                        DialogResult result = item1.ShowDialog();
-                        if (result == DialogResult.Cancel)
-                        {
-                            return;
-                        }
-                        e.EditingControl.Text = item1.GetSelectedString(); //將選取selectitem value帶入GridView
-                        dr["Inspector"] = item1.GetSelectedString();
-                    }
-                };
-                              
-                ResultCell.CellMouseDoubleClick+=(s,e)=>
+
+
+            wetScaleCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    if (!this.EditMode) return;
                     DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string scalecmd = @"select id from Scale WITH (NOLOCK) where junk!=1";
+                    SelectItem item1 = new SelectItem(scalecmd, "15", dr["WetScale"].ToString());
+                    DialogResult result = item1.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    e.EditingControl.Text = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                    dr["WetScale"] = item1.GetSelectedString();
+                }
 
-                    if (dr["Result"].ToString() == "PASS") dr["Result"] = "FAIL";
-                    else dr["Result"] = "PASS";
-                };
-           
+            };
+            LabTechCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) ";
+                    SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Inspector"].ToString());
+                    DialogResult result = item1.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    e.EditingControl.Text = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                    dr["Inspector"] = item1.GetSelectedString();
+                }
+            };
+
+            ResultCell.CellMouseDoubleClick += (s, e) =>
+            {
+                if (!this.EditMode) return;
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+
+                if (dr["Result"].ToString() == "PASS") dr["Result"] = "FAIL";
+                else dr["Result"] = "PASS";
+            };
+
             #endregion
-                #region Valid 檢驗
-                Rollcell.CellValidating += (s, e) =>
+            #region Valid 檢驗
+            Rollcell.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                string oldvalue = dr["Roll"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (this.EditMode == false) return;
+                if (dr.RowState != DataRowState.Added)
+                {
+                    if (oldvalue == newvalue) return;
+                }
+
+                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                DataRow roll_dr;
+                if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
+                {
+                    dr["Roll"] = roll_dr["Roll"];
+                    dr["Dyelot"] = roll_dr["Dyelot"];
+                    dr.EndEdit();
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("<Roll> data not found!");
+                    dr["Roll"] = "";
+                    dr["Dyelot"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true;
+                    return;
+                }
+            };
+
+            dryScaleCell.CellValidating += (s, e) =>
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string oldvalue = dr["Roll"].ToString();
-                    string newvalue = e.FormattedValue.ToString();
-                    if (this.EditMode == false) return;
-                    if (dr.RowState!=DataRowState.Added) {
-                        if (oldvalue == newvalue) return;
-                    }
-
-                    string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
-                    DataRow roll_dr;
-                    if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
-                    {
-                        dr["Roll"] = roll_dr["Roll"];
-                        dr["Dyelot"] = roll_dr["Dyelot"];
-                        dr.EndEdit();
-                    }
-                    else
-                    {
-                        MyUtility.Msg.WarningBox("<Roll> data not found!");
-                        dr["Roll"] = "";
-                        dr["Dyelot"] = "";
-                        dr.EndEdit();
-                        e.Cancel = true;
-                        return;
-                    }
-                };
-
-                dryScaleCell.CellValidating += (s, e) =>
-                    {
-                        DataRow dr = grid.GetDataRow(e.RowIndex);
-                        string oldvalue = dr["DryScale"].ToString();
-                        string newvalue = e.FormattedValue.ToString();
-                        if (this.EditMode == false) return;
-                        if (dr.RowState != DataRowState.Added)
-                        {
-                            if (oldvalue == newvalue) return;
-                        }
-
-                        string dryScale_cmd = string.Format(@"	select DryScale from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Scale b WITH (NOLOCK) on a.DryScale=b.id where a.id ='{0}'", maindr["id"]);
-                        DataRow roll_dr;
-                        if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
-                        {
-                             MyUtility.Msg.WarningBox("<Dry Scale> data not found!");
-                             dr["DryScale"] = "";
-                             dr.EndEdit();
-                             e.Cancel = true;
-                             return;
-                        }
-                     
-                    };
-                wetScaleCell.CellValidating += (s, e) =>
-                {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string oldvalue = dr["wetScale"].ToString();
+                    string oldvalue = dr["DryScale"].ToString();
                     string newvalue = e.FormattedValue.ToString();
                     if (this.EditMode == false) return;
                     if (dr.RowState != DataRowState.Added)
@@ -269,85 +254,109 @@ namespace Sci.Production.Quality
                         if (oldvalue == newvalue) return;
                     }
 
-                    string dryScale_cmd = string.Format(@"select wetScale from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Scale b WITH (NOLOCK) on a.DryScale=b.id where a.id ='{0}'", maindr["id"]);
+                    string dryScale_cmd = string.Format(@"	select DryScale from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Scale b WITH (NOLOCK) on a.DryScale=b.id where a.id ='{0}'", maindr["id"]);
                     DataRow roll_dr;
                     if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
                     {
-                        MyUtility.Msg.WarningBox("<Wet Scale> data not found!");
-                        dr["wetScale"] = "";
+                        MyUtility.Msg.WarningBox("<Dry Scale> data not found!");
+                        dr["DryScale"] = "";
                         dr.EndEdit();
                         e.Cancel = true;
                         return;
                     }
-                
-                };
-                LabTechCell.CellValidating += (s, e) =>
-                {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string oldvalue = dr["inspector"].ToString();
-                    string newvalue = e.FormattedValue.ToString();
-                    if (this.EditMode == false) return;
-                    if (dr.RowState != DataRowState.Added)
-                    {
-                        if (oldvalue == newvalue) return;
-                    }
-                    string dryScale_cmd = string.Format(@"select Inspector from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID and b.Resign is not null where a.id ='{0}'", maindr["id"]);
-                    DataRow roll_dr;
-                    if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
-                    {
 
-                        MyUtility.Msg.WarningBox("<Inspector> data not found!");
-                        dr["Inspector"] = "";
-                        dr.EndEdit();
-                        e.Cancel = true;
-                        return;
-                    }
-                   
                 };
-                ResultCell.CellValidating += (s, e) =>
+            wetScaleCell.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                string oldvalue = dr["wetScale"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (this.EditMode == false) return;
+                if (dr.RowState != DataRowState.Added)
                 {
-                    string result_cmd = string.Format(@"select result from FIR_Laboratory_Crocking WITH (NOLOCK) where id ='{0}'", maindr["id"]);
-                    DataRow drResult;
-                    if (!MyUtility.Check.Seek(result_cmd,out drResult))
-                    {
-                        MyUtility.Msg.WarningBox("<Result> cannot be empty!");
-                        return;
-                    }
-                };
-                InspDateCell.CellValidating += (s, e) =>
-                {
-                    string result_cmd = string.Format(@"select inspdate from FIR_Laboratory_Crocking WITH (NOLOCK) where id ='{0}'", maindr["id"]);
-                    DataRow drResult;
-                    if (!MyUtility.Check.Seek(result_cmd, out drResult))
-                    {
-                        MyUtility.Msg.WarningBox("<inspdate> cannot be empty!");
-                        return;
-                    }
-                };                               
-                
-                #endregion
+                    if (oldvalue == newvalue) return;
+                }
 
-                Helper.Controls.Grid.Generator(this.grid)
-                .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: Rollcell)
-                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .Text("DryScale", header: "Dry Scale", width: Widths.AnsiChars(5), settings: dryScaleCell,iseditingreadonly:true)
-                .Text("WetScale", header: "Wet Scale", width: Widths.AnsiChars(5), settings: wetScaleCell,iseditingreadonly:true)
-                .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell,iseditingreadonly:true)
-                .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10), settings: InspDateCell)
-                .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16),iseditingreadonly:true,settings:LabTechCell)
-                .CellUser("Inspector", header: "Name", width: Widths.AnsiChars(10), userNamePropertyName: "Name",iseditingreadonly:true)
-                .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
-                .Text("Last update", header: "Last update",width: Widths.AnsiChars(50), iseditingreadonly: true);
-                       
+                string dryScale_cmd = string.Format(@"select wetScale from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Scale b WITH (NOLOCK) on a.DryScale=b.id where a.id ='{0}'", maindr["id"]);
+                DataRow roll_dr;
+                if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
+                {
+                    MyUtility.Msg.WarningBox("<Wet Scale> data not found!");
+                    dr["wetScale"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true;
+                    return;
+                }
+
+            };
+            LabTechCell.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                string oldvalue = dr["inspector"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (this.EditMode == false) return;
+                if (dr.RowState != DataRowState.Added)
+                {
+                    if (oldvalue == newvalue) return;
+                }
+                string dryScale_cmd = string.Format(@"select Inspector from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID and b.Resign is not null where a.id ='{0}'", maindr["id"]);
+                DataRow roll_dr;
+                if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
+                {
+
+                    MyUtility.Msg.WarningBox("<Inspector> data not found!");
+                    dr["Inspector"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true;
+                    return;
+                }
+
+            };
+            ResultCell.CellValidating += (s, e) =>
+            {
+                string result_cmd = string.Format(@"select result from FIR_Laboratory_Crocking WITH (NOLOCK) where id ='{0}'", maindr["id"]);
+                DataRow drResult;
+                if (!MyUtility.Check.Seek(result_cmd, out drResult))
+                {
+                    MyUtility.Msg.WarningBox("<Result> cannot be empty!");
+                    return;
+                }
+            };
+            InspDateCell.CellValidating += (s, e) =>
+            {
+                string result_cmd = string.Format(@"select inspdate from FIR_Laboratory_Crocking WITH (NOLOCK) where id ='{0}'", maindr["id"]);
+                DataRow drResult;
+                if (!MyUtility.Check.Seek(result_cmd, out drResult))
+                {
+                    MyUtility.Msg.WarningBox("<inspdate> cannot be empty!");
+                    return;
+                }
+            };
+
+            #endregion
+
+            Helper.Controls.Grid.Generator(this.grid)
+            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: Rollcell)
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
+            .Text("DryScale", header: "Dry Scale", width: Widths.AnsiChars(5), settings: dryScaleCell, iseditingreadonly: true)
+            .Text("WetScale", header: "Wet Scale", width: Widths.AnsiChars(5), settings: wetScaleCell, iseditingreadonly: true)
+            .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell, iseditingreadonly: true)
+            .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10), settings: InspDateCell)
+            .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), iseditingreadonly: true, settings: LabTechCell)
+            .CellUser("Inspector", header: "Name", width: Widths.AnsiChars(10), userNamePropertyName: "Name", iseditingreadonly: true)
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
+            .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true)
+            .Text("DescDetail", header: "Description", width: Widths.AnsiChars(50), iseditingreadonly: true);
+
 
             return true;
         }
 
-        
+
         protected override void OnInsert()
         {
             DataTable dt = (DataTable)gridbs.DataSource;
-            
+
             int Maxi = MyUtility.Convert.GetInt(dt.Compute("Max(NewKey)", ""));
             base.OnInsert();
 
@@ -368,8 +377,8 @@ namespace Sci.Production.Quality
             //將將刪除資料過的grid 重新丟進新datatable 並將資料完全刪除來做判斷! 
             afterDT.Merge(gridTb, true);
             afterDT.AcceptChanges();
-         
-            
+
+
             #region 判斷空白不可存檔
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["Roll"])))
             {
@@ -379,14 +388,14 @@ namespace Sci.Production.Quality
             else
             {
                 foreach (DataRow dr in afterDT.Rows)
-                {                                  
+                {
                     DataRow[] drArray = afterDT.Select(string.Format("Roll='{0}'", MyUtility.Convert.GetString(dr["Roll"])));
                     if (drArray.Length > 1)
                     {
                         MyUtility.Msg.WarningBox("<Roll>" + MyUtility.Convert.GetString(dr["Roll"]) + " is already exist ! ");
                         return false;
-                    }                                    
-                }       
+                    }
+                }
             }
 
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["DryScale"])))
@@ -415,7 +424,7 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.WarningBox("<Inspector> can not be empty.");
                 return false;
             }
-          
+
             #endregion
             return base.OnSaveBefore();
         }
@@ -423,7 +432,7 @@ namespace Sci.Production.Quality
         {
             DualResult upResult = new DualResult(true);
             string update_cmd = "";
-          
+
             foreach (DataRow dr in ((DataTable)gridbs.DataSource).Rows)
             {
                 if (dr.RowState == DataRowState.Deleted)
@@ -440,7 +449,7 @@ namespace Sci.Production.Quality
                 string inspdate;
                 if (MyUtility.Check.Empty(dr["InspDate"])) inspdate = ""; //判斷Inspect Date
                 else inspdate = string.Format("{0:yyyy-MM-dd}", dr["InspDate"]);
-                DateTime Today =  DateTime.Now;
+                DateTime Today = DateTime.Now;
                 if (dr.RowState == DataRowState.Added)
                 {
                     List<SqlParameter> spamAdd = new List<SqlParameter>();
@@ -487,10 +496,10 @@ namespace Sci.Production.Quality
 
                 }
             }
-          
+
             return upResult;
-           
-        }   
+
+        }
 
         private void encode_button_Click(object sender, EventArgs e)
         {
@@ -506,14 +515,14 @@ namespace Sci.Production.Quality
                 {
                     //至少檢驗一卷 並且出現在Fir_Continuity.Roll
                     DataTable rolldt;
-                    string cmd= string.Format(
+                    string cmd = string.Format(
                         @"Select roll from Receiving_Detail a WITH (NOLOCK) where 
                         a.id='{0}' and a.poid='{2}' and a.seq1 ='{3}' and a.seq2='{4}'  
                         and exists 
                         (Select distinct dyelot from FIR_Continuity b WITH (NOLOCK) where b.id='{1}' and a.roll = b.roll)"
                         , maindr["receivingid"], maindr["id"], maindr["POID"], maindr["seq1"], maindr["seq2"]);
                     DualResult dResult;
-                    if (dResult =  DBProxy.Current.Select(null, cmd, out rolldt))
+                    if (dResult = DBProxy.Current.Select(null, cmd, out rolldt))
                     {
                         if (rolldt.Rows.Count < 1)
                         {
@@ -525,7 +534,7 @@ namespace Sci.Production.Quality
                 #region 判斷Crocking Result
                 DataTable gridDt = (DataTable)gridbs.DataSource;
                 DataRow[] ResultAry = gridDt.Select("Result='Fail'");
-                string result = "Pass";                
+                string result = "Pass";
                 string Today = DateTime.Now.ToShortDateString();
                 if (ResultAry.Length > 0) result = "Fail";
                 #endregion
@@ -536,31 +545,31 @@ namespace Sci.Production.Quality
                 if (dt.Rows.Count == 0) return;
                 DateTime lastDate = Convert.ToDateTime(dt.Rows[0]["inspDate"]);
                 for (int i = 0; i < dt.Rows.Count; i++)
-                {                    
+                {
                     DateTime newDate = Convert.ToDateTime(dt.Rows[i]["inspDate"]);
                     //代表newDate 比  lastDate還晚 就取代lastDate
                     if (DateTime.Compare(newDate, lastDate) > 0)
                     {
                         lastDate = newDate;
-                    }                    
+                    }
                 }
                 #endregion
-               
+
                 #region  寫入實體Table
                 updatesql = string.Format(
                 @"Update Fir_Laboratory set CrockingEncode=1,Crocking='{0}',CrockingDate ='{2}' where id ='{1}'",
                 result, maindr["ID"], lastDate.ToShortDateString());
 
                 updatesql = updatesql + string.Format(@"update FIR_Laboratory_Crocking set inspDate='{1}' where id='{0}'", maindr["ID"], Today);
-                #endregion                           
+                #endregion
 
             }
             else //Amend
-            {                              
+            {
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir_Laboratory set CrockingDate = null,CrockingEncode= 0 where id ='{0}'",  maindr["ID"]);
-              
+                @"Update Fir_Laboratory set CrockingDate = null,CrockingEncode= 0 where id ='{0}'", maindr["ID"]);
+
                 #endregion
             }
             DualResult upResult;
@@ -596,34 +605,36 @@ namespace Sci.Production.Quality
             #endregion
 
             OnRequery();
-           
+
         }
 
         private void button_enable()
         {
             if (maindr == null) return;
-            encode_button.Enabled = this.CanEdit && !this.EditMode;            
-            this.ToExcelBtn.Enabled =  !this.EditMode;
+            encode_button.Enabled = this.CanEdit && !this.EditMode;
+            this.ToExcelBtn.Enabled = !this.EditMode;
             this.Supptext.TextBox1.ReadOnly = true;
         }
 
         private void ToExcelBtn_Click(object sender, EventArgs e)
-        {           
+        {
             DataTable dt = (DataTable)gridbs.DataSource;
-            string[] columnNames = new string[] { "Roll","Dyelot","DryScale","WetScale","Result","InspDate","Inspector","Remark","Last update" };
+            string[] columnNames = new string[] { "Roll", "Dyelot", "DryScale", "WetScale", "Result", "InspDate", "Inspector", "Remark", "Last update" };
             var ret = Array.CreateInstance(typeof(object), dt.Rows.Count, grid.Columns.Count) as object[,];
-            for( int i = 0;i <dt.Rows.Count; i++) {
-                DataRow row = dt.Rows[i];           
-                for (int j=0; j<columnNames.Length; j++) {
-                    ret[i,j] = row[columnNames[j]];
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                DataRow row = dt.Rows[i];
+                for (int j = 0; j < columnNames.Length; j++)
+                {
+                    ret[i, j] = row[columnNames[j]];
                 }
             }
-            if (dt.Rows.Count==0)
+            if (dt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return;
             }
-            
+
             //撈取seasonID
             DataTable dtSeason;
             string SeasonID;
@@ -631,8 +642,8 @@ namespace Sci.Production.Quality
             "select C.SeasonID from FIR_Laboratory_Crocking a WITH (NOLOCK) left join FIR_Laboratory b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C WITH (NOLOCK) ON B.POID=C.ID where a.ID='{0}'", maindr["ID"]), out dtSeason);
             if (dtSeason.Rows.Count == 0) { SeasonID = ""; }
             else { SeasonID = dtSeason.Rows[0]["SeasonID"].ToString(); }
-           
-            
+
+
             Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
             MyUtility.Excel.CopyToXls(ret, xltFileName: "Quality_P03_Crocking_Test.xltx", fileName: "Quality_P03_Crocking_Test", headerline: 5, excelAppObj: excel);
             Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表      
@@ -658,7 +669,7 @@ namespace Sci.Production.Quality
 
             if (excelSheets != null) Marshal.FinalReleaseComObject(excelSheets);//釋放sheet
             if (excel != null) Marshal.FinalReleaseComObject(excel);          //釋放objApp
-           
+
         }
         //maindr where id,poid重新query 
         private void mainDBQuery()
@@ -690,7 +701,7 @@ namespace Sci.Production.Quality
         }
 
 
-    
-     
+
+
     }
 }

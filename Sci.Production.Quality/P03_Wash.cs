@@ -29,7 +29,7 @@ namespace Sci.Production.Quality
             InitializeComponent();
             maindr = mainDr;
             ID = id.Trim();
-            
+
         }
         //編輯事件觸發     
 
@@ -51,16 +51,24 @@ namespace Sci.Production.Quality
             this.save.Enabled = !MyUtility.Convert.GetBool(maindr["WashEncode"]);
 
             string fir_cmd = string.Format(
-                @"select distinct a.Poid,a.SEQ1+a.SEQ2 as seq,a.ArriveQty,
-				b.styleid,b.BrandID,c.ExportId,c.WhseArrival,f.SuppID,a.SCIRefno,a.Refno,d.ColorID,
-				e.WashDate,e.Wash,e.nonWash												
-				 from FIR a WITH (NOLOCK) 
-				left join Orders b WITH (NOLOCK) on a.POID=b.POID
-				left join Receiving c WITH (NOLOCK) on a.ReceivingID=c.Id
-				left join PO_Supp_Detail d WITH (NOLOCK) on d.ID=a.POID and a.SEQ1=d.SEQ1 and a.seq2=d.SEQ2
-				left join FIR_Laboratory e WITH (NOLOCK) on a.ID=e.ID
-                left join PO_Supp f WITH (NOLOCK) on d.ID=f.ID and d.SEQ1=f.SEQ1
-				where a.ID='{0}'", ID);
+@"select distinct 
+	a.Poid,a.SCIRefno,a.Refno,
+	seq = CONCAT(a.SEQ1,a.SEQ2),a.ArriveQty,
+	b.styleid,b.BrandID,
+	c.ExportId,c.WhseArrival,
+	d.ColorID,	
+	e.WashDate,e.Wash,e.nonWash,
+	f.SuppID,
+	g.DescDetail										
+from FIR a WITH (NOLOCK) 
+left join Orders b WITH (NOLOCK) on a.POID=b.POID
+left join Receiving c WITH (NOLOCK) on a.ReceivingID=c.Id
+left join PO_Supp_Detail d WITH (NOLOCK) on d.ID=a.POID and a.SEQ1=d.SEQ1 and a.seq2=d.SEQ2
+left join FIR_Laboratory e WITH (NOLOCK) on a.ID=e.ID
+left join PO_Supp f WITH (NOLOCK) on d.ID=f.ID and d.SEQ1=f.SEQ1
+left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
+where a.ID='{0}'"
+                , ID);
             DataRow fir_dr;
             if (MyUtility.Check.Seek(fir_cmd, out fir_dr))
             {
@@ -187,7 +195,7 @@ namespace Sci.Production.Quality
                     e.EditingControl.Text = item1.GetSelectedString(); //將選取selectitem value帶入GridView
                 }
             };
-           
+
             ResultCell.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode) return;
@@ -232,20 +240,20 @@ namespace Sci.Production.Quality
                         dr["HorizontalOriginal"] = dr["HorizontalOriginal"];
                         return;
                     }
-                    if (MyUtility.Convert.GetDecimal(e.FormattedValue)>=100)
+                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
                         MyUtility.Msg.InfoBox("<Original Horizontal > cannot over than 100 !");
-                         dr["HorizontalOriginal"] = MyUtility.Convert.GetDecimal(dr["HorizontalOriginal"]);
+                        dr["HorizontalOriginal"] = MyUtility.Convert.GetDecimal(dr["HorizontalOriginal"]);
                     }
                     else
                     {
                         dr["HorizontalOriginal"] = e.FormattedValue;
                     }
-                    
+
                 }
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != 0)
                 {
-                    decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3 - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"]*100;
+                    decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3 - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"] * 100;
                     dr["HorizontalRate"] = Math.Round(newValue, 2);
                 }
                 else
@@ -265,20 +273,20 @@ namespace Sci.Production.Quality
                         dr["VerticalOriginal"] = MyUtility.Convert.GetDecimal(dr["VerticalOriginal"]);
                         return;
                     }
-                    if (MyUtility.Convert.GetDecimal(e.FormattedValue)>=100)
+                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
-                         MyUtility.Msg.InfoBox("<VerticalOriginal > cannot over than 100 !");
-                         dr["VerticalOriginal"] = MyUtility.Convert.GetDecimal(dr["VerticalOriginal"]);
+                        MyUtility.Msg.InfoBox("<VerticalOriginal > cannot over than 100 !");
+                        dr["VerticalOriginal"] = MyUtility.Convert.GetDecimal(dr["VerticalOriginal"]);
                     }
                     else
                     {
                         dr["VerticalOriginal"] = e.FormattedValue;
                     }
-                    
+
                 }
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != 0)
                 {
-                    decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3 - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] *100;
+                    decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3 - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
                     dr["VerticalRate"] = Math.Round(newValue, 2);
                 }
                 else
@@ -292,23 +300,23 @@ namespace Sci.Production.Quality
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest1"]))
                 {
-                    if (MyUtility.Convert.GetDecimal(e.FormattedValue)>=100)
+                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
                         MyUtility.Msg.InfoBox("<Horizontal 1> cannot over than 100 !");
-                        dr["HorizontalTest1"] = MyUtility.Convert.GetDecimal(dr["HorizontalTest1"]);                        
+                        dr["HorizontalTest1"] = MyUtility.Convert.GetDecimal(dr["HorizontalTest1"]);
                     }
                     else
                     {
                         dr["HorizontalTest1"] = e.FormattedValue;
                     }
-                    
-                }               
+
+                }
                 if ((decimal)dr["HorizontalOriginal"] != 0)
                 {
                     decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3 - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"] * 100;
                     dr["HorizontalRate"] = Math.Round(newValue, 2);
                     decimal newAvgValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3);
-                    dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);                    
+                    dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);
                 }
                 else
                 {
@@ -330,14 +338,14 @@ namespace Sci.Production.Quality
                     {
                         dr["HorizontalTest2"] = e.FormattedValue;
                     }
-                    
+
                 }
                 if ((decimal)dr["HorizontalOriginal"] != 0)
                 {
                     decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3 - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"] * 100;
                     dr["HorizontalRate"] = Math.Round(newValue, 2);
                     decimal newAvgValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3);
-                    dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);                    
+                    dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);
                 }
                 else
                 {
@@ -349,7 +357,7 @@ namespace Sci.Production.Quality
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest3"]))
                 {
-                    if (MyUtility.Convert.GetDecimal(e.FormattedValue)>=100)
+                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
                         MyUtility.Msg.InfoBox("<Horizontal 3> cannot over than 100 !");
                         dr["HorizontalTest3"] = MyUtility.Convert.GetDecimal(dr["HorizontalTest3"]);
@@ -358,7 +366,7 @@ namespace Sci.Production.Quality
                     {
                         dr["HorizontalTest3"] = e.FormattedValue;
                     }
-                    
+
                 }
                 if ((decimal)dr["HorizontalOriginal"] != 0)
                 {
@@ -366,7 +374,7 @@ namespace Sci.Production.Quality
                     dr["HorizontalRate"] = Math.Round(newValue, 2);
                     decimal newAvgValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3);
                     dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);
-                    
+
                 }
                 else
                 {
@@ -396,7 +404,7 @@ namespace Sci.Production.Quality
                     decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3 - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
                     dr["VerticalRate"] = Math.Round(newValue, 2);
                     decimal newAvgValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3);
-                    dr["Vertical_Average"] = Math.Round(newAvgValue, 2);                    
+                    dr["Vertical_Average"] = Math.Round(newAvgValue, 2);
                 }
                 else
                 {
@@ -425,7 +433,7 @@ namespace Sci.Production.Quality
                     dr["VerticalRate"] = Math.Round(newValue, 2);
                     decimal newAvgValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3);
                     dr["Vertical_Average"] = Math.Round(newAvgValue, 2);
-                    
+
                 }
                 else
                 {
@@ -447,9 +455,9 @@ namespace Sci.Production.Quality
                     {
                         dr["VerticalTest3"] = e.FormattedValue;
                     }
-                    
+
                 }
-                
+
                 if ((decimal)dr["VerticalOriginal"] != 0)
                 {
                     decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3 - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
@@ -492,10 +500,10 @@ namespace Sci.Production.Quality
               .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
               .Numeric("HorizontalOriginal", header: "Original Horizontal", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: orlHorCell)
               .Numeric("VerticalOriginal", header: "Original Vertical", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: orlVirCell)
-              .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell,iseditingreadonly:true)
+              .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell, iseditingreadonly: true)
               .Numeric("HorizontalTest1", header: "Horizontal 1", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: HorTest1Cell)
               .Numeric("HorizontalTest2", header: "Horizontal 2", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: HorTest2Cell)
-              .Numeric("HorizontalTest3", header: "Horizontal 3", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2,maximum:99, settings: HorTest3Cell)
+              .Numeric("HorizontalTest3", header: "Horizontal 3", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, maximum: 99, settings: HorTest3Cell)
               .Numeric("Horizontal_Average", header: "Horizontal_Average", width: Widths.AnsiChars(6), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
               .Numeric("Horizontalrate", header: "Horizontal Shrinkage rate", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
               .Numeric("VerticalTest1", header: "Vertical 1", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: VirTest1Cell)
@@ -507,7 +515,8 @@ namespace Sci.Production.Quality
               .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), settings: LabTechCell)
               .CellUser("Inspector", header: "Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
               .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
-              .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
+              .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true)
+              .Text("DescDetail", header: "Description", width: Widths.AnsiChars(50), iseditingreadonly: true);
             return true;
         }
         protected override void OnInsert()
@@ -811,17 +820,17 @@ namespace Sci.Production.Quality
                 updatesql = string.Format(
                 @"Update Fir_Laboratory set WashDate = '{2}',WashEncode = 1,Wash='{0}' where id ='{1}'", result, maindr["ID"], lastDate.ToShortDateString());
 
-                updatesql = updatesql + string.Format(@"update FIR_Laboratory_Wash set editName='{0}',inspdate='{2}' where id='{1}'", loginID, maindr["ID"],Today);
-                #endregion               
+                updatesql = updatesql + string.Format(@"update FIR_Laboratory_Wash set editName='{0}',inspdate='{2}' where id='{1}'", loginID, maindr["ID"], Today);
+                #endregion
             }
 
             else//Amend
-            {                
+            {
                 #region  寫入實體Table
                 updatesql = string.Format(
                 @"Update Fir_Laboratory set WashDate = null,WashEncode= 0 where id ='{0}'", maindr["ID"]);
 
-               // updatesql = updatesql + string.Format(@"update FIR_Laboratory_Wash set editName='{0}',editDate=Getdate() where id='{1}'", loginID, maindr["ID"]);
+                // updatesql = updatesql + string.Format(@"update FIR_Laboratory_Wash set editName='{0}',editDate=Getdate() where id='{1}'", loginID, maindr["ID"]);
                 #endregion
             }
             DualResult upResult;
@@ -846,7 +855,7 @@ namespace Sci.Production.Quality
                 }
             }
             #region Over All Result 寫入
-            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Lab(maindr["ID"]);           
+            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Lab(maindr["ID"]);
             maindr["Result"] = returnstr[0];
             string cmdResult = @"update Fir_Laboratory set Result=@Result where id=@id";
             List<SqlParameter> spam = new List<SqlParameter>();
@@ -873,10 +882,10 @@ namespace Sci.Production.Quality
                     ret[i, j] = row[columnNames[j]];
                 }
             }
-            if (dt.Rows.Count==0)
+            if (dt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
-                    return;
+                return;
             }
             //撈seasonID
             DataTable dtSeason;
@@ -885,7 +894,7 @@ namespace Sci.Production.Quality
             "select C.SeasonID from FIR_Laboratory_Wash a WITH (NOLOCK) left join FIR_Laboratory b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C WITH (NOLOCK) ON B.POID=C.ID where a.ID='{0}'", maindr["ID"]), out dtSeason);
             if (dtSeason.Rows.Count == 0) { SeasonID = ""; }
             else { SeasonID = dtSeason.Rows[0]["SeasonID"].ToString(); }
-         
+
             Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
             MyUtility.Excel.CopyToXls(ret, xltFileName: "Quality_P03_Wash_Test.xltx", fileName: "Quality_P03_Wash_Test", headerline: 5, excelAppObj: excel);
             Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表            

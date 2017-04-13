@@ -51,16 +51,24 @@ namespace Sci.Production.Quality
             this.save.Enabled = !MyUtility.Convert.GetBool(maindr["HeatEncode"]);
            
             string fir_cmd = string.Format(
-                @"select distinct a.Poid,a.SEQ1+a.SEQ2 as seq,a.ArriveQty,
-				b.styleid,b.BrandID,c.ExportId,c.WhseArrival,f.SuppID,a.SCIRefno,a.Refno,d.ColorID,
-				e.HeatDate,e.Heat,e.nonHeat												
-				 from FIR a WITH (NOLOCK) 
-				left join Orders b WITH (NOLOCK) on a.POID=b.POID
-				left join Receiving c WITH (NOLOCK) on a.ReceivingID=c.Id
-				left join PO_Supp_Detail d WITH (NOLOCK) on d.ID=a.POID and a.SEQ1=d.SEQ1 and a.seq2=d.SEQ2
-				left join FIR_Laboratory e WITH (NOLOCK) on a.ID=e.ID
-                left join PO_Supp f WITH (NOLOCK) on d.ID=f.ID and d.SEQ1=f.SEQ1
-				where a.ID='{0}'", ID);
+@"select distinct 
+    a.Poid,a.ArriveQty,a.Refno,a.SCIRefno,
+	seq = CONCAT(a.SEQ1,a.SEQ2),
+    b.styleid,b.BrandID,
+    c.ExportId,c.WhseArrival,
+    d.ColorID,
+    e.HeatDate,e.Heat,e.nonHeat,
+    f.SuppID,
+    g.DescDetail
+from FIR a WITH (NOLOCK) 
+left join Orders b WITH (NOLOCK) on a.POID=b.POID
+left join Receiving c WITH (NOLOCK) on a.ReceivingID=c.Id
+left join PO_Supp_Detail d WITH (NOLOCK) on d.ID=a.POID and a.SEQ1=d.SEQ1 and a.seq2=d.SEQ2
+left join FIR_Laboratory e WITH (NOLOCK) on a.ID=e.ID
+left join PO_Supp f WITH (NOLOCK) on d.ID=f.ID and d.SEQ1=f.SEQ1
+left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
+where a.ID='{0}'"
+                , ID);
             DataRow fir_dr;
             if (MyUtility.Check.Seek(fir_cmd, out fir_dr))
             {
@@ -516,7 +524,8 @@ namespace Sci.Production.Quality
               .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), settings: LabTechCell)
               .CellUser("Inspector", header: "Name", width: Widths.AnsiChars(10),iseditingreadonly:true)
               .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
-              .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
+              .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true)
+              .Text("DescDetail", header: "Description", width: Widths.AnsiChars(50), iseditingreadonly: true);
             return true;
         }
         protected override void OnInsert()
