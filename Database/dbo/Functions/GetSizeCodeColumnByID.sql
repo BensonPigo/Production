@@ -11,7 +11,7 @@ BEGIN
 
 	declare @main table(id varchar(13),SizeGroup varchar(1),Seq varchar(2),SizeCode varchar(8))
 	--main1 取得全部SizeCode
-	insert into @main select id,SizeGroup,Seq,SizeCode from Order_SizeCode WITH (NOLOCK) WHERE ID = @poid
+	insert into @main select id,SizeGroup,Seq,SizeCode from MNOrder_SizeCode WITH (NOLOCK) WHERE ID = @poid
 
 	declare @id table (id varchar(13))
 	if(@ByType = 0)
@@ -25,7 +25,7 @@ BEGIN
 	--main2 取得哪些有QTY
 	declare @main2 table(SizeGroup varchar(1),Seq varchar(2),SizeCode varchar(8))
 	insert into @main2
-	select a.SizeGroup,a.Seq,a.SizeCode from @main a inner join dbo.Order_Qty b on a.SizeCode = b.SizeCode
+	select a.SizeGroup,a.Seq,a.SizeCode from @main a inner join dbo.MNOrder_Qty b on a.SizeCode = b.SizeCode
 		where b.ID in (select id from @id)
 	group by a.SizeGroup,a.Seq,a.SizeCode order by SizeGroup,a.Seq,a.SizeCode
 		
