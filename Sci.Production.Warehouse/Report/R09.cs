@@ -132,12 +132,12 @@ from cte
 inner join Inventory a WITH (NOLOCK) on a.POID = cte.POID 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
 inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2
-inner joni Orders orders on c.poid = orders.id
+inner join Orders orders on c.poid = orders.id
 inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
 inner join dbo.View_Unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit 
 outer apply (select isnull(sum(m.InQty),0.00) InQty,isnull(sum(m.OutQty),0.00) OutQty,isnull(sum(m.AdjustQty),0.00) AdjustQty 
 from dbo.FtyInventory m WITH (NOLOCK) 
-            where m.POID = a.POID and m.seq1 = a.seq1 and m.seq2 = a.seq2 and StockType = 'I' and m.mdivisionid=c.mdivisionid) x
+            where m.POID = a.POID and m.seq1 = a.seq1 and m.seq2 = a.seq2 and StockType = 'I' ) x
 where b.InputQty > 0 ", sqlBuyerDelivery));
             }
             else
@@ -179,7 +179,7 @@ inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
 left join dbo.View_Unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit 
 outer apply (select isnull(sum(m.InQty),0.00) InQty,isnull(sum(m.OutQty),0.00) OutQty,isnull(sum(m.AdjustQty),0.00) AdjustQty 
 from dbo.FtyInventory m WITH (NOLOCK) 
-            where m.POID = a.POID and m.seq1 = a.seq1 and m.seq2 = a.seq2 and StockType = 'I' and m.mdivisionid=c.mdivisionid) x
+            where m.POID = a.POID and m.seq1 = a.seq1 and m.seq2 = a.seq2 and StockType = 'I' ) x
 where b.InputQty> 0"));
 
             }
