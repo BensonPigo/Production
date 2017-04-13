@@ -154,7 +154,8 @@ select 	distinct o.POID
 into #tmpPOID
 from Orders o WITH (NOLOCK) 
 where (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')
-	and o.LocalOrder = 0 and o.MDivisionID = @mdivision
+and o.LocalOrder = 0 and o.MDivisionID = @mdivision
+and o.WhseClose is null  
 
 select * 
 into #tmpWHQty
