@@ -29,8 +29,8 @@ namespace Sci.Production.IE
                 .Date("ActualDate", header: "Actual Date")
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
 
-            grid.Columns[3].DefaultCellStyle.BackColor = Color.Pink;
-            grid.Columns[4].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["ActualDate"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             return true;
         }
 

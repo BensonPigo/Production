@@ -99,12 +99,12 @@ namespace Sci.Production.Cutting
              .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: false)
              .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true);
-            
-            this.grid1.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns[6].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns[6].DefaultCellStyle.ForeColor = Color.Red;
-            this.grid1.Columns[16].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns[16].DefaultCellStyle.ForeColor = Color.Red;
+
+            this.grid1.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["Cutcellid"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["Cutcellid"].DefaultCellStyle.ForeColor = Color.Red;
+            this.grid1.Columns["estcutdate"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["estcutdate"].DefaultCellStyle.ForeColor = Color.Red;
 
         }
 

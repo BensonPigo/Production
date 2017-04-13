@@ -59,7 +59,7 @@ namespace Sci.Production.Cutting
              .Numeric("ReqQty", header: "# of Copies", width: Widths.AnsiChars(5), integer_places: 8)
              .Numeric("ReleaseQty", header: "# of Release", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
              .Date("ReleaseDate", header: "Release Date", width: Widths.AnsiChars(10), iseditingreadonly: true);
-            this.detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ReqQty"].DefaultCellStyle.BackColor = Color.Pink;
         }
         protected override bool ClickDeleteBefore()
         {

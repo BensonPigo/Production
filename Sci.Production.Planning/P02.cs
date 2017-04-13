@@ -239,8 +239,8 @@ namespace Sci.Production.Planning
                  .Text("msg", header: "Error Message", width: Widths.AnsiChars(20), settings: ts1, iseditingreadonly: true)
                   ;
             #region 可編輯欄位變色
-            grid1.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns["inhouseosp"].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns["localSuppid"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
           // foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
            this.grid1.ColumnHeaderMouseClick += grid1_ColumnHeaderMouseClick;

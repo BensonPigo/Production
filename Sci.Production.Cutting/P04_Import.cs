@@ -39,7 +39,7 @@ namespace Sci.Production.Cutting
             .Text("Styleid", header: "Style#", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Cutcellid", header: "Cut Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(40), iseditingreadonly: true);
-            this.grid1.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
 
         }
         private void Close_Click(object sender, EventArgs e)

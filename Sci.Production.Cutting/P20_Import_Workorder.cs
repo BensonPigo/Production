@@ -65,7 +65,7 @@ namespace Sci.Production.Cutting
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2)
             .Text("sizeRatio", header: "Size Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true);
-            this.grid1.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
 
         }
 

@@ -333,10 +333,10 @@ namespace Sci.Production.Cutting
            .Numeric("TotalParts", header: "Total Parts", width: Widths.AnsiChars(4), integer_places: 3, iseditingreadonly: true);
             ArticleSize_grid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             ArticleSize_grid.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            ArticleSize_grid.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
-            ArticleSize_grid.Columns[5].DefaultCellStyle.BackColor = Color.Pink;
-            ArticleSize_grid.Columns[6].DefaultCellStyle.BackColor = Color.Pink;
-            ArticleSize_grid.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
+            ArticleSize_grid.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            ArticleSize_grid.Columns["SewingLine"].DefaultCellStyle.BackColor = Color.Pink;
+            ArticleSize_grid.Columns["SewingCell"].DefaultCellStyle.BackColor = Color.Pink;
+            ArticleSize_grid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
             #region 左下一 Qty
             this.Qty_grid.IsEditingReadOnly = false;
@@ -345,7 +345,7 @@ namespace Sci.Production.Cutting
            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(4), integer_places: 3, settings: QtySizecell);
             Qty_grid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             Qty_grid.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            Qty_grid.Columns[1].DefaultCellStyle.BackColor = Color.Pink;
+            Qty_grid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
             #region Cutpart-Pattern 下中
@@ -357,10 +357,10 @@ namespace Sci.Production.Cutting
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3,settings:partQtyCell);
             Cutpart_grid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             Cutpart_grid.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            Cutpart_grid.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
-            Cutpart_grid.Columns[1].DefaultCellStyle.BackColor = Color.Pink;
-            Cutpart_grid.Columns[2].DefaultCellStyle.BackColor = Color.SkyBlue;
-            Cutpart_grid.Columns[3].DefaultCellStyle.BackColor = Color.Pink;
+            Cutpart_grid.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
+            Cutpart_grid.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
+            Cutpart_grid.Columns["art"].DefaultCellStyle.BackColor = Color.SkyBlue;
+            Cutpart_grid.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
 
             #endregion
 
@@ -374,10 +374,10 @@ namespace Sci.Production.Cutting
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partQtyCell2);
             AllPart_grid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             AllPart_grid.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            AllPart_grid.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
-            AllPart_grid.Columns[1].DefaultCellStyle.BackColor = Color.Pink;
-            AllPart_grid.Columns[2].DefaultCellStyle.BackColor = Color.Pink;
-            AllPart_grid.Columns[4].DefaultCellStyle.BackColor = Color.Pink;
+            AllPart_grid.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            AllPart_grid.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
+            AllPart_grid.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
+            AllPart_grid.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
         }
 

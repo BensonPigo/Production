@@ -403,7 +403,7 @@ namespace Sci.Production.Cutting
             .Numeric("No", header: "No", width: Widths.AnsiChars(4), integer_places: 5, iseditingreadonly: true)
             .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), integer_places: 5, settings: qtyCell);
-            grid_qty.Columns[2].DefaultCellStyle.BackColor = Color.Pink;
+            grid_qty.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             grid_art.DataSource = patternTb;
             grid_art.IsEditingReadOnly = false;
@@ -412,10 +412,10 @@ namespace Sci.Production.Cutting
             .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(15))
             .Text("art", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true,settings: subcell)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell1);
-            grid_art.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
-            grid_art.Columns[1].DefaultCellStyle.BackColor = Color.Pink;
-            grid_art.Columns[2].DefaultCellStyle.BackColor = Color.Pink;
-            grid_art.Columns[3].DefaultCellStyle.BackColor = Color.Pink;
+            grid_art.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
+            grid_art.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
+            grid_art.Columns["art"].DefaultCellStyle.BackColor = Color.Pink;
+            grid_art.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
 
             grid_allpart.DataSource = allpartTb;
             this.grid_allpart.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
@@ -425,10 +425,10 @@ namespace Sci.Production.Cutting
             .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(13))
             .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell2);
-            grid_allpart.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
-            grid_allpart.Columns[1].DefaultCellStyle.BackColor = Color.Pink;
-            grid_allpart.Columns[2].DefaultCellStyle.BackColor = Color.Pink;
-            grid_allpart.Columns[4].DefaultCellStyle.BackColor = Color.Pink;
+            grid_allpart.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            grid_allpart.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
+            grid_allpart.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
+            grid_allpart.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
 
 
             grid_Size.DataSource = sizeTb;

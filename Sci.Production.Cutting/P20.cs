@@ -206,7 +206,7 @@ namespace Sci.Production.Cutting
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2, iseditingreadonly: true)
             .Text("sizeRatio", header: "Size Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: sizeratio);
-            this.detailgrid.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["Cutref"].DefaultCellStyle.BackColor = Color.Pink;
         }
         protected override void ClickNewAfter()
         {

@@ -83,7 +83,7 @@ namespace Sci.Production.Cutting
             .Text("Refno", header: "Refno", width: Widths.Auto(), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.Auto(), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.Auto());
-            this.detailgrid.Columns[15].DefaultCellStyle.BackColor = Color.Pink;            
+            this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;            
         }
         protected override bool ClickDeleteBefore()
         {

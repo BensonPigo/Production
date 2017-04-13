@@ -52,9 +52,9 @@ namespace Sci.Production.Packing
                 .Date("Delivery", header: "Delivery")
                 .Numeric("POQty", header: "PO Qty", settings: poqty);
 
-            this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.LightGreen;
-            this.grid1.Columns[11].DefaultCellStyle.BackColor = Color.LightGreen;
-            this.grid1.Columns[12].DefaultCellStyle.BackColor = Color.LightGreen;
+            this.grid1.Columns["LocalPOID"].DefaultCellStyle.BackColor = Color.LightGreen;
+            this.grid1.Columns["Delivery"].DefaultCellStyle.BackColor = Color.LightGreen;
+            this.grid1.Columns["POQty"].DefaultCellStyle.BackColor = Color.LightGreen;
         }
 
         //Query
