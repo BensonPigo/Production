@@ -784,6 +784,10 @@ where 1 = 1
                 {
                     if (printData[i].Rows.Count == 0)
                         continue;
+                    foreach (DataRow dr in printData[i].Rows)
+                    {
+                        dr["Fab Desc"] = dr["Fab Desc"].ToString().Trim();
+                    }
 
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表
                     MyUtility.Excel.CopyToXls(printData[i], tmpFile, "Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: boolshowexcel, showSaveMsg: false);//將datatable copy to excel
@@ -791,13 +795,13 @@ where 1 = 1
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
                     objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
                     objSheets.Cells[3, 9] = MD;
-                    objSheets.Columns[7].ColumnWidth = 45;
+                    objSheets.Columns[7].ColumnWidth = 47;
                     objSheets.Columns[11].ColumnWidth = 8;
                     objSheets.Columns[12].ColumnWidth = 13;
                     objSheets.Columns[13].ColumnWidth = 15;
                     objSheets.Columns[14].ColumnWidth = 10;
                     objSheets.Columns[15].ColumnWidth = 18;
-                    objSheets.Columns[16].ColumnWidth = 50;
+                    objSheets.Columns[16].ColumnWidth = 40;
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet                    
                 }
                 if (!boolsend) objApp.Visible = true;
