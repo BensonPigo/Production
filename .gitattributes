@@ -2355,6 +2355,7 @@ Sci.Production.Quality/P01_Continuity.Designer.cs -text
 Sci.Production.Quality/P01_Continuity.cs -text
 Sci.Production.Quality/P01_Continuity.rdlc -text
 Sci.Production.Quality/P01_Continuity.resx -text
+Sci.Production.Quality/P01_Continuity_Printdata.cs -text
 Sci.Production.Quality/P01_PhysicalInspection.Designer.cs -text
 Sci.Production.Quality/P01_PhysicalInspection.cs -text
 Sci.Production.Quality/P01_PhysicalInspection.resx -text

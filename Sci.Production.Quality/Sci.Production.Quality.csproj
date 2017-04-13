@@ -175,6 +175,7 @@
     <Compile Include="B21.Designer.cs">
       <DependentUpon>B21.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_Continuity_PrintData.cs" />
     <Compile Include="P01_PhysicalInspection_Defect.cs">
       <SubType>Form</SubType>
     </Compile>
