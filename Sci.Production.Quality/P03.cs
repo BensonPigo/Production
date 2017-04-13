@@ -147,13 +147,12 @@ where POID='{0}'
     b.CrockingEncode,b.HeatEncode,b.WashEncode,
     ArriveQty,
 	Colorid = (Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2),
-    Supplier = (select Suppid+f.AbbEN as supplier from Supp f WITH (NOLOCK) where a.Suppid=f.ID),
+    Supplier = (select concat(Suppid,f.AbbEN) as supplier from Supp f WITH (NOLOCK) where a.Suppid=f.ID),
     b.ReceiveSampleDate,b.InspDeadline,b.Result,b.Crocking,b.nonCrocking,b.CrockingDate,b.nonHeat,Heat,b.HeatDate,
     b.nonWash,b.Wash,b.WashDate,a.ReceivingID
 from FIR a WITH (NOLOCK) 
 left join FIR_Laboratory b WITH (NOLOCK) on a.ID=b.ID
 left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
-left join Fabric d WITH (NOLOCK) on d.SCIRefno = a.SCIRefno
 Where a.poid='{0}' 
 order by a.seq1,a.seq2,a.Refno "
                 , masterID);
@@ -290,8 +289,7 @@ order by a.seq1,a.seq2,a.Refno "
                 .CheckBox("nonWash", header: "Wash N/A", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0,settings:nonWash)
                 .Text("Wash", header: "Wash Result", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:wash)
                 .Date("WashDate", header: "Wash Last Test Date", width: Widths.AnsiChars(10),iseditingreadonly:true,settings:washD)
-                .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("DescDetail", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true);
+                .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
 
             detailgrid.Columns[8].DefaultCellStyle.BackColor = Color.MistyRose;
