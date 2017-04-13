@@ -38,19 +38,19 @@ namespace Sci.Production.Warehouse
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))
                  .Text("factoryid", header: "Factory", width: Widths.AnsiChars(6))
+                 .Text("Brandid", header: "Brand", width: Widths.AnsiChars(10))
                  .Text("projectid", header: "Project ID", width: Widths.AnsiChars(8))
                  .Text("refno", header: "Refno", width: Widths.AnsiChars(18))
+                 .Text("POunit", header: "PO Unit", width: Widths.AnsiChars(10))
                  .Numeric("InputQty_unit", header: "Input Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("OutputQty_unit", header: "Output Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("Qty_unit", header: "Balance", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 2)
-                 .Text("Brandid", header: "Brand", width: Widths.AnsiChars(10))
+                 .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(10))             
                  .Text("FabricType", header: "Fabric Type", width: Widths.AnsiChars(10))
                  .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(10))
                  .Date("eta",header:"ETA")
                  .Date("Deadline", header: "Deadline")
-                 .Text("scirefno", header: "SCI Refno#", width: Widths.AnsiChars(20))
-                 .Text("POunit", header: "PO Unit", width: Widths.AnsiChars(10))
-                 .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(10))
+                 .Text("scirefno", header: "SCI Refno#", width: Widths.AnsiChars(20))                               
                  ;
 
             //設定Grid2的顯示欄位
