@@ -29,7 +29,7 @@ namespace Sci.Production
         {
             Sci.Env.App = this;
             InitializeComponent();
-
+            if (Debugger.IsAttached)
             {
                 ToolStripMenuItem winmenu;
                 menus.Items.Add(winmenu = new ToolStripMenuItem("Window")
