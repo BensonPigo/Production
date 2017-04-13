@@ -175,6 +175,7 @@
     <Compile Include="B21.Designer.cs">
       <DependentUpon>B21.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_Continuity_Printdata.cs" />
     <Compile Include="P01_PhysicalInspection_Defect.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -326,11 +327,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="R01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -450,6 +446,7 @@
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P01_Continuity.rdlc" />
     <EmbeddedResource Include="P01_PhysicalInspection.resx">
       <DependentUpon>P01_PhysicalInspection.cs</DependentUpon>
     </EmbeddedResource>
@@ -591,14 +588,6 @@
       <Project>{F1A7F278-EFA9-4DDA-B68A-202093B2444C}</Project>
       <Name>Sci.Production.Tools</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\DataSources\P01_ShadeBond.datasource" />
-    <None Include="Properties\DataSources\P01_ShadeBond_Data.datasource" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
