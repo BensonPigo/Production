@@ -175,7 +175,6 @@
     <Compile Include="B21.Designer.cs">
       <DependentUpon>B21.cs</DependentUpon>
     </Compile>
-    <Compile Include="P01_Continuity_PrintData.cs" />
     <Compile Include="P01_PhysicalInspection_Defect.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -200,6 +199,7 @@
     <Compile Include="P01_PhysicalInspection_PointRecord.Designer.cs">
       <DependentUpon>P01_PhysicalInspection_PointRecord.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_ShadeBond_Data.cs" />
     <Compile Include="P02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -302,6 +302,11 @@
     <Compile Include="P30.Designer.cs">
       <DependentUpon>P30.cs</DependentUpon>
     </Compile>
+    <Compile Include="ProductionDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProductionDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="P01_Weight.cs">
       <SubType>Form</SubType>
@@ -325,6 +330,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="R01.cs">
       <SubType>Form</SubType>
@@ -446,7 +456,6 @@
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P01_Continuity.rdlc" />
     <EmbeddedResource Include="P01_PhysicalInspection.resx">
       <DependentUpon>P01_PhysicalInspection.cs</DependentUpon>
     </EmbeddedResource>
@@ -456,6 +465,7 @@
     <EmbeddedResource Include="P01_PhysicalInspection_PointRecord.resx">
       <DependentUpon>P01_PhysicalInspection_PointRecord.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P01_ShadeBond_Print.rdlc" />
     <EmbeddedResource Include="P01_Weight.resx">
       <DependentUpon>P01_Weight.cs</DependentUpon>
     </EmbeddedResource>
@@ -587,6 +597,29 @@
       <Project>{F1A7F278-EFA9-4DDA-B68A-202093B2444C}</Project>
       <Name>Sci.Production.Tools</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="ProductionDataSet.xsc">
+      <DependentUpon>ProductionDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="ProductionDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ProductionDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="ProductionDataSet.xss">
+      <DependentUpon>ProductionDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="Properties\DataSources\P01_ShadeBond.datasource" />
+    <None Include="Properties\DataSources\P01_ShadeBond_Data.datasource" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
