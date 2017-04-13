@@ -64,6 +64,7 @@
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.textID = new Sci.Win.UI.DisplayBox();
             this.lastinspdate_box = new Sci.Win.UI.DateBox();
+            this.btnPrint = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -71,6 +72,7 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.btnPrint);
             this.btmcont.Controls.Add(this.button3);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
             this.btmcont.Size = new System.Drawing.Size(1073, 40);
@@ -80,6 +82,7 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.button3, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnPrint, 0);
             // 
             // gridcont
             // 
@@ -450,6 +453,16 @@
             this.lastinspdate_box.Size = new System.Drawing.Size(130, 23);
             this.lastinspdate_box.TabIndex = 136;
             // 
+            // btnPrint
+            // 
+            this.btnPrint.Location = new System.Drawing.Point(461, 5);
+            this.btnPrint.Name = "btnPrint";
+            this.btnPrint.Size = new System.Drawing.Size(160, 30);
+            this.btnPrint.TabIndex = 133;
+            this.btnPrint.Text = "Print Format Report";
+            this.btnPrint.UseVisualStyleBackColor = true;
+            this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
+            // 
             // P01_Continuity
             // 
             this.ClientSize = new System.Drawing.Size(1073, 733);
@@ -578,5 +591,6 @@
         private Win.UI.DateBox dateBox1;
         private Win.UI.DisplayBox textID;
         private Win.UI.DateBox lastinspdate_box;
+        private Win.UI.Button btnPrint;
     }
 }

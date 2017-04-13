@@ -445,6 +445,7 @@
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P01_Continuity.rdlc" />
     <EmbeddedResource Include="P01_PhysicalInspection.resx">
       <DependentUpon>P01_PhysicalInspection.cs</DependentUpon>
     </EmbeddedResource>
