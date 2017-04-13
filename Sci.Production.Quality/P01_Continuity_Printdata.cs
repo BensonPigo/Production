@@ -10,6 +10,7 @@ namespace Sci.Production.Quality
     {
         public string FactoryNameEN { set; get; }
         public string FactoryID { set; get; }
+        public string POID { set; get; }
         public string StyleID { set; get; }
         public string Color { set; get; }
         public string FabricDesc { set; get; }
