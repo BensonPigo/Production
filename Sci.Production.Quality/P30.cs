@@ -185,10 +185,12 @@ namespace Sci.Production.Quality
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 DataRow dr1;
 
-                string sqlcmd = string.Format(@" select colorid from po_supp_detail WITH (NOLOCK) a,Orders b  WITH (NOLOCK) 
-                where a.id=b.POID and a.fabrictype='A' 
-                and colorid is not null  and b.id='{0}' and a.colorid='{1}'"
-                  , textBox1.Text.ToString(), e.FormattedValue);
+                string sqlcmd = string.Format(@" 
+select  colorid 
+from  po_supp_detail a WITH (NOLOCK) 
+      , Orders b  WITH (NOLOCK) 
+where a.id=b.POID and a.fabrictype='A' 
+    and colorid is not null  and b.id='{0}' and a.colorid='{1}'", textBox1.Text.ToString(), e.FormattedValue);
                 if (MyUtility.Check.Seek(sqlcmd,out dr1))
                 {
                     dr["Colorid"] = e.FormattedValue;
