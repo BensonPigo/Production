@@ -65,7 +65,7 @@ namespace Sci.Production.Subcon
                                                                                 , b.orderid
                                                                                 ,b.refno
                                                                                 ,b.threadcolorid
-                                                                                ,'' description
+                                                                                ,[description]=dbo.getItemDesc(a.category,b.refno)
                                                                                 ,b.qty as poqty
                                                                                 ,b.unitid
                                                                                 ,b.price
