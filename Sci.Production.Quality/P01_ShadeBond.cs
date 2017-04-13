@@ -14,6 +14,9 @@ using System.Transactions;
 using Sci.Win.Tools;
 using Sci.Production.Quality;
 using System.Runtime.InteropServices;
+using System.Reflection;
+using System.Data.SqlClient;
+using System.Linq;
 
 
 namespace Sci.Production.Quality
@@ -24,6 +27,7 @@ namespace Sci.Production.Quality
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
         string excelFile;
+        string ID;
 
         public P01_ShadeBond(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
@@ -31,7 +35,7 @@ namespace Sci.Production.Quality
         {
             InitializeComponent();
             maindr = mainDr;
-            this.textID.Text = keyvalue1;            
+            ID = keyvalue1;            
         }
         protected override void OnEditModeChanged()
         {
@@ -508,7 +512,7 @@ namespace Sci.Production.Quality
             #region Excel Grid Value
             DataTable dt;
             DualResult xresult;
-            if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Shadebone WITH (NOLOCK) where id='{0}'", textID.Text), out dt))
+            if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Shadebone WITH (NOLOCK) where id='{0}'", ID), out dt))
             {
                 if (dt.Rows.Count <= 0)
                 {
@@ -523,7 +527,7 @@ namespace Sci.Production.Quality
             string ContinuityEncode = "";
             DualResult xresult1;
             if (xresult1 = DBProxy.Current.Select("Production", string.Format(
-            "select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Shadebone a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", textID.Text), out dt1))
+            "select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Shadebone a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", ID), out dt1))
             {
                 if (dt1.Rows.Count == 0)
                 {
@@ -578,6 +582,96 @@ namespace Sci.Production.Quality
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
+        }
+ 
+        private void btn_Print_Click(object sender, EventArgs e)
+        {
+            DataTable dt_title;
+            DataTable dt_Exp;
+            DualResult result;
+          
+           
+            //抓表頭資料
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@ID", Sci.Env.User.Factory));
+            result = DBProxy.Current.Select("",
+            @"select NameEN from Factory WITH (NOLOCK) where id=@ID ", pars, out dt_title);
+            if (!result) { this.ShowErr(result); }
+
+            //抓Invo,ETA 資料
+            List<SqlParameter> par_Exp = new List<SqlParameter>();
+            par_Exp.Add(new SqlParameter("@wkno", wk_box.Text));
+            result = DBProxy.Current.Select("", @"select id,Eta from Export where id=@wkno ", par_Exp, out dt_Exp);
+            if (!result) { this.ShowErr(result); }
+
+            //變數區
+            string Title = dt_title.Rows[0]["NameEN"].ToString();
+            string suppid=this.txtsupplier1.TextBox1.Text +" - "+this.txtsupplier1.DisplayBox1.Text;
+            string Invno=dt_Exp.Rows[0]["ID"].ToString();
+            //string ETA = dt_Exp.Rows[0]["ETA"].ToString();
+
+            string Refno = "Ref#" + brandrefno_box.Text + " , " + refdesc_box.Text;
+            
+            ReportDefinition report = new ReportDefinition();
+            //@變數
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title", Title));
+
+            DataTable dt = new DataTable();
+            DataRow dr;
+            dt.Columns.Add(new DataColumn("Poid",typeof(string)));
+            dt.Columns.Add(new DataColumn("FactoryID",typeof(string)));
+            dt.Columns.Add(new DataColumn("Style",typeof(string)));
+            dt.Columns.Add(new DataColumn("Color",typeof(string)));
+            dt.Columns.Add(new DataColumn("DESC",typeof(string)));
+            dt.Columns.Add(new DataColumn("Supp",typeof(string)));
+            dt.Columns.Add(new DataColumn("Invo",typeof(string)));
+            dt.Columns.Add(new DataColumn("ETA",typeof(DateTime)));
+
+            dr=dt.NewRow();
+            dr["Poid"]=sp_box.Text;
+            dr["FactoryID"] = Sci.Env.User.Factory;
+            dr["Style"] = style_box.Text;
+            dr["Color"] = color_box.Text;
+            dr["DESC"] = Refno;
+            dr["Supp"] = suppid;
+            dr["Invo"] = Invno;
+            dr["ETA"] = DateTime.Parse(dt_Exp.Rows[0]["ETA"].ToString()).ToString("yyyy-MM-dd").ToString();
+            dt.Rows.Add(dr);
+
+           
+
+            List<P01_ShadeBond_Data> data = dt.AsEnumerable()
+                .Select(row1 => new P01_ShadeBond_Data()
+            {
+                POID = row1["Poid"].ToString().Trim(),
+                FactoryID = row1["FactoryID"].ToString().Trim(),
+                Style = row1["Style"].ToString().Trim(),
+                Color = row1["Color"].ToString().Trim(),
+                DESC = row1["DESC"].ToString().Trim(),
+                Supp = row1["Supp"].ToString().Trim(),
+                Invo = row1["Invo"].ToString().Trim(),
+                ETA =  DateTime.Parse(row1["ETA"].ToString()).ToString("yyyy-MM-dd").ToString().Trim()
+            }).ToList();
+
+            report.ReportDataSource = data;
+
+            Type ReportResourceNamespace = typeof(P01_ShadeBond_Data);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P01_ShadeBond_Print.rdlc";
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                return;
+            }
+
+            report.ReportResource = reportresource;
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
+
         }
     }
 }
