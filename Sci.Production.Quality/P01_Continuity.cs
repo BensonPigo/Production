@@ -14,6 +14,7 @@ using System.Transactions;
 using Sci.Win.Tools;
 using Sci.Production.Quality;
 using System.Runtime.InteropServices;
+using System.Reflection;
 
 
 namespace Sci.Production.Quality
@@ -580,7 +581,34 @@ namespace Sci.Production.Quality
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
+            // 指定是哪個 RDLC
+            //DualResult result;
+            Type ReportResourceNamespace = typeof(P01_Continuity_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P01_Continuity.rdlc";
 
+            DualResult res;
+            IReportResource reportresource;
+            if (!(res = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                return;
+            }
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryNameEN", MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory", "ID")));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", MyUtility.GetValue.Lookup("FactoryID", sp_box.Text, "Orders", "ID")));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("POID", sp_box.Text));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("StyleID", style_box.Text));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Color", color_box.Text));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FabricDesc", refdesc_box.Text));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FabricSupplier", txtsupplier1.TextBox1.Text + " - " + txtsupplier1.DisplayBox1.Text));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("InvNo", wk_box.Text));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ETA", DateTime.Parse(arrwhdate_box.Value.ToString()).ToString("yyyy-MM-dd").ToString()));
+            report.ReportResource = reportresource;
+
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = MdiParent;
+            frm.Show();
         }
 
     }
