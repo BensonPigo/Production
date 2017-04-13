@@ -246,23 +246,23 @@ order by Suppid,point desc,ID desc
     ,[Inspected]= iif(Tmp.stockqty<>0,round(Tmp.TotalInspYds/Tmp.stockqty*100,2),0) 
     ,Tmp.yrds 
     ,Tmp.[Fabric(%)]
-    ,(select sl.id from SuppLevel sl WITH (NOLOCK) where type='F' and range1 <= isnull(tmp.[Fabric(%)],0) and range2 >= isnull(tmp.[Fabric(%)],0)) id		
+    ,(select sl.id from SuppLevel sl WITH (NOLOCK) where type='F' and Junk=0 and range1 <= isnull(tmp.[Fabric(%)],0) and range2 >= isnull(tmp.[Fabric(%)],0)) id		
     ,[Point]=point.defect
     ,[SHRINKAGEyards]= isnull(SHRINKAGE.SHRINKAGEyards,0)
     ,[SHRINKAGE (%)] = isnull(SHINGKAGE ,0)
-    ,(select id from SuppLevel WITH (NOLOCK) where type='F' and range1 <= isnull(SHINGKAGE,0) and range2 >= isnull(SHINGKAGE,0))SHINGKAGELevel
+    ,(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and range1 <= isnull(SHINGKAGE,0) and range2 >= isnull(SHINGKAGE,0))SHINGKAGELevel
     ,[MIGRATIONyards]= isnull(MIGRATION.MIGRATIONyards,0)
     ,[MIGRATION (%)]= isnull(MIGRATION,0)
-    ,(select id from SuppLevel WITH (NOLOCK) where type='F' and range1 <= isnull(MIGRATION,0) and range2 >= isnull(MIGRATION,0))MIGRATIONLevel
+    ,(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and range1 <= isnull(MIGRATION,0) and range2 >= isnull(MIGRATION,0))MIGRATIONLevel
     ,[SHADINGyards]= isnull(SHADING.SHADINGyards,0)
     ,[SHADING (%)]= isnull(SHADING,0)
-    ,(select id from SuppLevel WITH (NOLOCK) where type='F' and range1 <= isnull(SHADING,0) and range2 >= isnull(SHADING,0))SHADINGLevel
+    ,(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and range1 <= isnull(SHADING,0) and range2 >= isnull(SHADING,0))SHADINGLevel
     ,[ActualYds]= isnull(LACKINGYARDAGE.ActualYds,0)
     ,[LACKINGYARDAGE(%)]= isnull(LACKINGYARDAGELevel.LACKINGYARDAGE ,0)
-    ,(select id from SuppLevel WITH (NOLOCK) where type='F' and range1 <= isnull(LACKINGYARDAGELevel.LACKINGYARDAGE,0) and range2 >= isnull(LACKINGYARDAGELevel.LACKINGYARDAGE,0))LACKINGYARDAGELevel
+    ,(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and range1 <= isnull(LACKINGYARDAGELevel.LACKINGYARDAGE,0) and range2 >= isnull(LACKINGYARDAGELevel.LACKINGYARDAGE,0))LACKINGYARDAGELevel
     ,[SHORTWIDTH]= isnull(SHORTyards.SHORTWIDTH,0)
     ,[SHORT WIDTH (%)]= isnull(SHORTWIDTHLevel.SHORTWIDTH,0)
-    ,(select id from SuppLevel WITH (NOLOCK) where type='F' and range1 <= isnull(SHORTWIDTHLevel.SHORTWIDTH,0) and range2 >= isnull(SHORTWIDTHLevel.SHORTWIDTH,0))SHORTWIDTHLevel            
+    ,(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and range1 <= isnull(SHORTWIDTHLevel.SHORTWIDTH,0) and range2 >= isnull(SHORTWIDTHLevel.SHORTWIDTH,0))SHORTWIDTHLevel            
 	into #TmpFinal
 from (
 	select 
@@ -382,7 +382,7 @@ order by Tmp.SuppID
 
 -----加總匯出Report
 select *, 
-	[TOTALLEVEL]=(select id from SuppLevel WITH (NOLOCK) where type='F' and range1 <= isnull([AVG],0) and range2 >= isnull([AVG],0))
+	[TOTALLEVEL]=(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and range1 <= isnull([AVG],0) and range2 >= isnull([AVG],0))
 from(
 	select * ,[Avg] = (select 
        	(	[Fabric(%)]* (select Weight from dbo.Inspweight WITH (NOLOCK) where id ='Fabric Defect') +
