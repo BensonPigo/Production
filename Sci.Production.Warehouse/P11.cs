@@ -33,6 +33,8 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             this.gridicon.Location = new System.Drawing.Point(891, 128); //此gridcon位置會跑掉，需強制設定gridcon位置        
+            this.gridicon.Anchor = AnchorStyles.Right;
+
             this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);//Issue此為PMS自行建立的資料，MDivisionID皆會有寫入值
 
             WorkAlias = "Issue";                        // PK: ID
