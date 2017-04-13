@@ -15,7 +15,6 @@ using System.Reflection;
 using Microsoft.Reporting.WinForms;
 using System.Data.SqlClient;
 using Sci.Win;
-
 namespace Sci.Production.Warehouse
 {
     public partial class P17 : Sci.Win.Tems.Input6
@@ -23,6 +22,7 @@ namespace Sci.Production.Warehouse
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         protected ReportViewer viewer;
+        protected DataTable dtBorrow;
         public P17(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -235,6 +235,7 @@ namespace Sci.Production.Warehouse
                         , row["poid"], row["seq1"], row["seq2"])
                         + Environment.NewLine);
                 }
+        
 
                 if (MyUtility.Check.Empty(row["Qty"]))
                 {
@@ -244,8 +245,22 @@ namespace Sci.Production.Warehouse
 
                 if (MyUtility.Check.Empty(row["ftyinventoryukey"]))
                 {
+                    string stocktype="";
+                    switch (row["stocktype"].ToString())
+                    {
+                        case "I":
+                            stocktype = "Inventory";
+                            break;
+                        case "B":
+                            stocktype = "Bulk";
+                            break;
+                        default:
+                            
+                            break;
+                    }
+
                     warningmsg.Append(string.Format(@"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} doesn't exist in warehouse {5}"
-                        , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], row["stocktype"]) + Environment.NewLine);
+                        , row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], stocktype) + Environment.NewLine);
                 }
 
             }
@@ -443,36 +458,59 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
             #region -- Roll Vaild --
             ts4.CellValidating += (s, e) =>
             {
+                
                 if (this.EditMode)
                 {
-                    DataRow dr;
-                    if (String.Compare(e.FormattedValue.ToString(), CurrentDetailData["roll"].ToString()) != 0)
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    string sqlcmd = string.Format(@"SELECT  dyelot
+                                                            ,stuff((select ',' + mtllocationid from (
+                                                                                        select MtlLocationID 
+                                                                                        from dbo.FtyInventory_Detail 
+                                                                                        WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')), 1, 1, '') as [location]
+                                                            ,ukey
+                                                        FROM dbo.ftyinventory a WITH (NOLOCK) 
+                                                        WHERE   stocktype = 'B'
+                                                            AND poID ='{0}'
+                                                            AND seq1= '{1}' 
+                                                            AND seq2= '{2}' 
+                                                            AND roll= '{3}'
+                                                       ", dr["poid"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString(), e.FormattedValue);
+                   
+                    Ict.DualResult result;
+                    if (result = DBProxy.Current.Select(null, sqlcmd, out dtBorrow))
                     {
-
-                        if (!MyUtility.Check.Seek(string.Format(@"
-select ukey 
-from ftyinventory WITH (NOLOCK) 
-inner join Orders on ftyinventory.poid = Orders.id
-inner join Factory on Orders.FactoryID = Factory.id
-where poid = '{0}' and seq1 ='{1}' and seq2 = '{2}' and Factory.MDivisionID = '{3}'
-    and stocktype = '{4}' and roll = '{5}'
-", CurrentDetailData["poid"], e.FormattedValue.ToString().PadRight(5).Substring(0, 3)
-, e.FormattedValue.ToString().PadRight(5).Substring(3, 2), Sci.Env.User.Keyword, CurrentDetailData["stocktype"], CurrentDetailData["roll"]), out dr, null))
+                        if (dtBorrow.Rows.Count > 0)
                         {
+                            //有此ROLL
+                            dr["dyelot"] = dtBorrow.Rows[0][0].ToString();
+                            dr["Roll"] = e.FormattedValue;
+                            dr["Location"] = dtBorrow.Rows[0][1].ToString();
+                            dr["ftyinventoryukey"] = dtBorrow.Rows[0][2].ToString();
+                            dr.EndEdit();
+                        }
+                        else {
                             MyUtility.Msg.WarningBox("Data not found!", "Roll#");
                             e.Cancel = true;
+                            CurrentDetailData["roll"] = "";
                             return;
                         }
-                        CurrentDetailData["ftyinventoryukey"] = dr["ukey"];
                     }
+                    else {
+                        MyUtility.Msg.WarningBox("Data not found!", "Roll#");
+                        e.Cancel = true;
+                        CurrentDetailData["roll"] = "";
+                        return;
+                    }
+                                       
                 }
             };
             #endregion
+
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), CheckMDivisionID: true)  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6),settings:ts)  //1
-            .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)  //2
+            .Text("roll", header: "Roll", width: Widths.AnsiChars(6),  settings: ts4)  //2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
