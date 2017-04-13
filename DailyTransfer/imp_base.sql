@@ -1258,6 +1258,7 @@ SET
       ,a.AddDate		      =b.AddDate
       ,a.EditName		      =b.EditName
       ,a.EditDate		      =b.EditDate
+	  ,a.ukey =b.ukey
 
 from Production.dbo.Color as a inner join Trade_To_Pms.dbo.Color as b ON a.id=b.id and a.BrandId = b.BrandId
 -------------------------- INSERT INTO §ì
@@ -1272,6 +1273,7 @@ INSERT INTO Production.dbo.Color(
       ,AddDate
       ,EditName
       ,EditDate
+	  ,ukey
 
 )
 select 
@@ -1285,6 +1287,7 @@ select
       ,AddDate
       ,EditName
       ,EditDate
+	  ,ukey
 
 from Trade_To_Pms.dbo.Color as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Color as a WITH (NOLOCK) where a.id = b.id and a.BrandId = b.BrandId)
