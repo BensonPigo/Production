@@ -190,7 +190,7 @@ namespace Sci.Production.Quality
             string grade_cmd = string.Format(@"
 select grade = Min(ID) 
 from SuppLevel SLv
-where   SLv.Range1 < {0} and {0} < SLv.Range2
+where   SLv.Range1 <= {0} and {0} <= SLv.Range2
         and Junk != 1", CurrentData["PointRate"]);
             DataRow grade_dr;
             if (MyUtility.Check.Seek(grade_cmd, out grade_dr))
