@@ -186,7 +186,12 @@ namespace Sci.Production.Quality
             #region Grade,Result
            // string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", CurrentData["SCiRefno"].ToString(), "Fabric", "SciRefno");
             string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", mainrow["SCiRefno"].ToString(), "Fabric", "SciRefno");
-            string grade_cmd = String.Format("SELECT MIN(GRADE) grade FROM FIR_Grade WITH (NOLOCK) WHERE WEAVETYPEID = '{0}' AND PERCENTAGE >= IIF({1} > 100,100,{1})", WeaveTypeid, CurrentData["PointRate"]);
+            //string grade_cmd = String.Format("SELECT MIN(GRADE) grade FROM FIR_Grade WITH (NOLOCK) WHERE WEAVETYPEID = '{0}' AND PERCENTAGE >= IIF({1} > 100,100,{1})", WeaveTypeid, CurrentData["PointRate"]);
+            string grade_cmd = string.Format(@"
+select grade = Min(ID) 
+from SuppLevel SLv
+where   SLv.Range1 < {0} and {0} < SLv.Range2
+        and Junk != 1", CurrentData["PointRate"]);
             DataRow grade_dr;
             if (MyUtility.Check.Seek(grade_cmd, out grade_dr))
             {
