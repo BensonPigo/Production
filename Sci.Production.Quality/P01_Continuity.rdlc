@@ -1846,7 +1846,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!FactoryNameEN.Value</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
                     <FontSize>14pt</FontSize>
@@ -1950,7 +1950,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!FactoryID.Value</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
                   </Style>
@@ -2014,7 +2014,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!FabricSupplier.Value</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
                   </Style>
@@ -2142,7 +2142,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!POID.Value</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
                   </Style>
@@ -2206,7 +2206,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!InvNo.Value</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
                   </Style>
@@ -2334,7 +2334,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!StyleID.Value</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
                   </Style>
@@ -2398,7 +2398,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!ETA.Value</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
                   </Style>
@@ -2526,7 +2526,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!Color.Value</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
                   </Style>
@@ -2717,7 +2717,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value />
+                  <Value>=Parameters!FabricDesc.Value</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
                   </Style>
