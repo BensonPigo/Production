@@ -214,6 +214,7 @@ select DISTINCT c.FactoryID
 	        ,[Amount] = b.Qty*b.Price
 	        ,b.InQty
 	        ,b.APQty
+            ,a.id
 	        ,b.Remark
 from localpo a WITH (NOLOCK) 
 inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
