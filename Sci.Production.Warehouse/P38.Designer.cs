@@ -88,7 +88,7 @@
             this.txtSeq1.seq1 = "";
             this.txtSeq1.seq2 = "";
             this.txtSeq1.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq1.TabIndex = 39;
+            this.txtSeq1.TabIndex = 1;
             // 
             // cbxStockType
             // 
@@ -103,7 +103,7 @@
             this.cbxStockType.Location = new System.Drawing.Point(766, 10);
             this.cbxStockType.Name = "cbxStockType";
             this.cbxStockType.Size = new System.Drawing.Size(100, 24);
-            this.cbxStockType.TabIndex = 2;
+            this.cbxStockType.TabIndex = 4;
             // 
             // label3
             // 
@@ -155,14 +155,14 @@
             this.cbxStatus.Location = new System.Drawing.Point(492, 10);
             this.cbxStatus.Name = "cbxStatus";
             this.cbxStatus.Size = new System.Drawing.Size(121, 24);
-            this.cbxStatus.TabIndex = 1;
+            this.cbxStatus.TabIndex = 3;
             // 
             // btnQuery
             // 
             this.btnQuery.Location = new System.Drawing.Point(916, 6);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 3;
+            this.btnQuery.TabIndex = 5;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);

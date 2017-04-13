@@ -280,9 +280,37 @@ where f.MDivisionID = '{0}' and fi.POID like @poid1
         {
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             //MyUtility.Excel.CopyToXls(dt, "");
+            string sql = @"
+
+                select  
+t.selected,
+t.POID,
+t.Seq1+' '+Seq2,
+t.Roll,
+t.Dyelot,
+t.stocktype,
+t.status,
+t.InQty,
+t.OutQty,
+t.balanceqty,
+t.location,
+t.Description,
+t.StyleID,
+t.ColorID,
+t.earliest_BuyerDelivery,
+t.earliest_SciDelivery,
+t.BrandID,
+t.FactoryID,
+t.LockDate,
+t.LockName
+                from  #Tmp t
+            ";
+
+            DataTable k;
+            MyUtility.Tool.ProcessWithDatatable(dt, "", sql, out k, "#Tmp");
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P38.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P38.xltx", 1, true, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(k, "", "Warehouse_P38.xltx", 1, true, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
 
