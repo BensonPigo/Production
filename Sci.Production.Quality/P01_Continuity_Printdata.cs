@@ -8,13 +8,13 @@ namespace Sci.Production.Quality
 {
     class P01_Continuity_PrintData
     {
-        string FactoryNameEN { set; get; }
-        string FactoryID { set; get; }
-        string StyleID { set; get; }
-        string Color { set; get; }
-        string FabricDesc { set; get; }
-        string FabricSupplier { set; get; }
-        string InvNo { set; get; }
-        string ETA { set; get; }
+        public string FactoryNameEN { set; get; }
+        public string FactoryID { set; get; }
+        public string StyleID { set; get; }
+        public string Color { set; get; }
+        public string FabricDesc { set; get; }
+        public string FabricSupplier { set; get; }
+        public string InvNo { set; get; }
+        public string ETA { set; get; }
     }
 }
