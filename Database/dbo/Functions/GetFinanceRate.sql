@@ -1,4 +1,4 @@
-CREATE FUNCTION [dbo].[GetFinanceRate]
+﻿CREATE FUNCTION [dbo].[GetFinanceRate]
 (
 	@rateTypeID VARCHAR(2), 
 	@rateDate DATETIME,
@@ -13,37 +13,37 @@ BEGIN
 		RETURN 1
 
 	--正向
-	SELECT @returnRate = Rate FROM FinanceEn.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = @originalCurrency AND ExchangeCurrency = @exchangeCurrency
+	SELECT @returnRate = Rate FROM FinanceEn.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = @originalCurrency AND ExchangeCurrency = @exchangeCurrency AND BeginDate <= @rateDate AND EndDate >= @rateDate
 	IF @returnRate <> 0
 		RETURN @returnRate
 	
 	--反向
-	SELECT @returnRate = Rate FROM FinanceEn.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = @exchangeCurrency AND ExchangeCurrency = @originalCurrency
+	SELECT @returnRate = Rate FROM FinanceEn.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = @exchangeCurrency AND ExchangeCurrency = @originalCurrency AND BeginDate <= @rateDate AND EndDate >= @rateDate
 	IF @returnRate <> 0
 		RETURN 1 / @returnRate
 
 	--間接正向
-	SELECT @immediateRate = Rate FROM FinanceEn.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = @originalCurrency AND ExchangeCurrency = 'TWD'
+	SELECT @immediateRate = Rate FROM FinanceEn.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = @originalCurrency AND ExchangeCurrency = 'TWD' AND BeginDate <= @rateDate AND EndDate >= @rateDate
 	IF @immediateRate <> 0
 	BEGIN
-		SELECT @returnRate = Rate FROM FinanceEn.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = 'TWD' AND ExchangeCurrency = @exchangeCurrency
+		SELECT @returnRate = Rate FROM FinanceEn.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = 'TWD' AND ExchangeCurrency = @exchangeCurrency AND BeginDate <= @rateDate AND EndDate >= @rateDate
 		IF @returnRate <> 0
 			RETURN ROUND(@immediateRate * @returnRate, 8)
 
-		SELECT @returnRate = Rate FROM FinanceEn.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = @exchangeCurrency AND ExchangeCurrency = 'TWD'
+		SELECT @returnRate = Rate FROM FinanceEn.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = @exchangeCurrency AND ExchangeCurrency = 'TWD' AND BeginDate <= @rateDate AND EndDate >= @rateDate
 		IF @returnRate <> 0
 			RETURN ROUND(@immediateRate / @returnRate, 8)
 	END
 
 	--間接反向
-	SELECT @immediateRate = Rate FROM Finance.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = @exchangeCurrency AND ExchangeCurrency = 'TWD'
+	SELECT @immediateRate = Rate FROM FinanceEn.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = @exchangeCurrency AND ExchangeCurrency = 'TWD' AND BeginDate <= @rateDate AND EndDate >= @rateDate
 	IF @immediateRate <> 0
 	BEGIN
-		SELECT @returnRate = Rate FROM Finance.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = 'TWD' AND ExchangeCurrency = @originalCurrency
+		SELECT @returnRate = Rate FROM FinanceEn.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = 'TWD' AND ExchangeCurrency = @originalCurrency AND BeginDate <= @rateDate AND EndDate >= @rateDate
 		IF @returnRate <> 0
 			RETURN rOUND(1/ROUND(@immediateRate * @returnRate, 8),8)
 
-		SELECT @returnRate = Rate FROM Finance.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = @originalCurrency AND ExchangeCurrency = 'TWD'
+		SELECT @returnRate = Rate FROM FinanceEn.dbo.Rate WHERE RateTypeID = @rateTypeID AND OriginalCurrency = @originalCurrency AND ExchangeCurrency = 'TWD' AND BeginDate <= @rateDate AND EndDate >= @rateDate
 		IF @returnRate <> 0
 			RETURN rOUND(1/ROUND(@immediateRate / @returnRate, 8),8)
 	END
