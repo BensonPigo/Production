@@ -248,7 +248,7 @@ order by SMVEFFX";
 
         private DualResult transferData()
         {
-            string temfile = "";
+            string temfile = "", title = "";
             DualResult result = Result.True;
 
             string strPath = PrivUtils.getPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
@@ -262,6 +262,17 @@ order by SMVEFFX";
             SaveXltReportCls.xltRptTable xrt3 = new SaveXltReportCls.xltRptTable(tmpStyleDetail);
             SaveXltReportCls.xltRptTable xrt4 = new SaveXltReportCls.xltRptTable(tmpOrderDetail);
 
+            #region 抬頭
+            if (rbRegionNo.Checked)
+            {
+                title = "Season =" + txtSeason1.Text + "   , Brand =" + txtBrand1.Text + "    , Grouping by Region No";
+            }
+            else
+            {
+                title = "Season =" + txtSeason1.Text + "   , Brand =" + txtBrand1.Text + "    , Grouping by Factory Code";
+            }
+            #endregion 
+
             xrt1.ShowHeader = false;
             xrt2.ShowHeader = false;
             xrt3.ShowHeader = false;
@@ -271,6 +282,8 @@ order by SMVEFFX";
             sxrc.dicDatas.Add("##detailAll", xrt2);
             sxrc.dicDatas.Add("##StyleDetail", xrt3);
             sxrc.dicDatas.Add("##OrderDetail", xrt4);
+            sxrc.dicDatas.Add("##title", title);
+            sxrc.dicDatas.Add("##Fty Code", txtSeason1.Text + "_historical data");
 
             //Microsoft.Office.Interop.Excel.Application excel = sxrc.ExcelApp;
 
