@@ -570,7 +570,7 @@ drop table #TmpSource
         #region-- GetLocation --
         public static string GetLocation(int ukey, System.Data.SqlClient.SqlConnection conn = null)
         {
-            string rtn = "";
+            //string rtn = "";
             DataRow dr;
             DataTable dt;
             if (null == conn)

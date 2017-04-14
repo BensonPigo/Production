@@ -22,19 +22,19 @@ namespace Sci.Production.PublicForm
             InitializeComponent();
         }
         private DataTable sizetb;
-        private String _isCuttingPiece;
-        private int _cuttingPiece;
+        private String _isCuttingPiece="";
+        private int _cuttingPiece=0;
 
         /// <summary>
         /// inner class.
         /// </summary>
         class SizeQtyInfo
         {
-            public DataRow master;
-            public DataTable sizeQty;
+            public DataRow master = null;
+            public DataTable sizeQty=null;
         }
         ITableSchema _sizeQtyTableschema;
-        int _isSizeQtyGridCurrentChanging;
+        //int _isSizeQtyGridCurrentChanging=0;
         /// <summary>
         /// Internal used.
         /// </summary>
@@ -42,9 +42,9 @@ namespace Sci.Production.PublicForm
         /// <summary>
         /// Internal used.
         /// </summary>
-        SizeQtyInfo _sizeQtyAttached;
-        private bool isSizeQtyGridCurrentChanging { get { return 0 < _isSizeQtyGridCurrentChanging; } }
-        private bool IsSizeQtyAttached { get { return null != _sizeQtyAttached; } }
+        //SizeQtyInfo _sizeQtyAttached;
+        //private bool isSizeQtyGridCurrentChanging { get { return 0 < _isSizeQtyGridCurrentChanging; } }
+       // private bool IsSizeQtyAttached { get { return null != _sizeQtyAttached; } }
 
         public EachConsumption(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, bool cuttingPiece, bool switchToWorkorder,bool canSwitch)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
