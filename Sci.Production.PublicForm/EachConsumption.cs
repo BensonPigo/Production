@@ -12,7 +12,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 
-
+#pragma warning disable 0414
 namespace Sci.Production.PublicForm
 {
     public partial class EachConsumption : Sci.Win.Subs.Input4Plus
@@ -21,10 +21,10 @@ namespace Sci.Production.PublicForm
         {
             InitializeComponent();
         }
-        private DataTable sizetb;
-        private String _isCuttingPiece="";
-        private int _cuttingPiece=0;
-
+        private DataTable sizetb;       
+        private String _isCuttingPiece;
+        private int _cuttingPiece;
+        
         /// <summary>
         /// inner class.
         /// </summary>
@@ -33,7 +33,7 @@ namespace Sci.Production.PublicForm
             public DataRow master = null;
             public DataTable sizeQty=null;
         }
-        ITableSchema _sizeQtyTableschema;
+        //ITableSchema _sizeQtyTableschema;
         //int _isSizeQtyGridCurrentChanging=0;
         /// <summary>
         /// Internal used.
