@@ -25,7 +25,8 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             this.grid1.DataSource = this.Data;
             this.GridSetup();
-            string RcvDate = ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToShortDateString();
+            string RcvDate="" ;
+            if (!MyUtility.Check.Empty(row["WhseArrival"])) RcvDate = ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToShortDateString();              
             DualResult result;
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -73,7 +74,7 @@ namespace Sci.Production.Warehouse
                     QTY = row1["stockqty"].ToString(),
                     MRName = row1["MRName"].ToString(),
                     Season = row1["Seasonid"].ToString(),
-                    RcvDate = ((DateTime)MyUtility.Convert.GetDate(row1["WhseArrival"])).ToShortDateString(),
+                    RcvDate = RcvDate,
                     Brand = row1["BrandId"].ToString(),
                     RefNo = row1["refno"].ToString(),
                     Style = row1["styleid"].ToString(),
