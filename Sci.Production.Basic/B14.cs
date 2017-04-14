@@ -21,9 +21,9 @@ namespace Sci.Production.Basic
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("I", "InHouse");
             comboBox1_RowSource.Add("O", "OSP");
-            comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            comboInHouseOSP.DataSource = new BindingSource(comboBox1_RowSource, null);
+            comboInHouseOSP.ValueMember = "Key";
+            comboInHouseOSP.DisplayMember = "Value";
         }
 
         protected override void OnDetailEntered()
@@ -34,20 +34,20 @@ namespace Sci.Production.Basic
             DataTable machineTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, sqlCommand, out machineTable))
             {
-                this.editBox1.Text = machineTable.Rows[0]["MatchTypeID"].ToString();
+                this.editMachineID.Text = machineTable.Rows[0]["MatchTypeID"].ToString();
             }
         }
 
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.txtdropdownlist1.ReadOnly = true;
-            this.editBox1.ReadOnly = true;
-            this.checkBox1.ReadOnly = true;
-            this.checkBox2.ReadOnly = true;
-            this.checkBox3.ReadOnly = true;
-            this.checkBox4.ReadOnly = true;
-            this.checkBox5.ReadOnly = true;
+            this.txtDropdownlistClassify.ReadOnly = true;
+            this.editMachineID.ReadOnly = true;
+            this.checkJunk.ReadOnly = true;
+            this.checkIsTMS.ReadOnly = true;
+            this.checkIsPrice.ReadOnly = true;
+            this.checkIsArtWork.ReadOnly = true;
+            this.checkIsttlTMS.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()
@@ -56,7 +56,7 @@ namespace Sci.Production.Basic
             if (MyUtility.Check.Empty(CurrentMaintain["InhouseOSP"]))
             {
                 MyUtility.Msg.WarningBox("< InHouse/OSP > can not be empty!");
-                this.comboBox1.Focus();
+                this.comboInHouseOSP.Focus();
                 return false;
             }
             return base.ClickSaveBefore();

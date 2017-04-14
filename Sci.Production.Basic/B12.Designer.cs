@@ -32,13 +32,13 @@
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
             this.label7 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
+            this.displayUnit = new Sci.Win.UI.DisplayBox();
+            this.displayDescription = new Sci.Win.UI.DisplayBox();
+            this.displayExtendUnit = new Sci.Win.UI.DisplayBox();
+            this.numPriceRate = new Sci.Win.UI.NumericBox();
+            this.numRound = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -55,13 +55,13 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.numericBox2);
-            this.masterpanel.Controls.Add(this.numericBox1);
-            this.masterpanel.Controls.Add(this.displayBox5);
-            this.masterpanel.Controls.Add(this.displayBox4);
-            this.masterpanel.Controls.Add(this.displayBox1);
+            this.masterpanel.Controls.Add(this.numRound);
+            this.masterpanel.Controls.Add(this.numPriceRate);
+            this.masterpanel.Controls.Add(this.displayExtendUnit);
+            this.masterpanel.Controls.Add(this.displayDescription);
+            this.masterpanel.Controls.Add(this.displayUnit);
             this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.checkBox1);
+            this.masterpanel.Controls.Add(this.checkJunk);
             this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.label4);
@@ -72,13 +72,13 @@
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkJunk, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayUnit, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayDescription, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayExtendUnit, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numPriceRate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numRound, 0);
             // 
             // detailpanel
             // 
@@ -99,15 +99,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(916, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(910, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(910, 40);
             // 
             // detail
             // 
@@ -124,7 +124,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(754, 387);
+            this.browse.Size = new System.Drawing.Size(916, 387);
             // 
             // tabs
             // 
@@ -179,17 +179,17 @@
             this.label6.TabIndex = 4;
             this.label6.Text = "Description";
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(413, 14);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 5;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(413, 14);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 5;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
             // label7
             // 
@@ -200,75 +200,75 @@
             this.label7.TabIndex = 6;
             this.label7.Text = "Extend Unit";
             // 
-            // displayBox1
+            // displayUnit
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(103, 14);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(70, 23);
-            this.displayBox1.TabIndex = 7;
+            this.displayUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayUnit.Location = new System.Drawing.Point(103, 14);
+            this.displayUnit.Name = "displayUnit";
+            this.displayUnit.Size = new System.Drawing.Size(70, 23);
+            this.displayUnit.TabIndex = 7;
             // 
-            // displayBox4
+            // displayDescription
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(103, 104);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(316, 23);
-            this.displayBox4.TabIndex = 10;
+            this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDescription.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
+            this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDescription.Location = new System.Drawing.Point(103, 104);
+            this.displayDescription.Name = "displayDescription";
+            this.displayDescription.Size = new System.Drawing.Size(316, 23);
+            this.displayDescription.TabIndex = 10;
             // 
-            // displayBox5
+            // displayExtendUnit
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExtensionUnit", true));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(498, 44);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(70, 23);
-            this.displayBox5.TabIndex = 11;
+            this.displayExtendUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayExtendUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExtensionUnit", true));
+            this.displayExtendUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayExtendUnit.Location = new System.Drawing.Point(498, 44);
+            this.displayExtendUnit.Name = "displayExtendUnit";
+            this.displayExtendUnit.Size = new System.Drawing.Size(70, 23);
+            this.displayExtendUnit.TabIndex = 11;
             // 
-            // numericBox1
+            // numPriceRate
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PriceRate", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(103, 44);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numPriceRate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numPriceRate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PriceRate", true));
+            this.numPriceRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numPriceRate.IsSupportEditMode = false;
+            this.numPriceRate.Location = new System.Drawing.Point(103, 44);
+            this.numPriceRate.Name = "numPriceRate";
+            this.numPriceRate.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(50, 23);
-            this.numericBox1.TabIndex = 12;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numPriceRate.ReadOnly = true;
+            this.numPriceRate.Size = new System.Drawing.Size(50, 23);
+            this.numPriceRate.TabIndex = 12;
+            this.numPriceRate.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox2
+            // numRound
             // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Round", true));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(103, 74);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
+            this.numRound.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numRound.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Round", true));
+            this.numRound.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numRound.IsSupportEditMode = false;
+            this.numRound.Location = new System.Drawing.Point(103, 74);
+            this.numRound.Name = "numRound";
+            this.numRound.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(30, 23);
-            this.numericBox2.TabIndex = 13;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numRound.ReadOnly = true;
+            this.numRound.Size = new System.Drawing.Size(30, 23);
+            this.numRound.TabIndex = 13;
+            this.numRound.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -314,16 +314,16 @@
 
         #endregion
 
-        private Win.UI.DisplayBox displayBox5;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.DisplayBox displayExtendUnit;
+        private Win.UI.DisplayBox displayDescription;
+        private Win.UI.DisplayBox displayUnit;
         private Win.UI.Label label7;
-        private Win.UI.CheckBox checkBox1;
+        private Win.UI.CheckBox checkJunk;
         private Win.UI.Label label6;
         private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.NumericBox numericBox1;
+        private Win.UI.NumericBox numRound;
+        private Win.UI.NumericBox numPriceRate;
     }
 }

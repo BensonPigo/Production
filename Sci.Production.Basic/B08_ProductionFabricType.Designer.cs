@@ -34,21 +34,36 @@
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
-            this.textBox5 = new Sci.Win.UI.TextBox();
-            this.textBox6 = new Sci.Win.UI.TextBox();
-            this.textBox7 = new Sci.Win.UI.TextBox();
-            this.textBox8 = new Sci.Win.UI.TextBox();
+            this.txtProdTypeTop = new Sci.Win.UI.TextBox();
+            this.txtFabricTypeTop = new Sci.Win.UI.TextBox();
+            this.txtProdTypeBottom = new Sci.Win.UI.TextBox();
+            this.txtFabricTypeBottom = new Sci.Win.UI.TextBox();
+            this.txtProdTypeInner = new Sci.Win.UI.TextBox();
+            this.txtFabricTypeInner = new Sci.Win.UI.TextBox();
+            this.txtProdTypeOuter = new Sci.Win.UI.TextBox();
+            this.txtFabricTypeOuter = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
+            this.btmcont.SuspendLayout();
             this.SuspendLayout();
             // 
             // btmcont
             // 
             this.btmcont.Location = new System.Drawing.Point(0, 216);
             this.btmcont.Size = new System.Drawing.Size(418, 44);
+            // 
+            // edit
+            // 
+            this.edit.Size = new System.Drawing.Size(80, 34);
+            // 
+            // save
+            // 
+            this.save.Location = new System.Drawing.Point(248, 5);
+            this.save.Size = new System.Drawing.Size(80, 34);
+            // 
+            // undo
+            // 
+            this.undo.Location = new System.Drawing.Point(328, 5);
+            this.undo.Size = new System.Drawing.Size(80, 34);
             // 
             // label1
             // 
@@ -104,113 +119,113 @@
             this.label6.TabIndex = 99;
             this.label6.Text = "Outer";
             // 
-            // textBox1
+            // txtProdTypeTop
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "TopProductionType", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(102, 58);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(140, 23);
-            this.textBox1.TabIndex = 100;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtProdTypeTop.BackColor = System.Drawing.Color.White;
+            this.txtProdTypeTop.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "TopProductionType", true));
+            this.txtProdTypeTop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtProdTypeTop.Location = new System.Drawing.Point(102, 58);
+            this.txtProdTypeTop.Name = "txtProdTypeTop";
+            this.txtProdTypeTop.Size = new System.Drawing.Size(140, 23);
+            this.txtProdTypeTop.TabIndex = 100;
+            this.txtProdTypeTop.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtProdTypeTop.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // textBox2
+            // txtFabricTypeTop
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "TopFabricType", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(262, 58);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(140, 23);
-            this.textBox2.TabIndex = 101;
-            this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
-            this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
+            this.txtFabricTypeTop.BackColor = System.Drawing.Color.White;
+            this.txtFabricTypeTop.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "TopFabricType", true));
+            this.txtFabricTypeTop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFabricTypeTop.Location = new System.Drawing.Point(262, 58);
+            this.txtFabricTypeTop.Name = "txtFabricTypeTop";
+            this.txtFabricTypeTop.Size = new System.Drawing.Size(140, 23);
+            this.txtFabricTypeTop.TabIndex = 101;
+            this.txtFabricTypeTop.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtFabricTypeTop.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
-            // textBox3
+            // txtProdTypeBottom
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BottomProductionType", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(102, 96);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(140, 23);
-            this.textBox3.TabIndex = 102;
-            this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox3.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtProdTypeBottom.BackColor = System.Drawing.Color.White;
+            this.txtProdTypeBottom.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BottomProductionType", true));
+            this.txtProdTypeBottom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtProdTypeBottom.Location = new System.Drawing.Point(102, 96);
+            this.txtProdTypeBottom.Name = "txtProdTypeBottom";
+            this.txtProdTypeBottom.Size = new System.Drawing.Size(140, 23);
+            this.txtProdTypeBottom.TabIndex = 102;
+            this.txtProdTypeBottom.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtProdTypeBottom.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // textBox4
+            // txtFabricTypeBottom
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BottomFabricType", true));
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(262, 96);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(140, 23);
-            this.textBox4.TabIndex = 103;
-            this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
-            this.textBox4.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
+            this.txtFabricTypeBottom.BackColor = System.Drawing.Color.White;
+            this.txtFabricTypeBottom.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BottomFabricType", true));
+            this.txtFabricTypeBottom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFabricTypeBottom.Location = new System.Drawing.Point(262, 96);
+            this.txtFabricTypeBottom.Name = "txtFabricTypeBottom";
+            this.txtFabricTypeBottom.Size = new System.Drawing.Size(140, 23);
+            this.txtFabricTypeBottom.TabIndex = 103;
+            this.txtFabricTypeBottom.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtFabricTypeBottom.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
-            // textBox5
+            // txtProdTypeInner
             // 
-            this.textBox5.BackColor = System.Drawing.Color.White;
-            this.textBox5.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "InnerProductionType", true));
-            this.textBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox5.Location = new System.Drawing.Point(102, 134);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(140, 23);
-            this.textBox5.TabIndex = 104;
-            this.textBox5.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox5.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtProdTypeInner.BackColor = System.Drawing.Color.White;
+            this.txtProdTypeInner.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "InnerProductionType", true));
+            this.txtProdTypeInner.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtProdTypeInner.Location = new System.Drawing.Point(102, 134);
+            this.txtProdTypeInner.Name = "txtProdTypeInner";
+            this.txtProdTypeInner.Size = new System.Drawing.Size(140, 23);
+            this.txtProdTypeInner.TabIndex = 104;
+            this.txtProdTypeInner.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtProdTypeInner.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // textBox6
+            // txtFabricTypeInner
             // 
-            this.textBox6.BackColor = System.Drawing.Color.White;
-            this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "InnerFabricType", true));
-            this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox6.Location = new System.Drawing.Point(262, 133);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(140, 23);
-            this.textBox6.TabIndex = 105;
-            this.textBox6.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
-            this.textBox6.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
+            this.txtFabricTypeInner.BackColor = System.Drawing.Color.White;
+            this.txtFabricTypeInner.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "InnerFabricType", true));
+            this.txtFabricTypeInner.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFabricTypeInner.Location = new System.Drawing.Point(262, 133);
+            this.txtFabricTypeInner.Name = "txtFabricTypeInner";
+            this.txtFabricTypeInner.Size = new System.Drawing.Size(140, 23);
+            this.txtFabricTypeInner.TabIndex = 105;
+            this.txtFabricTypeInner.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtFabricTypeInner.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
-            // textBox7
+            // txtProdTypeOuter
             // 
-            this.textBox7.BackColor = System.Drawing.Color.White;
-            this.textBox7.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OuterProductionType", true));
-            this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox7.Location = new System.Drawing.Point(102, 172);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(140, 23);
-            this.textBox7.TabIndex = 106;
-            this.textBox7.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox7.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtProdTypeOuter.BackColor = System.Drawing.Color.White;
+            this.txtProdTypeOuter.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OuterProductionType", true));
+            this.txtProdTypeOuter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtProdTypeOuter.Location = new System.Drawing.Point(102, 172);
+            this.txtProdTypeOuter.Name = "txtProdTypeOuter";
+            this.txtProdTypeOuter.Size = new System.Drawing.Size(140, 23);
+            this.txtProdTypeOuter.TabIndex = 106;
+            this.txtProdTypeOuter.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtProdTypeOuter.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // textBox8
+            // txtFabricTypeOuter
             // 
-            this.textBox8.BackColor = System.Drawing.Color.White;
-            this.textBox8.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OuterFabricType", true));
-            this.textBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox8.Location = new System.Drawing.Point(262, 171);
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(140, 23);
-            this.textBox8.TabIndex = 107;
-            this.textBox8.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
-            this.textBox8.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
+            this.txtFabricTypeOuter.BackColor = System.Drawing.Color.White;
+            this.txtFabricTypeOuter.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OuterFabricType", true));
+            this.txtFabricTypeOuter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFabricTypeOuter.Location = new System.Drawing.Point(262, 171);
+            this.txtFabricTypeOuter.Name = "txtFabricTypeOuter";
+            this.txtFabricTypeOuter.Size = new System.Drawing.Size(140, 23);
+            this.txtFabricTypeOuter.TabIndex = 107;
+            this.txtFabricTypeOuter.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtFabricTypeOuter.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
             // B08_ProductionFabricType
             // 
             this.ClientSize = new System.Drawing.Size(418, 260);
-            this.Controls.Add(this.textBox8);
-            this.Controls.Add(this.textBox7);
-            this.Controls.Add(this.textBox6);
-            this.Controls.Add(this.textBox5);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtFabricTypeOuter);
+            this.Controls.Add(this.txtProdTypeOuter);
+            this.Controls.Add(this.txtFabricTypeInner);
+            this.Controls.Add(this.txtProdTypeInner);
+            this.Controls.Add(this.txtFabricTypeBottom);
+            this.Controls.Add(this.txtProdTypeBottom);
+            this.Controls.Add(this.txtFabricTypeTop);
+            this.Controls.Add(this.txtProdTypeTop);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -227,15 +242,16 @@
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
-            this.Controls.SetChildIndex(this.textBox2, 0);
-            this.Controls.SetChildIndex(this.textBox3, 0);
-            this.Controls.SetChildIndex(this.textBox4, 0);
-            this.Controls.SetChildIndex(this.textBox5, 0);
-            this.Controls.SetChildIndex(this.textBox6, 0);
-            this.Controls.SetChildIndex(this.textBox7, 0);
-            this.Controls.SetChildIndex(this.textBox8, 0);
+            this.Controls.SetChildIndex(this.txtProdTypeTop, 0);
+            this.Controls.SetChildIndex(this.txtFabricTypeTop, 0);
+            this.Controls.SetChildIndex(this.txtProdTypeBottom, 0);
+            this.Controls.SetChildIndex(this.txtFabricTypeBottom, 0);
+            this.Controls.SetChildIndex(this.txtProdTypeInner, 0);
+            this.Controls.SetChildIndex(this.txtFabricTypeInner, 0);
+            this.Controls.SetChildIndex(this.txtProdTypeOuter, 0);
+            this.Controls.SetChildIndex(this.txtFabricTypeOuter, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
+            this.btmcont.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -249,13 +265,13 @@
         private Win.UI.Label label4;
         private Win.UI.Label label5;
         private Win.UI.Label label6;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox4;
-        private Win.UI.TextBox textBox5;
-        private Win.UI.TextBox textBox6;
-        private Win.UI.TextBox textBox7;
-        private Win.UI.TextBox textBox8;
+        private Win.UI.TextBox txtProdTypeTop;
+        private Win.UI.TextBox txtFabricTypeTop;
+        private Win.UI.TextBox txtProdTypeBottom;
+        private Win.UI.TextBox txtFabricTypeBottom;
+        private Win.UI.TextBox txtProdTypeInner;
+        private Win.UI.TextBox txtFabricTypeInner;
+        private Win.UI.TextBox txtProdTypeOuter;
+        private Win.UI.TextBox txtFabricTypeOuter;
     }
 }

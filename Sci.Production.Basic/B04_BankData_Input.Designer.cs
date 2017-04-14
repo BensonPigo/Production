@@ -39,18 +39,18 @@
             this.label9 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
-            this.textBox5 = new Sci.Win.UI.TextBox();
-            this.textBox6 = new Sci.Win.UI.TextBox();
-            this.textBox7 = new Sci.Win.UI.TextBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
-            this.editBox1 = new Sci.Win.UI.EditBox();
+            this.txtAccountNo = new Sci.Win.UI.TextBox();
+            this.checkDefault = new Sci.Win.UI.CheckBox();
+            this.txtSWIFTCode = new Sci.Win.UI.TextBox();
+            this.txtAccountName = new Sci.Win.UI.TextBox();
+            this.txtBankName = new Sci.Win.UI.TextBox();
+            this.txtCity = new Sci.Win.UI.TextBox();
+            this.txtIntermediaryBank = new Sci.Win.UI.TextBox();
+            this.txtIntermediaryBankSWIFTCode = new Sci.Win.UI.TextBox();
+            this.displayCreateBy = new Sci.Win.UI.DisplayBox();
+            this.displayEditBy = new Sci.Win.UI.DisplayBox();
+            this.txtCountry = new Sci.Production.Class.txtcountry();
+            this.editRemark = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
@@ -174,147 +174,147 @@
             this.label11.TabIndex = 105;
             this.label11.Text = "Edit by";
             // 
-            // textBox1
+            // txtAccountNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountNo", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(136, 13);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(198, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtAccountNo.BackColor = System.Drawing.Color.White;
+            this.txtAccountNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountNo", true));
+            this.txtAccountNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtAccountNo.Location = new System.Drawing.Point(136, 13);
+            this.txtAccountNo.Name = "txtAccountNo";
+            this.txtAccountNo.Size = new System.Drawing.Size(198, 23);
+            this.txtAccountNo.TabIndex = 0;
             // 
-            // checkBox1
+            // checkDefault
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsDefault", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(377, 12);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(72, 21);
-            this.checkBox1.TabIndex = 9;
-            this.checkBox1.Text = "Default";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkDefault.AutoSize = true;
+            this.checkDefault.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsDefault", true));
+            this.checkDefault.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkDefault.Location = new System.Drawing.Point(377, 12);
+            this.checkDefault.Name = "checkDefault";
+            this.checkDefault.Size = new System.Drawing.Size(72, 21);
+            this.checkDefault.TabIndex = 9;
+            this.checkDefault.Text = "Default";
+            this.checkDefault.UseVisualStyleBackColor = true;
             // 
-            // textBox2
+            // txtSWIFTCode
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SWIFTCode", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(136, 40);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(85, 23);
-            this.textBox2.TabIndex = 1;
+            this.txtSWIFTCode.BackColor = System.Drawing.Color.White;
+            this.txtSWIFTCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SWIFTCode", true));
+            this.txtSWIFTCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSWIFTCode.Location = new System.Drawing.Point(136, 40);
+            this.txtSWIFTCode.Name = "txtSWIFTCode";
+            this.txtSWIFTCode.Size = new System.Drawing.Size(85, 23);
+            this.txtSWIFTCode.TabIndex = 1;
             // 
-            // textBox3
+            // txtAccountName
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountName", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(136, 67);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(378, 23);
-            this.textBox3.TabIndex = 2;
+            this.txtAccountName.BackColor = System.Drawing.Color.White;
+            this.txtAccountName.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtAccountName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountName", true));
+            this.txtAccountName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtAccountName.Location = new System.Drawing.Point(136, 67);
+            this.txtAccountName.Name = "txtAccountName";
+            this.txtAccountName.Size = new System.Drawing.Size(378, 23);
+            this.txtAccountName.TabIndex = 2;
             // 
-            // textBox4
+            // txtBankName
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BankName", true));
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(136, 94);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(438, 23);
-            this.textBox4.TabIndex = 3;
+            this.txtBankName.BackColor = System.Drawing.Color.White;
+            this.txtBankName.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtBankName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BankName", true));
+            this.txtBankName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBankName.Location = new System.Drawing.Point(136, 94);
+            this.txtBankName.Name = "txtBankName";
+            this.txtBankName.Size = new System.Drawing.Size(438, 23);
+            this.txtBankName.TabIndex = 3;
             // 
-            // textBox5
+            // txtCity
             // 
-            this.textBox5.BackColor = System.Drawing.Color.White;
-            this.textBox5.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox5.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "City", true));
-            this.textBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox5.Location = new System.Drawing.Point(136, 148);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(140, 23);
-            this.textBox5.TabIndex = 5;
+            this.txtCity.BackColor = System.Drawing.Color.White;
+            this.txtCity.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtCity.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "City", true));
+            this.txtCity.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCity.Location = new System.Drawing.Point(136, 148);
+            this.txtCity.Name = "txtCity";
+            this.txtCity.Size = new System.Drawing.Size(140, 23);
+            this.txtCity.TabIndex = 5;
             // 
-            // textBox6
+            // txtIntermediaryBank
             // 
-            this.textBox6.BackColor = System.Drawing.Color.White;
-            this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MidBankName", true));
-            this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox6.Location = new System.Drawing.Point(136, 175);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(438, 23);
-            this.textBox6.TabIndex = 6;
+            this.txtIntermediaryBank.BackColor = System.Drawing.Color.White;
+            this.txtIntermediaryBank.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MidBankName", true));
+            this.txtIntermediaryBank.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtIntermediaryBank.Location = new System.Drawing.Point(136, 175);
+            this.txtIntermediaryBank.Name = "txtIntermediaryBank";
+            this.txtIntermediaryBank.Size = new System.Drawing.Size(438, 23);
+            this.txtIntermediaryBank.TabIndex = 6;
             // 
-            // textBox7
+            // txtIntermediaryBankSWIFTCode
             // 
-            this.textBox7.BackColor = System.Drawing.Color.White;
-            this.textBox7.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MidSWIFTCode", true));
-            this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox7.Location = new System.Drawing.Point(217, 202);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(84, 23);
-            this.textBox7.TabIndex = 7;
+            this.txtIntermediaryBankSWIFTCode.BackColor = System.Drawing.Color.White;
+            this.txtIntermediaryBankSWIFTCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MidSWIFTCode", true));
+            this.txtIntermediaryBankSWIFTCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtIntermediaryBankSWIFTCode.Location = new System.Drawing.Point(217, 202);
+            this.txtIntermediaryBankSWIFTCode.Name = "txtIntermediaryBankSWIFTCode";
+            this.txtIntermediaryBankSWIFTCode.Size = new System.Drawing.Size(84, 23);
+            this.txtIntermediaryBankSWIFTCode.TabIndex = 7;
             // 
-            // displayBox1
+            // displayCreateBy
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CreateBy", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(136, 293);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(350, 23);
-            this.displayBox1.TabIndex = 10;
+            this.displayCreateBy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCreateBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CreateBy", true));
+            this.displayCreateBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCreateBy.Location = new System.Drawing.Point(136, 293);
+            this.displayCreateBy.Name = "displayCreateBy";
+            this.displayCreateBy.Size = new System.Drawing.Size(350, 23);
+            this.displayCreateBy.TabIndex = 10;
             // 
-            // displayBox2
+            // displayEditBy
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EditBy", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(136, 320);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(350, 23);
-            this.displayBox2.TabIndex = 11;
+            this.displayEditBy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayEditBy.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EditBy", true));
+            this.displayEditBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayEditBy.Location = new System.Drawing.Point(136, 320);
+            this.displayEditBy.Name = "displayEditBy";
+            this.displayEditBy.Size = new System.Drawing.Size(350, 23);
+            this.displayEditBy.TabIndex = 11;
             // 
-            // txtcountry1
+            // txtCountry
             // 
-            this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Location = new System.Drawing.Point(136, 121);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 4;
-            this.txtcountry1.TextBox1Binding = "";
+            this.txtCountry.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
+            this.txtCountry.DisplayBox1Binding = "";
+            this.txtCountry.Location = new System.Drawing.Point(136, 121);
+            this.txtCountry.Name = "txtCountry";
+            this.txtCountry.Size = new System.Drawing.Size(232, 22);
+            this.txtCountry.TabIndex = 4;
+            this.txtCountry.TextBox1Binding = "";
             // 
-            // editBox1
+            // editRemark
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(137, 229);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(435, 60);
-            this.editBox1.TabIndex = 8;
+            this.editRemark.BackColor = System.Drawing.Color.White;
+            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
+            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editRemark.Location = new System.Drawing.Point(137, 229);
+            this.editRemark.Multiline = true;
+            this.editRemark.Name = "editRemark";
+            this.editRemark.Size = new System.Drawing.Size(435, 60);
+            this.editRemark.TabIndex = 8;
             // 
             // B04_BankData_Input
             // 
             this.ClientSize = new System.Drawing.Size(584, 394);
-            this.Controls.Add(this.editBox1);
-            this.Controls.Add(this.txtcountry1);
-            this.Controls.Add(this.displayBox2);
-            this.Controls.Add(this.displayBox1);
-            this.Controls.Add(this.textBox7);
-            this.Controls.Add(this.textBox6);
-            this.Controls.Add(this.textBox5);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.editRemark);
+            this.Controls.Add(this.txtCountry);
+            this.Controls.Add(this.displayEditBy);
+            this.Controls.Add(this.displayCreateBy);
+            this.Controls.Add(this.txtIntermediaryBankSWIFTCode);
+            this.Controls.Add(this.txtIntermediaryBank);
+            this.Controls.Add(this.txtCity);
+            this.Controls.Add(this.txtBankName);
+            this.Controls.Add(this.txtAccountName);
+            this.Controls.Add(this.txtSWIFTCode);
+            this.Controls.Add(this.checkDefault);
+            this.Controls.Add(this.txtAccountNo);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
@@ -341,18 +341,18 @@
             this.Controls.SetChildIndex(this.label9, 0);
             this.Controls.SetChildIndex(this.label10, 0);
             this.Controls.SetChildIndex(this.label11, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
-            this.Controls.SetChildIndex(this.checkBox1, 0);
-            this.Controls.SetChildIndex(this.textBox2, 0);
-            this.Controls.SetChildIndex(this.textBox3, 0);
-            this.Controls.SetChildIndex(this.textBox4, 0);
-            this.Controls.SetChildIndex(this.textBox5, 0);
-            this.Controls.SetChildIndex(this.textBox6, 0);
-            this.Controls.SetChildIndex(this.textBox7, 0);
-            this.Controls.SetChildIndex(this.displayBox1, 0);
-            this.Controls.SetChildIndex(this.displayBox2, 0);
-            this.Controls.SetChildIndex(this.txtcountry1, 0);
-            this.Controls.SetChildIndex(this.editBox1, 0);
+            this.Controls.SetChildIndex(this.txtAccountNo, 0);
+            this.Controls.SetChildIndex(this.checkDefault, 0);
+            this.Controls.SetChildIndex(this.txtSWIFTCode, 0);
+            this.Controls.SetChildIndex(this.txtAccountName, 0);
+            this.Controls.SetChildIndex(this.txtBankName, 0);
+            this.Controls.SetChildIndex(this.txtCity, 0);
+            this.Controls.SetChildIndex(this.txtIntermediaryBank, 0);
+            this.Controls.SetChildIndex(this.txtIntermediaryBankSWIFTCode, 0);
+            this.Controls.SetChildIndex(this.displayCreateBy, 0);
+            this.Controls.SetChildIndex(this.displayEditBy, 0);
+            this.Controls.SetChildIndex(this.txtCountry, 0);
+            this.Controls.SetChildIndex(this.editRemark, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -373,17 +373,17 @@
         private Win.UI.Label label9;
         private Win.UI.Label label10;
         private Win.UI.Label label11;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox4;
-        private Win.UI.TextBox textBox5;
-        private Win.UI.TextBox textBox6;
-        private Win.UI.TextBox textBox7;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.DisplayBox displayBox2;
-        private Class.txtcountry txtcountry1;
-        private Win.UI.EditBox editBox1;
+        private Win.UI.TextBox txtAccountNo;
+        private Win.UI.CheckBox checkDefault;
+        private Win.UI.TextBox txtSWIFTCode;
+        private Win.UI.TextBox txtAccountName;
+        private Win.UI.TextBox txtBankName;
+        private Win.UI.TextBox txtCity;
+        private Win.UI.TextBox txtIntermediaryBank;
+        private Win.UI.TextBox txtIntermediaryBankSWIFTCode;
+        private Win.UI.DisplayBox displayCreateBy;
+        private Win.UI.DisplayBox displayEditBy;
+        private Class.txtcountry txtCountry;
+        private Win.UI.EditBox editRemark;
     }
 }

@@ -20,19 +20,19 @@ namespace Sci.Production.Basic
         {
             base.OnDetailEntered();
             //帶出Group/Quota的全名
-            this.displayBox5.Text = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'QuotaRegion' and ID = '{0}'", CurrentMaintain["QuotaArea"].ToString()));
+            this.displayGroupQuota2.Text = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'QuotaRegion' and ID = '{0}'", CurrentMaintain["QuotaArea"].ToString()));
 
             //在編輯模式下，下列這些欄位都不可以被修改
             if (this.EditMode)
             {
-                this.txtcountry1.TextBox1.ReadOnly = true;
-                this.editBox1.ReadOnly = true;
-                this.txtpaytermar1.TextBox1.ReadOnly = true;
-                this.txtpaytermar2.TextBox1.ReadOnly = true;
-                this.checkBox1.ReadOnly = true;
-                this.checkBox2.ReadOnly = true;
-                this.checkBox3.ReadOnly = true;
-                this.checkBox4.ReadOnly = true;
+                this.txtCountry.TextBox1.ReadOnly = true;
+                this.editLabel.ReadOnly = true;
+                this.txtPaytermarBulk.TextBox1.ReadOnly = true;
+                this.txtPaytermarSample.TextBox1.ReadOnly = true;
+                this.checkJunk.ReadOnly = true;
+                this.checkScanPack.ReadOnly = true;
+                this.checkVASSHAS.ReadOnly = true;
+                this.checkSpecialCustomer.ReadOnly = true;
             }
 
             //按鈕Shipping Mark變色
@@ -41,11 +41,11 @@ namespace Sci.Production.Basic
                 !String.IsNullOrWhiteSpace(CurrentMaintain["MarkLeft"].ToString()) ||
                 !String.IsNullOrWhiteSpace(CurrentMaintain["MarkRight"].ToString()))
             { 
-                this.button1.ForeColor = Color.Blue;
+                this.btnShippingMark.ForeColor = Color.Blue;
             }
             else
             {
-                this.button1.ForeColor = Color.Black;
+                this.btnShippingMark.ForeColor = Color.Black;
             }
         }
 

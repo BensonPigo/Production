@@ -27,23 +27,23 @@ namespace Sci.Production.Basic
 
             if (EditMode)
             {
-                textBox1.ReadOnly = !MyUtility.Check.Empty(data["id"]);
+                txtCode.ReadOnly = !MyUtility.Check.Empty(data["id"]);
             }
         }
 
         protected override bool DoSave()
         {
-            if (MyUtility.Check.Empty(textBox1.Text))
+            if (MyUtility.Check.Empty(txtCode.Text))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
-                this.textBox1.Focus();
+                this.txtCode.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(editBox1.Text))
+            if (MyUtility.Check.Empty(editMailTo.Text))
             {
                 MyUtility.Msg.WarningBox("< Mail to > can not be empty!");
-                this.editBox1.Focus();
+                this.editMailTo.Focus();
                 return false;
             }
 

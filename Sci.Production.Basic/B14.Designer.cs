@@ -39,24 +39,24 @@
             this.label11 = new Sci.Win.UI.Label();
             this.label12 = new Sci.Win.UI.Label();
             this.label13 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
-            this.displayBox7 = new Sci.Win.UI.DisplayBox();
-            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
-            this.checkBox3 = new Sci.Win.UI.CheckBox();
-            this.checkBox4 = new Sci.Win.UI.CheckBox();
-            this.checkBox5 = new Sci.Win.UI.CheckBox();
-            this.checkBox6 = new Sci.Win.UI.CheckBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
+            this.displayCode = new Sci.Win.UI.DisplayBox();
+            this.displayAbbr = new Sci.Win.UI.DisplayBox();
+            this.displayArtworkType = new Sci.Win.UI.DisplayBox();
+            this.displayUnit = new Sci.Win.UI.DisplayBox();
+            this.displayRemark = new Sci.Win.UI.DisplayBox();
+            this.displayProductionUnit = new Sci.Win.UI.DisplayBox();
+            this.txtDropdownlistClassify = new Sci.Production.Class.txtdropdownlist();
+            this.comboInHouseOSP = new Sci.Win.UI.ComboBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.checkIsTMS = new Sci.Win.UI.CheckBox();
+            this.checkIsPrice = new Sci.Win.UI.CheckBox();
+            this.checkIsArtWork = new Sci.Win.UI.CheckBox();
+            this.checkIsttlTMS = new Sci.Win.UI.CheckBox();
+            this.checkIsSubprocess = new Sci.Win.UI.CheckBox();
+            this.btnMachine = new Sci.Win.UI.Button();
+            this.editMachineID = new Sci.Win.UI.EditBox();
+            this.numSubprocessBCSLeadTime = new Sci.Win.UI.NumericBox();
+            this.numStdLTDayb41stCutDateBaseOnSubProcess = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -71,24 +71,24 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.numericBox2);
-            this.detailcont.Controls.Add(this.numericBox1);
-            this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.button1);
-            this.detailcont.Controls.Add(this.checkBox6);
-            this.detailcont.Controls.Add(this.checkBox5);
-            this.detailcont.Controls.Add(this.checkBox4);
-            this.detailcont.Controls.Add(this.checkBox3);
-            this.detailcont.Controls.Add(this.checkBox2);
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.comboBox1);
-            this.detailcont.Controls.Add(this.displayBox7);
-            this.detailcont.Controls.Add(this.txtdropdownlist1);
-            this.detailcont.Controls.Add(this.displayBox6);
-            this.detailcont.Controls.Add(this.displayBox4);
-            this.detailcont.Controls.Add(this.displayBox3);
-            this.detailcont.Controls.Add(this.displayBox2);
-            this.detailcont.Controls.Add(this.displayBox1);
+            this.detailcont.Controls.Add(this.numStdLTDayb41stCutDateBaseOnSubProcess);
+            this.detailcont.Controls.Add(this.numSubprocessBCSLeadTime);
+            this.detailcont.Controls.Add(this.editMachineID);
+            this.detailcont.Controls.Add(this.btnMachine);
+            this.detailcont.Controls.Add(this.checkIsSubprocess);
+            this.detailcont.Controls.Add(this.checkIsttlTMS);
+            this.detailcont.Controls.Add(this.checkIsArtWork);
+            this.detailcont.Controls.Add(this.checkIsPrice);
+            this.detailcont.Controls.Add(this.checkIsTMS);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.comboInHouseOSP);
+            this.detailcont.Controls.Add(this.displayProductionUnit);
+            this.detailcont.Controls.Add(this.txtDropdownlistClassify);
+            this.detailcont.Controls.Add(this.displayRemark);
+            this.detailcont.Controls.Add(this.displayUnit);
+            this.detailcont.Controls.Add(this.displayArtworkType);
+            this.detailcont.Controls.Add(this.displayAbbr);
+            this.detailcont.Controls.Add(this.displayCode);
             this.detailcont.Controls.Add(this.label13);
             this.detailcont.Controls.Add(this.label12);
             this.detailcont.Controls.Add(this.label11);
@@ -110,7 +110,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(694, 455);
+            this.browse.Size = new System.Drawing.Size(832, 455);
             // 
             // tabs
             // 
@@ -232,228 +232,228 @@
             this.label13.TabIndex = 10;
             this.label13.Text = "Abbr";
             // 
-            // displayBox1
+            // displayCode
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Seq", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(144, 10);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(42, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Seq", true));
+            this.displayCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCode.Location = new System.Drawing.Point(144, 10);
+            this.displayCode.Name = "displayCode";
+            this.displayCode.Size = new System.Drawing.Size(42, 23);
+            this.displayCode.TabIndex = 0;
             // 
-            // displayBox2
+            // displayAbbr
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Abbreviation", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(282, 10);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(30, 23);
-            this.displayBox2.TabIndex = 1;
+            this.displayAbbr.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayAbbr.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Abbreviation", true));
+            this.displayAbbr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayAbbr.Location = new System.Drawing.Point(282, 10);
+            this.displayAbbr.Name = "displayAbbr";
+            this.displayAbbr.Size = new System.Drawing.Size(30, 23);
+            this.displayAbbr.TabIndex = 1;
             // 
-            // displayBox3
+            // displayArtworkType
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(144, 40);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(170, 23);
-            this.displayBox3.TabIndex = 2;
+            this.displayArtworkType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayArtworkType.Location = new System.Drawing.Point(144, 40);
+            this.displayArtworkType.Name = "displayArtworkType";
+            this.displayArtworkType.Size = new System.Drawing.Size(170, 23);
+            this.displayArtworkType.TabIndex = 2;
             // 
-            // displayBox4
+            // displayUnit
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ArtworkUnit", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(144, 100);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(78, 23);
-            this.displayBox4.TabIndex = 4;
+            this.displayUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ArtworkUnit", true));
+            this.displayUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayUnit.Location = new System.Drawing.Point(144, 100);
+            this.displayUnit.Name = "displayUnit";
+            this.displayUnit.Size = new System.Drawing.Size(78, 23);
+            this.displayUnit.TabIndex = 4;
             // 
-            // displayBox6
+            // displayRemark
             // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Remark", true));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(144, 373);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(380, 23);
-            this.displayBox6.TabIndex = 10;
+            this.displayRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayRemark.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Remark", true));
+            this.displayRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayRemark.Location = new System.Drawing.Point(144, 373);
+            this.displayRemark.Name = "displayRemark";
+            this.displayRemark.Size = new System.Drawing.Size(380, 23);
+            this.displayRemark.TabIndex = 10;
             // 
-            // displayBox7
+            // displayProductionUnit
             // 
-            this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ProductionUnit", true));
-            this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox7.Location = new System.Drawing.Point(144, 130);
-            this.displayBox7.Name = "displayBox7";
-            this.displayBox7.Size = new System.Drawing.Size(78, 23);
-            this.displayBox7.TabIndex = 5;
+            this.displayProductionUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayProductionUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ProductionUnit", true));
+            this.displayProductionUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayProductionUnit.Location = new System.Drawing.Point(144, 130);
+            this.displayProductionUnit.Name = "displayProductionUnit";
+            this.displayProductionUnit.Size = new System.Drawing.Size(78, 23);
+            this.displayProductionUnit.TabIndex = 5;
             // 
-            // txtdropdownlist1
+            // txtDropdownlistClassify
             // 
-            this.txtdropdownlist1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtdropdownlist1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Classify", true));
-            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtdropdownlist1.FormattingEnabled = true;
-            this.txtdropdownlist1.IsSupportUnselect = true;
-            this.txtdropdownlist1.Location = new System.Drawing.Point(144, 70);
-            this.txtdropdownlist1.Name = "txtdropdownlist1";
-            this.txtdropdownlist1.ReadOnly = true;
-            this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist1.TabIndex = 3;
-            this.txtdropdownlist1.Type = "Classify";
+            this.txtDropdownlistClassify.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtDropdownlistClassify.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Classify", true));
+            this.txtDropdownlistClassify.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtDropdownlistClassify.FormattingEnabled = true;
+            this.txtDropdownlistClassify.IsSupportUnselect = true;
+            this.txtDropdownlistClassify.Location = new System.Drawing.Point(144, 70);
+            this.txtDropdownlistClassify.Name = "txtDropdownlistClassify";
+            this.txtDropdownlistClassify.ReadOnly = true;
+            this.txtDropdownlistClassify.Size = new System.Drawing.Size(121, 24);
+            this.txtDropdownlistClassify.TabIndex = 3;
+            this.txtDropdownlistClassify.Type = "Classify";
             // 
-            // comboBox1
+            // comboInHouseOSP
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "InhouseOSP", true));
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(144, 160);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(100, 24);
-            this.comboBox1.TabIndex = 6;
+            this.comboInHouseOSP.BackColor = System.Drawing.Color.White;
+            this.comboInHouseOSP.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "InhouseOSP", true));
+            this.comboInHouseOSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboInHouseOSP.FormattingEnabled = true;
+            this.comboInHouseOSP.IsSupportUnselect = true;
+            this.comboInHouseOSP.Location = new System.Drawing.Point(144, 160);
+            this.comboInHouseOSP.Name = "comboInHouseOSP";
+            this.comboInHouseOSP.Size = new System.Drawing.Size(100, 24);
+            this.comboInHouseOSP.TabIndex = 6;
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(364, 10);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 11;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(364, 10);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 11;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // checkIsTMS
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsTMS", true));
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox2.Location = new System.Drawing.Point(364, 38);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(168, 21);
-            this.checkBox2.TabIndex = 12;
-            this.checkBox2.Text = "秒數換算成本 (Is TMS)";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkIsTMS.AutoSize = true;
+            this.checkIsTMS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsTMS", true));
+            this.checkIsTMS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIsTMS.Location = new System.Drawing.Point(364, 38);
+            this.checkIsTMS.Name = "checkIsTMS";
+            this.checkIsTMS.Size = new System.Drawing.Size(168, 21);
+            this.checkIsTMS.TabIndex = 12;
+            this.checkIsTMS.Text = "秒數換算成本 (Is TMS)";
+            this.checkIsTMS.UseVisualStyleBackColor = true;
             // 
-            // checkBox3
+            // checkIsPrice
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsPrice", true));
-            this.checkBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox3.Location = new System.Drawing.Point(364, 70);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(171, 21);
-            this.checkBox3.TabIndex = 13;
-            this.checkBox3.Text = "直接輸入成本 (Is Price)";
-            this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkIsPrice.AutoSize = true;
+            this.checkIsPrice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsPrice", true));
+            this.checkIsPrice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIsPrice.Location = new System.Drawing.Point(364, 70);
+            this.checkIsPrice.Name = "checkIsPrice";
+            this.checkIsPrice.Size = new System.Drawing.Size(171, 21);
+            this.checkIsPrice.TabIndex = 13;
+            this.checkIsPrice.Text = "直接輸入成本 (Is Price)";
+            this.checkIsPrice.UseVisualStyleBackColor = true;
             // 
-            // checkBox4
+            // checkIsArtWork
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsArtwork", true));
-            this.checkBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox4.Location = new System.Drawing.Point(364, 100);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(213, 21);
-            this.checkBox4.TabIndex = 14;
-            this.checkBox4.Text = "是否加入ArtWork (Is ArtWork)";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.checkIsArtWork.AutoSize = true;
+            this.checkIsArtWork.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsArtwork", true));
+            this.checkIsArtWork.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIsArtWork.Location = new System.Drawing.Point(364, 100);
+            this.checkIsArtWork.Name = "checkIsArtWork";
+            this.checkIsArtWork.Size = new System.Drawing.Size(213, 21);
+            this.checkIsArtWork.TabIndex = 14;
+            this.checkIsArtWork.Text = "是否加入ArtWork (Is ArtWork)";
+            this.checkIsArtWork.UseVisualStyleBackColor = true;
             // 
-            // checkBox5
+            // checkIsttlTMS
             // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsTtlTMS", true));
-            this.checkBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox5.Location = new System.Drawing.Point(364, 130);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(199, 21);
-            this.checkBox5.TabIndex = 15;
-            this.checkBox5.Text = "是否加入ttl TMS (Is ttl TMS)";
-            this.checkBox5.UseVisualStyleBackColor = true;
+            this.checkIsttlTMS.AutoSize = true;
+            this.checkIsttlTMS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsTtlTMS", true));
+            this.checkIsttlTMS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIsttlTMS.Location = new System.Drawing.Point(364, 130);
+            this.checkIsttlTMS.Name = "checkIsttlTMS";
+            this.checkIsttlTMS.Size = new System.Drawing.Size(199, 21);
+            this.checkIsttlTMS.TabIndex = 15;
+            this.checkIsttlTMS.Text = "是否加入ttl TMS (Is ttl TMS)";
+            this.checkIsttlTMS.UseVisualStyleBackColor = true;
             // 
-            // checkBox6
+            // checkIsSubprocess
             // 
-            this.checkBox6.AutoSize = true;
-            this.checkBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSubprocess", true));
-            this.checkBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox6.Location = new System.Drawing.Point(364, 160);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(247, 21);
-            this.checkBox6.TabIndex = 16;
-            this.checkBox6.Text = "是否為Subprocess (Is Subprocess)";
-            this.checkBox6.UseVisualStyleBackColor = true;
+            this.checkIsSubprocess.AutoSize = true;
+            this.checkIsSubprocess.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSubprocess", true));
+            this.checkIsSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIsSubprocess.Location = new System.Drawing.Point(364, 160);
+            this.checkIsSubprocess.Name = "checkIsSubprocess";
+            this.checkIsSubprocess.Size = new System.Drawing.Size(247, 21);
+            this.checkIsSubprocess.TabIndex = 16;
+            this.checkIsSubprocess.Text = "是否為Subprocess (Is Subprocess)";
+            this.checkIsSubprocess.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btnMachine
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(573, 20);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 17;
-            this.button1.Text = "Machine";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnMachine.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnMachine.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnMachine.Location = new System.Drawing.Point(573, 20);
+            this.btnMachine.Name = "btnMachine";
+            this.btnMachine.Size = new System.Drawing.Size(80, 30);
+            this.btnMachine.TabIndex = 17;
+            this.btnMachine.Text = "Machine";
+            this.btnMachine.UseVisualStyleBackColor = true;
+            this.btnMachine.Click += new System.EventHandler(this.button1_Click);
             // 
-            // editBox1
+            // editMachineID
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(144, 319);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(380, 46);
-            this.editBox1.TabIndex = 9;
+            this.editMachineID.BackColor = System.Drawing.Color.White;
+            this.editMachineID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editMachineID.Location = new System.Drawing.Point(144, 319);
+            this.editMachineID.Multiline = true;
+            this.editMachineID.Name = "editMachineID";
+            this.editMachineID.Size = new System.Drawing.Size(380, 46);
+            this.editMachineID.TabIndex = 9;
             // 
-            // numericBox1
+            // numSubprocessBCSLeadTime
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BcsLt", true));
-            this.numericBox1.DecimalPlaces = 1;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(144, 202);
-            this.numericBox1.Maximum = new decimal(new int[] {
+            this.numSubprocessBCSLeadTime.BackColor = System.Drawing.Color.White;
+            this.numSubprocessBCSLeadTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BcsLt", true));
+            this.numSubprocessBCSLeadTime.DecimalPlaces = 1;
+            this.numSubprocessBCSLeadTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numSubprocessBCSLeadTime.Location = new System.Drawing.Point(144, 202);
+            this.numSubprocessBCSLeadTime.Maximum = new decimal(new int[] {
             99,
             0,
             0,
             65536});
-            this.numericBox1.MaxLength = 3;
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numSubprocessBCSLeadTime.MaxLength = 3;
+            this.numSubprocessBCSLeadTime.Name = "numSubprocessBCSLeadTime";
+            this.numSubprocessBCSLeadTime.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(42, 23);
-            this.numericBox1.TabIndex = 7;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numSubprocessBCSLeadTime.Size = new System.Drawing.Size(42, 23);
+            this.numSubprocessBCSLeadTime.TabIndex = 7;
+            this.numSubprocessBCSLeadTime.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox2
+            // numStdLTDayb41stCutDateBaseOnSubProcess
             // 
-            this.numericBox2.BackColor = System.Drawing.Color.White;
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CutLt", true));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox2.Location = new System.Drawing.Point(144, 265);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
+            this.numStdLTDayb41stCutDateBaseOnSubProcess.BackColor = System.Drawing.Color.White;
+            this.numStdLTDayb41stCutDateBaseOnSubProcess.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CutLt", true));
+            this.numStdLTDayb41stCutDateBaseOnSubProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numStdLTDayb41stCutDateBaseOnSubProcess.Location = new System.Drawing.Point(144, 265);
+            this.numStdLTDayb41stCutDateBaseOnSubProcess.Name = "numStdLTDayb41stCutDateBaseOnSubProcess";
+            this.numStdLTDayb41stCutDateBaseOnSubProcess.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.Size = new System.Drawing.Size(36, 23);
-            this.numericBox2.TabIndex = 8;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numStdLTDayb41stCutDateBaseOnSubProcess.Size = new System.Drawing.Size(36, 23);
+            this.numStdLTDayb41stCutDateBaseOnSubProcess.TabIndex = 8;
+            this.numStdLTDayb41stCutDateBaseOnSubProcess.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -499,23 +499,23 @@
         private Win.UI.Label label3;
         private Win.UI.Label label13;
         private Win.UI.Label label12;
-        private Win.UI.DisplayBox displayBox7;
-        private Class.txtdropdownlist txtdropdownlist1;
-        private Win.UI.DisplayBox displayBox6;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.CheckBox checkBox6;
-        private Win.UI.CheckBox checkBox5;
-        private Win.UI.CheckBox checkBox4;
-        private Win.UI.CheckBox checkBox3;
-        private Win.UI.CheckBox checkBox2;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Button button1;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.NumericBox numericBox1;
+        private Win.UI.DisplayBox displayProductionUnit;
+        private Class.txtdropdownlist txtDropdownlistClassify;
+        private Win.UI.DisplayBox displayRemark;
+        private Win.UI.DisplayBox displayUnit;
+        private Win.UI.DisplayBox displayArtworkType;
+        private Win.UI.DisplayBox displayAbbr;
+        private Win.UI.DisplayBox displayCode;
+        private Win.UI.CheckBox checkIsSubprocess;
+        private Win.UI.CheckBox checkIsttlTMS;
+        private Win.UI.CheckBox checkIsArtWork;
+        private Win.UI.CheckBox checkIsPrice;
+        private Win.UI.CheckBox checkIsTMS;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.ComboBox comboInHouseOSP;
+        private Win.UI.Button btnMachine;
+        private Win.UI.EditBox editMachineID;
+        private Win.UI.NumericBox numStdLTDayb41stCutDateBaseOnSubProcess;
+        private Win.UI.NumericBox numSubprocessBCSLeadTime;
     }
 }

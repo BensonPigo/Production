@@ -32,12 +32,12 @@
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.button1 = new Sci.Win.UI.Button();
+            this.displayCDCode = new Sci.Win.UI.DisplayBox();
+            this.displayDescription = new Sci.Win.UI.DisplayBox();
+            this.displayCPUUnit = new Sci.Win.UI.DisplayBox();
+            this.displayCombinationPieces = new Sci.Win.UI.DisplayBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.btnProdFabricType = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -52,12 +52,12 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.button1);
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.displayBox4);
-            this.detailcont.Controls.Add(this.displayBox3);
-            this.detailcont.Controls.Add(this.displayBox2);
-            this.detailcont.Controls.Add(this.displayBox1);
+            this.detailcont.Controls.Add(this.btnProdFabricType);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.displayCombinationPieces);
+            this.detailcont.Controls.Add(this.displayCPUUnit);
+            this.detailcont.Controls.Add(this.displayDescription);
+            this.detailcont.Controls.Add(this.displayCDCode);
             this.detailcont.Controls.Add(this.label6);
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
@@ -112,68 +112,68 @@
             this.label6.TabIndex = 3;
             this.label6.Text = "Combination Pieces";
             // 
-            // displayBox1
+            // displayCDCode
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(149, 39);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(54, 23);
-            this.displayBox1.TabIndex = 4;
+            this.displayCDCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCDCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayCDCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCDCode.Location = new System.Drawing.Point(149, 39);
+            this.displayCDCode.Name = "displayCDCode";
+            this.displayCDCode.Size = new System.Drawing.Size(54, 23);
+            this.displayCDCode.TabIndex = 4;
             // 
-            // displayBox2
+            // displayDescription
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(149, 91);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(288, 23);
-            this.displayBox2.TabIndex = 5;
+            this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDescription.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
+            this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDescription.Location = new System.Drawing.Point(149, 91);
+            this.displayDescription.Name = "displayDescription";
+            this.displayDescription.Size = new System.Drawing.Size(288, 23);
+            this.displayDescription.TabIndex = 5;
             // 
-            // displayBox3
+            // displayCPUUnit
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CPU", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(149, 143);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(60, 23);
-            this.displayBox3.TabIndex = 6;
+            this.displayCPUUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCPUUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CPU", true));
+            this.displayCPUUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCPUUnit.Location = new System.Drawing.Point(149, 143);
+            this.displayCPUUnit.Name = "displayCPUUnit";
+            this.displayCPUUnit.Size = new System.Drawing.Size(60, 23);
+            this.displayCPUUnit.TabIndex = 6;
             // 
-            // displayBox4
+            // displayCombinationPieces
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ComboPcs", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(201, 195);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(36, 23);
-            this.displayBox4.TabIndex = 7;
+            this.displayCombinationPieces.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCombinationPieces.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ComboPcs", true));
+            this.displayCombinationPieces.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCombinationPieces.Location = new System.Drawing.Point(201, 195);
+            this.displayCombinationPieces.Name = "displayCombinationPieces";
+            this.displayCombinationPieces.Size = new System.Drawing.Size(36, 23);
+            this.displayCombinationPieces.TabIndex = 7;
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(352, 39);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 8;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(352, 39);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 8;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btnProdFabricType
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.button1.Location = new System.Drawing.Point(518, 35);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(151, 30);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "Prod./Fabric Type";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnProdFabricType.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btnProdFabricType.Location = new System.Drawing.Point(518, 35);
+            this.btnProdFabricType.Name = "btnProdFabricType";
+            this.btnProdFabricType.Size = new System.Drawing.Size(151, 30);
+            this.btnProdFabricType.TabIndex = 9;
+            this.btnProdFabricType.Text = "Prod./Fabric Type";
+            this.btnProdFabricType.UseVisualStyleBackColor = true;
+            this.btnProdFabricType.Click += new System.EventHandler(this.button1_Click);
             // 
             // B08
             // 
@@ -203,12 +203,12 @@
 
         #endregion
 
-        private Win.UI.Button button1;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.Button btnProdFabricType;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.DisplayBox displayCombinationPieces;
+        private Win.UI.DisplayBox displayCPUUnit;
+        private Win.UI.DisplayBox displayDescription;
+        private Win.UI.DisplayBox displayCDCode;
         private Win.UI.Label label6;
         private Win.UI.Label label5;
         private Win.UI.Label label4;

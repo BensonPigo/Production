@@ -63,7 +63,7 @@ namespace Sci.Production.Basic
             string sql = string.Format(@"select ID from CDCode_Content WITH (NOLOCK) where ID = '{0}' and 
                         (TopProductionType<>'' or TopFabricType<>'' or BottomProductionType<>'' or BottomFabricType<>'' or
                         InnerProductionType<>'' or InnerFabricType<>'' or OuterProductionType<>'' or OuterFabricType<>'')", CurrentMaintain["ID"].ToString());
-            button1.ForeColor = MyUtility.Check.Seek(sql) ? Color.Blue : Color.Black;
+            btnProdFabricType.ForeColor = MyUtility.Check.Seek(sql) ? Color.Blue : Color.Black;
 
         }
 

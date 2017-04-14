@@ -30,8 +30,8 @@
         {
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
+            this.displayCode = new Sci.Win.UI.DisplayBox();
+            this.displayAbbreviation = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -95,29 +95,29 @@
             this.label2.TabIndex = 99;
             this.label2.Text = "Abbreviation";
             // 
-            // displayBox1
+            // displayCode
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(64, 13);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(66, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCode.Location = new System.Drawing.Point(64, 13);
+            this.displayCode.Name = "displayCode";
+            this.displayCode.Size = new System.Drawing.Size(66, 23);
+            this.displayCode.TabIndex = 0;
             // 
-            // displayBox2
+            // displayAbbreviation
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(291, 13);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(120, 23);
-            this.displayBox2.TabIndex = 1;
+            this.displayAbbreviation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayAbbreviation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayAbbreviation.Location = new System.Drawing.Point(291, 13);
+            this.displayAbbreviation.Name = "displayAbbreviation";
+            this.displayAbbreviation.Size = new System.Drawing.Size(120, 23);
+            this.displayAbbreviation.TabIndex = 1;
             // 
             // B04_AccountNo
             // 
             this.ClientSize = new System.Drawing.Size(433, 497);
-            this.Controls.Add(this.displayBox2);
-            this.Controls.Add(this.displayBox1);
+            this.Controls.Add(this.displayAbbreviation);
+            this.Controls.Add(this.displayCode);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.GridPopUp = false;
@@ -129,8 +129,8 @@
             this.Controls.SetChildIndex(this.gridcont, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.displayBox1, 0);
-            this.Controls.SetChildIndex(this.displayBox2, 0);
+            this.Controls.SetChildIndex(this.displayCode, 0);
+            this.Controls.SetChildIndex(this.displayAbbreviation, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -143,7 +143,7 @@
 
         private Win.UI.Label label1;
         private Win.UI.Label label2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.DisplayBox displayBox2;
+        private Win.UI.DisplayBox displayCode;
+        private Win.UI.DisplayBox displayAbbreviation;
     }
 }

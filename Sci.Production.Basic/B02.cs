@@ -20,7 +20,7 @@ namespace Sci.Production.Basic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            button1.ForeColor = MyUtility.GetValue.Lookup("select isnull(count(ID),0) from MailTo WITH (NOLOCK) ") == "0" ? Color.Black : Color.Blue;
+            btnMailTo.ForeColor = MyUtility.GetValue.Lookup("select isnull(count(ID),0) from MailTo WITH (NOLOCK) ") == "0" ? Color.Black : Color.Blue;
         }
 
         //取Sketch目錄的路徑
@@ -29,7 +29,7 @@ namespace Sci.Production.Basic
             string dir = getDir();
             if (!MyUtility.Check.Empty(dir))
             {
-                textBox8.Text = dir;
+                txtSketchFilesPath.Text = dir;
             }
         }
 
@@ -39,7 +39,7 @@ namespace Sci.Production.Basic
             string dir = getDir();
             if (!MyUtility.Check.Empty(dir))
             {
-                textBox9.Text = dir;
+                txtCilpFilesPath.Text = dir;
             }
         }
 
@@ -59,7 +59,7 @@ namespace Sci.Production.Basic
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            txtuser1.TextBox1.Select();
+            txtUserPOApproved.TextBox1.Select();
         }
     }
 }

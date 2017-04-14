@@ -23,29 +23,29 @@ namespace Sci.Production.Basic
             //按鈕Accounting chart no變色
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "LocalSupp_AccountNo", "ID"))
             {
-                this.button1.ForeColor = Color.Blue;
+                this.btnAccountingChartNo.ForeColor = Color.Blue;
             }
             else
             {
-                this.button1.ForeColor = Color.Black;
+                this.btnAccountingChartNo.ForeColor = Color.Black;
             }
 
             //按鈕Bank detail變色
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "LocalSupp_Bank", "ID"))
             {
-                this.button2.ForeColor = Color.Blue;
+                this.btnBankDetail.ForeColor = Color.Blue;
             }
             else
             {
-                this.button2.ForeColor = Color.Black;
+                this.btnBankDetail.ForeColor = Color.Black;
             }
         }
 
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textCode.ReadOnly = true;
-            this.textBox2.ReadOnly = true;
+            this.txtCode.ReadOnly = true;
+            this.txtAbbreviation.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()
@@ -53,28 +53,28 @@ namespace Sci.Production.Basic
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
-                this.textCode.Focus();
+                this.txtCode.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Abb"]))
             {
                 MyUtility.Msg.WarningBox("< Abbreviation > can not be empty!");
-                this.textBox2.Focus();
+                this.txtAbbreviation.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["CountryID"]))
             {
                 MyUtility.Msg.WarningBox("< Nationality > can not be empty!");
-                this.txtcountry1.TextBox1.Focus();
+                this.txtCountryNationality.TextBox1.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Name"]))
             {
                 MyUtility.Msg.WarningBox("< Company > can not be empty!");
-                this.textBox3.Focus();
+                this.txtCompany.Focus();
                 return false;
             }
             return base.ClickSaveBefore();

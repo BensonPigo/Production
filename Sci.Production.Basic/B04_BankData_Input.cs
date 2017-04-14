@@ -17,31 +17,31 @@ namespace Sci.Production.Basic
 
         protected override bool DoSave()
         {
-            if (MyUtility.Check.Empty(this.textBox1.Text.ToString()))
+            if (MyUtility.Check.Empty(this.txtAccountNo.Text.ToString()))
             {
                 MyUtility.Msg.WarningBox("< Account No. > can not be empty!");
-                this.textBox1.Focus();
+                this.txtAccountNo.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.textBox3.Text.ToString()))
+            if (MyUtility.Check.Empty(this.txtAccountName.Text.ToString()))
             {
                 MyUtility.Msg.WarningBox("< Account Name > can not be empty!");
-                this.textBox3.Focus();
+                this.txtAccountName.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.textBox4.Text.ToString()))
+            if (MyUtility.Check.Empty(this.txtBankName.Text.ToString()))
             {
                 MyUtility.Msg.WarningBox("< Bank Name > can not be empty!");
-                this.textBox4.Focus();
+                this.txtBankName.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.txtcountry1.TextBox1.Text.ToString()))
+            if (MyUtility.Check.Empty(this.txtCountry.TextBox1.Text.ToString()))
             {
                 MyUtility.Msg.WarningBox("< Country > can not be empty!");
-                this.txtcountry1.TextBox1.Focus();
+                this.txtCountry.TextBox1.Focus();
                 return false;
             }
 

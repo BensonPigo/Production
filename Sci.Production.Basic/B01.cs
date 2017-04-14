@@ -24,18 +24,18 @@ namespace Sci.Production.Basic
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Factory_TMS", "ID") ||
                 MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Factory_WorkHour", "ID"))
             {
-                this.button1.ForeColor = Color.Blue;
+                this.btnCapacityWorkday.ForeColor = Color.Blue;
             }
             else
             {
-                this.button1.ForeColor = Color.Black;
+                this.btnCapacityWorkday.ForeColor = Color.Black;
             }
         }
 
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
+            this.txtCode.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()
@@ -43,14 +43,14 @@ namespace Sci.Production.Basic
             if (MyUtility.Check.Empty(CurrentMaintain["ID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
-                this.textBox1.Focus();
+                this.txtCode.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["NameEN"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Name > can not be empty!");
-                this.textBox2.Focus();
+                this.txtName.Focus();
                 return false;
             }
             

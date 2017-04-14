@@ -29,52 +29,52 @@
         private void InitializeComponent()
         {
             this.label1 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.num1CPUTMS = new Sci.Win.UI.NumericBox();
             this.label2 = new Sci.Win.UI.Label();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
+            this.numSample = new Sci.Win.UI.NumericBox();
             this.label3 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.displayAccountKeyword = new Sci.Win.UI.DisplayBox();
             this.label4 = new Sci.Win.UI.Label();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
+            this.displayLocalCurrency = new Sci.Win.UI.DisplayBox();
             this.label5 = new Sci.Win.UI.Label();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
+            this.numUSDRate = new Sci.Win.UI.NumericBox();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
-            this.numericUpDown1 = new Sci.Win.UI.NumericUpDown();
+            this.numericUpDownAutoApprovedWhileDateBefore = new Sci.Win.UI.NumericUpDown();
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
+            this.displayRegionCode = new Sci.Win.UI.DisplayBox();
             this.label10 = new Sci.Win.UI.Label();
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
+            this.numCuttingLeadTime = new Sci.Win.UI.NumericBox();
             this.label11 = new Sci.Win.UI.Label();
-            this.numericBox5 = new Sci.Win.UI.NumericBox();
+            this.numMtlInspectionLeadTime = new Sci.Win.UI.NumericBox();
             this.label12 = new Sci.Win.UI.Label();
-            this.numericBox6 = new Sci.Win.UI.NumericBox();
+            this.numReadyDayByProd = new Sci.Win.UI.NumericBox();
             this.label13 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
+            this.dateDailyOutputLockDate = new Sci.Win.UI.DateBox();
             this.label14 = new Sci.Win.UI.Label();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
+            this.datePulloutLockDate = new Sci.Win.UI.DateBox();
             this.label15 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.txtSMTPIP = new Sci.Win.UI.TextBox();
             this.label16 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.txtSendFrom = new Sci.Win.UI.TextBox();
             this.label17 = new Sci.Win.UI.Label();
-            this.textBox3 = new Sci.Win.UI.TextBox();
+            this.txtEmailID = new Sci.Win.UI.TextBox();
             this.label18 = new Sci.Win.UI.Label();
-            this.textBox4 = new Sci.Win.UI.TextBox();
+            this.txtEmailPassword = new Sci.Win.UI.TextBox();
             this.label19 = new Sci.Win.UI.Label();
-            this.textBox5 = new Sci.Win.UI.TextBox();
+            this.txtFTPIP = new Sci.Win.UI.TextBox();
             this.label20 = new Sci.Win.UI.Label();
-            this.textBox6 = new Sci.Win.UI.TextBox();
+            this.txtFTPID = new Sci.Win.UI.TextBox();
             this.label21 = new Sci.Win.UI.Label();
-            this.textBox7 = new Sci.Win.UI.TextBox();
+            this.txtFTPPassword = new Sci.Win.UI.TextBox();
             this.label22 = new Sci.Win.UI.Label();
             this.label23 = new Sci.Win.UI.Label();
-            this.textBox8 = new Sci.Win.UI.TextBox();
-            this.textBox9 = new Sci.Win.UI.TextBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
+            this.txtSketchFilesPath = new Sci.Win.UI.TextBox();
+            this.txtCilpFilesPath = new Sci.Win.UI.TextBox();
+            this.btnMailTo = new Sci.Win.UI.Button();
+            this.btnSketchFilesPath = new Sci.Win.UI.Button();
+            this.btnCilpFilesPath = new Sci.Win.UI.Button();
             this.lineShape9 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape8 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape7 = new Microsoft.VisualBasic.PowerPacks.LineShape();
@@ -85,10 +85,10 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtUserPOApproved = new Sci.Production.Class.txtuser();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -101,23 +101,23 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "1CPU / TMS";
             // 
-            // numericBox1
+            // num1CPUTMS
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StdTMS", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(106, 15);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.num1CPUTMS.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.num1CPUTMS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StdTMS", true));
+            this.num1CPUTMS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.num1CPUTMS.IsSupportEditMode = false;
+            this.num1CPUTMS.Location = new System.Drawing.Point(106, 15);
+            this.num1CPUTMS.Name = "num1CPUTMS";
+            this.num1CPUTMS.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(56, 23);
-            this.numericBox1.TabIndex = 0;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.num1CPUTMS.ReadOnly = true;
+            this.num1CPUTMS.Size = new System.Drawing.Size(56, 23);
+            this.num1CPUTMS.TabIndex = 0;
+            this.num1CPUTMS.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -132,23 +132,23 @@
             this.label2.TabIndex = 3;
             this.label2.Text = "Sample Rate";
             // 
-            // numericBox2
+            // numSample
             // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SampleRate", true));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(292, 15);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
+            this.numSample.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numSample.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SampleRate", true));
+            this.numSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numSample.IsSupportEditMode = false;
+            this.numSample.Location = new System.Drawing.Point(292, 15);
+            this.numSample.Name = "numSample";
+            this.numSample.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(42, 23);
-            this.numericBox2.TabIndex = 1;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numSample.ReadOnly = true;
+            this.numSample.Size = new System.Drawing.Size(42, 23);
+            this.numSample.TabIndex = 1;
+            this.numSample.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -163,15 +163,15 @@
             this.label3.TabIndex = 5;
             this.label3.Text = "Account Keyword";
             // 
-            // displayBox1
+            // displayAccountKeyword
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AccountKeyword", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(496, 15);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(34, 23);
-            this.displayBox1.TabIndex = 2;
+            this.displayAccountKeyword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayAccountKeyword.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AccountKeyword", true));
+            this.displayAccountKeyword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayAccountKeyword.Location = new System.Drawing.Point(496, 15);
+            this.displayAccountKeyword.Name = "displayAccountKeyword";
+            this.displayAccountKeyword.Size = new System.Drawing.Size(34, 23);
+            this.displayAccountKeyword.TabIndex = 2;
             // 
             // label4
             // 
@@ -182,15 +182,15 @@
             this.label4.TabIndex = 7;
             this.label4.Text = "Local Currency";
             // 
-            // displayBox2
+            // displayLocalCurrency
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CurrencyID", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(118, 54);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(64, 23);
-            this.displayBox2.TabIndex = 4;
+            this.displayLocalCurrency.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayLocalCurrency.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CurrencyID", true));
+            this.displayLocalCurrency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayLocalCurrency.Location = new System.Drawing.Point(118, 54);
+            this.displayLocalCurrency.Name = "displayLocalCurrency";
+            this.displayLocalCurrency.Size = new System.Drawing.Size(64, 23);
+            this.displayLocalCurrency.TabIndex = 4;
             // 
             // label5
             // 
@@ -201,24 +201,24 @@
             this.label5.TabIndex = 9;
             this.label5.Text = "USD Rate";
             // 
-            // numericBox3
+            // numUSDRate
             // 
-            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "USDRate", true));
-            this.numericBox3.DecimalPlaces = 4;
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(118, 83);
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.NullValue = new decimal(new int[] {
+            this.numUSDRate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numUSDRate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "USDRate", true));
+            this.numUSDRate.DecimalPlaces = 4;
+            this.numUSDRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numUSDRate.IsSupportEditMode = false;
+            this.numUSDRate.Location = new System.Drawing.Point(118, 83);
+            this.numUSDRate.Name = "numUSDRate";
+            this.numUSDRate.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox3.ReadOnly = true;
-            this.numericBox3.Size = new System.Drawing.Size(80, 23);
-            this.numericBox3.TabIndex = 6;
-            this.numericBox3.Value = new decimal(new int[] {
+            this.numUSDRate.ReadOnly = true;
+            this.numUSDRate.Size = new System.Drawing.Size(80, 23);
+            this.numUSDRate.TabIndex = 6;
+            this.numUSDRate.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -242,21 +242,21 @@
             this.label7.TabIndex = 13;
             this.label7.Text = "Auto Approved while date before";
             // 
-            // numericUpDown1
+            // numericUpDownAutoApprovedWhileDateBefore
             // 
-            this.numericUpDown1.BackColor = System.Drawing.Color.White;
-            this.numericUpDown1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "POApproveDay", true));
-            this.numericUpDown1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericUpDown1.Location = new System.Drawing.Point(487, 83);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.numericUpDownAutoApprovedWhileDateBefore.BackColor = System.Drawing.Color.White;
+            this.numericUpDownAutoApprovedWhileDateBefore.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "POApproveDay", true));
+            this.numericUpDownAutoApprovedWhileDateBefore.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numericUpDownAutoApprovedWhileDateBefore.Location = new System.Drawing.Point(487, 83);
+            this.numericUpDownAutoApprovedWhileDateBefore.Maximum = new decimal(new int[] {
             10,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(49, 23);
-            this.numericUpDown1.TabIndex = 7;
-            this.numericUpDown1.Value = new decimal(new int[] {
+            this.numericUpDownAutoApprovedWhileDateBefore.Name = "numericUpDownAutoApprovedWhileDateBefore";
+            this.numericUpDownAutoApprovedWhileDateBefore.Size = new System.Drawing.Size(49, 23);
+            this.numericUpDownAutoApprovedWhileDateBefore.TabIndex = 7;
+            this.numericUpDownAutoApprovedWhileDateBefore.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -285,15 +285,15 @@
             this.label9.TabIndex = 16;
             this.label9.Text = "Region Code";
             // 
-            // displayBox3
+            // displayRegionCode
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RgCode", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(669, 15);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(45, 23);
-            this.displayBox3.TabIndex = 3;
+            this.displayRegionCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayRegionCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RgCode", true));
+            this.displayRegionCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayRegionCode.Location = new System.Drawing.Point(669, 15);
+            this.displayRegionCode.Name = "displayRegionCode";
+            this.displayRegionCode.Size = new System.Drawing.Size(45, 23);
+            this.displayRegionCode.TabIndex = 3;
             // 
             // label10
             // 
@@ -304,21 +304,21 @@
             this.label10.TabIndex = 18;
             this.label10.Text = "Cutting Lead Time";
             // 
-            // numericBox4
+            // numCuttingLeadTime
             // 
-            this.numericBox4.BackColor = System.Drawing.Color.White;
-            this.numericBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CutDay", true));
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox4.Location = new System.Drawing.Point(140, 122);
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.NullValue = new decimal(new int[] {
+            this.numCuttingLeadTime.BackColor = System.Drawing.Color.White;
+            this.numCuttingLeadTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CutDay", true));
+            this.numCuttingLeadTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numCuttingLeadTime.Location = new System.Drawing.Point(140, 122);
+            this.numCuttingLeadTime.Name = "numCuttingLeadTime";
+            this.numCuttingLeadTime.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox4.Size = new System.Drawing.Size(50, 23);
-            this.numericBox4.TabIndex = 9;
-            this.numericBox4.Value = new decimal(new int[] {
+            this.numCuttingLeadTime.Size = new System.Drawing.Size(50, 23);
+            this.numCuttingLeadTime.TabIndex = 9;
+            this.numCuttingLeadTime.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -333,21 +333,21 @@
             this.label11.TabIndex = 20;
             this.label11.Text = "Mtl. Inspection Lead Time";
             // 
-            // numericBox5
+            // numMtlInspectionLeadTime
             // 
-            this.numericBox5.BackColor = System.Drawing.Color.White;
-            this.numericBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MtlLeadTime", true));
-            this.numericBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox5.Location = new System.Drawing.Point(413, 122);
-            this.numericBox5.Name = "numericBox5";
-            this.numericBox5.NullValue = new decimal(new int[] {
+            this.numMtlInspectionLeadTime.BackColor = System.Drawing.Color.White;
+            this.numMtlInspectionLeadTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MtlLeadTime", true));
+            this.numMtlInspectionLeadTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numMtlInspectionLeadTime.Location = new System.Drawing.Point(413, 122);
+            this.numMtlInspectionLeadTime.Name = "numMtlInspectionLeadTime";
+            this.numMtlInspectionLeadTime.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox5.Size = new System.Drawing.Size(50, 23);
-            this.numericBox5.TabIndex = 10;
-            this.numericBox5.Value = new decimal(new int[] {
+            this.numMtlInspectionLeadTime.Size = new System.Drawing.Size(50, 23);
+            this.numMtlInspectionLeadTime.TabIndex = 10;
+            this.numMtlInspectionLeadTime.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -362,21 +362,21 @@
             this.label12.TabIndex = 22;
             this.label12.Text = "Ready day by Prod.";
             // 
-            // numericBox6
+            // numReadyDayByProd
             // 
-            this.numericBox6.BackColor = System.Drawing.Color.White;
-            this.numericBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ReadyDay", true));
-            this.numericBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox6.Location = new System.Drawing.Point(643, 122);
-            this.numericBox6.Name = "numericBox6";
-            this.numericBox6.NullValue = new decimal(new int[] {
+            this.numReadyDayByProd.BackColor = System.Drawing.Color.White;
+            this.numReadyDayByProd.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ReadyDay", true));
+            this.numReadyDayByProd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numReadyDayByProd.Location = new System.Drawing.Point(643, 122);
+            this.numReadyDayByProd.Name = "numReadyDayByProd";
+            this.numReadyDayByProd.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox6.Size = new System.Drawing.Size(50, 23);
-            this.numericBox6.TabIndex = 11;
-            this.numericBox6.Value = new decimal(new int[] {
+            this.numReadyDayByProd.Size = new System.Drawing.Size(50, 23);
+            this.numReadyDayByProd.TabIndex = 11;
+            this.numReadyDayByProd.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -391,15 +391,15 @@
             this.label13.TabIndex = 24;
             this.label13.Text = "Daily Output Lock Date";
             // 
-            // dateBox1
+            // dateDailyOutputLockDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewLock", true));
-            this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(166, 161);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.ReadOnly = true;
-            this.dateBox1.Size = new System.Drawing.Size(110, 23);
-            this.dateBox1.TabIndex = 12;
+            this.dateDailyOutputLockDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewLock", true));
+            this.dateDailyOutputLockDate.IsSupportEditMode = false;
+            this.dateDailyOutputLockDate.Location = new System.Drawing.Point(166, 161);
+            this.dateDailyOutputLockDate.Name = "dateDailyOutputLockDate";
+            this.dateDailyOutputLockDate.ReadOnly = true;
+            this.dateDailyOutputLockDate.Size = new System.Drawing.Size(110, 23);
+            this.dateDailyOutputLockDate.TabIndex = 12;
             // 
             // label14
             // 
@@ -410,15 +410,15 @@
             this.label14.TabIndex = 26;
             this.label14.Text = "Pullout Lock Date";
             // 
-            // dateBox2
+            // datePulloutLockDate
             // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PullLock", true));
-            this.dateBox2.IsSupportEditMode = false;
-            this.dateBox2.Location = new System.Drawing.Point(458, 161);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.ReadOnly = true;
-            this.dateBox2.Size = new System.Drawing.Size(110, 23);
-            this.dateBox2.TabIndex = 13;
+            this.datePulloutLockDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PullLock", true));
+            this.datePulloutLockDate.IsSupportEditMode = false;
+            this.datePulloutLockDate.Location = new System.Drawing.Point(458, 161);
+            this.datePulloutLockDate.Name = "datePulloutLockDate";
+            this.datePulloutLockDate.ReadOnly = true;
+            this.datePulloutLockDate.Size = new System.Drawing.Size(110, 23);
+            this.datePulloutLockDate.TabIndex = 13;
             // 
             // label15
             // 
@@ -429,15 +429,15 @@
             this.label15.TabIndex = 28;
             this.label15.Text = "SMTP IP";
             // 
-            // textBox1
+            // txtSMTPIP
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Mailserver", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(97, 201);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(471, 23);
-            this.textBox1.TabIndex = 14;
+            this.txtSMTPIP.BackColor = System.Drawing.Color.White;
+            this.txtSMTPIP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Mailserver", true));
+            this.txtSMTPIP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSMTPIP.Location = new System.Drawing.Point(97, 201);
+            this.txtSMTPIP.Name = "txtSMTPIP";
+            this.txtSMTPIP.Size = new System.Drawing.Size(471, 23);
+            this.txtSMTPIP.TabIndex = 14;
             // 
             // label16
             // 
@@ -448,15 +448,15 @@
             this.label16.TabIndex = 30;
             this.label16.Text = "Send From";
             // 
-            // textBox2
+            // txtSendFrom
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Sendfrom", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(97, 230);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(246, 23);
-            this.textBox2.TabIndex = 15;
+            this.txtSendFrom.BackColor = System.Drawing.Color.White;
+            this.txtSendFrom.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Sendfrom", true));
+            this.txtSendFrom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSendFrom.Location = new System.Drawing.Point(97, 230);
+            this.txtSendFrom.Name = "txtSendFrom";
+            this.txtSendFrom.Size = new System.Drawing.Size(246, 23);
+            this.txtSendFrom.TabIndex = 15;
             // 
             // label17
             // 
@@ -467,15 +467,15 @@
             this.label17.TabIndex = 32;
             this.label17.Text = "Email ID";
             // 
-            // textBox3
+            // txtEmailID
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EmailID", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(97, 259);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(246, 23);
-            this.textBox3.TabIndex = 16;
+            this.txtEmailID.BackColor = System.Drawing.Color.White;
+            this.txtEmailID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EmailID", true));
+            this.txtEmailID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtEmailID.Location = new System.Drawing.Point(97, 259);
+            this.txtEmailID.Name = "txtEmailID";
+            this.txtEmailID.Size = new System.Drawing.Size(246, 23);
+            this.txtEmailID.TabIndex = 16;
             // 
             // label18
             // 
@@ -486,15 +486,15 @@
             this.label18.TabIndex = 34;
             this.label18.Text = "Password";
             // 
-            // textBox4
+            // txtEmailPassword
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EmailPwd", true));
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(440, 259);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(100, 23);
-            this.textBox4.TabIndex = 17;
+            this.txtEmailPassword.BackColor = System.Drawing.Color.White;
+            this.txtEmailPassword.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EmailPwd", true));
+            this.txtEmailPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtEmailPassword.Location = new System.Drawing.Point(440, 259);
+            this.txtEmailPassword.Name = "txtEmailPassword";
+            this.txtEmailPassword.Size = new System.Drawing.Size(100, 23);
+            this.txtEmailPassword.TabIndex = 17;
             // 
             // label19
             // 
@@ -505,15 +505,15 @@
             this.label19.TabIndex = 36;
             this.label19.Text = "FTP IP";
             // 
-            // textBox5
+            // txtFTPIP
             // 
-            this.textBox5.BackColor = System.Drawing.Color.White;
-            this.textBox5.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpIP", true));
-            this.textBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox5.Location = new System.Drawing.Point(97, 288);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(274, 23);
-            this.textBox5.TabIndex = 18;
+            this.txtFTPIP.BackColor = System.Drawing.Color.White;
+            this.txtFTPIP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpIP", true));
+            this.txtFTPIP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFTPIP.Location = new System.Drawing.Point(97, 288);
+            this.txtFTPIP.Name = "txtFTPIP";
+            this.txtFTPIP.Size = new System.Drawing.Size(274, 23);
+            this.txtFTPIP.TabIndex = 18;
             // 
             // label20
             // 
@@ -524,15 +524,15 @@
             this.label20.TabIndex = 38;
             this.label20.Text = "FTP ID";
             // 
-            // textBox6
+            // txtFTPID
             // 
-            this.textBox6.BackColor = System.Drawing.Color.White;
-            this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpID", true));
-            this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox6.Location = new System.Drawing.Point(97, 317);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(100, 23);
-            this.textBox6.TabIndex = 19;
+            this.txtFTPID.BackColor = System.Drawing.Color.White;
+            this.txtFTPID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpID", true));
+            this.txtFTPID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFTPID.Location = new System.Drawing.Point(97, 317);
+            this.txtFTPID.Name = "txtFTPID";
+            this.txtFTPID.Size = new System.Drawing.Size(100, 23);
+            this.txtFTPID.TabIndex = 19;
             // 
             // label21
             // 
@@ -543,15 +543,15 @@
             this.label21.TabIndex = 40;
             this.label21.Text = "Password";
             // 
-            // textBox7
+            // txtFTPPassword
             // 
-            this.textBox7.BackColor = System.Drawing.Color.White;
-            this.textBox7.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpPwd", true));
-            this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox7.Location = new System.Drawing.Point(440, 317);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(100, 23);
-            this.textBox7.TabIndex = 20;
+            this.txtFTPPassword.BackColor = System.Drawing.Color.White;
+            this.txtFTPPassword.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpPwd", true));
+            this.txtFTPPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFTPPassword.Location = new System.Drawing.Point(440, 317);
+            this.txtFTPPassword.Name = "txtFTPPassword";
+            this.txtFTPPassword.Size = new System.Drawing.Size(100, 23);
+            this.txtFTPPassword.TabIndex = 20;
             // 
             // label22
             // 
@@ -571,58 +571,58 @@
             this.label23.TabIndex = 43;
             this.label23.Text = "Clip Files Path";
             // 
-            // textBox8
+            // txtSketchFilesPath
             // 
-            this.textBox8.BackColor = System.Drawing.Color.White;
-            this.textBox8.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PicPath", true));
-            this.textBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox8.Location = new System.Drawing.Point(133, 356);
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(506, 23);
-            this.textBox8.TabIndex = 22;
+            this.txtSketchFilesPath.BackColor = System.Drawing.Color.White;
+            this.txtSketchFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PicPath", true));
+            this.txtSketchFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSketchFilesPath.Location = new System.Drawing.Point(133, 356);
+            this.txtSketchFilesPath.Name = "txtSketchFilesPath";
+            this.txtSketchFilesPath.Size = new System.Drawing.Size(506, 23);
+            this.txtSketchFilesPath.TabIndex = 22;
             // 
-            // textBox9
+            // txtCilpFilesPath
             // 
-            this.textBox9.BackColor = System.Drawing.Color.White;
-            this.textBox9.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ClipPath", true));
-            this.textBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox9.Location = new System.Drawing.Point(133, 385);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(506, 23);
-            this.textBox9.TabIndex = 24;
+            this.txtCilpFilesPath.BackColor = System.Drawing.Color.White;
+            this.txtCilpFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ClipPath", true));
+            this.txtCilpFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCilpFilesPath.Location = new System.Drawing.Point(133, 385);
+            this.txtCilpFilesPath.Name = "txtCilpFilesPath";
+            this.txtCilpFilesPath.Size = new System.Drawing.Size(506, 23);
+            this.txtCilpFilesPath.TabIndex = 24;
             // 
-            // button1
+            // btnMailTo
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Location = new System.Drawing.Point(558, 314);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 21;
-            this.button1.Text = "Mail to";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnMailTo.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnMailTo.Location = new System.Drawing.Point(558, 314);
+            this.btnMailTo.Name = "btnMailTo";
+            this.btnMailTo.Size = new System.Drawing.Size(80, 30);
+            this.btnMailTo.TabIndex = 21;
+            this.btnMailTo.Text = "Mail to";
+            this.btnMailTo.UseVisualStyleBackColor = true;
+            this.btnMailTo.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnSketchFilesPath
             // 
-            this.button2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button2.Location = new System.Drawing.Point(642, 356);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(30, 25);
-            this.button2.TabIndex = 23;
-            this.button2.Text = "...";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnSketchFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnSketchFilesPath.Location = new System.Drawing.Point(642, 356);
+            this.btnSketchFilesPath.Name = "btnSketchFilesPath";
+            this.btnSketchFilesPath.Size = new System.Drawing.Size(30, 25);
+            this.btnSketchFilesPath.TabIndex = 23;
+            this.btnSketchFilesPath.Text = "...";
+            this.btnSketchFilesPath.UseVisualStyleBackColor = true;
+            this.btnSketchFilesPath.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button3
+            // btnCilpFilesPath
             // 
-            this.button3.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button3.Location = new System.Drawing.Point(642, 385);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(30, 25);
-            this.button3.TabIndex = 25;
-            this.button3.Text = "...";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnCilpFilesPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnCilpFilesPath.Location = new System.Drawing.Point(642, 385);
+            this.btnCilpFilesPath.Name = "btnCilpFilesPath";
+            this.btnCilpFilesPath.Size = new System.Drawing.Size(30, 25);
+            this.btnCilpFilesPath.TabIndex = 25;
+            this.btnCilpFilesPath.Text = "...";
+            this.btnCilpFilesPath.UseVisualStyleBackColor = true;
+            this.btnCilpFilesPath.Click += new System.EventHandler(this.button3_Click);
             // 
             // lineShape9
             // 
@@ -708,58 +708,68 @@
             // panel1
             // 
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.button3);
-            this.panel1.Controls.Add(this.numericBox1);
-            this.panel1.Controls.Add(this.button2);
+            this.panel1.Controls.Add(this.btnCilpFilesPath);
+            this.panel1.Controls.Add(this.num1CPUTMS);
+            this.panel1.Controls.Add(this.btnSketchFilesPath);
             this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.button1);
-            this.panel1.Controls.Add(this.numericBox2);
-            this.panel1.Controls.Add(this.textBox9);
+            this.panel1.Controls.Add(this.btnMailTo);
+            this.panel1.Controls.Add(this.numSample);
+            this.panel1.Controls.Add(this.txtCilpFilesPath);
             this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.textBox8);
-            this.panel1.Controls.Add(this.displayBox1);
+            this.panel1.Controls.Add(this.txtSketchFilesPath);
+            this.panel1.Controls.Add(this.displayAccountKeyword);
             this.panel1.Controls.Add(this.label23);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label22);
-            this.panel1.Controls.Add(this.displayBox2);
-            this.panel1.Controls.Add(this.textBox7);
+            this.panel1.Controls.Add(this.displayLocalCurrency);
+            this.panel1.Controls.Add(this.txtFTPPassword);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.label21);
-            this.panel1.Controls.Add(this.numericBox3);
-            this.panel1.Controls.Add(this.textBox6);
+            this.panel1.Controls.Add(this.numUSDRate);
+            this.panel1.Controls.Add(this.txtFTPID);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.label20);
-            this.panel1.Controls.Add(this.txtuser1);
-            this.panel1.Controls.Add(this.textBox5);
+            this.panel1.Controls.Add(this.txtUserPOApproved);
+            this.panel1.Controls.Add(this.txtFTPIP);
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.label19);
-            this.panel1.Controls.Add(this.numericUpDown1);
-            this.panel1.Controls.Add(this.textBox4);
+            this.panel1.Controls.Add(this.numericUpDownAutoApprovedWhileDateBefore);
+            this.panel1.Controls.Add(this.txtEmailPassword);
             this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.label18);
             this.panel1.Controls.Add(this.label9);
-            this.panel1.Controls.Add(this.textBox3);
-            this.panel1.Controls.Add(this.displayBox3);
+            this.panel1.Controls.Add(this.txtEmailID);
+            this.panel1.Controls.Add(this.displayRegionCode);
             this.panel1.Controls.Add(this.label17);
             this.panel1.Controls.Add(this.label10);
-            this.panel1.Controls.Add(this.textBox2);
-            this.panel1.Controls.Add(this.numericBox4);
+            this.panel1.Controls.Add(this.txtSendFrom);
+            this.panel1.Controls.Add(this.numCuttingLeadTime);
             this.panel1.Controls.Add(this.label16);
             this.panel1.Controls.Add(this.label11);
-            this.panel1.Controls.Add(this.textBox1);
-            this.panel1.Controls.Add(this.numericBox5);
+            this.panel1.Controls.Add(this.txtSMTPIP);
+            this.panel1.Controls.Add(this.numMtlInspectionLeadTime);
             this.panel1.Controls.Add(this.label15);
             this.panel1.Controls.Add(this.label12);
-            this.panel1.Controls.Add(this.dateBox2);
-            this.panel1.Controls.Add(this.numericBox6);
+            this.panel1.Controls.Add(this.datePulloutLockDate);
+            this.panel1.Controls.Add(this.numReadyDayByProd);
             this.panel1.Controls.Add(this.label14);
             this.panel1.Controls.Add(this.label13);
-            this.panel1.Controls.Add(this.dateBox1);
+            this.panel1.Controls.Add(this.dateDailyOutputLockDate);
             this.panel1.Controls.Add(this.shapeContainer2);
             this.panel1.Location = new System.Drawing.Point(10, 38);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(737, 427);
             this.panel1.TabIndex = 50;
+            // 
+            // txtUserPOApproved
+            // 
+            this.txtUserPOApproved.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "POApproveName", true));
+            this.txtUserPOApproved.DisplayBox1Binding = "";
+            this.txtUserPOApproved.Location = new System.Drawing.Point(375, 54);
+            this.txtUserPOApproved.Name = "txtUserPOApproved";
+            this.txtUserPOApproved.Size = new System.Drawing.Size(300, 23);
+            this.txtUserPOApproved.TabIndex = 5;
+            this.txtUserPOApproved.TextBox1Binding = "";
             // 
             // shapeContainer2
             // 
@@ -780,16 +790,6 @@
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
             // 
-            // txtuser1
-            // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "POApproveName", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(375, 54);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 5;
-            this.txtuser1.TextBox1Binding = "";
-            // 
             // B02
             // 
             this.ClientSize = new System.Drawing.Size(759, 474);
@@ -802,7 +802,7 @@
             this.WorkAlias = "System";
             this.Controls.SetChildIndex(this.panel1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -813,53 +813,53 @@
         #endregion
 
         private Win.UI.Label label1;
-        private Win.UI.NumericBox numericBox1;
+        private Win.UI.NumericBox num1CPUTMS;
         private Win.UI.Label label2;
-        private Win.UI.NumericBox numericBox2;
+        private Win.UI.NumericBox numSample;
         private Win.UI.Label label3;
-        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.DisplayBox displayAccountKeyword;
         private Win.UI.Label label4;
-        private Win.UI.DisplayBox displayBox2;
+        private Win.UI.DisplayBox displayLocalCurrency;
         private Win.UI.Label label5;
-        private Win.UI.NumericBox numericBox3;
+        private Win.UI.NumericBox numUSDRate;
         private Win.UI.Label label6;
-        private Class.txtuser txtuser1;
+        private Class.txtuser txtUserPOApproved;
         private Win.UI.Label label7;
-        private Win.UI.NumericUpDown numericUpDown1;
+        private Win.UI.NumericUpDown numericUpDownAutoApprovedWhileDateBefore;
         private Win.UI.Label label8;
         private Win.UI.Label label9;
-        private Win.UI.DisplayBox displayBox3;
+        private Win.UI.DisplayBox displayRegionCode;
         private Win.UI.Label label10;
-        private Win.UI.NumericBox numericBox4;
+        private Win.UI.NumericBox numCuttingLeadTime;
         private Win.UI.Label label11;
-        private Win.UI.NumericBox numericBox5;
+        private Win.UI.NumericBox numMtlInspectionLeadTime;
         private Win.UI.Label label12;
-        private Win.UI.NumericBox numericBox6;
+        private Win.UI.NumericBox numReadyDayByProd;
         private Win.UI.Label label13;
-        private Win.UI.DateBox dateBox1;
+        private Win.UI.DateBox dateDailyOutputLockDate;
         private Win.UI.Label label14;
-        private Win.UI.DateBox dateBox2;
+        private Win.UI.DateBox datePulloutLockDate;
         private Win.UI.Label label15;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.TextBox txtSMTPIP;
         private Win.UI.Label label16;
-        private Win.UI.TextBox textBox2;
+        private Win.UI.TextBox txtSendFrom;
         private Win.UI.Label label17;
-        private Win.UI.TextBox textBox3;
+        private Win.UI.TextBox txtEmailID;
         private Win.UI.Label label18;
-        private Win.UI.TextBox textBox4;
+        private Win.UI.TextBox txtEmailPassword;
         private Win.UI.Label label19;
-        private Win.UI.TextBox textBox5;
+        private Win.UI.TextBox txtFTPIP;
         private Win.UI.Label label20;
-        private Win.UI.TextBox textBox6;
+        private Win.UI.TextBox txtFTPID;
         private Win.UI.Label label21;
-        private Win.UI.TextBox textBox7;
+        private Win.UI.TextBox txtFTPPassword;
         private Win.UI.Label label22;
         private Win.UI.Label label23;
-        private Win.UI.TextBox textBox8;
-        private Win.UI.TextBox textBox9;
-        private Win.UI.Button button1;
-        private Win.UI.Button button2;
-        private Win.UI.Button button3;
+        private Win.UI.TextBox txtSketchFilesPath;
+        private Win.UI.TextBox txtCilpFilesPath;
+        private Win.UI.Button btnMailTo;
+        private Win.UI.Button btnSketchFilesPath;
+        private Win.UI.Button btnCilpFilesPath;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape9;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape8;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape7;

@@ -32,11 +32,11 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
-            this.editBox1 = new Sci.Win.UI.EditBox();
+            this.editA = new Sci.Win.UI.EditBox();
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
-            this.editBox2 = new Sci.Win.UI.EditBox();
-            this.editBox3 = new Sci.Win.UI.EditBox();
-            this.editBox4 = new Sci.Win.UI.EditBox();
+            this.editB = new Sci.Win.UI.EditBox();
+            this.editC = new Sci.Win.UI.EditBox();
+            this.editD = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -100,16 +100,16 @@
             this.label4.TabIndex = 97;
             this.label4.Text = "(D)";
             // 
-            // editBox1
+            // editA
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkFront", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(31, 7);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(285, 172);
-            this.editBox1.TabIndex = 0;
+            this.editA.BackColor = System.Drawing.Color.White;
+            this.editA.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkFront", true));
+            this.editA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editA.Location = new System.Drawing.Point(31, 7);
+            this.editA.Multiline = true;
+            this.editA.Name = "editA";
+            this.editA.Size = new System.Drawing.Size(285, 172);
+            this.editA.TabIndex = 0;
             // 
             // pictureBox1
             // 
@@ -120,47 +120,47 @@
             this.pictureBox1.TabIndex = 99;
             this.pictureBox1.TabStop = false;
             // 
-            // editBox2
+            // editB
             // 
-            this.editBox2.BackColor = System.Drawing.Color.White;
-            this.editBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkBack", true));
-            this.editBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox2.Location = new System.Drawing.Point(575, 7);
-            this.editBox2.Multiline = true;
-            this.editBox2.Name = "editBox2";
-            this.editBox2.Size = new System.Drawing.Size(285, 172);
-            this.editBox2.TabIndex = 1;
+            this.editB.BackColor = System.Drawing.Color.White;
+            this.editB.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkBack", true));
+            this.editB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editB.Location = new System.Drawing.Point(575, 7);
+            this.editB.Multiline = true;
+            this.editB.Name = "editB";
+            this.editB.Size = new System.Drawing.Size(285, 172);
+            this.editB.TabIndex = 1;
             // 
-            // editBox3
+            // editC
             // 
-            this.editBox3.BackColor = System.Drawing.Color.White;
-            this.editBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkLeft", true));
-            this.editBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox3.Location = new System.Drawing.Point(31, 185);
-            this.editBox3.Multiline = true;
-            this.editBox3.Name = "editBox3";
-            this.editBox3.Size = new System.Drawing.Size(285, 172);
-            this.editBox3.TabIndex = 2;
+            this.editC.BackColor = System.Drawing.Color.White;
+            this.editC.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkLeft", true));
+            this.editC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editC.Location = new System.Drawing.Point(31, 185);
+            this.editC.Multiline = true;
+            this.editC.Name = "editC";
+            this.editC.Size = new System.Drawing.Size(285, 172);
+            this.editC.TabIndex = 2;
             // 
-            // editBox4
+            // editD
             // 
-            this.editBox4.BackColor = System.Drawing.Color.White;
-            this.editBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkRight", true));
-            this.editBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox4.Location = new System.Drawing.Point(575, 185);
-            this.editBox4.Multiline = true;
-            this.editBox4.Name = "editBox4";
-            this.editBox4.Size = new System.Drawing.Size(285, 172);
-            this.editBox4.TabIndex = 3;
+            this.editD.BackColor = System.Drawing.Color.White;
+            this.editD.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MarkRight", true));
+            this.editD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editD.Location = new System.Drawing.Point(575, 185);
+            this.editD.Multiline = true;
+            this.editD.Name = "editD";
+            this.editD.Size = new System.Drawing.Size(285, 172);
+            this.editD.TabIndex = 3;
             // 
             // B11_ShippingMark
             // 
             this.ClientSize = new System.Drawing.Size(864, 408);
-            this.Controls.Add(this.editBox4);
-            this.Controls.Add(this.editBox3);
-            this.Controls.Add(this.editBox2);
+            this.Controls.Add(this.editD);
+            this.Controls.Add(this.editC);
+            this.Controls.Add(this.editB);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.editBox1);
+            this.Controls.Add(this.editA);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -174,11 +174,11 @@
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.editBox1, 0);
+            this.Controls.SetChildIndex(this.editA, 0);
             this.Controls.SetChildIndex(this.pictureBox1, 0);
-            this.Controls.SetChildIndex(this.editBox2, 0);
-            this.Controls.SetChildIndex(this.editBox3, 0);
-            this.Controls.SetChildIndex(this.editBox4, 0);
+            this.Controls.SetChildIndex(this.editB, 0);
+            this.Controls.SetChildIndex(this.editC, 0);
+            this.Controls.SetChildIndex(this.editD, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -193,10 +193,10 @@
         private Win.UI.Label label2;
         private Win.UI.Label label3;
         private Win.UI.Label label4;
-        private Win.UI.EditBox editBox1;
+        private Win.UI.EditBox editA;
         private Win.UI.PictureBox pictureBox1;
-        private Win.UI.EditBox editBox2;
-        private Win.UI.EditBox editBox3;
-        private Win.UI.EditBox editBox4;
+        private Win.UI.EditBox editB;
+        private Win.UI.EditBox editC;
+        private Win.UI.EditBox editD;
     }
 }

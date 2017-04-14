@@ -36,8 +36,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.button1 = new Sci.Win.UI.Button();
+            this.comboYearMonth = new Sci.Win.UI.ComboBox();
+            this.btnRefersh = new Sci.Win.UI.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.holiday35 = new Sci.Production.Class.Holiday();
             this.holiday34 = new Sci.Production.Class.Holiday();
@@ -165,29 +165,29 @@
             this.label7.Text = "Saturday";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // comboBox1
+            // comboYearMonth
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(107, 6);
-            this.comboBox1.MaxDropDownItems = 15;
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(90, 24);
-            this.comboBox1.TabIndex = 0;
-            this.comboBox1.Validated += new System.EventHandler(this.comboBox1_Validated);
+            this.comboYearMonth.BackColor = System.Drawing.Color.White;
+            this.comboYearMonth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboYearMonth.FormattingEnabled = true;
+            this.comboYearMonth.IsSupportUnselect = true;
+            this.comboYearMonth.Location = new System.Drawing.Point(107, 6);
+            this.comboYearMonth.MaxDropDownItems = 15;
+            this.comboYearMonth.Name = "comboYearMonth";
+            this.comboYearMonth.Size = new System.Drawing.Size(90, 24);
+            this.comboYearMonth.TabIndex = 0;
+            this.comboYearMonth.Validated += new System.EventHandler(this.comboBox1_Validated);
             // 
-            // button1
+            // btnRefersh
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(209, 5);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(83, 27);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Refresh";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnRefersh.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnRefersh.Location = new System.Drawing.Point(209, 5);
+            this.btnRefersh.Name = "btnRefersh";
+            this.btnRefersh.Size = new System.Drawing.Size(83, 27);
+            this.btnRefersh.TabIndex = 1;
+            this.btnRefersh.Text = "Refresh";
+            this.btnRefersh.UseVisualStyleBackColor = true;
+            this.btnRefersh.Click += new System.EventHandler(this.button1_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -508,16 +508,16 @@
             // 
             this.ClientSize = new System.Drawing.Size(867, 425);
             this.Controls.Add(this.label8);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.comboYearMonth);
+            this.Controls.Add(this.btnRefersh);
             this.Controls.Add(this.tableLayoutPanel1);
             this.DefaultControl = "comboBox1";
             this.EditMode = true;
             this.Name = "B05";
             this.Text = "B05. Holiday setup";
             this.Controls.SetChildIndex(this.tableLayoutPanel1, 0);
-            this.Controls.SetChildIndex(this.button1, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
+            this.Controls.SetChildIndex(this.btnRefersh, 0);
+            this.Controls.SetChildIndex(this.comboYearMonth, 0);
             this.Controls.SetChildIndex(this.label8, 0);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
@@ -535,8 +535,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label7;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Button button1;
+        private Win.UI.ComboBox comboYearMonth;
+        private Win.UI.Button btnRefersh;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private Class.Holiday holiday35;
         private Class.Holiday holiday34;

@@ -19,8 +19,8 @@ namespace Sci.Production.Basic
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             InitializeComponent();
-            this.displayBox1.Text = this.KeyValue1;
-            this.displayBox2.Text = MyUtility.GetValue.Lookup("Abb", this.KeyValue1, "LocalSupp", "ID");
+            this.displayCode.Text = this.KeyValue1;
+            this.displayAbbreviation.Text = MyUtility.GetValue.Lookup("Abb", this.KeyValue1, "LocalSupp", "ID");
         }
 
         protected override DualResult OnRequery()

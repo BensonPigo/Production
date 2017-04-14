@@ -60,7 +60,7 @@ namespace Sci.Production.Basic
             DataTable yearTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, selectCommand, cmds, out yearTable))
             {
-                MyUtility.Tool.SetupCombox(comboBox1, 1, yearTable);
+                MyUtility.Tool.SetupCombox(comboCapacityYear, 1, yearTable);
             }
 
             //comboBox2
@@ -68,7 +68,7 @@ namespace Sci.Production.Basic
             DataTable artworkTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, selectCommand, cmds, out artworkTable))
             {
-                MyUtility.Tool.SetupCombox(comboBox2, 1, artworkTable);
+                MyUtility.Tool.SetupCombox(comboArtwork, 1, artworkTable);
             }
 
             //comboBox3
@@ -76,13 +76,13 @@ namespace Sci.Production.Basic
             DataTable yearTable2 = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, selectCommand, cmds, out yearTable2))
             {
-                MyUtility.Tool.SetupCombox(comboBox3, 1, yearTable2);
+                MyUtility.Tool.SetupCombox(comboWorkdayYear, 1, yearTable2);
             }
 
             //設定ComboBox預設值
-            this.comboBox1.SelectedValue = DateTime.Now.Year.ToString();
-            this.comboBox2.SelectedValue = "SEWING";
-            this.comboBox3.SelectedValue = DateTime.Now.Year.ToString();
+            this.comboCapacityYear.SelectedValue = DateTime.Now.Year.ToString();
+            this.comboArtwork.SelectedValue = "SEWING";
+            this.comboWorkdayYear.SelectedValue = DateTime.Now.Year.ToString();
         }
 
         // 撈取Grid資料
@@ -119,15 +119,15 @@ namespace Sci.Production.Basic
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox3.SelectedIndex != -1)
+            if (comboWorkdayYear.SelectedIndex != -1)
             {
-                ((DataTable)listControlBindingSource2.DataSource).DefaultView.RowFilter = "Year = " + comboBox3.SelectedValue.ToString();
+                ((DataTable)listControlBindingSource2.DataSource).DefaultView.RowFilter = "Year = " + comboWorkdayYear.SelectedValue.ToString();
             }
         }
 
         private void CapacityFilter()
         {
-            ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = "Year = " + (comboBox1.SelectedIndex != -1 ? comboBox1.SelectedValue.ToString() : "0") + " AND ArtworkTypeID = '" + (comboBox2.SelectedIndex != -1 ? comboBox2.SelectedValue.ToString() : "") + "'";
+            ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = "Year = " + (comboCapacityYear.SelectedIndex != -1 ? comboCapacityYear.SelectedValue.ToString() : "0") + " AND ArtworkTypeID = '" + (comboArtwork.SelectedIndex != -1 ? comboArtwork.SelectedValue.ToString() : "") + "'";
         }
     }
 }

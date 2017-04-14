@@ -31,16 +31,16 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
-            this.checkBox3 = new Sci.Win.UI.CheckBox();
-            this.checkBox4 = new Sci.Win.UI.CheckBox();
+            this.displayArtwork = new Sci.Win.UI.DisplayBox();
+            this.displayProduction = new Sci.Win.UI.DisplayBox();
+            this.comboMaterialType = new Sci.Win.UI.ComboBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.checkExtend = new Sci.Win.UI.CheckBox();
+            this.checkZipper = new Sci.Win.UI.CheckBox();
+            this.checkIsICRItem = new Sci.Win.UI.CheckBox();
             this.label6 = new Sci.Win.UI.Label();
-            this.txtdropdownlist2 = new Sci.Production.Class.txtdropdownlist();
-            this.checkBox5 = new Sci.Win.UI.CheckBox();
+            this.txtDropdownlistIssueType = new Sci.Production.Class.txtdropdownlist();
+            this.checkIsTrimCardOther = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -55,16 +55,16 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.checkBox5);
-            this.detailcont.Controls.Add(this.txtdropdownlist2);
+            this.detailcont.Controls.Add(this.checkIsTrimCardOther);
+            this.detailcont.Controls.Add(this.txtDropdownlistIssueType);
             this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.checkBox4);
-            this.detailcont.Controls.Add(this.checkBox3);
-            this.detailcont.Controls.Add(this.checkBox2);
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.comboBox1);
-            this.detailcont.Controls.Add(this.displayBox3);
-            this.detailcont.Controls.Add(this.displayBox2);
+            this.detailcont.Controls.Add(this.checkIsICRItem);
+            this.detailcont.Controls.Add(this.checkZipper);
+            this.detailcont.Controls.Add(this.checkExtend);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.comboMaterialType);
+            this.detailcont.Controls.Add(this.displayProduction);
+            this.detailcont.Controls.Add(this.displayArtwork);
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
@@ -77,7 +77,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(688, 395);
+            this.browse.Size = new System.Drawing.Size(828, 395);
             // 
             // tabs
             // 
@@ -124,86 +124,86 @@
             this.label5.TabIndex = 2;
             this.label5.Text = "Production";
             // 
-            // displayBox2
+            // displayArtwork
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(169, 70);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(170, 23);
-            this.displayBox2.TabIndex = 1;
+            this.displayArtwork.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayArtwork.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayArtwork.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayArtwork.Location = new System.Drawing.Point(169, 70);
+            this.displayArtwork.Name = "displayArtwork";
+            this.displayArtwork.Size = new System.Drawing.Size(170, 23);
+            this.displayArtwork.TabIndex = 1;
             // 
-            // displayBox3
+            // displayProduction
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ProductionType", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(169, 110);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(100, 23);
-            this.displayBox3.TabIndex = 2;
+            this.displayProduction.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayProduction.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ProductionType", true));
+            this.displayProduction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayProduction.Location = new System.Drawing.Point(169, 110);
+            this.displayProduction.Name = "displayProduction";
+            this.displayProduction.Size = new System.Drawing.Size(100, 23);
+            this.displayProduction.TabIndex = 2;
             // 
-            // comboBox1
+            // comboMaterialType
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Type", true));
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(169, 30);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.ReadOnly = true;
-            this.comboBox1.Size = new System.Drawing.Size(100, 24);
-            this.comboBox1.TabIndex = 0;
+            this.comboMaterialType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboMaterialType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Type", true));
+            this.comboMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboMaterialType.FormattingEnabled = true;
+            this.comboMaterialType.IsSupportUnselect = true;
+            this.comboMaterialType.Location = new System.Drawing.Point(169, 30);
+            this.comboMaterialType.Name = "comboMaterialType";
+            this.comboMaterialType.ReadOnly = true;
+            this.comboMaterialType.Size = new System.Drawing.Size(100, 24);
+            this.comboMaterialType.TabIndex = 0;
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(400, 30);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 4;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(400, 30);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 4;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // checkExtend
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsExtensionUnit", true));
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox2.Location = new System.Drawing.Point(400, 70);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(70, 21);
-            this.checkBox2.TabIndex = 5;
-            this.checkBox2.Text = "Extend";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkExtend.AutoSize = true;
+            this.checkExtend.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsExtensionUnit", true));
+            this.checkExtend.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkExtend.Location = new System.Drawing.Point(400, 70);
+            this.checkExtend.Name = "checkExtend";
+            this.checkExtend.Size = new System.Drawing.Size(70, 21);
+            this.checkExtend.TabIndex = 5;
+            this.checkExtend.Text = "Extend";
+            this.checkExtend.UseVisualStyleBackColor = true;
             // 
-            // checkBox3
+            // checkZipper
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CheckZipper", true));
-            this.checkBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox3.Location = new System.Drawing.Point(400, 110);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(111, 21);
-            this.checkBox3.TabIndex = 6;
-            this.checkBox3.Text = "Check Zipper";
-            this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkZipper.AutoSize = true;
+            this.checkZipper.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CheckZipper", true));
+            this.checkZipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkZipper.Location = new System.Drawing.Point(400, 110);
+            this.checkZipper.Name = "checkZipper";
+            this.checkZipper.Size = new System.Drawing.Size(111, 21);
+            this.checkZipper.TabIndex = 6;
+            this.checkZipper.Text = "Check Zipper";
+            this.checkZipper.UseVisualStyleBackColor = true;
             // 
-            // checkBox4
+            // checkIsICRItem
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IrregularCost", true));
-            this.checkBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox4.Location = new System.Drawing.Point(400, 150);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(93, 21);
-            this.checkBox4.TabIndex = 7;
-            this.checkBox4.Text = "is ICR Item";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.checkIsICRItem.AutoSize = true;
+            this.checkIsICRItem.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IrregularCost", true));
+            this.checkIsICRItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIsICRItem.Location = new System.Drawing.Point(400, 150);
+            this.checkIsICRItem.Name = "checkIsICRItem";
+            this.checkIsICRItem.Size = new System.Drawing.Size(93, 21);
+            this.checkIsICRItem.TabIndex = 7;
+            this.checkIsICRItem.Text = "is ICR Item";
+            this.checkIsICRItem.UseVisualStyleBackColor = true;
             // 
             // label6
             // 
@@ -214,31 +214,31 @@
             this.label6.TabIndex = 11;
             this.label6.Text = "Issue Type";
             // 
-            // txtdropdownlist2
+            // txtDropdownlistIssueType
             // 
-            this.txtdropdownlist2.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist2.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "IssueType", true));
-            this.txtdropdownlist2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist2.FormattingEnabled = true;
-            this.txtdropdownlist2.IsSupportUnselect = true;
-            this.txtdropdownlist2.Location = new System.Drawing.Point(169, 150);
-            this.txtdropdownlist2.Name = "txtdropdownlist2";
-            this.txtdropdownlist2.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist2.TabIndex = 3;
-            this.txtdropdownlist2.Type = "IssueType";
+            this.txtDropdownlistIssueType.BackColor = System.Drawing.Color.White;
+            this.txtDropdownlistIssueType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "IssueType", true));
+            this.txtDropdownlistIssueType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDropdownlistIssueType.FormattingEnabled = true;
+            this.txtDropdownlistIssueType.IsSupportUnselect = true;
+            this.txtDropdownlistIssueType.Location = new System.Drawing.Point(169, 150);
+            this.txtDropdownlistIssueType.Name = "txtDropdownlistIssueType";
+            this.txtDropdownlistIssueType.Size = new System.Drawing.Size(121, 24);
+            this.txtDropdownlistIssueType.TabIndex = 3;
+            this.txtDropdownlistIssueType.Type = "IssueType";
             // 
-            // checkBox5
+            // checkIsTrimCardOther
             // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsTrimCardOther", true));
-            this.checkBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBox5.Location = new System.Drawing.Point(400, 191);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.ReadOnly = true;
-            this.checkBox5.Size = new System.Drawing.Size(143, 21);
-            this.checkBox5.TabIndex = 8;
-            this.checkBox5.Text = "Is Trim Card Other";
-            this.checkBox5.UseVisualStyleBackColor = true;
+            this.checkIsTrimCardOther.AutoSize = true;
+            this.checkIsTrimCardOther.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsTrimCardOther", true));
+            this.checkIsTrimCardOther.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkIsTrimCardOther.Location = new System.Drawing.Point(400, 191);
+            this.checkIsTrimCardOther.Name = "checkIsTrimCardOther";
+            this.checkIsTrimCardOther.ReadOnly = true;
+            this.checkIsTrimCardOther.Size = new System.Drawing.Size(143, 21);
+            this.checkIsTrimCardOther.TabIndex = 8;
+            this.checkIsTrimCardOther.Text = "Is Trim Card Other";
+            this.checkIsTrimCardOther.UseVisualStyleBackColor = true;
             // 
             // B13
             // 
@@ -269,18 +269,18 @@
 
         #endregion
 
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
+        private Win.UI.ComboBox comboMaterialType;
+        private Win.UI.DisplayBox displayProduction;
+        private Win.UI.DisplayBox displayArtwork;
         private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
-        private Win.UI.CheckBox checkBox4;
-        private Win.UI.CheckBox checkBox3;
-        private Win.UI.CheckBox checkBox2;
-        private Win.UI.CheckBox checkBox1;
+        private Win.UI.CheckBox checkIsICRItem;
+        private Win.UI.CheckBox checkZipper;
+        private Win.UI.CheckBox checkExtend;
+        private Win.UI.CheckBox checkJunk;
         private Win.UI.Label label6;
-        private Class.txtdropdownlist txtdropdownlist2;
-        private Win.UI.CheckBox checkBox5;
+        private Class.txtdropdownlist txtDropdownlistIssueType;
+        private Win.UI.CheckBox checkIsTrimCardOther;
     }
 }

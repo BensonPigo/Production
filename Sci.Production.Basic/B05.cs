@@ -34,7 +34,7 @@ namespace Sci.Production.Basic
             for (int i = 0; i < 36; i++)
             {
                 firstDate = firstDate.AddMonths(1);
-                this.comboBox1.Items.Add(firstDate.ToString("yyyy/MM"));
+                this.comboYearMonth.Items.Add(firstDate.ToString("yyyy/MM"));
             }
 
             //委任日期上的 Click 事件
@@ -45,7 +45,7 @@ namespace Sci.Production.Basic
                 holiday.label1.Click += new System.EventHandler(this.lable1_Click);
             }
 
-            this.comboBox1.Text = DateTime.Today.ToString("yyyy/MM");
+            this.comboYearMonth.Text = DateTime.Today.ToString("yyyy/MM");
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Sci.Production.Basic
             {
                 Holiday holiday = ((Label)sender).Parent.Parent as Holiday;
                 B05_SetHoliday f = new B05_SetHoliday(holiday.Today);
-                if (f.ShowDialog() == DialogResult.OK) this.button1.PerformClick();
+                if (f.ShowDialog() == DialogResult.OK) this.btnRefersh.PerformClick();
             }
         }
 
@@ -121,12 +121,12 @@ namespace Sci.Production.Basic
 
         private void comboBox1_Validated(object sender, EventArgs e)
         {
-            this.button1.PerformClick();
+            this.btnRefersh.PerformClick();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            this.ShowDate(this.comboBox1.Text);
+            this.ShowDate(this.comboYearMonth.Text);
         }
     }
 }

@@ -38,21 +38,21 @@
             this.label10 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
             this.label12 = new Sci.Win.UI.Label();
-            this.textCode = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
-            this.textBox5 = new Sci.Win.UI.TextBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
-            this.checkBox3 = new Sci.Win.UI.CheckBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.txtpayterm_fty1 = new Sci.Production.Class.txtpayterm_fty();
-            this.txtcurrency1 = new Sci.Production.Class.txtcurrency();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.txtCode = new Sci.Win.UI.TextBox();
+            this.txtAbbreviation = new Sci.Win.UI.TextBox();
+            this.txtCompany = new Sci.Win.UI.TextBox();
+            this.txtTel = new Sci.Win.UI.TextBox();
+            this.txtFax = new Sci.Win.UI.TextBox();
+            this.editAddress = new Sci.Win.UI.EditBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.checkUseSBTS = new Sci.Win.UI.CheckBox();
+            this.checkIsFactory = new Sci.Win.UI.CheckBox();
+            this.btnAccountingChartNo = new Sci.Win.UI.Button();
+            this.btnBankDetail = new Sci.Win.UI.Button();
+            this.txtpayterm_ftyPaymentTerm = new Sci.Production.Class.txtpayterm_fty();
+            this.txtCurrency = new Sci.Production.Class.txtcurrency();
+            this.txtCountryNationality = new Sci.Production.Class.txtcountry();
+            this.numWHoldingTerm = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -67,21 +67,21 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.numericBox1);
-            this.detailcont.Controls.Add(this.button2);
-            this.detailcont.Controls.Add(this.button1);
-            this.detailcont.Controls.Add(this.checkBox3);
-            this.detailcont.Controls.Add(this.checkBox2);
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.txtpayterm_fty1);
-            this.detailcont.Controls.Add(this.txtcurrency1);
-            this.detailcont.Controls.Add(this.txtcountry1);
-            this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.textBox5);
-            this.detailcont.Controls.Add(this.textBox4);
-            this.detailcont.Controls.Add(this.textBox3);
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.textCode);
+            this.detailcont.Controls.Add(this.numWHoldingTerm);
+            this.detailcont.Controls.Add(this.btnBankDetail);
+            this.detailcont.Controls.Add(this.btnAccountingChartNo);
+            this.detailcont.Controls.Add(this.checkIsFactory);
+            this.detailcont.Controls.Add(this.checkUseSBTS);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.txtpayterm_ftyPaymentTerm);
+            this.detailcont.Controls.Add(this.txtCurrency);
+            this.detailcont.Controls.Add(this.txtCountryNationality);
+            this.detailcont.Controls.Add(this.editAddress);
+            this.detailcont.Controls.Add(this.txtFax);
+            this.detailcont.Controls.Add(this.txtTel);
+            this.detailcont.Controls.Add(this.txtCompany);
+            this.detailcont.Controls.Add(this.txtAbbreviation);
+            this.detailcont.Controls.Add(this.txtCode);
             this.detailcont.Controls.Add(this.label12);
             this.detailcont.Controls.Add(this.label11);
             this.detailcont.Controls.Add(this.label10);
@@ -101,7 +101,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(767, 395);
+            this.browse.Size = new System.Drawing.Size(824, 395);
             // 
             // tabs
             // 
@@ -211,174 +211,174 @@
             this.label12.TabIndex = 9;
             this.label12.Text = "W/Holding Rate(%)";
             // 
-            // textCode
+            // txtCode
             // 
-            this.textCode.BackColor = System.Drawing.Color.White;
-            this.textCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textCode.Location = new System.Drawing.Point(156, 15);
-            this.textCode.Name = "textCode";
-            this.textCode.Size = new System.Drawing.Size(66, 23);
-            this.textCode.TabIndex = 0;
+            this.txtCode.BackColor = System.Drawing.Color.White;
+            this.txtCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCode.Location = new System.Drawing.Point(156, 15);
+            this.txtCode.Name = "txtCode";
+            this.txtCode.Size = new System.Drawing.Size(66, 23);
+            this.txtCode.TabIndex = 0;
             // 
-            // textBox2
+            // txtAbbreviation
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Abb", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(156, 42);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(120, 23);
-            this.textBox2.TabIndex = 2;
+            this.txtAbbreviation.BackColor = System.Drawing.Color.White;
+            this.txtAbbreviation.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Abb", true));
+            this.txtAbbreviation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtAbbreviation.Location = new System.Drawing.Point(156, 42);
+            this.txtAbbreviation.Name = "txtAbbreviation";
+            this.txtAbbreviation.Size = new System.Drawing.Size(120, 23);
+            this.txtAbbreviation.TabIndex = 2;
             // 
-            // textBox3
+            // txtCompany
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Name", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(156, 96);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(317, 23);
-            this.textBox3.TabIndex = 6;
+            this.txtCompany.BackColor = System.Drawing.Color.White;
+            this.txtCompany.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtCompany.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Name", true));
+            this.txtCompany.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCompany.Location = new System.Drawing.Point(156, 96);
+            this.txtCompany.Name = "txtCompany";
+            this.txtCompany.Size = new System.Drawing.Size(317, 23);
+            this.txtCompany.TabIndex = 6;
             // 
-            // textBox4
+            // txtTel
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Tel", true));
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(156, 123);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(220, 23);
-            this.textBox4.TabIndex = 7;
+            this.txtTel.BackColor = System.Drawing.Color.White;
+            this.txtTel.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Tel", true));
+            this.txtTel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTel.Location = new System.Drawing.Point(156, 123);
+            this.txtTel.Name = "txtTel";
+            this.txtTel.Size = new System.Drawing.Size(220, 23);
+            this.txtTel.TabIndex = 7;
             // 
-            // textBox5
+            // txtFax
             // 
-            this.textBox5.BackColor = System.Drawing.Color.White;
-            this.textBox5.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Fax", true));
-            this.textBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox5.Location = new System.Drawing.Point(156, 150);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(220, 23);
-            this.textBox5.TabIndex = 8;
+            this.txtFax.BackColor = System.Drawing.Color.White;
+            this.txtFax.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Fax", true));
+            this.txtFax.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFax.Location = new System.Drawing.Point(156, 150);
+            this.txtFax.Name = "txtFax";
+            this.txtFax.Size = new System.Drawing.Size(220, 23);
+            this.txtFax.TabIndex = 8;
             // 
-            // editBox1
+            // editAddress
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Address", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(156, 177);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(400, 82);
-            this.editBox1.TabIndex = 9;
+            this.editAddress.BackColor = System.Drawing.Color.White;
+            this.editAddress.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Address", true));
+            this.editAddress.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editAddress.Location = new System.Drawing.Point(156, 177);
+            this.editAddress.Multiline = true;
+            this.editAddress.Name = "editAddress";
+            this.editAddress.Size = new System.Drawing.Size(400, 82);
+            this.editAddress.TabIndex = 9;
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(478, 15);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 1;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(478, 15);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 1;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // checkUseSBTS
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "UseSBTS", true));
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox2.Location = new System.Drawing.Point(478, 42);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(92, 21);
-            this.checkBox2.TabIndex = 3;
-            this.checkBox2.Text = "Use SBTS";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkUseSBTS.AutoSize = true;
+            this.checkUseSBTS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "UseSBTS", true));
+            this.checkUseSBTS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkUseSBTS.Location = new System.Drawing.Point(478, 42);
+            this.checkUseSBTS.Name = "checkUseSBTS";
+            this.checkUseSBTS.Size = new System.Drawing.Size(92, 21);
+            this.checkUseSBTS.TabIndex = 3;
+            this.checkUseSBTS.Text = "Use SBTS";
+            this.checkUseSBTS.UseVisualStyleBackColor = true;
             // 
-            // checkBox3
+            // checkIsFactory
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsFactory", true));
-            this.checkBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox3.Location = new System.Drawing.Point(478, 69);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(88, 21);
-            this.checkBox3.TabIndex = 5;
-            this.checkBox3.Text = "Is Factory";
-            this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkIsFactory.AutoSize = true;
+            this.checkIsFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsFactory", true));
+            this.checkIsFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIsFactory.Location = new System.Drawing.Point(478, 69);
+            this.checkIsFactory.Name = "checkIsFactory";
+            this.checkIsFactory.Size = new System.Drawing.Size(88, 21);
+            this.checkIsFactory.TabIndex = 5;
+            this.checkIsFactory.Text = "Is Factory";
+            this.checkIsFactory.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btnAccountingChartNo
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(589, 15);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(163, 30);
-            this.button1.TabIndex = 13;
-            this.button1.Text = "Accounting chart no";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnAccountingChartNo.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnAccountingChartNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnAccountingChartNo.Location = new System.Drawing.Point(589, 15);
+            this.btnAccountingChartNo.Name = "btnAccountingChartNo";
+            this.btnAccountingChartNo.Size = new System.Drawing.Size(163, 30);
+            this.btnAccountingChartNo.TabIndex = 13;
+            this.btnAccountingChartNo.Text = "Accounting chart no";
+            this.btnAccountingChartNo.UseVisualStyleBackColor = true;
+            this.btnAccountingChartNo.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnBankDetail
             // 
-            this.button2.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(589, 52);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(163, 30);
-            this.button2.TabIndex = 14;
-            this.button2.Text = "Bank detail";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnBankDetail.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnBankDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnBankDetail.Location = new System.Drawing.Point(589, 52);
+            this.btnBankDetail.Name = "btnBankDetail";
+            this.btnBankDetail.Size = new System.Drawing.Size(163, 30);
+            this.btnBankDetail.TabIndex = 14;
+            this.btnBankDetail.Text = "Bank detail";
+            this.btnBankDetail.UseVisualStyleBackColor = true;
+            this.btnBankDetail.Click += new System.EventHandler(this.button2_Click);
             // 
-            // txtpayterm_fty1
+            // txtpayterm_ftyPaymentTerm
             // 
-            this.txtpayterm_fty1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermID", true));
-            this.txtpayterm_fty1.DisplayBox1Binding = "";
-            this.txtpayterm_fty1.Location = new System.Drawing.Point(156, 290);
-            this.txtpayterm_fty1.Name = "txtpayterm_fty1";
-            this.txtpayterm_fty1.Size = new System.Drawing.Size(384, 23);
-            this.txtpayterm_fty1.TabIndex = 11;
-            this.txtpayterm_fty1.TextBox1Binding = "";
+            this.txtpayterm_ftyPaymentTerm.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermID", true));
+            this.txtpayterm_ftyPaymentTerm.DisplayBox1Binding = "";
+            this.txtpayterm_ftyPaymentTerm.Location = new System.Drawing.Point(156, 290);
+            this.txtpayterm_ftyPaymentTerm.Name = "txtpayterm_ftyPaymentTerm";
+            this.txtpayterm_ftyPaymentTerm.Size = new System.Drawing.Size(384, 23);
+            this.txtpayterm_ftyPaymentTerm.TabIndex = 11;
+            this.txtpayterm_ftyPaymentTerm.TextBox1Binding = "";
             // 
-            // txtcurrency1
+            // txtCurrency
             // 
-            this.txtcurrency1.BackColor = System.Drawing.Color.White;
-            this.txtcurrency1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CurrencyID", true));
-            this.txtcurrency1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcurrency1.IsSupportSytsemContextMenu = false;
-            this.txtcurrency1.Location = new System.Drawing.Point(156, 263);
-            this.txtcurrency1.Name = "txtcurrency1";
-            this.txtcurrency1.Size = new System.Drawing.Size(40, 23);
-            this.txtcurrency1.TabIndex = 10;
+            this.txtCurrency.BackColor = System.Drawing.Color.White;
+            this.txtCurrency.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CurrencyID", true));
+            this.txtCurrency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCurrency.IsSupportSytsemContextMenu = false;
+            this.txtCurrency.Location = new System.Drawing.Point(156, 263);
+            this.txtCurrency.Name = "txtCurrency";
+            this.txtCurrency.Size = new System.Drawing.Size(40, 23);
+            this.txtCurrency.TabIndex = 10;
             // 
-            // txtcountry1
+            // txtCountryNationality
             // 
-            this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Location = new System.Drawing.Point(156, 69);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 4;
-            this.txtcountry1.TextBox1Binding = "";
+            this.txtCountryNationality.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
+            this.txtCountryNationality.DisplayBox1Binding = "";
+            this.txtCountryNationality.Location = new System.Drawing.Point(156, 69);
+            this.txtCountryNationality.Name = "txtCountryNationality";
+            this.txtCountryNationality.Size = new System.Drawing.Size(232, 22);
+            this.txtCountryNationality.TabIndex = 4;
+            this.txtCountryNationality.TextBox1Binding = "";
             // 
-            // numericBox1
+            // numWHoldingTerm
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WithHoldingRate", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(156, 317);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numWHoldingTerm.BackColor = System.Drawing.Color.White;
+            this.numWHoldingTerm.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WithHoldingRate", true));
+            this.numWHoldingTerm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numWHoldingTerm.Location = new System.Drawing.Point(156, 317);
+            this.numWHoldingTerm.Name = "numWHoldingTerm";
+            this.numWHoldingTerm.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(40, 23);
-            this.numericBox1.TabIndex = 12;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numWHoldingTerm.Size = new System.Drawing.Size(40, 23);
+            this.numWHoldingTerm.TabIndex = 12;
+            this.numWHoldingTerm.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -414,15 +414,15 @@
         #endregion
 
         private Win.UI.Label label3;
-        private Class.txtpayterm_fty txtpayterm_fty1;
-        private Class.txtcurrency txtcurrency1;
-        private Class.txtcountry txtcountry1;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.TextBox textBox5;
-        private Win.UI.TextBox textBox4;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textCode;
+        private Class.txtpayterm_fty txtpayterm_ftyPaymentTerm;
+        private Class.txtcurrency txtCurrency;
+        private Class.txtcountry txtCountryNationality;
+        private Win.UI.EditBox editAddress;
+        private Win.UI.TextBox txtFax;
+        private Win.UI.TextBox txtTel;
+        private Win.UI.TextBox txtCompany;
+        private Win.UI.TextBox txtAbbreviation;
+        private Win.UI.TextBox txtCode;
         private Win.UI.Label label12;
         private Win.UI.Label label11;
         private Win.UI.Label label10;
@@ -432,11 +432,11 @@
         private Win.UI.Label label6;
         private Win.UI.Label label5;
         private Win.UI.Label label4;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.CheckBox checkBox3;
-        private Win.UI.CheckBox checkBox2;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.NumericBox numericBox1;
+        private Win.UI.Button btnBankDetail;
+        private Win.UI.Button btnAccountingChartNo;
+        private Win.UI.CheckBox checkIsFactory;
+        private Win.UI.CheckBox checkUseSBTS;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.NumericBox numWHoldingTerm;
     }
 }

@@ -18,7 +18,7 @@ namespace Sci.Production.Basic
         public B05_SetHoliday(DateTime date)
         {
             InitializeComponent();
-            this.textBox1.Text = date.ToString("d");
+            this.txtDate.Text = date.ToString("d");
             reviseDate = date;
         }
 
@@ -26,7 +26,7 @@ namespace Sci.Production.Basic
         {
             base.OnFormLoaded();
 
-            string sqlcmd = string.Format("select Name from Holiday WITH (NOLOCK) where HolidayDate='{0}' and FactoryID = '{1}'", this.textBox1.Text, Sci.Env.User.Factory);
+            string sqlcmd = string.Format("select Name from Holiday WITH (NOLOCK) where HolidayDate='{0}' and FactoryID = '{1}'", this.txtDate.Text, Sci.Env.User.Factory);
             string holidayName = MyUtility.GetValue.Lookup(sqlcmd);
 
             if (MyUtility.Check.Empty(holidayName))
@@ -36,7 +36,7 @@ namespace Sci.Production.Basic
             }
             else
             {
-                this.textBox2.Text = holidayName;
+                this.txtDescription.Text = holidayName;
                 this.Text = this.Text + " - Revise";
                 newRecord = 0;
             }
@@ -44,7 +44,7 @@ namespace Sci.Production.Basic
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(textBox2.Text))
+            if (MyUtility.Check.Empty(txtDescription.Text))
             {
                 if (newRecord == 0)
                 {
@@ -61,7 +61,7 @@ namespace Sci.Production.Basic
             {
                 if (newRecord == 0)
                 {
-                    string updateCmd = string.Format("update Holiday set Name = '{0}' where HolidayDate = '{1}' and FactoryID = '{2}'", textBox2.Text, reviseDate.ToString("d"), Sci.Env.User.Factory);
+                    string updateCmd = string.Format("update Holiday set Name = '{0}' where HolidayDate = '{1}' and FactoryID = '{2}'", txtDescription.Text, reviseDate.ToString("d"), Sci.Env.User.Factory);
                     DualResult result = DBProxy.Current.Execute(null, updateCmd);
                     if (!result)
                     {
@@ -72,7 +72,7 @@ namespace Sci.Production.Basic
                 else
                 {
                     string insertCmd = string.Format(@"insert into Holiday(FactoryID,HolidayDate,Name,AddName,AddDate)
-values ('{0}','{1}','{2}','{3}',GETDATE());", Sci.Env.User.Factory, reviseDate.ToString("d"), textBox2.Text, Sci.Env.User.UserID);
+values ('{0}','{1}','{2}','{3}',GETDATE());", Sci.Env.User.Factory, reviseDate.ToString("d"), txtDescription.Text, Sci.Env.User.UserID);
                     DualResult result = DBProxy.Current.Execute(null, insertCmd);
                     if (!result)
                     {

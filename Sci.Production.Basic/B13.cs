@@ -19,9 +19,9 @@ namespace Sci.Production.Basic
             comboBox1_RowSource.Add("F", "Fabric");
             comboBox1_RowSource.Add("A", "Accessories");
             comboBox1_RowSource.Add("", "");
-            comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            comboMaterialType.DataSource = new BindingSource(comboBox1_RowSource, null);
+            comboMaterialType.ValueMember = "Key";
+            comboMaterialType.DisplayMember = "Value";
         }
 
         protected override void OnDetailEntered()
@@ -30,12 +30,12 @@ namespace Sci.Production.Basic
             //在編輯模式下，下列這些欄位都不可以被修改
             if (this.EditMode)
             {
-                this.comboBox1.ReadOnly = true;
-                this.checkBox1.ReadOnly = true;
-                this.checkBox2.ReadOnly = true;
-                this.checkBox3.ReadOnly = true;
-                this.checkBox4.ReadOnly = true;
-                this.checkBox5.ReadOnly = true;
+                this.comboMaterialType.ReadOnly = true;
+                this.checkJunk.ReadOnly = true;
+                this.checkExtend.ReadOnly = true;
+                this.checkZipper.ReadOnly = true;
+                this.checkIsICRItem.ReadOnly = true;
+                this.checkIsTrimCardOther.ReadOnly = true;
             }
         }
     }

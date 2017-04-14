@@ -30,8 +30,8 @@
         {
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.textM = new Sci.Win.UI.TextBox();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.txtM = new Sci.Win.UI.TextBox();
+            this.txtUserManager = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -46,8 +46,8 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtuser1);
-            this.detailcont.Controls.Add(this.textM);
+            this.detailcont.Controls.Add(this.txtUserManager);
+            this.detailcont.Controls.Add(this.txtM);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Size = new System.Drawing.Size(835, 357);
@@ -58,7 +58,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(676, 395);
+            this.browse.Size = new System.Drawing.Size(835, 395);
             // 
             // tabs
             // 
@@ -95,25 +95,25 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "Manager";
             // 
-            // textM
+            // txtM
             // 
-            this.textM.BackColor = System.Drawing.Color.White;
-            this.textM.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textM.Location = new System.Drawing.Point(118, 31);
-            this.textM.Name = "textM";
-            this.textM.Size = new System.Drawing.Size(80, 23);
-            this.textM.TabIndex = 2;
+            this.txtM.BackColor = System.Drawing.Color.White;
+            this.txtM.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtM.Location = new System.Drawing.Point(118, 31);
+            this.txtM.Name = "txtM";
+            this.txtM.Size = new System.Drawing.Size(80, 23);
+            this.txtM.TabIndex = 2;
             // 
-            // txtuser1
+            // txtUserManager
             // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Manager", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(118, 69);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 3;
-            this.txtuser1.TextBox1Binding = "";
+            this.txtUserManager.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Manager", true));
+            this.txtUserManager.DisplayBox1Binding = "";
+            this.txtUserManager.Location = new System.Drawing.Point(118, 69);
+            this.txtUserManager.Name = "txtUserManager";
+            this.txtUserManager.Size = new System.Drawing.Size(300, 23);
+            this.txtUserManager.TabIndex = 3;
+            this.txtUserManager.TextBox1Binding = "";
             // 
             // B03
             // 
@@ -142,8 +142,8 @@
 
         #endregion
 
-        private Class.txtuser txtuser1;
-        private Win.UI.TextBox textM;
+        private Class.txtuser txtUserManager;
+        private Win.UI.TextBox txtM;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
     }

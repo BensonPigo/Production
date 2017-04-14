@@ -40,23 +40,23 @@
             this.label12 = new Sci.Win.UI.Label();
             this.label13 = new Sci.Win.UI.Label();
             this.label14 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
-            this.textBox5 = new Sci.Win.UI.TextBox();
-            this.textBox6 = new Sci.Win.UI.TextBox();
-            this.textBox7 = new Sci.Win.UI.TextBox();
-            this.textBox8 = new Sci.Win.UI.TextBox();
-            this.textBox9 = new Sci.Win.UI.TextBox();
+            this.txtCode = new Sci.Win.UI.TextBox();
+            this.txtName = new Sci.Win.UI.TextBox();
+            this.txtTel = new Sci.Win.UI.TextBox();
+            this.editAddress = new Sci.Win.UI.EditBox();
+            this.txtTINNo = new Sci.Win.UI.TextBox();
+            this.txtFtyGroup = new Sci.Win.UI.TextBox();
+            this.txtRegionCode = new Sci.Win.UI.TextBox();
+            this.txtVAT = new Sci.Win.UI.TextBox();
+            this.txtWHolding = new Sci.Win.UI.TextBox();
+            this.txtCreditbank = new Sci.Win.UI.TextBox();
             this.label15 = new Sci.Win.UI.Label();
-            this.textBox10 = new Sci.Win.UI.TextBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.txtKeyWord = new Sci.Win.UI.TextBox();
+            this.btnCapacityWorkday = new Sci.Win.UI.Button();
+            this.checkUseSBTS = new Sci.Win.UI.CheckBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.displayM = new Sci.Win.UI.DisplayBox();
+            this.txtUserManager = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -71,22 +71,22 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.displayBox1);
+            this.detailcont.Controls.Add(this.displayM);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.button1);
-            this.detailcont.Controls.Add(this.textBox10);
+            this.detailcont.Controls.Add(this.checkUseSBTS);
+            this.detailcont.Controls.Add(this.btnCapacityWorkday);
+            this.detailcont.Controls.Add(this.txtKeyWord);
             this.detailcont.Controls.Add(this.label15);
-            this.detailcont.Controls.Add(this.textBox9);
-            this.detailcont.Controls.Add(this.textBox8);
-            this.detailcont.Controls.Add(this.textBox7);
-            this.detailcont.Controls.Add(this.textBox6);
-            this.detailcont.Controls.Add(this.textBox5);
-            this.detailcont.Controls.Add(this.textBox4);
-            this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.textBox3);
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.txtCreditbank);
+            this.detailcont.Controls.Add(this.txtWHolding);
+            this.detailcont.Controls.Add(this.txtVAT);
+            this.detailcont.Controls.Add(this.txtRegionCode);
+            this.detailcont.Controls.Add(this.txtFtyGroup);
+            this.detailcont.Controls.Add(this.txtTINNo);
+            this.detailcont.Controls.Add(this.editAddress);
+            this.detailcont.Controls.Add(this.txtTel);
+            this.detailcont.Controls.Add(this.txtName);
+            this.detailcont.Controls.Add(this.txtCode);
             this.detailcont.Controls.Add(this.label14);
             this.detailcont.Controls.Add(this.label13);
             this.detailcont.Controls.Add(this.label12);
@@ -99,7 +99,7 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.txtuser1);
+            this.detailcont.Controls.Add(this.txtUserManager);
             this.detailcont.Size = new System.Drawing.Size(830, 357);
             // 
             // detailbtm
@@ -109,7 +109,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(680, 395);
+            this.browse.Size = new System.Drawing.Size(830, 395);
             // 
             // tabs
             // 
@@ -237,113 +237,113 @@
             this.label14.TabIndex = 11;
             this.label14.Text = "Credit bank";
             // 
-            // textBox1
+            // txtCode
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(124, 14);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(66, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtCode.BackColor = System.Drawing.Color.White;
+            this.txtCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCode.Location = new System.Drawing.Point(124, 14);
+            this.txtCode.Name = "txtCode";
+            this.txtCode.Size = new System.Drawing.Size(66, 23);
+            this.txtCode.TabIndex = 0;
             // 
-            // textBox2
+            // txtName
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NameEN", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(124, 41);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(317, 23);
-            this.textBox2.TabIndex = 3;
+            this.txtName.BackColor = System.Drawing.Color.White;
+            this.txtName.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NameEN", true));
+            this.txtName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtName.Location = new System.Drawing.Point(124, 41);
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(317, 23);
+            this.txtName.TabIndex = 3;
             // 
-            // textBox3
+            // txtTel
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Tel", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(124, 142);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(200, 23);
-            this.textBox3.TabIndex = 5;
+            this.txtTel.BackColor = System.Drawing.Color.White;
+            this.txtTel.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Tel", true));
+            this.txtTel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTel.Location = new System.Drawing.Point(124, 142);
+            this.txtTel.Name = "txtTel";
+            this.txtTel.Size = new System.Drawing.Size(200, 23);
+            this.txtTel.TabIndex = 5;
             // 
-            // editBox1
+            // editAddress
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AddressEN", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(124, 68);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(317, 69);
-            this.editBox1.TabIndex = 4;
+            this.editAddress.BackColor = System.Drawing.Color.White;
+            this.editAddress.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AddressEN", true));
+            this.editAddress.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editAddress.Location = new System.Drawing.Point(124, 68);
+            this.editAddress.Multiline = true;
+            this.editAddress.Name = "editAddress";
+            this.editAddress.Size = new System.Drawing.Size(317, 69);
+            this.editAddress.TabIndex = 4;
             // 
-            // textBox4
+            // txtTINNo
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "TINNo", true));
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(124, 169);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(110, 23);
-            this.textBox4.TabIndex = 6;
+            this.txtTINNo.BackColor = System.Drawing.Color.White;
+            this.txtTINNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "TINNo", true));
+            this.txtTINNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTINNo.Location = new System.Drawing.Point(124, 169);
+            this.txtTINNo.Name = "txtTINNo";
+            this.txtTINNo.Size = new System.Drawing.Size(110, 23);
+            this.txtTINNo.TabIndex = 6;
             // 
-            // textBox5
+            // txtFtyGroup
             // 
-            this.textBox5.BackColor = System.Drawing.Color.White;
-            this.textBox5.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FTYGroup", true));
-            this.textBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox5.Location = new System.Drawing.Point(124, 223);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(66, 23);
-            this.textBox5.TabIndex = 8;
+            this.txtFtyGroup.BackColor = System.Drawing.Color.White;
+            this.txtFtyGroup.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FTYGroup", true));
+            this.txtFtyGroup.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFtyGroup.Location = new System.Drawing.Point(124, 223);
+            this.txtFtyGroup.Name = "txtFtyGroup";
+            this.txtFtyGroup.Size = new System.Drawing.Size(66, 23);
+            this.txtFtyGroup.TabIndex = 8;
             // 
-            // textBox6
+            // txtRegionCode
             // 
-            this.textBox6.BackColor = System.Drawing.Color.White;
-            this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NegoRegion", true));
-            this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox6.Location = new System.Drawing.Point(124, 250);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(36, 23);
-            this.textBox6.TabIndex = 9;
+            this.txtRegionCode.BackColor = System.Drawing.Color.White;
+            this.txtRegionCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NegoRegion", true));
+            this.txtRegionCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRegionCode.Location = new System.Drawing.Point(124, 250);
+            this.txtRegionCode.Name = "txtRegionCode";
+            this.txtRegionCode.Size = new System.Drawing.Size(36, 23);
+            this.txtRegionCode.TabIndex = 9;
             // 
-            // textBox7
+            // txtVAT
             // 
-            this.textBox7.BackColor = System.Drawing.Color.White;
-            this.textBox7.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VATAccNo", true));
-            this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox7.Location = new System.Drawing.Point(108, 304);
-            this.textBox7.Mask = "9999-9999";
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(70, 23);
-            this.textBox7.TabIndex = 10;
-            this.textBox7.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
+            this.txtVAT.BackColor = System.Drawing.Color.White;
+            this.txtVAT.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VATAccNo", true));
+            this.txtVAT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtVAT.Location = new System.Drawing.Point(108, 304);
+            this.txtVAT.Mask = "9999-9999";
+            this.txtVAT.Name = "txtVAT";
+            this.txtVAT.Size = new System.Drawing.Size(70, 23);
+            this.txtVAT.TabIndex = 10;
+            this.txtVAT.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             // 
-            // textBox8
+            // txtWHolding
             // 
-            this.textBox8.BackColor = System.Drawing.Color.White;
-            this.textBox8.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "WithholdingRateAccNo", true));
-            this.textBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox8.Location = new System.Drawing.Point(296, 304);
-            this.textBox8.Mask = "9999-9999";
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(70, 23);
-            this.textBox8.TabIndex = 11;
-            this.textBox8.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
+            this.txtWHolding.BackColor = System.Drawing.Color.White;
+            this.txtWHolding.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "WithholdingRateAccNo", true));
+            this.txtWHolding.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtWHolding.Location = new System.Drawing.Point(296, 304);
+            this.txtWHolding.Mask = "9999-9999";
+            this.txtWHolding.Name = "txtWHolding";
+            this.txtWHolding.Size = new System.Drawing.Size(70, 23);
+            this.txtWHolding.TabIndex = 11;
+            this.txtWHolding.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             // 
-            // textBox9
+            // txtCreditbank
             // 
-            this.textBox9.BackColor = System.Drawing.Color.White;
-            this.textBox9.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CreditBankAccNo", true));
-            this.textBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox9.Location = new System.Drawing.Point(487, 304);
-            this.textBox9.Mask = "9999-9999";
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(70, 23);
-            this.textBox9.TabIndex = 12;
-            this.textBox9.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
+            this.txtCreditbank.BackColor = System.Drawing.Color.White;
+            this.txtCreditbank.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CreditBankAccNo", true));
+            this.txtCreditbank.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCreditbank.Location = new System.Drawing.Point(487, 304);
+            this.txtCreditbank.Mask = "9999-9999";
+            this.txtCreditbank.Name = "txtCreditbank";
+            this.txtCreditbank.Size = new System.Drawing.Size(70, 23);
+            this.txtCreditbank.TabIndex = 12;
+            this.txtCreditbank.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             // 
             // label15
             // 
@@ -354,39 +354,39 @@
             this.label15.TabIndex = 22;
             this.label15.Text = "Key Word";
             // 
-            // textBox10
+            // txtKeyWord
             // 
-            this.textBox10.BackColor = System.Drawing.Color.White;
-            this.textBox10.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "KeyWord", true));
-            this.textBox10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox10.Location = new System.Drawing.Point(301, 14);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(36, 23);
-            this.textBox10.TabIndex = 1;
+            this.txtKeyWord.BackColor = System.Drawing.Color.White;
+            this.txtKeyWord.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "KeyWord", true));
+            this.txtKeyWord.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtKeyWord.Location = new System.Drawing.Point(301, 14);
+            this.txtKeyWord.Name = "txtKeyWord";
+            this.txtKeyWord.Size = new System.Drawing.Size(36, 23);
+            this.txtKeyWord.TabIndex = 1;
             // 
-            // button1
+            // btnCapacityWorkday
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(500, 14);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(162, 30);
-            this.button1.TabIndex = 14;
-            this.button1.Text = "Capacity / Work day";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnCapacityWorkday.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCapacityWorkday.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCapacityWorkday.Location = new System.Drawing.Point(500, 14);
+            this.btnCapacityWorkday.Name = "btnCapacityWorkday";
+            this.btnCapacityWorkday.Size = new System.Drawing.Size(162, 30);
+            this.btnCapacityWorkday.TabIndex = 14;
+            this.btnCapacityWorkday.Text = "Capacity / Work day";
+            this.btnCapacityWorkday.UseVisualStyleBackColor = true;
+            this.btnCapacityWorkday.Click += new System.EventHandler(this.button1_Click);
             // 
-            // checkBox1
+            // checkUseSBTS
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "UseSBTS", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(500, 74);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(92, 21);
-            this.checkBox1.TabIndex = 13;
-            this.checkBox1.Text = "Use SBTS";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkUseSBTS.AutoSize = true;
+            this.checkUseSBTS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "UseSBTS", true));
+            this.checkUseSBTS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkUseSBTS.Location = new System.Drawing.Point(500, 74);
+            this.checkUseSBTS.Name = "checkUseSBTS";
+            this.checkUseSBTS.Size = new System.Drawing.Size(92, 21);
+            this.checkUseSBTS.TabIndex = 13;
+            this.checkUseSBTS.Text = "Use SBTS";
+            this.checkUseSBTS.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -397,25 +397,25 @@
             this.label1.TabIndex = 27;
             this.label1.Text = "M";
             // 
-            // displayBox1
+            // displayM
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(398, 14);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(41, 23);
-            this.displayBox1.TabIndex = 2;
+            this.displayM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
+            this.displayM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayM.Location = new System.Drawing.Point(398, 14);
+            this.displayM.Name = "displayM";
+            this.displayM.Size = new System.Drawing.Size(41, 23);
+            this.displayM.TabIndex = 2;
             // 
-            // txtuser1
+            // txtUserManager
             // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Manager", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(124, 196);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 7;
-            this.txtuser1.TextBox1Binding = "";
+            this.txtUserManager.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Manager", true));
+            this.txtUserManager.DisplayBox1Binding = "";
+            this.txtUserManager.Location = new System.Drawing.Point(124, 196);
+            this.txtUserManager.Name = "txtUserManager";
+            this.txtUserManager.Size = new System.Drawing.Size(300, 23);
+            this.txtUserManager.TabIndex = 7;
+            this.txtUserManager.TextBox1Binding = "";
             // 
             // B01
             // 
@@ -444,16 +444,16 @@
         #endregion
 
         private Win.UI.Label label15;
-        private Win.UI.TextBox textBox9;
-        private Win.UI.TextBox textBox8;
-        private Win.UI.TextBox textBox7;
-        private Win.UI.TextBox textBox6;
-        private Win.UI.TextBox textBox5;
-        private Win.UI.TextBox textBox4;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.TextBox txtCreditbank;
+        private Win.UI.TextBox txtWHolding;
+        private Win.UI.TextBox txtVAT;
+        private Win.UI.TextBox txtRegionCode;
+        private Win.UI.TextBox txtFtyGroup;
+        private Win.UI.TextBox txtTINNo;
+        private Win.UI.EditBox editAddress;
+        private Win.UI.TextBox txtTel;
+        private Win.UI.TextBox txtName;
+        private Win.UI.TextBox txtCode;
         private Win.UI.Label label14;
         private Win.UI.Label label13;
         private Win.UI.Label label12;
@@ -466,11 +466,11 @@
         private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
-        private Win.UI.TextBox textBox10;
-        private Class.txtuser txtuser1;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.Button button1;
-        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.TextBox txtKeyWord;
+        private Class.txtuser txtUserManager;
+        private Win.UI.CheckBox checkUseSBTS;
+        private Win.UI.Button btnCapacityWorkday;
+        private Win.UI.DisplayBox displayM;
         private Win.UI.Label label1;
     }
 }

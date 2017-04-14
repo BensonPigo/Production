@@ -35,29 +35,29 @@
             this.label7 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
+            this.displayCode = new Sci.Win.UI.DisplayBox();
+            this.displayAbbrvChinese = new Sci.Win.UI.DisplayBox();
+            this.displayCompanyChinese = new Sci.Win.UI.DisplayBox();
+            this.displayCompanyEnglish = new Sci.Win.UI.DisplayBox();
+            this.displayAddressChinese = new Sci.Win.UI.DisplayBox();
             this.label10 = new Sci.Win.UI.Label();
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
+            this.displayAbbrvEnglish = new Sci.Win.UI.DisplayBox();
             this.label11 = new Sci.Win.UI.Label();
-            this.displayBox7 = new Sci.Win.UI.DisplayBox();
+            this.displayZipCode = new Sci.Win.UI.DisplayBox();
             this.label12 = new Sci.Win.UI.Label();
             this.label13 = new Sci.Win.UI.Label();
-            this.displayBox8 = new Sci.Win.UI.DisplayBox();
-            this.displayBox9 = new Sci.Win.UI.DisplayBox();
+            this.displayTel = new Sci.Win.UI.DisplayBox();
+            this.displayFax = new Sci.Win.UI.DisplayBox();
             this.label14 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.editBox2 = new Sci.Win.UI.EditBox();
-            this.editBox3 = new Sci.Win.UI.EditBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.txtcountry2 = new Sci.Production.Class.txtcountry();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.checkThirdCountry = new Sci.Win.UI.CheckBox();
+            this.editAddressEnglish = new Sci.Win.UI.EditBox();
+            this.editLockDate = new Sci.Win.UI.EditBox();
+            this.editDelay = new Sci.Win.UI.EditBox();
+            this.dateLockDate = new Sci.Win.UI.DateBox();
+            this.dateDelay = new Sci.Win.UI.DateBox();
+            this.txtCountry = new Sci.Production.Class.txtcountry();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -72,29 +72,29 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtcountry2);
-            this.detailcont.Controls.Add(this.dateBox2);
-            this.detailcont.Controls.Add(this.dateBox1);
-            this.detailcont.Controls.Add(this.editBox3);
-            this.detailcont.Controls.Add(this.editBox2);
-            this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.checkBox2);
-            this.detailcont.Controls.Add(this.checkBox1);
+            this.detailcont.Controls.Add(this.txtCountry);
+            this.detailcont.Controls.Add(this.dateDelay);
+            this.detailcont.Controls.Add(this.dateLockDate);
+            this.detailcont.Controls.Add(this.editDelay);
+            this.detailcont.Controls.Add(this.editLockDate);
+            this.detailcont.Controls.Add(this.editAddressEnglish);
+            this.detailcont.Controls.Add(this.checkThirdCountry);
+            this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.label15);
             this.detailcont.Controls.Add(this.label14);
-            this.detailcont.Controls.Add(this.displayBox9);
-            this.detailcont.Controls.Add(this.displayBox8);
+            this.detailcont.Controls.Add(this.displayFax);
+            this.detailcont.Controls.Add(this.displayTel);
             this.detailcont.Controls.Add(this.label13);
             this.detailcont.Controls.Add(this.label12);
-            this.detailcont.Controls.Add(this.displayBox7);
+            this.detailcont.Controls.Add(this.displayZipCode);
             this.detailcont.Controls.Add(this.label11);
-            this.detailcont.Controls.Add(this.displayBox6);
+            this.detailcont.Controls.Add(this.displayAbbrvEnglish);
             this.detailcont.Controls.Add(this.label10);
-            this.detailcont.Controls.Add(this.displayBox5);
-            this.detailcont.Controls.Add(this.displayBox4);
-            this.detailcont.Controls.Add(this.displayBox3);
-            this.detailcont.Controls.Add(this.displayBox2);
-            this.detailcont.Controls.Add(this.displayBox1);
+            this.detailcont.Controls.Add(this.displayAddressChinese);
+            this.detailcont.Controls.Add(this.displayCompanyEnglish);
+            this.detailcont.Controls.Add(this.displayCompanyChinese);
+            this.detailcont.Controls.Add(this.displayAbbrvChinese);
+            this.detailcont.Controls.Add(this.displayCode);
             this.detailcont.Controls.Add(this.label9);
             this.detailcont.Controls.Add(this.label8);
             this.detailcont.Controls.Add(this.label7);
@@ -111,7 +111,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(765, 478);
+            this.browse.Size = new System.Drawing.Size(830, 478);
             // 
             // tabs
             // 
@@ -193,55 +193,55 @@
             this.label9.TabIndex = 6;
             this.label9.Text = "Address(English)";
             // 
-            // displayBox1
+            // displayCode
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(153, 14);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(60, 23);
-            this.displayBox1.TabIndex = 7;
+            this.displayCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCode.Location = new System.Drawing.Point(153, 14);
+            this.displayCode.Name = "displayCode";
+            this.displayCode.Size = new System.Drawing.Size(60, 23);
+            this.displayCode.TabIndex = 7;
             // 
-            // displayBox2
+            // displayAbbrvChinese
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AbbCH", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(153, 47);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(100, 23);
-            this.displayBox2.TabIndex = 8;
+            this.displayAbbrvChinese.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayAbbrvChinese.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AbbCH", true));
+            this.displayAbbrvChinese.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayAbbrvChinese.Location = new System.Drawing.Point(153, 47);
+            this.displayAbbrvChinese.Name = "displayAbbrvChinese";
+            this.displayAbbrvChinese.Size = new System.Drawing.Size(100, 23);
+            this.displayAbbrvChinese.TabIndex = 8;
             // 
-            // displayBox3
+            // displayCompanyChinese
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NameCH", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(153, 111);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(369, 23);
-            this.displayBox3.TabIndex = 9;
+            this.displayCompanyChinese.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCompanyChinese.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NameCH", true));
+            this.displayCompanyChinese.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCompanyChinese.Location = new System.Drawing.Point(153, 111);
+            this.displayCompanyChinese.Name = "displayCompanyChinese";
+            this.displayCompanyChinese.Size = new System.Drawing.Size(369, 23);
+            this.displayCompanyChinese.TabIndex = 9;
             // 
-            // displayBox4
+            // displayCompanyEnglish
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NameEN", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(153, 144);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(369, 23);
-            this.displayBox4.TabIndex = 10;
+            this.displayCompanyEnglish.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCompanyEnglish.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NameEN", true));
+            this.displayCompanyEnglish.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCompanyEnglish.Location = new System.Drawing.Point(153, 144);
+            this.displayCompanyEnglish.Name = "displayCompanyEnglish";
+            this.displayCompanyEnglish.Size = new System.Drawing.Size(369, 23);
+            this.displayCompanyEnglish.TabIndex = 10;
             // 
-            // displayBox5
+            // displayAddressChinese
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AddressCH", true));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(153, 176);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(369, 23);
-            this.displayBox5.TabIndex = 11;
+            this.displayAddressChinese.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayAddressChinese.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AddressCH", true));
+            this.displayAddressChinese.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayAddressChinese.Location = new System.Drawing.Point(153, 176);
+            this.displayAddressChinese.Name = "displayAddressChinese";
+            this.displayAddressChinese.Size = new System.Drawing.Size(369, 23);
+            this.displayAddressChinese.TabIndex = 11;
             // 
             // label10
             // 
@@ -252,15 +252,15 @@
             this.label10.TabIndex = 14;
             this.label10.Text = "(English)";
             // 
-            // displayBox6
+            // displayAbbrvEnglish
             // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AbbEN", true));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(449, 47);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(100, 23);
-            this.displayBox6.TabIndex = 15;
+            this.displayAbbrvEnglish.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayAbbrvEnglish.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AbbEN", true));
+            this.displayAbbrvEnglish.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayAbbrvEnglish.Location = new System.Drawing.Point(449, 47);
+            this.displayAbbrvEnglish.Name = "displayAbbrvEnglish";
+            this.displayAbbrvEnglish.Size = new System.Drawing.Size(100, 23);
+            this.displayAbbrvEnglish.TabIndex = 15;
             // 
             // label11
             // 
@@ -271,15 +271,15 @@
             this.label11.TabIndex = 16;
             this.label11.Text = "Zip Code";
             // 
-            // displayBox7
+            // displayZipCode
             // 
-            this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ZipCode", true));
-            this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox7.Location = new System.Drawing.Point(449, 79);
-            this.displayBox7.Name = "displayBox7";
-            this.displayBox7.Size = new System.Drawing.Size(73, 23);
-            this.displayBox7.TabIndex = 17;
+            this.displayZipCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayZipCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ZipCode", true));
+            this.displayZipCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayZipCode.Location = new System.Drawing.Point(449, 79);
+            this.displayZipCode.Name = "displayZipCode";
+            this.displayZipCode.Size = new System.Drawing.Size(73, 23);
+            this.displayZipCode.TabIndex = 17;
             // 
             // label12
             // 
@@ -299,25 +299,25 @@
             this.label13.TabIndex = 19;
             this.label13.Text = "Fax";
             // 
-            // displayBox8
+            // displayTel
             // 
-            this.displayBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox8.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Tel", true));
-            this.displayBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox8.Location = new System.Drawing.Point(153, 271);
-            this.displayBox8.Name = "displayBox8";
-            this.displayBox8.Size = new System.Drawing.Size(250, 23);
-            this.displayBox8.TabIndex = 20;
+            this.displayTel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTel.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Tel", true));
+            this.displayTel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTel.Location = new System.Drawing.Point(153, 271);
+            this.displayTel.Name = "displayTel";
+            this.displayTel.Size = new System.Drawing.Size(250, 23);
+            this.displayTel.TabIndex = 20;
             // 
-            // displayBox9
+            // displayFax
             // 
-            this.displayBox9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox9.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Fax", true));
-            this.displayBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox9.Location = new System.Drawing.Point(153, 304);
-            this.displayBox9.Name = "displayBox9";
-            this.displayBox9.Size = new System.Drawing.Size(250, 23);
-            this.displayBox9.TabIndex = 21;
+            this.displayFax.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFax.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Fax", true));
+            this.displayFax.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFax.Location = new System.Drawing.Point(153, 304);
+            this.displayFax.Name = "displayFax";
+            this.displayFax.Size = new System.Drawing.Size(250, 23);
+            this.displayFax.TabIndex = 21;
             // 
             // label14
             // 
@@ -337,88 +337,88 @@
             this.label15.TabIndex = 25;
             this.label15.Text = "Delay";
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(609, 14);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 28;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(609, 14);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 28;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // checkThirdCountry
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ThirdCountry", true));
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox2.Location = new System.Drawing.Point(609, 47);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(113, 21);
-            this.checkBox2.TabIndex = 29;
-            this.checkBox2.Text = "Third Country";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkThirdCountry.AutoSize = true;
+            this.checkThirdCountry.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ThirdCountry", true));
+            this.checkThirdCountry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkThirdCountry.Location = new System.Drawing.Point(609, 47);
+            this.checkThirdCountry.Name = "checkThirdCountry";
+            this.checkThirdCountry.Size = new System.Drawing.Size(113, 21);
+            this.checkThirdCountry.TabIndex = 29;
+            this.checkThirdCountry.Text = "Third Country";
+            this.checkThirdCountry.UseVisualStyleBackColor = true;
             // 
-            // editBox1
+            // editAddressEnglish
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AddressEN", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(153, 208);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(369, 52);
-            this.editBox1.TabIndex = 30;
+            this.editAddressEnglish.BackColor = System.Drawing.Color.White;
+            this.editAddressEnglish.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AddressEN", true));
+            this.editAddressEnglish.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editAddressEnglish.Location = new System.Drawing.Point(153, 208);
+            this.editAddressEnglish.Multiline = true;
+            this.editAddressEnglish.Name = "editAddressEnglish";
+            this.editAddressEnglish.Size = new System.Drawing.Size(369, 52);
+            this.editAddressEnglish.TabIndex = 30;
             // 
-            // editBox2
+            // editLockDate
             // 
-            this.editBox2.BackColor = System.Drawing.Color.White;
-            this.editBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LockMemo", true));
-            this.editBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox2.Location = new System.Drawing.Point(153, 366);
-            this.editBox2.Multiline = true;
-            this.editBox2.Name = "editBox2";
-            this.editBox2.Size = new System.Drawing.Size(221, 68);
-            this.editBox2.TabIndex = 31;
+            this.editLockDate.BackColor = System.Drawing.Color.White;
+            this.editLockDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LockMemo", true));
+            this.editLockDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editLockDate.Location = new System.Drawing.Point(153, 366);
+            this.editLockDate.Multiline = true;
+            this.editLockDate.Name = "editLockDate";
+            this.editLockDate.Size = new System.Drawing.Size(221, 68);
+            this.editLockDate.TabIndex = 31;
             // 
-            // editBox3
+            // editDelay
             // 
-            this.editBox3.BackColor = System.Drawing.Color.White;
-            this.editBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DelayMemo", true));
-            this.editBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox3.Location = new System.Drawing.Point(471, 366);
-            this.editBox3.Multiline = true;
-            this.editBox3.Name = "editBox3";
-            this.editBox3.Size = new System.Drawing.Size(221, 68);
-            this.editBox3.TabIndex = 32;
+            this.editDelay.BackColor = System.Drawing.Color.White;
+            this.editDelay.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DelayMemo", true));
+            this.editDelay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editDelay.Location = new System.Drawing.Point(471, 366);
+            this.editDelay.Multiline = true;
+            this.editDelay.Name = "editDelay";
+            this.editDelay.Size = new System.Drawing.Size(221, 68);
+            this.editDelay.TabIndex = 32;
             // 
-            // dateBox1
+            // dateLockDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LockDate", true));
-            this.dateBox1.Location = new System.Drawing.Point(153, 336);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 33;
+            this.dateLockDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LockDate", true));
+            this.dateLockDate.Location = new System.Drawing.Point(153, 336);
+            this.dateLockDate.Name = "dateLockDate";
+            this.dateLockDate.Size = new System.Drawing.Size(130, 23);
+            this.dateLockDate.TabIndex = 33;
             // 
-            // dateBox2
+            // dateDelay
             // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Delay", true));
-            this.dateBox2.Location = new System.Drawing.Point(471, 336);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 34;
+            this.dateDelay.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Delay", true));
+            this.dateDelay.Location = new System.Drawing.Point(471, 336);
+            this.dateDelay.Name = "dateDelay";
+            this.dateDelay.Size = new System.Drawing.Size(130, 23);
+            this.dateDelay.TabIndex = 34;
             // 
-            // txtcountry2
+            // txtCountry
             // 
-            this.txtcountry2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
-            this.txtcountry2.DisplayBox1Binding = "";
-            this.txtcountry2.Location = new System.Drawing.Point(153, 80);
-            this.txtcountry2.Name = "txtcountry2";
-            this.txtcountry2.Size = new System.Drawing.Size(221, 22);
-            this.txtcountry2.TabIndex = 35;
-            this.txtcountry2.TextBox1Binding = "";
+            this.txtCountry.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
+            this.txtCountry.DisplayBox1Binding = "";
+            this.txtCountry.Location = new System.Drawing.Point(153, 80);
+            this.txtCountry.Name = "txtCountry";
+            this.txtCountry.Size = new System.Drawing.Size(221, 22);
+            this.txtCountry.TabIndex = 35;
+            this.txtCountry.TextBox1Binding = "";
             // 
             // B09
             // 
@@ -447,23 +447,23 @@
 
         #endregion
 
-        private Win.UI.CheckBox checkBox2;
-        private Win.UI.CheckBox checkBox1;
+        private Win.UI.CheckBox checkThirdCountry;
+        private Win.UI.CheckBox checkJunk;
         private Win.UI.Label label15;
         private Win.UI.Label label14;
-        private Win.UI.DisplayBox displayBox9;
-        private Win.UI.DisplayBox displayBox8;
+        private Win.UI.DisplayBox displayFax;
+        private Win.UI.DisplayBox displayTel;
         private Win.UI.Label label13;
         private Win.UI.Label label12;
-        private Win.UI.DisplayBox displayBox7;
+        private Win.UI.DisplayBox displayZipCode;
         private Win.UI.Label label11;
-        private Win.UI.DisplayBox displayBox6;
+        private Win.UI.DisplayBox displayAbbrvEnglish;
         private Win.UI.Label label10;
-        private Win.UI.DisplayBox displayBox5;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.DisplayBox displayAddressChinese;
+        private Win.UI.DisplayBox displayCompanyEnglish;
+        private Win.UI.DisplayBox displayCompanyChinese;
+        private Win.UI.DisplayBox displayAbbrvChinese;
+        private Win.UI.DisplayBox displayCode;
         private Win.UI.Label label9;
         private Win.UI.Label label8;
         private Win.UI.Label label7;
@@ -471,11 +471,11 @@
         private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
-        private Win.UI.EditBox editBox3;
-        private Win.UI.EditBox editBox2;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.DateBox dateBox2;
-        private Win.UI.DateBox dateBox1;
-        private Class.txtcountry txtcountry2;
+        private Win.UI.EditBox editDelay;
+        private Win.UI.EditBox editLockDate;
+        private Win.UI.EditBox editAddressEnglish;
+        private Win.UI.DateBox dateDelay;
+        private Win.UI.DateBox dateLockDate;
+        private Class.txtcountry txtCountry;
     }
 }

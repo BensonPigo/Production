@@ -19,7 +19,7 @@ namespace Sci.Production.Basic
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
+            this.txtID.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()
@@ -27,14 +27,14 @@ namespace Sci.Production.Basic
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("< ID > can not be empty!");
-                this.textBox1.Focus();
+                this.txtID.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Name"]))
             {
                 MyUtility.Msg.WarningBox("< Term > can not be empty!");
-                this.textBox2.Focus();
+                this.txtTerm.Focus();
                 return false;
             }
 

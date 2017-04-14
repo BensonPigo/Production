@@ -37,33 +37,33 @@
             this.label9 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
             this.label11 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.displayBrand = new Sci.Win.UI.DisplayBox();
             this.label12 = new Sci.Win.UI.Label();
             this.label13 = new Sci.Win.UI.Label();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
-            this.displayBox7 = new Sci.Win.UI.DisplayBox();
-            this.displayBox8 = new Sci.Win.UI.DisplayBox();
-            this.displayBox9 = new Sci.Win.UI.DisplayBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
+            this.displayBuyer = new Sci.Win.UI.DisplayBox();
+            this.displayTeam = new Sci.Win.UI.DisplayBox();
+            this.displayName = new Sci.Win.UI.DisplayBox();
+            this.displayEngName = new Sci.Win.UI.DisplayBox();
+            this.displayTel = new Sci.Win.UI.DisplayBox();
+            this.displayEmail = new Sci.Win.UI.DisplayBox();
+            this.displayContact1 = new Sci.Win.UI.DisplayBox();
+            this.displayCommossion = new Sci.Win.UI.DisplayBox();
+            this.editEngAddress = new Sci.Win.UI.EditBox();
             this.label14 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
             this.label16 = new Sci.Win.UI.Label();
-            this.displayBox10 = new Sci.Win.UI.DisplayBox();
-            this.displayBox11 = new Sci.Win.UI.DisplayBox();
-            this.displayBox12 = new Sci.Win.UI.DisplayBox();
-            this.displayBox13 = new Sci.Win.UI.DisplayBox();
+            this.displaySpecialField1 = new Sci.Win.UI.DisplayBox();
+            this.displaySpecialField2 = new Sci.Win.UI.DisplayBox();
+            this.displaySpecialField3 = new Sci.Win.UI.DisplayBox();
+            this.displayContact2 = new Sci.Win.UI.DisplayBox();
             this.label17 = new Sci.Win.UI.Label();
             this.label18 = new Sci.Win.UI.Label();
             this.label19 = new Sci.Win.UI.Label();
-            this.displayBox14 = new Sci.Win.UI.DisplayBox();
+            this.displayCurrency = new Sci.Win.UI.DisplayBox();
             this.displayBox15 = new Sci.Win.UI.DisplayBox();
-            this.displayBox16 = new Sci.Win.UI.DisplayBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
+            this.displayFax = new Sci.Win.UI.DisplayBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.txtCountry = new Sci.Production.Class.txtcountry();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -78,33 +78,33 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.displayBox16);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.displayFax);
             this.detailcont.Controls.Add(this.displayBox15);
-            this.detailcont.Controls.Add(this.displayBox14);
+            this.detailcont.Controls.Add(this.displayCurrency);
             this.detailcont.Controls.Add(this.label19);
             this.detailcont.Controls.Add(this.label18);
             this.detailcont.Controls.Add(this.label17);
-            this.detailcont.Controls.Add(this.displayBox13);
-            this.detailcont.Controls.Add(this.displayBox12);
-            this.detailcont.Controls.Add(this.displayBox11);
-            this.detailcont.Controls.Add(this.displayBox10);
+            this.detailcont.Controls.Add(this.displayContact2);
+            this.detailcont.Controls.Add(this.displaySpecialField3);
+            this.detailcont.Controls.Add(this.displaySpecialField2);
+            this.detailcont.Controls.Add(this.displaySpecialField1);
             this.detailcont.Controls.Add(this.label16);
             this.detailcont.Controls.Add(this.label15);
             this.detailcont.Controls.Add(this.label14);
-            this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.displayBox9);
-            this.detailcont.Controls.Add(this.displayBox8);
-            this.detailcont.Controls.Add(this.displayBox7);
-            this.detailcont.Controls.Add(this.displayBox6);
-            this.detailcont.Controls.Add(this.displayBox5);
-            this.detailcont.Controls.Add(this.displayBox4);
-            this.detailcont.Controls.Add(this.txtcountry1);
-            this.detailcont.Controls.Add(this.displayBox3);
-            this.detailcont.Controls.Add(this.displayBox2);
+            this.detailcont.Controls.Add(this.editEngAddress);
+            this.detailcont.Controls.Add(this.displayCommossion);
+            this.detailcont.Controls.Add(this.displayContact1);
+            this.detailcont.Controls.Add(this.displayEmail);
+            this.detailcont.Controls.Add(this.displayTel);
+            this.detailcont.Controls.Add(this.displayEngName);
+            this.detailcont.Controls.Add(this.displayName);
+            this.detailcont.Controls.Add(this.txtCountry);
+            this.detailcont.Controls.Add(this.displayTeam);
+            this.detailcont.Controls.Add(this.displayBuyer);
             this.detailcont.Controls.Add(this.label13);
             this.detailcont.Controls.Add(this.label12);
-            this.detailcont.Controls.Add(this.displayBox1);
+            this.detailcont.Controls.Add(this.displayBrand);
             this.detailcont.Controls.Add(this.label11);
             this.detailcont.Controls.Add(this.label10);
             this.detailcont.Controls.Add(this.label9);
@@ -123,7 +123,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(699, 521);
+            this.browse.Size = new System.Drawing.Size(827, 521);
             // 
             // tabs
             // 
@@ -223,15 +223,15 @@
             this.label11.TabIndex = 8;
             this.label11.Text = "Contact";
             // 
-            // displayBox1
+            // displayBrand
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(127, 14);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(66, 23);
-            this.displayBox1.TabIndex = 9;
+            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrand.Location = new System.Drawing.Point(127, 14);
+            this.displayBrand.Name = "displayBrand";
+            this.displayBrand.Size = new System.Drawing.Size(66, 23);
+            this.displayBrand.TabIndex = 9;
             // 
             // label12
             // 
@@ -251,96 +251,96 @@
             this.label13.TabIndex = 11;
             this.label13.Text = "Eng. Address";
             // 
-            // displayBox2
+            // displayBuyer
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerID", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(127, 44);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(66, 23);
-            this.displayBox2.TabIndex = 12;
+            this.displayBuyer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBuyer.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerID", true));
+            this.displayBuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBuyer.Location = new System.Drawing.Point(127, 44);
+            this.displayBuyer.Name = "displayBuyer";
+            this.displayBuyer.Size = new System.Drawing.Size(66, 23);
+            this.displayBuyer.TabIndex = 12;
             // 
-            // displayBox3
+            // displayTeam
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MrTeam", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(127, 74);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(48, 23);
-            this.displayBox3.TabIndex = 13;
+            this.displayTeam.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTeam.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MrTeam", true));
+            this.displayTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTeam.Location = new System.Drawing.Point(127, 74);
+            this.displayTeam.Name = "displayTeam";
+            this.displayTeam.Size = new System.Drawing.Size(48, 23);
+            this.displayTeam.TabIndex = 13;
             // 
-            // displayBox4
+            // displayName
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NameCH", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(127, 134);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(232, 23);
-            this.displayBox4.TabIndex = 15;
+            this.displayName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NameCH", true));
+            this.displayName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayName.Location = new System.Drawing.Point(127, 134);
+            this.displayName.Name = "displayName";
+            this.displayName.Size = new System.Drawing.Size(232, 23);
+            this.displayName.TabIndex = 15;
             // 
-            // displayBox5
+            // displayEngName
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NameEN", true));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(127, 164);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(260, 23);
-            this.displayBox5.TabIndex = 16;
+            this.displayEngName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayEngName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NameEN", true));
+            this.displayEngName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayEngName.Location = new System.Drawing.Point(127, 164);
+            this.displayEngName.Name = "displayEngName";
+            this.displayEngName.Size = new System.Drawing.Size(260, 23);
+            this.displayEngName.TabIndex = 16;
             // 
-            // displayBox6
+            // displayTel
             // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Tel", true));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(127, 194);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(138, 23);
-            this.displayBox6.TabIndex = 17;
+            this.displayTel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTel.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Tel", true));
+            this.displayTel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTel.Location = new System.Drawing.Point(127, 194);
+            this.displayTel.Name = "displayTel";
+            this.displayTel.Size = new System.Drawing.Size(138, 23);
+            this.displayTel.TabIndex = 17;
             // 
-            // displayBox7
+            // displayEmail
             // 
-            this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Email", true));
-            this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox7.Location = new System.Drawing.Point(127, 224);
-            this.displayBox7.Name = "displayBox7";
-            this.displayBox7.Size = new System.Drawing.Size(318, 23);
-            this.displayBox7.TabIndex = 18;
+            this.displayEmail.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayEmail.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Email", true));
+            this.displayEmail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayEmail.Location = new System.Drawing.Point(127, 224);
+            this.displayEmail.Name = "displayEmail";
+            this.displayEmail.Size = new System.Drawing.Size(318, 23);
+            this.displayEmail.TabIndex = 18;
             // 
-            // displayBox8
+            // displayContact1
             // 
-            this.displayBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox8.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Contact1", true));
-            this.displayBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox8.Location = new System.Drawing.Point(127, 254);
-            this.displayBox8.Name = "displayBox8";
-            this.displayBox8.Size = new System.Drawing.Size(138, 23);
-            this.displayBox8.TabIndex = 19;
+            this.displayContact1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayContact1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Contact1", true));
+            this.displayContact1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayContact1.Location = new System.Drawing.Point(127, 254);
+            this.displayContact1.Name = "displayContact1";
+            this.displayContact1.Size = new System.Drawing.Size(138, 23);
+            this.displayContact1.TabIndex = 19;
             // 
-            // displayBox9
+            // displayCommossion
             // 
-            this.displayBox9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox9.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Commission", true));
-            this.displayBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox9.Location = new System.Drawing.Point(127, 284);
-            this.displayBox9.Name = "displayBox9";
-            this.displayBox9.Size = new System.Drawing.Size(45, 23);
-            this.displayBox9.TabIndex = 20;
+            this.displayCommossion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCommossion.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Commission", true));
+            this.displayCommossion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCommossion.Location = new System.Drawing.Point(127, 284);
+            this.displayCommossion.Name = "displayCommossion";
+            this.displayCommossion.Size = new System.Drawing.Size(45, 23);
+            this.displayCommossion.TabIndex = 20;
             // 
-            // editBox1
+            // editEngAddress
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AddressEN", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(127, 314);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(386, 70);
-            this.editBox1.TabIndex = 21;
+            this.editEngAddress.BackColor = System.Drawing.Color.White;
+            this.editEngAddress.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AddressEN", true));
+            this.editEngAddress.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editEngAddress.Location = new System.Drawing.Point(127, 314);
+            this.editEngAddress.Multiline = true;
+            this.editEngAddress.Name = "editEngAddress";
+            this.editEngAddress.Size = new System.Drawing.Size(386, 70);
+            this.editEngAddress.TabIndex = 21;
             // 
             // label14
             // 
@@ -369,45 +369,45 @@
             this.label16.TabIndex = 24;
             this.label16.Text = "Special field 3";
             // 
-            // displayBox10
+            // displaySpecialField1
             // 
-            this.displayBox10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox10.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Customize1", true));
-            this.displayBox10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox10.Location = new System.Drawing.Point(127, 389);
-            this.displayBox10.Name = "displayBox10";
-            this.displayBox10.Size = new System.Drawing.Size(90, 23);
-            this.displayBox10.TabIndex = 25;
+            this.displaySpecialField1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySpecialField1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Customize1", true));
+            this.displaySpecialField1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySpecialField1.Location = new System.Drawing.Point(127, 389);
+            this.displaySpecialField1.Name = "displaySpecialField1";
+            this.displaySpecialField1.Size = new System.Drawing.Size(90, 23);
+            this.displaySpecialField1.TabIndex = 25;
             // 
-            // displayBox11
+            // displaySpecialField2
             // 
-            this.displayBox11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox11.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Customize2", true));
-            this.displayBox11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox11.Location = new System.Drawing.Point(127, 419);
-            this.displayBox11.Name = "displayBox11";
-            this.displayBox11.Size = new System.Drawing.Size(90, 23);
-            this.displayBox11.TabIndex = 26;
+            this.displaySpecialField2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySpecialField2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Customize2", true));
+            this.displaySpecialField2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySpecialField2.Location = new System.Drawing.Point(127, 419);
+            this.displaySpecialField2.Name = "displaySpecialField2";
+            this.displaySpecialField2.Size = new System.Drawing.Size(90, 23);
+            this.displaySpecialField2.TabIndex = 26;
             // 
-            // displayBox12
+            // displaySpecialField3
             // 
-            this.displayBox12.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox12.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Customize3", true));
-            this.displayBox12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox12.Location = new System.Drawing.Point(127, 449);
-            this.displayBox12.Name = "displayBox12";
-            this.displayBox12.Size = new System.Drawing.Size(90, 23);
-            this.displayBox12.TabIndex = 27;
+            this.displaySpecialField3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySpecialField3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Customize3", true));
+            this.displaySpecialField3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySpecialField3.Location = new System.Drawing.Point(127, 449);
+            this.displaySpecialField3.Name = "displaySpecialField3";
+            this.displaySpecialField3.Size = new System.Drawing.Size(90, 23);
+            this.displaySpecialField3.TabIndex = 27;
             // 
-            // displayBox13
+            // displayContact2
             // 
-            this.displayBox13.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox13.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Contact2", true));
-            this.displayBox13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox13.Location = new System.Drawing.Point(271, 253);
-            this.displayBox13.Name = "displayBox13";
-            this.displayBox13.Size = new System.Drawing.Size(138, 23);
-            this.displayBox13.TabIndex = 28;
+            this.displayContact2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayContact2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Contact2", true));
+            this.displayContact2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayContact2.Location = new System.Drawing.Point(271, 253);
+            this.displayContact2.Name = "displayContact2";
+            this.displayContact2.Size = new System.Drawing.Size(138, 23);
+            this.displayContact2.TabIndex = 28;
             // 
             // label17
             // 
@@ -436,15 +436,15 @@
             this.label19.TabIndex = 31;
             this.label19.Text = "Fax";
             // 
-            // displayBox14
+            // displayCurrency
             // 
-            this.displayBox14.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox14.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CurrencyID", true));
-            this.displayBox14.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox14.Location = new System.Drawing.Point(471, 44);
-            this.displayBox14.Name = "displayBox14";
-            this.displayBox14.Size = new System.Drawing.Size(36, 23);
-            this.displayBox14.TabIndex = 32;
+            this.displayCurrency.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCurrency.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CurrencyID", true));
+            this.displayCurrency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCurrency.Location = new System.Drawing.Point(471, 44);
+            this.displayCurrency.Name = "displayCurrency";
+            this.displayCurrency.Size = new System.Drawing.Size(36, 23);
+            this.displayCurrency.TabIndex = 32;
             // 
             // displayBox15
             // 
@@ -456,37 +456,37 @@
             this.displayBox15.Size = new System.Drawing.Size(54, 23);
             this.displayBox15.TabIndex = 33;
             // 
-            // displayBox16
+            // displayFax
             // 
-            this.displayBox16.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox16.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Fax", true));
-            this.displayBox16.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox16.Location = new System.Drawing.Point(471, 194);
-            this.displayBox16.Name = "displayBox16";
-            this.displayBox16.Size = new System.Drawing.Size(138, 23);
-            this.displayBox16.TabIndex = 34;
+            this.displayFax.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFax.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Fax", true));
+            this.displayFax.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFax.Location = new System.Drawing.Point(471, 194);
+            this.displayFax.Name = "displayFax";
+            this.displayFax.Size = new System.Drawing.Size(138, 23);
+            this.displayFax.TabIndex = 34;
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(553, 14);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 35;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(553, 14);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 35;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // txtcountry1
+            // txtCountry
             // 
-            this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Location = new System.Drawing.Point(127, 104);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 14;
-            this.txtcountry1.TextBox1Binding = "";
+            this.txtCountry.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
+            this.txtCountry.DisplayBox1Binding = "";
+            this.txtCountry.Location = new System.Drawing.Point(127, 104);
+            this.txtCountry.Name = "txtCountry";
+            this.txtCountry.Size = new System.Drawing.Size(232, 22);
+            this.txtCountry.TabIndex = 14;
+            this.txtCountry.TextBox1Binding = "";
             // 
             // B10
             // 
@@ -515,33 +515,33 @@
 
         #endregion
 
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.DisplayBox displayBox16;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.DisplayBox displayFax;
         private Win.UI.DisplayBox displayBox15;
-        private Win.UI.DisplayBox displayBox14;
+        private Win.UI.DisplayBox displayCurrency;
         private Win.UI.Label label19;
         private Win.UI.Label label18;
         private Win.UI.Label label17;
-        private Win.UI.DisplayBox displayBox13;
-        private Win.UI.DisplayBox displayBox12;
-        private Win.UI.DisplayBox displayBox11;
-        private Win.UI.DisplayBox displayBox10;
+        private Win.UI.DisplayBox displayContact2;
+        private Win.UI.DisplayBox displaySpecialField3;
+        private Win.UI.DisplayBox displaySpecialField2;
+        private Win.UI.DisplayBox displaySpecialField1;
         private Win.UI.Label label16;
         private Win.UI.Label label15;
         private Win.UI.Label label14;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.DisplayBox displayBox9;
-        private Win.UI.DisplayBox displayBox8;
-        private Win.UI.DisplayBox displayBox7;
-        private Win.UI.DisplayBox displayBox6;
-        private Win.UI.DisplayBox displayBox5;
-        private Win.UI.DisplayBox displayBox4;
-        private Class.txtcountry txtcountry1;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
+        private Win.UI.EditBox editEngAddress;
+        private Win.UI.DisplayBox displayCommossion;
+        private Win.UI.DisplayBox displayContact1;
+        private Win.UI.DisplayBox displayEmail;
+        private Win.UI.DisplayBox displayTel;
+        private Win.UI.DisplayBox displayEngName;
+        private Win.UI.DisplayBox displayName;
+        private Class.txtcountry txtCountry;
+        private Win.UI.DisplayBox displayTeam;
+        private Win.UI.DisplayBox displayBuyer;
         private Win.UI.Label label13;
         private Win.UI.Label label12;
-        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.DisplayBox displayBrand;
         private Win.UI.Label label11;
         private Win.UI.Label label10;
         private Win.UI.Label label9;

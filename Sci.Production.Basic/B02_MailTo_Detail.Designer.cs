@@ -34,12 +34,12 @@
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.editBox2 = new Sci.Win.UI.EditBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.editBox3 = new Sci.Win.UI.EditBox();
+            this.txtCode = new Sci.Win.UI.TextBox();
+            this.txtDescription = new Sci.Win.UI.TextBox();
+            this.editMailTo = new Sci.Win.UI.EditBox();
+            this.editCC = new Sci.Win.UI.EditBox();
+            this.txtSubject = new Sci.Win.UI.TextBox();
+            this.editContents = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
@@ -121,79 +121,79 @@
             this.label6.TabIndex = 100;
             this.label6.Text = "Contents";
             // 
-            // textBox1
+            // txtCode
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(92, 13);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(40, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtCode.BackColor = System.Drawing.Color.White;
+            this.txtCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCode.Location = new System.Drawing.Point(92, 13);
+            this.txtCode.Name = "txtCode";
+            this.txtCode.Size = new System.Drawing.Size(40, 23);
+            this.txtCode.TabIndex = 0;
             // 
-            // textBox2
+            // txtDescription
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(92, 41);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(600, 23);
-            this.textBox2.TabIndex = 1;
+            this.txtDescription.BackColor = System.Drawing.Color.White;
+            this.txtDescription.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDescription.Location = new System.Drawing.Point(92, 41);
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.Size = new System.Drawing.Size(600, 23);
+            this.txtDescription.TabIndex = 1;
             // 
-            // editBox1
+            // editMailTo
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToAddress", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(92, 69);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(600, 50);
-            this.editBox1.TabIndex = 2;
+            this.editMailTo.BackColor = System.Drawing.Color.White;
+            this.editMailTo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToAddress", true));
+            this.editMailTo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editMailTo.Location = new System.Drawing.Point(92, 69);
+            this.editMailTo.Multiline = true;
+            this.editMailTo.Name = "editMailTo";
+            this.editMailTo.Size = new System.Drawing.Size(600, 50);
+            this.editMailTo.TabIndex = 2;
             // 
-            // editBox2
+            // editCC
             // 
-            this.editBox2.BackColor = System.Drawing.Color.White;
-            this.editBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CcAddress", true));
-            this.editBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox2.Location = new System.Drawing.Point(92, 124);
-            this.editBox2.Multiline = true;
-            this.editBox2.Name = "editBox2";
-            this.editBox2.Size = new System.Drawing.Size(600, 50);
-            this.editBox2.TabIndex = 3;
+            this.editCC.BackColor = System.Drawing.Color.White;
+            this.editCC.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CcAddress", true));
+            this.editCC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editCC.Location = new System.Drawing.Point(92, 124);
+            this.editCC.Multiline = true;
+            this.editCC.Name = "editCC";
+            this.editCC.Size = new System.Drawing.Size(600, 50);
+            this.editCC.TabIndex = 3;
             // 
-            // textBox3
+            // txtSubject
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Subject", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(92, 179);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(600, 23);
-            this.textBox3.TabIndex = 4;
+            this.txtSubject.BackColor = System.Drawing.Color.White;
+            this.txtSubject.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Subject", true));
+            this.txtSubject.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSubject.Location = new System.Drawing.Point(92, 179);
+            this.txtSubject.Name = "txtSubject";
+            this.txtSubject.Size = new System.Drawing.Size(600, 23);
+            this.txtSubject.TabIndex = 4;
             // 
-            // editBox3
+            // editContents
             // 
-            this.editBox3.BackColor = System.Drawing.Color.White;
-            this.editBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Content", true));
-            this.editBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox3.Location = new System.Drawing.Point(92, 207);
-            this.editBox3.Multiline = true;
-            this.editBox3.Name = "editBox3";
-            this.editBox3.Size = new System.Drawing.Size(600, 218);
-            this.editBox3.TabIndex = 5;
+            this.editContents.BackColor = System.Drawing.Color.White;
+            this.editContents.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Content", true));
+            this.editContents.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editContents.Location = new System.Drawing.Point(92, 207);
+            this.editContents.Multiline = true;
+            this.editContents.Name = "editContents";
+            this.editContents.Size = new System.Drawing.Size(600, 218);
+            this.editContents.TabIndex = 5;
             // 
             // B02_MailTo_Detail
             // 
             this.ClientSize = new System.Drawing.Size(713, 471);
-            this.Controls.Add(this.editBox3);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.editBox2);
-            this.Controls.Add(this.editBox1);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.editContents);
+            this.Controls.Add(this.txtSubject);
+            this.Controls.Add(this.editCC);
+            this.Controls.Add(this.editMailTo);
+            this.Controls.Add(this.txtDescription);
+            this.Controls.Add(this.txtCode);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -209,12 +209,12 @@
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
-            this.Controls.SetChildIndex(this.textBox2, 0);
-            this.Controls.SetChildIndex(this.editBox1, 0);
-            this.Controls.SetChildIndex(this.editBox2, 0);
-            this.Controls.SetChildIndex(this.textBox3, 0);
-            this.Controls.SetChildIndex(this.editBox3, 0);
+            this.Controls.SetChildIndex(this.txtCode, 0);
+            this.Controls.SetChildIndex(this.txtDescription, 0);
+            this.Controls.SetChildIndex(this.editMailTo, 0);
+            this.Controls.SetChildIndex(this.editCC, 0);
+            this.Controls.SetChildIndex(this.txtSubject, 0);
+            this.Controls.SetChildIndex(this.editContents, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -230,11 +230,11 @@
         private Win.UI.Label label4;
         private Win.UI.Label label5;
         private Win.UI.Label label6;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.EditBox editBox2;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.EditBox editBox3;
+        private Win.UI.TextBox txtCode;
+        private Win.UI.TextBox txtDescription;
+        private Win.UI.EditBox editMailTo;
+        private Win.UI.EditBox editCC;
+        private Win.UI.TextBox txtSubject;
+        private Win.UI.EditBox editContents;
     }
 }

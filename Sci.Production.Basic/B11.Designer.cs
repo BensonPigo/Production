@@ -41,24 +41,24 @@
             this.label13 = new Sci.Win.UI.Label();
             this.label14 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.displayBox7 = new Sci.Win.UI.DisplayBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.editBox2 = new Sci.Win.UI.EditBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
-            this.checkBox3 = new Sci.Win.UI.CheckBox();
-            this.checkBox4 = new Sci.Win.UI.CheckBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.txtpaytermar2 = new Sci.Production.Class.txtpaytermar();
-            this.txtpaytermar1 = new Sci.Production.Class.txtpaytermar();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
+            this.displayBrand = new Sci.Win.UI.DisplayBox();
+            this.displayCustCD = new Sci.Win.UI.DisplayBox();
+            this.displayCity = new Sci.Win.UI.DisplayBox();
+            this.displayGroupQuota1 = new Sci.Win.UI.DisplayBox();
+            this.displayGroupQuota2 = new Sci.Win.UI.DisplayBox();
+            this.displayZipperInsert = new Sci.Win.UI.DisplayBox();
+            this.editLabel = new Sci.Win.UI.EditBox();
+            this.displayExcludeFactories = new Sci.Win.UI.DisplayBox();
+            this.txtDestination = new Sci.Win.UI.TextBox();
+            this.editConsignee = new Sci.Win.UI.EditBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.checkScanPack = new Sci.Win.UI.CheckBox();
+            this.checkVASSHAS = new Sci.Win.UI.CheckBox();
+            this.checkSpecialCustomer = new Sci.Win.UI.CheckBox();
+            this.btnShippingMark = new Sci.Win.UI.Button();
+            this.txtPaytermarSample = new Sci.Production.Class.txtpaytermar();
+            this.txtPaytermarBulk = new Sci.Production.Class.txtpaytermar();
+            this.txtCountry = new Sci.Production.Class.txtcountry();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -73,21 +73,21 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.button1);
-            this.detailcont.Controls.Add(this.checkBox4);
-            this.detailcont.Controls.Add(this.checkBox3);
-            this.detailcont.Controls.Add(this.checkBox2);
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.editBox2);
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.displayBox7);
-            this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.displayBox6);
-            this.detailcont.Controls.Add(this.displayBox5);
-            this.detailcont.Controls.Add(this.displayBox4);
-            this.detailcont.Controls.Add(this.displayBox3);
-            this.detailcont.Controls.Add(this.displayBox2);
-            this.detailcont.Controls.Add(this.displayBox1);
+            this.detailcont.Controls.Add(this.btnShippingMark);
+            this.detailcont.Controls.Add(this.checkSpecialCustomer);
+            this.detailcont.Controls.Add(this.checkVASSHAS);
+            this.detailcont.Controls.Add(this.checkScanPack);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.editConsignee);
+            this.detailcont.Controls.Add(this.txtDestination);
+            this.detailcont.Controls.Add(this.displayExcludeFactories);
+            this.detailcont.Controls.Add(this.editLabel);
+            this.detailcont.Controls.Add(this.displayZipperInsert);
+            this.detailcont.Controls.Add(this.displayGroupQuota2);
+            this.detailcont.Controls.Add(this.displayGroupQuota1);
+            this.detailcont.Controls.Add(this.displayCity);
+            this.detailcont.Controls.Add(this.displayCustCD);
+            this.detailcont.Controls.Add(this.displayBrand);
             this.detailcont.Controls.Add(this.label15);
             this.detailcont.Controls.Add(this.label14);
             this.detailcont.Controls.Add(this.label13);
@@ -101,9 +101,9 @@
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.txtpaytermar2);
-            this.detailcont.Controls.Add(this.txtpaytermar1);
-            this.detailcont.Controls.Add(this.txtcountry1);
+            this.detailcont.Controls.Add(this.txtPaytermarSample);
+            this.detailcont.Controls.Add(this.txtPaytermarBulk);
+            this.detailcont.Controls.Add(this.txtCountry);
             this.detailcont.Size = new System.Drawing.Size(830, 538);
             this.detailcont.TabIndex = 0;
             // 
@@ -114,7 +114,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(776, 576);
+            this.browse.Size = new System.Drawing.Size(830, 576);
             // 
             // tabs
             // 
@@ -251,197 +251,197 @@
             this.label15.TabIndex = 12;
             this.label15.Text = "Consignee";
             // 
-            // displayBox1
+            // displayBrand
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(147, 15);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(85, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandID", true));
+            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrand.Location = new System.Drawing.Point(147, 15);
+            this.displayBrand.Name = "displayBrand";
+            this.displayBrand.Size = new System.Drawing.Size(85, 23);
+            this.displayBrand.TabIndex = 0;
             // 
-            // displayBox2
+            // displayCustCD
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(147, 45);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(114, 23);
-            this.displayBox2.TabIndex = 1;
+            this.displayCustCD.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCustCD.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayCustCD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCustCD.Location = new System.Drawing.Point(147, 45);
+            this.displayCustCD.Name = "displayCustCD";
+            this.displayCustCD.Size = new System.Drawing.Size(114, 23);
+            this.displayCustCD.TabIndex = 1;
             // 
-            // displayBox3
+            // displayCity
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "City", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(147, 105);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(144, 23);
-            this.displayBox3.TabIndex = 3;
+            this.displayCity.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCity.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "City", true));
+            this.displayCity.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCity.Location = new System.Drawing.Point(147, 105);
+            this.displayCity.Name = "displayCity";
+            this.displayCity.Size = new System.Drawing.Size(144, 23);
+            this.displayCity.TabIndex = 3;
             // 
-            // displayBox4
+            // displayGroupQuota1
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "QuotaArea", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(147, 135);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(48, 23);
-            this.displayBox4.TabIndex = 4;
+            this.displayGroupQuota1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayGroupQuota1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "QuotaArea", true));
+            this.displayGroupQuota1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayGroupQuota1.Location = new System.Drawing.Point(147, 135);
+            this.displayGroupQuota1.Name = "displayGroupQuota1";
+            this.displayGroupQuota1.Size = new System.Drawing.Size(48, 23);
+            this.displayGroupQuota1.TabIndex = 4;
             // 
-            // displayBox5
+            // displayGroupQuota2
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(195, 135);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(236, 23);
-            this.displayBox5.TabIndex = 5;
+            this.displayGroupQuota2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayGroupQuota2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayGroupQuota2.Location = new System.Drawing.Point(195, 135);
+            this.displayGroupQuota2.Name = "displayGroupQuota2";
+            this.displayGroupQuota2.Size = new System.Drawing.Size(236, 23);
+            this.displayGroupQuota2.TabIndex = 5;
             // 
-            // displayBox6
+            // displayZipperInsert
             // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ZipperInsert", true));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(147, 165);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(48, 23);
-            this.displayBox6.TabIndex = 6;
+            this.displayZipperInsert.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayZipperInsert.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ZipperInsert", true));
+            this.displayZipperInsert.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayZipperInsert.Location = new System.Drawing.Point(147, 165);
+            this.displayZipperInsert.Name = "displayZipperInsert";
+            this.displayZipperInsert.Size = new System.Drawing.Size(48, 23);
+            this.displayZipperInsert.TabIndex = 6;
             // 
-            // editBox1
+            // editLabel
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandLabel", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(147, 195);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(336, 71);
-            this.editBox1.TabIndex = 7;
+            this.editLabel.BackColor = System.Drawing.Color.White;
+            this.editLabel.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandLabel", true));
+            this.editLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editLabel.Location = new System.Drawing.Point(147, 195);
+            this.editLabel.Multiline = true;
+            this.editLabel.Name = "editLabel";
+            this.editLabel.Size = new System.Drawing.Size(336, 71);
+            this.editLabel.TabIndex = 7;
             // 
-            // displayBox7
+            // displayExcludeFactories
             // 
-            this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Factories", true));
-            this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox7.Location = new System.Drawing.Point(147, 360);
-            this.displayBox7.Name = "displayBox7";
-            this.displayBox7.Size = new System.Drawing.Size(378, 23);
-            this.displayBox7.TabIndex = 10;
+            this.displayExcludeFactories.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayExcludeFactories.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Factories", true));
+            this.displayExcludeFactories.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayExcludeFactories.Location = new System.Drawing.Point(147, 360);
+            this.displayExcludeFactories.Name = "displayExcludeFactories";
+            this.displayExcludeFactories.Size = new System.Drawing.Size(378, 23);
+            this.displayExcludeFactories.TabIndex = 10;
             // 
-            // textBox1
+            // txtDestination
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Dest", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(147, 390);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(318, 23);
-            this.textBox1.TabIndex = 11;
+            this.txtDestination.BackColor = System.Drawing.Color.White;
+            this.txtDestination.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtDestination.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Dest", true));
+            this.txtDestination.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDestination.Location = new System.Drawing.Point(147, 390);
+            this.txtDestination.Name = "txtDestination";
+            this.txtDestination.Size = new System.Drawing.Size(318, 23);
+            this.txtDestination.TabIndex = 11;
             // 
-            // editBox2
+            // editConsignee
             // 
-            this.editBox2.BackColor = System.Drawing.Color.White;
-            this.editBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Consignee", true));
-            this.editBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox2.Location = new System.Drawing.Point(147, 420);
-            this.editBox2.Multiline = true;
-            this.editBox2.Name = "editBox2";
-            this.editBox2.Size = new System.Drawing.Size(384, 113);
-            this.editBox2.TabIndex = 12;
+            this.editConsignee.BackColor = System.Drawing.Color.White;
+            this.editConsignee.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Consignee", true));
+            this.editConsignee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editConsignee.Location = new System.Drawing.Point(147, 420);
+            this.editConsignee.Multiline = true;
+            this.editConsignee.Name = "editConsignee";
+            this.editConsignee.Size = new System.Drawing.Size(384, 113);
+            this.editConsignee.TabIndex = 12;
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(417, 15);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 13;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(417, 15);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 13;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // checkScanPack
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ScanAndPack", true));
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox2.Location = new System.Drawing.Point(417, 45);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(107, 21);
-            this.checkBox2.TabIndex = 14;
-            this.checkBox2.Text = "Scan && Pack";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkScanPack.AutoSize = true;
+            this.checkScanPack.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ScanAndPack", true));
+            this.checkScanPack.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkScanPack.Location = new System.Drawing.Point(417, 45);
+            this.checkScanPack.Name = "checkScanPack";
+            this.checkScanPack.Size = new System.Drawing.Size(107, 21);
+            this.checkScanPack.TabIndex = 14;
+            this.checkScanPack.Text = "Scan && Pack";
+            this.checkScanPack.UseVisualStyleBackColor = true;
             // 
-            // checkBox3
+            // checkVASSHAS
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "VasShas", true));
-            this.checkBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox3.Location = new System.Drawing.Point(417, 75);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(95, 21);
-            this.checkBox3.TabIndex = 15;
-            this.checkBox3.Text = "VAS/SHAS";
-            this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkVASSHAS.AutoSize = true;
+            this.checkVASSHAS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "VasShas", true));
+            this.checkVASSHAS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkVASSHAS.Location = new System.Drawing.Point(417, 75);
+            this.checkVASSHAS.Name = "checkVASSHAS";
+            this.checkVASSHAS.Size = new System.Drawing.Size(95, 21);
+            this.checkVASSHAS.TabIndex = 15;
+            this.checkVASSHAS.Text = "VAS/SHAS";
+            this.checkVASSHAS.UseVisualStyleBackColor = true;
             // 
-            // checkBox4
+            // checkSpecialCustomer
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SpecialCust", true));
-            this.checkBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox4.Location = new System.Drawing.Point(417, 103);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(137, 21);
-            this.checkBox4.TabIndex = 16;
-            this.checkBox4.Text = "Special Customer";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.checkSpecialCustomer.AutoSize = true;
+            this.checkSpecialCustomer.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SpecialCust", true));
+            this.checkSpecialCustomer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkSpecialCustomer.Location = new System.Drawing.Point(417, 103);
+            this.checkSpecialCustomer.Name = "checkSpecialCustomer";
+            this.checkSpecialCustomer.Size = new System.Drawing.Size(137, 21);
+            this.checkSpecialCustomer.TabIndex = 16;
+            this.checkSpecialCustomer.Text = "Special Customer";
+            this.checkSpecialCustomer.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btnShippingMark
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(550, 15);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(119, 30);
-            this.button1.TabIndex = 17;
-            this.button1.Text = "Shipping Mark";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnShippingMark.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnShippingMark.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnShippingMark.Location = new System.Drawing.Point(550, 15);
+            this.btnShippingMark.Name = "btnShippingMark";
+            this.btnShippingMark.Size = new System.Drawing.Size(119, 30);
+            this.btnShippingMark.TabIndex = 17;
+            this.btnShippingMark.Text = "Shipping Mark";
+            this.btnShippingMark.UseVisualStyleBackColor = true;
+            this.btnShippingMark.Click += new System.EventHandler(this.button1_Click);
             // 
-            // txtpaytermar2
+            // txtPaytermarSample
             // 
-            this.txtpaytermar2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARIDSample", true));
-            this.txtpaytermar2.DisplayBox1Binding = "";
-            this.txtpaytermar2.Location = new System.Drawing.Point(147, 330);
-            this.txtpaytermar2.Name = "txtpaytermar2";
-            this.txtpaytermar2.Size = new System.Drawing.Size(311, 23);
-            this.txtpaytermar2.TabIndex = 9;
-            this.txtpaytermar2.TextBox1Binding = "";
+            this.txtPaytermarSample.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARIDSample", true));
+            this.txtPaytermarSample.DisplayBox1Binding = "";
+            this.txtPaytermarSample.Location = new System.Drawing.Point(147, 330);
+            this.txtPaytermarSample.Name = "txtPaytermarSample";
+            this.txtPaytermarSample.Size = new System.Drawing.Size(311, 23);
+            this.txtPaytermarSample.TabIndex = 9;
+            this.txtPaytermarSample.TextBox1Binding = "";
             // 
-            // txtpaytermar1
+            // txtPaytermarBulk
             // 
-            this.txtpaytermar1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARIDBulk", true));
-            this.txtpaytermar1.DisplayBox1Binding = "";
-            this.txtpaytermar1.Location = new System.Drawing.Point(147, 300);
-            this.txtpaytermar1.Name = "txtpaytermar1";
-            this.txtpaytermar1.Size = new System.Drawing.Size(311, 23);
-            this.txtpaytermar1.TabIndex = 8;
-            this.txtpaytermar1.TextBox1Binding = "";
+            this.txtPaytermarBulk.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARIDBulk", true));
+            this.txtPaytermarBulk.DisplayBox1Binding = "";
+            this.txtPaytermarBulk.Location = new System.Drawing.Point(147, 300);
+            this.txtPaytermarBulk.Name = "txtPaytermarBulk";
+            this.txtPaytermarBulk.Size = new System.Drawing.Size(311, 23);
+            this.txtPaytermarBulk.TabIndex = 8;
+            this.txtPaytermarBulk.TextBox1Binding = "";
             // 
-            // txtcountry1
+            // txtCountry
             // 
-            this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Location = new System.Drawing.Point(147, 75);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 2;
-            this.txtcountry1.TextBox1Binding = "";
+            this.txtCountry.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CountryID", true));
+            this.txtCountry.DisplayBox1Binding = "";
+            this.txtCountry.Location = new System.Drawing.Point(147, 75);
+            this.txtCountry.Name = "txtCountry";
+            this.txtCountry.Size = new System.Drawing.Size(232, 22);
+            this.txtCountry.TabIndex = 2;
+            this.txtCountry.TextBox1Binding = "";
             // 
             // B11
             // 
@@ -472,19 +472,19 @@
 
         #endregion
 
-        private Win.UI.EditBox editBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.DisplayBox displayBox7;
-        private Class.txtpaytermar txtpaytermar2;
-        private Class.txtpaytermar txtpaytermar1;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.DisplayBox displayBox6;
-        private Win.UI.DisplayBox displayBox5;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox3;
-        private Class.txtcountry txtcountry1;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.EditBox editConsignee;
+        private Win.UI.TextBox txtDestination;
+        private Win.UI.DisplayBox displayExcludeFactories;
+        private Class.txtpaytermar txtPaytermarSample;
+        private Class.txtpaytermar txtPaytermarBulk;
+        private Win.UI.EditBox editLabel;
+        private Win.UI.DisplayBox displayZipperInsert;
+        private Win.UI.DisplayBox displayGroupQuota2;
+        private Win.UI.DisplayBox displayGroupQuota1;
+        private Win.UI.DisplayBox displayCity;
+        private Class.txtcountry txtCountry;
+        private Win.UI.DisplayBox displayCustCD;
+        private Win.UI.DisplayBox displayBrand;
         private Win.UI.Label label15;
         private Win.UI.Label label14;
         private Win.UI.Label label13;
@@ -498,10 +498,10 @@
         private Win.UI.Label label5;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
-        private Win.UI.CheckBox checkBox4;
-        private Win.UI.CheckBox checkBox3;
-        private Win.UI.CheckBox checkBox2;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.Button button1;
+        private Win.UI.CheckBox checkSpecialCustomer;
+        private Win.UI.CheckBox checkVASSHAS;
+        private Win.UI.CheckBox checkScanPack;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.Button btnShippingMark;
     }
 }
