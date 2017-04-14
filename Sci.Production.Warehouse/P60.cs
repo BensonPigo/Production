@@ -498,8 +498,7 @@ join (select LocalPoId,LocalPo_detailukey
 ,dbo.getItemDesc(a.category,a.Refno) [description],b.UnitId
 from dbo.LocalReceiving_Detail a WITH (NOLOCK) left join dbo.LocalPO_Detail b WITH (NOLOCK) 
 on b.id = a.LocalPoId and b.Ukey = a.LocalPo_detailukey
-Where a.id = '{0}' ", masterID);
-
+Where a.id = '{0}' ", masterID);                        
             return base.OnDetailSelectCommandPrepare(e);
 
         }
@@ -533,7 +532,14 @@ Where a.id = '{0}' ", masterID);
             }
             var frm = new Sci.Production.Warehouse.P60_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
+
             this.RenewData();
+        }
+
+        private void computeTotalQty()
+        {
+            DataTable dt = (DataTable)detailgrid.DataSource;
+            txtTotal.Text = dt.Compute("sum(poqty)", null).ToString();            
         }
 
         protected override bool ClickPrint()
