@@ -93,7 +93,7 @@ namespace Sci.Production.Warehouse
         {
             this.grid1.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid1)
-                .CheckBox("selected", header: "Sele", width: Widths.AnsiChars(14), iseditable: true,trueValue: true,falseValue:false)
+                .CheckBox("selected", header: "", width: Widths.AnsiChars(14), iseditable: true,trueValue: true,falseValue:false)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(5), iseditingreadonly: true)
