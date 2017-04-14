@@ -45,5 +45,6 @@ namespace Sci.Production.Warehouse
         public string Roll { get; set; }
         public string Dyelot { get; set; }
         public string RcvDate { get; set; }
+        public string Packing { get; set; }
     }
 }

@@ -44,6 +44,7 @@ namespace Sci.Production.Warehouse
 	    ,RTRIM(dbo.Getmtldesc(r.poid, r.seq1, r.seq2,2,0)) [Description],s.colorId 
         ,dbo.getTPEPass1( p.posmr )[MRName] 
 		, p.posmr, o.Seasonid,o.BrandId,o.styleid ,rec.WhseArrival
+        ,Packing = (select ID+',' from (select DISTINCT d.ID from dbo.PackingList_Detail d WITH (NOLOCK) where d.OrderID = r.POID) t for xml path(''))
          from dbo.Receiving_Detail r WITH (NOLOCK) 
          left join dbo.PO_Supp_Detail s WITH (NOLOCK) 
          on 
@@ -75,7 +76,8 @@ namespace Sci.Production.Warehouse
                     RcvDate = ((DateTime)MyUtility.Convert.GetDate(row1["WhseArrival"])).ToShortDateString(),
                     Brand = row1["BrandId"].ToString(),
                     RefNo = row1["refno"].ToString(),
-                    Style = row1["styleid"].ToString()
+                    Style = row1["styleid"].ToString(),
+                    Packing = row1["Packing"].ToString()
                 })
                 .ToList()
                 .ForEach(d => Data.Add(d));
