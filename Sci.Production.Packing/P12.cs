@@ -16,7 +16,7 @@ namespace Sci.Production.Packing
     public partial class P12 : Sci.Win.Tems.QueryForm
     {
         DualResult result;
-        DataTable gridData,dateData;
+        DataTable gridData;
         DataGridViewGeneratorNumericColumnSettings clogctn = new DataGridViewGeneratorNumericColumnSettings();
         public P12(ToolStripMenuItem menuitem)
             : base(menuitem)

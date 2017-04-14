@@ -302,7 +302,7 @@ namespace Sci.Production.Packing
             double ctn, ttlCBM = 0.0;
             string cbm;
 
-            if (comboBox1.SelectedValue == "2")
+            if (comboBox1.SelectedValue.ToString().EqualString("2"))
             {
                 DataTable groupData;
                 DualResult result;

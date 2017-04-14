@@ -15,7 +15,6 @@ namespace Sci.Production.Packing
     {
         DataRow P03_CurrentMaintain;
         DataTable grid2Data = new DataTable();
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         DataTable detailData;
         public P03_ExcelImport(DataRow CurrentMaintain, DataTable DetailData)
         {
@@ -159,7 +158,7 @@ namespace Sci.Production.Packing
                         }
                         catch (Exception ex)
                         {
-                            dr["Errlog"] = string.Format("Not able to open excel file < {0} >.", MyUtility.Convert.GetString(dr["Filename"]));
+                            dr["Errlog"] = string.Format("Not able to open excel file < {0} >. {1}", MyUtility.Convert.GetString(dr["Filename"]), ex.Message);
                             continue;
                         }
 

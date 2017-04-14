@@ -128,6 +128,7 @@ namespace Sci.Production.Packing
                         catch (Exception ex)
                         {
                             dr["Status"] = string.Format("Not able to open excel file < {0} >.", MyUtility.Convert.GetString(dr["Filename"]));
+                            dr["ErrMsg"] = ex.Message;
                             continue;
                         }
 
