@@ -14,8 +14,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class R04 : Sci.Win.Tems.PrintForm
     {
-        string reason, factory, brand, mdivisionid, operation;
-        int ordertypeindex;
+        //string reason, factory, brand, mdivisionid, operation;
+        //int ordertypeindex;
+        string  factory, brand, mdivisionid, operation;
+    
         DateTime? cfmdate1, cfmdate2;
         DataTable printData;
         StringBuilder condition = new StringBuilder();

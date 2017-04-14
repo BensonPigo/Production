@@ -27,8 +27,8 @@ namespace Sci.Production.Warehouse
         private int grid1SelectIndex = 0;
 
         protected DataTable dtBorrow;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        DataRelation relation;
+      //  Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        //DataRelation relation;
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         public P78_Import(DataRow master, DataTable detail)
         {
@@ -42,8 +42,8 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
-            Ict.Win.UI.DataGridViewTextBoxColumn col_Location;
+           // Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
+            //Ict.Win.UI.DataGridViewTextBoxColumn col_Location;
 
             #region Location 右鍵開窗
             //Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();

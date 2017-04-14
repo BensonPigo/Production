@@ -19,7 +19,7 @@ namespace Sci.Production.Warehouse
         DataSet dsTmp;
         protected DataTable dtBorrow;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        DataRelation relation;
+       // DataRelation relation;
         public P71_Import(DataRow master, DataTable detail)
         {
             InitializeComponent();

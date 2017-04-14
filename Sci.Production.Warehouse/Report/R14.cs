@@ -14,7 +14,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class R14 : Sci.Win.Tems.PrintForm
     {
-        string reason, factory, stocktype, fabrictype, ordertype;
+        //string reason, factory, stocktype, fabrictype, ordertype;
+        string  factory, fabrictype, ordertype;
         int ordertypeindex;
         DateTime? eta1, eta2;
         DataTable printData;

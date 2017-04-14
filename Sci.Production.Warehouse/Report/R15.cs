@@ -14,7 +14,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class R15 : Sci.Win.Tems.PrintForm
     {
-        string reason, mdivision, factory, stocktype, spno1, spno2;
+        //string reason, mdivision, factory, stocktype, spno1, spno2;
+        string reason, mdivision, factory, stocktype="", spno1, spno2;
         DateTime? issueDate1, issueDate2;
         DataTable printData;
 

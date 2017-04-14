@@ -17,7 +17,7 @@ namespace Sci.Production.Warehouse
         public Sci.Win.Tems.Base P77;
         DataRow dr_master;
         DataTable dt_detail;
-        DataSet dsTmp;
+       // DataSet dsTmp;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         protected DataTable dtArtwork;

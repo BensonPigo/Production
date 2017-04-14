@@ -17,7 +17,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P07_ModifyRollDyelot : Sci.Win.Subs.Base
     {
-        DataRow dr;
+       // DataRow dr;
         DataTable source;
         string docno = "";
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();

@@ -18,8 +18,8 @@ namespace Sci.Production.Warehouse
         DataTable dt_detail;
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        bool flag;
-        string poType;
+      //  bool flag;
+      //  string poType;
         protected DataTable dtFtyinventory;
 
         public P50_Import(DataRow master, DataTable detail)

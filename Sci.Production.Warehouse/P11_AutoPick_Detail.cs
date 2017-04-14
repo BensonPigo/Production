@@ -15,13 +15,13 @@ namespace Sci.Production.Warehouse
 {
     public partial class P11_AutoPick_Detail : Sci.Win.Subs.Base
     {
-        DataRow dr_master;
+        //DataRow dr_master;
         DataTable dt_detail;
-        int _isgridcurrentchanging;
+       // int _isgridcurrentchanging;
         protected Sci.Win.UI.ListControlBindingSource gridbs = new Win.UI.ListControlBindingSource();
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        bool flag;
-        string poType;
+       // Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+       // bool flag;
+        //string poType;
         protected DataTable dtArtwork;
 
         public P11_AutoPick_Detail()

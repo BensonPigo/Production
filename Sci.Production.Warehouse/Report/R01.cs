@@ -15,7 +15,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class R01 : Sci.Win.Tems.PrintForm
     {
-        string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
+        //string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
+        string season, mdivision, factory, orderby, spno1, spno2, fabrictype, refno1, refno2, style, country, supp;
         DateTime? sciDelivery1, sciDelivery2, suppDelivery1, suppDelivery2, eta1, eta2, ata1, ata2;
         DataTable printData;
 

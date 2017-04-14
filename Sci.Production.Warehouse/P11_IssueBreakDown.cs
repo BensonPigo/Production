@@ -18,7 +18,7 @@ namespace Sci.Production.Warehouse
     {
         DataRow Master;
         DataTable dtQtyBreakDown, DtIssueBreakDown, DtSizeCode;
-        StringBuilder sbSizecode, sbSizecode2, strsbIssueBreakDown;//LEO 10/04多加一個變數
+        StringBuilder sbSizecode;//, sbSizecode2, strsbIssueBreakDown;//LEO 10/04多加一個變數
       // StringBuilder strsbIssueBreakDown;//LEO 10/04多加一個變數
         public P11_IssueBreakDown()
         {

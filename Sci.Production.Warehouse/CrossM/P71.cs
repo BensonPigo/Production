@@ -200,10 +200,12 @@ namespace Sci.Production.Warehouse
             if (null == dr) return;
 
             StringBuilder sqlupd2 = new StringBuilder();
-            String sqlcmd = "", sqlupd3 = "", ids = "";
-            DualResult result, result2;
-            DataTable datacheck;
-
+            String sqlupd3 = "";
+            DualResult result;//, result2;
+           // DataTable datacheck;
+            //String sqlcmd = "", sqlupd3 = "", ids = "";
+            //DualResult result, result2;
+            //DataTable datacheck;
 
             #region -- 更新表頭狀態資料 --
 
@@ -246,7 +248,7 @@ namespace Sci.Production.Warehouse
         {
             base.ClickRecall();
         
-            DataTable datacheck;
+          //  DataTable datacheck;
             DataTable dt = (DataTable)detailgridbs.DataSource;
 
             #region 602: WAREHOUSE_P71，若P72已經Confirm了，還不能recall。
@@ -262,8 +264,8 @@ namespace Sci.Production.Warehouse
             if (dResult.ToString().ToUpper() == "NO") return;
             var dr = this.CurrentMaintain; if (null == dr) return;
             StringBuilder sqlupd2 = new StringBuilder();
-            string sqlcmd = "", sqlupd3 = "", ids = "";
-            DualResult result, result2;
+            string sqlupd3 = "";//sqlcmd = "", , ids = "";
+            DualResult result;//, result2;
 
             
             #region -- 更新表頭狀態資料 --

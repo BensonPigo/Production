@@ -198,7 +198,7 @@ namespace Sci.Production.Warehouse
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    string sqlcmd = "";
+                    //string sqlcmd = "";
                     IList<DataRow> x;
                    
                         Sci.Win.Tools.SelectItem selepoitem = Prgs.SelePoItem(CurrentDetailData["poid"].ToString(), CurrentDetailData["seq"].ToString(), "f.MDivisionID = '{1}'");

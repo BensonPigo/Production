@@ -209,10 +209,12 @@ namespace Sci.Production.Warehouse
             if (null == dr) return;
 
             StringBuilder sqlupd2 = new StringBuilder();
-            String sqlcmd = "", sqlupd3 = "", ids = "";
-            DualResult result, result2;
-            DataTable datacheck;
-
+            String sqlupd3 = "";
+            DualResult result;
+           
+            //String sqlcmd = "", sqlupd3 = "", ids = "";
+            //DualResult result, result2;
+            //DataTable datacheck;
 
             #region -- 更新表頭狀態資料 --
 

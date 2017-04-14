@@ -23,7 +23,7 @@ namespace Sci.Production.Warehouse
         StringBuilder strSQLCmd = new StringBuilder();
         protected DataTable dtBorrow;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        DataRelation relation;
+       // DataRelation relation;
         public P76_Import(DataRow master, DataTable detail)
         {
             InitializeComponent();
@@ -35,7 +35,7 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
-            Ict.Win.UI.DataGridViewTextBoxColumn col_Location;
+           // Ict.Win.UI.DataGridViewTextBoxColumn col_Location;
             #region Location 右鍵開窗 & Validating
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>

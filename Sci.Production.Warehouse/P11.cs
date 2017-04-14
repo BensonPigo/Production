@@ -21,7 +21,7 @@ namespace Sci.Production.Warehouse
     public partial class P11 : Sci.Win.Tems.Input8
     {
         StringBuilder sbSizecode, sbSizecode2, strsbIssueBreakDown;
-        StringBuilder sbIssueBreakDown;
+       // StringBuilder sbIssueBreakDown;
         DataTable dtSizeCode = null, dtIssueBreakDown = null;
         DataRow dr;
         string poid = "";

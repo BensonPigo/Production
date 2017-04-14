@@ -83,9 +83,9 @@ namespace Sci.Production.Warehouse
 
             //POPrg.BOAExpend(poid, "0", 1, out BOA, out BOA_Orderlist);
             SqlConnection sqlConnection = null;
-            SqlCommand sqlCmd = null;
+          //  SqlCommand sqlCmd = null;
             DataSet dataSet = new DataSet();
-            SqlDataAdapter sqlDataAdapter = null;
+           // SqlDataAdapter sqlDataAdapter = null;
             DataTable[] result = null;
 
             BOA = null;

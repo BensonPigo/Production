@@ -35,7 +35,7 @@ namespace Sci.Production.Warehouse
             
             // TODO: Complete member initialization
         }
-        string outpa;
+       // string outpa;
         
        // string sqlcmd;
       

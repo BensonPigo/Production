@@ -18,7 +18,7 @@ namespace Sci.Production.Warehouse
     {
         DataRow dr;
         DataTable selectDataTable1;
-        List<DataRow> datas;
+      //  List<DataRow> datas;
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
 
         public P07_UpdateActualWeight(DataRow data)

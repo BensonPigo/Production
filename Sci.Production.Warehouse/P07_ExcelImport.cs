@@ -155,6 +155,7 @@ namespace Sci.Production.Warehouse
                         }
                         catch (Exception ex)
                         {
+                            MessageBox.Show(ex.ToString());
                             dr["Status"] = string.Format("Not able to open excel file < {0} >.", MyUtility.Convert.GetString(dr["Filename"]));
                             continue;
                         }

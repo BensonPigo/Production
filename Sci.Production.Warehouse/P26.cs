@@ -112,7 +112,7 @@ namespace Sci.Production.Warehouse
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
         {
-            DataTable result = null;
+         //   DataTable result = null;
             StringBuilder warningmsg = new StringBuilder();
 
             // Check ToLocation is not empty
@@ -251,7 +251,7 @@ namespace Sci.Production.Warehouse
 
             StringBuilder sqlupd2 = new StringBuilder();
             String sqlupd3 = "";
-            DualResult result, result2;
+            DualResult result;//, result2;
             string upd_MD_2T = "";
             string upd_Fty_26F = "";
 

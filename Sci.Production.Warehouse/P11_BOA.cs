@@ -17,7 +17,7 @@ namespace Sci.Production.Warehouse
     public partial class P11_BOA : Sci.Win.Subs.Base
     {
         string poid, issueid, cutplanid,orderid;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+       // Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public P11_BOA(string _issueid, string _poid, string _cutplanid, string _orderid)
         {
             InitializeComponent();           

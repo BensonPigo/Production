@@ -13,7 +13,8 @@ namespace Sci.Production.Warehouse
 {
     public partial class R10 : Sci.Win.Tems.PrintForm
     {
-        string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
+        //string    mdivision, factory, orderby, spno1, spno2, refno1, refno2;
+        string mdivision, factory, spno1, spno2, refno1, refno2;
         DateTime? deadline1, deadline2, buyerDelivery1, buyerDelivery2, eta1, eta2;
         DataTable printData;
 

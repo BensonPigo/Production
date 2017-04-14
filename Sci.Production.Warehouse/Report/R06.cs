@@ -15,8 +15,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class R06 : Sci.Win.Tems.PrintForm
     {
-        string reason, factory, stocktype, fabrictype, mdivisionid, shift;
-        int ordertypeindex;
+        //string reason, factory, stocktype, fabrictype, mdivisionid, shift;
+        //int ordertypeindex;
+        string  factory, fabrictype, mdivisionid, shift;
+       
         DateTime? issuedate1, issuedate2, approveDate1, approveDate2;
         DataTable printData;
         StringBuilder condition = new StringBuilder();

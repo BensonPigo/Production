@@ -19,8 +19,8 @@ namespace Sci.Production.Warehouse
         DataRow dr_master;
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        bool flag;
-        string poType;
+       // bool flag;
+       // string poType;
         protected DataTable dtlack, dtftyinventory;
         string Type;
         public P16_Import(DataRow master, DataTable detail,string type, string title)

@@ -221,31 +221,32 @@ where a.id= @ID", pars, out dd);
     
 
 
-            Sci.Win.ReportDefinition rd = new Sci.Win.ReportDefinition();
-            DualResult result;
+            //Sci.Win.ReportDefinition rd = new Sci.Win.ReportDefinition();
+            ////
+            //DualResult result;
 
-            IReportResource reportresource;
+            //IReportResource reportresource;
 
-            DataTable dt = (DataTable)gridbs.DataSource;
-            DataTable dtmaster = new DataTable();
+            //DataTable dt = (DataTable)gridbs.DataSource;
+            //DataTable dtmaster = new DataTable();
 
-            if (!(result = ReportResources.ByEmbeddedResource(Assembly.GetAssembly(GetType()), GetType(), "P13Detail.rdlc", out reportresource)))
-            {
-                ShowErr(result);
-            }
-            else
-            {
-                rd.ReportResource = reportresource;
-                rd.ReportDataSources.Add(new System.Collections.Generic.KeyValuePair<string, object>("DataSet1", dtmaster));
-                // Assign subreport datasource, 如果不是 master-detail report 則以下的指令不必指定.
-                rd.SubreportDataSource("RepDetail", "DetailData", (DataTable)this.detailgridbs.DataSource);
-                using (var frm = new Sci.Win.Subs.ReportView(rd))
-                {
-                    frm.ShowDialog(this);
-                }
-            }
+            //if (!(result = ReportResources.ByEmbeddedResource(Assembly.GetAssembly(GetType()), GetType(), "P13Detail.rdlc", out reportresource)))
+            //{
+            //    ShowErr(result);
+            //}
+            //else
+            //{
+            //    rd.ReportResource = reportresource;
+            //    rd.ReportDataSources.Add(new System.Collections.Generic.KeyValuePair<string, object>("DataSet1", dtmaster));
+            //    // Assign subreport datasource, 如果不是 master-detail report 則以下的指令不必指定.
+            //    rd.SubreportDataSource("RepDetail", "DetailData", (DataTable)this.detailgridbs.DataSource);
+            //    using (var frm = new Sci.Win.Subs.ReportView(rd))
+            //    {
+            //        frm.ShowDialog(this);
+            //    }
+            //}
 
-            return base.ClickPrint();
+           // return base.ClickPrint();
         }
 
         private void MySubreportEventHandler(object sender, SubreportProcessingEventArgs e)

@@ -890,7 +890,7 @@ Where a.id = '{0}'", masterID);
             }
             catch (Exception ex)
             {
-                ShowErr("data loading error.");
+                ShowErr("data loading error." + ex.ToString());
             }
         }
 

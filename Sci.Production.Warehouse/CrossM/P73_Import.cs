@@ -23,7 +23,7 @@ namespace Sci.Production.Warehouse
         StringBuilder strSQLCmd = new StringBuilder();
         protected DataTable dtBorrow;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        DataRelation relation;
+       // DataRelation relation;
         public P73_Import(DataRow master, DataTable detail)
         {
             InitializeComponent();
