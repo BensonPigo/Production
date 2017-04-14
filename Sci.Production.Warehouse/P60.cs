@@ -175,6 +175,9 @@ where ID = '{0}'", CurrentMaintain["ID"].ToString()));
                         MyUtility.Msg.WarningBox("Qty can't be over on road qty!!");
                         e.Cancel = true;
                     }
+                    dr["Qty"] = e.FormattedValue;
+                    dr.EndEdit();
+                    computeTotalQty();
                 }
             };
             #endregion 
@@ -503,7 +506,6 @@ from dbo.LocalReceiving_Detail a WITH (NOLOCK) left join dbo.LocalPO_Detail b WI
 on b.id = a.LocalPoId and b.Ukey = a.LocalPo_detailukey
 Where a.id = '{0}' ", masterID);                        
             return base.OnDetailSelectCommandPrepare(e);
-
         }
 
         //delete all
@@ -541,7 +543,7 @@ Where a.id = '{0}' ", masterID);
 
         private void computeTotalQty()
         {
-            txtTotal.Text = detailgrid.Rows.Cast<DataGridViewRow>().AsEnumerable().Sum(row => decimal.Parse(row.Cells["PoQty"].Value.ToString())).ToString();         
+            txtTotal.Text = detailgrid.Rows.Cast<DataGridViewRow>().AsEnumerable().Sum(row => decimal.Parse(row.Cells["Qty"].Value.ToString())).ToString();         
         }
 
         protected override bool ClickPrint()
