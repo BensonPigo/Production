@@ -173,9 +173,12 @@ where ID = '{0}'", CurrentMaintain["ID"].ToString()));
                     if (decimal.Parse(e.FormattedValue.ToString()) > decimal.Parse(st))
                     {
                         MyUtility.Msg.WarningBox("Qty can't be over on road qty!!");
-                        e.Cancel = true;
+                        dr["Qty"] = dr["onRoad"];
                     }
-                    dr["Qty"] = e.FormattedValue;
+                    else
+                    {
+                        dr["Qty"] = e.FormattedValue;
+                    }
                     dr.EndEdit();
                     computeTotalQty();
                 }
