@@ -159,15 +159,15 @@ namespace Sci.Production.PPIC
                 .Date("SCIDelivery", header: "SCI Del", iseditingreadonly: true)
                 .Text("ProdRemark", header: "Remark", width: Widths.AnsiChars(20));
 
-            grid1.Columns[5].DefaultCellStyle.ForeColor = Color.Red;
+            grid1.Columns["Inconsistent"].DefaultCellStyle.ForeColor = Color.Red;
             if (EditMode)
             {
-                grid1.Columns[14].DefaultCellStyle.ForeColor = Color.Red;
-                grid1.Columns[15].DefaultCellStyle.ForeColor = Color.Red;
-                grid1.Columns[20].DefaultCellStyle.ForeColor = Color.Red;
-                grid1.Columns[14].DefaultCellStyle.BackColor = Color.Pink;
-                grid1.Columns[15].DefaultCellStyle.BackColor = Color.Pink;
-                grid1.Columns[20].DefaultCellStyle.BackColor = Color.Pink;
+                grid1.Columns["ReadyDate"].DefaultCellStyle.ForeColor = Color.Red;
+                grid1.Columns["EstPulloutDate"].DefaultCellStyle.ForeColor = Color.Red;
+                grid1.Columns["ProdRemark"].DefaultCellStyle.ForeColor = Color.Red;
+                grid1.Columns["ReadyDate"].DefaultCellStyle.BackColor = Color.Pink;
+                grid1.Columns["EstPulloutDate"].DefaultCellStyle.BackColor = Color.Pink;
+                grid1.Columns["ProdRemark"].DefaultCellStyle.BackColor = Color.Pink;
             }
 
             grid1.RowPostPaint += (s, e) =>

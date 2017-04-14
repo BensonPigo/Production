@@ -244,19 +244,19 @@ namespace Sci.Production.Quality
                 .Text("Receivingid", header: "Receiving ID", width: Widths.AnsiChars(13), iseditingreadonly: true);
             detailgrid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             detailgrid.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            detailgrid.Columns[11].DefaultCellStyle.BackColor = Color.MistyRose;
-            detailgrid.Columns[12].DefaultCellStyle.BackColor = Color.LemonChiffon;
-            detailgrid.Columns[13].DefaultCellStyle.BackColor = Color.LemonChiffon;
-            detailgrid.Columns[14].DefaultCellStyle.BackColor = Color.LemonChiffon;
-            detailgrid.Columns[15].DefaultCellStyle.BackColor = Color.MistyRose;
-            detailgrid.Columns[16].DefaultCellStyle.BackColor = Color.LightCyan;
-            detailgrid.Columns[17].DefaultCellStyle.BackColor = Color.LightCyan;
-            detailgrid.Columns[18].DefaultCellStyle.BackColor = Color.MistyRose;
-            detailgrid.Columns[19].DefaultCellStyle.BackColor = Color.LightGreen;
-            detailgrid.Columns[20].DefaultCellStyle.BackColor = Color.LightGreen;
-            detailgrid.Columns[21].DefaultCellStyle.BackColor = Color.MistyRose;
-            detailgrid.Columns[22].DefaultCellStyle.BackColor = Color.AntiqueWhite;
-            detailgrid.Columns[23].DefaultCellStyle.BackColor = Color.AntiqueWhite;
+            detailgrid.Columns["Result"].DefaultCellStyle.BackColor = Color.MistyRose;
+            detailgrid.Columns["NonPhysical"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            detailgrid.Columns["Physical"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            detailgrid.Columns["TotalInspYds"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            detailgrid.Columns["PhysicalDate"].DefaultCellStyle.BackColor = Color.MistyRose;
+            detailgrid.Columns["NonWeight"].DefaultCellStyle.BackColor = Color.LightCyan;
+            detailgrid.Columns["Weight"].DefaultCellStyle.BackColor = Color.LightCyan;
+            detailgrid.Columns["WeightDate"].DefaultCellStyle.BackColor = Color.MistyRose;
+            detailgrid.Columns["NonShadeBond"].DefaultCellStyle.BackColor = Color.LightGreen;
+            detailgrid.Columns["Shadebond"].DefaultCellStyle.BackColor = Color.LightGreen;
+            detailgrid.Columns["ShadeBondDate"].DefaultCellStyle.BackColor = Color.MistyRose;
+            detailgrid.Columns["NonContinuity"].DefaultCellStyle.BackColor = Color.AntiqueWhite;
+            detailgrid.Columns["Continuity"].DefaultCellStyle.BackColor = Color.AntiqueWhite;
             #endregion
             
         }

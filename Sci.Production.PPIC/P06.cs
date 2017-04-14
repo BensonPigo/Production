@@ -89,10 +89,10 @@ namespace Sci.Production.PPIC
                 .Numeric("CBM", header: "Ttl CBM", decimal_places: 3, iseditingreadonly: true)
                 .Text("ClogLocationId", header: "Bin Location", width: Widths.AnsiChars(20), iseditingreadonly: true);
 
-            grid1.Columns[13].DefaultCellStyle.ForeColor = Color.Red;
-            grid1.Columns[27].DefaultCellStyle.ForeColor = Color.Red;
-            grid1.Columns[13].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns[27].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns["SDPDate"].DefaultCellStyle.ForeColor = Color.Red;
+            grid1.Columns["ShipRemark"].DefaultCellStyle.ForeColor = Color.Red;
+            grid1.Columns["SDPDate"].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns["ShipRemark"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Query

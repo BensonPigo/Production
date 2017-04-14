@@ -216,14 +216,14 @@ namespace Sci.Production.Quality
             .CellUser("Inspector", header: "Inspector", width: Widths.AnsiChars(10), userNamePropertyName: "Name")
             .Text("Name", header: "Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20));
-            grid.Columns[0].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns[2].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns[3].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns[3].DefaultCellStyle.ForeColor = Color.Red;
+            grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.MistyRose;
+            grid.Columns["Scale"].DefaultCellStyle.BackColor = Color.MistyRose;
+            grid.Columns["Result"].DefaultCellStyle.BackColor = Color.MistyRose;
+            grid.Columns["Result"].DefaultCellStyle.ForeColor = Color.Red;
 
-            grid.Columns[4].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns[5].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns[6].DefaultCellStyle.BackColor = Color.MistyRose;
+            grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.MistyRose;
+            grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.MistyRose;
+            grid.Columns["Name"].DefaultCellStyle.BackColor = Color.MistyRose;
             return true;
 
         }

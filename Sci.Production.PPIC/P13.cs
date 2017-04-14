@@ -165,16 +165,16 @@ namespace Sci.Production.PPIC
                 .Text("MR", header: "MR", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("SMR", header: "SMR", width: Widths.AnsiChars(13), iseditingreadonly: true);
 
-            grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns[11].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns[12].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns[17].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns[9].DefaultCellStyle.ForeColor = Color.Red;
-            grid1.Columns[10].DefaultCellStyle.ForeColor = Color.Red;
-            grid1.Columns[11].DefaultCellStyle.ForeColor = Color.Red;
-            grid1.Columns[12].DefaultCellStyle.ForeColor = Color.Red;
-            grid1.Columns[17].DefaultCellStyle.ForeColor = Color.Red;
+            grid1.Columns["SewLine"].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns["SewInLine"].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns["SewOffLine"].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns["CutReadyDate"].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns["SewRemark"].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns["SewLine"].DefaultCellStyle.ForeColor = Color.Red;
+            grid1.Columns["SewInLine"].DefaultCellStyle.ForeColor = Color.Red;
+            grid1.Columns["SewOffLine"].DefaultCellStyle.ForeColor = Color.Red;
+            grid1.Columns["CutReadyDate"].DefaultCellStyle.ForeColor = Color.Red;
+            grid1.Columns["SewRemark"].DefaultCellStyle.ForeColor = Color.Red;
         }
 
         //SMR

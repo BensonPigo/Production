@@ -79,8 +79,8 @@ namespace Sci.Production.PPIC
                 .Text("POHandleName", header: "PO Handle", width: Widths.AnsiChars(38), iseditingreadonly: true)
                 .Text("POSMRName", header: "PO SMR", width: Widths.AnsiChars(38), iseditingreadonly: true);
 
-            this.grid1.Columns[6].DefaultCellStyle.BackColor = Color.LightYellow;
-            this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.LightYellow;
+            this.grid1.Columns["ReceiveDate"].DefaultCellStyle.BackColor = Color.LightYellow;
+            this.grid1.Columns["FtyRemark"].DefaultCellStyle.BackColor = Color.LightYellow;
         }
 
         //Query

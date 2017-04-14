@@ -298,16 +298,16 @@ order by a.seq1,a.seq2,a.Refno "
                 .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
 
-            detailgrid.Columns[8].DefaultCellStyle.BackColor = Color.MistyRose;
-            detailgrid.Columns[11].DefaultCellStyle.BackColor = Color.MistyRose;
-            detailgrid.Columns[12].DefaultCellStyle.BackColor = Color.LemonChiffon;
-            detailgrid.Columns[13].DefaultCellStyle.BackColor = Color.LemonChiffon;
-            detailgrid.Columns[14].DefaultCellStyle.BackColor = Color.MistyRose;
-            detailgrid.Columns[15].DefaultCellStyle.BackColor = Color.LightCyan;
-            detailgrid.Columns[16].DefaultCellStyle.BackColor = Color.LightCyan;
-            detailgrid.Columns[17].DefaultCellStyle.BackColor = Color.MistyRose;
-            detailgrid.Columns[18].DefaultCellStyle.BackColor = Color.LightBlue;
-            detailgrid.Columns[19].DefaultCellStyle.BackColor = Color.LightBlue;
+            detailgrid.Columns["ReceiveSampleDate"].DefaultCellStyle.BackColor = Color.MistyRose;
+            detailgrid.Columns["nonCrocking"].DefaultCellStyle.BackColor = Color.MistyRose;
+            detailgrid.Columns["Crocking"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            detailgrid.Columns["CrockingDate"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            detailgrid.Columns["nonHeat"].DefaultCellStyle.BackColor = Color.MistyRose;
+            detailgrid.Columns["Heat"].DefaultCellStyle.BackColor = Color.LightCyan;
+            detailgrid.Columns["HeatDate"].DefaultCellStyle.BackColor = Color.LightCyan;
+            detailgrid.Columns["nonWash"].DefaultCellStyle.BackColor = Color.MistyRose;
+            detailgrid.Columns["Wash"].DefaultCellStyle.BackColor = Color.LightBlue;
+            detailgrid.Columns["WashDate"].DefaultCellStyle.BackColor = Color.LightBlue;
             
             #endregion
 
