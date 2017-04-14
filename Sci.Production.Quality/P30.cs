@@ -328,8 +328,7 @@ where a.id=b.POID and a.fabrictype='A'
                 for (int i = t-1; i >= 0; i--)
                 {
                     //MD.PK都要有值才能save
-                    if (                       
-                        (detailDt.Rows[i]["Type"].ToString().ToUpper() == "ACCESSORY ITEMS" && detailDt.Rows[i]["Item"].ToString() == ""))
+                    if (detailDt.Rows[i].RowState != DataRowState.Deleted && (detailDt.Rows[i]["Type"].ToString().ToUpper() == "ACCESSORY ITEMS" && detailDt.Rows[i]["Item"].ToString() == ""))
                     {
                         //刪除
                         detailDt.Rows[i].Delete();                        
@@ -380,12 +379,12 @@ where a.id=b.POID and a.fabrictype='A'
 
                 for (int i = t - 1; i >= 0; i--)
                 {
-                    if (MyUtility.Check.Empty(detailDt.Rows[i]["ID"].ToString()))
+                    if (detailDt.Rows[i].RowState != DataRowState.Deleted && MyUtility.Check.Empty(detailDt.Rows[i]["ID"].ToString()))
                     {
                         MyUtility.Msg.InfoBox("<ID> cannot be null !");
                         return false;
-                    }                    
-                    if (MyUtility.Check.Empty(detailDt.Rows[i]["Type"].ToString()))
+                    }
+                    if (detailDt.Rows[i].RowState != DataRowState.Deleted && MyUtility.Check.Empty(detailDt.Rows[i]["Type"].ToString()))
                     {
                         MyUtility.Msg.InfoBox("<Main Item NO> cannot be null !");
                         return false;
