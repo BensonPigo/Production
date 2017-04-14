@@ -162,7 +162,7 @@ from (
 select {0} = iif(final.{0} is not null, final.{0}, c.{0})
 ,Country = iif(final.Country is not null, final.Country, c.Country)
 ,isnull(final.[%] ,0) [%]
-,SMVEFF = case iif(final.SMVEFFX is not null, final.SMVEFFX, c.data) when 'A' then '40 & below' when 'B' then '40-49' when 'C' then '50-59' when 'D' then '60-69' when 'E' then '70-79' when 'F' then '80-89' when 'G' then '90-99' else '100 & above' end
+,SMVEFF = case c.data when 'A' then '40 & below' when 'B' then '40-49' when 'C' then '50-59' when 'D' then '60-69' when 'E' then '70-79' when 'F' then '80-89' when 'G' then '90-99' else '100 & above' end
 ,isnull(final.v1 ,0) v1 ,isnull(final.v2 ,0) v2 ,isnull(final.v3 ,0) v3
 ,isnull(final.v4 ,0) v4 ,isnull(final.v5 ,0) v5 ,isnull(final.v6 ,0) v6
 from final 
@@ -170,7 +170,7 @@ full join (
 	select * from (select {0},Country from final group by {0},Country) a
 	inner join ( select data from dbo.SplitString('A,B,C,D,E,F,G,H',',') ) b on 1=1
 ) c on c.Country = final.Country and c.Data = final.SMVEFFX and c.{0} = final.{0}
-order by {0} , Country , iif(final.SMVEFFX is not null, final.SMVEFFX, c.data)
+order by {0} , Country , c.data
 ", select, GroupBy);
 
             All_SqlData4 = @"
@@ -190,14 +190,14 @@ order by {0} , Country , iif(final.SMVEFFX is not null, final.SMVEFFX, c.data)
 ) 
 select 'All',''
 ,isnull(final.[%] ,0) [%]
-,SMVEFF = case iif(final.SMVEFFX is not null, final.SMVEFFX, c.data) when 'A' then '40 & below' when 'B' then '40-49' when 'C' then '50-59' when 'D' then '60-69' when 'E' then '70-79' when 'F' then '80-89' when 'G' then '90-99' else '100 & above' end
+,SMVEFF = case c.data when 'A' then '40 & below' when 'B' then '40-49' when 'C' then '50-59' when 'D' then '60-69' when 'E' then '70-79' when 'F' then '80-89' when 'G' then '90-99' else '100 & above' end
 ,isnull(final.v1 ,0) v1 ,isnull(final.v2 ,0) v2 ,isnull(final.v3 ,0) v3
 ,isnull(final.v4 ,0) v4 ,isnull(final.v5 ,0) v5 ,isnull(final.v6 ,0) v6
 from final 
 full join (
 	 select data from dbo.SplitString('A,B,C,D,E,F,G,H',',')
 ) c on c.Data = final.SMVEFFX
-order by iif(final.SMVEFFX is not null, final.SMVEFFX, c.data)";
+order by c.data";
 
             BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Produce tmpEFFIC details (Step 3/5)"); });
             result = DBProxy.Current.SelectByConn(con, SqlData4, out tmpData4);
