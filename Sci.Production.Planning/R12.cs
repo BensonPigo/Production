@@ -170,7 +170,7 @@ full join (
 	select * from (select {0},Country from final group by {0},Country) a
 	inner join ( select data from dbo.SplitString('A,B,C,D,E,F,G,H',',') ) b on 1=1
 ) c on c.Country = final.Country and c.Data = final.SMVEFFX and c.{0} = final.{0}
-order by {0} , Country , SMVEFFX
+order by {0} , Country , iif(final.SMVEFFX is not null, final.SMVEFFX, c.data)
 ", select, GroupBy);
 
             All_SqlData4 = @"
@@ -197,7 +197,7 @@ from final
 full join (
 	 select data from dbo.SplitString('A,B,C,D,E,F,G,H',',')
 ) c on c.Data = final.SMVEFFX
-order by SMVEFFX";
+order by iif(final.SMVEFFX is not null, final.SMVEFFX, c.data)";
 
             BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Produce tmpEFFIC details (Step 3/5)"); });
             result = DBProxy.Current.SelectByConn(con, SqlData4, out tmpData4);
@@ -221,9 +221,11 @@ order by SMVEFFX";
             #endregion
 
             #region tmpOrderDetail
-            SqlOrderDetail = @"select tmpData2.OrderID as SP#, tmpData2.CPU as CPU, tmpData2.SMV as SMV, tmpData2.TMS as TMS, tmpData2.Factory as Factory, 
-	                                            tmpData2.AGCCode  as AreaCode, tmpData2.[Order Qty] as [SP# Q'ty], tmpData2.Style as Style, tmpData2.ProdQty as 實際產量, tmpData2.StardQty as 標準產量 
-                                            from #tmpData2 tmpData2";
+            SqlOrderDetail = @"
+select  tmpData2.OrderID as SP#, tmpData2.CPU as CPU, tmpData2.SMV as SMV, tmpData2.TMS as TMS, tmpData2.Factory as Factory, 
+	    tmpData2.AGCCode  as AreaCode, tmpData2.[Order Qty] as [SP# Q'ty], tmpData2.Style as Style, tmpData2.ProdQty as 實際產量, tmpData2.StardQty as 標準產量 
+from #tmpData2 tmpData2
+order by tmpData2.OrderID";
 
             BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Finishing Order Detail Data (Step 5/5)"); });
             result = DBProxy.Current.SelectByConn(con, SqlOrderDetail, out tmpOrderDetail);
