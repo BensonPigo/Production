@@ -39,34 +39,44 @@ namespace Sci.Production.Warehouse
             String spno2 = txtSpno2.Text;
             String category = txtartworktype_fty1.Text;
 
-            if (MyUtility.Check.Empty(localpoid) &&(MyUtility.Check.Empty(spno1) || MyUtility.Check.Empty(spno2)) && MyUtility.Check.Empty(issueDate1))
+            if (MyUtility.Check.Empty(localpoid) && MyUtility.Check.Empty(spno1) && MyUtility.Check.Empty(spno2) && MyUtility.Check.Empty(issueDate1))
             {
                 MyUtility.Msg.WarningBox("< Local Po# > < SP# > < Issue Date > can't be empty at the same time!!");
                 textBox1.Focus();
                 return;
             }
 
-            else
+            if (!MyUtility.Check.Empty(spno1) && MyUtility.Check.Empty(spno2))
             {
-                // 建立可以符合回傳的Cursor
+                MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
+                txtSpno2.Focus();
+                return;
+            }
+            if (MyUtility.Check.Empty(spno1) && !MyUtility.Check.Empty(spno2))
+            {
+                MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
+                txtSpno1.Focus();
+                return;
+            }
+            // 建立可以符合回傳的Cursor
 
-                #region -- sql parameters declare --
-                System.Data.SqlClient.SqlParameter sp_localpoid = new System.Data.SqlClient.SqlParameter();
-                sp_localpoid.ParameterName = "@localpoid";
-                
-                System.Data.SqlClient.SqlParameter sp_spno1 = new System.Data.SqlClient.SqlParameter();
-                sp_spno1.ParameterName = "@spno1";
+            #region -- sql parameters declare --
+            System.Data.SqlClient.SqlParameter sp_localpoid = new System.Data.SqlClient.SqlParameter();
+            sp_localpoid.ParameterName = "@localpoid";
 
-                System.Data.SqlClient.SqlParameter sp_spno2 = new System.Data.SqlClient.SqlParameter();
-                sp_spno2.ParameterName = "@spno2";
+            System.Data.SqlClient.SqlParameter sp_spno1 = new System.Data.SqlClient.SqlParameter();
+            sp_spno1.ParameterName = "@spno1";
 
-                System.Data.SqlClient.SqlParameter sp_category = new System.Data.SqlClient.SqlParameter();
-                sp_category.ParameterName = "@category";
+            System.Data.SqlClient.SqlParameter sp_spno2 = new System.Data.SqlClient.SqlParameter();
+            sp_spno2.ParameterName = "@spno2";
 
-                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                #endregion
+            System.Data.SqlClient.SqlParameter sp_category = new System.Data.SqlClient.SqlParameter();
+            sp_category.ParameterName = "@category";
 
-                string strSQLCmd = string.Format(@"select 1 as selected ,'' id, a.id as LocalPoId
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            #endregion
+
+            string strSQLCmd = string.Format(@"select 1 as selected ,'' id, a.id as LocalPoId
 ,a.Category
 ,b.OrderId 
 ,b.Refno
@@ -82,43 +92,45 @@ from dbo.LocalPO a WITH (NOLOCK) inner join dbo.LocalPO_Detail b WITH (NOLOCK) o
 Where b.Qty - b.InQty >0
 and a.status = 'Approved' and a.LocalSuppID = '{0}'", dr_master["localsuppid"]);
 
-                if (!MyUtility.Check.Empty(localpoid))
-                {
-                    strSQLCmd += " and a.id = @localpoid";
-                    sp_localpoid.Value = localpoid;
-                    cmds.Add(sp_localpoid);
-                }
-
-                if (!MyUtility.Check.Empty(issueDate1))
-                {
-                    strSQLCmd += string.Format(@" and a.issuedate between '{0}' and '{1}'",
-                    Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d"));
-                }
-                if (!MyUtility.Check.Empty(spno1))
-                {
-                    strSQLCmd +=" and b.orderid >= @spno1 and b.orderid <= @spno2";
-                    sp_spno1.Value = spno1;
-                    sp_spno2.Value = spno2;
-                    cmds.Add(sp_spno1);
-                    cmds.Add(sp_spno2);
-                }
-                if (!MyUtility.Check.Empty(category))
-                {
-                    strSQLCmd +=" and a.category = @category";
-                    sp_category.Value = category;
-                    cmds.Add(sp_category);
-                }
-
-
-                Ict.DualResult result;
-                if (result = DBProxy.Current.Select(null, strSQLCmd,cmds, out dtArtwork))
-                {
-                    if (dtArtwork.Rows.Count == 0)
-                    { MyUtility.Msg.WarningBox("Data not found!!"); }
-                    detailBS.DataSource = dtArtwork;
-                }
-                else { ShowErr(strSQLCmd, result); }
+            if (!MyUtility.Check.Empty(localpoid))
+            {
+                strSQLCmd += " and a.id = @localpoid";
+                sp_localpoid.Value = localpoid;
+                cmds.Add(sp_localpoid);
             }
+
+            if (!MyUtility.Check.Empty(issueDate1))
+            {
+                strSQLCmd += string.Format(@" and a.issuedate between '{0}' and '{1}'",
+                Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d"));
+            }
+            if (!MyUtility.Check.Empty(spno1))
+            {
+                strSQLCmd += " and b.orderid >= @spno1 and b.orderid <= @spno2";
+                sp_spno1.Value = spno1;
+                sp_spno2.Value = spno2;
+                cmds.Add(sp_spno1);
+                cmds.Add(sp_spno2);
+            }
+            if (!MyUtility.Check.Empty(category))
+            {
+                strSQLCmd += " and a.category = @category";
+                sp_category.Value = category;
+                cmds.Add(sp_category);
+            }
+
+
+            Ict.DualResult result;
+            if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out dtArtwork))
+            {
+                if (dtArtwork.Rows.Count == 0)
+                { MyUtility.Msg.WarningBox("Data not found!!"); }
+                detailBS.DataSource = dtArtwork;
+            }
+            else { ShowErr(strSQLCmd, result); }
+
+            
+            
         }
 
         protected override void OnFormLoaded()
