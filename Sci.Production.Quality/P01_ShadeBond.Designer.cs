@@ -58,12 +58,11 @@
             this.approve_box = new Sci.Win.UI.DisplayBox();
             this.button3 = new Sci.Win.UI.Button();
             this.result_box = new Sci.Win.UI.DisplayBox();
-            this.textID = new Sci.Win.UI.TextBox();
             this.lastinspdate_box = new Sci.Win.UI.DateBox();
             this.arrwhdate_box = new Sci.Win.UI.DateBox();
+            this.btn_Print = new System.Windows.Forms.Button();
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
-            this.btn_Print = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -74,7 +73,7 @@
             this.btmcont.Controls.Add(this.btn_Print);
             this.btmcont.Controls.Add(this.button3);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
-            this.btmcont.Size = new System.Drawing.Size(1153, 40);
+            this.btmcont.Size = new System.Drawing.Size(962, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
@@ -86,15 +85,15 @@
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 163);
-            this.gridcont.Size = new System.Drawing.Size(1129, 520);
+            this.gridcont.Size = new System.Drawing.Size(938, 520);
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(1063, 5);
+            this.undo.Location = new System.Drawing.Point(872, 5);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(983, 5);
+            this.save.Location = new System.Drawing.Point(792, 5);
             // 
             // brand_box
             // 
@@ -399,17 +398,6 @@
             this.result_box.Size = new System.Drawing.Size(102, 21);
             this.result_box.TabIndex = 133;
             // 
-            // textID
-            // 
-            this.textID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textID.Location = new System.Drawing.Point(1043, 128);
-            this.textID.Name = "textID";
-            this.textID.ReadOnly = true;
-            this.textID.Size = new System.Drawing.Size(100, 23);
-            this.textID.TabIndex = 134;
-            this.textID.Visible = false;
-            // 
             // lastinspdate_box
             // 
             this.lastinspdate_box.Location = new System.Drawing.Point(782, 42);
@@ -425,6 +413,16 @@
             this.arrwhdate_box.ReadOnly = true;
             this.arrwhdate_box.Size = new System.Drawing.Size(130, 23);
             this.arrwhdate_box.TabIndex = 138;
+            // 
+            // btn_Print
+            // 
+            this.btn_Print.Location = new System.Drawing.Point(476, 5);
+            this.btn_Print.Name = "btn_Print";
+            this.btn_Print.Size = new System.Drawing.Size(145, 30);
+            this.btn_Print.TabIndex = 140;
+            this.btn_Print.Text = "Print Format Report";
+            this.btn_Print.UseVisualStyleBackColor = true;
+            this.btn_Print.Click += new System.EventHandler(this.btn_Print_Click);
             // 
             // txtuser1
             // 
@@ -444,22 +442,11 @@
             this.txtsupplier1.TabIndex = 109;
             this.txtsupplier1.TextBox1Binding = "";
             // 
-            // btn_Print
-            // 
-            this.btn_Print.Location = new System.Drawing.Point(476, 5);
-            this.btn_Print.Name = "btn_Print";
-            this.btn_Print.Size = new System.Drawing.Size(145, 30);
-            this.btn_Print.TabIndex = 140;
-            this.btn_Print.Text = "Print Format Report";
-            this.btn_Print.UseVisualStyleBackColor = true;
-            this.btn_Print.Click += new System.EventHandler(this.btn_Print_Click);
-            // 
             // P01_ShadeBond
             // 
-            this.ClientSize = new System.Drawing.Size(1153, 733);
+            this.ClientSize = new System.Drawing.Size(962, 733);
             this.Controls.Add(this.arrwhdate_box);
             this.Controls.Add(this.lastinspdate_box);
-            this.Controls.Add(this.textID);
             this.Controls.Add(this.result_box);
             this.Controls.Add(this.txtuser1);
             this.Controls.Add(this.approve_box);
@@ -531,7 +518,6 @@
             this.Controls.SetChildIndex(this.approve_box, 0);
             this.Controls.SetChildIndex(this.txtuser1, 0);
             this.Controls.SetChildIndex(this.result_box, 0);
-            this.Controls.SetChildIndex(this.textID, 0);
             this.Controls.SetChildIndex(this.lastinspdate_box, 0);
             this.Controls.SetChildIndex(this.arrwhdate_box, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -576,7 +562,6 @@
         private Win.UI.DisplayBox approve_box;
         private Class.txtuser txtuser1;
         private Win.UI.DisplayBox result_box;
-        private Win.UI.TextBox textID;
         private Win.UI.DateBox lastinspdate_box;
         private Win.UI.DateBox arrwhdate_box;
         private System.Windows.Forms.Button btn_Print;
