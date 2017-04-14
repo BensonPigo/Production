@@ -147,7 +147,10 @@ namespace Sci.Production.Warehouse
             #region Status Label
 
             label25.Text = CurrentMaintain["status"].ToString();
-
+            txtTotal.Text = MyUtility.GetValue.Lookup(string.Format(@"
+select sum(Qty) 
+from LocalReceiving_Detail
+where ID = '{0}'", CurrentMaintain["ID"].ToString()));
             #endregion Status Label
         }
 

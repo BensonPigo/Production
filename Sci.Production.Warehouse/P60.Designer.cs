@@ -44,6 +44,8 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.textBox2 = new Sci.Win.UI.TextBox();
+            this.txtTotal = new Sci.Win.UI.TextBox();
+            this.lblTotal = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -60,6 +62,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtTotal);
+            this.masterpanel.Controls.Add(this.lblTotal);
             this.masterpanel.Controls.Add(this.textBox2);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label2);
@@ -94,6 +98,8 @@
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblTotal, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtTotal, 0);
             // 
             // detailpanel
             // 
@@ -320,6 +326,24 @@
             this.textBox2.Size = new System.Drawing.Size(145, 23);
             this.textBox2.TabIndex = 2;
             // 
+            // txtTotal
+            // 
+            this.txtTotal.BackColor = System.Drawing.Color.White;
+            this.txtTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTotal.Location = new System.Drawing.Point(635, 48);
+            this.txtTotal.Name = "txtTotal";
+            this.txtTotal.Size = new System.Drawing.Size(145, 23);
+            this.txtTotal.TabIndex = 65;
+            // 
+            // lblTotal
+            // 
+            this.lblTotal.Lines = 0;
+            this.lblTotal.Location = new System.Drawing.Point(524, 48);
+            this.lblTotal.Name = "lblTotal";
+            this.lblTotal.Size = new System.Drawing.Size(108, 23);
+            this.lblTotal.TabIndex = 66;
+            this.lblTotal.Text = "Total Qty";
+            // 
             // P60
             // 
             this.ApvChkValue = "New";
@@ -379,5 +403,7 @@
         private Win.UI.Label label4;
         private Win.UI.Label label2;
         private Class.txtsubcon txtsubcon1;
+        private Win.UI.TextBox txtTotal;
+        private Win.UI.Label lblTotal;
     }
 }
