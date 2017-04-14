@@ -16,7 +16,6 @@ namespace Sci.Production.Shipping
     {
         DataTable detailData, gridData;
         IList<string> comboBox1_RowSource = new List<string>();
-        BindingSource comboxbs1;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         public P08_ShareExpense_ImportGarment(DataTable DetailData)

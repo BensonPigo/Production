@@ -47,7 +47,6 @@ namespace Sci.Production.Shipping
                 if (drGrid["BLNO"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper()) return;
                 if (MyUtility.Check.Seek(cmd_type,out dr))
                 {
-                    DataRow dr1;
                     //刪除異動資料
                     if (drGrid["BLNO"].ToString().ToUpper() != e.FormattedValue.ToString().ToUpper() && !MyUtility.Check.Empty(drGrid["BLNO"].ToString()))
                     {
@@ -181,8 +180,7 @@ select * from Expt", e.FormattedValue.ToString());
                 DataTable dts = (DataTable)listControlBindingSource1.DataSource;
                 if (drGrid["WKNO"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper()) return;
                 if (MyUtility.Check.Seek(cmd_type, out dr))
-                {
-                    DataRow dr1;                    
+                {    
                     //TYPE= Export : GB,Packing(type=F,L),FTYExport(type=3)
                     if (dr["Type"].ToString().ToUpper()=="EXPORT")
                     {
@@ -213,8 +211,7 @@ SELECT * FROM FTY
  ", e.FormattedValue.ToString());
                         DataTable dtExp;
                         DBProxy.Current.Select(null, chkExp, out dtExp);
-                        if (MyUtility.Check.Empty(dtExp)) ;
-                        if (dtExp.Rows.Count == 0)
+                        if (dtExp == null && dtExp.Rows.Count == 0)
                         {
                             MyUtility.Msg.InfoBox("<WKNo:>" + e.FormattedValue.ToString() + " Not Found!!");
                             drGrid.Delete();

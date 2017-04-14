@@ -1107,7 +1107,7 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
                     }
                     catch (System.IO.IOException e)
                     {
-                        MyUtility.Msg.WarningBox("Delete excel file fail!!");
+                        MyUtility.Msg.WarningBox(string.Format("Delete excel file fail!! {0}", e));
                     }
                 }
             }
