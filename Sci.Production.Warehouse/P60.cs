@@ -30,7 +30,10 @@ namespace Sci.Production.Warehouse
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
-
+            gridicon.RemoveClick += (s, e) =>
+            {
+                computeTotalQty();
+            };
         }
 
         public P60(ToolStripMenuItem menuitem, string transID)
@@ -532,14 +535,13 @@ Where a.id = '{0}' ", masterID);
             }
             var frm = new Sci.Production.Warehouse.P60_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
-
+            computeTotalQty();
             this.RenewData();
         }
 
         private void computeTotalQty()
         {
-            DataTable dt = (DataTable)detailgrid.DataSource;
-            txtTotal.Text = dt.Compute("sum(poqty)", null).ToString();            
+            txtTotal.Text = detailgrid.Rows.Cast<DataGridViewRow>().AsEnumerable().Sum(row => decimal.Parse(row.Cells["PoQty"].Value.ToString())).ToString();         
         }
 
         protected override bool ClickPrint()

@@ -44,7 +44,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.textBox2 = new Sci.Win.UI.TextBox();
-            this.txtTotal = new Sci.Win.UI.TextBox();
+            this.txtTotal = new Sci.Win.UI.DisplayBox();
             this.lblTotal = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -328,8 +328,7 @@
             // 
             // txtTotal
             // 
-            this.txtTotal.BackColor = System.Drawing.Color.White;
-            this.txtTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTotal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtTotal.Location = new System.Drawing.Point(635, 48);
             this.txtTotal.Name = "txtTotal";
             this.txtTotal.Size = new System.Drawing.Size(145, 23);
@@ -403,7 +402,7 @@
         private Win.UI.Label label4;
         private Win.UI.Label label2;
         private Class.txtsubcon txtsubcon1;
-        private Win.UI.TextBox txtTotal;
+        private Win.UI.DisplayBox txtTotal;
         private Win.UI.Label lblTotal;
     }
 }
