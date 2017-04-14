@@ -599,7 +599,7 @@ namespace Sci.Production.Quality
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("POID", sp_box.Text));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("StyleID", style_box.Text));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Color", color_box.Text));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FabricDesc", refdesc_box.Text));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FabricDesc", "Ref# " + scirefno_box.Text + ", " + refdesc_box.Text));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FabricSupplier", txtsupplier1.TextBox1.Text + " - " + txtsupplier1.DisplayBox1.Text));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("InvNo", wk_box.Text));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ETA", DateTime.Parse(arrwhdate_box.Value.ToString()).ToString("yyyy-MM-dd").ToString()));
