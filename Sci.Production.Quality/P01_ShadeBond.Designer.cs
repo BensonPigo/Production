@@ -452,6 +452,7 @@
             this.btn_Print.TabIndex = 140;
             this.btn_Print.Text = "Print Format Report";
             this.btn_Print.UseVisualStyleBackColor = true;
+            this.btn_Print.Click += new System.EventHandler(this.btn_Print_Click);
             // 
             // P01_ShadeBond
             // 

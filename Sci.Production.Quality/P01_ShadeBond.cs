@@ -350,7 +350,7 @@ namespace Sci.Production.Quality
                 string cmd_leader = string.Format(@"select email from pass1	
 	where id=(select Supervisor from pass1 where  id='{0}')", Sci.Env.User.UserID);
                 DBProxy.Current.Select("", cmd_leader, out dt_Leader);
-                if (!MyUtility.Check.Empty(dt_Leader))
+                if (!MyUtility.Check.Empty(dt_Leader) && dt_Leader.Rows.Count>1)
                 {
                     string mailto = dt_Leader.Rows[0]["email"].ToString();
 
