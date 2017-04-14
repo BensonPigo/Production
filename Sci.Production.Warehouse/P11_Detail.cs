@@ -17,6 +17,7 @@ namespace Sci.Production.Warehouse
     {
         Sci.Win.MatrixHelper _matrix;
         String Orderid;
+        Decimal Rate;
         public bool combo;
 
         public DataRow master
@@ -44,7 +45,20 @@ namespace Sci.Production.Warehouse
                     .Select(row=> row["SizeCode"].ToString()+"*"+row["Qty"].ToString())
                 
                 );
+            Decimal usedqty;
+            if (Convert.ToDecimal(dis_usedqty.Text)!=0) 
+            {
+                usedqty = Convert.ToDecimal(dis_usedqty.Text);
+            }
+            else 
+            {
+                usedqty = 1;
+            }
 
+            parentData["qty"] = this.CurrentSubDetailDatas
+                    .AsEnumerable()
+                    .Where(row=> !MyUtility.Check.Empty(row["Qty"]) )
+                    .Sum(row => Convert.ToDecimal(row["Qty"].ToString())) * usedqty * Rate;
             
             
         }
@@ -133,7 +147,8 @@ namespace Sci.Production.Warehouse
             base.OnAttached();
             DataRow dr;
             if (MyUtility.Check.Seek(string.Format(@"select *,concat(Ltrim(Rtrim(seq1)), ' ', seq2) as seq,dbo.getmtldesc(id,seq1,seq2,2,0) [description]
-,(select orderid+',' from (select orderid from dbo.po_supp_detail_orderlist WITH (NOLOCK) where id=po_supp_detail.id and seq1=po_supp_detail.seq1 and seq2=po_supp_detail.seq2)t for xml path('')) [orderlist] 
+,(select orderid+',' from (select orderid from dbo.po_supp_detail_orderlist WITH (NOLOCK) where id=po_supp_detail.id and seq1=po_supp_detail.seq1 and seq2=po_supp_detail.seq2)t for xml path('')) [orderlist]
+,ISNULL((SELECT cast(V.RateValue as numeric) FROM dbo.View_Unitrate V WHERE V.FROM_U=po_supp_detail.POUnit AND V.TO_U = po_supp_detail.StockUnit),1.0) RATE 
 from dbo.po_supp_detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2}'"
                 , CurrentDetailData["poid"], CurrentDetailData["seq1"], CurrentDetailData["seq2"]), out dr))
             {
@@ -145,6 +160,7 @@ from dbo.po_supp_detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2
                 this.dis_special.Text = dr["special"].ToString();
                 this.eb_orderlist.Text = dr["orderlist"].ToString();
                 this.eb_desc.Text = dr["description"].ToString();
+                Rate = Convert.ToDecimal(dr["RATE"].ToString());
             }
 
             #region -- matrix breakdown

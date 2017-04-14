@@ -214,7 +214,9 @@ delete from #tmp2 where qty = 0;
     --Select * From #Tmp_BoaExpend group by id,Order_BOAUkey,RefNo,SCIRefNo,Article,ColorID,SuppColor,SizeCode,SizeSpec,SizeUnit,Remark, OrderQty, Price, UsageQty, UsageUnit, SysUsageQty , BomZipperInsert , BomCustPONo;
 
 	select p.id as [poid], p.seq1, p.seq2, p.SCIRefno,dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
-	,p.ColorID, p.SizeSpec, p.Spec, p.Special, p.Remark into #tmpPO_supp_detail
+	,p.ColorID, p.SizeSpec, p.Spec, p.Special, p.Remark , IIF ( p.UsedQty=0.0000, 1, p.UsedQty ) as UsedQty  
+    ,ISNULL((SELECT cast(V.RateValue as numeric) FROM dbo.View_Unitrate V WHERE V.FROM_U=p.POUnit AND V.TO_U = p.StockUnit),1.0) as RATE 
+        into #tmpPO_supp_detail
 		from dbo.PO_Supp_Detail as p WITH (NOLOCK) 
 	inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
 	inner join dbo.MtlType m WITH (NOLOCK) on m.id = f.MtlTypeID
@@ -228,12 +230,12 @@ delete from #tmp2 where qty = 0;
 		and m.StockType = 'B' and Roll=''
 		where lock = 0
 	)
-	select 0 as [Selected],''as id,a.Refno,b.*,isnull(sum(a.OrderQty),0.00) qty,concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) as seq,isnull(cte2.balanceqty,0) as balanceqty,cte2.Ukey as ftyinventoryukey,cte2.StockType,cte2.Roll,cte2.Dyelot
+	select 0 as [Selected],''as id,a.Refno,b.*,isnull(sum(a.OrderQty),0.00)*b.UsedQty*b.RATE as qty,concat(Ltrim(Rtrim(b.seq1)), ' ', b.seq2) as seq,isnull(cte2.balanceqty,0) as balanceqty,cte2.Ukey as ftyinventoryukey,cte2.StockType,cte2.Roll,cte2.Dyelot
 	from #tmpPO_supp_detail b
 	left join cte2 on cte2.poid = b.poid and cte2.seq1 = b.seq1 and cte2.SEQ2 = b.SEQ2
 	left join #Tmp_BoaExpend a on b.SCIRefno = a.scirefno and b.poid = a.ID
 	 and (b.SizeSpec = a.SizeSpec) and (b.ColorID = a.ColorID)
-	 group by b.poid,b.seq1,b.seq2,a.Refno,b.[description],b.ColorID,b.SizeSpec,b.SCIRefno,b.Spec,b.Special,b.Remark,cte2.balanceqty,cte2.Ukey,cte2.StockType,cte2.Roll,cte2.Dyelot
+	 group by b.poid,b.seq1,b.seq2,a.Refno,b.[description],b.ColorID,b.SizeSpec,b.SCIRefno,b.Spec,b.Special,b.Remark,b.UsedQty,b.RATE,cte2.balanceqty,cte2.Ukey,cte2.StockType,cte2.Roll,cte2.Dyelot
 	 order by b.scirefno,b.ColorID,b.SizeSpec,b.Special,b.poid,b.seq1,b.seq2;
 
 	 with cte
@@ -395,12 +397,17 @@ delete from #tmp2 where qty = 0;
                 if (tmpDt != null)
                 {
                     var Output = "";
+                    Decimal SumQTY=0;
                     foreach (DataRow dr2 in tmpDt.ToList())
                     {
                         if (Convert.ToInt32(dr2["qty"]) != 0)
+                        {
                             Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
+                            SumQTY += Convert.ToDecimal(dr2["qty"]) * Convert.ToDecimal(dr["UsedQty"]) * Convert.ToDecimal(dr["RATE"]);
+                        }
                     }
                     dr["Output"] = Output;
+                    dr["qty"] = SumQTY;
                 }
                 if (Convert.ToDecimal(dr["qty"]) > 0) dr["Selected"] = 1;
                 else dr["Selected"] = 0;
@@ -431,6 +438,7 @@ delete from #tmp2 where qty = 0;
                  .Text("scirefno", header: "SCI Refno", width: Widths.AnsiChars(23), iseditingreadonly: true)
                  .Text("colorid", header: "Color ID", width: Widths.AnsiChars(7), iseditingreadonly: true)
                  .Text("sizespec", header: "SizeSpec", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Numeric("usedqty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
                  .Numeric("qty", header: "Pick Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, settings: ns2)
                  .Text("Output", header: "Output", width: Widths.AnsiChars(10), settings: ns)
                  .Text("Balanceqty", header: "Bulk Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -441,9 +449,9 @@ delete from #tmp2 where qty = 0;
                   .Text("usageqty", header: "Usage Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .Text("usageunit", header: "Usage Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  ;
-            grid1.Columns[8].Frozen = true;  //Qty
-            grid1.Columns[8].DefaultCellStyle.BackColor = Color.Pink;   //Qty
-            grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;   //Qty
+            grid1.Columns["qty"].Frozen = true;  //Qty
+            grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;   //Qty
+            grid1.Columns["Output"].DefaultCellStyle.BackColor = Color.Pink;   //Qty
             #endregion
 
         }
