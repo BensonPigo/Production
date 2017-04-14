@@ -14,6 +14,7 @@ using System.Diagnostics;
 
 namespace Sci.Production
 {
+#pragma warning disable 1591
     public partial class Main : Sci.Win.Apps.Base
     {
         delegate Sci.Win.Tems.Base CREATETEMPLATE(ToolStripMenuItem menuitem);
@@ -265,9 +266,9 @@ namespace Sci.Production
                     Process myProcess = Process.Start(Application.ExecutablePath,cmd);
                     bool startSuccess = false;
                     try {
-                        int newPid = myProcess.Id; /// 如果process start失敗, 就會抓不到 id, 跳出exception
+                        int newPid = myProcess.Id; // 如果process start失敗, 就會抓不到 id, 跳出exception
                         startSuccess = true;
-                    } catch (Exception exception) { }
+                    } catch { }
                     if (startSuccess)
                     {
                         myProcess.EnableRaisingEvents = true;
@@ -276,7 +277,7 @@ namespace Sci.Production
                         menuItem.Enabled = false;
                     }
                 }
-                catch (Exception e)
+                catch 
                 {
 
                 }

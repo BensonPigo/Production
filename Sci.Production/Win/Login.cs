@@ -27,7 +27,7 @@ namespace Sci.Production.Win
             ok.Click += ok_Click;
             exit.Click += exit_Click;
 
-            Sci.Production.SCHEMAS.PASS1Row data;
+            //Sci.Production.SCHEMAS.PASS1Row data;
         }
 
 
