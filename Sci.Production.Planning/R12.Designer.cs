@@ -33,8 +33,8 @@
             this.lbGroupingby = new Sci.Win.UI.Label();
             this.lbSeason = new Sci.Win.UI.Label();
             this.lbBrand = new Sci.Win.UI.Label();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.txtseason1 = new Sci.Production.Class.txtseason();
+            this.txtBrand1 = new Sci.Production.Class.txtbrand();
+            this.txtSeason1 = new Sci.Production.Class.txtseason();
             this.SuspendLayout();
             // 
             // print
@@ -112,30 +112,30 @@
             this.lbBrand.TextStyle.BorderColor = System.Drawing.Color.White;
             this.lbBrand.TextStyle.Color = System.Drawing.Color.White;
             // 
-            // txtbrand1
+            // txtBrand1
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(123, 12);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(153, 23);
-            this.txtbrand1.TabIndex = 0;
+            this.txtBrand1.BackColor = System.Drawing.Color.White;
+            this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand1.Location = new System.Drawing.Point(123, 12);
+            this.txtBrand1.Name = "txtBrand1";
+            this.txtBrand1.Size = new System.Drawing.Size(153, 23);
+            this.txtBrand1.TabIndex = 0;
             // 
-            // txtseason1
+            // txtSeason1
             // 
-            this.txtseason1.BackColor = System.Drawing.Color.White;
-            this.txtseason1.BrandObjectName = null;
-            this.txtseason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtseason1.Location = new System.Drawing.Point(123, 50);
-            this.txtseason1.Name = "txtseason1";
-            this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 2;
+            this.txtSeason1.BackColor = System.Drawing.Color.White;
+            this.txtSeason1.BrandObjectName = null;
+            this.txtSeason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeason1.Location = new System.Drawing.Point(123, 50);
+            this.txtSeason1.Name = "txtSeason1";
+            this.txtSeason1.Size = new System.Drawing.Size(80, 23);
+            this.txtSeason1.TabIndex = 2;
             // 
             // R12
             // 
             this.ClientSize = new System.Drawing.Size(489, 157);
-            this.Controls.Add(this.txtseason1);
-            this.Controls.Add(this.txtbrand1);
+            this.Controls.Add(this.txtSeason1);
+            this.Controls.Add(this.txtBrand1);
             this.Controls.Add(this.rbFactoryCode);
             this.Controls.Add(this.rbRegionNo);
             this.Controls.Add(this.lbGroupingby);
@@ -153,8 +153,8 @@
             this.Controls.SetChildIndex(this.lbGroupingby, 0);
             this.Controls.SetChildIndex(this.rbRegionNo, 0);
             this.Controls.SetChildIndex(this.rbFactoryCode, 0);
-            this.Controls.SetChildIndex(this.txtbrand1, 0);
-            this.Controls.SetChildIndex(this.txtseason1, 0);
+            this.Controls.SetChildIndex(this.txtBrand1, 0);
+            this.Controls.SetChildIndex(this.txtSeason1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -167,7 +167,7 @@
         private Win.UI.Label lbGroupingby;
         private Win.UI.Label lbSeason;
         private Win.UI.Label lbBrand;
-        private Class.txtbrand txtbrand1;
-        private Class.txtseason txtseason1;
+        private Class.txtbrand txtBrand1;
+        private Class.txtseason txtSeason1;
     }
 }
