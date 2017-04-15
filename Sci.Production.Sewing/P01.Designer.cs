@@ -165,7 +165,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(892, 463);
+            this.browse.Size = new System.Drawing.Size(922, 463);
             // 
             // tabs
             // 
