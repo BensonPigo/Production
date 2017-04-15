@@ -90,23 +90,20 @@ namespace Sci.Production.Planning
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(string.Format(@"
---依條件取得訂單資料
-;with rawdata_order as 
-(
-SELECT a.FtyGroup,a.Styleid, a.CDCODEID, a.Qty,a.SciDelivery, a.CPU, a.SeasonID 
-, a.id orderid, a.category,a.StyleUkey,a.OrderTypeID,a.ProgramID,a.BrandID
-FROM dbo.Orders a WITH (NOLOCK)  
-where 1=1 "));
+SELECT o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.Qty,o.CPU,o.category,o.SciDelivery,o.StyleUkey,o.id
+into #tmpo
+FROM Orders o
+Where 1=1 "));
 
             #region --- 條件組合  ---
             condition.Clear();
             if (!MyUtility.Check.Empty(sciDelivery1))
             { 
-              sqlCmd.Append(string.Format(@" and a.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
+              sqlCmd.Append(string.Format(@" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDelivery1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(sciDelivery2))
             { 
-              sqlCmd.Append(string.Format(@" and a.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
+              sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
             }
 
             #region [condition]處理
@@ -126,7 +123,7 @@ where 1=1 "));
 
             if (!MyUtility.Check.Empty(mdivision))
             {
-                sqlCmd.Append(" and a.mdivisionid = @MDivision");
+                sqlCmd.Append(" and o.mdivisionid = @MDivision");
                 sp_mdivision.Value = mdivision;
                 cmds.Add(sp_mdivision);
                 condition.Append(string.Format(@"    M : {0}", mdivision));
@@ -134,7 +131,7 @@ where 1=1 "));
 
             if (!MyUtility.Check.Empty(factory))
             {
-                sqlCmd.Append(" and a.FtyGroup = @factory");
+                sqlCmd.Append(" and o.FtyGroup = @factory");
                 sp_factory.Value = factory;
                 cmds.Add(sp_factory);
                 condition.Append(string.Format(@"    Factory : {0}", factory));
@@ -143,94 +140,127 @@ where 1=1 "));
             switch (selectindex)
             {
                 case 0:
-                    sqlCmd.Append(@" and (Category = 'B' or Category = 'S')");
+                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S')");
                     break;
                 case 1:
-                    sqlCmd.Append(@" and Category = 'B' ");
+                    sqlCmd.Append(@" and o.Category = 'B' ");
                     break;
                 case 2:
-                    sqlCmd.Append(@" and (Category = 'S')");
+                    sqlCmd.Append(@" and o.Category = 'S' ");
                     break;
                 case 3:
-                    sqlCmd.Append(@" and (Category = 'M' )");
+                    sqlCmd.Append(@" and o.Category = 'M' ");
                     break;
             }
             condition.Append(string.Format(@"    Category : {0}", cbxCategory.Items[selectindex]));
 
             #endregion
 
-            sqlCmd.Append(string.Format(@")
-, rawdata_output as
-(
-SELECT a.StyleUkey, a.Styleid, a.CDCODEID, a.Qty,a.SciDelivery, a.CPU, a.SeasonID , a.orderid, a.category
-,b.WorkHour,b.QAQty,c.ManHour,c.Manpower,c.ID,c.OutputDate,c.FactoryID,c.SewingLineID
-,iif(a.Category='S',round(a.cpu*s.StdTMS,0),round(a.cpu*e.rate/100.00*s.StdTMS,0)) set_tms
-FROM dbo.System s WITH (NOLOCK)  
-,rawdata_order a
-inner join dbo.SewingOutput_Detail b on b.OrderId = a.orderid
-inner join dbo.SewingOutput c on c.id = b.ID 
-left join dbo.style_location e on e.StyleUkey = a.StyleUkey and e.Location = iif(b.ComboType='' or b.ComboType is null,'T',b.ComboType)
-cross apply (select * from dbo.GetCPURate(a.OrderTypeID,a.ProgramID,a.Category,a.BrandID,'O')) g
-where c.FactoryID = a.FtyGroup"));
-            if (!MyUtility.Check.Empty(sciDelivery1))
+            sqlCmd.Append(string.Format(@"
+select 
+	o.StyleID
+	,qty = sod.QAQty
+	,MH = so.manpower * sod.WorkHour
+	,tms = iif(o.Category = 'S',o.CPU*StdTMS,o.CPU*s.StdTMS*(sl.Rate/100))
+	,S = sum(iif(o.Category = 'S',1,0)) over(partition by o.StyleID)
+	,B = sum(iif(o.Category = 'B',1,0)) over(partition by o.StyleID)
+	,OutputDate
+	,SewingLineID
+into #tmp_AR_Basic
+from System s,#tmpo o2
+inner join Orders o on o2.StyleID = o.StyleID and o2.CdCodeID = o.CdCodeID
+inner join SewingOutput_Detail sod on sod.OrderId = o.ID
+inner join SewingOutput so on sod.id = so.id
+inner join Style_Location sl on sl.StyleUkey = o.StyleUkey AND sl.Location = iif(o.StyleUnit = 'PCS',sl.Location,sod.ComboType)	
+where 1=1"));
+            if (!MyUtility.Check.Empty(mdivision))
             {
-                sqlCmd.Append(string.Format(@" and  dateadd(month,{0},a.sciDelivery) > c.OutputDate", 0 - months));
-                condition.Append(string.Format(@"    New Style base on {0} month(s)", months));
+                sqlCmd.Append(" and o.mdivisionid = @MDivision");
             }
 
-            sqlCmd.Append(string.Format(@")
--- 依找到的output資料，先將最新的output日資料整理
-,max_output as
-(
-	select distinct styleukey,outputdate,SewingLineID from rawdata_output M 
-				where exists(select StyleUkey,max(outputdate) as mmm 
-								from rawdata_output 
-								where Category = 'B'
-								group by styleUkey 
-								having M.StyleUkey = StyleUkey and m.OutputDate = max(outputdate)  )
-)
---依取得的訂單資料取得訂單的 TMS Cost
-,rawdata_tmscost as
-(
-select aa.StyleUkey,bb.ArtworkTypeID,max(iif(cc.IsTMS=1,bb.tms,bb.price)) price_tms 
-from rawdata_order aa 
-inner join dbo.Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.orderid
-inner join dbo.ArtworkType cc WITH (NOLOCK) on cc.id = bb.ArtworkTypeID
-where IsTMS =1 or IsPrice = 1
-group by aa.StyleUkey,bb.ArtworkTypeID
-)"));
-
-            sqlCmd.Append(string.Format(@"--將取得Tms Cost做成樞紐表
-, tmscost_pvt as 
-(
-    select * from rawdata_tmscost
-    pivot
-    (
-        sum(price_tms)
-        for artworktypeid in ( {0})
-    )as pvt )",artworktypes.ToString().Substring(0,artworktypes.ToString().Length-1)));
-
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlCmd.Append(" and o.FtyGroup = @factory");
+            }
+            if (!MyUtility.Check.Empty(numericUpDown1))
+            {
+                sqlCmd.Append(string.Format(@" and  dateadd(month,{0},o2.sciDelivery) > so.OutputDate", -months));
+                condition.Append(string.Format(@"    New Style base on {0} month(s)", months));
+            }
+            switch (selectindex)
+            {
+                case 0:
+                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S')");
+                    break;
+                case 1:
+                    sqlCmd.Append(@" and o.Category = 'B' ");
+                    break;
+                case 2:
+                    sqlCmd.Append(@" and o.Category = 'S' ");
+                    break;
+                case 3:
+                    sqlCmd.Append(@" and o.Category = 'M' ");
+                    break;
+            }
             sqlCmd.Append(string.Format(@"
-select DISTINCT a.FtyGroup,a.StyleID,a.SeasonID,a.CdCodeID,a.CPU,a.ttl_qty,a.ttl_cpu
-,isnull(round(B.ttl_output/ NULLIF(ttl_target,0),4),0) [Avg. Eff.]
-,iif(xxx.outputdate is null,'Only Sample',xxx.sewinglineid+' ('+convert(varchar,xxx.outputdate)+')')remark
---,(select 'Y' from dbo.Style_TmsCost WITH (NOLOCK) where StyleUkey = a.StyleUkey and ArtworkTypeID = 'GMT WASH' and price > 0) wash
-,W.WASH
-{0}
+--
+select o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.CPU,TQty = sum(o.Qty),TCPU = sum(o.CPU*o.Qty)
+into #tmpol
+from #tmpo o
+group by o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.CPU
+--
+select a.StyleID
+	,A = format(sum(a.tms*a.qty)/(3600*Sum(a.MH)),'P')	
+into #tmp_A
+from #tmp_AR_Basic a 
+group by a.StyleID
+--
+select a.StyleID
+	,R = iif(max_OutputDate is null,'New Style'
+			,iif(null = null 
+				,concat(min(a.SewingLineID),'(',b.max_OutputDate,')')+IIF(a.S > 0 AND a.B = 0, 'Only Sample', '')
+				,iif(a.S > 0 AND a.B = 0, 'New Style',concat(min(a.SewingLineID),'(',b.max_OutputDate,')'))
+				)
+			)
+into #tmp_R
+from #tmp_AR_Basic a inner join (select StyleID,max_OutputDate = max(OutputDate) from #tmp_AR_Basic group by StyleID) b
+on a.StyleID = b.StyleID and a.OutputDate = b.max_OutputDate
+group by a.StyleID,b.max_OutputDate,S,B
+--
+select o.StyleID,P = sum(st.Price)
+into #tmp_P
+from #tmpo o2 
+inner join orders o on o.StyleID = o2.StyleID and o.SeasonID = o2.SeasonID
+inner join style_tmscost st on st.StyleUkey = o.StyleUkey
+where ArtworkTypeID ='GMT WASH'
+group by o.StyleID,st.ArtworkTypeID
+--
+select *
+into #cls
 from
-(select FtyGroup,styleukey,Styleid,seasonid,cdcodeid,cpu,sum(qty) ttl_qty,sum(qty*cpu) ttl_cpu from rawdata_order group by FtyGroup,styleukey,Styleid,seasonid,cdcodeid,cpu) a
-inner join tmscost_pvt pvt on pvt.StyleUkey = a.StyleUkey
-left join 
-(select StyleUkey
-    , nullif(sum(set_tms*qaqty),0) ttl_tms 
-    , nullif(sum(WorkHour*Manpower),0) ttl_manhours
-    , sum(qaqty) ttl_output
-    , sum(round(3600*WorkHour/ NULLIF(set_tms*Manpower,0),0)) ttl_target
-from rawdata_output group by StyleUkey) b on b.StyleUkey = a.StyleUkey
-outer apply (select outputdate,SewingLineID from max_output M 
-				where m.StyleUkey = a.StyleUkey) xxx
-OUTER APPLY(select IIF(ArtworkUnit='GMT WASH',IIF(price > 0,'Y','N'),'N')WASH from dbo.Style_TmsCost WITH (NOLOCK) where StyleUkey = a.StyleUkey )W
-order by a.FtyGroup, a.StyleID,a.SeasonID
+(
+	select o.StyleID,otc.ArtworkTypeID,max(iif(at.IsTMS=1,otc.tms,otc.price)) price_tms 
+	from #tmpo o
+	inner join dbo.Order_TmsCost otc on otc.id = o.id
+	inner join dbo.ArtworkType at on at.id = otc.ArtworkTypeID
+	where at.IsTMS =1 or at.IsPrice = 1
+	group by o.StyleID,otc.ArtworkTypeID
+)a
+pivot
+(
+    sum(price_tms)
+    for artworktypeid in ( [SEWING],[BONDING (MACHINE)],[BONDING (HAND)],[LASER],[SEAMSEAL],[ULTRASONIC],[HEAT TRANSFER],[WELDED],[CUTTING],[DOWN],[INSPECTION],[DIE CUT],[SUBLIMATION PRINT],[QUILTING(AT)],[SUBLIMATION SPRAY],[SUBLIMATION ROLLER],[FEEDOFARM],[FLATLOCK],[4FLATLOCK-S],[4FLATLOCK-H],[3FLATLOCK],[EYEBUTTON],[SMALL HOT PRESS],[BIG HOT PRESS],[DOWN FILLING],[ZIG ZAG],[QUILTING(HAND)],[D-chain ZIG ZAG],[REAL FLATSEAM],[Fusible],[BIG HOT FOR BONDING],[EMBROIDERY],[PRINTING],[EMBOSS/DEBOSS],[GMT WASH],[PAD PRINTING],[Garment Dye],[SP_THREAD],[CARTON])
+)as pvt 
+select o.FtyGroup,o.StyleID,o.SeasonID,o.CdCodeID,CPU = format(o.CPU,'0.00'),o.TQty,TCPU = format(o.TCPU,'0.00')
+,a.A,r.R,W = iif(w.P=0 or w.P is null,'N','Y'),isnull([SEWING],0)[SEWING],isnull([BONDING (MACHINE)],0)[BONDING (MACHINE)],isnull([BONDING (HAND)],0)[BONDING (HAND)],isnull([LASER],0)[LASER],isnull([SEAMSEAL],0)[SEAMSEAL],isnull([ULTRASONIC],0)[ULTRASONIC],isnull([HEAT TRANSFER],0)[HEAT TRANSFER],isnull([WELDED],0)[WELDED],isnull([CUTTING],0)[CUTTING],isnull([DOWN],0)[DOWN],isnull([INSPECTION],0)[INSPECTION],isnull([DIE CUT],0)[DIE CUT],isnull([SUBLIMATION PRINT],0)[SUBLIMATION PRINT],isnull([QUILTING(AT)],0)[QUILTING(AT)],isnull([SUBLIMATION SPRAY],0)[SUBLIMATION SPRAY],isnull([SUBLIMATION ROLLER],0)[SUBLIMATION ROLLER],isnull([FEEDOFARM],0)[FEEDOFARM],isnull([FLATLOCK],0)[FLATLOCK],isnull([4FLATLOCK-S],0)[4FLATLOCK-S],isnull([4FLATLOCK-H],0)[4FLATLOCK-H],isnull([3FLATLOCK],0)[3FLATLOCK],isnull([EYEBUTTON],0)[EYEBUTTON],isnull([SMALL HOT PRESS],0)[SMALL HOT PRESS],isnull([BIG HOT PRESS],0)[BIG HOT PRESS],isnull([DOWN FILLING],0)[DOWN FILLING],isnull([ZIG ZAG],0)[ZIG ZAG],isnull([QUILTING(HAND)],0)[QUILTING(HAND)],isnull([D-chain ZIG ZAG],0)[D-chain ZIG ZAG],isnull([REAL FLATSEAM],0)[REAL FLATSEAM],isnull([Fusible],0)[Fusible],isnull([BIG HOT FOR BONDING],0)[BIG HOT FOR BONDING],isnull([EMBROIDERY],0)[EMBROIDERY],isnull([PRINTING],0)[PRINTING],isnull([EMBOSS/DEBOSS],0)[EMBOSS/DEBOSS],isnull([GMT WASH],0)[GMT WASH],isnull([PAD PRINTING],0)[PAD PRINTING],isnull([Garment Dye],0)[Garment Dye],isnull([SP_THREAD],0)[SP_THREAD],isnull([CARTON],0)[CARTON]
+from #tmpol o
+left join #tmp_A a on a.StyleID = o.StyleID
+left join #tmp_R r on r.StyleID = o.StyleID
+left join #tmp_P w on w.StyleID = o.StyleID
+left join #cls s on s.StyleID = o.StyleID
+order by o.FtyGroup,o.StyleID,o.SeasonID
+drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls
+
  ", pvtid.ToString()));
 
            
