@@ -50,16 +50,17 @@ namespace Sci.Production.Sewing
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"
-                select sd.*,
-                [RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%'  ),                 
-                [Remark] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') ,
-                [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
-                from SewingOutput_Detail sd WITH (NOLOCK) 
-                left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
-                left join Rft WITH (NOLOCK) on rft.OrderID = sd.OrderId and rft.CDate = s.OutputDate 
-			                  and rft.SewinglineID = s.SewingLineID and rft.Shift = s.Shift 
-			                  and rft.Team = s.Team
-                where sd.ID = '{0}'", masterID);
+select sd.*,
+[RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%'  ),                 
+[Remark] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') ,
+[QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
+from SewingOutput_Detail sd WITH (NOLOCK) 
+left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
+left join Rft WITH (NOLOCK) on rft.OrderID = sd.OrderId and rft.CDate = s.OutputDate 
+			    and rft.SewinglineID = s.SewingLineID and rft.Shift = s.Shift 
+			    and rft.Team = s.Team
+where sd.ID = '{0}'"
+                , masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -68,42 +69,43 @@ namespace Sci.Production.Sewing
             string masterID = (e.Detail == null) ? "0" : MyUtility.Convert.GetString(e.Detail["UKey"]);
 
             this.SubDetailSelectCommand = string.Format(@"
-            ;with AllQty as
-            (
-	            select 
-                    '' as ID ,--sd.ID, 
-                    sd.UKey as SewingOutput_DetailUkey, sd.OrderId, sd.ComboType,oq.Article,oq.SizeCode,oq.Qty as OrderQty,
-	            isnull((select QAQty from SewingOutput_Detail_Detail WITH (NOLOCK) where SewingOutput_DetailUkey = sd.UKey and SizeCode = oq.SizeCode and orderid = sd.OrderId),0) as QAQty ,
-	            isnull(
-			            (
-				            select sum(QAQty) 
-				            from SewingOutput_Detail_Detail WITH (NOLOCK) 
-				            where OrderId = sd.OrderId and ComboType = sd.ComboType and Article = oq.Article and SizeCode = oq.SizeCode and ID != sd.ID
-			            ),0
-		                ) as AccumQty
-	            from SewingOutput_Detail sd WITH (NOLOCK) ,Order_Qty oq WITH (NOLOCK)  
-	            where sd.UKey = '{0}' and sd.OrderId = oq.ID and sd.Article=oq.Article
-	            union all
-	            select sdd.ID, sdd.SewingOutput_DetailUkey, sdd.OrderId, sdd.ComboType,sdd.Article,sdd.SizeCode,0 as OrderQty,sdd.QAQty,
-	            isnull(
-			            (
-				            select sum(QAQty) 
-				            from SewingOutput_Detail_Detail WITH (NOLOCK)  
-				            where OrderId = sdd.OrderId and ComboType = sdd.ComboType and Article = sdd.Article and SizeCode = sdd.SizeCode and ID != sdd.ID
-			            ),0
-		                ) as AccumQty 
-	            from SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
-	            where SewingOutput_DetailUKey = '{0}'
-	            and not exists (select 1 from Order_Qty WITH (NOLOCK) where ID = sdd.OrderId and Article = sdd.Article and SizeCode = sdd.SizeCode)
-            )
-            select a.*,
-            [Variance] = a.OrderQty-a.AccumQty, 
-            [BalQty] = a.OrderQty-a.AccumQty-a.QAQty,
-            [Seq] = isnull(os.Seq,0)
-            from AllQty a
-            left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
-            left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = a.SizeCode
-            order by a.OrderId,os.Seq", masterID);
+;with AllQty as
+(
+	select 
+        '' as ID ,--sd.ID, 
+        sd.UKey as SewingOutput_DetailUkey, sd.OrderId, sd.ComboType,oq.Article,oq.SizeCode,oq.Qty as OrderQty,
+	isnull((select QAQty from SewingOutput_Detail_Detail WITH (NOLOCK) where SewingOutput_DetailUkey = sd.UKey and SizeCode = oq.SizeCode and orderid = sd.OrderId),0) as QAQty ,
+	isnull(
+			(
+				select sum(QAQty) 
+				from SewingOutput_Detail_Detail WITH (NOLOCK) 
+				where OrderId = sd.OrderId and ComboType = sd.ComboType and Article = oq.Article and SizeCode = oq.SizeCode and ID != sd.ID
+			),0
+		    ) as AccumQty
+	from SewingOutput_Detail sd WITH (NOLOCK) ,Order_Qty oq WITH (NOLOCK)  
+	where sd.UKey = '{0}' and sd.OrderId = oq.ID and sd.Article=oq.Article
+	union all
+	select sdd.ID, sdd.SewingOutput_DetailUkey, sdd.OrderId, sdd.ComboType,sdd.Article,sdd.SizeCode,0 as OrderQty,sdd.QAQty,
+	isnull(
+			(
+				select sum(QAQty) 
+				from SewingOutput_Detail_Detail WITH (NOLOCK)  
+				where OrderId = sdd.OrderId and ComboType = sdd.ComboType and Article = sdd.Article and SizeCode = sdd.SizeCode and ID != sdd.ID
+			),0
+		    ) as AccumQty 
+	from SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
+	where SewingOutput_DetailUKey = '{0}'
+	and not exists (select 1 from Order_Qty WITH (NOLOCK) where ID = sdd.OrderId and Article = sdd.Article and SizeCode = sdd.SizeCode)
+)
+select a.*,
+[Variance] = a.OrderQty-a.AccumQty, 
+[BalQty] = a.OrderQty-a.AccumQty-a.QAQty,
+[Seq] = isnull(os.Seq,0)
+from AllQty a
+left join Orders o WITH (NOLOCK) on a.OrderId = o.ID
+left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = a.SizeCode
+order by a.OrderId,os.Seq"
+                , masterID);
             return base.OnSubDetailSelectCommandPrepare(e);
         }
 
@@ -445,7 +447,7 @@ namespace Sci.Production.Sewing
                 e.Detail["QAQty"] = QAQty;
                 //e.Detail.EndEdit();
                 CalculateDefectQty(e.Detail);
-                this.numericBox5.Value = QAQty;
+                CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("SUM(QAQty)", "");
             }
             return base.ConvertSubDetailDatasFromDoSubForm(e);
         }
@@ -460,6 +462,7 @@ namespace Sci.Production.Sewing
         private void CalculateDefectQty(DataRow dr)
         {
             dr["DefectQty"] = MyUtility.Convert.GetInt(dr["InlineQty"]) - MyUtility.Convert.GetInt(dr["QAQty"]);
+            CurrentMaintain["DefectQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("SUM(DefectQty)","");
         }
 
         //撈取RFT值
