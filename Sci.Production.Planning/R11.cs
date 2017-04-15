@@ -94,7 +94,6 @@ SELECT o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.Qty,o.CPU,o.category,o.SciDe
 into #tmpo
 FROM Orders o
 Where 1=1 "));
-
             #region --- 條件組合  ---
             condition.Clear();
             if (!MyUtility.Check.Empty(sciDelivery1))
@@ -105,7 +104,6 @@ Where 1=1 "));
             { 
               sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDelivery2).ToString("d")));
             }
-
             #region [condition]處理
             if (!MyUtility.Check.Empty(sciDelivery1) && !MyUtility.Check.Empty(sciDelivery2))
             {
@@ -120,7 +118,6 @@ Where 1=1 "));
                 condition.Append(string.Format(@"SCI Delivery :  ~ {0}", Convert.ToDateTime(sciDelivery2).ToString("d")));
             }
             #endregion
-
             if (!MyUtility.Check.Empty(mdivision))
             {
                 sqlCmd.Append(" and o.mdivisionid = @MDivision");
