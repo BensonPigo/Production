@@ -68,14 +68,19 @@ namespace Sci.Production.Warehouse
             
         }
 
+        protected override void OnDetached()
+        {
+            this.listControlBindingSource1.DataSource = null;
+            base.OnDetached();
+        }
+
         private DualResult matrix_Reload()
         {
             DualResult result;
             DataTable dtIssueBreakdown, dtX, dtY;
             #region -- matrix breakdown setting
-            Sci.Win.UI.ListControlBindingSource gridbsBreakdown = new Sci.Win.UI.ListControlBindingSource();
-            gridBreakDown.DataSource = gridbsBreakdown;
-            _matrix = new Sci.Win.MatrixHelper(this, gridBreakDown, gridbsBreakdown); // 建立 Matrix 物件           
+            gridBreakDown.DataSource = listControlBindingSource1;
+            _matrix = new Sci.Win.MatrixHelper(this, gridBreakDown, listControlBindingSource1); // 建立 Matrix 物件           
             //_matrix.XTableName = "issue_breakdown";  // X 軸表格名稱
             //_matrix.YTableName = "issue_breakdown";  // Y 軸表格名稱
             //_matrix.TableName = "issue_breakdown";   // 第三表格名稱

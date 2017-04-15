@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.dis_seq = new Sci.Win.UI.DisplayBox();
@@ -46,11 +47,13 @@
             this.dis_sizespec = new Sci.Win.UI.DisplayBox();
             this.label11 = new Sci.Win.UI.Label();
             this.gridBreakDown = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridBreakDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // gridcont
@@ -264,6 +267,7 @@
             this.gridBreakDown.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridBreakDown.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridBreakDown.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridBreakDown.DataSource = this.listControlBindingSource1;
             this.gridBreakDown.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridBreakDown.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridBreakDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -295,6 +299,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridBreakDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -319,5 +324,6 @@
         private Win.UI.DisplayBox dis_usedqty;
         private Win.UI.DisplayBox dis_sizespec;
         private Win.UI.Grid gridBreakDown;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }
