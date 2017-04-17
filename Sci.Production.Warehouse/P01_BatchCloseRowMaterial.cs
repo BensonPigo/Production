@@ -177,7 +177,6 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
                 if (dtBatch[1].Rows.Count == 0) {
                     this.HideWaitMessage();
                     MyUtility.Msg.WarningBox("Data not found!!");
-                    return;
                 }
                 listControlBindingSource1.DataSource = dtBatch[1];
             }
