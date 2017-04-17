@@ -460,7 +460,7 @@ namespace Sci.Production.Quality
             DataTable dt_MC;
             string cmd_MC = "select * from MailTo where Description='Material locked/Unlocked'";
             DBProxy.Current.Select("", cmd_MC, out dt_MC);
-            if (!MyUtility.Check.Empty(dt_MC))
+            if (!MyUtility.Check.Empty(dt_MC)&&dt_MC.Rows.Count>0)
             {
                 string mailto = dt_MC.Rows[0]["ToAddress"].ToString();
                 string mailCC = dt_MC.Rows[0]["CCAddress"].ToString();
@@ -599,6 +599,7 @@ namespace Sci.Production.Quality
             @"select NameEN from Factory WITH (NOLOCK) where id=@ID ", pars, out dt_title);
             if (!result) { this.ShowErr(result); }
 
+
             //抓Invo,ETA 資料
             List<SqlParameter> par_Exp = new List<SqlParameter>();
             par_Exp.Add(new SqlParameter("@wkno", wk_box.Text));
@@ -606,10 +607,9 @@ namespace Sci.Production.Quality
             if (!result) { this.ShowErr(result); }
 
             //變數區
-            string Title = dt_title.Rows[0]["NameEN"].ToString();
+            string Title = dt_title.Rows.Count == 0 ? "" : dt_title.Rows[0]["NameEN"].ToString();
             string suppid=this.txtsupplier1.TextBox1.Text +" - "+this.txtsupplier1.DisplayBox1.Text;
-            string Invno=dt_Exp.Rows[0]["ID"].ToString();
-            //string ETA = dt_Exp.Rows[0]["ETA"].ToString();
+            string Invno = dt_Exp.Rows.Count == 0 ? "" : dt_Exp.Rows[0]["ID"].ToString();
 
             string Refno = "Ref#" + brandrefno_box.Text + " , " + refdesc_box.Text;
             
@@ -626,7 +626,7 @@ namespace Sci.Production.Quality
             dt.Columns.Add(new DataColumn("DESC",typeof(string)));
             dt.Columns.Add(new DataColumn("Supp",typeof(string)));
             dt.Columns.Add(new DataColumn("Invo",typeof(string)));
-            dt.Columns.Add(new DataColumn("ETA",typeof(DateTime)));
+            dt.Columns.Add(new DataColumn("ETA",typeof(string)));
 
             dr=dt.NewRow();
             dr["Poid"]=sp_box.Text;
@@ -636,7 +636,7 @@ namespace Sci.Production.Quality
             dr["DESC"] = Refno;
             dr["Supp"] = suppid;
             dr["Invo"] = Invno;
-            dr["ETA"] = DateTime.Parse(dt_Exp.Rows[0]["ETA"].ToString()).ToString("yyyy-MM-dd").ToString();
+            dr["ETA"] = dt_Exp.Rows.Count == 0 ? "" : DateTime.Parse(dt_Exp.Rows[0]["ETA"].ToString()).ToString("yyyy-MM-dd").ToString();
             dt.Rows.Add(dr);
 
            
@@ -651,7 +651,7 @@ namespace Sci.Production.Quality
                 DESC = row1["DESC"].ToString().Trim(),
                 Supp = row1["Supp"].ToString().Trim(),
                 Invo = row1["Invo"].ToString().Trim(),
-                ETA =  DateTime.Parse(row1["ETA"].ToString()).ToString("yyyy-MM-dd").ToString().Trim()
+                ETA = row1["ETA"].ToString()=="" ? "": DateTime.Parse(row1["ETA"].ToString()).ToString("yyyy-MM-dd").ToString().Trim()
             }).ToList();
 
             report.ReportDataSource = data;
