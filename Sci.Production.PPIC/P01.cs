@@ -13,7 +13,6 @@ using Ict;
 using Ict.Win;
 using Sci.Win;
 using Sci.Production.Class.Commons;
-//using CSCHEMAS = Sci.Production.Report.Order.Schemas.P01;
 using Microsoft.Office.Interop.Excel;
 using Excel = Microsoft.Office.Interop.Excel;
 using MsExcel = Microsoft.Office.Interop.Excel;
@@ -27,8 +26,7 @@ using System.Runtime.InteropServices;
 namespace Sci.Production.PPIC
 {
     public partial class P01 : Sci.Win.Tems.Input1
-    {
-        private ToolStripMenuItem _menuitem;
+    {        
         private string dataType;
         public P01(ToolStripMenuItem menuitem, string Type)
             : base(menuitem)
@@ -970,7 +968,6 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
             callNextForm.ShowDialog(this);
         }
 
-        private int intSizeSpecRowCnt = 0;
         private int intSizeSpecColumnCnt = 18;
         void ForSizeSpec(Worksheet oSheet, int rowNo, int columnNo)
         {
@@ -1020,7 +1017,7 @@ where POID = @poid group by POID,b.spno";
          if (CurrentMaintain["SMnorderApv"].ToString() == null || CurrentMaintain["SMnorderApv"].ToString() == "")
          {
              var dr = this.CurrentMaintain; if (null == dr) return;
-             var frm = new Sci.Production.PPIC.P01_MNoticePrint(_menuitem, dr["ID"].ToString());
+             var frm = new Sci.Production.PPIC.P01_MNoticePrint(null, dr["ID"].ToString());
              frm.ShowDialog(this);
              this.RenewData();
              return;
