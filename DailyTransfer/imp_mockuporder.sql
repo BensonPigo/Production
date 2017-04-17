@@ -20,7 +20,8 @@ BEGIN
 			
 
 		---------------新增 Temp MockupOrder ----------------------------
-		select * into #tempMO from Trade_To_Pms.dbo.MockupOrder a WITH (NOLOCK)
+		select a.*,b.MDivisionID into #tempMO 
+		from Trade_To_Pms.dbo.MockupOrder a WITH (NOLOCK) left join Production.dbo.factory b on a.FactoryID = b.ID
 		where a.FactoryID in (select id from @Sayfty)
 		--新增欄位FTY_Group
 		ALTER TABLE  #tempMO ADD FTY_Group varchar(8)
@@ -29,7 +30,7 @@ BEGIN
 		update #tempMO
 		set FTY_Group =IIF(b.FTYGroup is null,a.FactoryID,b.FTYGroup)
 		from #tempMO a 
-		inner join Production.dbo.Factory b on a.FactoryID=b.id
+		inner join Production.dbo.Factory b on a.FactoryID = b.id
 
 
 	------------------MockupOrder--------------------------------------------------------------
@@ -58,16 +59,20 @@ BEGIN
 			t.Remark = s.Remark ,
 			t.CMPUnit = s.CMPUnit ,
 			t.CMPPrice = s.CMPPrice ,
-			t.FTYGroup = s.FTy_Group ,
+			t.FTYGroup = s.FTY_Group ,
 			t.CPUFactor =3 ,
-			t.MDivisionID = s.FactoryID ,
+			t.MDivisionID = s.MDivisionID ,
 			t.AddName = s.AddName ,
 			t.AddDate = s.AddDate ,
 			t.EditName = iif(s.EditDate<=t.EditDate,t.EditName,s.EditName) ,
 			t.EditDate = iif(s.EditDate<=t.EditDate,t.EditDate,s.EditDate) 
 		when not matched by target then  -------go to Merge2
-			insert (ID ,MockupID ,Description ,Cpu ,BrandID ,StyleID ,SeasonID ,ProgramID ,FactoryID ,Qty ,CfmDate ,SCIDelivery ,MRHandle ,SMR ,Junk ,Remark ,CMPUnit ,CMPPrice ,FTYGroup ,CPUFactor ,MDivisionID ,AddName ,AddDate ,EditName ,EditDate )
-			values(s.ID ,s.MockupID ,s.Description ,s.Cpu ,s.BrandID ,s.StyleID ,s.SeasonID ,s.ProgramID ,s.FactoryID ,s.Qty ,s.CfmDate ,s.SCIDelivery ,s.MRHandle ,s.SMR ,s.Junk ,s.Remark ,s.CMPUnit ,s.CMPPrice ,s.FTy_Group ,3,'',s.AddName ,s.AddDate ,s.EditName ,s.EditDate )
+			insert (ID ,MockupID ,Description ,Cpu ,BrandID ,StyleID ,SeasonID ,ProgramID ,FactoryID ,Qty ,CfmDate 
+			,SCIDelivery ,MRHandle ,SMR ,Junk ,Remark ,CMPUnit ,CMPPrice ,FTYGroup ,CPUFactor ,MDivisionID ,AddName 
+			,AddDate ,EditName ,EditDate )
+			values(s.ID ,s.MockupID ,s.Description ,s.Cpu ,s.BrandID ,s.StyleID ,s.SeasonID ,s.ProgramID ,s.FactoryID ,s.Qty ,s.CfmDate
+			,s.SCIDelivery,s.MRHandle ,s.SMR ,s.Junk ,s.Remark ,s.CMPUnit ,s.CMPPrice ,FTY_Group ,3 ,s.MDivisionID,s.AddName 
+			,s.AddDate ,s.EditName ,s.EditDate )
 		output inserted.id, iif(deleted.id='',1,0) into @mockT; --將insert =1 , update =0 把改變過的id output
 		
 		---------Merge2
