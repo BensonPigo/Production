@@ -135,7 +135,7 @@ namespace Sci.Production.Warehouse
             }
             _matrix.Clear();          
             if (!(result = _matrix.Sets(dtIssueBreakdown, dtX, dtY))) return result;  // 如果不是直接由資料庫載入, PR 自行處理資料來源, 再由 matrix.Set() 設定資料.
-            ((DataTable)gridbsBreakdown.DataSource).Rows[0].Delete();  
+            ((DataTable)this.listControlBindingSource1.DataSource).Rows[0].Delete();  
             return Result.True;
         }
 
