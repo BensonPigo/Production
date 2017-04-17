@@ -114,7 +114,7 @@ namespace Sci.Production.Thread
         private void btn_Generate_Click(object sender, EventArgs e)
         {
             grid1.ValidateControl();
-            DataTable groupTable, countTable, operTable, gridTable3;
+            DataTable groupTable, operTable, gridTable3;
             StringBuilder delesql = new StringBuilder();
             string sql = "", str_Select;
             List<string> SqlList = new List<string>();

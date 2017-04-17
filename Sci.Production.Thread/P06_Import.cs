@@ -91,8 +91,6 @@ namespace Sci.Production.Thread
             gridTable.Clear();
             try
             {
-                DualResult rst;
-                DataTable dt;
                 DBProxy.Current.Select("Production", sql, out gridTable);
                 if (gridTable.Rows.Count == 0)
                 {
