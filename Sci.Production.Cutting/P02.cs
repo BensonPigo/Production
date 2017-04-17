@@ -1319,36 +1319,28 @@ namespace Sci.Production.Cutting
         {
             #region 建立Grid
             string settbsql = string.Format(@"
-Select a.id,article,sizecode,a.qty,0 as balance
- From Order_Qty a WITH (NOLOCK) ,orders b WITH (NOLOCK) 
-Where b.cuttingsp ='{0}' and a.id = b.id 
-order by id,article,sizecode", masterID);
+            Select a.id, a.article, a.sizecode, a.qty, 0 as balance, c.workorder_Distribute_Qty
+            From Order_Qty a WITH (NOLOCK)
+            inner join orders b WITH (NOLOCK) on a.id = b.id 
+            outer apply(Select Sum(Qty) workorder_Distribute_Qty
+			            from workorder_Distribute WD WITH (NOLOCK) 
+			            where WD.ID='{0}' and WD.OrderID=a.id and WD.Article=a.Article and WD.SizeCode=a.SizeCode) c
+            Where b.cuttingsp ='{0}'
+            order by id,article,sizecode", masterID);
 
             DualResult gridResult = DBProxy.Current.Select(null, settbsql, out qtybreakTb);
             MyUtility.Tool.ProcessWithDatatable(qtybreakTb, "sizecode", "Select distinct SizeCode from #tmp", out sizeGroup);
             MyUtility.Tool.ProcessWithDatatable(qtybreakTb, "article", "Select distinct Article from #tmp", out artTb);
             MyUtility.Tool.ProcessWithDatatable(qtybreakTb, "id", "Select distinct id from #tmp", out spTb);
             #endregion
-            
-            #region 判斷是否Complete
-            DataTable panneltb;
-            string fabcodesql = string.Format(@"Select distinct a.Article,a.FabricPanelCode
-            from Order_ColorCombo a WITH (NOLOCK) ,Order_EachCons b WITH (NOLOCK) 
-            where a.id = '{0}' and a.FabricCode is not null 
-            and a.id = b.id and b.cuttingpiece='0' and  a.FabricPanelCode=b.FabricPanelCode
-            and a.FabricCode !='' order by Article,FabricPanelCode", masterID);
-            gridResult = DBProxy.Current.Select(null, fabcodesql, out panneltb);
-            decimal minqty = 0;
+
+            #region 若訂單數量超過裁切分配數量，則更新balance
             foreach (DataRow dr in qtybreakTb.Rows)
             {
-                minqty = 0;
-                DataRow[] sel = panneltb.Select(string.Format("Article = '{0}'", dr["Article"]));
-                foreach (DataRow pdr in sel)
+                if (MyUtility.Convert.GetDecimal(dr["qty"]) > MyUtility.Convert.GetDecimal(dr["workorder_Distribute_Qty"]))
                 {
-                    if (minqty > MyUtility.Convert.GetDecimal(dr[pdr["FabricPanelCode"].ToString()])) minqty = MyUtility.Convert.GetDecimal(dr[pdr["FabricPanelCode"].ToString()]);
-
+                    dr["balance"] = MyUtility.Convert.GetDecimal(dr["qty"]) - MyUtility.Convert.GetDecimal(dr["workorder_Distribute_Qty"]);
                 }
-                dr["balance"] = minqty;
             }
             #endregion
         }
