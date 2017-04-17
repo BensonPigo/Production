@@ -76,21 +76,26 @@ namespace Sci.Production.Warehouse
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             #endregion
 
-            string strSQLCmd = string.Format(@"select 1 as selected ,'' id, a.id as LocalPoId
-,a.Category
-,b.OrderId 
-,b.Refno
-,b.ThreadColorID
-,dbo.getItemDesc(a.category,b.refno) as [Description]
-,b.Qty as poqty
-,b.Qty - b.InQty as onRoad
-,b.Qty - b.InQty as Qty
-,b.Ukey as localpo_detailUkey
-,b.UnitId
-,b.Price
-from dbo.LocalPO a WITH (NOLOCK) inner join dbo.LocalPO_Detail b WITH (NOLOCK) on b.id = a.Id
+            string strSQLCmd = string.Format(@"
+select  1 as selected 
+        ,'' id
+        , a.id as LocalPoId
+        ,a.Category
+        ,b.OrderId 
+        ,b.Refno
+        ,b.ThreadColorID
+        ,dbo.getItemDesc(a.category,b.refno) as [Description]
+        ,b.Qty as poqty
+        ,b.Qty - b.InQty as onRoad
+        ,b.Qty - b.InQty as Qty
+        ,b.Ukey as localpo_detailUkey
+        ,b.UnitId
+        ,b.Price
+from dbo.LocalPO a WITH (NOLOCK) 
+inner join dbo.LocalPO_Detail b WITH (NOLOCK) on b.id = a.Id
 Where b.Qty - b.InQty >0
-and a.status = 'Approved' and a.LocalSuppID = '{0}'", dr_master["localsuppid"]);
+    and a.status = 'Approved' 
+    and a.LocalSuppID = '{0}'", dr_master["localsuppid"]);
 
             if (!MyUtility.Check.Empty(localpoid))
             {
@@ -160,6 +165,7 @@ and a.status = 'Approved' and a.LocalSuppID = '{0}'", dr_master["localsuppid"]);
             this.grid1.DataSource = detailBS;
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+                .Text("LocalPoId", header: "Local PO#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("OrderID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("Refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(12))
                 .Text("ThreadColorID", header: "Color Shade", iseditingreadonly: true, width: Widths.AnsiChars(12))

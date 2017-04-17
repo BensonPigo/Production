@@ -257,7 +257,7 @@
             // 
             // P60_Import
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 661);
+            this.ClientSize = new System.Drawing.Size(1150, 670);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
