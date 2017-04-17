@@ -92,7 +92,7 @@
             // ToExcel
             // 
             this.ToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.ToExcel.Location = new System.Drawing.Point(768, 5);
+            this.ToExcel.Location = new System.Drawing.Point(718, 5);
             this.ToExcel.Name = "ToExcel";
             this.ToExcel.Size = new System.Drawing.Size(80, 30);
             this.ToExcel.TabIndex = 95;
@@ -103,7 +103,6 @@
             // Description_box
             // 
             this.Description_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Description_box.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FirLaboratoryRemark", true));
             this.Description_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.Description_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.Description_box.Location = new System.Drawing.Point(553, 67);
