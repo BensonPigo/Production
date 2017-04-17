@@ -16,7 +16,7 @@ namespace Sci.Production.Quality
     {   
         DateTime? DateRecStart; DateTime? DateRecEnd;
         DateTime? DateArrStart; DateTime? DateArrEnd;
-        string Category; string factory; string Outstanding = "0"; string M;
+        string Category; string factory; string M;
         string OUTSTAN = "";
         List<SqlParameter> lis; DualResult res;
         DataTable dt; string cmd;
@@ -62,13 +62,12 @@ namespace Sci.Production.Quality
             }
             if (checkOutstandingOnly.Checked == true)
             {
-                Outstanding = "1";
                 OUTSTAN = "YES";
             }
-            else { OUTSTAN = "NO";
-            Outstanding = "0";
+            else
+            {
+                OUTSTAN = "NO";
             }
-           // lis.Add(new SqlParameter("@Outstanding", Outstanding));
 
             string sqlWhere = ""; string sqlRec = ""; string sqlArr = ""; string sqlOutStanding = ""; string sqlFactorys = "";
 
