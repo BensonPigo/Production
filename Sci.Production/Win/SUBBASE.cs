@@ -13,6 +13,9 @@ namespace Sci.Win
 {
     public partial class SUBBASE : Sci.Win.Subs.Base
     {
+        /// <summary>
+        /// xxx
+        /// </summary>
         public SUBBASE()
         {
             InitializeComponent();
