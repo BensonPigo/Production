@@ -52,26 +52,20 @@ Where cuttingsp = '{0}'"
             }
 
             DBProxy.Current.Select(null, string.Format("SELECT *,isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList FROM ORDERS o WITH (NOLOCK)  WHERE ID = '{0}'", cuttingid), out ODT);
-            button1.Enabled = datas.Rows.Count != 0 && MyUtility.Convert.GetString(ODT.Rows[0]["CtnType"]) == "2";
-            
+                        
             return Result.True;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
+            Sci.Production.PPIC.P01_QtyCTN callNextForm = new Sci.Production.PPIC.P01_QtyCTN(ODT.Rows[0]);
+            callNextForm.ShowDialog(this);
+        }
 
-            
-            if (MyUtility.Convert.GetString(ODT.Rows[0]["LocalOrder"]).ToUpper() == "TRUE")
-            {
-                Sci.Production.PPIC.P01_QtyLocalOrder callNextForm = new Sci.Production.PPIC.P01_QtyLocalOrder(MyUtility.Convert.GetString(ODT.Rows[0]["ID"]), MyUtility.Convert.GetString(ODT.Rows[0]["Finished"]).ToUpper() == "FALSE" ? true : false, MyUtility.Convert.GetInt(ODT.Rows[0]["Qty"]));
-                callNextForm.ShowDialog(this);
-            }
-            else
-            {
-                Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(ODT.Rows[0]["ID"]), MyUtility.Convert.GetString(ODT.Rows[0]["POID"]), MyUtility.Convert.GetString(ODT.Rows[0]["PoList"]));
-                callNextForm.ShowDialog(this);
-            }
+        private void gridbs_PositionChanged(object sender, EventArgs e)
+        {
+            DBProxy.Current.Select(null, string.Format("SELECT *,isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList FROM ORDERS o WITH (NOLOCK)  WHERE ID = '{0}'", CurrentData["id"]), out ODT);
+            button1.Enabled = ODT.Rows.Count != 0 && MyUtility.Convert.GetString(ODT.Rows[0]["CtnType"]) == "2";
         }
     }
 }

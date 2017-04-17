@@ -40,6 +40,10 @@
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
             // 
+            // gridbs
+            // 
+            this.gridbs.PositionChanged += new System.EventHandler(this.gridbs_PositionChanged);
+            // 
             // btmcont
             // 
             this.btmcont.Location = new System.Drawing.Point(0, 415);
