@@ -769,7 +769,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
 
             try
             {
-                mySheet.Activate();
+                ((Microsoft.Office.Interop.Excel._Worksheet)mySheet).Activate();
                 //在工作簿 新增一張 統計圖表，單獨放在一個分頁裡面
                 Range range = mySheet.get_Range("a1", "a14");//.Select();
                 range.Select();
