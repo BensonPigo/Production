@@ -79,7 +79,7 @@ namespace Sci.Production.Cutting
             fabcodesql = string.Format(@"Select distinct a.Article,a.PatternPanel
             from Order_ColorCombo a WITH (NOLOCK) ,Order_EachCons b WITH (NOLOCK) 
             where a.id = '{0}' and a.FabricCode is not null 
-            and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel
+            and a.id = b.id and b.cuttingpiece='0' and  a.FabricPanelCode=b.FabricPanelCode
             and a.FabricCode !='' order by Article,PatternPanel", cutid);
             gridResult = DBProxy.Current.Select(null, fabcodesql, out panneltb);
             foreach (DataRow dr in gridtb.Rows)
