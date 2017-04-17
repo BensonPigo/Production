@@ -24,13 +24,14 @@ namespace Sci.Production.Quality
 
         private string loginID = Sci.Env.User.UserID;
         private string Factory = Sci.Env.User.Keyword;
-        bool IsSupportEdit = true;
+        private new bool IsSupportEdit = true;
 
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
             this.detailgrid.ContextMenuStrip = detailgridmenus;
+
         }
        
       

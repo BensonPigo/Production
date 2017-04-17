@@ -1099,7 +1099,7 @@ namespace Sci.Production.Quality
 
         }
 
-        private void TextChanged(object sender, EventArgs e)
+        private new void TextChanged(object sender, EventArgs e)
         {
             isModify = true;
         }

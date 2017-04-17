@@ -20,14 +20,13 @@ namespace Sci.Production.Quality
     {
         // 宣告Context Menu Item
         ToolStripMenuItem add, edit, delete;
-        bool IsSupportEdit = true;
-
+        private new bool IsSupportEdit = true;
 
         public P06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
-            this.detailgrid.ContextMenuStrip = detailgridmenus;
+            this.detailgrid.ContextMenuStrip = detailgridmenus;            
         }
 
         //refresh
