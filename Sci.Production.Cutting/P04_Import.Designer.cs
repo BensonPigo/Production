@@ -200,7 +200,7 @@
         private Win.UI.Grid grid1;
         private Win.UI.Button Query;
         private Win.UI.Button Import;
-        private Win.UI.Button Close;
+        private new Win.UI.Button Close;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
         private Class.txtCell txtCell1;
