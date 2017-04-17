@@ -62,13 +62,14 @@ From (
 	SELECT	[date] = a.IssueDate
 			,[transactionID] = a.ID
 			,[Name] ='P60.Local PO Receiving - incoming' 
-			,[arrivedQty] = b.Qty 
+			,[arrivedQty] = sum(b.Qty)
 			,[releasedQty] = '0.00' 
 			,[remark] = isnull(a.Remark, '')
 	FROM LocalReceiving A
 	INNER JOIN LocalReceiving_Detail B ON  A.ID=B.Id 
 	WHERE b.OrderId = @Poid and b.Refno = @Refno and b.ThreadColorID = @ColorID 
         and a.Status = 'CONFIRMED'
+    Group By a.IssueDate, a.ID, a.Remark
 
 	Union all
 
@@ -76,12 +77,13 @@ From (
 			,[transactionID] = a.ID
 			,[Name] ='P61.Issue Local Item' 
 			,[arrivedQty] = '0.00' 
-			,[releasedQty] = b.Qty
+			,[releasedQty] = sum(b.Qty)
 			,[remark] = isnull(a.Remark, '')
 	FROM localissue a 
 	inner join localissue_Detail b ON a.id=b.id
 	WHERE b.OrderId = @Poid and b.Refno = @Refno and b.ThreadColorID = @ColorID
         and a.Status = 'CONFIRMED'
+    Group By a.IssueDate, a.ID, a.Remark
 ) s	
 order by s.date, s.Name          
 ";
