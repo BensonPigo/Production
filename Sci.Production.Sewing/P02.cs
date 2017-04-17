@@ -268,6 +268,19 @@ where sd.ID = '{0}'", masterID);
         {
             base.OnDetailGridDelete();
             CurrentMaintain["QAQty"] = (((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable()).Compute("sum(QAQty)", "");
+            CurrentMaintain["InlineQty"] = (((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable()).Compute("sum(InlineQty)", "");
+
+            DataTable tms;
+            try
+            {
+                MyUtility.Tool.ProcessWithDatatable((((DataTable)detailgridbs.DataSource).DefaultView.ToTable()), "QAQty,TMS,OrderID", "select round(isnull(sum(cast(QAQty as float)*cast(TMS as float)),0)/sum(cast(QAQty as float)),0) as TtlTMS from #tmp", out tms, "#tmp");
+            }
+            catch (Exception ex)
+            {
+                ShowErr("Calculate error.", ex);
+                return;
+            }
+            CurrentMaintain["TMS"] = tms.Rows[0]["TtlTMS"];
         }
 
         protected override void ClickNewAfter()
@@ -506,9 +519,9 @@ where sd.ID = '{0}'", masterID);
             decimal subSum = 0;
             foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
             {
-                recCnt = recCnt - 1;
                 if (dr.RowState != DataRowState.Deleted)
                 {
+                    recCnt = recCnt - 1;
                     if (recCnt == 0)
                     {
                         dr["WorkHour"] = MyUtility.Convert.GetDecimal(CurrentMaintain["WorkHour"]) - subSum;
