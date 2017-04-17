@@ -32,7 +32,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.comboBox_Factory = new Sci.Win.UI.ComboBox();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.label5 = new Sci.Win.UI.Label();
             this.button5 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
@@ -78,7 +78,7 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.comboBox_Factory);
+            this.panel3.Controls.Add(this.comboFactory);
             this.panel3.Controls.Add(this.label5);
             this.panel3.Controls.Add(this.button5);
             this.panel3.Controls.Add(this.button2);
@@ -98,16 +98,16 @@
             this.panel3.Size = new System.Drawing.Size(924, 88);
             this.panel3.TabIndex = 3;
             // 
-            // comboBox_Factory
+            // comboFactory
             // 
-            this.comboBox_Factory.BackColor = System.Drawing.Color.White;
-            this.comboBox_Factory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox_Factory.FormattingEnabled = true;
-            this.comboBox_Factory.IsSupportUnselect = true;
-            this.comboBox_Factory.Location = new System.Drawing.Point(71, 12);
-            this.comboBox_Factory.Name = "comboBox_Factory";
-            this.comboBox_Factory.Size = new System.Drawing.Size(73, 24);
-            this.comboBox_Factory.TabIndex = 10;
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(71, 12);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(73, 24);
+            this.comboFactory.TabIndex = 10;
             // 
             // label5
             // 
@@ -362,6 +362,6 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Button button5;
         private Win.UI.Label label5;
-        private Win.UI.ComboBox comboBox_Factory;
+        private Win.UI.ComboBox comboFactory;
     }
 }

@@ -32,10 +32,10 @@ namespace Sci.Production.PPIC
             DBProxy.Current.Select("", factoryCmd.ToString(), out facData);
             facData.Rows.Add(new string[] { "" });
             facData.DefaultView.Sort = "factoryid";
-            this.comboBox_Factory.DataSource = facData;
-            this.comboBox_Factory.ValueMember = "factoryid";
+            this.comboFactory.DataSource = facData;
+            this.comboFactory.ValueMember = "factoryid";
             this.EditMode = true;
-            this.comboBox_Factory.SelectedIndex = 0;
+            this.comboFactory.SelectedIndex = 0;
            
          
         }
@@ -88,7 +88,7 @@ namespace Sci.Production.PPIC
         {
             this.grid1.ValidateControl();
             listControlBindingSource1.EndEdit();
-            f = comboBox_Factory.SelectedValue.ToString();
+            f = comboFactory.SelectedValue.ToString();
             foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
             {
                 if (dr.RowState == DataRowState.Modified)
@@ -163,7 +163,7 @@ and sp.MDivisionID = '{0}' ", Sci.Env.User.Keyword));
             if (query == 1)
             {
                 if (f == "") { }
-                if (!this.comboBox_Factory.Text.ToString().Empty()&& f !="")
+                if (!this.comboFactory.Text.ToString().Empty()&& f !="")
                 {
                     sqlCmd.Append(string.Format(" and sp.FactoryID = '{0}'", f));
                 }
