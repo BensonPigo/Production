@@ -20,6 +20,9 @@
     [VerticalTest1]      NUMERIC (4, 2) CONSTRAINT [DF_FIR_Laboratory_Wash_VerticalTest1] DEFAULT ((0)) NULL,
     [VerticalTest2]      NUMERIC (4, 2) CONSTRAINT [DF_FIR_Laboratory_Wash_VerticalTest2] DEFAULT ((0)) NULL,
     [VerticalTest3]      NUMERIC (4, 2) CONSTRAINT [DF_FIR_Laboratory_Wash_VerticalTest3] DEFAULT ((0)) NULL,
+    [SkewnessTest1] NUMERIC(4, 2) NULL DEFAULT ((0)), 
+    [SkewnessTest2] NUMERIC(4, 2) NULL DEFAULT ((0)), 
+    [SkewnessRate] NUMERIC(6, 2) NULL DEFAULT ((0)), 
     CONSTRAINT [PK_FIR_Laboratory_Wash] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
 
