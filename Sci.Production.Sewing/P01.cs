@@ -962,6 +962,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
                     }
                     catch (Exception ec)
                     {
+                        ShowErr("error: ", ec);
                     }
                     NewUpdated.Add(newOne);
                     newT.Rows.Add(newOne);
@@ -989,6 +990,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
                     }
                     catch (Exception ec)
                     {
+                        ShowErr("Error:", ec);
                     }
                     NewDelete.Add(newOne);
                     newT.Rows.Add(newOne);
