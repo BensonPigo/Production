@@ -90,7 +90,8 @@ namespace Sci.Production.Planning
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(string.Format(@"
-SELECT o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.Qty,o.CPU,o.category,o.SciDelivery,o.StyleUkey,o.id
+SELECT o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.Qty,o.CPU,o.category,o.StyleUkey,o.id
+    ,SciDelivery = min(o.SciDelivery)over(partition by o.Styleid)
 into #tmpo
 FROM Orders o
 Where 1=1 "));
@@ -154,6 +155,12 @@ Where 1=1 "));
             #endregion
 
             sqlCmd.Append(string.Format(@"
+--
+select o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.CPU,TQty = sum(o.Qty),TCPU = sum(o.CPU*o.Qty)
+into #tmpol
+from #tmpo o
+group by o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.CPU
+--
 select 
 	o.StyleID
 	,qty = sod.QAQty
@@ -169,7 +176,8 @@ inner join Orders o on o2.StyleID = o.StyleID and o2.CdCodeID = o.CdCodeID
 inner join SewingOutput_Detail sod on sod.OrderId = o.ID
 inner join SewingOutput so on sod.id = so.id
 inner join Style_Location sl on sl.StyleUkey = o.StyleUkey AND sl.Location = iif(o.StyleUnit = 'PCS',sl.Location,sod.ComboType)	
-where 1=1"));
+where 1=1"
+                ));
             if (!MyUtility.Check.Empty(mdivision))
             {
                 sqlCmd.Append(" and o.mdivisionid = @MDivision");
@@ -179,9 +187,9 @@ where 1=1"));
             {
                 sqlCmd.Append(" and o.FtyGroup = @factory");
             }
-            if (!MyUtility.Check.Empty(numericUpDown1))
+            if (numericUpDown1.Value != 0)
             {
-                sqlCmd.Append(string.Format(@" and  dateadd(month,{0},o2.sciDelivery) > so.OutputDate", -months));
+                sqlCmd.Append(string.Format(@" and  dateadd(month,{0},o2.SciDelivery ) < so.OutputDate", -months));
                 condition.Append(string.Format(@"    New Style base on {0} month(s)", months));
             }
             switch (selectindex)
@@ -200,12 +208,6 @@ where 1=1"));
                     break;
             }
             sqlCmd.Append(string.Format(@"
---
-select o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.CPU,TQty = sum(o.Qty),TCPU = sum(o.CPU*o.Qty)
-into #tmpol
-from #tmpo o
-group by o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.CPU
---
 select a.StyleID
 	,A = format(sum(a.tms*a.qty)/(3600*Sum(a.MH)),'P')	
 into #tmp_A
@@ -215,8 +217,8 @@ group by a.StyleID
 select a.StyleID
 	,R = iif(max_OutputDate is null,'New Style'
 			,iif(null = null 
-				,concat(min(a.SewingLineID),'(',b.max_OutputDate,')')+IIF(a.S > 0 AND a.B = 0, 'Only Sample', '')
-				,iif(a.S > 0 AND a.B = 0, 'New Style',concat(min(a.SewingLineID),'(',b.max_OutputDate,')'))
+				,concat(min(a.SewingLineID),'(',format(b.max_OutputDate,'yyyy/MM/dd'),')')+IIF(a.S > 0 AND a.B = 0, 'Only Sample', '')
+				,iif(a.S > 0 AND a.B = 0, 'New Style',concat(min(a.SewingLineID),'(',format(b.max_OutputDate,'yyyy/MM/dd'),')'))
 				)
 			)
 into #tmp_R
