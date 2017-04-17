@@ -245,7 +245,7 @@ as
 (select ot.ID,ot.ArtworkTypeID
 from NoOutputOrderID o
 inner join Order_TmsCost ot WITH (NOLOCK) on o.ID = ot.ID
-inner join ArtworkType a on WITH (NOLOCK) ot.ArtworkTypeID = a.ID and a.IsArtwork = 0
+inner join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID and a.IsArtwork = 0
 ),
 --撈出應該要有的全部資料
 AllData
