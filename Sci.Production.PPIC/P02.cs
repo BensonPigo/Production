@@ -25,11 +25,13 @@ namespace Sci.Production.PPIC
             DualResult cbResult;
             if (cbResult = DBProxy.Current.Select(null, string.Format("select ID from Factory WITH (NOLOCK) where MDivisionID = '{0}'", Sci.Env.User.Keyword), out dtFactory))
             {
-                MyUtility.Tool.SetupCombox(comboFactory, 1, dtFactory);
-            }
 
-            comboFactory.SelectedIndex = -1;
-            //comboBox1.SelectedValue = "";
+                MyUtility.Tool.SetupCombox(comboFactory, 1, dtFactory);
+
+            }
+            dtFactory.Rows.Add(new string[] { "" });
+            comboFactory.SelectedValue= Sci.Env.User.Keyword;
+
             DataRow drOC;
             if (MyUtility.Check.Seek(string.Format(@"select top 1 UpdateDate 
 from OrderComparisonList WITH (NOLOCK) 
@@ -164,7 +166,7 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
             }
             else
             {
-                QueryDate((string)comboFactory.SelectedValue, (DateTime?)dateUpdatedDate.Value);
+                QueryDate((string)comboFactory.SelectedValue, (DateTime?)dateUpdatedDate.Value);//
             }
         }
 
