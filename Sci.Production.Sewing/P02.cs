@@ -263,9 +263,11 @@ where sd.ID = '{0}'", masterID);
                 .Numeric("WorkHour", header: "W'Hours", decimal_places: 3, width: Widths.AnsiChars(5))
                 .Numeric("RFT", header: "RFT(%)", width: Widths.AnsiChars(5), iseditingreadonly: true);
         }
-        private void ovad()
+
+        protected override void OnDetailGridDelete()
         {
-            
+            base.OnDetailGridDelete();
+            CurrentMaintain["QAQty"] = (((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable()).Compute("sum(QAQty)", "");
         }
 
         protected override void ClickNewAfter()
