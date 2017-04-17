@@ -173,7 +173,7 @@ full join (
 order by {0} , Country , c.data
 ", select, GroupBy);
 
-            All_SqlData4 = @"
+            All_SqlData4 = string.Format(@"
 ;with final as (
 	select sum(SMV / sSMV) as [%] ,SMVEFFX 
 	,max(v1) as v1 ,max(v2) as v2 ,max(v3) as v3
@@ -188,7 +188,7 @@ order by {0} , Country , c.data
 	outer apply (select iif( sum(StyleStardQty) = 0 , 0 , sum(StyleProdQty) / sum(StyleStardQty) ) as v6 from #tmpData3 tmp where tmp.SMVEFFX = td3.SMVEFFX and tmp.QtyEFFX = 'F') v6
 	group by SMVEFFX
 ) 
-select 'All',''
+select 'All' as {0}, ''
 ,isnull(final.[%] ,0) [%]
 ,SMVEFF = case c.data when 'A' then '40 & below' when 'B' then '40-49' when 'C' then '50-59' when 'D' then '60-69' when 'E' then '70-79' when 'F' then '80-89' when 'G' then '90-99' else '100 & above' end
 ,isnull(final.v1 ,0) v1 ,isnull(final.v2 ,0) v2 ,isnull(final.v3 ,0) v3
@@ -197,7 +197,7 @@ from final
 full join (
 	 select data from dbo.SplitString('A,B,C,D,E,F,G,H',',')
 ) c on c.Data = final.SMVEFFX
-order by c.data";
+order by c.data", select);
 
             BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – Produce tmpEFFIC details (Step 3/5)"); });
             result = DBProxy.Current.SelectByConn(con, SqlData4, out tmpData4);
@@ -259,8 +259,10 @@ order by tmpData2.OrderID";
             SaveXltReportCls sxrc = new SaveXltReportCls(temfile);
             sxrc.boOpenFile = true;
 
+            tmpData4.Merge(All_tmpData4);
+
             SaveXltReportCls.xltRptTable xrt1 = new SaveXltReportCls.xltRptTable(tmpData4);
-            SaveXltReportCls.xltRptTable xrt2 = new SaveXltReportCls.xltRptTable(All_tmpData4);
+            //SaveXltReportCls.xltRptTable xrt2 = new SaveXltReportCls.xltRptTable(All_tmpData4);
             SaveXltReportCls.xltRptTable xrt3 = new SaveXltReportCls.xltRptTable(tmpStyleDetail);
             SaveXltReportCls.xltRptTable xrt4 = new SaveXltReportCls.xltRptTable(tmpOrderDetail);
 
@@ -276,12 +278,12 @@ order by tmpData2.OrderID";
             #endregion 
 
             xrt1.ShowHeader = false;
-            xrt2.ShowHeader = false;
+            //xrt2.ShowHeader = false;
             xrt3.ShowHeader = false;
             xrt4.ShowHeader = false;
 
             sxrc.dicDatas.Add("##detail", xrt1);
-            sxrc.dicDatas.Add("##detailAll", xrt2);
+            //sxrc.dicDatas.Add("##detailAll", xrt2);
             sxrc.dicDatas.Add("##StyleDetail", xrt3);
             sxrc.dicDatas.Add("##OrderDetail", xrt4);
             sxrc.dicDatas.Add("##title", title);
