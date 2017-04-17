@@ -820,7 +820,7 @@ Where DetailUkey = {15};",
 
             excel.Cells[4, 4] = this.arriveqty_box.Text;
             excel.Cells[4, 6] = dtSumQty.Rows[0]["TotalTicketYds"];//Inspected Qty
-            excel.Cells[4, 8] = dt1.Rows[0]["PhysicalEncode"] == "1" ? "Y" : "N";
+            excel.Cells[4, 8] = dt1.Rows[0]["PhysicalEncode"].ToString() == "1" ? "Y" : "N";
 
 
             #endregion
