@@ -539,7 +539,7 @@ Where DetailUkey = {15};",
                 string cmd_leader = string.Format(@"select email from pass1	
 	where id=(select Supervisor from pass1 where  id='{0}')", Sci.Env.User.UserID);
                 DBProxy.Current.Select("", cmd_leader, out dt_Leader);
-                if (dt_Leader != null && dt_Leader.Rows.Count > 0)
+                if (!MyUtility.Check.Empty(dt_Leader) && dt_Leader.Rows.Count > 0)
                 {
                     string mailto = dt_Leader.Rows[0]["email"].ToString();
 
@@ -649,7 +649,7 @@ Where DetailUkey = {15};",
             DataTable dt_MC;
             string cmd_MC = "select * from MailTo where Description='Material locked/Unlocked'";
             DBProxy.Current.Select("", cmd_MC, out dt_MC);
-            if (!MyUtility.Check.Empty(dt_MC))
+            if (!MyUtility.Check.Empty(dt_MC)&& dt_MC.Rows.Count>0)
             {
                 string mailto = dt_MC.Rows[0]["ToAddress"].ToString();
                 string mailCC = dt_MC.Rows[0]["CCAddress"].ToString();
