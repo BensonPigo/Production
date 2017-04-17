@@ -485,7 +485,7 @@ where sd.ID = '{0}'", masterID);
             DataTable SumQaQty;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable(((DataTable)detailgridbs.DataSource), "QAQty,TMS,OrderID", "select isnull(sum(QAQty*TMS),0) as sumQaqty,isnull(count(QAQty),0) as RecCnt from #tmp", out SumQaQty, "#tmp");
+                MyUtility.Tool.ProcessWithDatatable((((DataTable)detailgridbs.DataSource).DefaultView.ToTable()), "QAQty,TMS,OrderID", "select isnull(sum(QAQty*TMS),0) as sumQaqty,isnull(count(QAQty),0) as RecCnt from #tmp", out SumQaQty, "#tmp");
             }
             catch (Exception ex)
             {
