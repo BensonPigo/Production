@@ -25,10 +25,10 @@ namespace Sci.Production.PPIC
             DualResult cbResult;
             if (cbResult = DBProxy.Current.Select(null, string.Format("select ID from Factory WITH (NOLOCK) where MDivisionID = '{0}'", Sci.Env.User.Keyword), out dtFactory))
             {
-                MyUtility.Tool.SetupCombox(comboBox1, 1, dtFactory);
+                MyUtility.Tool.SetupCombox(comboFactory, 1, dtFactory);
             }
 
-            comboBox1.SelectedIndex = -1;
+            comboFactory.SelectedIndex = -1;
             //comboBox1.SelectedValue = "";
             DataRow drOC;
             if (MyUtility.Check.Seek(string.Format(@"select top 1 UpdateDate 
@@ -36,7 +36,7 @@ from OrderComparisonList WITH (NOLOCK)
 where MDivisionID = '{0}' 
 and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) where MDivisionID = '{0}')", Sci.Env.User.Keyword), out drOC))
             {
-                dateBox2.Value = Convert.ToDateTime(drOC["UpdateDate"]);
+                dateUpdatedDate.Value = Convert.ToDateTime(drOC["UpdateDate"]);
             }
         }
 
@@ -97,7 +97,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
                 }
             };
 
-            QueryDate((string)comboBox1.SelectedValue,dateBox2.Value);
+            QueryDate((string)comboFactory.SelectedValue,dateUpdatedDate.Value);
         }
 
         //Query Data
@@ -129,11 +129,11 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
             listControlBindingSource1.DataSource = gridData;
             if (gridData.Rows.Count == 0)
             {
-                dateBox1.Value = null;
+                dateLastDate.Value = null;
             }
             else
             {
-                dateBox1.Value = Convert.ToDateTime(gridData.Rows[0]["TransferDate"]);
+                dateLastDate.Value = Convert.ToDateTime(gridData.Rows[0]["TransferDate"]);
             }
 
             this.grid1.AutoResizeColumns();
@@ -158,13 +158,13 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
         //Factory
         private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
         {
-            if (comboBox1.SelectedIndex < 0)
+            if (comboFactory.SelectedIndex < 0)
             {
-                QueryDate("", (DateTime?)dateBox2.Value);
+                QueryDate("", (DateTime?)dateUpdatedDate.Value);
             }
             else
             {
-                QueryDate((string)comboBox1.SelectedValue, (DateTime?)dateBox2.Value);
+                QueryDate((string)comboFactory.SelectedValue, (DateTime?)dateUpdatedDate.Value);
             }
         }
 
@@ -187,15 +187,16 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
                 MyUtility.Msg.InfoBox("No data.");
                 return;
             }
-
+          
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P02.xltx");
             MyUtility.Excel.CopyToXls(ExcelTable, "", "PPIC_P02.xltx", 3, true, "", objApp);
-
+            objApp.Cells[2, 3] = "Last Date " + dateLastDate.Value.Value.ToShortDateString();
+            objApp.Cells[2, 9] = "Update Date " + dateUpdatedDate.Value.Value.ToShortDateString();
         }
               
         private void dateBox2_ValueChanged(object sender, EventArgs e)
         {
-            QueryDate((string)comboBox1.SelectedValue, (DateTime?)dateBox2.Value);
+            QueryDate((string)comboFactory.SelectedValue, (DateTime?)dateUpdatedDate.Value);
         }
     }
 }
