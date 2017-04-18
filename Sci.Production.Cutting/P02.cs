@@ -512,7 +512,9 @@ namespace Sci.Production.Cutting
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                     SelectItem sele;
 
-                    sele = new SelectItem(spTb, "ID", "23", dr["OrderID"].ToString(), false, ",");
+                    sele = new SelectItem(spTb, "ID", "15", dr["OrderID"].ToString(), columndecimals: "50");
+                    sele.Width = 300;
+                    sele.Height = 300;
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
@@ -939,11 +941,14 @@ namespace Sci.Production.Cutting
                     if (CurrentDetailData == null) return;
                     DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
-                    if (dr["OrderID"].ToString().ToUpper() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
-                    sele = new SelectItem(sizeGroup, "SizeCode", "23", dr["SizeCode"].ToString(), false, ",");
+                    if (dr["OrderID"].ToString().ToUpper() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;                   
+                    DataTable srdt = ((DataTable)sizeratiobs.DataSource).DefaultView.ToTable();
+                    DataTable sizeGroup2;
+                    MyUtility.Tool.ProcessWithDatatable(srdt, "sizecode", "Select distinct SizeCode from #tmp", out sizeGroup2);
+                    sele = new SelectItem(sizeGroup2, "SizeCode", "23", dr["SizeCode"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
-                    e.EditingControl.Text = sele.GetSelectedString();
+                    e.EditingControl.Text = sele.GetSelectedString();                    
                 }
             };
             col_dist_size.EditingControlShowing += (s, e) =>
@@ -951,7 +956,8 @@ namespace Sci.Production.Cutting
                 if (e.RowIndex == -1) return;
                 if (CurrentDetailData == null) return;
                 DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString().ToUpper() != "EXCESS") ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString().ToUpper() != "EXCESS") 
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
 
             };
@@ -1319,14 +1325,15 @@ namespace Sci.Production.Cutting
         {
             #region 建立Grid
             string settbsql = string.Format(@"
-            Select a.id, a.article, a.sizecode, a.qty, 0 as balance, c.workorder_Distribute_Qty
-            From Order_Qty a WITH (NOLOCK)
-            inner join orders b WITH (NOLOCK) on a.id = b.id 
-            outer apply(Select Sum(Qty) workorder_Distribute_Qty
-			            from workorder_Distribute WD WITH (NOLOCK) 
-			            where WD.ID='{0}' and WD.OrderID=a.id and WD.Article=a.Article and WD.SizeCode=a.SizeCode) c
-            Where b.cuttingsp ='{0}'
-            order by id,article,sizecode", masterID);
+Select a.id, a.article, a.sizecode, a.qty, 0 as balance, c.workorder_Distribute_Qty
+From Order_Qty a WITH (NOLOCK)
+inner join orders b WITH (NOLOCK) on a.id = b.id 
+outer apply(Select Sum(Qty) workorder_Distribute_Qty
+			from workorder_Distribute WD WITH (NOLOCK) 
+			where WD.ID='{0}' and WD.OrderID=a.id and WD.Article=a.Article and WD.SizeCode=a.SizeCode) c
+Where b.cuttingsp ='{0}'
+order by id,article,sizecode"
+                , masterID);
 
             DualResult gridResult = DBProxy.Current.Select(null, settbsql, out qtybreakTb);
             MyUtility.Tool.ProcessWithDatatable(qtybreakTb, "sizecode", "Select distinct SizeCode from #tmp", out sizeGroup);
