@@ -389,7 +389,7 @@ namespace Sci.Production.Cutting
                 }
             };
             #endregion
-            #region Layer
+            #region Layers
             col_layer.EditingControlShowing += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
@@ -415,66 +415,61 @@ namespace Sci.Production.Cutting
             };
             col_layer.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) { return; }
-                // 右鍵彈出功能
-                if (e.RowIndex == -1) return;
+                if (!this.EditMode || e.RowIndex == -1) return; 
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+
                 string oldvalue = dr["layer"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
 
-                dr["layer"] = newvalue;
-                dr.EndEdit();
-                int bal = Convert.ToInt16(newvalue) - Convert.ToInt16(oldvalue == "" ? "0" : oldvalue);
-
+                CurrentDetailData["layer"] = newvalue;
+                
                 int sumlayer = 0;
                 if (MyUtility.Check.Empty(CurrentDetailData["Order_EachConsUkey"]))
                 {
-                    DataRow[] AA = ((DataTable)detailgridbs.DataSource).Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]));
+                    object O_sumLayer = ((DataTable)detailgridbs.DataSource).Compute("sum(layer)", string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]));
+                    if (!O_sumLayer.Empty()) sumlayer = Convert.ToInt32(O_sumLayer);
 
-                    foreach (DataRow l in AA)
-                    {
-                        sumlayer += MyUtility.Convert.GetInt(l["layer"]);
-                    }
-                }
-                else
-                {
-                    DataRow[] AA = ((DataTable)detailgridbs.DataSource).Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", CurrentDetailData["Order_EachConsUkey"], CurrentDetailData["Colorid"]));
-
-                    foreach (DataRow l in AA)
-                    {
-                        sumlayer += MyUtility.Convert.GetInt(l["layer"]);
-                    }
-                }
-
-                if (MyUtility.Check.Empty(CurrentDetailData["Order_EachConsUkey"]))
-                {
                     DataRow[] drar = layersTb.Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]));
-                    if (drar.Length != 0)
-                    {
-                        //drar[0]["layer"] = Convert.ToInt16(drar[0]["layer"]) + bal;
-                        //BalanceLayer.Value = Convert.ToInt16(drar[0]["layer"]) - Convert.ToInt16(drar[0]["TotalLayerMarker"]);
-
-                        BalanceLayer.Value = sumlayer - Convert.ToInt16(drar[0]["TotalLayerMarker"]);
-                    }
-
+                    if (drar.Length != 0) BalanceLayer.Value = sumlayer - Convert.ToInt16(drar[0]["TotalLayerMarker"]);
                 }
                 else
                 {
+                    object O_sumLayer = ((DataTable)detailgridbs.DataSource).Compute("sum(layer)", string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", CurrentDetailData["Order_EachConsUkey"], CurrentDetailData["Colorid"]));
+                    if (!O_sumLayer.Empty()) sumlayer = Convert.ToInt32(O_sumLayer);
+
                     DataRow[] drar = layersTb.Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", CurrentDetailData["Order_EachConsUkey"], CurrentDetailData["Colorid"]));
-                    if (drar.Length != 0)
+                    if (drar.Length != 0) BalanceLayer.Value = sumlayer - Convert.ToInt16(drar[0]["TotalLayerUkey"]);
+                }
+                cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
+                
+                int newsumQty = 0;
+                if (sizeratiobs.DataSource != null)
+                {
+                    object Sq = ((DataTable)sizeratiobs.DataSource).DefaultView.ToTable().Compute("SUM(Qty)", "");
+                    if (!Sq.Empty()) newsumQty = MyUtility.Convert.GetInt(CurrentDetailData["layer"]) * Convert.ToInt32(Sq);
+                }
+
+                int oldttlqty = (int)totaldisqtybox.Value;
+                int diff = newsumQty - oldttlqty;
+                totaldisqtybox.Value = newsumQty;
+                
+                if (diff > 0)
+                {
+                    DataRow[] sizeR = sizeratioTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = '{1}'", CurrentDetailData["Ukey"].ToString(), CurrentDetailData["NewKey"].ToString()));
+                    foreach (DataRow drr in sizeR)
                     {
-                        //drar[0]["layer"] = Convert.ToInt16(drar[0]["layer"]) + bal;
-                        //BalanceLayer.Value = Convert.ToInt16(drar[0]["layer"]) - Convert.ToInt16(drar[0]["TotalLayerUkey"]);
-                        BalanceLayer.Value = sumlayer - Convert.ToInt16(drar[0]["TotalLayerUkey"]);
+                        updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), drr["SizeCode"].ToString());
+                    }                    
+                }
+                if (diff<0)
+                {
+                    DataRow[] dist = distqtyTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = '{1}' ", CurrentDetailData["Ukey"].ToString(), CurrentDetailData["NewKey"].ToString()));
+                    foreach (DataRow drr in dist)
+                    {
+                        drr["Qty"] = 0;
                     }
                 }
-                //1172: CUTTING_P02_Cutting Work Order
-                //cal_TotalCutQty(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]));
-                cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
-
-                totalDisQty();
-
             };
             #endregion
             #region SP
@@ -1148,17 +1143,13 @@ namespace Sci.Production.Cutting
                 }
             }
         }
+
         private void totalDisQty()
         {
-            if (distributebs.DataSource != null)
+            if (sizeratiobs.DataSource != null)
             {
-                DataTable forsumqty = ((DataTable)distributebs.DataSource).DefaultView.ToTable();
-                object comput;
-                int disqty;
-                comput = forsumqty.Compute("SUM(Qty)", "");
-                if (comput == DBNull.Value) disqty = 0;
-                else disqty = Convert.ToInt32(comput);
-                totaldisqtybox.Value = disqty;
+                object Sq = ((DataTable)sizeratiobs.DataSource).DefaultView.ToTable().Compute("SUM(Qty)", "");
+                if (!Sq.Empty()) totaldisqtybox.Value = MyUtility.Convert.GetInt(CurrentDetailData["layer"]) * Convert.ToInt32(Sq);
             }
         }
 
@@ -1310,7 +1301,7 @@ namespace Sci.Production.Cutting
                 distributeMenuStrip.Enabled = false;
             }
             #endregion
-
+            totalDisQty();
             this.sizeratio_grid.AutoResizeColumns();            
             this.qtybreak_grid.AutoResizeColumns();
         }
