@@ -66,8 +66,8 @@ select  selected = 0
         ,balance = c.InQty - c.OutQty + c.AdjustQty 
         ,location = stuff((select ',' + mtllocationid from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, '') 
         ,toseq = concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) 
-        ,toroll = c.Roll 
-        ,todyelot = c.Dyelot 
+        ,toroll = iif(toSP.Roll is not null, toSP.Roll, c.Roll)
+        ,todyelot = iif(toSP.Roll is not null, toSP.Dyelot, c.Dyelot)
         ,Qty = 0.00 
         ,ToStocktype = 'B' 
         ,topoid = b.id 
@@ -80,6 +80,15 @@ inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1
 inner join Orders on c.poid = Orders.id
 inner join Factory on Orders.FactoryID = Factory.ID
 left join dbo.po_supp_detail b WITH (NOLOCK) on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec and b.ColorID = a.ColorID and b.BrandId = a.BrandId
+outer apply(
+    select	Top 1 Roll
+		    , Dyelot
+    from FtyInventory
+    where POID = b.id
+	    and Seq1 = b.seq1
+	    and Seq2 = b.seq2
+        and Roll = c.Roll
+) as toSP
 Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}' and Factory.MDivisionID = '{4}'
 and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq1.seq1, txtSeq1.seq2, Sci.Env.User.Keyword)); // 
 
