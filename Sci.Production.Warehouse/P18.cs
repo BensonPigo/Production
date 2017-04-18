@@ -1206,12 +1206,10 @@ where   Poid = '{0}'
                                      * 如果在編輯模式下，直接改 Grid
                                      * 非編輯模式 (Confirm) 必須用 Update 才能顯示正確的資料
                                      **/
-                                    if (this.EditMode == true)
-                                    {
-                                        row["Roll"] = dt.Rows[0]["Roll"];
-                                        row["Dyelot"] = dt.Rows[0]["Dyelot"];
-                                    }
-                                    else
+                                    row["Roll"] = dt.Rows[0]["Roll"];
+                                    row["Dyelot"] = dt.Rows[0]["Dyelot"];
+
+                                    if (this.EditMode != true)
                                     {
                                         result = DBProxy.Current.Execute(null, string.Format(@"
 Update TD
