@@ -1191,7 +1191,7 @@ left join AirPP a WITH (NOLOCK) on p.OrderID = a.OrderID and p.OrderShipmodeSeq 
         private void textBox7_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             DataTable dt;
-            string sqlCmd = string.Format(@"select fwd.WhseNo,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
+            string sqlCmd = string.Format(@"select fwd.WhseNo,fwd.address,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
 where fw.ID = fwd.ID
 and fw.BrandID = '{0}'
 and fw.Forwarder = '{1}'
@@ -1199,7 +1199,7 @@ and fw.ShipModeID = '{2}'
 order by fwd.WhseNo", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(CurrentMaintain["Forwarder"]), MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "WhseNo", "50", MyUtility.Convert.GetString(textBox7.Text));
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "WhseNo,address", "20,20", MyUtility.Convert.GetString(textBox7.Text));
 
             DialogResult result1 = item.ShowDialog();
             if (result1 == DialogResult.Cancel) { return; }
