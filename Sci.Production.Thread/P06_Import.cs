@@ -116,7 +116,7 @@ namespace Sci.Production.Thread
         private void button1_Click(object sender, EventArgs e)
         {
             grid1.ValidateControl();
-            if (gridTable.Rows.Count == 0) return;
+            if (MyUtility.Check.Empty(gridTable) || gridTable.Rows.Count == 0) return;
 
             DataRow[] dr2 = gridTable.Select("Sel= 1");
             if (dr2.Length > 0)
