@@ -462,8 +462,12 @@ order by a.seq1,a.seq2,a.Refno "
       
         private void modifyToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(detailgrid) || detailgrid.RowCount == 0)
+            {
+                return;
+            } 
             string currentID = this.CurrentDetailData["ID"].ToString();
-            var dr = this.CurrentDetailData; if (null == dr) return;
+            var dr = this.CurrentDetailData; 
             var frm = new Sci.Production.Quality.P03_Crocking(IsSupportEdit, CurrentDetailData["ID"].ToString(),null,null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
@@ -486,8 +490,12 @@ order by a.seq1,a.seq2,a.Refno "
 
         private void modifyHeatTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(detailgrid) || detailgrid.RowCount == 0)
+            {
+                return;
+            } 
             string currentID = this.CurrentDetailData["ID"].ToString();
-            var dr = this.CurrentDetailData; if (null == dr) return;
+            var dr = this.CurrentDetailData; 
             var frm = new Sci.Production.Quality.P03_Heat(IsSupportEdit, CurrentDetailData["ID"].ToString(),null,null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
@@ -511,8 +519,12 @@ order by a.seq1,a.seq2,a.Refno "
 
         private void modifyWashTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(detailgrid) || detailgrid.RowCount == 0)
+            {
+                return;
+            } 
             string currentID = this.CurrentDetailData["ID"].ToString();
-            var dr = this.CurrentDetailData; if (null == dr) return;
+            var dr = this.CurrentDetailData;
             var frm = new Sci.Production.Quality.P03_Wash(IsSupportEdit, CurrentDetailData["ID"].ToString(),null,null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
