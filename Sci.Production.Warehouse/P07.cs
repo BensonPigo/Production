@@ -416,7 +416,7 @@ where e.PoID ='{0}' and e.id = '{1}'", CurrentDetailData["poid"], CurrentMaintai
                     CurrentDetailData["pounit"] = x[0]["pounit"];
                     CurrentDetailData["stockunit"] = x[0]["stockunit"];
                     CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
-                    CurrentDetailData["shipqty"] = 0m;
+                    //CurrentDetailData["shipqty"] = 0m;
                     CurrentDetailData["Actualqty"] = 0m;
                     CurrentDetailData.EndEdit();
                 }
@@ -488,7 +488,7 @@ where b.id = '{0}' and b.seq1 ='{1}'and b.seq2 = '{2}'", CurrentDetailData["poid
                                 CurrentDetailData["seq2"] = seq[1];
                                 CurrentDetailData["pounit"] = dr["pounit"];
                                 CurrentDetailData["fabrictype"] = dr["fabrictype"];
-                                CurrentDetailData["shipqty"] = 0m;
+                                //CurrentDetailData["shipqty"] = 0m;
                                 CurrentDetailData["Actualqty"] = 0m;
                             }
                         }
