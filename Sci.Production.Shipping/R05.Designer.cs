@@ -119,7 +119,7 @@
             // txtsubcon1
             // 
             this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = false;
+            this.txtsubcon1.IsIncludeJunk = true;
             this.txtsubcon1.Location = new System.Drawing.Point(78, 84);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
