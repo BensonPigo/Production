@@ -117,6 +117,8 @@ order by s.Refno, s.ThreadColorID, s.StockQty, s.[Desc]
         private void btnImport_Click(object sender, EventArgs e)
         {
             grid1.ValidateControl();
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dt)) return;
             DataRow[] dataRow = this.grid1.GetTable().Select("Selected = 1");
             foreach (DataRow dr in dataRow)
             {

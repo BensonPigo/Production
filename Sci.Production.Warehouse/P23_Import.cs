@@ -360,6 +360,7 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
             grid_ftyDetail.ValidateControl();
             grid_ftyDetail.EndEdit();
 
+            if (MyUtility.Check.Empty(dsTmp)) return;
             DataRow[] drs;
             DataTable dt = dsTmp.Tables["TaipeiInput"];
             if (cb_return.CheckState == CheckState.Checked)

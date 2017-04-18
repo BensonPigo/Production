@@ -331,6 +331,7 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
             grid_ftyDetail.EndEdit();
 
             DataRow[] drs;
+            if (MyUtility.Check.Empty(dsTmp)) return;
             DataTable dt = dsTmp.Tables["TaipeiInput"];
             if (cb_return.CheckState == CheckState.Checked)
                 drs = dt.Select("taipei_qty <= accu_qty");
