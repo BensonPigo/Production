@@ -44,13 +44,22 @@ namespace Sci.Production.Warehouse
                 txtTransferOutID.Focus();
                 return;
             }
-            strSQLCmd.Append(string.Format(@"select 0 as selected,null as ukey,'' as id
-,b.POID,b.seq1,b.seq2
-,concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) as seq
-,b.Roll,b.Dyelot,b.StockType,b.Qty 
-,dbo.getmtldesc(b.poid,b.seq1,b.seq2,2,0) [description]
-,'' location
-,psd.StockUnit
+            strSQLCmd.Append(string.Format(@"
+select  0 as selected
+        , null as ukey
+        , '' as id
+        , b.POID
+        , b.seq1
+        , b.seq2
+        , concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) as seq
+        , b.Roll
+        , b.Dyelot
+        , b.StockType
+        , b.Qty 
+        , dbo.getmtldesc(b.poid,b.seq1,b.seq2,2,0) [description]
+        , '' location
+        , psd.StockUnit
+        , pds.FabricType
 from TransferOut a WITH (NOLOCK) 
 inner join TransferOut_Detail b WITH (NOLOCK) on b.id = a.id
 inner join PO_Supp_Detail psd WITH (NOLOCK) on b.POID = psd.id and b.Seq1 = psd.Seq1 and b.Seq2 = psd.Seq2
