@@ -66,7 +66,7 @@ iseditingreadonly: true)
                 {
                     if (((bool)this.grid1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))
                     {
-                        //thisRow["total_qty"] = 0.00;
+                        thisRow["total_qty"] = DBNull.Value;
                         foreach (DataRow dr in thisRow.GetChildRows("rel1"))
                         {
                             dr["selected"] = false;
@@ -91,7 +91,16 @@ iseditingreadonly: true)
                     DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
                     DataRow currentrow = grid2.GetDataRow(grid2.GetSelectedRowIndex());
                     currentrow["qty"] = e.FormattedValue;
-                    currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
+                    decimal total_qty = curentgridrowChild.Sum(row => (decimal)row["qty"]);
+                    if (total_qty > 0)
+                    {
+                        currentrow.GetParentRow("rel1")["total_qty"] = total_qty;
+                    }
+                    else
+                    {
+                        currentrow.GetParentRow("rel1")["total_qty"] = DBNull.Value;
+                    }
+                    //currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
                     if (Convert.ToDecimal(e.FormattedValue) > 0)
                     {
                         currentrow["selected"] = true;
@@ -176,7 +185,15 @@ iseditingreadonly: true)
                     DataRow thisRow = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
                     DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
                     DataRow currentrow = grid2.GetDataRow(grid2.GetSelectedRowIndex());
-                    currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
+                    decimal total_qty =curentgridrowChild.Sum(row => (decimal)row["qty"]);
+                    if (total_qty > 0)
+                    {
+                        currentrow.GetParentRow("rel1")["total_qty"] = total_qty;
+                    }
+                    else {
+                        currentrow.GetParentRow("rel1")["total_qty"] = DBNull.Value;
+                    }
+                    //currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
                     currentrow.EndEdit();
                 }
             };
