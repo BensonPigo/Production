@@ -37,6 +37,8 @@
             this.label9 = new Sci.Win.UI.Label();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
+            this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
             this.dateRange2 = new Sci.Win.UI.DateRange();
             this.dateRange1 = new Sci.Win.UI.DateRange();
             this.label8 = new Sci.Win.UI.Label();
@@ -48,8 +50,6 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
-            this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -180,6 +180,28 @@
             this.comboBox1.TabIndex = 9;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
+            // txtsubcon1
+            // 
+            this.txtsubcon1.DisplayBox1Binding = "";
+            this.txtsubcon1.IsIncludeJunk = true;
+            this.txtsubcon1.Location = new System.Drawing.Point(114, 205);
+            this.txtsubcon1.Name = "txtsubcon1";
+            this.txtsubcon1.Size = new System.Drawing.Size(214, 23);
+            this.txtsubcon1.TabIndex = 8;
+            this.txtsubcon1.TextBox1Binding = "";
+            // 
+            // txtartworktype_fty1
+            // 
+            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
+            this.txtartworktype_fty1.cClassify = "\'P\'";
+            this.txtartworktype_fty1.cSubprocess = "";
+            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtartworktype_fty1.Location = new System.Drawing.Point(114, 168);
+            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
+            this.txtartworktype_fty1.Size = new System.Drawing.Size(153, 23);
+            this.txtartworktype_fty1.TabIndex = 7;
+            this.txtartworktype_fty1.TextChanged += new System.EventHandler(this.txtartworktype_fty1_TextChanged);
+            // 
             // dateRange2
             // 
             this.dateRange2.IsRequired = false;
@@ -279,28 +301,6 @@
             this.checkBox1.Text = "Shipping Mark";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // txtsubcon1
-            // 
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(114, 205);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(214, 23);
-            this.txtsubcon1.TabIndex = 8;
-            this.txtsubcon1.TextBox1Binding = "";
-            // 
-            // txtartworktype_fty1
-            // 
-            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_fty1.cClassify = "\'P\'";
-            this.txtartworktype_fty1.cSubprocess = "";
-            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_fty1.Location = new System.Drawing.Point(114, 168);
-            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
-            this.txtartworktype_fty1.Size = new System.Drawing.Size(153, 23);
-            this.txtartworktype_fty1.TabIndex = 7;
-            this.txtartworktype_fty1.TextChanged += new System.EventHandler(this.txtartworktype_fty1_TextChanged);
             // 
             // R26
             // 
