@@ -174,7 +174,7 @@ where (od.Qty-isnull(pd.PulloutQty,0)) > 0 and isnull(fd.Price,-1) = 0");
             this.grid1.ValidateControl();
             listControlBindingSource1.EndEdit();
             DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
-            if (gridData.Rows.Count == 0)
+            if (MyUtility.Check.Empty(gridData)|| gridData.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No data!");
                 return;
