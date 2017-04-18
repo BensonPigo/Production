@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.labelCode = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.displayCode = new Sci.Win.UI.DisplayBox();
+            this.editDescription = new Sci.Win.UI.EditBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,11 +47,11 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.displayBox1);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.editDescription);
+            this.detailcont.Controls.Add(this.displayCode);
+            this.detailcont.Controls.Add(this.labelDescription);
+            this.detailcont.Controls.Add(this.labelCode);
             this.detailcont.Size = new System.Drawing.Size(830, 357);
             // 
             // detailbtm
@@ -60,7 +60,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(676, 395);
+            this.browse.Size = new System.Drawing.Size(830, 395);
             // 
             // tabs
             // 
@@ -79,56 +79,56 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelCode
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(35, 28);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Code";
+            this.labelCode.Lines = 0;
+            this.labelCode.Location = new System.Drawing.Point(35, 28);
+            this.labelCode.Name = "labelCode";
+            this.labelCode.Size = new System.Drawing.Size(75, 23);
+            this.labelCode.TabIndex = 0;
+            this.labelCode.Text = "Code";
             // 
-            // label4
+            // labelDescription
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(35, 68);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(35, 68);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.TabIndex = 1;
+            this.labelDescription.Text = "Description";
             // 
-            // displayBox1
+            // displayCode
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(114, 28);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(60, 23);
-            this.displayBox1.TabIndex = 2;
+            this.displayCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCode.Location = new System.Drawing.Point(114, 28);
+            this.displayCode.Name = "displayCode";
+            this.displayCode.Size = new System.Drawing.Size(60, 23);
+            this.displayCode.TabIndex = 2;
             // 
-            // editBox1
+            // editDescription
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Name", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(114, 68);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(481, 50);
-            this.editBox1.TabIndex = 3;
+            this.editDescription.BackColor = System.Drawing.Color.White;
+            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Name", true));
+            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editDescription.Location = new System.Drawing.Point(114, 68);
+            this.editDescription.Multiline = true;
+            this.editDescription.Name = "editDescription";
+            this.editDescription.Size = new System.Drawing.Size(481, 50);
+            this.editDescription.TabIndex = 3;
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(370, 28);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 4;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(370, 28);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 4;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
             // B02
             // 
@@ -158,10 +158,10 @@
 
         #endregion
 
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.EditBox editDescription;
+        private Win.UI.DisplayBox displayCode;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelCode;
     }
 }

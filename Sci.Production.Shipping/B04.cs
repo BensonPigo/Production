@@ -16,7 +16,7 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "C,CBM,G,G.W.,,Number of Deliver Sheets");
+            MyUtility.Tool.SetupCombox(comboSharebase, 2, 1, "C,CBM,G,G.W.,,Number of Deliver Sheets");
         }
 
         protected override void OnDetailEntered()
@@ -28,11 +28,11 @@ namespace Sci.Production.Shipping
             DualResult selectResult = DBProxy.Current.Select("Finance", selectCommand, out AccountNoTable);
             if (AccountNoTable != null && AccountNoTable.Rows.Count > 0)
             {
-                this.displayBox2.Text = MyUtility.Convert.GetString(AccountNoTable.Rows[0]["Name"]);
+                this.displayAccountName.Text = MyUtility.Convert.GetString(AccountNoTable.Rows[0]["Name"]);
             }
             else
             {
-                this.displayBox2.Text = "";
+                this.displayAccountName.Text = "";
             }
         }
     }

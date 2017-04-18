@@ -23,8 +23,8 @@ namespace Sci.Production.Shipping
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            reviseDate1 = MyUtility.Check.Empty(dateRange1.Value1) ? "" : Convert.ToDateTime(dateRange1.Value1).ToString("d");
-            reviseDate2 = MyUtility.Check.Empty(dateRange1.Value2) ? "" : Convert.ToDateTime(dateRange1.Value2).ToString("d");
+            reviseDate1 = MyUtility.Check.Empty(dateReviseDate.Value1) ? "" : Convert.ToDateTime(dateReviseDate.Value1).ToString("d");
+            reviseDate2 = MyUtility.Check.Empty(dateReviseDate.Value2) ? "" : Convert.ToDateTime(dateReviseDate.Value2).ToString("d");
 
             return base.ValidateInput();
         }

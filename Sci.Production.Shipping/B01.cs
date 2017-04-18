@@ -35,21 +35,21 @@ namespace Sci.Production.Shipping
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("< Brand > can not be empty!");
-                txtbrand1.Focus();
+                txtbrand.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Ship Mode > can not be empty!");
-                txtshipmode1.Focus();
+                txtShipMode.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Forwarder"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Forwarder > can not be empty!");
-                this.txtsubcon1.Focus();
+                this.txtubconForwarder.Focus();
                 return false;
             }
 

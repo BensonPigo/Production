@@ -18,8 +18,8 @@ namespace Sci.Production.Shipping
         {
             InitializeComponent();
             this.motherData = data;
-            this.displayBox1.Text = MyUtility.Convert.GetString(motherData["ID"]);
-            this.editBox1.Text = MyUtility.Convert.GetString(motherData["Description"]);
+            this.displayCode.Text = MyUtility.Convert.GetString(motherData["ID"]);
+            this.editDescription.Text = MyUtility.Convert.GetString(motherData["Description"]);
         }
 
         protected override void OnFormLoaded()
@@ -32,9 +32,9 @@ namespace Sci.Production.Shipping
             bindingSource1.DataSource = selectDataTable;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridPaymentHistory.IsEditingReadOnly = false;
+            this.gridPaymentHistory.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridPaymentHistory)
                  .Date("Cdate",header:"A/P Date")
                  .Text("ID", header: "AP#", width: Widths.AnsiChars(15))
                  .Numeric("Qty",header:"Q'ty",decimal_places:4)

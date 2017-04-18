@@ -28,21 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
-            this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.txtubconForwarder = new Sci.Production.Class.txtsubcon();
+            this.txtShipMode = new Sci.Production.Class.txtshipmode();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.labelForwarder = new Sci.Win.UI.Label();
+            this.labelShipMode = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.editAddress = new Sci.Win.UI.EditBox();
+            this.txtMobile = new Sci.Win.UI.TextBox();
+            this.txtTel = new Sci.Win.UI.TextBox();
+            this.txtContact = new Sci.Win.UI.TextBox();
+            this.labelAddress = new Sci.Win.UI.Label();
+            this.labelMobile = new Sci.Win.UI.Label();
+            this.labelTel = new Sci.Win.UI.Label();
+            this.labelContact = new Sci.Win.UI.Label();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -59,38 +59,38 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.checkBox1);
-            this.masterpanel.Controls.Add(this.editBox1);
-            this.masterpanel.Controls.Add(this.textBox4);
-            this.masterpanel.Controls.Add(this.textBox3);
-            this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.label10);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.txtsubcon1);
-            this.masterpanel.Controls.Add(this.txtshipmode1);
-            this.masterpanel.Controls.Add(this.txtbrand1);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.checkJunk);
+            this.masterpanel.Controls.Add(this.editAddress);
+            this.masterpanel.Controls.Add(this.txtMobile);
+            this.masterpanel.Controls.Add(this.txtTel);
+            this.masterpanel.Controls.Add(this.txtContact);
+            this.masterpanel.Controls.Add(this.labelAddress);
+            this.masterpanel.Controls.Add(this.labelMobile);
+            this.masterpanel.Controls.Add(this.labelTel);
+            this.masterpanel.Controls.Add(this.labelContact);
+            this.masterpanel.Controls.Add(this.txtubconForwarder);
+            this.masterpanel.Controls.Add(this.txtShipMode);
+            this.masterpanel.Controls.Add(this.txtbrand);
+            this.masterpanel.Controls.Add(this.labelForwarder);
+            this.masterpanel.Controls.Add(this.labelShipMode);
+            this.masterpanel.Controls.Add(this.labelBrand);
             this.masterpanel.Size = new System.Drawing.Size(909, 183);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtbrand1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtshipmode1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtsubcon1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelShipMode, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelForwarder, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtbrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtShipMode, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtubconForwarder, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelContact, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTel, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelMobile, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelAddress, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtContact, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtTel, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtMobile, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editAddress, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkJunk, 0);
             // 
             // detailpanel
             // 
@@ -111,15 +111,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(909, 429);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(903, 383);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(903, 40);
             // 
             // detail
             // 
@@ -136,7 +136,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(751, 429);
+            this.browse.Size = new System.Drawing.Size(909, 429);
             // 
             // tabs
             // 
@@ -155,158 +155,158 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(422, 13);
             // 
-            // txtsubcon1
+            // txtubconForwarder
             // 
-            this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(81, 41);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
-            this.txtsubcon1.TabIndex = 2;
-            this.txtsubcon1.TextBox1Binding = "";
+            this.txtubconForwarder.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
+            this.txtubconForwarder.DisplayBox1Binding = "";
+            this.txtubconForwarder.IsIncludeJunk = false;
+            this.txtubconForwarder.Location = new System.Drawing.Point(81, 41);
+            this.txtubconForwarder.Name = "txtubconForwarder";
+            this.txtubconForwarder.Size = new System.Drawing.Size(159, 23);
+            this.txtubconForwarder.TabIndex = 2;
+            this.txtubconForwarder.TextBox1Binding = "";
             // 
-            // txtshipmode1
+            // txtShipMode
             // 
-            this.txtshipmode1.BackColor = System.Drawing.Color.White;
-            this.txtshipmode1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
-            this.txtshipmode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshipmode1.FormattingEnabled = true;
-            this.txtshipmode1.IsSupportUnselect = true;
-            this.txtshipmode1.Location = new System.Drawing.Point(499, 9);
-            this.txtshipmode1.Name = "txtshipmode1";
-            this.txtshipmode1.Size = new System.Drawing.Size(121, 24);
-            this.txtshipmode1.TabIndex = 1;
-            this.txtshipmode1.UseFunction = null;
+            this.txtShipMode.BackColor = System.Drawing.Color.White;
+            this.txtShipMode.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
+            this.txtShipMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShipMode.FormattingEnabled = true;
+            this.txtShipMode.IsSupportUnselect = true;
+            this.txtShipMode.Location = new System.Drawing.Point(499, 9);
+            this.txtShipMode.Name = "txtShipMode";
+            this.txtShipMode.Size = new System.Drawing.Size(121, 24);
+            this.txtShipMode.TabIndex = 1;
+            this.txtShipMode.UseFunction = null;
             // 
-            // txtbrand1
+            // txtbrand
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(81, 9);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand1.TabIndex = 0;
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(81, 9);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand.TabIndex = 0;
             // 
-            // label5
+            // labelForwarder
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(7, 41);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(70, 23);
-            this.label5.TabIndex = 13;
-            this.label5.Text = "Forwarder";
+            this.labelForwarder.Lines = 0;
+            this.labelForwarder.Location = new System.Drawing.Point(7, 41);
+            this.labelForwarder.Name = "labelForwarder";
+            this.labelForwarder.Size = new System.Drawing.Size(70, 23);
+            this.labelForwarder.TabIndex = 13;
+            this.labelForwarder.Text = "Forwarder";
             // 
-            // label4
+            // labelShipMode
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(422, 9);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(73, 23);
-            this.label4.TabIndex = 12;
-            this.label4.Text = "Ship Mode";
+            this.labelShipMode.Lines = 0;
+            this.labelShipMode.Location = new System.Drawing.Point(422, 9);
+            this.labelShipMode.Name = "labelShipMode";
+            this.labelShipMode.Size = new System.Drawing.Size(73, 23);
+            this.labelShipMode.TabIndex = 12;
+            this.labelShipMode.Text = "Ship Mode";
             // 
-            // label3
+            // labelBrand
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(7, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(70, 23);
-            this.label3.TabIndex = 11;
-            this.label3.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(7, 9);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(70, 23);
+            this.labelBrand.TabIndex = 11;
+            this.labelBrand.Text = "Brand";
             // 
-            // editBox1
+            // editAddress
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Address", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(81, 105);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(301, 73);
-            this.editBox1.TabIndex = 6;
+            this.editAddress.BackColor = System.Drawing.Color.White;
+            this.editAddress.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Address", true));
+            this.editAddress.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editAddress.Location = new System.Drawing.Point(81, 105);
+            this.editAddress.Multiline = true;
+            this.editAddress.Name = "editAddress";
+            this.editAddress.Size = new System.Drawing.Size(301, 73);
+            this.editAddress.TabIndex = 6;
             // 
-            // textBox4
+            // txtMobile
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Mobile", true));
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(499, 73);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(200, 23);
-            this.textBox4.TabIndex = 5;
+            this.txtMobile.BackColor = System.Drawing.Color.White;
+            this.txtMobile.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtMobile.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Mobile", true));
+            this.txtMobile.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMobile.Location = new System.Drawing.Point(499, 73);
+            this.txtMobile.Name = "txtMobile";
+            this.txtMobile.Size = new System.Drawing.Size(200, 23);
+            this.txtMobile.TabIndex = 5;
             // 
-            // textBox3
+            // txtTel
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Tel", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(81, 73);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(200, 23);
-            this.textBox3.TabIndex = 4;
+            this.txtTel.BackColor = System.Drawing.Color.White;
+            this.txtTel.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtTel.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Tel", true));
+            this.txtTel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTel.Location = new System.Drawing.Point(81, 73);
+            this.txtTel.Name = "txtTel";
+            this.txtTel.Size = new System.Drawing.Size(200, 23);
+            this.txtTel.TabIndex = 4;
             // 
-            // textBox2
+            // txtContact
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Contact", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(499, 41);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(200, 23);
-            this.textBox2.TabIndex = 3;
+            this.txtContact.BackColor = System.Drawing.Color.White;
+            this.txtContact.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtContact.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Contact", true));
+            this.txtContact.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtContact.Location = new System.Drawing.Point(499, 41);
+            this.txtContact.Name = "txtContact";
+            this.txtContact.Size = new System.Drawing.Size(200, 23);
+            this.txtContact.TabIndex = 3;
             // 
-            // label10
+            // labelAddress
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(7, 105);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(70, 23);
-            this.label10.TabIndex = 20;
-            this.label10.Text = "Address";
+            this.labelAddress.Lines = 0;
+            this.labelAddress.Location = new System.Drawing.Point(7, 105);
+            this.labelAddress.Name = "labelAddress";
+            this.labelAddress.Size = new System.Drawing.Size(70, 23);
+            this.labelAddress.TabIndex = 20;
+            this.labelAddress.Text = "Address";
             // 
-            // label9
+            // labelMobile
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(422, 73);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(73, 23);
-            this.label9.TabIndex = 19;
-            this.label9.Text = "Mobile";
+            this.labelMobile.Lines = 0;
+            this.labelMobile.Location = new System.Drawing.Point(422, 73);
+            this.labelMobile.Name = "labelMobile";
+            this.labelMobile.Size = new System.Drawing.Size(73, 23);
+            this.labelMobile.TabIndex = 19;
+            this.labelMobile.Text = "Mobile";
             // 
-            // label8
+            // labelTel
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(7, 73);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(70, 23);
-            this.label8.TabIndex = 18;
-            this.label8.Text = "Tel";
+            this.labelTel.Lines = 0;
+            this.labelTel.Location = new System.Drawing.Point(7, 73);
+            this.labelTel.Name = "labelTel";
+            this.labelTel.Size = new System.Drawing.Size(70, 23);
+            this.labelTel.TabIndex = 18;
+            this.labelTel.Text = "Tel";
             // 
-            // label7
+            // labelContact
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(422, 41);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(73, 23);
-            this.label7.TabIndex = 17;
-            this.label7.Text = "Contact";
+            this.labelContact.Lines = 0;
+            this.labelContact.Location = new System.Drawing.Point(422, 41);
+            this.labelContact.Name = "labelContact";
+            this.labelContact.Size = new System.Drawing.Size(73, 23);
+            this.labelContact.TabIndex = 17;
+            this.labelContact.Text = "Contact";
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(303, 9);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 21;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(303, 9);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 21;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
             // B01
             // 
@@ -346,20 +346,20 @@
 
         #endregion
 
-        private Class.txtsubcon txtsubcon1;
-        private Class.txtshipmode txtshipmode1;
-        private Class.txtbrand txtbrand1;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.TextBox textBox4;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.CheckBox checkBox1;
+        private Class.txtsubcon txtubconForwarder;
+        private Class.txtshipmode txtShipMode;
+        private Class.txtbrand txtbrand;
+        private Win.UI.Label labelForwarder;
+        private Win.UI.Label labelShipMode;
+        private Win.UI.Label labelBrand;
+        private Win.UI.EditBox editAddress;
+        private Win.UI.TextBox txtMobile;
+        private Win.UI.TextBox txtTel;
+        private Win.UI.TextBox txtContact;
+        private Win.UI.Label labelAddress;
+        private Win.UI.Label labelMobile;
+        private Win.UI.Label labelTel;
+        private Win.UI.Label labelContact;
+        private Win.UI.CheckBox checkJunk;
     }
 }

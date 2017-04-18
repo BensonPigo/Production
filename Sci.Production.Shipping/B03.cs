@@ -23,35 +23,35 @@ namespace Sci.Production.Shipping
             //按鈕Canvass Record變色
             if (MyUtility.Check.Seek(MyUtility.Convert.GetString(CurrentMaintain["ID"]), "ShipExpense_CanVass", "ID"))
             {
-                this.button1.ForeColor = Color.Blue;
+                this.btnCanvassRecord.ForeColor = Color.Blue;
             }
             else
             {
-                this.button1.ForeColor = Color.Black;
+                this.btnCanvassRecord.ForeColor = Color.Black;
             }
 
             //按鈕Payment History變色
             if (MyUtility.Check.Seek(MyUtility.Convert.GetString(CurrentMaintain["ID"]), "ShippingAP_Detail", "ShipExpenseID"))
             {
-                this.button2.ForeColor = Color.Blue;
+                this.btnPaymentHistory.ForeColor = Color.Blue;
             }
             else
             {
-                this.button2.ForeColor = Color.Black;
+                this.btnPaymentHistory.ForeColor = Color.Black;
             }
         }
 
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.txtsubcon1.TextBox1.ReadOnly = true;
+            this.txtsubconSupplier.TextBox1.ReadOnly = true;
         }
 
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
             this.txtCode.ReadOnly = true;
-            this.txtsubcon1.TextBox1.ReadOnly = true;
+            this.txtsubconSupplier.TextBox1.ReadOnly = true;
         }
 
         protected override void ClickCopyAfter()
@@ -62,7 +62,7 @@ namespace Sci.Production.Shipping
             CurrentMaintain["CurrencyID"] = "";
             CurrentMaintain["Price"] = 0;
             CurrentMaintain["CanvassDate"] = DBNull.Value;
-            this.txtsubcon1.TextBox1.ReadOnly = true;
+            this.txtsubconSupplier.TextBox1.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()
@@ -77,14 +77,14 @@ namespace Sci.Production.Shipping
             if (string.IsNullOrWhiteSpace(MyUtility.Convert.GetString(CurrentMaintain["Description"])))
             {
                 MyUtility.Msg.WarningBox("< Description > can not be empty!");
-                this.editBox1.Focus();
+                this.editDescription.Focus();
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(MyUtility.Convert.GetString(CurrentMaintain["AccountID"])))
             {
                 MyUtility.Msg.WarningBox("< Account No > can not be empty!");
-                this.textBox2.Focus();
+                this.txtAccountNo.Focus();
                 return false;
             }
 

@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
+            this.labelReviseDate = new Sci.Win.UI.Label();
+            this.dateReviseDate = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
@@ -44,37 +44,36 @@
             // 
             this.close.Location = new System.Drawing.Point(398, 84);
             // 
-            // label1
+            // labelReviseDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 48);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Revise Date";
+            this.labelReviseDate.Lines = 0;
+            this.labelReviseDate.Location = new System.Drawing.Point(13, 48);
+            this.labelReviseDate.Name = "labelReviseDate";
+            this.labelReviseDate.Size = new System.Drawing.Size(82, 23);
+            this.labelReviseDate.TabIndex = 94;
+            this.labelReviseDate.Text = "Revise Date";
             // 
-            // dateRange1
+            // dateReviseDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(99, 48);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 95;
+            this.dateReviseDate.IsRequired = false;
+            this.dateReviseDate.Location = new System.Drawing.Point(99, 48);
+            this.dateReviseDate.Name = "dateReviseDate";
+            this.dateReviseDate.Size = new System.Drawing.Size(280, 23);
+            this.dateReviseDate.TabIndex = 95;
             // 
             // B03_PrintReviseList
             // 
             this.ClientSize = new System.Drawing.Size(490, 159);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.label1);
-            this.EditMode = true;
+            this.Controls.Add(this.dateReviseDate);
+            this.Controls.Add(this.labelReviseDate);
             this.IsSupportToPrint = false;
             this.Name = "B03_PrintReviseList";
             this.Text = "Print Revise List";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
+            this.Controls.SetChildIndex(this.labelReviseDate, 0);
+            this.Controls.SetChildIndex(this.dateReviseDate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -82,7 +81,7 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.DateRange dateRange1;
+        private Win.UI.Label labelReviseDate;
+        private Win.UI.DateRange dateReviseDate;
     }
 }

@@ -29,101 +29,101 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
+            this.labelCode = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.displayCode = new Sci.Win.UI.DisplayBox();
+            this.editDescription = new Sci.Win.UI.EditBox();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.button1 = new Sci.Win.UI.Button();
+            this.gridPaymentHistory = new Sci.Win.UI.Grid();
+            this.btnClose = new Sci.Win.UI.Button();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.panel4 = new Sci.Win.UI.Panel();
             this.panel5 = new Sci.Win.UI.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPaymentHistory)).BeginInit();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
             this.SuspendLayout();
             // 
-            // label1
+            // labelCode
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(3, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Code";
+            this.labelCode.Lines = 0;
+            this.labelCode.Location = new System.Drawing.Point(3, 9);
+            this.labelCode.Name = "labelCode";
+            this.labelCode.Size = new System.Drawing.Size(75, 23);
+            this.labelCode.TabIndex = 0;
+            this.labelCode.Text = "Code";
             // 
-            // label2
+            // labelDescription
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(3, 36);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(3, 36);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.TabIndex = 1;
+            this.labelDescription.Text = "Description";
             // 
-            // displayBox1
+            // displayCode
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(82, 9);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(140, 23);
-            this.displayBox1.TabIndex = 2;
+            this.displayCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCode.Location = new System.Drawing.Point(82, 9);
+            this.displayCode.Name = "displayCode";
+            this.displayCode.Size = new System.Drawing.Size(140, 23);
+            this.displayCode.TabIndex = 2;
             // 
-            // editBox1
+            // editDescription
             // 
-            this.editBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editBox1.IsSupportEditMode = false;
-            this.editBox1.Location = new System.Drawing.Point(82, 36);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.ReadOnly = true;
-            this.editBox1.Size = new System.Drawing.Size(486, 43);
-            this.editBox1.TabIndex = 3;
+            this.editDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editDescription.IsSupportEditMode = false;
+            this.editDescription.Location = new System.Drawing.Point(82, 36);
+            this.editDescription.Multiline = true;
+            this.editDescription.Name = "editDescription";
+            this.editDescription.ReadOnly = true;
+            this.editDescription.Size = new System.Drawing.Size(486, 43);
+            this.editDescription.TabIndex = 3;
             // 
-            // grid1
+            // gridPaymentHistory
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.bindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.ReadOnly = true;
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(574, 293);
-            this.grid1.TabIndex = 4;
-            this.grid1.TabStop = false;
+            this.gridPaymentHistory.AllowUserToAddRows = false;
+            this.gridPaymentHistory.AllowUserToDeleteRows = false;
+            this.gridPaymentHistory.AllowUserToResizeRows = false;
+            this.gridPaymentHistory.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridPaymentHistory.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridPaymentHistory.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridPaymentHistory.DataSource = this.bindingSource1;
+            this.gridPaymentHistory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridPaymentHistory.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridPaymentHistory.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridPaymentHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridPaymentHistory.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridPaymentHistory.Location = new System.Drawing.Point(0, 0);
+            this.gridPaymentHistory.Name = "gridPaymentHistory";
+            this.gridPaymentHistory.ReadOnly = true;
+            this.gridPaymentHistory.RowHeadersVisible = false;
+            this.gridPaymentHistory.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridPaymentHistory.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridPaymentHistory.RowTemplate.Height = 24;
+            this.gridPaymentHistory.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridPaymentHistory.Size = new System.Drawing.Size(574, 293);
+            this.gridPaymentHistory.TabIndex = 4;
+            this.gridPaymentHistory.TabStop = false;
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(488, 6);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnClose.Location = new System.Drawing.Point(488, 6);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 5;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
             // 
             // panel1
             // 
@@ -143,10 +143,10 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.label1);
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.displayBox1);
-            this.panel3.Controls.Add(this.editBox1);
+            this.panel3.Controls.Add(this.labelCode);
+            this.panel3.Controls.Add(this.labelDescription);
+            this.panel3.Controls.Add(this.displayCode);
+            this.panel3.Controls.Add(this.editDescription);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
@@ -155,7 +155,7 @@
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button1);
+            this.panel4.Controls.Add(this.btnClose);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 379);
             this.panel4.Name = "panel4";
@@ -164,7 +164,7 @@
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridPaymentHistory);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 86);
             this.panel5.Name = "panel5";
@@ -173,7 +173,7 @@
             // 
             // B03_PaymentHistory
             // 
-            this.CancelButton = this.button1;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(594, 423);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
@@ -183,7 +183,7 @@
             this.Name = "B03_PaymentHistory";
             this.Text = "Payment History";
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPaymentHistory)).EndInit();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
@@ -194,13 +194,13 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.EditBox editBox1;
+        private Win.UI.Label labelCode;
+        private Win.UI.Label labelDescription;
+        private Win.UI.DisplayBox displayCode;
+        private Win.UI.EditBox editDescription;
         private Win.UI.BindingSource bindingSource1;
-        private Win.UI.Grid grid1;
-        private Win.UI.Button button1;
+        private Win.UI.Grid gridPaymentHistory;
+        private Win.UI.Button btnClose;
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;

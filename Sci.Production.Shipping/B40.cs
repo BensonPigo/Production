@@ -19,8 +19,8 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "F,Fabric,A,Accessory");
-            label3.Text = "Description\r\n(Detail)";
+            MyUtility.Tool.SetupCombox(comboType, 2, 1, "F,Fabric,A,Accessory");
+            labelDescription2.Text = "Description\r\n(Detail)";
         }
 
         protected override bool ClickEditBefore()
@@ -33,11 +33,11 @@ namespace Sci.Production.Shipping
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            editBox1.ReadOnly = true;
-            comboBox1.ReadOnly = true;
-            txtunit1.TextBox1.ReadOnly = true;
-            numericBox1.ReadOnly = true;
-            checkBox1.ReadOnly = true;
+            editDescription2.ReadOnly = true;
+            comboType.ReadOnly = true;
+            txtUnitUsageUnit.TextBox1.ReadOnly = true;
+            numUsableWidth.ReadOnly = true;
+            checkJunk.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()
@@ -81,9 +81,9 @@ order by NLCode", "5,11,8", this.Text, false, ",", headercaptions: "NL Code, HSC
         //NL Code
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && textBox1.OldValue != textBox1.Text)
+            if (EditMode && txtNLCode.OldValue != txtNLCode.Text)
             {
-                if (MyUtility.Check.Empty(textBox1.Text))
+                if (MyUtility.Check.Empty(txtNLCode.Text))
                 {
                     CurrentMaintain["NLCode"] = "";
                     CurrentMaintain["HSCode"] = "";
@@ -95,9 +95,9 @@ order by NLCode", "5,11,8", this.Text, false, ",", headercaptions: "NL Code, HSC
                     if (MyUtility.Check.Seek(string.Format(@"select NLCode,HSCode,UnitID
 from VNContract_Detail WITH (NOLOCK) 
 where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-and NLCode = '{0}'", textBox1.Text), out NLCodeDate))
+and NLCode = '{0}'", txtNLCode.Text), out NLCodeDate))
                     {
-                        CurrentMaintain["NLCode"] = textBox1.Text;
+                        CurrentMaintain["NLCode"] = txtNLCode.Text;
                         CurrentMaintain["HSCode"] = NLCodeDate["HSCode"];
                         CurrentMaintain["CustomsUnit"] = NLCodeDate["UnitID"];
                     }

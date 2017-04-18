@@ -28,26 +28,26 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
+            this.labelCode = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelSupplier = new Sci.Win.UI.Label();
+            this.labelPrice = new Sci.Win.UI.Label();
+            this.labelCanvassDate = new Sci.Win.UI.Label();
+            this.labelAccountNo = new Sci.Win.UI.Label();
             this.txtCode = new Sci.Win.UI.TextBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.editDescription = new Sci.Win.UI.EditBox();
+            this.displayPrice = new Sci.Win.UI.DisplayBox();
+            this.numPrice = new Sci.Win.UI.NumericBox();
+            this.dateCanvassDate = new Sci.Win.UI.DateBox();
+            this.txtAccountNo = new Sci.Win.UI.TextBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.txtunit1 = new Sci.Production.Class.txtunit();
-            this.label1 = new Sci.Win.UI.Label();
+            this.btnCanvassRecord = new Sci.Win.UI.Button();
+            this.btnPaymentHistory = new Sci.Win.UI.Button();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtUnit = new Sci.Production.Class.txtunit();
+            this.labelUnit = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -62,26 +62,26 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Controls.Add(this.txtunit1);
-            this.detailcont.Controls.Add(this.button2);
-            this.detailcont.Controls.Add(this.button1);
+            this.detailcont.Controls.Add(this.labelUnit);
+            this.detailcont.Controls.Add(this.txtUnit);
+            this.detailcont.Controls.Add(this.btnPaymentHistory);
+            this.detailcont.Controls.Add(this.btnCanvassRecord);
             this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.dateBox1);
-            this.detailcont.Controls.Add(this.numericBox1);
-            this.detailcont.Controls.Add(this.displayBox1);
-            this.detailcont.Controls.Add(this.txtsubcon1);
-            this.detailcont.Controls.Add(this.txtbrand1);
-            this.detailcont.Controls.Add(this.editBox1);
+            this.detailcont.Controls.Add(this.txtAccountNo);
+            this.detailcont.Controls.Add(this.dateCanvassDate);
+            this.detailcont.Controls.Add(this.numPrice);
+            this.detailcont.Controls.Add(this.displayPrice);
+            this.detailcont.Controls.Add(this.txtsubconSupplier);
+            this.detailcont.Controls.Add(this.txtbrand);
+            this.detailcont.Controls.Add(this.editDescription);
             this.detailcont.Controls.Add(this.txtCode);
-            this.detailcont.Controls.Add(this.label9);
-            this.detailcont.Controls.Add(this.label8);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.labelAccountNo);
+            this.detailcont.Controls.Add(this.labelCanvassDate);
+            this.detailcont.Controls.Add(this.labelPrice);
+            this.detailcont.Controls.Add(this.labelSupplier);
+            this.detailcont.Controls.Add(this.labelBrand);
+            this.detailcont.Controls.Add(this.labelDescription);
+            this.detailcont.Controls.Add(this.labelCode);
             this.detailcont.Size = new System.Drawing.Size(828, 357);
             // 
             // detailbtm
@@ -90,7 +90,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(744, 395);
+            this.browse.Size = new System.Drawing.Size(828, 395);
             // 
             // tabs
             // 
@@ -109,68 +109,68 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelCode
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(27, 22);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(90, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Code";
+            this.labelCode.Lines = 0;
+            this.labelCode.Location = new System.Drawing.Point(27, 22);
+            this.labelCode.Name = "labelCode";
+            this.labelCode.Size = new System.Drawing.Size(90, 23);
+            this.labelCode.TabIndex = 4;
+            this.labelCode.Text = "Code";
             // 
-            // label4
+            // labelDescription
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(27, 57);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(90, 23);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(27, 57);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(90, 23);
+            this.labelDescription.TabIndex = 5;
+            this.labelDescription.Text = "Description";
             // 
-            // label5
+            // labelBrand
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(27, 120);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(90, 23);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(27, 120);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(90, 23);
+            this.labelBrand.TabIndex = 6;
+            this.labelBrand.Text = "Brand";
             // 
-            // label6
+            // labelSupplier
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(27, 187);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(90, 23);
-            this.label6.TabIndex = 7;
-            this.label6.Text = "Supplier";
+            this.labelSupplier.Lines = 0;
+            this.labelSupplier.Location = new System.Drawing.Point(27, 187);
+            this.labelSupplier.Name = "labelSupplier";
+            this.labelSupplier.Size = new System.Drawing.Size(90, 23);
+            this.labelSupplier.TabIndex = 7;
+            this.labelSupplier.Text = "Supplier";
             // 
-            // label7
+            // labelPrice
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(27, 222);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(90, 23);
-            this.label7.TabIndex = 8;
-            this.label7.Text = "Price";
+            this.labelPrice.Lines = 0;
+            this.labelPrice.Location = new System.Drawing.Point(27, 222);
+            this.labelPrice.Name = "labelPrice";
+            this.labelPrice.Size = new System.Drawing.Size(90, 23);
+            this.labelPrice.TabIndex = 8;
+            this.labelPrice.Text = "Price";
             // 
-            // label8
+            // labelCanvassDate
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(27, 257);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(90, 23);
-            this.label8.TabIndex = 9;
-            this.label8.Text = "Canvass Date";
+            this.labelCanvassDate.Lines = 0;
+            this.labelCanvassDate.Location = new System.Drawing.Point(27, 257);
+            this.labelCanvassDate.Name = "labelCanvassDate";
+            this.labelCanvassDate.Size = new System.Drawing.Size(90, 23);
+            this.labelCanvassDate.TabIndex = 9;
+            this.labelCanvassDate.Text = "Canvass Date";
             // 
-            // label9
+            // labelAccountNo
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(27, 292);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(90, 23);
-            this.label9.TabIndex = 10;
-            this.label9.Text = "Account No";
+            this.labelAccountNo.Lines = 0;
+            this.labelAccountNo.Location = new System.Drawing.Point(27, 292);
+            this.labelAccountNo.Name = "labelAccountNo";
+            this.labelAccountNo.Size = new System.Drawing.Size(90, 23);
+            this.labelAccountNo.TabIndex = 10;
+            this.labelAccountNo.Text = "Account No";
             // 
             // txtCode
             // 
@@ -183,71 +183,71 @@
             this.txtCode.TabIndex = 7;
             this.txtCode.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // editBox1
+            // editDescription
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(120, 57);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(391, 50);
-            this.editBox1.TabIndex = 0;
+            this.editDescription.BackColor = System.Drawing.Color.White;
+            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editDescription.Location = new System.Drawing.Point(120, 57);
+            this.editDescription.Multiline = true;
+            this.editDescription.Name = "editDescription";
+            this.editDescription.Size = new System.Drawing.Size(391, 50);
+            this.editDescription.TabIndex = 0;
             // 
-            // displayBox1
+            // displayPrice
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CurrencyID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(120, 222);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(40, 23);
-            this.displayBox1.TabIndex = 11;
+            this.displayPrice.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPrice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CurrencyID", true));
+            this.displayPrice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPrice.Location = new System.Drawing.Point(120, 222);
+            this.displayPrice.Name = "displayPrice";
+            this.displayPrice.Size = new System.Drawing.Size(40, 23);
+            this.displayPrice.TabIndex = 11;
             // 
-            // numericBox1
+            // numPrice
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Price", true));
-            this.numericBox1.DecimalPlaces = 4;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(161, 222);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numPrice.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numPrice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Price", true));
+            this.numPrice.DecimalPlaces = 4;
+            this.numPrice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numPrice.IsSupportEditMode = false;
+            this.numPrice.Location = new System.Drawing.Point(161, 222);
+            this.numPrice.Name = "numPrice";
+            this.numPrice.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 12;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numPrice.ReadOnly = true;
+            this.numPrice.Size = new System.Drawing.Size(100, 23);
+            this.numPrice.TabIndex = 12;
+            this.numPrice.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // dateBox1
+            // dateCanvassDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CanvassDate", true));
-            this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(120, 257);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.ReadOnly = true;
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 13;
+            this.dateCanvassDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CanvassDate", true));
+            this.dateCanvassDate.IsSupportEditMode = false;
+            this.dateCanvassDate.Location = new System.Drawing.Point(120, 257);
+            this.dateCanvassDate.Name = "dateCanvassDate";
+            this.dateCanvassDate.ReadOnly = true;
+            this.dateCanvassDate.Size = new System.Drawing.Size(130, 23);
+            this.dateCanvassDate.TabIndex = 13;
             // 
-            // textBox2
+            // txtAccountNo
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountID", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(120, 292);
-            this.textBox2.Mask = "9999-9999";
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(70, 23);
-            this.textBox2.TabIndex = 2;
-            this.textBox2.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
+            this.txtAccountNo.BackColor = System.Drawing.Color.White;
+            this.txtAccountNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountID", true));
+            this.txtAccountNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtAccountNo.Location = new System.Drawing.Point(120, 292);
+            this.txtAccountNo.Mask = "9999-9999";
+            this.txtAccountNo.Name = "txtAccountNo";
+            this.txtAccountNo.Size = new System.Drawing.Size(70, 23);
+            this.txtAccountNo.TabIndex = 2;
+            this.txtAccountNo.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             // 
             // checkBox1
             // 
@@ -261,69 +261,69 @@
             this.checkBox1.Text = "Junk";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btnCanvassRecord
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(587, 22);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(138, 30);
-            this.button1.TabIndex = 16;
-            this.button1.Text = "Canvass Record";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnCanvassRecord.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCanvassRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCanvassRecord.Location = new System.Drawing.Point(587, 22);
+            this.btnCanvassRecord.Name = "btnCanvassRecord";
+            this.btnCanvassRecord.Size = new System.Drawing.Size(138, 30);
+            this.btnCanvassRecord.TabIndex = 16;
+            this.btnCanvassRecord.Text = "Canvass Record";
+            this.btnCanvassRecord.UseVisualStyleBackColor = true;
+            this.btnCanvassRecord.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnPaymentHistory
             // 
-            this.button2.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(587, 59);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(138, 30);
-            this.button2.TabIndex = 17;
-            this.button2.Text = "Payment History";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnPaymentHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnPaymentHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnPaymentHistory.Location = new System.Drawing.Point(587, 59);
+            this.btnPaymentHistory.Name = "btnPaymentHistory";
+            this.btnPaymentHistory.Size = new System.Drawing.Size(138, 30);
+            this.btnPaymentHistory.TabIndex = 17;
+            this.btnPaymentHistory.Text = "Payment History";
+            this.btnPaymentHistory.UseVisualStyleBackColor = true;
+            this.btnPaymentHistory.Click += new System.EventHandler(this.button2_Click);
             // 
-            // txtsubcon1
+            // txtsubconSupplier
             // 
-            this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID", true));
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(120, 187);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
-            this.txtsubcon1.TabIndex = 10;
-            this.txtsubcon1.TextBox1Binding = "";
+            this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID", true));
+            this.txtsubconSupplier.DisplayBox1Binding = "";
+            this.txtsubconSupplier.IsIncludeJunk = false;
+            this.txtsubconSupplier.Location = new System.Drawing.Point(120, 187);
+            this.txtsubconSupplier.Name = "txtsubconSupplier";
+            this.txtsubconSupplier.Size = new System.Drawing.Size(159, 23);
+            this.txtsubconSupplier.TabIndex = 10;
+            this.txtsubconSupplier.TextBox1Binding = "";
             // 
-            // txtbrand1
+            // txtbrand
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(120, 118);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand1.TabIndex = 1;
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(120, 118);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand.TabIndex = 1;
             // 
-            // txtunit1
+            // txtUnit
             // 
-            this.txtunit1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "UnitID", true));
-            this.txtunit1.DisplayBox1Binding = "";
-            this.txtunit1.Location = new System.Drawing.Point(120, 154);
-            this.txtunit1.Name = "txtunit1";
-            this.txtunit1.Size = new System.Drawing.Size(320, 23);
-            this.txtunit1.TabIndex = 18;
-            this.txtunit1.TextBox1Binding = "";
+            this.txtUnit.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "UnitID", true));
+            this.txtUnit.DisplayBox1Binding = "";
+            this.txtUnit.Location = new System.Drawing.Point(120, 154);
+            this.txtUnit.Name = "txtUnit";
+            this.txtUnit.Size = new System.Drawing.Size(320, 23);
+            this.txtUnit.TabIndex = 18;
+            this.txtUnit.TextBox1Binding = "";
             // 
-            // label1
+            // labelUnit
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(27, 154);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(90, 23);
-            this.label1.TabIndex = 19;
-            this.label1.Text = "Unit";
+            this.labelUnit.Lines = 0;
+            this.labelUnit.Location = new System.Drawing.Point(27, 154);
+            this.labelUnit.Name = "labelUnit";
+            this.labelUnit.Size = new System.Drawing.Size(90, 23);
+            this.labelUnit.TabIndex = 19;
+            this.labelUnit.Text = "Unit";
             // 
             // B03
             // 
@@ -351,25 +351,25 @@
 
         #endregion
 
-        private Win.UI.TextBox textBox2;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.DisplayBox displayBox1;
-        private Class.txtsubcon txtsubcon1;
-        private Class.txtbrand txtbrand1;
-        private Win.UI.EditBox editBox1;
+        private Win.UI.TextBox txtAccountNo;
+        private Win.UI.DateBox dateCanvassDate;
+        private Win.UI.NumericBox numPrice;
+        private Win.UI.DisplayBox displayPrice;
+        private Class.txtsubcon txtsubconSupplier;
+        private Class.txtbrand txtbrand;
+        private Win.UI.EditBox editDescription;
         private Win.UI.TextBox txtCode;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
+        private Win.UI.Label labelAccountNo;
+        private Win.UI.Label labelCanvassDate;
+        private Win.UI.Label labelPrice;
+        private Win.UI.Label labelSupplier;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelCode;
+        private Win.UI.Button btnPaymentHistory;
+        private Win.UI.Button btnCanvassRecord;
         private Win.UI.CheckBox checkBox1;
-        private Win.UI.Label label1;
-        private Class.txtunit txtunit1;
+        private Win.UI.Label labelUnit;
+        private Class.txtunit txtUnit;
     }
 }

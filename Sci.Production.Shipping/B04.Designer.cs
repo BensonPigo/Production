@@ -28,16 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.labelAccountNo = new Sci.Win.UI.Label();
+            this.labelAccountName = new Sci.Win.UI.Label();
+            this.labelExpenseReason = new Sci.Win.UI.Label();
+            this.labelShippingMode = new Sci.Win.UI.Label();
+            this.labelSharebase = new Sci.Win.UI.Label();
+            this.displayAccountName = new Sci.Win.UI.DisplayBox();
+            this.displayExpenseReason = new Sci.Win.UI.DisplayBox();
+            this.displayShippingMode = new Sci.Win.UI.DisplayBox();
+            this.comboSharebase = new Sci.Win.UI.ComboBox();
+            this.txtAccountNo = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -52,16 +52,16 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.comboBox1);
-            this.detailcont.Controls.Add(this.displayBox4);
-            this.detailcont.Controls.Add(this.displayBox3);
-            this.detailcont.Controls.Add(this.displayBox2);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.txtAccountNo);
+            this.detailcont.Controls.Add(this.comboSharebase);
+            this.detailcont.Controls.Add(this.displayShippingMode);
+            this.detailcont.Controls.Add(this.displayExpenseReason);
+            this.detailcont.Controls.Add(this.displayAccountName);
+            this.detailcont.Controls.Add(this.labelSharebase);
+            this.detailcont.Controls.Add(this.labelShippingMode);
+            this.detailcont.Controls.Add(this.labelExpenseReason);
+            this.detailcont.Controls.Add(this.labelAccountName);
+            this.detailcont.Controls.Add(this.labelAccountNo);
             this.detailcont.Size = new System.Drawing.Size(823, 357);
             // 
             // detailbtm
@@ -70,7 +70,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(680, 395);
+            this.browse.Size = new System.Drawing.Size(823, 395);
             // 
             // tabs
             // 
@@ -89,102 +89,102 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelAccountNo
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(33, 30);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(115, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Account No.";
+            this.labelAccountNo.Lines = 0;
+            this.labelAccountNo.Location = new System.Drawing.Point(33, 30);
+            this.labelAccountNo.Name = "labelAccountNo";
+            this.labelAccountNo.Size = new System.Drawing.Size(115, 23);
+            this.labelAccountNo.TabIndex = 0;
+            this.labelAccountNo.Text = "Account No.";
             // 
-            // label4
+            // labelAccountName
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(33, 70);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(115, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Account Name";
+            this.labelAccountName.Lines = 0;
+            this.labelAccountName.Location = new System.Drawing.Point(33, 70);
+            this.labelAccountName.Name = "labelAccountName";
+            this.labelAccountName.Size = new System.Drawing.Size(115, 23);
+            this.labelAccountName.TabIndex = 1;
+            this.labelAccountName.Text = "Account Name";
             // 
-            // label5
+            // labelExpenseReason
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(33, 110);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(115, 23);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Expense Reason";
+            this.labelExpenseReason.Lines = 0;
+            this.labelExpenseReason.Location = new System.Drawing.Point(33, 110);
+            this.labelExpenseReason.Name = "labelExpenseReason";
+            this.labelExpenseReason.Size = new System.Drawing.Size(115, 23);
+            this.labelExpenseReason.TabIndex = 2;
+            this.labelExpenseReason.Text = "Expense Reason";
             // 
-            // label6
+            // labelShippingMode
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(33, 150);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(115, 23);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Shipping Mode";
+            this.labelShippingMode.Lines = 0;
+            this.labelShippingMode.Location = new System.Drawing.Point(33, 150);
+            this.labelShippingMode.Name = "labelShippingMode";
+            this.labelShippingMode.Size = new System.Drawing.Size(115, 23);
+            this.labelShippingMode.TabIndex = 3;
+            this.labelShippingMode.Text = "Shipping Mode";
             // 
-            // label7
+            // labelSharebase
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(33, 190);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(115, 23);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "Share base";
+            this.labelSharebase.Lines = 0;
+            this.labelSharebase.Location = new System.Drawing.Point(33, 190);
+            this.labelSharebase.Name = "labelSharebase";
+            this.labelSharebase.Size = new System.Drawing.Size(115, 23);
+            this.labelSharebase.TabIndex = 4;
+            this.labelSharebase.Text = "Share base";
             // 
-            // displayBox2
+            // displayAccountName
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(151, 70);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(200, 23);
-            this.displayBox2.TabIndex = 6;
+            this.displayAccountName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayAccountName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayAccountName.Location = new System.Drawing.Point(151, 70);
+            this.displayAccountName.Name = "displayAccountName";
+            this.displayAccountName.Size = new System.Drawing.Size(200, 23);
+            this.displayAccountName.TabIndex = 6;
             // 
-            // displayBox3
+            // displayExpenseReason
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExpenseReason", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(151, 110);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(200, 23);
-            this.displayBox3.TabIndex = 7;
+            this.displayExpenseReason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayExpenseReason.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExpenseReason", true));
+            this.displayExpenseReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayExpenseReason.Location = new System.Drawing.Point(151, 110);
+            this.displayExpenseReason.Name = "displayExpenseReason";
+            this.displayExpenseReason.Size = new System.Drawing.Size(200, 23);
+            this.displayExpenseReason.TabIndex = 7;
             // 
-            // displayBox4
+            // displayShippingMode
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ShipModeID", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(151, 150);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(455, 23);
-            this.displayBox4.TabIndex = 8;
+            this.displayShippingMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayShippingMode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ShipModeID", true));
+            this.displayShippingMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayShippingMode.Location = new System.Drawing.Point(151, 150);
+            this.displayShippingMode.Name = "displayShippingMode";
+            this.displayShippingMode.Size = new System.Drawing.Size(455, 23);
+            this.displayShippingMode.TabIndex = 8;
             // 
-            // comboBox1
+            // comboSharebase
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShareBase", true));
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(151, 190);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(178, 24);
-            this.comboBox1.TabIndex = 9;
+            this.comboSharebase.BackColor = System.Drawing.Color.White;
+            this.comboSharebase.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShareBase", true));
+            this.comboSharebase.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSharebase.FormattingEnabled = true;
+            this.comboSharebase.IsSupportUnselect = true;
+            this.comboSharebase.Location = new System.Drawing.Point(151, 190);
+            this.comboSharebase.Name = "comboSharebase";
+            this.comboSharebase.Size = new System.Drawing.Size(178, 24);
+            this.comboSharebase.TabIndex = 9;
             // 
-            // textBox1
+            // txtAccountNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(151, 30);
-            this.textBox1.Mask = "CCCC-CCCC";
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(70, 23);
-            this.textBox1.TabIndex = 10;
+            this.txtAccountNo.BackColor = System.Drawing.Color.White;
+            this.txtAccountNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountID", true));
+            this.txtAccountNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtAccountNo.Location = new System.Drawing.Point(151, 30);
+            this.txtAccountNo.Mask = "CCCC-CCCC";
+            this.txtAccountNo.Name = "txtAccountNo";
+            this.txtAccountNo.Size = new System.Drawing.Size(70, 23);
+            this.txtAccountNo.TabIndex = 10;
             // 
             // B04
             // 
@@ -212,15 +212,15 @@
 
         #endregion
 
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.ComboBox comboSharebase;
+        private Win.UI.DisplayBox displayShippingMode;
+        private Win.UI.DisplayBox displayExpenseReason;
+        private Win.UI.DisplayBox displayAccountName;
+        private Win.UI.Label labelSharebase;
+        private Win.UI.Label labelShippingMode;
+        private Win.UI.Label labelExpenseReason;
+        private Win.UI.Label labelAccountName;
+        private Win.UI.Label labelAccountNo;
+        private Win.UI.TextBox txtAccountNo;
     }
 }
