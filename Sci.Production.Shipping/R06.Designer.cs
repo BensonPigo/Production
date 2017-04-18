@@ -158,7 +158,7 @@
             // txtsubcon1
             // 
             this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = false;
+            this.txtsubcon1.IsIncludeJunk = true;
             this.txtsubcon1.Location = new System.Drawing.Point(82, 184);
             this.txtsubcon1.Name = "txtsubcon1";
             this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
@@ -207,7 +207,6 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.EditMode = true;
             this.IsSupportToPrint = false;
             this.Name = "R06";
             this.Text = "R06. Payment List - Shipping";
