@@ -23,8 +23,8 @@ Delete Production.dbo.Style_ProductionKits
 from Production.dbo.Style_ProductionKits as a left join Trade_To_Pms.dbo.Style_ProductionKits as b
 on a.Ukey = b.Ukey
 where b.Ukey is null
-and ((AddDate between (select DateStart from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits') and (select DateEnd from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits')) 
-or (EditDate between (select DateStart from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits') and (select DateEnd from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits')))
+and ((a.AddDate between (select DateStart from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits') and (select DateEnd from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits')) 
+or (a.EditDate between (select DateStart from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits') and (select DateEnd from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits')))
 
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
@@ -59,6 +59,10 @@ SET
       ,a.FtyList	      =b.FtyList
       ,a.Reasonid	      =b.Reasonid
       ,a.StyleCUkey1_Old	      =b.StyleCUkey1_Old
+	  ,a.[AddName]=b.[AddName]
+	  ,a.[AddDate]=b.[AddDate]
+	  ,a.[EditName]=b.[EditName]
+	  ,a.[EditDate]=b.[EditDate]
 from Production.dbo.Style_ProductionKits as a inner join Trade_To_Pms.dbo.Style_ProductionKits as b ON a.Ukey=b.Ukey
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.Style_ProductionKits(
@@ -92,6 +96,10 @@ INSERT INTO Production.dbo.Style_ProductionKits(
       ,FtyList
       ,Reasonid
       ,StyleCUkey1_Old
+	  ,[AddName]
+	  ,[AddDate]
+	  ,[EditName]
+	  ,[EditDate]
 
 )
 select 
@@ -125,6 +133,10 @@ select
       ,FtyList
       ,Reasonid
       ,StyleCUkey1_Old
+	  ,[AddName]
+	  ,[AddDate]
+	  ,[EditName]
+	  ,[EditDate]
 
 from Trade_To_Pms.dbo.Style_ProductionKits as b WITH (NOLOCK)
 where not exists(select Ukey from Production.dbo.Style_ProductionKits as a WITH (NOLOCK) where a.Ukey = b.Ukey)
